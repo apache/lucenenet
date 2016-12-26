@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-
 namespace Lucene.Net.Store
 {
     /*
@@ -39,17 +38,17 @@ namespace Lucene.Net.Store
         {
             /// <summary>
             /// source file </summary>
-            internal string File; // LUCENENET TODO: make property
+            internal string File { get; set; }
 
-            internal long Length; // LUCENENET TODO: make property
+            internal long Length { get; set; }
 
             /// <summary>
             /// temporary holder for the start of this file's data section </summary>
-            internal long Offset; // LUCENENET TODO: make property
+            internal long Offset { get; set; }
 
             /// <summary>
             /// the directory which contains the file. </summary>
-            internal Directory Dir; // LUCENENET TODO: make property
+            internal Directory Dir { get; set; }
         }
 
         // Before versioning started.
@@ -68,18 +67,18 @@ namespace Lucene.Net.Store
         // versioning for the .cfe file
         internal const string ENTRY_CODEC = "CompoundFileWriterEntries";
 
-        private readonly Directory Directory_Renamed;
-        private readonly IDictionary<string, FileEntry> Entries = new Dictionary<string, FileEntry>();
-        private readonly ISet<string> SeenIDs = new HashSet<string>();
+        private readonly Directory directory;
+        private readonly IDictionary<string, FileEntry> entries = new Dictionary<string, FileEntry>();
+        private readonly ISet<string> seenIDs = new HashSet<string>();
 
         // all entries that are written to a sep. file but not yet moved into CFS
-        private readonly LinkedList<FileEntry> PendingEntries = new LinkedList<FileEntry>();
+        private readonly LinkedList<FileEntry> pendingEntries = new LinkedList<FileEntry>();
 
-        private bool Closed = false;
-        private IndexOutput DataOut;
-        private readonly AtomicBoolean OutputTaken = new AtomicBoolean(false);
-        internal readonly string EntryTableName;
-        internal readonly string DataFileName;
+        private bool closed = false;
+        private IndexOutput dataOut;
+        private readonly AtomicBoolean outputTaken = new AtomicBoolean(false);
+        internal readonly string entryTableName;
+        internal readonly string dataFileName;
 
         /// <summary>
         /// Create the compound stream in the specified file. The file name is the
@@ -97,36 +96,33 @@ namespace Lucene.Net.Store
             {
                 throw new System.NullReferenceException("name cannot be null");
             }
-            Directory_Renamed = dir;
-            EntryTableName = IndexFileNames.SegmentFileName(IndexFileNames.StripExtension(name), "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
-            DataFileName = name;
+            directory = dir;
+            entryTableName = IndexFileNames.SegmentFileName(IndexFileNames.StripExtension(name), "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
+            dataFileName = name;
         }
 
-        private IndexOutput Output // LUCENENET TODO: Change to GetOutput() (throws exceptions)
+        private IndexOutput GetOutput()
         {
-            get
+            lock (this)
             {
-                lock (this)
+                if (dataOut == null)
                 {
-                    if (DataOut == null)
+                    bool success = false;
+                    try
                     {
-                        bool success = false;
-                        try
+                        dataOut = directory.CreateOutput(dataFileName, IOContext.DEFAULT);
+                        CodecUtil.WriteHeader(dataOut, DATA_CODEC, VERSION_CURRENT);
+                        success = true;
+                    }
+                    finally
+                    {
+                        if (!success)
                         {
-                            DataOut = Directory_Renamed.CreateOutput(DataFileName, IOContext.DEFAULT);
-                            CodecUtil.WriteHeader(DataOut, DATA_CODEC, VERSION_CURRENT);
-                            success = true;
-                        }
-                        finally
-                        {
-                            if (!success)
-                            {
-                                IOUtils.CloseWhileHandlingException(DataOut);
-                            }
+                            IOUtils.CloseWhileHandlingException((IDisposable)dataOut);
                         }
                     }
-                    return DataOut;
                 }
+                return dataOut;
             }
         }
 
@@ -136,7 +132,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return Directory_Renamed;
+                return directory;
             }
         }
 
@@ -146,7 +142,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return DataFileName;
+                return dataFileName;
             }
         }
 
@@ -158,7 +154,7 @@ namespace Lucene.Net.Store
         ///           this object </exception>
         public void Dispose()
         {
-            if (Closed)
+            if (closed)
             {
                 return;
             }
@@ -168,15 +164,15 @@ namespace Lucene.Net.Store
             // (remove partial .cfs/.cfe)
             try
             {
-                if (PendingEntries.Count > 0 || OutputTaken.Get())
+                if (pendingEntries.Count > 0 || outputTaken.Get())
                 {
                     throw new InvalidOperationException("CFS has pending open files");
                 }
-                Closed = true;
+                closed = true;
                 // open the compound stream
                 GetOutput();
-                Debug.Assert(DataOut != null);
-                CodecUtil.WriteFooter(DataOut);
+                Debug.Assert(dataOut != null);
+                CodecUtil.WriteFooter(dataOut);
             }
             catch (System.IO.IOException e)
             {
@@ -184,12 +180,12 @@ namespace Lucene.Net.Store
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(priorException, DataOut);
+                IOUtils.CloseWhileHandlingException(priorException, dataOut);
             }
             try
             {
-                entryTableOut = Directory_Renamed.CreateOutput(EntryTableName, IOContext.DEFAULT);
-                WriteEntryTable(Entries.Values, entryTableOut);
+                entryTableOut = directory.CreateOutput(entryTableName, IOContext.DEFAULT);
+                WriteEntryTable(entries.Values, entryTableOut);
             }
             catch (System.IO.IOException e)
             {
@@ -203,7 +199,7 @@ namespace Lucene.Net.Store
 
         private void EnsureOpen()
         {
-            if (Closed)
+            if (closed)
             {
                 throw new AlreadyClosedException("CFS Directory is already closed");
             }
@@ -269,26 +265,26 @@ namespace Lucene.Net.Store
             try
             {
                 Debug.Assert(name != null, "name must not be null");
-                if (Entries.ContainsKey(name))
+                if (entries.ContainsKey(name))
                 {
                     throw new System.ArgumentException("File " + name + " already exists");
                 }
                 FileEntry entry = new FileEntry();
                 entry.File = name;
-                Entries[name] = entry;
+                entries[name] = entry;
                 string id = IndexFileNames.StripSegmentName(name);
-                Debug.Assert(!SeenIDs.Contains(id), "file=\"" + name + "\" maps to id=\"" + id + "\", which was already written");
-                SeenIDs.Add(id);
+                Debug.Assert(!seenIDs.Contains(id), "file=\"" + name + "\" maps to id=\"" + id + "\", which was already written");
+                seenIDs.Add(id);
                 DirectCFSIndexOutput @out;
 
-                if ((outputLocked = OutputTaken.CompareAndSet(false, true)))
+                if ((outputLocked = outputTaken.CompareAndSet(false, true)))
                 {
-                    @out = new DirectCFSIndexOutput(this, Output, entry, false);
+                    @out = new DirectCFSIndexOutput(this, GetOutput(), entry, false);
                 }
                 else
                 {
-                    entry.Dir = this.Directory_Renamed;
-                    @out = new DirectCFSIndexOutput(this, Directory_Renamed.CreateOutput(name, context), entry, true);
+                    entry.Dir = this.directory;
+                    @out = new DirectCFSIndexOutput(this, directory.CreateOutput(name, context), entry, true);
                 }
                 success = true;
                 return @out;
@@ -297,64 +293,39 @@ namespace Lucene.Net.Store
             {
                 if (!success)
                 {
-                    Entries.Remove(name);
+                    entries.Remove(name);
                     if (outputLocked) // release the output lock if not successful
                     {
-                        Debug.Assert(OutputTaken.Get());
+                        Debug.Assert(outputTaken.Get());
                         ReleaseOutputLock();
                     }
                 }
             }
         }
 
-        private IndexOutput GetOutput() // LUCENENET TODO: Move to where Output property is now and delete unnecessary Output property
-        {
-            lock (this)
-            {
-                if (DataOut == null)
-                {
-                    bool success = false;
-                    try
-                    {
-                        DataOut = Directory.CreateOutput(DataFileName, IOContext.DEFAULT);
-                        CodecUtil.WriteHeader(DataOut, DATA_CODEC, VERSION_CURRENT);
-                        success = true;
-                    }
-                    finally
-                    {
-                        if (!success)
-                        {
-                            IOUtils.CloseWhileHandlingException((IDisposable)DataOut);
-                        }
-                    }
-                }
-                return DataOut;
-            }
-        }
-
         internal void ReleaseOutputLock()
         {
-            OutputTaken.CompareAndSet(true, false);
+            outputTaken.CompareAndSet(true, false);
         }
 
         private void PrunePendingEntries()
         {
             // claim the output and copy all pending files in
-            if (OutputTaken.CompareAndSet(false, true))
+            if (outputTaken.CompareAndSet(false, true))
             {
                 try
                 {
-                    while (PendingEntries.Count > 0)
+                    while (pendingEntries.Count > 0)
                     {
-                        FileEntry entry = PendingEntries.First();
-                        PendingEntries.RemoveFirst(); ;
-                        CopyFileEntry(Output, entry);
-                        Entries[entry.File] = entry;
+                        FileEntry entry = pendingEntries.First();
+                        pendingEntries.RemoveFirst(); ;
+                        CopyFileEntry(GetOutput(), entry);
+                        entries[entry.File] = entry;
                     }
                 }
                 finally
                 {
-                    bool compareAndSet = OutputTaken.CompareAndSet(true, false);
+                    bool compareAndSet = outputTaken.CompareAndSet(true, false);
                     Debug.Assert(compareAndSet);
                 }
             }
@@ -362,7 +333,7 @@ namespace Lucene.Net.Store
 
         internal long FileLength(string name)
         {
-            FileEntry fileEntry = Entries[name];
+            FileEntry fileEntry = entries[name];
             if (fileEntry == null)
             {
                 throw new Exception(name + " does not exist");
@@ -372,12 +343,12 @@ namespace Lucene.Net.Store
 
         internal bool FileExists(string name)
         {
-            return Entries.ContainsKey(name);
+            return entries.ContainsKey(name);
         }
 
         internal string[] ListAll()
         {
-            return Entries.Keys.ToArray();
+            return entries.Keys.ToArray();
         }
 
         private sealed class DirectCFSIndexOutput : IndexOutput
@@ -416,7 +387,7 @@ namespace Lucene.Net.Store
                     {
                         @delegate.Dispose();
                         // we are a separate file - push into the pending entries
-                        OuterInstance.PendingEntries.AddLast(Entry);
+                        OuterInstance.pendingEntries.AddLast(Entry);
                     }
                     else
                     {
