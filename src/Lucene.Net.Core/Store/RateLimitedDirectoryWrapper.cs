@@ -55,13 +55,13 @@ namespace Lucene.Net.Store
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
-            return @in.CreateSlicer(name, context);
+            return m_input.CreateSlicer(name, context);
         }
 
         public override void Copy(Directory to, string src, string dest, IOContext context)
         {
             EnsureOpen();
-            @in.Copy(to, src, dest, context);
+            m_input.Copy(to, src, dest, context);
         }
 
         private RateLimiter GetRateLimiter(IOContext.UsageContext? context) // LUCENENET TODO: Can we get rid of the nullable?

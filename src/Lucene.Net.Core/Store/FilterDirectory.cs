@@ -33,13 +33,13 @@ namespace Lucene.Net.Store
     /// </summary>
     public class FilterDirectory : Directory
     {
-        protected internal readonly Directory @in; // LUCENENET TODO: Rename m_in
+        protected internal readonly Directory m_input;
 
         /// <summary>
         /// Sole constructor, typically called from sub-classes. </summary>
         protected FilterDirectory(Directory @in)
         {
-            this.@in = @in;
+            this.m_input = @in;
         }
 
         /// <summary>
@@ -48,81 +48,81 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return @in;
+                return m_input;
             }
         }
 
         public override string[] ListAll()
         {
-            return @in.ListAll();
+            return m_input.ListAll();
         }
 
         public override bool FileExists(string name)
         {
-            return @in.FileExists(name);
+            return m_input.FileExists(name);
         }
 
         public override void DeleteFile(string name)
         {
-            @in.DeleteFile(name);
+            m_input.DeleteFile(name);
         }
 
         public override long FileLength(string name)
         {
-            return @in.FileLength(name);
+            return m_input.FileLength(name);
         }
 
         public override IndexOutput CreateOutput(string name, IOContext context)
         {
-            return @in.CreateOutput(name, context);
+            return m_input.CreateOutput(name, context);
         }
 
         public override void Sync(ICollection<string> names)
         {
-            @in.Sync(names);
+            m_input.Sync(names);
         }
 
         public override IndexInput OpenInput(string name, IOContext context)
         {
-            return @in.OpenInput(name, context);
+            return m_input.OpenInput(name, context);
         }
 
         public override Lock MakeLock(string name)
         {
-            return @in.MakeLock(name);
+            return m_input.MakeLock(name);
         }
 
         public override void ClearLock(string name)
         {
-            @in.ClearLock(name);
+            m_input.ClearLock(name);
         }
 
         public override void Dispose()
         {
-            @in.Dispose();
+            m_input.Dispose();
         }
 
         public override void SetLockFactory(LockFactory lockFactory)
         {
-            @in.SetLockFactory(lockFactory);
+            m_input.SetLockFactory(lockFactory);
         }
 
         public override LockFactory LockFactory
         {
             get
             {
-                return @in.LockFactory;
+                return m_input.LockFactory;
             }
         }
 
         public override string GetLockID()
         {
-            return @in.GetLockID();
+            return m_input.GetLockID();
         }
 
         public override string ToString()
         {
-            return this.GetType().Name + "(" + @in.ToString() + ")";
+            return this.GetType().Name + "(" + m_input.ToString() + ")";
         }
     }
 }

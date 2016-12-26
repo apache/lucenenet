@@ -36,24 +36,24 @@ namespace Lucene.Net.Store
         public override void DeleteFile(string name)
         {
             CreatedFileNames.Remove(name);
-            @in.DeleteFile(name);
+            m_input.DeleteFile(name);
         }
 
         public override IndexOutput CreateOutput(string name, IOContext context)
         {
             CreatedFileNames.Add(name);
-            return @in.CreateOutput(name, context);
+            return m_input.CreateOutput(name, context);
         }
 
         public override void Copy(Directory to, string src, string dest, IOContext context)
         {
             CreatedFileNames.Add(dest);
-            @in.Copy(to, src, dest, context);
+            m_input.Copy(to, src, dest, context);
         }
 
         public override Directory.IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
-            return @in.CreateSlicer(name, context);
+            return m_input.CreateSlicer(name, context);
         }
 
         // maybe clone before returning.... all callers are

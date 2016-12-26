@@ -221,7 +221,7 @@ namespace Lucene.Net.Store
         /// </summary>
         private bool MustSync()
         {
-            Directory @delegate = @in;
+            Directory @delegate = m_input;
             while (@delegate is FilterDirectory)
             {
                 @delegate = ((FilterDirectory)@delegate).Delegate;
@@ -246,7 +246,7 @@ namespace Lucene.Net.Store
                     {
                         // randomly fail with IOE on any file
                         MaybeThrowIOException(name);
-                        @in.Sync(new[] { name });
+                        m_input.Sync(new[] { name });
                         UnSyncedFiles.Remove(name);
                     }
                 }
@@ -261,17 +261,17 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                if (@in is RAMDirectory)
+                if (m_input is RAMDirectory)
                 {
-                    return ((RAMDirectory)@in).SizeInBytes();
+                    return ((RAMDirectory)m_input).SizeInBytes();
                 }
                 else
                 {
                     // hack
                     long size = 0;
-                    foreach (string file in @in.ListAll())
+                    foreach (string file in m_input.ListAll())
                     {
-                        size += @in.FileLength(file);
+                        size += m_input.FileLength(file);
                     }
                     return size;
                 }
@@ -325,7 +325,7 @@ namespace Lucene.Net.Store
                         long length = FileLength(name);
                         var zeroes = new byte[256]; // LUCENENET TODO: Don't we want to fill the array before writing from it?
                         long upto = 0;
-                        IndexOutput @out = @in.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
+                        IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
                         while (upto < length)
                         {
                             var limit = (int)Math.Min(length - upto, zeroes.Length);
@@ -345,13 +345,13 @@ namespace Lucene.Net.Store
                         while (true)
                         {
                             tempFileName = "" + RandomState.Next();
-                            if (!LuceneTestCase.SlowFileExists(@in, tempFileName))
+                            if (!LuceneTestCase.SlowFileExists(m_input, tempFileName))
                             {
                                 break;
                             }
                         }
-                        IndexOutput tempOut = @in.CreateOutput(tempFileName, LuceneTestCase.NewIOContext(RandomState));
-                        IndexInput ii = @in.OpenInput(name, LuceneTestCase.NewIOContext(RandomState));
+                        IndexOutput tempOut = m_input.CreateOutput(tempFileName, LuceneTestCase.NewIOContext(RandomState));
+                        IndexInput ii = m_input.OpenInput(name, LuceneTestCase.NewIOContext(RandomState));
                         tempOut.CopyBytes(ii, ii.Length() / 2);
                         tempOut.Dispose();
                         ii.Dispose();
@@ -359,8 +359,8 @@ namespace Lucene.Net.Store
                         // Delete original and copy bytes back:
                         DeleteFile(name, true);
 
-                        IndexOutput @out = @in.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
-                        ii = @in.OpenInput(tempFileName, LuceneTestCase.NewIOContext(RandomState));
+                        IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
+                        ii = m_input.OpenInput(tempFileName, LuceneTestCase.NewIOContext(RandomState));
                         @out.CopyBytes(ii, ii.Length());
                         @out.Dispose();
                         ii.Dispose();
@@ -376,7 +376,7 @@ namespace Lucene.Net.Store
                         action = "fully truncated";
                         // Totally truncate the file to zero bytes
                         DeleteFile(name, true);
-                        IndexOutput @out = @in.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
+                        IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
                         @out.Length = 0;
                         @out.Dispose();
                     }
@@ -610,7 +610,7 @@ namespace Lucene.Net.Store
                         OpenFilesDeleted.Remove(name);
                     }
                 }
-                @in.DeleteFile(name);
+                m_input.DeleteFile(name);
             }
         }
 
@@ -677,9 +677,9 @@ namespace Lucene.Net.Store
                 UnSyncedFiles.Add(name);
                 CreatedFiles.Add(name);
 
-                if (@in is RAMDirectory)
+                if (m_input is RAMDirectory)
                 {
-                    RAMDirectory ramdir = (RAMDirectory)@in;
+                    RAMDirectory ramdir = (RAMDirectory)m_input;
                     RAMFile file = new RAMFile(ramdir);
                     RAMFile existing = ramdir.FileMap.ContainsKey(name) ? ramdir.FileMap[name] : null;
 
@@ -699,7 +699,7 @@ namespace Lucene.Net.Store
                     }
                 }
                 //System.out.println(Thread.currentThread().getName() + ": MDW: create " + name);
-                IndexOutput delegateOutput = @in.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState, context));
+                IndexOutput delegateOutput = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState, context));
                 if (RandomState.Next(10) == 0)
                 {
                     // once in a while wrap the IO in a Buffered IO with random buffer sizes
@@ -710,7 +710,7 @@ namespace Lucene.Net.Store
                 OpenFilesForWrite.Add(name);
 
                 // throttling REALLY slows down tests, so don't do it very often for SOMETIMES.
-                if (throttling == Throttling_e.ALWAYS || (throttling == Throttling_e.SOMETIMES && RandomState.Next(50) == 0) && !(@in is RateLimitedDirectoryWrapper))
+                if (throttling == Throttling_e.ALWAYS || (throttling == Throttling_e.SOMETIMES && RandomState.Next(50) == 0) && !(m_input is RateLimitedDirectoryWrapper))
                 {
                     if (LuceneTestCase.VERBOSE)
                     {
@@ -776,9 +776,9 @@ namespace Lucene.Net.Store
                 {
                     MaybeThrowDeterministicException();
                 }
-                if (!LuceneTestCase.SlowFileExists(@in, name))
+                if (!LuceneTestCase.SlowFileExists(m_input, name))
                 {
-                    throw new FileNotFoundException(name + " in dir=" + @in);
+                    throw new FileNotFoundException(name + " in dir=" + m_input);
                 }
 
                 // cannot open a file for input if it's still open for
@@ -788,7 +788,7 @@ namespace Lucene.Net.Store
                     throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
                 }
 
-                IndexInput delegateInput = @in.OpenInput(name, LuceneTestCase.NewIOContext(RandomState, context));
+                IndexInput delegateInput = m_input.OpenInput(name, LuceneTestCase.NewIOContext(RandomState, context));
 
                 IndexInput ii;
                 int randomInt = RandomState.Next(500);
@@ -825,12 +825,12 @@ namespace Lucene.Net.Store
             {
                 lock (this)
                 {
-                    if (!(@in is RAMDirectory))
+                    if (!(m_input is RAMDirectory))
                     {
                         return SizeInBytes();
                     }
                     long size = 0;
-                    foreach (RAMFile file in ((RAMDirectory)@in).FileMap.Values)
+                    foreach (RAMFile file in ((RAMDirectory)m_input).FileMap.Values)
                     {
                         size += file.SizeInBytes;
                     }
@@ -852,12 +852,12 @@ namespace Lucene.Net.Store
             {
                 lock (this)
                 {
-                    if (!(@in is RAMDirectory))
+                    if (!(m_input is RAMDirectory))
                     {
                         return SizeInBytes();
                     }
                     long size = 0;
-                    foreach (RAMFile file in ((RAMDirectory)@in).FileMap.Values)
+                    foreach (RAMFile file in ((RAMDirectory)m_input).FileMap.Values)
                     {
                         size += file.Length;
                     }
@@ -955,8 +955,8 @@ namespace Lucene.Net.Store
                             string[] startFiles = allFiles.ToArray(/*new string[0]*/);
                             IndexWriterConfig iwc = new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null);
                             iwc.SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE);
-                            (new IndexWriter(@in, iwc)).Rollback();
-                            string[] endFiles = @in.ListAll();
+                            (new IndexWriter(m_input, iwc)).Rollback();
+                            string[] endFiles = m_input.ListAll();
 
                             ISet<string> startSet = new SortedSet<string>(Arrays.AsList(startFiles));
                             ISet<string> endSet = new SortedSet<string>(Arrays.AsList(endFiles));
@@ -987,7 +987,7 @@ namespace Lucene.Net.Store
                                     SegmentInfos sis = new SegmentInfos();
                                     try
                                     {
-                                        sis.Read(@in, file);
+                                        sis.Read(m_input, file);
                                     }
                                     catch (System.IO.IOException ioe)
                                     {
@@ -996,7 +996,7 @@ namespace Lucene.Net.Store
 
                                     try
                                     {
-                                        ISet<string> ghosts = new HashSet<string>(sis.Files(@in, false));
+                                        ISet<string> ghosts = new HashSet<string>(sis.Files(m_input, false));
                                         foreach (string s in ghosts)
                                         {
                                             if (endSet.Contains(s) && !startSet.Contains(s))
@@ -1076,7 +1076,7 @@ namespace Lucene.Net.Store
                         }
                     }
                 }
-                @in.Dispose();
+                m_input.Dispose();
             }
         }
 
@@ -1211,7 +1211,7 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 MaybeYield();
-                return @in.ListAll();
+                return m_input.ListAll();
             }
         }
 
@@ -1220,7 +1220,7 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 MaybeYield();
-                return @in.FileExists(name);
+                return m_input.FileExists(name);
             }
         }
 
@@ -1229,7 +1229,7 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 MaybeYield();
-                return @in.FileLength(name);
+                return m_input.FileLength(name);
             }
         }
 
@@ -1258,7 +1258,7 @@ namespace Lucene.Net.Store
                 MaybeYield();
                 // sneaky: we must pass the original this way to the dir, because
                 // some impls (e.g. FSDir) do instanceof here.
-                @in.SetLockFactory(lockFactory);
+                m_input.SetLockFactory(lockFactory);
                 // now set our wrapped factory here
                 this.LockFactory_Renamed = new MockLockFactoryWrapper(this, lockFactory);
             }
@@ -1277,7 +1277,7 @@ namespace Lucene.Net.Store
                     }
                     else
                     {
-                        return @in.LockFactory;
+                        return m_input.LockFactory;
                     }
                 }
             }
@@ -1288,7 +1288,7 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 MaybeYield();
-                return @in.GetLockID();
+                return m_input.GetLockID();
             }
         }
 
@@ -1298,14 +1298,14 @@ namespace Lucene.Net.Store
             {
                 MaybeYield();
                 // randomize the IOContext here?
-                @in.Copy(to, src, dest, context);
+                m_input.Copy(to, src, dest, context);
             }
         }
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             MaybeYield();
-            if (!LuceneTestCase.SlowFileExists(@in, name))
+            if (!LuceneTestCase.SlowFileExists(m_input, name))
             {
                 throw RandomState.NextBoolean() ? new FileNotFoundException(name) : new FileNotFoundException(name);
             }
@@ -1317,7 +1317,7 @@ namespace Lucene.Net.Store
                 throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
             }
 
-            IndexInputSlicer delegateHandle = @in.CreateSlicer(name, context);
+            IndexInputSlicer delegateHandle = m_input.CreateSlicer(name, context);
             IndexInputSlicer handle = new IndexInputSlicerAnonymousInnerClassHelper(this, name, delegateHandle);
             AddFileHandle(handle, name, Handle.Slice);
             return handle;

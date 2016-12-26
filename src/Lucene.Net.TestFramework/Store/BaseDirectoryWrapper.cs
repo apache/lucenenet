@@ -85,12 +85,12 @@ namespace Lucene.Net.Store
 
         public override void Copy(Directory to, string src, string dest, IOContext context)
         {
-            @in.Copy(to, src, dest, context);
+            m_input.Copy(to, src, dest, context);
         }
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
-            return @in.CreateSlicer(name, context);
+            return m_input.CreateSlicer(name, context);
         }
     }
 }
