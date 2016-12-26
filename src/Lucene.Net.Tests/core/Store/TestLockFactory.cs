@@ -85,7 +85,7 @@ namespace Lucene.Net.Store
         public virtual void TestRAMDirectoryNoLocking()
         {
             MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new RAMDirectory());
-            dir.SetLockFactory(NoLockFactory.DoNoLockFactory);
+            dir.SetLockFactory(NoLockFactory.GetNoLockFactory());
             dir.WrapLockFactory = false; // we are gonna explicitly test we get this back
             Assert.IsTrue(typeof(NoLockFactory).IsInstanceOfType(dir.LockFactory), "RAMDirectory.setLockFactory did not take");
 

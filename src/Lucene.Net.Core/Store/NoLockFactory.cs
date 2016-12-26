@@ -35,12 +35,9 @@ namespace Lucene.Net.Store
         {
         }
 
-        public static NoLockFactory DoNoLockFactory // LUCENENET TODO: Rename GetNoLockFactory() (name collision)
+        public static NoLockFactory GetNoLockFactory() // LUCENENET NOTE: name collision on a property, so leaving a method
         {
-            get
-            {
-                return singleton;
-            }
+            return singleton;
         }
 
         public override Lock MakeLock(string lockName)

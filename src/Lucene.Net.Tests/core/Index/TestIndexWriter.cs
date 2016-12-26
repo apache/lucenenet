@@ -1739,7 +1739,7 @@ namespace Lucene.Net.Index
             // Tests that if FSDir is opened w/ a NoLockFactory (or SingleInstanceLF),
             // then IndexWriter ctor succeeds. Previously (LUCENE-2386) it failed
             // when listAll() was called in IndexFileDeleter.
-            Directory dir = NewFSDirectory(CreateTempDir("emptyFSDirNoLock"), NoLockFactory.DoNoLockFactory);
+            Directory dir = NewFSDirectory(CreateTempDir("emptyFSDirNoLock"), NoLockFactory.GetNoLockFactory());
             (new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())))).Dispose();
             dir.Dispose();
         }
@@ -1814,7 +1814,7 @@ namespace Lucene.Net.Index
         public virtual void TestNoSegmentFile()
         {
             BaseDirectoryWrapper dir = NewDirectory();
-            dir.SetLockFactory(NoLockFactory.DoNoLockFactory);
+            dir.SetLockFactory(NoLockFactory.GetNoLockFactory());
             IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
 
             Document doc = new Document();
