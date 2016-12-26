@@ -29,16 +29,16 @@ namespace Lucene.Net.Store
     {
         internal const int BUFFER_SIZE = 1024;
 
-        private RAMFile File;
+        private RAMFile file;
 
-        private byte[] CurrentBuffer;
-        private int CurrentBufferIndex;
+        private byte[] currentBuffer;
+        private int currentBufferIndex;
 
-        private int BufferPosition;
-        private long BufferStart;
-        private int BufferLength;
+        private int bufferPosition;
+        private long bufferStart;
+        private int bufferLength;
 
-        private BufferedChecksum Crc = new BufferedChecksum(new CRC32());
+        private BufferedChecksum crc = new BufferedChecksum(new CRC32());
 
         /// <summary>
         /// Construct an empty output buffer. </summary>
@@ -49,12 +49,12 @@ namespace Lucene.Net.Store
 
         public RAMOutputStream(RAMFile f)
         {
-            File = f;
+            file = f;
 
             // make sure that we switch to the
             // first needed buffer lazily
-            CurrentBufferIndex = -1;
-            CurrentBuffer = null;
+            currentBufferIndex = -1;
+            currentBuffer = null;
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Lucene.Net.Store
         public virtual void WriteTo(DataOutput @out)
         {
             Flush();
-            long end = File.length;
+            long end = file.length;
             long pos = 0;
             int buffer = 0;
             while (pos < end)
@@ -73,7 +73,7 @@ namespace Lucene.Net.Store
                 {
                     length = (int)(end - pos);
                 }
-                @out.WriteBytes(File.GetBuffer(buffer++), length);
+                @out.WriteBytes(file.GetBuffer(buffer++), length);
                 pos = nextPos;
             }
         }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Store
         public virtual void WriteTo(byte[] bytes, int offset)
         {
             Flush();
-            long end = File.length;
+            long end = file.length;
             long pos = 0;
             int buffer = 0;
             int bytesUpto = offset;
@@ -97,7 +97,7 @@ namespace Lucene.Net.Store
                 {
                     length = (int)(end - pos);
                 }
-                System.Buffer.BlockCopy(File.GetBuffer(buffer++), 0, bytes, bytesUpto, length);
+                System.Buffer.BlockCopy(file.GetBuffer(buffer++), 0, bytes, bytesUpto, length);
                 bytesUpto += length;
                 pos = nextPos;
             }
@@ -107,13 +107,13 @@ namespace Lucene.Net.Store
         /// Resets this to an empty file. </summary>
         public virtual void Reset()
         {
-            CurrentBuffer = null;
-            CurrentBufferIndex = -1;
-            BufferPosition = 0;
-            BufferStart = 0;
-            BufferLength = 0;
-            File.Length = 0;
-            Crc.Reset();
+            currentBuffer = null;
+            currentBufferIndex = -1;
+            bufferPosition = 0;
+            bufferStart = 0;
+            bufferLength = 0;
+            file.Length = 0;
+            crc.Reset();
         }
 
         public override void Dispose()
@@ -126,20 +126,20 @@ namespace Lucene.Net.Store
             // set the file length in case we seek back
             // and flush() has not been called yet
             SetFileLength();
-            if (pos < BufferStart || pos >= BufferStart + BufferLength)
+            if (pos < bufferStart || pos >= bufferStart + bufferLength)
             {
-                CurrentBufferIndex = (int)(pos / BUFFER_SIZE);
+                currentBufferIndex = (int)(pos / BUFFER_SIZE);
                 SwitchCurrentBuffer();
             }
 
-            BufferPosition = (int)(pos % BUFFER_SIZE);
+            bufferPosition = (int)(pos % BUFFER_SIZE);
         }
 
         public override long Length
         {
             get
             {
-                return File.length;
+                return file.length;
             }
             set
             {
@@ -148,57 +148,57 @@ namespace Lucene.Net.Store
 
         public override void WriteByte(byte b)
         {
-            if (BufferPosition == BufferLength)
+            if (bufferPosition == bufferLength)
             {
-                CurrentBufferIndex++;
+                currentBufferIndex++;
                 SwitchCurrentBuffer();
             }
-            Crc.Update(b);
-            CurrentBuffer[BufferPosition++] = b;
+            crc.Update(b);
+            currentBuffer[bufferPosition++] = b;
         }
 
         public override void WriteBytes(byte[] b, int offset, int len)
         {
             Debug.Assert(b != null);
-            Crc.Update(b, offset, len);
+            crc.Update(b, offset, len);
             while (len > 0)
             {
-                if (BufferPosition == BufferLength)
+                if (bufferPosition == bufferLength)
                 {
-                    CurrentBufferIndex++;
+                    currentBufferIndex++;
                     SwitchCurrentBuffer();
                 }
 
-                int remainInBuffer = CurrentBuffer.Length - BufferPosition;
+                int remainInBuffer = currentBuffer.Length - bufferPosition;
                 int bytesToCopy = len < remainInBuffer ? len : remainInBuffer;
-                System.Buffer.BlockCopy(b, offset, CurrentBuffer, BufferPosition, bytesToCopy);
+                System.Buffer.BlockCopy(b, offset, currentBuffer, bufferPosition, bytesToCopy);
                 offset += bytesToCopy;
                 len -= bytesToCopy;
-                BufferPosition += bytesToCopy;
+                bufferPosition += bytesToCopy;
             }
         }
 
         private void SwitchCurrentBuffer()
         {
-            if (CurrentBufferIndex == File.NumBuffers())
+            if (currentBufferIndex == file.NumBuffers())
             {
-                CurrentBuffer = File.AddBuffer(BUFFER_SIZE);
+                currentBuffer = file.AddBuffer(BUFFER_SIZE);
             }
             else
             {
-                CurrentBuffer = File.GetBuffer(CurrentBufferIndex);
+                currentBuffer = file.GetBuffer(currentBufferIndex);
             }
-            BufferPosition = 0;
-            BufferStart = (long)BUFFER_SIZE * (long)CurrentBufferIndex;
-            BufferLength = CurrentBuffer.Length;
+            bufferPosition = 0;
+            bufferStart = (long)BUFFER_SIZE * (long)currentBufferIndex;
+            bufferLength = currentBuffer.Length;
         }
 
         private void SetFileLength()
         {
-            long pointer = BufferStart + BufferPosition;
-            if (pointer > File.length)
+            long pointer = bufferStart + bufferPosition;
+            if (pointer > file.length)
             {
-                File.Length = pointer;
+                file.Length = pointer;
             }
         }
 
@@ -211,7 +211,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return CurrentBufferIndex < 0 ? 0 : BufferStart + BufferPosition;
+                return currentBufferIndex < 0 ? 0 : bufferStart + bufferPosition;
             }
         }
 
@@ -219,14 +219,14 @@ namespace Lucene.Net.Store
         /// Returns byte usage of all buffers. </summary>
         public virtual long SizeInBytes()
         {
-            return (long)File.NumBuffers() * (long)BUFFER_SIZE;
+            return (long)file.NumBuffers() * (long)BUFFER_SIZE;
         }
 
         public override long Checksum
         {
             get
             {
-                return Crc.Value;
+                return crc.Value;
             }
         }
     }
