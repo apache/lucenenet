@@ -31,23 +31,23 @@ namespace Lucene.Net.Store
 
     public class SingleInstanceLockFactory : LockFactory
     {
-        private HashSet<string> Locks = new HashSet<string>();
+        private HashSet<string> locks = new HashSet<string>();
 
         public override Lock MakeLock(string lockName)
         {
             // We do not use the LockPrefix at all, because the private
             // HashSet instance effectively scopes the locking to this
             // single Directory instance.
-            return new SingleInstanceLock(Locks, lockName);
+            return new SingleInstanceLock(locks, lockName);
         }
 
         public override void ClearLock(string lockName)
         {
-            lock (Locks)
+            lock (locks)
             {
-                if (Locks.Contains(lockName))
+                if (locks.Contains(lockName))
                 {
-                    Locks.Remove(lockName);
+                    locks.Remove(lockName);
                 }
             }
         }
@@ -55,28 +55,28 @@ namespace Lucene.Net.Store
 
     internal class SingleInstanceLock : Lock
     {
-        internal string LockName;
-        private HashSet<string> Locks;
+        internal string lockName;
+        private HashSet<string> locks;
 
         public SingleInstanceLock(HashSet<string> locks, string lockName)
         {
-            this.Locks = locks;
-            this.LockName = lockName;
+            this.locks = locks;
+            this.lockName = lockName;
         }
 
         public override bool Obtain()
         {
-            lock (Locks)
+            lock (locks)
             {
-                return Locks.Add(LockName);
+                return locks.Add(lockName);
             }
         }
 
         public override void Release()
         {
-            lock (Locks)
+            lock (locks)
             {
-                Locks.Remove(LockName);
+                locks.Remove(lockName);
             }
         }
 
@@ -84,16 +84,16 @@ namespace Lucene.Net.Store
         {
             get
             {
-                lock (Locks)
+                lock (locks)
                 {
-                    return Locks.Contains(LockName);
+                    return locks.Contains(lockName);
                 }
             }
         }
 
         public override string ToString()
         {
-            return base.ToString() + ": " + LockName;
+            return base.ToString() + ": " + lockName;
         }
     }
 }
