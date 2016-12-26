@@ -241,17 +241,17 @@ namespace Lucene.Net.Store
 
         private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
         {
-            private readonly Directory OuterInstance;
+            private readonly Directory outerInstance;
 
-            private string Name;
-            private IOContext Context;
+            private string name;
+            private IOContext context;
 
             public IndexInputSlicerAnonymousInnerClassHelper(Directory outerInstance, string name, IOContext context)
                 : base(outerInstance)
             {
-                this.OuterInstance = outerInstance;
-                this.Name = name;
-                this.Context = context;
+                this.outerInstance = outerInstance;
+                this.name = name;
+                this.context = context;
                 @base = outerInstance.OpenInput(name, context);
             }
 
@@ -287,11 +287,11 @@ namespace Lucene.Net.Store
         /// </summary>
         public abstract class IndexInputSlicer : IDisposable
         {
-            private readonly Directory OuterInstance;
+            private readonly Directory outerInstance;
 
             public IndexInputSlicer(Directory outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             /// <summary>
@@ -323,8 +323,8 @@ namespace Lucene.Net.Store
         private sealed class SlicedIndexInput : BufferedIndexInput
         {
             private IndexInput @base;
-            private long FileOffset;
-            private long Length_Renamed;
+            private long fileOffset;
+            private long length;
 
             internal SlicedIndexInput(string sliceDescription, IndexInput @base, long fileOffset, long length)
                 : this(sliceDescription, @base, fileOffset, length, BufferedIndexInput.BUFFER_SIZE)
@@ -335,16 +335,16 @@ namespace Lucene.Net.Store
                 : base("SlicedIndexInput(" + sliceDescription + " in " + @base + " slice=" + fileOffset + ":" + (fileOffset + length) + ")", readBufferSize)
             {
                 this.@base = (IndexInput)@base.Clone();
-                this.FileOffset = fileOffset;
-                this.Length_Renamed = length;
+                this.fileOffset = fileOffset;
+                this.length = length;
             }
 
             public override object Clone()
             {
                 SlicedIndexInput clone = (SlicedIndexInput)base.Clone();
                 clone.@base = (IndexInput)@base.Clone();
-                clone.FileOffset = FileOffset;
-                clone.Length_Renamed = Length_Renamed;
+                clone.fileOffset = fileOffset;
+                clone.length = length;
                 return clone;
             }
 
@@ -357,11 +357,11 @@ namespace Lucene.Net.Store
             protected override void ReadInternal(byte[] b, int offset, int len)
             {
                 long start = FilePointer;
-                if (start + len > Length_Renamed)
+                if (start + len > length)
                 {
                     throw new Exception("read past EOF: " + this);
                 }
-                @base.Seek(FileOffset + start);
+                @base.Seek(fileOffset + start);
                 @base.ReadBytes(b, offset, len, false);
             }
 
@@ -380,7 +380,7 @@ namespace Lucene.Net.Store
 
             public override long Length()
             {
-                return Length_Renamed;
+                return length;
             }
         }
     }
