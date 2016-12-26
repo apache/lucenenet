@@ -100,9 +100,9 @@ namespace Lucene.Net.Store
 
         public override Lock MakeLock(string lockName)
         {
-            if (LockPrefix_Renamed != null)
+            if (m_lockPrefix != null)
             {
-                lockName = LockPrefix_Renamed + "-" + lockName;
+                lockName = m_lockPrefix + "-" + lockName;
             }
 
             return _locks.GetOrAdd(lockName, (s) => new NativeFSLock(this, LockDir_Renamed, s));

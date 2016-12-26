@@ -42,7 +42,7 @@ namespace Lucene.Net.Store
     /// <seealso cref= VerifyingLockFactory </seealso>
     public abstract class LockFactory
     {
-        protected string LockPrefix_Renamed = null; // LUCENENET TODO: Rename m_lockPrefix
+        protected string m_lockPrefix = null;
 
         /// <summary>
         /// Set the prefix in use for all locks created in this
@@ -58,11 +58,11 @@ namespace Lucene.Net.Store
         {
             set
             {
-                this.LockPrefix_Renamed = value;
+                this.m_lockPrefix = value;
             }
             get
             {
-                return this.LockPrefix_Renamed;
+                return this.m_lockPrefix;
             }
         }
 

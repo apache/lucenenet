@@ -89,9 +89,9 @@ namespace Lucene.Net.Store
 
         public override Lock MakeLock(string lockName)
         {
-            if (LockPrefix_Renamed != null)
+            if (m_lockPrefix != null)
             {
-                lockName = LockPrefix_Renamed + "-" + lockName;
+                lockName = m_lockPrefix + "-" + lockName;
             }
             return new SimpleFSLock(LockDir_Renamed, lockName);
         }
@@ -100,9 +100,9 @@ namespace Lucene.Net.Store
         {
             if (LockDir_Renamed.Exists)
             {
-                if (LockPrefix_Renamed != null)
+                if (m_lockPrefix != null)
                 {
-                    lockName = LockPrefix_Renamed + "-" + lockName;
+                    lockName = m_lockPrefix + "-" + lockName;
                 }
                 FileInfo lockFile = new FileInfo(Path.Combine(LockDir_Renamed.FullName, lockName));
                 try
