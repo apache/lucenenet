@@ -101,22 +101,22 @@ namespace Lucene.Net.Store
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
-            private object LocalLock;
-            private int[] LockedID;
-            private CountdownEvent StartingGun;
-            private Socket Cs;
+            private object localLock;
+            private int[] lockedID;
+            private CountdownEvent startingGun;
+            private Socket cs;
 
             public ThreadAnonymousInnerClassHelper(object localLock, int[] lockedID, CountdownEvent startingGun, Socket cs)
             {
-                this.LocalLock = localLock;
-                this.LockedID = lockedID;
-                this.StartingGun = startingGun;
-                this.Cs = cs;
+                this.localLock = localLock;
+                this.lockedID = lockedID;
+                this.startingGun = startingGun;
+                this.cs = cs;
             }
 
             public override void Run()
             {
-                using (Stream @in = new NetworkStream(Cs), os = new NetworkStream(Cs))
+                using (Stream @in = new NetworkStream(cs), os = new NetworkStream(cs))
                 {
                     BinaryReader intReader = new BinaryReader(@in);
                     BinaryWriter intWriter = new BinaryWriter(os);
@@ -129,7 +129,7 @@ namespace Lucene.Net.Store
                         }
 
                         //LUCENE TO-DO NOt sure about this
-                        StartingGun.Wait();
+                        startingGun.Wait();
                         intWriter.Write(43);
                         os.Flush();
 
@@ -141,9 +141,9 @@ namespace Lucene.Net.Store
                                 return; // closed
                             }
 
-                            lock (LocalLock)
+                            lock (localLock)
                             {
-                                int currentLock = LockedID[0];
+                                int currentLock = lockedID[0];
                                 if (currentLock == -2)
                                 {
                                     return; // another thread got error, so we exit, too!
@@ -154,20 +154,20 @@ namespace Lucene.Net.Store
                                         // Locked
                                         if (currentLock != -1)
                                         {
-                                            LockedID[0] = -2;
+                                            lockedID[0] = -2;
                                             throw new InvalidOperationException("id " + id + " got lock, but " + currentLock + " already holds the lock");
                                         }
-                                        LockedID[0] = id;
+                                        lockedID[0] = id;
                                         break;
 
                                     case 0:
                                         // Unlocked
                                         if (currentLock != id)
                                         {
-                                            LockedID[0] = -2;
+                                            lockedID[0] = -2;
                                             throw new InvalidOperationException("id " + id + " released the lock, but " + currentLock + " is the one holding the lock");
                                         }
-                                        LockedID[0] = -1;
+                                        lockedID[0] = -1;
                                         break;
 
                                     default:
@@ -184,7 +184,7 @@ namespace Lucene.Net.Store
                     }
                     finally
                     {
-                        IOUtils.CloseWhileHandlingException(Cs);
+                        IOUtils.CloseWhileHandlingException(cs);
                     }
                 }
             }
