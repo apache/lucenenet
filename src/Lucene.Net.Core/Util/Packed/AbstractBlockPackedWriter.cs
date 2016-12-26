@@ -1,10 +1,9 @@
+using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Util.Packed
 {
-    using Lucene.Net.Support;
-    using System;
-
     /*
     * Licensed to the Apache Software Foundation (ASF) under one or more
     * contributor license agreements.  See the NOTICE file distributed with
