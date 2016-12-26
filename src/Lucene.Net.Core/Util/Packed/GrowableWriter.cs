@@ -152,7 +152,12 @@ namespace Lucene.Net.Util.Packed
 
         public override long RamBytesUsed()
         {
-            return RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_LONG + RamUsageEstimator.NUM_BYTES_FLOAT) + Current.RamBytesUsed();
+            return RamUsageEstimator.AlignObjectSize(
+                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
+                + RamUsageEstimator.NUM_BYTES_OBJECT_REF 
+                + RamUsageEstimator.NUM_BYTES_LONG 
+                + RamUsageEstimator.NUM_BYTES_FLOAT) 
+                + Current.RamBytesUsed();
         }
 
         public override void Save(DataOutput @out)

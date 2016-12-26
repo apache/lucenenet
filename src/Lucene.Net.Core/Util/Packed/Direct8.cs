@@ -30,11 +30,11 @@ namespace Lucene.Net.Util.Packed
     /// Direct wrapping of 8-bits values to a backing array.
     /// @lucene.internal
     /// </summary>
-    public sealed class Direct8 : PackedInts.MutableImpl
+    internal sealed class Direct8 : PackedInts.MutableImpl
     {
         readonly byte[] Values;
 
-        public Direct8(int valueCount)
+        internal Direct8(int valueCount)
             : base(valueCount, 8)
         {
             Values = new byte[valueCount];
@@ -64,7 +64,11 @@ namespace Lucene.Net.Util.Packed
 
         public override long RamBytesUsed()
         {
-            return RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_OBJECT_REF) + RamUsageEstimator.SizeOf(Values); // values ref -  valueCount,bitsPerValue
+            return RamUsageEstimator.AlignObjectSize(
+                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
+                + 2 * RamUsageEstimator.NUM_BYTES_INT // valueCount,bitsPerValue
+                + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // values ref 
+                + RamUsageEstimator.SizeOf(Values);  
         }
 
         public override void Clear()

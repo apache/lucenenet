@@ -32,7 +32,7 @@ namespace Lucene.Net.Util.Packed
     /// speed by ensuring that a single block needs to be read/written in order to
     /// read/write a value.
     /// </summary>
-    public abstract class Packed64SingleBlock : PackedInts.MutableImpl
+    internal abstract class Packed64SingleBlock : PackedInts.MutableImpl
     {
         public const int MAX_SUPPORTED_BITS_PER_VALUE = 32;
         private static readonly int[] SUPPORTED_BITS_PER_VALUE = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 21, 32 };
@@ -64,7 +64,11 @@ namespace Lucene.Net.Util.Packed
 
         public override long RamBytesUsed()
         {
-            return RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_OBJECT_REF) + RamUsageEstimator.SizeOf(Blocks); // blocks ref -  valueCount,bitsPerValue
+            return RamUsageEstimator.AlignObjectSize(
+                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
+                + 2 * RamUsageEstimator.NUM_BYTES_INT // valueCount,bitsPerValue
+                + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // blocks ref 
+                + RamUsageEstimator.SizeOf(Blocks);
         }
 
         public override int Get(int index, long[] arr, int off, int len)

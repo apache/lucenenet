@@ -71,7 +71,7 @@ namespace Lucene.Net.Util.Packed
         {
         }
 
-        public override Iterator GetIterator()
+        public override Iterator GetIterator() // LUCENENET TODO: This can be handled by the base class
         {
             return new Iterator(this);
         }
@@ -173,8 +173,6 @@ namespace Lucene.Net.Util.Packed
                 Values[ValuesOff] = mutable;
             }
         }
-
-        //LUCENE TO-DO Implement GetIterator()
 
         internal override long BaseRamBytesUsed()
         {

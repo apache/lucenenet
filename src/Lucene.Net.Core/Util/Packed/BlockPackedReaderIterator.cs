@@ -37,7 +37,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         // same as DataInput.readVLong but supports negative values
-        internal static long ReadVLong(DataInput @in)
+        internal static long ReadVLong(DataInput @in) // LUCENENET TODO: rename to ReadVInt64 ?
         {
             byte b = @in.ReadByte();
             if ((sbyte)b >= 0)
@@ -290,7 +290,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Return the offset of the next value to read. </summary>
-        public long Ord()
+        public long Ord() // LUCENENET TODO: make property ? check consistency
         {
             return Ord_Renamed;
         }

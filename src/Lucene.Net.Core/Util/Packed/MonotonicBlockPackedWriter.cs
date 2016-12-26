@@ -69,7 +69,7 @@ namespace Lucene.Net.Util.Packed
             base.Add(l);
         }
 
-        protected internal override void Flush()
+        protected override void Flush()
         {
             Debug.Assert(Off > 0);
 

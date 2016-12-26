@@ -103,7 +103,7 @@ namespace Lucene.Net.Util.Packed
             Values[ValuesOff] = mutable;
         }
 
-        public override Iterator GetIterator()
+        public override Iterator GetIterator() // LUCENENET TODO: This can be done from the base class
         {
             return new Iterator(this);
         }

@@ -30,11 +30,11 @@ namespace Lucene.Net.Util.Packed
     /// Direct wrapping of 64-bits values to a backing array.
     /// @lucene.internal
     /// </summary>
-    public sealed class Direct64 : PackedInts.MutableImpl
+    internal sealed class Direct64 : PackedInts.MutableImpl
     {
         internal readonly long[] Values;
 
-        public Direct64(int valueCount)
+        internal Direct64(int valueCount)
             : base(valueCount, 64)
         {
             Values = new long[valueCount];
@@ -61,7 +61,11 @@ namespace Lucene.Net.Util.Packed
 
         public override long RamBytesUsed()
         {
-            return RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_OBJECT_REF) + RamUsageEstimator.SizeOf(Values); // values ref -  valueCount,bitsPerValue
+            return RamUsageEstimator.AlignObjectSize(
+                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
+                + 2 * RamUsageEstimator.NUM_BYTES_INT // valueCount,bitsPerValue
+                + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // values ref 
+                + RamUsageEstimator.SizeOf(Values); 
         }
 
         public override void Clear()

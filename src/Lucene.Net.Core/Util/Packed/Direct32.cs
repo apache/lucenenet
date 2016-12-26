@@ -30,11 +30,11 @@ namespace Lucene.Net.Util.Packed
     /// Direct wrapping of 32-bits values to a backing array.
     /// @lucene.internal
     /// </summary>
-    public sealed class Direct32 : PackedInts.MutableImpl
+    internal sealed class Direct32 : PackedInts.MutableImpl
     {
         internal readonly int[] Values;
 
-        public Direct32(int valueCount)
+        internal Direct32(int valueCount)
             : base(valueCount, 32)
         {
             Values = new int[valueCount];
@@ -67,7 +67,11 @@ namespace Lucene.Net.Util.Packed
 
         public override long RamBytesUsed()
         {
-            return RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_OBJECT_REF) + RamUsageEstimator.SizeOf(Values); // values ref -  valueCount,bitsPerValue
+            return RamUsageEstimator.AlignObjectSize(
+                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
+                + 2 * RamUsageEstimator.NUM_BYTES_INT // valueCount,bitsPerValue
+                + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // values ref  
+                + RamUsageEstimator.SizeOf(Values);
         }
 
         public override void Clear()

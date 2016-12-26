@@ -55,18 +55,18 @@ namespace Lucene.Net.Util.Packed
             this.Format = format;
         }
 
-        protected internal override Mutable NewMutable(int valueCount, int bitsPerValue)
+        protected override Mutable NewMutable(int valueCount, int bitsPerValue)
         {
             Debug.Assert(this.BitsPerValue >= bitsPerValue);
             return PackedInts.GetMutable(valueCount, this.BitsPerValue, Format);
         }
 
-        protected internal override PagedMutable NewUnfilledCopy(long newSize)
+        protected override PagedMutable NewUnfilledCopy(long newSize)
         {
             return new PagedMutable(newSize, PageSize(), BitsPerValue, Format);
         }
 
-        protected internal override long BaseRamBytesUsed()
+        protected override long BaseRamBytesUsed()
         {
             return base.BaseRamBytesUsed() + RamUsageEstimator.NUM_BYTES_OBJECT_REF;
         }

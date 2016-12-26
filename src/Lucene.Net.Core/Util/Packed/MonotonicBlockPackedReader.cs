@@ -86,7 +86,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Returns the number of values </summary>
-        public long Size()
+        public long Size() // LUCENENET TODO: make property, rename Count
         {
             return ValueCount;
         }

@@ -53,17 +53,17 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        protected internal override Mutable NewMutable(int valueCount, int bitsPerValue)
+        protected override Mutable NewMutable(int valueCount, int bitsPerValue)
         {
             return new GrowableWriter(bitsPerValue, valueCount, AcceptableOverheadRatio);
         }
 
-        protected internal override PagedGrowableWriter NewUnfilledCopy(long newSize)
+        protected override PagedGrowableWriter NewUnfilledCopy(long newSize)
         {
             return new PagedGrowableWriter(newSize, PageSize(), BitsPerValue, AcceptableOverheadRatio, false);
         }
 
-        protected internal override long BaseRamBytesUsed()
+        protected override long BaseRamBytesUsed()
         {
             return base.BaseRamBytesUsed() + RamUsageEstimator.NUM_BYTES_FLOAT;
         }

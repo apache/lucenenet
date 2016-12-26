@@ -297,7 +297,12 @@ namespace Lucene.Net.Util.Packed
 
         public override long RamBytesUsed()
         {
-            return RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 3 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_LONG + RamUsageEstimator.NUM_BYTES_OBJECT_REF) + RamUsageEstimator.SizeOf(Blocks); // blocks ref -  maskRight -  bpvMinusBlockSize,valueCount,bitsPerValue
+            return RamUsageEstimator.AlignObjectSize(
+                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
+                + 3 * RamUsageEstimator.NUM_BYTES_INT // bpvMinusBlockSize,valueCount,bitsPerValue
+                + RamUsageEstimator.NUM_BYTES_LONG // maskRight
+                + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // blocks ref
+                + RamUsageEstimator.SizeOf(Blocks);
         }
 
         public override void Fill(int fromIndex, int toIndex, long val)

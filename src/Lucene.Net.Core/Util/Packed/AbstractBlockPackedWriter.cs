@@ -24,7 +24,7 @@ namespace Lucene.Net.Util.Packed
 
     using DataOutput = Lucene.Net.Store.DataOutput;
 
-    public abstract class AbstractBlockPackedWriter
+    public abstract class AbstractBlockPackedWriter // LUCENENET NOTE: made public rather than internal because has public subclasses
     {
         internal const int MIN_BLOCK_SIZE = 64;
         internal static readonly int MAX_BLOCK_SIZE = 1 << (30 - 3);
@@ -48,12 +48,12 @@ namespace Lucene.Net.Util.Packed
             @out.WriteByte((byte)(sbyte)i);
         }
 
-        protected internal DataOutput @out;
-        protected internal readonly long[] Values;
-        protected internal byte[] Blocks;
-        protected internal int Off;
-        protected internal long Ord_Renamed;
-        protected internal bool Finished;
+        protected DataOutput @out;
+        protected readonly long[] Values;
+        protected byte[] Blocks;
+        protected int Off;
+        protected long Ord_Renamed;
+        protected bool Finished;
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -98,7 +98,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         // For testing only
-        public virtual void AddBlockOfZeros()
+        internal virtual void AddBlockOfZeros()
         {
             CheckNotFinished();
             if (Off != 0 && Off != Values.Length)
@@ -131,14 +131,14 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Return the number of values which have been added. </summary>
-        public virtual long Ord()
+        public virtual long Ord() // LUCENENET TODO: Make property ? Check consistency across API
         {
             return Ord_Renamed;
         }
 
-        protected internal abstract void Flush();
+        protected abstract void Flush();
 
-        protected internal void WriteValues(int bitsRequired)
+        protected void WriteValues(int bitsRequired)
         {
             PackedInts.Encoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, bitsRequired);
             int iterations = Values.Length / encoder.ByteValueCount();

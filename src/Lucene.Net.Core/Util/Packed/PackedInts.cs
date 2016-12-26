@@ -312,7 +312,7 @@ namespace Lucene.Net.Util.Packed
                 return 8L * LongCount(packedIntsVersion, valueCount, bitsPerValue);
             }
 
-            public virtual int LongCount(int packedIntsVersion, int valueCount, int bitsPerValue)
+            public virtual int LongCount(int packedIntsVersion, int valueCount, int bitsPerValue) // LUCENENET TODO: Rename Int64Count ?
             {
                 long byteCount = ByteCount(packedIntsVersion, valueCount, bitsPerValue);
 
@@ -331,12 +331,12 @@ namespace Lucene.Net.Util.Packed
                 return bitsPerValue >= 1 && bitsPerValue <= 64;
             }
 
-            public virtual float OverheadPerValue(int bitsPerValue)
+            public virtual float OverheadPerValue(int bitsPerValue) // LUCENENET TODO: Debug.Assert missing
             {
                 return 0f;
             }
 
-            public virtual float OverheadRatio(int bitsPerValue)
+            public virtual float OverheadRatio(int bitsPerValue) // LUCENENET TODO: Debug.Assert missing
             {
                 return OverheadPerValue(bitsPerValue) / bitsPerValue;
             }
@@ -443,31 +443,31 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// A decoder for packed integers.
         /// </summary>
-        public interface Decoder
+        public interface Decoder // LUCENENET TODO: Rename with "I"
         {
             /// <summary>
             /// The minimum number of long blocks to encode in a single iteration, when
             /// using long encoding.
             /// </summary>
-            int LongBlockCount();
+            int LongBlockCount(); // LUCENENET TODO: Make property, Rename Int64BlockCount ?
 
             /// <summary>
             /// The number of values that can be stored in <seealso cref="#longBlockCount()"/> long
             /// blocks.
             /// </summary>
-            int LongValueCount();
+            int LongValueCount(); // LUCENENET TODO: Make property, Rename Int64ValueCount ?
 
             /// <summary>
             /// The minimum number of byte blocks to encode in a single iteration, when
             /// using byte encoding.
             /// </summary>
-            int ByteBlockCount();
+            int ByteBlockCount(); // LUCENENET TODO: Make property
 
             /// <summary>
             /// The number of values that can be stored in <seealso cref="#byteBlockCount()"/> byte
             /// blocks.
             /// </summary>
-            int ByteValueCount();
+            int ByteValueCount(); // LUCENENET TODO: Make property
 
             /// <summary>
             /// Read <code>iterations * blockCount()</code> blocks from <code>blocks</code>,
@@ -521,31 +521,31 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// An encoder for packed integers.
         /// </summary>
-        public interface Encoder
+        public interface Encoder // LUCENENET TODO: Rename with "I"
         {
             /// <summary>
             /// The minimum number of long blocks to encode in a single iteration, when
             /// using long encoding.
             /// </summary>
-            int LongBlockCount();
+            int LongBlockCount(); // LUCENENET TODO: Make property, Rename Int64BlockCount ?
 
             /// <summary>
             /// The number of values that can be stored in <seealso cref="#longBlockCount()"/> long
             /// blocks.
             /// </summary>
-            int LongValueCount();
+            int LongValueCount(); // LUCENENET TODO:  Make property, Rename Int64ValueCount ?
 
             /// <summary>
             /// The minimum number of byte blocks to encode in a single iteration, when
             /// using byte encoding.
             /// </summary>
-            int ByteBlockCount();
+            int ByteBlockCount(); // LUCENENET TODO: Make property
 
             /// <summary>
             /// The number of values that can be stored in <seealso cref="#byteBlockCount()"/> byte
             /// blocks.
             /// </summary>
-            int ByteValueCount();
+            int ByteValueCount(); // LUCENENET TODO: Make property
 
             /// <summary>
             /// Read <code>iterations * valueCount()</code> values from <code>values</code>,
@@ -628,7 +628,7 @@ namespace Lucene.Net.Util.Packed
             public abstract int BitsPerValue { get; }
 
             /// <returns> the number of values. </returns>
-            public abstract int Size();
+            public abstract int Size(); // LUCENENET TODO: Make property, rename Count
 
             /// <summary>
             /// Return the in-memory size in bytes.
@@ -644,7 +644,7 @@ namespace Lucene.Net.Util.Packed
             /// interpret the full value as unsigned.  Ie,
             /// bytes[idx]&0xFF, shorts[idx]&0xFFFF, etc.
             /// </summary>
-            public virtual object Array
+            public virtual object Array // LUCENENET TODO: Change to GetArray() (returns array)
             {
                 get
                 {
@@ -658,7 +658,7 @@ namespace Lucene.Net.Util.Packed
             /// native java array.
             /// </summary>
             /// <seealso cref= #getArray </seealso>
-            public virtual bool HasArray()
+            public virtual bool HasArray() // LUCENENET TODO: Make property
             {
                 return false;
             }
@@ -667,7 +667,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Run-once iterator interface, to decode previously saved PackedInts.
         /// </summary>
-        public interface ReaderIterator
+        public interface ReaderIterator // LUCENENET TODO: Rename with "I"
         {
             /// <summary>
             /// Returns next value </summary>
@@ -685,20 +685,21 @@ namespace Lucene.Net.Util.Packed
 
             /// <summary>
             /// Returns number of values </summary>
-            int Size();
+            int Size(); // LUCENENET TODO: Make property, rename Count
 
             /// <summary>
             /// Returns the current position </summary>
-            int Ord();
+            int Ord(); // LUCENENET TODO: Make property ? check consistency
         }
 
-        internal abstract class ReaderIteratorImpl : ReaderIterator
+        internal abstract class ReaderIteratorImpl : ReaderIterator // LUCENENET TODO: Rename ReaderIterator after interface is renamed ?
         {
-            protected internal readonly DataInput @in;
-            protected internal readonly int bitsPerValue;
-            protected internal readonly int valueCount;
+            // LUCENENET TODO: Rename with m_
+            protected readonly DataInput @in;
+            protected readonly int bitsPerValue;
+            protected readonly int valueCount;
 
-            protected internal ReaderIteratorImpl(int valueCount, int bitsPerValue, DataInput @in)
+            protected ReaderIteratorImpl(int valueCount, int bitsPerValue, DataInput @in)
             {
                 this.@in = @in;
                 this.bitsPerValue = bitsPerValue;
@@ -820,10 +821,11 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         internal abstract class ReaderImpl : Reader
         {
-            protected internal readonly int bitsPerValue;
-            protected internal readonly int valueCount;
+            // LUCENENET TODO: Rename with m_
+            protected readonly int bitsPerValue;
+            protected readonly int valueCount;
 
-            protected internal ReaderImpl(int valueCount, int bitsPerValue)
+            protected ReaderImpl(int valueCount, int bitsPerValue)
             {
                 this.bitsPerValue = bitsPerValue;
                 Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
@@ -848,10 +850,11 @@ namespace Lucene.Net.Util.Packed
 
         public abstract class MutableImpl : Mutable
         {
-            protected internal readonly int valueCount;
-            protected internal readonly int bitsPerValue;
+            // LUCENENET TODO: Rename with m_
+            protected readonly int valueCount;
+            protected readonly int bitsPerValue;
 
-            protected internal MutableImpl(int valueCount, int bitsPerValue)
+            protected MutableImpl(int valueCount, int bitsPerValue)
             {
                 this.valueCount = valueCount;
                 Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
@@ -876,7 +879,7 @@ namespace Lucene.Net.Util.Packed
         /// A <seealso cref="Reader"/> which has all its values equal to 0 (bitsPerValue = 0). </summary>
         public sealed class NullReader : Reader
         {
-            internal readonly int valueCount;
+            private readonly int valueCount;
 
             /// <summary>
             /// Sole constructor. </summary>
@@ -924,11 +927,12 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public abstract class Writer
         {
-            protected internal readonly DataOutput @out;
-            protected internal readonly int valueCount;
-            protected internal readonly int bitsPerValue;
+            // LUCENENET TODO: Rename with m_
+            protected readonly DataOutput @out;
+            protected readonly int valueCount;
+            protected readonly int bitsPerValue;
 
-            protected internal Writer(DataOutput @out, int valueCount, int bitsPerValue)
+            protected Writer(DataOutput @out, int valueCount, int bitsPerValue)
             {
                 Debug.Assert(bitsPerValue <= 64);
                 Debug.Assert(valueCount >= 0 || valueCount == -1);
@@ -956,7 +960,7 @@ namespace Lucene.Net.Util.Packed
 
             /// <summary>
             /// The number of bits per value. </summary>
-            public int BitsPerValue()
+            public int BitsPerValue() // LUCENENET TODO: make property
             {
                 return bitsPerValue;
             }
@@ -969,7 +973,7 @@ namespace Lucene.Net.Util.Packed
             /// Returns the current ord in the stream (number of values that have been
             /// written so far minus one).
             /// </summary>
-            public abstract int Ord();
+            public abstract int Ord(); // LUCENENET TODO: make property ? check consistency
         }
 
         /// <summary>

@@ -35,12 +35,12 @@ namespace Lucene.Net.Util.Packed
             this.Mask = (1L << bitsPerValue) - 1;
         }
 
-        public override int LongBlockCount()
+        public override sealed int LongBlockCount()
         {
             return BLOCK_COUNT;
         }
 
-        public override int ByteBlockCount()
+        public override sealed int ByteBlockCount()
         {
             return BLOCK_COUNT * 8;
         }
@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Packed
             return ValueCount;
         }
 
-        public override int ByteValueCount()
+        public override sealed int ByteValueCount()
         {
             return ValueCount;
         }

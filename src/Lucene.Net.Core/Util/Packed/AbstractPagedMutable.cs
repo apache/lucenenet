@@ -24,7 +24,7 @@ namespace Lucene.Net.Util.Packed
     /// Base implementation for <seealso cref="PagedMutable"/> and <seealso cref="PagedGrowableWriter"/>.
     /// @lucene.internal
     /// </summary>
-    public abstract class AbstractPagedMutable<T> : LongValues where T : AbstractPagedMutable<T>
+    public abstract class AbstractPagedMutable<T> : LongValues where T : AbstractPagedMutable<T> // LUCENENET NOTE: made public rather than internal because has public subclasses
     {
         internal static readonly int MIN_BLOCK_SIZE = 1 << 6;
         internal static readonly int MAX_BLOCK_SIZE = 1 << 30;
@@ -45,7 +45,7 @@ namespace Lucene.Net.Util.Packed
             SubMutables = new PackedInts.Mutable[numPages];
         }
 
-        protected internal void FillPages()
+        protected void FillPages()
         {
             int numPages = PackedInts.NumBlocks(Size_Renamed, PageSize());
             for (int i = 0; i < numPages; ++i)
@@ -56,7 +56,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        protected internal abstract PackedInts.Mutable NewMutable(int valueCount, int bitsPerValue);
+        protected abstract PackedInts.Mutable NewMutable(int valueCount, int bitsPerValue);
 
         internal int LastPageSize(long size)
         {
@@ -64,14 +64,14 @@ namespace Lucene.Net.Util.Packed
             return sz == 0 ? PageSize() : sz;
         }
 
-        internal int PageSize()
+        internal int PageSize() // LUCENENET TODO: Make property, change to PageCount ?
         {
             return PageMask + 1;
         }
 
         /// <summary>
         /// The number of values. </summary>
-        public long Size()
+        public long Size() // LUCENENET TODO: Make property, change to Count
         {
             return Size_Renamed;
         }
@@ -104,7 +104,7 @@ namespace Lucene.Net.Util.Packed
             SubMutables[pageIndex].Set(indexInPage, value);
         }
 
-        protected internal virtual long BaseRamBytesUsed()
+        protected virtual long BaseRamBytesUsed()
         {
             return RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_LONG + 3 * RamUsageEstimator.NUM_BYTES_INT;
         }
@@ -122,7 +122,7 @@ namespace Lucene.Net.Util.Packed
             return bytesUsed;
         }
 
-        protected internal abstract T NewUnfilledCopy(long newSize);
+        protected abstract T NewUnfilledCopy(long newSize);
 
         /// <summary>
         /// Create a new copy of size <code>newSize</code> based on the content of

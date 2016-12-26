@@ -30,13 +30,13 @@ namespace Lucene.Net.Util.Packed
     /// Packs integers into 3 bytes (24 bits per value).
     /// @lucene.internal
     /// </summary>
-    public sealed class Packed8ThreeBlocks : PackedInts.MutableImpl
+    internal sealed class Packed8ThreeBlocks : PackedInts.MutableImpl
     {
         readonly byte[] Blocks;
 
         public static readonly int MAX_SIZE = int.MaxValue / 3;
 
-        public Packed8ThreeBlocks(int valueCount)
+        internal Packed8ThreeBlocks(int valueCount)
             : base(valueCount, 24)
         {
             if (valueCount > MAX_SIZE)
@@ -123,7 +123,11 @@ namespace Lucene.Net.Util.Packed
 
         public override long RamBytesUsed()
         {
-            return RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_OBJECT_REF) + RamUsageEstimator.SizeOf(Blocks); // blocks ref -  valueCount,bitsPerValue
+            return RamUsageEstimator.AlignObjectSize(
+                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
+                + 2 * RamUsageEstimator.NUM_BYTES_INT // valueCount,bitsPerValue
+                + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // blocks ref
+                + RamUsageEstimator.SizeOf(Blocks);
         }
 
         public override string ToString()

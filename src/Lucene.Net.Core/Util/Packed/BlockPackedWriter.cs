@@ -65,7 +65,7 @@ namespace Lucene.Net.Util.Packed
         {
         }
 
-        protected internal override void Flush()
+        protected override void Flush()
         {
             Debug.Assert(Off > 0);
             long min = long.MaxValue, max = long.MinValue;

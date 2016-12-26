@@ -22,7 +22,7 @@ namespace Lucene.Net.Util.Packed
 
     /// <summary>
     /// Common functionality shared by <seealso cref="AppendingDeltaPackedLongBuffer"/> and <seealso cref="MonotonicAppendingLongBuffer"/>. </summary>
-    public abstract class AbstractAppendingLongBuffer : LongValues
+    public abstract class AbstractAppendingLongBuffer : LongValues // LUCENENET NOTE: made public rather than internal because has public subclasses
     {
         internal const int MIN_PAGE_SIZE = 64;
 
@@ -49,14 +49,14 @@ namespace Lucene.Net.Util.Packed
             this.AcceptableOverheadRatio = acceptableOverheadRatio;
         }
 
-        public int PageSize()
+        public int PageSize() // LUCENENET TODO: Make property, rename PageCount ?
         {
             return PageMask + 1;
         }
 
         /// <summary>
         /// Get the number of values that have been added to the buffer. </summary>
-        public long Size()
+        public long Size() // LUCENENET TODO: Make property, rename Count
         {
             long size = PendingOff;
             if (ValuesOff > 0)
@@ -138,7 +138,7 @@ namespace Lucene.Net.Util.Packed
         return new Iterator(this);
       }*/
 
-        public abstract Iterator GetIterator();
+        public abstract Iterator GetIterator(); // LUCENENET TODO: This was not abstract in the original
 
         public sealed class Iterator
         {
@@ -183,7 +183,7 @@ namespace Lucene.Net.Util.Packed
 
             /// <summary>
             /// Whether or not there are remaining values. </summary>
-            public bool HasNext()
+            public bool HasNext() // LUCENENET TODO: make property
             {
                 return POff < CurrentCount;
             }
@@ -213,7 +213,12 @@ namespace Lucene.Net.Util.Packed
 
         internal virtual long BaseRamBytesUsed()
         {
-            return RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 2 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 2 * RamUsageEstimator.NUM_BYTES_INT + 2 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_FLOAT + RamUsageEstimator.NUM_BYTES_LONG; // valuesBytes -  acceptable overhead -  pageShift, pageMask -  the 2 offsets -  the 2 arrays
+            return RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
+                + 2 * RamUsageEstimator.NUM_BYTES_OBJECT_REF 
+                + 2 * RamUsageEstimator.NUM_BYTES_INT 
+                + 2 * RamUsageEstimator.NUM_BYTES_INT 
+                + RamUsageEstimator.NUM_BYTES_FLOAT 
+                + RamUsageEstimator.NUM_BYTES_LONG; // valuesBytes -  acceptable overhead -  pageShift, pageMask -  the 2 offsets -  the 2 arrays
         }
 
         /// <summary>
