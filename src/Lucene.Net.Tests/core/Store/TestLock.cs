@@ -64,7 +64,7 @@ namespace Lucene.Net.Store
                 // do nothing
             }
 
-            public override bool Locked
+            public override bool IsLocked
             {
                 get
                 {

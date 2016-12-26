@@ -79,13 +79,13 @@ namespace Lucene.Net.Store
                 }
             }
 
-            public override bool Locked
+            public override bool IsLocked
             {
                 get
                 {
                     lock (this)
                     {
-                        return @lock.Locked;
+                        return @lock.IsLocked;
                     }
                 }
             }
@@ -94,7 +94,7 @@ namespace Lucene.Net.Store
             {
                 lock (this)
                 {
-                    if (Locked)
+                    if (IsLocked)
                     {
                         Verify((sbyte)0);
                         @lock.Release();

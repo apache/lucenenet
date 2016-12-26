@@ -93,11 +93,11 @@ namespace Lucene.Net.Store
                 OuterInstance.Dir.OpenLocks.Remove(Name);
             }
 
-            public override bool Locked
+            public override bool IsLocked
             {
                 get
                 {
-                    return DelegateLock.Locked;
+                    return DelegateLock.IsLocked;
                 }
             }
         }

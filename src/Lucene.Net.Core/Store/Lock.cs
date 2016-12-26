@@ -129,7 +129,7 @@ namespace Lucene.Net.Store
         /// Returns true if the resource is currently locked.  Note that one must
         /// still call <seealso cref="#obtain()"/> before using the resource.
         /// </summary>
-        public abstract bool Locked { get; } // LUCENENET TODO: Rename IsLocked
+        public abstract bool IsLocked { get; }
 
         /// <summary>
         /// Utility class for executing code with exclusive access. </summary>

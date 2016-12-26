@@ -217,11 +217,11 @@ namespace Lucene.Net.Store
 
             // Make sure we can obtain first one again, test isLocked():
             Assert.IsTrue(l.Obtain(), "failed to obtain lock, got exception: {0}", l.FailureReason);
-            Assert.IsTrue(l.Locked);
-            Assert.IsTrue(l2.Locked);
+            Assert.IsTrue(l.IsLocked);
+            Assert.IsTrue(l2.IsLocked);
             l.Dispose();
-            Assert.IsFalse(l.Locked);
-            Assert.IsFalse(l2.Locked);
+            Assert.IsFalse(l.IsLocked);
+            Assert.IsFalse(l2.IsLocked);
         }
 
         // Verify: NativeFSLockFactory works correctly if the lock file exists
@@ -237,7 +237,7 @@ namespace Lucene.Net.Store
             var l = (new NativeFSLockFactory(tempDir)).MakeLock("test.lock");
             Assert.IsTrue(l.Obtain(), "failed to obtain lock, got exception: {0}", l.FailureReason);
             l.Dispose();
-            Assert.IsFalse(l.Locked, "failed to release lock, got exception: {0}", l.FailureReason);
+            Assert.IsFalse(l.IsLocked, "failed to release lock, got exception: {0}", l.FailureReason);
             if (lockFile.Exists)
             {
                 lockFile.Delete();
@@ -488,7 +488,7 @@ namespace Lucene.Net.Store
                     // do nothing
                 }
 
-                public override bool Locked
+                public override bool IsLocked
                 {
                     get
                     {
