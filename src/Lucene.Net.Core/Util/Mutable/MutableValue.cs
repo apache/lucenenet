@@ -63,8 +63,8 @@ namespace Lucene.Net.Util.Mutable
 
         // LUCENENET specific implementation, for use with FunctionFirstPassGroupingCollector 
         // (note that IComparable<T> does not inherit IComparable, so we need to explicitly 
-        // do that here in order to support IComparable)
-        public int CompareTo(object other)
+        // implement here in order to support IComparable)
+        public virtual int CompareTo(object other)
         {
             Type c1 = this.GetType();
             Type c2 = other.GetType();

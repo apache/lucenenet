@@ -23,7 +23,7 @@ namespace Lucene.Net.Util.Mutable
     /// </summary>
     public class MutableValueStr : MutableValue
     {
-        public BytesRef Value = new BytesRef();
+        public BytesRef Value = new BytesRef(); // LUCENENET TODO: make property
 
         public override object ToObject()
         {

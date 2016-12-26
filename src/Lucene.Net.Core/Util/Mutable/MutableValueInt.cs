@@ -23,7 +23,7 @@ namespace Lucene.Net.Util.Mutable
     /// </summary>
     public class MutableValueInt : MutableValue
     {
-        public int Value;
+        public int Value; // LUCENENET TODO: make property
 
         public override object ToObject()
         {

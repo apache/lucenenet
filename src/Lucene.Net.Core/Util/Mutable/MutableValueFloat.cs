@@ -25,7 +25,7 @@ namespace Lucene.Net.Util.Mutable
     /// </summary>
     public class MutableValueFloat : MutableValue
     {
-        public float Value;
+        public float Value; // LUCENENET TODO: make property
 
         public override object ToObject()
         {
