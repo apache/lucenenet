@@ -104,13 +104,13 @@ namespace Lucene.Net.Store
             {
                 if (limiter != null)
                 {
-                    limiter.MbPerSec = double.MaxValue;
+                    limiter.SetMbPerSec(double.MaxValue);
                     _contextRateLimiters[context] = null;
                 }
             }
             else if (limiter != null)
             {
-                limiter.MbPerSec = mbPerSec.Value;
+                limiter.SetMbPerSec(mbPerSec.Value);
                 _contextRateLimiters[context] = limiter; // cross the mem barrier again
             }
             else

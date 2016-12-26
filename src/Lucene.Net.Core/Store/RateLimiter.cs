@@ -32,7 +32,12 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Sets an updated mb per second rate limit.
         /// </summary>
-        public abstract double MbPerSec { set; get; }
+        public abstract void SetMbPerSec(double mbPerSec);
+
+        /// <summary>
+        /// The current mb per second rate limit.
+        /// </summary>
+        public abstract double MbPerSec { get; }
 
         /// <summary>
         /// Pauses, if necessary, to keep the instantaneous IO
@@ -61,22 +66,26 @@ namespace Lucene.Net.Store
             /// mbPerSec is the MB/sec max IO rate </summary>
             public SimpleRateLimiter(double mbPerSec)
             {
-                MbPerSec = mbPerSec;
+                SetMbPerSec(mbPerSec);
             }
 
             /// <summary>
             /// Sets an updated mb per second rate limit.
             /// </summary>
+            public override void SetMbPerSec(double mbPerSec)
+            {
+                this.mbPerSec = mbPerSec;
+                if (mbPerSec == 0)
+                    nsPerByte = 0;
+                else
+                    nsPerByte = 1000000000.0 / (1024 * 1024 * mbPerSec);
+            }
+
+            /// <summary>
+            /// The current mb per second rate limit.
+            /// </summary>
             public override double MbPerSec
             {
-                set // LUCENENET TODO: make method ? has side effect
-                {
-                    this.mbPerSec = value;
-                    if (value == 0)
-                        nsPerByte = 0;
-                    else
-                        nsPerByte = 1000000000.0 / (1024 * 1024 * value);
-                }
                 get
                 {
                     return this.mbPerSec;
