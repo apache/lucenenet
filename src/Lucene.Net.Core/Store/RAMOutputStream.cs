@@ -62,7 +62,7 @@ namespace Lucene.Net.Store
         public virtual void WriteTo(DataOutput @out)
         {
             Flush();
-            long end = File.Length_Renamed;
+            long end = File.length;
             long pos = 0;
             int buffer = 0;
             while (pos < end)
@@ -85,7 +85,7 @@ namespace Lucene.Net.Store
         public virtual void WriteTo(byte[] bytes, int offset)
         {
             Flush();
-            long end = File.Length_Renamed;
+            long end = File.length;
             long pos = 0;
             int buffer = 0;
             int bytesUpto = offset;
@@ -139,7 +139,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return File.Length_Renamed;
+                return File.length;
             }
             set
             {
@@ -196,7 +196,7 @@ namespace Lucene.Net.Store
         private void SetFileLength()
         {
             long pointer = BufferStart + BufferPosition;
-            if (pointer > File.Length_Renamed)
+            if (pointer > File.length)
             {
                 File.Length = pointer;
             }

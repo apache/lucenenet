@@ -693,7 +693,7 @@ namespace Lucene.Net.Store
                         if (existing != null)
                         {
                             ramdir.m_sizeInBytes.AddAndGet(-existing.SizeInBytes);
-                            existing.Directory = null;
+                            existing.directory = null;
                         }
                         ramdir.m_fileMap.Put(name, file);
                     }

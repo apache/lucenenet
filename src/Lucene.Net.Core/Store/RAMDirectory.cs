@@ -170,8 +170,8 @@ namespace Lucene.Net.Store
             m_fileMap.Remove(name);
             if (file != null)
             {
-                file.Directory = null;
-                m_sizeInBytes.AddAndGet(-file.SizeInBytes_Renamed);
+                file.directory = null;
+                m_sizeInBytes.AddAndGet(-file.m_sizeInBytes);
             }
             else
             {
@@ -189,8 +189,8 @@ namespace Lucene.Net.Store
             m_fileMap.TryGetValue(name, out existing);
             if (existing != null)
             {
-                m_sizeInBytes.AddAndGet(-existing.SizeInBytes_Renamed);
-                existing.Directory = null;
+                m_sizeInBytes.AddAndGet(-existing.m_sizeInBytes);
+                existing.directory = null;
             }
             m_fileMap[name] = file;
             return new RAMOutputStream(file);

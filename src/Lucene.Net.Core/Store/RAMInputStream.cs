@@ -42,7 +42,7 @@ namespace Lucene.Net.Store
             : base("RAMInputStream(name=" + name + ")")
         {
             File = f;
-            Length_Renamed = File.Length_Renamed;
+            Length_Renamed = File.length;
             if (Length_Renamed / BUFFER_SIZE >= int.MaxValue)
             {
                 throw new System.IO.IOException("RAMInputStream too large length=" + Length_Renamed + ": " + name);

@@ -25,10 +25,10 @@ namespace Lucene.Net.Store
     /// </summary>
     public class RAMFile
     {
-        protected List<byte[]> Buffers = new List<byte[]>(); // LUCENENET TODO: Rename m_
-        internal long Length_Renamed;
-        internal RAMDirectory Directory;
-        protected internal long SizeInBytes_Renamed; // LUCENENET TODO: Rename m_
+        protected List<byte[]> m_buffers = new List<byte[]>();
+        internal long length;
+        internal RAMDirectory directory;
+        protected internal long m_sizeInBytes;
 
         // File used as buffer, in no RAMDirectory
         public RAMFile()
@@ -37,7 +37,7 @@ namespace Lucene.Net.Store
 
         public RAMFile(RAMDirectory directory)
         {
-            this.Directory = directory;
+            this.directory = directory;
         }
 
         // For non-stream access from thread that might be concurrent with writing
@@ -47,14 +47,14 @@ namespace Lucene.Net.Store
             {
                 lock (this)
                 {
-                    return Length_Renamed;
+                    return length;
                 }
             }
             set
             {
                 lock (this)
                 {
-                    this.Length_Renamed = value;
+                    this.length = value;
                 }
             }
         }
@@ -64,13 +64,13 @@ namespace Lucene.Net.Store
             byte[] buffer = NewBuffer(size);
             lock (this)
             {
-                Buffers.Add(buffer);
-                SizeInBytes_Renamed += size;
+                m_buffers.Add(buffer);
+                m_sizeInBytes += size;
             }
 
-            if (Directory != null)
+            if (directory != null)
             {
-                Directory.m_sizeInBytes.AddAndGet(size);
+                directory.m_sizeInBytes.AddAndGet(size);
             }
             return buffer;
         }
@@ -79,7 +79,7 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                return Buffers[index];
+                return m_buffers[index];
             }
         }
 
@@ -87,7 +87,7 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                return Buffers.Count;
+                return m_buffers.Count;
             }
         }
 
@@ -107,7 +107,7 @@ namespace Lucene.Net.Store
             {
                 lock (this)
                 {
-                    return SizeInBytes_Renamed;
+                    return m_sizeInBytes;
                 }
             }
         }
