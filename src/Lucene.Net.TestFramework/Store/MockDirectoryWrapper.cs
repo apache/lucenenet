@@ -681,7 +681,7 @@ namespace Lucene.Net.Store
                 {
                     RAMDirectory ramdir = (RAMDirectory)m_input;
                     RAMFile file = new RAMFile(ramdir);
-                    RAMFile existing = ramdir.FileMap.ContainsKey(name) ? ramdir.FileMap[name] : null;
+                    RAMFile existing = ramdir.m_fileMap.ContainsKey(name) ? ramdir.m_fileMap[name] : null;
 
                     // Enforce write once:
                     if (existing != null && !name.Equals("segments.gen") && PreventDoubleWrite_Renamed)
@@ -692,10 +692,10 @@ namespace Lucene.Net.Store
                     {
                         if (existing != null)
                         {
-                            ramdir.sizeInBytes.AddAndGet(-existing.SizeInBytes);
+                            ramdir.m_sizeInBytes.AddAndGet(-existing.SizeInBytes);
                             existing.Directory = null;
                         }
-                        ramdir.FileMap.Put(name, file);
+                        ramdir.m_fileMap.Put(name, file);
                     }
                 }
                 //System.out.println(Thread.currentThread().getName() + ": MDW: create " + name);
@@ -830,7 +830,7 @@ namespace Lucene.Net.Store
                         return SizeInBytes();
                     }
                     long size = 0;
-                    foreach (RAMFile file in ((RAMDirectory)m_input).FileMap.Values)
+                    foreach (RAMFile file in ((RAMDirectory)m_input).m_fileMap.Values)
                     {
                         size += file.SizeInBytes;
                     }
@@ -857,7 +857,7 @@ namespace Lucene.Net.Store
                         return SizeInBytes();
                     }
                     long size = 0;
-                    foreach (RAMFile file in ((RAMDirectory)m_input).FileMap.Values)
+                    foreach (RAMFile file in ((RAMDirectory)m_input).m_fileMap.Values)
                     {
                         size += file.Length;
                     }

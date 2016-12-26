@@ -43,8 +43,8 @@ namespace Lucene.Net.Store
     /// </summary>
     public class RAMDirectory : BaseDirectory
     {
-        protected internal readonly IDictionary<string, RAMFile> FileMap = new ConcurrentDictionary<string, RAMFile>(); // LUCENENET TODO: Rename m_
-        protected internal readonly AtomicLong sizeInBytes = new AtomicLong(0); // LUCENENET TODO: Rename m_
+        protected internal readonly IDictionary<string, RAMFile> m_fileMap = new ConcurrentDictionary<string, RAMFile>();
+        protected internal readonly AtomicLong m_sizeInBytes = new AtomicLong(0);
 
         // *****
         // Lock acquisition sequence:  RAMDirectory, then RAMFile
@@ -118,7 +118,7 @@ namespace Lucene.Net.Store
             // NOTE: fileMap.keySet().toArray(new String[0]) is broken in non Sun JDKs,
             // and the code below is resilient to map changes during the array population.
             //IDictionary<string, RAMFile>.KeyCollection fileNames = FileMap.Keys;
-            ISet<string> fileNames = SetFactory.CreateHashSet(FileMap.Keys);//just want a set of strings
+            ISet<string> fileNames = SetFactory.CreateHashSet(m_fileMap.Keys);//just want a set of strings
             IList<string> names = new List<string>(fileNames.Count);
             foreach (string name in fileNames)
             {
@@ -132,7 +132,7 @@ namespace Lucene.Net.Store
         public override sealed bool FileExists(string name) // LUCENENET TODO: Find out what happens when you inherit a deprecated member in Java
         {
             EnsureOpen();
-            return FileMap.ContainsKey(name);
+            return m_fileMap.ContainsKey(name);
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace Lucene.Net.Store
         public override sealed long FileLength(string name)
         {
             EnsureOpen();
-            RAMFile file = FileMap[name];
+            RAMFile file = m_fileMap[name];
             if (file == null)
             {
                 throw new FileNotFoundException(name);
@@ -156,7 +156,7 @@ namespace Lucene.Net.Store
         public long SizeInBytes()
         {
             EnsureOpen();
-            return sizeInBytes.Get();
+            return m_sizeInBytes.Get();
         }
 
         /// <summary>
@@ -166,12 +166,12 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             RAMFile file;
-            FileMap.TryGetValue(name, out file);
-            FileMap.Remove(name);
+            m_fileMap.TryGetValue(name, out file);
+            m_fileMap.Remove(name);
             if (file != null)
             {
                 file.Directory = null;
-                sizeInBytes.AddAndGet(-file.SizeInBytes_Renamed);
+                m_sizeInBytes.AddAndGet(-file.SizeInBytes_Renamed);
             }
             else
             {
@@ -186,13 +186,13 @@ namespace Lucene.Net.Store
             EnsureOpen();
             RAMFile file = NewRAMFile();
             RAMFile existing;
-            FileMap.TryGetValue(name, out existing);
+            m_fileMap.TryGetValue(name, out existing);
             if (existing != null)
             {
-                sizeInBytes.AddAndGet(-existing.SizeInBytes_Renamed);
+                m_sizeInBytes.AddAndGet(-existing.SizeInBytes_Renamed);
                 existing.Directory = null;
             }
-            FileMap[name] = file;
+            m_fileMap[name] = file;
             return new RAMOutputStream(file);
         }
 
@@ -216,7 +216,7 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             RAMFile file;
-            if (!FileMap.TryGetValue(name, out file))
+            if (!m_fileMap.TryGetValue(name, out file))
             {
                 throw new FileNotFoundException(name);
             }
@@ -228,7 +228,7 @@ namespace Lucene.Net.Store
         public override void Dispose()
         {
             IsOpen = false;
-            FileMap.Clear();
+            m_fileMap.Clear();
         }
     }
 }

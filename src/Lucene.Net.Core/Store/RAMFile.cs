@@ -70,7 +70,7 @@ namespace Lucene.Net.Store
 
             if (Directory != null)
             {
-                Directory.sizeInBytes.AddAndGet(size);
+                Directory.m_sizeInBytes.AddAndGet(size);
             }
             return buffer;
         }
