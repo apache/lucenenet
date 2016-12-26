@@ -1,4 +1,3 @@
-using System;
 using Lucene.Net.Support;
 using System.Collections;
 using System.Collections.Generic;

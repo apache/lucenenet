@@ -1,3 +1,7 @@
+using Lucene.Net.Support;
+using System;
+using System.Text;
+
 /*
  * dk.brics.automaton
  *
@@ -26,10 +30,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * this SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-using Lucene.Net.Support;
-using System;
-using System.Text;
 
 namespace Lucene.Net.Util.Automaton
 {
