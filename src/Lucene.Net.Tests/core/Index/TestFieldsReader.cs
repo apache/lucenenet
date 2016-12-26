@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
             public FaultyFSDirectory(DirectoryInfo dir)
             {
                 FsDir = NewFSDirectory(dir);
-                _lockFactory = FsDir.LockFactory;
+                m_lockFactory = FsDir.LockFactory;
             }
 
             public override IndexInput OpenInput(string name, IOContext context)

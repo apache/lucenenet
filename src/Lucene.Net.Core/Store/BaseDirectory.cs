@@ -32,7 +32,7 @@ namespace Lucene.Net.Store
         /// Holds the LockFactory instance (implements locking for
         /// this Directory instance).
         /// </summary>
-        protected internal LockFactory _lockFactory; // LUCENENET TODO: Rename
+        protected internal LockFactory m_lockFactory;
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -43,14 +43,14 @@ namespace Lucene.Net.Store
 
         public override Lock MakeLock(string name)
         {
-            return _lockFactory.MakeLock(name);
+            return m_lockFactory.MakeLock(name);
         }
 
         public override void ClearLock(string name)
         {
-            if (_lockFactory != null)
+            if (m_lockFactory != null)
             {
-                _lockFactory.ClearLock(name);
+                m_lockFactory.ClearLock(name);
             }
         }
 
@@ -59,12 +59,12 @@ namespace Lucene.Net.Store
             set // LUCENENET TODO: Make SetLockFactory() a separate method
             {
                 Debug.Assert(value != null);
-                this._lockFactory = value;
+                this.m_lockFactory = value;
                 value.LockPrefix = this.LockID;
             }
             get
             {
-                return this._lockFactory;
+                return this.m_lockFactory;
             }
         }
 

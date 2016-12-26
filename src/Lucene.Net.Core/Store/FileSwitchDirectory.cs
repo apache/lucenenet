@@ -45,7 +45,7 @@ namespace Lucene.Net.Store
             this.PrimaryDir_Renamed = primaryDir;
             this.SecondaryDir_Renamed = secondaryDir;
             this.DoClose = doClose;
-            this._lockFactory = primaryDir.LockFactory;
+            this.m_lockFactory = primaryDir.LockFactory;
         }
 
         /// <summary>
