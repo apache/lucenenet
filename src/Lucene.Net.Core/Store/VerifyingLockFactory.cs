@@ -35,27 +35,27 @@ namespace Lucene.Net.Store
 
     public class VerifyingLockFactory : LockFactory
     {
-        internal readonly LockFactory Lf;
+        internal readonly LockFactory lf;
         internal readonly Stream @in;
         internal readonly Stream @out;
 
         private class CheckedLock : Lock
         {
-            private readonly VerifyingLockFactory OuterInstance;
+            private readonly VerifyingLockFactory outerInstance;
 
             private readonly Lock @lock;
 
             public CheckedLock(VerifyingLockFactory outerInstance, Lock @lock)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.@lock = @lock;
             }
 
             private void Verify(sbyte message) // LUCENENET TODO: sbyte unnecessary here
             {
-                OuterInstance.@out.WriteByte((byte)message);
-                OuterInstance.@out.Flush();
-                int ret = OuterInstance.@in.ReadByte();
+                outerInstance.@out.WriteByte((byte)message);
+                outerInstance.@out.Flush();
+                int ret = outerInstance.@in.ReadByte();
                 if (ret < 0)
                 {
                     throw new InvalidOperationException("Lock server died because of locking error.");
@@ -108,7 +108,7 @@ namespace Lucene.Net.Store
         /// <param name="out"> the socket's output to <seealso cref="LockVerifyServer"/> </param>
         public VerifyingLockFactory(LockFactory lf, Stream @in, Stream @out)
         {
-            this.Lf = lf;
+            this.lf = lf;
             this.@in = @in;
             this.@out = @out;
         }
@@ -117,7 +117,7 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                return new CheckedLock(this, Lf.MakeLock(lockName));
+                return new CheckedLock(this, lf.MakeLock(lockName));
             }
         }
 
@@ -125,7 +125,7 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                Lf.ClearLock(lockName);
+                lf.ClearLock(lockName);
             }
         }
     }
