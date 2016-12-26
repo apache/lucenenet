@@ -23,7 +23,6 @@ namespace Lucene.Net.Store
     /// <summary>
     /// Base class for file system based locking implementation.
     /// </summary>
-
     public abstract class FSLockFactory : LockFactory
     {
         /// <summary>

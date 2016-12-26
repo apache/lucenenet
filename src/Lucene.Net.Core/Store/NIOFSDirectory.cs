@@ -1,4 +1,3 @@
-using System.Threading;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;

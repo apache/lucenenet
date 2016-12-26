@@ -21,7 +21,6 @@ namespace Lucene.Net.Store
     /// <p>A MergeInfo provides information required for a MERGE context.
     ///  It is used as part of an <seealso cref="IOContext"/> in case of MERGE context.</p>
     /// </summary>
-
     public class MergeInfo
     {
         public readonly int TotalDocCount; // LUCENENET TODO: Make property

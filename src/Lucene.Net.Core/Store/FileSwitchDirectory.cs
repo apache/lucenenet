@@ -32,7 +32,6 @@ namespace Lucene.Net.Store
     ///
     /// @lucene.experimental
     /// </summary>
-
     public class FileSwitchDirectory : BaseDirectory
     {
         private readonly Directory SecondaryDir_Renamed;

@@ -30,7 +30,6 @@ namespace Lucene.Net.Store
     /// </summary>
     /// <seealso cref= VerifyingLockFactory </seealso>
     /// <seealso cref= LockVerifyServer </seealso>
-
     public class LockStressTest
     {
         [STAThread]

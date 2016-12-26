@@ -1,9 +1,9 @@
-using System.Linq;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Compatibility;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Lucene.Net.Store
 {

@@ -40,7 +40,6 @@ namespace Lucene.Net.Store
     /// <seealso cref= LockVerifyServer </seealso>
     /// <seealso cref= LockStressTest </seealso>
     /// <seealso cref= VerifyingLockFactory </seealso>
-
     public abstract class LockFactory
     {
         protected string LockPrefix_Renamed = null; // LUCENENET TODO: Rename m_lockPrefix

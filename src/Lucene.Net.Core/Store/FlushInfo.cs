@@ -21,7 +21,6 @@ namespace Lucene.Net.Store
     /// <p>A FlushInfo provides information required for a FLUSH context.
     ///  It is used as part of an <seealso cref="IOContext"/> in case of FLUSH context.</p>
     /// </summary>
-
     public class FlushInfo
     {
         public readonly int NumDocs; // LUCENENET TODO: make property
