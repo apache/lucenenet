@@ -74,55 +74,55 @@ namespace Lucene.Net.Store
         /// Offset/Length for a slice inside of a compound file </summary>
         public sealed class FileEntry
         {
-            internal long Offset; // LUCENENET TODO: make property
-            internal long Length; // LUCENENET TODO: make property
+            internal long Offset { get; set; }
+            internal long Length { get; set; }
         }
 
-        private readonly Directory Directory_Renamed;
-        private readonly string FileName;
-        private readonly int ReadBufferSize;
-        private readonly IDictionary<string, FileEntry> Entries;
-        private readonly bool OpenForWrite;
+        private readonly Directory directory;
+        private readonly string fileName;
+        private readonly int readBufferSize;
+        private readonly IDictionary<string, FileEntry> entries;
+        private readonly bool openForWrite;
         private static readonly IDictionary<string, FileEntry> SENTINEL = CollectionsHelper.EmptyMap<string, FileEntry>();
-        private readonly CompoundFileWriter Writer;
-        private readonly IndexInputSlicer Handle;
+        private readonly CompoundFileWriter writer;
+        private readonly IndexInputSlicer handle;
 
         /// <summary>
         /// Create a new CompoundFileDirectory.
         /// </summary>
         public CompoundFileDirectory(Directory directory, string fileName, IOContext context, bool openForWrite)
         {
-            this.Directory_Renamed = directory;
-            this.FileName = fileName;
-            this.ReadBufferSize = BufferedIndexInput.GetBufferSize(context);
+            this.directory = directory;
+            this.fileName = fileName;
+            this.readBufferSize = BufferedIndexInput.GetBufferSize(context);
             this.isOpen = false;
-            this.OpenForWrite = openForWrite;
+            this.openForWrite = openForWrite;
             if (!openForWrite)
             {
                 bool success = false;
-                Handle = directory.CreateSlicer(fileName, context);
+                handle = directory.CreateSlicer(fileName, context);
                 try
                 {
-                    this.Entries = ReadEntries(Handle, directory, fileName);
+                    this.entries = ReadEntries(handle, directory, fileName);
                     success = true;
                 }
                 finally
                 {
                     if (!success)
                     {
-                        IOUtils.CloseWhileHandlingException(Handle);
+                        IOUtils.CloseWhileHandlingException(handle);
                     }
                 }
                 this.isOpen = true;
-                Writer = null;
+                writer = null;
             }
             else
             {
                 Debug.Assert(!(directory is CompoundFileDirectory), "compound file inside of compound file: " + fileName);
-                this.Entries = SENTINEL;
+                this.entries = SENTINEL;
                 this.isOpen = true;
-                Writer = new CompoundFileWriter(directory, fileName);
-                Handle = null;
+                writer = new CompoundFileWriter(directory, fileName);
+                handle = null;
             }
         }
 
@@ -281,7 +281,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return Directory_Renamed;
+                return directory;
             }
         }
 
@@ -289,7 +289,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return FileName;
+                return fileName;
             }
         }
 
@@ -303,14 +303,14 @@ namespace Lucene.Net.Store
                     return; // already closed
                 }
                 isOpen = false;
-                if (Writer != null)
+                if (writer != null)
                 {
-                    Debug.Assert(OpenForWrite);
-                    Writer.Dispose();
+                    Debug.Assert(openForWrite);
+                    writer.Dispose();
                 }
                 else
                 {
-                    IOUtils.Close(Handle);
+                    IOUtils.Close(handle);
                 }
             }
         }
@@ -320,14 +320,14 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 EnsureOpen();
-                Debug.Assert(!OpenForWrite);
+                Debug.Assert(!openForWrite);
                 string id = IndexFileNames.StripSegmentName(name);
                 FileEntry entry;
-                if (!Entries.TryGetValue(id, out entry))
+                if (!entries.TryGetValue(id, out entry))
                 {
-                    throw new Exception("No sub-file with id " + id + " found (fileName=" + name + " files: " + Arrays.ToString(Entries.Keys) + ")");
+                    throw new Exception("No sub-file with id " + id + " found (fileName=" + name + " files: " + Arrays.ToString(entries.Keys) + ")");
                 }
-                return Handle.OpenSlice(name, entry.Offset, entry.Length);
+                return handle.OpenSlice(name, entry.Offset, entry.Length);
             }
         }
 
@@ -337,15 +337,15 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             string[] res;
-            if (Writer != null)
+            if (writer != null)
             {
-                res = Writer.ListAll();
+                res = writer.ListAll();
             }
             else
             {
-                res = Entries.Keys.ToArray();
+                res = entries.Keys.ToArray();
                 // Add the segment name
-                string seg = IndexFileNames.ParseSegmentName(FileName);
+                string seg = IndexFileNames.ParseSegmentName(fileName);
                 for (int i = 0; i < res.Length; i++)
                 {
                     res[i] = seg + res[i];
@@ -359,11 +359,11 @@ namespace Lucene.Net.Store
         public override bool FileExists(string name)
         {
             EnsureOpen();
-            if (this.Writer != null)
+            if (this.writer != null)
             {
-                return Writer.FileExists(name);
+                return writer.FileExists(name);
             }
-            return Entries.ContainsKey(IndexFileNames.StripSegmentName(name));
+            return entries.ContainsKey(IndexFileNames.StripSegmentName(name));
         }
 
         /// <summary>
@@ -388,11 +388,11 @@ namespace Lucene.Net.Store
         public override long FileLength(string name)
         {
             EnsureOpen();
-            if (this.Writer != null)
+            if (this.writer != null)
             {
-                return Writer.FileLength(name);
+                return writer.FileLength(name);
             }
-            FileEntry e = Entries[IndexFileNames.StripSegmentName(name)];
+            FileEntry e = entries[IndexFileNames.StripSegmentName(name)];
             if (e == null)
             {
                 throw new Exception(name);
@@ -403,7 +403,7 @@ namespace Lucene.Net.Store
         public override IndexOutput CreateOutput(string name, IOContext context)
         {
             EnsureOpen();
-            return Writer.CreateOutput(name, context);
+            return writer.CreateOutput(name, context);
         }
 
         public override void Sync(ICollection<string> names)
@@ -422,12 +422,12 @@ namespace Lucene.Net.Store
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
-            Debug.Assert(!OpenForWrite);
+            Debug.Assert(!openForWrite);
             string id = IndexFileNames.StripSegmentName(name);
-            FileEntry entry = Entries[id];
+            FileEntry entry = entries[id];
             if (entry == null)
             {
-                throw new Exception("No sub-file with id " + id + " found (fileName=" + name + " files: " + Entries.Keys + ")");
+                throw new Exception("No sub-file with id " + id + " found (fileName=" + name + " files: " + entries.Keys + ")");
             }
             return new IndexInputSlicerAnonymousInnerClassHelper(this, entry);
         }
@@ -451,7 +451,7 @@ namespace Lucene.Net.Store
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
-                return OuterInstance.Handle.OpenSlice(sliceDescription, Entry.Offset + offset, length);
+                return OuterInstance.handle.OpenSlice(sliceDescription, Entry.Offset + offset, length);
             }
 
             [Obsolete]
@@ -463,7 +463,7 @@ namespace Lucene.Net.Store
 
         public override string ToString()
         {
-            return "CompoundFileDirectory(file=\"" + FileName + "\" in dir=" + Directory_Renamed + ")";
+            return "CompoundFileDirectory(file=\"" + fileName + "\" in dir=" + directory + ")";
         }
     }
 }
