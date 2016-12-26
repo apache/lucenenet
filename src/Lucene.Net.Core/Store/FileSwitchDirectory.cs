@@ -34,17 +34,17 @@ namespace Lucene.Net.Store
     /// </summary>
     public class FileSwitchDirectory : BaseDirectory
     {
-        private readonly Directory SecondaryDir_Renamed;
-        private readonly Directory PrimaryDir_Renamed;
-        private readonly ISet<string> PrimaryExtensions;
-        private bool DoClose;
+        private readonly Directory secondaryDir;
+        private readonly Directory primaryDir;
+        private readonly ISet<string> primaryExtensions;
+        private bool doClose;
 
         public FileSwitchDirectory(ISet<string> primaryExtensions, Directory primaryDir, Directory secondaryDir, bool doClose)
         {
-            this.PrimaryExtensions = primaryExtensions;
-            this.PrimaryDir_Renamed = primaryDir;
-            this.SecondaryDir_Renamed = secondaryDir;
-            this.DoClose = doClose;
+            this.primaryExtensions = primaryExtensions;
+            this.primaryDir = primaryDir;
+            this.secondaryDir = secondaryDir;
+            this.doClose = doClose;
             this.m_lockFactory = primaryDir.LockFactory;
         }
 
@@ -54,7 +54,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return PrimaryDir_Renamed;
+                return primaryDir;
             }
         }
 
@@ -64,23 +64,23 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return SecondaryDir_Renamed;
+                return secondaryDir;
             }
         }
 
         public override void Dispose()
         {
-            if (DoClose)
+            if (doClose)
             {
                 try
                 {
-                    SecondaryDir_Renamed.Dispose();
+                    secondaryDir.Dispose();
                 }
                 finally
                 {
-                    PrimaryDir_Renamed.Dispose();
+                    primaryDir.Dispose();
                 }
-                DoClose = false;
+                doClose = false;
             }
         }
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Store
             NoSuchDirectoryException exc = null;
             try
             {
-                foreach (string f in PrimaryDir_Renamed.ListAll())
+                foreach (string f in primaryDir.ListAll())
                 {
                     files.Add(f);
                 }
@@ -106,7 +106,7 @@ namespace Lucene.Net.Store
 
             try
             {
-                foreach (string f in SecondaryDir_Renamed.ListAll())
+                foreach (string f in secondaryDir.ListAll())
                 {
                     files.Add(f);
                 }
@@ -151,13 +151,13 @@ namespace Lucene.Net.Store
         private Directory GetDirectory(string name)
         {
             string ext = GetExtension(name);
-            if (PrimaryExtensions.Contains(ext))
+            if (primaryExtensions.Contains(ext))
             {
-                return PrimaryDir_Renamed;
+                return primaryDir;
             }
             else
             {
-                return SecondaryDir_Renamed;
+                return secondaryDir;
             }
         }
 
@@ -188,7 +188,7 @@ namespace Lucene.Net.Store
 
             foreach (string name in names)
             {
-                if (PrimaryExtensions.Contains(GetExtension(name)))
+                if (primaryExtensions.Contains(GetExtension(name)))
                 {
                     primaryNames.Add(name);
                 }
@@ -198,8 +198,8 @@ namespace Lucene.Net.Store
                 }
             }
 
-            PrimaryDir_Renamed.Sync(primaryNames);
-            SecondaryDir_Renamed.Sync(secondaryNames);
+            primaryDir.Sync(primaryNames);
+            secondaryDir.Sync(secondaryNames);
         }
 
         public override IndexInput OpenInput(string name, IOContext context)
