@@ -120,48 +120,48 @@ namespace Lucene.Net.Store
 
     internal class SimpleFSLock : Lock
     {
-        internal FileInfo LockFile;
-        internal DirectoryInfo LockDir;
+        internal FileInfo lockFile;
+        internal DirectoryInfo lockDir;
 
         public SimpleFSLock(DirectoryInfo lockDir, string lockFileName)
         {
-            this.LockDir = lockDir;
-            LockFile = new FileInfo(Path.Combine(lockDir.FullName, lockFileName));
+            this.lockDir = lockDir;
+            lockFile = new FileInfo(Path.Combine(lockDir.FullName, lockFileName));
         }
 
         public override bool Obtain()
         {
             // Ensure that lockDir exists and is a directory:
-            if (!LockDir.Exists)
+            if (!lockDir.Exists)
             {
                 try
                 {
-                    System.IO.Directory.CreateDirectory(LockDir.FullName);
+                    System.IO.Directory.CreateDirectory(lockDir.FullName);
                 }
                 catch
                 {
-                    throw new System.IO.IOException("Cannot create directory: " + LockDir.FullName);
+                    throw new System.IO.IOException("Cannot create directory: " + lockDir.FullName);
                 }
             }
             else
             {
                 try
                 {
-                    System.IO.Directory.Exists(LockDir.FullName);
+                    System.IO.Directory.Exists(lockDir.FullName);
                 }
                 catch
                 {
-                    throw new System.IO.IOException("Found regular file where directory expected: " + LockDir.FullName);
+                    throw new System.IO.IOException("Found regular file where directory expected: " + lockDir.FullName);
                 }
             }
 
-            if (LockFile.Exists)
+            if (lockFile.Exists)
             {
                 return false;
             }
             else
             {
-                System.IO.FileStream createdFile = LockFile.Create();
+                System.IO.FileStream createdFile = lockFile.Create();
                 createdFile.Dispose();
                 return true;
             }
@@ -171,12 +171,12 @@ namespace Lucene.Net.Store
         {//LUCENE TO-DO
             try
             {
-                LockFile.Delete();
+                lockFile.Delete();
             }
             catch (Exception e)
             {
-                if (LockFile.Exists) // Delete failed and lockFile exists
-                    throw new LockReleaseFailedException("failed to delete " + LockFile);
+                if (lockFile.Exists) // Delete failed and lockFile exists
+                    throw new LockReleaseFailedException("failed to delete " + lockFile);
             }
         }
 
@@ -184,13 +184,13 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return LockFile.Exists;
+                return lockFile.Exists;
             }
         }
 
         public override string ToString()
         {
-            return "SimpleFSLock@" + LockFile;
+            return "SimpleFSLock@" + lockFile;
         }
     }
 }
