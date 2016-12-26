@@ -18,38 +18,38 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// A <seealso cref="RateLimiter rate limiting"/> <seealso cref="IndexOutput"/>
+    /// A <seealso cref="rateLimiter rate limiting"/> <seealso cref="IndexOutput"/>
     ///
     /// @lucene.internal
     /// </summary>
     internal sealed class RateLimitedIndexOutput : BufferedIndexOutput
     {
         private readonly IndexOutput @delegate;
-        private readonly BufferedIndexOutput BufferedDelegate;
-        private readonly RateLimiter RateLimiter;
+        private readonly BufferedIndexOutput bufferedDelegate;
+        private readonly RateLimiter rateLimiter;
 
         internal RateLimitedIndexOutput(RateLimiter rateLimiter, IndexOutput @delegate)
         {
             // TODO should we make buffer size configurable
             if (@delegate is BufferedIndexOutput)
             {
-                BufferedDelegate = (BufferedIndexOutput)@delegate;
+                bufferedDelegate = (BufferedIndexOutput)@delegate;
                 this.@delegate = @delegate;
             }
             else
             {
                 this.@delegate = @delegate;
-                BufferedDelegate = null;
+                bufferedDelegate = null;
             }
-            this.RateLimiter = rateLimiter;
+            this.rateLimiter = rateLimiter;
         }
 
         protected internal override void FlushBuffer(byte[] b, int offset, int len)
         {
-            RateLimiter.Pause(len);
-            if (BufferedDelegate != null)
+            rateLimiter.Pause(len);
+            if (bufferedDelegate != null)
             {
-                BufferedDelegate.FlushBuffer(b, offset, len);
+                bufferedDelegate.FlushBuffer(b, offset, len);
             }
             else
             {
