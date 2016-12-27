@@ -1096,7 +1096,7 @@ namespace Lucene.Net.Index
                         break;
                     }
 
-                    Debug.Assert(term.Valid);
+                    Debug.Assert(term.IsValid());
 
                     // make sure terms arrive in order according to
                     // the comp
@@ -1229,7 +1229,7 @@ namespace Lucene.Net.Index
                                 BytesRef payload = postings.Payload;
                                 if (payload != null)
                                 {
-                                    Debug.Assert(payload.Valid);
+                                    Debug.Assert(payload.IsValid());
                                 }
                                 if (payload != null && payload.Length < 1)
                                 {
@@ -1796,7 +1796,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < reader.MaxDoc; i++)
             {
                 dv.Get(i, scratch);
-                Debug.Assert(scratch.Valid);
+                Debug.Assert(scratch.IsValid());
                 if (docsWithField.Get(i) == false && scratch.Length > 0)
                 {
                     throw new Exception("dv for field: " + fieldName + " is missing but has value=" + scratch + " for doc: " + i);
@@ -1847,7 +1847,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i <= maxOrd; i++)
             {
                 dv.LookupOrd(i, scratch);
-                Debug.Assert(scratch.Valid);
+                Debug.Assert(scratch.IsValid());
                 if (lastValue != null)
                 {
                     if (scratch.CompareTo(lastValue) <= 0)
@@ -1939,7 +1939,7 @@ namespace Lucene.Net.Index
             for (long i = 0; i <= maxOrd; i++)
             {
                 dv.LookupOrd(i, scratch);
-                Debug.Assert(scratch.Valid);
+                Debug.Assert(scratch.IsValid());
                 if (lastValue != null)
                 {
                     if (scratch.CompareTo(lastValue) <= 0)

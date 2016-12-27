@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
             {
                 TermsEnum termsEnum = input.Intersect(automaton, bytes);
                 Debug.Assert(termsEnum != null);
-                Debug.Assert(bytes == null || bytes.Valid);
+                Debug.Assert(bytes == null || bytes.IsValid());
                 return new AssertingTermsEnum(termsEnum);
             }
 
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    Debug.Assert(result.Valid);
+                    Debug.Assert(result.IsValid());
                     State = State_e.POSITIONED;
                 }
                 return result;
@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
                 {
                     Debug.Assert(State == State_e.POSITIONED, "term() called on unpositioned TermsEnum");
                     BytesRef ret = base.Term;
-                    Debug.Assert(ret == null || ret.Valid);
+                    Debug.Assert(ret == null || ret.IsValid());
                     return ret;
                 }
             }
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
 
             public override SeekStatus SeekCeil(BytesRef term)
             {
-                Debug.Assert(term.Valid);
+                Debug.Assert(term.IsValid());
                 SeekStatus result = base.SeekCeil(term);
                 if (result == SeekStatus.END)
                 {
@@ -226,7 +226,7 @@ namespace Lucene.Net.Index
 
             public override bool SeekExact(BytesRef text)
             {
-                Debug.Assert(text.Valid);
+                Debug.Assert(text.IsValid());
                 if (base.SeekExact(text))
                 {
                     State = State_e.POSITIONED;
@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
 
             public override void SeekExact(BytesRef term, TermState state)
             {
-                Debug.Assert(term.Valid);
+                Debug.Assert(term.IsValid());
                 base.SeekExact(term, state);
                 this.State = State_e.POSITIONED;
             }
@@ -465,7 +465,7 @@ namespace Lucene.Net.Index
                     Debug.Assert(State != DocsEnumState.FINISHED, "getPayload() called after NO_MORE_DOCS");
                     Debug.Assert(PositionCount > 0, "getPayload() called before nextPosition()!");
                     BytesRef payload = base.Payload;
-                    Debug.Assert(payload == null || payload.Valid && payload.Length > 0, "getPayload() returned payload with invalid length!");
+                    Debug.Assert(payload == null || payload.IsValid() && payload.Length > 0, "getPayload() returned payload with invalid length!");
                     return payload;
                 }
             }
@@ -507,9 +507,9 @@ namespace Lucene.Net.Index
             public override void Get(int docID, BytesRef result)
             {
                 Debug.Assert(docID >= 0 && docID < MaxDoc);
-                Debug.Assert(result.Valid);
+                Debug.Assert(result.IsValid());
                 @in.Get(docID, result);
-                Debug.Assert(result.Valid);
+                Debug.Assert(result.IsValid());
             }
         }
 
@@ -540,9 +540,9 @@ namespace Lucene.Net.Index
             public override void LookupOrd(int ord, BytesRef result)
             {
                 Debug.Assert(ord >= 0 && ord < ValueCount_Renamed);
-                Debug.Assert(result.Valid);
+                Debug.Assert(result.IsValid());
                 @in.LookupOrd(ord, result);
-                Debug.Assert(result.Valid);
+                Debug.Assert(result.IsValid());
             }
 
             public override int ValueCount
@@ -558,17 +558,17 @@ namespace Lucene.Net.Index
             public override void Get(int docID, BytesRef result)
             {
                 Debug.Assert(docID >= 0 && docID < MaxDoc);
-                Debug.Assert(result.Valid);
+                Debug.Assert(result.IsValid());
                 @in.Get(docID, result);
-                Debug.Assert(result.Valid);
+                Debug.Assert(result.IsValid());
             }
 
             public override int LookupTerm(BytesRef key)
             {
-                Debug.Assert(key.Valid);
+                Debug.Assert(key.IsValid());
                 int result = @in.LookupTerm(key);
                 Debug.Assert(result < ValueCount_Renamed);
-                Debug.Assert(key.Valid);
+                Debug.Assert(key.IsValid());
                 return result;
             }
         }
@@ -610,9 +610,9 @@ namespace Lucene.Net.Index
             public override void LookupOrd(long ord, BytesRef result)
             {
                 Debug.Assert(ord >= 0 && ord < ValueCount_Renamed);
-                Debug.Assert(result.Valid);
+                Debug.Assert(result.IsValid());
                 @in.LookupOrd(ord, result);
-                Debug.Assert(result.Valid);
+                Debug.Assert(result.IsValid());
             }
 
             public override long ValueCount
@@ -627,10 +627,10 @@ namespace Lucene.Net.Index
 
             public override long LookupTerm(BytesRef key)
             {
-                Debug.Assert(key.Valid);
+                Debug.Assert(key.IsValid());
                 long result = @in.LookupTerm(key);
                 Debug.Assert(result < ValueCount_Renamed);
-                Debug.Assert(key.Valid);
+                Debug.Assert(key.IsValid());
                 return result;
             }
         }

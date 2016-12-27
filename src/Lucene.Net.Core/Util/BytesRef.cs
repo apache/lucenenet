@@ -72,7 +72,7 @@ namespace Lucene.Net.Util
             this.Bytes = bytes;
             this.Offset = offset;
             this.Length = length;
-            Debug.Assert(Valid);
+            Debug.Assert(IsValid());
         }
 
         /// <summary>
@@ -431,40 +431,37 @@ namespace Lucene.Net.Util
         /// Performs internal consistency checks.
         /// Always returns true (or throws InvalidOperationException)
         /// </summary>
-        public bool Valid // LUCENENET TODO: Rename IsValid
+        public bool IsValid()
         {
-            get
+            if (Bytes == null)
             {
-                if (Bytes == null)
-                {
-                    throw new InvalidOperationException("bytes is null");
-                }
-                if (Length < 0)
-                {
-                    throw new InvalidOperationException("length is negative: " + Length);
-                }
-                if (Length > Bytes.Length)
-                {
-                    throw new InvalidOperationException("length is out of bounds: " + Length + ",bytes.length=" + Bytes.Length);
-                }
-                if (Offset < 0)
-                {
-                    throw new InvalidOperationException("offset is negative: " + Offset);
-                }
-                if (Offset > Bytes.Length)
-                {
-                    throw new InvalidOperationException("offset out of bounds: " + Offset + ",bytes.length=" + Bytes.Length);
-                }
-                if (Offset + Length < 0)
-                {
-                    throw new InvalidOperationException("offset+length is negative: offset=" + Offset + ",length=" + Length);
-                }
-                if (Offset + Length > Bytes.Length)
-                {
-                    throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",bytes.length=" + Bytes.Length);
-                }
-                return true;
+                throw new InvalidOperationException("bytes is null");
             }
+            if (Length < 0)
+            {
+                throw new InvalidOperationException("length is negative: " + Length);
+            }
+            if (Length > Bytes.Length)
+            {
+                throw new InvalidOperationException("length is out of bounds: " + Length + ",bytes.length=" + Bytes.Length);
+            }
+            if (Offset < 0)
+            {
+                throw new InvalidOperationException("offset is negative: " + Offset);
+            }
+            if (Offset > Bytes.Length)
+            {
+                throw new InvalidOperationException("offset out of bounds: " + Offset + ",bytes.length=" + Bytes.Length);
+            }
+            if (Offset + Length < 0)
+            {
+                throw new InvalidOperationException("offset+length is negative: offset=" + Offset + ",length=" + Length);
+            }
+            if (Offset + Length > Bytes.Length)
+            {
+                throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",bytes.length=" + Bytes.Length);
+            }
+            return true;
         }
     }
 }

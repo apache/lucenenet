@@ -92,7 +92,7 @@ namespace Lucene.Net.Codecs.asserting
                 int count = 0;
                 foreach (BytesRef b in values)
                 {
-                    Debug.Assert(b == null || b.Valid);
+                    Debug.Assert(b == null || b.IsValid());
                     count++;
                 }
                 Debug.Assert(count == MaxDoc);
@@ -107,7 +107,7 @@ namespace Lucene.Net.Codecs.asserting
                 foreach (BytesRef b in values)
                 {
                     Debug.Assert(b != null);
-                    Debug.Assert(b.Valid);
+                    Debug.Assert(b.IsValid());
                     if (valueCount > 0)
                     {
                         Debug.Assert(b.CompareTo(lastValue) > 0);
@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs.asserting
                 foreach (BytesRef b in values)
                 {
                     Debug.Assert(b != null);
-                    Debug.Assert(b.Valid);
+                    Debug.Assert(b.IsValid());
                     if (valueCount > 0)
                     {
                         Debug.Assert(b.CompareTo(lastValue) > 0);
