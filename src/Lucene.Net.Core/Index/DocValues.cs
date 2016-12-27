@@ -191,9 +191,9 @@ namespace Lucene.Net.Index
                 return Dv.GetOrd(index) >= 0;
             }
 
-            public virtual int Length()
+            public virtual int Length
             {
-                return MaxDoc;
+                get { return MaxDoc; }
             }
         }
 
@@ -222,9 +222,9 @@ namespace Lucene.Net.Index
                 return Dv.NextOrd() != SortedSetDocValues.NO_MORE_ORDS;
             }
 
-            public virtual int Length()
+            public virtual int Length
             {
-                return MaxDoc;
+                get { return MaxDoc; }
             }
         }
     }

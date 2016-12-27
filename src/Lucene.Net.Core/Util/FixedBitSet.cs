@@ -137,7 +137,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static FixedBitSet EnsureCapacity(FixedBitSet bits, int numBits)
         {
-            if (numBits < bits.Length())
+            if (numBits < bits.Length)
             {
                 return bits;
             }
@@ -238,9 +238,9 @@ namespace Lucene.Net.Util
             return this;
         }
 
-        public int Length() // LUCENENET TODO: make property
+        public int Length
         {
-            return NumBits;
+            get { return NumBits; }
         }
 
         /// <summary>
@@ -721,7 +721,7 @@ namespace Lucene.Net.Util
                 return false;
             }
             var other = (FixedBitSet)o;
-            if (NumBits != other.Length())
+            if (NumBits != other.Length)
             {
                 return false;
             }

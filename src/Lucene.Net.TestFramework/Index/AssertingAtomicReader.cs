@@ -733,13 +733,13 @@ namespace Lucene.Net.Index
 
             public bool Get(int index)
             {
-                Debug.Assert(index >= 0 && index < Length());
+                Debug.Assert(index >= 0 && index < Length);
                 return @in.Get(index);
             }
 
-            public int Length()
+            public int Length
             {
-                return @in.Length();
+                get { return @in.Length; }
             }
         }
 
@@ -750,7 +750,7 @@ namespace Lucene.Net.Index
                 IBits liveDocs = base.LiveDocs;
                 if (liveDocs != null)
                 {
-                    Debug.Assert(MaxDoc == liveDocs.Length());
+                    Debug.Assert(MaxDoc == liveDocs.Length);
                     liveDocs = new AssertingBits(liveDocs);
                 }
                 else
@@ -770,7 +770,7 @@ namespace Lucene.Net.Index
             {
                 Debug.Assert(fi != null);
                 Debug.Assert(fi.HasDocValues);
-                Debug.Assert(MaxDoc == docsWithField.Length());
+                Debug.Assert(MaxDoc == docsWithField.Length);
                 docsWithField = new AssertingBits(docsWithField);
             }
             else

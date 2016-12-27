@@ -321,7 +321,7 @@ namespace Lucene.Net.Codecs.asserting
                 Debug.Assert(field.DocValuesType != null);
                 IBits bits = @in.GetDocsWithField(field);
                 Debug.Assert(bits != null);
-                Debug.Assert(bits.Length() == MaxDoc);
+                Debug.Assert(bits.Length == MaxDoc);
                 return new AssertingAtomicReader.AssertingBits(bits);
             }
 

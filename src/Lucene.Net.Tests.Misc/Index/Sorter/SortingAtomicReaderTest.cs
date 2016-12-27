@@ -53,7 +53,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 Console.WriteLine("mapped-deleted-docs: ");
                 IBits mappedLiveDocs = reader.LiveDocs;
-                for (int i = 0; i < mappedLiveDocs.Length(); i++)
+                for (int i = 0; i < mappedLiveDocs.Length; i++)
                 {
                     if (!mappedLiveDocs.Get(i))
                     {

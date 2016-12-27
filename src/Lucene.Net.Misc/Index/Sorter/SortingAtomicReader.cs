@@ -135,9 +135,9 @@ namespace Lucene.Net.Index.Sorter
                     return liveDocs.Get(outerInstance.docMap.OldToNew(index));
                 }
 
-                public int Length()
+                public int Length
                 {
-                    return liveDocs.Length();
+                    get { return liveDocs.Length; }
                 }
             }
 
@@ -248,9 +248,9 @@ namespace Lucene.Net.Index.Sorter
                 return @in.Get(docMap.NewToOld(index));
             }
 
-            public int Length()
+            public int Length
             {
-                return @in.Length();
+                get { return @in.Length; }
             }
         }
 

@@ -236,7 +236,7 @@ namespace Lucene.Net.Index
             {
                 return;
             }
-            for (int x = 0; x < bits.Length(); x++)
+            for (int x = 0; x < bits.Length; x++)
             {
                 Console.WriteLine(x + ":" + bits.Get(x));
             }

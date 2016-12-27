@@ -252,8 +252,8 @@ namespace Lucene.Net.Search
             IBits docsWithField = cache.GetDocsWithField(Reader, "theLong");
             Assert.AreSame(docsWithField, cache.GetDocsWithField(Reader, "theLong"), "Second request to cache return same array");
             Assert.IsTrue(docsWithField is Bits.MatchAllBits, "docsWithField(theLong) must be class Bits.MatchAllBits");
-            Assert.IsTrue(docsWithField.Length() == NUM_DOCS, "docsWithField(theLong) Size: " + docsWithField.Length() + " is not: " + NUM_DOCS);
-            for (int i = 0; i < docsWithField.Length(); i++)
+            Assert.IsTrue(docsWithField.Length == NUM_DOCS, "docsWithField(theLong) Size: " + docsWithField.Length + " is not: " + NUM_DOCS);
+            for (int i = 0; i < docsWithField.Length; i++)
             {
                 Assert.IsTrue(docsWithField.Get(i));
             }
@@ -261,8 +261,8 @@ namespace Lucene.Net.Search
             docsWithField = cache.GetDocsWithField(Reader, "sparse");
             Assert.AreSame(docsWithField, cache.GetDocsWithField(Reader, "sparse"), "Second request to cache return same array");
             Assert.IsFalse(docsWithField is Bits.MatchAllBits, "docsWithField(sparse) must not be class Bits.MatchAllBits");
-            Assert.IsTrue(docsWithField.Length() == NUM_DOCS, "docsWithField(sparse) Size: " + docsWithField.Length() + " is not: " + NUM_DOCS);
-            for (int i = 0; i < docsWithField.Length(); i++)
+            Assert.IsTrue(docsWithField.Length == NUM_DOCS, "docsWithField(sparse) Size: " + docsWithField.Length + " is not: " + NUM_DOCS);
+            for (int i = 0; i < docsWithField.Length; i++)
             {
                 Assert.AreEqual(i % 2 == 0, docsWithField.Get(i));
             }
@@ -437,7 +437,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(6, cache.GetCacheEntries().Length);
             IBits docsWithField = cache.GetDocsWithField(Reader, "sparse");
             Assert.AreEqual(6, cache.GetCacheEntries().Length);
-            for (int i = 0; i < docsWithField.Length(); i++)
+            for (int i = 0; i < docsWithField.Length; i++)
             {
                 if (i % 2 == 0)
                 {
@@ -452,7 +452,7 @@ namespace Lucene.Net.Search
 
             Ints numInts = cache.GetInts(Reader, "numInt", Random().NextBoolean());
             docsWithField = cache.GetDocsWithField(Reader, "numInt");
-            for (int i = 0; i < docsWithField.Length(); i++)
+            for (int i = 0; i < docsWithField.Length; i++)
             {
                 if (i % 2 == 0)
                 {
@@ -553,7 +553,7 @@ namespace Lucene.Net.Search
                         else if (op == 1)
                         {
                             IBits docsWithField = Cache.GetDocsWithField(Reader, "sparse");
-                            for (int i = 0; i < docsWithField.Length(); i++)
+                            for (int i = 0; i < docsWithField.Length; i++)
                             {
                                 Assert.AreEqual(i % 2 == 0, docsWithField.Get(i));
                             }
@@ -562,7 +562,7 @@ namespace Lucene.Net.Search
                         {
                             Ints ints = Cache.GetInts(Reader, "sparse", true);
                             IBits docsWithField = Cache.GetDocsWithField(Reader, "sparse");
-                            for (int i = 0; i < docsWithField.Length(); i++)
+                            for (int i = 0; i < docsWithField.Length; i++)
                             {
                                 if (i % 2 == 0)
                                 {

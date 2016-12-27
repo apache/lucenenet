@@ -34,7 +34,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the number of bits in this set </summary>
-        int Length(); // LUCENENET TODO: Change to property getter
+        int Length { get; }
     }
 
     public static class Bits
@@ -58,9 +58,9 @@ namespace Lucene.Net.Util
                 return true;
             }
 
-            public int Length()
+            public int Length
             {
-                return _len;
+                get { return _len; }
             }
 
             public override int GetHashCode() // LUCENENET TODO: This wasn't in Lucene - is it needed ?
@@ -86,9 +86,9 @@ namespace Lucene.Net.Util
                 return false;
             }
 
-            public int Length()
+            public int Length
             {
-                return _len;
+                get { return _len; }
             }
 
             public override int GetHashCode() // LUCENENET TODO: This wasn't in Lucene - is it needed ?

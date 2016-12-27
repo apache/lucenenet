@@ -77,9 +77,9 @@ namespace Lucene.Net.Search
                 return outerInstance.MatchDoc(docid);
             }
 
-            public virtual int Length()
+            public virtual int Length
             {
-                return outerInstance.m_maxDoc;
+                get { return outerInstance.m_maxDoc; }
             }
         }
 
@@ -97,9 +97,9 @@ namespace Lucene.Net.Search
                 return outerInstance.MatchDoc(docid) && outerInstance.m_acceptDocs.Get(docid);
             }
 
-            public virtual int Length()
+            public virtual int Length
             {
-                return outerInstance.m_maxDoc;
+                get { return outerInstance.m_maxDoc; }
             }
         }
 

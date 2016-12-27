@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
             {
                 Debug.Assert(liveDocs != null);
                 //Debug.Assert(Thread.holdsLock(Writer));
-                Debug.Assert(docID >= 0 && docID < liveDocs.Length(), "out of bounds: docid=" + docID + " liveDocsLength=" + liveDocs.Length() + " seg=" + Info.Info.Name + " docCount=" + Info.Info.DocCount);
+                Debug.Assert(docID >= 0 && docID < liveDocs.Length, "out of bounds: docid=" + docID + " liveDocsLength=" + liveDocs.Length + " seg=" + Info.Info.Name + " docCount=" + Info.Info.DocCount);
                 Debug.Assert(!liveDocsShared);
                 bool didDelete = liveDocs.Get(docID);
                 if (didDelete)
@@ -396,7 +396,7 @@ namespace Lucene.Net.Index
                 }
 
                 // We have new deletes
-                Debug.Assert(liveDocs.Length() == Info.Info.DocCount);
+                Debug.Assert(liveDocs.Length == Info.Info.DocCount);
 
                 // Do this so we can delete any created files on
                 // exception; this saves all codecs from having to do

@@ -190,9 +190,9 @@ namespace Lucene.Net.Codecs.Lucene40
         /// the number of the largest valid bit number.
         /// This is the equivalent of either size() or length() in Lucene.
         /// </summary>
-        public int Length()
+        public int Length
         {
-            return Size_Renamed;
+            get { return Size_Renamed; }
         }
 
         /// <summary>
@@ -333,7 +333,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Write as a bit set </summary>
         private void WriteBits(IndexOutput output)
         {
-            output.WriteInt(Length()); // write size
+            output.WriteInt(Length); // write size
             output.WriteInt(Count()); // write count
             output.WriteBytes(Bits, Bits.Length);
         }
@@ -343,10 +343,10 @@ namespace Lucene.Net.Codecs.Lucene40
         private void WriteClearedDgaps(IndexOutput output)
         {
             output.WriteInt(-1); // mark using d-gaps
-            output.WriteInt(Length()); // write size
+            output.WriteInt(Length); // write size
             output.WriteInt(Count()); // write count
             int last = 0;
-            int numCleared = Length() - Count();
+            int numCleared = Length - Count();
             for (int i = 0; i < Bits.Length && numCleared > 0; i++)
             {
                 if (Bits[i] != unchecked((byte)0xff))
@@ -366,7 +366,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             get
             {
-                int clearedCount = Length() - Count();
+                int clearedCount = Length - Count();
                 if (clearedCount == 0)
                 {
                     return true;
@@ -406,7 +406,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 // note: factor is for read/write of byte-arrays being faster than vints.
                 const long factor = 10;
-                return factor * expectedBits < Length();
+                return factor * expectedBits < Length;
             }
         }
 
@@ -520,7 +520,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             ClearUnusedBits();
             int last = 0;
-            int numCleared = Length() - Count();
+            int numCleared = Length - Count();
             while (numCleared > 0)
             {
                 last += input.ReadVInt();

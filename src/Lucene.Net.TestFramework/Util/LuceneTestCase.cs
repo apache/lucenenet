@@ -1984,9 +1984,9 @@ namespace Lucene.Net.Util
                 return bits.Get(index);
             }
 
-            public int Length()
+            public int Length
             {
-                return bits.Length();
+                get { return bits.Length; }
             }
         }
 
@@ -2509,8 +2509,8 @@ namespace Lucene.Net.Util
                     IBits rightBits = MultiDocValues.GetDocsWithField(rightReader, field);
                     if (leftBits != null && rightBits != null)
                     {
-                        Assert.AreEqual(leftBits.Length(), rightBits.Length(), info);
-                        for (int i = 0; i < leftBits.Length(); i++)
+                        Assert.AreEqual(leftBits.Length, rightBits.Length, info);
+                        for (int i = 0; i < leftBits.Length; i++)
                         {
                             Assert.AreEqual(leftBits.Get(i), rightBits.Get(i), info);
                         }
@@ -2549,7 +2549,7 @@ namespace Lucene.Net.Util
             }
 
             Debug.Assert(leftReader.MaxDoc == rightReader.MaxDoc);
-            Assert.AreEqual(leftBits.Length(), rightBits.Length(), info);
+            Assert.AreEqual(leftBits.Length, rightBits.Length, info);
             for (int i = 0; i < leftReader.MaxDoc; i++)
             {
                 Assert.AreEqual(leftBits.Get(i), rightBits.Get(i), info);

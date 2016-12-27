@@ -856,9 +856,9 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
-            public virtual int Length()
+            public virtual int Length
             {
-                return OuterInstance.MaxDoc;
+                get { return OuterInstance.MaxDoc; }
             }
         }
 

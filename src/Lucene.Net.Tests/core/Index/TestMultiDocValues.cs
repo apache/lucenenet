@@ -417,7 +417,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                Assert.AreEqual(single.Length(), multi.Length());
+                Assert.AreEqual(single.Length, multi.Length);
                 for (int i = 0; i < numDocs; i++)
                 {
                     Assert.AreEqual(single.Get(i), multi.Get(i));
@@ -426,7 +426,7 @@ namespace Lucene.Net.Index
 
             multi = MultiDocValues.GetDocsWithField(ir, "numbersAlways");
             single = merged.GetDocsWithField("numbersAlways");
-            Assert.AreEqual(single.Length(), multi.Length());
+            Assert.AreEqual(single.Length, multi.Length);
             for (int i = 0; i < numDocs; i++)
             {
                 Assert.AreEqual(single.Get(i), multi.Get(i));

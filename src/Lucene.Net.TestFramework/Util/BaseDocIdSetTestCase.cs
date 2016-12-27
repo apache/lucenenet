@@ -221,7 +221,7 @@ namespace Lucene.Net.Util
                 it2 = ds2.GetIterator();
                 for (int previousDoc = -1, doc = it2.NextDoc(); ; previousDoc = doc, doc = it2.NextDoc())
                 {
-                    int max = doc == DocIdSetIterator.NO_MORE_DOCS ? bits.Length() : doc;
+                    int max = doc == DocIdSetIterator.NO_MORE_DOCS ? bits.Length : doc;
                     for (int i = previousDoc + 1; i < max; ++i)
                     {
                         Assert.AreEqual(false, bits.Get(i));

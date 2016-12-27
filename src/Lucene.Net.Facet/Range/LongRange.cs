@@ -218,9 +218,9 @@ namespace Lucene.Net.Facet.Range
                     }
 
 
-                    public virtual int Length()
+                    public virtual int Length
                     {
-                        return outerInstance.maxDoc;
+                        get { return outerInstance.maxDoc; }
                     }
                 }
 

@@ -71,10 +71,13 @@ namespace Lucene.Net.Util
             return bitSet.SafeGet(index);
         }
 
-        public int Length()
+        public int Length
         {
-            // the size may not be correct...
-            return bitSet.Length;
+            get
+            {
+                // the size may not be correct...
+                return bitSet.Length;
+            }
         }
 
         private class DocIdBitSetIterator : DocIdSetIterator

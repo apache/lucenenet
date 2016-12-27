@@ -572,9 +572,9 @@ namespace Lucene.Net.Search
                         return OuterInstance.BitSet.SafeGet(index);
                     }
 
-                    public int Length()
+                    public int Length
                     {
-                        return OuterInstance.BitSet.Length;
+                        get { return OuterInstance.BitSet.Length; }
                     }
                 }
 

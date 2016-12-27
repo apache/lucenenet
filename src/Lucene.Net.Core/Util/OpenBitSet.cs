@@ -162,9 +162,9 @@ namespace Lucene.Net.Util
             return Capacity();
         }
 
-        public virtual int Length() // LUCENENET TODO: make property
+        public virtual int Length // LUCENENET TODO: consider using this only, since it is required by the IBits interface
         {
-            return bits.Length << 6;
+            get { return bits.Length << 6; }
         }
 
         /// <summary>

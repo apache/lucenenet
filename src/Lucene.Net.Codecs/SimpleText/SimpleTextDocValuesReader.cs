@@ -296,9 +296,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 return _scratch.Bytes[_scratch.Offset] == (sbyte)'T';
             }
 
-            public int Length()
+            public int Length
             {
-                return _outerInstance.MAX_DOC;
+                get { return _outerInstance.MAX_DOC; }
             }
         }
 
@@ -343,9 +343,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 return _scratch.Bytes[_scratch.Offset] == (sbyte)'T';
             }
 
-            public int Length()
+            public int Length
             {
-                return _outerInstance.MAX_DOC;
+                get { return _outerInstance.MAX_DOC; }
             }
         }
 

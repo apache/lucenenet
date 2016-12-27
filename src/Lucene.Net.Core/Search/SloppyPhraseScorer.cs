@@ -191,7 +191,7 @@ namespace Lucene.Net.Search
             // empty (partially) the queue until seeing all pps advanced for resolving collisions
             int n = 0;
             // TODO would be good if we can avoid calling cardinality() in each iteration!
-            int numBits = bits.Length(); // larges bit we set
+            int numBits = bits.Length; // larges bit we set
             while (bits.Cardinality() > 0)
             {
                 PhrasePositions pp2 = pq.Pop();

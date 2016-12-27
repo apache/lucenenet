@@ -239,9 +239,9 @@ namespace Lucene.Net.Spatial.Prefix
             }
 
             /// <summary>Largest docid.</summary>
-            public virtual int Length()
+            public virtual int Length
             {
-                return maxInt;
+                get { return maxInt; }
             }
 
             /// <summary>Number of docids.</summary>

@@ -124,7 +124,7 @@ namespace Lucene.Net.Codecs.SimpleText
             IOContext context)
         {
             var set = ((SimpleTextBits) bits).BITS;
-            var size = bits.Length();
+            var size = bits.Length;
             var scratch = new BytesRef();
 
             var fileName = IndexFileNames.FileNameFromGeneration(info.Info.Name, LIVEDOCS_EXTENSION, info.NextDelGen);
@@ -187,9 +187,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 return BITS.SafeGet(index);
             }
 
-            public int Length()
+            public int Length
             {
-                return SIZE;
+                get { return SIZE; }
             }
         }
 

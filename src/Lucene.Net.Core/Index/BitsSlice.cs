@@ -52,9 +52,9 @@ namespace Lucene.Net.Index
             return Parent.Get(doc + Start);
         }
 
-        public int Length()
+        public int Length
         {
-            return Length_Renamed;
+            get { return Length_Renamed; }
         }
     }
 }

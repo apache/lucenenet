@@ -2439,8 +2439,8 @@ namespace Lucene.Net.Index
 
         private void AssertEquals(IBits expected, IBits actual)
         {
-            Assert.AreEqual(expected.Length(), actual.Length());
-            for (int i = 0; i < expected.Length(); i++)
+            Assert.AreEqual(expected.Length, actual.Length);
+            for (int i = 0; i < expected.Length; i++)
             {
                 Assert.AreEqual(expected.Get(i), actual.Get(i));
             }

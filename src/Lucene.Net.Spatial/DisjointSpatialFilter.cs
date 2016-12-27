@@ -104,7 +104,7 @@ namespace Lucene.Net.Spatial
                 docsWithField = FieldCache.DEFAULT.GetDocsWithField((context.AtomicReader), field);
 
                 int maxDoc = context.AtomicReader.MaxDoc;
-                if (docsWithField.Length() != maxDoc)
+                if (docsWithField.Length != maxDoc)
                 {
                     throw new InvalidOperationException("Bits length should be maxDoc (" + maxDoc + ") but wasn't: " + docsWithField);
                 }

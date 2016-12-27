@@ -82,9 +82,9 @@ namespace Lucene.Net.Search
                 return bits.Get(docid) && outerInstance.Match(docid);
             }
 
-            public virtual int Length()
+            public virtual int Length
             {
-                return bits.Length();
+                get { return bits.Length; }
             }
         }
 

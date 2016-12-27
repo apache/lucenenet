@@ -4157,8 +4157,8 @@ namespace Lucene.Net.Index
                         // If we had deletions on starting the merge we must
                         // still have deletions now:
                         Debug.Assert(currentLiveDocs != null);
-                        Debug.Assert(prevLiveDocs.Length() == docCount);
-                        Debug.Assert(currentLiveDocs.Length() == docCount);
+                        Debug.Assert(prevLiveDocs.Length == docCount);
+                        Debug.Assert(currentLiveDocs.Length == docCount);
 
                         // There were deletes on this segment when the merge
                         // started.  The merge has collapsed away those
@@ -4231,7 +4231,7 @@ namespace Lucene.Net.Index
                     }
                     else if (currentLiveDocs != null)
                     {
-                        Debug.Assert(currentLiveDocs.Length() == docCount);
+                        Debug.Assert(currentLiveDocs.Length == docCount);
                         // this segment had no deletes before but now it
                         // does:
                         for (int j = 0; j < docCount; j++)

@@ -783,7 +783,7 @@ namespace Lucene.Net.Index
                         else
                         {
                             int numLive = 0;
-                            for (int j = 0; j < liveDocs.Length(); j++)
+                            for (int j = 0; j < liveDocs.Length; j++)
                             {
                                 if (liveDocs.Get(j))
                                 {
@@ -809,7 +809,7 @@ namespace Lucene.Net.Index
                         if (liveDocs != null)
                         {
                             // its ok for it to be non-null here, as long as none are set right?
-                            for (int j = 0; j < liveDocs.Length(); j++)
+                            for (int j = 0; j < liveDocs.Length; j++)
                             {
                                 if (!liveDocs.Get(j))
                                 {
@@ -1970,9 +1970,9 @@ namespace Lucene.Net.Index
             {
                 throw new Exception(fi.Name + " docsWithField does not exist");
             }
-            else if (docsWithField.Length() != reader.MaxDoc)
+            else if (docsWithField.Length != reader.MaxDoc)
             {
-                throw new Exception(fi.Name + " docsWithField has incorrect length: " + docsWithField.Length() + ",expected: " + reader.MaxDoc);
+                throw new Exception(fi.Name + " docsWithField has incorrect length: " + docsWithField.Length + ",expected: " + reader.MaxDoc);
             }
             switch (fi.DocValuesType)
             {

@@ -1878,9 +1878,9 @@ namespace Lucene.Net.Search
                     return offsetReader.Get(index) != 0;
                 }
 
-                public virtual int Length()
+                public virtual int Length
                 {
-                    return maxDoc;
+                    get { return maxDoc; }
                 }
             }
         }

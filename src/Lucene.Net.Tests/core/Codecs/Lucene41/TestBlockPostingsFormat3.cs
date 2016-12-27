@@ -562,9 +562,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 return Bits.Get(index);
             }
 
-            public int Length()
+            public int Length
             {
-                return Bits.Length();
+                get { return Bits.Length; }
             }
         }
     }

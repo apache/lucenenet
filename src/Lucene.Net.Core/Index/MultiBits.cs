@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    b.Append("s=" + starts[i] + " l=" + subs[i].Length() + " b=" + subs[i]);
+                    b.Append("s=" + starts[i] + " l=" + subs[i].Length + " b=" + subs[i]);
                 }
             }
             b.Append(" end=" + starts[subs.Length]);
@@ -129,9 +129,9 @@ namespace Lucene.Net.Index
             return subResult;
         }
 
-        public int Length()
+        public int Length
         {
-            return starts[starts.Length - 1];
+            get { return starts[starts.Length - 1]; } // LUCENENET TODO: Will throw exception if array is empty
         }
     }
 }
