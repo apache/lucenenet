@@ -150,28 +150,28 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// number of temporary files created when merging partitions </summary>
-            public int TempMergeFiles; // LUCENENET TODO: make property
+            public int TempMergeFiles { get; set; }
             /// <summary>
             /// number of partition merges </summary>
-            public int MergeRounds; // LUCENENET TODO: make property
+            public int MergeRounds { get; set; }
             /// <summary>
             /// number of lines of data read </summary>
-            public int Lines; // LUCENENET TODO: make property
+            public int Lines { get; set; }
             /// <summary>
             /// time spent merging sorted partitions (in milliseconds) </summary>
-            public long MergeTime; // LUCENENET TODO: make property
+            public long MergeTime { get; set; }
             /// <summary>
             /// time spent sorting data (in milliseconds) </summary>
-            public long SortTime; // LUCENENET TODO: make property
+            public long SortTime { get; set; }
             /// <summary>
             /// total time spent (in milliseconds) </summary>
-            public long TotalTime; // LUCENENET TODO: make property
+            public long TotalTime { get; set; }
             /// <summary>
             /// time spent in i/o read (in milliseconds) </summary>
-            public long ReadTime; // LUCENENET TODO: make property
+            public long ReadTime { get; set; }
             /// <summary>
             /// read buffer size (in bytes) </summary>
-            public long BufferSize; // LUCENENET TODO: make property
+            public long BufferSize { get; set; }
 
             /// <summary>
             /// create a new SortInfo (with empty statistics) for debugging </summary>
@@ -492,8 +492,8 @@ namespace Lucene.Net.Util
 
         internal class FileAndTop
         {
-            internal readonly int Fd; // LUCENENET TODO: make property
-            internal readonly BytesRef Current; // LUCENENET TODO: make property
+            internal int Fd { get; private set; }
+            internal BytesRef Current { get; private set; }
 
             internal FileAndTop(int fd, byte[] firstLine)
             {

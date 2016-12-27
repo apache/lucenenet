@@ -24,13 +24,6 @@ namespace Lucene.Net.Util
     * limitations under the License.
     */
 
-
-    //LUCENE PORT NOTE: The corresponding file was left out of the port due to being experimental on not porting properly
-    
-    //using BufferSize = Lucene.Net.Util.OfflineSorter.BufferSize;
-    //using ByteSequencesWriter = Lucene.Net.Util.OfflineSorter.ByteSequencesWriter;
-    //using SortInfo = Lucene.Net.Util.OfflineSorter.SortInfo;
-
     /// <summary>
     /// Tests for on-disk merge sorting.
     /// </summary>
