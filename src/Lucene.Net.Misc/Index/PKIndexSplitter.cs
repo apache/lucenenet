@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
 
         private class DocumentFilteredAtomicIndexReader : FilterAtomicReader
         {
-            internal readonly Bits liveDocs;
+            internal readonly IBits liveDocs;
             internal readonly int numDocs_Renamed;
 
             public DocumentFilteredAtomicIndexReader(AtomicReaderContext context, Filter preserveFilter, bool negateFilter)
@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
 
                 if (input.HasDeletions)
                 {
-                    Bits oldLiveDocs = input.LiveDocs;
+                    IBits oldLiveDocs = input.LiveDocs;
                     Debug.Assert(oldLiveDocs != null);
                     DocIdSetIterator it = bits.GetIterator();
                     for (int i = it.NextDoc(); i < maxDoc; i = it.NextDoc())
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
                 get { return numDocs_Renamed; }
             }
 
-            public override Bits LiveDocs
+            public override IBits LiveDocs
             {
                 get
                 {

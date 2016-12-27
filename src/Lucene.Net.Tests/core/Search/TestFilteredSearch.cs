@@ -21,7 +21,7 @@ namespace Lucene.Net.Search
 {
     using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Documents.Document;
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search
                 this.Docs = docs;
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 Assert.IsNull(acceptDocs, "acceptDocs should be null, as we have an index without deletions");
                 FixedBitSet set = new FixedBitSet(context.Reader.MaxDoc);

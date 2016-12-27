@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Lucene40
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DataInput = Lucene.Net.Store.DataInput;
     using Directory = Lucene.Net.Store.Directory;
@@ -212,7 +212,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState termState, Bits liveDocs, DocsEnum reuse, int flags)
+        public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsEnum reuse, int flags)
         {
             if (CanReuse(reuse, liveDocs))
             {
@@ -222,7 +222,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return NewDocsEnum(liveDocs, fieldInfo, (StandardTermState)termState);
         }
 
-        private bool CanReuse(DocsEnum reuse, Bits liveDocs)
+        private bool CanReuse(DocsEnum reuse, IBits liveDocs)
         {
             if (reuse != null && (reuse is SegmentDocsEnumBase))
             {
@@ -239,7 +239,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return false;
         }
 
-        private DocsEnum NewDocsEnum(Bits liveDocs, FieldInfo fieldInfo, StandardTermState termState)
+        private DocsEnum NewDocsEnum(IBits liveDocs, FieldInfo fieldInfo, StandardTermState termState)
         {
             if (liveDocs == null)
             {
@@ -251,7 +251,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState termState, Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+        public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
         {
             bool hasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 
@@ -332,9 +332,9 @@ namespace Lucene.Net.Codecs.Lucene40
             protected internal long SkipOffset;
 
             protected internal bool Skipped;
-            protected internal readonly Bits LiveDocs;
+            protected internal readonly IBits LiveDocs;
 
-            internal SegmentDocsEnumBase(Lucene40PostingsReader outerInstance, IndexInput startFreqIn, Bits liveDocs)
+            internal SegmentDocsEnumBase(Lucene40PostingsReader outerInstance, IndexInput startFreqIn, IBits liveDocs)
             {
                 this.OuterInstance = outerInstance;
                 this.StartFreqIn = startFreqIn;
@@ -640,7 +640,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             private readonly Lucene40PostingsReader OuterInstance;
 
-            internal LiveDocsSegmentDocsEnum(Lucene40PostingsReader outerInstance, IndexInput startFreqIn, Bits liveDocs)
+            internal LiveDocsSegmentDocsEnum(Lucene40PostingsReader outerInstance, IndexInput startFreqIn, IBits liveDocs)
                 : base(outerInstance, startFreqIn, liveDocs)
             {
                 this.OuterInstance = outerInstance;
@@ -649,7 +649,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override int NextDoc()
             {
-                Bits liveDocs = this.LiveDocs;
+                IBits liveDocs = this.LiveDocs;
                 for (int i = Start + 1; i < Count; i++)
                 {
                     int d = Docs[i];
@@ -668,7 +668,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 int[] docs = this.Docs;
                 int upTo = Count;
-                Bits liveDocs = this.LiveDocs;
+                IBits liveDocs = this.LiveDocs;
                 for (int i = Start; i < upTo; i++)
                 {
                     int d = docs[i];
@@ -689,7 +689,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 IndexInput freqIn = this.FreqIn;
                 bool omitTF = IndexOmitsTF;
                 int loopLimit = Limit;
-                Bits liveDocs = this.LiveDocs;
+                IBits liveDocs = this.LiveDocs;
                 for (int i = Ord; i < loopLimit; i++)
                 {
                     int code = freqIn.ReadVInt();
@@ -722,7 +722,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 IndexInput freqIn = this.FreqIn;
                 bool omitTF = IndexOmitsTF;
                 int loopLimit = Limit;
-                Bits liveDocs = this.LiveDocs;
+                IBits liveDocs = this.LiveDocs;
                 for (int i = Ord; i < loopLimit; i++)
                 {
                     int code = freqIn.ReadVInt();
@@ -766,7 +766,7 @@ namespace Lucene.Net.Codecs.Lucene40
             internal int Freq_Renamed; // freq we last read
             internal int Position;
 
-            internal Bits LiveDocs;
+            internal IBits LiveDocs;
 
             internal long FreqOffset;
             internal long SkipOffset;
@@ -786,7 +786,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.ProxIn = (IndexInput)proxIn.Clone();
             }
 
-            public SegmentDocsAndPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, Bits liveDocs)
+            public SegmentDocsAndPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, IBits liveDocs)
             {
                 Debug.Assert(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
                 Debug.Assert(!fieldInfo.HasPayloads);
@@ -990,7 +990,7 @@ namespace Lucene.Net.Codecs.Lucene40
             internal int Freq_Renamed; // freq we last read
             internal int Position;
 
-            internal Bits LiveDocs;
+            internal IBits LiveDocs;
 
             internal long FreqOffset;
             internal long SkipOffset;
@@ -1019,7 +1019,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.ProxIn = (IndexInput)proxIn.Clone();
             }
 
-            public virtual SegmentFullPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, Bits liveDocs)
+            public virtual SegmentFullPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, IBits liveDocs)
             {
                 StoreOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
                 StorePayloads = fieldInfo.HasPayloads;

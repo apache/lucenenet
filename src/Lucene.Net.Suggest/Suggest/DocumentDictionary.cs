@@ -117,7 +117,7 @@ namespace Lucene.Net.Search.Suggest
             private readonly HashSet<string> relevantFields;
             private readonly bool hasPayloads;
             private readonly bool hasContexts;
-            private readonly Bits liveDocs;
+            private readonly IBits liveDocs;
             private int currentDocId = -1;
             private long currentWeight;
             private BytesRef currentPayload;

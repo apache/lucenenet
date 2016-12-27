@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BinaryDocValuesField = BinaryDocValuesField;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CannedTokenStream = Lucene.Net.Analysis.CannedTokenStream;
     using Directory = Lucene.Net.Store.Directory;
@@ -820,7 +820,7 @@ namespace Lucene.Net.Index
                     Assert.AreEqual(expected, reader.DocFreq(new Term("contents", "here")));
                     Assert.AreEqual(expected, reader.MaxDoc);
                     int numDel = 0;
-                    Bits liveDocs = MultiFields.GetLiveDocs(reader);
+                    IBits liveDocs = MultiFields.GetLiveDocs(reader);
                     Assert.IsNotNull(liveDocs);
                     for (int j = 0; j < reader.MaxDoc; j++)
                     {
@@ -921,7 +921,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(expected, reader.DocFreq(new Term("contents", "here")), "i=" + i);
                 Assert.AreEqual(expected, reader.MaxDoc);
                 int numDel = 0;
-                Bits liveDocs = MultiFields.GetLiveDocs(reader);
+                IBits liveDocs = MultiFields.GetLiveDocs(reader);
                 Assert.IsNotNull(liveDocs);
                 for (int j = 0; j < reader.MaxDoc; j++)
                 {
@@ -2270,7 +2270,7 @@ namespace Lucene.Net.Index
                     foreach (AtomicReaderContext context in ir.Leaves)
                     {
                         AtomicReader reader = context.AtomicReader;
-                        Bits liveDocs = reader.LiveDocs;
+                        IBits liveDocs = reader.LiveDocs;
                         NumericDocValues f = reader.GetNumericDocValues("f");
                         NumericDocValues cf = reader.GetNumericDocValues("cf");
                         BinaryDocValues bf = reader.GetBinaryDocValues("bf");

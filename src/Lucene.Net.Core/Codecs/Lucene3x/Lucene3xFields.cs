@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Lucene3x
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
@@ -1077,7 +1077,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return -1;
             }
 
-            public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
                 PreDocsEnum docsEnum;
                 if (reuse == null || !(reuse is PreDocsEnum))
@@ -1095,7 +1095,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return docsEnum.Reset(TermEnum, liveDocs);
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
                 PreDocsAndPositionsEnum docsPosEnum;
                 if (fieldInfo.IndexOptions != IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
@@ -1139,7 +1139,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public PreDocsEnum Reset(SegmentTermEnum termEnum, Bits liveDocs)
+            public PreDocsEnum Reset(SegmentTermEnum termEnum, IBits liveDocs)
             {
                 Docs.LiveDocs = liveDocs;
                 Docs.Seek(termEnum);
@@ -1209,7 +1209,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public DocsAndPositionsEnum Reset(SegmentTermEnum termEnum, Bits liveDocs)
+            public DocsAndPositionsEnum Reset(SegmentTermEnum termEnum, IBits liveDocs)
             {
                 Pos.LiveDocs = liveDocs;
                 Pos.Seek(termEnum);

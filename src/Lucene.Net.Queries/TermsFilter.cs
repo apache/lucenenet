@@ -221,7 +221,7 @@ namespace Lucene.Net.Queries
 
         }
 
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             AtomicReader reader = context.AtomicReader;
             FixedBitSet result = null; // lazy init if needed - no need to create a big bitset ahead of time

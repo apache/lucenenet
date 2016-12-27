@@ -292,7 +292,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        internal Bits RandomLiveDocs(int maxDoc)
+        internal IBits RandomLiveDocs(int maxDoc)
         {
             if (Rarely())
             {
@@ -302,7 +302,7 @@ namespace Lucene.Net.Index.Sorter
                 }
                 else
                 {
-                    return new Bits_MatchNoBits(maxDoc);
+                    return new Bits.MatchNoBits(maxDoc);
                 }
             }
             FixedBitSet bits = new FixedBitSet(maxDoc);
@@ -325,7 +325,7 @@ namespace Lucene.Net.Index.Sorter
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestDocsEnum()
         {
-            Bits mappedLiveDocs = RandomLiveDocs(reader.MaxDoc);
+            IBits mappedLiveDocs = RandomLiveDocs(reader.MaxDoc);
             TermsEnum termsEnum = reader.Terms(DOCS_ENUM_FIELD).Iterator(null);
             assertEquals(TermsEnum.SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef(DOCS_ENUM_TERM)));
             DocsEnum docs = termsEnum.Docs(mappedLiveDocs, null);

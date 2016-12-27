@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Lucene40
      */
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
@@ -317,7 +317,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             int docCount = 0;
             int maxDoc = reader.MaxDoc;
-            Bits liveDocs = reader.LiveDocs;
+            IBits liveDocs = reader.LiveDocs;
             Debug.Assert(liveDocs != null);
             if (matchingFieldsReader != null)
             {

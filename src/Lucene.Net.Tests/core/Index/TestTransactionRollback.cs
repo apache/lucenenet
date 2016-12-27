@@ -7,7 +7,7 @@ namespace Lucene.Net.Index
 {
     using Lucene.Net.Support;
     using NUnit.Framework;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
 
             //Perhaps not the most efficient approach but meets our
             //needs here.
-            Bits liveDocs = MultiFields.GetLiveDocs(r);
+            IBits liveDocs = MultiFields.GetLiveDocs(r);
             for (int i = 0; i < r.MaxDoc; i++)
             {
                 if (liveDocs == null || liveDocs.Get(i))

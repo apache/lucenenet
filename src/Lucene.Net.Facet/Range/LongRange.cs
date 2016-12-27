@@ -20,7 +20,7 @@ namespace Lucene.Net.Facet.Range
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Filter = Lucene.Net.Search.Filter;
@@ -136,7 +136,7 @@ namespace Lucene.Net.Facet.Range
                 return "Filter(" + outerInstance.ToString() + ")";
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
 
                 // TODO: this is just like ValueSourceScorer,
@@ -148,7 +148,7 @@ namespace Lucene.Net.Facet.Range
 
                 int maxDoc = context.Reader.MaxDoc;
 
-                Bits fastMatchBits;
+                IBits fastMatchBits;
                 if (fastMatchFilter != null)
                 {
                     DocIdSet dis = fastMatchFilter.GetDocIdSet(context, null);
@@ -175,12 +175,12 @@ namespace Lucene.Net.Facet.Range
             {
                 private readonly FilterAnonymousInnerClassHelper outerInstance;
 
-                private readonly Bits acceptDocs;
+                private readonly IBits acceptDocs;
                 private readonly FunctionValues values;
                 private readonly int maxDoc;
-                private readonly Bits fastMatchBits;
+                private readonly IBits fastMatchBits;
 
-                public DocIdSetAnonymousInnerClassHelper(FilterAnonymousInnerClassHelper outerInstance, Bits acceptDocs, FunctionValues values, int maxDoc, Bits fastMatchBits)
+                public DocIdSetAnonymousInnerClassHelper(FilterAnonymousInnerClassHelper outerInstance, IBits acceptDocs, FunctionValues values, int maxDoc, IBits fastMatchBits)
                 {
                     this.outerInstance = outerInstance;
                     this.acceptDocs = acceptDocs;
@@ -190,12 +190,12 @@ namespace Lucene.Net.Facet.Range
                 }
 
 
-                public override Bits GetBits()
+                public override IBits GetBits()
                 {
                     return new BitsAnonymousInnerClassHelper(this);
                 }
 
-                private class BitsAnonymousInnerClassHelper : Bits
+                private class BitsAnonymousInnerClassHelper : IBits
                 {
                     private readonly DocIdSetAnonymousInnerClassHelper outerInstance;
 

@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Lucene40
      */
 
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
@@ -876,9 +876,9 @@ namespace Lucene.Net.Codecs.Lucene40
             throw new InvalidOperationException("Lucene 4.0 does not support SortedSet: how did you pull this off?");
         }
 
-        public override Bits GetDocsWithField(FieldInfo field)
+        public override IBits GetDocsWithField(FieldInfo field)
         {
-            return new Lucene.Net.Util.Bits_MatchAllBits(State.SegmentInfo.DocCount);
+            return new Lucene.Net.Util.Bits.MatchAllBits(State.SegmentInfo.DocCount);
         }
 
         protected override void Dispose(bool disposing)

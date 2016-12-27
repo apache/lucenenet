@@ -6,7 +6,7 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using NUnit.Framework;
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
             return false;
         }
 
-        public static void PrintDelDocs(Bits bits)
+        public static void PrintDelDocs(IBits bits)
         {
             if (bits == null)
             {
@@ -242,7 +242,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual int[] ToDocsArray(Term term, Bits bits, IndexReader reader)
+        public virtual int[] ToDocsArray(Term term, IBits bits, IndexReader reader)
         {
             Fields fields = MultiFields.GetFields(reader);
             Terms cterms = fields.Terms(term.Field);

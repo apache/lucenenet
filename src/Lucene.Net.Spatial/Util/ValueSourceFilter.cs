@@ -49,7 +49,7 @@ namespace Lucene.Net.Spatial.Util
             this.max = max;
         }
 
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             var values = source.GetValues(null, context);
             return new ValueSourceFilteredDocIdSet(this, startingFilter.GetDocIdSet(context, acceptDocs), values);

@@ -18,7 +18,7 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             SortedDocValues fcsi = FieldCache.GetTermsIndex((context.AtomicReader), field);
             FixedBitSet bits = new FixedBitSet(fcsi.ValueCount);
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
             private SortedDocValues fcsi;
             private FixedBitSet bits;
 
-            public FieldCacheDocIdSetAnonymousInnerClassHelper(FieldCacheTermsFilter outerInstance, int maxDoc, Bits acceptDocs, SortedDocValues fcsi, FixedBitSet bits)
+            public FieldCacheDocIdSetAnonymousInnerClassHelper(FieldCacheTermsFilter outerInstance, int maxDoc, IBits acceptDocs, SortedDocValues fcsi, FixedBitSet bits)
                 : base(maxDoc, acceptDocs)
             {
                 this.outerInstance = outerInstance;

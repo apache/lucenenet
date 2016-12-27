@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.Lucene41
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
     using Directory = Lucene.Net.Store.Directory;
@@ -337,7 +337,7 @@ namespace Lucene.Net.Codecs.Lucene41
         public virtual void AssertTermsEnum(TermsEnum leftTermsEnum, TermsEnum rightTermsEnum, bool deep)
         {
             BytesRef term;
-            Bits randomBits = new RandomBits(MAXDOC, Random().NextDouble(), Random());
+            IBits randomBits = new RandomBits(MAXDOC, Random().NextDouble(), Random());
             DocsAndPositionsEnum leftPositions = null;
             DocsAndPositionsEnum rightPositions = null;
             DocsEnum leftDocs = null;
@@ -541,7 +541,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
-        private class RandomBits : Bits
+        private class RandomBits : IBits
         {
             internal FixedBitSet Bits;
 

@@ -10,7 +10,7 @@ namespace Lucene.Net.Search
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
 
@@ -342,7 +342,7 @@ namespace Lucene.Net.Search
                 this.DocValues = docValues;
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 int maxDoc = context.Reader.MaxDoc;
                 FieldCache.Ints idSource = FieldCache.DEFAULT.GetInts(context.AtomicReader, "id", false);

@@ -21,7 +21,7 @@ namespace Lucene.Net.Search.Payloads
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using NearSpansOrdered = Lucene.Net.Search.Spans.NearSpansOrdered;
     using NearSpansUnordered = Lucene.Net.Search.Spans.NearSpansUnordered;
@@ -167,7 +167,7 @@ namespace Lucene.Net.Search.Payloads
                 this.outerInstance = outerInstance;
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 return new PayloadNearSpanScorer(outerInstance, m_query.GetSpans(context, acceptDocs, m_termContexts), this, m_similarity, m_similarity.GetSimScorer(m_stats, context));
             }

@@ -229,7 +229,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
-        public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState termState, Bits liveDocs, DocsEnum reuse, int flags)
+        public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsEnum reuse, int flags)
         {
             BlockDocsEnum docsEnum;
             if (reuse is BlockDocsEnum)
@@ -249,7 +249,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
         // TODO: specialize to liveDocs vs not
 
-        public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState termState, Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+        public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
         {
             bool indexHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             bool indexHasPayloads = fieldInfo.HasPayloads;
@@ -331,7 +331,7 @@ namespace Lucene.Net.Codecs.Lucene41
             // target docID is not larger than this
             private int NextSkipDoc;
 
-            private Bits LiveDocs;
+            private IBits LiveDocs;
 
             private bool NeedsFreq; // true if the caller actually needs frequencies
             private int SingletonDocID; // docid when there is a single pulsed posting, otherwise -1
@@ -353,7 +353,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 return docIn == StartDocIn && IndexHasFreq == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS) && IndexHasPos == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) && IndexHasPayloads == fieldInfo.HasPayloads;
             }
 
-            public DocsEnum Reset(Bits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState, int flags)
+            public DocsEnum Reset(IBits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState, int flags)
             {
                 this.LiveDocs = liveDocs;
                 // if (DEBUG) {
@@ -656,7 +656,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             private int NextSkipDoc;
 
-            private Bits LiveDocs;
+            private IBits LiveDocs;
             private int SingletonDocID; // docid when there is a single pulsed posting, otherwise -1
 
             public BlockDocsAndPositionsEnum(Lucene41PostingsReader outerInstance, FieldInfo fieldInfo)
@@ -675,7 +675,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 return docIn == StartDocIn && IndexHasOffsets == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && IndexHasPayloads == fieldInfo.HasPayloads;
             }
 
-            public DocsAndPositionsEnum Reset(Bits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState)
+            public DocsAndPositionsEnum Reset(IBits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState)
             {
                 this.LiveDocs = liveDocs;
                 // if (DEBUG) {
@@ -1141,7 +1141,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             private int NextSkipDoc;
 
-            private Bits LiveDocs;
+            private IBits LiveDocs;
 
             private bool NeedsOffsets; // true if we actually need offsets
             private bool NeedsPayloads; // true if we actually need payloads
@@ -1189,7 +1189,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 return docIn == StartDocIn && IndexHasOffsets == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && IndexHasPayloads == fieldInfo.HasPayloads;
             }
 
-            public EverythingEnum Reset(Bits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState, int flags)
+            public EverythingEnum Reset(IBits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState, int flags)
             {
                 this.LiveDocs = liveDocs;
                 // if (DEBUG) {

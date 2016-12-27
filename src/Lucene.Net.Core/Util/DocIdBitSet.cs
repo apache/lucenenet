@@ -26,7 +26,7 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Simple DocIdSet and DocIdSetIterator backed by a BitSet 
     /// </summary>
-    public class DocIdBitSet : DocIdSet, Bits
+    public class DocIdBitSet : DocIdSet, IBits
     {
         private readonly BitArray bitSet;
 
@@ -40,7 +40,7 @@ namespace Lucene.Net.Util
             return new DocIdBitSetIterator(bitSet);
         }
 
-        public override Bits GetBits()
+        public override IBits GetBits()
         {
             return this;
         }

@@ -1963,7 +1963,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        internal class RandomBits : Bits
+        internal class RandomBits : IBits
         {
             private static FixedBitSet bits;
 
@@ -1997,7 +1997,7 @@ namespace Lucene.Net.Util
         public void AssertTermsEnumEquals(string info, IndexReader leftReader, TermsEnum leftTermsEnum, TermsEnum rightTermsEnum, bool deep)
         {
             BytesRef term;
-            Bits randomBits = new RandomBits(leftReader.MaxDoc, Random().NextDouble(), Random());
+            IBits randomBits = new RandomBits(leftReader.MaxDoc, Random().NextDouble(), Random());
             DocsAndPositionsEnum leftPositions = null;
             DocsAndPositionsEnum rightPositions = null;
             DocsEnum leftDocs = null;
@@ -2505,8 +2505,8 @@ namespace Lucene.Net.Util
                 }
 
                 {
-                    Bits leftBits = MultiDocValues.GetDocsWithField(leftReader, field);
-                    Bits rightBits = MultiDocValues.GetDocsWithField(rightReader, field);
+                    IBits leftBits = MultiDocValues.GetDocsWithField(leftReader, field);
+                    IBits rightBits = MultiDocValues.GetDocsWithField(rightReader, field);
                     if (leftBits != null && rightBits != null)
                     {
                         Assert.AreEqual(leftBits.Length(), rightBits.Length(), info);
@@ -2538,8 +2538,8 @@ namespace Lucene.Net.Util
         public void AssertDeletedDocsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
             Debug.Assert(leftReader.NumDeletedDocs == rightReader.NumDeletedDocs);
-            Bits leftBits = MultiFields.GetLiveDocs(leftReader);
-            Bits rightBits = MultiFields.GetLiveDocs(rightReader);
+            IBits leftBits = MultiFields.GetLiveDocs(leftReader);
+            IBits rightBits = MultiFields.GetLiveDocs(rightReader);
 
             if (leftBits == null || rightBits == null)
             {

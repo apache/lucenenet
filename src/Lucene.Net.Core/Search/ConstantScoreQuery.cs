@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Term = Lucene.Net.Index.Term;
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
+            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
                 //DocIdSetIterator disi;
                 if (outerInstance.m_filter != null)
@@ -193,7 +193,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 DocIdSetIterator disi;
                 if (outerInstance.m_filter != null)

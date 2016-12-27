@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
             {
             }
 
-            public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
                 Debug.Assert(State == State_e.POSITIONED, "docs(...) called on unpositioned TermsEnum");
 
@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
                 return docs == null ? null : new AssertingDocsEnum(docs);
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
                 Debug.Assert(State == State_e.POSITIONED, "docsAndPositions(...) called on unpositioned TermsEnum");
 
@@ -722,11 +722,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Wraps a Bits but with additional asserts </summary>
-        public class AssertingBits : Bits
+        public class AssertingBits : IBits
         {
-            internal readonly Bits @in;
+            internal readonly IBits @in;
 
-            public AssertingBits(Bits @in)
+            public AssertingBits(IBits @in)
             {
                 this.@in = @in;
             }
@@ -743,11 +743,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override Bits LiveDocs
+        public override IBits LiveDocs
         {
             get
             {
-                Bits liveDocs = base.LiveDocs;
+                IBits liveDocs = base.LiveDocs;
                 if (liveDocs != null)
                 {
                     Debug.Assert(MaxDoc == liveDocs.Length());
@@ -762,9 +762,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override Bits GetDocsWithField(string field)
+        public override IBits GetDocsWithField(string field)
         {
-            Bits docsWithField = base.GetDocsWithField(field);
+            IBits docsWithField = base.GetDocsWithField(field);
             FieldInfo fi = FieldInfos.FieldInfo(field);
             if (docsWithField != null)
             {

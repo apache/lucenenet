@@ -171,7 +171,7 @@ namespace Lucene.Net.Codecs.Sep
             }
         }
 
-        public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState bTermState, Bits liveDocs, DocsEnum reuse,
+        public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState bTermState, IBits liveDocs, DocsEnum reuse,
             int flags)
         {
             var termState = (SepTermState)bTermState;
@@ -197,7 +197,7 @@ namespace Lucene.Net.Codecs.Sep
         }
 
         public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState bTermState,
-            Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
         {
 
             Debug.Assert(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
@@ -319,7 +319,7 @@ namespace Lucene.Net.Codecs.Sep
             private bool _omitTf;
             private IndexOptions _indexOptions;
             private bool _storePayloads;
-            private Bits _liveDocs;
+            private IBits _liveDocs;
             private readonly IntIndexInputReader _docReader;
             private readonly IntIndexInputReader _freqReader;
             private long _skipFp;
@@ -355,7 +355,7 @@ namespace Lucene.Net.Codecs.Sep
                 START_DOC_IN = outerInstance._docIn;
             }
 
-            internal virtual SepDocsEnum Init(FieldInfo fieldInfo, SepTermState termState, Bits liveDocs)
+            internal virtual SepDocsEnum Init(FieldInfo fieldInfo, SepTermState termState, IBits liveDocs)
             {
                 _liveDocs = liveDocs;
                 if (fieldInfo.IndexOptions.HasValue)
@@ -501,7 +501,7 @@ namespace Lucene.Net.Codecs.Sep
             private int _freq;
 
             private bool _storePayloads;
-            private Bits _liveDocs;
+            private IBits _liveDocs;
             private readonly IntIndexInputReader _docReader;
             private readonly IntIndexInputReader _freqReader;
             private readonly IntIndexInputReader _posReader;
@@ -540,7 +540,7 @@ namespace Lucene.Net.Codecs.Sep
                 START_DOC_IN = outerInstance._docIn;
             }
 
-            internal virtual SepDocsAndPositionsEnum Init(FieldInfo fieldInfo, SepTermState termState, Bits liveDocs)
+            internal virtual SepDocsAndPositionsEnum Init(FieldInfo fieldInfo, SepTermState termState, IBits liveDocs)
             {
                 _liveDocs = liveDocs;
                 _storePayloads = fieldInfo.HasPayloads;

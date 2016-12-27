@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
      */
 
     using AttributeSource = Lucene.Net.Util.AttributeSource;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
@@ -200,12 +200,12 @@ namespace Lucene.Net.Index
             return tenum.Ord();
         }
 
-        public override DocsEnum Docs(Bits bits, DocsEnum reuse, int flags)
+        public override DocsEnum Docs(IBits bits, DocsEnum reuse, int flags)
         {
             return tenum.Docs(bits, reuse, flags);
         }
 
-        public override DocsAndPositionsEnum DocsAndPositions(Bits bits, DocsAndPositionsEnum reuse, int flags)
+        public override DocsAndPositionsEnum DocsAndPositions(IBits bits, DocsAndPositionsEnum reuse, int flags)
         {
             return tenum.DocsAndPositions(bits, reuse, flags);
         }

@@ -6,7 +6,7 @@ namespace Lucene.Net.Codecs.asserting
     using System;
     using AssertingAtomicReader = Lucene.Net.Index.AssertingAtomicReader;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DocValuesType = Lucene.Net.Index.DocValuesType;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
@@ -316,10 +316,10 @@ namespace Lucene.Net.Codecs.asserting
                 return new AssertingAtomicReader.AssertingSortedSetDocValues(values, MaxDoc);
             }
 
-            public override Bits GetDocsWithField(FieldInfo field)
+            public override IBits GetDocsWithField(FieldInfo field)
             {
                 Debug.Assert(field.DocValuesType != null);
-                Bits bits = @in.GetDocsWithField(field);
+                IBits bits = @in.GetDocsWithField(field);
                 Debug.Assert(bits != null);
                 Debug.Assert(bits.Length() == MaxDoc);
                 return new AssertingAtomicReader.AssertingBits(bits);

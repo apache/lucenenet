@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs.Pulsing
             }
         }
 
-        public override DocsEnum Docs(FieldInfo field, BlockTermState _termState, Bits liveDocs, DocsEnum reuse,
+        public override DocsEnum Docs(FieldInfo field, BlockTermState _termState, IBits liveDocs, DocsEnum reuse,
             int flags)
         {
             var termState = (PulsingTermState) _termState;
@@ -197,7 +197,7 @@ namespace Lucene.Net.Codecs.Pulsing
             return wrapped;
         }
 
-        public override DocsAndPositionsEnum DocsAndPositions(FieldInfo field, BlockTermState _termState, Bits liveDocs,
+        public override DocsAndPositionsEnum DocsAndPositions(FieldInfo field, BlockTermState _termState, IBits liveDocs,
             DocsAndPositionsEnum reuse,
             int flags)
         {
@@ -372,7 +372,7 @@ namespace Lucene.Net.Codecs.Pulsing
             private readonly IndexOptions? _indexOptions;
             private readonly bool _storePayloads;
             private readonly bool _storeOffsets;
-            private Bits _liveDocs;
+            private IBits _liveDocs;
 
             private int _docId = -1;
             private int _accum;
@@ -387,7 +387,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 _storeOffsets = _indexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
-            public PulsingDocsEnum Reset(Bits liveDocs, PulsingTermState termState)
+            public PulsingDocsEnum Reset(IBits liveDocs, PulsingTermState termState)
             {
                 Debug.Assert(termState.PostingsSize != -1);
 
@@ -509,7 +509,7 @@ namespace Lucene.Net.Codecs.Pulsing
             // and re-init'ed storeOffsets accordingly (made it non-final)
             private readonly IndexOptions? _indexOptions;
 
-            private Bits _liveDocs;
+            private IBits _liveDocs;
             private int _docId = -1;
             private int _accum;
             private int _freq;
@@ -531,7 +531,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     _indexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
-            public PulsingDocsAndPositionsEnum Reset(Bits liveDocs, PulsingTermState termState)
+            public PulsingDocsAndPositionsEnum Reset(IBits liveDocs, PulsingTermState termState)
             {
                 Debug.Assert(termState.PostingsSize != -1);
 

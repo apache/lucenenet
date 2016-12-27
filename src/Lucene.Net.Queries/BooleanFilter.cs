@@ -43,7 +43,7 @@ namespace Lucene.Net.Queries
         /// Returns the a DocIdSetIterator representing the Boolean composition
         /// of the filters that have been added.
         /// </summary>
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             FixedBitSet res = null;
             AtomicReader reader = context.AtomicReader;

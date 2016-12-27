@@ -17,7 +17,7 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
     /// Abstract decorator class for a DocIdSet implementation
@@ -59,19 +59,19 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override Bits GetBits()
+        public override IBits GetBits()
         {
-            Bits bits = innerSet.GetBits();
+            IBits bits = innerSet.GetBits();
             return (bits == null) ? null : new BitsAnonymousInnerClassHelper(this, bits);
         }
 
-        private class BitsAnonymousInnerClassHelper : Bits
+        private class BitsAnonymousInnerClassHelper : IBits
         {
             private readonly FilteredDocIdSet outerInstance;
 
-            private Bits bits;
+            private IBits bits;
 
-            public BitsAnonymousInnerClassHelper(FilteredDocIdSet outerInstance, Bits bits)
+            public BitsAnonymousInnerClassHelper(FilteredDocIdSet outerInstance, IBits bits)
             {
                 this.outerInstance = outerInstance;
                 this.bits = bits;

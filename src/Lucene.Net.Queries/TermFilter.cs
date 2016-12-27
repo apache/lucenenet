@@ -52,7 +52,7 @@ namespace Lucene.Net.Queries
             }
         }
 
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             Terms terms = context.AtomicReader.Terms(term.Field);
             if (terms == null)
@@ -70,10 +70,10 @@ namespace Lucene.Net.Queries
 
         private class DocIdSetAnonymousInnerClassHelper : DocIdSet
         {
-            private readonly Bits acceptDocs;
+            private readonly IBits acceptDocs;
             private readonly TermsEnum termsEnum;
 
-            public DocIdSetAnonymousInnerClassHelper(Bits acceptDocs, TermsEnum termsEnum)
+            public DocIdSetAnonymousInnerClassHelper(IBits acceptDocs, TermsEnum termsEnum)
             {
                 this.acceptDocs = acceptDocs;
                 this.termsEnum = termsEnum;

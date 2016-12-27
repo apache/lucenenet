@@ -20,13 +20,13 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
-    using Bits_MatchAllBits = Lucene.Net.Util.Bits_MatchAllBits;
-    using Bits_MatchNoBits = Lucene.Net.Util.Bits_MatchNoBits;
+    using IBits = Lucene.Net.Util.IBits;
+    using MatchAllBits = Lucene.Net.Util.Bits.MatchAllBits;
+    using MatchNoBits = Lucene.Net.Util.Bits.MatchNoBits;
 
     /// <summary>
     /// A <seealso cref="Filter"/> that accepts all documents that have one or more values in a
-    /// given field. this <seealso cref="Filter"/> request <seealso cref="Bits"/> from the
+    /// given field. this <seealso cref="Filter"/> request <seealso cref="IBits"/> from the
     /// <seealso cref="IFieldCache"/> and build the bits if not present.
     /// </summary>
     public class FieldValueFilter : Filter
@@ -75,12 +75,12 @@ namespace Lucene.Net.Search
             get { return negate; }
         }
 
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
-            Bits docsWithField = FieldCache.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader), field);
+            IBits docsWithField = FieldCache.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader), field);
             if (negate)
             {
-                if (docsWithField is Bits_MatchAllBits)
+                if (docsWithField is MatchAllBits)
                 {
                     return null;
                 }
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                if (docsWithField is Bits_MatchNoBits)
+                if (docsWithField is MatchNoBits)
                 {
                     return null;
                 }
@@ -106,9 +106,9 @@ namespace Lucene.Net.Search
         {
             private readonly FieldValueFilter outerInstance;
 
-            private Bits docsWithField;
+            private IBits docsWithField;
 
-            public FieldCacheDocIdSetAnonymousInnerClassHelper(FieldValueFilter outerInstance, int maxDoc, Bits acceptDocs, Bits docsWithField)
+            public FieldCacheDocIdSetAnonymousInnerClassHelper(FieldValueFilter outerInstance, int maxDoc, IBits acceptDocs, IBits docsWithField)
                 : base(maxDoc, acceptDocs)
             {
                 this.outerInstance = outerInstance;
@@ -125,9 +125,9 @@ namespace Lucene.Net.Search
         {
             private readonly FieldValueFilter outerInstance;
 
-            private readonly Bits docsWithField;
+            private readonly IBits docsWithField;
 
-            public FieldCacheDocIdSetAnonymousInnerClassHelper2(FieldValueFilter outerInstance, int maxDoc, Bits acceptDocs, Bits docsWithField)
+            public FieldCacheDocIdSetAnonymousInnerClassHelper2(FieldValueFilter outerInstance, int maxDoc, IBits acceptDocs, IBits docsWithField)
                 : base(maxDoc, acceptDocs)
             {
                 this.outerInstance = outerInstance;

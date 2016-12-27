@@ -7,7 +7,7 @@ namespace Lucene.Net.Index
 {
     using NUnit.Framework;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
                     return null;
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+                public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
                 {
                     return new TestPositions(base.DocsAndPositions(liveDocs, reuse == null ? null : ((FilterDocsAndPositionsEnum)reuse).input, flags));
                 }

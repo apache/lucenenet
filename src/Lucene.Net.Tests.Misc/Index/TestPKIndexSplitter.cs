@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
 
         private void CheckContents(IndexReader ir, string indexname)
         {
-            Bits liveDocs = MultiFields.GetLiveDocs(ir);
+            IBits liveDocs = MultiFields.GetLiveDocs(ir);
             for (int i = 0; i < ir.MaxDoc; i++)
             {
                 if (liveDocs == null || liveDocs.Get(i))

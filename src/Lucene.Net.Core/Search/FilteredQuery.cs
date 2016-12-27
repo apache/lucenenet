@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Term = Lucene.Net.Index.Term;
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
             }
 
             // return a filtering scorer
-            public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 Debug.Assert(outerInstance.filter != null);
 
@@ -159,7 +159,7 @@ namespace Lucene.Net.Search
             }
 
             // return a filtering top scorer
-            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
+            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
                 Debug.Assert(outerInstance.filter != null);
 
@@ -184,9 +184,9 @@ namespace Lucene.Net.Search
         {
             private readonly Scorer scorer;
             private int scorerDoc = -1;
-            private readonly Bits filterBits;
+            private readonly IBits filterBits;
 
-            internal QueryFirstScorer(Weight weight, Bits filterBits, Scorer other)
+            internal QueryFirstScorer(Weight weight, IBits filterBits, Scorer other)
                 : base(weight)
             {
                 this.scorer = other;
@@ -251,9 +251,9 @@ namespace Lucene.Net.Search
         private class QueryFirstBulkScorer : BulkScorer
         {
             private readonly Scorer scorer;
-            private readonly Bits filterBits;
+            private readonly IBits filterBits;
 
-            public QueryFirstBulkScorer(Scorer scorer, Bits filterBits)
+            public QueryFirstBulkScorer(Scorer scorer, IBits filterBits)
             {
                 this.scorer = scorer;
                 this.filterBits = filterBits;
@@ -622,7 +622,7 @@ namespace Lucene.Net.Search
                     return null;
                 }
 
-                Bits filterAcceptDocs = docIdSet.GetBits();
+                IBits filterAcceptDocs = docIdSet.GetBits();
                 // force if RA is requested
                 bool useRandomAccess = filterAcceptDocs != null && UseRandomAccess(filterAcceptDocs, firstFilterDoc);
                 if (useRandomAccess)
@@ -653,7 +653,7 @@ namespace Lucene.Net.Search
             ///
             /// @lucene.internal
             /// </summary>
-            protected virtual bool UseRandomAccess(Bits bits, int firstFilterDoc)
+            protected virtual bool UseRandomAccess(IBits bits, int firstFilterDoc)
             {
                 //TODO once we have a cost API on filters and scorers we should rethink this heuristic
                 return firstFilterDoc < 100;
@@ -712,7 +712,7 @@ namespace Lucene.Net.Search
         {
             public override Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet)
             {
-                Bits filterAcceptDocs = docIdSet.GetBits();
+                IBits filterAcceptDocs = docIdSet.GetBits();
                 if (filterAcceptDocs == null)
                 {
                     // Filter does not provide random-access Bits; we
@@ -725,7 +725,7 @@ namespace Lucene.Net.Search
 
             public override BulkScorer FilteredBulkScorer(AtomicReaderContext context, Weight weight, bool scoreDocsInOrder, DocIdSet docIdSet) // ignored (we always top-score in order)
             {
-                Bits filterAcceptDocs = docIdSet.GetBits();
+                IBits filterAcceptDocs = docIdSet.GetBits();
                 if (filterAcceptDocs == null)
                 {
                     // Filter does not provide random-access Bits; we

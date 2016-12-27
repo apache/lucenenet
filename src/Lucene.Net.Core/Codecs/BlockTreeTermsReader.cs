@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs
      */
 
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
     using ByteSequenceOutputs = Lucene.Net.Util.Fst.ByteSequenceOutputs;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -1174,13 +1174,13 @@ namespace Lucene.Net.Codecs
                     return CurrentFrame.TermState.TotalTermFreq;
                 }
 
-                public override DocsEnum Docs(Bits skipDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits skipDocs, DocsEnum reuse, int flags)
                 {
                     CurrentFrame.DecodeMetaData();
                     return OuterInstance.OuterInstance.PostingsReader.Docs(OuterInstance.fieldInfo, CurrentFrame.TermState, skipDocs, reuse, flags);
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(Bits skipDocs, DocsAndPositionsEnum reuse, int flags)
+                public override DocsAndPositionsEnum DocsAndPositions(IBits skipDocs, DocsAndPositionsEnum reuse, int flags)
                 {
                     if (OuterInstance.fieldInfo.IndexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                     {
@@ -2585,7 +2585,7 @@ namespace Lucene.Net.Codecs
                     return CurrentFrame.State.TotalTermFreq;
                 }
 
-                public override DocsEnum Docs(Bits skipDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits skipDocs, DocsEnum reuse, int flags)
                 {
                     Debug.Assert(!Eof);
                     //if (DEBUG) {
@@ -2598,7 +2598,7 @@ namespace Lucene.Net.Codecs
                     return OuterInstance.OuterInstance.PostingsReader.Docs(OuterInstance.fieldInfo, CurrentFrame.State, skipDocs, reuse, flags);
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(Bits skipDocs, DocsAndPositionsEnum reuse, int flags)
+                public override DocsAndPositionsEnum DocsAndPositions(IBits skipDocs, DocsAndPositionsEnum reuse, int flags)
                 {
                     if (OuterInstance.fieldInfo.IndexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                     {

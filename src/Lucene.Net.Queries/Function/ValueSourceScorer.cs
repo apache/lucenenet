@@ -32,7 +32,7 @@ namespace Lucene.Net.Queries.Function
         protected internal readonly int maxDoc;
         protected internal readonly FunctionValues values;
         protected internal bool checkDeletes;
-        private readonly Bits liveDocs;
+        private readonly IBits liveDocs;
 
         protected internal ValueSourceScorer(IndexReader reader, FunctionValues values)
             : base(null)

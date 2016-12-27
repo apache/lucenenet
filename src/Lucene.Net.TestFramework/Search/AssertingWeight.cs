@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
          */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
 
     internal class AssertingWeight : Weight
     {
@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
             @in.Normalize(norm, topLevelBoost);
         }
 
-        public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+        public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
         {
             // if the caller asks for in-order scoring or if the weight does not support
             // out-of order scoring then collection will have to happen in-order.
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
             return AssertingScorer.Wrap(new Random(Random.Next()), inScorer);
         }
 
-        public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
+        public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
         {
             // if the caller asks for in-order scoring or if the weight does not support
             // out-of order scoring then collection will have to happen in-order.

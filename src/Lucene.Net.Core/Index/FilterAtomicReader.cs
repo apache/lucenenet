@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
      */
 
     using AttributeSource = Lucene.Net.Util.AttributeSource;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
@@ -231,12 +231,12 @@ namespace Lucene.Net.Index
                 return input.TotalTermFreq();
             }
 
-            public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
                 return input.Docs(liveDocs, reuse, flags);
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
                 return input.DocsAndPositions(liveDocs, reuse, flags);
             }
@@ -383,7 +383,7 @@ namespace Lucene.Net.Index
             input.RegisterParentReader(this);
         }
 
-        public override Bits LiveDocs
+        public override IBits LiveDocs
         {
             get
             {
@@ -484,7 +484,7 @@ namespace Lucene.Net.Index
             return input.GetNormValues(field);
         }
 
-        public override Bits GetDocsWithField(string field)
+        public override IBits GetDocsWithField(string field)
         {
             EnsureOpen();
             return input.GetDocsWithField(field);

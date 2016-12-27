@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Term = Lucene.Net.Index.Term;
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -40,9 +40,9 @@ namespace Lucene.Net.Search
             internal readonly float score;
             private int doc = -1;
             private readonly int maxDoc;
-            private readonly Bits liveDocs;
+            private readonly IBits liveDocs;
 
-            internal MatchAllScorer(MatchAllDocsQuery outerInstance, IndexReader reader, Bits liveDocs, Weight w, float score)
+            internal MatchAllScorer(MatchAllDocsQuery outerInstance, IndexReader reader, IBits liveDocs, Weight w, float score)
                 : base(w)
             {
                 this.outerInstance = outerInstance;
@@ -129,7 +129,7 @@ namespace Lucene.Net.Search
                 queryWeight *= this.queryNorm;
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 return new MatchAllScorer(outerInstance, context.Reader, acceptDocs, this, queryWeight);
             }

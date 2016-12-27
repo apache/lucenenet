@@ -20,7 +20,7 @@ namespace Lucene.Net.Codecs.Lucene40
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
 
     // javadocs
     using Directory = Lucene.Net.Store.Directory;
@@ -80,13 +80,13 @@ namespace Lucene.Net.Codecs.Lucene40
             return bitVector;
         }
 
-        public override MutableBits NewLiveDocs(Bits existing)
+        public override MutableBits NewLiveDocs(IBits existing)
         {
             BitVector liveDocs = (BitVector)existing;
             return (BitVector)liveDocs.Clone();
         }
 
-        public override Bits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)
+        public override IBits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)
         {
             string filename = IndexFileNames.FileNameFromGeneration(info.Info.Name, DELETES_EXTENSION, info.DelGen);
             BitVector liveDocs = new BitVector(dir, filename, context);

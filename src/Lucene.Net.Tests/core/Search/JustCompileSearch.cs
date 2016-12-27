@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
          */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
@@ -176,7 +176,7 @@ namespace Lucene.Net.Search
             // Filter is just an abstract class with no abstract methods. However it is
             // still added here in case someone will add abstract methods in the future.
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return null;
             }
@@ -345,7 +345,7 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }

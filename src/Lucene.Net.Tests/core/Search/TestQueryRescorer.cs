@@ -10,7 +10,7 @@ namespace Lucene.Net.Search
     using System.Collections.Generic;
     using System.IO;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
 
@@ -496,7 +496,7 @@ namespace Lucene.Net.Search
                 {
                 }
 
-                public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+                public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
                 {
                     return new ScorerAnonymousInnerClassHelper(this, context);
                 }

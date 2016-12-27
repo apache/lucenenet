@@ -20,7 +20,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
     /// Concatenates multiple Bits together, on every lookup.
@@ -30,16 +30,16 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-    internal sealed class MultiBits : Bits
+    internal sealed class MultiBits : IBits
     {
-        private readonly Bits[] subs;
+        private readonly IBits[] subs;
 
         // length is 1+subs.length (the last entry has the maxDoc):
         private readonly int[] starts;
 
         private readonly bool sefaultValue;
 
-        public MultiBits(Bits[] subs, int[] starts, bool defaultValue)
+        public MultiBits(IBits[] subs, int[] starts, bool defaultValue)
         {
             Debug.Assert(starts.Length == 1 + subs.Length);
             this.subs = subs;
@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
         {
             int reader = ReaderUtil.SubIndex(doc, starts);
             Debug.Assert(reader != -1);
-            Bits bits = subs[reader];
+            IBits bits = subs[reader];
             if (bits == null)
             {
                 return sefaultValue;
@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
         public sealed class SubResult
         {
             public bool Matches { get; internal set; }
-            public Bits Result { get; internal set; }
+            public IBits Result { get; internal set; }
         }
 
         /// <summary>

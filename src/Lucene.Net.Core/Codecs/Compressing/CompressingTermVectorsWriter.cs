@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.Compressing
      */
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BlockPackedWriter = Lucene.Net.Util.Packed.BlockPackedWriter;
     using BufferedChecksumIndexInput = Lucene.Net.Store.BufferedChecksumIndexInput;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -882,7 +882,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
 
                 int maxDoc = reader.MaxDoc;
-                Bits liveDocs = reader.LiveDocs;
+                IBits liveDocs = reader.LiveDocs;
 
                 if (matchingVectorsReader == null || matchingVectorsReader.Version != VERSION_CURRENT || matchingVectorsReader.CompressionMode != CompressionMode || matchingVectorsReader.ChunkSize != ChunkSize || matchingVectorsReader.PackedIntsVersion != PackedInts.VERSION_CURRENT)
                 {
@@ -958,7 +958,7 @@ namespace Lucene.Net.Codecs.Compressing
             return docCount;
         }
 
-        private static int NextLiveDoc(int doc, Bits liveDocs, int maxDoc)
+        private static int NextLiveDoc(int doc, IBits liveDocs, int maxDoc)
         {
             if (liveDocs == null)
             {
@@ -971,7 +971,7 @@ namespace Lucene.Net.Codecs.Compressing
             return doc;
         }
 
-        private static int NextDeletedDoc(int doc, Bits liveDocs, int maxDoc)
+        private static int NextDeletedDoc(int doc, IBits liveDocs, int maxDoc)
         {
             if (liveDocs == null)
             {

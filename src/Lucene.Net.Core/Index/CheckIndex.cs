@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BlockTreeTermsReader = Lucene.Net.Codecs.BlockTreeTermsReader;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
@@ -775,7 +775,7 @@ namespace Lucene.Net.Index
                         {
                             throw new Exception("delete count mismatch: info=" + info.DelCount + " vs reader=" + (info.Info.DocCount - numDocs));
                         }
-                        Bits liveDocs = reader.LiveDocs;
+                        IBits liveDocs = reader.LiveDocs;
                         if (liveDocs == null)
                         {
                             throw new Exception("segment should have deletions, but liveDocs is null");
@@ -805,7 +805,7 @@ namespace Lucene.Net.Index
                         {
                             throw new Exception("delete count mismatch: info=" + info.DelCount + " vs reader=" + (info.Info.DocCount - numDocs));
                         }
-                        Bits liveDocs = reader.LiveDocs;
+                        IBits liveDocs = reader.LiveDocs;
                         if (liveDocs != null)
                         {
                             // its ok for it to be non-null here, as long as none are set right?
@@ -983,7 +983,7 @@ namespace Lucene.Net.Index
         /// checks Fields api is consistent with itself.
         /// searcher is optional, to verify with queries. Can be null.
         /// </summary>
-        private static Status.TermIndexStatus CheckFields(Fields fields, Bits liveDocs, int maxDoc, FieldInfos fieldInfos, bool doPrint, bool isVectors, TextWriter infoStream, bool verbose)
+        private static Status.TermIndexStatus CheckFields(Fields fields, IBits liveDocs, int maxDoc, FieldInfos fieldInfos, bool doPrint, bool isVectors, TextWriter infoStream, bool verbose)
         {
             // TODO: we should probably return our own stats thing...?!
 
@@ -1650,7 +1650,7 @@ namespace Lucene.Net.Index
 
             Status.TermIndexStatus status;
             int maxDoc = reader.MaxDoc;
-            Bits liveDocs = reader.LiveDocs;
+            IBits liveDocs = reader.LiveDocs;
 
             try
             {
@@ -1705,7 +1705,7 @@ namespace Lucene.Net.Index
                 }
 
                 // Scan stored fields for all documents
-                Bits liveDocs = reader.LiveDocs;
+                IBits liveDocs = reader.LiveDocs;
                 for (int j = 0; j < reader.MaxDoc; ++j)
                 {
                     // Intentionally pull even deleted documents to
@@ -1790,7 +1790,7 @@ namespace Lucene.Net.Index
             return status;
         }
 
-        private static void CheckBinaryDocValues(string fieldName, AtomicReader reader, BinaryDocValues dv, Bits docsWithField)
+        private static void CheckBinaryDocValues(string fieldName, AtomicReader reader, BinaryDocValues dv, IBits docsWithField)
         {
             BytesRef scratch = new BytesRef();
             for (int i = 0; i < reader.MaxDoc; i++)
@@ -1804,7 +1804,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static void CheckSortedDocValues(string fieldName, AtomicReader reader, SortedDocValues dv, Bits docsWithField)
+        private static void CheckSortedDocValues(string fieldName, AtomicReader reader, SortedDocValues dv, IBits docsWithField)
         {
             CheckBinaryDocValues(fieldName, reader, dv, docsWithField);
             int maxOrd = dv.ValueCount - 1;
@@ -1859,7 +1859,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static void CheckSortedSetDocValues(string fieldName, AtomicReader reader, SortedSetDocValues dv, Bits docsWithField)
+        private static void CheckSortedSetDocValues(string fieldName, AtomicReader reader, SortedSetDocValues dv, IBits docsWithField)
         {
             long maxOrd = dv.ValueCount - 1;
             LongBitSet seenOrds = new LongBitSet(dv.ValueCount);
@@ -1951,7 +1951,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static void CheckNumericDocValues(string fieldName, AtomicReader reader, NumericDocValues ndv, Bits docsWithField)
+        private static void CheckNumericDocValues(string fieldName, AtomicReader reader, NumericDocValues ndv, IBits docsWithField)
         {
             for (int i = 0; i < reader.MaxDoc; i++)
             {
@@ -1965,7 +1965,7 @@ namespace Lucene.Net.Index
 
         private static void CheckDocValues(FieldInfo fi, AtomicReader reader, /*StreamWriter infoStream,*/ DocValuesStatus status)
         {
-            Bits docsWithField = reader.GetDocsWithField(fi.Name);
+            IBits docsWithField = reader.GetDocsWithField(fi.Name);
             if (docsWithField == null)
             {
                 throw new Exception(fi.Name + " docsWithField does not exist");
@@ -2022,7 +2022,7 @@ namespace Lucene.Net.Index
             switch (fi.NormType)
             {
                 case DocValuesType.NUMERIC:
-                    CheckNumericDocValues(fi.Name, reader, reader.GetNormValues(fi.Name), new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc));
+                    CheckNumericDocValues(fi.Name, reader, reader.GetNormValues(fi.Name), new Lucene.Net.Util.Bits.MatchAllBits(reader.MaxDoc));
                     break;
 
                 default:
@@ -2047,7 +2047,7 @@ namespace Lucene.Net.Index
         {
             Status.TermVectorStatus status = new Status.TermVectorStatus();
             FieldInfos fieldInfos = reader.FieldInfos;
-            Bits onlyDocIsDeleted = new FixedBitSet(1);
+            IBits onlyDocIsDeleted = new FixedBitSet(1);
 
             try
             {
@@ -2063,7 +2063,7 @@ namespace Lucene.Net.Index
                 DocsEnum postingsDocs = null;
                 DocsAndPositionsEnum postingsPostings = null;
 
-                Bits liveDocs = reader.LiveDocs;
+                IBits liveDocs = reader.LiveDocs;
 
                 Fields postingsFields;
                 // TODO: testTermsIndex

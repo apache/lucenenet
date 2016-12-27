@@ -51,7 +51,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             FieldCache.Ints arr = cache.GetInts(readerContext.AtomicReader, field, parser, true);
-            Bits valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
+            IBits valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
 
             return new IntDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
         }
@@ -61,9 +61,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             private readonly IntFieldSource outerInstance;
 
             private readonly FieldCache.Ints arr;
-            private readonly Bits valid;
+            private readonly IBits valid;
 
-            public IntDocValuesAnonymousInnerClassHelper(IntFieldSource outerInstance, IntFieldSource @this, FieldCache.Ints arr, Bits valid)
+            public IntDocValuesAnonymousInnerClassHelper(IntFieldSource outerInstance, IntFieldSource @this, FieldCache.Ints arr, IBits valid)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

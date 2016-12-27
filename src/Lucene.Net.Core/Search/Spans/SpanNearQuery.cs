@@ -23,7 +23,7 @@ namespace Lucene.Net.Search.Spans
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search.Spans
             return buffer.ToString();
         }
 
-        public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+        public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
             if (m_clauses.Count == 0) // optimize 0-clause case
             {

@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs.Memory
     using IndexOutput = Store.IndexOutput;
     using RAMOutputStream = Store.RAMOutputStream;
     using ArrayUtil = Util.ArrayUtil;
-    using Bits = Util.Bits;
+    using IBits = Util.IBits;
     using BytesRef = Util.BytesRef;
     using IOUtils = Util.IOUtils;
     using IntsRef = Util.IntsRef;
@@ -392,7 +392,7 @@ namespace Lucene.Net.Codecs.Memory
             internal byte[] buffer = new byte[16];
             internal ByteArrayDataInput @in;
 
-            internal Bits liveDocs;
+            internal IBits liveDocs;
             internal int docUpto;
             internal int docID_Renamed = -1;
             internal int accum;
@@ -412,7 +412,7 @@ namespace Lucene.Net.Codecs.Memory
                 return indexOptions == this.indexOptions && storePayloads == this.storePayloads;
             }
 
-            public FSTDocsEnum Reset(BytesRef bufferIn, Bits liveDocs, int numDocs)
+            public FSTDocsEnum Reset(BytesRef bufferIn, IBits liveDocs, int numDocs)
             {
                 Debug.Assert(numDocs > 0);
                 if (buffer.Length < bufferIn.Length)
@@ -548,7 +548,7 @@ namespace Lucene.Net.Codecs.Memory
             internal byte[] buffer = new byte[16];
             internal ByteArrayDataInput @in;
 
-            internal Bits liveDocs;
+            internal IBits liveDocs;
             internal int docUpto;
             internal int docID_Renamed = -1;
             internal int accum;
@@ -575,7 +575,7 @@ namespace Lucene.Net.Codecs.Memory
                 return storePayloads == this.storePayloads && storeOffsets == this.storeOffsets;
             }
 
-            public FSTDocsAndPositionsEnum reset(BytesRef bufferIn, Bits liveDocs, int numDocs)
+            public FSTDocsAndPositionsEnum reset(BytesRef bufferIn, IBits liveDocs, int numDocs)
             {
                 Debug.Assert(numDocs > 0);
 
@@ -840,7 +840,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
                 decodeMetaData();
                 FSTDocsEnum docsEnum;
@@ -860,7 +860,7 @@ namespace Lucene.Net.Codecs.Memory
                 return docsEnum.Reset(this.postingsSpare, liveDocs, docFreq_Renamed);
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
 
                 bool hasOffsets = field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;

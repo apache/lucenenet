@@ -258,7 +258,7 @@ namespace Lucene.Net.Queries
                 queryWeight = topLevelBoost * outerInstance.Boost;
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 Scorer subQueryScorer = subQueryWeight.Scorer(context, acceptDocs);
                 if (subQueryScorer == null)

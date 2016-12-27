@@ -74,7 +74,7 @@ namespace Lucene.Net.Spatial.Vector
             private readonly double nullValue;
 
             private readonly FieldCache.Doubles ptX, ptY;
-            private readonly Bits validX, validY;
+            private readonly IBits validX, validY;
 
             public DistanceFunctionValue(DistanceValueSource outerInstance, AtomicReader reader)
             {

@@ -20,7 +20,7 @@ namespace Lucene.Net.Codecs
      */
 
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
@@ -71,12 +71,12 @@ namespace Lucene.Net.Codecs
         public abstract SortedSetDocValues GetSortedSet(FieldInfo field);
 
         /// <summary>
-        /// Returns a <seealso cref="Bits"/> at the size of <code>reader.maxDoc()</code>,
+        /// Returns a <seealso cref="IBits"/> at the size of <code>reader.maxDoc()</code>,
         ///  with turned on bits for each docid that does have a value for this field.
         ///  The returned instance need not be thread-safe: it will only be
         ///  used by a single thread.
         /// </summary>
-        public abstract Bits GetDocsWithField(FieldInfo field);
+        public abstract IBits GetDocsWithField(FieldInfo field);
 
         /// <summary>
         /// Returns approximate RAM bytes used </summary>

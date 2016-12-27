@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using PagedBytes = Lucene.Net.Util.PagedBytes;
@@ -200,14 +200,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Inverts all terms </summary>
-        public DocTermOrds(AtomicReader reader, Bits liveDocs, string field)
+        public DocTermOrds(AtomicReader reader, IBits liveDocs, string field)
             : this(reader, liveDocs, field, null, int.MaxValue)
         {
         }
 
         /// <summary>
         /// Inverts only terms starting w/ prefix </summary>
-        public DocTermOrds(AtomicReader reader, Bits liveDocs, string field, BytesRef termPrefix)
+        public DocTermOrds(AtomicReader reader, IBits liveDocs, string field, BytesRef termPrefix)
             : this(reader, liveDocs, field, termPrefix, int.MaxValue)
         {
         }
@@ -217,7 +217,7 @@ namespace Lucene.Net.Index
         ///  whose docFreq (not taking deletions into account) is
         ///  <=  maxTermDocFreq
         /// </summary>
-        public DocTermOrds(AtomicReader reader, Bits liveDocs, string field, BytesRef termPrefix, int maxTermDocFreq)
+        public DocTermOrds(AtomicReader reader, IBits liveDocs, string field, BytesRef termPrefix, int maxTermDocFreq)
             : this(reader, liveDocs, field, termPrefix, maxTermDocFreq, DEFAULT_INDEX_INTERVAL_BITS)
         {
         }
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
         ///  <=  maxTermDocFreq, with a custom indexing interval
         ///  (default is every 128nd term).
         /// </summary>
-        public DocTermOrds(AtomicReader reader, Bits liveDocs, string field, BytesRef termPrefix, int maxTermDocFreq, int indexIntervalBits)
+        public DocTermOrds(AtomicReader reader, IBits liveDocs, string field, BytesRef termPrefix, int maxTermDocFreq, int indexIntervalBits)
             : this(field, maxTermDocFreq, indexIntervalBits)
         {
             Uninvert(reader, liveDocs, termPrefix);
@@ -323,7 +323,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Call this only once (if you subclass!) </summary>
-        protected virtual void Uninvert(AtomicReader reader, Bits liveDocs, BytesRef termPrefix)
+        protected virtual void Uninvert(AtomicReader reader, IBits liveDocs, BytesRef termPrefix)
         {
             FieldInfo info = reader.FieldInfos.FieldInfo(field);
             if (info != null && info.HasDocValues)
@@ -753,12 +753,12 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
                 return TermsEnum.Docs(liveDocs, reuse, flags);
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
                 return TermsEnum.DocsAndPositions(liveDocs, reuse, flags);
             }

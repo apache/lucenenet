@@ -23,7 +23,7 @@ namespace Lucene.Net.Search.Spans
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
@@ -208,7 +208,7 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+        public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
             if (clauses.Count == 1) // optimize 1-clause case
             {
@@ -223,10 +223,10 @@ namespace Lucene.Net.Search.Spans
             private readonly SpanOrQuery OuterInstance;
 
             private AtomicReaderContext Context;
-            private Bits AcceptDocs;
+            private IBits AcceptDocs;
             private IDictionary<Term, TermContext> TermContexts;
 
-            public SpansAnonymousInnerClassHelper(SpanOrQuery outerInstance, AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+            public SpansAnonymousInnerClassHelper(SpanOrQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {
                 this.OuterInstance = outerInstance;
                 this.Context = context;

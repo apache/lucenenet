@@ -324,7 +324,7 @@ namespace Lucene.Net.Index
             {
                 // TODO: improve this
                 AtomicReader sub = (AtomicReader)ctx.Reader;
-                Bits liveDocs = sub.LiveDocs;
+                IBits liveDocs = sub.LiveDocs;
                 Console.WriteLine("  " + ((SegmentReader)sub).SegmentInfo);
                 for (int docID = 0; docID < sub.MaxDoc; docID++)
                 {
@@ -374,15 +374,15 @@ namespace Lucene.Net.Index
             }
             TermsEnum termsEnum = terms1.Iterator(null);
 
-            Bits liveDocs1 = MultiFields.GetLiveDocs(r1);
-            Bits liveDocs2 = MultiFields.GetLiveDocs(r2);
+            IBits liveDocs1 = MultiFields.GetLiveDocs(r1);
+            IBits liveDocs2 = MultiFields.GetLiveDocs(r2);
 
             Fields fields = MultiFields.GetFields(r2);
             if (fields == null)
             {
                 // make sure r1 is in fact empty (eg has only all
                 // deleted docs):
-                Bits liveDocs = MultiFields.GetLiveDocs(r1);
+                IBits liveDocs = MultiFields.GetLiveDocs(r1);
                 DocsEnum docs = null;
                 while (termsEnum.Next() != null)
                 {

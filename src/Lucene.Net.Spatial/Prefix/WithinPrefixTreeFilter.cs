@@ -137,7 +137,7 @@ namespace Lucene.Net.Spatial.Prefix
         }
 
         /// <exception cref="System.IO.IOException"></exception>
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             return new _VisitorTemplate_121(this, context, acceptDocs, true).GetDocIdSet();
         }
@@ -151,7 +151,7 @@ namespace Lucene.Net.Spatial.Prefix
             private SpatialRelation visitRelation;
 
             public _VisitorTemplate_121(WithinPrefixTreeFilter outerInstance, AtomicReaderContext context, 
-                Bits acceptDocs, bool hasIndexedLeaves)
+                IBits acceptDocs, bool hasIndexedLeaves)
                 : base(outerInstance, context, acceptDocs, hasIndexedLeaves)
             {
             }

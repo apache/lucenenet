@@ -88,9 +88,9 @@ namespace Lucene.Net.Spatial
         }
 
         /// <exception cref="System.IO.IOException"></exception>
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
-            Bits docsWithField;
+            IBits docsWithField;
             if (field == null)
             {
                 docsWithField = null;
@@ -109,11 +109,11 @@ namespace Lucene.Net.Spatial
                     throw new InvalidOperationException("Bits length should be maxDoc (" + maxDoc + ") but wasn't: " + docsWithField);
                 }
 
-                if (docsWithField is Bits_MatchNoBits)
+                if (docsWithField is Bits.MatchNoBits)
                 {
                     return null;//match nothing
                 }
-                else if (docsWithField is Bits_MatchAllBits)
+                else if (docsWithField is Bits.MatchAllBits)
                 {
                     docsWithField = null;//all docs
                 }

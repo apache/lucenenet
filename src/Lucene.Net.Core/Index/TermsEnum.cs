@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
      */
 
     using AttributeSource = Lucene.Net.Util.AttributeSource;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
         /// <param name="liveDocs"> unset bits are documents that should not
         /// be returned </param>
         /// <param name="reuse"> pass a prior DocsEnum for possible reuse  </param>
-        public DocsEnum Docs(Bits liveDocs, DocsEnum reuse)
+        public DocsEnum Docs(IBits liveDocs, DocsEnum reuse)
         {
             return Docs(liveDocs, reuse, DocsEnum.FLAG_FREQS);
         }
@@ -204,7 +204,7 @@ namespace Lucene.Net.Index
         /// <param name="flags"> specifies which optional per-document values
         ///        you require; see <seealso cref="DocsEnum#FLAG_FREQS"/> </param>
         /// <seealso cref= #docs(Bits, DocsEnum, int)  </seealso>
-        public abstract DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags);
+        public abstract DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags);
 
         /// <summary>
         /// Get <seealso cref="DocsAndPositionsEnum"/> for the current term.
@@ -216,7 +216,7 @@ namespace Lucene.Net.Index
         ///  be returned </param>
         ///  <param name="reuse"> pass a prior DocsAndPositionsEnum for possible reuse </param>
         ///  <seealso cref= #docsAndPositions(Bits, DocsAndPositionsEnum, int)  </seealso>
-        public DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse)
+        public DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse)
         {
             return DocsAndPositions(liveDocs, reuse, DocsAndPositionsEnum.FLAG_OFFSETS | DocsAndPositionsEnum.FLAG_PAYLOADS);
         }
@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
         ///  <param name="flags"> specifies which optional per-position values you
         ///         require; see <seealso cref="DocsAndPositionsEnum#FLAG_OFFSETS"/> and
         ///         <seealso cref="DocsAndPositionsEnum#FLAG_PAYLOADS"/>.  </param>
-        public abstract DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags);
+        public abstract DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags);
 
         /// <summary>
         /// Expert: Returns the TermsEnums internal state to position the TermsEnum
@@ -320,12 +320,12 @@ namespace Lucene.Net.Index
                 throw new InvalidOperationException("this method should never be called");
             }
 
-            public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
                 throw new InvalidOperationException("this method should never be called");
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
                 throw new InvalidOperationException("this method should never be called");
             }

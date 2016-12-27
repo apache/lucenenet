@@ -56,7 +56,7 @@ namespace Lucene.Net.Facet
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TopDocs = Lucene.Net.Search.TopDocs;
     using Directory = Lucene.Net.Store.Directory;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using IOUtils = Lucene.Net.Util.IOUtils;
@@ -814,7 +814,7 @@ namespace Lucene.Net.Facet
                 this.outerInstance = outerInstance;
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 int maxDoc = context.Reader.MaxDoc;
                 FixedBitSet bits = new FixedBitSet(maxDoc);

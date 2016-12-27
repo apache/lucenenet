@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs
      */
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DataInput = Lucene.Net.Store.DataInput;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -221,7 +221,7 @@ namespace Lucene.Net.Codecs
             {
                 AtomicReader reader = mergeState.Readers[i];
                 int maxDoc = reader.MaxDoc;
-                Bits liveDocs = reader.LiveDocs;
+                IBits liveDocs = reader.LiveDocs;
 
                 for (int docID = 0; docID < maxDoc; docID++)
                 {

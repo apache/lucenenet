@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using NumericUtils = Lucene.Net.Util.NumericUtils;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
         ///  <code>reader.maxDoc()</code>, with turned on bits for each docid that
         ///  does have a value for this field.
         /// </summary>
-        Bits GetDocsWithField(AtomicReader reader, string field);
+        IBits GetDocsWithField(AtomicReader reader, string field);
 
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none is

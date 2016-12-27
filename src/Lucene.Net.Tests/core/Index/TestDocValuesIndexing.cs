@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BinaryDocValuesField = BinaryDocValuesField;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
@@ -899,7 +899,7 @@ namespace Lucene.Net.Index
             AtomicReader subR = (AtomicReader)r.Leaves[0].Reader;
             Assert.AreEqual(2, subR.NumDocs);
 
-            Bits bits = FieldCache.DEFAULT.GetDocsWithField(subR, "dv");
+            IBits bits = FieldCache.DEFAULT.GetDocsWithField(subR, "dv");
             Assert.IsTrue(bits.Get(0));
             Assert.IsTrue(bits.Get(1));
             r.Dispose();

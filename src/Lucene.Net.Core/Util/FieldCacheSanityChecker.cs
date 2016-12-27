@@ -126,7 +126,7 @@ namespace Lucene.Net.Util
                 // It's OK to have dup entries, where one is eg
                 // float[] and the other is the Bits (from
                 // getDocWithField())
-                if (val is Bits)
+                if (val is IBits)
                 {
                     continue;
                 }

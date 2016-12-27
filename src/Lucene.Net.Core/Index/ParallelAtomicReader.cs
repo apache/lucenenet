@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
     /// An <seealso cref="AtomicReader"/> which reads multiple, parallel indexes.  Each index
@@ -237,7 +237,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override Bits LiveDocs
+        public override IBits LiveDocs
         {
             get
             {
@@ -365,7 +365,7 @@ namespace Lucene.Net.Index
             return fieldToReader.TryGetValue(field, out reader) ? reader.GetSortedSetDocValues(field) : null;
         }
 
-        public override Bits GetDocsWithField(string field)
+        public override IBits GetDocsWithField(string field)
         {
             EnsureOpen();
             AtomicReader reader;

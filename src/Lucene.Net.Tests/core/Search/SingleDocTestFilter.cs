@@ -18,7 +18,7 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
 
     public class SingleDocTestFilter : Filter
@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
             this.Doc = doc;
         }
 
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             FixedBitSet bits = new FixedBitSet(context.Reader.MaxDoc);
             bits.Set(Doc);

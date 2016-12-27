@@ -13,7 +13,7 @@ namespace Lucene.Net.Index
     using Util;
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -356,7 +356,7 @@ namespace Lucene.Net.Index
                 if (success)
                 {
                     IndexReader reader = DirectoryReader.Open(dir);
-                    Bits delDocs = MultiFields.GetLiveDocs(reader);
+                    IBits delDocs = MultiFields.GetLiveDocs(reader);
                     for (int j = 0; j < reader.MaxDoc; j++)
                     {
                         if (delDocs == null || !delDocs.Get(j))

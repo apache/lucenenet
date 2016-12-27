@@ -87,13 +87,13 @@ namespace Lucene.Net.Spatial.Prefix
         {
             protected readonly AbstractPrefixTreeFilter outerInstance;
             protected readonly AtomicReaderContext context;
-            protected Bits acceptDocs;
+            protected IBits acceptDocs;
             protected readonly int maxDoc;
 
             protected TermsEnum termsEnum;//remember to check for null in getDocIdSet
             protected DocsEnum docsEnum;
             
-            public BaseTermsEnumTraverser(AbstractPrefixTreeFilter outerInstance, AtomicReaderContext context, Bits acceptDocs)
+            public BaseTermsEnumTraverser(AbstractPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs)
             {
                 this.outerInstance = outerInstance;
                 

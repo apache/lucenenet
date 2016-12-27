@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
     using NIOFSDirectory = Lucene.Net.Store.NIOFSDirectory;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using SimpleFSDirectory = Lucene.Net.Store.SimpleFSDirectory;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Constants = Lucene.Net.Util.Constants;
     using IOUtils = Lucene.Net.Util.IOUtils;
@@ -443,7 +443,7 @@ namespace Lucene.Net.Index
 
             Debug.Assert(is40Index); // NOTE: currently we can only do this on trunk!
 
-            Bits liveDocs = MultiFields.GetLiveDocs(reader);
+            IBits liveDocs = MultiFields.GetLiveDocs(reader);
 
             for (int i = 0; i < 35; i++)
             {

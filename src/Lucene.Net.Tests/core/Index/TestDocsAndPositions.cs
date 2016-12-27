@@ -7,7 +7,7 @@ namespace Lucene.Net.Index
 {
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-        public virtual DocsAndPositionsEnum GetDocsAndPositions(AtomicReader reader, BytesRef bytes, Bits liveDocs)
+        public virtual DocsAndPositionsEnum GetDocsAndPositions(AtomicReader reader, BytesRef bytes, IBits liveDocs)
         {
             Terms terms = reader.Terms(FieldName);
             if (terms != null)

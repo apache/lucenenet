@@ -92,7 +92,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     internal class QueryDocValues : FloatDocValues
     {
         internal readonly AtomicReaderContext readerContext;
-        internal readonly Bits acceptDocs;
+        internal readonly IBits acceptDocs;
         internal readonly Weight weight;
         internal readonly float defVal;
         internal readonly IDictionary fcontext;

@@ -44,7 +44,7 @@ namespace Lucene.Net.Codecs.Memory
         private readonly IDictionary<int?, BinaryDocValues> binaryInstances = new Dictionary<int?, BinaryDocValues>();
         private readonly IDictionary<int?, SortedDocValues> sortedInstances = new Dictionary<int?, SortedDocValues>();
         private readonly IDictionary<int?, SortedSetRawValues> sortedSetInstances = new Dictionary<int?, SortedSetRawValues>();
-        private readonly IDictionary<int?, Bits> docsWithFieldInstances = new Dictionary<int?, Bits>();
+        private readonly IDictionary<int?, IBits> docsWithFieldInstances = new Dictionary<int?, IBits>();
 
         private readonly int maxDoc;
         private readonly AtomicLong ramBytesUsed;
@@ -551,15 +551,15 @@ namespace Lucene.Net.Codecs.Memory
             return instance;
         }
 
-        private Bits GetMissingBits(int fieldNumber, long offset, long length)
+        private IBits GetMissingBits(int fieldNumber, long offset, long length)
         {
             if (offset == -1)
             {
-                return new Bits_MatchAllBits(maxDoc);
+                return new Bits.MatchAllBits(maxDoc);
             }
             else
             {
-                Bits instance;
+                IBits instance;
                 lock (this)
                 {
                     if (!docsWithFieldInstances.TryGetValue(fieldNumber, out instance))
@@ -580,7 +580,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        public override Bits GetDocsWithField(FieldInfo field)
+        public override IBits GetDocsWithField(FieldInfo field)
         {
             switch (field.DocValuesType)
             {

@@ -76,9 +76,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             private readonly LongFieldSource outerInstance;
 
             private readonly FieldCache.Longs arr;
-            private readonly Bits valid;
+            private readonly IBits valid;
 
-            public LongDocValuesAnonymousInnerClassHelper(LongFieldSource outerInstance, LongFieldSource @this, FieldCache.Longs arr, Bits valid)
+            public LongDocValuesAnonymousInnerClassHelper(LongFieldSource outerInstance, LongFieldSource @this, FieldCache.Longs arr, IBits valid)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

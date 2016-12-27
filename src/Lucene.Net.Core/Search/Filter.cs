@@ -20,7 +20,7 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
     ///  Abstract base class for restricting which documents may
@@ -54,6 +54,6 @@ namespace Lucene.Net.Search
         ///         prohibited in search results. <b>NOTE:</b> <code>null</code> should be returned if
         ///         the filter doesn't accept any documents otherwise internal optimization might not apply
         ///         in the case an <i>empty</i> <seealso cref="DocIdSet"/> is returned. </returns>
-        public abstract DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs);
+        public abstract DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs);
     }
 }

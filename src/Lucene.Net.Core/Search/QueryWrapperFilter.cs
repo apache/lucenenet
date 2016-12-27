@@ -18,7 +18,7 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
     /// Constrains search results to only match those which also match a provided
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             // get a private context that is used to rewrite, createWeight and score eventually
             AtomicReaderContext privateContext = context.AtomicReader.AtomicContext;
@@ -68,11 +68,11 @@ namespace Lucene.Net.Search
         {
             private readonly QueryWrapperFilter outerInstance;
 
-            private Bits acceptDocs;
+            private IBits acceptDocs;
             private AtomicReaderContext privateContext;
             private Lucene.Net.Search.Weight weight;
 
-            public DocIdSetAnonymousInnerClassHelper(QueryWrapperFilter outerInstance, Bits acceptDocs, AtomicReaderContext privateContext, Lucene.Net.Search.Weight weight)
+            public DocIdSetAnonymousInnerClassHelper(QueryWrapperFilter outerInstance, IBits acceptDocs, AtomicReaderContext privateContext, Lucene.Net.Search.Weight weight)
             {
                 this.outerInstance = outerInstance;
                 this.acceptDocs = acceptDocs;

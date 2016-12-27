@@ -981,7 +981,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         internal class TestFlattenFilteredQueryFilterAnonymousHelper : Filter
         {
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return null;
             }

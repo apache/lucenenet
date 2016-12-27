@@ -13,7 +13,7 @@ namespace Lucene.Net.Index
     using System.Threading;
     using AssertingDocValuesFormat = Lucene.Net.Codecs.asserting.AssertingDocValuesFormat;
     using BinaryDocValuesField = BinaryDocValuesField;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
@@ -298,7 +298,7 @@ namespace Lucene.Net.Index
 
             AtomicReader slow = SlowCompositeReaderWrapper.Wrap(reader);
 
-            Bits liveDocs = slow.LiveDocs;
+            IBits liveDocs = slow.LiveDocs;
             bool[] expectedLiveDocs = new bool[] { true, false, false, true, true, true };
             for (int i = 0; i < expectedLiveDocs.Length; i++)
             {
@@ -564,7 +564,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            Bits docsWithField = r.GetDocsWithField("bdv");
+            IBits docsWithField = r.GetDocsWithField("bdv");
             Assert.IsFalse(docsWithField.Get(0));
             Assert.IsTrue(docsWithField.Get(1));
 
@@ -603,7 +603,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(0, scratch.Length);
             }
 
-            Bits docsWithField = r.GetDocsWithField("bdv");
+            IBits docsWithField = r.GetDocsWithField("bdv");
             Assert.IsFalse(docsWithField.Get(0));
             Assert.IsFalse(docsWithField.Get(1));
 
@@ -948,12 +948,12 @@ namespace Lucene.Net.Index
                 {
                     AtomicReader r = context.AtomicReader;
                     //        System.out.println(((SegmentReader) r).getSegmentName());
-                    Bits liveDocs = r.LiveDocs;
+                    IBits liveDocs = r.LiveDocs;
                     for (int field = 0; field < fieldValues.Length; field++)
                     {
                         string f = "f" + field;
                         BinaryDocValues bdv = r.GetBinaryDocValues(f);
-                        Bits docsWithField = r.GetDocsWithField(f);
+                        IBits docsWithField = r.GetDocsWithField(f);
                         Assert.IsNotNull(bdv);
                         int maxDoc = r.MaxDoc;
                         for (int doc = 0; doc < maxDoc; doc++)
@@ -1025,7 +1025,7 @@ namespace Lucene.Net.Index
             {
                 AtomicReader r = context.AtomicReader;
                 BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
-                Bits docsWithField = r.GetDocsWithField("bdv");
+                IBits docsWithField = r.GetDocsWithField("bdv");
                 Assert.IsNotNull(docsWithField);
                 Assert.IsTrue(docsWithField.Get(0));
                 Assert.AreEqual(5L, GetValue(bdv, 0, scratch));
@@ -1251,9 +1251,9 @@ namespace Lucene.Net.Index
                 {
                     BinaryDocValues bdv = r.GetBinaryDocValues("f" + i);
                     BinaryDocValues control = r.GetBinaryDocValues("cf" + i);
-                    Bits docsWithBdv = r.GetDocsWithField("f" + i);
-                    Bits docsWithControl = r.GetDocsWithField("cf" + i);
-                    Bits liveDocs = r.LiveDocs;
+                    IBits docsWithBdv = r.GetDocsWithField("f" + i);
+                    IBits docsWithControl = r.GetDocsWithField("cf" + i);
+                    IBits liveDocs = r.LiveDocs;
                     for (int j = 0; j < r.MaxDoc; j++)
                     {
                         if (liveDocs == null || liveDocs.Get(j))

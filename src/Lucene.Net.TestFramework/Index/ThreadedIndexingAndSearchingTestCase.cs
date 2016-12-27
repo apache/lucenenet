@@ -15,7 +15,7 @@ namespace Lucene.Net.Index
     using Search;
     using System.IO;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
@@ -790,7 +790,7 @@ namespace Lucene.Net.Index
                 }
                 OuterInstance.Warmed[(SegmentCoreReaders)reader.CoreCacheKey] = true;
                 int maxDoc = reader.MaxDoc;
-                Bits liveDocs = reader.LiveDocs;
+                IBits liveDocs = reader.LiveDocs;
                 int sum = 0;
                 int inc = Math.Max(1, maxDoc / 50);
                 for (int docID = 0; docID < maxDoc; docID += inc)

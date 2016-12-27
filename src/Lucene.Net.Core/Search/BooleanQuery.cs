@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Occur_e = Lucene.Net.Search.Occur;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
@@ -377,7 +377,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
+            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
                 if (scoreDocsInOrder || OuterInstance.minNrShouldMatch > 1)
                 {
@@ -422,7 +422,7 @@ namespace Lucene.Net.Search
                 return new BooleanScorer(this, m_disableCoord, OuterInstance.minNrShouldMatch, optional, prohibited, m_maxCoord);
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 IList<Scorer> required = new List<Scorer>();
                 IList<Scorer> prohibited = new List<Scorer>();

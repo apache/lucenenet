@@ -21,7 +21,7 @@ namespace Lucene.Net.Facet
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BulkScorer = Lucene.Net.Search.BulkScorer;
     using Collector = Lucene.Net.Search.Collector;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
@@ -153,13 +153,13 @@ namespace Lucene.Net.Facet
                 }
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 // We can only run as a top scorer:
                 throw new System.NotSupportedException();
             }
 
-            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
+            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
                 // TODO: it could be better if we take acceptDocs
                 // into account instead of baseScorer?
@@ -183,7 +183,7 @@ namespace Lucene.Net.Facet
                             continue;
                         }
 
-                        Bits bits = dis.GetBits();
+                        IBits bits = dis.GetBits();
 
                         if (bits != null)
                         {

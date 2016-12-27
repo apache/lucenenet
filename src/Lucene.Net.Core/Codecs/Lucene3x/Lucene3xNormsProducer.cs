@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.Lucene3x
      */
 
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
@@ -273,7 +273,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             throw new InvalidOperationException();
         }
 
-        public override Bits GetDocsWithField(FieldInfo field)
+        public override IBits GetDocsWithField(FieldInfo field)
         {
             throw new InvalidOperationException();
         }

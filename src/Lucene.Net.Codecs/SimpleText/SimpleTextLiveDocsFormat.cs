@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs.SimpleText
 	using IOContext = Store.IOContext;
 	using IndexOutput = Store.IndexOutput;
 	using ArrayUtil = Util.ArrayUtil;
-	using Bits = Util.Bits;
+	using IBits = Util.IBits;
 	using BytesRef = Util.BytesRef;
 	using CharsRef = Util.CharsRef;
 	using IOUtils = Util.IOUtils;
@@ -61,13 +61,13 @@ namespace Lucene.Net.Codecs.SimpleText
             return new SimpleTextMutableBits(size);
         }
 
-        public override MutableBits NewLiveDocs(Bits existing)
+        public override MutableBits NewLiveDocs(IBits existing)
         {
             var bits = (SimpleTextBits) existing;
             return new SimpleTextMutableBits(new BitArray(bits.BITS), bits.SIZE);
         }
 
-        public override Bits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)
+        public override IBits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)
         {
             Debug.Assert(info.HasDeletions);
             var scratch = new BytesRef();
@@ -171,7 +171,7 @@ namespace Lucene.Net.Codecs.SimpleText
         }
 
         // read-only
-        internal class SimpleTextBits : Bits
+        internal class SimpleTextBits : IBits
         {
             internal readonly BitArray BITS;
             internal readonly int SIZE;

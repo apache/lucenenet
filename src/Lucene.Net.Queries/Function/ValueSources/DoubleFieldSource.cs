@@ -59,9 +59,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         private class DoubleDocValuesAnonymousInnerClassHelper : DoubleDocValues
         {
             private readonly FieldCache.Doubles arr;
-            private readonly Bits valid;
+            private readonly IBits valid;
 
-            public DoubleDocValuesAnonymousInnerClassHelper(DoubleFieldSource @this, FieldCache.Doubles arr, Bits valid)
+            public DoubleDocValuesAnonymousInnerClassHelper(DoubleFieldSource @this, FieldCache.Doubles arr, IBits valid)
                 : base(@this)
             {
                 this.arr = arr;

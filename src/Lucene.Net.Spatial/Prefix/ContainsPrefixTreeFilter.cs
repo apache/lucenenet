@@ -64,14 +64,14 @@ namespace Lucene.Net.Spatial.Prefix
             return base.GetHashCode() + (multiOverlappingIndexedShapes ? 1 : 0);
         }
 
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             return new ContainsVisitor(this, context, acceptDocs).Visit(grid.WorldCell, acceptDocs);
         }
 
         private class ContainsVisitor : BaseTermsEnumTraverser
         {
-            public ContainsVisitor(ContainsPrefixTreeFilter outerInstance, AtomicReaderContext context, Bits acceptDocs)
+            public ContainsVisitor(ContainsPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs)
                 : base(outerInstance, context, acceptDocs)
             {
             }
@@ -81,7 +81,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             /// <remarks>This is the primary algorithm; recursive.  Returns null if finds none.</remarks>
             /// <exception cref="System.IO.IOException"></exception>
-            internal SmallDocSet Visit(Cell cell, Bits acceptContains)
+            internal SmallDocSet Visit(Cell cell, IBits acceptContains)
             {
                 if (termsEnum == null)
                 {
@@ -153,7 +153,7 @@ namespace Lucene.Net.Spatial.Prefix
                 return this.termsEnum.SeekExact(termBytes);
             }
 
-            private SmallDocSet GetDocs(Cell cell, Bits acceptContains)
+            private SmallDocSet GetDocs(Cell cell, IBits acceptContains)
             {
                 Debug.Assert(new BytesRef(cell.GetTokenBytes()).Equals(termBytes));
                 return this.CollectDocs(acceptContains);
@@ -161,7 +161,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             private Cell lastLeaf = null;//just for assertion
 
-            private SmallDocSet GetLeafDocs(Cell leafCell, Bits acceptContains)
+            private SmallDocSet GetLeafDocs(Cell leafCell, IBits acceptContains)
             {
                 Debug.Assert(new BytesRef(leafCell.GetTokenBytes()).Equals(termBytes));
                 Debug.Assert(!leafCell.Equals(lastLeaf));//don't call for same leaf again
@@ -186,7 +186,7 @@ namespace Lucene.Net.Spatial.Prefix
                 }
             }
 
-            private SmallDocSet CollectDocs(Bits acceptContains)
+            private SmallDocSet CollectDocs(IBits acceptContains)
             {
                 SmallDocSet set = null;
 
@@ -214,7 +214,7 @@ namespace Lucene.Net.Spatial.Prefix
         /// A hash based mutable set of docIds. If this were Solr code then we might
         /// use a combination of HashDocSet and SortedIntDocSet instead.
         /// </remarks>
-        private class SmallDocSet : DocIdSet, Bits
+        private class SmallDocSet : DocIdSet, IBits
         {
             private readonly SentinelIntSet intSet;
             private int maxInt = 0;
@@ -277,7 +277,7 @@ namespace Lucene.Net.Spatial.Prefix
                 return bigger;
             }
 
-            public override Bits GetBits()
+            public override IBits GetBits()
             {
                 //if the # of docids is super small, return null since iteration is going
                 // to be faster

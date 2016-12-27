@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
     using ReaderUtil = Lucene.Net.Index.ReaderUtil;
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
                 stats.Normalize(queryNorm, topLevelBoost);
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 Debug.Assert(termStates.TopReaderContext == ReaderUtil.GetTopLevelContext(context), "The top-reader used to create Weight (" + termStates.TopReaderContext + ") is not the same as the current reader's top-reader (" + ReaderUtil.GetTopLevelContext(context));
                 TermsEnum termsEnum = GetTermsEnum(context);

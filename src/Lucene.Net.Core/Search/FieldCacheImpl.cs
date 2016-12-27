@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using DocTermOrds = Lucene.Net.Index.DocTermOrds;
@@ -381,7 +381,7 @@ namespace Lucene.Net.Search
 
         private abstract class Uninvert
         {
-            public Bits docsWithField;
+            public IBits docsWithField;
 
             public virtual void DoUninvert(AtomicReader reader, string field, bool setDocsWithField)
             {
@@ -396,7 +396,7 @@ namespace Lucene.Net.Search
                         if (termsDocCount == maxDoc)
                         {
                             // Fast case: all docs have this field:
-                            this.docsWithField = new Lucene.Net.Util.Bits_MatchAllBits(maxDoc);
+                            this.docsWithField = new Lucene.Net.Util.Bits.MatchAllBits(maxDoc);
                             setDocsWithField = false;
                         }
                     }
@@ -444,13 +444,13 @@ namespace Lucene.Net.Search
         }
 
         // null Bits means no docs matched
-        internal virtual void SetDocsWithField(AtomicReader reader, string field, Bits docsWithField)
+        internal virtual void SetDocsWithField(AtomicReader reader, string field, IBits docsWithField)
         {
             int maxDoc = reader.MaxDoc;
-            Bits bits;
+            IBits bits;
             if (docsWithField == null)
             {
-                bits = new Lucene.Net.Util.Bits_MatchNoBits(maxDoc);
+                bits = new Lucene.Net.Util.Bits.MatchNoBits(maxDoc);
             }
             else if (docsWithField is FixedBitSet)
             {
@@ -459,7 +459,7 @@ namespace Lucene.Net.Search
                 {
                     // The cardinality of the BitSet is maxDoc if all documents have a value.
                     Debug.Assert(numSet == maxDoc);
-                    bits = new Lucene.Net.Util.Bits_MatchAllBits(maxDoc);
+                    bits = new Lucene.Net.Util.Bits.MatchAllBits(maxDoc);
                 }
                 else
                 {
@@ -942,13 +942,13 @@ namespace Lucene.Net.Search
             }
         }
 
-        public virtual Bits GetDocsWithField(AtomicReader reader, string field)
+        public virtual IBits GetDocsWithField(AtomicReader reader, string field)
         {
             FieldInfo fieldInfo = reader.FieldInfos.FieldInfo(field);
             if (fieldInfo == null)
             {
                 // field does not exist or has no value
-                return new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc);
+                return new Lucene.Net.Util.Bits.MatchNoBits(reader.MaxDoc);
             }
             else if (fieldInfo.HasDocValues)
             {
@@ -956,9 +956,9 @@ namespace Lucene.Net.Search
             }
             else if (!fieldInfo.IsIndexed)
             {
-                return new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc);
+                return new Lucene.Net.Util.Bits.MatchNoBits(reader.MaxDoc);
             }
-            return (Bits)caches[typeof(DocsWithFieldCache)].Get(reader, new CacheKey(field, null), false);
+            return (IBits)caches[typeof(DocsWithFieldCache)].Get(reader, new CacheKey(field, null), false);
         }
 
         internal sealed class DocsWithFieldCache : Cache
@@ -983,7 +983,7 @@ namespace Lucene.Net.Search
                     if (termsDocCount == maxDoc)
                     {
                         // Fast case: all docs have this field:
-                        return new Lucene.Net.Util.Bits_MatchAllBits(maxDoc);
+                        return new Lucene.Net.Util.Bits.MatchAllBits(maxDoc);
                     }
                     TermsEnum termsEnum = terms.Iterator(null);
                     DocsEnum docs = null;
@@ -1015,14 +1015,14 @@ namespace Lucene.Net.Search
                 }
                 if (res == null)
                 {
-                    return new Lucene.Net.Util.Bits_MatchNoBits(maxDoc);
+                    return new Lucene.Net.Util.Bits.MatchNoBits(maxDoc);
                 }
                 int numSet = res.Cardinality();
                 if (numSet >= maxDoc)
                 {
                     // The cardinality of the BitSet is maxDoc if all documents have a value.
                     Debug.Assert(numSet == maxDoc);
-                    return new Lucene.Net.Util.Bits_MatchAllBits(maxDoc);
+                    return new Lucene.Net.Util.Bits.MatchAllBits(maxDoc);
                 }
                 return res;
             }
@@ -1859,7 +1859,7 @@ namespace Lucene.Net.Search
                 return new BinaryDocValuesImpl(bytes.Freeze(true), offsetReader);
             }
 
-            private class BitsAnonymousInnerClassHelper : Bits
+            private class BitsAnonymousInnerClassHelper : IBits
             {
                 private readonly BinaryDocValuesCache outerInstance;
 

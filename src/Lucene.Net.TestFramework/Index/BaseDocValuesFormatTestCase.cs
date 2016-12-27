@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BinaryDocValuesField = BinaryDocValuesField;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BooleanClause = Lucene.Net.Search.BooleanClause;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -1480,8 +1480,8 @@ namespace Lucene.Net.Index
             foreach (var context in ir.Leaves)
             {
                 AtomicReader r = context.AtomicReader;
-                Bits expected = FieldCache.DEFAULT.GetDocsWithField(r, "indexed");
-                Bits actual = FieldCache.DEFAULT.GetDocsWithField(r, "dv");
+                IBits expected = FieldCache.DEFAULT.GetDocsWithField(r, "indexed");
+                IBits actual = FieldCache.DEFAULT.GetDocsWithField(r, "dv");
                 AssertEquals(expected, actual);
             }
             ir.Dispose();
@@ -2437,7 +2437,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void AssertEquals(Bits expected, Bits actual)
+        private void AssertEquals(IBits expected, IBits actual)
         {
             Assert.AreEqual(expected.Length(), actual.Length());
             for (int i = 0; i < expected.Length(); i++)
@@ -2762,7 +2762,7 @@ namespace Lucene.Net.Index
             NumericDocValues dv = ar.GetNumericDocValues("dv1");
             Assert.AreEqual(0, dv.Get(0));
             Assert.AreEqual(0, dv.Get(1));
-            Bits docsWithField = ar.GetDocsWithField("dv1");
+            IBits docsWithField = ar.GetDocsWithField("dv1");
             Assert.IsTrue(docsWithField.Get(0));
             Assert.IsFalse(docsWithField.Get(1));
             ir.Dispose();
@@ -2794,7 +2794,7 @@ namespace Lucene.Net.Index
             NumericDocValues dv = ar.GetNumericDocValues("dv1");
             Assert.AreEqual(0, dv.Get(0));
             Assert.AreEqual(0, dv.Get(1));
-            Bits docsWithField = ar.GetDocsWithField("dv1");
+            IBits docsWithField = ar.GetDocsWithField("dv1");
             Assert.IsTrue(docsWithField.Get(0));
             Assert.IsFalse(docsWithField.Get(1));
             ir.Dispose();
@@ -2831,7 +2831,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(0, dv.Get(0));
             Assert.AreEqual(0, dv.Get(1));
             Assert.AreEqual(5, dv.Get(2));
-            Bits docsWithField = ar.GetDocsWithField("dv1");
+            IBits docsWithField = ar.GetDocsWithField("dv1");
             Assert.IsTrue(docsWithField.Get(0));
             Assert.IsFalse(docsWithField.Get(1));
             Assert.IsTrue(docsWithField.Get(2));
@@ -2866,7 +2866,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(new BytesRef(), @ref);
             dv.Get(1, @ref);
             Assert.AreEqual(new BytesRef(), @ref);
-            Bits docsWithField = ar.GetDocsWithField("dv1");
+            IBits docsWithField = ar.GetDocsWithField("dv1");
             Assert.IsTrue(docsWithField.Get(0));
             Assert.IsFalse(docsWithField.Get(1));
             ir.Dispose();
@@ -2901,7 +2901,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(new BytesRef(), @ref);
             dv.Get(1, @ref);
             Assert.AreEqual(new BytesRef(), @ref);
-            Bits docsWithField = ar.GetDocsWithField("dv1");
+            IBits docsWithField = ar.GetDocsWithField("dv1");
             Assert.IsTrue(docsWithField.Get(0));
             Assert.IsFalse(docsWithField.Get(1));
             ir.Dispose();
@@ -2942,7 +2942,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(new BytesRef(), @ref);
             dv.Get(2, @ref);
             Assert.AreEqual(new BytesRef("boo"), @ref);
-            Bits docsWithField = ar.GetDocsWithField("dv1");
+            IBits docsWithField = ar.GetDocsWithField("dv1");
             Assert.IsTrue(docsWithField.Get(0));
             Assert.IsFalse(docsWithField.Get(1));
             Assert.IsTrue(docsWithField.Get(2));
@@ -3388,13 +3388,13 @@ namespace Lucene.Net.Index
                     {
                         AtomicReader r = context.AtomicReader;
                         BinaryDocValues binaries = r.GetBinaryDocValues("dvBin");
-                        Bits binaryBits = r.GetDocsWithField("dvBin");
+                        IBits binaryBits = r.GetDocsWithField("dvBin");
                         SortedDocValues sorted = r.GetSortedDocValues("dvSorted");
-                        Bits sortedBits = r.GetDocsWithField("dvSorted");
+                        IBits sortedBits = r.GetDocsWithField("dvSorted");
                         NumericDocValues numerics = r.GetNumericDocValues("dvNum");
-                        Bits numericBits = r.GetDocsWithField("dvNum");
+                        IBits numericBits = r.GetDocsWithField("dvNum");
                         SortedSetDocValues sortedSet = r.GetSortedSetDocValues("dvSortedSet");
-                        Bits sortedSetBits = r.GetDocsWithField("dvSortedSet");
+                        IBits sortedSetBits = r.GetDocsWithField("dvSortedSet");
                         for (int j = 0; j < r.MaxDoc; j++)
                         {
                             BytesRef binaryValue = r.Document(j).GetBinaryValue("storedBin");

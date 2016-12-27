@@ -393,13 +393,13 @@ namespace Lucene.Net.Codecs.Bloom
                     return Delegate().TotalTermFreq();
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs,
+                public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs,
                     DocsAndPositionsEnum reuse, int flags)
                 {
                     return Delegate().DocsAndPositions(liveDocs, reuse, flags);
                 }
 
-                public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
                 {
                     return Delegate().Docs(liveDocs, reuse, flags);
                 }

@@ -39,7 +39,7 @@ namespace Lucene.Net.Codecs.Memory
     using IOContext = Store.IOContext;
     using RAMOutputStream = Store.RAMOutputStream;
     using ArrayUtil = Util.ArrayUtil;
-    using Bits = Util.Bits;
+    using IBits = Util.IBits;
     using BytesRef = Util.BytesRef;
     using RamUsageEstimator = Util.RamUsageEstimator;
     using CompiledAutomaton = Util.Automaton.CompiledAutomaton;
@@ -989,7 +989,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
                 {
                     // TODO: implement reuse, something like Pulsing:
                     // it's hairy!
@@ -1091,7 +1091,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse,
+                public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse,
                     int flags)
                 {
                     if (!outerInstance.hasPos)
@@ -1693,7 +1693,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
                 {
                     // TODO: implement reuse, something like Pulsing:
                     // it's hairy!
@@ -1738,7 +1738,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse,
+                public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse,
                     int flags)
                 {
                     if (!outerInstance.hasPos)
@@ -1783,15 +1783,15 @@ namespace Lucene.Net.Codecs.Memory
         private sealed class LowFreqDocsEnumNoTF : DocsEnum
         {
             internal int[] postings;
-            internal readonly Bits liveDocs;
+            internal readonly IBits liveDocs;
             internal int upto;
 
-            public LowFreqDocsEnumNoTF(Bits liveDocs)
+            public LowFreqDocsEnumNoTF(IBits liveDocs)
             {
                 this.liveDocs = liveDocs;
             }
 
-            public bool CanReuse(Bits liveDocs)
+            public bool CanReuse(IBits liveDocs)
             {
                 return liveDocs == this.liveDocs;
             }
@@ -1870,15 +1870,15 @@ namespace Lucene.Net.Codecs.Memory
         private sealed class LowFreqDocsEnumNoPos : DocsEnum
         {
             internal int[] postings;
-            internal readonly Bits liveDocs;
+            internal readonly IBits liveDocs;
             internal int upto;
 
-            public LowFreqDocsEnumNoPos(Bits liveDocs)
+            public LowFreqDocsEnumNoPos(IBits liveDocs)
             {
                 this.liveDocs = liveDocs;
             }
 
-            public bool CanReuse(Bits liveDocs)
+            public bool CanReuse(IBits liveDocs)
             {
                 return liveDocs == this.liveDocs;
             }
@@ -1956,12 +1956,12 @@ namespace Lucene.Net.Codecs.Memory
         private sealed class LowFreqDocsEnum : DocsEnum
         {
             internal int[] postings;
-            internal readonly Bits liveDocs;
+            internal readonly IBits liveDocs;
             internal readonly int posMult;
             internal int upto;
             internal int freq_Renamed;
 
-            public LowFreqDocsEnum(Bits liveDocs, int posMult)
+            public LowFreqDocsEnum(IBits liveDocs, int posMult)
             {
                 this.liveDocs = liveDocs;
                 this.posMult = posMult;
@@ -1970,7 +1970,7 @@ namespace Lucene.Net.Codecs.Memory
                 // }
             }
 
-            public bool CanReuse(Bits liveDocs, int posMult)
+            public bool CanReuse(IBits liveDocs, int posMult)
             {
                 return liveDocs == this.liveDocs && posMult == this.posMult;
             }
@@ -2058,7 +2058,7 @@ namespace Lucene.Net.Codecs.Memory
         private sealed class LowFreqDocsAndPositionsEnum : DocsAndPositionsEnum
         {
             internal int[] postings;
-            internal readonly Bits liveDocs;
+            internal readonly IBits liveDocs;
             internal readonly int posMult;
             internal readonly bool hasOffsets;
             internal readonly bool hasPayloads;
@@ -2074,7 +2074,7 @@ namespace Lucene.Net.Codecs.Memory
             internal int payloadLength;
             internal byte[] payloadBytes;
 
-            public LowFreqDocsAndPositionsEnum(Bits liveDocs, bool hasOffsets, bool hasPayloads)
+            public LowFreqDocsAndPositionsEnum(IBits liveDocs, bool hasOffsets, bool hasPayloads)
             {
                 this.liveDocs = liveDocs;
                 this.hasOffsets = hasOffsets;
@@ -2250,16 +2250,16 @@ namespace Lucene.Net.Codecs.Memory
         {
             internal int[] docIDs;
             internal int[] freqs;
-            internal readonly Bits liveDocs;
+            internal readonly IBits liveDocs;
             internal int upto;
             internal int docID_Renamed = -1;
 
-            public HighFreqDocsEnum(Bits liveDocs)
+            public HighFreqDocsEnum(IBits liveDocs)
             {
                 this.liveDocs = liveDocs;
             }
 
-            public bool canReuse(Bits liveDocs)
+            public bool canReuse(IBits liveDocs)
             {
                 return liveDocs == this.liveDocs;
             }
@@ -2445,7 +2445,7 @@ namespace Lucene.Net.Codecs.Memory
             internal int[] freqs;
             internal int[][] positions;
             internal byte[][][] payloads;
-            internal readonly Bits liveDocs;
+            internal readonly IBits liveDocs;
             internal readonly bool hasOffsets;
             internal readonly int posJump;
             internal int upto;
@@ -2453,7 +2453,7 @@ namespace Lucene.Net.Codecs.Memory
             internal int posUpto;
             internal int[] curPositions;
 
-            public HighFreqDocsAndPositionsEnum(Bits liveDocs, bool hasOffsets)
+            public HighFreqDocsAndPositionsEnum(IBits liveDocs, bool hasOffsets)
             {
                 this.liveDocs = liveDocs;
                 this.hasOffsets = hasOffsets;
@@ -2475,7 +2475,7 @@ namespace Lucene.Net.Codecs.Memory
                 get { return posJump; }
             }
 
-            public Bits LiveDocs
+            public IBits LiveDocs
             {
                 get { return liveDocs; }
             }

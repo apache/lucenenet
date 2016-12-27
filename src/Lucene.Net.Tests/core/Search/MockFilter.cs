@@ -18,14 +18,14 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
 
     public class MockFilter : Filter
     {
         private bool WasCalled_Renamed;
 
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             WasCalled_Renamed = true;
             return new FixedBitSet(context.Reader.MaxDoc);

@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using Bits = Lucene.Net.Util.Bits;
+using IBits = Lucene.Net.Util.IBits;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -36,7 +36,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private readonly FieldInfos FieldInfos;
 
         private readonly TermInfosReader Tis;
-        protected internal Bits LiveDocs_Renamed;
+        protected internal IBits LiveDocs_Renamed;
         protected internal IndexInput FreqStream;
         protected internal int Count;
         protected internal int Df;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             Seek(ti, term);
         }
 
-        public virtual Bits LiveDocs
+        public virtual IBits LiveDocs
         {
             get
             {

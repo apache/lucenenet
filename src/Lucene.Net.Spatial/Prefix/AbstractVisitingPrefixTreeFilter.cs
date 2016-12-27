@@ -32,7 +32,7 @@ namespace Lucene.Net.Spatial.Prefix
     /// visitor design patterns for subclasses to guide the traversal and collect
     /// matching documents.
     /// <para/>
-    /// Subclasses implement <see cref="Filter.GetDocIdSet(AtomicReaderContext, Bits)"/>
+    /// Subclasses implement <see cref="Filter.GetDocIdSet(AtomicReaderContext, IBits)"/>
     /// by instantiating a custom <see cref="VisitorTemplate"/> subclass (i.e. an anonymous inner class) and implement the
     /// required methods.
     /// 
@@ -78,7 +78,7 @@ namespace Lucene.Net.Spatial.Prefix
         /// other operations on a <see cref="SpatialPrefixTree"/> indexed field. An instance
         /// of this class is not designed to be re-used across AtomicReaderContext
         /// instances so simply create a new one for each call to, say a
-        /// <see cref="Lucene.Net.Search.Filter.GetDocIdSet(Lucene.Net.Index.AtomicReaderContext, Lucene.Net.Util.Bits)"/>.
+        /// <see cref="Lucene.Net.Search.Filter.GetDocIdSet(Lucene.Net.Index.AtomicReaderContext, Lucene.Net.Util.IBits)"/>.
         /// The <see cref="GetDocIdSet()"/> method here starts the work. It first checks
         /// that there are indexed terms; if not it quickly returns null. Then it calls
         /// <see cref="Start()">Start()</see> so a subclass can set up a return value, like an
@@ -124,7 +124,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             private BytesRef thisTerm; //the result of termsEnum.term()
 
-            public VisitorTemplate(AbstractVisitingPrefixTreeFilter outerInstance, AtomicReaderContext context, Bits acceptDocs,
+            public VisitorTemplate(AbstractVisitingPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs,
                                    bool hasIndexedLeaves)
                 : base(outerInstance, context, acceptDocs)
             {

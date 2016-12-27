@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
      */
 
     // javadocs
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
     /// {@code AtomicReader} is an abstract class, providing an interface for accessing an
@@ -281,12 +281,12 @@ namespace Lucene.Net.Index
         public abstract SortedSetDocValues GetSortedSetDocValues(string field);
 
         /// <summary>
-        /// Returns a <seealso cref="Bits"/> at the size of <code>reader.maxDoc()</code>,
+        /// Returns a <seealso cref="IBits"/> at the size of <code>reader.maxDoc()</code>,
         ///  with turned on bits for each docid that does have a value for this field,
         ///  or null if no DocValues were indexed for this field. The
         ///  returned instance should only be used by a single thread
         /// </summary>
-        public abstract Bits GetDocsWithField(string field);
+        public abstract IBits GetDocsWithField(string field);
 
         /// <summary>
         /// Returns <seealso cref="NumericDocValues"/> representing norms
@@ -304,7 +304,7 @@ namespace Lucene.Net.Index
         public abstract FieldInfos FieldInfos { get; }
 
         /// <summary>
-        /// Returns the <seealso cref="Bits"/> representing live (not
+        /// Returns the <seealso cref="IBits"/> representing live (not
         ///  deleted) docs.  A set bit indicates the doc ID has not
         ///  been deleted.  If this method returns null it means
         ///  there are no deleted documents (all documents are
@@ -314,7 +314,7 @@ namespace Lucene.Net.Index
         ///  use by multiple threads without additional
         ///  synchronization.
         /// </summary>
-        public abstract Bits LiveDocs { get; }
+        public abstract IBits LiveDocs { get; }
 
         /// <summary>
         /// Checks consistency of this reader.

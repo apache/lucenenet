@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Term = Lucene.Net.Index.Term;
 
@@ -182,7 +182,7 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Create the scorer used to score our associated DisjunctionMaxQuery </summary>
-            public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 IList<Scorer> scorers = new List<Scorer>();
                 foreach (Weight w in m_weights)

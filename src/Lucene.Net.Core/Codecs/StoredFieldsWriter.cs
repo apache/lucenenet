@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs
      */
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using Document = Documents.Document;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs
             foreach (AtomicReader reader in mergeState.Readers)
             {
                 int maxDoc = reader.MaxDoc;
-                Bits liveDocs = reader.LiveDocs;
+                IBits liveDocs = reader.LiveDocs;
                 for (int i = 0; i < maxDoc; i++)
                 {
                     if (liveDocs != null && !liveDocs.Get(i))

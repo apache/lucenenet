@@ -10,7 +10,7 @@ namespace Lucene.Net.Index
     using Attributes;
     using Lucene.Net.Support;
     using NUnit.Framework;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -619,8 +619,8 @@ namespace Lucene.Net.Index
             }
 
             // check deletions
-            Bits liveDocs1 = MultiFields.GetLiveDocs(index1);
-            Bits liveDocs2 = MultiFields.GetLiveDocs(index2);
+            IBits liveDocs1 = MultiFields.GetLiveDocs(index1);
+            IBits liveDocs2 = MultiFields.GetLiveDocs(index2);
             for (int i = 0; i < index1.MaxDoc; i++)
             {
                 Assert.AreEqual(liveDocs1 == null || !liveDocs1.Get(i), liveDocs2 == null || !liveDocs2.Get(i), "Doc " + i + " only deleted in one index.");
@@ -653,7 +653,7 @@ namespace Lucene.Net.Index
             Fields fields1 = MultiFields.GetFields(index1);
             Fields fields2 = MultiFields.GetFields(index2);
             IEnumerator<string> fenum2 = fields2.GetEnumerator();
-            Bits liveDocs = MultiFields.GetLiveDocs(index1);
+            IBits liveDocs = MultiFields.GetLiveDocs(index1);
             foreach (string field1 in fields1)
             {
                 fenum2.MoveNext();

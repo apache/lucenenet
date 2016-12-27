@@ -57,7 +57,7 @@ namespace Lucene.Net.Sandbox.Queries
         }
 
 
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             if (processingMode == ProcessingMode.PM_FAST_INVALIDATION)
             {
@@ -69,7 +69,7 @@ namespace Lucene.Net.Sandbox.Queries
             }
         }
 
-        private FixedBitSet CorrectBits(AtomicReader reader, Bits acceptDocs)
+        private FixedBitSet CorrectBits(AtomicReader reader, IBits acceptDocs)
         {
             FixedBitSet bits = new FixedBitSet(reader.MaxDoc); //assume all are INvalid
             Terms terms = reader.Fields.Terms(fieldName);
@@ -118,7 +118,7 @@ namespace Lucene.Net.Sandbox.Queries
             return bits;
         }
 
-        private FixedBitSet FastBits(AtomicReader reader, Bits acceptDocs)
+        private FixedBitSet FastBits(AtomicReader reader, IBits acceptDocs)
         {
             FixedBitSet bits = new FixedBitSet(reader.MaxDoc);
             bits.Set(0, reader.MaxDoc); //assume all are valid

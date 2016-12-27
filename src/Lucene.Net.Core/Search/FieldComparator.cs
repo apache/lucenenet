@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
 
@@ -327,7 +327,7 @@ namespace Lucene.Net.Search
         {
             protected readonly T? m_missingValue;
             protected readonly string m_field;
-            protected Bits m_docsWithField;
+            protected IBits m_docsWithField;
 
             public NumericComparator(string field, T? missingValue)
             {
@@ -341,7 +341,7 @@ namespace Lucene.Net.Search
                 {
                     m_docsWithField = FieldCache.DEFAULT.GetDocsWithField((context.AtomicReader), m_field);
                     // optimization to remove unneeded checks on the bit interface:
-                    if (m_docsWithField is Lucene.Net.Util.Bits_MatchAllBits)
+                    if (m_docsWithField is Lucene.Net.Util.Bits.MatchAllBits)
                     {
                         m_docsWithField = null;
                     }
@@ -1372,7 +1372,7 @@ namespace Lucene.Net.Search
 
             private BytesRef[] values;
             private BinaryDocValues docTerms;
-            private Bits docsWithField;
+            private IBits docsWithField;
             private readonly string field;
             private BytesRef bottom;
             private BytesRef topValue;

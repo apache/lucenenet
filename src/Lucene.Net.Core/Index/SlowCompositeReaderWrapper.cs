@@ -20,7 +20,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using MultiSortedDocValues = Lucene.Net.Index.MultiDocValues.MultiSortedDocValues;
     using MultiSortedSetDocValues = Lucene.Net.Index.MultiDocValues.MultiSortedSetDocValues;
     using OrdinalMap = Lucene.Net.Index.MultiDocValues.OrdinalMap;
@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
     {
         private readonly CompositeReader @in;
         private readonly Fields fields;
-        private readonly Bits liveDocs;
+        private readonly IBits liveDocs;
 
         /// <summary>
         /// this method is sugar for getting an <seealso cref="AtomicReader"/> from
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
             return MultiDocValues.GetNumericValues(@in, field);
         }
 
-        public override Bits GetDocsWithField(string field)
+        public override IBits GetDocsWithField(string field)
         {
             EnsureOpen();
             return MultiDocValues.GetDocsWithField(@in, field);
@@ -229,7 +229,7 @@ namespace Lucene.Net.Index
             @in.Document(docID, visitor);
         }
 
-        public override Bits LiveDocs
+        public override IBits LiveDocs
         {
             get
             {

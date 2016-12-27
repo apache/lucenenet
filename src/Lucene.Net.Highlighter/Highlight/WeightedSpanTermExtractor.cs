@@ -295,7 +295,7 @@ namespace Lucene.Net.Search.Highlight
                 {
                     termContexts[term] = TermContext.Build(context, term);
                 }
-                Bits acceptDocs = context.AtomicReader.LiveDocs;
+                IBits acceptDocs = context.AtomicReader.LiveDocs;
                 Spans.Spans spans = q.GetSpans(context, acceptDocs, termContexts);
 
                 // collect span positions
@@ -455,7 +455,7 @@ namespace Lucene.Net.Search.Highlight
                 return base.GetNormValues(FIELD_NAME);
             }
 
-            public override Bits GetDocsWithField(string field)
+            public override IBits GetDocsWithField(string field)
             {
                 return base.GetDocsWithField(FIELD_NAME);
             }

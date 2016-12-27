@@ -8,7 +8,7 @@ namespace Lucene.Net.Codecs.Lucene40
     using NUnit.Framework;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
@@ -17,7 +17,7 @@ namespace Lucene.Net.Codecs.Lucene40
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using MatchNoBits = Lucene.Net.Util.Bits_MatchNoBits;
+    using MatchNoBits = Lucene.Net.Util.Bits.MatchNoBits;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -182,7 +182,7 @@ namespace Lucene.Net.Codecs.Lucene40
             IOUtils.Close(writer, firstReader, secondReader, dir);
         }
 
-        public virtual DocsEnum RandomDocsEnum(string field, BytesRef term, IList<AtomicReaderContext> readers, Bits bits)
+        public virtual DocsEnum RandomDocsEnum(string field, BytesRef term, IList<AtomicReaderContext> readers, IBits bits)
         {
             if (Random().Next(10) == 0)
             {

@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using IndexReader = Lucene.Net.Index.IndexReader;
@@ -336,11 +336,11 @@ namespace Lucene.Net.Search
                 stats.Normalize(queryNorm, topLevelBoost);
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 Debug.Assert(outerInstance.terms.Count > 0);
                 AtomicReader reader = context.AtomicReader;
-                Bits liveDocs = acceptDocs;
+                IBits liveDocs = acceptDocs;
                 PostingsAndFreq[] postingsFreqs = new PostingsAndFreq[outerInstance.terms.Count];
 
                 Terms fieldTerms = reader.Terms(outerInstance.field);

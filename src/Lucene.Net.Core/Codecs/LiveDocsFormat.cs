@@ -19,7 +19,7 @@ namespace Lucene.Net.Codecs
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;
     using IOContext = Lucene.Net.Store.IOContext;
     using MutableBits = Lucene.Net.Util.MutableBits;
@@ -45,11 +45,11 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Creates a new mutablebits of the same bits set and size of existing. </summary>
-        public abstract MutableBits NewLiveDocs(Bits existing);
+        public abstract MutableBits NewLiveDocs(IBits existing);
 
         /// <summary>
         /// Read live docs bits. </summary>
-        public abstract Bits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context);
+        public abstract IBits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context);
 
         /// <summary>
         /// Persist live docs bits.  Use {@link

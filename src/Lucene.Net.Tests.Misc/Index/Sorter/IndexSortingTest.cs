@@ -38,7 +38,7 @@ namespace Lucene.Net.Index.Sorter
         {
             // only read the values of the undeleted documents, since after addIndexes,
             // the deleted ones will be dropped from the index.
-            Bits liveDocs = reader.LiveDocs;
+            IBits liveDocs = reader.LiveDocs;
             List<int> values = new List<int>();
             for (int i = 0; i < reader.MaxDoc; i++)
             {

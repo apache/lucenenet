@@ -38,7 +38,7 @@ namespace Lucene.Net.Codecs.SimpleText
     using BufferedChecksumIndexInput = Store.BufferedChecksumIndexInput;
     using ChecksumIndexInput = Store.ChecksumIndexInput;
     using IndexInput = Store.IndexInput;
-    using Bits = Util.Bits;
+    using IBits = Util.IBits;
     using BytesRef = Util.BytesRef;
     using StringHelper = Util.StringHelper;
     using System.Numerics;
@@ -189,7 +189,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return new SortedSetDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
         }
 
-        public override Bits GetDocsWithField(FieldInfo field)
+        public override IBits GetDocsWithField(FieldInfo field)
         {
             switch (field.DocValuesType)
             {
@@ -213,7 +213,7 @@ namespace Lucene.Net.Codecs.SimpleText
             DATA.Dispose();
         }
 
-        private Bits GetNumericDocsWithField(FieldInfo fieldInfo)
+        private IBits GetNumericDocsWithField(FieldInfo fieldInfo)
         {
             var field = FIELDS[fieldInfo.Name];
             var input = (IndexInput)DATA.Clone();
@@ -221,7 +221,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return new BitsAnonymousInnerClassHelper(this, field, input, scratch);
         }
 
-        private Bits GetBinaryDocsWithField(FieldInfo fieldInfo)
+        private IBits GetBinaryDocsWithField(FieldInfo fieldInfo)
         {
             var field = FIELDS[fieldInfo.Name];
             var input = (IndexInput)DATA.Clone();
@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
 
 
-        private class BitsAnonymousInnerClassHelper : Bits
+        private class BitsAnonymousInnerClassHelper : IBits
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
 
@@ -302,7 +302,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private class BitsAnonymousInnerClassHelper2 : Bits
+        private class BitsAnonymousInnerClassHelper2 : IBits
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
 

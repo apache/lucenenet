@@ -20,7 +20,7 @@ namespace Lucene.Net.Search.Spans
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
 
@@ -32,7 +32,7 @@ namespace Lucene.Net.Search.Spans
         /// Expert: Returns the matches for this query in an index.  Used internally
         /// to search for spans.
         /// </summary>
-        public abstract Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts);
+        public abstract Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts);
 
         /// <summary>
         /// Returns the name of the field matched by this query.

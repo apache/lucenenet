@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs.Memory
         private readonly IDictionary<int?, NumericDocValues> numericInstances = new Dictionary<int?, NumericDocValues>();
         private readonly IDictionary<int?, BinaryDocValues> binaryInstances = new Dictionary<int?, BinaryDocValues>();
         private readonly IDictionary<int?, FST<long?>> fstInstances = new Dictionary<int?, FST<long?>>();
-        private readonly IDictionary<int?, Bits> docsWithFieldInstances = new Dictionary<int?, Bits>();
+        private readonly IDictionary<int?, IBits> docsWithFieldInstances = new Dictionary<int?, IBits>();
 
         private readonly int maxDoc;
         private readonly AtomicLong ramBytesUsed;
@@ -668,15 +668,15 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private Bits GetMissingBits(int fieldNumber, long offset, long length)
+        private IBits GetMissingBits(int fieldNumber, long offset, long length)
         {
             if (offset == -1)
             {
-                return new Bits_MatchAllBits(maxDoc);
+                return new Bits.MatchAllBits(maxDoc);
             }
             else
             {
-                Bits instance;
+                IBits instance;
                 lock (this)
                 {
                     if (!docsWithFieldInstances.TryGetValue(fieldNumber, out instance))
@@ -697,7 +697,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        public override Bits GetDocsWithField(FieldInfo field)
+        public override IBits GetDocsWithField(FieldInfo field)
         {
             switch (field.DocValuesType)
             {
@@ -841,12 +841,12 @@ namespace Lucene.Net.Codecs.Memory
                 throw new NotSupportedException();
             }
 
-            public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
                 throw new NotSupportedException();
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
                 throw new NotSupportedException();
             }

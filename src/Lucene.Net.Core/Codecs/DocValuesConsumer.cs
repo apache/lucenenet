@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FilteredTermsEnum = Lucene.Net.Index.FilteredTermsEnum;
@@ -109,19 +109,19 @@ namespace Lucene.Net.Codecs
         /// The default implementation calls <seealso cref="#addNumericField"/>, passing
         /// an Iterable that merges and filters deleted documents on the fly.</p>
         /// </summary>
-        public virtual void MergeNumericField(FieldInfo fieldInfo, MergeState mergeState, IList<NumericDocValues> toMerge, IList<Bits> docsWithField)
+        public virtual void MergeNumericField(FieldInfo fieldInfo, MergeState mergeState, IList<NumericDocValues> toMerge, IList<IBits> docsWithField)
         {
             AddNumericField(fieldInfo, GetMergeNumericFieldEnumerable(fieldInfo, mergeState, toMerge, docsWithField));
         }
 
-        private IEnumerable<long?> GetMergeNumericFieldEnumerable(FieldInfo fieldinfo, MergeState mergeState, IList<NumericDocValues> toMerge, IList<Bits> docsWithField)
+        private IEnumerable<long?> GetMergeNumericFieldEnumerable(FieldInfo fieldinfo, MergeState mergeState, IList<NumericDocValues> toMerge, IList<IBits> docsWithField)
         {
             int readerUpto = -1;
             int docIDUpto = 0;
             AtomicReader currentReader = null;
             NumericDocValues currentValues = null;
-            Bits currentLiveDocs = null;
-            Bits currentDocsWithField = null;
+            IBits currentLiveDocs = null;
+            IBits currentDocsWithField = null;
 
             while (true)
             {
@@ -171,19 +171,19 @@ namespace Lucene.Net.Codecs
         /// The default implementation calls <seealso cref="#addBinaryField"/>, passing
         /// an Iterable that merges and filters deleted documents on the fly.
         /// </summary>
-        public virtual void MergeBinaryField(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<Bits> docsWithField)
+        public virtual void MergeBinaryField(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<IBits> docsWithField)
         {
             AddBinaryField(fieldInfo, GetMergeBinaryFieldEnumerable(fieldInfo, mergeState, toMerge, docsWithField));
         }
 
-        private IEnumerable<BytesRef> GetMergeBinaryFieldEnumerable(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<Bits> docsWithField)
+        private IEnumerable<BytesRef> GetMergeBinaryFieldEnumerable(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<IBits> docsWithField)
         {
             int readerUpto = -1;
             int docIDUpto = 0;
             AtomicReader currentReader = null;
             BinaryDocValues currentValues = null;
-            Bits currentLiveDocs = null;
-            Bits currentDocsWithField = null;
+            IBits currentLiveDocs = null;
+            IBits currentDocsWithField = null;
 
             while (true)
             {
@@ -245,7 +245,7 @@ namespace Lucene.Net.Codecs
             {
                 AtomicReader reader = readers[sub];
                 SortedDocValues dv = dvs[sub];
-                Bits liveDocs = reader.LiveDocs;
+                IBits liveDocs = reader.LiveDocs;
                 if (liveDocs == null)
                 {
                     liveTerms[sub] = dv.TermsEnum();
@@ -298,7 +298,7 @@ namespace Lucene.Net.Codecs
             int readerUpTo = -1;
             int docIDUpTo = 0;
             AtomicReader currentReader = null;
-            Bits currentLiveDocs = null;
+            IBits currentLiveDocs = null;
 
             while (true)
             {
@@ -559,7 +559,7 @@ namespace Lucene.Net.Codecs
             int readerUpto = -1;
             int docIDUpto = 0;
             AtomicReader currentReader = null;
-            Bits currentLiveDocs = null;
+            IBits currentLiveDocs = null;
 
             while (true)
             {
@@ -603,7 +603,7 @@ namespace Lucene.Net.Codecs
             int readerUpto = -1;
             int docIDUpto = 0;
             AtomicReader currentReader = null;
-            Bits currentLiveDocs = null;
+            IBits currentLiveDocs = null;
             var ords = new long[8];
             int ordUpto = 0;
             int ordLength = 0;

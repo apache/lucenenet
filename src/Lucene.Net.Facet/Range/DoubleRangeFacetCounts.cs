@@ -19,7 +19,7 @@ namespace Lucene.Net.Facet.Range
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using DoubleFieldSource = Lucene.Net.Queries.Function.ValueSources.DoubleFieldSource;
@@ -102,7 +102,7 @@ namespace Lucene.Net.Facet.Range
                 FunctionValues fv = valueSource.GetValues(new Dictionary<string, object>(), hits.Context);
 
                 totCount += hits.TotalHits;
-                Bits bits;
+                IBits bits;
                 if (fastMatchFilter != null)
                 {
                     DocIdSet dis = fastMatchFilter.GetDocIdSet(hits.Context, null);

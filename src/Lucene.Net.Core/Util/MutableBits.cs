@@ -20,7 +20,7 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Extension of Bits for live documents.
     /// </summary>
-    public interface MutableBits : Bits // LUCENENET TODO: Make abstract class (since Bits should be an abstract class)
+    public interface MutableBits : IBits // LUCENENET TODO: Rename with "I"
     {
         /// <summary>
         /// Sets the bit specified by <code>index</code> to false. </summary>

@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using NumericUtils = Lucene.Net.Util.NumericUtils;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
                 private int inclusiveLowerPoint;
                 private int inclusiveUpperPoint;
 
-                internal AnonymousClassFieldCacheDocIdSet(SortedDocValues fcsi, int inclusiveLowerPoint, int inclusiveUpperPoint, int maxDoc, Bits acceptDocs)
+                internal AnonymousClassFieldCacheDocIdSet(SortedDocValues fcsi, int inclusiveLowerPoint, int inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
                     : base(maxDoc, acceptDocs)
                 {
                     this.fcsi = fcsi;
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, field);
                 int lowerPoint = lowerVal == null ? -1 : fcsi.LookupTerm(new BytesRef(lowerVal));
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search
                 private int inclusiveLowerPoint;
                 private int inclusiveUpperPoint;
 
-                internal AnonymousClassFieldCacheDocIdSet(SortedDocValues fcsi, int inclusiveLowerPoint, int inclusiveUpperPoint, int maxDoc, Bits acceptDocs)
+                internal AnonymousClassFieldCacheDocIdSet(SortedDocValues fcsi, int inclusiveLowerPoint, int inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
                     : base(maxDoc, acceptDocs)
                 {
                     this.fcsi = fcsi;
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, field);
                 int lowerPoint = lowerVal == null ? -1 : fcsi.LookupTerm(lowerVal);
@@ -251,7 +251,7 @@ namespace Lucene.Net.Search
                 private sbyte inclusiveLowerPoint;
                 private sbyte inclusiveUpperPoint;
 
-                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Bytes values, sbyte inclusiveLowerPoint, sbyte inclusiveUpperPoint, int maxDoc, Bits acceptDocs)
+                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Bytes values, sbyte inclusiveLowerPoint, sbyte inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
                     : base(maxDoc, acceptDocs)
                 {
                     this.values = values;
@@ -271,7 +271,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 sbyte inclusiveLowerPoint, inclusiveUpperPoint;
                 if (lowerVal != null)
@@ -318,7 +318,7 @@ namespace Lucene.Net.Search
                 private short inclusiveLowerPoint;
                 private short inclusiveUpperPoint;
 
-                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Shorts values, short inclusiveLowerPoint, short inclusiveUpperPoint, int maxDoc, Bits acceptDocs)
+                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Shorts values, short inclusiveLowerPoint, short inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
                     : base(maxDoc, acceptDocs)
                 {
                     this.values = values;
@@ -338,7 +338,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 short inclusiveLowerPoint, inclusiveUpperPoint;
 
@@ -386,7 +386,7 @@ namespace Lucene.Net.Search
                 private int inclusiveLowerPoint;
                 private int inclusiveUpperPoint;
 
-                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Ints values, int inclusiveLowerPoint, int inclusiveUpperPoint, int maxDoc, Bits acceptDocs)
+                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Ints values, int inclusiveLowerPoint, int inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
                     : base(maxDoc, acceptDocs)
                 {
                     this.values = values;
@@ -406,7 +406,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 int inclusiveLowerPoint, inclusiveUpperPoint;
 
@@ -453,7 +453,7 @@ namespace Lucene.Net.Search
                 private long inclusiveLowerPoint;
                 private long inclusiveUpperPoint;
 
-                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Longs values, long inclusiveLowerPoint, long inclusiveUpperPoint, int maxDoc, Bits acceptDocs)
+                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Longs values, long inclusiveLowerPoint, long inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
                     : base(maxDoc, acceptDocs)
                 {
                     this.values = values;
@@ -473,7 +473,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 long inclusiveLowerPoint, inclusiveUpperPoint;
 
@@ -520,7 +520,7 @@ namespace Lucene.Net.Search
                 private float inclusiveLowerPoint;
                 private float inclusiveUpperPoint;
 
-                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Floats values, float inclusiveLowerPoint, float inclusiveUpperPoint, int maxDoc, Bits acceptDocs)
+                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Floats values, float inclusiveLowerPoint, float inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
                     : base(maxDoc, acceptDocs)
                 {
                     this.values = values;
@@ -540,7 +540,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 // we transform the floating point numbers to sortable integers
                 // using NumericUtils to easier find the next bigger/lower value
@@ -592,7 +592,7 @@ namespace Lucene.Net.Search
                 private double inclusiveLowerPoint;
                 private double inclusiveUpperPoint;
 
-                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Doubles values, double inclusiveLowerPoint, double inclusiveUpperPoint, int maxDoc, Bits acceptDocs)
+                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Doubles values, double inclusiveLowerPoint, double inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
                     : base(maxDoc, acceptDocs)
                 {
                     this.values = values;
@@ -612,7 +612,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 // we transform the floating point numbers to sortable integers
                 // using NumericUtils to easier find the next bigger/lower value
@@ -830,7 +830,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// this method is implemented for each data type </summary>
-        public override abstract DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs);
+        public override abstract DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs);
 
         /*
 	  /// <summary>

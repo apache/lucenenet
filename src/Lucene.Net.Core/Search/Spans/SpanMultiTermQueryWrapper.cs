@@ -21,7 +21,7 @@ namespace Lucene.Net.Search.Spans
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+        public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
             throw new System.NotSupportedException("Query should have been rewritten");
         }
@@ -329,7 +329,7 @@ namespace Lucene.Net.Search.Spans
     public interface ISpanMultiTermQueryWrapper
     {
         SpanRewriteMethod MultiTermRewriteMethod { get; }
-        Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts);
+        Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts);
         string Field { get; }
         Query WrappedQuery { get; }
         Query Rewrite(IndexReader reader);

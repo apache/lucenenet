@@ -42,7 +42,7 @@ namespace Lucene.Net.Index.Memory
                 return outerInstance.sortedFields[pos].Value;
             }
 
-            public override Bits LiveDocs
+            public override IBits LiveDocs
             {
                 get
                 {
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index.Memory
                 return null;
             }
 
-            public override Bits GetDocsWithField(string field)
+            public override IBits GetDocsWithField(string field)
             {
                 return null;
             }
@@ -370,7 +370,7 @@ namespace Lucene.Net.Index.Memory
                     return info.sliceArray.freq[info.sortedTerms[termUpto]];
                 }
 
-                public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
                 {
                     if (reuse == null || !(reuse is MemoryDocsEnum))
                     {
@@ -379,7 +379,7 @@ namespace Lucene.Net.Index.Memory
                     return ((MemoryDocsEnum)reuse).Reset(liveDocs, info.sliceArray.freq[info.sortedTerms[termUpto]]);
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+                public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
                 {
                     if (reuse == null || !(reuse is MemoryDocsAndPositionsEnum))
                     {
@@ -421,11 +421,11 @@ namespace Lucene.Net.Index.Memory
                 }
 
                 internal bool hasNext;
-                internal Bits liveDocs;
+                internal IBits liveDocs;
                 internal int doc = -1;
                 internal int freq_Renamed;
 
-                public virtual DocsEnum Reset(Bits liveDocs, int freq)
+                public virtual DocsEnum Reset(IBits liveDocs, int freq)
                 {
                     this.liveDocs = liveDocs;
                     hasNext = true;
@@ -474,7 +474,7 @@ namespace Lucene.Net.Index.Memory
 
                 internal int posUpto; // for assert
                 internal bool hasNext;
-                internal Bits liveDocs;
+                internal IBits liveDocs;
                 internal int doc = -1;
                 internal IntBlockPool.SliceReader sliceReader;
                 internal int freq_Renamed;
@@ -487,7 +487,7 @@ namespace Lucene.Net.Index.Memory
                     this.sliceReader = new IntBlockPool.SliceReader(outerInstance.outerInstance.intBlockPool);
                 }
 
-                public virtual DocsAndPositionsEnum Reset(Bits liveDocs, int start, int end, int freq)
+                public virtual DocsAndPositionsEnum Reset(IBits liveDocs, int start, int end, int freq)
                 {
                     this.liveDocs = liveDocs;
                     this.sliceReader.Reset(start, end);

@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.Memory
     using System.Diagnostics;
     using Util.Fst;
     using ArrayUtil = Util.ArrayUtil;
-    using Bits = Util.Bits;
+    using IBits = Util.IBits;
     using ByteArrayDataInput = Store.ByteArrayDataInput;
     using ByteRunAutomaton = Util.Automaton.ByteRunAutomaton;
     using BytesRef = Util.BytesRef;
@@ -325,13 +325,13 @@ namespace Lucene.Net.Codecs.Memory
                     return state.TotalTermFreq;
                 }
 
-                public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
                 {
                     DecodeMetaData();
                     return outerInstance.outerInstance.postingsReader.Docs(outerInstance.fieldInfo, state, liveDocs, reuse, flags);
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+                public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
                 {
                     if (!outerInstance.HasPositions)
                     {

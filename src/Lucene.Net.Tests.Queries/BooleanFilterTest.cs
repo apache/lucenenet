@@ -77,7 +77,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             private readonly BooleanFilterTest parent;
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return new FixedBitSet(context.AtomicReader.MaxDoc);
             }
@@ -96,7 +96,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             private readonly BooleanFilterTest parent;
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return null;
             }
@@ -133,7 +133,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             private readonly BooleanFilterTest parent;
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return new AnonymousDocIdSet();
             }

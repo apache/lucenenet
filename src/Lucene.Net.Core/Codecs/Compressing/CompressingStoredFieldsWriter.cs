@@ -448,7 +448,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
 
                 int maxDoc = reader.MaxDoc;
-                Bits liveDocs = reader.LiveDocs;
+                IBits liveDocs = reader.LiveDocs;
 
                 if (matchingFieldsReader == null || matchingFieldsReader.Version != VERSION_CURRENT || matchingFieldsReader.CompressionMode != CompressionMode || matchingFieldsReader.ChunkSize != ChunkSize) // the way data is decompressed depends on the chunk size -  means reader version is not the same as the writer version
                 {
@@ -525,7 +525,7 @@ namespace Lucene.Net.Codecs.Compressing
             return docCount;
         }
 
-        private static int NextLiveDoc(int doc, Bits liveDocs, int maxDoc)
+        private static int NextLiveDoc(int doc, IBits liveDocs, int maxDoc)
         {
             if (liveDocs == null)
             {
@@ -538,7 +538,7 @@ namespace Lucene.Net.Codecs.Compressing
             return doc;
         }
 
-        private static int NextDeletedDoc(int doc, Bits liveDocs, int maxDoc)
+        private static int NextDeletedDoc(int doc, IBits liveDocs, int maxDoc)
         {
             if (liveDocs == null)
             {

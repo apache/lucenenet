@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
      */
 
     using BinaryDocValuesField = BinaryDocValuesField;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
         // docs, and it's copy-on-write (cloned whenever we need
         // to change it but it's been shared to an external NRT
         // reader).
-        private Bits liveDocs;
+        private IBits liveDocs;
 
         // How many further deletions we've done against
         // liveDocs vs when we loaded it or last wrote it:
@@ -338,7 +338,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual Bits LiveDocs
+        public virtual IBits LiveDocs
         {
             get
             {
@@ -350,7 +350,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual Bits GetReadOnlyLiveDocs()
+        public virtual IBits GetReadOnlyLiveDocs()
         {
             lock (this)
             {
@@ -668,7 +668,7 @@ namespace Lucene.Net.Index
         private IEnumerable<long?> GetLongEnumerable(SegmentReader reader, string field, NumericDocValuesFieldUpdates fieldUpdates)
         {
             int maxDoc = reader.MaxDoc;
-            Bits DocsWithField = reader.GetDocsWithField(field);
+            IBits DocsWithField = reader.GetDocsWithField(field);
             NumericDocValues currentValues = reader.GetNumericDocValues(field);
             NumericDocValuesFieldUpdates.Iterator iter = (NumericDocValuesFieldUpdates.Iterator)fieldUpdates.GetIterator();
             int updateDoc = iter.NextDoc();
@@ -699,7 +699,7 @@ namespace Lucene.Net.Index
         private IEnumerable<BytesRef> GetBytesRefEnumerable(SegmentReader reader, string field, BinaryDocValuesFieldUpdates fieldUpdates)
         {
             BinaryDocValues currentValues = reader.GetBinaryDocValues(field);
-            Bits DocsWithField = reader.GetDocsWithField(field);
+            IBits DocsWithField = reader.GetDocsWithField(field);
             int maxDoc = reader.MaxDoc;
             var iter = (BinaryDocValuesFieldUpdates.Iterator)fieldUpdates.GetIterator();
             int updateDoc = iter.NextDoc();

@@ -58,9 +58,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
         {
             private readonly FieldCache.Floats arr;
-            private readonly Bits valid;
+            private readonly IBits valid;
 
-            public FloatDocValuesAnonymousInnerClassHelper(FloatFieldSource @this, FieldCache.Floats arr, Bits valid)
+            public FloatDocValuesAnonymousInnerClassHelper(FloatFieldSource @this, FieldCache.Floats arr, IBits valid)
                 : base(@this)
             {
                 this.arr = arr;

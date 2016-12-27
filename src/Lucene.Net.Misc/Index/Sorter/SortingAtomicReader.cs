@@ -108,7 +108,7 @@ namespace Lucene.Net.Index.Sorter
                 this.indexOptions = indexOptions;
             }
 
-            internal virtual Bits NewToOld(Bits liveDocs)
+            internal virtual IBits NewToOld(IBits liveDocs)
             {
                 if (liveDocs == null)
                 {
@@ -117,13 +117,13 @@ namespace Lucene.Net.Index.Sorter
                 return new BitsAnonymousInnerClassHelper(this, liveDocs);
             }
 
-            private class BitsAnonymousInnerClassHelper : Bits
+            private class BitsAnonymousInnerClassHelper : IBits
             {
                 private readonly SortingTermsEnum outerInstance;
 
-                private Bits liveDocs;
+                private IBits liveDocs;
 
-                public BitsAnonymousInnerClassHelper(SortingTermsEnum outerInstance, Bits liveDocs)
+                public BitsAnonymousInnerClassHelper(SortingTermsEnum outerInstance, IBits liveDocs)
                 {
                     this.outerInstance = outerInstance;
                     this.liveDocs = liveDocs;
@@ -141,7 +141,7 @@ namespace Lucene.Net.Index.Sorter
                 }
             }
 
-            public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
                 DocsEnum inReuse;
                 SortingDocsEnum wrapReuse;
@@ -163,7 +163,7 @@ namespace Lucene.Net.Index.Sorter
                 return new SortingDocsEnum(docMap.Count, wrapReuse, inDocs, withFreqs, docMap);
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
                 DocsAndPositionsEnum inReuse;
                 SortingDocsAndPositionsEnum wrapReuse;
@@ -231,13 +231,13 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        private class SortingBits : Bits
+        private class SortingBits : IBits
         {
 
-            internal readonly Bits @in;
+            internal readonly IBits @in;
             internal readonly Sorter.DocMap docMap;
 
-            public SortingBits(Bits @in, Sorter.DocMap docMap)
+            public SortingBits(IBits @in, Sorter.DocMap docMap)
             {
                 this.@in = @in;
                 this.docMap = docMap;
@@ -867,11 +867,11 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        public override Bits LiveDocs
+        public override IBits LiveDocs
         {
             get
             {
-                Bits inLiveDocs = input.LiveDocs;
+                IBits inLiveDocs = input.LiveDocs;
                 if (inLiveDocs == null)
                 {
                     return null;
@@ -932,10 +932,10 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        public override Bits GetDocsWithField(string field)
+        public override IBits GetDocsWithField(string field)
         {
-            Bits bits = input.GetDocsWithField(field);
-            if (bits == null || bits is Bits_MatchAllBits || bits is Bits_MatchNoBits)
+            IBits bits = input.GetDocsWithField(field);
+            if (bits == null || bits is Bits.MatchAllBits || bits is Bits.MatchNoBits)
             {
                 return bits;
             }

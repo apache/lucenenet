@@ -17,7 +17,7 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
     /// this implementation supplies a filtered DocIdSet, that excludes all
@@ -30,14 +30,14 @@ namespace Lucene.Net.Search
 
     public sealed class BitsFilteredDocIdSet : FilteredDocIdSet
     {
-        private readonly Bits acceptDocs;
+        private readonly IBits acceptDocs;
 
         /// <summary>
         /// Convenience wrapper method: If {@code acceptDocs == null} it returns the original set without wrapping. </summary>
         /// <param name="set"> Underlying DocIdSet. If {@code null}, this method returns {@code null} </param>
         /// <param name="acceptDocs"> Allowed docs, all docids not in this set will not be returned by this DocIdSet.
         /// If {@code null}, this method returns the original set without wrapping. </param>
-        public static DocIdSet Wrap(DocIdSet set, Bits acceptDocs)
+        public static DocIdSet Wrap(DocIdSet set, IBits acceptDocs)
         {
             return (set == null || acceptDocs == null) ? set : new BitsFilteredDocIdSet(set, acceptDocs);
         }
@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
         /// Constructor. </summary>
         /// <param name="innerSet"> Underlying DocIdSet </param>
         /// <param name="acceptDocs"> Allowed docs, all docids not in this set will not be returned by this DocIdSet </param>
-        public BitsFilteredDocIdSet(DocIdSet innerSet, Bits acceptDocs)
+        public BitsFilteredDocIdSet(DocIdSet innerSet, IBits acceptDocs)
             : base(innerSet)
         {
             if (acceptDocs == null)

@@ -24,7 +24,7 @@ namespace Lucene.Net.Search.Spans
 
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using InPlaceMergeSorter = Lucene.Net.Util.InPlaceMergeSorter;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
@@ -100,12 +100,12 @@ namespace Lucene.Net.Search.Spans
         private SpanNearQuery Query;
         private bool CollectPayloads = true;
 
-        public NearSpansOrdered(SpanNearQuery spanNearQuery, AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+        public NearSpansOrdered(SpanNearQuery spanNearQuery, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             : this(spanNearQuery, context, acceptDocs, termContexts, true)
         {
         }
 
-        public NearSpansOrdered(SpanNearQuery spanNearQuery, AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts, bool collectPayloads)
+        public NearSpansOrdered(SpanNearQuery spanNearQuery, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts, bool collectPayloads)
         {
             sorter = new InPlaceMergeSorterAnonymousInnerClassHelper(this);
             if (spanNearQuery.Clauses.Length < 2)

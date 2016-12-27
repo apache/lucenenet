@@ -4,7 +4,7 @@ using Lucene.Net.Documents;
 namespace Lucene.Net.Index
 {
     using NUnit.Framework;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
             base.TearDown();
         }
 
-        private void CheckTerms(Terms terms, Bits liveDocs, params string[] termsList)
+        private void CheckTerms(Terms terms, IBits liveDocs, params string[] termsList)
         {
             Assert.IsNotNull(terms);
             TermsEnum te = terms.Iterator(null);
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
         {
             ParallelAtomicReader pr = new ParallelAtomicReader(Ir1, Ir2);
 
-            Bits liveDocs = pr.LiveDocs;
+            IBits liveDocs = pr.LiveDocs;
 
             Fields fields = pr.Fields;
             IEnumerator<string> fe = fields.GetEnumerator();

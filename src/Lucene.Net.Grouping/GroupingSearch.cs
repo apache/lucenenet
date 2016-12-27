@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.Grouping
         private int initialSize = 128;
 
         private ICollection /* Collection<?> */ matchingGroups;
-        private Bits matchingGroupHeads;
+        private IBits matchingGroupHeads;
 
         /// <summary>
         /// Constructs a <see cref="GroupingSearch"/> instance that groups documents by index terms using the <see cref="FieldCache"/>.
@@ -288,7 +288,7 @@ namespace Lucene.Net.Search.Grouping
             }
             else
             {
-                matchingGroupHeads = new Bits_MatchNoBits(searcher.IndexReader.MaxDoc);
+                matchingGroupHeads = new Bits.MatchNoBits(searcher.IndexReader.MaxDoc);
             }
 
             IEnumerable<ISearchGroup<TGroupValue>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
@@ -527,7 +527,7 @@ namespace Lucene.Net.Search.Grouping
         /// Returns the matching group heads if <see cref="SetAllGroupHeads(bool)"/> was set to true or an empty bit set.
         /// </summary>
         /// <returns>The matching group heads if <see cref="SetAllGroupHeads(bool)"/> was set to true or an empty bit set</returns>
-        public virtual Bits GetAllGroupHeads()
+        public virtual IBits GetAllGroupHeads()
         {
             return matchingGroupHeads;
         }

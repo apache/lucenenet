@@ -20,7 +20,7 @@ namespace Lucene.Net.Search.Spans
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Spans
         ///  </seealso>
         protected abstract AcceptStatus AcceptPosition(Spans spans);
 
-        public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+        public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
             return new PositionCheckSpan(this, context, acceptDocs, termContexts);
         }
@@ -129,7 +129,7 @@ namespace Lucene.Net.Search.Spans
 
             private Spans spans;
 
-            public PositionCheckSpan(SpanPositionCheckQuery outerInstance, AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+            public PositionCheckSpan(SpanPositionCheckQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {
                 this.outerInstance = outerInstance;
                 spans = outerInstance.m_match.GetSpans(context, acceptDocs, termContexts);

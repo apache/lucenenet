@@ -17,7 +17,7 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
     /// A DocIdSet contains a set of doc ids. Implementing classes must
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="IOException"/>). this is generally true for bit sets
         /// like <seealso cref="Lucene.Net.Util.FixedBitSet"/>, which return
         /// itself if they are used as {@code DocIdSet}. </returns>
-        public virtual Bits GetBits()
+        public virtual IBits GetBits()
         {
             return null;
         }

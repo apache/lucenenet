@@ -20,21 +20,21 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
     /// Exposes a slice of an existing Bits as a new Bits.
     ///
     /// @lucene.internal
     /// </summary>
-    internal sealed class BitsSlice : Bits
+    internal sealed class BitsSlice : IBits
     {
-        private readonly Bits Parent;
+        private readonly IBits Parent;
         private readonly int Start;
         private readonly int Length_Renamed;
 
         // start is inclusive; end is exclusive (length = end-start)
-        public BitsSlice(Bits parent, ReaderSlice slice)
+        public BitsSlice(IBits parent, ReaderSlice slice)
         {
             this.Parent = parent;
             this.Start = slice.Start;

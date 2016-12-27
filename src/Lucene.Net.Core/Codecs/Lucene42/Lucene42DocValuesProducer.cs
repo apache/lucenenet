@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.Lucene42
      */
 
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BlockPackedReader = Lucene.Net.Util.Packed.BlockPackedReader;
     using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -660,7 +660,7 @@ namespace Lucene.Net.Codecs.Lucene42
             }
         }
 
-        public override Bits GetDocsWithField(FieldInfo field)
+        public override IBits GetDocsWithField(FieldInfo field)
         {
             if (field.DocValuesType == DocValuesType.SORTED_SET)
             {
@@ -668,7 +668,7 @@ namespace Lucene.Net.Codecs.Lucene42
             }
             else
             {
-                return new Lucene.Net.Util.Bits_MatchAllBits(MaxDoc);
+                return new Lucene.Net.Util.Bits.MatchAllBits(MaxDoc);
             }
         }
 
@@ -811,12 +811,12 @@ namespace Lucene.Net.Codecs.Lucene42
                 throw new System.NotSupportedException();
             }
 
-            public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
                 throw new System.NotSupportedException();
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
                 throw new System.NotSupportedException();
             }

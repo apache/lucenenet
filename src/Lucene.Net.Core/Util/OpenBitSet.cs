@@ -76,7 +76,7 @@ namespace Lucene.Net.Util
     /// </tr>
     /// </table>
     /// </summary>
-    public class OpenBitSet : DocIdSet, Bits
+    public class OpenBitSet : DocIdSet, IBits
     {
         protected internal long[] bits; // LUCENENET TODO: rename m_
         protected internal int Wlen; // number of words (elements) used in the array // LUCENENET TODO: rename m_
@@ -129,7 +129,7 @@ namespace Lucene.Net.Util
             return new OpenBitSetIterator(bits, Wlen);
         }
 
-        public override Bits GetBits() // LUCENENET TODO: This was Bits() in original - we have another (currently a property) below that if we fix should be named GetBits()
+        public override IBits GetBits() // LUCENENET TODO: This was Bits() in original - we have another (currently a property) below that if we fix should be named GetBits()
         {
             return this;
         }

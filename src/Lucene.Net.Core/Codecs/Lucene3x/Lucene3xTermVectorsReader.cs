@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Bits = Lucene.Net.Util.Bits;
+using IBits = Lucene.Net.Util.IBits;
 using BytesRef = Lucene.Net.Util.BytesRef;
 using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
 using Directory = Lucene.Net.Store.Directory;
@@ -633,7 +633,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return TermAndPostings[CurrentTerm].Freq;
             }
 
-            public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags) // ignored
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags) // ignored
             {
                 TVDocsEnum docsEnum;
                 if (reuse != null && reuse is TVDocsEnum)
@@ -648,7 +648,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return docsEnum;
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
                 if (!StorePositions && !StoreOffsets)
                 {
@@ -691,7 +691,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             internal bool DidNext;
             internal int Doc = -1;
             internal int Freq_Renamed;
-            internal Bits LiveDocs;
+            internal IBits LiveDocs;
 
             public override int Freq
             {
@@ -728,7 +728,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public virtual void Reset(Bits liveDocs, TermAndPostings termAndPostings)
+            public virtual void Reset(IBits liveDocs, TermAndPostings termAndPostings)
             {
                 this.LiveDocs = liveDocs;
                 this.Freq_Renamed = termAndPostings.Freq;
@@ -747,7 +747,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             private bool DidNext;
             private int Doc = -1;
             private int NextPos;
-            private Bits LiveDocs;
+            private IBits LiveDocs;
             private int[] Positions;
             private int[] StartOffsets;
             private int[] EndOffsets;
@@ -798,7 +798,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public virtual void Reset(Bits liveDocs, TermAndPostings termAndPostings)
+            public virtual void Reset(IBits liveDocs, TermAndPostings termAndPostings)
             {
                 this.LiveDocs = liveDocs;
                 this.Positions = termAndPostings.Positions;

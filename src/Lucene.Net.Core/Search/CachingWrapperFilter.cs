@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using WAH8DocIdSet = Lucene.Net.Util.WAH8DocIdSet;
 
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
         // for testing
         internal int hitCount, missCount;
 
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             var reader = context.AtomicReader;
             object key = reader.CoreCacheKey;
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
             }
 
             // we explicitly provide no random access, as this filter is 100% sparse and iterator exits faster
-            public override Bits GetBits()
+            public override IBits GetBits()
             {
                 return null;
             }

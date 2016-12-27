@@ -18,7 +18,7 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
     /// Expert: Calculate query weights and build query scorers.
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
         /// </param>
         /// <returns> a <seealso cref="Scorer"/> which scores documents in/out-of order. </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public abstract Scorer Scorer(AtomicReaderContext context, Bits acceptDocs); // LUCENENET TODO: Rename GetScorer() ?
+        public abstract Scorer Scorer(AtomicReaderContext context, IBits acceptDocs); // LUCENENET TODO: Rename GetScorer() ?
 
         /// <summary>
         /// Optional method, to return a <seealso cref="BulkScorer"/> to
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
         /// <returns> a <seealso cref="BulkScorer"/> which scores documents and
         /// passes them to a collector. </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public virtual BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs) // LUCENENET TODO: Rename GetBulkScorer ?
+        public virtual BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs) // LUCENENET TODO: Rename GetBulkScorer ?
         {
             Scorer scorer = Scorer(context, acceptDocs);
             if (scorer == null)

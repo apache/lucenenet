@@ -38,7 +38,7 @@ namespace Lucene.Net.Codecs.SimpleText
     using ChecksumIndexInput = Store.ChecksumIndexInput;
     using IndexInput = Store.IndexInput;
     using ArrayUtil = Util.ArrayUtil;
-    using Bits = Util.Bits;
+    using IBits = Util.IBits;
     using BytesRef = Util.BytesRef;
     using CharsRef = Util.CharsRef;
     using FixedBitSet = Util.FixedBitSet;
@@ -196,7 +196,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return _indexOptions == IndexOptions.DOCS_ONLY ? - 1 : _totalTermFreq;
             }
 
-            public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
                 SimpleTextDocsEnum docsEnum;
                 if (reuse != null && reuse is SimpleTextDocsEnum && ((SimpleTextDocsEnum) reuse).CanReuse(_outerInstance._input))
@@ -211,7 +211,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     _docFreq);
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
 
                 if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
@@ -245,7 +245,7 @@ namespace Lucene.Net.Codecs.SimpleText
             private bool _omitTf;
             private int _docId = -1;
             private int _tf;
-            private Bits _liveDocs;
+            private IBits _liveDocs;
             private readonly BytesRef _scratch = new BytesRef(10);
             private readonly CharsRef _scratchUtf16 = new CharsRef(10);
             private int _cost;
@@ -261,7 +261,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return @in == _inStart;
             }
 
-            public SimpleTextDocsEnum Reset(long fp, Bits liveDocs, bool omitTf, int docFreq)
+            public SimpleTextDocsEnum Reset(long fp, IBits liveDocs, bool omitTf, int docFreq)
             {
                 _liveDocs = liveDocs;
                 _in.Seek(fp);
@@ -370,7 +370,7 @@ namespace Lucene.Net.Codecs.SimpleText
             private readonly IndexInput _in;
             private int _docId = -1;
             private int _tf;
-            private Bits _liveDocs;
+            private IBits _liveDocs;
             private readonly BytesRef _scratch = new BytesRef(10);
             private readonly BytesRef _scratch2 = new BytesRef(10);
             private readonly CharsRef _scratchUtf16 = new CharsRef(10);
@@ -394,7 +394,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return @in == _inStart;
             }
 
-            public SimpleTextDocsAndPositionsEnum Reset(long fp, Bits liveDocs, IndexOptions indexOptions, int docFreq)
+            public SimpleTextDocsAndPositionsEnum Reset(long fp, IBits liveDocs, IndexOptions indexOptions, int docFreq)
             {
                 _liveDocs = liveDocs;
                 _nextDocStart = fp;

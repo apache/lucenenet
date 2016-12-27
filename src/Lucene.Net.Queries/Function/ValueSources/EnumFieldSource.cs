@@ -125,9 +125,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             private readonly EnumFieldSource outerInstance;
 
             private readonly FieldCache.Ints arr;
-            private readonly Bits valid;
+            private readonly IBits valid;
 
-            public IntDocValuesAnonymousInnerClassHelper(EnumFieldSource outerInstance, EnumFieldSource @this, FieldCache.Ints arr, Bits valid)
+            public IntDocValuesAnonymousInnerClassHelper(EnumFieldSource outerInstance, EnumFieldSource @this, FieldCache.Ints arr, IBits valid)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

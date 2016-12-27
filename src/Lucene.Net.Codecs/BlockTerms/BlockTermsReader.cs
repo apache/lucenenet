@@ -765,13 +765,13 @@ namespace Lucene.Net.Codecs.BlockTerms
                     return _state.TotalTermFreq;
                 }
 
-                public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
                 {
                     DecodeMetaData();
                     return _blockTermsReader._postingsReader.Docs(_fieldReader._fieldInfo, _state, liveDocs, reuse, flags);
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse,
+                public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse,
                     int flags)
                 {
                     if (_fieldReader._fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)

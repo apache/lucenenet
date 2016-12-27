@@ -10,7 +10,7 @@ using System.Linq;
 namespace Lucene.Net.Index
 {
     using NUnit.Framework;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
             internal readonly int MaxDocSpacing;
             internal readonly int PayloadSize;
             internal readonly bool FixedPayloads;
-            internal readonly Bits LiveDocs;
+            internal readonly IBits LiveDocs;
             internal readonly BytesRef Payload_Renamed;
             internal readonly IndexOptions Options;
             internal readonly bool DoPositions;
@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
             internal int PosSpacing;
             internal int PosUpto;
 
-            public SeedPostings(long seed, int minDocFreq, int maxDocFreq, Bits liveDocs, IndexOptions options)
+            public SeedPostings(long seed, int minDocFreq, int maxDocFreq, IBits liveDocs, IndexOptions options)
             {
                 Random = new Random((int)seed);
                 DocRandom = new Random(Random.Next());
@@ -675,7 +675,7 @@ namespace Lucene.Net.Index
 
             // 50% of the time time pass liveDocs:
             bool useLiveDocs = options.Contains(Option.LIVE_DOCS) && Random().NextBoolean();
-            Bits liveDocs;
+            IBits liveDocs;
             if (useLiveDocs)
             {
                 liveDocs = GlobalLiveDocs;

@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using Codec = Lucene.Net.Codecs.Codec;
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
     using Directory = Lucene.Net.Store.Directory;
@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
     public sealed class SegmentReader : AtomicReader
     {
         private readonly SegmentCommitInfo si;
-        private readonly Bits liveDocs;
+        private readonly IBits liveDocs;
 
         // Normally set to si.docCount - si.delDocCount, unless we
         // were created as an NRT reader from IW, in which case IW
@@ -69,17 +69,17 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal readonly IDisposableThreadLocal<IDictionary<string, Bits>> docsWithFieldLocal = new IDisposableThreadLocalAnonymousInnerClassHelper2();
+        internal readonly IDisposableThreadLocal<IDictionary<string, IBits>> docsWithFieldLocal = new IDisposableThreadLocalAnonymousInnerClassHelper2();
 
-        private class IDisposableThreadLocalAnonymousInnerClassHelper2 : IDisposableThreadLocal<IDictionary<string, Bits>>
+        private class IDisposableThreadLocalAnonymousInnerClassHelper2 : IDisposableThreadLocal<IDictionary<string, IBits>>
         {
             public IDisposableThreadLocalAnonymousInnerClassHelper2()
             {
             }
 
-            protected internal override IDictionary<string, Bits> InitialValue()
+            protected internal override IDictionary<string, IBits> InitialValue()
             {
-                return new Dictionary<string, Bits>();
+                return new Dictionary<string, IBits>();
             }
         }
 
@@ -163,7 +163,7 @@ namespace Lucene.Net.Index
         ///  liveDocs.  Used by IndexWriter to provide a new NRT
         ///  reader
         /// </summary>
-        internal SegmentReader(SegmentCommitInfo si, SegmentReader sr, Bits liveDocs, int numDocs)
+        internal SegmentReader(SegmentCommitInfo si, SegmentReader sr, IBits liveDocs, int numDocs)
         {
             this.si = si;
             this.liveDocs = liveDocs;
@@ -288,7 +288,7 @@ namespace Lucene.Net.Index
             return genInfos;
         }
 
-        public override Bits LiveDocs
+        public override IBits LiveDocs
         {
             get
             {
@@ -535,7 +535,7 @@ namespace Lucene.Net.Index
             return dvs;
         }
 
-        public override Bits GetDocsWithField(string field)
+        public override IBits GetDocsWithField(string field)
         {
             EnsureOpen();
             FieldInfo fi = FieldInfos.FieldInfo(field);
@@ -550,9 +550,9 @@ namespace Lucene.Net.Index
                 return null;
             }
 
-            IDictionary<string, Bits> dvFields = docsWithFieldLocal.Get();
+            IDictionary<string, IBits> dvFields = docsWithFieldLocal.Get();
 
-            Bits dvs;
+            IBits dvs;
             dvFields.TryGetValue(field, out dvs);
             if (dvs == null)
             {

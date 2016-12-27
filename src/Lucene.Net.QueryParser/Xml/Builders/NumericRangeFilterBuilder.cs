@@ -160,7 +160,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
 
         internal class NoMatchFilter : Filter
         {
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return null;
             }

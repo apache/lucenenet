@@ -11,7 +11,7 @@ namespace Lucene.Net.Search
     using System.Reflection;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
@@ -114,11 +114,11 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 if (acceptDocs == null)
                 {
-                    acceptDocs = new Bits_MatchAllBits(5);
+                    acceptDocs = new Bits.MatchAllBits(5);
                 }
                 BitArray bitset = new BitArray(5);
                 if (acceptDocs.Get(1))
@@ -217,7 +217,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 Assert.IsNull(acceptDocs, "acceptDocs should be null, as we have an index without deletions");
                 BitArray bitset = new BitArray(5, true);
@@ -462,7 +462,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected override bool UseRandomAccess(Bits bits, int firstFilterDoc)
+            protected override bool UseRandomAccess(IBits bits, int firstFilterDoc)
             {
                 return true;
             }
@@ -514,7 +514,7 @@ namespace Lucene.Net.Search
                 this.Reader = reader;
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 bool nullBitset = Random().Next(10) == 5;
                 AtomicReader reader = context.AtomicReader;
@@ -548,7 +548,7 @@ namespace Lucene.Net.Search
                     this.BitSet = bitSet;
                 }
 
-                public override Bits GetBits()
+                public override IBits GetBits()
                 {
                     if (NullBitset)
                     {
@@ -557,7 +557,7 @@ namespace Lucene.Net.Search
                     return new BitsAnonymousInnerClassHelper(this);
                 }
 
-                private class BitsAnonymousInnerClassHelper : Bits
+                private class BitsAnonymousInnerClassHelper : IBits
                 {
                     private readonly DocIdSetAnonymousInnerClassHelper OuterInstance;
 
@@ -633,7 +633,7 @@ namespace Lucene.Net.Search
                 this.QueryFirst = queryFirst;
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return new DocIdSetAnonymousInnerClassHelper2(this, context);
             }
@@ -650,7 +650,7 @@ namespace Lucene.Net.Search
                     this.Context = context;
                 }
 
-                public override Bits GetBits()
+                public override IBits GetBits()
                 {
                     return null;
                 }

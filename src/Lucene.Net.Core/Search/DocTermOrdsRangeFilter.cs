@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
 
@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// this method is implemented for each data type </summary>
-        public override abstract DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs);
+        public override abstract DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs);
 
         /// <summary>
         /// Creates a BytesRef range filter using <seealso cref="IFieldCache#getTermsIndex"/>. this works with all
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, field);
                 long lowerPoint = lowerVal == null ? -1 : docTermOrds.LookupTerm(lowerVal);
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
                 private readonly long inclusiveLowerPoint;
                 private readonly long inclusiveUpperPoint;
 
-                public FieldCacheDocIdSetAnonymousInnerClassHelper(DocTermOrdsRangeFilterAnonymousInnerClassHelper outerInstance, int maxDoc, Bits acceptDocs, SortedSetDocValues docTermOrds, long inclusiveLowerPoint, long inclusiveUpperPoint)
+                public FieldCacheDocIdSetAnonymousInnerClassHelper(DocTermOrdsRangeFilterAnonymousInnerClassHelper outerInstance, int maxDoc, IBits acceptDocs, SortedSetDocValues docTermOrds, long inclusiveLowerPoint, long inclusiveUpperPoint)
                     : base(maxDoc, acceptDocs)
                 {
                     this.outerInstance = outerInstance;

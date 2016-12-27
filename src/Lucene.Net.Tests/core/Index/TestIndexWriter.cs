@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
 
     //using SimpleTextCodec = Lucene.Net.Codecs.simpletext.SimpleTextCodec;
     using BinaryDocValuesField = BinaryDocValuesField;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
     using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
@@ -2569,7 +2569,7 @@ namespace Lucene.Net.Index
             foreach (AtomicReaderContext atomicReaderContext in leaves)
             {
                 AtomicReader ar = (AtomicReader)atomicReaderContext.Reader;
-                Bits liveDocs = ar.LiveDocs;
+                IBits liveDocs = ar.LiveDocs;
                 int maxDoc = ar.MaxDoc;
                 for (int i = 0; i < maxDoc; i++)
                 {

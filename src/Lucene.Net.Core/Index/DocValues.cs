@@ -17,7 +17,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
@@ -170,12 +170,12 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns a Bits representing all documents from <code>dv</code> that have a value.
         /// </summary>
-        public static Bits DocsWithValue(SortedDocValues dv, int maxDoc)
+        public static IBits DocsWithValue(SortedDocValues dv, int maxDoc)
         {
             return new BitsAnonymousInnerClassHelper(dv, maxDoc);
         }
 
-        private class BitsAnonymousInnerClassHelper : Bits
+        private class BitsAnonymousInnerClassHelper : IBits
         {
             private Lucene.Net.Index.SortedDocValues Dv;
             private int MaxDoc;
@@ -200,12 +200,12 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns a Bits representing all documents from <code>dv</code> that have a value.
         /// </summary>
-        public static Bits DocsWithValue(SortedSetDocValues dv, int maxDoc)
+        public static IBits DocsWithValue(SortedSetDocValues dv, int maxDoc)
         {
             return new BitsAnonymousInnerClassHelper2(dv, maxDoc);
         }
 
-        private class BitsAnonymousInnerClassHelper2 : Bits
+        private class BitsAnonymousInnerClassHelper2 : IBits
         {
             private Lucene.Net.Index.SortedSetDocValues Dv;
             private int MaxDoc;

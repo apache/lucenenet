@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.Perfield
      */
 
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using IOUtils = Lucene.Net.Util.IOUtils;
@@ -343,7 +343,7 @@ namespace Lucene.Net.Codecs.Perfield
                 return null;
             }
 
-            public override Bits GetDocsWithField(FieldInfo field)
+            public override IBits GetDocsWithField(FieldInfo field)
             {
                 DocValuesProducer producer;
                 if (Fields.TryGetValue(field.Name, out producer))

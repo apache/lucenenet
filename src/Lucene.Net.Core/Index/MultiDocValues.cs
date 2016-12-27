@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
      */
 
     using AppendingPackedLongBuffer = Lucene.Net.Util.Packed.AppendingPackedLongBuffer;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using MonotonicAppendingLongBuffer = Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer;
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
         /// </p>
         ///
         /// </summary>
-        public static Bits GetDocsWithField(IndexReader r, string field)
+        public static IBits GetDocsWithField(IndexReader r, string field)
         {
             IList<AtomicReaderContext> leaves = r.Leaves;
             int size = leaves.Count;
@@ -210,21 +210,21 @@ namespace Lucene.Net.Index
 
             bool anyReal = false;
             bool anyMissing = false;
-            Bits[] values = new Bits[size];
+            IBits[] values = new IBits[size];
             int[] starts = new int[size + 1];
             for (int i = 0; i < size; i++)
             {
                 AtomicReaderContext context = leaves[i];
-                Bits v = context.AtomicReader.GetDocsWithField(field);
+                IBits v = context.AtomicReader.GetDocsWithField(field);
                 if (v == null)
                 {
-                    v = new Lucene.Net.Util.Bits_MatchNoBits(context.Reader.MaxDoc);
+                    v = new Lucene.Net.Util.Bits.MatchNoBits(context.Reader.MaxDoc);
                     anyMissing = true;
                 }
                 else
                 {
                     anyReal = true;
-                    if (v is Lucene.Net.Util.Bits_MatchAllBits == false)
+                    if (v is Lucene.Net.Util.Bits.MatchAllBits == false)
                     {
                         anyMissing = true;
                     }
@@ -240,7 +240,7 @@ namespace Lucene.Net.Index
             }
             else if (!anyMissing)
             {
-                return new Lucene.Net.Util.Bits_MatchAllBits(r.MaxDoc);
+                return new Lucene.Net.Util.Bits.MatchAllBits(r.MaxDoc);
             }
             else
             {

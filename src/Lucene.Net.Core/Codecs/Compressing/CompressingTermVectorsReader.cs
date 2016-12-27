@@ -999,7 +999,7 @@ namespace Lucene.Net.Codecs.Compressing
                 return TermFreqs[Ord_Renamed];
             }
 
-            public override sealed DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+            public override sealed DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
                 TVDocsEnum docsEnum;
                 if (reuse != null && reuse is TVDocsEnum)
@@ -1015,7 +1015,7 @@ namespace Lucene.Net.Codecs.Compressing
                 return docsEnum;
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
                 if (Positions == null && StartOffsets == null)
                 {
@@ -1028,7 +1028,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class TVDocsEnum : DocsAndPositionsEnum
         {
-            private Bits LiveDocs;
+            private IBits LiveDocs;
             private int Doc = -1;
             private int TermFreq;
             private int PositionIndex;
@@ -1045,7 +1045,7 @@ namespace Lucene.Net.Codecs.Compressing
                 Payload_Renamed = new BytesRef();
             }
 
-            public virtual void Reset(Bits liveDocs, int freq, int positionIndex, int[] positions, int[] startOffsets, int[] lengths, BytesRef payloads, int[] payloadIndex)
+            public virtual void Reset(IBits liveDocs, int freq, int positionIndex, int[] positions, int[] startOffsets, int[] lengths, BytesRef payloads, int[] payloadIndex)
             {
                 this.LiveDocs = liveDocs;
                 this.TermFreq = freq;

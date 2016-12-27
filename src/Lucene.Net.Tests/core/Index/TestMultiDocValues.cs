@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
          */
 
     using BinaryDocValuesField = BinaryDocValuesField;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
@@ -409,8 +409,8 @@ namespace Lucene.Net.Index
             AtomicReader merged = GetOnlySegmentReader(ir2);
             iw.Dispose();
 
-            Bits multi = MultiDocValues.GetDocsWithField(ir, "numbers");
-            Bits single = merged.GetDocsWithField("numbers");
+            IBits multi = MultiDocValues.GetDocsWithField(ir, "numbers");
+            IBits single = merged.GetDocsWithField("numbers");
             if (multi == null)
             {
                 Assert.IsNull(single);

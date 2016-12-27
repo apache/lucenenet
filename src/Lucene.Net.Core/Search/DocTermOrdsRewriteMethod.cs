@@ -21,7 +21,7 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LongBitSet = Lucene.Net.Util.LongBitSet;
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
             /// Returns a DocIdSet with documents that should be permitted in search
             /// results.
             /// </summary>
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds((context.AtomicReader), m_query.m_field);
                 // Cannot use FixedBitSet because we require long index (ord):
@@ -204,7 +204,7 @@ namespace Lucene.Net.Search
                 private SortedSetDocValues docTermOrds;
                 private LongBitSet termSet;
 
-                public FieldCacheDocIdSetAnonymousInnerClassHelper(MultiTermQueryDocTermOrdsWrapperFilter outerInstance, int maxDoc, Bits acceptDocs, SortedSetDocValues docTermOrds, LongBitSet termSet)
+                public FieldCacheDocIdSetAnonymousInnerClassHelper(MultiTermQueryDocTermOrdsWrapperFilter outerInstance, int maxDoc, IBits acceptDocs, SortedSetDocValues docTermOrds, LongBitSet termSet)
                     : base(maxDoc, acceptDocs)
                 {
                     this.outerInstance = outerInstance;

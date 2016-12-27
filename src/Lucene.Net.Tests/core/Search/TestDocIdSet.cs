@@ -7,7 +7,7 @@ namespace Lucene.Net.Search
     using Lucene.Net.Support;
     using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;
 
     /*
@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return null;
             }
@@ -213,7 +213,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 DocIdSet innerNullIteratorSet = new DocIdSetAnonymousInnerClassHelper2(this);
                 return new FilteredDocIdSetAnonymousInnerClassHelper2(this, innerNullIteratorSet);

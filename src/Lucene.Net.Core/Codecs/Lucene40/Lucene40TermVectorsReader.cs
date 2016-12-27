@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Lucene40
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
@@ -619,7 +619,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return Freq;
             }
 
-            public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags) // ignored
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags) // ignored
             {
                 TVDocsEnum docsEnum;
                 if (reuse != null && reuse is TVDocsEnum)
@@ -634,7 +634,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return docsEnum;
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
                 if (!StorePositions && !StoreOffsets)
                 {
@@ -670,7 +670,7 @@ namespace Lucene.Net.Codecs.Lucene40
             private bool DidNext;
             private int Doc = -1;
             private int Freq_Renamed;
-            private Bits LiveDocs;
+            private IBits LiveDocs;
 
             public override int Freq
             {
@@ -700,7 +700,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return SlowAdvance(target);
             }
 
-            public virtual void Reset(Bits liveDocs, int freq)
+            public virtual void Reset(IBits liveDocs, int freq)
             {
                 this.LiveDocs = liveDocs;
                 this.Freq_Renamed = freq;
@@ -719,7 +719,7 @@ namespace Lucene.Net.Codecs.Lucene40
             private bool DidNext;
             private int Doc = -1;
             private int NextPos;
-            private Bits LiveDocs;
+            private IBits LiveDocs;
             private int[] Positions;
             private int[] StartOffsets;
             private int[] EndOffsets;
@@ -766,7 +766,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return SlowAdvance(target);
             }
 
-            public void Reset(Bits liveDocs, int[] positions, int[] startOffsets, int[] endOffsets, int[] payloadLengths, byte[] payloadBytes)
+            public void Reset(IBits liveDocs, int[] positions, int[] startOffsets, int[] endOffsets, int[] payloadLengths, byte[] payloadBytes)
             {
                 this.LiveDocs = liveDocs;
                 this.Positions = positions;

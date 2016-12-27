@@ -8,7 +8,7 @@ namespace Lucene.Net.Search
     using NUnit.Framework;
     using System.Diagnostics;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BooleanWeight = Lucene.Net.Search.BooleanQuery.BooleanWeight;
     using Directory = Lucene.Net.Store.Directory;
 
@@ -269,12 +269,12 @@ namespace Lucene.Net.Search
                 {
                 }
 
-                public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+                public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
                 {
                     throw new System.NotSupportedException();
                 }
 
-                public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
+                public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
                 {
                     return new BulkScorerAnonymousInnerClassHelper(this);
                 }

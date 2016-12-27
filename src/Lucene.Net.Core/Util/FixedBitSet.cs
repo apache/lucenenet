@@ -32,7 +32,7 @@ namespace Lucene.Net.Util
     ///
     /// @lucene.internal
     /// </summary>
-    public sealed class FixedBitSet : DocIdSet, Bits
+    public sealed class FixedBitSet : DocIdSet, IBits
     {
         /// <summary>
         /// A <seealso cref="DocIdSetIterator"/> which iterates over set bits in a
@@ -233,7 +233,7 @@ namespace Lucene.Net.Util
             return new FixedBitSetIterator(bits, NumBits, NumWords);
         }
 
-        public override Bits GetBits()
+        public override IBits GetBits()
         {
             return this;
         }

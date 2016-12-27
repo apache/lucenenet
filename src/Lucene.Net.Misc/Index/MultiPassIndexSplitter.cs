@@ -275,7 +275,7 @@ namespace Lucene.Net.Index
                 liveDocs = new FixedBitSet(input.MaxDoc);
                 if (input.HasDeletions)
                 {
-                    Bits oldLiveDocs = input.LiveDocs;
+                    IBits oldLiveDocs = input.LiveDocs;
                     Debug.Assert(oldLiveDocs != null);
                     // this loop is a little bit ineffective, as Bits has no nextSetBit():
                     for (int i = 0; i < maxDoc; i++)
@@ -298,7 +298,7 @@ namespace Lucene.Net.Index
                 liveDocs.Clear(n);
             }
 
-            public override Bits LiveDocs
+            public override IBits LiveDocs
             {
                 get
                 {

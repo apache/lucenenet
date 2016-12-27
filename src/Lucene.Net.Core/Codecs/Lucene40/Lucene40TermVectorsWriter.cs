@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DataInput = Lucene.Net.Store.DataInput;
     using Directory = Lucene.Net.Store.Directory;
@@ -399,7 +399,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private int CopyVectorsWithDeletions(MergeState mergeState, Lucene40TermVectorsReader matchingVectorsReader, AtomicReader reader, int[] rawDocLengths, int[] rawDocLengths2)
         {
             int maxDoc = reader.MaxDoc;
-            Bits liveDocs = reader.LiveDocs;
+            IBits liveDocs = reader.LiveDocs;
             int totalNumDocs = 0;
             if (matchingVectorsReader != null)
             {

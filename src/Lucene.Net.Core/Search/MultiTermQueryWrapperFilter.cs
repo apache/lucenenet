@@ -21,7 +21,7 @@ namespace Lucene.Net.Search
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using Fields = Lucene.Net.Index.Fields;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
         /// Returns a DocIdSet with documents that should be permitted in search
         /// results.
         /// </summary>
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             AtomicReader reader = (context.AtomicReader);
             Fields fields = reader.Fields;

@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs.Lucene45
      */
 
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BlockPackedReader = Lucene.Net.Util.Packed.BlockPackedReader;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
@@ -816,11 +816,11 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
-        private Bits GetMissingBits(long offset)
+        private IBits GetMissingBits(long offset)
         {
             if (offset == -1)
             {
-                return new Bits_MatchAllBits(MaxDoc);
+                return new Bits.MatchAllBits(MaxDoc);
             }
             else
             {
@@ -829,7 +829,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
-        private class BitsAnonymousInnerClassHelper : Bits
+        private class BitsAnonymousInnerClassHelper : IBits
         {
             private readonly Lucene45DocValuesProducer OuterInstance;
 
@@ -862,7 +862,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
-        public override Bits GetDocsWithField(FieldInfo field)
+        public override IBits GetDocsWithField(FieldInfo field)
         {
             switch (field.DocValuesType)
             {
@@ -1242,12 +1242,12 @@ namespace Lucene.Net.Codecs.Lucene45
                     return -1;
                 }
 
-                public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
                 {
                     throw new System.NotSupportedException();
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+                public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
                 {
                     throw new System.NotSupportedException();
                 }

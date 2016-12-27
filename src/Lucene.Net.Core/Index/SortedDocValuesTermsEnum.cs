@@ -20,7 +20,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
@@ -129,12 +129,12 @@ namespace Lucene.Net.Index
             return -1;
         }
 
-        public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+        public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
         {
             throw new System.NotSupportedException();
         }
 
-        public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+        public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
         {
             throw new System.NotSupportedException();
         }

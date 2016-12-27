@@ -214,7 +214,7 @@ namespace Lucene.Net.Util
             }
 
             // bits()
-            Bits bits = ds2.GetBits();
+            IBits bits = ds2.GetBits();
             if (bits != null)
             {
                 // test consistency between bits and iterator

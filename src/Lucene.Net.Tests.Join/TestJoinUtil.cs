@@ -838,7 +838,7 @@ namespace Lucene.Net.Tests.Join
 
             private Scorer scorer;
             private BinaryDocValues terms;
-            private Bits docsWithField;
+            private IBits docsWithField;
             private readonly BytesRef spare;
             
             public override void Collect(int doc)

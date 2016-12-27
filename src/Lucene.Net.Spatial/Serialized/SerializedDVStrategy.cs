@@ -143,7 +143,7 @@ namespace Lucene.Net.Spatial.Serialized
                 this.predicateValueSource = predicateValueSource;
             }
 
-            public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return new DocIdSetAnonymousHelper(this, context, acceptDocs);
             }
@@ -152,9 +152,9 @@ namespace Lucene.Net.Spatial.Serialized
             {
                 private readonly PredicateValueSourceFilter outerInstance;
                 private readonly AtomicReaderContext context;
-                private readonly Bits acceptDocs;
+                private readonly IBits acceptDocs;
 
-                public DocIdSetAnonymousHelper(PredicateValueSourceFilter outerInstance, AtomicReaderContext context, Bits acceptDocs)
+                public DocIdSetAnonymousHelper(PredicateValueSourceFilter outerInstance, AtomicReaderContext context, IBits acceptDocs)
                 {
                     this.outerInstance = outerInstance;
                     this.context = context;
@@ -168,7 +168,7 @@ namespace Lucene.Net.Spatial.Serialized
                         //Note that if you're truly bent on doing this, then see FunctionValues.getRangeScorer
                 }
 
-                public override Bits GetBits()
+                public override IBits GetBits()
                 {
                     //null Map context -- we simply don't have one. That's ok.
                     FunctionValues predFuncValues = outerInstance.predicateValueSource.GetValues(null, context);
@@ -176,14 +176,14 @@ namespace Lucene.Net.Spatial.Serialized
                     return new BitsAnonymousHelper(this, predFuncValues, context, acceptDocs);
                 }
 
-                internal class BitsAnonymousHelper : Bits
+                internal class BitsAnonymousHelper : IBits
                 {
                     private readonly DocIdSetAnonymousHelper outerInstance;
                     private readonly FunctionValues predFuncValues;
                     private readonly AtomicReaderContext context;
-                    private readonly Bits acceptDocs;
+                    private readonly IBits acceptDocs;
 
-                    public BitsAnonymousHelper(DocIdSetAnonymousHelper outerInstance, FunctionValues predFuncValues, AtomicReaderContext context, Bits acceptDocs)
+                    public BitsAnonymousHelper(DocIdSetAnonymousHelper outerInstance, FunctionValues predFuncValues, AtomicReaderContext context, IBits acceptDocs)
                     {
                         this.outerInstance = outerInstance;
                         this.predFuncValues = predFuncValues;

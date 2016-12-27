@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
 
     //using FilterIterator = Lucene.Net.Util.FilterIterator;
 
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
             return HasField(field) ? base.GetNormValues(field) : null;
         }
 
-        public override Bits GetDocsWithField(string field)
+        public override IBits GetDocsWithField(string field)
         {
             return HasField(field) ? base.GetDocsWithField(field) : null;
         }

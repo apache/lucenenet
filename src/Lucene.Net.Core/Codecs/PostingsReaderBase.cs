@@ -19,7 +19,7 @@ namespace Lucene.Net.Codecs
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using DataInput = Lucene.Net.Store.DataInput;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
@@ -71,13 +71,13 @@ namespace Lucene.Net.Codecs
         /// Must fully consume state, since after this call that
         ///  TermState may be reused.
         /// </summary>
-        public abstract DocsEnum Docs(FieldInfo fieldInfo, BlockTermState state, Bits skipDocs, DocsEnum reuse, int flags);
+        public abstract DocsEnum Docs(FieldInfo fieldInfo, BlockTermState state, IBits skipDocs, DocsEnum reuse, int flags);
 
         /// <summary>
         /// Must fully consume state, since after this call that
         ///  TermState may be reused.
         /// </summary>
-        public abstract DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState state, Bits skipDocs, DocsAndPositionsEnum reuse, int flags);
+        public abstract DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState state, IBits skipDocs, DocsAndPositionsEnum reuse, int flags);
 
         /// <summary>
         /// Returns approximate RAM bytes used </summary>

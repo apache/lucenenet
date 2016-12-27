@@ -10,7 +10,7 @@ namespace Lucene.Net.Search
     using AllDeletedFilterReader = Lucene.Net.Index.AllDeletedFilterReader;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Documents.Document;
@@ -476,7 +476,7 @@ namespace Lucene.Net.Search
 
             private Scorer scorer;
             private int leafPtr;
-            private Bits liveDocs;
+            private IBits liveDocs;
 
             public override void SetScorer(Scorer scorer)
             {

@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
@@ -216,11 +216,11 @@ namespace Lucene.Net.Search
                 stats.Normalize(queryNorm, topLevelBoost);
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 Debug.Assert(outerInstance.termArrays.Count > 0);
                 AtomicReader reader = (context.AtomicReader);
-                Bits liveDocs = acceptDocs;
+                IBits liveDocs = acceptDocs;
 
                 PhraseQuery.PostingsAndFreq[] postingsFreqs = new PhraseQuery.PostingsAndFreq[outerInstance.termArrays.Count];
 
@@ -588,7 +588,7 @@ namespace Lucene.Net.Search
         private readonly IntQueue _posList;
         private readonly long _cost;
 
-        public UnionDocsAndPositionsEnum(Bits liveDocs, AtomicReaderContext context, Term[] terms, IDictionary<Term, TermContext> termContexts, TermsEnum termsEnum)
+        public UnionDocsAndPositionsEnum(IBits liveDocs, AtomicReaderContext context, Term[] terms, IDictionary<Term, TermContext> termContexts, TermsEnum termsEnum)
         {
             ICollection<DocsAndPositionsEnum> docsEnums = new LinkedList<DocsAndPositionsEnum>();
             for (int i = 0; i < terms.Length; i++)

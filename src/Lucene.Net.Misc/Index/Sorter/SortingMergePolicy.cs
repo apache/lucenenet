@@ -106,7 +106,7 @@ namespace Lucene.Net.Index.Sorter
                 foreach (AtomicReader reader in readers)
                 {
                     int maxDoc = reader.MaxDoc;
-                    Bits liveDocs = reader.LiveDocs;
+                    IBits liveDocs = reader.LiveDocs;
                     for (int i = 0; i < maxDoc; ++i)
                     {
                         if (liveDocs != null && !liveDocs.Get(i))

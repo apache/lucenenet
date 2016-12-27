@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
     using BasicOperations = Lucene.Net.Util.Automaton.BasicOperations;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using ByteRunAutomaton = Lucene.Net.Util.Automaton.ByteRunAutomaton;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
@@ -304,12 +304,12 @@ namespace Lucene.Net.Search
             return actualEnum.TotalTermFreq();
         }
 
-        public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+        public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
         {
             return actualEnum.Docs(liveDocs, reuse, flags);
         }
 
-        public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+        public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
         {
             return actualEnum.DocsAndPositions(liveDocs, reuse, flags);
         }

@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
@@ -187,15 +187,15 @@ namespace Lucene.Net.Index
                         if (type == DocValuesType.NUMERIC)
                         {
                             IList<NumericDocValues> toMerge = new List<NumericDocValues>();
-                            IList<Bits> docsWithField = new List<Bits>();
+                            IList<IBits> docsWithField = new List<IBits>();
                             foreach (AtomicReader reader in MergeState.Readers)
                             {
                                 NumericDocValues values = reader.GetNumericDocValues(field.Name);
-                                Bits bits = reader.GetDocsWithField(field.Name);
+                                IBits bits = reader.GetDocsWithField(field.Name);
                                 if (values == null)
                                 {
                                     values = DocValues.EMPTY_NUMERIC;
-                                    bits = new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc);
+                                    bits = new Lucene.Net.Util.Bits.MatchNoBits(reader.MaxDoc);
                                 }
                                 toMerge.Add(values);
                                 docsWithField.Add(bits);
@@ -205,15 +205,15 @@ namespace Lucene.Net.Index
                         else if (type == DocValuesType.BINARY)
                         {
                             IList<BinaryDocValues> toMerge = new List<BinaryDocValues>();
-                            IList<Bits> docsWithField = new List<Bits>();
+                            IList<IBits> docsWithField = new List<IBits>();
                             foreach (AtomicReader reader in MergeState.Readers)
                             {
                                 BinaryDocValues values = reader.GetBinaryDocValues(field.Name);
-                                Bits bits = reader.GetDocsWithField(field.Name);
+                                IBits bits = reader.GetDocsWithField(field.Name);
                                 if (values == null)
                                 {
                                     values = DocValues.EMPTY_BINARY;
-                                    bits = new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc);
+                                    bits = new Lucene.Net.Util.Bits.MatchNoBits(reader.MaxDoc);
                                 }
                                 toMerge.Add(values);
                                 docsWithField.Add(bits);
@@ -280,7 +280,7 @@ namespace Lucene.Net.Index
                     if (field.HasNorms)
                     {
                         IList<NumericDocValues> toMerge = new List<NumericDocValues>();
-                        IList<Bits> docsWithField = new List<Bits>();
+                        IList<IBits> docsWithField = new List<IBits>();
                         foreach (AtomicReader reader in MergeState.Readers)
                         {
                             NumericDocValues norms = reader.GetNormValues(field.Name);
@@ -289,7 +289,7 @@ namespace Lucene.Net.Index
                                 norms = DocValues.EMPTY_NUMERIC;
                             }
                             toMerge.Add(norms);
-                            docsWithField.Add(new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc));
+                            docsWithField.Add(new Lucene.Net.Util.Bits.MatchAllBits(reader.MaxDoc));
                         }
                         consumer.MergeNumericField(field, MergeState, toMerge, docsWithField);
                     }

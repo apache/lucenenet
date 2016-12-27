@@ -6,7 +6,7 @@ using System.Linq;
 namespace Lucene.Net.Codecs.ramonly
 {
     using Lucene.Net.Support;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
@@ -492,12 +492,12 @@ namespace Lucene.Net.Codecs.ramonly
                 return RamField.TermToDocs[Current].TotalTermFreq;
             }
 
-            public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
                 return new RAMDocsEnum(RamField.TermToDocs[Current], liveDocs);
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
                 return new RAMDocsAndPositionsEnum(RamField.TermToDocs[Current], liveDocs);
             }
@@ -506,12 +506,12 @@ namespace Lucene.Net.Codecs.ramonly
         private class RAMDocsEnum : DocsEnum
         {
             private readonly RAMTerm RamTerm;
-            private readonly Bits LiveDocs;
+            private readonly IBits LiveDocs;
             private RAMDoc Current;
             private int Upto = -1;
             private int PosUpto = 0;
 
-            public RAMDocsEnum(RAMTerm ramTerm, Bits liveDocs)
+            public RAMDocsEnum(RAMTerm ramTerm, IBits liveDocs)
             {
                 this.RamTerm = ramTerm;
                 this.LiveDocs = liveDocs;
@@ -563,12 +563,12 @@ namespace Lucene.Net.Codecs.ramonly
         private class RAMDocsAndPositionsEnum : DocsAndPositionsEnum
         {
             private readonly RAMTerm RamTerm;
-            private readonly Bits LiveDocs;
+            private readonly IBits LiveDocs;
             private RAMDoc Current;
             private int Upto = -1;
             private int PosUpto = 0;
 
-            public RAMDocsAndPositionsEnum(RAMTerm ramTerm, Bits liveDocs)
+            public RAMDocsAndPositionsEnum(RAMTerm ramTerm, IBits liveDocs)
             {
                 this.RamTerm = ramTerm;
                 this.LiveDocs = liveDocs;

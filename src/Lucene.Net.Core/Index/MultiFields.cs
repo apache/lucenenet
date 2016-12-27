@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a single <seealso cref="Bits"/> instance for this
+        /// Returns a single <seealso cref="IBits"/> instance for this
         ///  reader, merging live Documents on the
         ///  fly.  this method will return null if the reader
         ///  has no deletions.
@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
         ///  It's better to get the sub-readers and iterate through them
         ///  yourself.
         /// </summary>
-        public static Bits GetLiveDocs(IndexReader reader)
+        public static IBits GetLiveDocs(IndexReader reader)
         {
             if (reader.HasDeletions)
             {
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
                 {
                     return leaves[0].AtomicReader.LiveDocs;
                 }
-                var liveDocs = new Bits[size];
+                var liveDocs = new IBits[size];
                 int[] starts = new int[size + 1];
                 for (int i = 0; i < size; i++)
                 {
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
         ///  term.  this will return null if the field or term does
         ///  not exist.
         /// </summary>
-        public static DocsEnum GetTermDocsEnum(IndexReader r, Bits liveDocs, string field, BytesRef term)
+        public static DocsEnum GetTermDocsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term)
         {
             return GetTermDocsEnum(r, liveDocs, field, term, DocsEnum.FLAG_FREQS);
         }
@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
         ///  return null if the field or term does not exist.  See {@link
         ///  TermsEnum#docs(Bits,DocsEnum,int)}.
         /// </summary>
-        public static DocsEnum GetTermDocsEnum(IndexReader r, Bits liveDocs, string field, BytesRef term, int flags)
+        public static DocsEnum GetTermDocsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, int flags)
         {
             Debug.Assert(field != null);
             Debug.Assert(term != null);
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
         ///  field & term.  this will return null if the field or
         ///  term does not exist or positions were not indexed. </summary>
         ///  <seealso cref= #getTermPositionsEnum(IndexReader, Bits, String, BytesRef, int)  </seealso>
-        public static DocsAndPositionsEnum GetTermPositionsEnum(IndexReader r, Bits liveDocs, string field, BytesRef term)
+        public static DocsAndPositionsEnum GetTermPositionsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term)
         {
             return GetTermPositionsEnum(r, liveDocs, field, term, DocsAndPositionsEnum.FLAG_OFFSETS | DocsAndPositionsEnum.FLAG_PAYLOADS);
         }
@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
         ///  exist or positions were not indexed. See {@link
         ///  TermsEnum#docsAndPositions(Bits,DocsAndPositionsEnum,int)}.
         /// </summary>
-        public static DocsAndPositionsEnum GetTermPositionsEnum(IndexReader r, Bits liveDocs, string field, BytesRef term, int flags)
+        public static DocsAndPositionsEnum GetTermPositionsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, int flags)
         {
             Debug.Assert(field != null);
             Debug.Assert(term != null);

@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using Directory = Lucene.Net.Store.Directory;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Constants = Lucene.Net.Util.Constants;
     using StringHelper = Lucene.Net.Util.StringHelper;
@@ -412,7 +412,7 @@ namespace Lucene.Net.Index
             // true if this is a 4.0+ index
             bool is40Index = MultiFields.GetMergedFieldInfos(reader).FieldInfo("content5") != null;
 
-            Bits liveDocs = MultiFields.GetLiveDocs(reader);
+            IBits liveDocs = MultiFields.GetLiveDocs(reader);
 
             for (int i = 0; i < 35; i++)
             {

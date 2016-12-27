@@ -97,7 +97,7 @@ namespace Lucene.Net.Queries.Function
                 queryWeight *= this.queryNorm;
             }
 
-            public override Scorer Scorer(AtomicReaderContext ctx, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext ctx, IBits acceptDocs)
             {
                 return new AllScorer(outerInstance, ctx, acceptDocs, this, queryWeight);
             }
@@ -118,11 +118,11 @@ namespace Lucene.Net.Queries.Function
             internal readonly float qWeight;
             internal int doc = -1;
             internal readonly FunctionValues vals;
-            internal readonly Bits acceptDocs;
+            internal readonly IBits acceptDocs;
 
             //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
             //ORIGINAL LINE: public AllScorer(org.apache.lucene.index.AtomicReaderContext context, org.apache.lucene.util.Bits acceptDocs, FunctionWeight w, float qWeight) throws java.io.IOException
-            public AllScorer(FunctionQuery outerInstance, AtomicReaderContext context, Bits acceptDocs, FunctionWeight w, float qWeight)
+            public AllScorer(FunctionQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, FunctionWeight w, float qWeight)
                 : base(w)
             {
                 this.outerInstance = outerInstance;

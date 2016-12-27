@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
@@ -430,7 +430,7 @@ namespace Lucene.Net.Index
             return sum;
         }
 
-        public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+        public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
         {
             MultiDocsEnum docsEnum;
             // Can only reuse if incoming enum is also a MultiDocsEnum
@@ -464,7 +464,7 @@ namespace Lucene.Net.Index
             {
                 TermsEnumWithSlice entry = top[i];
 
-                Bits b;
+                IBits b;
 
                 if (multiLiveDocs != null)
                 {
@@ -521,7 +521,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+        public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
         {
             MultiDocsAndPositionsEnum docsAndPositionsEnum;
             // Can only reuse if incoming enum is also a MultiDocsAndPositionsEnum
@@ -555,7 +555,7 @@ namespace Lucene.Net.Index
             {
                 TermsEnumWithSlice entry = top[i];
 
-                Bits b;
+                IBits b;
 
                 if (multiLiveDocs != null)
                 {

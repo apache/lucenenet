@@ -20,7 +20,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using MonotonicAppendingLongBuffer = Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer;
@@ -80,11 +80,11 @@ namespace Lucene.Net.Index
                 {
                     return new NoDelDocMap(maxDoc);
                 }
-                Bits liveDocs = reader.LiveDocs;
+                IBits liveDocs = reader.LiveDocs;
                 return Build(maxDoc, liveDocs);
             }
 
-            internal static DocMap Build(int maxDoc, Bits liveDocs)
+            internal static DocMap Build(int maxDoc, IBits liveDocs)
             {
                 Debug.Assert(liveDocs != null);
                 MonotonicAppendingLongBuffer docMap = new MonotonicAppendingLongBuffer();
@@ -106,11 +106,11 @@ namespace Lucene.Net.Index
             private class DocMapAnonymousInnerClassHelper : DocMap
             {
                 private int maxDoc;
-                private Bits LiveDocs;
+                private IBits LiveDocs;
                 private MonotonicAppendingLongBuffer docMap;
                 private int numDeletedDocs;
 
-                public DocMapAnonymousInnerClassHelper(int maxDoc, Bits liveDocs, MonotonicAppendingLongBuffer docMap, int numDeletedDocs)
+                public DocMapAnonymousInnerClassHelper(int maxDoc, IBits liveDocs, MonotonicAppendingLongBuffer docMap, int numDeletedDocs)
                 {
                     this.maxDoc = maxDoc;
                     this.LiveDocs = liveDocs;

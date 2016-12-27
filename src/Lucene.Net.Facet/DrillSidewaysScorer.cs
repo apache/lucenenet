@@ -22,7 +22,7 @@ namespace Lucene.Net.Facet
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BulkScorer = Lucene.Net.Search.BulkScorer;
     using Collector = Lucene.Net.Search.Collector;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -107,7 +107,7 @@ namespace Lucene.Net.Facet
 
             int numDims = dims.Length;
 
-            Bits[] bits = new Bits[numBits];
+            IBits[] bits = new IBits[numBits];
             Collector[] bitsSidewaysCollectors = new Collector[numBits];
 
             DocIdSetIterator[] disis = new DocIdSetIterator[numDims - numBits];
@@ -175,7 +175,7 @@ namespace Lucene.Net.Facet
         /// the dim filters. 
         /// </summary>
         private void DoQueryFirstScoring(Collector collector, DocIdSetIterator[] disis, 
-            Collector[] sidewaysCollectors, Bits[] bits, Collector[] bitsSidewaysCollectors)
+            Collector[] sidewaysCollectors, IBits[] bits, Collector[] bitsSidewaysCollectors)
         {
             //if (DEBUG) {
             //  System.out.println("  doQueryFirstScoring");
@@ -784,7 +784,7 @@ namespace Lucene.Net.Facet
             // Iterator for docs matching this dim's filter, or ...
             internal DocIdSetIterator disi;
             // Random access bits:
-            internal Bits bits;
+            internal IBits bits;
             internal Collector sidewaysCollector;
             internal string dim;
 

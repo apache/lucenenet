@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("TEST: reader=" + reader);
                 }
 
-                Bits liveDocs = MultiFields.GetLiveDocs(reader);
+                IBits liveDocs = MultiFields.GetLiveDocs(reader);
                 foreach (int delDoc in deleted)
                 {
                     Assert.IsFalse(liveDocs.Get(delDoc));

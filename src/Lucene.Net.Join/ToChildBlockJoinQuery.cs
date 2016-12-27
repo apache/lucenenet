@@ -110,7 +110,7 @@ namespace Lucene.Net.Join
             }
 
             // NOTE: acceptDocs applies (and is checked) only in the child document space
-            public override Scorer Scorer(AtomicReaderContext readerContext, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext readerContext, IBits acceptDocs)
             {
                 Scorer parentScorer = _parentWeight.Scorer(readerContext, null);
 
@@ -157,7 +157,7 @@ namespace Lucene.Net.Join
             private readonly Scorer _parentScorer;
             private readonly FixedBitSet _parentBits;
             private readonly bool _doScores;
-            private readonly Bits _acceptDocs;
+            private readonly IBits _acceptDocs;
 
             private float _parentScore;
             private int _parentFreq = 1;
@@ -165,7 +165,7 @@ namespace Lucene.Net.Join
             private int _childDoc = -1;
             private int _parentDoc;
 
-            public ToChildBlockJoinScorer(Weight weight, Scorer parentScorer, FixedBitSet parentBits, bool doScores, Bits acceptDocs) : base(weight)
+            public ToChildBlockJoinScorer(Weight weight, Scorer parentScorer, FixedBitSet parentBits, bool doScores, IBits acceptDocs) : base(weight)
             {
                 _doScores = doScores;
                 _parentBits = parentBits;

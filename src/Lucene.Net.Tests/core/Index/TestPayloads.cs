@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
     using Lucene.Net.Util;
     using NUnit.Framework;
     using System.IO;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -488,7 +488,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
             IndexReader reader = DirectoryReader.Open(dir);
             TermsEnum terms = MultiFields.GetFields(reader).Terms(field).Iterator(null);
-            Bits liveDocs = MultiFields.GetLiveDocs(reader);
+            IBits liveDocs = MultiFields.GetLiveDocs(reader);
             DocsAndPositionsEnum tp = null;
             while (terms.Next() != null)
             {

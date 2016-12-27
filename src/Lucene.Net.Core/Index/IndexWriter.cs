@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
@@ -4114,11 +4114,11 @@ namespace Lucene.Net.Index
                     SegmentCommitInfo info = sourceSegments[i];
                     minGen = Math.Min(info.BufferedDeletesGen, minGen);
                     int docCount = info.Info.DocCount;
-                    Bits prevLiveDocs = merge.readers[i].LiveDocs;
+                    IBits prevLiveDocs = merge.readers[i].LiveDocs;
                     ReadersAndUpdates rld = readerPool.Get(info, false);
                     // We hold a ref so it should still be in the pool:
                     Debug.Assert(rld != null, "seg=" + info.Info.Name);
-                    Bits currentLiveDocs = rld.LiveDocs;
+                    IBits currentLiveDocs = rld.LiveDocs;
                     IDictionary<string, AbstractDocValuesFieldUpdates> mergingFieldUpdates = rld.MergingFieldUpdates;
                     string[] mergingFields;
                     AbstractDocValuesFieldUpdates[] dvFieldUpdates;
@@ -4969,7 +4969,7 @@ namespace Lucene.Net.Index
 
                     // Carefully pull the most recent live docs and reader
                     SegmentReader reader;
-                    Bits liveDocs;
+                    IBits liveDocs;
                     int delCount;
 
                     lock (this)

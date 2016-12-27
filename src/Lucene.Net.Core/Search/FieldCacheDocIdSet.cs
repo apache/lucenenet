@@ -17,7 +17,7 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    using Bits = Lucene.Net.Util.Bits;
+    using IBits = Lucene.Net.Util.IBits;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 
@@ -33,9 +33,9 @@ namespace Lucene.Net.Search
     public abstract class FieldCacheDocIdSet : DocIdSet
     {
         protected readonly int m_maxDoc;
-        protected readonly Bits m_acceptDocs;
+        protected readonly IBits m_acceptDocs;
 
-        public FieldCacheDocIdSet(int maxDoc, Bits acceptDocs)
+        public FieldCacheDocIdSet(int maxDoc, IBits acceptDocs)
         {
             this.m_maxDoc = maxDoc;
             this.m_acceptDocs = acceptDocs;
@@ -58,12 +58,12 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override sealed Bits GetBits()
+        public override sealed IBits GetBits()
         {
-            return (m_acceptDocs == null) ? (Bits)new BitsAnonymousInnerClassHelper(this) : new BitsAnonymousInnerClassHelper2(this);
+            return (m_acceptDocs == null) ? (IBits)new BitsAnonymousInnerClassHelper(this) : new BitsAnonymousInnerClassHelper2(this);
         }
 
-        private class BitsAnonymousInnerClassHelper : Bits
+        private class BitsAnonymousInnerClassHelper : IBits
         {
             private readonly FieldCacheDocIdSet outerInstance;
 
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class BitsAnonymousInnerClassHelper2 : Bits
+        private class BitsAnonymousInnerClassHelper2 : IBits
         {
             private readonly FieldCacheDocIdSet outerInstance;
 

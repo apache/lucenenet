@@ -92,7 +92,7 @@ namespace Lucene.Net.Queries
         /// <summary>
         /// <seealso cref="Filter#GetDocIdSet"/>.
         /// </summary>
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             int[] index = new int[1]; // use array as reference to modifiable int;
             index[0] = 0; // an object attribute would not be thread safe.

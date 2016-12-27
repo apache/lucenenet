@@ -163,7 +163,7 @@ namespace Lucene.Net.Join
                 originalWeight.Normalize(norm, topLevelBoost*outerInstance.Boost);
             }
             
-            public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 Terms terms = context.AtomicReader.Terms(outerInstance._field);
                 if (terms == null)
@@ -183,7 +183,7 @@ namespace Lucene.Net.Join
                 return new SVInOrderScorer(outerInstance, this, acceptDocs, segmentTermsEnum, context.AtomicReader.MaxDoc, cost);
             }
             
-            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
+            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
                 if (scoreDocsInOrder)
                 {
@@ -216,7 +216,7 @@ namespace Lucene.Net.Join
             private readonly TermsIncludingScoreQuery outerInstance;
 
             private readonly BytesRef _spare = new BytesRef();
-            private readonly Bits _acceptDocs;
+            private readonly IBits _acceptDocs;
             private readonly TermsEnum _termsEnum;
             private readonly long _cost;
 
@@ -226,7 +226,7 @@ namespace Lucene.Net.Join
             private int _scoreUpto;
             private int _doc;
 
-            internal SVInnerScorer(TermsIncludingScoreQuery outerInstance, Weight weight, Bits acceptDocs, TermsEnum termsEnum, long cost)
+            internal SVInnerScorer(TermsIncludingScoreQuery outerInstance, Weight weight, IBits acceptDocs, TermsEnum termsEnum, long cost)
             {
                 this.outerInstance = outerInstance;
                 _acceptDocs = acceptDocs;
@@ -326,7 +326,7 @@ namespace Lucene.Net.Join
 
             internal readonly FixedBitSet alreadyEmittedDocs;
 
-            internal MVInnerScorer(TermsIncludingScoreQuery outerInstance, Weight weight, Bits acceptDocs,
+            internal MVInnerScorer(TermsIncludingScoreQuery outerInstance, Weight weight, IBits acceptDocs,
                 TermsEnum termsEnum, int maxDoc, long cost) : base(outerInstance, weight, acceptDocs, termsEnum, cost)
             {
                 this.outerInstance = outerInstance;
@@ -361,7 +361,7 @@ namespace Lucene.Net.Join
 
             internal int currentDoc = -1;
             
-            internal SVInOrderScorer(TermsIncludingScoreQuery outerInstance, Weight weight, Bits acceptDocs,
+            internal SVInOrderScorer(TermsIncludingScoreQuery outerInstance, Weight weight, IBits acceptDocs,
                 TermsEnum termsEnum, int maxDoc, long cost) : base(weight)
             {
                 this.outerInstance = outerInstance;
@@ -372,7 +372,7 @@ namespace Lucene.Net.Join
                 cost_Renamed = cost;
             }
             
-            protected virtual void FillDocsAndScores(FixedBitSet matchingDocs, Bits acceptDocs,
+            protected virtual void FillDocsAndScores(FixedBitSet matchingDocs, IBits acceptDocs,
                 TermsEnum termsEnum)
             {
                 BytesRef spare = new BytesRef();
@@ -430,13 +430,13 @@ namespace Lucene.Net.Join
         // This scorer deals with the fact that a document can have more than one score from multiple related documents.
         internal class MVInOrderScorer : SVInOrderScorer
         {
-            internal MVInOrderScorer(TermsIncludingScoreQuery outerInstance, Weight weight, Bits acceptDocs,
+            internal MVInOrderScorer(TermsIncludingScoreQuery outerInstance, Weight weight, IBits acceptDocs,
                 TermsEnum termsEnum, int maxDoc, long cost)
                 : base(outerInstance, weight, acceptDocs, termsEnum, maxDoc, cost)
             {
             }
             
-            protected override void FillDocsAndScores(FixedBitSet matchingDocs, Bits acceptDocs,
+            protected override void FillDocsAndScores(FixedBitSet matchingDocs, IBits acceptDocs,
                 TermsEnum termsEnum)
             {
                 BytesRef spare = new BytesRef();
