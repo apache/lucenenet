@@ -40,11 +40,11 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Offset of first valid integer. </summary>
-        public int Offset; // LUCENENET TODO: make property
+        public int Offset { get; set; }
 
         /// <summary>
         /// Length of used ints. </summary>
-        public int Length; // LUCENENET TODO: make property
+        public int Length { get; set; }
 
         /// <summary>
         /// Create a IntsRef with <seealso cref="#EMPTY_INTS"/> </summary>

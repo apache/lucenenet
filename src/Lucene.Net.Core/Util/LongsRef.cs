@@ -40,11 +40,11 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Offset of first valid long. </summary>
-        public int Offset; // LUCENENET TODO: Make property
+        public int Offset { get; set; }
 
         /// <summary>
         /// Length of used longs. </summary>
-        public int Length; // LUCENENET TODO: Make property
+        public int Length { get; set; }
 
         /// <summary>
         /// Create a LongsRef with <seealso cref="#EMPTY_LONGS"/> </summary>
