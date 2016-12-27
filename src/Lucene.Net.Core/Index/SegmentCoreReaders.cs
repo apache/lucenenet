@@ -64,9 +64,9 @@ namespace Lucene.Net.Index
         // Thingy class holding fieldsReader, termVectorsReader,
         // normsProducer
 
-        internal readonly IDisposableThreadLocal<StoredFieldsReader> fieldsReaderLocal;
+        internal readonly DisposableThreadLocal<StoredFieldsReader> fieldsReaderLocal;
 
-        private class AnonymousFieldsReaderLocal : IDisposableThreadLocal<StoredFieldsReader>
+        private class AnonymousFieldsReaderLocal : DisposableThreadLocal<StoredFieldsReader>
         {
             private readonly SegmentCoreReaders OuterInstance;
 
@@ -81,9 +81,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal readonly IDisposableThreadLocal<TermVectorsReader> termVectorsLocal;
+        internal readonly DisposableThreadLocal<TermVectorsReader> termVectorsLocal;
 
-        private class AnonymousTermVectorsLocal : IDisposableThreadLocal<TermVectorsReader>
+        private class AnonymousTermVectorsLocal : DisposableThreadLocal<TermVectorsReader>
         {
             private readonly SegmentCoreReaders OuterInstance;
 
@@ -98,9 +98,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal readonly IDisposableThreadLocal<IDictionary<string, object>> normsLocal = new IDisposableThreadLocalAnonymousInnerClassHelper3();
+        internal readonly DisposableThreadLocal<IDictionary<string, object>> normsLocal = new IDisposableThreadLocalAnonymousInnerClassHelper3();
 
-        private class IDisposableThreadLocalAnonymousInnerClassHelper3 : IDisposableThreadLocal<IDictionary<string, object>>
+        private class IDisposableThreadLocalAnonymousInnerClassHelper3 : DisposableThreadLocal<IDictionary<string, object>>
         {
             public IDisposableThreadLocalAnonymousInnerClassHelper3()
             {

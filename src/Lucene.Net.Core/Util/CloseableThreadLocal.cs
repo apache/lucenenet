@@ -51,7 +51,7 @@ namespace Lucene.Net.Util
     ///
     /// @lucene.internal
     /// </summary>
-    public class IDisposableThreadLocal<T> : IDisposable // LUCENENET TODO: Rename DisposableThreadLocal
+    public class DisposableThreadLocal<T> : IDisposable
     {
         private ThreadLocal<WeakReference> t = new ThreadLocal<WeakReference>();
 

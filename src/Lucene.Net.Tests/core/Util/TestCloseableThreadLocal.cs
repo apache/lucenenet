@@ -37,7 +37,7 @@ namespace Lucene.Net.Util
         {
             // Tests that null can be set as a valid value (LUCENE-1805). this
             // previously failed in get().
-            IDisposableThreadLocal<object> ctl = new IDisposableThreadLocal<object>();
+            DisposableThreadLocal<object> ctl = new DisposableThreadLocal<object>();
             ctl.Set(null);
             Assert.IsNull(ctl.Get());
         }
@@ -47,11 +47,11 @@ namespace Lucene.Net.Util
         {
             // LUCENE-1805: make sure default get returns null,
             // twice in a row
-            IDisposableThreadLocal<object> ctl = new IDisposableThreadLocal<object>();
+            DisposableThreadLocal<object> ctl = new DisposableThreadLocal<object>();
             Assert.IsNull(ctl.Get());
         }
 
-        public class InitValueThreadLocal : IDisposableThreadLocal<object>
+        public class InitValueThreadLocal : DisposableThreadLocal<object>
         {
             private readonly TestIDisposableThreadLocal OuterInstance;
 

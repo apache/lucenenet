@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis
         private readonly ReuseStrategy _reuseStrategy;
 
         // non final as it gets nulled if closed; pkg private for access by ReuseStrategy's final helper methods:
-        internal IDisposableThreadLocal<object> StoredValue = new IDisposableThreadLocal<object>();
+        internal DisposableThreadLocal<object> StoredValue = new DisposableThreadLocal<object>();
 
         /// <summary>
         /// Create a new Analyzer, reusing the same set of components per-thread

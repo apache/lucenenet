@@ -44,7 +44,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private readonly string Segment;
         private readonly FieldInfos FieldInfos;
 
-        private readonly IDisposableThreadLocal<ThreadResources> threadResources = new IDisposableThreadLocal<ThreadResources>();
+        private readonly DisposableThreadLocal<ThreadResources> threadResources = new DisposableThreadLocal<ThreadResources>();
         private readonly SegmentTermEnum OrigEnum;
         private readonly long Size_Renamed;
 
