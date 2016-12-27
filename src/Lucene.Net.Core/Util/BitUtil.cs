@@ -127,7 +127,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 
         /// <summary>
         /// Returns the number of set bits in an array of longs. </summary>
-        public static long Pop_array(long[] arr, int wordOffset, int numWords) // LUCENENET TODO: Rename Pop_Array
+        public static long Pop_Array(long[] arr, int wordOffset, int numWords)
         {
             long popCount = 0;
             for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
@@ -141,7 +141,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         /// Returns the popcount or cardinality of the two sets after an intersection.
         ///  Neither array is modified.
         /// </summary>
-        public static long Pop_intersect(long[] arr1, long[] arr2, int wordOffset, int numWords) // LUCENENET TODO: Rename Pop_Intersect
+        public static long Pop_Intersect(long[] arr1, long[] arr2, int wordOffset, int numWords)
         {
             long popCount = 0;
             for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
@@ -155,7 +155,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         /// Returns the popcount or cardinality of the union of two sets.
         ///  Neither array is modified.
         /// </summary>
-        public static long Pop_union(long[] arr1, long[] arr2, int wordOffset, int numWords) // LUCENENET TODO: Rename Pop_Union
+        public static long Pop_Union(long[] arr1, long[] arr2, int wordOffset, int numWords)
         {
             long popCount = 0;
             for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
@@ -169,7 +169,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         /// Returns the popcount or cardinality of A & ~B.
         ///  Neither array is modified.
         /// </summary>
-        public static long Pop_andnot(long[] arr1, long[] arr2, int wordOffset, int numWords) // LUCENENET TODO: Rename Pop_AndNot
+        public static long Pop_AndNot(long[] arr1, long[] arr2, int wordOffset, int numWords)
         {
             long popCount = 0;
             for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
@@ -183,7 +183,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         /// Returns the popcount or cardinality of A ^ B
         /// Neither array is modified.
         /// </summary>
-        public static long Pop_xor(long[] arr1, long[] arr2, int wordOffset, int numWords) // LUCENENET TODO: Rename Pop_Xor
+        public static long Pop_Xor(long[] arr1, long[] arr2, int wordOffset, int numWords)
         {
             long popCount = 0;
             for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)

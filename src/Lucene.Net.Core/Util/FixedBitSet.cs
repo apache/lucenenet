@@ -171,7 +171,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static long IntersectionCount(FixedBitSet a, FixedBitSet b)
         {
-            return BitUtil.Pop_intersect(a.bits, b.bits, 0, Math.Min(a.NumWords, b.NumWords));
+            return BitUtil.Pop_Intersect(a.bits, b.bits, 0, Math.Min(a.NumWords, b.NumWords));
         }
 
         /// <summary>
@@ -180,14 +180,14 @@ namespace Lucene.Net.Util
         /// </summary>
         public static long UnionCount(FixedBitSet a, FixedBitSet b)
         {
-            long tot = BitUtil.Pop_union(a.bits, b.bits, 0, Math.Min(a.NumWords, b.NumWords));
+            long tot = BitUtil.Pop_Union(a.bits, b.bits, 0, Math.Min(a.NumWords, b.NumWords));
             if (a.NumWords < b.NumWords)
             {
-                tot += BitUtil.Pop_array(b.bits, a.NumWords, b.NumWords - a.NumWords);
+                tot += BitUtil.Pop_Array(b.bits, a.NumWords, b.NumWords - a.NumWords);
             }
             else if (a.NumWords > b.NumWords)
             {
-                tot += BitUtil.Pop_array(a.bits, b.NumWords, a.NumWords - b.NumWords);
+                tot += BitUtil.Pop_Array(a.bits, b.NumWords, a.NumWords - b.NumWords);
             }
             return tot;
         }
@@ -198,10 +198,10 @@ namespace Lucene.Net.Util
         /// </summary>
         public static long AndNotCount(FixedBitSet a, FixedBitSet b)
         {
-            long tot = BitUtil.Pop_andnot(a.bits, b.bits, 0, Math.Min(a.NumWords, b.NumWords));
+            long tot = BitUtil.Pop_AndNot(a.bits, b.bits, 0, Math.Min(a.NumWords, b.NumWords));
             if (a.NumWords > b.NumWords)
             {
-                tot += BitUtil.Pop_array(a.bits, b.NumWords, a.NumWords - b.NumWords);
+                tot += BitUtil.Pop_Array(a.bits, b.NumWords, a.NumWords - b.NumWords);
             }
             return tot;
         }
@@ -270,7 +270,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public int Cardinality()
         {
-            return (int)BitUtil.Pop_array(bits, 0, bits.Length);
+            return (int)BitUtil.Pop_Array(bits, 0, bits.Length);
         }
 
         public bool Get(int index)

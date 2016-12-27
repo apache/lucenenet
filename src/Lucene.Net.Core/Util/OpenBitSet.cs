@@ -673,7 +673,7 @@ namespace Lucene.Net.Util
         /// <returns> the number of set bits </returns>
         public virtual long Cardinality()
         {
-            return BitUtil.Pop_array(bits, 0, Wlen);
+            return BitUtil.Pop_Array(bits, 0, Wlen);
         }
 
         /// <summary>
@@ -682,7 +682,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static long IntersectionCount(OpenBitSet a, OpenBitSet b)
         {
-            return BitUtil.Pop_intersect(a.bits, b.bits, 0, Math.Min(a.Wlen, b.Wlen));
+            return BitUtil.Pop_Intersect(a.bits, b.bits, 0, Math.Min(a.Wlen, b.Wlen));
         }
 
         /// <summary>
@@ -691,14 +691,14 @@ namespace Lucene.Net.Util
         /// </summary>
         public static long UnionCount(OpenBitSet a, OpenBitSet b)
         {
-            long tot = BitUtil.Pop_union(a.bits, b.bits, 0, Math.Min(a.Wlen, b.Wlen));
+            long tot = BitUtil.Pop_Union(a.bits, b.bits, 0, Math.Min(a.Wlen, b.Wlen));
             if (a.Wlen < b.Wlen)
             {
-                tot += BitUtil.Pop_array(b.bits, a.Wlen, b.Wlen - a.Wlen);
+                tot += BitUtil.Pop_Array(b.bits, a.Wlen, b.Wlen - a.Wlen);
             }
             else if (a.Wlen > b.Wlen)
             {
-                tot += BitUtil.Pop_array(a.bits, b.Wlen, a.Wlen - b.Wlen);
+                tot += BitUtil.Pop_Array(a.bits, b.Wlen, a.Wlen - b.Wlen);
             }
             return tot;
         }
@@ -710,10 +710,10 @@ namespace Lucene.Net.Util
         /// </summary>
         public static long AndNotCount(OpenBitSet a, OpenBitSet b)
         {
-            long tot = BitUtil.Pop_andnot(a.bits, b.bits, 0, Math.Min(a.Wlen, b.Wlen));
+            long tot = BitUtil.Pop_AndNot(a.bits, b.bits, 0, Math.Min(a.Wlen, b.Wlen));
             if (a.Wlen > b.Wlen)
             {
-                tot += BitUtil.Pop_array(a.bits, b.Wlen, a.Wlen - b.Wlen);
+                tot += BitUtil.Pop_Array(a.bits, b.Wlen, a.Wlen - b.Wlen);
             }
             return tot;
         }
@@ -724,14 +724,14 @@ namespace Lucene.Net.Util
         /// </summary>
         public static long XorCount(OpenBitSet a, OpenBitSet b)
         {
-            long tot = BitUtil.Pop_xor(a.bits, b.bits, 0, Math.Min(a.Wlen, b.Wlen));
+            long tot = BitUtil.Pop_Xor(a.bits, b.bits, 0, Math.Min(a.Wlen, b.Wlen));
             if (a.Wlen < b.Wlen)
             {
-                tot += BitUtil.Pop_array(b.bits, a.Wlen, b.Wlen - a.Wlen);
+                tot += BitUtil.Pop_Array(b.bits, a.Wlen, b.Wlen - a.Wlen);
             }
             else if (a.Wlen > b.Wlen)
             {
-                tot += BitUtil.Pop_array(a.bits, b.Wlen, a.Wlen - b.Wlen);
+                tot += BitUtil.Pop_Array(a.bits, b.Wlen, a.Wlen - b.Wlen);
             }
             return tot;
         }

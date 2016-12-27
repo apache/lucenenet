@@ -116,7 +116,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public long Cardinality()
         {
-            return BitUtil.Pop_array(bits, 0, bits.Length);
+            return BitUtil.Pop_Array(bits, 0, bits.Length);
         }
 
         public bool Get(long index)
