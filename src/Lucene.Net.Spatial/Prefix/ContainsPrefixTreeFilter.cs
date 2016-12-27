@@ -247,7 +247,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// <summary>Number of docids.</summary>
             public virtual int Size
             {
-                get { return intSet.Size(); }
+                get { return intSet.Size; }
             }
 
             /// <summary>NOTE: modifies and returns either "this" or "other"</summary>
@@ -255,7 +255,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 SmallDocSet bigger;
                 SmallDocSet smaller;
-                if (other.intSet.Size() > this.intSet.Size())
+                if (other.intSet.Size > this.intSet.Size)
                 {
                     bigger = other;
                     smaller = this;
@@ -345,7 +345,7 @@ namespace Lucene.Net.Spatial.Prefix
                 }
                 //copy the unsorted values to a new array then sort them
                 int d = 0;
-                int[] docs = new int[intSet.Size()];
+                int[] docs = new int[intSet.Size];
                 foreach (int v in intSet.Keys)
                 {
                     if (v == intSet.EmptyVal)
@@ -354,7 +354,7 @@ namespace Lucene.Net.Spatial.Prefix
                     }
                     docs[d++] = v;
                 }
-                Debug.Assert(d == intSet.Size());
+                Debug.Assert(d == intSet.Size);
                 int size = d;
                 //sort them
                 Array.Sort(docs, 0, size);
