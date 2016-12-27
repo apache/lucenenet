@@ -25,7 +25,7 @@ namespace Lucene.Net.Util.Mutable
     /// </summary>
     public class MutableValueDouble : MutableValue
     {
-        public double Value; // LUCENENET TODO: make property
+        public double Value { get; set; }
 
         public override object ToObject()
         {
