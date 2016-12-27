@@ -39,7 +39,7 @@
         /// <summary>
         /// The indexes from the passed-in array of terms used to make this word combination
         /// </summary>
-        public int[] OriginalTermIndexes
+        public int[] OriginalTermIndexes // LUCENENET TODO: change to GetOriginalTermIndexes() ? (array)
         {
             get { return originalTermIndexes; }
         }

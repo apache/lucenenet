@@ -23,7 +23,7 @@ namespace Lucene.Net.Util
     /// An <seealso cref="IntroSorter"/> for object arrays.
     /// @lucene.internal
     /// </summary>
-    public sealed class ArrayIntroSorter<T> : IntroSorter
+    internal sealed class ArrayIntroSorter<T> : IntroSorter
     {
         private readonly T[] Arr;
         private readonly IComparer<T> Comparator;
@@ -48,7 +48,7 @@ namespace Lucene.Net.Util
             ArrayUtil.Swap(Arr, i, j);
         }
 
-        protected internal override int Pivot
+        protected override int Pivot
         {
             set
             {
@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        protected internal override int ComparePivot(int i)
+        protected override int ComparePivot(int i)
         {
             return Comparator.Compare(Pivot_Renamed, Arr[i]);
         }

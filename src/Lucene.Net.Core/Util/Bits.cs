@@ -21,7 +21,7 @@ namespace Lucene.Net.Util
     /// Interface for Bitset-like structures.
     /// @lucene.experimental
     /// </summary>
-    public interface Bits // LUCENENET TODO: Rename IBits
+    public interface Bits // LUCENENET TODO: Rename IBits (or better yet, change this to an abstract class so we can properly nest its subclasses)
     {
         /// <summary>
         /// Returns the value of the bit with the specified <code>index</code>.
@@ -45,7 +45,7 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Bits impl of the specified length with all bits set.
     /// </summary>
-    public class Bits_MatchAllBits : Bits
+    public class Bits_MatchAllBits : Bits // LUCENENET TODO: Rename MatchAllBits and nest in type named Bits (after Bits is named IBits)
     {
         private readonly int _len;
 
@@ -64,7 +64,7 @@ namespace Lucene.Net.Util
             return _len;
         }
 
-        public override int GetHashCode()
+        public override int GetHashCode() // LUCENENET TODO: This wasn't in Lucene - is it needed ?
         {
             return ("MatchAllBits" + _len).GetHashCode();
         }
@@ -92,7 +92,7 @@ namespace Lucene.Net.Util
             return _len;
         }
 
-        public override int GetHashCode()
+        public override int GetHashCode() // LUCENENET TODO: This wasn't in Lucene - is it needed ?
         {
             return ("MatchNoBits" + _len).GetHashCode();
         }

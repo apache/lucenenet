@@ -33,7 +33,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// returns true, if this element should be returned by <seealso cref="#next()"/>. </summary>
-        protected internal abstract bool PredicateFunction(T @object);
+        protected abstract bool PredicateFunction(T @object);
 
         public FilterIterator(IEnumerator<T> baseIterator)
         {
@@ -62,7 +62,7 @@ namespace Lucene.Net.Util
 
         public void Reset()
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); // LUCENENET TODO: Change to NotSupportedException
         }
 
         private bool SetNext()

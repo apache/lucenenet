@@ -33,7 +33,7 @@ namespace Lucene.Net.Support
             return new SubList<T>(list, fromIndex, toIndex);
         }
 
-        public static IList<T> Swap<T>(this IList<T> list, int indexA, int indexB)
+        public static IList<T> Swap<T>(this IList<T> list, int indexA, int indexB) // LUCENENET TODO: The swap is in-place. Returning the list makes this confusing.
         {
             T tmp = list[indexA];
             list[indexA] = list[indexB];

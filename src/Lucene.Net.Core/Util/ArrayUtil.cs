@@ -58,7 +58,7 @@ namespace Lucene.Net.Util
         /// <param name="chars"> a string representation of an int quantity. </param>
         /// <returns> int the value represented by the argument </returns>
         /// <exception cref="NumberFormatException"> if the argument could not be parsed as an int quantity. </exception>
-        public static int ParseInt(char[] chars)
+        public static int ParseInt(char[] chars) // LUCENENET TODO: Rename ParseInt32 ?
         {
             return ParseInt(chars, 0, chars.Length, 10);
         }
@@ -70,7 +70,7 @@ namespace Lucene.Net.Util
         /// <param name="len"> The length </param>
         /// <returns> the int </returns>
         /// <exception cref="NumberFormatException"> if it can't parse </exception>
-        public static int ParseInt(char[] chars, int offset, int len)
+        public static int ParseInt(char[] chars, int offset, int len) // LUCENENET TODO: Rename ParseInt32 ?
         {
             return ParseInt(chars, offset, len, 10);
         }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Util
         /// <param name="radix"> the base to use for conversion. </param>
         /// <returns> int the value represented by the argument </returns>
         /// <exception cref="NumberFormatException"> if the argument could not be parsed as an int quantity. </exception>
-        public static int ParseInt(char[] chars, int offset, int len, int radix)
+        public static int ParseInt(char[] chars, int offset, int len, int radix) // LUCENENET TODO: Rename ParseInt32 ?
         {
             int minRadix = 2, maxRadix = 36;
             if (chars == null || radix < minRadix || radix > maxRadix)
@@ -415,7 +415,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static sbyte[] Grow(sbyte[] array, int minSize)
+        public static sbyte[] Grow(sbyte[] array, int minSize) // LUCENENET TODO: remove this overload, mark it non-CLS compliant, or mark internal
         {
             Debug.Assert(minSize >= 0, "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
@@ -538,7 +538,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static int[][] Grow(int[][] array, int minSize)
+        public static int[][] Grow(int[][] array, int minSize) // LUCENENET TODO: CLS compliance issue
         {
             Debug.Assert(minSize >= 0, "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
@@ -553,12 +553,12 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static int[][] Grow(int[][] array)
+        public static int[][] Grow(int[][] array) // LUCENENET TODO: CLS compliance issue
         {
             return Grow(array, 1 + array.Length);
         }
 
-        public static int[][] Shrink(int[][] array, int targetSize)
+        public static int[][] Shrink(int[][] array, int targetSize) // LUCENENET TODO: CLS compliance issue
         {
             Debug.Assert(targetSize >= 0, "size must be positive (got " + targetSize + "): likely integer overflow?");
             int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
@@ -574,7 +574,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static float[][] Grow(float[][] array, int minSize)
+        public static float[][] Grow(float[][] array, int minSize) // LUCENENET TODO: CLS compliance issue
         {
             Debug.Assert(minSize >= 0, "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
@@ -589,12 +589,12 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static float[][] Grow(float[][] array)
+        public static float[][] Grow(float[][] array) // LUCENENET TODO: CLS compliance issue
         {
             return Grow(array, 1 + array.Length);
         }
 
-        public static float[][] Shrink(float[][] array, int targetSize)
+        public static float[][] Shrink(float[][] array, int targetSize) // LUCENENET TODO: CLS compliance issue
         {
             Debug.Assert(targetSize >= 0, "size must be positive (got " + targetSize + "): likely integer overflow?");
             int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
@@ -628,7 +628,7 @@ namespace Lucene.Net.Util
         /// Returns hash of bytes in range start (inclusive) to
         /// end (inclusive)
         /// </summary>
-        public static int GetHashCode(sbyte[] array, int start, int end)
+        public static int GetHashCode(sbyte[] array, int start, int end) // LUCENENET TODO: chnage to byte ?
         {
             int code = 0;
             for (int i = end - 1; i >= start; i--)
@@ -751,7 +751,7 @@ namespace Lucene.Net.Util
             return false;
         }
 
-        public static int[] ToIntArray(ICollection<int?> ints)
+        public static int[] ToIntArray(ICollection<int?> ints) // LUCENENET TODO: Nullable issue - the cast to int probably won't work here
         {
             int[] result = new int[ints.Count];
             int upto = 0;
@@ -780,9 +780,10 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Get the natural <seealso cref="Comparator"/> for the provided object class. </summary>
-        public static IComparer<T> naturalComparator<T>()
+        public static IComparer<T> naturalComparator<T>() // LUCENENET TODO: pascal case
             where T : IComparable<T>
         {
+            // return Comparer<T>.Default; // LUCENENET TODO: Shouldn't we just return the default comparer already included in .NET?
             return (IComparer<T>)new NaturalComparator<T>();
         }
 

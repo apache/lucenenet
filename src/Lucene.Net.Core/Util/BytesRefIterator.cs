@@ -43,7 +43,7 @@ namespace Lucene.Net.Util
         /// sorted. Callers may invoke this method many times, so it's best to cache a
         /// single instance & reuse it.
         /// </summary>
-        IComparer<BytesRef> Comparator { get; }
+        IComparer<BytesRef> Comparator { get; } // LUCENENET TODO: Rename Comparer ?
     }
 
     public class EmptyBytesRefIterator : BytesRefIterator
@@ -60,4 +60,9 @@ namespace Lucene.Net.Util
             get { return null; }
         }
     }
+
+    // LUCENENET TODO: add new class named BytesRefIterator and add:
+    // public static readonly BytesRefIterator EMPTY = new EmptyBytesRefIterator()
+    // make EmptyBytesRefIterator private
+    // See original source
 }

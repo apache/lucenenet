@@ -24,7 +24,7 @@ namespace Lucene.Net.Util
     /// A <seealso cref="TimSorter"/> for object arrays.
     /// @lucene.internal
     /// </summary>
-    public sealed class ArrayTimSorter<T> : TimSorter
+    internal sealed class ArrayTimSorter<T> : TimSorter
     {
         private readonly IComparer<T> Comparator;
         private readonly T[] Arr;
@@ -58,22 +58,22 @@ namespace Lucene.Net.Util
             ArrayUtil.Swap(Arr, i, j);
         }
 
-        protected internal override void Copy(int src, int dest)
+        protected override void Copy(int src, int dest)
         {
             Arr[dest] = Arr[src];
         }
 
-        protected internal override void Save(int start, int len)
+        protected override void Save(int start, int len)
         {
             Array.Copy(Arr, start, Tmp, 0, len);
         }
 
-        protected internal override void Restore(int src, int dest)
+        protected override void Restore(int src, int dest)
         {
             Arr[dest] = Tmp[src];
         }
 
-        protected internal override int CompareSaved(int i, int j)
+        protected override int CompareSaved(int i, int j)
         {
             return Comparator.Compare(Tmp[i], Arr[j]);
         }

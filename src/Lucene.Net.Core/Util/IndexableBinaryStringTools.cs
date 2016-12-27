@@ -43,10 +43,21 @@ namespace Lucene.Net.Util
     /// @lucene.experimental </summary>
     /// @deprecated Implement <seealso cref="ITermToBytesRefAttribute"/> and store bytes directly
     /// instead. this class will be removed in Lucene 5.0
-    [Obsolete("Implement <seealso cref=TermToBytesRefAttribute/> and store bytes directly")]
+    [Obsolete("Implement ITermToBytesRefAttribute and store bytes directly")]
     public sealed class IndexableBinaryStringTools
     {
-        private static readonly CodingCase[] CODING_CASES = new CodingCase[] { new CodingCase(7, 1), new CodingCase(14, 6, 2), new CodingCase(13, 5, 3), new CodingCase(12, 4, 4), new CodingCase(11, 3, 5), new CodingCase(10, 2, 6), new CodingCase(9, 1, 7), new CodingCase(8, 0) };
+        private static readonly CodingCase[] CODING_CASES = new CodingCase[] {
+            // CodingCase(int initialShift, int finalShift)
+            new CodingCase(7, 1),
+            // CodingCase(int initialShift, int middleShift, int finalShift)
+            new CodingCase(14, 6, 2),
+            new CodingCase(13, 5, 3),
+            new CodingCase(12, 4, 4),
+            new CodingCase(11, 3, 5),
+            new CodingCase(10, 2, 6),
+            new CodingCase(9, 1, 7),
+            new CodingCase(8, 0)
+        };
 
         // Export only static methods
         private IndexableBinaryStringTools()
@@ -60,7 +71,7 @@ namespace Lucene.Net.Util
         /// <param name="inputOffset"> initial offset into inputArray </param>
         /// <param name="inputLength"> number of bytes in inputArray </param>
         /// <returns> The number of chars required to encode the number of bytes. </returns>
-        public static int GetEncodedLength(sbyte[] inputArray, int inputOffset, int inputLength)
+        public static int GetEncodedLength(sbyte[] inputArray, int inputOffset, int inputLength) // LUCENENET TODO: CLS compliance
         {
             // Use long for intermediaries to protect against overflow
             return (int)((8L * inputLength + 14L) / 15L) + 1;
@@ -100,7 +111,7 @@ namespace Lucene.Net.Util
         /// <param name="outputArray"> char sequence to store encoded result </param>
         /// <param name="outputOffset"> initial offset into outputArray </param>
         /// <param name="outputLength"> length of output, must be getEncodedLength </param>
-        public static void Encode(sbyte[] inputArray, int inputOffset, int inputLength, char[] outputArray, int outputOffset, int outputLength)
+        public static void Encode(sbyte[] inputArray, int inputOffset, int inputLength, char[] outputArray, int outputOffset, int outputLength) // LUCENENET TODO: CLS compliance
         {
             Debug.Assert(outputLength == GetEncodedLength(inputArray, inputOffset, inputLength));
             if (inputLength > 0)

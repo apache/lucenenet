@@ -53,18 +53,18 @@
         /// Returns the parents array, where <c>Parents[i]</c> denotes the parent of
         /// category ordinal <c>i</c>.
         /// </summary>
-        public abstract int[] Parents { get; }
+        public abstract int[] Parents { get; } // LUCENENET TODO: Change to GetParents()
 
         /// <summary>
         /// Returns the children array, where <c>Children[i]</c> denotes a child of
         /// category ordinal <c>i</c>.
         /// </summary>
-        public abstract int[] Children { get; }
+        public abstract int[] Children { get; } // LUCENENET TODO: Change to GetChildren()
 
         /// <summary>
         /// Returns the siblings array, where <c>Siblings[i]</c> denotes the sibling
         /// of category ordinal <c>i</c>.
         /// </summary>
-        public abstract int[] Siblings { get; }
+        public abstract int[] Siblings { get; } // LUCENENET TODO: Change to GetSiblings()
     }
 }

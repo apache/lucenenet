@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class ByteBlockPool
     {
-        public const int BYTE_BLOCK_SHIFT = 15;
+        public static readonly int BYTE_BLOCK_SHIFT = 15;
         public static readonly int BYTE_BLOCK_SIZE = 1 << BYTE_BLOCK_SHIFT;
         public static readonly int BYTE_BLOCK_MASK = BYTE_BLOCK_SIZE - 1;
 
@@ -54,7 +54,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public abstract class Allocator
         {
-            protected internal readonly int BlockSize;
+            protected readonly int BlockSize; // LUCENENET TODO: rename m_
 
             protected Allocator(int blockSize)
             {
@@ -69,7 +69,7 @@ namespace Lucene.Net.Util
                 RecycleByteBlocks(b, 0, b.Length);
             }
 
-            public virtual byte[] ByteBlock
+            public virtual byte[] ByteBlock // LUCENENET TODO: Change to GetByteBlock() (array)
             {
                 get
                 {
@@ -103,7 +103,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public class DirectTrackingAllocator : Allocator
         {
-            internal readonly Counter BytesUsed;
+            private readonly Counter BytesUsed;
 
             public DirectTrackingAllocator(Counter bytesUsed)
                 : this(BYTE_BLOCK_SIZE, bytesUsed)
@@ -147,12 +147,12 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Where we are in head buffer </summary>
-        public int ByteUpto = BYTE_BLOCK_SIZE;
+        public int ByteUpto = BYTE_BLOCK_SIZE; // LUCENENET TODO: make property
 
         /// <summary>
         /// Current head buffer
         /// </summary>
-        public byte[] Buffer;
+        public byte[] Buffer; // LUCENENET TODO: make property ? public array
 
         /// <summary>
         /// Current head offset </summary>

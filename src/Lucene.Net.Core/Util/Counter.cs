@@ -63,7 +63,7 @@ namespace Lucene.Net.Util
 
         private sealed class SerialCounter : Counter
         {
-            internal long Count = 0;
+            private long Count = 0;
 
             public override long AddAndGet(long delta)
             {
@@ -79,7 +79,7 @@ namespace Lucene.Net.Util
         private sealed class AtomicCounter : Counter
         {
             //internal readonly AtomicLong Count = new AtomicLong();
-            internal long Count;
+            private long Count;
 
             public override long AddAndGet(long delta)
             {

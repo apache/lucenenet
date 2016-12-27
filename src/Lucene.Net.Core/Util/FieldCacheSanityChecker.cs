@@ -58,7 +58,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// If set, estimate size for all CacheEntry objects will be calculateed.
         /// </summary>
-        public bool RamUsageEstimator
+        public bool RamUsageEstimator // LUCENENET TODO: change to SetRamUsageEstimator(bool flag) (or better yet, add a constructor with the overload and remove this)
         {
             set
             {
@@ -327,7 +327,7 @@ namespace Lucene.Net.Util
 
             public override int GetHashCode()
             {
-                return ReaderKey.GetHashCode() * FieldName.GetHashCode();
+                return ReaderKey.GetHashCode() * FieldName.GetHashCode(); // LUCENENET TODO: IdentityHashCode
             }
 
             public override bool Equals(object that)
@@ -354,9 +354,9 @@ namespace Lucene.Net.Util
         /// </summary>
         public sealed class Insanity
         {
-            internal readonly InsanityType Type_Renamed;
-            internal readonly string Msg_Renamed;
-            internal readonly FieldCache.CacheEntry[] Entries;
+            private readonly InsanityType Type_Renamed;
+            private readonly string Msg_Renamed;
+            private readonly FieldCache.CacheEntry[] Entries;
 
             public Insanity(InsanityType type, string msg, params FieldCache.CacheEntry[] entries)
             {
@@ -398,7 +398,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// CacheEntry objects which suggest a problem
             /// </summary>
-            public FieldCache.CacheEntry[] CacheEntries
+            public FieldCache.CacheEntry[] CacheEntries // LUCENENET TODO: change to GetCacheEntries() (array)
             {
                 get
                 {
@@ -443,9 +443,9 @@ namespace Lucene.Net.Util
         /// <seealso cref= InsanityType#EXPECTED </seealso>
         public sealed class InsanityType
         {
-            internal readonly string Label;
+            private readonly string Label;
 
-            internal InsanityType(string label)
+            private InsanityType(string label)
             {
                 this.Label = label;
             }

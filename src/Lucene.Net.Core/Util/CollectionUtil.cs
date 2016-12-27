@@ -29,7 +29,6 @@ namespace Lucene.Net.Util
     ///
     /// @lucene.internal
     /// </summary>
-
     public sealed class CollectionUtil
     {
         private CollectionUtil() // no instance
@@ -54,7 +53,7 @@ namespace Lucene.Net.Util
                 this.Comp = comp;
             }
 
-            protected internal override int Pivot
+            protected override int Pivot
             {
                 set
                 {
@@ -64,7 +63,7 @@ namespace Lucene.Net.Util
 
             protected override void Swap(int i, int j)
             {
-                list = list.Swap(i, j);
+                list = list.Swap(i, j); // LUCENENET TODO: Could be more efficient
             }
 
             protected override int Compare(int i, int j)
@@ -72,7 +71,7 @@ namespace Lucene.Net.Util
                 return Comp.Compare(list[i], list[j]);
             }
 
-            protected internal override int ComparePivot(int j)
+            protected override int ComparePivot(int j)
             {
                 return Comp.Compare(pivot, list[j]);
             }
@@ -106,15 +105,15 @@ namespace Lucene.Net.Util
 
             protected override void Swap(int i, int j)
             {
-                List = List.Swap(i, j);
+                List = List.Swap(i, j); // LUCENENET TODO: Could be more efficient
             }
 
-            protected internal override void Copy(int src, int dest)
+            protected override void Copy(int src, int dest)
             {
                 List[dest] = List[src];
             }
 
-            protected internal override void Save(int i, int len)
+            protected override void Save(int i, int len)
             {
                 for (int j = 0; j < len; ++j)
                 {
@@ -122,7 +121,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            protected internal override void Restore(int i, int j)
+            protected override void Restore(int i, int j)
             {
                 List[j] = Tmp[i];
             }
@@ -132,7 +131,7 @@ namespace Lucene.Net.Util
                 return Comp.Compare(List[i], List[j]);
             }
 
-            protected internal override int CompareSaved(int i, int j)
+            protected override int CompareSaved(int i, int j)
             {
                 return Comp.Compare(Tmp[i], List[j]);
             }

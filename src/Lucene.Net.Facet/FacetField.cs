@@ -48,7 +48,7 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Path for this field.
         /// </summary>
-        public string[] Path { get; private set; }
+        public string[] Path { get; private set; } // LUCENENET TODO: public array property
 
         /// <summary>
         /// Creates the this from <paramref name="dim"/> and

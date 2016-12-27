@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public virtual string ReflectAsString(bool prependAttClass)
+        public virtual string ReflectAsString(bool prependAttClass) // LUCENENET TODO: When AttributeImpl is removed, this method should be non-virtual
         {
             StringBuilder buffer = new StringBuilder();
 
@@ -131,18 +131,18 @@ namespace Lucene.Net.Util
         ///
         /// This method may be overridden by subclasses.
         /// </summary>
-        public override System.String ToString()
+        public override string ToString() // LUCENENET NOTE: This method didn't exist in Lucene
         {
-            System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-            System.Type clazz = this.GetType();
-            System.Reflection.FieldInfo[] fields = clazz.GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.DeclaredOnly | System.Reflection.BindingFlags.Static);
+            StringBuilder buffer = new StringBuilder();
+            Type clazz = this.GetType();
+            FieldInfo[] fields = clazz.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Static);
             for (int i = 0; i < fields.Length; i++)
             {
-                System.Reflection.FieldInfo f = fields[i];
+                FieldInfo f = fields[i];
                 if (f.IsStatic)
                     continue;
                 //f.setAccessible(true);   // {{Aroush-2.9}} java.lang.reflect.AccessibleObject.setAccessible
-                System.Object value_Renamed = f.GetValue(this);
+                object value_Renamed = f.GetValue(this);
                 if (buffer.Length > 0)
                 {
                     buffer.Append(',');
@@ -164,12 +164,12 @@ namespace Lucene.Net.Util
         /// target attribute. The target implementation must support all the
         /// Attributes this implementation supports.
         /// </summary>
-        public abstract void CopyTo(Attribute target);
+        public abstract void CopyTo(Attribute target); // LUCENENET TODO: Change this to accept an IAttribute...? we should eliminate casting if possible
 
         /// <summary> Shallow clone. Subclasses must override this if they
         /// need to clone any members deeply,
         /// </summary>
-        public virtual System.Object Clone()
+        public virtual object Clone()
         {
             return base.MemberwiseClone();
         }

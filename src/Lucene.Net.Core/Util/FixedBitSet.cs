@@ -238,7 +238,7 @@ namespace Lucene.Net.Util
             return this;
         }
 
-        public int Length()
+        public int Length() // LUCENENET TODO: make property
         {
             return NumBits;
         }
@@ -255,7 +255,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Expert. </summary>
-        public long[] Bits
+        public long[] Bits // LUCENENET TODO: change to GetBits() (array)
         {
             get
             {

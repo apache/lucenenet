@@ -41,12 +41,11 @@ namespace Lucene.Net.Util
     ///
     /// @lucene.internal
     /// </summary>
-
     public sealed class DoubleBarrelLRUCache<K, V> where K : DoubleBarrelLRUCache.CloneableKey
     {
         /// <summary>
         /// Object providing clone(); the key class must subclass this. </summary>
-        public abstract class CloneableKey
+        public abstract class CloneableKey // LUCENENET TODO: Remove this type (it is already defined in non-generic DoubleBarrelLRUCache). Make this class inherit DoubleBarrelLRUCache.
         {
             public abstract CloneableKey Clone();
         }
@@ -60,7 +59,7 @@ namespace Lucene.Net.Util
         private volatile bool Swapped;
         private readonly int MaxSize;
 
-        public DoubleBarrelLRUCache(int maxSize)
+        public DoubleBarrelLRUCache(int maxSize) // LUCENENET TODO: Rename parameter maxCount ?
         {
             this.MaxSize = maxSize;
             Interlocked.Exchange(ref Countdown, maxSize);

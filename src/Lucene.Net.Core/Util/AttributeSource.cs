@@ -168,7 +168,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// returns the used AttributeFactory.
         /// </summary>
-        public AttributeFactory attributeFactory
+        public AttributeFactory attributeFactory // LUCENENET TODO: rename (collision), perhaps go back to GetAttributeFactory()
         {
             get
             {
@@ -180,7 +180,7 @@ namespace Lucene.Net.Util
         /// Returns a new iterator that iterates the attribute classes
         /// in the same order they were added in.
         /// </summary>
-        public IEnumerator<Type> AttributeClassesIterator
+        public IEnumerator<Type> AttributeClassesIterator // LUCENENET TODO: Change to GetAttributeClassesIterator() (new instance)
         {
             get
             {
@@ -193,7 +193,7 @@ namespace Lucene.Net.Util
         /// this iterator may contain less entries that <seealso cref="#getAttributeClassesIterator"/>,
         /// if one instance implements more than one Attribute interface.
         /// </summary>
-        public IEnumerator<Attribute> AttributeImplsIterator
+        public IEnumerator<Attribute> AttributeImplsIterator // LUCENENET TODO: Change to GetAttributeImplsIterator() (new instance)
         {
             get
             {
@@ -364,7 +364,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns true, iff this AttributeSource has any attributes </summary>
-        public bool HasAttributes()
+        public bool HasAttributes() // LUCENENET TODO: make property ?
         {
             return this.Attributes.Count > 0;
         }
@@ -399,7 +399,7 @@ namespace Lucene.Net.Util
             return (T)(IAttribute)this.Attributes[attClass].Value;
         }
 
-        private State CurrentState
+        private State CurrentState // LUCENENET TODO: Change to GetCurrentState() (complexity)
         {
             get
             {

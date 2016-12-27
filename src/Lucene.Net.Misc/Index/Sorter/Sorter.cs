@@ -133,22 +133,22 @@ namespace Lucene.Net.Index.Sorter
                 docs[j] = tmpDoc;
             }
 
-            protected internal override void Copy(int src, int dest)
+            protected override void Copy(int src, int dest)
             {
                 docs[dest] = docs[src];
             }
 
-            protected internal override void Save(int i, int len)
+            protected override void Save(int i, int len)
             {
                 Array.Copy(docs, i, tmp, 0, len);
             }
 
-            protected internal override void Restore(int i, int j)
+            protected override void Restore(int i, int j)
             {
                 docs[j] = tmp[i];
             }
 
-            protected internal override int CompareSaved(int i, int j)
+            protected override int CompareSaved(int i, int j)
             {
                 return comparator.Compare(tmp[i], docs[j]);
             }

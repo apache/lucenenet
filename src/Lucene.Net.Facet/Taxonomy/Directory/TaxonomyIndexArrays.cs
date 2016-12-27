@@ -224,7 +224,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// category that was added last to the taxonomy as an immediate child of
         /// <c>i</c>.
         /// </summary>
-        public override int[] Children
+        public override int[] Children // LUCENENET TODO: Change to GetChildren() (check consistency)
         {
             get
             {

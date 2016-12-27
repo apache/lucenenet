@@ -44,9 +44,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// UTF-8 charset string.
-        /// <p>Where possible, use <seealso cref="StandardCharsets#UTF_8"/> instead,
+        /// <para/>Where possible, use <see cref="Encoding.UTF8"/> instead,
         /// as using the String constant may slow things down. </summary>
-        /// <seealso cref= StandardCharsets#UTF_8 </seealso>
+        /// <seealso cref="Encoding.UTF8"/>
         public static readonly string UTF_8 = "UTF-8";
 
         private IOUtils() // no instance

@@ -82,7 +82,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the current size of this <seealso cref="BytesRefArray"/> </summary>
         /// <returns> the current size of this <seealso cref="BytesRefArray"/> </returns>
-        public int Size()
+        public int Size() // LUCENENET TODO: make property, rename Count
         {
             return LastElement;
         }
@@ -148,7 +148,7 @@ namespace Lucene.Net.Util
                 return Comp.Compare(OuterInstance.Get(scratch1, idx1), OuterInstance.Get(scratch2, idx2));
             }
 
-            protected internal override int Pivot
+            protected override int Pivot
             {
                 set
                 {
@@ -157,7 +157,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            protected internal override int ComparePivot(int j)
+            protected override int ComparePivot(int j)
             {
                 int index = OrderedEntries[j];
                 return Comp.Compare(pivot, OuterInstance.Get(scratch2, index));
@@ -171,7 +171,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// sugar for <seealso cref="#iterator(Comparator)"/> with a <code>null</code> comparator
         /// </summary>
-        public BytesRefIterator Iterator()
+        public BytesRefIterator Iterator() // LUCENENET TODO: Rename GetIterator() ? check consistency
         {
             return Iterator(null);
         }
@@ -190,7 +190,7 @@ namespace Lucene.Net.Util
         /// this is a non-destructive operation.
         /// </p>
         /// </summary>
-        public BytesRefIterator Iterator(IComparer<BytesRef> comp)
+        public BytesRefIterator Iterator(IComparer<BytesRef> comp)// LUCENENET TODO: Rename GetIterator() ? check consistency
         {
             BytesRef spare = new BytesRef();
             int size = Size();

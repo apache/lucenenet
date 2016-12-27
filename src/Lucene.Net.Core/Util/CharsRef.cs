@@ -242,6 +242,8 @@ namespace Lucene.Net.Util
             return new string(Chars, Offset, Length);
         }
 
+        // LUCENENET NOTE: Length field made into property already
+
         public char CharAt(int index)
         {
             // NOTE: must do a real check here to meet the specs of CharSequence
@@ -371,7 +373,7 @@ namespace Lucene.Net.Util
         /// Performs internal consistency checks.
         /// Always returns true (or throws InvalidOperationException)
         /// </summary>
-        public bool Valid
+        public bool Valid // LUCENENET TODO: Change to IsValid() method (throws exception)
         {
             get
             {

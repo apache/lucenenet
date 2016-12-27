@@ -34,7 +34,7 @@ namespace Lucene.Net.Util
     /// is <b>wrong</b>, as it does not respect the correct character set
     /// and may return wrong results (depending on the platform's defaults)!
     /// </summary>
-    public sealed class BytesRef : IComparable
+    public sealed class BytesRef : IComparable // LUCENENET TODO: Implement IComparable<BytesRef>
     {
         /// <summary>
         /// An empty byte array for convenience </summary>
@@ -98,7 +98,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="text"> this must be well-formed
         /// unicode text, with no unpaired surrogates. </param>
-        public BytesRef(CharsRef text)
+        public BytesRef(CharsRef text) // LUCENENET TODO: There was not a CharsRef overload in Lucene. This was supposed to be ICharSequence
             : this()
         {
             CopyChars(text);
@@ -121,7 +121,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="text"> Must be well-formed unicode text, with no
         /// unpaired surrogates or invalid UTF16 code units. </param>
-        public void CopyChars(CharsRef text)
+        public void CopyChars(CharsRef text) // LUCENENET TODO: There was not a CharsRef overload in Lucene. This was supposed to be ICharSequence
         {
             Debug.Assert(Offset == 0); // TODO broken if offset != 0
             UnicodeUtil.UTF16toUTF8(text, 0, text.Length, this);
@@ -430,7 +430,7 @@ namespace Lucene.Net.Util
         /// Performs internal consistency checks.
         /// Always returns true (or throws InvalidOperationException)
         /// </summary>
-        public bool Valid
+        public bool Valid // LUCENENET TODO: Rename IsValid
         {
             get
             {

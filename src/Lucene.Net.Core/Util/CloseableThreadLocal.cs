@@ -51,8 +51,7 @@ namespace Lucene.Net.Util
     ///
     /// @lucene.internal
     /// </summary>
-
-    public class IDisposableThreadLocal<T> : IDisposable
+    public class IDisposableThreadLocal<T> : IDisposable // LUCENENET TODO: Rename DisposableThreadLocal
     {
         private ThreadLocal<WeakReference> t = new ThreadLocal<WeakReference>();
 
@@ -70,7 +69,7 @@ namespace Lucene.Net.Util
         //private readonly AtomicInteger CountUntilPurge = new AtomicInteger(PURGE_MULTIPLIER);
         private int CountUntilPurge = PURGE_MULTIPLIER;
 
-        protected internal virtual T InitialValue()
+        protected internal virtual T InitialValue() // LUCENENET NOTE: Sometimes returns new instance - not a good candidate for a property
         {
             return default(T);
         }

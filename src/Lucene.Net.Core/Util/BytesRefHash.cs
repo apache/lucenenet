@@ -99,7 +99,7 @@ namespace Lucene.Net.Util
         /// Returns the number of <seealso cref="BytesRef"/> values in this <seealso cref="BytesRefHash"/>.
         /// </summary>
         /// <returns> the number of <seealso cref="BytesRef"/> values in this <seealso cref="BytesRefHash"/>. </returns>
-        public int Size()
+        public int Size() // LUCENENET TODO: make property, rename Count
         {
             return Count;
         }
@@ -203,7 +203,7 @@ namespace Lucene.Net.Util
                 return Comp.Compare(OuterInstance.Scratch1, scratch2);
             }
 
-            protected internal override int Pivot
+            protected override int Pivot
             {
                 set
                 {
@@ -213,7 +213,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            protected internal override int ComparePivot(int j)
+            protected override int ComparePivot(int j)
             {
                 int id = Compact[j];
                 Debug.Assert(OuterInstance.BytesStart.Length > id);
@@ -281,7 +281,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Closes the BytesRefHash and releases all internally used memory
         /// </summary>
-        public void Close()
+        public void Close() // LUCENENET TODO: Change to Dispose()
         {
             Clear(true);
             Ids = null;
@@ -557,6 +557,10 @@ namespace Lucene.Net.Util
         /// Thrown if a <seealso cref="BytesRef"/> exceeds the <seealso cref="BytesRefHash"/> limit of
         /// <seealso cref="ByteBlockPool#BYTE_BLOCK_SIZE"/>-2.
         /// </summary>
+        // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class MaxBytesLengthExceededException : Exception
         {
             internal MaxBytesLengthExceededException(string message)
@@ -608,7 +612,7 @@ namespace Lucene.Net.Util
             // TrackingDirectBytesStartArray...?  Just add a ctor
             // that makes a private bytesUsed?
 
-            protected internal readonly int InitSize;
+            protected readonly int InitSize; // LUCENENET TODO: rename m_
             internal int[] BytesStart;
             internal readonly Counter BytesUsed_Renamed;
 

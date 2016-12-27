@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class IntBlockPool
     {
-        public const int INT_BLOCK_SHIFT = 13;
+        public static readonly int INT_BLOCK_SHIFT = 13;
         public static readonly int INT_BLOCK_SIZE = 1 << INT_BLOCK_SHIFT;
         public static readonly int INT_BLOCK_MASK = INT_BLOCK_SIZE - 1;
 
@@ -37,7 +37,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public abstract class Allocator
         {
-            protected internal readonly int BlockSize;
+            protected readonly int BlockSize; // LUCENENET TODO: rename m_
 
             public Allocator(int blockSize)
             {
@@ -46,7 +46,7 @@ namespace Lucene.Net.Util
 
             public abstract void RecycleIntBlocks(int[][] blocks, int start, int end);
 
-            public virtual int[] GetIntBlock()
+            public virtual int[] GetIntBlock() // LUCENENET TODO: Rename GetInt32Block() ?
             {
                 return new int[BlockSize];
             }
@@ -71,7 +71,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// array of buffers currently used in the pool. Buffers are allocated if needed don't modify this outside of this class </summary>
-        public int[][] Buffers = new int[10][];
+        public int[][] Buffers = new int[10][]; // LUCENENET TODO: make property ?
 
         /// <summary>
         /// index into the buffers array pointing to the current buffer used as the head </summary>
@@ -79,15 +79,15 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Pointer to the current position in head buffer </summary>
-        public int IntUpto = INT_BLOCK_SIZE;
+        public int IntUpto = INT_BLOCK_SIZE; // LUCENENET TODO: make property
 
         /// <summary>
         /// Current head buffer </summary>
-        public int[] Buffer;
+        public int[] Buffer; // LUCENENET TODO: make property ?
 
         /// <summary>
         /// Current head offset </summary>
-        public int IntOffset = -INT_BLOCK_SIZE;
+        public int IntOffset = -INT_BLOCK_SIZE; // LUCENENET TODO: make property
 
         private readonly Allocator allocator;
 
@@ -266,8 +266,8 @@ namespace Lucene.Net.Util
         ///  @lucene.internal </seealso>
         public class SliceWriter
         {
-            internal int Offset;
-            internal readonly IntBlockPool Pool;
+            private int Offset;
+            private readonly IntBlockPool Pool;
 
             public SliceWriter(IntBlockPool pool)
             {
@@ -283,7 +283,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Writes the given value into the slice and resizes the slice if needed
             /// </summary>
-            public virtual void WriteInt(int value)
+            public virtual void WriteInt(int value) // LUCENENET TODO: rename WriteInt32 ?
             {
                 int[] ints = Pool.Buffers[Offset >> INT_BLOCK_SHIFT];
                 Debug.Assert(ints != null);
@@ -329,14 +329,14 @@ namespace Lucene.Net.Util
         /// </summary>
         public sealed class SliceReader
         {
-            internal readonly IntBlockPool Pool;
-            internal int Upto;
-            internal int BufferUpto;
-            internal int BufferOffset;
-            internal int[] Buffer;
-            internal int Limit;
-            internal int Level;
-            internal int End;
+            private readonly IntBlockPool Pool;
+            private int Upto;
+            private int BufferUpto;
+            private int BufferOffset;
+            private int[] Buffer;
+            private int Limit;
+            private int Level;
+            private int End;
 
             /// <summary>
             /// Creates a new <seealso cref="SliceReader"/> on the given pool
@@ -386,7 +386,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Reads the next int from the current slice and returns it. </summary>
             /// <seealso cref= SliceReader#endOfSlice() </seealso>
-            public int ReadInt()
+            public int ReadInt() // LUCENENET TODO: Rename ReadInt32() ?
             {
                 Debug.Assert(!EndOfSlice());
                 Debug.Assert(Upto <= Limit);
@@ -397,7 +397,7 @@ namespace Lucene.Net.Util
                 return Buffer[Upto++];
             }
 
-            internal void NextSlice()
+            private void NextSlice()
             {
                 // Skip to our next slice
                 int nextIndex = Buffer[Limit];

@@ -381,7 +381,7 @@ namespace Lucene.Net.Index.Sorter
                     }
                 }
 
-                protected internal override void Copy(int src, int dest)
+                protected override void Copy(int src, int dest)
                 {
                     docs[dest] = docs[src];
                     if (freqs != null)
@@ -390,7 +390,7 @@ namespace Lucene.Net.Index.Sorter
                     }
                 }
 
-                protected internal override void Save(int i, int len)
+                protected override void Save(int i, int len)
                 {
                     Array.Copy(docs, i, tmpDocs, 0, len);
                     if (freqs != null)
@@ -399,7 +399,7 @@ namespace Lucene.Net.Index.Sorter
                     }
                 }
 
-                protected internal override void Restore(int i, int j)
+                protected override void Restore(int i, int j)
                 {
                     docs[j] = tmpDocs[i];
                     if (freqs != null)
@@ -408,7 +408,7 @@ namespace Lucene.Net.Index.Sorter
                     }
                 }
 
-                protected internal override int CompareSaved(int i, int j)
+                protected override int CompareSaved(int i, int j)
                 {
                     return tmpDocs[i] - docs[j];
                 }
@@ -576,25 +576,25 @@ namespace Lucene.Net.Index.Sorter
                     offsets[j] = tmpOffset;
                 }
 
-                protected internal override void Copy(int src, int dest)
+                protected override void Copy(int src, int dest)
                 {
                     docs[dest] = docs[src];
                     offsets[dest] = offsets[src];
                 }
 
-                protected internal override void Save(int i, int len)
+                protected override void Save(int i, int len)
                 {
                     Array.Copy(docs, i, tmpDocs, 0, len);
                     Array.Copy(offsets, i, tmpOffsets, 0, len);
                 }
 
-                protected internal override void Restore(int i, int j)
+                protected override void Restore(int i, int j)
                 {
                     docs[j] = tmpDocs[i];
                     offsets[j] = tmpOffsets[i];
                 }
 
-                protected internal override int CompareSaved(int i, int j)
+                protected override int CompareSaved(int i, int j)
                 {
                     return tmpDocs[i] - docs[j];
                 }

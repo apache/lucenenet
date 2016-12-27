@@ -35,7 +35,7 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Path whose children were requested.
         /// </summary>
-        public string[] Path { get; private set; }
+        public string[] Path { get; private set; } // LUCENENET TODO: public array property
 
         /// <summary>
         /// Total value for this path (sum of all child counts, or
@@ -52,7 +52,7 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Child counts.
         /// </summary>
-        public LabelAndValue[] LabelValues { get; private set; }
+        public LabelAndValue[] LabelValues { get; private set; } // LUCENENET TODO: public array property
 
         /// <summary>
         /// The original data type of <see cref="Value"/> that was passed through the constructor.

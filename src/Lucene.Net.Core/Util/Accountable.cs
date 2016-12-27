@@ -23,8 +23,8 @@
 	/// 
 	/// @lucene.internal
 	/// </summary>
-	public interface Accountable
-	{
+	public interface Accountable // LUCENENET TODO: Rename with "I"
+	{ // LUCENENET NOTE: This interface wasn't added until Lucene 4.9
 
 	  /// <summary>
 	  /// Return the memory usage of this object in bytes. Negative values are illegal.

@@ -50,7 +50,7 @@ namespace Lucene.Net.Util
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override bool PredicateFunction(string s)
+            protected override bool PredicateFunction(string s)
             {
                 return false;
             }
@@ -75,7 +75,7 @@ namespace Lucene.Net.Util
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override bool PredicateFunction(string s)
+            protected override bool PredicateFunction(string s)
             {
                 return "a".Equals(s);
             }
@@ -101,7 +101,7 @@ namespace Lucene.Net.Util
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override bool PredicateFunction(string s)
+            protected override bool PredicateFunction(string s)
             {
                 return "a".Equals(s);
             }
@@ -126,7 +126,7 @@ namespace Lucene.Net.Util
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override bool PredicateFunction(string s)
+            protected override bool PredicateFunction(string s)
             {
                 return "b".Equals(s);
             }
@@ -152,7 +152,7 @@ namespace Lucene.Net.Util
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override bool PredicateFunction(string s)
+            protected override bool PredicateFunction(string s)
             {
                 return "b".Equals(s);
             }
@@ -181,7 +181,7 @@ namespace Lucene.Net.Util
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override bool PredicateFunction(string s)
+            protected override bool PredicateFunction(string s)
             {
                 return true;
             }
@@ -210,7 +210,7 @@ namespace Lucene.Net.Util
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override bool PredicateFunction(string s)
+            protected override bool PredicateFunction(string s)
             {
                 return true;
             }
@@ -243,7 +243,7 @@ namespace Lucene.Net.Util
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override bool PredicateFunction(string s)
+            protected override bool PredicateFunction(string s)
             {
                 return true;
             }

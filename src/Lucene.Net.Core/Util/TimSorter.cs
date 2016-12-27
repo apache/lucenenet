@@ -449,23 +449,23 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Copy data from slot <code>src</code> to slot <code>dest</code>. </summary>
-        protected internal abstract void Copy(int src, int dest);
+        protected abstract void Copy(int src, int dest);
 
         /// <summary>
         /// Save all elements between slots <code>i</code> and <code>i+len</code>
         ///  into the temporary storage.
         /// </summary>
-        protected internal abstract void Save(int i, int len);
+        protected abstract void Save(int i, int len);
 
         /// <summary>
         /// Restore element <code>j</code> from the temporary storage into slot <code>i</code>. </summary>
-        protected internal abstract void Restore(int i, int j);
+        protected abstract void Restore(int i, int j);
 
         /// <summary>
         /// Compare element <code>i</code> from the temporary storage with element
         ///  <code>j</code> from the slice to sort, similarly to
         ///  <seealso cref="#compare(int, int)"/>.
         /// </summary>
-        protected internal abstract int CompareSaved(int i, int j);
+        protected abstract int CompareSaved(int i, int j);
     }
 }

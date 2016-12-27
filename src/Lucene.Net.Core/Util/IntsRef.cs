@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
     ///
     ///  @lucene.internal
     /// </summary>
-    public sealed class IntsRef : IComparable<IntsRef>
+    public sealed class IntsRef : IComparable<IntsRef> // LUCENENET TODO: Rename Int32sRef ?
     {
         /// <summary>
         /// An empty integer array for convenience </summary>
@@ -36,15 +36,15 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// The contents of the IntsRef. Should never be {@code null}. </summary>
-        public int[] Ints;
+        public int[] Ints; // LUCENENET TODO: make property ?
 
         /// <summary>
         /// Offset of first valid integer. </summary>
-        public int Offset;
+        public int Offset; // LUCENENET TODO: make property
 
         /// <summary>
         /// Length of used ints. </summary>
-        public int Length;
+        public int Length; // LUCENENET TODO: make property
 
         /// <summary>
         /// Create a IntsRef with <seealso cref="#EMPTY_INTS"/> </summary>
@@ -227,7 +227,7 @@ namespace Lucene.Net.Util
         /// Performs internal consistency checks.
         /// Always returns true (or throws InvalidOperationException)
         /// </summary>
-        public bool Valid
+        public bool Valid // LUCENENET TODO: make IsValid() (throws exceptions)
         {
             get
             {

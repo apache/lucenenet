@@ -5,7 +5,7 @@ namespace Lucene.Net.Support
 {
     public static class StringBuilderExtensions
     {
-        public static StringBuilder Reverse(this StringBuilder text)
+        public static StringBuilder Reverse(this StringBuilder text) // LUCENENET TODO: The reverse is in-place. Returning the StringBuilder makes this confusing.
         {
             int textLength = text.Length;
             if (textLength > 1)
