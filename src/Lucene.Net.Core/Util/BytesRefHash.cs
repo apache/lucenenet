@@ -202,14 +202,11 @@ namespace Lucene.Net.Util
                 return comp.Compare(outerInstance.scratch1, scratch2);
             }
 
-            protected override int Pivot
+            protected override void SetPivot(int i)
             {
-                set
-                {
-                    int id = compact[value];
-                    Debug.Assert(outerInstance.bytesStart.Length > id);
-                    outerInstance.pool.SetBytesRef(pivot, outerInstance.bytesStart[id]);
-                }
+                int id = compact[i];
+                Debug.Assert(outerInstance.bytesStart.Length > id);
+                outerInstance.pool.SetBytesRef(pivot, outerInstance.bytesStart[id]);
             }
 
             protected override int ComparePivot(int j)

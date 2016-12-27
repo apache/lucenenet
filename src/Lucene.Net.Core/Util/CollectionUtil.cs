@@ -53,12 +53,9 @@ namespace Lucene.Net.Util
                 this.Comp = comp;
             }
 
-            protected override int Pivot
+            protected override void SetPivot(int i)
             {
-                set
-                {
-                    pivot = list[value];
-                }
+                pivot = (i < list.Count) ? list[i] : default(T);
             }
 
             protected override void Swap(int i, int j)

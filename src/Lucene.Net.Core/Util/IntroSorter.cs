@@ -80,7 +80,7 @@ namespace Lucene.Net.Util
             int left = from + 1;
             int right = to - 2;
 
-            Pivot = mid;
+            SetPivot(mid);
             for (; ; )
             {
                 while (ComparePivot(right) < 0)
@@ -112,7 +112,7 @@ namespace Lucene.Net.Util
         /// Save the value at slot <code>i</code> so that it can later be used as a
         /// pivot, see <seealso cref="#comparePivot(int)"/>.
         /// </summary>
-        protected abstract int Pivot { set; } // LUCENENET TODO: Change to SetPivot(int i)
+        protected abstract void SetPivot(int i);
 
         /// <summary>
         /// Compare the pivot with the slot at <code>j</code>, similarly to

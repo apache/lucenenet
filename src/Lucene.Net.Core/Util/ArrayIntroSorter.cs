@@ -48,12 +48,9 @@ namespace Lucene.Net.Util
             ArrayUtil.Swap(Arr, i, j);
         }
 
-        protected override int Pivot
+        protected override void SetPivot(int i)
         {
-            set
-            {
-                Pivot_Renamed = Arr[value];
-            }
+            Pivot_Renamed = (i < Arr.Length) ? Arr[i] : default(T);
         }
 
         protected override int ComparePivot(int i)

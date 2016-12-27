@@ -148,13 +148,10 @@ namespace Lucene.Net.Util
                 return comp.Compare(outerInstance.Get(scratch1, idx1), outerInstance.Get(scratch2, idx2));
             }
 
-            protected override int Pivot
+            protected override void SetPivot(int i)
             {
-                set
-                {
-                    int index = orderedEntries[value];
-                    outerInstance.Get(pivot, index);
-                }
+                int index = orderedEntries[i];
+                outerInstance.Get(pivot, index);
             }
 
             protected override int ComparePivot(int j)
