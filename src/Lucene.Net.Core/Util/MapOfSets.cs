@@ -23,22 +23,22 @@ namespace Lucene.Net.Util
     /// Helper class for keeping Lists of Objects associated with keys. <b>WARNING: this CLASS IS NOT THREAD SAFE</b>
     /// @lucene.internal
     /// </summary>
-    public class MapOfSets<K, V>// LUCENENET TODO: change to Key, Value
+    public class MapOfSets<TKey, TValue>
     {
-        private readonly IDictionary<K, HashSet<V>> TheMap;
+        private readonly IDictionary<TKey, HashSet<TValue>> theMap;
 
         /// <param name="m"> the backing store for this object </param>
-        public MapOfSets(IDictionary<K, HashSet<V>> m)
+        public MapOfSets(IDictionary<TKey, HashSet<TValue>> m)
         {
-            TheMap = m;
+            theMap = m;
         }
 
         /// <returns> direct access to the map backing this object. </returns>
-        public virtual IDictionary<K, HashSet<V>> Map
+        public virtual IDictionary<TKey, HashSet<TValue>> Map
         {
             get
             {
-                return TheMap;
+                return theMap;
             }
         }
 
@@ -46,17 +46,17 @@ namespace Lucene.Net.Util
         /// Adds val to the Set associated with key in the Map.  If key is not
         /// already in the map, a new Set will first be created. </summary>
         /// <returns> the size of the Set associated with key once val is added to it. </returns>
-        public virtual int Put(K key, V val)
+        public virtual int Put(TKey key, TValue val)
         {
-            HashSet<V> theSet;
-            if (TheMap.ContainsKey(key))
+            HashSet<TValue> theSet;
+            if (theMap.ContainsKey(key))
             {
-                theSet = TheMap[key];
+                theSet = theMap[key];
             }
             else
             {
-                theSet = new HashSet<V>();
-                TheMap[key] = theSet;
+                theSet = new HashSet<TValue>();
+                theMap[key] = theSet;
             }
             theSet.Add(val);
             return theSet.Count;
@@ -67,17 +67,17 @@ namespace Lucene.Net.Util
         /// If key is not
         /// already in the map, a new Set will first be created. </summary>
         /// <returns> the size of the Set associated with key once val is added to it. </returns>
-        public virtual int PutAll(K key, IEnumerable<V> vals)
+        public virtual int PutAll(TKey key, IEnumerable<TValue> vals)
         {
-            HashSet<V> theSet;
-            if (TheMap.ContainsKey(key))
+            HashSet<TValue> theSet;
+            if (theMap.ContainsKey(key))
             {
-                theSet = TheMap[key];
+                theSet = theMap[key];
             }
             else
             {
-                theSet = new HashSet<V>();
-                TheMap[key] = theSet;
+                theSet = new HashSet<TValue>();
+                theMap[key] = theSet;
             }
             theSet.UnionWith(vals);
             return theSet.Count;
