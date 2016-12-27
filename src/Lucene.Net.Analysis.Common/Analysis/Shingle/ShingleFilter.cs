@@ -485,8 +485,7 @@ namespace Lucene.Net.Analysis.Shingle
                     numFillerTokensToInsert = Math.Min(posIncrAtt.PositionIncrement, maxShingleSize - 1);
                     if (numFillerTokensToInsert > 0)
                     {
-                        // LUCENENET TODO: Property attributeFactory should begin with uppre case character
-                        nextInputStreamToken = new AttributeSource(this.attributeFactory);
+                        nextInputStreamToken = new AttributeSource(this.GetAttributeFactory());
                         nextInputStreamToken.AddAttribute<ICharTermAttribute>();
                         IOffsetAttribute newOffsetAtt = nextInputStreamToken.AddAttribute<IOffsetAttribute>();
                         newOffsetAtt.SetOffset(offsetAtt.EndOffset, offsetAtt.EndOffset);

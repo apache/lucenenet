@@ -168,24 +168,18 @@ namespace Lucene.Net.Util
         /// <summary>
         /// returns the used AttributeFactory.
         /// </summary>
-        public AttributeFactory attributeFactory // LUCENENET TODO: rename (collision), perhaps go back to GetAttributeFactory()
+        public AttributeFactory GetAttributeFactory()
         {
-            get
-            {
-                return this.Factory;
-            }
+            return this.Factory;
         }
 
         /// <summary>
         /// Returns a new iterator that iterates the attribute classes
         /// in the same order they were added in.
         /// </summary>
-        public IEnumerator<Type> AttributeClassesIterator // LUCENENET TODO: Change to GetAttributeClassesIterator() (new instance)
+        public IEnumerator<Type> GetAttributeClassesEnumerator()
         {
-            get
-            {
-                return Attributes.Keys.GetEnumerator();
-            }
+            return Attributes.Keys.GetEnumerator();
         }
 
         /// <summary>
@@ -193,19 +187,16 @@ namespace Lucene.Net.Util
         /// this iterator may contain less entries that <seealso cref="#getAttributeClassesIterator"/>,
         /// if one instance implements more than one Attribute interface.
         /// </summary>
-        public IEnumerator<Attribute> AttributeImplsIterator // LUCENENET TODO: Change to GetAttributeImplsIterator() (new instance)
+        public IEnumerator<Attribute> GetAttributeImplsEnumerator()
         {
-            get
+            State initState = GetCurrentState();
+            if (initState != null)
             {
-                State initState = CurrentState;
-                if (initState != null)
-                {
-                    return new IteratorAnonymousInnerClassHelper(this, initState);
-                }
-                else
-                {
-                    return (new HashSet<Attribute>()).GetEnumerator();
-                }
+                return new IteratorAnonymousInnerClassHelper(this, initState);
+            }
+            else
+            {
+                return (new HashSet<Attribute>()).GetEnumerator();
             }
         }
 
@@ -364,9 +355,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns true, iff this AttributeSource has any attributes </summary>
-        public bool HasAttributes() // LUCENENET TODO: make property ?
+        public bool HasAttributes
         {
-            return this.Attributes.Count > 0;
+            get { return this.Attributes.Count > 0; }
         }
 
         /// <summary>
@@ -399,27 +390,24 @@ namespace Lucene.Net.Util
             return (T)(IAttribute)this.Attributes[attClass].Value;
         }
 
-        private State CurrentState // LUCENENET TODO: Change to GetCurrentState() (complexity)
+        private State GetCurrentState()
         {
-            get
+            State s = CurrentState_Renamed[0];
+            if (s != null || !HasAttributes)
             {
-                State s = CurrentState_Renamed[0];
-                if (s != null || !HasAttributes())
-                {
-                    return s;
-                }
-                var c = s = CurrentState_Renamed[0] = new State();
-                var it = AttributeImpls.Values().GetEnumerator();
-                it.MoveNext();
-                c.attribute = it.Current.Value;
-                while (it.MoveNext())
-                {
-                    c.next = new State();
-                    c = c.next;
-                    c.attribute = it.Current.Value;
-                }
                 return s;
             }
+            var c = s = CurrentState_Renamed[0] = new State();
+            var it = AttributeImpls.Values().GetEnumerator();
+            it.MoveNext();
+            c.attribute = it.Current.Value;
+            while (it.MoveNext())
+            {
+                c.next = new State();
+                c = c.next;
+                c.attribute = it.Current.Value;
+            }
+            return s;
         }
 
         /// <summary>
@@ -428,7 +416,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public void ClearAttributes()
         {
-            for (State state = CurrentState; state != null; state = state.next)
+            for (State state = GetCurrentState(); state != null; state = state.next)
             {
                 state.attribute.Clear();
             }
@@ -440,7 +428,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual State CaptureState()
         {
-            State state = this.CurrentState;
+            State state = this.GetCurrentState();
             return (state == null) ? null : (State)state.Clone();
         }
 
@@ -480,7 +468,7 @@ namespace Lucene.Net.Util
         public override int GetHashCode()
         {
             int code = 0;
-            for (State state = CurrentState; state != null; state = state.next)
+            for (State state = GetCurrentState(); state != null; state = state.next)
             {
                 code = code * 31 + state.attribute.GetHashCode();
             }
@@ -498,9 +486,9 @@ namespace Lucene.Net.Util
             {
                 AttributeSource other = (AttributeSource)obj;
 
-                if (HasAttributes())
+                if (HasAttributes)
                 {
-                    if (!other.HasAttributes())
+                    if (!other.HasAttributes)
                     {
                         return false;
                     }
@@ -511,8 +499,8 @@ namespace Lucene.Net.Util
                     }
 
                     // it is only equal if all attribute impls are the same in the same order
-                    State thisState = this.CurrentState;
-                    State otherState = other.CurrentState;
+                    State thisState = this.GetCurrentState();
+                    State otherState = other.GetCurrentState();
                     while (thisState != null && otherState != null)
                     {
                         if (otherState.attribute.GetType() != thisState.attribute.GetType() || !otherState.attribute.Equals(thisState.attribute))
@@ -526,7 +514,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    return !other.HasAttributes();
+                    return !other.HasAttributes;
                 }
             }
             else
@@ -596,7 +584,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= Attribute#reflectWith </seealso>
         public void ReflectWith(IAttributeReflector reflector)
         {
-            for (State state = CurrentState; state != null; state = state.next)
+            for (State state = GetCurrentState(); state != null; state = state.next)
             {
                 state.attribute.ReflectWith(reflector);
             }
@@ -613,10 +601,10 @@ namespace Lucene.Net.Util
         {
             AttributeSource clone = new AttributeSource(this.Factory);
 
-            if (HasAttributes())
+            if (HasAttributes)
             {
                 // first clone the impls
-                for (State state = CurrentState; state != null; state = state.next)
+                for (State state = GetCurrentState(); state != null; state = state.next)
                 {
                     //clone.AttributeImpls[state.attribute.GetType()] = state.attribute.Clone();
                     var impl = (Attribute)state.attribute.Clone();
@@ -647,7 +635,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public void CopyTo(AttributeSource target)
         {
-            for (State state = CurrentState; state != null; state = state.next)
+            for (State state = GetCurrentState(); state != null; state = state.next)
             {
                 Attribute targetImpl = target.AttributeImpls[state.attribute.GetType()].Value;
                 if (targetImpl == null)

@@ -96,7 +96,7 @@ namespace Lucene.Net.Util
             typeAtt.Type = "TestType";
 
             AttributeSource clone = src.CloneAttributes();
-            IEnumerator<Type> it = clone.AttributeClassesIterator;
+            IEnumerator<Type> it = clone.GetAttributeClassesEnumerator();
             it.MoveNext();
             Assert.AreEqual(typeof(IFlagsAttribute), it.Current, "FlagsAttribute must be the first attribute");
             it.MoveNext();
