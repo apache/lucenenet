@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
         {
             RecyclingByteBlockAllocator allocator = NewAllocator();
             var set = new HashSet<byte[]>();
-            var block = allocator.ByteBlock;
+            var block = allocator.GetByteBlock();
             set.Add(block);
             Assert.IsNotNull(block);
             int size = block.Length;
@@ -52,7 +52,7 @@ namespace Lucene.Net.Util
             int num = AtLeast(97);
             for (int i = 0; i < num; i++)
             {
-                block = allocator.ByteBlock;
+                block = allocator.GetByteBlock();
                 Assert.IsNotNull(block);
                 Assert.AreEqual(size, block.Length);
                 Assert.IsTrue(set.Add(block), "block is returned twice");
@@ -67,7 +67,7 @@ namespace Lucene.Net.Util
             RecyclingByteBlockAllocator allocator = NewAllocator();
             var allocated = new HashSet<byte[]>();
 
-            var block = allocator.ByteBlock;
+            var block = allocator.GetByteBlock();
             allocated.Add(block);
             Assert.IsNotNull(block);
             int size = block.Length;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Util
                 int num = 1 + Random().Next(39);
                 for (int j = 0; j < num; j++)
                 {
-                    block = allocator.ByteBlock;
+                    block = allocator.GetByteBlock();
                     Assert.IsNotNull(block);
                     Assert.AreEqual(size, block.Length);
                     Assert.IsTrue(allocated.Add(block), "block is returned twice");
@@ -109,7 +109,7 @@ namespace Lucene.Net.Util
             RecyclingByteBlockAllocator allocator = NewAllocator();
             var allocated = new HashSet<byte[]>();
             int freeButAllocated = 0;
-            var block = allocator.ByteBlock;
+            var block = allocator.GetByteBlock();
             allocated.Add(block);
             Assert.IsNotNull(block);
             int size = block.Length;
@@ -120,7 +120,7 @@ namespace Lucene.Net.Util
                 int num = 1 + Random().Next(39);
                 for (int j = 0; j < num; j++)
                 {
-                    block = allocator.ByteBlock;
+                    block = allocator.GetByteBlock();
                     freeButAllocated = Math.Max(0, freeButAllocated - 1);
                     Assert.IsNotNull(block);
                     Assert.AreEqual(size, block.Length);

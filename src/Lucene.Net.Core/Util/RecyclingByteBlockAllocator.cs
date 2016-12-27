@@ -77,19 +77,16 @@ namespace Lucene.Net.Util
         {
         }
 
-        public override byte[] ByteBlock // LUCENENET TODO: change to GetByteBlock() (array, complexity, non-deterministic)
+        public override byte[] GetByteBlock() 
         {
-            get
+            if (FreeBlocks_Renamed == 0)
             {
-                if (FreeBlocks_Renamed == 0)
-                {
-                    BytesUsed_Renamed.AddAndGet(m_blockSize);
-                    return new byte[m_blockSize];
-                }
-                var b = FreeByteBlocks[--FreeBlocks_Renamed];
-                FreeByteBlocks[FreeBlocks_Renamed] = null;
-                return b;
+                BytesUsed_Renamed.AddAndGet(m_blockSize);
+                return new byte[m_blockSize];
             }
+            var b = FreeByteBlocks[--FreeBlocks_Renamed];
+            FreeByteBlocks[FreeBlocks_Renamed] = null;
+            return b;
         }
 
         public override void RecycleByteBlocks(byte[][] blocks, int start, int end)

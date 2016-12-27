@@ -69,12 +69,9 @@ namespace Lucene.Net.Util
                 RecycleByteBlocks(b, 0, b.Length);
             }
 
-            public virtual byte[] ByteBlock // LUCENENET TODO: Change to GetByteBlock() (array)
+            public virtual byte[] GetByteBlock()
             {
-                get
-                {
-                    return new byte[m_blockSize];
-                }
+                return new byte[m_blockSize];
             }
         }
 
@@ -116,13 +113,10 @@ namespace Lucene.Net.Util
                 this.bytesUsed = bytesUsed;
             }
 
-            public override byte[] ByteBlock
+            public override byte[] GetByteBlock()
             {
-                get
-                {
-                    bytesUsed.AddAndGet(m_blockSize);
-                    return new byte[m_blockSize];
-                }
+                bytesUsed.AddAndGet(m_blockSize);
+                return new byte[m_blockSize];
             }
 
             public override void RecycleByteBlocks(byte[][] blocks, int start, int end)
@@ -247,7 +241,7 @@ namespace Lucene.Net.Util
                 Array.Copy(buffers, 0, newBuffers, 0, buffers.Length);
                 buffers = newBuffers;
             }
-            Buffer = buffers[1 + bufferUpto] = allocator.ByteBlock;
+            Buffer = buffers[1 + bufferUpto] = allocator.GetByteBlock();
             bufferUpto++;
 
             ByteUpto = 0;
