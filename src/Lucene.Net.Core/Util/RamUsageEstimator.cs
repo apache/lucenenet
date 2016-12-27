@@ -234,7 +234,7 @@ namespace Lucene.Net.Util
         /// </summary>
         private sealed class ClassCache
         {
-            public readonly long AlignedShallowInstanceSize; // LUCENENET TODO: make property
+            public long AlignedShallowInstanceSize { get; private set; }
             public readonly FieldInfo[] ReferenceFields; // LUCENENET TODO: make property ?
 
             public ClassCache(long alignedShallowInstanceSize, FieldInfo[] referenceFields)
@@ -653,23 +653,23 @@ namespace Lucene.Net.Util
             /// <summary>
             /// All of set entries. Always of power of two length.
             /// </summary>
-            public object[] Keys; // LUCENENET TODO: make property
+            public object[] Keys; // LUCENENET TODO: make property ?
 
             /// <summary>
             /// Cached number of assigned slots.
             /// </summary>
-            public int Assigned; // LUCENENET TODO: make property
+            public int Assigned { get; set; }
 
             /// <summary>
             /// The load factor for this set (fraction of allocated or deleted slots before
             /// the buffers must be rehashed or reallocated).
             /// </summary>
-            public readonly float LoadFactor; // LUCENENET TODO: make property
+            public float LoadFactor { get; private set; }
 
             /// <summary>
             /// Cached capacity threshold at which we must resize the buffers.
             /// </summary>
-            private int ResizeThreshold;
+            private int resizeThreshold;
 
             /// <summary>
             /// Creates a hash set with the default capacity of 16.
@@ -709,7 +709,7 @@ namespace Lucene.Net.Util
             {
                 Debug.Assert(e != null, "Null keys not allowed.");
 
-                if (Assigned >= ResizeThreshold)
+                if (Assigned >= resizeThreshold)
                 {
                     ExpandAndRehash();
                 }
@@ -776,7 +776,7 @@ namespace Lucene.Net.Util
             {
                 object[] oldKeys = this.Keys;
 
-                Debug.Assert(Assigned >= ResizeThreshold);
+                Debug.Assert(Assigned >= resizeThreshold);
                 AllocateBuffers(NextCapacity(Keys.Length));
 
                 /*
@@ -807,7 +807,7 @@ namespace Lucene.Net.Util
             private void AllocateBuffers(int capacity)
             {
                 this.Keys = new object[capacity];
-                this.ResizeThreshold = (int)(capacity * DEFAULT_LOAD_FACTOR);
+                this.resizeThreshold = (int)(capacity * DEFAULT_LOAD_FACTOR);
             }
 
             /// <summary>
@@ -851,18 +851,18 @@ namespace Lucene.Net.Util
                 Array.Clear(Keys, 0, Keys.Length);
             }
 
-            public int Size() // LUCENENET TODO: make property, rename Count
+            public int Size // LUCENENET TODO: rename Count
             {
-                return Assigned;
+                get { return Assigned; }
             }
 
-            public bool Empty // LUCENENET TODO: remove (in .NET we can just use Any() on IEnumerable<T>)
-            {
-                get
-                {
-                    return Size() == 0;
-                }
-            }
+            //public bool Empty // LUCENENET NOTE: in .NET we can just use !Any() on IEnumerable<T>
+            //{
+            //    get
+            //    {
+            //        return Size == 0;
+            //    }
+            //}
 
             public IEnumerator<KType> GetEnumerator()
             {
@@ -876,11 +876,11 @@ namespace Lucene.Net.Util
 
             private class IteratorAnonymousInnerClassHelper : IEnumerator<KType>
             {
-                private readonly IdentityHashSet<KType> OuterInstance;
+                private readonly IdentityHashSet<KType> outerInstance;
 
                 public IteratorAnonymousInnerClassHelper(IdentityHashSet<KType> outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                     pos = -1;
                     nextElement = FetchNext();
                 }
@@ -915,12 +915,12 @@ namespace Lucene.Net.Util
                 private object FetchNext()
                 {
                     pos++;
-                    while (pos < OuterInstance.Keys.Length && OuterInstance.Keys[pos] == null)
+                    while (pos < outerInstance.Keys.Length && outerInstance.Keys[pos] == null)
                     {
                         pos++;
                     }
 
-                    return (pos >= OuterInstance.Keys.Length ? null : OuterInstance.Keys[pos]);
+                    return (pos >= outerInstance.Keys.Length ? null : outerInstance.Keys[pos]);
                 }
 
                 public void Reset()
