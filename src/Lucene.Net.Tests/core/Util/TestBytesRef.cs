@@ -1,3 +1,5 @@
+using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 namespace Lucene.Net.Util
@@ -52,6 +54,20 @@ namespace Lucene.Net.Util
             for (int i = 0; i < 100; i++)
             {
                 string s = TestUtil.RandomUnicodeString(Random());
+                string s2 = (new BytesRef(s)).Utf8ToString();
+                Assert.AreEqual(s, s2);
+            }
+
+            // only for 4.x
+            Assert.AreEqual("\uFFFF", (new BytesRef("\uFFFF")).Utf8ToString());
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestFromCharSequence()
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                ICharSequence s = new StringCharSequenceWrapper(TestUtil.RandomUnicodeString(Random()));
                 string s2 = (new BytesRef(s)).Utf8ToString();
                 Assert.AreEqual(s, s2);
             }

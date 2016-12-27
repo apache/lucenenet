@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -98,7 +99,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="text"> this must be well-formed
         /// unicode text, with no unpaired surrogates. </param>
-        public BytesRef(CharsRef text) // LUCENENET TODO: There was not a CharsRef overload in Lucene. This was supposed to be ICharSequence
+        public BytesRef(ICharSequence text)
             : this()
         {
             CopyChars(text);
@@ -121,7 +122,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="text"> Must be well-formed unicode text, with no
         /// unpaired surrogates or invalid UTF16 code units. </param>
-        public void CopyChars(CharsRef text) // LUCENENET TODO: There was not a CharsRef overload in Lucene. This was supposed to be ICharSequence
+        public void CopyChars(ICharSequence text)
         {
             Debug.Assert(Offset == 0); // TODO broken if offset != 0
             UnicodeUtil.UTF16toUTF8(text, 0, text.Length, this);
@@ -135,7 +136,7 @@ namespace Lucene.Net.Util
         public void CopyChars(string text)
         {
             Debug.Assert(Offset == 0); // TODO broken if offset != 0
-            UnicodeUtil.UTF16toUTF8(text.ToCharArray(0, text.Length), 0, text.Length, this);
+            UnicodeUtil.UTF16toUTF8(text, 0, text.Length, this);
         }
 
         /// <summary>
