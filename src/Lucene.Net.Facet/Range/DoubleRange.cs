@@ -160,7 +160,7 @@ namespace Lucene.Net.Facet.Range
                         // No documents match
                         return null;
                     }
-                    fastMatchBits = dis.GetBits();
+                    fastMatchBits = dis.Bits;
                     if (fastMatchBits == null)
                     {
                         throw new System.ArgumentException("fastMatchFilter does not implement DocIdSet.bits");
@@ -192,9 +192,9 @@ namespace Lucene.Net.Facet.Range
                     this.fastMatchBits = fastMatchBits;
                 }
 
-                public override IBits GetBits()
+                public override IBits Bits
                 {
-                    return new BitsAnonymousInnerClassHelper(this);
+                    get { return new BitsAnonymousInnerClassHelper(this); }
                 }
 
                 private class BitsAnonymousInnerClassHelper : IBits

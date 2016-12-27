@@ -168,12 +168,15 @@ namespace Lucene.Net.Spatial.Serialized
                         //Note that if you're truly bent on doing this, then see FunctionValues.getRangeScorer
                 }
 
-                public override IBits GetBits()
+                public override IBits Bits
                 {
-                    //null Map context -- we simply don't have one. That's ok.
-                    FunctionValues predFuncValues = outerInstance.predicateValueSource.GetValues(null, context);
+                    get
+                    {
+                        //null Map context -- we simply don't have one. That's ok.
+                        FunctionValues predFuncValues = outerInstance.predicateValueSource.GetValues(null, context);
 
-                    return new BitsAnonymousHelper(this, predFuncValues, context, acceptDocs);
+                        return new BitsAnonymousHelper(this, predFuncValues, context, acceptDocs);
+                    }
                 }
 
                 internal class BitsAnonymousHelper : IBits

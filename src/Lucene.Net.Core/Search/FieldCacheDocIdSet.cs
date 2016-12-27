@@ -58,9 +58,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override sealed IBits GetBits()
+        public override sealed IBits Bits
         {
-            return (m_acceptDocs == null) ? (IBits)new BitsAnonymousInnerClassHelper(this) : new BitsAnonymousInnerClassHelper2(this);
+            get { return (m_acceptDocs == null) ? (IBits)new BitsAnonymousInnerClassHelper(this) : new BitsAnonymousInnerClassHelper2(this); }
         }
 
         private class BitsAnonymousInnerClassHelper : IBits

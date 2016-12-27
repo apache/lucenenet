@@ -129,9 +129,9 @@ namespace Lucene.Net.Util
             return new OpenBitSetIterator(m_bits, m_wlen);
         }
 
-        public override IBits GetBits() // LUCENENET TODO: This was Bits() in original - we have another (currently a property) below that if we fix should be named GetBits()
+        public override IBits Bits
         {
-            return this;
+            get { return this; }
         }
 
         /// <summary>
@@ -179,12 +179,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Expert: returns the long[] storing the bits </summary>
-        public virtual long[] Bits // LUCENENET TODO: change to GetBits() (array) - note the above GetBits() will need to be fixed
+        public virtual long[] GetBits()
         {
-            get
-            {
-                return m_bits;
-            }
+            return m_bits;
         }
 
         /// <summary>

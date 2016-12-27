@@ -170,9 +170,9 @@ namespace Lucene.Net.Search
             }
 
             // we explicitly provide no random access, as this filter is 100% sparse and iterator exits faster
-            public override IBits GetBits()
+            public override IBits Bits
             {
-                return null;
+                get { return null; }
             }
         }
 

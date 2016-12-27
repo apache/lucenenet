@@ -144,7 +144,7 @@ namespace Lucene.Net.Util
             else
             {
                 int numWords = Bits2words(numBits);
-                long[] arr = bits.Bits;
+                long[] arr = bits.GetBits();
                 if (numWords >= arr.Length)
                 {
                     arr = ArrayUtil.Grow(arr, numWords + 1);
@@ -233,9 +233,9 @@ namespace Lucene.Net.Util
             return new FixedBitSetIterator(bits, NumBits, NumWords);
         }
 
-        public override IBits GetBits()
+        public override IBits Bits
         {
-            return this;
+            get { return this; }
         }
 
         public int Length
@@ -255,12 +255,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Expert. </summary>
-        public long[] Bits // LUCENENET TODO: change to GetBits() (array)
+        public long[] GetBits()
         {
-            get
-            {
-                return bits;
-            }
+            return bits;
         }
 
         /// <summary>

@@ -202,7 +202,7 @@ namespace Lucene.Net.Codecs.Bloom
         {
             output.WriteInt(VERSION_CURRENT);
             output.WriteInt(_bloomSize);
-            var bits = _filter.Bits;
+            var bits = _filter.GetBits();
             output.WriteInt(bits.Length);
             foreach (var t in bits)
             {

@@ -40,9 +40,9 @@ namespace Lucene.Net.Util
             return new DocIdBitSetIterator(bitSet);
         }
 
-        public override IBits GetBits()
+        public override IBits Bits
         {
-            return this;
+            get { return this; }
         }
 
         /// <summary>

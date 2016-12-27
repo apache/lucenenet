@@ -183,7 +183,7 @@ namespace Lucene.Net.Facet
                             continue;
                         }
 
-                        IBits bits = dis.GetBits();
+                        IBits bits = dis.Bits;
 
                         if (bits != null)
                         {

@@ -97,7 +97,7 @@ namespace Lucene.Net.Facet.Range
                         // No documents match
                         continue;
                     }
-                    bits = dis.GetBits();
+                    bits = dis.Bits;
                     if (bits == null)
                     {
                         throw new System.ArgumentException("fastMatchFilter does not implement DocIdSet.bits");

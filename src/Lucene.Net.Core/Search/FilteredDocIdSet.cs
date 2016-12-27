@@ -59,10 +59,13 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override IBits GetBits()
+        public override IBits Bits
         {
-            IBits bits = innerSet.GetBits();
-            return (bits == null) ? null : new BitsAnonymousInnerClassHelper(this, bits);
+            get
+            {
+                IBits bits = innerSet.Bits;
+                return (bits == null) ? null : new BitsAnonymousInnerClassHelper(this, bits);
+            }
         }
 
         private class BitsAnonymousInnerClassHelper : IBits

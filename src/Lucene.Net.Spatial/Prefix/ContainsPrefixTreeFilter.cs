@@ -277,11 +277,14 @@ namespace Lucene.Net.Spatial.Prefix
                 return bigger;
             }
 
-            public override IBits GetBits()
+            public override IBits Bits
             {
-                //if the # of docids is super small, return null since iteration is going
-                // to be faster
-                return Size > 4 ? this : null;
+                get
+                {
+                    //if the # of docids is super small, return null since iteration is going
+                    // to be faster
+                    return Size > 4 ? this : null;
+                }
             }
 
             private sealed class _DocIdSetIterator_225 : DocIdSetIterator

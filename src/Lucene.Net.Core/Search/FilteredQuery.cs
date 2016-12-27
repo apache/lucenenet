@@ -622,7 +622,7 @@ namespace Lucene.Net.Search
                     return null;
                 }
 
-                IBits filterAcceptDocs = docIdSet.GetBits();
+                IBits filterAcceptDocs = docIdSet.Bits;
                 // force if RA is requested
                 bool useRandomAccess = filterAcceptDocs != null && UseRandomAccess(filterAcceptDocs, firstFilterDoc);
                 if (useRandomAccess)
@@ -712,7 +712,7 @@ namespace Lucene.Net.Search
         {
             public override Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet)
             {
-                IBits filterAcceptDocs = docIdSet.GetBits();
+                IBits filterAcceptDocs = docIdSet.Bits;
                 if (filterAcceptDocs == null)
                 {
                     // Filter does not provide random-access Bits; we
@@ -725,7 +725,7 @@ namespace Lucene.Net.Search
 
             public override BulkScorer FilteredBulkScorer(AtomicReaderContext context, Weight weight, bool scoreDocsInOrder, DocIdSet docIdSet) // ignored (we always top-score in order)
             {
-                IBits filterAcceptDocs = docIdSet.GetBits();
+                IBits filterAcceptDocs = docIdSet.Bits;
                 if (filterAcceptDocs == null)
                 {
                     // Filter does not provide random-access Bits; we

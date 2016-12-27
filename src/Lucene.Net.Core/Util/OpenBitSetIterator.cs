@@ -40,7 +40,7 @@ namespace Lucene.Net.Util
         private int CurDocId = -1;
 
         public OpenBitSetIterator(OpenBitSet obs)
-            : this(obs.Bits, obs.NumWords)
+            : this(obs.GetBits(), obs.NumWords)
         {
         }
 

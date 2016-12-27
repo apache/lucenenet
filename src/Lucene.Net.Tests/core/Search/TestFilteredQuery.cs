@@ -548,13 +548,16 @@ namespace Lucene.Net.Search
                     this.BitSet = bitSet;
                 }
 
-                public override IBits GetBits()
+                public override IBits Bits
                 {
-                    if (NullBitset)
+                    get
                     {
-                        return null;
+                        if (NullBitset)
+                        {
+                            return null;
+                        }
+                        return new BitsAnonymousInnerClassHelper(this);
                     }
-                    return new BitsAnonymousInnerClassHelper(this);
                 }
 
                 private class BitsAnonymousInnerClassHelper : IBits
@@ -650,9 +653,9 @@ namespace Lucene.Net.Search
                     this.Context = context;
                 }
 
-                public override IBits GetBits()
+                public override IBits Bits
                 {
-                    return null;
+                    get { return null; }
                 }
 
                 public override DocIdSetIterator GetIterator()

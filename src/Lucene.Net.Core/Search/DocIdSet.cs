@@ -52,9 +52,9 @@ namespace Lucene.Net.Search
         /// <seealso cref="IOException"/>). this is generally true for bit sets
         /// like <seealso cref="Lucene.Net.Util.FixedBitSet"/>, which return
         /// itself if they are used as {@code DocIdSet}. </returns>
-        public virtual IBits GetBits() // LUCENENET TODO: Make property ?
+        public virtual IBits Bits // LUCENENET NOTE: This isn't a great candidate for a property, but it makes more sense to call this Bits than Bits(). GetBits() was already taken in the same context.
         {
-            return null;
+            get { return null; }
         }
 
         /// <summary>
