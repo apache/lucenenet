@@ -46,10 +46,10 @@ namespace Lucene.Net.Util
     public sealed class MergedIterator<T> : IEnumerator<T>
         where T : IComparable<T>
     {
-        private readonly TermMergeQueue<T> Queue;
-        private readonly SubIterator<T>[] Top;
-        private readonly bool RemoveDuplicates;
-        private int NumTop;
+        private readonly TermMergeQueue<T> queue;
+        private readonly SubIterator<T>[] top;
+        private readonly bool removeDuplicates;
+        private int numTop;
         private T current;
 
         public MergedIterator(params IEnumerator<T>[] iterators)
@@ -59,9 +59,9 @@ namespace Lucene.Net.Util
 
         public MergedIterator(bool removeDuplicates, params IEnumerator<T>[] iterators)
         {
-            this.RemoveDuplicates = removeDuplicates;
-            Queue = new TermMergeQueue<T>(iterators.Length);
-            Top = new SubIterator<T>[iterators.Length];
+            this.removeDuplicates = removeDuplicates;
+            queue = new TermMergeQueue<T>(iterators.Length);
+            top = new SubIterator<T>[iterators.Length];
             int index = 0;
             foreach (IEnumerator<T> iter in iterators)
             {
@@ -72,7 +72,7 @@ namespace Lucene.Net.Util
                     sub.Current = iter.Current;
                     sub.Iterator = iter;
                     sub.Index = index++;
-                    Queue.Add(sub);
+                    queue.Add(sub);
                 }
             }
         }
@@ -81,7 +81,7 @@ namespace Lucene.Net.Util
         {
             PushTop();
 
-            if (Queue.Size() > 0)
+            if (queue.Size() > 0)
             {
                 PullTop();
             }
@@ -120,34 +120,34 @@ namespace Lucene.Net.Util
 
         private void PullTop()
         {
-            Debug.Assert(NumTop == 0);
-            Top[NumTop++] = Queue.Pop();
-            if (RemoveDuplicates)
+            Debug.Assert(numTop == 0);
+            top[numTop++] = queue.Pop();
+            if (removeDuplicates)
             {
                 //extract all subs from the queue that have the same top element
-                while (Queue.Size() != 0 && Queue.Top().Current.Equals(Top[0].Current))
+                while (queue.Size() != 0 && queue.Top().Current.Equals(top[0].Current))
                 {
-                    Top[NumTop++] = Queue.Pop();
+                    top[numTop++] = queue.Pop();
                 }
             }
-            current = Top[0].Current;
+            current = top[0].Current;
         }
 
         private void PushTop()
         {
-            for (int i = 0; i < NumTop; ++i)
+            for (int i = 0; i < numTop; ++i)
             {
-                if (Top[i].Iterator.MoveNext())
+                if (top[i].Iterator.MoveNext())
                 {
-                    Top[i].Current = Top[i].Iterator.Current;
-                    Queue.Add(Top[i]);
+                    top[i].Current = top[i].Iterator.Current;
+                    queue.Add(top[i]);
                 }
                 else
                 {
-                    Top[i].Current = default(T);
+                    top[i].Current = default(T);
                 }
             }
-            NumTop = 0;
+            numTop = 0;
         }
 
         /*private T Current;
@@ -259,9 +259,9 @@ namespace Lucene.Net.Util
         private class SubIterator<I>
             where I : IComparable<I>
         {
-            internal IEnumerator<I> Iterator;// LUCENENET TODO: Make property
-            internal I Current;// LUCENENET TODO: Make property
-            internal int Index;// LUCENENET TODO: Make property
+            internal IEnumerator<I> Iterator { get; set; }
+            internal I Current { get; set; }
+            internal int Index { get; set; }
         }
 
         private class TermMergeQueue<C> : PriorityQueue<SubIterator<C>>
