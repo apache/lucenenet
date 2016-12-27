@@ -40,7 +40,7 @@ namespace Lucene.Net.Util
                 }
                 int entries = AtLeast(500);
                 BytesRef spare = new BytesRef();
-                int initSize = list.Size();
+                int initSize = list.Size;
                 for (int i = 0; i < entries; i++)
                 {
                     string randomRealisticUnicodeString = TestUtil.RandomRealisticUnicodeString(random);
@@ -88,7 +88,7 @@ namespace Lucene.Net.Util
                 }
                 int entries = AtLeast(500);
                 BytesRef spare = new BytesRef();
-                int initSize = list.Size();
+                int initSize = list.Size;
                 for (int i = 0; i < entries; i++)
                 {
                     string randomRealisticUnicodeString = TestUtil.RandomRealisticUnicodeString(random);

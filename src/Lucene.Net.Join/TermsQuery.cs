@@ -49,7 +49,7 @@ namespace Lucene.Net.Join
 
         protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
-            if (_terms.Size() == 0)
+            if (_terms.Size == 0)
             {
                 return TermsEnum.EMPTY;
             }
@@ -81,7 +81,7 @@ namespace Lucene.Net.Join
                 Terms = terms;
                 Ords = ords;
                 _comparator = BytesRef.UTF8SortedAsUnicodeComparer;
-                _lastElement = terms.Size() - 1;
+                _lastElement = terms.Size - 1;
                 _lastTerm = terms.Get(ords[_lastElement], new BytesRef());
                 _seekTerm = terms.Get(ords[_upto], _spare);
             }

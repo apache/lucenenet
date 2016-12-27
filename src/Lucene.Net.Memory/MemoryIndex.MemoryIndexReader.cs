@@ -197,7 +197,7 @@ namespace Lucene.Net.Index.Memory
 
                     public override long Size
                     {
-                        get { return info.terms.Size(); }
+                        get { return info.terms.Size; }
                     }
 
                     public override long SumTotalTermFreq
@@ -213,7 +213,7 @@ namespace Lucene.Net.Index.Memory
                         get
                         {
                             // each term has df=1
-                            return info.terms.Size();
+                            return info.terms.Size;
                         }
                     }
 
@@ -221,7 +221,7 @@ namespace Lucene.Net.Index.Memory
                     {
                         get
                         {
-                            return info.terms.Size() > 0 ? 1 : 0;
+                            return info.terms.Size > 0 ? 1 : 0;
                         }
                     }
 
@@ -304,17 +304,17 @@ namespace Lucene.Net.Index.Memory
 
                 public override bool SeekExact(BytesRef text)
                 {
-                    termUpto = BinarySearch(text, br, 0, info.terms.Size() - 1, info.terms, info.sortedTerms, BytesRef.UTF8SortedAsUnicodeComparer);
+                    termUpto = BinarySearch(text, br, 0, info.terms.Size - 1, info.terms, info.sortedTerms, BytesRef.UTF8SortedAsUnicodeComparer);
                     return termUpto >= 0;
                 }
 
                 public override SeekStatus SeekCeil(BytesRef text)
                 {
-                    termUpto = BinarySearch(text, br, 0, info.terms.Size() - 1, info.terms, info.sortedTerms, BytesRef.UTF8SortedAsUnicodeComparer);
+                    termUpto = BinarySearch(text, br, 0, info.terms.Size - 1, info.terms, info.sortedTerms, BytesRef.UTF8SortedAsUnicodeComparer);
                     if (termUpto < 0) // not found; choose successor
                     {
                         termUpto = -termUpto - 1;
-                        if (termUpto >= info.terms.Size())
+                        if (termUpto >= info.terms.Size)
                         {
                             return SeekStatus.END;
                         }
@@ -332,14 +332,14 @@ namespace Lucene.Net.Index.Memory
 
                 public override void SeekExact(long ord)
                 {
-                    Debug.Assert(ord < info.terms.Size());
+                    Debug.Assert(ord < info.terms.Size);
                     termUpto = (int)ord;
                 }
 
                 public override BytesRef Next()
                 {
                     termUpto++;
-                    if (termUpto >= info.terms.Size())
+                    if (termUpto >= info.terms.Size)
                     {
                         return null;
                     }

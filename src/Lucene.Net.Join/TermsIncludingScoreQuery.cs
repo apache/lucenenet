@@ -271,7 +271,7 @@ namespace Lucene.Net.Join
                         }
                     }
 
-                    if (_upto == outerInstance._terms.Size())
+                    if (_upto == outerInstance._terms.Size)
                     {
                         return _doc = DocIdSetIterator.NO_MORE_DOCS;
                     }
@@ -377,7 +377,7 @@ namespace Lucene.Net.Join
             {
                 BytesRef spare = new BytesRef();
                 DocsEnum docsEnum = null;
-                for (int i = 0; i < outerInstance._terms.Size(); i++)
+                for (int i = 0; i < outerInstance._terms.Size; i++)
                 {
                     if (termsEnum.SeekExact(outerInstance._terms.Get(outerInstance._ords[i], spare)))
                     {
@@ -441,7 +441,7 @@ namespace Lucene.Net.Join
             {
                 BytesRef spare = new BytesRef();
                 DocsEnum docsEnum = null;
-                for (int i = 0; i < outerInstance._terms.Size(); i++)
+                for (int i = 0; i < outerInstance._terms.Size; i++)
                 {
                     if (termsEnum.SeekExact(outerInstance._terms.Get(outerInstance._ords[i], spare)))
                     {

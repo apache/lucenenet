@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
 
             CutOffTermCollector col = new CutOffTermCollector(docCountCutoff, termCountLimit);
             CollectTerms(reader, query, col);
-            int size = col.PendingTerms.Size();
+            int size = col.PendingTerms.Size;
             if (col.HasCutOff)
             {
                 return MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE.Rewrite(reader, query);
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search
             {
                 int pos = PendingTerms.Add(bytes);
                 DocVisitCount += TermsEnum.DocFreq();
-                if (PendingTerms.Size() >= TermCountLimit || DocVisitCount >= DocCountCutoff)
+                if (PendingTerms.Size >= TermCountLimit || DocVisitCount >= DocCountCutoff)
                 {
                     HasCutOff = true;
                     return false;

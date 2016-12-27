@@ -98,9 +98,9 @@ namespace Lucene.Net.Util
         /// Returns the number of <seealso cref="BytesRef"/> values in this <seealso cref="BytesRefHash"/>.
         /// </summary>
         /// <returns> the number of <seealso cref="BytesRef"/> values in this <seealso cref="BytesRefHash"/>. </returns>
-        public int Size() // LUCENENET TODO: make property, rename Count
+        public int Size // LUCENENET TODO: rename Count
         {
-            return Count;
+            get { return Count; }
         }
 
         /// <summary>

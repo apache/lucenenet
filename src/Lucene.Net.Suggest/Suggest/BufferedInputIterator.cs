@@ -84,7 +84,7 @@ namespace Lucene.Net.Search.Suggest
 
         public virtual BytesRef Next()
         {
-            if (++curPos < entries.Size())
+            if (++curPos < entries.Size)
             {
                 entries.Get(spare, curPos);
                 return spare;
@@ -96,7 +96,7 @@ namespace Lucene.Net.Search.Suggest
         {
             get
             {
-                if (hasPayloads && curPos < payloads.Size())
+                if (hasPayloads && curPos < payloads.Size)
                 {
                     return payloads.Get(payloadSpare, curPos);
                 }

@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
             foreach (TermsHashConsumerPerField f in fieldsToFlush.Values)
             {
                 FreqProxTermsWriterPerField perField = (FreqProxTermsWriterPerField)f;
-                if (perField.TermsHashPerField.BytesHash.Size() > 0)
+                if (perField.TermsHashPerField.BytesHash.Size > 0)
                 {
                     allFields.Add(perField);
                 }
@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
                     TermsHashPerField perField = fieldWriter.TermsHashPerField;
                     Debug.Assert(termsHash == null || termsHash == perField.TermsHash);
                     termsHash = perField.TermsHash;
-                    int numPostings = perField.BytesHash.Size();
+                    int numPostings = perField.BytesHash.Size;
                     perField.Reset();
                     perField.ShrinkHash(numPostings);
                     fieldWriter.Reset();

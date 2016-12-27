@@ -82,9 +82,9 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the current size of this <seealso cref="BytesRefArray"/> </summary>
         /// <returns> the current size of this <seealso cref="BytesRefArray"/> </returns>
-        public int Size() // LUCENENET TODO: make property, rename Count
+        public int Size // LUCENENET TODO: rename Count
         {
-            return LastElement;
+            get { return LastElement; }
         }
 
         /// <summary>
@@ -109,12 +109,12 @@ namespace Lucene.Net.Util
 
         private int[] Sort(IComparer<BytesRef> comp)
         {
-            int[] orderedEntries = new int[Size()];
+            int[] orderedEntries = new int[Size];
             for (int i = 0; i < orderedEntries.Length; i++)
             {
                 orderedEntries[i] = i;
             }
-            new IntroSorterAnonymousInnerClassHelper(this, comp, orderedEntries).Sort(0, Size());
+            new IntroSorterAnonymousInnerClassHelper(this, comp, orderedEntries).Sort(0, Size);
             return orderedEntries;
         }
 
@@ -193,7 +193,7 @@ namespace Lucene.Net.Util
         public BytesRefIterator Iterator(IComparer<BytesRef> comp)// LUCENENET TODO: Rename GetIterator() ? check consistency
         {
             BytesRef spare = new BytesRef();
-            int size = Size();
+            int size = Size;
             int[] indices = comp == null ? null : Sort(comp);
             return new BytesRefIteratorAnonymousInnerClassHelper(this, comp, spare, size, indices);
         }

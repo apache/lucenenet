@@ -221,7 +221,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 Lucene.Net.Util.Fst.Builder<BytesRef> builder = new Lucene.Net.Util.Fst.Builder<BytesRef>(FST.INPUT_TYPE.BYTE4, outputs);
                 int[] sort = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
                 IntsRef intsSpare = new IntsRef();
-                int size = hash.Size();
+                int size = hash.Size;
                 for (int i = 0; i < size; i++)
                 {
                     int id = sort[i];

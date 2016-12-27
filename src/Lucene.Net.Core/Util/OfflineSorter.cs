@@ -487,7 +487,7 @@ namespace Lucene.Net.Util
                 }
             }
             sortInfo.ReadTime += (Environment.TickCount - start);
-            return Buffer.Size();
+            return Buffer.Size;
         }
 
         internal class FileAndTop

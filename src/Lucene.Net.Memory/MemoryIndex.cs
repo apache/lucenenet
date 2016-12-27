@@ -657,7 +657,7 @@ namespace Lucene.Net.Index.Memory
                 SliceByteStartArray sliceArray = info.sliceArray;
                 int numPositions = 0;
                 IntBlockPool.SliceReader postingsReader = new IntBlockPool.SliceReader(intBlockPool);
-                for (int j = 0; j < info.terms.Size(); j++)
+                for (int j = 0; j < info.terms.Size; j++)
                 {
                     int ord = info.sortedTerms[j];
                     info.terms.Get(ord, spare);
@@ -690,12 +690,12 @@ namespace Lucene.Net.Index.Memory
                     numPositions += freq;
                 }
 
-                result.Append("\tterms=" + info.terms.Size());
+                result.Append("\tterms=" + info.terms.Size);
                 result.Append(", positions=" + numPositions);
                 result.Append(", memory=" + RamUsageEstimator.HumanReadableUnits(RamUsageEstimator.SizeOf(info)));
                 result.Append("\n");
                 sumPositions += numPositions;
-                sumTerms += info.terms.Size();
+                sumTerms += info.terms.Size;
             }
 
             result.Append("\nfields=" + sortedFields.Length);

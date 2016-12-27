@@ -163,7 +163,7 @@ namespace Lucene.Net.Index
             int maxDoc = state.SegmentInfo.DocCount;
             int maxCountPerDoc = MaxCount;
             Debug.Assert(PendingCounts.Size() == maxDoc);
-            int valueCount = Hash.Size();
+            int valueCount = Hash.Size;
 
             int[] sortedValues = Hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
             int[] ordMap = new int[valueCount];

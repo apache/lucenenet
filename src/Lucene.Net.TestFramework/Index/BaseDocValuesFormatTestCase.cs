@@ -1282,8 +1282,8 @@ namespace Lucene.Net.Index
             int[] sort = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
             BytesRef expected = new BytesRef();
             BytesRef actual = new BytesRef();
-            Assert.AreEqual(hash.Size(), docValues.ValueCount);
-            for (int i = 0; i < hash.Size(); i++)
+            Assert.AreEqual(hash.Size, docValues.ValueCount);
+            for (int i = 0; i < hash.Size; i++)
             {
                 hash.Get(sort[i], expected);
                 docValues.LookupOrd(i, actual);
