@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
 
             protected override void Release()
             {
-                @object.Dispose();
+                m_object.Dispose();
                 lock (OuterInstance)
                 {
                     OuterInstance.GenDVProducers.Remove(Gen);

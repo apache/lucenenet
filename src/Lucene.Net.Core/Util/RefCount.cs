@@ -29,11 +29,11 @@ namespace Lucene.Net.Util
         //private readonly AtomicInteger refCount = new AtomicInteger(1);
         private int refCount = 1;
 
-        protected internal readonly T @object; // LUCENENET TODO: rename m_
+        protected internal readonly T m_object;
 
         public RefCount(T @object)
         {
-            this.@object = @object;
+            this.m_object = @object;
         }
 
         /// <summary>
@@ -77,24 +77,21 @@ namespace Lucene.Net.Util
 
         public T Get()
         {
-            return @object;
+            return m_object;
         }
 
         /// <summary>
         /// Returns the current reference count. </summary>
-        public int GetRefCount // LUCENENET TODO: rename RefCount
+        public int GetRefCount() // LUCENENET NOTE: although this would be a good candidate for a property, doing so would cause a naming conflict
         {
-            get
+            //LUCENE TO-DO read operations atomic in 64 bit
+            /*if (IntPtr.Size == 4)
             {
-                //LUCENE TO-DO read operations atomic in 64 bit
-                /*if (IntPtr.Size == 4)
-                {
-                    long refCount_ = 0;
-                    Interlocked.Exchange(ref refCount_, (long)refCount);
-                    return (int)Interlocked.Read(ref refCount_);
-                }*/
-                return refCount;
-            }
+                long refCount_ = 0;
+                Interlocked.Exchange(ref refCount_, (long)refCount);
+                return (int)Interlocked.Read(ref refCount_);
+            }*/
+            return refCount;
         }
 
         /// <summary>
