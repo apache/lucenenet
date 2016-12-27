@@ -23,7 +23,7 @@ namespace Lucene.Net.Facet.Taxonomy
      */
 
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using Accountable = Lucene.Net.Util.Accountable;
+    using IAccountable = Lucene.Net.Util.IAccountable;
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
@@ -58,7 +58,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// not static).
     /// </para>
     /// </summary>
-    public class CachedOrdinalsReader : OrdinalsReader, Accountable
+    public class CachedOrdinalsReader : OrdinalsReader, IAccountable
     {
         private readonly OrdinalsReader source;
 
@@ -124,17 +124,17 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Holds the cached ordinals in two parallel <see cref="int[]"/> arrays.
         /// </summary>
-        public sealed class CachedOrds : Accountable
+        public sealed class CachedOrds : IAccountable
         {
             /// <summary>
             /// Index into <see cref="Ordinals"/> for each document.
             /// </summary>
-            public int[] Offsets { get; private set; }
+            public int[] Offsets { get; private set; } // LUCENENET TODO: property returning array
 
             /// <summary>
             /// Holds ords for all docs.
             /// </summary>
-            public int[] Ordinals { get; private set; }
+            public int[] Ordinals { get; private set; } // LUCENENET TODO: property returning array
 
             /// <summary>
             /// Creates a new <see cref="CachedOrds"/> from the <see cref="BinaryDocValues"/>.
