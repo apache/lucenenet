@@ -1,7 +1,6 @@
 using Lucene.Net.Support;
 using System;
 using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace Lucene.Net.Util
 {
@@ -24,9 +23,7 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Some useful constants.
-    ///
     /// </summary>
-
     public sealed class Constants
     {
         private Constants() // can't construct

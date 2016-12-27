@@ -3,8 +3,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
-    using Allocator = Lucene.Net.Util.ByteBlockPool.Allocator;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with

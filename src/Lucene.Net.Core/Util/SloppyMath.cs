@@ -1,6 +1,5 @@
 using Lucene.Net.Support;
 using System;
-using Double = System.Double;
 
 namespace Lucene.Net.Util
 {

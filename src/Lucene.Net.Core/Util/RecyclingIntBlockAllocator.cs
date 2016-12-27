@@ -3,8 +3,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
-    using Allocator = Lucene.Net.Util.IntBlockPool.Allocator;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +19,8 @@ namespace Lucene.Net.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using Allocator = Lucene.Net.Util.IntBlockPool.Allocator;
 
     /// <summary>
     /// A <seealso cref="Allocator"/> implementation that recycles unused int

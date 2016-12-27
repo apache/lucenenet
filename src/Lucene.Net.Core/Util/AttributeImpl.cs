@@ -22,7 +22,6 @@ namespace Lucene.Net.Util
 	 * limitations under the License.
 	 */
 
-
     /// <summary>
     /// Base class for Attributes that can be added to a 
     /// <seealso cref="Lucene.Net.Util.AttributeSource"/>.

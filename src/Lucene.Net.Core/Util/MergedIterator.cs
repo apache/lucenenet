@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -20,10 +20,6 @@ namespace Lucene.Net.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using System;
-
-    //LUCENE TO-DO Rewrote class
 
     /// <summary>
     /// Provides a merged sorted view from several sorted iterators.

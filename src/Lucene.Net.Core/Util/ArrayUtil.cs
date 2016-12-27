@@ -26,7 +26,6 @@ namespace Lucene.Net.Util
     ///
     /// @lucene.internal
     /// </summary>
-
     public sealed class ArrayUtil
     {
         /// <summary>

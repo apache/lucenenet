@@ -20,9 +20,6 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-    // javadocs
-    // javadocs
-
     /// <summary>
     /// Debugging API for Lucene classes such as <seealso cref="IndexWriter"/>
     /// and <seealso cref="SegmentInfos"/>.

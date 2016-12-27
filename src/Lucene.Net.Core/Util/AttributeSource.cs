@@ -3,11 +3,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Util
 {
-    using System.Reflection;    /*
+    /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
      * this work for additional information regarding copyright ownership.
@@ -23,8 +25,6 @@ namespace Lucene.Net.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// An AttributeSource contains a list of different <seealso cref="Attribute"/>s,
