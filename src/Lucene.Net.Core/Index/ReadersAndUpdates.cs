@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LiveDocsFormat = Lucene.Net.Codecs.LiveDocsFormat;
-    using MutableBits = Lucene.Net.Util.MutableBits;
+    using IMutableBits = Lucene.Net.Util.IMutableBits;
     using NumericDocValuesField = NumericDocValuesField;
     using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
 
@@ -233,7 +233,7 @@ namespace Lucene.Net.Index
                 bool didDelete = liveDocs.Get(docID);
                 if (didDelete)
                 {
-                    ((MutableBits)liveDocs).Clear(docID);
+                    ((IMutableBits)liveDocs).Clear(docID);
                     pendingDeleteCount++;
                     //System.out.println("  new del seg=" + info + " docID=" + docID + " pendingDelCount=" + pendingDeleteCount + " totDelCount=" + (info.docCount-liveDocs.count()));
                 }
@@ -410,7 +410,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     Codec codec = Info.Info.Codec;
-                    codec.LiveDocsFormat.WriteLiveDocs((MutableBits)liveDocs, trackingDir, Info, pendingDeleteCount, IOContext.DEFAULT);
+                    codec.LiveDocsFormat.WriteLiveDocs((IMutableBits)liveDocs, trackingDir, Info, pendingDeleteCount, IOContext.DEFAULT);
                     success = true;
                 }
                 finally

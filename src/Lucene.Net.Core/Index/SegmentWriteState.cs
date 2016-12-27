@@ -20,7 +20,7 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using IOContext = Lucene.Net.Store.IOContext;
-    using MutableBits = Lucene.Net.Util.MutableBits;
+    using IMutableBits = Lucene.Net.Util.IMutableBits;
     using PerFieldPostingsFormat = Lucene.Net.Codecs.Perfield.PerFieldPostingsFormat; // javadocs
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat; // javadocs
 
@@ -65,10 +65,10 @@ namespace Lucene.Net.Index
         public BufferedUpdates SegUpdates { get; private set; }
 
         /// <summary>
-        /// <seealso cref="MutableBits"/> recording live documents; this is
+        /// <seealso cref="IMutableBits"/> recording live documents; this is
         ///  only set if there is one or more deleted documents.
         /// </summary>
-        public MutableBits LiveDocs { get; set; }
+        public IMutableBits LiveDocs { get; set; }
 
         /// <summary>
         /// Unique suffix for any postings files written for this

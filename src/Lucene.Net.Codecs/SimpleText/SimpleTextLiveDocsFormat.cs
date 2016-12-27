@@ -36,7 +36,7 @@ namespace Lucene.Net.Codecs.SimpleText
 	using BytesRef = Util.BytesRef;
 	using CharsRef = Util.CharsRef;
 	using IOUtils = Util.IOUtils;
-	using MutableBits = Util.MutableBits;
+	using IMutableBits = Util.IMutableBits;
 	using StringHelper = Util.StringHelper;
 	using UnicodeUtil = Util.UnicodeUtil;
 
@@ -56,12 +56,12 @@ namespace Lucene.Net.Codecs.SimpleText
         internal static readonly BytesRef DOC = new BytesRef("  doc ");
         internal static readonly BytesRef END = new BytesRef("END");
 
-        public override MutableBits NewLiveDocs(int size)
+        public override IMutableBits NewLiveDocs(int size)
         {
             return new SimpleTextMutableBits(size);
         }
 
-        public override MutableBits NewLiveDocs(IBits existing)
+        public override IMutableBits NewLiveDocs(IBits existing)
         {
             var bits = (SimpleTextBits) existing;
             return new SimpleTextMutableBits(new BitArray(bits.BITS), bits.SIZE);
@@ -120,7 +120,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return ArrayUtil.ParseInt(scratch.Chars, 0, scratch.Length);
         }
 
-        public override void WriteLiveDocs(MutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount,
+        public override void WriteLiveDocs(IMutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount,
             IOContext context)
         {
             var set = ((SimpleTextBits) bits).BITS;
@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs.SimpleText
         }
 
         // read-write
-        internal class SimpleTextMutableBits : SimpleTextBits, MutableBits
+        internal class SimpleTextMutableBits : SimpleTextBits, IMutableBits
         {
 
             internal SimpleTextMutableBits(int size) : this(new BitArray(size), size)

@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
     using InfoStream = Lucene.Net.Util.InfoStream;
     using IntBlockPool = Lucene.Net.Util.IntBlockPool;
     using IOContext = Lucene.Net.Store.IOContext;
-    using MutableBits = Lucene.Net.Util.MutableBits;
+    using IMutableBits = Lucene.Net.Util.IMutableBits;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
@@ -142,10 +142,10 @@ namespace Lucene.Net.Index
             internal readonly SegmentCommitInfo SegmentInfo;
             internal readonly FieldInfos FieldInfos;
             internal readonly FrozenBufferedUpdates SegmentUpdates;
-            internal readonly MutableBits LiveDocs;
+            internal readonly IMutableBits LiveDocs;
             internal readonly int DelCount;
 
-            internal FlushedSegment(SegmentCommitInfo segmentInfo, FieldInfos fieldInfos, BufferedUpdates segmentUpdates, MutableBits liveDocs, int delCount)
+            internal FlushedSegment(SegmentCommitInfo segmentInfo, FieldInfos fieldInfos, BufferedUpdates segmentUpdates, IMutableBits liveDocs, int delCount)
             {
                 this.SegmentInfo = segmentInfo;
                 this.FieldInfos = fieldInfos;
@@ -608,7 +608,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Seals the <seealso cref="SegmentInfo"/> for the new flushed segment and persists
-        /// the deleted documents <seealso cref="MutableBits"/>.
+        /// the deleted documents <seealso cref="IMutableBits"/>.
         /// </summary>
         internal virtual void SealFlushedSegment(FlushedSegment flushedSegment)
         {

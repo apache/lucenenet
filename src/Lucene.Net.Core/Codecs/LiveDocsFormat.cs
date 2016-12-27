@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs
     using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;
     using IOContext = Lucene.Net.Store.IOContext;
-    using MutableBits = Lucene.Net.Util.MutableBits;
+    using IMutableBits = Lucene.Net.Util.IMutableBits;
     using SegmentCommitInfo = Lucene.Net.Index.SegmentCommitInfo;
 
     /// <summary>
@@ -41,11 +41,11 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Creates a new MutableBits, with all bits set, for the specified size. </summary>
-        public abstract MutableBits NewLiveDocs(int size);
+        public abstract IMutableBits NewLiveDocs(int size);
 
         /// <summary>
         /// Creates a new mutablebits of the same bits set and size of existing. </summary>
-        public abstract MutableBits NewLiveDocs(IBits existing);
+        public abstract IMutableBits NewLiveDocs(IBits existing);
 
         /// <summary>
         /// Read live docs bits. </summary>
@@ -56,7 +56,7 @@ namespace Lucene.Net.Codecs
         ///  SegmentCommitInfo#getNextDelGen} to determine the
         ///  generation of the deletes file you should write to.
         /// </summary>
-        public abstract void WriteLiveDocs(MutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount, IOContext context);
+        public abstract void WriteLiveDocs(IMutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount, IOContext context);
 
         /// <summary>
         /// Records all files in use by this <seealso cref="SegmentCommitInfo"/> into the files argument. </summary>

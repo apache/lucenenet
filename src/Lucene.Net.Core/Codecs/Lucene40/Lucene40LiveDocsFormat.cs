@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.Lucene40
     using Directory = Lucene.Net.Store.Directory;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IOContext = Lucene.Net.Store.IOContext;
-    using MutableBits = Lucene.Net.Util.MutableBits;
+    using IMutableBits = Lucene.Net.Util.IMutableBits;
     using SegmentCommitInfo = Lucene.Net.Index.SegmentCommitInfo;
 
     /// <summary>
@@ -73,14 +73,14 @@ namespace Lucene.Net.Codecs.Lucene40
         {
         }
 
-        public override MutableBits NewLiveDocs(int size)
+        public override IMutableBits NewLiveDocs(int size)
         {
             BitVector bitVector = new BitVector(size);
             bitVector.InvertAll();
             return bitVector;
         }
 
-        public override MutableBits NewLiveDocs(IBits existing)
+        public override IMutableBits NewLiveDocs(IBits existing)
         {
             BitVector liveDocs = (BitVector)existing;
             return (BitVector)liveDocs.Clone();
@@ -95,7 +95,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return liveDocs;
         }
 
-        public override void WriteLiveDocs(MutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount, IOContext context)
+        public override void WriteLiveDocs(IMutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount, IOContext context)
         {
             string filename = IndexFileNames.FileNameFromGeneration(info.Info.Name, DELETES_EXTENSION, info.NextDelGen);
             BitVector liveDocs = (BitVector)bits;

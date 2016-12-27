@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs.Lucene40
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using MutableBits = Lucene.Net.Util.MutableBits;
+    using IMutableBits = Lucene.Net.Util.IMutableBits;
 
     /// <summary>
     /// Optimized implementation of a vector of bits.  this is more-or-less like
@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// </summary>
     // pkg-private: if this thing is generally useful then it can go back in .util,
     // but the serialization must be here underneath the codec.
-    internal sealed class BitVector : MutableBits
+    internal sealed class BitVector : IMutableBits
     {
         private byte[] Bits;
         private int Size_Renamed;
