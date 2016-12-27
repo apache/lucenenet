@@ -40,9 +40,9 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestParseLeniently()
         {
-            Assert.AreEqual(LuceneVersion.LUCENE_40, LuceneVersionHelpers.ParseLeniently("4.0"));
-            Assert.AreEqual(LuceneVersion.LUCENE_40, LuceneVersionHelpers.ParseLeniently("LUCENE_40"));
-            Assert.AreEqual(LuceneVersion.LUCENE_CURRENT, LuceneVersionHelpers.ParseLeniently("LUCENE_CURRENT"));
+            Assert.AreEqual(LuceneVersion.LUCENE_40, LuceneVersionExtensions.ParseLeniently("4.0"));
+            Assert.AreEqual(LuceneVersion.LUCENE_40, LuceneVersionExtensions.ParseLeniently("LUCENE_40"));
+            Assert.AreEqual(LuceneVersion.LUCENE_CURRENT, LuceneVersionExtensions.ParseLeniently("LUCENE_CURRENT"));
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
             LuceneVersion[] values = Enum.GetValues(typeof(LuceneVersion)).Cast<LuceneVersion>().ToArray();
             Assert.IsTrue(values.Length >= 2);
             string mainVersionWithoutAlphaBeta = Constants.MainVersionWithoutAlphaBeta();
-            LuceneVersion mainVersionParsed = LuceneVersionHelpers.ParseLeniently(mainVersionWithoutAlphaBeta);
+            LuceneVersion mainVersionParsed = LuceneVersionExtensions.ParseLeniently(mainVersionWithoutAlphaBeta);
             Assert.AreEqual(mainVersionParsed, values[values.Length - 2], "Constant one before last must be the same as the parsed LUCENE_MAIN_VERSION (without alpha/beta) constant: " + mainVersionWithoutAlphaBeta);
         }
     }

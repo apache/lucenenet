@@ -877,7 +877,7 @@
     <Compile Include="Util\TimSorter.cs" />
     <Compile Include="Util\ToStringUtils.cs" />
     <Compile Include="Util\UnicodeUtil.cs" />
-    <Compile Include="Util\LuceneVersion.cs" />
+    <Compile Include="Util\Version.cs" />
     <Compile Include="Util\VirtualMethod.cs" />
     <Compile Include="Util\WAH8DocIdSet.cs" />
     <Compile Include="Util\WeakIdentityMap.cs" />

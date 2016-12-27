@@ -1,4 +1,6 @@
-using System.Collections.Generic;
+using System;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Util
 {
@@ -149,70 +151,25 @@ namespace Lucene.Net.Util
         LUCENE_CURRENT
     }
 
-    public static class LuceneVersionHelpers // LUCENENET TODO: rename Version ?
+    /// <summary>
+    /// Extension methods to the <see cref="LuceneVersion"/> enumeration to provide
+    /// version comparison and parsing functionality.
+    /// </summary>
+    public static class LuceneVersionExtensions
     {
-        // LUCENENET TODO: The simple Regex in the original in combination with Enum.Parse() would make this unnecessary
-        private static readonly Dictionary<string, LuceneVersion> stringToEnum = new Dictionary<string, LuceneVersion>()
-        {
-            {"LUCENE_30", LuceneVersion.LUCENE_30},
-            {"LUCENE_31", LuceneVersion.LUCENE_31},
-            {"LUCENE_32", LuceneVersion.LUCENE_32},
-            {"LUCENE_33", LuceneVersion.LUCENE_33},
-            {"LUCENE_34", LuceneVersion.LUCENE_34},
-            {"LUCENE_35", LuceneVersion.LUCENE_35},
-            {"LUCENE_36", LuceneVersion.LUCENE_36},
-            {"LUCENE_40", LuceneVersion.LUCENE_40},
-            {"LUCENE_41", LuceneVersion.LUCENE_41},
-            {"LUCENE_42", LuceneVersion.LUCENE_42},
-            {"LUCENE_43", LuceneVersion.LUCENE_43},
-            {"LUCENE_44", LuceneVersion.LUCENE_44},
-            {"LUCENE_45", LuceneVersion.LUCENE_45},
-            {"LUCENE_46", LuceneVersion.LUCENE_46},
-            {"LUCENE_47", LuceneVersion.LUCENE_47},
-            {"LUCENE_48", LuceneVersion.LUCENE_48},
-            {"LUCENE_CURRENT", LuceneVersion.LUCENE_CURRENT}
-        };
-
-        // LUCENENET TODO: The simple Regex in the original in combination with Enum.Parse() would make this unnecessary
-        private static readonly Dictionary<string, LuceneVersion> longToEnum = new Dictionary<string, LuceneVersion>()
-        {
-            {"3.0", LuceneVersion.LUCENE_30},
-            {"3.1", LuceneVersion.LUCENE_31},
-            {"3.2", LuceneVersion.LUCENE_32},
-            {"3.3", LuceneVersion.LUCENE_33},
-            {"3.4", LuceneVersion.LUCENE_34},
-            {"3.5", LuceneVersion.LUCENE_35},
-            {"3.6", LuceneVersion.LUCENE_36},
-            {"4.0", LuceneVersion.LUCENE_40},
-            {"4.1", LuceneVersion.LUCENE_41},
-            {"4.2", LuceneVersion.LUCENE_42},
-            {"4.3", LuceneVersion.LUCENE_43},
-            {"4.4", LuceneVersion.LUCENE_44},
-            {"4.5", LuceneVersion.LUCENE_45},
-            {"4.6", LuceneVersion.LUCENE_46},
-            {"4.7", LuceneVersion.LUCENE_47},
-            {"4.8", LuceneVersion.LUCENE_48}
-        };
-
         public static bool OnOrAfter(this LuceneVersion instance, LuceneVersion other)
         {
             return other <= instance;
-            //return other >= 0; //LUCENENET TODO
         }
+
+        private static Regex NumericVersion = new Regex("^(\\d)\\.(\\d)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         public static LuceneVersion ParseLeniently(string version)
         {
-            string upperVersionString = version.ToUpper(); // LUCENENET TODO: culture
-            LuceneVersion ret;
-            if (stringToEnum.TryGetValue(upperVersionString, out ret))
-            {
-                return ret;
-            }
-            else if (longToEnum.TryGetValue(upperVersionString, out ret))
-            {
-                return ret;
-            }
-            return ret;
+            string parsedMatchVersion = version.ToUpper(CultureInfo.InvariantCulture);
+            LuceneVersion result;
+            Enum.TryParse(NumericVersion.Replace(parsedMatchVersion, "LUCENE_$1$2", 1), out result);
+            return result;
         }
     }
 }

@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Util
 #pragma warning disable 612, 618
                 LuceneVersion.LUCENE_CURRENT :
 #pragma warning restore 612, 618
-                LuceneVersionHelpers.ParseLeniently(version);
+                LuceneVersionExtensions.ParseLeniently(version);
             args.Remove(CLASS_NAME); // consume the class arg
         }
 
