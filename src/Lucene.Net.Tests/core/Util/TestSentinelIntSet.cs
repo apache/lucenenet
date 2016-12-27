@@ -31,18 +31,18 @@ namespace Lucene.Net.Util
             Assert.IsFalse(set.Exists(50));
             set.Put(50);
             Assert.IsTrue(set.Exists(50));
-            Assert.AreEqual(1, set.Size());
+            Assert.AreEqual(1, set.Size);
             Assert.AreEqual(-11, set.Find(10));
-            Assert.AreEqual(1, set.Size());
+            Assert.AreEqual(1, set.Size);
             set.Clear();
-            Assert.AreEqual(0, set.Size());
+            Assert.AreEqual(0, set.Size);
             Assert.AreEqual(50, set.Hash(50));
             //force a rehash
             for (int i = 0; i < 20; i++)
             {
                 set.Put(i);
             }
-            Assert.AreEqual(20, set.Size());
+            Assert.AreEqual(20, set.Size);
             Assert.AreEqual(24, set.RehashCount);
         }
 
@@ -68,7 +68,7 @@ namespace Lucene.Net.Util
                     Assert.AreEqual(exists, slot >= 0);
                     b.Put(val);
 
-                    Assert.AreEqual(a.Count, b.Size());
+                    Assert.AreEqual(a.Count, b.Size);
                 }
             }
         }

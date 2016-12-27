@@ -60,21 +60,21 @@ namespace Lucene.Net.Util
     ///
     /// @lucene.internal
     /// </summary>
-    public sealed class WeakIdentityMap<K, V>
-        where K : class
+    public sealed class WeakIdentityMap<TKey, TValue>
+        where TKey : class
     {
         // LUCENENET TODO: Make this class internal as it isn't required anywhere; need to have it exposed to tests though
 
         //private readonly ReferenceQueue<object> queue = new ReferenceQueue<object>();
-        private readonly IDictionary<IdentityWeakReference, V> BackingStore;
+        private readonly IDictionary<IdentityWeakReference, TValue> backingStore;
 
-        private readonly bool ReapOnRead;
+        private readonly bool reapOnRead;
 
         /// <summary>
         /// Creates a new {@code WeakIdentityMap} based on a non-synchronized <seealso cref="HashMap"/>.
         /// The map <a href="#reapInfo">cleans up the reference queue on every read operation</a>.
         /// </summary>
-        public static WeakIdentityMap<K, V> NewHashMap()
+        public static WeakIdentityMap<TKey, TValue> NewHashMap()
         {
             return NewHashMap(false);
         }
@@ -82,16 +82,16 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Creates a new {@code WeakIdentityMap} based on a non-synchronized <seealso cref="HashMap"/>. </summary>
         /// <param name="reapOnRead"> controls if the map <a href="#reapInfo">cleans up the reference queue on every read operation</a>. </param>
-        public static WeakIdentityMap<K, V> NewHashMap(bool reapOnRead)
+        public static WeakIdentityMap<TKey, TValue> NewHashMap(bool reapOnRead)
         {
-            return new WeakIdentityMap<K, V>(new HashMap<IdentityWeakReference, V>(), reapOnRead);
+            return new WeakIdentityMap<TKey, TValue>(new HashMap<IdentityWeakReference, TValue>(), reapOnRead);
         }
 
         /// <summary>
         /// Creates a new {@code WeakIdentityMap} based on a <seealso cref="ConcurrentHashMap"/>.
         /// The map <a href="#reapInfo">cleans up the reference queue on every read operation</a>.
         /// </summary>
-        public static WeakIdentityMap<K, V> NewConcurrentHashMap()
+        public static WeakIdentityMap<TKey, TValue> NewConcurrentHashMap()
         {
             return NewConcurrentHashMap(true);
         }
@@ -99,24 +99,24 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Creates a new {@code WeakIdentityMap} based on a <seealso cref="ConcurrentHashMap"/>. </summary>
         /// <param name="reapOnRead"> controls if the map <a href="#reapInfo">cleans up the reference queue on every read operation</a>. </param>
-        public static WeakIdentityMap<K, V> NewConcurrentHashMap(bool reapOnRead)
+        public static WeakIdentityMap<TKey, TValue> NewConcurrentHashMap(bool reapOnRead)
         {
-            return new WeakIdentityMap<K, V>(new ConcurrentDictionary<IdentityWeakReference, V>(), reapOnRead);
+            return new WeakIdentityMap<TKey, TValue>(new ConcurrentDictionary<IdentityWeakReference, TValue>(), reapOnRead);
         }
 
         /// <summary>
         /// Private only constructor, to create use the static factory methods. </summary>
-        private WeakIdentityMap(IDictionary<IdentityWeakReference, V> backingStore, bool reapOnRead)
+        private WeakIdentityMap(IDictionary<IdentityWeakReference, TValue> backingStore, bool reapOnRead)
         {
-            this.BackingStore = backingStore;
-            this.ReapOnRead = reapOnRead;
+            this.backingStore = backingStore;
+            this.reapOnRead = reapOnRead;
         }
 
         /// <summary>
         /// Removes all of the mappings from this map. </summary>
         public void Clear()
         {
-            BackingStore.Clear();
+            backingStore.Clear();
             Reap();
         }
 
@@ -124,30 +124,30 @@ namespace Lucene.Net.Util
         /// Returns {@code true} if this map contains a mapping for the specified key. </summary>
         public bool ContainsKey(object key)
         {
-            if (ReapOnRead)
+            if (reapOnRead)
             {
                 Reap();
             }
-            return BackingStore.ContainsKey(new IdentityWeakReference(key));
+            return backingStore.ContainsKey(new IdentityWeakReference(key));
         }
 
         /// <summary>
         /// Returns the value to which the specified key is mapped. </summary>
-        public V Get(object key)
+        public TValue Get(object key)
         {
-            if (ReapOnRead)
+            if (reapOnRead)
             {
                 Reap();
             }
 
-            V val;
-            if (BackingStore.TryGetValue(new IdentityWeakReference(key), out val))
+            TValue val;
+            if (backingStore.TryGetValue(new IdentityWeakReference(key), out val))
             {
                 return val;
             }
             else
             {
-                return default(V);
+                return default(TValue);
             }
         }
 
@@ -156,13 +156,13 @@ namespace Lucene.Net.Util
         /// If the map previously contained a mapping for this key, the old value
         /// is replaced.
         /// </summary>
-        public V Put(K key, V value)
+        public TValue Put(TKey key, TValue value)
         {
             Reap();
-            return BackingStore[new IdentityWeakReference(key)] = value;
+            return backingStore[new IdentityWeakReference(key)] = value;
         }
 
-        public IEnumerable<K> Keys
+        public IEnumerable<TKey> Keys
         {
             get
             {
@@ -179,14 +179,14 @@ namespace Lucene.Net.Util
         /// event there are no more values left (instead of returning
         /// a null value in an extra enumeration).
         /// </summary>
-        private class KeyWrapper : IEnumerable<K>
+        private class KeyWrapper : IEnumerable<TKey>
         {
-            private readonly WeakIdentityMap<K, V> outerInstance;
-            public KeyWrapper(WeakIdentityMap<K, V> outerInstance)
+            private readonly WeakIdentityMap<TKey, TValue> outerInstance;
+            public KeyWrapper(WeakIdentityMap<TKey, TValue> outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
-            public IEnumerator<K> GetEnumerator()
+            public IEnumerator<TKey> GetEnumerator()
             {
                 outerInstance.Reap();
                 return new IteratorAnonymousInnerClassHelper(outerInstance);
@@ -198,22 +198,22 @@ namespace Lucene.Net.Util
             }
         }
 
-        public IEnumerable<V> Values
+        public IEnumerable<TValue> Values
         {
             get
             {
-                if (ReapOnRead) Reap();
-                return BackingStore.Values;
+                if (reapOnRead) Reap();
+                return backingStore.Values;
             }
         }
 
         /// <summary>
         /// Returns {@code true} if this map contains no key-value mappings. </summary>
-        public bool Empty // LUCENENET TODO: rename IsEmpty
+        public bool IsEmpty
         {
             get
             {
-                return Size() == 0;
+                return Size == 0;
             }
         }
 
@@ -227,7 +227,7 @@ namespace Lucene.Net.Util
         public bool Remove(object key)
         {
             Reap();
-            return BackingStore.Remove(new IdentityWeakReference(key));
+            return backingStore.Remove(new IdentityWeakReference(key));
         }
 
         /// <summary>
@@ -235,24 +235,27 @@ namespace Lucene.Net.Util
         /// and may not reflect unprocessed entries that will be removed before next
         /// attempted access because they are no longer referenced.
         /// </summary>
-        public int Size() // LUCENENET TODO: make property, rename Count
+        public int Size // LUCENENET TODO: rename Count
         {
-            if (BackingStore.Count == 0)
+            get
             {
-                return 0;
+                if (backingStore.Count == 0)
+                {
+                    return 0;
+                }
+                if (reapOnRead)
+                {
+                    Reap();
+                }
+                return backingStore.Count;
             }
-            if (ReapOnRead)
-            {
-                Reap();
-            }
-            return BackingStore.Count;
         }
 
-        private class IteratorAnonymousInnerClassHelper : IEnumerator<K>
+        private class IteratorAnonymousInnerClassHelper : IEnumerator<TKey>
         {
-            private readonly WeakIdentityMap<K,V> outerInstance;
+            private readonly WeakIdentityMap<TKey,TValue> outerInstance;
 
-            public IteratorAnonymousInnerClassHelper(WeakIdentityMap<K,V> outerInstance)
+            public IteratorAnonymousInnerClassHelper(WeakIdentityMap<TKey,TValue> outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -261,11 +264,11 @@ namespace Lucene.Net.Util
             private object next = null;
             private int position = -1; // start before the beginning of the set
 
-            public K Current
+            public TKey Current
             {
                 get
                 {
-                    return (K)next;
+                    return (TKey)next;
                 }
             }
 
@@ -290,14 +293,14 @@ namespace Lucene.Net.Util
                     IdentityWeakReference key;
 
                     // If the next position doesn't exist, exit
-                    if (++position >= outerInstance.BackingStore.Count)
+                    if (++position >= outerInstance.backingStore.Count)
                     {
                         position--;
                         return false;
                     }
                     try
                     {
-                        key = outerInstance.BackingStore.Keys.ElementAt(position);
+                        key = outerInstance.backingStore.Keys.ElementAt(position);
                     }
                     catch (ArgumentOutOfRangeException)
                     {
@@ -307,7 +310,7 @@ namespace Lucene.Net.Util
                     }
                     if (!key.IsAlive)
                     {
-                        outerInstance.BackingStore.Remove(key);
+                        outerInstance.backingStore.Remove(key);
                         position--;
                         continue;
                     }
@@ -336,13 +339,13 @@ namespace Lucene.Net.Util
         /// garbage collected while iterator is consumed,
         /// especially if {@code reapOnRead} is {@code false}.
         /// </summary>
-        public IEnumerator<V> ValueIterator()
+        public IEnumerator<TValue> ValueIterator()
         {
-            if (ReapOnRead)
+            if (reapOnRead)
             {
                 Reap();
             }
-            return BackingStore.Values.GetEnumerator();
+            return backingStore.Values.GetEnumerator();
         }
 
         /// <summary>
@@ -354,7 +357,7 @@ namespace Lucene.Net.Util
         public void Reap()
         {
             List<IdentityWeakReference> keysToRemove = new List<IdentityWeakReference>();
-            foreach (IdentityWeakReference zombie in BackingStore.Keys)
+            foreach (IdentityWeakReference zombie in backingStore.Keys)
             {
                 if (!zombie.IsAlive)
                 {
@@ -364,7 +367,7 @@ namespace Lucene.Net.Util
 
             foreach (var key in keysToRemove)
             {
-                BackingStore.Remove(key);
+                backingStore.Remove(key);
             }
         }
 
@@ -373,17 +376,17 @@ namespace Lucene.Net.Util
 
         private sealed class IdentityWeakReference : WeakReference
         {
-            private readonly int Hash;
+            private readonly int hash;
 
             internal IdentityWeakReference(object obj/*, ReferenceQueue<object> queue*/)
                 : base(obj == null ? NULL : obj/*, queue*/)
             {
-                Hash = RuntimeHelpers.GetHashCode(obj);
+                hash = RuntimeHelpers.GetHashCode(obj);
             }
 
             public override int GetHashCode()
             {
-                return Hash;
+                return hash;
             }
 
             public override bool Equals(object o)

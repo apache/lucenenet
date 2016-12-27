@@ -66,7 +66,7 @@ namespace Lucene.Net.Util
             map.Put(key1, "bar1");
             map.Put(key2, "bar2");
 
-            Assert.AreEqual(3, map.Size());
+            Assert.AreEqual(3, map.Size);
 
             Assert.AreEqual("bar1", map.Get(key1));
             Assert.AreEqual("bar2", map.Get(key2));
@@ -83,7 +83,7 @@ namespace Lucene.Net.Util
             map.Put(key2, "bar2");
             map.Put(null, "null");
 
-            Assert.AreEqual(3, map.Size());
+            Assert.AreEqual(3, map.Size);
 
             Assert.AreEqual("bar1", map.Get(key1));
             Assert.AreEqual("bar2", map.Get(key2));
@@ -96,13 +96,13 @@ namespace Lucene.Net.Util
             Assert.IsTrue(map.ContainsKey(null));
 
             map.Remove(null);
-            Assert.AreEqual(2, map.Size());
+            Assert.AreEqual(2, map.Size);
             map.Remove(key1);
-            Assert.AreEqual(1, map.Size());
+            Assert.AreEqual(1, map.Size);
             map.Put(key1, "bar1");
             map.Put(key2, "bar2");
             map.Put(key3, "bar3");
-            Assert.AreEqual(3, map.Size());
+            Assert.AreEqual(3, map.Size);
 
             int c = 0, keysAssigned = 0;
             for (IEnumerator<string> iter = map.Keys.GetEnumerator(); iter.MoveNext();)
@@ -130,7 +130,7 @@ namespace Lucene.Net.Util
             key1 = key2 = key3 = null;
 
             // check that GC does not cause problems in reap() method, wait 1 second and let GC work:
-            int size = map.Size();
+            int size = map.Size;
             for (int i = 0; size > 0 && i < 10; i++)
             {
 #if !NETSTANDARD
@@ -138,7 +138,7 @@ namespace Lucene.Net.Util
                 {
 #endif
                     GC.Collect();
-                    int newSize = map.Size();
+                    int newSize = map.Size;
                     Assert.IsTrue(size >= newSize, "previousSize(" + size + ")>=newSize(" + newSize + ")");
                     size = newSize;
                     Thread.Sleep(TimeSpan.FromSeconds(1));
@@ -148,7 +148,7 @@ namespace Lucene.Net.Util
                         Assert.IsNotNull(iter.Current);
                         c++;
                     }
-                    newSize = map.Size();
+                    newSize = map.Size;
                     Assert.IsTrue(size >= c, "previousSize(" + size + ")>=iteratorSize(" + c + ")");
                     Assert.IsTrue(c >= newSize, "iteratorSize(" + c + ")>=newSize(" + newSize + ")");
                     size = newSize;
@@ -161,8 +161,8 @@ namespace Lucene.Net.Util
             }
 
             map.Clear();
-            Assert.AreEqual(0, map.Size());
-            Assert.IsTrue(map.Empty);
+            Assert.AreEqual(0, map.Size);
+            Assert.IsTrue(map.IsEmpty);
 
             IEnumerator<string> it = map.Keys.GetEnumerator();
             Assert.IsFalse(it.MoveNext());
@@ -185,11 +185,11 @@ namespace Lucene.Net.Util
             key2 = "test4 foo".Split(' ')[1];
             map.Put(key1, "bar1");
             map.Put(key2, "bar2");
-            Assert.AreEqual(2, map.Size());
+            Assert.AreEqual(2, map.Size);
 
             map.Clear();
-            Assert.AreEqual(0, map.Size());
-            Assert.IsTrue(map.Empty);
+            Assert.AreEqual(0, map.Size);
+            Assert.IsTrue(map.IsEmpty);
         }
 
         [Test]
@@ -243,7 +243,7 @@ namespace Lucene.Net.Util
             }
 
             // check that GC does not cause problems in reap() method:
-            int size = map.Size();
+            int size = map.Size;
             for (int i = 0; size > 0 && i < 10; i++)
             {
 #if !NETSTANDARD
@@ -251,7 +251,7 @@ namespace Lucene.Net.Util
                 {
 #endif
                     GC.Collect();
-                    int newSize = map.Size();
+                    int newSize = map.Size;
                     Assert.IsTrue(size >= newSize, "previousSize(" + size + ")>=newSize(" + newSize + ")");
                     size = newSize;
                     Thread.Sleep(new TimeSpan(100L));
@@ -261,7 +261,7 @@ namespace Lucene.Net.Util
                         Assert.IsNotNull(it.Current);
                         c++;
                     }
-                    newSize = map.Size();
+                    newSize = map.Size;
                     Assert.IsTrue(size >= c, "previousSize(" + size + ")>=iteratorSize(" + c + ")");
                     Assert.IsTrue(c >= newSize, "iteratorSize(" + c + ")>=newSize(" + newSize + ")");
                     size = newSize;
