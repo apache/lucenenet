@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Suggest
             buffer.Append(utf8);
         }
 
-        public BytesRefIterator GetEnumerator()
+        public IBytesRefIterator GetEnumerator()
         {
             closed = true;
             return buffer.Iterator(comparator);

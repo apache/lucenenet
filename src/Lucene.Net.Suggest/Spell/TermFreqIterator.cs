@@ -23,7 +23,7 @@ namespace Lucene.Net.Search.Spell
     /// <summary>
     /// Interface for enumerating term,weight pairs.
     /// </summary>
-    public interface ITermFreqIterator : BytesRefIterator
+    public interface ITermFreqIterator : IBytesRefIterator
     {
 
         /// <summary>
@@ -38,13 +38,13 @@ namespace Lucene.Net.Search.Spell
     /// </summary>
     public class TermFreqIteratorWrapper : ITermFreqIterator
     {
-        internal BytesRefIterator wrapped;
+        internal IBytesRefIterator wrapped;
 
         /// <summary>
         /// Creates a new wrapper, wrapping the specified iterator and 
         /// specifying a weight value of <code>1</code> for all terms.
         /// </summary>
-        public TermFreqIteratorWrapper(BytesRefIterator wrapped)
+        public TermFreqIteratorWrapper(IBytesRefIterator wrapped)
         {
             this.wrapped = wrapped;
         }

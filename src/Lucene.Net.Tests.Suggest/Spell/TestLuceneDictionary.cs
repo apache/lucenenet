@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Spell
 
         private IndexReader indexReader = null;
         private LuceneDictionary ld;
-        private BytesRefIterator it;
+        private IBytesRefIterator it;
         private BytesRef spare = new BytesRef();
 
 

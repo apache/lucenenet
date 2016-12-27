@@ -74,7 +74,7 @@ namespace Lucene.Net.Search.Spell
             }
         }
 
-        internal sealed class FileIterator : BytesRefIterator
+        internal sealed class FileIterator : IBytesRefIterator
         {
             private readonly PlainTextDictionary outerInstance;
 

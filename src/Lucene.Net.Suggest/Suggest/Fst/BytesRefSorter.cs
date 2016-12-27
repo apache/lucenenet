@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// an enumerator over all sorted entries.
         /// </summary>
         /// <exception cref="System.IO.IOException"> If an I/O exception occurs. </exception>
-        BytesRefIterator GetEnumerator();
+        IBytesRefIterator GetEnumerator();
 
         /// <summary>
         /// Comparator used to determine the sort order of entries.

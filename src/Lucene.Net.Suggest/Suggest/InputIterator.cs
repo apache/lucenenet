@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Suggest
     /// currently only <see cref="Analyzing.AnalyzingSuggester"/>, <see cref="Analyzing.FuzzySuggester"/>
     /// and <see cref="Analyzing.AnalyzingInfixSuggester"/> support payloads.
     /// </summary>
-    public interface IInputIterator : BytesRefIterator
+    public interface IInputIterator : IBytesRefIterator
     {
 
         /// <summary>
@@ -59,23 +59,23 @@ namespace Lucene.Net.Search.Suggest
     /// </summary>
     public static class EmptyInputIterator
     {
-        public static readonly IInputIterator Instance = new InputIteratorWrapper(EmptyBytesRefIterator.Instance);
+        public static readonly IInputIterator Instance = new InputIteratorWrapper(BytesRefIterator.EMPTY);
     }
 
     /// <summary>
-    /// Wraps a <see cref="BytesRefIterator"/> as a suggester <see cref="IInputIterator"/>, with all weights
+    /// Wraps a <see cref="IBytesRefIterator"/> as a suggester <see cref="IInputIterator"/>, with all weights
     /// set to <c>1</c> and carries no payload
     /// </summary>
     public class InputIteratorWrapper : IInputIterator
     {
-        internal readonly BytesRefIterator wrapped;
+        internal readonly IBytesRefIterator wrapped;
 
         /// <summary>
         /// Creates a new wrapper, wrapping the specified iterator and 
         /// specifying a weight value of <c>1</c> for all terms 
         /// and nullifies associated payloads.
         /// </summary>
-        public InputIteratorWrapper(BytesRefIterator wrapped)
+        public InputIteratorWrapper(IBytesRefIterator wrapped)
         {
             this.wrapped = wrapped;
         }

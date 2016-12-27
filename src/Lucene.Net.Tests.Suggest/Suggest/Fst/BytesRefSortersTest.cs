@@ -47,8 +47,8 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
 
             // Create two iterators and check that they're aligned with each other.
-            BytesRefIterator i1 = sorter.GetEnumerator();
-            BytesRefIterator i2 = sorter.GetEnumerator();
+            IBytesRefIterator i1 = sorter.GetEnumerator();
+            IBytesRefIterator i2 = sorter.GetEnumerator();
 
             // Verify sorter contract.
             try

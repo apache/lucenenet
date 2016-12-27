@@ -380,7 +380,7 @@ namespace Lucene.Net.Util
             {
                 BytesRef spare;
 
-                BytesRefIterator iter = Buffer.Iterator(comparator);
+                IBytesRefIterator iter = Buffer.Iterator(comparator);
                 while ((spare = iter.Next()) != null)
                 {
                     Debug.Assert(spare.Length <= ushort.MaxValue);

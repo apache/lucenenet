@@ -171,14 +171,14 @@ namespace Lucene.Net.Util
         /// <summary>
         /// sugar for <seealso cref="#iterator(Comparator)"/> with a <code>null</code> comparator
         /// </summary>
-        public BytesRefIterator Iterator() // LUCENENET TODO: Rename GetIterator() ? check consistency
+        public IBytesRefIterator Iterator() // LUCENENET TODO: Rename GetIterator() ? check consistency
         {
             return Iterator(null);
         }
 
         /// <summary>
         /// <p>
-        /// Returns a <seealso cref="BytesRefIterator"/> with point in time semantics. The
+        /// Returns a <seealso cref="IBytesRefIterator"/> with point in time semantics. The
         /// iterator provides access to all so far appended <seealso cref="BytesRef"/> instances.
         /// </p>
         /// <p>
@@ -190,7 +190,7 @@ namespace Lucene.Net.Util
         /// this is a non-destructive operation.
         /// </p>
         /// </summary>
-        public BytesRefIterator Iterator(IComparer<BytesRef> comp)// LUCENENET TODO: Rename GetIterator() ? check consistency
+        public IBytesRefIterator Iterator(IComparer<BytesRef> comp)// LUCENENET TODO: Rename GetIterator() ? check consistency
         {
             BytesRef spare = new BytesRef();
             int size = Size;
@@ -198,7 +198,7 @@ namespace Lucene.Net.Util
             return new BytesRefIteratorAnonymousInnerClassHelper(this, comp, spare, size, indices);
         }
 
-        private class BytesRefIteratorAnonymousInnerClassHelper : BytesRefIterator
+        private class BytesRefIteratorAnonymousInnerClassHelper : IBytesRefIterator
         {
             private readonly BytesRefArray outerInstance;
 

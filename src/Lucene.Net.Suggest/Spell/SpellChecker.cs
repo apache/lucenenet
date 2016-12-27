@@ -531,7 +531,7 @@ namespace Lucene.Net.Search.Spell
 
                     try
                     {
-                        BytesRefIterator iter = dict.EntryIterator;
+                        IBytesRefIterator iter = dict.EntryIterator;
                         BytesRef currentTerm;
 
                         while ((currentTerm = iter.Next()) != null)

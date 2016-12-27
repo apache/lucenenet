@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-    public abstract class TermsEnum : BytesRefIterator
+    public abstract class TermsEnum : IBytesRefIterator
     {
         public abstract IComparer<BytesRef> Comparator { get; } // LUCENENET specific - must supply implementation for the interface
 

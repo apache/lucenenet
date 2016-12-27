@@ -22,7 +22,7 @@ namespace Lucene.Net.Util
     /// <summary>
     /// A simple iterator interface for <seealso cref="BytesRef"/> iteration.
     /// </summary>
-    public interface BytesRefIterator // LUCENENET TODO: Rename interface "I"
+    public interface IBytesRefIterator
     {
         /// <summary>
         /// Increments the iteration to the next <seealso cref="BytesRef"/> in the iterator.
@@ -45,23 +45,30 @@ namespace Lucene.Net.Util
         IComparer<BytesRef> Comparator { get; } // LUCENENET TODO: Rename Comparer ?
     }
 
-    public class EmptyBytesRefIterator : BytesRefIterator
+    /// <summary>
+    /// LUCENENET specific class to make the syntax of creating an empty
+    /// <see cref="IBytesRefIterator"/> the same as it was in Lucene. Example:
+    /// <code>
+    /// var iter = BytesRefIterator.Empty;
+    /// </code>
+    /// </summary>
+    public class BytesRefIterator
     {
-        public static readonly BytesRefIterator Instance = new EmptyBytesRefIterator();
+        private BytesRefIterator() { } // Disallow creation
 
-        public BytesRef Next()
-        {
-            return null;
-        }
+        public static readonly IBytesRefIterator EMPTY = new EmptyBytesRefIterator();
 
-        public IComparer<BytesRef> Comparator
+        private class EmptyBytesRefIterator : IBytesRefIterator
         {
-            get { return null; }
+            public BytesRef Next()
+            {
+                return null;
+            }
+
+            public IComparer<BytesRef> Comparator
+            {
+                get { return null; }
+            }
         }
     }
-
-    // LUCENENET TODO: add new class named BytesRefIterator and add:
-    // public static readonly BytesRefIterator EMPTY = new EmptyBytesRefIterator()
-    // make EmptyBytesRefIterator private
-    // See original source
 }

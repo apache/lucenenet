@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             writer.Write(utf8);
         }
 
-        public virtual BytesRefIterator GetEnumerator()
+        public virtual IBytesRefIterator GetEnumerator()
         {
             if (sorted == null)
             {
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <summary>
         /// Iterate over byte refs in a file.
         /// </summary>
-        internal class ByteSequenceIterator : BytesRefIterator
+        internal class ByteSequenceIterator : IBytesRefIterator
         {
             private readonly OfflineSorter.ByteSequencesReader reader;
             private BytesRef scratch = new BytesRef();
