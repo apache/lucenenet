@@ -54,11 +54,11 @@ namespace Lucene.Net.Util
         /// </summary>
         public abstract class Allocator
         {
-            protected readonly int BlockSize; // LUCENENET TODO: rename m_
+            protected readonly int m_blockSize;
 
             protected Allocator(int blockSize)
             {
-                this.BlockSize = blockSize;
+                this.m_blockSize = blockSize;
             }
 
             public abstract void RecycleByteBlocks(byte[][] blocks, int start, int end);
@@ -73,7 +73,7 @@ namespace Lucene.Net.Util
             {
                 get
                 {
-                    return new byte[BlockSize];
+                    return new byte[m_blockSize];
                 }
             }
         }
@@ -103,7 +103,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public class DirectTrackingAllocator : Allocator
         {
-            private readonly Counter BytesUsed;
+            private readonly Counter bytesUsed;
 
             public DirectTrackingAllocator(Counter bytesUsed)
                 : this(BYTE_BLOCK_SIZE, bytesUsed)
@@ -113,21 +113,21 @@ namespace Lucene.Net.Util
             public DirectTrackingAllocator(int blockSize, Counter bytesUsed)
                 : base(blockSize)
             {
-                this.BytesUsed = bytesUsed;
+                this.bytesUsed = bytesUsed;
             }
 
             public override byte[] ByteBlock
             {
                 get
                 {
-                    BytesUsed.AddAndGet(BlockSize);
-                    return new byte[BlockSize];
+                    bytesUsed.AddAndGet(m_blockSize);
+                    return new byte[m_blockSize];
                 }
             }
 
             public override void RecycleByteBlocks(byte[][] blocks, int start, int end)
             {
-                BytesUsed.AddAndGet(-((end - start) * BlockSize));
+                bytesUsed.AddAndGet(-((end - start) * m_blockSize));
                 for (var i = start; i < end; i++)
                 {
                     blocks[i] = null;
@@ -139,15 +139,15 @@ namespace Lucene.Net.Util
         /// array of buffers currently used in the pool. Buffers are allocated if
         /// needed don't modify this outside of this class.
         /// </summary>
-        public byte[][] Buffers = new byte[10][];
+        public byte[][] buffers = new byte[10][]; // LUCENENET TODO: make property ? public array
 
         /// <summary>
         /// index into the buffers array pointing to the current buffer used as the head </summary>
-        private int BufferUpto = -1; // Which buffer we are upto
+        private int bufferUpto = -1; // Which buffer we are upto
 
         /// <summary>
         /// Where we are in head buffer </summary>
-        public int ByteUpto = BYTE_BLOCK_SIZE; // LUCENENET TODO: make property
+        public int ByteUpto { get; set; }
 
         /// <summary>
         /// Current head buffer
@@ -156,12 +156,16 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Current head offset </summary>
-        public int ByteOffset = -BYTE_BLOCK_SIZE;
+        public int ByteOffset { get; set; }
 
         private readonly Allocator allocator;
 
         public ByteBlockPool(Allocator allocator)
         {
+            // set defaults
+            ByteUpto = BYTE_BLOCK_SIZE;
+            ByteOffset = -BYTE_BLOCK_SIZE;
+
             this.allocator = allocator;
         }
 
@@ -186,42 +190,42 @@ namespace Lucene.Net.Util
         ///        block pool was used before ie. <seealso cref="ByteBlockPool#nextBuffer()"/> was called before. </param>
         public void Reset(bool zeroFillBuffers, bool reuseFirst)
         {
-            if (BufferUpto != -1)
+            if (bufferUpto != -1)
             {
                 // We allocated at least one buffer
 
                 if (zeroFillBuffers)
                 {
-                    for (int i = 0; i < BufferUpto; i++)
+                    for (int i = 0; i < bufferUpto; i++)
                     {
                         // Fully zero fill buffers that we fully used
                         //Array.Clear(Buffers[i], 0, Buffers[i].Length);
-                        Arrays.Fill(Buffers[i], (byte)0);
+                        Arrays.Fill(buffers[i], (byte)0);
                     }
                     // Partial zero fill the final buffer
                     //Array.Clear(Buffers[BufferUpto], 0, BufferUpto);
-                    Arrays.Fill(Buffers[BufferUpto], 0, ByteUpto, (byte)0);
+                    Arrays.Fill(buffers[bufferUpto], 0, ByteUpto, (byte)0);
                 }
 
-                if (BufferUpto > 0 || !reuseFirst)
+                if (bufferUpto > 0 || !reuseFirst)
                 {
                     int offset = reuseFirst ? 1 : 0;
                     // Recycle all but the first buffer
-                    allocator.RecycleByteBlocks(Buffers, offset, 1 + BufferUpto);
+                    allocator.RecycleByteBlocks(buffers, offset, 1 + bufferUpto);
                     //Array.Clear(Buffers, 0, Buffers.Length);
-                    Arrays.Fill(Buffers, offset, 1 + BufferUpto, null);
+                    Arrays.Fill(buffers, offset, 1 + bufferUpto, null);
                 }
                 if (reuseFirst)
                 {
                     // Re-use the first buffer
-                    BufferUpto = 0;
+                    bufferUpto = 0;
                     ByteUpto = 0;
                     ByteOffset = 0;
-                    Buffer = Buffers[0];
+                    Buffer = buffers[0];
                 }
                 else
                 {
-                    BufferUpto = -1;
+                    bufferUpto = -1;
                     ByteUpto = BYTE_BLOCK_SIZE;
                     ByteOffset = -BYTE_BLOCK_SIZE;
                     Buffer = null;
@@ -237,14 +241,14 @@ namespace Lucene.Net.Util
         /// </summary>
         public void NextBuffer()
         {
-            if (1 + BufferUpto == Buffers.Length)
+            if (1 + bufferUpto == buffers.Length)
             {
-                var newBuffers = new byte[ArrayUtil.Oversize(Buffers.Length + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
-                Array.Copy(Buffers, 0, newBuffers, 0, Buffers.Length);
-                Buffers = newBuffers;
+                var newBuffers = new byte[ArrayUtil.Oversize(buffers.Length + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
+                Array.Copy(buffers, 0, newBuffers, 0, buffers.Length);
+                buffers = newBuffers;
             }
-            Buffer = Buffers[1 + BufferUpto] = allocator.ByteBlock;
-            BufferUpto++;
+            Buffer = buffers[1 + bufferUpto] = allocator.ByteBlock;
+            bufferUpto++;
 
             ByteUpto = 0;
             ByteOffset += BYTE_BLOCK_SIZE;
@@ -329,7 +333,7 @@ namespace Lucene.Net.Util
         // byte block
         public void SetBytesRef(BytesRef term, int textStart)
         {
-            var bytes = term.Bytes = Buffers[textStart >> BYTE_BLOCK_SHIFT];
+            var bytes = term.Bytes = buffers[textStart >> BYTE_BLOCK_SHIFT];
             var pos = textStart & BYTE_BLOCK_MASK;
             if ((bytes[pos] & 0x80) == 0)
             {
@@ -396,7 +400,7 @@ namespace Lucene.Net.Util
             var bytesOffset = off;
             var bytesLength = length;
             var bufferIndex = (int)(offset >> BYTE_BLOCK_SHIFT);
-            var buffer = Buffers[bufferIndex];
+            var buffer = buffers[bufferIndex];
             var pos = (int)(offset & BYTE_BLOCK_MASK);
             var overflow = (pos + length) - BYTE_BLOCK_SIZE;
             do
@@ -413,7 +417,7 @@ namespace Lucene.Net.Util
                     pos = 0;
                     bytesLength -= bytesToCopy;
                     bytesOffset += bytesToCopy;
-                    buffer = Buffers[++bufferIndex];
+                    buffer = buffers[++bufferIndex];
                     overflow = overflow - BYTE_BLOCK_SIZE;
                 }
             } while (true);

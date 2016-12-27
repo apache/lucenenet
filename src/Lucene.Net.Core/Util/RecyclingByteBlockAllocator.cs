@@ -83,8 +83,8 @@ namespace Lucene.Net.Util
             {
                 if (FreeBlocks_Renamed == 0)
                 {
-                    BytesUsed_Renamed.AddAndGet(BlockSize);
-                    return new byte[BlockSize];
+                    BytesUsed_Renamed.AddAndGet(m_blockSize);
+                    return new byte[m_blockSize];
                 }
                 var b = FreeByteBlocks[--FreeBlocks_Renamed];
                 FreeByteBlocks[FreeBlocks_Renamed] = null;
@@ -112,7 +112,7 @@ namespace Lucene.Net.Util
             {
                 blocks[i] = null;
             }
-            BytesUsed_Renamed.AddAndGet(-(end - stop) * BlockSize);
+            BytesUsed_Renamed.AddAndGet(-(end - stop) * m_blockSize);
             Debug.Assert(BytesUsed_Renamed.Get() >= 0);
         }
 
@@ -159,7 +159,7 @@ namespace Lucene.Net.Util
             {
                 FreeByteBlocks[--FreeBlocks_Renamed] = null;
             }
-            BytesUsed_Renamed.AddAndGet(-count * BlockSize);
+            BytesUsed_Renamed.AddAndGet(-count * m_blockSize);
             Debug.Assert(BytesUsed_Renamed.Get() >= 0);
             return count;
         }

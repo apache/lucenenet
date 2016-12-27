@@ -286,7 +286,7 @@ namespace Lucene.Net.Index
         internal void WriteByte(int stream, byte b)
         {
             int upto = IntUptos[IntUptoStart + stream];
-            var bytes = BytePool.Buffers[upto >> ByteBlockPool.BYTE_BLOCK_SHIFT];
+            var bytes = BytePool.buffers[upto >> ByteBlockPool.BYTE_BLOCK_SHIFT];
             Debug.Assert(bytes != null);
             int offset = upto & ByteBlockPool.BYTE_BLOCK_MASK;
             if (bytes[offset] != 0)

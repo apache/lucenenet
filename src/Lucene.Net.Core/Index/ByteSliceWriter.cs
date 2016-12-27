@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public void Init(int address)
         {
-            Slice = Pool.Buffers[address >> ByteBlockPool.BYTE_BLOCK_SHIFT];
+            Slice = Pool.buffers[address >> ByteBlockPool.BYTE_BLOCK_SHIFT];
             Debug.Assert(Slice != null);
             Upto = address & ByteBlockPool.BYTE_BLOCK_MASK;
             Offset0 = address;
