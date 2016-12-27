@@ -148,18 +148,18 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the current capacity in bits (1 greater than the index of the last bit) </summary>
-        public virtual long Capacity()
+        public virtual long Capacity
         {
-            return m_bits.Length << 6;
+            get { return m_bits.Length << 6; }
         }
 
         /// <summary>
         /// Returns the current capacity of this set.  Included for
         /// compatibility.  this is *not* equal to <seealso cref="#cardinality"/>
         /// </summary>
-        public virtual long Size() // LUCENENET TODO: make property, rename Count
+        public virtual long Size // LUCENENET TODO: rename Count
         {
-            return Capacity();
+            get { return Capacity; }
         }
 
         public virtual int Length // LUCENENET TODO: consider using this only, since it is required by the IBits interface

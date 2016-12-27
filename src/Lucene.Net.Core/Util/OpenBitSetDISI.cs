@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
         public virtual void InPlaceOr(DocIdSetIterator disi)
         {
             int doc;
-            long size = Size();
+            long size = Size;
             while ((doc = disi.NextDoc()) < size)
             {
                 FastSet(doc);
@@ -80,7 +80,7 @@ namespace Lucene.Net.Util
             }
             if (bitSetDoc != -1)
             {
-                Clear(bitSetDoc, Size());
+                Clear(bitSetDoc, Size);
             }
         }
 
@@ -93,7 +93,7 @@ namespace Lucene.Net.Util
         public virtual void InPlaceNot(DocIdSetIterator disi)
         {
             int doc;
-            long size = Size();
+            long size = Size;
             while ((doc = disi.NextDoc()) < size)
             {
                 FastClear(doc);
@@ -109,7 +109,7 @@ namespace Lucene.Net.Util
         public virtual void InPlaceXor(DocIdSetIterator disi)
         {
             int doc;
-            long size = Size();
+            long size = Size;
             while ((doc = disi.NextDoc()) < size)
             {
                 FastFlip(doc);
