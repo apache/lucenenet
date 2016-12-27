@@ -261,7 +261,7 @@ namespace Lucene.Net.Util
                 {
                     name = Thread.CurrentThread.Name;
                 }
-                Stream.WriteLine(component + " " + MessageID + " [" + DateTime.Now + "; " + name + "]: " + message);
+                m_stream.WriteLine(component + " " + m_messageID + " [" + DateTime.Now + "; " + name + "]: " + message);
             }
         }
 

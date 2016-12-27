@@ -32,9 +32,9 @@ namespace Lucene.Net.Util
         // Used for printing messages
         private static int MESSAGE_ID = 0;
 
-        protected readonly int MessageID; // LUCENENET TODO: rename m_
+        protected readonly int m_messageID;
 
-        protected readonly TextWriter Stream; // LUCENENET TODO: rename m_
+        protected readonly TextWriter m_stream;
 
         public PrintStreamInfoStream(TextWriter stream)
             : this(stream, Interlocked.Increment(ref MESSAGE_ID))
@@ -43,13 +43,13 @@ namespace Lucene.Net.Util
 
         public PrintStreamInfoStream(TextWriter stream, int messageID)
         {
-            this.Stream = stream;
-            this.MessageID = messageID;
+            this.m_stream = stream;
+            this.m_messageID = messageID;
         }
 
         public override void Message(string component, string message)
         {
-            Stream.Write(component + " " + MessageID + " [" + DateTime.Now + "; " + Thread.CurrentThread.Name + "]: " + message);
+            m_stream.Write(component + " " + m_messageID + " [" + DateTime.Now + "; " + Thread.CurrentThread.Name + "]: " + message);
         }
 
         public override bool IsEnabled(string component)
@@ -59,17 +59,17 @@ namespace Lucene.Net.Util
 
         public override void Dispose()
         {
-            if (!SystemStream)
+            if (!IsSystemStream)
             {
-                Stream.Dispose();
+                m_stream.Dispose();
             }
         }
 
-        public virtual bool SystemStream // LUCENENET TODO: rename IsSystemStream
+        public virtual bool IsSystemStream
         {
             get
             {
-                return Stream == Console.Out || Stream == Console.Error;
+                return m_stream == Console.Out || m_stream == Console.Error;
             }
         }
     }
