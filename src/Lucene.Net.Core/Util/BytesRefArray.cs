@@ -33,21 +33,21 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class BytesRefArray
     {
-        private readonly ByteBlockPool Pool;
-        private int[] Offsets = new int[1];
-        private int LastElement = 0;
-        private int CurrentOffset = 0;
-        private readonly Counter BytesUsed;
+        private readonly ByteBlockPool pool;
+        private int[] offsets = new int[1];
+        private int lastElement = 0;
+        private int currentOffset = 0;
+        private readonly Counter bytesUsed;
 
         /// <summary>
         /// Creates a new <seealso cref="BytesRefArray"/> with a counter to track allocated bytes
         /// </summary>
         public BytesRefArray(Counter bytesUsed)
         {
-            this.Pool = new ByteBlockPool(new ByteBlockPool.DirectTrackingAllocator(bytesUsed));
-            Pool.NextBuffer();
+            this.pool = new ByteBlockPool(new ByteBlockPool.DirectTrackingAllocator(bytesUsed));
+            pool.NextBuffer();
             bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + RamUsageEstimator.NUM_BYTES_INT);
-            this.BytesUsed = bytesUsed;
+            this.bytesUsed = bytesUsed;
         }
 
         /// <summary>
@@ -55,10 +55,10 @@ namespace Lucene.Net.Util
         /// </summary>
         public void Clear()
         {
-            LastElement = 0;
-            CurrentOffset = 0;
-            Array.Clear(Offsets, 0, Offsets.Length);
-            Pool.Reset(false, true); // no need to 0 fill the buffers we control the allocator
+            lastElement = 0;
+            currentOffset = 0;
+            Array.Clear(offsets, 0, offsets.Length);
+            pool.Reset(false, true); // no need to 0 fill the buffers we control the allocator
         }
 
         /// <summary>
@@ -67,16 +67,16 @@ namespace Lucene.Net.Util
         /// <returns> the index of the appended bytes </returns>
         public int Append(BytesRef bytes)
         {
-            if (LastElement >= Offsets.Length)
+            if (lastElement >= offsets.Length)
             {
-                int oldLen = Offsets.Length;
-                Offsets = ArrayUtil.Grow(Offsets, Offsets.Length + 1);
-                BytesUsed.AddAndGet((Offsets.Length - oldLen) * RamUsageEstimator.NUM_BYTES_INT);
+                int oldLen = offsets.Length;
+                offsets = ArrayUtil.Grow(offsets, offsets.Length + 1);
+                bytesUsed.AddAndGet((offsets.Length - oldLen) * RamUsageEstimator.NUM_BYTES_INT);
             }
-            Pool.Append(bytes);
-            Offsets[LastElement++] = CurrentOffset;
-            CurrentOffset += bytes.Length;
-            return LastElement - 1;
+            pool.Append(bytes);
+            offsets[lastElement++] = currentOffset;
+            currentOffset += bytes.Length;
+            return lastElement - 1;
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Lucene.Net.Util
         /// <returns> the current size of this <seealso cref="BytesRefArray"/> </returns>
         public int Size // LUCENENET TODO: rename Count
         {
-            get { return LastElement; }
+            get { return lastElement; }
         }
 
         /// <summary>
@@ -94,17 +94,17 @@ namespace Lucene.Net.Util
         /// <returns> the <i>n'th</i> element of this <seealso cref="BytesRefArray"/> </returns>
         public BytesRef Get(BytesRef spare, int index)
         {
-            if (LastElement > index)
+            if (lastElement > index)
             {
-                int offset = Offsets[index];
-                int length = index == LastElement - 1 ? CurrentOffset - offset : Offsets[index + 1] - offset;
+                int offset = offsets[index];
+                int length = index == lastElement - 1 ? currentOffset - offset : offsets[index + 1] - offset;
                 Debug.Assert(spare.Offset == 0);
                 spare.Grow(length);
                 spare.Length = length;
-                Pool.ReadBytes(offset, spare.Bytes, spare.Offset, spare.Length);
+                pool.ReadBytes(offset, spare.Bytes, spare.Offset, spare.Length);
                 return spare;
             }
-            throw new System.IndexOutOfRangeException("index " + index + " must be less than the size: " + LastElement);
+            throw new System.IndexOutOfRangeException("index " + index + " must be less than the size: " + lastElement);
         }
 
         private int[] Sort(IComparer<BytesRef> comp)
@@ -120,16 +120,16 @@ namespace Lucene.Net.Util
 
         private class IntroSorterAnonymousInnerClassHelper : IntroSorter
         {
-            private readonly BytesRefArray OuterInstance;
+            private readonly BytesRefArray outerInstance;
 
-            private IComparer<BytesRef> Comp;
-            private int[] OrderedEntries;
+            private IComparer<BytesRef> comp;
+            private int[] orderedEntries;
 
             public IntroSorterAnonymousInnerClassHelper(BytesRefArray outerInstance, IComparer<BytesRef> comp, int[] orderedEntries)
             {
-                this.OuterInstance = outerInstance;
-                this.Comp = comp;
-                this.OrderedEntries = orderedEntries;
+                this.outerInstance = outerInstance;
+                this.comp = comp;
+                this.orderedEntries = orderedEntries;
                 pivot = new BytesRef();
                 scratch1 = new BytesRef();
                 scratch2 = new BytesRef();
@@ -137,30 +137,30 @@ namespace Lucene.Net.Util
 
             protected override void Swap(int i, int j)
             {
-                int o = OrderedEntries[i];
-                OrderedEntries[i] = OrderedEntries[j];
-                OrderedEntries[j] = o;
+                int o = orderedEntries[i];
+                orderedEntries[i] = orderedEntries[j];
+                orderedEntries[j] = o;
             }
 
             protected override int Compare(int i, int j)
             {
-                int idx1 = OrderedEntries[i], idx2 = OrderedEntries[j];
-                return Comp.Compare(OuterInstance.Get(scratch1, idx1), OuterInstance.Get(scratch2, idx2));
+                int idx1 = orderedEntries[i], idx2 = orderedEntries[j];
+                return comp.Compare(outerInstance.Get(scratch1, idx1), outerInstance.Get(scratch2, idx2));
             }
 
             protected override int Pivot
             {
                 set
                 {
-                    int index = OrderedEntries[value];
-                    OuterInstance.Get(pivot, index);
+                    int index = orderedEntries[value];
+                    outerInstance.Get(pivot, index);
                 }
             }
 
             protected override int ComparePivot(int j)
             {
-                int index = OrderedEntries[j];
-                return Comp.Compare(pivot, OuterInstance.Get(scratch2, index));
+                int index = orderedEntries[j];
+                return comp.Compare(pivot, outerInstance.Get(scratch2, index));
             }
 
             private readonly BytesRef pivot;
@@ -200,20 +200,20 @@ namespace Lucene.Net.Util
 
         private class BytesRefIteratorAnonymousInnerClassHelper : BytesRefIterator
         {
-            private readonly BytesRefArray OuterInstance;
+            private readonly BytesRefArray outerInstance;
 
-            private IComparer<BytesRef> Comp;
-            private BytesRef Spare;
-            private int Size;
-            private int[] Indices;
+            private IComparer<BytesRef> comp;
+            private BytesRef spare;
+            private int size;
+            private int[] indices;
 
             public BytesRefIteratorAnonymousInnerClassHelper(BytesRefArray outerInstance, IComparer<BytesRef> comp, BytesRef spare, int size, int[] indices)
             {
-                this.OuterInstance = outerInstance;
-                this.Comp = comp;
-                this.Spare = spare;
-                this.Size = size;
-                this.Indices = indices;
+                this.outerInstance = outerInstance;
+                this.comp = comp;
+                this.spare = spare;
+                this.size = size;
+                this.indices = indices;
                 pos = 0;
             }
 
@@ -221,9 +221,9 @@ namespace Lucene.Net.Util
 
             public virtual BytesRef Next()
             {
-                if (pos < Size)
+                if (pos < size)
                 {
-                    return OuterInstance.Get(Spare, Indices == null ? pos++ : Indices[pos++]);
+                    return outerInstance.Get(spare, indices == null ? pos++ : indices[pos++]);
                 }
                 return null;
             }
@@ -232,7 +232,7 @@ namespace Lucene.Net.Util
             {
                 get
                 {
-                    return Comp;
+                    return comp;
                 }
             }
         }
