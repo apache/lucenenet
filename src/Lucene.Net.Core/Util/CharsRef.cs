@@ -244,15 +244,15 @@ namespace Lucene.Net.Util
 
         // LUCENENET NOTE: Length field made into property already
 
-        public char CharAt(int index)
-        {
-            // NOTE: must do a real check here to meet the specs of CharSequence
-            if (index < 0 || index >= Length)
-            {
-                throw new System.IndexOutOfRangeException();
-            }
-            return Chars[Offset + index];
-        }
+        //public char CharAt(int index)
+        //{
+        //    // NOTE: must do a real check here to meet the specs of CharSequence
+        //    if (index < 0 || index >= Length)
+        //    {
+        //        throw new System.IndexOutOfRangeException();
+        //    }
+        //    return Chars[Offset + index];
+        //}
 
         // LUCENENET specific - added to .NETify
         public char this[int index]

@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -114,17 +115,48 @@ namespace Lucene.Net.Util
             Assert.AreEqual("bcde", c.ToString());
         }
 
+        // LUCENENET NOTE: Removed the CharAt(int) method from the 
+        // ICharSequence interface and replaced with this[int]
+        //// LUCENE-3590: fix charsequence to fully obey interface
+        //[Test]
+        //public virtual void TestCharSequenceCharAt()
+        //{
+        //    CharsRef c = new CharsRef("abc");
+
+        //    Assert.AreEqual('b', c.CharAt(1));
+
+        //    try
+        //    {
+        //        c.CharAt(-1);
+        //        Assert.Fail();
+        //    }
+        //    catch (System.IndexOutOfRangeException expected)
+        //    {
+        //        // expected exception
+        //    }
+
+        //    try
+        //    {
+        //        c.CharAt(3);
+        //        Assert.Fail();
+        //    }
+        //    catch (System.IndexOutOfRangeException expected)
+        //    {
+        //        // expected exception
+        //    }
+        //}
+
         // LUCENE-3590: fix charsequence to fully obey interface
-        [Test]
-        public virtual void TestCharSequenceCharAt()
+        [Test, LuceneNetSpecific]
+        public virtual void TestCharSequenceIndexer()
         {
             CharsRef c = new CharsRef("abc");
 
-            Assert.AreEqual('b', c.CharAt(1));
+            Assert.AreEqual('b', c[1]);
 
             try
             {
-                c.CharAt(-1);
+                var _ = c[-1];
                 Assert.Fail();
             }
             catch (System.IndexOutOfRangeException expected)
@@ -134,7 +166,7 @@ namespace Lucene.Net.Util
 
             try
             {
-                c.CharAt(3);
+                var _ = c[3];
                 Assert.Fail();
             }
             catch (System.IndexOutOfRangeException expected)

@@ -127,7 +127,7 @@ namespace Lucene.Net.Util
         ///  offset for length chars. After encoding, result.offset will always be 0.
         /// </summary>
         // TODO: broken if incoming result.offset != 0
-        public static void UTF16toUTF8(CharsRef source, int offset, int length, BytesRef result)
+        public static void UTF16toUTF8(char[] source, int offset, int length, BytesRef result)
         {
             int upto = 0;
             int i = offset;
@@ -143,7 +143,7 @@ namespace Lucene.Net.Util
 
             while (i < end)
             {
-                int code = (int)source.CharAt(i++);
+                int code = (int)source[i++];
 
                 if (code < 0x80)
                 {
@@ -166,7 +166,7 @@ namespace Lucene.Net.Util
                     // confirm valid high surrogate
                     if (code < 0xDC00 && i < end)
                     {
-                        var utf32 = (int)source.CharAt(i);
+                        var utf32 = (int)source[i];
                         // confirm valid low surrogate and write pair
                         if (utf32 >= 0xDC00 && utf32 <= 0xDFFF)
                         {
@@ -191,11 +191,79 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Encode characters from this String, starting at offset
+        /// Encode characters from this <see cref="ICharSequence"/>, starting at offset
         ///  for length characters. After encoding, result.offset will always be 0.
         /// </summary>
         // TODO: broken if incoming result.offset != 0
-        public static void UTF16toUTF8(char[] s, int offset, int length, BytesRef result)
+        public static void UTF16toUTF8(ICharSequence s, int offset, int length, BytesRef result)
+        {
+            int end = offset + length;
+
+            var @out = result.Bytes;
+            result.Offset = 0;
+            // Pre-allocate for worst case 4-for-1
+            int maxLen = length * 4;
+            if (@out.Length < maxLen)
+            {
+                @out = result.Bytes = new byte[maxLen];
+            }
+
+            int upto = 0;
+            for (int i = offset; i < end; i++)
+            {
+                var code = (int)s[i];
+                if (code < 0x80)
+                {
+                    @out[upto++] = (byte)code;
+                }
+                else if (code < 0x800)
+                {
+                    @out[upto++] = (byte)(0xC0 | (code >> 6));
+                    @out[upto++] = (byte)(0x80 | (code & 0x3F));
+                }
+                else if (code < 0xD800 || code > 0xDFFF)
+                {
+                    @out[upto++] = (byte)(0xE0 | (code >> 12));
+                    @out[upto++] = (byte)(0x80 | ((code >> 6) & 0x3F));
+                    @out[upto++] = (byte)(0x80 | (code & 0x3F));
+                }
+                else
+                {
+                    // surrogate pair
+                    // confirm valid high surrogate
+                    if (code < 0xDC00 && (i < end - 1))
+                    {
+                        int utf32 = (int)s[i + 1];
+                        // confirm valid low surrogate and write pair
+                        if (utf32 >= 0xDC00 && utf32 <= 0xDFFF)
+                        {
+                            utf32 = (code << 10) + utf32 + SURROGATE_OFFSET;
+                            i++;
+                            @out[upto++] = (byte)(0xF0 | (utf32 >> 18));
+                            @out[upto++] = (byte)(0x80 | ((utf32 >> 12) & 0x3F));
+                            @out[upto++] = (byte)(0x80 | ((utf32 >> 6) & 0x3F));
+                            @out[upto++] = (byte)(0x80 | (utf32 & 0x3F));
+                            continue;
+                        }
+                    }
+                    // replace unpaired surrogate or out-of-order low surrogate
+                    // with substitution character
+                    @out[upto++] = unchecked((byte)0xEF);
+                    @out[upto++] = unchecked((byte)0xBF);
+                    @out[upto++] = unchecked((byte)0xBD);
+                }
+            }
+            //assert matches(s, offset, length, out, upto);
+            result.Length = upto;
+        }
+
+        /// <summary>
+        /// Encode characters from this <see cref="string"/>, starting at offset
+        /// for length characters. After encoding, result.offset will always be 0.
+        /// LUCENENET specific.
+        /// </summary>
+        // TODO: broken if incoming result.offset != 0
+        public static void UTF16toUTF8(string s, int offset, int length, BytesRef result)
         {
             int end = offset + length;
 
