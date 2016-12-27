@@ -290,7 +290,7 @@ namespace Lucene.Net.Search.Spans
 
         private SpansCell Min
         {
-            get { return Queue.Top(); }
+            get { return Queue.Top; }
         }
 
         public override int Doc
@@ -405,7 +405,7 @@ namespace Lucene.Net.Search.Spans
         private void QueueToList()
         {
             Last = First = null;
-            while (Queue.Top() != null)
+            while (Queue.Top != null)
             {
                 AddToList(Queue.Pop());
             }

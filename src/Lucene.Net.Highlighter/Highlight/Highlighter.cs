@@ -295,7 +295,7 @@ namespace Lucene.Net.Search.Highlight
                 }
 
                 //return the most relevant fragments
-                var frag = new TextFragment[fragQueue.Size()];
+                var frag = new TextFragment[fragQueue.Size];
                 for (int i = frag.Length - 1; i >= 0; i--)
                 {
                     frag[i] = fragQueue.Pop();

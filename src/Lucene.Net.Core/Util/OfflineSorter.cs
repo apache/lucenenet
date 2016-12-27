@@ -422,7 +422,7 @@ namespace Lucene.Net.Util
                 // a nicer theoretical complexity bound :) The entire sorting process is I/O bound anyway
                 // so it shouldn't make much of a difference (didn't check).
                 FileAndTop top;
-                while ((top = queue.Top()) != null)
+                while ((top = queue.Top) != null)
                 {
                     @out.Write(top.Current);
                     if (!streams[top.Fd].Read(top.Current))

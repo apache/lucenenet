@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    for (int i = m_pq.Size(); i > 1; i--)
+                    for (int i = m_pq.Size; i > 1; i--)
                     {
                         m_pq.Pop();
                     }

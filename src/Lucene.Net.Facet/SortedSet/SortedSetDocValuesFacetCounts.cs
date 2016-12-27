@@ -123,9 +123,9 @@ namespace Lucene.Net.Facet.SortedSet
                             q = new TopOrdAndIntQueue(topN);
                         }
                         reuse = q.InsertWithOverflow(reuse);
-                        if (q.Size() == topN)
+                        if (q.Size == topN)
                         {
-                            bottomCount = q.Top().Value;
+                            bottomCount = q.Top.Value;
                         }
                     }
                 }
@@ -136,7 +136,7 @@ namespace Lucene.Net.Facet.SortedSet
                 return null;
             }
 
-            LabelAndValue[] labelValues = new LabelAndValue[q.Size()];
+            LabelAndValue[] labelValues = new LabelAndValue[q.Size];
             for (int i = labelValues.Length - 1; i >= 0; i--)
             {
                 TopOrdAndIntQueue.OrdAndValue ordAndValue = q.Pop();

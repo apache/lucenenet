@@ -97,9 +97,9 @@ namespace Lucene.Net.Util
             pq.Add(2);
             pq.Add(3);
             pq.Add(1);
-            Assert.AreEqual(3, pq.Size());
+            Assert.AreEqual(3, pq.Size);
             pq.Clear();
-            Assert.AreEqual(0, pq.Size());
+            Assert.AreEqual(0, pq.Size);
         }
 
         [Test]
@@ -112,8 +112,8 @@ namespace Lucene.Net.Util
             pq.InsertWithOverflow(5);
             pq.InsertWithOverflow(7);
             pq.InsertWithOverflow(1);
-            assertEquals(3, pq.Size());
-            assertEquals((int?)3, pq.Top());
+            assertEquals(3, pq.Size);
+            assertEquals((int?)3, pq.Top);
         }
 
         [Test]
@@ -137,16 +137,16 @@ namespace Lucene.Net.Util
             Assert.IsNull(pq.InsertWithOverflow(i4));
             Assert.IsTrue(pq.InsertWithOverflow(i5) == i3); // i3 should have been dropped
             Assert.IsTrue(pq.InsertWithOverflow(i6) == i6); // i6 should not have been inserted
-            Assert.AreEqual(size, pq.Size());
-            Assert.AreEqual((int?)2, pq.Top());
+            Assert.AreEqual(size, pq.Size);
+            Assert.AreEqual((int?)2, pq.Top);
 
             // LUCENENET SPECIFIC
             pq.Pop();
-            Assert.AreEqual((int?)3, pq.Top());
+            Assert.AreEqual((int?)3, pq.Top);
             pq.Pop();
-            Assert.AreEqual((int?)5, pq.Top());
+            Assert.AreEqual((int?)5, pq.Top);
             pq.Pop();
-            Assert.AreEqual((int?)7, pq.Top());
+            Assert.AreEqual((int?)7, pq.Top);
         }
 
 
@@ -159,12 +159,9 @@ namespace Lucene.Net.Util
             {
             }
 
-            protected override int? SentinelObject
+            protected override int? GetSentinelObject()
             {
-                get
-                {
-                    return int.MaxValue;
-                }
+                return int.MaxValue;
             }
         }
 
@@ -254,20 +251,20 @@ namespace Lucene.Net.Util
             int maxSize = 10;
             // Populates the internal array
             PriorityQueue<int?> pq = new IntegerQueueWithSentinel(maxSize, true);
-            Assert.AreEqual(pq.Top(), int.MaxValue);
-            Assert.AreEqual(pq.Size(), 10);
+            Assert.AreEqual(pq.Top, int.MaxValue);
+            Assert.AreEqual(pq.Size, 10);
 
             // Does not populate it
             pq = new IntegerQueue(maxSize, false);
-            Assert.AreEqual(pq.Top(), default(int?));
-            Assert.AreEqual(pq.Size(), 0);
+            Assert.AreEqual(pq.Top, default(int?));
+            Assert.AreEqual(pq.Size, 0);
         }
 
         private static void AddAndTest<T>(PriorityQueue<T> pq, T element, T expectedTop, int expectedSize)
         {
             pq.Add(element);
-            Assert.AreEqual(pq.Top(), expectedTop);
-            Assert.AreEqual(pq.Size(), expectedSize);
+            Assert.AreEqual(pq.Top, expectedTop);
+            Assert.AreEqual(pq.Size, expectedSize);
         }
 
         [Test, LuceneNetSpecific]
@@ -309,16 +306,16 @@ namespace Lucene.Net.Util
 
             pq.Add(3);
             pq.Add(3);
-            Assert.AreEqual(pq.Size(), 2);
+            Assert.AreEqual(pq.Size, 2);
 
             pq.Add(3);
-            Assert.AreEqual(pq.Size(), 3);
+            Assert.AreEqual(pq.Size, 3);
 
             pq.Add(17);
             pq.Add(17);
             pq.Add(17);
             pq.Add(17);
-            Assert.AreEqual(pq.Size(), 7);
+            Assert.AreEqual(pq.Size, 7);
         }
 
         [Test, LuceneNetSpecific]
@@ -330,7 +327,7 @@ namespace Lucene.Net.Util
             // Add one element and pop it
             pq.Add(7);
             pq.Pop();
-            Assert.AreEqual(pq.Size(), 0);
+            Assert.AreEqual(pq.Size, 0);
             
             // Add a bunch of elements, pop them all
             pq.Add(1);
@@ -342,7 +339,7 @@ namespace Lucene.Net.Util
             pq.Add(1000);
             pq.Add(-3);
             pq.Pop();
-            Assert.AreEqual(pq.Size(), 7);
+            Assert.AreEqual(pq.Size, 7);
             pq.Pop();
             pq.Pop();
             pq.Pop();
@@ -350,25 +347,25 @@ namespace Lucene.Net.Util
             pq.Pop();
             pq.Pop();
             pq.Pop();
-            Assert.AreEqual(pq.Size(), 0);
+            Assert.AreEqual(pq.Size, 0);
 
             // Interleaved adds and pops
             pq.Add(1);
             pq.Add(20);
             pq.Pop();
-            Assert.AreEqual(pq.Size(), 1);
+            Assert.AreEqual(pq.Size, 1);
             pq.Add(1);
             pq.Add(15);
             pq.Add(4);
             pq.Pop();
             pq.Pop();
-            Assert.AreEqual(pq.Size(), 2);
+            Assert.AreEqual(pq.Size, 2);
             pq.Add(12);
             pq.Add(1000);
             pq.Add(-3);
             pq.Pop();
             pq.Pop();
-            Assert.AreEqual(pq.Size(), 3);
+            Assert.AreEqual(pq.Size, 3);
 
             // Pop an empty PQ
             pq.Pop();
@@ -395,17 +392,17 @@ namespace Lucene.Net.Util
             pq.Add(new MyType(1000));
             pq.Add(new MyType(-300));
 
-            Assert.AreEqual(pq.Top().Field, -300);
-            MyType topElement = pq.Top();
+            Assert.AreEqual(pq.Top.Field, -300);
+            MyType topElement = pq.Top;
             topElement.Field = 25;  // Now this should no longer be at the top of the queue
             pq.UpdateTop();         // Hence we need to update the top queue
-            Assert.AreEqual(pq.Top().Field, 1);
+            Assert.AreEqual(pq.Top.Field, 1);
 
             // The less eficient way to do this is the following
             topElement = pq.Pop();
             topElement.Field = 678;
             pq.Add(topElement);
-            Assert.AreEqual(pq.Top().Field, 1);
+            Assert.AreEqual(pq.Top.Field, 1);
         }
 
         [Test, LuceneNetSpecific]
@@ -454,29 +451,29 @@ namespace Lucene.Net.Util
             pq.Add(-2);
             pq.Add(1);
             pq.Add(-10);
-            Assert.AreEqual(pq.Size(), 4);
+            Assert.AreEqual(pq.Size, 4);
 
             pq.Add(7);
             pq.Add(5);
             pq.Add(10);
             pq.Add(1);
-            Assert.AreEqual(pq.Size(), 8);
+            Assert.AreEqual(pq.Size, 8);
 
             pq.Add(10);
             pq.Add(1);
             pq.Add(5);
-            Assert.AreEqual(pq.Size(), 11);
+            Assert.AreEqual(pq.Size, 11);
 
             pq.Add(12);
             pq.Add(13);
             pq.Add(14);
             pq.Add(15);
             pq.Add(16);
-            Assert.AreEqual(pq.Size(), 16);
+            Assert.AreEqual(pq.Size, 16);
 
             pq.Add(-17);
             pq.Add(-18);
-            Assert.AreEqual(pq.Size(), 18);
+            Assert.AreEqual(pq.Size, 18);
         }
 
         [Test, LuceneNetSpecific]
@@ -493,25 +490,25 @@ namespace Lucene.Net.Util
             pq.Add(1);
             pq.Add(-10);
             pq.Add(-100);
-            Assert.AreEqual(pq.Top(), -100);
+            Assert.AreEqual(pq.Top, -100);
 
             pq.Add(-1000);
-            Assert.AreEqual(pq.Top(), -1000);
+            Assert.AreEqual(pq.Top, -1000);
 
             pq.Pop();
             pq.Pop();
             pq.Pop();
-            Assert.AreEqual(pq.Top(), -2);
+            Assert.AreEqual(pq.Top, -2);
 
             pq.Add(0);
-            Assert.AreEqual(pq.Top(), -2);
+            Assert.AreEqual(pq.Top, -2);
 
             for(int i = 0; i < 100; i++)
             {
                 pq.Add(5);
             }
             
-            Assert.AreEqual(pq.Top(), -2);
+            Assert.AreEqual(pq.Top, -2);
         }
 
         
@@ -528,8 +525,8 @@ namespace Lucene.Net.Util
             pq.InsertWithOverflow(5);
             pq.InsertWithOverflow(7);
             pq.InsertWithOverflow(1);
-            Assert.AreEqual(3, pq.Size());
-            Assert.AreEqual((int?)3, pq.Top());
+            Assert.AreEqual(3, pq.Size);
+            Assert.AreEqual((int?)3, pq.Top);
         }
 
         private static void AddElements<T>(PriorityQueue<T> pq, T[] elements)
@@ -544,7 +541,7 @@ namespace Lucene.Net.Util
 
         private static void PopElements<T>(PriorityQueue<T> pq)
         {
-            int size = pq.Size();
+            int size = pq.Size;
 
             for (int i = 0; i < size; i++)
             {
@@ -554,7 +551,7 @@ namespace Lucene.Net.Util
 
         private static void PopAndTestElements<T>(PriorityQueue<T> pq, T[] elements)
         {
-            int size = pq.Size();
+            int size = pq.Size;
 
             for (int i = 0; i < size; i++)
             {
@@ -564,7 +561,7 @@ namespace Lucene.Net.Util
 
         private static void PopAndTestElements<T>(PriorityQueue<T> pq)
         {
-            int size = pq.Size();
+            int size = pq.Size;
             T last = pq.Pop();
 
             for (int i = 1; i < size; i++)
@@ -638,20 +635,20 @@ namespace Lucene.Net.Util
             }
 
             // Pop some of them
-            while (pq.Size() > atLeast/2)
+            while (pq.Size > atLeast/2)
             {
                 pq.Pop();
             }
 
             // Add some more
-            while (pq.Size() < (atLeast*3)/4)
+            while (pq.Size < (atLeast*3)/4)
             {
                 pq.Add(Random().Next());
             }
 
             PopAndTestElements(pq);
 
-            Assert.AreEqual(pq.Size(), 0);
+            Assert.AreEqual(pq.Size, 0);
 
             // We fill it again
             for (int i = 0; 2 * i < maxSize; i++)
@@ -659,9 +656,9 @@ namespace Lucene.Net.Util
                 pq.Add(Random().Next());
             }
 
-            Assert.AreEqual(pq.Size(), (maxSize + 1) / 2);
+            Assert.AreEqual(pq.Size, (maxSize + 1) / 2);
             pq.Clear();
-            Assert.AreEqual(pq.Size(), 0);
+            Assert.AreEqual(pq.Size, 0);
 
             // One last time
             for (int i = 0; 2 * i < maxSize; i++)
@@ -670,7 +667,7 @@ namespace Lucene.Net.Util
             }
 
             PopAndTestElements(pq);
-            Assert.AreEqual(pq.Size(), 0);
+            Assert.AreEqual(pq.Size, 0);
         }
 
         [Test, Explicit, LuceneNetSpecific]

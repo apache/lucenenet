@@ -400,17 +400,17 @@ namespace Lucene.Net.Search.Spell
                         }
                     }
                     sugQueue.InsertWithOverflow(sugWord);
-                    if (sugQueue.Size() == numSug)
+                    if (sugQueue.Size == numSug)
                     {
                         // if queue full, maintain the minScore score
-                        accuracy = sugQueue.Top().Score;
+                        accuracy = sugQueue.Top.Score;
                     }
                     sugWord = new SuggestWord();
                 }
 
                 // convert to array string
-                string[] list = new string[sugQueue.Size()];
-                for (int i = sugQueue.Size() - 1; i >= 0; i--)
+                string[] list = new string[sugQueue.Size];
+                for (int i = sugQueue.Size - 1; i >= 0; i--)
                 {
                     list[i] = sugQueue.Pop().String;
                 }

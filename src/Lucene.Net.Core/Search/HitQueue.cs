@@ -64,15 +64,12 @@ namespace Lucene.Net.Search
         {
         }
 
-        protected override ScoreDoc SentinelObject
+        protected override ScoreDoc GetSentinelObject()
         {
-            get
-            {
-                // Always set the doc Id to MAX_VALUE so that it won't be favored by
-                // lessThan. this generally should not happen since if score is not NEG_INF,
-                // TopScoreDocCollector will always add the object to the queue.
-                return new ScoreDoc(int.MaxValue, float.NegativeInfinity);
-            }
+            // Always set the doc Id to MAX_VALUE so that it won't be favored by
+            // lessThan. this generally should not happen since if score is not NEG_INF,
+            // TopScoreDocCollector will always add the object to the queue.
+            return new ScoreDoc(int.MaxValue, float.NegativeInfinity);
         }
 
         protected internal override bool LessThan(ScoreDoc hitA, ScoreDoc hitB)

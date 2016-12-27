@@ -617,7 +617,7 @@ namespace Lucene.Net.Search
 
         public override sealed int NextDoc()
         {
-            if (_queue.Size() == 0)
+            if (_queue.Size == 0)
             {
                 return NO_MORE_DOCS;
             }
@@ -626,13 +626,13 @@ namespace Lucene.Net.Search
             // doesn't need the positions for this doc then don't
             // waste CPU merging them:
             _posList.Clear();
-            _doc = _queue.Top().DocID;
+            _doc = _queue.Top.DocID;
 
             // merge sort all positions together
             DocsAndPositionsEnum postings;
             do
             {
-                postings = _queue.Top();
+                postings = _queue.Top;
 
                 int freq = postings.Freq;
                 for (int i = 0; i < freq; i++)
@@ -648,7 +648,7 @@ namespace Lucene.Net.Search
                 {
                     _queue.Pop();
                 }
-            } while (_queue.Size() > 0 && _queue.Top().DocID == _doc);
+            } while (_queue.Size > 0 && _queue.Top.DocID == _doc);
 
             _posList.Sort();
             _freq = _posList.Size;
@@ -681,7 +681,7 @@ namespace Lucene.Net.Search
 
         public override sealed int Advance(int target)
         {
-            while (_queue.Top() != null && target > _queue.Top().DocID)
+            while (_queue.Top != null && target > _queue.Top.DocID)
             {
                 DocsAndPositionsEnum postings = _queue.Pop();
                 if (postings.Advance(target) != NO_MORE_DOCS)

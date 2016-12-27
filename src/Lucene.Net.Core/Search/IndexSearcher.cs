@@ -491,8 +491,8 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                var scoreDocs = new ScoreDoc[hq.Size()];
-                for (int i = hq.Size() - 1; i >= 0; i--) // put docs in array
+                var scoreDocs = new ScoreDoc[hq.Size];
+                for (int i = hq.Size - 1; i >= 0; i--) // put docs in array
                 {
                     scoreDocs[i] = hq.Pop();
                 }

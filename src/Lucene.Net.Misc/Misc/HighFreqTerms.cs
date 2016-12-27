@@ -131,11 +131,11 @@ namespace Lucene.Net.Misc
                 }
             }
 
-            TermStats[] result = new TermStats[tiq.Size()];
+            TermStats[] result = new TermStats[tiq.Size];
             // we want highest first so we read the queue and populate the array
             // starting at the end and work backwards
-            int count = tiq.Size() - 1;
-            while (tiq.Size() != 0)
+            int count = tiq.Size - 1;
+            while (tiq.Size != 0)
             {
                 result[count] = tiq.Pop();
                 count--;

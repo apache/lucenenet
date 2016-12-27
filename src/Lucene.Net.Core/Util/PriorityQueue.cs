@@ -34,10 +34,10 @@ namespace Lucene.Net.Util
     /// </summary>
     public abstract class PriorityQueue<T>
     {
-        private int QueueSize = 0;
-        private int MaxSize;
-        private T[] Heap;
-        private bool resizable;
+        private int size = 0;
+        private int maxSize;
+        private T[] heap;
+        private bool resizable; // LUCENENET TODO: Remove
 
         public PriorityQueue() // LUCENENET TODO: Remove this constructor (and revert the rest of the implementation back to its original state)
             : this(8, false)
@@ -89,21 +89,21 @@ namespace Lucene.Net.Util
             
             // T is unbounded type, so this unchecked cast works always:
             T[] h = new T[heapSize];
-            this.Heap = h;
-            this.MaxSize = maxSize;
+            this.heap = h;
+            this.maxSize = maxSize;
 
             if (prepopulate)
             {
                 // If sentinel objects are supported, populate the queue with them
-                T sentinel = SentinelObject;
+                T sentinel = GetSentinelObject();
                 if (sentinel != null)
                 {
-                    Heap[1] = sentinel;
-                    for (int i = 2; i < Heap.Length; i++)
+                    heap[1] = sentinel;
+                    for (int i = 2; i < heap.Length; i++)
                     {
-                        Heap[i] = SentinelObject;
+                        heap[i] = GetSentinelObject();
                     }
-                    QueueSize = maxSize;
+                    size = maxSize;
                 }
             }
         }
@@ -153,12 +153,9 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <returns> the sentinel object to use to pre-populate the queue, or null if
         ///         sentinel objects are not supported. </returns>
-        protected virtual T SentinelObject // LUCENENET TODO: Change to GetSentinalObject() (returns new instance in some cases)
+        protected virtual T GetSentinelObject()
         {
-            get
-            {
-                return default(T);
-            }
+            return default(T);
         }
 
         /// <summary>
@@ -169,14 +166,14 @@ namespace Lucene.Net.Util
         /// <returns> the new 'top' element in the queue. </returns>
         public T Add(T element)
         {
-            QueueSize++;
-            if (resizable && QueueSize > MaxSize)
+            size++;
+            if (resizable && size > maxSize)
             {
                 Resize();
             }
-            Heap[QueueSize] = element;
+            heap[size] = element;
             UpHeap();
-            return Heap[1];
+            return heap[1];
         }
 
         /// <summary>
@@ -191,15 +188,15 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual T InsertWithOverflow(T element)
         {
-            if (QueueSize < MaxSize)
+            if (size < maxSize)
             {
                 Add(element);
                 return default(T);
             }
-            else if (QueueSize > 0 && !LessThan(element, Heap[1]))
+            else if (size > 0 && !LessThan(element, heap[1]))
             {
-                T ret = Heap[1];
-                Heap[1] = element;
+                T ret = heap[1];
+                heap[1] = element;
                 DownHeap();
                 return ret;
             }
@@ -212,12 +209,15 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the least element of the PriorityQueue in constant time.
         /// Returns null if the queue is empty. </summary>
-        public T Top() // LUCENENET TODO: Change to property
+        public T Top
         {
-            // We don't need to check size here: if maxSize is 0,
-            // then heap is length 2 array with both entries null.
-            // If size is 0 then heap[1] is already null.
-            return Heap[1]; // LUCENENET TODO: add check to ensure there is a value so this doesn't throw an exception
+            get
+            {
+                // We don't need to check size here: if maxSize is 0,
+                // then heap is length 2 array with both entries null.
+                // If size is 0 then heap[1] is already null.
+                return heap[1];
+            }
         }
 
         /// <summary>
@@ -226,12 +226,12 @@ namespace Lucene.Net.Util
         /// </summary>
         public T Pop()
         {
-            if (QueueSize > 0)
+            if (size > 0)
             {
-                T result = Heap[1]; // save first value
-                Heap[1] = Heap[QueueSize]; // move last to first
-                Heap[QueueSize] = default(T); // permit GC of objects
-                QueueSize--;
+                T result = heap[1]; // save first value
+                heap[1] = heap[size]; // move last to first
+                heap[size] = default(T); // permit GC of objects
+                size--;
                 DownHeap(); // adjust heap
                 return result;
             }
@@ -262,91 +262,88 @@ namespace Lucene.Net.Util
         public T UpdateTop()
         {
             DownHeap();
-            return Heap[1];
+            return heap[1];
         }
 
         /// <summary>
         /// Returns the number of elements currently stored in the PriorityQueue. </summary>
-        public int Size() // LUCENENET TODO: make property, rename Count
+        public int Size // LUCENENET TODO: rename Count
         {
-            return QueueSize;
+            get { return size; }
         }
 
         /// <summary>
         /// Removes all entries from the PriorityQueue. </summary>
         public void Clear()
         {
-            for (int i = 0; i <= QueueSize; i++)
+            for (int i = 0; i <= size; i++)
             {
-                Heap[i] = default(T);
+                heap[i] = default(T);
             }
-            QueueSize = 0;
+            size = 0;
         }
 
         public T[] ToArray() // LUCENENET TODO: Remove this method (after TopTermsRewrite is fixed)
         {
-            T[] copy = new T[QueueSize];
-            Array.Copy(Heap, 1, copy, 0, QueueSize);
+            T[] copy = new T[size];
+            Array.Copy(heap, 1, copy, 0, size);
             return copy;
         }
 
         private void Resize() // LUCENENET TODO: Remove this method
         {
-            int newSize = Math.Min(ArrayUtil.MAX_ARRAY_LENGTH - 1, 2*MaxSize);
+            int newSize = Math.Min(ArrayUtil.MAX_ARRAY_LENGTH - 1, 2*maxSize);
             T[] newHeap = new T[newSize + 1];
-            Array.Copy(Heap, newHeap, MaxSize + 1);
-            MaxSize = newSize;
-            Heap = newHeap;
+            Array.Copy(heap, newHeap, maxSize + 1);
+            maxSize = newSize;
+            heap = newHeap;
         }
 
         private void UpHeap()
         {
-            int i = QueueSize;
-            T node = Heap[i]; // save bottom node
+            int i = size;
+            T node = heap[i]; // save bottom node
             int j = (int)((uint)i >> 1);
-            while (j > 0 && LessThan(node, Heap[j]))
+            while (j > 0 && LessThan(node, heap[j]))
             {
-                Heap[i] = Heap[j]; // shift parents down
+                heap[i] = heap[j]; // shift parents down
                 i = j;
                 j = (int)((uint)j >> 1);
             }
-            Heap[i] = node; // install saved node
+            heap[i] = node; // install saved node
         }
 
         private void DownHeap()
         {
             int i = 1;
-            T node = Heap[i]; // save top node
+            T node = heap[i]; // save top node
             int j = i << 1; // find smaller child
             int k = j + 1;
-            if (k <= QueueSize && LessThan(Heap[k], Heap[j]))
+            if (k <= size && LessThan(heap[k], heap[j]))
             {
                 j = k;
             }
-            while (j <= QueueSize && LessThan(Heap[j], node))
+            while (j <= size && LessThan(heap[j], node))
             {
-                Heap[i] = Heap[j]; // shift up child
+                heap[i] = heap[j]; // shift up child
                 i = j;
                 j = i << 1;
                 k = j + 1;
-                if (k <= QueueSize && LessThan(Heap[k], Heap[j]))
+                if (k <= size && LessThan(heap[k], heap[j]))
                 {
                     j = k;
                 }
             }
-            Heap[i] = node; // install saved node
+            heap[i] = node; // install saved node
         }
 
         /// <summary>
-        /// this method returns the internal heap array as Object[].
+        /// this method returns the internal heap array as T[].
         /// @lucene.internal
         /// </summary>
-        protected internal object[] HeapArray // LUCENENET TODO: change to GetHeapArray() (array)
+        protected T[] GetHeapArray()
         {
-            get
-            {
-                return (object[])(Array)Heap;
-            }
+            return heap;
         }
     }
 }

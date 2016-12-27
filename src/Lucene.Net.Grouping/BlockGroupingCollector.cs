@@ -212,7 +212,7 @@ namespace Lucene.Net.Search.Grouping
                     og.comparatorSlot = bottomSlot;
                     OneGroup bottomGroup = groupQueue.Add(og);
                     //System.out.println("      ADD group=" + getGroupString(lastGroupOrd) + " newBottom=" + getGroupString(bottomGroup.groupOrd));
-                    queueFull = groupQueue.Size() == topNGroups;
+                    queueFull = groupQueue.Size == topNGroups;
                     if (queueFull)
                     {
                         // Queue just became full; now set the real bottom
@@ -228,13 +228,13 @@ namespace Lucene.Net.Search.Grouping
                     else
                     {
                         // Queue not full yet -- just advance bottomSlot:
-                        bottomSlot = groupQueue.Size();
+                        bottomSlot = groupQueue.Size;
                     }
                 }
                 else
                 {
                     // Replace bottom element in PQ and then updateTop
-                    OneGroup og = groupQueue.Top();
+                    OneGroup og = groupQueue.Top;
                     Debug.Assert(og != null);
                     og.count = subDocUpto;
                     og.topGroupDoc = docBase + topGroupDoc;
@@ -397,7 +397,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 ProcessGroup();
             }
-            if (groupOffset >= groupQueue.Size())
+            if (groupOffset >= groupQueue.Size)
             {
                 return null;
             }
@@ -407,8 +407,8 @@ namespace Lucene.Net.Search.Grouping
 
             float maxScore = float.MinValue;
 
-            GroupDocs<TGroupValue>[] groups = new GroupDocs<TGroupValue>[groupQueue.Size() - groupOffset];
-            for (int downTo = groupQueue.Size() - groupOffset - 1; downTo >= 0; downTo--)
+            GroupDocs<TGroupValue>[] groups = new GroupDocs<TGroupValue>[groupQueue.Size - groupOffset];
+            for (int downTo = groupQueue.Size - groupOffset - 1; downTo >= 0; downTo--)
             {
                 OneGroup og = groupQueue.Pop();
 

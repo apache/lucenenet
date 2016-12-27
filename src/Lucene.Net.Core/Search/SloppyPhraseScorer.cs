@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
             numMatches = 0;
             PhrasePositions pp = pq.Pop();
             int matchLength = end - pp.position;
-            int next = pq.Top().position;
+            int next = pq.Top.position;
             while (AdvancePP(pp))
             {
                 if (hasRpts && !AdvanceRpts(pp))
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
                     }
                     pq.Add(pp);
                     pp = pq.Pop();
-                    next = pq.Top().position;
+                    next = pq.Top.position;
                     matchLength = end - pp.position;
                 }
                 else

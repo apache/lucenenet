@@ -231,13 +231,13 @@ namespace Lucene.Net.Sandbox.Queries
                             numVariants++;
                             totalVariantDocFreqs += fe.DocFreq();
                             float score = boostAtt.Boost;
-                            if (variantsQ.Size() < MAX_VARIANTS_PER_TERM || score > minScore)
+                            if (variantsQ.Size < MAX_VARIANTS_PER_TERM || score > minScore)
                             {
                                 ScoreTerm st = new ScoreTerm(new Term(startTerm.Field, BytesRef.DeepCopyOf(possibleMatch)), score, startTerm);
                                 variantsQ.InsertWithOverflow(st);
-                                minScore = variantsQ.Top().score; // maintain minScore
+                                minScore = variantsQ.Top.score; // maintain minScore
                             }
-                            maxBoostAtt.MaxNonCompetitiveBoost = variantsQ.Size() >= MAX_VARIANTS_PER_TERM ? minScore : float.NegativeInfinity;
+                            maxBoostAtt.MaxNonCompetitiveBoost = variantsQ.Size >= MAX_VARIANTS_PER_TERM ? minScore : float.NegativeInfinity;
                         }
 
                         if (numVariants > 0)
@@ -251,7 +251,7 @@ namespace Lucene.Net.Sandbox.Queries
                             // take the top variants (scored by edit distance) and reset the score
                             // to include an IDF factor then add to the global queue for ranking
                             // overall top query terms
-                            int size = variantsQ.Size();
+                            int size = variantsQ.Size;
                             for (int i = 0; i < size; i++)
                             {
                                 ScoreTerm st = variantsQ.Pop();
@@ -291,7 +291,7 @@ namespace Lucene.Net.Sandbox.Queries
             // has no coord factor
             //Step 1: sort the termqueries by term/field
             IDictionary<Term, List<ScoreTerm>> variantQueries = new Dictionary<Term, List<ScoreTerm>>();
-            int size = q.Size();
+            int size = q.Size;
             for (int i = 0; i < size; i++)
             {
                 ScoreTerm st = q.Pop();

@@ -156,9 +156,9 @@ namespace Lucene.Net.Search
 
                 //System.out.println("TTR.collect term=" + bytes.utf8ToString() + " boost=" + boost + " ord=" + readerContext.ord);
                 // ignore uncompetitive hits
-                if (stQueue.Size() == maxSize)
+                if (stQueue.Size == maxSize)
                 {
-                    ScoreTerm t = stQueue.Top();
+                    ScoreTerm t = stQueue.Top;
                     if (boost < t.Boost)
                     {
                         return true;
@@ -187,7 +187,7 @@ namespace Lucene.Net.Search
                     st.TermState.Register(state, m_readerContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
                     stQueue.Add(st);
                     // possibly drop entries from queue
-                    if (stQueue.Size() > maxSize)
+                    if (stQueue.Size > maxSize)
                     {
                         st = stQueue.Pop();
                         visitedTerms.Remove(st.Bytes);
@@ -197,11 +197,11 @@ namespace Lucene.Net.Search
                     {
                         st = new ScoreTerm(termComp, new TermContext(m_topReaderContext));
                     }
-                    Debug.Assert(stQueue.Size() <= maxSize, "the PQ size must be limited to maxSize");
+                    Debug.Assert(stQueue.Size <= maxSize, "the PQ size must be limited to maxSize");
                     // set maxBoostAtt with values to help FuzzyTermsEnum to optimize
-                    if (stQueue.Size() == maxSize)
+                    if (stQueue.Size == maxSize)
                     {
-                        t2 = stQueue.Top();
+                        t2 = stQueue.Top;
                         maxBoostAtt.MaxNonCompetitiveBoost = t2.Boost;
                         maxBoostAtt.CompetitiveTerm = t2.Bytes;
                     }

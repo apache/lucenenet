@@ -178,7 +178,7 @@ namespace Lucene.Net.Search.Suggest
             {
                 get
                 {
-                    int size = Size();
+                    int size = Size;
                     var res = new LookupResult[size];
                     for (int i = size - 1; i >= 0; i--)
                     {

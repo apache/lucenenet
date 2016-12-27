@@ -481,7 +481,7 @@ namespace Lucene.Net.Tests.Queries
         private static List<TermAndFreq> QueueToList(Util.PriorityQueue<TermAndFreq> queue)
         {
             var terms = new List<TermAndFreq>();
-            while (queue.Size() > 0)
+            while (queue.Size > 0)
             {
                 terms.Add(queue.Pop());
             }

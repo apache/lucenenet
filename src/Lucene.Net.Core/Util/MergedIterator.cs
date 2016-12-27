@@ -81,7 +81,7 @@ namespace Lucene.Net.Util
         {
             PushTop();
 
-            if (queue.Size() > 0)
+            if (queue.Size > 0)
             {
                 PullTop();
             }
@@ -125,7 +125,7 @@ namespace Lucene.Net.Util
             if (removeDuplicates)
             {
                 //extract all subs from the queue that have the same top element
-                while (queue.Size() != 0 && queue.Top().Current.Equals(top[0].Current))
+                while (queue.Size != 0 && queue.Top.Current.Equals(top[0].Current))
                 {
                     top[numTop++] = queue.Pop();
                 }

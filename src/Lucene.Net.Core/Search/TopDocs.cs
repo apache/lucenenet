@@ -305,7 +305,7 @@ namespace Lucene.Net.Search
                 int hitUpto = 0;
                 while (hitUpto < numIterOnHits)
                 {
-                    Debug.Assert(queue.Size() > 0);
+                    Debug.Assert(queue.Size > 0);
                     ShardRef @ref = queue.Pop();
                     ScoreDoc hit = shardHits[@ref.ShardIndex].ScoreDocs[@ref.HitIndex++];
                     hit.ShardIndex = @ref.ShardIndex;

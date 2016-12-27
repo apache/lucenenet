@@ -251,7 +251,7 @@ namespace Lucene.Net.Search.Spans
                         queue.Add(spans);
                     }
                 }
-                return queue.Size() != 0;
+                return queue.Size != 0;
             }
 
             public override bool Next()
@@ -261,7 +261,7 @@ namespace Lucene.Net.Search.Spans
                     return InitSpanQueue(-1);
                 }
 
-                if (queue.Size() == 0) // all done
+                if (queue.Size == 0) // all done
                 {
                     return false;
                 }
@@ -273,12 +273,12 @@ namespace Lucene.Net.Search.Spans
                 }
 
                 queue.Pop(); // exhausted a clause
-                return queue.Size() != 0;
+                return queue.Size != 0;
             }
 
-            private Spans Top()
+            private Spans Top() // LUCENENET TODO: make property
             {
-                return queue.Top();
+                return queue.Top;
             }
 
             public override bool SkipTo(int target)
@@ -289,7 +289,7 @@ namespace Lucene.Net.Search.Spans
                 }
 
                 bool skipCalled = false;
-                while (queue.Size() != 0 && Top().Doc < target)
+                while (queue.Size != 0 && Top().Doc < target)
                 {
                     if (Top().SkipTo(target))
                     {
@@ -304,7 +304,7 @@ namespace Lucene.Net.Search.Spans
 
                 if (skipCalled)
                 {
-                    return queue.Size() != 0;
+                    return queue.Size != 0;
                 }
                 return Next();
             }
@@ -349,7 +349,7 @@ namespace Lucene.Net.Search.Spans
 
             public override string ToString()
             {
-                return "spans(" + OuterInstance + ")@" + ((queue == null) ? "START" : (queue.Size() > 0 ? (Doc + ":" + Start + "-" + End) : "END"));
+                return "spans(" + OuterInstance + ")@" + ((queue == null) ? "START" : (queue.Size > 0 ? (Doc + ":" + Start + "-" + End) : "END"));
             }
 
             public override long Cost()

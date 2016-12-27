@@ -1706,9 +1706,9 @@ namespace Lucene.Net.Util.Fst
                     if (bottom == null)
                     {
                         q.Add(new FST.NodeAndInCount(node, (int)inCounts.Get(node)));
-                        if (q.Size() == topN)
+                        if (q.Size == topN)
                         {
-                            bottom = q.Top();
+                            bottom = q.Top;
                         }
                     }
                     else if (inCounts.Get(node) > bottom.Count)
@@ -1722,7 +1722,7 @@ namespace Lucene.Net.Util.Fst
             inCounts = null;
 
             IDictionary<int, int> topNodeMap = new Dictionary<int, int>();
-            for (int downTo = q.Size() - 1; downTo >= 0; downTo--)
+            for (int downTo = q.Size - 1; downTo >= 0; downTo--)
             {
                 FST.NodeAndInCount n = q.Pop();
                 topNodeMap[n.Node] = downTo;

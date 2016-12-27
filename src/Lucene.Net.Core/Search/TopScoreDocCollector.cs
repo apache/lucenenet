@@ -129,7 +129,7 @@ namespace Lucene.Net.Search
 
             protected override int TopDocsSize
             {
-                get { return collectedHits < m_pq.Size() ? collectedHits : m_pq.Size(); }
+                get { return collectedHits < m_pq.Size ? collectedHits : m_pq.Size; }
             }
 
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search
 
             protected override int TopDocsSize
             {
-                get { return collectedHits < m_pq.Size() ? collectedHits : m_pq.Size(); }
+                get { return collectedHits < m_pq.Size ? collectedHits : m_pq.Size; }
             }
 
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
@@ -296,7 +296,7 @@ namespace Lucene.Net.Search
         {
             // HitQueue implements getSentinelObject to return a ScoreDoc, so we know
             // that at this point top() is already initialized.
-            pqTop = m_pq.Top();
+            pqTop = m_pq.Top;
         }
 
         protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
@@ -317,7 +317,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                for (int i = m_pq.Size(); i > 1; i--)
+                for (int i = m_pq.Size; i > 1; i--)
                 {
                     m_pq.Pop();
                 }

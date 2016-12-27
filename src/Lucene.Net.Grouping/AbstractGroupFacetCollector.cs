@@ -80,9 +80,9 @@ namespace Lucene.Net.Search.Grouping
             }
 
             GroupedFacetResult facetResult = new GroupedFacetResult(size, minCount, orderByCount, totalCount, missingCount);
-            while (segments.Size() > 0)
+            while (segments.Size > 0)
             {
-                AbstractSegmentResult segmentResult = segments.Top();
+                AbstractSegmentResult segmentResult = segments.Top;
                 BytesRef currentFacetValue = BytesRef.DeepCopyOf(segmentResult.mergeTerm);
                 int count = 0;
 
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Grouping
                     else
                     {
                         segments.Pop();
-                        segmentResult = segments.Top();
+                        segmentResult = segments.Top;
                         if (segmentResult == null)
                         {
                             break;

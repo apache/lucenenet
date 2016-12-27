@@ -216,7 +216,7 @@ namespace Lucene.Net.Util
                 iterators.Add(iterator);
             }
 
-            Iterator top = iterators.Top();
+            Iterator top = iterators.Top;
             if (top.WordNum == int.MaxValue)
             {
                 return EMPTY;
@@ -228,7 +228,7 @@ namespace Lucene.Net.Util
             {
                 top.NextWord();
                 iterators.UpdateTop();
-                top = iterators.Top();
+                top = iterators.Top;
                 if (top.WordNum == wordNum)
                 {
                     word |= top.Word;
