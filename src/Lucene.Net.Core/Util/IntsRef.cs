@@ -71,7 +71,7 @@ namespace Lucene.Net.Util
             this.Ints = ints;
             this.Offset = offset;
             this.Length = length;
-            Debug.Assert(Valid);
+            Debug.Assert(IsValid());
         }
 
         /// <summary>
@@ -227,40 +227,37 @@ namespace Lucene.Net.Util
         /// Performs internal consistency checks.
         /// Always returns true (or throws InvalidOperationException)
         /// </summary>
-        public bool Valid // LUCENENET TODO: make IsValid() (throws exceptions)
+        public bool IsValid()
         {
-            get
+            if (Ints == null)
             {
-                if (Ints == null)
-                {
-                    throw new InvalidOperationException("ints is null");
-                }
-                if (Length < 0)
-                {
-                    throw new InvalidOperationException("length is negative: " + Length);
-                }
-                if (Length > Ints.Length)
-                {
-                    throw new InvalidOperationException("length is out of bounds: " + Length + ",ints.length=" + Ints.Length);
-                }
-                if (Offset < 0)
-                {
-                    throw new InvalidOperationException("offset is negative: " + Offset);
-                }
-                if (Offset > Ints.Length)
-                {
-                    throw new InvalidOperationException("offset out of bounds: " + Offset + ",ints.length=" + Ints.Length);
-                }
-                if (Offset + Length < 0)
-                {
-                    throw new InvalidOperationException("offset+length is negative: offset=" + Offset + ",length=" + Length);
-                }
-                if (Offset + Length > Ints.Length)
-                {
-                    throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",ints.length=" + Ints.Length);
-                }
-                return true;
+                throw new InvalidOperationException("ints is null");
             }
+            if (Length < 0)
+            {
+                throw new InvalidOperationException("length is negative: " + Length);
+            }
+            if (Length > Ints.Length)
+            {
+                throw new InvalidOperationException("length is out of bounds: " + Length + ",ints.length=" + Ints.Length);
+            }
+            if (Offset < 0)
+            {
+                throw new InvalidOperationException("offset is negative: " + Offset);
+            }
+            if (Offset > Ints.Length)
+            {
+                throw new InvalidOperationException("offset out of bounds: " + Offset + ",ints.length=" + Ints.Length);
+            }
+            if (Offset + Length < 0)
+            {
+                throw new InvalidOperationException("offset+length is negative: offset=" + Offset + ",length=" + Length);
+            }
+            if (Offset + Length > Ints.Length)
+            {
+                throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",ints.length=" + Ints.Length);
+            }
+            return true;
         }
     }
 }
