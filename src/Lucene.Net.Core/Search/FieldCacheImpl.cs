@@ -315,7 +315,7 @@ namespace Lucene.Net.Search
                 for (int i = 0; i < insanities.Length; i++)
                 {
                     FieldCacheSanityChecker.Insanity insanity = insanities[i];
-                    FieldCache.CacheEntry[] entries = insanity.CacheEntries;
+                    FieldCache.CacheEntry[] entries = insanity.GetCacheEntries();
                     for (int j = 0; j < entries.Length; j++)
                     {
                         if (entries[j].Value == value)

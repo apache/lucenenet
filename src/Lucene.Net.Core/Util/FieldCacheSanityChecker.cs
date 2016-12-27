@@ -48,23 +48,28 @@ namespace Lucene.Net.Util
     /// <seealso cref= FieldCacheSanityChecker.InsanityType </seealso>
     public sealed class FieldCacheSanityChecker
     {
-        private bool EstimateRam;
+        private bool estimateRam;
 
         public FieldCacheSanityChecker()
         {
             /* NOOP */
         }
 
-        /// <summary>
-        /// If set, estimate size for all CacheEntry objects will be calculateed.
-        /// </summary>
-        public bool RamUsageEstimator // LUCENENET TODO: change to SetRamUsageEstimator(bool flag) (or better yet, add a constructor with the overload and remove this)
+        /// <param name="estimateRam">If set, estimate size for all CacheEntry objects will be calculated.</param>
+        // LUCENENET specific - added this constructor overload so we wouldn't need a (ridiculous) SetRamUsageEstimator() method
+        public FieldCacheSanityChecker(bool estimateRam)
         {
-            set
-            {
-                EstimateRam = value;
-            }
+            this.estimateRam = estimateRam;
         }
+
+        // LUCENENET specific - using constructor overload to replace this method
+        ///// <summary>
+        ///// If set, estimate size for all CacheEntry objects will be calculateed.
+        ///// </summary>
+        //public bool SetRamUsageEstimator(bool flag)
+        //{
+        //    estimateRam = flag;
+        //}
 
         /// <summary>
         /// Quick and dirty convenience method </summary>
@@ -80,8 +85,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= #check </seealso>
         public static Insanity[] CheckSanity(params FieldCache.CacheEntry[] cacheEntries)
         {
-            FieldCacheSanityChecker sanityChecker = new FieldCacheSanityChecker();
-            sanityChecker.RamUsageEstimator = true;
+            FieldCacheSanityChecker sanityChecker = new FieldCacheSanityChecker(estimateRam: true);
             return sanityChecker.Check(cacheEntries);
         }
 
@@ -99,7 +103,7 @@ namespace Lucene.Net.Util
                 return new Insanity[0];
             }
 
-            if (EstimateRam)
+            if (estimateRam)
             {
                 for (int i = 0; i < cacheEntries.Length; i++)
                 {
@@ -316,8 +320,8 @@ namespace Lucene.Net.Util
         /// </summary>
         private sealed class ReaderField
         {
-            public readonly object ReaderKey;
-            public readonly string FieldName;
+            public object ReaderKey { get; private set; }
+            public string FieldName { get; private set; }
 
             public ReaderField(object readerKey, string fieldName)
             {
@@ -354,9 +358,9 @@ namespace Lucene.Net.Util
         /// </summary>
         public sealed class Insanity
         {
-            private readonly InsanityType Type_Renamed;
-            private readonly string Msg_Renamed;
-            private readonly FieldCache.CacheEntry[] Entries;
+            private readonly InsanityType type;
+            private readonly string msg;
+            private readonly FieldCache.CacheEntry[] entries;
 
             public Insanity(InsanityType type, string msg, params FieldCache.CacheEntry[] entries)
             {
@@ -368,9 +372,9 @@ namespace Lucene.Net.Util
                 {
                     throw new System.ArgumentException("Insanity requires non-null/non-empty CacheEntry[]");
                 }
-                this.Type_Renamed = type;
-                this.Msg_Renamed = msg;
-                this.Entries = entries;
+                this.type = type;
+                this.msg = msg;
+                this.entries = entries;
             }
 
             /// <summary>
@@ -380,7 +384,7 @@ namespace Lucene.Net.Util
             {
                 get
                 {
-                    return Type_Renamed;
+                    return type;
                 }
             }
 
@@ -391,19 +395,16 @@ namespace Lucene.Net.Util
             {
                 get
                 {
-                    return Msg_Renamed;
+                    return msg;
                 }
             }
 
             /// <summary>
             /// CacheEntry objects which suggest a problem
             /// </summary>
-            public FieldCache.CacheEntry[] CacheEntries // LUCENENET TODO: change to GetCacheEntries() (array)
+            public FieldCache.CacheEntry[] GetCacheEntries()
             {
-                get
-                {
-                    return Entries;
-                }
+                return entries;
             }
 
             /// <summary>
@@ -424,7 +425,7 @@ namespace Lucene.Net.Util
 
                 buf.Append('\n');
 
-                FieldCache.CacheEntry[] ce = CacheEntries;
+                FieldCache.CacheEntry[] ce = GetCacheEntries();
                 for (int i = 0; i < ce.Length; i++)
                 {
                     buf.Append('\t').Append(ce[i].ToString()).Append('\n');
@@ -443,16 +444,16 @@ namespace Lucene.Net.Util
         /// <seealso cref= InsanityType#EXPECTED </seealso>
         public sealed class InsanityType
         {
-            private readonly string Label;
+            private readonly string label;
 
             private InsanityType(string label)
             {
-                this.Label = label;
+                this.label = label;
             }
 
             public override string ToString()
             {
-                return Label;
+                return label;
             }
 
             /// <summary>
