@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis
         /// Holds all state for a single position; subclass this
         ///  to record other state at each position.
         /// </summary>
-        public class Position : Lucene.Net.Util.RollingBuffer.Resettable
+        public class Position : Lucene.Net.Util.RollingBuffer.IResettable
         {
             // Buffered input tokens at this position:
             public readonly IList<AttributeSource.State> InputTokens = new List<AttributeSource.State>();

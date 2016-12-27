@@ -82,7 +82,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        private class Position : RollingBuffer.Resettable
+        private class Position : RollingBuffer.IResettable
         {
             // Any tokens that ended at our position arrive to this state:
             internal State arriving;

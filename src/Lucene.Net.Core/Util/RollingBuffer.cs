@@ -22,7 +22,7 @@ namespace Lucene.Net.Util
 
     public static class RollingBuffer
     {
-        public interface Resettable // LUCENENET TODO: rename with "I"
+        public interface IResettable
         {
             void Reset();
         }
@@ -35,33 +35,33 @@ namespace Lucene.Net.Util
     ///  @lucene.internal
     /// </summary>
     public abstract class RollingBuffer<T>
-        where T : RollingBuffer.Resettable
+        where T : RollingBuffer.IResettable
     {
-        private T[] Buffer = new T[8];
+        private T[] buffer = new T[8];
 
         // Next array index to write to:
-        private int NextWrite;
+        private int nextWrite;
 
         // Next position to write:
-        private int NextPos;
+        private int nextPos;
 
         // How many valid Position are held in the
         // array:
-        private int Count;
+        private int count;
 
         protected RollingBuffer() // LUCENENET TODO: Remove ? not used
         {
-            for (var idx = 0; idx < Buffer.Length; idx++)
+            for (var idx = 0; idx < buffer.Length; idx++)
             {
-                Buffer[idx] = NewInstance(); // TODO GIVE ROLLING BUFFER A DELEGATE FOR NEW INSTANCE
+                buffer[idx] = NewInstance(); // TODO GIVE ROLLING BUFFER A DELEGATE FOR NEW INSTANCE
             }
         }
 
         protected RollingBuffer(Func<T> factory)
         {
-            for (int idx = 0; idx < Buffer.Length; idx++)
+            for (int idx = 0; idx < buffer.Length; idx++)
             {
-                Buffer[idx] = factory();
+                buffer[idx] = factory();
             }
         }
 
@@ -69,33 +69,33 @@ namespace Lucene.Net.Util
 
         public virtual void Reset()
         {
-            NextWrite--;
-            while (Count > 0)
+            nextWrite--;
+            while (count > 0)
             {
-                if (NextWrite == -1)
+                if (nextWrite == -1)
                 {
-                    NextWrite = Buffer.Length - 1;
+                    nextWrite = buffer.Length - 1;
                 }
-                Buffer[NextWrite--].Reset();
-                Count--;
+                buffer[nextWrite--].Reset();
+                count--;
             }
-            NextWrite = 0;
-            NextPos = 0;
-            Count = 0;
+            nextWrite = 0;
+            nextPos = 0;
+            count = 0;
         }
 
         // For assert:
         private bool InBounds(int pos)
         {
-            return pos < NextPos && pos >= NextPos - Count;
+            return pos < nextPos && pos >= nextPos - count;
         }
 
         private int GetIndex(int pos)
         {
-            int index = NextWrite - (NextPos - pos);
+            int index = nextWrite - (nextPos - pos);
             if (index < 0)
             {
-                index += Buffer.Length;
+                index += buffer.Length;
             }
             return index;
         }
@@ -108,32 +108,32 @@ namespace Lucene.Net.Util
         public virtual T Get(int pos)
         {
             //System.out.println("RA.get pos=" + pos + " nextPos=" + nextPos + " nextWrite=" + nextWrite + " count=" + count);
-            while (pos >= NextPos)
+            while (pos >= nextPos)
             {
-                if (Count == Buffer.Length)
+                if (count == buffer.Length)
                 {
-                    var newBuffer = new T[ArrayUtil.Oversize(1 + Count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                    Array.Copy(Buffer, NextWrite, newBuffer, 0, Buffer.Length - NextWrite);
-                    Array.Copy(Buffer, 0, newBuffer, Buffer.Length - NextWrite, NextWrite);
-                    for (int i = Buffer.Length; i < newBuffer.Length; i++)
+                    var newBuffer = new T[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                    Array.Copy(buffer, nextWrite, newBuffer, 0, buffer.Length - nextWrite);
+                    Array.Copy(buffer, 0, newBuffer, buffer.Length - nextWrite, nextWrite);
+                    for (int i = buffer.Length; i < newBuffer.Length; i++)
                     {
                         newBuffer[i] = NewInstance();
                     }
-                    NextWrite = Buffer.Length;
-                    Buffer = newBuffer;
+                    nextWrite = buffer.Length;
+                    buffer = newBuffer;
                 }
-                if (NextWrite == Buffer.Length)
+                if (nextWrite == buffer.Length)
                 {
-                    NextWrite = 0;
+                    nextWrite = 0;
                 }
                 // Should have already been reset:
-                NextWrite++;
-                NextPos++;
-                Count++;
+                nextWrite++;
+                nextPos++;
+                count++;
             }
             Debug.Assert(InBounds(pos));
             int index = GetIndex(pos);
-            return Buffer[index];
+            return buffer[index];
         }
 
         /// <summary>
@@ -144,31 +144,31 @@ namespace Lucene.Net.Util
         {
             get
             {
-                return NextPos - 1;
+                return nextPos - 1;
             }
         }
 
         public virtual void FreeBefore(int pos)
         {
-            int toFree = Count - (NextPos - pos);
+            int toFree = count - (nextPos - pos);
             Debug.Assert(toFree >= 0);
-            Debug.Assert(toFree <= Count, "toFree=" + toFree + " count=" + Count);
-            int index = NextWrite - Count;
+            Debug.Assert(toFree <= count, "toFree=" + toFree + " count=" + count);
+            int index = nextWrite - count;
             if (index < 0)
             {
-                index += Buffer.Length;
+                index += buffer.Length;
             }
             for (int i = 0; i < toFree; i++)
             {
-                if (index == Buffer.Length)
+                if (index == buffer.Length)
                 {
                     index = 0;
                 }
                 //System.out.println("  fb idx=" + index);
-                Buffer[index].Reset();
+                buffer[index].Reset();
                 index++;
             }
-            Count -= toFree;
+            count -= toFree;
         }
     }
 }

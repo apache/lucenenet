@@ -23,7 +23,7 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestRollingBuffer : LuceneTestCase
     {
-        private class Position : RollingBuffer.Resettable
+        private class Position : RollingBuffer.IResettable
         {
             public int Pos;
 
