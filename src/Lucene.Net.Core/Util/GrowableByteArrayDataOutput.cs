@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// The length </summary>
-        public int Length; // LUCENENET TODO: make property
+        public int Length { get; set; }
 
         /// <summary>
         /// Create a <seealso cref="GrowableByteArrayDataOutput"/> with the given initial capacity. </summary>
