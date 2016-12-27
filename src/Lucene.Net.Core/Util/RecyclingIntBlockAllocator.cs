@@ -33,10 +33,10 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class RecyclingIntBlockAllocator : Allocator // LUCENENET TODO: Rename RecyclingInt32BlockAllocator ?
     {
-        private int[][] FreeByteBlocks;
-        private readonly int MaxBufferedBlocks_Renamed;
-        private int FreeBlocks_Renamed = 0;
-        private readonly Counter BytesUsed_Renamed;
+        private int[][] freeByteBlocks;
+        private readonly int maxBufferedBlocks;
+        private int freeBlocks = 0;
+        private readonly Counter bytesUsed;
         public const int DEFAULT_BUFFERED_BLOCKS = 64;
 
         /// <summary>
@@ -51,9 +51,9 @@ namespace Lucene.Net.Util
         public RecyclingIntBlockAllocator(int blockSize, int maxBufferedBlocks, Counter bytesUsed)
             : base(blockSize)
         {
-            FreeByteBlocks = new int[maxBufferedBlocks][];
-            this.MaxBufferedBlocks_Renamed = maxBufferedBlocks;
-            this.BytesUsed_Renamed = bytesUsed;
+            freeByteBlocks = new int[maxBufferedBlocks][];
+            this.maxBufferedBlocks = maxBufferedBlocks;
+            this.bytesUsed = bytesUsed;
         }
 
         /// <summary>
@@ -81,56 +81,56 @@ namespace Lucene.Net.Util
 
         public override int[] GetIntBlock() // LUCENENET TODO: Rename GetInt32Block() ?
         {
-            if (FreeBlocks_Renamed == 0)
+            if (freeBlocks == 0)
             {
-                BytesUsed_Renamed.AddAndGet(m_blockSize * RamUsageEstimator.NUM_BYTES_INT);
+                bytesUsed.AddAndGet(m_blockSize * RamUsageEstimator.NUM_BYTES_INT);
                 return new int[m_blockSize];
             }
-            int[] b = FreeByteBlocks[--FreeBlocks_Renamed];
-            FreeByteBlocks[FreeBlocks_Renamed] = null;
+            int[] b = freeByteBlocks[--freeBlocks];
+            freeByteBlocks[freeBlocks] = null;
             return b;
         }
 
         public override void RecycleIntBlocks(int[][] blocks, int start, int end) // LUCENENET TODO: Rename RecycleInt32Blocks ?
         {
-            int numBlocks = Math.Min(MaxBufferedBlocks_Renamed - FreeBlocks_Renamed, end - start);
-            int size = FreeBlocks_Renamed + numBlocks;
-            if (size >= FreeByteBlocks.Length)
+            int numBlocks = Math.Min(maxBufferedBlocks - freeBlocks, end - start);
+            int size = freeBlocks + numBlocks;
+            if (size >= freeByteBlocks.Length)
             {
                 int[][] newBlocks = new int[ArrayUtil.Oversize(size, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
-                Array.Copy(FreeByteBlocks, 0, newBlocks, 0, FreeBlocks_Renamed);
-                FreeByteBlocks = newBlocks;
+                Array.Copy(freeByteBlocks, 0, newBlocks, 0, freeBlocks);
+                freeByteBlocks = newBlocks;
             }
             int stop = start + numBlocks;
             for (int i = start; i < stop; i++)
             {
-                FreeByteBlocks[FreeBlocks_Renamed++] = blocks[i];
+                freeByteBlocks[freeBlocks++] = blocks[i];
                 blocks[i] = null;
             }
             for (int i = stop; i < end; i++)
             {
                 blocks[i] = null;
             }
-            BytesUsed_Renamed.AddAndGet(-(end - stop) * (m_blockSize * RamUsageEstimator.NUM_BYTES_INT));
-            Debug.Assert(BytesUsed_Renamed.Get() >= 0);
+            bytesUsed.AddAndGet(-(end - stop) * (m_blockSize * RamUsageEstimator.NUM_BYTES_INT));
+            Debug.Assert(bytesUsed.Get() >= 0);
         }
 
         /// <returns> the number of currently buffered blocks </returns>
-        public int NumBufferedBlocks() // LUCENENET TODO: make property
+        public int NumBufferedBlocks
         {
-            return FreeBlocks_Renamed;
+            get { return freeBlocks; }
         }
 
         /// <returns> the number of bytes currently allocated by this <seealso cref="Allocator"/> </returns>
-        public long BytesUsed() // LUCENENET TODO: make property ?
+        public long BytesUsed 
         {
-            return BytesUsed_Renamed.Get();
+            get { return bytesUsed.Get(); }
         }
 
         /// <returns> the maximum number of buffered byte blocks </returns>
-        public int MaxBufferedBlocks() // LUCENENET TODO: make property
+        public int MaxBufferedBlocks
         {
-            return MaxBufferedBlocks_Renamed;
+            get { return maxBufferedBlocks; }
         }
 
         /// <summary>
@@ -144,22 +144,22 @@ namespace Lucene.Net.Util
             Debug.Assert(num >= 0, "free blocks must be >= 0 but was: " + num);
             int stop;
             int count;
-            if (num > FreeBlocks_Renamed)
+            if (num > freeBlocks)
             {
                 stop = 0;
-                count = FreeBlocks_Renamed;
+                count = freeBlocks;
             }
             else
             {
-                stop = FreeBlocks_Renamed - num;
+                stop = freeBlocks - num;
                 count = num;
             }
-            while (FreeBlocks_Renamed > stop)
+            while (freeBlocks > stop)
             {
-                FreeByteBlocks[--FreeBlocks_Renamed] = null;
+                freeByteBlocks[--freeBlocks] = null;
             }
-            BytesUsed_Renamed.AddAndGet(-count * m_blockSize * RamUsageEstimator.NUM_BYTES_INT);
-            Debug.Assert(BytesUsed_Renamed.Get() >= 0);
+            bytesUsed.AddAndGet(-count * m_blockSize * RamUsageEstimator.NUM_BYTES_INT);
+            Debug.Assert(bytesUsed.Get() >= 0);
             return count;
         }
     }

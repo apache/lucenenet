@@ -56,8 +56,8 @@ namespace Lucene.Net.Util
                 Assert.IsNotNull(block);
                 Assert.AreEqual(size, block.Length);
                 Assert.IsTrue(set.Add(block), "block is returned twice");
-                Assert.AreEqual(4 * size * (i + 2), allocator.BytesUsed()); // zero based + 1
-                Assert.AreEqual(0, allocator.NumBufferedBlocks());
+                Assert.AreEqual(4 * size * (i + 2), allocator.BytesUsed); // zero based + 1
+                Assert.AreEqual(0, allocator.NumBufferedBlocks);
             }
         }
 
@@ -82,7 +82,7 @@ namespace Lucene.Net.Util
                     Assert.IsNotNull(block);
                     Assert.AreEqual(size, block.Length);
                     Assert.IsTrue(allocated.Add(block), "block is returned twice");
-                    Assert.AreEqual(4 * size * (allocated.Count + allocator.NumBufferedBlocks()), allocator.BytesUsed());
+                    Assert.AreEqual(4 * size * (allocated.Count + allocator.NumBufferedBlocks), allocator.BytesUsed);
                 }
                 int[][] array = allocated.ToArray(/*new int[0][]*/);
                 int begin = Random().Next(array.Length);
@@ -125,7 +125,7 @@ namespace Lucene.Net.Util
                     Assert.IsNotNull(block);
                     Assert.AreEqual(size, block.Length);
                     Assert.IsTrue(allocated.Add(block), "block is returned twice");
-                    Assert.AreEqual(4 * size * (allocated.Count + allocator.NumBufferedBlocks()), allocator.BytesUsed(), "" + (4 * size * (allocated.Count + allocator.NumBufferedBlocks()) - allocator.BytesUsed()));
+                    Assert.AreEqual(4 * size * (allocated.Count + allocator.NumBufferedBlocks), allocator.BytesUsed, "" + (4 * size * (allocated.Count + allocator.NumBufferedBlocks) - allocator.BytesUsed));
                 }
 
                 int[][] array = allocated.ToArray(/*new int[0][]*/);
@@ -142,9 +142,9 @@ namespace Lucene.Net.Util
                     Assert.IsNull(array[j]);
                 }
                 // randomly free blocks
-                int numFreeBlocks = allocator.NumBufferedBlocks();
-                int freeBlocks = allocator.FreeBlocks(Random().Next(7 + allocator.MaxBufferedBlocks()));
-                Assert.AreEqual(allocator.NumBufferedBlocks(), numFreeBlocks - freeBlocks);
+                int numFreeBlocks = allocator.NumBufferedBlocks;
+                int freeBlocks = allocator.FreeBlocks(Random().Next(7 + allocator.MaxBufferedBlocks));
+                Assert.AreEqual(allocator.NumBufferedBlocks, numFreeBlocks - freeBlocks);
             }
         }
     }
