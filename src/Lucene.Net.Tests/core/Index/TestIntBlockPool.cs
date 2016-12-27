@@ -144,13 +144,13 @@ namespace Lucene.Net.Index
 
             public override int[] GetIntBlock()
             {
-                BytesUsed.AddAndGet(BlockSize * RamUsageEstimator.NUM_BYTES_INT);
-                return new int[BlockSize];
+                BytesUsed.AddAndGet(m_blockSize * RamUsageEstimator.NUM_BYTES_INT);
+                return new int[m_blockSize];
             }
 
             public override void RecycleIntBlocks(int[][] blocks, int start, int end)
             {
-                BytesUsed.AddAndGet(-((end - start) * BlockSize * RamUsageEstimator.NUM_BYTES_INT));
+                BytesUsed.AddAndGet(-((end - start) * m_blockSize * RamUsageEstimator.NUM_BYTES_INT));
             }
         }
 

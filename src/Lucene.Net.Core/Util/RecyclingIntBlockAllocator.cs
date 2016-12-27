@@ -83,8 +83,8 @@ namespace Lucene.Net.Util
         {
             if (FreeBlocks_Renamed == 0)
             {
-                BytesUsed_Renamed.AddAndGet(BlockSize * RamUsageEstimator.NUM_BYTES_INT);
-                return new int[BlockSize];
+                BytesUsed_Renamed.AddAndGet(m_blockSize * RamUsageEstimator.NUM_BYTES_INT);
+                return new int[m_blockSize];
             }
             int[] b = FreeByteBlocks[--FreeBlocks_Renamed];
             FreeByteBlocks[FreeBlocks_Renamed] = null;
@@ -111,7 +111,7 @@ namespace Lucene.Net.Util
             {
                 blocks[i] = null;
             }
-            BytesUsed_Renamed.AddAndGet(-(end - stop) * (BlockSize * RamUsageEstimator.NUM_BYTES_INT));
+            BytesUsed_Renamed.AddAndGet(-(end - stop) * (m_blockSize * RamUsageEstimator.NUM_BYTES_INT));
             Debug.Assert(BytesUsed_Renamed.Get() >= 0);
         }
 
@@ -158,7 +158,7 @@ namespace Lucene.Net.Util
             {
                 FreeByteBlocks[--FreeBlocks_Renamed] = null;
             }
-            BytesUsed_Renamed.AddAndGet(-count * BlockSize * RamUsageEstimator.NUM_BYTES_INT);
+            BytesUsed_Renamed.AddAndGet(-count * m_blockSize * RamUsageEstimator.NUM_BYTES_INT);
             Debug.Assert(BytesUsed_Renamed.Get() >= 0);
             return count;
         }
