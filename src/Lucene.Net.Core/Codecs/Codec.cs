@@ -35,7 +35,7 @@ namespace Lucene.Net.Codecs
     /// If you implement your own codec, make sure that it has a no-arg constructor
     /// so SPI can load it. </summary>
     /// <seealso cref= ServiceLoader </seealso>
-    public abstract class Codec : NamedSPILoader<Codec>.NamedSPI
+    public abstract class Codec : NamedSPILoader.INamedSPI
     {
         private static readonly NamedSPILoader<Codec> Loader;
 

@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs
     /// so SPI can load it. </summary>
     /// <seealso cref= ServiceLoader
     /// @lucene.experimental  </seealso>
-    public abstract class DocValuesFormat : NamedSPILoader<DocValuesFormat>.NamedSPI
+    public abstract class DocValuesFormat : NamedSPILoader.INamedSPI
     {
         private static readonly NamedSPILoader<DocValuesFormat> Loader = new NamedSPILoader<DocValuesFormat>(typeof(DocValuesFormat));
 

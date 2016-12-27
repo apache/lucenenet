@@ -39,7 +39,7 @@ namespace Lucene.Net.Codecs
     /// so SPI can load it. </summary>
     /// <seealso cref= ServiceLoader
     /// @lucene.experimental  </seealso>
-    public abstract class PostingsFormat : NamedSPILoader<PostingsFormat>.NamedSPI
+    public abstract class PostingsFormat : NamedSPILoader.INamedSPI
     {
         private static readonly NamedSPILoader<PostingsFormat> Loader = new NamedSPILoader<PostingsFormat>(typeof(PostingsFormat));
 

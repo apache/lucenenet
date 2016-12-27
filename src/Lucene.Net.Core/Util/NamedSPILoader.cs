@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
     /// Helper class for loading named SPIs from classpath (e.g. Codec, PostingsFormat).
     /// @lucene.internal
     /// </summary>
-    public sealed class NamedSPILoader<S> : IEnumerable<S> where S : NamedSPILoader<S>.NamedSPI
+    public sealed class NamedSPILoader<S> : IEnumerable<S> where S : NamedSPILoader.INamedSPI
     {
         private volatile IDictionary<string, S> Services = CollectionsHelper.EmptyMap<string, S>();
         private readonly Type Clazz;
@@ -84,7 +84,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Validates that a service name meets the requirements of <seealso cref="NamedSPI"/>
+        /// Validates that a service name meets the requirements of <seealso cref="INamedSPI"/>
         /// </summary>
         public static void CheckServiceName(string name)
         {
@@ -135,13 +135,18 @@ namespace Lucene.Net.Util
         {
             return GetEnumerator();
         }
+    }
+
+    public class NamedSPILoader
+    {
+        private NamedSPILoader() { } // prevent direct creation
 
         /// <summary>
         /// Interface to support <seealso cref="NamedSPILoader#lookup(String)"/> by name.
         /// <p>
         /// Names must be all ascii alphanumeric, and less than 128 characters in length.
         /// </summary>
-        public interface NamedSPI // LUCENENET TODO: Rename with "I", move into non-generic class named NamedSPILoader (so we don't need to use the generic closing type)
+        public interface INamedSPI
         {
             string Name { get; }
         }
