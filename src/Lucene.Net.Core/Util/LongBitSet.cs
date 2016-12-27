@@ -46,7 +46,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static LongBitSet EnsureCapacity(LongBitSet bits, long numBits)
         {
-            if (numBits < bits.Length())
+            if (numBits < bits.Length)
             {
                 return bits;
             }
@@ -94,9 +94,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the number of bits stored in this bitset. </summary>
-        public long Length() // LUCENENET TODO: Make property
+        public long Length
         {
-            return NumBits;
+            get { return NumBits; }
         }
 
         /// <summary>
@@ -431,7 +431,7 @@ namespace Lucene.Net.Util
                 return false;
             }
             LongBitSet other = (LongBitSet)o;
-            if (NumBits != other.Length())
+            if (NumBits != other.Length)
             {
                 return false;
             }

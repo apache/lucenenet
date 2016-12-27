@@ -29,7 +29,7 @@ namespace Lucene.Net.Util
     {
         internal virtual void DoGet(BitArray a, LongBitSet b)
         {
-            long max = b.Length();
+            long max = b.Length;
             for (int i = 0; i < max; i++)
             {
                 if (a.SafeGet(i) != b.Get(i))
@@ -46,7 +46,7 @@ namespace Lucene.Net.Util
             do
             {
                 aa = a.NextSetBit(aa + 1);
-                bb = bb < b.Length() - 1 ? b.NextSetBit(bb + 1) : -1;
+                bb = bb < b.Length - 1 ? b.NextSetBit(bb + 1) : -1;
                 Assert.AreEqual(aa, bb);
             } while (aa >= 0);
         }
@@ -63,13 +63,13 @@ namespace Lucene.Net.Util
                 {
                     aa--;
                 }
-                if (b.Length() == 0)
+                if (b.Length == 0)
                 {
                     bb = -1;
                 }
-                else if (bb > b.Length() - 1)
+                else if (bb > b.Length - 1)
                 {
-                    bb = b.PrevSetBit(b.Length() - 1);
+                    bb = b.PrevSetBit(b.Length - 1);
                 }
                 else if (bb < 1)
                 {
@@ -165,7 +165,7 @@ namespace Lucene.Net.Util
 
                 DoPrevSetBit(aa, bb);
 
-                if (b0 != null && b0.Length() <= b.Length())
+                if (b0 != null && b0.Length <= b.Length)
                 {
                     Assert.AreEqual(a.Cardinality(), b.Cardinality());
 
@@ -434,7 +434,7 @@ namespace Lucene.Net.Util
             Assert.IsFalse(newBits.Get(1));
 
             newBits.Set(1);
-            newBits = LongBitSet.EnsureCapacity(newBits, newBits.Length() - 2); // reuse
+            newBits = LongBitSet.EnsureCapacity(newBits, newBits.Length - 2); // reuse
             Assert.IsTrue(newBits.Get(1));
 
             bits.Set(1);
