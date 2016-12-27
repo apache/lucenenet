@@ -41,78 +41,71 @@ namespace Lucene.Net.Util
     ///
     /// @lucene.internal
     /// </summary>
-    public sealed class DoubleBarrelLRUCache<K, V> where K : DoubleBarrelLRUCache.CloneableKey
+    public sealed class DoubleBarrelLRUCache<TKey, TValue> : DoubleBarrelLRUCache where TKey : DoubleBarrelLRUCache.CloneableKey
     {
-        /// <summary>
-        /// Object providing clone(); the key class must subclass this. </summary>
-        public abstract class CloneableKey // LUCENENET TODO: Remove this type (it is already defined in non-generic DoubleBarrelLRUCache). Make this class inherit DoubleBarrelLRUCache.
-        {
-            public abstract CloneableKey Clone();
-        }
-
-        private readonly IDictionary<K, V> Cache1;
-        private readonly IDictionary<K, V> Cache2;
+        private readonly IDictionary<TKey, TValue> cache1;
+        private readonly IDictionary<TKey, TValue> cache2;
 
         //private readonly AtomicInteger Countdown;
-        private int Countdown;
+        private int countdown;
 
-        private volatile bool Swapped;
-        private readonly int MaxSize;
+        private volatile bool swapped;
+        private readonly int maxSize;
 
         public DoubleBarrelLRUCache(int maxSize) // LUCENENET TODO: Rename parameter maxCount ?
         {
-            this.MaxSize = maxSize;
-            Interlocked.Exchange(ref Countdown, maxSize);
-            Cache1 = new ConcurrentDictionary<K, V>();
-            Cache2 = new ConcurrentDictionary<K, V>();
+            this.maxSize = maxSize;
+            Interlocked.Exchange(ref countdown, maxSize);
+            cache1 = new ConcurrentDictionary<TKey, TValue>();
+            cache2 = new ConcurrentDictionary<TKey, TValue>();
         }
 
-        public V Get(K key)
+        public TValue Get(TKey key)
         {
-            IDictionary<K, V> primary;
-            IDictionary<K, V> secondary;
-            if (Swapped)
+            IDictionary<TKey, TValue> primary;
+            IDictionary<TKey, TValue> secondary;
+            if (swapped)
             {
-                primary = Cache2;
-                secondary = Cache1;
+                primary = cache2;
+                secondary = cache1;
             }
             else
             {
-                primary = Cache1;
-                secondary = Cache2;
+                primary = cache1;
+                secondary = cache2;
             }
 
             // Try primary first
-            V result;
+            TValue result;
             if (!primary.TryGetValue(key, out result))
             {
                 // Not found -- try secondary
                 if (secondary.TryGetValue(key, out result))
                 {
                     // Promote to primary
-                    Put((K)key.Clone(), result);
+                    Put((TKey)key.Clone(), result);
                 }
             }
             return result;
         }
 
-        public void Put(K key, V value)
+        public void Put(TKey key, TValue value)
         {
-            IDictionary<K, V> primary;
-            IDictionary<K, V> secondary;
-            if (Swapped)
+            IDictionary<TKey, TValue> primary;
+            IDictionary<TKey, TValue> secondary;
+            if (swapped)
             {
-                primary = Cache2;
-                secondary = Cache1;
+                primary = cache2;
+                secondary = cache1;
             }
             else
             {
-                primary = Cache1;
-                secondary = Cache2;
+                primary = cache1;
+                secondary = cache2;
             }
             primary[key] = value;
 
-            if (Interlocked.Decrement(ref Countdown) == 0)
+            if (Interlocked.Decrement(ref countdown) == 0)
             {
                 // Time to swap
 
@@ -126,17 +119,24 @@ namespace Lucene.Net.Util
                 secondary.Clear();
 
                 // Second, swap
-                Swapped = !Swapped;
+                swapped = !swapped;
 
                 // Third, reset countdown
-                Interlocked.Exchange(ref Countdown, MaxSize);
+                Interlocked.Exchange(ref countdown, maxSize);
             }
         }
     }
 
-    // .NET Port: non-generic base class to hold nested type
+    /// <summary>
+    /// LUCENENET specific class to nest the <see cref="CloneableKey"/>
+    /// so it can be accessed without referencing the generic closing types
+    /// of <see cref="DoubleBarrelLRUCache{TKey, TValue}"/>.
+    /// </summary>
     public abstract class DoubleBarrelLRUCache
     {
+        /// <summary>
+        /// Object providing clone(); the key class must subclass this.
+        /// </summary>
         public abstract class CloneableKey
         {
             public abstract CloneableKey Clone();
