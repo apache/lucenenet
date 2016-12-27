@@ -1,9 +1,11 @@
-﻿using System.Threading;
+﻿// LUCENENET NOTE: The only class that depends on this is NamedThreadFactory, which is Java-specific, so this is being excluded.
 
-namespace Lucene.Net.Support
-{
-    public abstract class ThreadFactory // LUCENENET TODO: Since NamedThreadFactory (the only subclass) is Java-specific, we can eliminate this
-    {
-        public abstract Thread NewThread(IThreadRunnable r);
-    }
-}
+//using System.Threading;
+
+//namespace Lucene.Net.Support
+//{
+//    public abstract class ThreadFactory
+//    {
+//        public abstract Thread NewThread(IThreadRunnable r);
+//    }
+//}
