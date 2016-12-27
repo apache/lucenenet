@@ -26,8 +26,10 @@ namespace Lucene.Net.Util
     /// the same object returned as String.intern().
     /// 
     /// This StringInterner base class simply delegates to String.intern().
+    /// 
+    /// LUCENENET specific.
     /// </summary>
-    public class StringInterner
+    public class StringInterner // LUCENENET TODO: move to support namespace ?
     {
         /// <summary>Returns a single object instance for each equal string. </summary>
         public virtual System.String Intern(System.String s)

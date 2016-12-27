@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
                 this.Gen = gen;
             }
 
-            protected internal override void Release()
+            protected override void Release()
             {
                 @object.Dispose();
                 lock (OuterInstance)

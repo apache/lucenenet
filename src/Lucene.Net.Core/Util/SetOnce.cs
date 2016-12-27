@@ -33,6 +33,10 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// Thrown when <seealso cref="SetOnce#set(Object)"/> is called more than once. </summary>
+        // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public sealed class AlreadySetException : InvalidOperationException
         {
             public AlreadySetException()

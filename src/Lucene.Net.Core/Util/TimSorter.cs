@@ -53,7 +53,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Create a new <seealso cref="TimSorter"/>. </summary>
         /// <param name="maxTempSlots"> the <a href="#maxTempSlots">maximum amount of extra memory to run merges</a> </param>
-        protected internal TimSorter(int maxTempSlots)
+        protected TimSorter(int maxTempSlots)
             : base()
         {
             RunEnds = new int[1 + STACKSIZE];

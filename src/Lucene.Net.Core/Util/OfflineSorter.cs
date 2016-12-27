@@ -7,6 +7,7 @@ using Lucene.Net.Support.Compatibility;
 using System.Linq;
 using Lucene.Net.Support;
 using System.Text;
+using System.Globalization;
 
 namespace Lucene.Net.Util
 {
@@ -44,7 +45,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Convenience constant for megabytes </summary>
-        public const long MB = 1024 * 1024;
+        public static readonly long MB = 1024 * 1024;
         /// <summary>
         /// Convenience constant for gigabytes </summary>
         public static readonly long GB = MB * 1024;
@@ -52,18 +53,18 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Minimum recommended buffer size for sorting.
         /// </summary>
-        public const long MIN_BUFFER_SIZE_MB = 32;
+        public static readonly long MIN_BUFFER_SIZE_MB = 32;
 
         /// <summary>
         /// Absolute minimum required buffer size for sorting.
         /// </summary>
         public static readonly long ABSOLUTE_MIN_SORT_BUFFER_SIZE = MB / 2;
-        private const string MIN_BUFFER_SIZE_MSG = "At least 0.5MB RAM buffer is needed";
+        private static readonly string MIN_BUFFER_SIZE_MSG = "At least 0.5MB RAM buffer is needed";
 
         /// <summary>
         /// Maximum number of temporary files before doing an intermediate merge.
         /// </summary>
-        public const int MAX_TEMPFILES = 128;
+        public static readonly int MAX_TEMPFILES = 128;
 
         /// <summary>
         /// A bit more descriptive unit for constructors.
@@ -74,7 +75,7 @@ namespace Lucene.Net.Util
         {
             internal readonly int Bytes;
 
-            internal BufferSize(long bytes)
+            private BufferSize(long bytes)
             {
                 if (bytes > int.MaxValue)
                 {
@@ -118,7 +119,7 @@ namespace Lucene.Net.Util
 
                 // by free mem (attempting to not grow the heap for this)
                 long sortBufferByteSize = free / 2;
-                const long minBufferSizeBytes = MIN_BUFFER_SIZE_MB * MB;
+                long minBufferSizeBytes = MIN_BUFFER_SIZE_MB * MB;
                 if (sortBufferByteSize < minBufferSizeBytes || totalAvailableBytes > 10 * minBufferSizeBytes) // lets see if we need/should to grow the heap
                 {
                     if (totalAvailableBytes / 2 > minBufferSizeBytes) // there is enough mem for a reasonable buffer
@@ -149,28 +150,28 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// number of temporary files created when merging partitions </summary>
-            public int TempMergeFiles;
+            public int TempMergeFiles; // LUCENENET TODO: make property
             /// <summary>
             /// number of partition merges </summary>
-            public int MergeRounds;
+            public int MergeRounds; // LUCENENET TODO: make property
             /// <summary>
             /// number of lines of data read </summary>
-            public int Lines;
+            public int Lines; // LUCENENET TODO: make property
             /// <summary>
             /// time spent merging sorted partitions (in milliseconds) </summary>
-            public long MergeTime;
+            public long MergeTime; // LUCENENET TODO: make property
             /// <summary>
             /// time spent sorting data (in milliseconds) </summary>
-            public long SortTime;
+            public long SortTime; // LUCENENET TODO: make property
             /// <summary>
             /// total time spent (in milliseconds) </summary>
-            public long TotalTime;
+            public long TotalTime; // LUCENENET TODO: make property
             /// <summary>
             /// time spent in i/o read (in milliseconds) </summary>
-            public long ReadTime;
+            public long ReadTime; // LUCENENET TODO: make property
             /// <summary>
             /// read buffer size (in bytes) </summary>
-            public long BufferSize;
+            public long BufferSize; // LUCENENET TODO: make property
 
             /// <summary>
             /// create a new SortInfo (with empty statistics) for debugging </summary>
@@ -183,7 +184,11 @@ namespace Lucene.Net.Util
 
             public override string ToString()
             {
-                return string.Format("time={0:0.00} sec. total ({1:0.00} reading, {2:0.00} sorting, {3:0.00} merging), lines={4}, temp files={5}, merges={6}, soft ram limit={7:0.00} MB", TotalTime / 1000.0d, ReadTime / 1000.0d, SortTime / 1000.0d, MergeTime / 1000.0d, Lines, TempMergeFiles, MergeRounds, (double)BufferSize / MB);
+                return string.Format(CultureInfo.InvariantCulture, 
+                    "time={0:0.00} sec. total ({1:0.00} reading, {2:0.00} sorting, {3:0.00} merging), lines={4}, temp files={5}, merges={6}, soft ram limit={7:0.00} MB", 
+                    TotalTime / 1000.0d, ReadTime / 1000.0d, SortTime / 1000.0d, MergeTime / 1000.0d, 
+                    Lines, TempMergeFiles, MergeRounds, 
+                    (double)BufferSize / MB);
             }
         }
 
@@ -363,7 +368,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Sort a single partition in-memory. </summary>
-        internal FileInfo SortPartition(int len)
+        private FileInfo SortPartition(int len) // LUCENENET NOTE: made private, since protected is not valid in a sealed class
         {
             var data = this.Buffer;
             FileInfo tempFile = FileSupport.CreateTempFile("sort", "partition", DefaultTempDir());
@@ -487,8 +492,8 @@ namespace Lucene.Net.Util
 
         internal class FileAndTop
         {
-            internal readonly int Fd;
-            internal readonly BytesRef Current;
+            internal readonly int Fd; // LUCENENET TODO: make property
+            internal readonly BytesRef Current; // LUCENENET TODO: make property
 
             internal FileAndTop(int fd, byte[] firstLine)
             {
@@ -504,7 +509,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public class ByteSequencesWriter : IDisposable
         {
-            internal readonly DataOutput Os;
+            private readonly DataOutput Os;
 
             /// <summary>
             /// Constructs a ByteSequencesWriter to the provided File </summary>
@@ -589,7 +594,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public class ByteSequencesReader : IDisposable
         {
-            internal readonly DataInput inputStream;
+            private readonly DataInput inputStream;
 
             /// <summary>
             /// Constructs a ByteSequencesReader from the provided File </summary>
@@ -672,7 +677,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the comparator in use to sort entries </summary>
-        public IComparer<BytesRef> Comparator
+        public IComparer<BytesRef> Comparator // LUCENENET TODO: Rename Comparer ?
         {
             get
             {

@@ -29,7 +29,7 @@ namespace Lucene.Net.Util
         //private readonly AtomicInteger refCount = new AtomicInteger(1);
         private int refCount = 1;
 
-        protected internal readonly T @object;
+        protected internal readonly T @object; // LUCENENET TODO: rename m_
 
         public RefCount(T @object)
         {
@@ -41,7 +41,7 @@ namespace Lucene.Net.Util
         /// but extensions can override to e.g. release resources attached to object
         /// that is managed by this class.
         /// </summary>
-        protected internal virtual void Release()
+        protected virtual void Release()
         {
         }
 
@@ -82,7 +82,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the current reference count. </summary>
-        public int GetRefCount
+        public int GetRefCount // LUCENENET TODO: rename RefCount
         {
             get
             {

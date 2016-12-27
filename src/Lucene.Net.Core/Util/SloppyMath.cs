@@ -189,7 +189,7 @@ namespace Lucene.Net.Util
         // this value must be < (Integer.MAX_VALUE / SIN_COS_INDEXER), to stay in range of int type.
         // The higher it is, the higher the error, but also the faster it is for lower values.
         // If you set it to ((Integer.MAX_VALUE / SIN_COS_INDEXER) * 0.99), worse accuracy on double range is about 1e-10.
-        public static readonly double SIN_COS_MAX_VALUE_FOR_INT_MODULO = ((int.MaxValue >> 9) / SIN_COS_INDEXER) * 0.99;
+        internal static readonly double SIN_COS_MAX_VALUE_FOR_INT_MODULO = ((int.MaxValue >> 9) / SIN_COS_INDEXER) * 0.99;
 
         // Supposed to be >= sin(77.2deg), as fdlibm code is supposed to work with values > 0.975,
         // but seems to work well enough as long as value >= sin(25deg).

@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis
             public Positions()
                 : base(NewPosition) { }
 
-            protected internal override Position NewInstance()
+            protected override Position NewInstance()
             {
                 return NewPosition();
             }

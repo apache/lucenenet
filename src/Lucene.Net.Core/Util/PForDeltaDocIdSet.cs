@@ -354,7 +354,7 @@ namespace Lucene.Net.Util
                                 goto indexBreak;
                             }
                         }
-                    indexContinue: ;
+                    //indexContinue: ;
                     }
                 indexBreak:
                     docIDs.Freeze();

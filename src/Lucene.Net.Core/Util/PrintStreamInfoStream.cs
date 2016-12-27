@@ -32,9 +32,9 @@ namespace Lucene.Net.Util
         // Used for printing messages
         private static int MESSAGE_ID = 0;
 
-        protected internal readonly int MessageID;
+        protected readonly int MessageID; // LUCENENET TODO: rename m_
 
-        protected internal readonly TextWriter Stream;
+        protected readonly TextWriter Stream; // LUCENENET TODO: rename m_
 
         public PrintStreamInfoStream(TextWriter stream)
             : this(stream, Interlocked.Increment(ref MESSAGE_ID))
@@ -65,7 +65,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public virtual bool SystemStream
+        public virtual bool SystemStream // LUCENENET TODO: rename IsSystemStream
         {
             get
             {

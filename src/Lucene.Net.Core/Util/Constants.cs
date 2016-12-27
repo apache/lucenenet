@@ -180,7 +180,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static string MainVersionWithoutAlphaBeta()
         {
-            string[] parts = LUCENE_MAIN_VERSION.Split("\\.", true);
+            string[] parts = LUCENE_MAIN_VERSION.Split("\\.", true); // LUCENENET TODO: Use the Regex class and remove the superfluous StringHelperClass
             if (parts.Length == 4 && "0".Equals(parts[2]))
             {
                 return parts[0] + "." + parts[1];

@@ -10,7 +10,7 @@ namespace Lucene.Net.Util
     /// 
     /// LUCENENET specific
     /// </summary>
-    internal static class ReaderWriterExtension
+    internal static class ReaderWriterExtension // LUCENENET TODO: Rename (both the file and class) ReaderWriterLockSlimExtensions, move to Support namespace
     {
         sealed class ReadLockToken : IDisposable
         {

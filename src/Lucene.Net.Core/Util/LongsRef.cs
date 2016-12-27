@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
     ///
     ///  @lucene.internal
     /// </summary>
-    public sealed class LongsRef : IComparable<LongsRef>
+    public sealed class LongsRef : IComparable<LongsRef> // LUCENENET TODO: Rename Int64sRef ?
     {
         /// <summary>
         /// An empty long array for convenience </summary>
@@ -36,15 +36,15 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// The contents of the LongsRef. Should never be {@code null}. </summary>
-        public long[] Longs;
+        public long[] Longs; // LUCENENET TODO: Make property ?
 
         /// <summary>
         /// Offset of first valid long. </summary>
-        public int Offset;
+        public int Offset; // LUCENENET TODO: Make property
 
         /// <summary>
         /// Length of used longs. </summary>
-        public int Length;
+        public int Length; // LUCENENET TODO: Make property
 
         /// <summary>
         /// Create a LongsRef with <seealso cref="#EMPTY_LONGS"/> </summary>
@@ -227,7 +227,7 @@ namespace Lucene.Net.Util
         /// Performs internal consistency checks.
         /// Always returns true (or throws InvalidOperationException)
         /// </summary>
-        public bool Valid
+        public bool Valid // LUCENENET TODO: Change to IsValid() (throws exception)
         {
             get
             {

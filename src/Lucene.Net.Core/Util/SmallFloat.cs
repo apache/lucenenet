@@ -42,7 +42,7 @@ namespace Lucene.Net.Util
         /// <param name="numMantissaBits"> the number of mantissa bits to use in the byte, with the remainder to be used in the exponent </param>
         /// <param name="zeroExp"> the zero-point in the range of exponent values </param>
         /// <returns> the 8 bit float representation </returns>
-        public static sbyte FloatToByte(float f, int numMantissaBits, int zeroExp)
+        public static sbyte FloatToByte(float f, int numMantissaBits, int zeroExp) // LUCENENET TODO: rename SingleToByte ? can we remove the sbyte?
         {
             // Adjustment from a float zero exponent to our zero exponent,
             // shifted over to our exponent position.
@@ -65,7 +65,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Converts an 8 bit float to a 32 bit float. </summary>
-        public static float ByteToFloat(sbyte b, int numMantissaBits, int zeroExp)
+        public static float ByteToFloat(sbyte b, int numMantissaBits, int zeroExp) // LUCENENET TODO: rename ByteToSingle ? can we remove the sbyte?
         {
             // on Java1.5 & 1.6 JVMs, prebuilding a decoding array and doing a lookup
             // is only a little bit faster (anywhere from 0% to 7%)
@@ -90,7 +90,7 @@ namespace Lucene.Net.Util
         /// <br>largest value = 7.5161928E9
         /// <br>epsilon = 0.125
         /// </summary>
-        public static sbyte FloatToByte315(float f)
+        public static sbyte FloatToByte315(float f) // LUCENENET TODO: rename SingleToByte315 ? can we remove the sbyte?
         {
             int bits = BitConverter.ToInt32(BitConverter.GetBytes(f), 0);
             int smallfloat = bits >> (24 - 3);
@@ -107,7 +107,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// byteToFloat(b, mantissaBits=3, zeroExponent=15) </summary>
-        public static float Byte315ToFloat(sbyte b)
+        public static float Byte315ToFloat(sbyte b) // LUCENENET TODO: rename Byte315ToSingle ? can we remove the sbyte?
         {
             // on Java1.5 & 1.6 JVMs, prebuilding a decoding array and doing a lookup
             // is only a little bit faster (anywhere from 0% to 7%)
@@ -126,7 +126,7 @@ namespace Lucene.Net.Util
         /// <br>largest value = 1984.0
         /// <br>epsilon = 0.03125
         /// </summary>
-        public static sbyte FloatToByte52(float f)
+        public static sbyte FloatToByte52(float f) // LUCENENET TODO: rename SingleToByte52 ? can we remove the sbyte?
         {
             int bits = BitConverter.ToInt32(BitConverter.GetBytes(f), 0);
             int smallfloat = bits >> (24 - 5);
@@ -143,7 +143,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// byteToFloat(b, mantissaBits=5, zeroExponent=2) </summary>
-        public static float Byte52ToFloat(sbyte b)
+        public static float Byte52ToFloat(sbyte b) // LUCENENET TODO: rename Byte52ToSingle ? can we remove the sbyte?
         {
             // on Java1.5 & 1.6 JVMs, prebuilding a decoding array and doing a lookup
             // is only a little bit faster (anywhere from 0% to 7%)

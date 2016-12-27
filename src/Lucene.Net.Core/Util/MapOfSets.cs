@@ -23,7 +23,7 @@ namespace Lucene.Net.Util
     /// Helper class for keeping Lists of Objects associated with keys. <b>WARNING: this CLASS IS NOT THREAD SAFE</b>
     /// @lucene.internal
     /// </summary>
-    public class MapOfSets<K, V>
+    public class MapOfSets<K, V>// LUCENENET TODO: change to Key, Value
     {
         private readonly IDictionary<K, HashSet<V>> TheMap;
 

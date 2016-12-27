@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Text;
@@ -112,14 +113,14 @@ namespace Lucene.Net.Util
         public const int UNI_SUR_LOW_START = 0xDC00;
         public const int UNI_SUR_LOW_END = 0xDFFF;
         public const int UNI_REPLACEMENT_CHAR = 0xFFFD;
-        private const int MIN_SUPPLEMENTARY_CODE_POINT = 0x10000;
+        //private const int MIN_SUPPLEMENTARY_CODE_POINT = 0x10000;
 
         private const long UNI_MAX_BMP = 0x0000FFFF;
 
         private const long HALF_SHIFT = 10;
         private const long HALF_MASK = 0x3FFL;
 
-        private const int SURROGATE_OFFSET = MIN_SUPPLEMENTARY_CODE_POINT - (UNI_SUR_HIGH_START << (int) HALF_SHIFT) - UNI_SUR_LOW_START;
+        private const int SURROGATE_OFFSET = Character.MIN_SUPPLEMENTARY_CODE_POINT - (UNI_SUR_HIGH_START << (int) HALF_SHIFT) - UNI_SUR_LOW_START;
 
         /// <summary>
         /// Encode characters from a char[] source, starting at
@@ -312,7 +313,7 @@ namespace Lucene.Net.Util
         }
         */
 
-        public static bool ValidUTF16String(char[] s)
+        public static bool ValidUTF16String(char[] s) // LUCENENET TODO: Original accepted ICharSequence - we should have one overload for that and one for string
         {
             int size = s.Length;
             for (int i = 0; i < size; i++)
@@ -350,7 +351,7 @@ namespace Lucene.Net.Util
             return true;
         }
 
-        public static bool ValidUTF16String(char[] s, int size)
+        public static bool ValidUTF16String(char[] s, int size) // LUCENENET TODO: Original accepted ICharSequence - we should have one overload for that and one for string
         {
             for (int i = 0; i < size; i++)
             {
@@ -398,7 +399,24 @@ namespace Lucene.Net.Util
         static UnicodeUtil()
         {
             int v = int.MinValue;
-            Utf8CodeLength = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4 };
+            Utf8CodeLength = new int[] {
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v,
+                v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v,
+                v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v,
+                v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v,
+                2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+                2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+                3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+                4, 4, 4, 4, 4, 4, 4, 4
+            };
         }
 
         /// <summary>
@@ -543,7 +561,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Generates char array that represents the provided input code points
+        /// Generates char array that represents the provided input code points.
+        /// 
+        /// LUCENENET specific.
         /// </summary>
         /// <param name="codePoints"> The code array </param>
         /// <param name="offset"> The start of the text in the code point array </param>

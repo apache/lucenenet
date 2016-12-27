@@ -4,7 +4,7 @@
 //
 //	this class is used to replace most calls to the Java String.split method.
 //-------------------------------------------------------------------------------------------
-internal static class StringHelperClass
+internal static class StringHelperClass // LUCENENET TODO: Remove this class
 {
 	//------------------------------------------------------------------------------
 	//	this method is used to replace most calls to the Java String.split method.

@@ -878,6 +878,7 @@
     <Compile Include="Util\ToStringUtils.cs" />
     <Compile Include="Util\UnicodeUtil.cs" />
     <Compile Include="Util\LuceneVersion.cs" />
+    <Compile Include="Util\VirtualMethod.cs" />
     <Compile Include="Util\WAH8DocIdSet.cs" />
     <Compile Include="Util\WeakIdentityMap.cs" />
   </ItemGroup>

@@ -76,11 +76,10 @@ namespace Lucene.Net.Util
     /// </tr>
     /// </table>
     /// </summary>
-
     public class OpenBitSet : DocIdSet, Bits
     {
-        protected internal long[] bits;
-        protected internal int Wlen; // number of words (elements) used in the array
+        protected internal long[] bits; // LUCENENET TODO: rename m_
+        protected internal int Wlen; // number of words (elements) used in the array // LUCENENET TODO: rename m_
 
         // Used only for assert:
         private long NumBits;
@@ -130,7 +129,7 @@ namespace Lucene.Net.Util
             return new OpenBitSetIterator(bits, Wlen);
         }
 
-        public override Bits GetBits()
+        public override Bits GetBits() // LUCENENET TODO: This was Bits() in original - we have another (currently a property) below that if we fix should be named GetBits()
         {
             return this;
         }
@@ -145,6 +144,8 @@ namespace Lucene.Net.Util
             }
         }
 
+        // LUCENENET TODO: The following 3 members all return the exact same result. Try to consolidate.
+
         /// <summary>
         /// Returns the current capacity in bits (1 greater than the index of the last bit) </summary>
         public virtual long Capacity()
@@ -156,19 +157,19 @@ namespace Lucene.Net.Util
         /// Returns the current capacity of this set.  Included for
         /// compatibility.  this is *not* equal to <seealso cref="#cardinality"/>
         /// </summary>
-        public virtual long Size()
+        public virtual long Size() // LUCENENET TODO: make property, rename Count
         {
             return Capacity();
         }
 
-        public virtual int Length()
+        public virtual int Length() // LUCENENET TODO: make property
         {
             return bits.Length << 6;
         }
 
         /// <summary>
         /// Returns true if there are no set bits </summary>
-        public virtual bool Empty
+        public virtual bool Empty // LUCENENET TODO: rename IsEmpty (or invert and make Any() ?)
         {
             get
             {
@@ -178,7 +179,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Expert: returns the long[] storing the bits </summary>
-        public virtual long[] Bits
+        public virtual long[] Bits // LUCENENET TODO: change to GetBits() (array) - note the above GetBits() will need to be fixed
         {
             get
             {
@@ -357,7 +358,7 @@ namespace Lucene.Net.Util
             bits[endWord] |= endmask;
         }
 
-        protected internal virtual int ExpandingWordNum(long index)
+        protected virtual int ExpandingWordNum(long index)
         {
             int wordNum = (int)(index >> 6);
             if (wordNum >= Wlen)

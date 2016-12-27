@@ -79,7 +79,7 @@ namespace Lucene.Net.Util
         {
         }
 
-        public override byte[] ByteBlock
+        public override byte[] ByteBlock // LUCENENET TODO: change to GetByteBlock() (array, complexity, non-deterministic)
         {
             get
             {
@@ -119,19 +119,19 @@ namespace Lucene.Net.Util
         }
 
         /// <returns> the number of currently buffered blocks </returns>
-        public int NumBufferedBlocks()
+        public int NumBufferedBlocks() // LUCENENET TODO: make property
         {
             return FreeBlocks_Renamed;
         }
 
         /// <returns> the number of bytes currently allocated by this <seealso cref="Allocator"/> </returns>
-        public long BytesUsed()
+        public long BytesUsed() // LUCENENET TODO: make property ?
         {
             return BytesUsed_Renamed.Get();
         }
 
         /// <returns> the maximum number of buffered byte blocks </returns>
-        public int MaxBufferedBlocks()
+        public int MaxBufferedBlocks() // LUCENENET TODO: make property
         {
             return MaxBufferedBlocks_Renamed;
         }

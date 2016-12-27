@@ -115,7 +115,7 @@ namespace Lucene.Net.Util
 
         public void Reset()
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException();// LUCENENET TODO: change to NotSupportedException
         }
 
         public void Dispose()
@@ -263,9 +263,9 @@ namespace Lucene.Net.Util
         private class SubIterator<I>
             where I : IComparable<I>
         {
-            internal IEnumerator<I> Iterator;
-            internal I Current;
-            internal int Index;
+            internal IEnumerator<I> Iterator;// LUCENENET TODO: Make property
+            internal I Current;// LUCENENET TODO: Make property
+            internal int Index;// LUCENENET TODO: Make property
         }
 
         private class TermMergeQueue<C> : PriorityQueue<SubIterator<C>>

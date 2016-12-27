@@ -22,8 +22,9 @@
 // LZO.Net
 // $Id: LZOCompressor.cs,v 1.1 2004/02/22 17:44:04 laptop Exp $
 
-namespace Simplicit.Net.Lzo {
-	using System;
+namespace Simplicit.Net.Lzo // LUCENENET TODO: Remove this class ? (not used)
+{
+    using System;
 	using System.Diagnostics;
 	using System.Runtime.InteropServices;
 

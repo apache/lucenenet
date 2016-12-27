@@ -339,7 +339,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            internal virtual bool SequenceIsConsistent()
+            private bool SequenceIsConsistent()
             {
                 for (int i = 1; i < DirtyWords.Length; ++i)
                 {
@@ -513,8 +513,8 @@ namespace Lucene.Net.Util
         /// A builder for <seealso cref="WAH8DocIdSet"/>s. </summary>
         public sealed class Builder : WordBuilder
         {
-            internal int LastDocID;
-            internal int WordNum, Word;
+            private int LastDocID;
+            private int WordNum, Word;
 
             /// <summary>
             /// Sole constructor </summary>
@@ -636,7 +636,7 @@ namespace Lucene.Net.Util
             return len;
         }
 
-        public class Iterator : DocIdSetIterator
+        internal class Iterator : DocIdSetIterator
         {
             /* Using the index can be costly for close targets. */
 
@@ -904,7 +904,10 @@ namespace Lucene.Net.Util
         /// Return the memory usage of this class in bytes. </summary>
         public long RamBytesUsed()
         {
-            return RamUsageEstimator.AlignObjectSize(3 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 2 * RamUsageEstimator.NUM_BYTES_INT) + RamUsageEstimator.SizeOf(Data) + Positions.RamBytesUsed() + WordNums.RamBytesUsed();
+            return RamUsageEstimator.AlignObjectSize(3 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 2 * RamUsageEstimator.NUM_BYTES_INT) 
+                + RamUsageEstimator.SizeOf(Data) 
+                + Positions.RamBytesUsed() 
+                + WordNums.RamBytesUsed();
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
     /// yields the same semantics as the thread factory returned by
     /// <seealso cref="Executors#defaultThreadFactory()"/>.
     /// </summary>
-    public class NamedThreadFactory : ThreadFactory
+    public class NamedThreadFactory : ThreadFactory // LUCENENET TODO: Comment out this class (Java specific)
     {
         private static int ThreadPoolNumber = 1;
         private int ThreadNumber = 1;

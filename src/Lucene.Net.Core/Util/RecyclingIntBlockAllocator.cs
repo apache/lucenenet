@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
     /// </p>
     /// @lucene.internal
     /// </summary>
-    public sealed class RecyclingIntBlockAllocator : Allocator
+    public sealed class RecyclingIntBlockAllocator : Allocator // LUCENENET TODO: Rename RecyclingInt32BlockAllocator ?
     {
         private int[][] FreeByteBlocks;
         private readonly int MaxBufferedBlocks_Renamed;
@@ -79,7 +79,7 @@ namespace Lucene.Net.Util
         {
         }
 
-        public override int[] GetIntBlock()
+        public override int[] GetIntBlock() // LUCENENET TODO: Rename GetInt32Block() ?
         {
             if (FreeBlocks_Renamed == 0)
             {
@@ -91,7 +91,7 @@ namespace Lucene.Net.Util
             return b;
         }
 
-        public override void RecycleIntBlocks(int[][] blocks, int start, int end)
+        public override void RecycleIntBlocks(int[][] blocks, int start, int end) // LUCENENET TODO: Rename RecycleInt32Blocks ?
         {
             int numBlocks = Math.Min(MaxBufferedBlocks_Renamed - FreeBlocks_Renamed, end - start);
             int size = FreeBlocks_Renamed + numBlocks;
@@ -116,19 +116,19 @@ namespace Lucene.Net.Util
         }
 
         /// <returns> the number of currently buffered blocks </returns>
-        public int NumBufferedBlocks()
+        public int NumBufferedBlocks() // LUCENENET TODO: make property
         {
             return FreeBlocks_Renamed;
         }
 
         /// <returns> the number of bytes currently allocated by this <seealso cref="Allocator"/> </returns>
-        public long BytesUsed()
+        public long BytesUsed() // LUCENENET TODO: make property ?
         {
             return BytesUsed_Renamed.Get();
         }
 
         /// <returns> the maximum number of buffered byte blocks </returns>
-        public int MaxBufferedBlocks()
+        public int MaxBufferedBlocks() // LUCENENET TODO: make property
         {
             return MaxBufferedBlocks_Renamed;
         }

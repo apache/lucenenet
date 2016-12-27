@@ -61,11 +61,11 @@ namespace Lucene.Net.Util
         /// <seealso cref= #freeze  </seealso>
         public sealed class Reader
         {
-            internal readonly byte[][] Blocks;
-            internal readonly int[] BlockEnds;
-            internal readonly int BlockBits;
-            internal readonly int BlockMask;
-            internal readonly int BlockSize;
+            private readonly byte[][] Blocks;
+            private readonly int[] BlockEnds;
+            private readonly int BlockBits;
+            private readonly int BlockMask;
+            private readonly int BlockSize;
 
             internal Reader(PagedBytes pagedBytes)
             {
@@ -336,9 +336,9 @@ namespace Lucene.Net.Util
         {
             private readonly PagedBytes OuterInstance;
 
-            internal int CurrentBlockIndex;
-            internal int CurrentBlockUpto;
-            internal byte[] CurrentBlock;
+            private int CurrentBlockIndex;
+            private int CurrentBlockUpto;
+            private byte[] CurrentBlock;
 
             internal PagedBytesDataInput(PagedBytes outerInstance)
             {
@@ -361,7 +361,7 @@ namespace Lucene.Net.Util
                 {
                     return (long)CurrentBlockIndex * OuterInstance.BlockSize + CurrentBlockUpto;
                 }
-                set
+                set // LUCENENET TODO: Change to SetPosition(long position) (has side effect)
                 {
                     CurrentBlockIndex = (int)(value >> OuterInstance.BlockBits);
                     CurrentBlock = OuterInstance.Blocks[CurrentBlockIndex];
@@ -402,7 +402,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            internal void NextBlock()
+            private void NextBlock()
             {
                 CurrentBlockIndex++;
                 CurrentBlockUpto = 0;
@@ -492,7 +492,7 @@ namespace Lucene.Net.Util
         /// Returns a DataInput to read values from this
         ///  PagedBytes instance.
         /// </summary>
-        public PagedBytesDataInput DataInput
+        public PagedBytesDataInput DataInput // LUCENENET TODO: change to GetDataInput() (returns new instance)
         {
             get
             {
@@ -510,7 +510,7 @@ namespace Lucene.Net.Util
         ///  not call the other writing methods (eg, copy);
         ///  results are undefined.
         /// </summary>
-        public PagedBytesDataOutput DataOutput
+        public PagedBytesDataOutput DataOutput // LUCENENET TODO: change to GetDataOutput() (returns new instance)
         {
             get
             {

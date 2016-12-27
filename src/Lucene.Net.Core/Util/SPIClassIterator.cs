@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyModel;
 
 namespace Lucene.Net.Util
 {
-    //LUCENE TO-DO Whole file
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -35,7 +34,6 @@ namespace Lucene.Net.Util
     /// @lucene.internal
     /// </summary>
     ///
-
     public class SPIClassIterator<S> : IEnumerable<Type>
     {
         private static HashSet<Type> types;

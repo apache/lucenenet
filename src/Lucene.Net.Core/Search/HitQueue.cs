@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
         {
         }
 
-        protected internal override ScoreDoc SentinelObject
+        protected override ScoreDoc SentinelObject
         {
             get
             {

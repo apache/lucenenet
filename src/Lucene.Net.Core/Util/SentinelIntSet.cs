@@ -43,14 +43,14 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// A power-of-2 over-sized array holding the integers in the set along with empty values. </summary>
-        public int[] Keys;
+        public int[] Keys; // LUCENENET TODO: make property ?
 
-        public int Count;
-        public readonly int EmptyVal;
+        public int Count; // LUCENENET TODO: make property
+        public readonly int EmptyVal; // LUCENENET TODO: make property
 
         /// <summary>
         /// the count at which a rehash should be done </summary>
-        public int RehashCount;
+        public int RehashCount; // LUCENENET TODO: make property
 
         ///
         /// <param name="size">  The minimum number of elements this set should be able to hold without rehashing
@@ -90,7 +90,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// The number of integers in this set. </summary>
-        public virtual int Size()
+        public virtual int Size()  // LUCENENET TODO: make property, rename Count
         {
             return Count;
         }

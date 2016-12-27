@@ -49,7 +49,7 @@ namespace Lucene.Net.Support
         public const char MIN_HIGH_SURROGATE = '\uD800';
         public const char MAX_HIGH_SURROGATE = '\uDBFF';
 
-        public static int MIN_SUPPLEMENTARY_CODE_POINT = 0x010000;
+        public const int MIN_SUPPLEMENTARY_CODE_POINT = 0x010000;
 
         /// <summary>
         ///

@@ -192,7 +192,7 @@ namespace Lucene.Net.Util
         /// <param name="queryText"> text to be passed to the analysis chain </param>
         /// <param name="quoted"> true if phrases should be generated when terms occur at more than one position </param>
         /// <param name="phraseSlop"> slop factor for phrase/multiphrase queries </param>
-        protected internal Query CreateFieldQuery(Analyzer analyzer, Occur @operator, string field, string queryText, bool quoted, int phraseSlop)
+        protected Query CreateFieldQuery(Analyzer analyzer, Occur @operator, string field, string queryText, bool quoted, int phraseSlop)
         {
             Debug.Assert(@operator == Occur.SHOULD || @operator == Occur.MUST);
             // Use the analyzer to get all the tokens, and then build a TermQuery,
@@ -446,7 +446,7 @@ namespace Lucene.Net.Util
         /// this is intended for subclasses that wish to customize the generated queries. </summary>
         /// <param name="disableCoord"> disable coord </param>
         /// <returns> new BooleanQuery instance </returns>
-        protected internal virtual BooleanQuery NewBooleanQuery(bool disableCoord)
+        protected virtual BooleanQuery NewBooleanQuery(bool disableCoord)
         {
             return new BooleanQuery(disableCoord);
         }
@@ -457,7 +457,7 @@ namespace Lucene.Net.Util
         /// this is intended for subclasses that wish to customize the generated queries. </summary>
         /// <param name="term"> term </param>
         /// <returns> new TermQuery instance </returns>
-        protected internal virtual Query NewTermQuery(Term term)
+        protected virtual Query NewTermQuery(Term term)
         {
             return new TermQuery(term);
         }
@@ -467,7 +467,7 @@ namespace Lucene.Net.Util
         /// <p>
         /// this is intended for subclasses that wish to customize the generated queries. </summary>
         /// <returns> new PhraseQuery instance </returns>
-        protected internal virtual PhraseQuery NewPhraseQuery()
+        protected virtual PhraseQuery NewPhraseQuery()
         {
             return new PhraseQuery();
         }
@@ -477,7 +477,7 @@ namespace Lucene.Net.Util
         /// <p>
         /// this is intended for subclasses that wish to customize the generated queries. </summary>
         /// <returns> new MultiPhraseQuery instance </returns>
-        protected internal virtual MultiPhraseQuery NewMultiPhraseQuery()
+        protected virtual MultiPhraseQuery NewMultiPhraseQuery()
         {
             return new MultiPhraseQuery();
         }

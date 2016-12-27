@@ -63,7 +63,7 @@ namespace Lucene.Net.Util
     public sealed class WeakIdentityMap<K, V>
         where K : class
     {
-        // LUCENENET TODO Make this class internal as it isn't required anywhere; need to have it exposed to tests though
+        // LUCENENET TODO: Make this class internal as it isn't required anywhere; need to have it exposed to tests though
 
         //private readonly ReferenceQueue<object> queue = new ReferenceQueue<object>();
         private readonly IDictionary<IdentityWeakReference, V> BackingStore;
@@ -209,7 +209,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns {@code true} if this map contains no key-value mappings. </summary>
-        public bool Empty
+        public bool Empty // LUCENENET TODO: rename IsEmpty
         {
             get
             {
@@ -235,7 +235,7 @@ namespace Lucene.Net.Util
         /// and may not reflect unprocessed entries that will be removed before next
         /// attempted access because they are no longer referenced.
         /// </summary>
-        public int Size()
+        public int Size() // LUCENENET TODO: make property, rename Count
         {
             if (BackingStore.Count == 0)
             {
@@ -373,7 +373,7 @@ namespace Lucene.Net.Util
 
         private sealed class IdentityWeakReference : WeakReference
         {
-            internal readonly int Hash;
+            private readonly int Hash;
 
             internal IdentityWeakReference(object obj/*, ReferenceQueue<object> queue*/)
                 : base(obj == null ? NULL : obj/*, queue*/)

@@ -31,6 +31,7 @@ namespace Lucene.Net.Util
         /// <summary> Expert:
         /// The StringInterner implementation used by Lucene.
         /// This shouldn't be changed to an incompatible implementation after other Lucene APIs have been used.
+        /// LUCENENET specific.
         /// </summary>
         public static StringInterner interner = new SimpleStringInterner(1024, 8);
 
@@ -70,7 +71,7 @@ namespace Lucene.Net.Util
 
         /// <returns> a Comparator over versioned strings such as X.YY.Z
         /// @lucene.internal </returns>
-        public static IComparer<string> VersionComparator
+        public static IComparer<string> VersionComparator // LUCENENET TODO: rename VersionComparer ?
         {
             get
             {
@@ -201,7 +202,7 @@ namespace Lucene.Net.Util
                 if (good_fast_hash_seed == 0)
                 {
                     //LUCENE TO-DO No idea if this works
-                    var prop = AppSettings.Get("tests.seed", null);
+                    var prop = AppSettings.Get("tests.seed", null); // LUCNENET TODO: change to Environment.GetEnvironmentVariable ?
                     if (prop != null)
                     {
                         // So if there is a test failure that relied on hash

@@ -41,7 +41,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// One kilobyte bytes. </summary>
-        public const long ONE_KB = 1024;
+        public static readonly long ONE_KB = 1024;
 
         /// <summary>
         /// One megabyte bytes. </summary>
@@ -103,6 +103,7 @@ namespace Lucene.Net.Util
             PrimitiveSizes[typeof(float)] = Convert.ToInt32(NUM_BYTES_FLOAT);
             PrimitiveSizes[typeof(double)] = Convert.ToInt32(NUM_BYTES_DOUBLE);
             PrimitiveSizes[typeof(long)] = Convert.ToInt32(NUM_BYTES_LONG);
+
             // Initialize empirically measured defaults. We'll modify them to the current
             // JVM settings later on if possible.
             int referenceSize = Constants.JRE_IS_64BIT ? 8 : 4;
@@ -233,8 +234,8 @@ namespace Lucene.Net.Util
         /// </summary>
         private sealed class ClassCache
         {
-            public readonly long AlignedShallowInstanceSize;
-            public readonly FieldInfo[] ReferenceFields;
+            public readonly long AlignedShallowInstanceSize; // LUCENENET TODO: make property
+            public readonly FieldInfo[] ReferenceFields; // LUCENENET TODO: make property ?
 
             public ClassCache(long alignedShallowInstanceSize, FieldInfo[] referenceFields)
             {
@@ -267,7 +268,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the size in bytes of the byte[] object. </summary>
-        public static long SizeOf(sbyte[] arr)
+        public static long SizeOf(sbyte[] arr) // LUCENENET TODO: can we change to byte ? it doesn't use the values in the array anyway
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + arr.Length);
         }
@@ -652,23 +653,23 @@ namespace Lucene.Net.Util
             /// <summary>
             /// All of set entries. Always of power of two length.
             /// </summary>
-            public object[] Keys;
+            public object[] Keys; // LUCENENET TODO: make property
 
             /// <summary>
             /// Cached number of assigned slots.
             /// </summary>
-            public int Assigned;
+            public int Assigned; // LUCENENET TODO: make property
 
             /// <summary>
             /// The load factor for this set (fraction of allocated or deleted slots before
             /// the buffers must be rehashed or reallocated).
             /// </summary>
-            public readonly float LoadFactor;
+            public readonly float LoadFactor; // LUCENENET TODO: make property
 
             /// <summary>
             /// Cached capacity threshold at which we must resize the buffers.
             /// </summary>
-            internal int ResizeThreshold;
+            private int ResizeThreshold;
 
             /// <summary>
             /// Creates a hash set with the default capacity of 16.
@@ -756,7 +757,7 @@ namespace Lucene.Net.Util
             /// <code>MurmurHash3</code>.
             /// </summary>
             /// <seealso cref= "http://sites.google.com/site/murmurhash/" </seealso>
-            internal static int Rehash(object o)
+            private static int Rehash(object o)
             {
                 int k = RuntimeHelpers.GetHashCode(o);
                 k ^= (int)((uint)k >> 16);
@@ -771,7 +772,7 @@ namespace Lucene.Net.Util
             /// Expand the internal storage buffers (capacity) or rehash current keys and
             /// values if there are a lot of deleted slots.
             /// </summary>
-            internal void ExpandAndRehash()
+            private void ExpandAndRehash()
             {
                 object[] oldKeys = this.Keys;
 
@@ -803,7 +804,7 @@ namespace Lucene.Net.Util
             /// </summary>
             /// <param name="capacity">
             ///          New capacity (must be a power of two). </param>
-            internal void AllocateBuffers(int capacity)
+            private void AllocateBuffers(int capacity)
             {
                 this.Keys = new object[capacity];
                 this.ResizeThreshold = (int)(capacity * DEFAULT_LOAD_FACTOR);
@@ -812,7 +813,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Return the next possible capacity, counting from the current buffers' size.
             /// </summary>
-            internal int NextCapacity(int current)
+            private int NextCapacity(int current) // LUCENENET NOTE: made private, since protected is not valid in a sealed class
             {
                 Debug.Assert(current > 0 && ((current & (current - 1)) == 0), "Capacity must be a power of two.");
                 Debug.Assert((current << 1) > 0, "Maximum capacity exceeded (" + ((int)((uint)0x80000000 >> 1)) + ").");
@@ -827,7 +828,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Round the capacity to the next allowed value.
             /// </summary>
-            private int RoundCapacity(int requestedCapacity)
+            private int RoundCapacity(int requestedCapacity) // LUCENENET NOTE: made private, since protected is not valid in a sealed class
             {
                 // Maximum positive integer that is a power of two.
                 if (requestedCapacity > ((int)((uint)0x80000000 >> 1)))
@@ -850,12 +851,12 @@ namespace Lucene.Net.Util
                 Array.Clear(Keys, 0, Keys.Length);
             }
 
-            public int Size()
+            public int Size() // LUCENENET TODO: make property, rename Count
             {
                 return Assigned;
             }
 
-            public bool Empty
+            public bool Empty // LUCENENET TODO: remove (in .NET we can just use Any() on IEnumerable<T>)
             {
                 get
                 {

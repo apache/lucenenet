@@ -22,7 +22,7 @@ namespace Lucene.Net.Util
 
     public static class RollingBuffer
     {
-        public interface Resettable
+        public interface Resettable // LUCENENET TODO: rename with "I"
         {
             void Reset();
         }
@@ -49,7 +49,7 @@ namespace Lucene.Net.Util
         // array:
         private int Count;
 
-        protected RollingBuffer()
+        protected RollingBuffer() // LUCENENET TODO: Remove ? not used
         {
             for (var idx = 0; idx < Buffer.Length; idx++)
             {
@@ -65,7 +65,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        protected internal abstract T NewInstance();
+        protected abstract T NewInstance();
 
         public virtual void Reset()
         {

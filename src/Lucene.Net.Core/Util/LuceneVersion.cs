@@ -136,7 +136,7 @@ namespace Lucene.Net.Util
         /// may happen.  If backwards compatibility is important
         /// then you should instead explicitly specify an actual
         /// version.
-        /// <p>
+        /// <para/>
         /// If you use this constant then you  may need to
         /// <b>re-index all of your documents</b> when upgrading
         /// Lucene, as the way text is indexed may have changed.
@@ -149,8 +149,9 @@ namespace Lucene.Net.Util
         LUCENE_CURRENT
     }
 
-    public static class LuceneVersionHelpers
+    public static class LuceneVersionHelpers // LUCENENET TODO: rename Version ?
     {
+        // LUCENENET TODO: The simple Regex in the original in combination with Enum.Parse() would make this unnecessary
         private static readonly Dictionary<string, LuceneVersion> stringToEnum = new Dictionary<string, LuceneVersion>()
         {
             {"LUCENE_30", LuceneVersion.LUCENE_30},
@@ -172,6 +173,7 @@ namespace Lucene.Net.Util
             {"LUCENE_CURRENT", LuceneVersion.LUCENE_CURRENT}
         };
 
+        // LUCENENET TODO: The simple Regex in the original in combination with Enum.Parse() would make this unnecessary
         private static readonly Dictionary<string, LuceneVersion> longToEnum = new Dictionary<string, LuceneVersion>()
         {
             {"3.0", LuceneVersion.LUCENE_30},
@@ -200,7 +202,7 @@ namespace Lucene.Net.Util
 
         public static LuceneVersion ParseLeniently(string version)
         {
-            string upperVersionString = version.ToUpper();
+            string upperVersionString = version.ToUpper(); // LUCENENET TODO: culture
             LuceneVersion ret;
             if (stringToEnum.TryGetValue(upperVersionString, out ret))
             {

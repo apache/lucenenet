@@ -159,7 +159,7 @@ namespace Lucene.Net.Util
             {
             }
 
-            protected internal override int? SentinelObject
+            protected override int? SentinelObject
             {
                 get
                 {

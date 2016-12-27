@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
     ///
     /// @lucene.internal
     /// </summary>
-    public sealed class LongBitSet
+    public sealed class LongBitSet // LUCENENET TODO: Rename Int64BitSet ?
     {
         private readonly long[] bits;
         private readonly long NumBits;
@@ -94,14 +94,14 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the number of bits stored in this bitset. </summary>
-        public long Length()
+        public long Length() // LUCENENET TODO: Make property
         {
             return NumBits;
         }
 
         /// <summary>
         /// Expert. </summary>
-        public long[] Bits
+        public long[] Bits // LUCENENET TODO: Change to GetBits() (array)
         {
             get
             {

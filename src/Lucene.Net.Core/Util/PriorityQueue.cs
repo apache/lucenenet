@@ -33,7 +33,6 @@ namespace Lucene.Net.Util
     ///
     /// @lucene.internal
     /// </summary>
-   
     public abstract class PriorityQueue<T>
     {
         private int QueueSize = 0;
@@ -41,7 +40,7 @@ namespace Lucene.Net.Util
         private T[] Heap;
         private bool resizable;
 
-        public PriorityQueue()
+        public PriorityQueue() // LUCENENET TODO: Remove this constructor (and revert the rest of the implementation back to its original state)
             : this(8, false)
         {
             resizable = true;
@@ -155,7 +154,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <returns> the sentinel object to use to pre-populate the queue, or null if
         ///         sentinel objects are not supported. </returns>
-        protected internal virtual T SentinelObject // LUCENENET TODO: Change to GetSentinalObject() (returns new instance in some cases)
+        protected virtual T SentinelObject // LUCENENET TODO: Change to GetSentinalObject() (returns new instance in some cases)
         {
             get
             {
@@ -219,7 +218,7 @@ namespace Lucene.Net.Util
             // We don't need to check size here: if maxSize is 0,
             // then heap is length 2 array with both entries null.
             // If size is 0 then heap[1] is already null.
-            return Heap[1];
+            return Heap[1]; // LUCENENET TODO: add check to ensure there is a value so this doesn't throw an exception
         }
 
         /// <summary>
@@ -269,7 +268,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the number of elements currently stored in the PriorityQueue. </summary>
-        public int Size()
+        public int Size() // LUCENENET TODO: make property, rename Count
         {
             return QueueSize;
         }
@@ -285,14 +284,14 @@ namespace Lucene.Net.Util
             QueueSize = 0;
         }
 
-        public T[] ToArray()
+        public T[] ToArray() // LUCENENET TODO: Remove this method (after TopTermsRewrite is fixed)
         {
             T[] copy = new T[QueueSize];
             Array.Copy(Heap, 1, copy, 0, QueueSize);
             return copy;
         }
 
-        private void Resize()
+        private void Resize() // LUCENENET TODO: Remove this method
         {
             int newSize = Math.Min(ArrayUtil.MAX_ARRAY_LENGTH - 1, 2*MaxSize);
             T[] newHeap = new T[newSize + 1];
@@ -343,7 +342,7 @@ namespace Lucene.Net.Util
         /// this method returns the internal heap array as Object[].
         /// @lucene.internal
         /// </summary>
-        protected internal object[] HeapArray
+        protected internal object[] HeapArray // LUCENENET TODO: change to GetHeapArray() (array)
         {
             get
             {

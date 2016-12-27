@@ -29,7 +29,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Sole constructor, used for inheritance. </summary>
-        protected internal Sorter()
+        protected Sorter()
         {
         }
 
