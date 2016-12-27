@@ -40,25 +40,25 @@ namespace Lucene.Net.Util
     ///
     /// @lucene.internal
     /// </summary>
-    public sealed class BytesRefHash
+    public sealed class BytesRefHash : IDisposable // LUCENENET specific: Implemented IDisposable to enable usage of the using statement
     {
         public const int DEFAULT_CAPACITY = 16;
 
         // the following fields are needed by comparator,
         // so package private to prevent access$-methods:
-        internal readonly ByteBlockPool Pool;
+        internal readonly ByteBlockPool pool;
 
-        internal int[] BytesStart;
+        internal int[] bytesStart;
 
-        private readonly BytesRef Scratch1 = new BytesRef();
-        private int HashSize;
-        private int HashHalfSize;
-        private int HashMask;
-        private int Count;
-        private int LastCount = -1;
-        private int[] Ids;
+        private readonly BytesRef scratch1 = new BytesRef();
+        private int hashSize;
+        private int hashHalfSize;
+        private int hashMask;
+        private int count;
+        private int lastCount = -1;
+        private int[] ids;
         private readonly BytesStartArray bytesStartArray;
-        private Counter BytesUsed;
+        private Counter bytesUsed;
 
         /// <summary>
         /// Creates a new <seealso cref="BytesRefHash"/> with a <seealso cref="ByteBlockPool"/> using a
@@ -82,16 +82,16 @@ namespace Lucene.Net.Util
         /// </summary>
         public BytesRefHash(ByteBlockPool pool, int capacity, BytesStartArray bytesStartArray)
         {
-            HashSize = capacity;
-            HashHalfSize = HashSize >> 1;
-            HashMask = HashSize - 1;
-            this.Pool = pool;
-            Ids = new int[HashSize];
-            Arrays.Fill(Ids, -1);
+            hashSize = capacity;
+            hashHalfSize = hashSize >> 1;
+            hashMask = hashSize - 1;
+            this.pool = pool;
+            ids = new int[hashSize];
+            Arrays.Fill(ids, -1);
             this.bytesStartArray = bytesStartArray;
-            BytesStart = bytesStartArray.Init();
-            BytesUsed = bytesStartArray.BytesUsed() == null ? Counter.NewCounter() : bytesStartArray.BytesUsed();
-            BytesUsed.AddAndGet(HashSize * RamUsageEstimator.NUM_BYTES_INT);
+            bytesStart = bytesStartArray.Init();
+            bytesUsed = bytesStartArray.BytesUsed() == null ? Counter.NewCounter() : bytesStartArray.BytesUsed();
+            bytesUsed.AddAndGet(hashSize * RamUsageEstimator.NUM_BYTES_INT);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Lucene.Net.Util
         /// <returns> the number of <seealso cref="BytesRef"/> values in this <seealso cref="BytesRefHash"/>. </returns>
         public int Size // LUCENENET TODO: rename Count
         {
-            get { return Count; }
+            get { return count; }
         }
 
         /// <summary>
@@ -119,9 +119,9 @@ namespace Lucene.Net.Util
         ///         bytesID </returns>
         public BytesRef Get(int bytesID, BytesRef @ref)
         {
-            Debug.Assert(BytesStart != null, "bytesStart is null - not initialized");
-            Debug.Assert(bytesID < BytesStart.Length, "bytesID exceeds byteStart len: " + BytesStart.Length);
-            Pool.SetBytesRef(@ref, BytesStart[bytesID]);
+            Debug.Assert(bytesStart != null, "bytesStart is null - not initialized");
+            Debug.Assert(bytesID < bytesStart.Length, "bytesID exceeds byteStart len: " + bytesStart.Length);
+            pool.SetBytesRef(@ref, bytesStart[bytesID]);
             return @ref;
         }
 
@@ -135,24 +135,24 @@ namespace Lucene.Net.Util
         /// </summary>
         public int[] Compact()
         {
-            Debug.Assert(BytesStart != null, "bytesStart is null - not initialized");
+            Debug.Assert(bytesStart != null, "bytesStart is null - not initialized");
             int upto = 0;
-            for (int i = 0; i < HashSize; i++)
+            for (int i = 0; i < hashSize; i++)
             {
-                if (Ids[i] != -1)
+                if (ids[i] != -1)
                 {
                     if (upto < i)
                     {
-                        Ids[upto] = Ids[i];
-                        Ids[i] = -1;
+                        ids[upto] = ids[i];
+                        ids[i] = -1;
                     }
                     upto++;
                 }
             }
 
-            Debug.Assert(upto == Count);
-            LastCount = Count;
-            return Ids;
+            Debug.Assert(upto == count);
+            lastCount = count;
+            return ids;
         }
 
         /// <summary>
@@ -167,83 +167,83 @@ namespace Lucene.Net.Util
         public int[] Sort(IComparer<BytesRef> comp)
         {
             int[] compact = Compact();
-            new IntroSorterAnonymousInnerClassHelper(this, comp, compact).Sort(0, Count);
+            new IntroSorterAnonymousInnerClassHelper(this, comp, compact).Sort(0, count);
             return compact;
         }
 
         private class IntroSorterAnonymousInnerClassHelper : IntroSorter
         {
-            private BytesRefHash OuterInstance;
+            private BytesRefHash outerInstance;
 
-            private IComparer<BytesRef> Comp;
-            private int[] Compact;
+            private IComparer<BytesRef> comp;
+            private int[] compact;
             private readonly BytesRef pivot = new BytesRef(), scratch1 = new BytesRef(), scratch2 = new BytesRef();
 
             public IntroSorterAnonymousInnerClassHelper(BytesRefHash outerInstance, IComparer<BytesRef> comp, int[] compact)
             {
-                this.OuterInstance = outerInstance;
-                this.Comp = comp;
-                this.Compact = compact;
+                this.outerInstance = outerInstance;
+                this.comp = comp;
+                this.compact = compact;
             }
 
             protected override void Swap(int i, int j)
             {
-                int o = Compact[i];
-                Compact[i] = Compact[j];
-                Compact[j] = o;
+                int o = compact[i];
+                compact[i] = compact[j];
+                compact[j] = o;
             }
 
             protected override int Compare(int i, int j)
             {
-                int id1 = Compact[i], id2 = Compact[j];
-                Debug.Assert(OuterInstance.BytesStart.Length > id1 && OuterInstance.BytesStart.Length > id2);
-                OuterInstance.Pool.SetBytesRef(OuterInstance.Scratch1, OuterInstance.BytesStart[id1]);
-                OuterInstance.Pool.SetBytesRef(scratch2, OuterInstance.BytesStart[id2]);
-                return Comp.Compare(OuterInstance.Scratch1, scratch2);
+                int id1 = compact[i], id2 = compact[j];
+                Debug.Assert(outerInstance.bytesStart.Length > id1 && outerInstance.bytesStart.Length > id2);
+                outerInstance.pool.SetBytesRef(outerInstance.scratch1, outerInstance.bytesStart[id1]);
+                outerInstance.pool.SetBytesRef(scratch2, outerInstance.bytesStart[id2]);
+                return comp.Compare(outerInstance.scratch1, scratch2);
             }
 
             protected override int Pivot
             {
                 set
                 {
-                    int id = Compact[value];
-                    Debug.Assert(OuterInstance.BytesStart.Length > id);
-                    OuterInstance.Pool.SetBytesRef(pivot, OuterInstance.BytesStart[id]);
+                    int id = compact[value];
+                    Debug.Assert(outerInstance.bytesStart.Length > id);
+                    outerInstance.pool.SetBytesRef(pivot, outerInstance.bytesStart[id]);
                 }
             }
 
             protected override int ComparePivot(int j)
             {
-                int id = Compact[j];
-                Debug.Assert(OuterInstance.BytesStart.Length > id);
-                OuterInstance.Pool.SetBytesRef(scratch2, OuterInstance.BytesStart[id]);
-                return Comp.Compare(pivot, scratch2);
+                int id = compact[j];
+                Debug.Assert(outerInstance.bytesStart.Length > id);
+                outerInstance.pool.SetBytesRef(scratch2, outerInstance.bytesStart[id]);
+                return comp.Compare(pivot, scratch2);
             }
         }
 
         private bool Equals(int id, BytesRef b)
         {
-            Pool.SetBytesRef(Scratch1, BytesStart[id]);
-            return Scratch1.BytesEquals(b);
+            pool.SetBytesRef(scratch1, bytesStart[id]);
+            return scratch1.BytesEquals(b);
         }
 
         private bool Shrink(int targetSize)
         {
             // Cannot use ArrayUtil.shrink because we require power
             // of 2:
-            int newSize = HashSize;
+            int newSize = hashSize;
             while (newSize >= 8 && newSize / 4 > targetSize)
             {
                 newSize /= 2;
             }
-            if (newSize != HashSize)
+            if (newSize != hashSize)
             {
-                BytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * -(HashSize - newSize));
-                HashSize = newSize;
-                Ids = new int[HashSize];
-                Arrays.Fill(Ids, -1);
-                HashHalfSize = newSize / 2;
-                HashMask = newSize - 1;
+                bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * -(hashSize - newSize));
+                hashSize = newSize;
+                ids = new int[hashSize];
+                Arrays.Fill(ids, -1);
+                hashHalfSize = newSize / 2;
+                hashMask = newSize - 1;
                 return true;
             }
             else
@@ -257,19 +257,19 @@ namespace Lucene.Net.Util
         /// </summary>
         public void Clear(bool resetPool)
         {
-            LastCount = Count;
-            Count = 0;
+            lastCount = count;
+            count = 0;
             if (resetPool)
             {
-                Pool.Reset(false, false); // we don't need to 0-fill the buffers
+                pool.Reset(false, false); // we don't need to 0-fill the buffers
             }
-            BytesStart = bytesStartArray.Clear();
-            if (LastCount != -1 && Shrink(LastCount))
+            bytesStart = bytesStartArray.Clear();
+            if (lastCount != -1 && Shrink(lastCount))
             {
                 // shrink clears the hash entries
                 return;
             }
-            Arrays.Fill(Ids, -1);
+            Arrays.Fill(ids, -1);
         }
 
         public void Clear()
@@ -280,11 +280,11 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Closes the BytesRefHash and releases all internally used memory
         /// </summary>
-        public void Close() // LUCENENET TODO: Change to Dispose()
+        public void Dispose()
         {
             Clear(true);
-            Ids = null;
-            BytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * -HashSize);
+            ids = null;
+            bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * -hashSize);
         }
 
         /// <summary>
@@ -302,34 +302,34 @@ namespace Lucene.Net.Util
         ///           <seealso cref="ByteBlockPool#BYTE_BLOCK_SIZE"/> </exception>
         public int Add(BytesRef bytes)
         {
-            Debug.Assert(BytesStart != null, "Bytesstart is null - not initialized");
+            Debug.Assert(bytesStart != null, "Bytesstart is null - not initialized");
             int length = bytes.Length;
             // final position
             int hashPos = FindHash(bytes);
-            int e = Ids[hashPos];
+            int e = ids[hashPos];
 
             if (e == -1)
             {
                 // new entry
                 int len2 = 2 + bytes.Length;
-                if (len2 + Pool.ByteUpto > ByteBlockPool.BYTE_BLOCK_SIZE)
+                if (len2 + pool.ByteUpto > ByteBlockPool.BYTE_BLOCK_SIZE)
                 {
                     if (len2 > ByteBlockPool.BYTE_BLOCK_SIZE)
                     {
                         throw new MaxBytesLengthExceededException("bytes can be at most " + (ByteBlockPool.BYTE_BLOCK_SIZE - 2) + " in length; got " + bytes.Length);
                     }
-                    Pool.NextBuffer();
+                    pool.NextBuffer();
                 }
-                var buffer = Pool.Buffer;
-                int bufferUpto = Pool.ByteUpto;
-                if (Count >= BytesStart.Length)
+                var buffer = pool.Buffer;
+                int bufferUpto = pool.ByteUpto;
+                if (count >= bytesStart.Length)
                 {
-                    BytesStart = bytesStartArray.Grow();
-                    Debug.Assert(Count < BytesStart.Length + 1, "count: " + Count + " len: " + BytesStart.Length);
+                    bytesStart = bytesStartArray.Grow();
+                    Debug.Assert(count < bytesStart.Length + 1, "count: " + count + " len: " + bytesStart.Length);
                 }
-                e = Count++;
+                e = count++;
 
-                BytesStart[e] = bufferUpto + Pool.ByteOffset;
+                bytesStart[e] = bufferUpto + pool.ByteOffset;
 
                 // We first encode the length, followed by the
                 // bytes. Length is encoded as vInt, but will consume
@@ -339,7 +339,7 @@ namespace Lucene.Net.Util
                 {
                     // 1 byte to store length
                     buffer[bufferUpto] = (byte)length;
-                    Pool.ByteUpto += length + 1;
+                    pool.ByteUpto += length + 1;
                     Debug.Assert(length >= 0, "Length must be positive: " + length);
                     System.Buffer.BlockCopy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 1, length);
                 }
@@ -348,15 +348,15 @@ namespace Lucene.Net.Util
                     // 2 byte to store length
                     buffer[bufferUpto] = unchecked((byte)(0x80 | (length & 0x7f)));
                     buffer[bufferUpto + 1] = unchecked((byte)((length >> 7) & 0xff));
-                    Pool.ByteUpto += length + 2;
+                    pool.ByteUpto += length + 2;
                     System.Buffer.BlockCopy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 2, length);
                 }
-                Debug.Assert(Ids[hashPos] == -1);
-                Ids[hashPos] = e;
+                Debug.Assert(ids[hashPos] == -1);
+                ids[hashPos] = e;
 
-                if (Count == HashHalfSize)
+                if (count == hashHalfSize)
                 {
-                    Rehash(2 * HashSize, true);
+                    Rehash(2 * hashSize, true);
                 }
                 return e;
             }
@@ -373,18 +373,18 @@ namespace Lucene.Net.Util
         ///         given bytes. </returns>
         public int Find(BytesRef bytes)
         {
-            return Ids[FindHash(bytes)];
+            return ids[FindHash(bytes)];
         }
 
         private int FindHash(BytesRef bytes)
         {
-            Debug.Assert(BytesStart != null, "bytesStart is null - not initialized");
+            Debug.Assert(bytesStart != null, "bytesStart is null - not initialized");
 
             int code = DoHash(bytes.Bytes, bytes.Offset, bytes.Length);
 
             // final position
-            int hashPos = code & HashMask;
-            int e = Ids[hashPos];
+            int hashPos = code & hashMask;
+            int e = ids[hashPos];
             if (e != -1 && !Equals(e, bytes))
             {
                 // Conflict; use linear probe to find an open slot
@@ -392,8 +392,8 @@ namespace Lucene.Net.Util
                 do
                 {
                     code++;
-                    hashPos = code & HashMask;
-                    e = Ids[hashPos];
+                    hashPos = code & hashMask;
+                    e = ids[hashPos];
                 } while (e != -1 && !Equals(e, bytes));
             }
 
@@ -410,38 +410,38 @@ namespace Lucene.Net.Util
         /// </summary>
         public int AddByPoolOffset(int offset)
         {
-            Debug.Assert(BytesStart != null, "Bytesstart is null - not initialized");
+            Debug.Assert(bytesStart != null, "Bytesstart is null - not initialized");
             // final position
             int code = offset;
-            int hashPos = offset & HashMask;
-            int e = Ids[hashPos];
-            if (e != -1 && BytesStart[e] != offset)
+            int hashPos = offset & hashMask;
+            int e = ids[hashPos];
+            if (e != -1 && bytesStart[e] != offset)
             {
                 // Conflict; use linear probe to find an open slot
                 // (see LUCENE-5604):
                 do
                 {
                     code++;
-                    hashPos = code & HashMask;
-                    e = Ids[hashPos];
-                } while (e != -1 && BytesStart[e] != offset);
+                    hashPos = code & hashMask;
+                    e = ids[hashPos];
+                } while (e != -1 && bytesStart[e] != offset);
             }
             if (e == -1)
             {
                 // new entry
-                if (Count >= BytesStart.Length)
+                if (count >= bytesStart.Length)
                 {
-                    BytesStart = bytesStartArray.Grow();
-                    Debug.Assert(Count < BytesStart.Length + 1, "count: " + Count + " len: " + BytesStart.Length);
+                    bytesStart = bytesStartArray.Grow();
+                    Debug.Assert(count < bytesStart.Length + 1, "count: " + count + " len: " + bytesStart.Length);
                 }
-                e = Count++;
-                BytesStart[e] = offset;
-                Debug.Assert(Ids[hashPos] == -1);
-                Ids[hashPos] = e;
+                e = count++;
+                bytesStart[e] = offset;
+                Debug.Assert(ids[hashPos] == -1);
+                ids[hashPos] = e;
 
-                if (Count == HashHalfSize)
+                if (count == hashHalfSize)
                 {
-                    Rehash(2 * HashSize, false);
+                    Rehash(2 * hashSize, false);
                 }
                 return e;
             }
@@ -455,20 +455,20 @@ namespace Lucene.Net.Util
         private void Rehash(int newSize, bool hashOnData)
         {
             int newMask = newSize - 1;
-            BytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * (newSize));
+            bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * (newSize));
             int[] newHash = new int[newSize];
             Arrays.Fill(newHash, -1);
-            for (int i = 0; i < HashSize; i++)
+            for (int i = 0; i < hashSize; i++)
             {
-                int e0 = Ids[i];
+                int e0 = ids[i];
                 if (e0 != -1)
                 {
                     int code;
                     if (hashOnData)
                     {
-                        int off = BytesStart[e0];
+                        int off = bytesStart[e0];
                         int start = off & ByteBlockPool.BYTE_BLOCK_MASK;
-                        var bytes = Pool.buffers[off >> ByteBlockPool.BYTE_BLOCK_SHIFT];
+                        var bytes = pool.buffers[off >> ByteBlockPool.BYTE_BLOCK_SHIFT];
                         int len;
                         int pos;
                         if ((bytes[start] & 0x80) == 0)
@@ -486,7 +486,7 @@ namespace Lucene.Net.Util
                     }
                     else
                     {
-                        code = BytesStart[e0];
+                        code = bytesStart[e0];
                     }
 
                     int hashPos = code & newMask;
@@ -505,11 +505,11 @@ namespace Lucene.Net.Util
                 }
             }
 
-            HashMask = newMask;
-            BytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * (-Ids.Length));
-            Ids = newHash;
-            HashSize = newSize;
-            HashHalfSize = newSize / 2;
+            hashMask = newMask;
+            bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * (-ids.Length));
+            ids = newHash;
+            hashSize = newSize;
+            hashHalfSize = newSize / 2;
         }
 
         // TODO: maybe use long?  But our keys are typically short...
@@ -525,15 +525,15 @@ namespace Lucene.Net.Util
         /// </summary>
         public void Reinit()
         {
-            if (BytesStart == null)
+            if (bytesStart == null)
             {
-                BytesStart = bytesStartArray.Init();
+                bytesStart = bytesStartArray.Init();
             }
 
-            if (Ids == null)
+            if (ids == null)
             {
-                Ids = new int[HashSize];
-                BytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * HashSize);
+                ids = new int[hashSize];
+                bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * hashSize);
             }
         }
 
@@ -547,9 +547,9 @@ namespace Lucene.Net.Util
         ///         <seealso cref="ByteBlockPool"/> for the given id </returns>
         public int ByteStart(int bytesID)
         {
-            Debug.Assert(BytesStart != null, "bytesStart is null - not initialized");
-            Debug.Assert(bytesID >= 0 && bytesID < Count, bytesID.ToString());
-            return BytesStart[bytesID];
+            Debug.Assert(bytesStart != null, "bytesStart is null - not initialized");
+            Debug.Assert(bytesID >= 0 && bytesID < count, bytesID.ToString());
+            return bytesStart[bytesID];
         }
 
         /// <summary>
@@ -611,14 +611,14 @@ namespace Lucene.Net.Util
             // TrackingDirectBytesStartArray...?  Just add a ctor
             // that makes a private bytesUsed?
 
-            protected readonly int InitSize; // LUCENENET TODO: rename m_
-            internal int[] BytesStart;
-            internal readonly Counter BytesUsed_Renamed;
+            protected readonly int m_initSize;
+            internal int[] bytesStart;
+            internal readonly Counter bytesUsed;
 
             public DirectBytesStartArray(int initSize, Counter counter)
             {
-                this.BytesUsed_Renamed = counter;
-                this.InitSize = initSize;
+                this.bytesUsed = counter;
+                this.m_initSize = initSize;
             }
 
             public DirectBytesStartArray(int initSize)
@@ -628,23 +628,23 @@ namespace Lucene.Net.Util
 
             public override int[] Clear()
             {
-                return BytesStart = null;
+                return bytesStart = null;
             }
 
             public override int[] Grow()
             {
-                Debug.Assert(BytesStart != null);
-                return BytesStart = ArrayUtil.Grow(BytesStart, BytesStart.Length + 1);
+                Debug.Assert(bytesStart != null);
+                return bytesStart = ArrayUtil.Grow(bytesStart, bytesStart.Length + 1);
             }
 
             public override int[] Init()
             {
-                return BytesStart = new int[ArrayUtil.Oversize(InitSize, RamUsageEstimator.NUM_BYTES_INT)];
+                return bytesStart = new int[ArrayUtil.Oversize(m_initSize, RamUsageEstimator.NUM_BYTES_INT)];
             }
 
             public override Counter BytesUsed()
             {
-                return BytesUsed_Renamed;
+                return bytesUsed;
             }
         }
     }
