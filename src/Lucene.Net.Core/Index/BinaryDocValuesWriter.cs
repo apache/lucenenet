@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
         {
             this.FieldInfo = fieldInfo;
             this.Bytes = new PagedBytes(BLOCK_BITS);
-            this.BytesOut = Bytes.DataOutput;
+            this.BytesOut = Bytes.GetDataOutput();
             this.Lengths = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
             this.IwBytesUsed = iwBytesUsed;
             this.DocsWithField = new FixedBitSet(64);
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
 
             AppendingDeltaPackedLongBuffer.Iterator lengthsIterator = Lengths.GetIterator();
             int size = (int)Lengths.Size();
-            DataInput bytesIterator = Bytes.DataInput;
+            DataInput bytesIterator = Bytes.GetDataInput();
             int maxDoc = maxDocParam;
             int upto = 0;
 

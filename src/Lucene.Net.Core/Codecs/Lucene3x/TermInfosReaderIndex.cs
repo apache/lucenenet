@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // this is only an inital size, it will be GCed once the build is complete
             long initialSize = (long)(tiiFileLength * 1.5) / indexDivisor;
             PagedBytes dataPagedBytes = new PagedBytes(EstimatePageBits(initialSize));
-            PagedBytesDataOutput dataOutput = dataPagedBytes.DataOutput;
+            PagedBytesDataOutput dataOutput = dataPagedBytes.GetDataOutput();
 
             int bitEstimate = 1 + MathUtil.Log(tiiFileLength, 2);
             GrowableWriter indexToTerms = new GrowableWriter(bitEstimate, IndexSize, PackedInts.DEFAULT);
@@ -115,7 +115,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
 
             dataPagedBytes.Freeze(true);
-            DataInput = dataPagedBytes.DataInput;
+            DataInput = dataPagedBytes.GetDataInput();
             IndexToDataOffset = indexToTerms.Mutable;
 
             RamBytesUsed_Renamed = Fields.Length * (RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.ShallowSizeOfInstance(typeof(Term))) + dataPagedBytes.RamBytesUsed() + IndexToDataOffset.RamBytesUsed();
@@ -130,7 +130,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             PagedBytesDataInput input = (PagedBytesDataInput)DataInput.Clone();
 
-            input.Position = IndexToDataOffset.Get(indexOffset);
+            input.SetPosition(IndexToDataOffset.Get(indexOffset));
 
             // read the term
             int fieldId = input.ReadVInt();
@@ -199,7 +199,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         internal virtual Term GetTerm(int termIndex)
         {
             PagedBytesDataInput input = (PagedBytesDataInput)DataInput.Clone();
-            input.Position = IndexToDataOffset.Get(termIndex);
+            input.SetPosition(IndexToDataOffset.Get(termIndex));
 
             // read the term
             int fieldId = input.ReadVInt();
@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         private int CompareField(Term term, int termIndex, PagedBytesDataInput input)
         {
-            input.Position = IndexToDataOffset.Get(termIndex);
+            input.SetPosition(IndexToDataOffset.Get(termIndex));
             return System.String.Compare(term.Field, Fields[input.ReadVInt()].Field, System.StringComparison.Ordinal);
         }
 

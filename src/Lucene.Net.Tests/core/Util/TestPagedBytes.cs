@@ -123,7 +123,7 @@ namespace Lucene.Net.Util
                 int blockBits = TestUtil.NextInt(random, 1, 20);
                 int blockSize = 1 << blockBits;
                 PagedBytes p = new PagedBytes(blockBits);
-                DataOutput @out = p.DataOutput;
+                DataOutput @out = p.GetDataOutput();
                 int numBytes = Random().Next(10000000);
 
                 byte[] answer = new byte[numBytes];
@@ -145,7 +145,7 @@ namespace Lucene.Net.Util
 
                 PagedBytes.Reader reader = p.Freeze(random.NextBoolean());
 
-                DataInput @in = p.DataInput;
+                DataInput @in = p.GetDataInput();
 
                 byte[] verify = new byte[numBytes];
                 int read = 0;
