@@ -652,6 +652,7 @@
     <Compile Include="Support\NumberFormat.cs" />
     <Compile Include="Support\ObjectExtensions.cs" />
     <Compile Include="Support\PriorityQueue.cs" />
+    <Compile Include="Support\ReaderWriterLockSlimExtensions.cs" />
     <Compile Include="Support\ReentrantLock.cs" />
     <Compile Include="Support\SetExtensions.cs" />
     <Compile Include="Support\StreamUtils.cs" />
@@ -860,7 +861,6 @@
     <Compile Include="Util\PriorityQueue.cs" />
     <Compile Include="Util\QueryBuilder.cs" />
     <Compile Include="Util\RamUsageEstimator.cs" />
-    <Compile Include="Util\ReaderWriterLockSlimExtension.cs" />
     <Compile Include="Util\RecyclingByteBlockAllocator.cs" />
     <Compile Include="Util\RecyclingIntBlockAllocator.cs" />
     <Compile Include="Util\RefCount.cs" />

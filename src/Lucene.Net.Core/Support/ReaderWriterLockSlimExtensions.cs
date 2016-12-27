@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Lucene.Net.Util
+namespace Lucene.Net.Support
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
     /// 
     /// LUCENENET specific
     /// </summary>
-    internal static class ReaderWriterExtension // LUCENENET TODO: Rename (both the file and class) ReaderWriterLockSlimExtensions, move to Support namespace
+    internal static class ReaderWriterLockSlimExtensions
     {
         sealed class ReadLockToken : IDisposable
         {
