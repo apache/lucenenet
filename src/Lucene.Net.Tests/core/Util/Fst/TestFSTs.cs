@@ -1313,7 +1313,7 @@ namespace Lucene.Net.Util.Fst
                 if (FST<object>.TargetHasArcs(arc))
                 {
                     int childCount = 0;
-                    BytesReader fstReader = fst.BytesReader;
+                    BytesReader fstReader = fst.GetBytesReader();
                     for (arc = fst.ReadFirstTargetArc(arc, arc, fstReader); ;
                         arc = fst.ReadNextArc(arc, fstReader), childCount++)
                     {
@@ -1436,12 +1436,12 @@ namespace Lucene.Net.Util.Fst
             Assert.AreEqual(nothing, startArc.Output);
             Assert.AreEqual(nothing, startArc.NextFinalOutput);
 
-            FST.Arc<long?> arc = fst.ReadFirstTargetArc(startArc, new FST.Arc<long?>(), fst.BytesReader);
+            FST.Arc<long?> arc = fst.ReadFirstTargetArc(startArc, new FST.Arc<long?>(), fst.GetBytesReader());
             Assert.AreEqual('a', arc.Label);
             Assert.AreEqual(17, arc.NextFinalOutput);
             Assert.IsTrue(arc.IsFinal);
 
-            arc = fst.ReadNextArc(arc, fst.BytesReader);
+            arc = fst.ReadNextArc(arc, fst.GetBytesReader());
             Assert.AreEqual('b', arc.Label);
             Assert.IsFalse(arc.IsFinal);
             Assert.AreEqual(42, arc.Output);
@@ -1667,7 +1667,7 @@ namespace Lucene.Net.Util.Fst
             //Util.toDot(fst, w, false, false);
             //w.Dispose();
 
-            BytesReader reader = fst.BytesReader;
+            BytesReader reader = fst.GetBytesReader();
 
             //System.out.println("testing: " + allPrefixes.Size() + " prefixes");
             foreach (string prefix in allPrefixes)
@@ -1810,7 +1810,7 @@ namespace Lucene.Net.Util.Fst
             //Util.toDot(fst, w, false, false);
             //w.Dispose();
 
-            BytesReader reader = fst.BytesReader;
+            BytesReader reader = fst.GetBytesReader();
 
             //System.out.println("testing: " + allPrefixes.Size() + " prefixes");
             foreach (string prefix in allPrefixes)

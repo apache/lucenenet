@@ -172,7 +172,7 @@ namespace Lucene.Net.Util.Fst
             fst = new FST<T>(inputType, outputs, doPackFST, acceptableOverheadRatio, allowArrayArcs, bytesPageBits);
             if (doShareSuffix)
             {
-                dedupHash = new NodeHash<T>(fst, fst.Bytes.GetReverseReader(false));
+                dedupHash = new NodeHash<T>(fst, fst.bytes.GetReverseReader(false));
             }
             else
             {

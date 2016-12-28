@@ -643,7 +643,7 @@ namespace Lucene.Net.Codecs.Memory
                     //if (TEST) System.out.println("Enum init, startTerm=" + startTerm);
                     this.outerInstance = outerInstance;
                     this.fst = outerInstance.index;
-                    this.fstReader = fst.BytesReader;
+                    this.fstReader = fst.GetBytesReader();
                     this.fstOutputs = outerInstance.index.Outputs;
                     this.fsa = compiled.RunAutomaton;
                     this.level = -1;
@@ -959,7 +959,7 @@ namespace Lucene.Net.Codecs.Memory
             // Java version was BitSet(), but in .NET we don't have a zero contructor BitArray. 
             // Couldn't find the default size in BitSet, so went with zero here.
             var seen = new BitArray(0); 
-            var reader = fst.BytesReader;
+            var reader = fst.GetBytesReader();
             var startArc = fst.GetFirstArc(new FST.Arc<T>());
             queue.Add(startArc);
             while (queue.Count > 0)

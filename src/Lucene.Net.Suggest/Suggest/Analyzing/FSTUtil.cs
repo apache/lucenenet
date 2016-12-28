@@ -79,7 +79,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             queue.Add(new Path<T>(a.GetInitialState(), fst.GetFirstArc(new FST.Arc<T>()), fst.Outputs.NoOutput, new IntsRef()));
 
             FST.Arc<T> scratchArc = new FST.Arc<T>();
-            FST.BytesReader fstReader = fst.BytesReader;
+            FST.BytesReader fstReader = fst.GetBytesReader();
 
             while (queue.Count != 0)
             {

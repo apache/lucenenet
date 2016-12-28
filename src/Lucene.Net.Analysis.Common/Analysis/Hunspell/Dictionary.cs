@@ -212,7 +212,7 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 return null;
             }
-            FST.BytesReader bytesReader = fst.BytesReader;
+            FST.BytesReader bytesReader = fst.GetBytesReader();
             FST.Arc<IntsRef> arc = fst.GetFirstArc(new FST.Arc<IntsRef>());
             // Accumulate output as we go
             IntsRef NO_OUTPUT = fst.Outputs.NoOutput;
@@ -1163,7 +1163,7 @@ namespace Lucene.Net.Analysis.Hunspell
         // TODO: this could be more efficient!
         internal static void ApplyMappings(FST<CharsRef> fst, StringBuilder sb)
         {
-            FST.BytesReader bytesReader = fst.BytesReader;
+            FST.BytesReader bytesReader = fst.GetBytesReader();
             FST.Arc<CharsRef> firstArc = fst.GetFirstArc(new FST.Arc<CharsRef>());
             CharsRef NO_OUTPUT = fst.Outputs.NoOutput;
 

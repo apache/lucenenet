@@ -517,7 +517,7 @@ namespace Lucene.Net.Codecs.Memory
                     this.outerInstance = outerInstance;
                     //if (TEST) System.out.println("Enum init, startTerm=" + startTerm);
                     this.fst = outerInstance.dict;
-                    this.fstReader = fst.BytesReader;
+                    this.fstReader = fst.GetBytesReader();
                     this.fstOutputs = outerInstance.dict.Outputs;
                     this.fsa = compiled.RunAutomaton;
                     this.level = -1;
@@ -868,7 +868,7 @@ namespace Lucene.Net.Codecs.Memory
         internal static void Walk<T>(FST<T> fst)
         {
             List<FST.Arc<T>> queue = new List<FST.Arc<T>>();
-            FST.BytesReader reader = fst.BytesReader;
+            FST.BytesReader reader = fst.GetBytesReader();
             FST.Arc<T> startArc = fst.GetFirstArc(new FST.Arc<T>());
             queue.Add(startArc);
             BitArray seen = new BitArray(queue.Count);

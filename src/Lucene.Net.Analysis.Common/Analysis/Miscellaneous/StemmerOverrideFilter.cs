@@ -120,7 +120,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     }
                     else
                     {
-                        return fst.BytesReader;
+                        return fst.GetBytesReader();
                     }
                 }
             }

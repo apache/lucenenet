@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.CharFilters
 
             if (map != null)
             {
-                fstReader = map.BytesReader;
+                fstReader = map.GetBytesReader();
             }
             else
             {

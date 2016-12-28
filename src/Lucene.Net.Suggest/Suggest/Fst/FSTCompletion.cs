@@ -148,7 +148,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 IList<FST.Arc<object>> rootArcs = new List<FST.Arc<object>>();
                 FST.Arc<object> arc = automaton.GetFirstArc(new FST.Arc<object>());
-                FST.BytesReader fstReader = automaton.BytesReader;
+                FST.BytesReader fstReader = automaton.GetBytesReader();
                 automaton.ReadFirstTargetArc(arc, arc, fstReader);
                 while (true)
                 {
@@ -188,7 +188,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             try
             {
                 FST.Arc<object> scratch = new FST.Arc<object>();
-                FST.BytesReader fstReader = automaton.BytesReader;
+                FST.BytesReader fstReader = automaton.GetBytesReader();
                 for (; rootArcIndex < rootArcs.Length; rootArcIndex++)
                 {
                     FST.Arc<object> rootArc = rootArcs[rootArcIndex];
@@ -383,7 +383,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             int max = utf8.Offset + utf8.Length;
             // Cannot save as instance var since multiple threads
             // can use FSTCompletion at once...
-            FST.BytesReader fstReader = automaton.BytesReader;
+            FST.BytesReader fstReader = automaton.GetBytesReader();
             for (int i = utf8.Offset; i < max; i++)
             {
                 if (automaton.FindTargetArc(utf8.Bytes[i] & 0xff, arc, arc, fstReader) == null)
@@ -409,7 +409,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             Debug.Assert(output.Offset == 0);
             output.Bytes[output.Length++] = (byte) arc.Label;
-            FST.BytesReader fstReader = automaton.BytesReader;
+            FST.BytesReader fstReader = automaton.GetBytesReader();
             automaton.ReadFirstTargetArc(arc, arc, fstReader);
             while (true)
             {

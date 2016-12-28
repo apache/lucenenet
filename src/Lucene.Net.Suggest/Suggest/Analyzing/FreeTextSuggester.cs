@@ -612,7 +612,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 var arc = new FST.Arc<long?>();
 
-                var bytesReader = fst.BytesReader;
+                var bytesReader = fst.GetBytesReader();
 
                 // Try highest order models first, and if they return
                 // results, return that; else, fallback:

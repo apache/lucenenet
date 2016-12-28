@@ -283,7 +283,7 @@ namespace Lucene.Net.Analysis.Synonym
             {
                 throw new System.ArgumentException("fst must be non-null");
             }
-            this.fstReader = fst.BytesReader;
+            this.fstReader = fst.GetBytesReader();
 
             // Must be 1+ so that when roll buffer is at full
             // lookahead we can distinguish this full buffer from

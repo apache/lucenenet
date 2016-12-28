@@ -430,7 +430,7 @@ namespace Lucene.Net.Codecs.Lucene42
             var fst = instance;
 
             // per-thread resources
-            var @in = fst.BytesReader;
+            var @in = fst.GetBytesReader();
             var firstArc = new FST.Arc<long?>();
             var scratchArc = new FST.Arc<long?>();
             var scratchInts = new IntsRef();
@@ -545,7 +545,7 @@ namespace Lucene.Net.Codecs.Lucene42
             FST<long?> fst = instance;
 
             // per-thread resources
-            var @in = fst.BytesReader;
+            var @in = fst.GetBytesReader();
             var firstArc = new FST.Arc<long?>();
             var scratchArc = new FST.Arc<long?>();
             var scratchInts = new IntsRef();
@@ -722,7 +722,7 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 this.Fst = fst;
                 @in = new BytesRefFSTEnum<long?>(fst);
-                BytesReader = fst.BytesReader;
+                BytesReader = fst.GetBytesReader();
             }
 
             public override BytesRef Next()

@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 {
                     // Pre-cache root arcs:
                     var scratchArc = new FST.Arc<CharsRef>();
-                    FST.BytesReader fstReader = map.BytesReader;
+                    FST.BytesReader fstReader = map.GetBytesReader();
                     map.GetFirstArc(scratchArc);
                     if (FST<CharsRef>.TargetHasArcs(scratchArc))
                     {

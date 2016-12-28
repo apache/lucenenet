@@ -220,7 +220,7 @@ namespace Lucene.Net.Util.Fst
             FST.Arc<T> arc = fst.GetFirstArc(new FST.Arc<T>());
             T NO_OUTPUT = fst.Outputs.NoOutput;
             T output = NO_OUTPUT;
-            FST.BytesReader fstReader = fst.BytesReader;
+            FST.BytesReader fstReader = fst.GetBytesReader();
 
             for (int i = 0; i <= term.Length; i++)
             {
@@ -267,7 +267,7 @@ namespace Lucene.Net.Util.Fst
             @in.Offset = 0;
             T NO_OUTPUT = fst.Outputs.NoOutput;
             T output = NO_OUTPUT;
-            FST.BytesReader fstReader = fst.BytesReader;
+            FST.BytesReader fstReader = fst.GetBytesReader();
 
             while (true)
             {

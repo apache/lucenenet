@@ -753,7 +753,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 //System.out.println("  prefixPaths: " + prefixPaths.size());
 
-                FST.BytesReader bytesReader = fst.BytesReader;
+                FST.BytesReader bytesReader = fst.GetBytesReader();
 
                 var scratchArc = new FST.Arc<PairOutputs<long?, BytesRef>.Pair>();
 

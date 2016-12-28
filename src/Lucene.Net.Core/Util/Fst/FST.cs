@@ -141,11 +141,11 @@ namespace Lucene.Net.Util.Fst
         // produces this output
         internal T emptyOutput;
 
-        internal readonly BytesStore Bytes; // LUCENENET TODO: rename
+        internal readonly BytesStore bytes;
 
         private long startNode = -1;
 
-        public readonly Outputs<T> Outputs; // LUCENENET TODO: make property
+        public Outputs<T> Outputs { get; private set; }
 
         // Used for the BIT_TARGET_NEXT optimization (whereby
         // instead of storing the address of the target node for
@@ -199,10 +199,10 @@ namespace Lucene.Net.Util.Fst
             this.Outputs = outputs;
             this.allowArrayArcs = allowArrayArcs;
             version = FST.VERSION_CURRENT;
-            Bytes = new BytesStore(bytesPageBits);
+            bytes = new BytesStore(bytesPageBits);
             // pad: ensure no node gets address 0 which is reserved to mean
             // the stop state w/ no arcs
-            Bytes.WriteByte(0);
+            bytes.WriteByte(0);
             NO_OUTPUT = outputs.NoOutput;
             if (willPackFST)
             {
@@ -220,12 +220,12 @@ namespace Lucene.Net.Util.Fst
             nodeRefToAddress = null;
         }
 
-        public static readonly int DEFAULT_MAX_BLOCK_BITS = Constants.JRE_IS_64BIT ? 30 : 28; // LUCENENET TODO: Move to FST class
+        
 
         /// <summary>
         /// Load a previously saved FST. </summary>
         public FST(DataInput @in, Outputs<T> outputs)
-            : this(@in, outputs, DEFAULT_MAX_BLOCK_BITS)
+            : this(@in, outputs, FST.DEFAULT_MAX_BLOCK_BITS)
         {
         }
 
@@ -309,7 +309,7 @@ namespace Lucene.Net.Util.Fst
             arcWithOutputCount = @in.ReadVLong();
 
             long numBytes_ = @in.ReadVLong();
-            Bytes = new BytesStore(@in, numBytes_, 1 << maxBlockBits);
+            bytes = new BytesStore(@in, numBytes_, 1 << maxBlockBits);
 
             NO_OUTPUT = outputs.NoOutput;
 
@@ -342,7 +342,7 @@ namespace Lucene.Net.Util.Fst
         /// Returns bytes used to represent the FST </summary>
         public long SizeInBytes()
         {
-            long size = Bytes.Position;
+            long size = bytes.Position;
             if (packed)
             {
                 size += nodeRefToAddress.RamBytesUsed();
@@ -366,7 +366,7 @@ namespace Lucene.Net.Util.Fst
                 newStartNode = 0;
             }
             startNode = newStartNode;
-            Bytes.Finish();
+            bytes.Finish();
 
             CacheRootArcs();
         }
@@ -399,7 +399,7 @@ namespace Lucene.Net.Util.Fst
         {
             FST.Arc<T> arc = new FST.Arc<T>();
             GetFirstArc(arc);
-            FST.BytesReader @in = BytesReader;
+            FST.BytesReader @in = GetBytesReader();
             if (TargetHasArcs(arc))
             {
                 ReadFirstRealTargetArc(arc.Target, arc, @in);
@@ -562,9 +562,9 @@ namespace Lucene.Net.Util.Fst
             @out.WriteVLong(nodeCount);
             @out.WriteVLong(arcCount);
             @out.WriteVLong(arcWithOutputCount);
-            long numBytes = Bytes.Position;
+            long numBytes = bytes.Position;
             @out.WriteVLong(numBytes);
-            Bytes.WriteTo(@out);
+            bytes.WriteTo(@out);
         }
 
         /// <summary>
@@ -658,7 +658,7 @@ namespace Lucene.Net.Util.Fst
                 }
             }
 
-            long startAddress = Bytes.Position;
+            long startAddress = bytes.Position;
             //System.out.println("  startAddr=" + startAddress);
 
             bool doFixedArray = ShouldExpand(nodeIn);
@@ -675,7 +675,7 @@ namespace Lucene.Net.Util.Fst
 
             int lastArc = nodeIn.NumArcs - 1;
 
-            long lastArcStart = Bytes.Position;
+            long lastArcStart = bytes.Position;
             int maxBytesPerArc = 0;
             for (int arcIdx = 0; arcIdx < nodeIn.NumArcs; arcIdx++)
             {
@@ -726,14 +726,14 @@ namespace Lucene.Net.Util.Fst
                     flags += FST.BIT_ARC_HAS_OUTPUT;
                 }
 
-                Bytes.WriteByte((byte)(sbyte)flags);
-                WriteLabel(Bytes, arc.Label);
+                bytes.WriteByte((byte)(sbyte)flags);
+                WriteLabel(bytes, arc.Label);
 
                 // System.out.println("  write arc: label=" + (char) arc.Label + " flags=" + flags + " target=" + target.Node + " pos=" + bytes.getPosition() + " output=" + outputs.outputToString(arc.Output));
 
                 if (!arc.Output.Equals(NO_OUTPUT))
                 {
-                    Outputs.Write(arc.Output, Bytes);
+                    Outputs.Write(arc.Output, bytes);
                     //System.out.println("    write output");
                     arcWithOutputCount++;
                 }
@@ -741,14 +741,14 @@ namespace Lucene.Net.Util.Fst
                 if (!arc.NextFinalOutput.Equals(NO_OUTPUT))
                 {
                     //System.out.println("    write final output");
-                    Outputs.WriteFinalOutput(arc.NextFinalOutput, Bytes);
+                    Outputs.WriteFinalOutput(arc.NextFinalOutput, bytes);
                 }
 
                 if (targetHasArcs && (flags & FST.BIT_TARGET_NEXT) == 0)
                 {
                     Debug.Assert(target.Node > 0);
                     //System.out.println("    write target");
-                    Bytes.WriteVLong(target.Node);
+                    bytes.WriteVLong(target.Node);
                 }
 
                 // just write the arcs "like normal" on first pass,
@@ -756,8 +756,8 @@ namespace Lucene.Net.Util.Fst
                 // byte size:
                 if (doFixedArray)
                 {
-                    bytesPerArc[arcIdx] = (int)(Bytes.Position - lastArcStart);
-                    lastArcStart = Bytes.Position;
+                    bytesPerArc[arcIdx] = (int)(bytes.Position - lastArcStart);
+                    lastArcStart = bytes.Position;
                     maxBytesPerArc = Math.Max(maxBytesPerArc, bytesPerArc[arcIdx]);
                     //System.out.println("    bytes=" + bytesPerArc[arcIdx]);
                 }
@@ -804,12 +804,12 @@ namespace Lucene.Net.Util.Fst
                 long fixedArrayStart = startAddress + headerLen;
 
                 // expand the arcs in place, backwards
-                long srcPos = Bytes.Position;
+                long srcPos = bytes.Position;
                 long destPos = fixedArrayStart + nodeIn.NumArcs * maxBytesPerArc;
                 Debug.Assert(destPos >= srcPos);
                 if (destPos > srcPos)
                 {
-                    Bytes.SkipBytes((int)(destPos - srcPos));
+                    bytes.SkipBytes((int)(destPos - srcPos));
                     for (int arcIdx = nodeIn.NumArcs - 1; arcIdx >= 0; arcIdx--)
                     {
                         destPos -= maxBytesPerArc;
@@ -819,18 +819,18 @@ namespace Lucene.Net.Util.Fst
                         {
                             //System.out.println("  copy len=" + bytesPerArc[arcIdx]);
                             Debug.Assert(destPos > srcPos, "destPos=" + destPos + " srcPos=" + srcPos + " arcIdx=" + arcIdx + " maxBytesPerArc=" + maxBytesPerArc + " bytesPerArc[arcIdx]=" + bytesPerArc[arcIdx] + " nodeIn.numArcs=" + nodeIn.NumArcs);
-                            Bytes.CopyBytes(srcPos, destPos, bytesPerArc[arcIdx]);
+                            bytes.CopyBytes(srcPos, destPos, bytesPerArc[arcIdx]);
                         }
                     }
                 }
 
                 // now write the header
-                Bytes.WriteBytes(startAddress, header, 0, headerLen);
+                bytes.WriteBytes(startAddress, header, 0, headerLen);
             }
 
-            long thisNodeAddress = Bytes.Position - 1;
+            long thisNodeAddress = bytes.Position - 1;
 
-            Bytes.Reverse(startAddress, thisNodeAddress);
+            bytes.Reverse(startAddress, thisNodeAddress);
 
             // PackedInts uses int as the index, so we cannot handle
             // > 2.1B nodes when packing:
@@ -1492,21 +1492,18 @@ namespace Lucene.Net.Util.Fst
         /// Returns a <seealso cref="FST.BytesReader"/> for this FST, positioned at
         ///  position 0.
         /// </summary>
-        public FST.BytesReader BytesReader // LUCENENET TODO: Change to GetBytesReader() (returns new instance)
+        public FST.BytesReader GetBytesReader()
         {
-            get
+            FST.BytesReader @in;
+            if (packed)
             {
-                FST.BytesReader @in;
-                if (packed)
-                {
-                    @in = Bytes.GetForwardReader();
-                }
-                else
-                {
-                    @in = Bytes.GetReverseReader();
-                }
-                return @in;
+                @in = bytes.GetForwardReader();
             }
+            else
+            {
+                @in = bytes.GetReverseReader();
+            }
+            return @in;
         }
 
         /*
@@ -1644,7 +1641,7 @@ namespace Lucene.Net.Util.Fst
             version = FST.VERSION_CURRENT;
             packed = true;
             this.inputType = inputType;
-            Bytes = new BytesStore(bytesPageBits);
+            bytes = new BytesStore(bytesPageBits);
             this.Outputs = outputs;
             NO_OUTPUT = outputs.NoOutput;
 
@@ -1690,7 +1687,7 @@ namespace Lucene.Net.Util.Fst
 
             FST.Arc<T> arc = new FST.Arc<T>();
 
-            FST.BytesReader r = BytesReader;
+            FST.BytesReader r = GetBytesReader();
 
             int topN = Math.Min(maxDerefNodes, inCounts.Size());
 
@@ -1730,12 +1727,12 @@ namespace Lucene.Net.Util.Fst
             }
 
             // +1 because node ords start at 1 (0 is reserved as stop node):
-            GrowableWriter newNodeAddress = new GrowableWriter(PackedInts.BitsRequired(this.Bytes.Position), (int)(1 + nodeCount), acceptableOverheadRatio);
+            GrowableWriter newNodeAddress = new GrowableWriter(PackedInts.BitsRequired(this.bytes.Position), (int)(1 + nodeCount), acceptableOverheadRatio);
 
             // Fill initial coarse guess:
             for (int node = 1; node <= nodeCount; node++)
             {
-                newNodeAddress.Set(node, 1 + this.Bytes.Position - nodeAddress.Get(node));
+                newNodeAddress.Set(node, 1 + this.bytes.Position - nodeAddress.Get(node));
             }
 
             int absCount;
@@ -1754,9 +1751,9 @@ namespace Lucene.Net.Util.Fst
                 // for assert:
                 bool negDelta = false;
 
-                fst = new FST<T>(inputType, Outputs, Bytes.BlockBits);
+                fst = new FST<T>(inputType, Outputs, bytes.BlockBits);
 
-                BytesStore writer = fst.Bytes;
+                BytesStore writer = fst.bytes;
 
                 // Skip 0 byte since 0 is reserved target:
                 writer.WriteByte(0);
@@ -2057,7 +2054,7 @@ namespace Lucene.Net.Util.Fst
             Debug.Assert(fst.arcCount == arcCount);
             Debug.Assert(fst.arcWithOutputCount == arcWithOutputCount, "fst.arcWithOutputCount=" + fst.arcWithOutputCount + " arcWithOutputCount=" + arcWithOutputCount);
 
-            fst.Bytes.Finish();
+            fst.bytes.Finish();
             fst.CacheRootArcs();
 
             //final int size = fst.sizeInBytes();
@@ -2073,6 +2070,8 @@ namespace Lucene.Net.Util.Fst
     /// </summary>
     public sealed class FST
     {
+        public static readonly int DEFAULT_MAX_BLOCK_BITS = Constants.JRE_IS_64BIT ? 30 : 28;
+
         public FST()
         { }
 
@@ -2319,8 +2318,8 @@ namespace Lucene.Net.Util.Fst
 
         internal class NodeAndInCount : IComparable<NodeAndInCount>
         {
-            internal readonly int Node; // LUCENENET TODO: make property
-            internal readonly int Count; // LUCENENET TODO: make property
+            internal int Node { get; private set; }
+            internal int Count { get; private set; }
 
             public NodeAndInCount(int node, int count)
             {

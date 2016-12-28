@@ -44,7 +44,7 @@ namespace Lucene.Net.Util.Fst
             // TODO: would be nice not to alloc this on every lookup
             var arc = fst.GetFirstArc(new FST.Arc<T>());
 
-            var fstReader = fst.BytesReader;
+            var fstReader = fst.GetBytesReader();
 
             // Accumulate output as we go
             T output = fst.Outputs.NoOutput;
@@ -77,7 +77,7 @@ namespace Lucene.Net.Util.Fst
         {
             Debug.Assert(fst.InputType == FST.INPUT_TYPE.BYTE1);
 
-            var fstReader = fst.BytesReader;
+            var fstReader = fst.GetBytesReader();
 
             // TODO: would be nice not to alloc this on every lookup
             var arc = fst.GetFirstArc(new FST.Arc<T>());
@@ -119,7 +119,7 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public static IntsRef GetByOutput(FST<long?> fst, long targetOutput)
         {
-            var @in = fst.BytesReader;
+            var @in = fst.GetBytesReader();
 
             // TODO: would be nice not to alloc this on every lookup
             FST.Arc<long?> arc = fst.GetFirstArc(new FST.Arc<long?>());
@@ -373,7 +373,7 @@ namespace Lucene.Net.Util.Fst
             public TopNSearcher(FST<T> fst, int topN, int maxQueueDepth, IComparer<T> comparator)
             {
                 this.fst = fst;
-                this.bytesReader = fst.BytesReader;
+                this.bytesReader = fst.GetBytesReader();
                 this.topN = topN;
                 this.maxQueueDepth = maxQueueDepth;
                 this.Comparator = comparator;
@@ -483,7 +483,7 @@ namespace Lucene.Net.Util.Fst
 
                 //System.out.println("search topN=" + topN);
 
-                var fstReader = fst.BytesReader;
+                var fstReader = fst.GetBytesReader();
                 T NO_OUTPUT = fst.Outputs.NoOutput;
 
                 // TODO: we could enable FST to sorting arcs by weight
@@ -776,7 +776,7 @@ namespace Lucene.Net.Util.Fst
             EmitDotState(@out, "initial", "point", "white", "");
 
             T NO_OUTPUT = fst.Outputs.NoOutput;
-            var r = fst.BytesReader;
+            var r = fst.GetBytesReader();
 
             // final FST.Arc<T> scratchArc = new FST.Arc<>();
 

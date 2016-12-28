@@ -213,7 +213,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             Debug.Assert(0 == (long)fst.Outputs.NoOutput);
             long output = 0;
-            var bytesReader = fst.BytesReader;
+            var bytesReader = fst.GetBytesReader();
 
             fst.GetFirstArc(arc);
 

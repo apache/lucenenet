@@ -1042,7 +1042,7 @@ namespace Lucene.Net.Codecs
                     }
                     else
                     {
-                        FstReader = outerInstance.Index.BytesReader;
+                        FstReader = outerInstance.Index.GetBytesReader();
                     }
 
                     // TODO: if the automaton is "smallish" we really
@@ -1554,7 +1554,7 @@ namespace Lucene.Net.Codecs
                     }
                     else
                     {
-                        FstReader = OuterInstance.Index.BytesReader;
+                        FstReader = OuterInstance.Index.GetBytesReader();
                     }
 
                     // Init w/ root block; don't use index since it may
