@@ -140,12 +140,9 @@ namespace Lucene.Net.Util.Automaton
         /// Selects minimization algorithm (default: <code>MINIMIZE_HOPCROFT</code>).
         /// </summary>
         /// <param name="algorithm"> minimization algorithm </param>
-        public static int Minimization // LUCENENET TODO: Make SetMinimization(int algorithm)
+        public static void SetMinimization(int algorithm)
         {
-            set
-            {
-                Minimization_Renamed = value;
-            }
+            Minimization_Renamed = algorithm;
         }
 
         /// <summary>
@@ -155,12 +152,9 @@ namespace Lucene.Net.Util.Automaton
         /// automata. By default, the flag is not set.
         /// </summary>
         /// <param name="flag"> if true, the flag is set </param>
-        public static bool MinimizeAlways // LUCENENET TODO: Make SetMinimizeAlways(bool flag)
+        public static void SetMinimizeAlways(bool flag)
         {
-            set
-            {
-                Minimize_always = value;
-            }
+            Minimize_always = flag;
         }
 
         /// <summary>
@@ -191,10 +185,6 @@ namespace Lucene.Net.Util.Automaton
             {
                 return Allow_mutation;
             }
-            set // LUCENENET TODO: Remove setter
-            {
-                Allow_mutation = value;
-            }
         }
 
         internal virtual void CheckMinimizeAlways()
@@ -219,7 +209,7 @@ namespace Lucene.Net.Util.Automaton
         /// case, this method may be used to obtain the string.
         /// </summary>
         /// <returns> string, null if this automaton is not in singleton mode. </returns>
-        public virtual string Singleton
+        public virtual string Singleton // LUCENENET TODO: Rename GetSingleton() ? check consistency across API
         {
             get
             {
@@ -242,15 +232,10 @@ namespace Lucene.Net.Util.Automaton
         /// Gets initial state.
         /// </summary>
         /// <returns> state </returns>
-        public virtual State InitialState // LUCENENET TODO: Change to GetIntitialState() (complexity, side-effect)
+        public virtual State GetInitialState()
         {
-            get
-            {
-                ExpandSingleton();
-                return Initial;
-            }
-
-            set { Initial = value; }// LUCENENET TODO: Remove setter
+            ExpandSingleton();
+            return Initial;
         }
 
         /// <summary>
@@ -258,7 +243,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         /// <returns> true if the automaton is definitely deterministic, false if the
         ///         automaton may be nondeterministic </returns>
-        public virtual bool Deterministic // LUCENENET TODO: Rename IsDeterministic
+        public virtual bool IsDeterministic
         {
             get
             {
@@ -287,62 +272,60 @@ namespace Lucene.Net.Util.Automaton
         }
 
         // cached
-        private State[] NumberedStates_Renamed;
+        private State[] numberedStates;
 
-        public virtual State[] NumberedStates // LUCENENET TODO: Change to GetNumberedStates() (complexity, array)
+        public virtual State[] GetNumberedStates()
         {
-            get
+            if (numberedStates == null)
             {
-                if (NumberedStates_Renamed == null)
+                ExpandSingleton();
+                HashSet<State> visited = new HashSet<State>();
+                LinkedList<State> worklist = new LinkedList<State>();
+                State[] states = new State[4];
+                int upto = 0;
+                worklist.AddLast(Initial);
+                visited.Add(Initial);
+                Initial.number = upto;
+                states[upto] = Initial;
+                upto++;
+                while (worklist.Count > 0)
                 {
-                    ExpandSingleton();
-                    HashSet<State> visited = new HashSet<State>();
-                    LinkedList<State> worklist = new LinkedList<State>();
-                    State[] states = new State[4];
-                    int upto = 0;
-                    worklist.AddLast(Initial);
-                    visited.Add(Initial);
-                    Initial.number = upto;
-                    states[upto] = Initial;
-                    upto++;
-                    while (worklist.Count > 0)
+                    State s = worklist.First.Value;
+                    worklist.RemoveFirst();
+                    for (int i = 0; i < s.numTransitions; i++)
                     {
-                        State s = worklist.First.Value;
-                        worklist.RemoveFirst();
-                        for (int i = 0; i < s.numTransitions; i++)
+                        Transition t = s.TransitionsArray[i];
+                        if (!visited.Contains(t.To))
                         {
-                            Transition t = s.TransitionsArray[i];
-                            if (!visited.Contains(t.To))
+                            visited.Add(t.To);
+                            worklist.AddLast(t.To);
+                            t.To.Number = upto;
+                            if (upto == states.Length)
                             {
-                                visited.Add(t.To);
-                                worklist.AddLast(t.To);
-                                t.To.Number = upto;
-                                if (upto == states.Length)
-                                {
-                                    State[] newArray = new State[ArrayUtil.Oversize(1 + upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                                    Array.Copy(states, 0, newArray, 0, upto);
-                                    states = newArray;
-                                }
-                                states[upto] = t.To;
-                                upto++;
+                                State[] newArray = new State[ArrayUtil.Oversize(1 + upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                                Array.Copy(states, 0, newArray, 0, upto);
+                                states = newArray;
                             }
+                            states[upto] = t.To;
+                            upto++;
                         }
                     }
-                    if (states.Length != upto)
-                    {
-                        State[] newArray = new State[upto];
-                        Array.Copy(states, 0, newArray, 0, upto);
-                        states = newArray;
-                    }
-                    NumberedStates_Renamed = states;
                 }
+                if (states.Length != upto)
+                {
+                    State[] newArray = new State[upto];
+                    Array.Copy(states, 0, newArray, 0, upto);
+                    states = newArray;
+                }
+                numberedStates = states;
+            }
 
-                return NumberedStates_Renamed;
-            }
-            set // LUCENENET TODO: make SetNumberedStates(State[] states)
-            {
-                SetNumberedStates(value, value.Length);
-            }
+            return numberedStates;
+        }
+
+        public virtual void SetNumberedStates(State[] states)
+        {
+            SetNumberedStates(states, states.Length);
         }
 
         public virtual void SetNumberedStates(State[] states, int count)
@@ -353,52 +336,49 @@ namespace Lucene.Net.Util.Automaton
             {
                 State[] newArray = new State[count];
                 Array.Copy(states, 0, newArray, 0, count);
-                NumberedStates_Renamed = newArray;
+                numberedStates = newArray;
             }
             else
             {
-                NumberedStates_Renamed = states;
+                numberedStates = states;
             }
         }
 
         public virtual void ClearNumberedStates()
         {
-            NumberedStates_Renamed = null;
+            numberedStates = null;
         }
 
         /// <summary>
         /// Returns the set of reachable accept states.
         /// </summary>
         /// <returns> set of <seealso cref="State"/> objects </returns>
-        public virtual ISet<State> AcceptStates // LUCENENET TODO: Make GetAcceptStates() (complexity)
+        public virtual ISet<State> GetAcceptStates()
         {
-            get
+            ExpandSingleton();
+            HashSet<State> accepts = new HashSet<State>();
+            HashSet<State> visited = new HashSet<State>();
+            LinkedList<State> worklist = new LinkedList<State>();
+            worklist.AddLast(Initial);
+            visited.Add(Initial);
+            while (worklist.Count > 0)
             {
-                ExpandSingleton();
-                HashSet<State> accepts = new HashSet<State>();
-                HashSet<State> visited = new HashSet<State>();
-                LinkedList<State> worklist = new LinkedList<State>();
-                worklist.AddLast(Initial);
-                visited.Add(Initial);
-                while (worklist.Count > 0)
+                State s = worklist.First.Value;
+                worklist.RemoveFirst();
+                if (s.accept)
                 {
-                    State s = worklist.First.Value;
-                    worklist.RemoveFirst();
-                    if (s.accept)
+                    accepts.Add(s);
+                }
+                foreach (Transition t in s.Transitions)
+                {
+                    if (!visited.Contains(t.To))
                     {
-                        accepts.Add(s);
-                    }
-                    foreach (Transition t in s.Transitions)
-                    {
-                        if (!visited.Contains(t.To))
-                        {
-                            visited.Add(t.To);
-                            worklist.AddLast(t.To);
-                        }
+                        visited.Add(t.To);
+                        worklist.AddLast(t.To);
                     }
                 }
-                return accepts;
             }
+            return accepts;
         }
 
         /// <summary>
@@ -409,7 +389,7 @@ namespace Lucene.Net.Util.Automaton
         {
             State s = new State();
             s.AddTransition(new Transition(Character.MIN_CODE_POINT, Character.MAX_CODE_POINT, s));
-            foreach (State p in NumberedStates)
+            foreach (State p in GetNumberedStates())
             {
                 int maxi = Character.MIN_CODE_POINT;
                 p.SortTransitions(Transition.CompareByMinMaxThenDest);
@@ -449,7 +429,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public virtual void Reduce()
         {
-            State[] states = NumberedStates;
+            State[] states = GetNumberedStates();
             if (IsSingleton)
             {
                 return;
@@ -463,33 +443,30 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns sorted array of all interval start points.
         /// </summary>
-        public virtual int[] StartPoints // LUCENENET TODO: Change to GetStartPoints() (array, complexity)
+        public virtual int[] GetStartPoints()
         {
-            get
+            State[] states = GetNumberedStates();
+            HashSet<int> pointset = new HashSet<int>();
+            pointset.Add(Character.MIN_CODE_POINT);
+            foreach (State s in states)
             {
-                State[] states = NumberedStates;
-                HashSet<int> pointset = new HashSet<int>();
-                pointset.Add(Character.MIN_CODE_POINT);
-                foreach (State s in states)
+                foreach (Transition t in s.Transitions)
                 {
-                    foreach (Transition t in s.Transitions)
+                    pointset.Add(t.Min_Renamed);
+                    if (t.Max_Renamed < Character.MAX_CODE_POINT)
                     {
-                        pointset.Add(t.Min_Renamed);
-                        if (t.Max_Renamed < Character.MAX_CODE_POINT)
-                        {
-                            pointset.Add((t.Max_Renamed + 1));
-                        }
+                        pointset.Add((t.Max_Renamed + 1));
                     }
                 }
-                int[] points = new int[pointset.Count];
-                int n = 0;
-                foreach (int m in pointset)
-                {
-                    points[n++] = m;
-                }
-                Array.Sort(points);
-                return points;
             }
+            int[] points = new int[pointset.Count];
+            int n = 0;
+            foreach (int m in pointset)
+            {
+                points[n++] = m;
+            }
+            Array.Sort(points);
+            return points;
         }
 
         /// <summary>
@@ -497,49 +474,46 @@ namespace Lucene.Net.Util.Automaton
         /// reachable from it.
         /// </summary>
         /// <returns> set of <seealso cref="State"/> objects </returns>
-        private State[] LiveStates // LUCENENET TODO: Make GetLiveStates() (array, conversion)
+        private State[] GetLiveStates()
         {
-            get
+            State[] states = GetNumberedStates();
+            HashSet<State> live = new HashSet<State>();
+            foreach (State q in states)
             {
-                State[] states = NumberedStates;
-                HashSet<State> live = new HashSet<State>();
-                foreach (State q in states)
+                if (q.Accept)
                 {
-                    if (q.Accept)
-                    {
-                        live.Add(q);
-                    }
+                    live.Add(q);
                 }
-                // map<state, set<state>>
-                ISet<State>[] map = new HashSet<State>[states.Length];
-                for (int i = 0; i < map.Length; i++)
-                {
-                    map[i] = new HashSet<State>();
-                }
-                foreach (State s in states)
-                {
-                    for (int i = 0; i < s.numTransitions; i++)
-                    {
-                        map[s.TransitionsArray[i].To.Number].Add(s);
-                    }
-                }
-                LinkedList<State> worklist = new LinkedList<State>(live);
-                while (worklist.Count > 0)
-                {
-                    State s = worklist.First.Value;
-                    worklist.RemoveFirst();
-                    foreach (State p in map[s.number])
-                    {
-                        if (!live.Contains(p))
-                        {
-                            live.Add(p);
-                            worklist.AddLast(p);
-                        }
-                    }
-                }
-
-                return live.ToArray(/*new State[live.Count]*/);
             }
+            // map<state, set<state>>
+            ISet<State>[] map = new HashSet<State>[states.Length];
+            for (int i = 0; i < map.Length; i++)
+            {
+                map[i] = new HashSet<State>();
+            }
+            foreach (State s in states)
+            {
+                for (int i = 0; i < s.numTransitions; i++)
+                {
+                    map[s.TransitionsArray[i].To.Number].Add(s);
+                }
+            }
+            LinkedList<State> worklist = new LinkedList<State>(live);
+            while (worklist.Count > 0)
+            {
+                State s = worklist.First.Value;
+                worklist.RemoveFirst();
+                foreach (State p in map[s.number])
+                {
+                    if (!live.Contains(p))
+                    {
+                        live.Add(p);
+                        worklist.AddLast(p);
+                    }
+                }
+            }
+
+            return live.ToArray(/*new State[live.Count]*/);
         }
 
         /// <summary>
@@ -549,13 +523,13 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public virtual void RemoveDeadTransitions()
         {
-            State[] states = NumberedStates;
+            State[] states = GetNumberedStates();
             //clearHashCode();
             if (IsSingleton)
             {
                 return;
             }
-            State[] live = LiveStates;
+            State[] live = GetLiveStates();
 
             BitArray liveSet = new BitArray(states.Length);
             foreach (State s in live)
@@ -583,7 +557,7 @@ namespace Lucene.Net.Util.Automaton
             }
             if (live.Length > 0)
             {
-                NumberedStates = live;
+                SetNumberedStates(live);
             }
             else
             {
@@ -597,21 +571,18 @@ namespace Lucene.Net.Util.Automaton
         /// Returns a sorted array of transitions for each state (and sets state
         /// numbers).
         /// </summary>
-        public virtual Transition[][] SortedTransitions // LUCENENET TODO: Make GetSortedTransitions() (array, conversion)
+        public virtual Transition[][] GetSortedTransitions()
         {
-            get
+            State[] states = GetNumberedStates();
+            Transition[][] transitions = new Transition[states.Length][];
+            foreach (State s in states)
             {
-                State[] states = NumberedStates;
-                Transition[][] transitions = new Transition[states.Length][];
-                foreach (State s in states)
-                {
-                    s.SortTransitions(Transition.CompareByMinMaxThenDest);
-                    s.TrimTransitionsArray();
-                    transitions[s.number] = s.TransitionsArray;
-                    Debug.Assert(s.TransitionsArray != null);
-                }
-                return transitions;
+                s.SortTransitions(Transition.CompareByMinMaxThenDest);
+                s.TrimTransitionsArray();
+                transitions[s.number] = s.TransitionsArray;
+                Debug.Assert(s.TransitionsArray != null);
             }
+            return transitions;
         }
 
         /// <summary>
@@ -639,48 +610,88 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns the number of states in this automaton.
         /// </summary>
-        public virtual int NumberOfStates
+        public virtual int GetNumberOfStates()
         {
-            get
+            if (IsSingleton)
             {
-                if (IsSingleton)
-                {
-                    return singleton.Length;// codePointCount(0, singleton.Length) + 1; // LUCENENET TODO: revert to original code
-                }
-                return NumberedStates.Length;
+                return singleton.CodePointCount(0, singleton.Length) + 1;
             }
+            return GetNumberedStates().Length;
         }
 
         /// <summary>
         /// Returns the number of transitions in this automaton. this number is counted
         /// as the total number of edges, where one edge may be a character interval.
         /// </summary>
-        public virtual int NumberOfTransitions
+        public virtual int GetNumberOfTransitions()
         {
-            get
+            if (IsSingleton)
             {
-                if (IsSingleton)
-                {
-                    return singleton.Length;// codePointCount(0, singleton.Length); // LUCENENET TODO: revert to original code
-                }
-                int c = 0;
-                foreach (State s in NumberedStates)
-                {
-                    c += s.NumTransitions();
-                }
-                return c;
+                return singleton.CodePointCount(0, singleton.Length);
             }
+            int c = 0;
+            foreach (State s in GetNumberedStates())
+            {
+                c += s.NumTransitions();
+            }
+            return c;
         }
 
         public override bool Equals(object obj)
         {
-            throw new System.NotSupportedException("use BasicOperations.sameLanguage instead");
+            var other = obj as Automaton;
+            return BasicOperations.SameLanguage(this, other);
+            //throw new System.NotSupportedException("use BasicOperations.sameLanguage instead");
         }
 
-        /*public override int GetHashCode() // LUCENENET TODO: Add this back in (as per the original)
+        // LUCENENET specific - in .NET, we can't simply throw an exception here because 
+        // collections use this to determine equality. Most of this code was pieced together from
+        // BasicOperations.SubSetOf (which, when done both ways determines equality).
+        public override int GetHashCode() 
         {
-          throw new System.NotSupportedException();
-        }*/
+            if (IsSingleton)
+            {
+                return singleton.GetHashCode();
+            }
+
+            int hash = 31; // arbitrary prime
+
+            this.Determinize(); // LUCENENET: should we do this ?
+
+            Transition[][] transitions = this.GetSortedTransitions();
+            LinkedList<State> worklist = new LinkedList<State>();
+            HashSet<State> visited = new HashSet<State>();
+
+            State current = this.Initial;
+            worklist.AddLast(this.Initial);
+            visited.Add(this.Initial);
+            while (worklist.Count > 0)
+            {
+                current = worklist.First.Value;
+                worklist.Remove(current);
+                hash = HashHelpers.CombineHashCodes(hash, current.accept.GetHashCode());
+
+                Transition[] t1 = transitions[current.number];
+
+                for (int n1 = 0; n1 < t1.Length; n1++)
+                {
+                    int min1 = t1[n1].Min_Renamed, max1 = t1[n1].Max_Renamed;
+
+                    hash = HashHelpers.CombineHashCodes(hash, min1.GetHashCode());
+                    hash = HashHelpers.CombineHashCodes(hash, max1.GetHashCode());
+
+                    State next = t1[n1].To;
+                    if (!visited.Contains(next))
+                    {
+                        worklist.AddLast(next);
+                        visited.Add(next);
+                    }
+                }
+            }
+
+            return hash;
+            //throw new System.NotSupportedException();
+        }
 
         /// <summary>
         /// Must be invoked when the stored hash code may no longer be valid.
@@ -714,7 +725,7 @@ namespace Lucene.Net.Util.Automaton
             }
             else
             {
-                State[] states = NumberedStates;
+                State[] states = GetNumberedStates();
                 b.Append("initial state: ").Append(Initial.number).Append("\n");
                 foreach (State s in states)
                 {
@@ -732,7 +743,7 @@ namespace Lucene.Net.Util.Automaton
         {
             StringBuilder b = new StringBuilder("digraph Automaton {\n");
             b.Append("  rankdir = LR;\n");
-            State[] states = NumberedStates;
+            State[] states = GetNumberedStates();
             foreach (State s in states)
             {
                 b.Append("  ").Append(s.number);
@@ -794,7 +805,7 @@ namespace Lucene.Net.Util.Automaton
             if (!IsSingleton)
             {
                 Dictionary<State, State> m = new Dictionary<State, State>();
-                State[] states = NumberedStates;
+                State[] states = GetNumberedStates();
                 foreach (State s in states)
                 {
                     m[s] = new State();
@@ -940,7 +951,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <seealso cref="BasicOperations#isEmptyString(Automaton)"/>.
         /// </summary>
-        public virtual bool EmptyString // LUCENENET TODO: Rename IsEmptyString
+        public virtual bool IsEmptyString
         {
             get
             {

@@ -314,7 +314,7 @@ namespace Lucene.Net.Util.Automaton
         public static Automaton MakeString(int[] word, int offset, int length)
         {
             Automaton a = new Automaton();
-            a.Deterministic = true;
+            a.IsDeterministic = true;
             State s = new State();
             a.Initial = s;
             for (int i = offset; i < offset + length; i++)

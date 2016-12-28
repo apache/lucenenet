@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Automaton
                 Automaton a = AutomatonTestUtil.RandomAutomaton(Random());
                 Automaton b = (Automaton)a.Clone();
                 AutomatonTestUtil.DeterminizeSimple(a);
-                b.Deterministic = false; // force det
+                b.IsDeterministic = false; // force det
                 b.Determinize();
                 // TODO: more verifications possible?
                 Assert.IsTrue(BasicOperations.SameLanguage(a, b));

@@ -199,7 +199,7 @@ namespace Lucene.Net.Util.Automaton
             }
 
             Automaton a = new Automaton(states[0]);
-            a.Deterministic = true;
+            a.IsDeterministic = true;
             // we create some useless unconnected states, and its a net-win overall to remove these,
             // as well as to combine any adjacent transitions (it makes later algorithms more efficient).
             // so, while we could set our numberedStates here, its actually best not to, and instead to

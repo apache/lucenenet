@@ -77,8 +77,8 @@ namespace Lucene.Net.Util.Automaton
             a.Totalize();
 
             // initialize data structures
-            int[] sigma = a.StartPoints;
-            State[] states = a.NumberedStates;
+            int[] sigma = a.GetStartPoints();
+            State[] states = a.GetNumberedStates();
             int sigmaLen = sigma.Length, statesLen = states.Length;
             List<State>[,] reverse = new List<State>[statesLen, sigmaLen];
             HashSet<State>[] partition = new ValueHashSet<State>[statesLen];

@@ -159,8 +159,8 @@ namespace Lucene.Net.Util.Automaton
         {
             this._maxInterval = maxInterval;
             a.Determinize();
-            _points = a.StartPoints;
-            State[] states = a.NumberedStates;
+            _points = a.GetStartPoints();
+            State[] states = a.GetNumberedStates();
             Initial = a.Initial.Number;
             _size = states.Length;
             Accept = new bool[_size];

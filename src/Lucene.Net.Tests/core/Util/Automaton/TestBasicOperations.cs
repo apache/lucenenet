@@ -40,7 +40,7 @@ namespace Lucene.Net.Util.Automaton
 
             strings.Sort();
             Automaton union = BasicAutomata.MakeStringUnion(strings);
-            Assert.IsTrue(union.Deterministic);
+            Assert.IsTrue(union.IsDeterministic);
             Assert.IsTrue(BasicOperations.SameLanguage(union, NaiveUnion(strings)));
         }
 
@@ -64,7 +64,7 @@ namespace Lucene.Net.Util.Automaton
             Automaton expandedSingleton = singleton.CloneExpanded();
             Automaton other = BasicAutomata.MakeCharRange('5', '7');
             Automaton concat = BasicOperations.Concatenate(singleton, other);
-            Assert.IsTrue(concat.Deterministic);
+            Assert.IsTrue(concat.IsDeterministic);
             Assert.IsTrue(BasicOperations.SameLanguage(BasicOperations.Concatenate(expandedSingleton, other), concat));
         }
 
@@ -78,7 +78,7 @@ namespace Lucene.Net.Util.Automaton
             // an NFA (two transitions for 't' from initial state)
             Automaton nfa = BasicOperations.Union(BasicAutomata.MakeString("this"), BasicAutomata.MakeString("three"));
             Automaton concat = BasicOperations.Concatenate(singleton, nfa);
-            Assert.IsFalse(concat.Deterministic);
+            Assert.IsFalse(concat.IsDeterministic);
             Assert.IsTrue(BasicOperations.SameLanguage(BasicOperations.Concatenate(expandedSingleton, nfa), concat));
         }
 
@@ -92,7 +92,7 @@ namespace Lucene.Net.Util.Automaton
             Automaton other = BasicAutomata.MakeCharRange('5', '7');
             Automaton concat1 = BasicOperations.Concatenate(expandedSingleton, other);
             Automaton concat2 = BasicOperations.Concatenate(singleton, other);
-            Assert.IsTrue(concat2.Deterministic);
+            Assert.IsTrue(concat2.IsDeterministic);
             Assert.IsTrue(BasicOperations.SameLanguage(concat1, concat2));
             Assert.IsTrue(BasicOperations.SameLanguage(other, concat1));
             Assert.IsTrue(BasicOperations.SameLanguage(other, concat2));
@@ -119,7 +119,7 @@ namespace Lucene.Net.Util.Automaton
             Automaton nfa = BasicOperations.Union(BasicAutomata.MakeString("this"), BasicAutomata.MakeString("three"));
             Automaton concat1 = BasicOperations.Concatenate(expandedSingleton, nfa);
             Automaton concat2 = BasicOperations.Concatenate(singleton, nfa);
-            Assert.IsFalse(concat2.Deterministic);
+            Assert.IsFalse(concat2.IsDeterministic);
             Assert.IsTrue(BasicOperations.SameLanguage(concat1, concat2));
             Assert.IsTrue(BasicOperations.SameLanguage(nfa, concat1));
             Assert.IsTrue(BasicOperations.SameLanguage(nfa, concat2));

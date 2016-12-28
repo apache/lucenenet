@@ -66,7 +66,7 @@ namespace Lucene.Net.Util.Automaton
             // adding epsilon transitions with the NFA concatenation algorithm
             // in this case always produces a resulting DFA, preventing expensive
             // redundant determinize() calls for this common case.
-            bool deterministic = a1.IsSingleton && a2.Deterministic;
+            bool deterministic = a1.IsSingleton && a2.IsDeterministic;
             if (a1 == a2)
             {
                 a1 = a1.CloneExpanded();
@@ -77,7 +77,7 @@ namespace Lucene.Net.Util.Automaton
                 a1 = a1.CloneExpandedIfRequired();
                 a2 = a2.CloneExpandedIfRequired();
             }
-            foreach (State s in a1.AcceptStates)
+            foreach (State s in a1.GetAcceptStates())
             {
                 s.accept = false;
                 s.AddEpsilon(a2.Initial);
@@ -143,7 +143,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     b = b.CloneExpandedIfRequired();
                 }
-                ISet<State> ac = b.AcceptStates;
+                ISet<State> ac = b.GetAcceptStates();
                 bool first = true;
                 foreach (Automaton a in l)
                 {
@@ -153,7 +153,7 @@ namespace Lucene.Net.Util.Automaton
                     }
                     else
                     {
-                        if (a.EmptyString)
+                        if (a.IsEmptyString)
                         {
                             continue;
                         }
@@ -166,7 +166,7 @@ namespace Lucene.Net.Util.Automaton
                         {
                             aa = aa.CloneExpandedIfRequired();
                         }
-                        ISet<State> ns = aa.AcceptStates;
+                        ISet<State> ns = aa.GetAcceptStates();
                         foreach (State s in ac)
                         {
                             s.accept = false;
@@ -220,7 +220,7 @@ namespace Lucene.Net.Util.Automaton
             State s = new State();
             s.accept = true;
             s.AddEpsilon(a.Initial);
-            foreach (State p in a.AcceptStates)
+            foreach (State p in a.GetAcceptStates())
             {
                 p.AddEpsilon(s);
             }
@@ -293,13 +293,13 @@ namespace Lucene.Net.Util.Automaton
                 while (--max > 0)
                 {
                     Automaton c = (Automaton)a.Clone();
-                    foreach (State p in c.AcceptStates)
+                    foreach (State p in c.GetAcceptStates())
                     {
                         p.AddEpsilon(d.Initial);
                     }
                     d = c;
                 }
-                foreach (State p in b.AcceptStates)
+                foreach (State p in b.GetAcceptStates())
                 {
                     p.AddEpsilon(d.Initial);
                 }
@@ -322,7 +322,7 @@ namespace Lucene.Net.Util.Automaton
             a = a.CloneExpandedIfRequired();
             a.Determinize();
             a.Totalize();
-            foreach (State p in a.NumberedStates)
+            foreach (State p in a.GetNumberedStates())
             {
                 p.accept = !p.accept;
             }
@@ -396,8 +396,8 @@ namespace Lucene.Net.Util.Automaton
             {
                 return a1.CloneIfRequired();
             }
-            Transition[][] transitions1 = a1.SortedTransitions;
-            Transition[][] transitions2 = a2.SortedTransitions;
+            Transition[][] transitions1 = a1.GetSortedTransitions();
+            Transition[][] transitions2 = a2.GetSortedTransitions();
             Automaton c = new Automaton();
             LinkedList<StatePair> worklist = new LinkedList<StatePair>();
             Dictionary<StatePair, StatePair> newstates = new Dictionary<StatePair, StatePair>();
@@ -493,8 +493,8 @@ namespace Lucene.Net.Util.Automaton
                 return BasicOperations.Run(a2, a1.singleton);
             }
             a2.Determinize();
-            Transition[][] transitions1 = a1.SortedTransitions;
-            Transition[][] transitions2 = a2.SortedTransitions;
+            Transition[][] transitions1 = a1.GetSortedTransitions();
+            Transition[][] transitions2 = a2.GetSortedTransitions();
             LinkedList<StatePair> worklist = new LinkedList<StatePair>();
             HashSet<StatePair> visited = new HashSet<StatePair>();
             StatePair p = new StatePair(a1.Initial, a2.Initial);
@@ -503,7 +503,7 @@ namespace Lucene.Net.Util.Automaton
             while (worklist.Count > 0)
             {
                 p = worklist.First.Value;
-                worklist.RemoveFirst();
+                worklist.Remove(p);
                 if (p.S1.accept && !p.S2.accept)
                 {
                     return false;
@@ -785,12 +785,12 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static void Determinize(Automaton a)
         {
-            if (a.Deterministic || a.IsSingleton)
+            if (a.IsDeterministic || a.IsSingleton)
             {
                 return;
             }
 
-            State[] allStates = a.NumberedStates;
+            State[] allStates = a.GetNumberedStates();
 
             // subset construction
             bool initAccept = a.Initial.accept;
@@ -1073,7 +1073,7 @@ namespace Lucene.Net.Util.Automaton
             }
             else
             {
-                State[] states = a.NumberedStates;
+                State[] states = a.GetNumberedStates();
                 LinkedList<State> pp = new LinkedList<State>();
                 LinkedList<State> pp_other = new LinkedList<State>();
                 BitArray bb = new BitArray(states.Length);

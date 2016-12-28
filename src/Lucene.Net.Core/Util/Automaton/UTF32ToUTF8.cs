@@ -314,14 +314,14 @@ namespace Lucene.Net.Util.Automaton
                 utf32 = utf32.CloneExpanded();
             }
 
-            State[] map = new State[utf32.NumberedStates.Length];
+            State[] map = new State[utf32.GetNumberedStates().Length];
             List<State> pending = new List<State>();
-            State utf32State = utf32.InitialState;
+            State utf32State = utf32.GetInitialState();
             pending.Add(utf32State);
             Automaton utf8 = new Automaton();
-            utf8.Deterministic = false;
+            utf8.IsDeterministic = false;
 
-            State utf8State = utf8.InitialState;
+            State utf8State = utf8.GetInitialState();
 
             Utf8States = new State[5];
             Utf8StateCount = 0;

@@ -203,7 +203,7 @@ namespace Lucene.Net.Util.Automaton
                 CommonSuffixRef = SpecialOperations.GetCommonSuffixBytesRef(utf8);
             }
             RunAutomaton = new ByteRunAutomaton(utf8, true);
-            SortedTransitions = utf8.SortedTransitions;
+            SortedTransitions = utf8.GetSortedTransitions();
         }
 
         //private static final boolean DEBUG = BlockTreeTermsWriter.DEBUG;

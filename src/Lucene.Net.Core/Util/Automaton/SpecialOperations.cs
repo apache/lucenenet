@@ -84,7 +84,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return true;
             }
-            return IsFinite(a.Initial, new BitArray(a.NumberOfStates), new BitArray(a.NumberOfStates));
+            return IsFinite(a.Initial, new BitArray(a.GetNumberOfStates()), new BitArray(a.GetNumberOfStates()));
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace Lucene.Net.Util.Automaton
             a.ExpandSingleton();
             // reverse all edges
             Dictionary<State, HashSet<Transition>> m = new Dictionary<State, HashSet<Transition>>();
-            State[] states = a.NumberedStates;
+            State[] states = a.GetNumberedStates();
             HashSet<State> accept = new HashSet<State>();
             foreach (State s in states)
             {

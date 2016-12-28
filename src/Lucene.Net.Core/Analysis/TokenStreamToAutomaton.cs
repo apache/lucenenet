@@ -183,14 +183,14 @@ namespace Lucene.Net.Analysis
                         if (pos == 0)
                         {
                             // OK: this is the first token
-                            posData.leaving = a.InitialState;
+                            posData.leaving = a.GetInitialState();
                         }
                         else
                         {
                             // this means there's a hole (eg, StopFilter
                             // does this):
                             posData.leaving = new State();
-                            AddHoles(a.InitialState, positions, pos);
+                            AddHoles(a.GetInitialState(), positions, pos);
                         }
                     }
                     else
@@ -201,7 +201,7 @@ namespace Lucene.Net.Analysis
                         {
                             // A token spanned over a hole; add holes
                             // "under" it:
-                            AddHoles(a.InitialState, positions, pos);
+                            AddHoles(a.GetInitialState(), positions, pos);
                         }
                     }
                     positions.FreeBefore(pos);
@@ -288,7 +288,7 @@ namespace Lucene.Net.Analysis
             }
 
             //toDot(a);
-            a.Deterministic = deterministic;
+            a.IsDeterministic = deterministic;
             return a;
         }
 

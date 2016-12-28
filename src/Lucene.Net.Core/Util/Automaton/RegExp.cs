@@ -502,7 +502,7 @@ namespace Lucene.Net.Util.Automaton
             Automaton a = ToAutomaton(automata, automaton_provider);
             if (Allow_mutation)
             {
-                Automaton.AllowMutate = b;
+                Automaton.SetAllowMutate(b);
             }
             return a;
         }

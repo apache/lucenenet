@@ -182,8 +182,8 @@ namespace Lucene.Net.Util.Automaton
 
                 var a = new Automaton();
                 var end = new State {Accept = true};
-                a.InitialState.AddTransition(new Transition(startCode, endCode, end));
-                a.Deterministic = true;
+                a.GetInitialState().AddTransition(new Transition(startCode, endCode, end));
+                a.IsDeterministic = true;
 
                 TestOne(r, new ByteRunAutomaton(a), startCode, endCode, ITERS_PER_DFA);
             }

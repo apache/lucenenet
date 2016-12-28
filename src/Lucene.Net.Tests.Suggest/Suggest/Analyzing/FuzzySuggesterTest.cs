@@ -905,7 +905,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // suggester.toLevA ...) ... but testRandom2() fixes
                 // this:
                 Automaton automaton = suggester.ConvertAutomaton(suggester.ToLevenshteinAutomata(suggester.ToLookupAutomaton(analyzedKey)));
-                assertTrue(automaton.Deterministic); // LUCENENET TODO: Rename back to IsDeterministic
+                assertTrue(automaton.IsDeterministic); // LUCENENET TODO: Rename back to IsDeterministic
                                                      // TODO: could be faster... but its slowCompletor for a reason
                 BytesRef spare = new BytesRef();
                 foreach (TermFreqPayload2 e in slowCompletor)
@@ -914,7 +914,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     ISet<IntsRef> finiteStrings = suggester.ToFiniteStrings(spare, tokenStreamToAutomaton);
                     foreach (IntsRef intsRef in finiteStrings)
                     {
-                        State p = automaton.InitialState;
+                        State p = automaton.GetInitialState();
                         BytesRef @ref = Lucene.Net.Util.Fst.Util.ToBytesRef(intsRef, spare);
                         bool added = false;
                         for (int i = @ref.Offset; i < @ref.Length; i++)

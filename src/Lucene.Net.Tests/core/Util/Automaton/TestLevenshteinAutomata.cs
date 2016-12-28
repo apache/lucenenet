@@ -86,8 +86,8 @@ namespace Lucene.Net.Util.Automaton
                 tautomata[n] = tbuilder.ToAutomaton(n);
                 Assert.IsNotNull(automata[n]);
                 Assert.IsNotNull(tautomata[n]);
-                Assert.IsTrue(automata[n].Deterministic);
-                Assert.IsTrue(tautomata[n].Deterministic);
+                Assert.IsTrue(automata[n].IsDeterministic);
+                Assert.IsTrue(tautomata[n].IsDeterministic);
                 Assert.IsTrue(SpecialOperations.IsFinite(automata[n]));
                 Assert.IsTrue(SpecialOperations.IsFinite(tautomata[n]));
                 AutomatonTestUtil.AssertNoDetachedStates(automata[n]);

@@ -73,10 +73,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public static List<Path<T>> IntersectPrefixPaths<T>(Automaton a, FST<T> fst)
         {
-            Debug.Assert(a.Deterministic);
+            Debug.Assert(a.IsDeterministic);
             IList<Path<T>> queue = new List<Path<T>>();
             List<Path<T>> endNodes = new List<Path<T>>();
-            queue.Add(new Path<T>(a.InitialState, fst.GetFirstArc(new FST.Arc<T>()), fst.Outputs.NoOutput, new IntsRef()));
+            queue.Add(new Path<T>(a.GetInitialState(), fst.GetFirstArc(new FST.Arc<T>()), fst.Outputs.NoOutput, new IntsRef()));
 
             FST.Arc<T> scratchArc = new FST.Arc<T>();
             FST.BytesReader fstReader = fst.BytesReader;

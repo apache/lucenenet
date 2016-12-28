@@ -257,7 +257,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private void ReplaceSep(Automaton a)
         {
 
-            State[] states = a.NumberedStates;
+            State[] states = a.GetNumberedStates();
 
             // Go in reverse topo sort so we know we only have to
             // make one pass:
@@ -278,7 +278,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         else
                         {
                             CopyDestTransitions(state, t.Dest, newTransitions);
-                            a.Deterministic = false;
+                            a.IsDeterministic = false;
                         }
                     }
                     else if (t.Min == TokenStreamToAutomaton.HOLE)
@@ -292,7 +292,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         // to a dedicated byte (and escape it in the
                         // input).
                         CopyDestTransitions(state, t.Dest, newTransitions);
-                        a.Deterministic = false;
+                        a.IsDeterministic = false;
                     }
                     else
                     {

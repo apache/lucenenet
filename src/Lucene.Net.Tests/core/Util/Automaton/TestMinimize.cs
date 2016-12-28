@@ -56,8 +56,8 @@ namespace Lucene.Net.Util.Automaton
                 Automaton b = (Automaton)a.Clone();
                 MinimizationOperations.Minimize(b);
                 Assert.IsTrue(BasicOperations.SameLanguage(a, b));
-                Assert.AreEqual(a.NumberOfStates, b.NumberOfStates);
-                Assert.AreEqual(a.NumberOfTransitions, b.NumberOfTransitions);
+                Assert.AreEqual(a.GetNumberOfStates(), b.GetNumberOfStates());
+                Assert.AreEqual(a.GetNumberOfTransitions(), b.GetNumberOfTransitions());
             }
         }
 

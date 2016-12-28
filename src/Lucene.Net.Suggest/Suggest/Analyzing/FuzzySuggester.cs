@@ -246,7 +246,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     LevenshteinAutomata lev = new LevenshteinAutomata(ints, unicodeAware ? Character.MAX_CODE_POINT : 255, transpositions);
                     Automaton levAutomaton = lev.ToAutomaton(maxEdits);
                     Automaton combined = BasicOperations.Concatenate(Arrays.AsList(prefix, levAutomaton));
-                    combined.Deterministic = true; // its like the special case in concatenate itself, except we cloneExpanded already
+                    combined.IsDeterministic = true; // its like the special case in concatenate itself, except we cloneExpanded already
                     subs[upto] = combined;
                     upto++;
                 }

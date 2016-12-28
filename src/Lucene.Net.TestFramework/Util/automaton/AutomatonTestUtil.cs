@@ -236,7 +236,7 @@ namespace Lucene.Net.Util.Automaton
 
                 // reverse map the transitions, so we can quickly look
                 // up all arriving transitions to a given state
-                foreach (State s in a.NumberedStates)
+                foreach (State s in a.GetNumberedStates())
                 {
                     for (int i = 0; i < s.numTransitions; i++)
                     {
@@ -299,7 +299,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 else
                 {
-                    var s = a.InitialState;
+                    var s = a.GetInitialState();
 
                     while (true)
                     {
@@ -449,7 +449,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static void DeterminizeSimple(Automaton a)
         {
-            if (a.Deterministic || a.IsSingleton)
+            if (a.IsDeterministic || a.IsSingleton)
             {
                 return;
             }
@@ -464,7 +464,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static void DeterminizeSimple(Automaton a, ISet<State> initialset)
         {
-            int[] points = a.StartPoints;
+            int[] points = a.GetStartPoints();
             // subset construction
             IDictionary<ISet<State>, ISet<State>> sets = new Dictionary<ISet<State>, ISet<State>>();
             LinkedList<ISet<State>> worklist = new LinkedList<ISet<State>>();
@@ -519,7 +519,7 @@ namespace Lucene.Net.Util.Automaton
                     r.AddTransition(new Transition(min, max, q_));
                 }
             }
-            a.Deterministic = true;
+            a.IsDeterministic = true;
             a.ClearNumberedStates();
             a.RemoveDeadTransitions();
         }
@@ -536,7 +536,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return true;
             }
-            return IsFiniteSlow(a.InitialState, new HashSet<State>());
+            return IsFiniteSlow(a.GetInitialState(), new HashSet<State>());
         }
 
         /// <summary>
@@ -565,9 +565,9 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static void AssertNoDetachedStates(Automaton a)
         {
-            int numStates = a.NumberOfStates;
+            int numStates = a.GetNumberOfStates();
             a.ClearNumberedStates(); // force recomputation of cached numbered states
-            Assert.True(numStates == a.NumberOfStates, "automaton has " + (numStates - a.NumberOfStates) + " detached states");
+            Assert.True(numStates == a.GetNumberOfStates(), "automaton has " + (numStates - a.GetNumberOfStates()) + " detached states");
         }
     }
 }
