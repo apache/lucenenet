@@ -94,7 +94,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
 
                 IntsRef currentInput = path.input;
-                foreach (Transition t in path.state.Transitions)
+                foreach (Transition t in path.state.GetTransitions())
                 {
                     int min = t.Min;
                     int max = t.Max;

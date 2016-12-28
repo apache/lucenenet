@@ -246,7 +246,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 from.Accept = true;
             }
-            foreach (Transition t in to.Transitions)
+            foreach (Transition t in to.GetTransitions())
             {
                 transitions.Add(t);
             }
@@ -265,7 +265,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 State state = states[stateNumber];
                 IList<Transition> newTransitions = new List<Transition>();
-                foreach (Transition t in state.Transitions)
+                foreach (Transition t in state.GetTransitions())
                 {
                     Debug.Assert(t.Min == t.Max);
                     if (t.Min == TokenStreamToAutomaton.POS_SEP)
@@ -299,7 +299,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         newTransitions.Add(t);
                     }
                 }
-                state.Transitions = newTransitions.ToArray();
+                state.SetTransitions(newTransitions.ToArray());
             }
         }
 

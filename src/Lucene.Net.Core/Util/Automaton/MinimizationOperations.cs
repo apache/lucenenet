@@ -240,7 +240,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 State s = newstates[n];
                 s.accept = states[s.number].accept;
-                foreach (Transition t in states[s.number].Transitions)
+                foreach (Transition t in states[s.number].GetTransitions())
                 {
                     s.AddTransition(new Transition(t.Min_Renamed, t.Max_Renamed, newstates[t.To.number]));
                 }

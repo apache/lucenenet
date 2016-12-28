@@ -143,22 +143,20 @@ namespace Lucene.Net.Util.Automaton
         /// in the automaton.
         /// </summary>
         /// <returns> transition set </returns>
-        public virtual IEnumerable<Transition> Transitions // LUCENENET TODO: Make GetTransitions(), SetTransitions() (conversion, new instance)
+        public virtual IEnumerable<Transition> GetTransitions()
         {
-            get
-            {
-                return new TransitionsIterable(this);
-            }
-            set
-            {
-                this.TransitionsArray = value.ToArray();
-                this.numTransitions = value.ToArray().Length;
-            }
+            return new TransitionsIterable(this);
         }
 
         public virtual int NumTransitions
         {
             get { return numTransitions; }
+        }
+
+        public virtual void SetTransitions(Transition[] transitions)
+        {
+            this.numTransitions = transitions.Length;
+            this.TransitionsArray = transitions;
         }
 
         /// <summary>
@@ -242,7 +240,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 accept = true;
             }
-            foreach (Transition t in to.Transitions)
+            foreach (Transition t in to.GetTransitions())
             {
                 AddTransition(t);
             }
@@ -364,7 +362,7 @@ namespace Lucene.Net.Util.Automaton
                 b.Append(" [reject]");
             }
             b.Append(":\n");
-            foreach (Transition t in Transitions)
+            foreach (Transition t in GetTransitions())
             {
                 b.Append("  ").Append(t.ToString()).Append("\n");
             }

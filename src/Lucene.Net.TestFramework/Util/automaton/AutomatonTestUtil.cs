@@ -491,7 +491,7 @@ namespace Lucene.Net.Util.Automaton
                     ISet<State> p = new ValueHashSet<State>();
                     foreach (State q in s)
                     {
-                        foreach (Transition t in q.Transitions)
+                        foreach (Transition t in q.GetTransitions())
                         {
                             if (t.Min <= points[n] && points[n] <= t.Max)
                             {
@@ -548,7 +548,7 @@ namespace Lucene.Net.Util.Automaton
         private static bool IsFiniteSlow(State s, HashSet<State> path)
         {
             path.Add(s);
-            foreach (Transition t in s.Transitions)
+            foreach (Transition t in s.GetTransitions())
             {
                 if (path.Contains(t.Dest) || !IsFiniteSlow(t.Dest, path))
                 {

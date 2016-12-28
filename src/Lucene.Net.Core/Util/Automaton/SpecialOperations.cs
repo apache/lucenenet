@@ -96,7 +96,7 @@ namespace Lucene.Net.Util.Automaton
         private static bool IsFinite(State s, BitArray path, BitArray visited)
         {
             path.SafeSet(s.number, true);
-            foreach (Transition t in s.Transitions)
+            foreach (Transition t in s.GetTransitions())
             {
                 if (path.SafeGet(t.To.number) || (!visited.SafeGet(t.To.number) && !IsFinite(t.To, path, visited)))
                 {
@@ -129,7 +129,7 @@ namespace Lucene.Net.Util.Automaton
                 visited.Add(s);
                 if (!s.accept && s.NumTransitions == 1)
                 {
-                    var iter = s.Transitions.GetEnumerator();
+                    var iter = s.GetTransitions().GetEnumerator();
                     iter.MoveNext();
                     Transition t = iter.Current;
                     if (t.Min_Renamed == t.Max_Renamed && !visited.Contains(t.To))
@@ -162,7 +162,7 @@ namespace Lucene.Net.Util.Automaton
                 visited.Add(s);
                 if (!s.accept && s.NumTransitions == 1)
                 {
-                    var iter = s.Transitions.GetEnumerator();
+                    var iter = s.GetTransitions().GetEnumerator();
                     iter.MoveNext();
                     Transition t = iter.Current;
 
@@ -253,7 +253,7 @@ namespace Lucene.Net.Util.Automaton
             }
             foreach (State r in states)
             {
-                foreach (Transition t in r.Transitions)
+                foreach (Transition t in r.GetTransitions())
                 {
                     m[t.To].Add(new Transition(t.Min_Renamed, t.Max_Renamed, r));
                 }
@@ -261,7 +261,7 @@ namespace Lucene.Net.Util.Automaton
             foreach (State r in states)
             {
                 HashSet<Transition> tr = m[r];
-                r.Transitions = tr.ToArray(/*new Transition[tr.Count]*/);
+                r.SetTransitions(tr.ToArray(/*new Transition[tr.Count]*/));
             }
             // make new initial+final states
             a.initial.accept = true;
@@ -310,7 +310,7 @@ namespace Lucene.Net.Util.Automaton
         private static bool GetFiniteStrings(State s, HashSet<State> pathstates, HashSet<IntsRef> strings, IntsRef path, int limit)
         {
             pathstates.Add(s);
-            foreach (Transition t in s.Transitions)
+            foreach (Transition t in s.GetTransitions())
             {
                 if (pathstates.Contains(t.To))
                 {

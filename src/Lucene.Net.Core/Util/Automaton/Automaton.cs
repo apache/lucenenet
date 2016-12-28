@@ -369,7 +369,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     accepts.Add(s);
                 }
-                foreach (Transition t in s.Transitions)
+                foreach (Transition t in s.GetTransitions())
                 {
                     if (!visited.Contains(t.To))
                     {
@@ -393,7 +393,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 int maxi = Character.MIN_CODE_POINT;
                 p.SortTransitions(Transition.CompareByMinMaxThenDest);
-                foreach (Transition t in p.Transitions)
+                foreach (Transition t in p.GetTransitions())
                 {
                     if (t.Min_Renamed > maxi)
                     {
@@ -450,7 +450,7 @@ namespace Lucene.Net.Util.Automaton
             pointset.Add(Character.MIN_CODE_POINT);
             foreach (State s in states)
             {
-                foreach (Transition t in s.Transitions)
+                foreach (Transition t in s.GetTransitions())
                 {
                     pointset.Add(t.Min_Renamed);
                     if (t.Max_Renamed < Character.MAX_CODE_POINT)
@@ -760,7 +760,7 @@ namespace Lucene.Net.Util.Automaton
                     b.Append("  initial [shape=plaintext,label=\"\"];\n");
                     b.Append("  initial -> ").Append(s.number).Append("\n");
                 }
-                foreach (Transition t in s.Transitions)
+                foreach (Transition t in s.GetTransitions())
                 {
                     b.Append("  ").Append(s.number);
                     t.AppendDot(b);
@@ -818,7 +818,7 @@ namespace Lucene.Net.Util.Automaton
                     {
                         a.initial = p;
                     }
-                    foreach (Transition t in s.Transitions)
+                    foreach (Transition t in s.GetTransitions())
                     {
                         p.AddTransition(new Transition(t.Min_Renamed, t.Max_Renamed, m[t.To]));
                     }

@@ -1040,7 +1040,7 @@ namespace Lucene.Net.Util.Automaton
             }
             if (a.initial.accept && a.initial.NumTransitions == 1)
             {
-                var iter = a.initial.Transitions.GetEnumerator();
+                var iter = a.initial.GetTransitions().GetEnumerator();
                 iter.MoveNext();
                 Transition t = iter.Current; ;
                 return t.To == a.initial && t.Min_Renamed == Character.MIN_CODE_POINT && t.Max_Renamed == Character.MAX_CODE_POINT;
