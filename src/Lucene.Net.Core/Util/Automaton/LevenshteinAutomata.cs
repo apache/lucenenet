@@ -156,7 +156,7 @@ namespace Lucene.Net.Util.Automaton
             int range = 2 * n + 1;
             ParametricDescription description = Descriptions[n];
             // the number of states is based on the length of the word and n
-            State[] states = new State[description.Size()];
+            State[] states = new State[description.Size];
             // create all states, and mark as accept states if appropriate
             for (int i = 0; i < states.Length; i++)
             {
@@ -257,9 +257,9 @@ namespace Lucene.Net.Util.Automaton
             /// <summary>
             /// Return the number of states needed to compute a Levenshtein DFA
             /// </summary>
-            internal virtual int Size() // LUCENENET TODO: change to property, rename Count
+            internal virtual int Size // LUCENENET TODO: rename Count
             {
-                return MinErrors.Length * (w + 1);
+                get { return MinErrors.Length * (w + 1); }
             }
 
             /// <summary>
