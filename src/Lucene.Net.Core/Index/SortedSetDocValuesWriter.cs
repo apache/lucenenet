@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
         {
             int maxDoc = state.SegmentInfo.DocCount;
             int maxCountPerDoc = MaxCount;
-            Debug.Assert(PendingCounts.Size() == maxDoc);
+            Debug.Assert(PendingCounts.Size == maxDoc);
             int valueCount = Hash.Size;
 
             int[] sortedValues = Hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
@@ -199,7 +199,7 @@ namespace Lucene.Net.Index
         {
             AppendingDeltaPackedLongBuffer.Iterator iter = PendingCounts.GetIterator();
 
-            Debug.Assert(maxDoc == PendingCounts.Size(), "MaxDoc: " + maxDoc + ", pending.Size(): " + Pending.Size());
+            Debug.Assert(maxDoc == PendingCounts.Size, "MaxDoc: " + maxDoc + ", pending.Size(): " + Pending.Size);
 
             for (int i = 0; i < maxDoc; ++i)
             {
@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
             AppendingDeltaPackedLongBuffer.Iterator counts = PendingCounts.GetIterator();
             int[] currentDoc = new int[maxCountPerDoc];
 
-            for (long i = 0; i < Pending.Size(); ++i)
+            for (long i = 0; i < Pending.Size; ++i)
             {
                 while (currentUpTo == currentLength)
                 {

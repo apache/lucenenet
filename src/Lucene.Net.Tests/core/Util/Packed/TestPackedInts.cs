@@ -1181,7 +1181,7 @@ namespace Lucene.Net.Util.Packed
                     {
                         buf.Add(arr[i]);
                     }
-                    Assert.AreEqual(arr.Length, buf.Size());
+                    Assert.AreEqual(arr.Length, buf.Size);
                     if (Random().NextBoolean())
                     {
                         buf.Freeze();
@@ -1191,7 +1191,7 @@ namespace Lucene.Net.Util.Packed
                             buf.Freeze();
                         }
                     }
-                    Assert.AreEqual(arr.Length, buf.Size());
+                    Assert.AreEqual(arr.Length, buf.Size);
 
                     for (int i = 0; i < arr.Length; ++i)
                     {
@@ -1213,7 +1213,7 @@ namespace Lucene.Net.Util.Packed
                     long[] target = new long[arr.Length + 1024]; // check the request for more is OK.
                     for (int i = 0; i < arr.Length; i += TestUtil.NextInt(Random(), 0, 10000))
                     {
-                        int lenToRead = Random().Next(buf.PageSize() * 2) + 1;
+                        int lenToRead = Random().Next(buf.PageSize * 2) + 1;
                         lenToRead = Math.Min(lenToRead, target.Length - i);
                         int lenToCheck = Math.Min(lenToRead, arr.Length - i);
                         int off = i;

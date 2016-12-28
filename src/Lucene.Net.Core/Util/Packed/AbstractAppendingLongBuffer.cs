@@ -49,25 +49,28 @@ namespace Lucene.Net.Util.Packed
             this.AcceptableOverheadRatio = acceptableOverheadRatio;
         }
 
-        public int PageSize() // LUCENENET TODO: Make property, rename PageCount ?
+        public int PageSize // LUCENENET TODO: rename PageCount ?
         {
-            return PageMask + 1;
+            get { return PageMask + 1; }
         }
 
         /// <summary>
         /// Get the number of values that have been added to the buffer. </summary>
-        public long Size() // LUCENENET TODO: Make property, rename Count
+        public long Size // LUCENENET TODO: rename Count
         {
-            long size = PendingOff;
-            if (ValuesOff > 0)
+            get
             {
-                size += Values[ValuesOff - 1].Size();
+                long size = PendingOff;
+                if (ValuesOff > 0)
+                {
+                    size += Values[ValuesOff - 1].Size();
+                }
+                if (ValuesOff > 1)
+                {
+                    size += (long)(ValuesOff - 1) * PageSize;
+                }
+                return size;
             }
-            if (ValuesOff > 1)
-            {
-                size += (long)(ValuesOff - 1) * PageSize();
-            }
-            return size;
         }
 
         /// <summary>
@@ -104,7 +107,7 @@ namespace Lucene.Net.Util.Packed
 
         public override sealed long Get(long index)
         {
-            Debug.Assert(index >= 0 && index < Size());
+            Debug.Assert(index >= 0 && index < Size);
             int block = (int)(index >> PageShift);
             int element = (int)(index & PageMask);
             return Get(block, element);
@@ -118,7 +121,7 @@ namespace Lucene.Net.Util.Packed
         public int Get(long index, long[] arr, int off, int len)
         {
             Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-            Debug.Assert(index >= 0 && index < Size());
+            Debug.Assert(index >= 0 && index < Size);
             Debug.Assert(off + len <= arr.Length);
 
             int block = (int)(index >> PageShift);

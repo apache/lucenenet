@@ -53,13 +53,13 @@ namespace Lucene.Net.Index
 
         public virtual void AddValue(int docID, long value)
         {
-            if (docID < pending.Size())
+            if (docID < pending.Size)
             {
                 throw new System.ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
             }
 
             // Fill in any holes:
-            for (int i = (int)pending.Size(); i < docID; ++i)
+            for (int i = (int)pending.Size; i < docID; ++i)
             {
                 pending.Add(MISSING);
             }
@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
         {
             // LUCENENET specific: using yield return instead of custom iterator type. Much less code.
             AbstractAppendingLongBuffer.Iterator iter = pending.GetIterator();
-            int size = (int)pending.Size();
+            int size = (int)pending.Size;
             int upto = 0;
 
             while (upto < maxDoc)

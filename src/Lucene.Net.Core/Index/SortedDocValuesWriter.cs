@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
 
         public virtual void AddValue(int docID, BytesRef value)
         {
-            if (docID < Pending.Size())
+            if (docID < Pending.Size)
             {
                 throw new System.ArgumentException("DocValuesField \"" + FieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
             }
@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
             }
 
             // Fill in any holes:
-            while (Pending.Size() < docID)
+            while (Pending.Size < docID)
             {
                 Pending.Add(EMPTY_ORD);
             }
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
 
         public override void Finish(int maxDoc)
         {
-            while (Pending.Size() < maxDoc)
+            while (Pending.Size < maxDoc)
             {
                 Pending.Add(EMPTY_ORD);
             }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
         {
             int maxDoc = state.SegmentInfo.DocCount;
 
-            Debug.Assert(Pending.Size() == maxDoc);
+            Debug.Assert(Pending.Size == maxDoc);
             int valueCount = Hash.Size;
 
             int[] sortedValues = Hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
