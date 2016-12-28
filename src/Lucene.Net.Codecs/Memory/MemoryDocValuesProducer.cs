@@ -823,12 +823,12 @@ namespace Lucene.Net.Codecs.Memory
 
             public override BytesRef Term
             {
-                get { return input.Current().Input; }
+                get { return input.Current.Input; }
             }
 
             public override long Ord()
             {
-                return input.Current().Output.Value;
+                return input.Current.Output.Value;
             }
 
             public override int DocFreq()

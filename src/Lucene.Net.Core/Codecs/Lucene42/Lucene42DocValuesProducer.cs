@@ -793,12 +793,12 @@ namespace Lucene.Net.Codecs.Lucene42
 
             public override BytesRef Term
             {
-                get { return @in.Current().Input; }
+                get { return @in.Current.Input; }
             }
 
             public override long Ord()
             {
-                return @in.Current().Output.Value;
+                return @in.Current.Output.Value;
             }
 
             public override int DocFreq()

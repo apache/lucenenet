@@ -497,21 +497,21 @@ namespace Lucene.Net.Util.Fst
         {
             if (termsEnum.Term == null)
             {
-                Assert.IsNull(fstEnum.Current());
+                Assert.IsNull(fstEnum.Current);
             }
             else
             {
-                Assert.IsNotNull(fstEnum.Current());
-                Assert.AreEqual(termsEnum.Term, fstEnum.Current().Input, termsEnum.Term.Utf8ToString() + " != " + fstEnum.Current().Input.Utf8ToString());
+                Assert.IsNotNull(fstEnum.Current);
+                Assert.AreEqual(termsEnum.Term, fstEnum.Current.Input, termsEnum.Term.Utf8ToString() + " != " + fstEnum.Current.Input.Utf8ToString());
                 if (storeOrd)
                 {
                     // fst stored the ord
-                    Assert.AreEqual(termsEnum.Ord(), fstEnum.Current().Output, "term=" + termsEnum.Term.Utf8ToString() + " " + termsEnum.Term);
+                    Assert.AreEqual(termsEnum.Ord(), fstEnum.Current.Output, "term=" + termsEnum.Term.Utf8ToString() + " " + termsEnum.Term);
                 }
                 else
                 {
                     // fst stored the docFreq
-                    Assert.AreEqual(termsEnum.DocFreq(), fstEnum.Current().Output, "term=" + termsEnum.Term.Utf8ToString() + " " + termsEnum.Term);
+                    Assert.AreEqual(termsEnum.DocFreq(), fstEnum.Current.Output, "term=" + termsEnum.Term.Utf8ToString() + " " + termsEnum.Term);
                 }
             }
         }

@@ -45,9 +45,9 @@ namespace Lucene.Net.Util.Fst
             current.Offset = 1;
         }
 
-        public BytesRefFSTEnum.InputOutput<T> Current() // LUCENENET TODO: Make property
+        public BytesRefFSTEnum.InputOutput<T> Current
         {
-            return result;
+            get { return result; }
         }
 
         public BytesRefFSTEnum.InputOutput<T> Next()
