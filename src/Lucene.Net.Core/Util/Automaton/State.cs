@@ -44,7 +44,7 @@ namespace Lucene.Net.Util.Automaton
     {
         internal bool accept;
         public Transition[] TransitionsArray; // LUCENENET TODO: make property ?
-        public int numTransitions; // LUCENENET TODO: make property ?
+        internal int numTransitions; // LUCENENET NOTE: Made internal because we already have a public property for access
 
         internal int number;
 
@@ -156,9 +156,9 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
-        public virtual int NumTransitions() // LUCENENET TODO: make property
+        public virtual int NumTransitions
         {
-            return numTransitions;
+            get { return numTransitions; }
         }
 
         /// <summary>
@@ -344,10 +344,6 @@ namespace Lucene.Net.Util.Automaton
             get
             {
                 return number;
-            }
-            internal set // LUCENENET TODO: This wasn't in the original
-            {
-                number = value;
             }
         }
 

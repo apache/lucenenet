@@ -1013,7 +1013,7 @@ namespace Lucene.Net.Util.Automaton
             }
             else
             {
-                return a.initial.accept && a.initial.NumTransitions() == 0;
+                return a.initial.accept && a.initial.NumTransitions == 0;
             }
         }
 
@@ -1026,7 +1026,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return false;
             }
-            return !a.initial.accept && a.initial.NumTransitions() == 0;
+            return !a.initial.accept && a.initial.NumTransitions == 0;
         }
 
         /// <summary>
@@ -1038,7 +1038,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return false;
             }
-            if (a.initial.accept && a.initial.NumTransitions() == 1)
+            if (a.initial.accept && a.initial.NumTransitions == 1)
             {
                 var iter = a.initial.Transitions.GetEnumerator();
                 iter.MoveNext();

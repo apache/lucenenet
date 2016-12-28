@@ -127,17 +127,14 @@ namespace Lucene.Net.Util.Automaton
             {
                 done = true;
                 visited.Add(s);
-                if (!s.accept && s.NumTransitions() == 1)
+                if (!s.accept && s.NumTransitions == 1)
                 {
                     var iter = s.Transitions.GetEnumerator();
                     iter.MoveNext();
                     Transition t = iter.Current;
                     if (t.Min_Renamed == t.Max_Renamed && !visited.Contains(t.To))
                     {
-                        //b.appendCodePoint(t.Min_Renamed);
-
-                        b.Append(Character.ToChars(t.Min_Renamed));
-
+                        b.AppendCodePoint(t.Min_Renamed);
                         s = t.To;
                         done = false;
                     }
@@ -163,7 +160,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 done = true;
                 visited.Add(s);
-                if (!s.accept && s.NumTransitions() == 1)
+                if (!s.accept && s.NumTransitions == 1)
                 {
                     var iter = s.Transitions.GetEnumerator();
                     iter.MoveNext();

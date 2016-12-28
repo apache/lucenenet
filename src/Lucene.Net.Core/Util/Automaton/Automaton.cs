@@ -299,7 +299,7 @@ namespace Lucene.Net.Util.Automaton
                         {
                             visited.Add(t.To);
                             worklist.AddLast(t.To);
-                            t.To.Number = upto;
+                            t.To.number = upto;
                             if (upto == states.Length)
                             {
                                 State[] newArray = new State[ArrayUtil.Oversize(1 + upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
@@ -632,7 +632,7 @@ namespace Lucene.Net.Util.Automaton
             int c = 0;
             foreach (State s in GetNumberedStates())
             {
-                c += s.NumTransitions();
+                c += s.NumTransitions;
             }
             return c;
         }
