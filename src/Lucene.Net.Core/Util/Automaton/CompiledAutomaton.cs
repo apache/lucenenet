@@ -63,19 +63,19 @@ namespace Lucene.Net.Util.Automaton
             NORMAL
         }
 
-        public readonly AUTOMATON_TYPE Type; // LUCENENET TODO: make property
+        public AUTOMATON_TYPE Type { get; private set; }
 
         /// <summary>
         /// For <seealso cref="AUTOMATON_TYPE#PREFIX"/>, this is the prefix term;
         /// for <seealso cref="AUTOMATON_TYPE#SINGLE"/> this is the singleton term.
         /// </summary>
-        public readonly BytesRef Term; // LUCENENET TODO: make property
+        public BytesRef Term { get; private set; }
 
         /// <summary>
         /// Matcher for quickly determining if a byte[] is accepted.
         /// only valid for <seealso cref="AUTOMATON_TYPE#NORMAL"/>.
         /// </summary>
-        public readonly ByteRunAutomaton RunAutomaton; // LUCENENET TODO: make property
+        public ByteRunAutomaton RunAutomaton { get; private set; }
 
         // TODO: would be nice if these sortedTransitions had "int
         // to;" instead of "State to;" somehow:
@@ -85,21 +85,21 @@ namespace Lucene.Net.Util.Automaton
         /// <seealso cref="#runAutomaton"/>.
         /// Only valid for <seealso cref="AUTOMATON_TYPE#NORMAL"/>.
         /// </summary>
-        public readonly Transition[][] SortedTransitions; // LUCENENET TODO: make property
+        public readonly Transition[][] SortedTransitions; // LUCENENET TODO: make property ?
 
         /// <summary>
         /// Shared common suffix accepted by the automaton. Only valid
         /// for <seealso cref="AUTOMATON_TYPE#NORMAL"/>, and only when the
         /// automaton accepts an infinite language.
         /// </summary>
-        public readonly BytesRef CommonSuffixRef; // LUCENENET TODO: make property
+        public BytesRef CommonSuffixRef { get; private set; }
 
         /// <summary>
         /// Indicates if the automaton accepts a finite set of strings.
         /// Null if this was not computed.
         /// Only valid for <seealso cref="AUTOMATON_TYPE#NORMAL"/>.
         /// </summary>
-        public readonly bool? Finite; // LUCENENET TODO: make property
+        public bool? Finite { get; private set; }
 
         public CompiledAutomaton(Automaton automaton)
             : this(automaton, null, true)
