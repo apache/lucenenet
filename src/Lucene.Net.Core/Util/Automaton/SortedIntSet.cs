@@ -308,7 +308,6 @@ namespace Lucene.Net.Util.Automaton
 
             public override bool Equals(object _other)
             {
-                throw new NotImplementedException(); // LUCENENET TODO: remove error
                 if (_other == null)
                 {
                     return false;

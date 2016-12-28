@@ -818,11 +818,15 @@ namespace Lucene.Net.Util.Automaton
             // like SortedMap<Integer,Integer>
             SortedIntSet statesSet = new SortedIntSet(5);
 
-            //THIS IS INFINITE LOOPING
+            // LUCENENET TODO: THIS IS INFINITE LOOPING
+
+            // LUCENENET NOTE: The problem here is almost certainly 
+            // due to the conversion to FrozenIntSet along with its
+            // differing equality checking.
             while (worklist.Count > 0)
             {
                 SortedIntSet.FrozenIntSet s = worklist.First.Value;
-                worklist.RemoveFirst();
+                worklist.Remove(s);
 
                 // Collate all outgoing transitions by min/1+max:
                 for (int i = 0; i < s.Values.Length; i++)
