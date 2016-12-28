@@ -37,8 +37,8 @@ namespace Lucene.Net.Util.Fst
         /// Holds a single pair of two outputs. </summary>
         public class Pair
         {
-            public readonly A Output1; // LUCENENET TODO: make property
-            public readonly B Output2; // LUCENENET TODO: make property
+            public A Output1 { get; private set; }
+            public B Output2 { get; private set; }
 
             // use newPair
             internal Pair(A output1, B output2)
