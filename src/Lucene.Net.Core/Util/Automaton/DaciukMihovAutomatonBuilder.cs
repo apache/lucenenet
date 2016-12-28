@@ -119,9 +119,9 @@ namespace Lucene.Net.Util.Automaton
             /// Return <code>true</code> if this state has any children (outgoing
             /// transitions).
             /// </summary>
-            internal bool HasChildren() // LUCENENET TODO: make property
+            internal bool HasChildren
             {
-                return Labels.Length > 0;
+                get { return Labels.Length > 0; }
             }
 
             /// <summary>
@@ -144,7 +144,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal State LastChild() // LUCENENET NOTE: Kept this a method because there is another overload
             {
-                Debug.Assert(HasChildren(), "No outgoing transitions.");
+                Debug.Assert(HasChildren, "No outgoing transitions.");
                 return States[States.Length - 1];
             }
 
@@ -170,7 +170,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal void ReplaceLastChild(State state)
             {
-                Debug.Assert(HasChildren(), "No outgoing transitions.");
+                Debug.Assert(HasChildren, "No outgoing transitions.");
                 States[States.Length - 1] = state;
             }
 
@@ -237,7 +237,7 @@ namespace Lucene.Net.Util.Automaton
                 pos += Character.CharCount(Character.CodePointAt(current, pos));
             }
 
-            if (state.HasChildren())
+            if (state.HasChildren)
             {
                 ReplaceOrRegister(state);
             }
@@ -257,7 +257,7 @@ namespace Lucene.Net.Util.Automaton
                 throw new InvalidOperationException();
             }
 
-            if (Root.HasChildren())
+            if (Root.HasChildren)
             {
                 ReplaceOrRegister(Root);
             }
@@ -331,7 +331,7 @@ namespace Lucene.Net.Util.Automaton
         {
             State child = state.LastChild();
 
-            if (child.HasChildren())
+            if (child.HasChildren)
             {
                 ReplaceOrRegister(child);
             }
