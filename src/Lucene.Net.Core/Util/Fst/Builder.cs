@@ -46,7 +46,7 @@ namespace Lucene.Net.Util.Fst
     ///
     /// @lucene.experimental
     /// </summary>
-    public class Builder<T>
+    public class Builder<T> : Builder
     {
         private readonly NodeHash<T> dedupHash;
         private readonly FST<T> fst;
@@ -79,16 +79,21 @@ namespace Lucene.Net.Util.Fst
         // current "frontier"
         private UnCompiledNode<T>[] frontier;
 
-        /// <summary>
-        /// Expert: this is invoked by Builder whenever a suffix
-        ///  is serialized.
-        /// </summary>
-        public abstract class FreezeTail<S> // LUCENENET TODO: De-nest this class and move into a separate Builder class so it can be accessed without the generic type
-        {
-            public abstract void Freeze(UnCompiledNode<S>[] frontier, int prefixLenPlus1, IntsRef prevInput);
-        }
+        // LUCENENET specific - FreezeTail class moved to non-generic type Builder
 
         private readonly FreezeTail<T> freezeTail;
+
+        // LUCENENET specific - allow external access through property
+        internal FST<T> Fst
+        {
+            get { return fst; }
+        }
+
+        internal T NoOutput
+        {
+            get { return NO_OUTPUT; }
+        }
+
 
         /// <summary>
         /// Instantiates an FST/FSA builder without any pruning. A shortcut
@@ -505,7 +510,7 @@ namespace Lucene.Net.Util.Fst
             //System.out.println("  count[0]=" + frontier[0].inputCount);
         }
 
-        private bool ValidOutput(T output)
+        internal bool ValidOutput(T output)
         {
             return output.Equals(NO_OUTPUT) || !output.Equals(NO_OUTPUT);
         }
@@ -571,6 +576,44 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
+        // LUCENENET specific: moved Arc<S> to Builder type
+
+        // NOTE: not many instances of Node or CompiledNode are in
+        // memory while the FST is being built; it's only the
+        // current "frontier":
+
+        // LUCENENET specific: moved INode to Builder type
+
+        public virtual long FstSizeInBytes()
+        {
+            return fst.SizeInBytes();
+        }
+
+        // LUCENENET specific: Moved CompiledNode and UncompiledNode to Builder class
+    }
+
+    /// <summary>
+    /// LUCENENET specific type used to access nested types of <see cref="Builder{T}"/>
+    /// without referring to its generic closing type.
+    /// </summary>
+    public abstract class Builder
+    {
+        internal Builder() { } // Disallow external creation
+
+        /// <summary>
+        /// Expert: this is invoked by Builder whenever a suffix
+        ///  is serialized.
+        /// </summary>
+        public abstract class FreezeTail<S>
+        {
+            public abstract void Freeze(UnCompiledNode<S>[] frontier, int prefixLenPlus1, IntsRef prevInput);
+        }
+
+        public interface INode // LUCENENET NOTE: made public rather than internal because it is returned in public types
+        {
+            bool IsCompiled { get; }
+        }
+
         /// <summary>
         /// Expert: holds a pending (seen but not yet serialized) arc. </summary>
         public class Arc<S>
@@ -580,20 +623,6 @@ namespace Lucene.Net.Util.Fst
             public bool IsFinal; // LUCENENET TODO: Make property
             public S Output; // LUCENENET TODO: Make property
             public S NextFinalOutput; // LUCENENET TODO: Make property
-        }
-
-        // NOTE: not many instances of Node or CompiledNode are in
-        // memory while the FST is being built; it's only the
-        // current "frontier":
-
-        public interface INode // LUCENENET NOTE: made public rater than internal because it is returned in public types
-        {
-            bool IsCompiled { get; }
-        }
-
-        public virtual long FstSizeInBytes()
-        {
-            return fst.SizeInBytes();
         }
 
         public sealed class CompiledNode : INode
@@ -639,7 +668,7 @@ namespace Lucene.Net.Util.Fst
                 this.Owner = owner;
                 Arcs = (Arc<S>[])new Arc<S>[1];
                 Arcs[0] = new Arc<S>();
-                Output = owner.NO_OUTPUT;
+                Output = owner.NoOutput;
                 this.Depth = depth;
             }
 
@@ -655,7 +684,7 @@ namespace Lucene.Net.Util.Fst
             {
                 NumArcs = 0;
                 IsFinal = false;
-                Output = Owner.NO_OUTPUT;
+                Output = Owner.NoOutput;
                 InputCount = 0;
 
                 // We don't clear the depth here because it never changes
@@ -690,7 +719,7 @@ namespace Lucene.Net.Util.Fst
                 Arc<S> arc = Arcs[NumArcs++];
                 arc.Label = label;
                 arc.Target = target;
-                arc.Output = arc.NextFinalOutput = Owner.NO_OUTPUT;
+                arc.Output = arc.NextFinalOutput = Owner.NoOutput;
                 arc.IsFinal = false;
             }
 
@@ -729,13 +758,13 @@ namespace Lucene.Net.Util.Fst
 
                 for (int arcIdx = 0; arcIdx < NumArcs; arcIdx++)
                 {
-                    Arcs[arcIdx].Output = Owner.fst.Outputs.Add(outputPrefix, Arcs[arcIdx].Output);
+                    Arcs[arcIdx].Output = Owner.Fst.Outputs.Add(outputPrefix, Arcs[arcIdx].Output);
                     Debug.Assert(Owner.ValidOutput(Arcs[arcIdx].Output));
                 }
 
                 if (IsFinal)
                 {
-                    Output = Owner.fst.Outputs.Add(outputPrefix, Output);
+                    Output = Owner.Fst.Outputs.Add(outputPrefix, Output);
                     Debug.Assert(Owner.ValidOutput(Output));
                 }
             }

@@ -41,7 +41,7 @@ namespace Lucene.Net.Util.Fst
             this.input = input;
         }
 
-        private bool NodesEqual(Builder<T>.UnCompiledNode<T> node, long address)
+        private bool NodesEqual(Builder.UnCompiledNode<T> node, long address)
         {
             fst.ReadFirstRealTargetArc(address, scratchArc, input);
             if (scratchArc.BytesPerArc != 0 && node.NumArcs != scratchArc.NumArcs)
@@ -50,8 +50,8 @@ namespace Lucene.Net.Util.Fst
             }
             for (int arcUpto = 0; arcUpto < node.NumArcs; arcUpto++)
             {
-                Builder<T>.Arc<T> arc = node.Arcs[arcUpto];
-                if (arc.Label != scratchArc.Label || !arc.Output.Equals(scratchArc.Output) || ((Builder<T>.CompiledNode)arc.Target).Node != scratchArc.Target || !arc.NextFinalOutput.Equals(scratchArc.NextFinalOutput) || arc.IsFinal != scratchArc.IsFinal)
+                Builder.Arc<T> arc = node.Arcs[arcUpto];
+                if (arc.Label != scratchArc.Label || !arc.Output.Equals(scratchArc.Output) || ((Builder.CompiledNode)arc.Target).Node != scratchArc.Target || !arc.NextFinalOutput.Equals(scratchArc.NextFinalOutput) || arc.IsFinal != scratchArc.IsFinal)
                 {
                     return false;
                 }
@@ -75,7 +75,7 @@ namespace Lucene.Net.Util.Fst
 
         // hash code for an unfrozen node.  this must be identical
         // to the frozen case (below)!!
-        private long Hash(Builder<T>.UnCompiledNode<T> node)
+        private long Hash(Builder.UnCompiledNode<T> node)
         {
             const int PRIME = 31;
             //System.out.println("hash unfrozen");
@@ -83,9 +83,9 @@ namespace Lucene.Net.Util.Fst
             // TODO: maybe if number of arcs is high we can safely subsample?
             for (int arcIdx = 0; arcIdx < node.NumArcs; arcIdx++)
             {
-                Builder<T>.Arc<T> arc = node.Arcs[arcIdx];
+                Builder.Arc<T> arc = node.Arcs[arcIdx];
                 h = PRIME * h + arc.Label;
-                long n = ((Builder<T>.CompiledNode)arc.Target).Node;
+                long n = ((Builder.CompiledNode)arc.Target).Node;
                 h = PRIME * h + (int)(n ^ (n >> 32));
                 h = PRIME * h + arc.Output.GetHashCode();
                 h = PRIME * h + arc.NextFinalOutput.GetValueHashCode();
@@ -126,7 +126,7 @@ namespace Lucene.Net.Util.Fst
             return h & long.MaxValue;
         }
 
-        public long Add(Builder<T>.UnCompiledNode<T> nodeIn)
+        public long Add(Builder.UnCompiledNode<T> nodeIn)
         {
             //System.out.println("hash: add count=" + count + " vs " + table.size() + " mask=" + mask);
             long h = Hash(nodeIn);

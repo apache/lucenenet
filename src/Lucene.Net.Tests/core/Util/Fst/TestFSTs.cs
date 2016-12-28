@@ -1381,14 +1381,14 @@ namespace Lucene.Net.Util.Fst
 
             FST<long?> fst = new FST<long?>(FST.INPUT_TYPE.BYTE1, outputs, false, PackedInts.COMPACT, true, 15);
 
-            Builder<long?>.UnCompiledNode<long?> rootNode = new Builder<long?>.UnCompiledNode<long?>(b, 0);
+            Builder.UnCompiledNode<long?> rootNode = new Builder.UnCompiledNode<long?>(b, 0);
 
             // Add final stop node
             {
-                Builder<long?>.UnCompiledNode<long?> node = new Builder<long?>.UnCompiledNode<long?>(b, 0);
+                Builder.UnCompiledNode<long?> node = new Builder.UnCompiledNode<long?>(b, 0);
                 node.IsFinal = true;
                 rootNode.AddArc('a', node);
-                Builder<long?>.CompiledNode frozen = new Builder<long?>.CompiledNode();
+                Builder.CompiledNode frozen = new Builder.CompiledNode();
                 frozen.Node = fst.AddNode(node);
                 rootNode.Arcs[0].NextFinalOutput = 17L;
                 rootNode.Arcs[0].IsFinal = true;
@@ -1398,9 +1398,9 @@ namespace Lucene.Net.Util.Fst
 
             // Add non-final stop node
             {
-                Builder<long?>.UnCompiledNode<long?> node = new Builder<long?>.UnCompiledNode<long?>(b, 0);
+                Builder.UnCompiledNode<long?> node = new Builder.UnCompiledNode<long?>(b, 0);
                 rootNode.AddArc('b', node);
-                Builder<long?>.CompiledNode frozen = new Builder<long?>.CompiledNode();
+                Builder.CompiledNode frozen = new Builder.CompiledNode();
                 frozen.Node = fst.AddNode(node);
                 rootNode.Arcs[1].NextFinalOutput = nothing;
                 rootNode.Arcs[1].Output = 42L;

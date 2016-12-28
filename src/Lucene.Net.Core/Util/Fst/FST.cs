@@ -643,7 +643,7 @@ namespace Lucene.Net.Util.Fst
 
         // serializes new node by appending its bytes to the end
         // of the current byte[]
-        internal long AddNode(Builder<T>.UnCompiledNode<T> nodeIn)
+        internal long AddNode(Builder.UnCompiledNode<T> nodeIn)
         {
             //System.out.println("FST.addNode pos=" + bytes.getPosition() + " numArcs=" + nodeIn.numArcs);
             if (nodeIn.NumArcs == 0)
@@ -679,8 +679,8 @@ namespace Lucene.Net.Util.Fst
             int maxBytesPerArc = 0;
             for (int arcIdx = 0; arcIdx < nodeIn.NumArcs; arcIdx++)
             {
-                Builder<T>.Arc<T> arc = nodeIn.Arcs[arcIdx];
-                var target = (Builder<T>.CompiledNode)arc.Target;
+                Builder.Arc<T> arc = nodeIn.Arcs[arcIdx];
+                var target = (Builder.CompiledNode)arc.Target;
                 int flags = 0;
                 //System.out.println("  arc " + arcIdx + " label=" + arc.Label + " -> target=" + target.Node);
 
@@ -1483,7 +1483,7 @@ namespace Lucene.Net.Util.Fst
         /// </returns>
         /// <seealso cref= #FIXED_ARRAY_NUM_ARCS_DEEP </seealso>
         /// <seealso cref= Builder.UnCompiledNode#depth </seealso>
-        private bool ShouldExpand(Builder<T>.UnCompiledNode<T> node)
+        private bool ShouldExpand(Builder.UnCompiledNode<T> node)
         {
             return allowArrayArcs && ((node.Depth <= FST.FIXED_ARRAY_SHALLOW_DISTANCE && node.NumArcs >= FST.FIXED_ARRAY_NUM_ARCS_SHALLOW) || node.NumArcs >= FST.FIXED_ARRAY_NUM_ARCS_DEEP);
         }

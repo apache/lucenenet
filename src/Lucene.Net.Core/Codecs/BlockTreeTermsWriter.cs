@@ -549,7 +549,7 @@ namespace Lucene.Net.Codecs
             // this class assigns terms to blocks "naturally", ie,
             // according to the number of terms under a given prefix
             // that we encounter:
-            private class FindBlocks : Builder<object>.FreezeTail<object>
+            private class FindBlocks : Builder.FreezeTail<object>
             {
                 private readonly BlockTreeTermsWriter.TermsWriter OuterInstance;
 
@@ -558,13 +558,13 @@ namespace Lucene.Net.Codecs
                     this.OuterInstance = outerInstance;
                 }
 
-                public override void Freeze(Builder<object>.UnCompiledNode<object>[] frontier, int prefixLenPlus1, IntsRef lastInput)
+                public override void Freeze(Builder.UnCompiledNode<object>[] frontier, int prefixLenPlus1, IntsRef lastInput)
                 {
                     //if (DEBUG) System.out.println("  freeze prefixLenPlus1=" + prefixLenPlus1);
 
                     for (int idx = lastInput.Length; idx >= prefixLenPlus1; idx--)
                     {
-                        Builder<object>.UnCompiledNode<object> node = frontier[idx];
+                        Builder.UnCompiledNode<object> node = frontier[idx];
 
                         long totCount = 0;
 
@@ -575,7 +575,7 @@ namespace Lucene.Net.Codecs
 
                         for (int arcIdx = 0; arcIdx < node.NumArcs; arcIdx++)
                         {
-                            Builder<object>.UnCompiledNode<object> target = (Builder<object>.UnCompiledNode<object>)node.Arcs[arcIdx].Target;
+                            Builder.UnCompiledNode<object> target = (Builder.UnCompiledNode<object>)node.Arcs[arcIdx].Target;
                             totCount += target.InputCount;
                             target.Clear();
                             node.Arcs[arcIdx].Target = null;
@@ -601,7 +601,7 @@ namespace Lucene.Net.Codecs
                             // stragglers!  carry count upwards
                             node.InputCount = totCount;
                         }
-                        frontier[idx] = new Builder<object>.UnCompiledNode<object>(OuterInstance.BlockBuilder, idx);
+                        frontier[idx] = new Builder.UnCompiledNode<object>(OuterInstance.BlockBuilder, idx);
                     }
                 }
             }
