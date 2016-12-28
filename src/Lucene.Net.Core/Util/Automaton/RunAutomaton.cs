@@ -132,12 +132,9 @@ namespace Lucene.Net.Util.Automaton
         /// Returns array of codepoint class interval start points. The array should
         /// not be modified by the caller.
         /// </summary>
-        public int[] CharIntervals // LUCENENET TODO: Change to GetCharIntervals() (conversion, array)
+        public int[] GetCharIntervals()
         {
-            get
-            {
-                return (int[])(Array)_points.Clone();
-            }
+            return (int[])(Array)_points.Clone();
         }
 
         /// <summary>
