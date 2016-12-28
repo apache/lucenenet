@@ -299,9 +299,9 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public class FSTPath<T>
         {
-            public FST.Arc<T> Arc; // LUCENENET TODO: make property
-            public T Cost; // LUCENENET TODO: make property
-            public readonly IntsRef Input; // LUCENENET TODO: make property
+            public FST.Arc<T> Arc { get; set; }
+            public T Cost { get; set; }
+            public IntsRef Input { get; private set; }
 
             /// <summary>
             /// Sole constructor </summary>
@@ -646,8 +646,8 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public sealed class Result<T>
         {
-            public readonly IntsRef Input; // LUCENENET TODO: make property
-            public readonly T Output; // LUCENENET TODO: make property
+            public IntsRef Input { get; private set; }
+            public T Output { get; private set; }
 
             public Result(IntsRef input, T output)
             {
@@ -666,12 +666,12 @@ namespace Lucene.Net.Util.Fst
             /// the specified queue size was large enough to find the complete list of results. this might
             /// be <code>false</code> if the <seealso cref="TopNSearcher"/> rejected too many results.
             /// </summary>
-            public readonly bool IsComplete; // LUCENENET TODO: make property
+            public bool IsComplete { get; private set; }
 
             /// <summary>
             /// The top results
             /// </summary>
-            public readonly IList<Result<T>> TopN; // LUCENENET TODO: make property
+            public IList<Result<T>> TopN { get; private set; }
 
             internal TopResults(bool isComplete, IList<Result<T>> topN)
             {
