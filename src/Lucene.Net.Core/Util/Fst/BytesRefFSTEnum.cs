@@ -160,8 +160,8 @@ namespace Lucene.Net.Util.Fst
         /// Holds a single input (BytesRef) + output pair. </summary>
         public class InputOutput<T>
         {
-            public BytesRef Input; // LUCENENET TODO: Make property
-            public T Output; // LUCENENET TODO: Make property
+            public BytesRef Input { get; set; }
+            public T Output { get; set; }
         }
     }
 }
