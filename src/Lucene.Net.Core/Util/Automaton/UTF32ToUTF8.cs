@@ -54,8 +54,8 @@ namespace Lucene.Net.Util.Automaton
         // how many bits are "used" by utf8 at that byte
         private class UTF8Byte
         {
-            internal int Value; // TODO: change to byte // LUCENENET TODO: make property
-            internal sbyte Bits; // LUCENENET TODO: make property
+            internal int Value { get; set; } // TODO: change to byte
+            internal sbyte Bits { get; set; }
         }
 
         // Holds a single code point, as a sequence of 1-4 utf8 bytes:
