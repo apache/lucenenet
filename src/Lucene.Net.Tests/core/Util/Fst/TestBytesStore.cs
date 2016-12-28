@@ -289,7 +289,7 @@ namespace Lucene.Net.Util.Fst
                     Console.WriteLine("    bulk: reversed");
                 }
                 // reversed
-                FST.BytesReader r2 = bytes.ReverseReader;
+                FST.BytesReader r2 = bytes.GetReverseReader();
                 Assert.IsTrue(r2.IsReversed);
                 r2.Position = totalLength - 1;
                 r2.ReadBytes(actual, 0, actual.Length);
@@ -311,7 +311,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     Console.WriteLine("    bulk: forward");
                 }
-                FST.BytesReader r3 = bytes.ForwardReader;
+                FST.BytesReader r3 = bytes.GetForwardReader();
                 Assert.IsFalse(r3.IsReversed);
                 r3.ReadBytes(actual, 0, actual.Length);
             }
@@ -331,7 +331,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     Console.WriteLine("    ops: reversed");
                 }
-                r = bytes.ReverseReader;
+                r = bytes.GetReverseReader();
             }
             else
             {
@@ -339,7 +339,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     Console.WriteLine("    ops: forward");
                 }
-                r = bytes.ForwardReader;
+                r = bytes.GetForwardReader();
             }
 
             if (totalLength > 1)

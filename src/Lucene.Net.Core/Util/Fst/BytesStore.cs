@@ -407,16 +407,13 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public virtual FST.BytesReader ForwardReader // LUCENENET TODO: Change to GetForwardReader() (returns new instance)
+        public virtual FST.BytesReader GetForwardReader()
         {
-            get
+            if (blocks.Count == 1)
             {
-                if (blocks.Count == 1)
-                {
-                    return new ForwardBytesReader(blocks[0]);
-                }
-                return new ForwardBytesReaderAnonymousInner(this);
+                return new ForwardBytesReader(blocks[0]);
             }
+            return new ForwardBytesReaderAnonymousInner(this);
         }
 
         private class ForwardBytesReaderAnonymousInner : FST.BytesReader
@@ -429,7 +426,7 @@ namespace Lucene.Net.Util.Fst
                 nextRead = outerInstance.blockSize;
             }
 
-            private byte[] Current;
+            private byte[] current;
             private int nextBuffer;
             private int nextRead;
 
@@ -437,10 +434,10 @@ namespace Lucene.Net.Util.Fst
             {
                 if (nextRead == outerInstance.blockSize)
                 {
-                    Current = outerInstance.blocks[nextBuffer++];
+                    current = outerInstance.blocks[nextBuffer++];
                     nextRead = 0;
                 }
-                return Current[nextRead++];
+                return current[nextRead++];
             }
 
             public override void SkipBytes(int count)
@@ -455,7 +452,7 @@ namespace Lucene.Net.Util.Fst
                     int chunkLeft = outerInstance.blockSize - nextRead;
                     if (len <= chunkLeft)
                     {
-                        Array.Copy(Current, nextRead, b, offset, len);
+                        Array.Copy(current, nextRead, b, offset, len);
                         nextRead += len;
                         break;
                     }
@@ -463,11 +460,11 @@ namespace Lucene.Net.Util.Fst
                     {
                         if (chunkLeft > 0)
                         {
-                            Array.Copy(Current, nextRead, b, offset, chunkLeft);
+                            Array.Copy(current, nextRead, b, offset, chunkLeft);
                             offset += chunkLeft;
                             len -= chunkLeft;
                         }
-                        Current = outerInstance.blocks[nextBuffer++];
+                        current = outerInstance.blocks[nextBuffer++];
                         nextRead = 0;
                     }
                 }
@@ -479,11 +476,11 @@ namespace Lucene.Net.Util.Fst
                 {
                     return ((long)nextBuffer - 1) * outerInstance.blockSize + nextRead;
                 }
-                set // LUCENENET TODO: change to SetPosition(long position) (side-effect)
+                set
                 {
                     int bufferIndex = (int)(value >> outerInstance.blockBits);
                     nextBuffer = bufferIndex + 1;
-                    Current = outerInstance.blocks[bufferIndex];
+                    current = outerInstance.blocks[bufferIndex];
                     nextRead = (int)(value & outerInstance.blockMask);
                     Debug.Assert(this.Position == value, "pos=" + value + " getPos()=" + this.Position);
                 }
@@ -495,12 +492,9 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public virtual FST.BytesReader ReverseReader // LUCENENET TODO: Change to GetReverseReader() (returns new instance)
+        public virtual FST.BytesReader GetReverseReader()
         {
-            get
-            {
-                return GetReverseReader(true);
-            }
+            return GetReverseReader(true);
         }
 
         internal virtual FST.BytesReader GetReverseReader(bool allowSingle)
@@ -519,12 +513,12 @@ namespace Lucene.Net.Util.Fst
             public ReverseBytesReaderAnonymousInner(BytesStore outerInstance)
             {
                 this.outerInstance = outerInstance;
-                Current = outerInstance.blocks.Count == 0 ? null : outerInstance.blocks[0];
+                current = outerInstance.blocks.Count == 0 ? null : outerInstance.blocks[0];
                 nextBuffer = -1;
                 nextRead = 0;
             }
 
-            private byte[] Current; // LUCENENET TODO: rename
+            private byte[] current;
             private int nextBuffer;
             private int nextRead;
 
@@ -532,10 +526,10 @@ namespace Lucene.Net.Util.Fst
             {
                 if (nextRead == -1)
                 {
-                    Current = outerInstance.blocks[nextBuffer--];
+                    current = outerInstance.blocks[nextBuffer--];
                     nextRead = outerInstance.blockSize - 1;
                 }
-                return Current[nextRead--];
+                return current[nextRead--];
             }
 
             public override void SkipBytes(int count)
@@ -557,7 +551,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     return ((long)nextBuffer + 1) * outerInstance.blockSize + nextRead;
                 }
-                set // LUCENENET TODO: change to SetPosition(long position) (side-effect)
+                set
                 {
                     // NOTE: a little weird because if you
                     // setPosition(0), the next byte you read is
@@ -565,7 +559,7 @@ namespace Lucene.Net.Util.Fst
                     // EOF)...?
                     int bufferIndex = (int)(value >> outerInstance.blockBits);
                     nextBuffer = bufferIndex - 1;
-                    Current = outerInstance.blocks[bufferIndex];
+                    current = outerInstance.blocks[bufferIndex];
                     nextRead = (int)(value & outerInstance.blockMask);
                     Debug.Assert(this.Position == value, "value=" + value + " this.Position=" + this.Position);
                 }

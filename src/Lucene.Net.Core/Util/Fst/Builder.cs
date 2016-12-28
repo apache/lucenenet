@@ -104,6 +104,7 @@ namespace Lucene.Net.Util.Fst
         public Builder(FST.INPUT_TYPE inputType, Outputs<T> outputs)
             : this(inputType, 0, 0, true, true, int.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15)
         {
+            var x = new System.Text.StringBuilder();
         }
 
         /// <summary>

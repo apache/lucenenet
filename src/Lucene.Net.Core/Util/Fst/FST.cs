@@ -258,11 +258,11 @@ namespace Lucene.Net.Util.Fst
                 FST.BytesReader reader;
                 if (packed)
                 {
-                    reader = emptyBytes.ForwardReader;
+                    reader = emptyBytes.GetForwardReader();
                 }
                 else
                 {
-                    reader = emptyBytes.ReverseReader;
+                    reader = emptyBytes.GetReverseReader();
                     // NoOutputs uses 0 bytes when writing its output,
                     // so we have to check here else BytesStore gets
                     // angry:
@@ -1499,11 +1499,11 @@ namespace Lucene.Net.Util.Fst
                 FST.BytesReader @in;
                 if (packed)
                 {
-                    @in = Bytes.ForwardReader;
+                    @in = Bytes.GetForwardReader();
                 }
                 else
                 {
-                    @in = Bytes.ReverseReader;
+                    @in = Bytes.GetReverseReader();
                 }
                 return @in;
             }
