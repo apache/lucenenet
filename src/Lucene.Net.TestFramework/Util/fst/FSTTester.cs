@@ -747,7 +747,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         if (!isDone)
                         {
-                            Console.WriteLine("    got " + InputToString(inputMode, fstEnum_.Current().Input));
+                            Console.WriteLine("    got " + InputToString(inputMode, fstEnum_.Current.Input));
                         }
                         else
                         {
@@ -763,8 +763,8 @@ namespace Lucene.Net.Util.Fst
                     else
                     {
                         Assert.IsFalse(isDone);
-                        Assert.AreEqual(Pairs[upto].Input, fstEnum_.Current().Input);
-                        Assert.IsTrue(OutputsEqual(Pairs[upto].Output, fstEnum_.Current().Output));
+                        Assert.AreEqual(Pairs[upto].Input, fstEnum_.Current.Input);
+                        Assert.IsTrue(OutputsEqual(Pairs[upto].Output, fstEnum_.Current.Output));
 
                         /*
                           if (upto < pairs.size()-1) {

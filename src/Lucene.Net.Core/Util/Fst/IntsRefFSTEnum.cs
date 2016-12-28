@@ -45,9 +45,9 @@ namespace Lucene.Net.Util.Fst
             current.Offset = 1;
         }
 
-        public IntsRefFSTEnum.InputOutput<T> Current() // LUCENENET TODO: make property
+        public IntsRefFSTEnum.InputOutput<T> Current
         {
-            return result;
+            get { return result; }
         }
 
         public IntsRefFSTEnum.InputOutput<T> Next()
@@ -160,8 +160,8 @@ namespace Lucene.Net.Util.Fst
         /// Holds a single input (IntsRef) + output pair. </summary>
         public class InputOutput<T>
         {
-            public IntsRef Input; // LUCENENET TODO: make property
-            public T Output; // LUCENENET TODO: make property
+            public IntsRef Input { get; set; }
+            public T Output { get; set; }
         }
     }
 }
