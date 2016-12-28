@@ -454,7 +454,7 @@ namespace Lucene.Net.Util.Automaton
                 return;
             }
             HashSet<State> initialset = new ValueHashSet<State>();
-            initialset.Add(a.Initial);
+            initialset.Add(a.initial);
             DeterminizeSimple(a, initialset);
         }
 
@@ -471,8 +471,8 @@ namespace Lucene.Net.Util.Automaton
             IDictionary<ISet<State>, State> newstate = new Dictionary<ISet<State>, State>();
             sets[initialset] = initialset;
             worklist.AddLast(initialset);
-            a.Initial = new State();
-            newstate[initialset] = a.Initial;
+            a.initial = new State();
+            newstate[initialset] = a.initial;
             while (worklist.Count > 0)
             {
                 ISet<State> s = worklist.First.Value;

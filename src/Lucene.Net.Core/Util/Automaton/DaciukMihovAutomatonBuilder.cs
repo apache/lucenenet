@@ -307,7 +307,7 @@ namespace Lucene.Net.Util.Automaton
             }
 
             Automaton a = new Automaton();
-            a.Initial = Convert(builder.Complete(), new IdentityHashMap<State, Lucene.Net.Util.Automaton.State>());
+            a.initial = Convert(builder.Complete(), new IdentityHashMap<State, Lucene.Net.Util.Automaton.State>());
             a.deterministic = true;
             return a;
         }

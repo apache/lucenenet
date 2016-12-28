@@ -81,11 +81,11 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Selects minimization algorithm (default: <code>MINIMIZE_HOPCROFT</code>). </summary>
-        internal static int Minimization_Renamed = MINIMIZE_HOPCROFT;
+        internal static int minimization = MINIMIZE_HOPCROFT;
 
         /// <summary>
         /// Initial state of this automaton. </summary>
-        internal State Initial;
+        internal State initial;
 
         /// <summary>
         /// If true, then this automaton is definitely deterministic (i.e., there are
@@ -109,13 +109,13 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Minimize always flag. </summary>
-        internal static bool Minimize_always = false;
+        internal static bool minimize_always = false;
 
         /// <summary>
         /// Selects whether operations may modify the input automata (default:
         /// <code>false</code>).
         /// </summary>
-        internal static bool Allow_mutation = false;
+        internal static bool allow_mutation = false;
 
         /// <summary>
         /// Constructs a new automaton that accepts the empty language. Using this
@@ -126,7 +126,7 @@ namespace Lucene.Net.Util.Automaton
         /// <seealso cref= Transition </seealso>
         public Automaton(State initial)
         {
-            this.Initial = initial;
+            this.initial = initial;
             deterministic = true;
             singleton = null;
         }
@@ -142,7 +142,7 @@ namespace Lucene.Net.Util.Automaton
         /// <param name="algorithm"> minimization algorithm </param>
         public static void SetMinimization(int algorithm)
         {
-            Minimization_Renamed = algorithm;
+            minimization = algorithm;
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace Lucene.Net.Util.Automaton
         /// <param name="flag"> if true, the flag is set </param>
         public static void SetMinimizeAlways(bool flag)
         {
-            Minimize_always = flag;
+            minimize_always = flag;
         }
 
         /// <summary>
@@ -167,8 +167,8 @@ namespace Lucene.Net.Util.Automaton
         /// <returns> previous value of the flag </returns>
         public static bool SetAllowMutate(bool flag)
         {
-            bool b = Allow_mutation;
-            Allow_mutation = flag;
+            bool b = allow_mutation;
+            allow_mutation = flag;
             return b;
         }
 
@@ -183,13 +183,13 @@ namespace Lucene.Net.Util.Automaton
         {
             get
             {
-                return Allow_mutation;
+                return allow_mutation;
             }
         }
 
         internal virtual void CheckMinimizeAlways()
         {
-            if (Minimize_always)
+            if (minimize_always)
             {
                 MinimizationOperations.Minimize(this);
             }
@@ -235,7 +235,7 @@ namespace Lucene.Net.Util.Automaton
         public virtual State GetInitialState()
         {
             ExpandSingleton();
-            return Initial;
+            return initial;
         }
 
         /// <summary>
@@ -283,10 +283,10 @@ namespace Lucene.Net.Util.Automaton
                 LinkedList<State> worklist = new LinkedList<State>();
                 State[] states = new State[4];
                 int upto = 0;
-                worklist.AddLast(Initial);
-                visited.Add(Initial);
-                Initial.number = upto;
-                states[upto] = Initial;
+                worklist.AddLast(initial);
+                visited.Add(initial);
+                initial.number = upto;
+                states[upto] = initial;
                 upto++;
                 while (worklist.Count > 0)
                 {
@@ -359,8 +359,8 @@ namespace Lucene.Net.Util.Automaton
             HashSet<State> accepts = new HashSet<State>();
             HashSet<State> visited = new HashSet<State>();
             LinkedList<State> worklist = new LinkedList<State>();
-            worklist.AddLast(Initial);
-            visited.Add(Initial);
+            worklist.AddLast(initial);
+            visited.Add(initial);
             while (worklist.Count > 0)
             {
                 State s = worklist.First.Value;
@@ -594,7 +594,7 @@ namespace Lucene.Net.Util.Automaton
             if (IsSingleton)
             {
                 State p = new State();
-                Initial = p;
+                initial = p;
                 for (int i = 0, cp = 0; i < singleton.Length; i += Character.CharCount(cp))
                 {
                     State q = new State();
@@ -662,9 +662,9 @@ namespace Lucene.Net.Util.Automaton
             LinkedList<State> worklist = new LinkedList<State>();
             HashSet<State> visited = new HashSet<State>();
 
-            State current = this.Initial;
-            worklist.AddLast(this.Initial);
-            visited.Add(this.Initial);
+            State current = this.initial;
+            worklist.AddLast(this.initial);
+            visited.Add(this.initial);
             while (worklist.Count > 0)
             {
                 current = worklist.First.Value;
@@ -726,7 +726,7 @@ namespace Lucene.Net.Util.Automaton
             else
             {
                 State[] states = GetNumberedStates();
-                b.Append("initial state: ").Append(Initial.number).Append("\n");
+                b.Append("initial state: ").Append(initial.number).Append("\n");
                 foreach (State s in states)
                 {
                     b.Append(s.ToString());
@@ -755,7 +755,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     b.Append(" [shape=circle,label=\"\"];\n");
                 }
-                if (s == Initial)
+                if (s == initial)
                 {
                     b.Append("  initial [shape=plaintext,label=\"\"];\n");
                     b.Append("  initial -> ").Append(s.number).Append("\n");
@@ -785,7 +785,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         internal virtual Automaton CloneExpandedIfRequired()
         {
-            if (Allow_mutation)
+            if (allow_mutation)
             {
                 ExpandSingleton();
                 return this;
@@ -814,9 +814,9 @@ namespace Lucene.Net.Util.Automaton
                 {
                     State p = m[s];
                     p.accept = s.accept;
-                    if (s == Initial)
+                    if (s == initial)
                     {
-                        a.Initial = p;
+                        a.initial = p;
                     }
                     foreach (Transition t in s.Transitions)
                     {
@@ -834,7 +834,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         internal virtual Automaton CloneIfRequired()
         {
-            if (Allow_mutation)
+            if (allow_mutation)
             {
                 return this;
             }

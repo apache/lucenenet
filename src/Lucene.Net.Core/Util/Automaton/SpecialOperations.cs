@@ -84,7 +84,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return true;
             }
-            return IsFinite(a.Initial, new BitArray(a.GetNumberOfStates()), new BitArray(a.GetNumberOfStates()));
+            return IsFinite(a.initial, new BitArray(a.GetNumberOfStates()), new BitArray(a.GetNumberOfStates()));
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Lucene.Net.Util.Automaton
             }
             StringBuilder b = new StringBuilder();
             HashSet<State> visited = new HashSet<State>();
-            State s = a.Initial;
+            State s = a.initial;
             bool done;
             do
             {
@@ -157,7 +157,7 @@ namespace Lucene.Net.Util.Automaton
             }
             BytesRef @ref = new BytesRef(10);
             HashSet<State> visited = new HashSet<State>();
-            State s = a.Initial;
+            State s = a.initial;
             bool done;
             do
             {
@@ -267,11 +267,11 @@ namespace Lucene.Net.Util.Automaton
                 r.Transitions = tr.ToArray(/*new Transition[tr.Count]*/);
             }
             // make new initial+final states
-            a.Initial.accept = true;
-            a.Initial = new State();
+            a.initial.accept = true;
+            a.initial = new State();
             foreach (State r in accept)
             {
-                a.Initial.AddEpsilon(r); // ensures that all initial states are reachable
+                a.initial.AddEpsilon(r); // ensures that all initial states are reachable
             }
             a.deterministic = false;
             a.ClearNumberedStates();
@@ -298,7 +298,7 @@ namespace Lucene.Net.Util.Automaton
                     strings.Add(Util.ToUTF32(a.Singleton, new IntsRef()));
                 }
             }
-            else if (!GetFiniteStrings(a.Initial, new HashSet<State>(), strings, new IntsRef(), limit))
+            else if (!GetFiniteStrings(a.initial, new HashSet<State>(), strings, new IntsRef(), limit))
             {
                 return strings;
             }

@@ -80,7 +80,7 @@ namespace Lucene.Net.Util.Automaton
             foreach (State s in a1.GetAcceptStates())
             {
                 s.accept = false;
-                s.AddEpsilon(a2.Initial);
+                s.AddEpsilon(a2.initial);
             }
             a1.deterministic = deterministic;
             //a1.clearHashCode();
@@ -170,7 +170,7 @@ namespace Lucene.Net.Util.Automaton
                         foreach (State s in ac)
                         {
                             s.accept = false;
-                            s.AddEpsilon(aa.Initial);
+                            s.AddEpsilon(aa.initial);
                             if (s.accept)
                             {
                                 ns.Add(s);
@@ -197,9 +197,9 @@ namespace Lucene.Net.Util.Automaton
         {
             a = a.CloneExpandedIfRequired();
             State s = new State();
-            s.AddEpsilon(a.Initial);
+            s.AddEpsilon(a.initial);
             s.accept = true;
-            a.Initial = s;
+            a.initial = s;
             a.deterministic = false;
             //a.clearHashCode();
             a.ClearNumberedStates();
@@ -219,12 +219,12 @@ namespace Lucene.Net.Util.Automaton
             a = a.CloneExpanded();
             State s = new State();
             s.accept = true;
-            s.AddEpsilon(a.Initial);
+            s.AddEpsilon(a.initial);
             foreach (State p in a.GetAcceptStates())
             {
                 p.AddEpsilon(s);
             }
-            a.Initial = s;
+            a.initial = s;
             a.deterministic = false;
             //a.clearHashCode();
             a.ClearNumberedStates();
@@ -295,13 +295,13 @@ namespace Lucene.Net.Util.Automaton
                     Automaton c = (Automaton)a.Clone();
                     foreach (State p in c.GetAcceptStates())
                     {
-                        p.AddEpsilon(d.Initial);
+                        p.AddEpsilon(d.initial);
                     }
                     d = c;
                 }
                 foreach (State p in b.GetAcceptStates())
                 {
-                    p.AddEpsilon(d.Initial);
+                    p.AddEpsilon(d.initial);
                 }
                 b.deterministic = false;
                 //b.clearHashCode();
@@ -401,7 +401,7 @@ namespace Lucene.Net.Util.Automaton
             Automaton c = new Automaton();
             LinkedList<StatePair> worklist = new LinkedList<StatePair>();
             Dictionary<StatePair, StatePair> newstates = new Dictionary<StatePair, StatePair>();
-            StatePair p = new StatePair(c.Initial, a1.Initial, a2.Initial);
+            StatePair p = new StatePair(c.initial, a1.initial, a2.initial);
             worklist.AddLast(p);
             newstates[p] = p;
             while (worklist.Count > 0)
@@ -497,7 +497,7 @@ namespace Lucene.Net.Util.Automaton
             Transition[][] transitions2 = a2.GetSortedTransitions();
             LinkedList<StatePair> worklist = new LinkedList<StatePair>();
             HashSet<StatePair> visited = new HashSet<StatePair>();
-            StatePair p = new StatePair(a1.Initial, a2.Initial);
+            StatePair p = new StatePair(a1.initial, a2.initial);
             worklist.AddLast(p);
             visited.Add(p);
             while (worklist.Count > 0)
@@ -572,9 +572,9 @@ namespace Lucene.Net.Util.Automaton
                 a2 = a2.CloneExpandedIfRequired();
             }
             State s = new State();
-            s.AddEpsilon(a1.Initial);
-            s.AddEpsilon(a2.Initial);
-            a1.Initial = s;
+            s.AddEpsilon(a1.initial);
+            s.AddEpsilon(a2.initial);
+            a1.initial = s;
             a1.deterministic = false;
             //a1.clearHashCode();
             a1.ClearNumberedStates();
@@ -612,10 +612,10 @@ namespace Lucene.Net.Util.Automaton
                 {
                     bb = bb.CloneExpandedIfRequired();
                 }
-                s.AddEpsilon(bb.Initial);
+                s.AddEpsilon(bb.initial);
             }
             Automaton a_ = new Automaton();
-            a_.Initial = s;
+            a_.initial = s;
             a_.deterministic = false;
             //a.clearHashCode();
             a_.ClearNumberedStates();
@@ -793,23 +793,23 @@ namespace Lucene.Net.Util.Automaton
             State[] allStates = a.GetNumberedStates();
 
             // subset construction
-            bool initAccept = a.Initial.accept;
-            int initNumber = a.Initial.number;
-            a.Initial = new State();
-            SortedIntSet.FrozenIntSet initialset = new SortedIntSet.FrozenIntSet(initNumber, a.Initial);
+            bool initAccept = a.initial.accept;
+            int initNumber = a.initial.number;
+            a.initial = new State();
+            SortedIntSet.FrozenIntSet initialset = new SortedIntSet.FrozenIntSet(initNumber, a.initial);
 
             LinkedList<SortedIntSet.FrozenIntSet> worklist = new LinkedList<SortedIntSet.FrozenIntSet>();
             IDictionary<SortedIntSet.FrozenIntSet, State> newstate = new Dictionary<SortedIntSet.FrozenIntSet, State>();
 
             worklist.AddLast(initialset);
 
-            a.Initial.accept = initAccept;
-            newstate[initialset] = a.Initial;
+            a.initial.accept = initAccept;
+            newstate[initialset] = a.initial;
 
             int newStateUpto = 0;
             State[] newStatesArray = new State[5];
-            newStatesArray[newStateUpto] = a.Initial;
-            a.Initial.number = newStateUpto;
+            newStatesArray[newStateUpto] = a.initial;
+            a.initial.number = newStateUpto;
             newStateUpto++;
 
             // like Set<Integer,PointTransitions>
@@ -1009,7 +1009,7 @@ namespace Lucene.Net.Util.Automaton
             }
             else
             {
-                return a.Initial.accept && a.Initial.NumTransitions() == 0;
+                return a.initial.accept && a.initial.NumTransitions() == 0;
             }
         }
 
@@ -1022,7 +1022,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return false;
             }
-            return !a.Initial.accept && a.Initial.NumTransitions() == 0;
+            return !a.initial.accept && a.initial.NumTransitions() == 0;
         }
 
         /// <summary>
@@ -1034,12 +1034,12 @@ namespace Lucene.Net.Util.Automaton
             {
                 return false;
             }
-            if (a.Initial.accept && a.Initial.NumTransitions() == 1)
+            if (a.initial.accept && a.initial.NumTransitions() == 1)
             {
-                var iter = a.Initial.Transitions.GetEnumerator();
+                var iter = a.initial.Transitions.GetEnumerator();
                 iter.MoveNext();
                 Transition t = iter.Current; ;
-                return t.To == a.Initial && t.Min_Renamed == Character.MIN_CODE_POINT && t.Max_Renamed == Character.MAX_CODE_POINT;
+                return t.To == a.initial && t.Min_Renamed == Character.MIN_CODE_POINT && t.Max_Renamed == Character.MAX_CODE_POINT;
             }
             return false;
         }
@@ -1059,7 +1059,7 @@ namespace Lucene.Net.Util.Automaton
             }
             if (a.deterministic)
             {
-                State p = a.Initial;
+                State p = a.initial;
                 for (int i = 0, cp = 0; i < s.Length; i += Character.CharCount(cp))
                 {
                     State q = p.Step(cp = Character.CodePointAt(s, i));
@@ -1078,9 +1078,9 @@ namespace Lucene.Net.Util.Automaton
                 LinkedList<State> pp_other = new LinkedList<State>();
                 BitArray bb = new BitArray(states.Length);
                 BitArray bb_other = new BitArray(states.Length);
-                pp.AddLast(a.Initial);
+                pp.AddLast(a.initial);
                 List<State> dest = new List<State>();
-                bool accept = a.Initial.accept;
+                bool accept = a.initial.accept;
                 for (int i = 0, c = 0; i < s.Length; i += Character.CharCount(c))
                 {
                     c = Character.CodePointAt(s, i);

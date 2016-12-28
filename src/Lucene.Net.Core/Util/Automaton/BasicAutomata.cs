@@ -52,7 +52,7 @@ namespace Lucene.Net.Util.Automaton
         {
             Automaton a = new Automaton();
             State s = new State();
-            a.Initial = s;
+            a.initial = s;
             a.deterministic = true;
             return a;
         }
@@ -75,7 +75,7 @@ namespace Lucene.Net.Util.Automaton
         {
             Automaton a = new Automaton();
             State s = new State();
-            a.Initial = s;
+            a.initial = s;
             s.accept = true;
             s.AddTransition(new Transition(Character.MIN_CODE_POINT, Character.MAX_CODE_POINT, s));
             a.deterministic = true;
@@ -115,7 +115,7 @@ namespace Lucene.Net.Util.Automaton
             Automaton a = new Automaton();
             State s1 = new State();
             State s2 = new State();
-            a.Initial = s1;
+            a.initial = s1;
             s2.accept = true;
             if (min <= max)
             {
@@ -276,19 +276,19 @@ namespace Lucene.Net.Util.Automaton
             by.Append(y);
             y = by.ToString();
             ICollection<State> initials = new List<State>();
-            a.Initial = Between(x, y, 0, initials, digits <= 0);
+            a.initial = Between(x, y, 0, initials, digits <= 0);
             if (digits <= 0)
             {
                 List<StatePair> pairs = new List<StatePair>();
                 foreach (State p in initials)
                 {
-                    if (a.Initial != p)
+                    if (a.initial != p)
                     {
-                        pairs.Add(new StatePair(a.Initial, p));
+                        pairs.Add(new StatePair(a.initial, p));
                     }
                 }
                 BasicOperations.AddEpsilons(a, pairs);
-                a.Initial.AddTransition(new Transition('0', a.Initial));
+                a.initial.AddTransition(new Transition('0', a.initial));
                 a.deterministic = false;
             }
             else
@@ -316,7 +316,7 @@ namespace Lucene.Net.Util.Automaton
             Automaton a = new Automaton();
             a.IsDeterministic = true;
             State s = new State();
-            a.Initial = s;
+            a.initial = s;
             for (int i = offset; i < offset + length; i++)
             {
                 State s2 = new State();

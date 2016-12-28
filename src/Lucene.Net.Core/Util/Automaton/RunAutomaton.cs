@@ -161,7 +161,7 @@ namespace Lucene.Net.Util.Automaton
             a.Determinize();
             _points = a.GetStartPoints();
             State[] states = a.GetNumberedStates();
-            Initial = a.Initial.Number;
+            Initial = a.initial.Number;
             _size = states.Length;
             Accept = new bool[_size];
             Transitions = new int[_size * _points.Length];

@@ -66,10 +66,10 @@ namespace Lucene.Net.Util.Automaton
         public static void MinimizeHopcroft(Automaton a)
         {
             a.Determinize();
-            if (a.Initial.numTransitions == 1)
+            if (a.initial.numTransitions == 1)
             {
-                Transition t = a.Initial.TransitionsArray[0];
-                if (t.To == a.Initial && t.Min_Renamed == Character.MIN_CODE_POINT && t.Max_Renamed == Character.MAX_CODE_POINT)
+                Transition t = a.initial.TransitionsArray[0];
+                if (t.To == a.initial && t.Min_Renamed == Character.MIN_CODE_POINT && t.Max_Renamed == Character.MAX_CODE_POINT)
                 {
                     return;
                 }
@@ -226,9 +226,9 @@ namespace Lucene.Net.Util.Automaton
                 newstates[n] = s;
                 foreach (State q in partition[n])
                 {
-                    if (q == a.Initial)
+                    if (q == a.initial)
                     {
-                        a.Initial = s;
+                        a.initial = s;
                     }
                     s.accept = q.accept;
                     s.number = q.number; // select representative
