@@ -618,16 +618,16 @@ namespace Lucene.Net.Util.Fst
         /// Expert: holds a pending (seen but not yet serialized) arc. </summary>
         public class Arc<S>
         {
-            public int Label; // really an "unsigned" byte // LUCENENET TODO: Make property
-            public INode Target; // LUCENENET TODO: Make property
-            public bool IsFinal; // LUCENENET TODO: Make property
-            public S Output; // LUCENENET TODO: Make property
-            public S NextFinalOutput; // LUCENENET TODO: Make property
+            public int Label { get; set; } // really an "unsigned" byte
+            public INode Target { get; set; }
+            public bool IsFinal { get; set; }
+            public S Output { get; set; }
+            public S NextFinalOutput { get; set; }
         }
 
         public sealed class CompiledNode : INode
         {
-            public long Node; // LUCENENET TODO: Make property
+            public long Node { get; set; }
 
             public bool IsCompiled
             {
@@ -642,22 +642,22 @@ namespace Lucene.Net.Util.Fst
         /// Expert: holds a pending (seen but not yet serialized) Node. </summary>
         public sealed class UnCompiledNode<S> : INode
         {
-            internal readonly Builder<S> Owner; // LUCENENET TODO: Make property
-            public int NumArcs; // LUCENENET TODO: Make property
-            public Arc<S>[] Arcs; // LUCENENET TODO: Make property
+            internal Builder<S> Owner { get; private set; }
+            public int NumArcs { get; set; }
+            public Arc<S>[] Arcs { get; set; }
 
             // TODO: instead of recording isFinal/output on the
             // node, maybe we should use -1 arc to mean "end" (like
             // we do when reading the FST).  Would simplify much
             // code here...
-            public S Output; // LUCENENET TODO: Make property
+            public S Output { get; set; }
 
-            public bool IsFinal; // LUCENENET TODO: Make property
-            public long InputCount; // LUCENENET TODO: Make property
+            public bool IsFinal { get; set; }
+            public long InputCount { get; set; }
 
             /// <summary>
             /// this node's depth, starting from the automaton root. </summary>
-            public readonly int Depth; // LUCENENET TODO: Make property
+            public int Depth { get; private set; }
 
             /// <param name="depth">
             ///          The node's depth starting from the automaton root. Needed for
