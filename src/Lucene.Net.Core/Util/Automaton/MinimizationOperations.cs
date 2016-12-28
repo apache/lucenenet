@@ -149,7 +149,7 @@ namespace Lucene.Net.Util.Automaton
                 // find states that need to be split off their blocks
                 for (StateListNode m = active[p, x].First; m != null; m = m.Next)
                 {
-                    List<State> r = reverse[m.q.number, x];
+                    List<State> r = reverse[m.Q.number, x];
                     if (r != null)
                     {
                         foreach (State s in r)
@@ -251,8 +251,8 @@ namespace Lucene.Net.Util.Automaton
 
         internal sealed class IntPair
         {
-            internal readonly int N1, N2; // LUCENENET TODO: Make property
-
+            internal int N1 { get; private set; }
+            internal int N2 { get; private set; }
             internal IntPair(int n1, int n2)
             {
                 this.N1 = n1;
@@ -262,9 +262,11 @@ namespace Lucene.Net.Util.Automaton
 
         internal sealed class StateList
         {
-            internal int Size; // LUCENENET TODO: Make property
+            internal int Size { get; set; } // LUCENENET TODO: Rename Count ?
 
-            internal StateListNode First, Last; // LUCENENET TODO: Make property
+            internal StateListNode First { get; set; }
+
+            internal StateListNode Last { get; set; }
 
             internal StateListNode Add(State q)
             {
@@ -274,15 +276,17 @@ namespace Lucene.Net.Util.Automaton
 
         internal sealed class StateListNode
         {
-            internal readonly State q; // LUCENENET TODO: Make property
+            internal State Q { get; private set; }
 
-            internal StateListNode Next, Prev; // LUCENENET TODO: Make property
+            internal StateListNode Next { get; set; }
 
-            internal readonly StateList Sl; // LUCENENET TODO: Make property
+            internal StateListNode Prev { get; set; }
+
+            internal StateList Sl { get; private set; }
 
             internal StateListNode(State q, StateList sl)
             {
-                this.q = q;
+                this.Q = q;
                 this.Sl = sl;
                 if (sl.Size++ == 0)
                 {
