@@ -20,7 +20,7 @@ namespace Lucene.Net.Search
      */
 
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
-    using AutomatonProvider = Lucene.Net.Util.Automaton.AutomatonProvider;
+    using IAutomatonProvider = Lucene.Net.Util.Automaton.IAutomatonProvider;
     using RegExp = Lucene.Net.Util.Automaton.RegExp;
     using Term = Lucene.Net.Index.Term;
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -51,9 +51,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// A provider that provides no named automata
         /// </summary>
-        private static readonly AutomatonProvider defaultProvider = new AutomatonProviderAnonymousInnerClassHelper();
+        private static readonly IAutomatonProvider defaultProvider = new AutomatonProviderAnonymousInnerClassHelper();
 
-        private class AutomatonProviderAnonymousInnerClassHelper : AutomatonProvider
+        private class AutomatonProviderAnonymousInnerClassHelper : IAutomatonProvider
         {
             public Automaton GetAutomaton(string name)
             {
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
         /// <param name="term"> regular expression. </param>
         /// <param name="flags"> optional RegExp features from <seealso cref="RegExp"/> </param>
         /// <param name="provider"> custom AutomatonProvider for named automata </param>
-        public RegexpQuery(Term term, int flags, AutomatonProvider provider)
+        public RegexpQuery(Term term, int flags, IAutomatonProvider provider)
             : base(term, (new RegExp(term.Text(), flags)).ToAutomaton(provider))
         {
         }

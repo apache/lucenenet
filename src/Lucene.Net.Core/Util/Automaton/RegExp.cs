@@ -459,7 +459,7 @@ namespace Lucene.Net.Util.Automaton
         /// <param name="automaton_provider"> provider of automata for named identifiers </param>
         /// <exception cref="IllegalArgumentException"> if this regular expression uses a named
         ///              identifier that is not available from the automaton provider </exception>
-        public virtual Automaton ToAutomaton(AutomatonProvider automaton_provider)
+        public virtual Automaton ToAutomaton(IAutomatonProvider automaton_provider)
         {
             return ToAutomatonAllowMutate(null, automaton_provider);
         }
@@ -492,7 +492,7 @@ namespace Lucene.Net.Util.Automaton
             return b;
         }
 
-        private Automaton ToAutomatonAllowMutate(IDictionary<string, Automaton> automata, AutomatonProvider automaton_provider)
+        private Automaton ToAutomatonAllowMutate(IDictionary<string, Automaton> automata, IAutomatonProvider automaton_provider)
         {
             bool b = false;
             if (Allow_mutation) // thread unsafe
@@ -507,7 +507,7 @@ namespace Lucene.Net.Util.Automaton
             return a;
         }
 
-        private Automaton ToAutomaton(IDictionary<string, Automaton> automata, AutomatonProvider automaton_provider)
+        private Automaton ToAutomaton(IDictionary<string, Automaton> automata, IAutomatonProvider automaton_provider)
         {
             IList<Automaton> list;
             Automaton a = null;
@@ -614,7 +614,7 @@ namespace Lucene.Net.Util.Automaton
             return a;
         }
 
-        private void FindLeaves(RegExp exp, Kind kind, IList<Automaton> list, IDictionary<string, Automaton> automata, AutomatonProvider automaton_provider)
+        private void FindLeaves(RegExp exp, Kind kind, IList<Automaton> list, IDictionary<string, Automaton> automata, IAutomatonProvider automaton_provider)
         {
             if (exp.kind == kind)
             {
