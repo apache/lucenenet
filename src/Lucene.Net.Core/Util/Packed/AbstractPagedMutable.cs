@@ -141,7 +141,7 @@ namespace Lucene.Net.Util.Packed
                 copy.SubMutables[i] = NewMutable(valueCount, bpv);
                 if (i < numCommonPages)
                 {
-                    int copyLength = Math.Min(valueCount, SubMutables[i].Size());
+                    int copyLength = Math.Min(valueCount, SubMutables[i].Size);
                     PackedInts.Copy(SubMutables[i], 0, copy.SubMutables[i], 0, copyLength, copyBuffer);
                 }
             }

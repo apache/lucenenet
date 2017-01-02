@@ -72,17 +72,14 @@ namespace Lucene.Net.Util.Packed
             Arrays.Fill(Values, 0L);
         }
 
-        public override object Array
+        public override object GetArray()
         {
-            get
-            {
-                return Values;
-            }
+            return Values;
         }
 
-        public override bool HasArray()
+        public override bool HasArray
         {
-            return true;
+            get { return true; }
         }
 
         public override int Get(int index, long[] arr, int off, int len)

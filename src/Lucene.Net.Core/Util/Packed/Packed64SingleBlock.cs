@@ -227,7 +227,7 @@ namespace Lucene.Net.Util.Packed
 
         public override string ToString()
         {
-            return this.GetType().Name + "(bitsPerValue=" + bitsPerValue + ", size=" + Size() + ", elements.length=" + Blocks.Length + ")";
+            return this.GetType().Name + "(bitsPerValue=" + bitsPerValue + ", size=" + Size + ", elements.length=" + Blocks.Length + ")";
         }
 
         public static Packed64SingleBlock Create(DataInput @in, int valueCount, int bitsPerValue)

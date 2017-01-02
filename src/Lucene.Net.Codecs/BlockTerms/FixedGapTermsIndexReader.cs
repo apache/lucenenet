@@ -432,11 +432,11 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                             // records offsets into main terms dict file
                             TermsDictOffsets = PackedInts.GetReader(clone);
-                            Debug.Assert(TermsDictOffsets.Size() == numIndexTerms);
+                            Debug.Assert(TermsDictOffsets.Size == numIndexTerms);
 
                             // records offsets into byte[] term data
                             TermOffsets = PackedInts.GetReader(clone);
-                            Debug.Assert(TermOffsets.Size() == 1 + numIndexTerms);
+                            Debug.Assert(TermOffsets.Size == 1 + numIndexTerms);
                         }
                         finally
                         {

@@ -924,7 +924,7 @@ namespace Lucene.Net.Search
                         values = new GrowableWriter(startBitsPerValue, reader.MaxDoc, PackedInts.FAST);
                         if (minValue != 0)
                         {
-                            values.Fill(0, values.Size(), (-minValue) & 0xFFFFFFFFL); // default value must be 0
+                            values.Fill(0, values.Size, (-minValue) & 0xFFFFFFFFL); // default value must be 0
                         }
                         valuesRef.Set(new GrowableWriterAndMinValue(values, minValue));
                     }
@@ -1342,7 +1342,7 @@ namespace Lucene.Net.Search
                         values = new GrowableWriter(startBitsPerValue, reader.MaxDoc, PackedInts.FAST);
                         if (minValue != 0)
                         {
-                            values.Fill(0, values.Size(), -minValue); // default value must be 0
+                            values.Fill(0, values.Size, -minValue); // default value must be 0
                         }
                         valuesRef.Set(new GrowableWriterAndMinValue(values, minValue));
                     }

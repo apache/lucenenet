@@ -291,7 +291,7 @@ namespace Lucene.Net.Util.Packed
 
         public override string ToString()
         {
-            return "Packed64(bitsPerValue=" + bitsPerValue + ", size=" + Size() + ", elements.length=" + Blocks.Length + ")";
+            return "Packed64(bitsPerValue=" + bitsPerValue + ", size=" + Size + ", elements.length=" + Blocks.Length + ")";
         }
 
         public override long RamBytesUsed()

@@ -63,7 +63,7 @@ namespace Lucene.Net.Util.Packed
                 long size = PendingOff;
                 if (ValuesOff > 0)
                 {
-                    size += Values[ValuesOff - 1].Size();
+                    size += Values[ValuesOff - 1].Size;
                 }
                 if (ValuesOff > 1)
                 {
@@ -162,7 +162,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 else
                 {
-                    CurrentValues = new long[outerInstance.Values[0].Size()];
+                    CurrentValues = new long[outerInstance.Values[0].Size];
                     FillValues();
                 }
             }
@@ -176,7 +176,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 else
                 {
-                    CurrentCount = OuterInstance.Values[VOff].Size();
+                    CurrentCount = OuterInstance.Values[VOff].Size;
                     for (int k = 0; k < CurrentCount; )
                     {
                         k += OuterInstance.Get(VOff, k, CurrentValues, k, CurrentCount - k);

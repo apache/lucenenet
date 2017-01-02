@@ -56,9 +56,9 @@ namespace Lucene.Net.Util.Packed
             return Current.Get(index);
         }
 
-        public override int Size()
+        public override int Size
         {
-            return Current.Size();
+            get { return Current.Size; }
         }
 
         public override int BitsPerValue
@@ -77,17 +77,14 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        public override object Array
+        public override object GetArray()
         {
-            get
-            {
-                return Current.Array;
-            }
+            return Current.GetArray();
         }
 
-        public override bool HasArray()
+        public override bool HasArray
         {
-            return Current.HasArray();
+            get { return Current.HasArray; }
         }
 
         private void EnsureCapacity(long value)
@@ -98,7 +95,7 @@ namespace Lucene.Net.Util.Packed
             }
             int bitsRequired = value < 0 ? 64 : PackedInts.BitsRequired(value);
             Debug.Assert(bitsRequired > Current.BitsPerValue);
-            int valueCount = Size();
+            int valueCount = Size;
             PackedInts.Mutable next = PackedInts.GetMutable(valueCount, bitsRequired, AcceptableOverheadRatio);
             PackedInts.Copy(Current, 0, next, 0, valueCount, PackedInts.DEFAULT_BUFFER_SIZE);
             Current = next;
@@ -119,7 +116,7 @@ namespace Lucene.Net.Util.Packed
         public virtual GrowableWriter Resize(int newSize)
         {
             GrowableWriter next = new GrowableWriter(BitsPerValue, newSize, AcceptableOverheadRatio);
-            int limit = Math.Min(Size(), newSize);
+            int limit = Math.Min(Size, newSize);
             PackedInts.Copy(Current, 0, next, 0, limit, PackedInts.DEFAULT_BUFFER_SIZE);
             return next;
         }

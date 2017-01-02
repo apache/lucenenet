@@ -196,7 +196,7 @@ namespace Lucene.Net.Util.Packed
                             int index = Random().Next(valueCount);
                             Assert.AreEqual(values[index], intsEnum.Get(index), msg);
                         }
-                        intsEnum.Get(intsEnum.Size() - 1);
+                        intsEnum.Get(intsEnum.Size - 1);
                         Assert.AreEqual(fp, @in.FilePointer);
                         @in.Dispose();
                     }
@@ -265,7 +265,7 @@ namespace Lucene.Net.Util.Packed
             IList<PackedInts.Mutable> packedInts = CreatePackedInts(VALUE_COUNT, BITS_PER_VALUE);
             foreach (PackedInts.Mutable packedInt in packedInts)
             {
-                for (int i = 0; i < packedInt.Size(); i++)
+                for (int i = 0; i < packedInt.Size; i++)
                 {
                     packedInt.Set(i, i + 1);
                 }
@@ -428,7 +428,7 @@ namespace Lucene.Net.Util.Packed
         private static void Fill(PackedInts.Mutable packedInt, long maxValue, long randomSeed)
         {
             Random rnd2 = new Random((int)randomSeed);
-            for (int i = 0; i < packedInt.Size(); i++)
+            for (int i = 0; i < packedInt.Size; i++)
             {
                 long value = TestUtil.NextLong(rnd2, 0, maxValue);
                 packedInt.Set(i, value);
@@ -448,10 +448,10 @@ namespace Lucene.Net.Util.Packed
                 return;
             }
             PackedInts.Reader @base = packedInts[0];
-            int valueCount = @base.Size();
+            int valueCount = @base.Size;
             foreach (PackedInts.Reader packedInt in packedInts)
             {
-                Assert.AreEqual(valueCount, packedInt.Size(), message + ". The number of values should be the same ");
+                Assert.AreEqual(valueCount, packedInt.Size, message + ". The number of values should be the same ");
             }
             for (int i = 0; i < valueCount; i++)
             {
@@ -479,7 +479,7 @@ namespace Lucene.Net.Util.Packed
                 IndexInput @in = dir.OpenInput("out", NewIOContext(Random()));
                 Reader reader = PackedInts.GetReader(@in);
                 string msg = "Impl=" + w.GetType().Name + ", bitsPerValue=" + bitsPerValue;
-                Assert.AreEqual(1, reader.Size(), msg);
+                Assert.AreEqual(1, reader.Size, msg);
                 Assert.AreEqual(value, reader.Get(0), msg);
                 Assert.AreEqual(end, @in.FilePointer, msg);
                 @in.Dispose();
@@ -594,9 +594,9 @@ namespace Lucene.Net.Util.Packed
                 foreach (PackedInts.Mutable ints in packedInts)
                 {
                     string msg = ints.GetType().Name + " bpv=" + bpv + ", from=" + from + ", to=" + to + ", val=" + val;
-                    ints.Fill(0, ints.Size(), 1);
+                    ints.Fill(0, ints.Size, 1);
                     ints.Fill(from, to, val);
-                    for (int i = 0; i < ints.Size(); ++i)
+                    for (int i = 0; i < ints.Size; ++i)
                     {
                         if (i >= from && i < to)
                         {
@@ -652,7 +652,7 @@ namespace Lucene.Net.Util.Packed
 
                 foreach (PackedInts.Mutable ints in packedInts)
                 {
-                    for (int i = 0; i < ints.Size(); ++i)
+                    for (int i = 0; i < ints.Size; ++i)
                     {
                         ints.Set(i, (31L * i - 1099) & mask);
                     }
@@ -662,7 +662,7 @@ namespace Lucene.Net.Util.Packed
                     int gets = ints.Get(index, arr, off, len);
                     Assert.IsTrue(gets > 0, msg);
                     Assert.IsTrue(gets <= len, msg);
-                    Assert.IsTrue(gets <= ints.Size() - index, msg);
+                    Assert.IsTrue(gets <= ints.Size - index, msg);
 
                     for (int i = 0; i < arr.Length; ++i)
                     {
@@ -705,7 +705,7 @@ namespace Lucene.Net.Util.Packed
                     Assert.IsTrue(sets > 0, msg);
                     Assert.IsTrue(sets <= len, msg);
 
-                    for (int i = 0; i < ints.Size(); ++i)
+                    for (int i = 0; i < ints.Size; ++i)
                     {
                         string m = msg + ", i=" + i;
                         if (i >= index && i < index + sets)
@@ -735,7 +735,7 @@ namespace Lucene.Net.Util.Packed
                 long mask = PackedInts.MaxValue(bpv);
                 foreach (PackedInts.Mutable r1 in CreatePackedInts(valueCount, bpv))
                 {
-                    for (int i = 0; i < r1.Size(); ++i)
+                    for (int i = 0; i < r1.Size; ++i)
                     {
                         r1.Set(i, (31L * i - 1023) & mask);
                     }
@@ -743,7 +743,7 @@ namespace Lucene.Net.Util.Packed
                     {
                         string msg = "src=" + r1 + ", dest=" + r2 + ", srcPos=" + off1 + ", destPos=" + off2 + ", len=" + len + ", mem=" + mem;
                         PackedInts.Copy(r1, off1, r2, off2, len, mem);
-                        for (int i = 0; i < r2.Size(); ++i)
+                        for (int i = 0; i < r2.Size; ++i)
                         {
                             string m = msg + ", i=" + i;
                             if (i >= off2 && i < off2 + len)
@@ -946,7 +946,7 @@ namespace Lucene.Net.Util.Packed
                 IList<PackedInts.Mutable> packedInts = CreatePackedInts(valueCount, bpv);
                 foreach (PackedInts.Mutable mutable in packedInts)
                 {
-                    for (int i = 0; i < mutable.Size(); ++i)
+                    for (int i = 0; i < mutable.Size; ++i)
                     {
                         mutable.Set(i, Random().Next(maxValue));
                     }
@@ -958,7 +958,7 @@ namespace Lucene.Net.Util.Packed
                     IndexInput @in = directory.OpenInput("packed-ints.bin", IOContext.DEFAULT);
                     PackedInts.Reader reader = PackedInts.GetReader(@in);
                     Assert.AreEqual(mutable.BitsPerValue, reader.BitsPerValue);
-                    Assert.AreEqual(valueCount, reader.Size());
+                    Assert.AreEqual(valueCount, reader.Size);
                     if (mutable is Packed64SingleBlock)
                     {
                         // make sure that we used the right format so that the reader has
