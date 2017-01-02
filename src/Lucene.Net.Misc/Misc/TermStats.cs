@@ -38,7 +38,7 @@ namespace Lucene.Net.Misc
             this.TotalTermFreq = tf;
         }
 
-        internal string TermText
+        public string TermText
         {
             get
             {
