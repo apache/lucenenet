@@ -63,9 +63,9 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// The number of values encoded by the encoder. </summary>
         /// <returns> The number of values encoded by the encoder. </returns>
-        public virtual long NumEncoded() // LUCENENET TODO: make property
+        public virtual long NumEncoded
         {
-            return NumEncoded_Renamed;
+            get { return NumEncoded_Renamed; }
         }
 
         /// <summary>

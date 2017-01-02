@@ -85,7 +85,7 @@ namespace Lucene.Net.Util.Packed
             {
                 this.OuterInstance = outerInstance;
                 curDocId = -1;
-                efDecoder = outerInstance.EfEncoder.Decoder;
+                efDecoder = outerInstance.EfEncoder.GetDecoder();
             }
 
             private int curDocId;
@@ -114,7 +114,7 @@ namespace Lucene.Net.Util.Packed
 
             public override long Cost()
             {
-                return efDecoder.NumEncoded();
+                return efDecoder.NumEncoded;
             }
         }
 

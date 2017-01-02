@@ -305,43 +305,31 @@ namespace Lucene.Net.Util.Packed
         /// Returns an <seealso cref="EliasFanoDecoder"/> to access the encoded values.
         /// Perform all calls to <seealso cref="#encodeNext"/> before calling <seealso cref="#getDecoder"/>.
         /// </summary>
-        public virtual EliasFanoDecoder Decoder // LUCENENET TODO: change to GetDecoder() (returns new instance)
+        public virtual EliasFanoDecoder GetDecoder()
         {
-            get
-            {
-                // decode as far as currently encoded as determined by numEncoded.
-                return new EliasFanoDecoder(this);
-            }
+            // decode as far as currently encoded as determined by numEncoded.
+            return new EliasFanoDecoder(this);
         }
 
         /// <summary>
         /// Expert. The low bits. </summary>
-        public virtual long[] LowerBits // LUCENENET TODO: Change to GetLowerBits() (array)
+        public virtual long[] GetLowerBits()
         {
-            get
-            {
-                return LowerLongs;
-            }
+            return LowerLongs;
         }
 
         /// <summary>
         /// Expert. The high bits. </summary>
-        public virtual long[] UpperBits // LUCENENET TODO: Change to GetUpperBits() (array)
+        public virtual long[] GetUpperBits()
         {
-            get
-            {
-                return UpperLongs;
-            }
+            return UpperLongs;
         }
 
         /// <summary>
         /// Expert. The index bits. </summary>
-        public virtual long[] IndexBits // LUCENENET TODO: Change to GetIndexBits() (array)
+        public virtual long[] GetIndexBits()
         {
-            get
-            {
-                return UpperZeroBitPositionIndex;
-            }
+            return UpperZeroBitPositionIndex;
         }
 
         public override string ToString()
