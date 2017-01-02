@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
                     return RuntimeHelpers.GetHashCode(this);
                 }
 
-                public override void CopyTo(Attribute target)
+                public override void CopyTo(IAttribute target)
                 {
                 }
 

@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         // The token needs to be immutable, so work with clones!
         private Token singleToken;
-        private readonly CharTermAttribute tokenAtt;
+        private readonly ICharTermAttribute tokenAtt;
 
         public SingleTokenTokenStream(Token token) : base(Token.TOKEN_ATTRIBUTE_FACTORY)
         {
@@ -37,9 +37,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             Debug.Assert(token != null);
             this.singleToken = (Token)token.Clone();
 
-            // LUCENENET TODO: This is ugly. Can't we just use the type we want?
-            // The interface doesn't convert to Attribute, so we need to do a cast.
-            tokenAtt = (CharTermAttribute)AddAttribute<ICharTermAttribute>();
+            tokenAtt = AddAttribute<ICharTermAttribute>();
             Debug.Assert(tokenAtt is Token);
         }
 

@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
             set { this.uniqueField = value; }
         }
 
-        public override void CopyTo(Attribute target)
+        public override void CopyTo(IAttribute target)
         {
 
             if (!(target is UniqueFieldAttributeImpl))

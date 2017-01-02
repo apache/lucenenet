@@ -18,6 +18,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
      */
 
     using Attribute = Lucene.Net.Util.Attribute;
+    using IAttribute = Lucene.Net.Util.IAttribute;
 
     /// <summary>
     /// Default implementation of <seealso cref="OffsetAttribute"/>. </summary>
@@ -90,7 +91,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             return code;
         }
 
-        public override void CopyTo(Attribute target)
+        public override void CopyTo(IAttribute target)
         {
             OffsetAttribute t = (OffsetAttribute)target;
             t.SetOffset(startOffset, endOffset);

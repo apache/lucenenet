@@ -100,7 +100,7 @@ namespace Lucene.Net.Analysis
                 return 76137213 ^ Convert.ToBoolean(ClearCalled).GetHashCode();
             }
 
-            public override void CopyTo(Attribute target)
+            public override void CopyTo(IAttribute target)
             {
                 ((CheckClearAttributesAttribute)target).Clear();
             }

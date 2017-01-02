@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis
                 return RuntimeHelpers.GetHashCode(this);
             }
 
-            public override void CopyTo(Attribute target)
+            public override void CopyTo(IAttribute target)
             {
                 BinaryTermAttribute other = (BinaryTermAttribute)target;
                 other.Bytes.CopyBytes(Bytes);

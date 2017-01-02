@@ -20,6 +20,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
      */
 
     using Attribute = Lucene.Net.Util.Attribute;
+    using IAttribute = Lucene.Net.Util.IAttribute;
 
     /// <summary>
     /// Default implementation of <seealso cref="PositionLengthAttribute"/>. </summary>
@@ -75,7 +76,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             return positionLength;
         }
 
-        public override void CopyTo(Attribute target)
+        public override void CopyTo(IAttribute target)
         {
             PositionLengthAttribute t = (PositionLengthAttribute)target;
             t.PositionLength = positionLength;

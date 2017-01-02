@@ -18,6 +18,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
      */
 
     using Attribute = Lucene.Net.Util.Attribute;
+    using IAttribute = Lucene.Net.Util.IAttribute;
 
     /// <summary>
     /// Default implementation of <seealso cref="KeywordAttribute"/>. </summary>
@@ -36,7 +37,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             keyword = false;
         }
 
-        public override void CopyTo(Attribute target)
+        public override void CopyTo(IAttribute target)
         {
             KeywordAttribute attr = (KeywordAttribute)target;
             attr.IsKeyword = keyword;

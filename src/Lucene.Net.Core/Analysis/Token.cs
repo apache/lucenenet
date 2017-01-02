@@ -3,6 +3,7 @@ using System.Reflection;
 using Attribute = Lucene.Net.Util.Attribute;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 using BytesRef = Lucene.Net.Util.BytesRef;
+using IAttribute = Lucene.Net.Util.IAttribute;
 
 namespace Lucene.Net.Analysis
 {
@@ -579,7 +580,7 @@ namespace Lucene.Net.Analysis
             payload = prototype.payload;
         }
 
-        public override void CopyTo(Attribute target)
+        public override void CopyTo(IAttribute target)
         {
             var to = target as Token;
             if (to != null)

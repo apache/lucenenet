@@ -24,6 +24,7 @@ namespace Lucene.Net.Analysis
     using NUnit.Framework;
     using Attribute = Lucene.Net.Util.Attribute;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using IAttribute = Lucene.Net.Util.IAttribute;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
@@ -233,7 +234,7 @@ namespace Lucene.Net.Analysis
 
         public sealed class SenselessAttribute : Attribute, ISenselessAttribute
         {
-            public override void CopyTo(Attribute target)
+            public override void CopyTo(IAttribute target)
             {
             }
 

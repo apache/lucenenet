@@ -514,7 +514,7 @@ namespace Lucene.Net.Search
                 return automata.Equals(((LevenshteinAutomataAttribute)other).automata);
             }
 
-            public override void CopyTo(Attribute target)
+            public override void CopyTo(IAttribute target)
             {
                 IList<CompiledAutomaton> targetAutomata = ((LevenshteinAutomataAttribute)target).Automata();
                 targetAutomata.Clear();

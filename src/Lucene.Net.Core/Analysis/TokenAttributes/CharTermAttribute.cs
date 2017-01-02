@@ -25,6 +25,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using Attribute = Lucene.Net.Util.Attribute;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using IAttribute = Lucene.Net.Util.IAttribute;
     using IAttributeReflector = Lucene.Net.Util.IAttributeReflector;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
@@ -389,7 +390,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(Bytes));
         }
 
-        public override void CopyTo(Attribute target)
+        public override void CopyTo(IAttribute target)
         {
             CharTermAttribute t = (CharTermAttribute)target;
             t.CopyBuffer(termBuffer, 0, termLength);

@@ -18,6 +18,7 @@ namespace Lucene.Net.Search
      */
 
     using Attribute = Lucene.Net.Util.Attribute;
+    using IAttribute = Lucene.Net.Util.IAttribute;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
@@ -59,7 +60,7 @@ namespace Lucene.Net.Search
             competitiveTerm = null;
         }
 
-        public override void CopyTo(Attribute target)
+        public override void CopyTo(IAttribute target)
         {
             MaxNonCompetitiveBoostAttribute t = (MaxNonCompetitiveBoostAttribute)target;
             t.MaxNonCompetitiveBoost = maxNonCompetitiveBoost;

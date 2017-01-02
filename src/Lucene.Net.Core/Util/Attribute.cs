@@ -24,7 +24,8 @@ namespace Lucene.Net.Util
      */
 
     /// <summary> Base interface for attributes.</summary>
-    public interface IAttribute // LUCENENET TODO: Move to Attribute file and delete this one
+    public interface IAttribute
     {
+        void CopyTo(IAttribute target);
     }
 }

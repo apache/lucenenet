@@ -164,7 +164,7 @@ namespace Lucene.Net.Util
         /// target attribute. The target implementation must support all the
         /// Attributes this implementation supports.
         /// </summary>
-        public abstract void CopyTo(Attribute target); // LUCENENET TODO: Change this to accept an IAttribute...? we should eliminate casting if possible
+        public abstract void CopyTo(IAttribute target);
 
         /// <summary> Shallow clone. Subclasses must override this if they
         /// need to clone any members deeply,

@@ -20,10 +20,11 @@ namespace Lucene.Net.Analysis.TokenAttributes
      */
 
     using Attribute = Lucene.Net.Util.Attribute;
+    using IAttribute = Lucene.Net.Util.IAttribute;
 
     /// <summary>
     /// Default implementation of <seealso cref="TypeAttribute"/>. </summary>
-    
+
     public class TypeAttribute : Attribute, ITypeAttribute
 #if FEATURE_CLONEABLE
         , ICloneable
@@ -77,7 +78,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             return (type == null) ? 0 : type.GetHashCode();
         }
 
-        public override void CopyTo(Attribute target)
+        public override void CopyTo(IAttribute target)
         {
             TypeAttribute t = (TypeAttribute)target;
             t.type = type;

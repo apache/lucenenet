@@ -226,7 +226,7 @@ namespace Lucene.Net.Analysis
                 reflector.Reflect(typeof(INumericTermAttribute), "valueSize", ValueSize);
             }
 
-            public override void CopyTo(Util.Attribute target)
+            public override void CopyTo(Util.IAttribute target)
             {
                 var a = (NumericTermAttribute)target;
                 a.Init(_value, ValueSize, _precisionStep, Shift);

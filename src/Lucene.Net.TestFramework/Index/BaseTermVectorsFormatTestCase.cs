@@ -21,6 +21,7 @@ namespace Lucene.Net.Index
     using Field = Field;
     using FieldType = FieldType;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using IAttribute = Lucene.Net.Util.IAttribute;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using OffsetAttribute = Lucene.Net.Analysis.TokenAttributes.OffsetAttribute;
     using PayloadAttribute = Lucene.Net.Analysis.TokenAttributes.PayloadAttribute;
@@ -239,7 +240,7 @@ namespace Lucene.Net.Index
                 return Start + 31 * End;
             }
 
-            public override void CopyTo(Attribute target)
+            public override void CopyTo(IAttribute target)
             {
                 OffsetAttribute t = (OffsetAttribute)target;
                 t.SetOffset(Start, End);

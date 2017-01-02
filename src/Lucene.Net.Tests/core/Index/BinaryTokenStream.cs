@@ -4,6 +4,7 @@ namespace Lucene.Net.Index
 {
     using Attribute = Lucene.Net.Util.Attribute;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using IAttribute = Lucene.Net.Util.IAttribute;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -90,7 +91,7 @@ namespace Lucene.Net.Index
             {
             }
 
-            public override void CopyTo(Attribute target)
+            public override void CopyTo(IAttribute target)
             {
                 ByteTermAttribute other = (ByteTermAttribute)target;
                 other.Bytes = Bytes;

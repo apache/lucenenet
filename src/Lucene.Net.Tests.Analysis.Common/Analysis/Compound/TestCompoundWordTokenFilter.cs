@@ -203,7 +203,7 @@ namespace Lucene.Net.Analysis.Compound
                     this.retain = value;
                 }
             }
-            public override void CopyTo(Attribute target)
+            public override void CopyTo(IAttribute target)
             {
                 IMockRetainAttribute t = (IMockRetainAttribute)target;
                 t.Retain = retain;

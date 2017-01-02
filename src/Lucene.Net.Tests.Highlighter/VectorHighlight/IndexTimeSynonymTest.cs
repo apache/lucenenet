@@ -336,13 +336,11 @@ namespace Lucene.Net.Search.VectorHighlight
             public TokenizerAnonymousHelper(AttributeFactory factory, TextReader reader, Token[] tokens)
                 : base(factory, reader)
             {
-                //reusableToken = (AttributeImpl)AddAttribute<ICharTermAttribute>();
-                reusableToken = (Util.Attribute)AddAttribute<ICharTermAttribute>();
+                reusableToken = AddAttribute<ICharTermAttribute>();
                 this.tokens = tokens;
             }
 
-            private Util.Attribute reusableToken;
-            //private ICharTermAttribute reusableToken;
+            private ICharTermAttribute reusableToken;
             private int p = 0;
 
             public override bool IncrementToken()

@@ -18,6 +18,7 @@ namespace Lucene.Net.Search
      */
 
     using Attribute = Lucene.Net.Util.Attribute;
+    using IAttribute = Lucene.Net.Util.IAttribute;
 
     /// <summary>
     /// Implementation class for <seealso cref="IBoostAttribute"/>.
@@ -40,7 +41,7 @@ namespace Lucene.Net.Search
             boost = 1.0f;
         }
 
-        public override void CopyTo(Attribute target)
+        public override void CopyTo(IAttribute target)
         {
             ((BoostAttribute)target).Boost = boost;
         }

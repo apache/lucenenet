@@ -18,6 +18,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
      */
 
     using Attribute = Lucene.Net.Util.Attribute;
+    using IAttribute = Lucene.Net.Util.IAttribute;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
@@ -94,7 +95,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             return (payload == null) ? 0 : payload.GetHashCode();
         }
 
-        public override void CopyTo(Attribute target)
+        public override void CopyTo(IAttribute target)
         {
             PayloadAttribute t = (PayloadAttribute)target;
             t.Payload = (payload == null) ? null : (BytesRef)payload.Clone();

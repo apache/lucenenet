@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         {
         }
 
-        public override void CopyTo(Attribute target)
+        public override void CopyTo(IAttribute target)
         {
             TermToBytesRefAttribute other = (TermToBytesRefAttribute)target;
             other.Bytes = Bytes;
