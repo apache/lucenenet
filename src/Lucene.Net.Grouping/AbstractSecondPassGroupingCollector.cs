@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public abstract class AbstractSecondPassGroupingCollector<TGroupValue> : ICollector, IAbstractSecondPassGroupingCollector<TGroupValue>
+    public abstract class AbstractSecondPassGroupingCollector<TGroupValue> : IAbstractSecondPassGroupingCollector<TGroupValue>
     {
         protected readonly IDictionary<TGroupValue, AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>> groupMap;
         private readonly int maxDocsPerGroup;
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search.Grouping
     /// to simulate Java's wildcard generics.
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public interface IAbstractSecondPassGroupingCollector<out TGroupValue>
+    public interface IAbstractSecondPassGroupingCollector<out TGroupValue> : ICollector
     {
         ITopGroups<TGroupValue> GetTopGroups(int withinGroupOffset);
     }

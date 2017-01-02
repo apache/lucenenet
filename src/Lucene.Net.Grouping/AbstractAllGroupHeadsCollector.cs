@@ -228,7 +228,7 @@ namespace Lucene.Net.Search.Grouping
         /// 
         /// </summary>
         /// <returns>the number of group heads found for a query.</returns>
-        public abstract int GroupHeadsSize { get; }
+        public abstract int GroupHeadsSize { get; } // LUCENENET TODO: Rename GroupHeadsCount ?
 
         /// <summary>
         /// Returns the group head and puts it into <see cref="TemporalResult"/>.

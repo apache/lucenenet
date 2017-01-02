@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public abstract class AbstractFirstPassGroupingCollector<TGroupValue> : ICollector, IAbstractFirstPassGroupingCollector<TGroupValue>
+    public abstract class AbstractFirstPassGroupingCollector<TGroupValue> : IAbstractFirstPassGroupingCollector<TGroupValue>
     {
         private readonly Sort groupSort;
         private readonly FieldComparator[] comparators;
@@ -419,7 +419,7 @@ namespace Lucene.Net.Search.Grouping
     /// to simulate Java's wildcard generics.
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public interface IAbstractFirstPassGroupingCollector<out TGroupValue>
+    public interface IAbstractFirstPassGroupingCollector<out TGroupValue> : ICollector
     {
         /// <summary>
         /// Returns top groups, starting from offset.  This may

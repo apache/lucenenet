@@ -101,14 +101,10 @@ namespace Lucene.Net.Search.Grouping
             }
 
             IAbstractFirstPassGroupingCollector<object> c1 = CreateRandomFirstPassCollector(groupField, groupSort, 10);
-            // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-            // so this cast is not necessary. Consider eliminating the Collector abstract class.
-            indexSearcher.Search(new TermQuery(new Index.Term("content", "random")), c1 as ICollector);
+            indexSearcher.Search(new TermQuery(new Index.Term("content", "random")), c1);
 
             IAbstractSecondPassGroupingCollector<object> c2 = CreateSecondPassCollector(c1, groupField, groupSort, null, 0, 5, true, true, true);
-            // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-            // so this cast is not necessary. Consider eliminating the Collector abstract class.
-            indexSearcher.Search(new TermQuery(new Index.Term("content", "random")), c2 as ICollector);
+            indexSearcher.Search(new TermQuery(new Index.Term("content", "random")), c2);
 
             ITopGroups<object> groups = c2.GetTopGroups(0);
             assertFalse(float.IsNaN(groups.MaxScore));
@@ -1069,16 +1065,12 @@ namespace Lucene.Net.Search.Grouping
                             {
                                 if (doAllGroups)
                                 {
-                                    // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                                    // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                                    cCache = CachingCollector.Create(c1 as ICollector, true, maxCacheMB);
-                                    c = MultiCollector.Wrap(cCache, allGroupsCollector as ICollector);
+                                    cCache = CachingCollector.Create(c1, true, maxCacheMB);
+                                    c = MultiCollector.Wrap(cCache, allGroupsCollector);
                                 }
                                 else
                                 {
-                                    // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                                    // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                                    c = cCache = CachingCollector.Create(c1 as ICollector, true, maxCacheMB);
+                                    c = cCache = CachingCollector.Create(c1, true, maxCacheMB);
                                 }
                             }
                             else
@@ -1092,15 +1084,11 @@ namespace Lucene.Net.Search.Grouping
                             cCache = null;
                             if (doAllGroups)
                             {
-                                // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                                // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                                c = MultiCollector.Wrap(c1 as ICollector, allGroupsCollector as ICollector);
+                                c = MultiCollector.Wrap(c1, allGroupsCollector);
                             }
                             else
                             {
-                                // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                                // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                                c = c1 as ICollector;
+                                c = c1;
                             }
                         }
 
@@ -1114,28 +1102,20 @@ namespace Lucene.Net.Search.Grouping
                             if (cCache.IsCached)
                             {
                                 // Replay for first-pass grouping
-                                // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                                // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                                cCache.Replay(c1 as ICollector);
+                                cCache.Replay(c1);
                                 if (doAllGroups)
                                 {
                                     // Replay for all groups:
-                                    // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                                    // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                                    cCache.Replay(allGroupsCollector as ICollector);
+                                    cCache.Replay(allGroupsCollector);
                                 }
                             }
                             else
                             {
                                 // Replay by re-running search:
-                                // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                                // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                                s.Search(query, c1 as ICollector);
+                                s.Search(query, c1);
                                 if (doAllGroups)
                                 {
-                                    // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                                    // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                                    s.Search(query, allGroupsCollector as ICollector);
+                                    s.Search(query, allGroupsCollector);
                                 }
                             }
                         }
@@ -1188,9 +1168,7 @@ namespace Lucene.Net.Search.Grouping
                                     {
                                         Console.WriteLine("TEST: cache is intact");
                                     }
-                                    // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                                    // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                                    cCache.Replay(c2 as ICollector);
+                                    cCache.Replay(c2);
                                 }
                                 else
                                 {
@@ -1198,16 +1176,12 @@ namespace Lucene.Net.Search.Grouping
                                     {
                                         Console.WriteLine("TEST: cache was too large");
                                     }
-                                    // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                                    // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                                    s.Search(query, c2 as ICollector);
+                                    s.Search(query, c2);
                                 }
                             }
                             else
                             {
-                                // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                                // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                                s.Search(query, c2 as ICollector);
+                                s.Search(query, c2);
                             }
 
                             if (doAllGroups)
@@ -1512,9 +1486,7 @@ namespace Lucene.Net.Search.Grouping
                     Console.WriteLine("    1st pass collector=" + firstPassCollector);
                 }
                 firstPassGroupingCollectors.Add(firstPassCollector);
-                // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                subSearchers[shardIDX].Search(w, firstPassCollector as ICollector);
+                subSearchers[shardIDX].Search(w, firstPassCollector);
                 IEnumerable<ISearchGroup<BytesRef>> topGroups = GetSearchGroups(firstPassCollector, 0, true);
                 if (topGroups != null)
                 {
@@ -1556,9 +1528,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     IAbstractSecondPassGroupingCollector<object> secondPassCollector = CreateSecondPassCollector(firstPassGroupingCollectors[shardIDX],
                         groupField, mergedTopGroups, groupSort, docSort, docOffset + topNDocs, getScores, getMaxScores, true);
-                    // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                    // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                    subSearchers[shardIDX].Search(w, secondPassCollector as ICollector);
+                    subSearchers[shardIDX].Search(w, secondPassCollector);
                     shardTopGroups[shardIDX] = GetTopGroups(secondPassCollector, 0);
                     if (VERBOSE)
                     {

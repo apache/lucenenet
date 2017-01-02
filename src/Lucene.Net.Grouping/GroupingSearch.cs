@@ -234,14 +234,10 @@ namespace Lucene.Net.Search.Grouping
             if (allGroupHeads || allGroups)
             {
                 List<ICollector> collectors = new List<ICollector>();
-                // LUCENENET TODO: Make the Collector abstract class into an interface
-                // so we can remove the casting here
-                collectors.Add((ICollector)firstPassCollector);
+                collectors.Add(firstPassCollector);
                 if (allGroups)
                 {
-                    // LUCENENET TODO: Make the Collector abstract class into an interface
-                    // so we can remove the casting here
-                    collectors.Add((ICollector)allGroupsCollector);
+                    collectors.Add(allGroupsCollector);
                 }
                 if (allGroupHeads)
                 {
@@ -251,9 +247,7 @@ namespace Lucene.Net.Search.Grouping
             }
             else
             {
-                // LUCENENET TODO: Make the Collector abstract class into an interface
-                // so we can remove the casting here
-                firstRound = (ICollector)firstPassCollector;
+                firstRound = firstPassCollector;
             }
 
             CachingCollector cachedCollector = null;
@@ -314,15 +308,11 @@ namespace Lucene.Net.Search.Grouping
 
             if (cachedCollector != null && cachedCollector.IsCached)
             {
-                // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                cachedCollector.Replay(secondPassCollector as ICollector);
+                cachedCollector.Replay(secondPassCollector);
             }
             else
             {
-                // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                searcher.Search(query, filter, secondPassCollector as ICollector);
+                searcher.Search(query, filter, secondPassCollector);
             }
 
             if (allGroups)

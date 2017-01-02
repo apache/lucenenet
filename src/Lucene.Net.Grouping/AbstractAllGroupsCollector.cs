@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public abstract class AbstractAllGroupsCollector<TGroupValue> : ICollector, IAbstractAllGroupsCollector<TGroupValue>
+    public abstract class AbstractAllGroupsCollector<TGroupValue> : IAbstractAllGroupsCollector<TGroupValue>
     {
         /// <summary>
         /// Returns the total number of groups for the executed search.
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Grouping
     /// LUCENENET specific interface used to apply covariance to TGroupValue
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public interface IAbstractAllGroupsCollector<out TGroupValue>
+    public interface IAbstractAllGroupsCollector<out TGroupValue> : ICollector
     {
         /// <summary>
         /// Returns the total number of groups for the executed search.

@@ -153,14 +153,10 @@ namespace Lucene.Net.Search.Grouping
 
             // === Search for content:random
             IAbstractFirstPassGroupingCollector<IComparable> firstCollector = CreateRandomFirstPassCollector(dvType, new Sort(), groupField, 10);
-            // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-            // so this cast is not necessary. Consider eliminating the Collector abstract class.
-            indexSearcher.Search(new TermQuery(new Term("content", "random")), firstCollector as ICollector);
+            indexSearcher.Search(new TermQuery(new Term("content", "random")), firstCollector);
             IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<IComparable>> distinctValuesCollector
                 = CreateDistinctCountCollector(firstCollector, groupField, countField, dvType.GetValueOrDefault());
-            // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-            // so this cast is not necessary. Consider eliminating the Collector abstract class.
-            indexSearcher.Search(new TermQuery(new Term("content", "random")), distinctValuesCollector as ICollector);
+            indexSearcher.Search(new TermQuery(new Term("content", "random")), distinctValuesCollector);
 
             //var gcs = distinctValuesCollector.Groups as List<IGroupCount<IComparable>>;
             // LUCENENET TODO: Try to work out how to do this without an O(n) operation
@@ -192,13 +188,9 @@ namespace Lucene.Net.Search.Grouping
 
             // === Search for content:some
             firstCollector = CreateRandomFirstPassCollector(dvType, new Sort(), groupField, 10);
-            // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-            // so this cast is not necessary. Consider eliminating the Collector abstract class.
-            indexSearcher.Search(new TermQuery(new Term("content", "some")), firstCollector as ICollector);
+            indexSearcher.Search(new TermQuery(new Term("content", "some")), firstCollector);
             distinctValuesCollector = CreateDistinctCountCollector(firstCollector, groupField, countField, dvType);
-            // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-            // so this cast is not necessary. Consider eliminating the Collector abstract class.
-            indexSearcher.Search(new TermQuery(new Term("content", "some")), distinctValuesCollector as ICollector);
+            indexSearcher.Search(new TermQuery(new Term("content", "some")), distinctValuesCollector);
 
             // LUCENENET TODO: Try to work out how to do this without an O(n) operation
             //gcs = distinctValuesCollector.Groups as List<IGroupCount<IComparable>>;
@@ -225,13 +217,9 @@ namespace Lucene.Net.Search.Grouping
 
             // === Search for content:blob
             firstCollector = CreateRandomFirstPassCollector(dvType, new Sort(), groupField, 10);
-            // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-            // so this cast is not necessary. Consider eliminating the Collector abstract class.
-            indexSearcher.Search(new TermQuery(new Term("content", "blob")), firstCollector as ICollector);
+            indexSearcher.Search(new TermQuery(new Term("content", "blob")), firstCollector);
             distinctValuesCollector = CreateDistinctCountCollector(firstCollector, groupField, countField, dvType);
-            // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-            // so this cast is not necessary. Consider eliminating the Collector abstract class.
-            indexSearcher.Search(new TermQuery(new Term("content", "blob")), distinctValuesCollector as ICollector);
+            indexSearcher.Search(new TermQuery(new Term("content", "blob")), distinctValuesCollector);
 
             // LUCENENET TODO: Try to work out how to do this without an O(n) operation
             //gcs = distinctValuesCollector.Groups as List<IGroupCount<IComparable>>;
@@ -274,14 +262,10 @@ namespace Lucene.Net.Search.Grouping
                     List<AbstractDistinctValuesCollector.IGroupCount<IComparable>> expectedResult = CreateExpectedResult(context, term, groupSort, topN);
 
                     IAbstractFirstPassGroupingCollector<IComparable> firstCollector = CreateRandomFirstPassCollector(dvType, groupSort, groupField, topN);
-                    // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                    // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                    searcher.Search(new TermQuery(new Term("content", term)), firstCollector as ICollector);
+                    searcher.Search(new TermQuery(new Term("content", term)), firstCollector);
                     IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<IComparable>> distinctValuesCollector
                         = CreateDistinctCountCollector(firstCollector, groupField, countField, dvType);
-                    // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
-                    // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                    searcher.Search(new TermQuery(new Term("content", term)), distinctValuesCollector as ICollector);
+                    searcher.Search(new TermQuery(new Term("content", term)), distinctValuesCollector);
 
                     // LUCENENET TODO: Try to work out how to do this without an O(n) operation
                     List<AbstractDistinctValuesCollector.IGroupCount<IComparable>> actualResult = new List<AbstractDistinctValuesCollector.IGroupCount<IComparable>>(distinctValuesCollector.Groups);
