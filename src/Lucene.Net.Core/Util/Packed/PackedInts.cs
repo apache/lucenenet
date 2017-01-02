@@ -681,7 +681,7 @@ namespace Lucene.Net.Util.Packed
 
             /// <summary>
             /// Returns number of values </summary>
-            int Size(); // LUCENENET TODO: Make property, rename Count
+            int Size { get; } // LUCENENET TODO: rename Count
 
             /// <summary>
             /// Returns the current position </summary>
@@ -691,16 +691,15 @@ namespace Lucene.Net.Util.Packed
         // LUCENENET NOTE: Was ReaderIteratorImpl in Lucene
         internal abstract class ReaderIterator : IReaderIterator
         {
-            // LUCENENET TODO: Rename with m_
-            protected readonly DataInput @in;
-            protected readonly int bitsPerValue;
-            protected readonly int valueCount;
+            protected readonly DataInput m_in;
+            protected readonly int m_bitsPerValue;
+            protected readonly int m_valueCount;
 
             protected ReaderIterator(int valueCount, int bitsPerValue, DataInput @in)
             {
-                this.@in = @in;
-                this.bitsPerValue = bitsPerValue;
-                this.valueCount = valueCount;
+                this.m_in = @in;
+                this.m_bitsPerValue = bitsPerValue;
+                this.m_valueCount = valueCount;
             }
 
             public virtual long Next()
@@ -719,13 +718,13 @@ namespace Lucene.Net.Util.Packed
             {
                 get
                 {
-                    return bitsPerValue;
+                    return m_bitsPerValue;
                 }
             }
 
-            public virtual int Size() // LUCENENET TODO: make property, rename Count
+            public virtual int Size // LUCENENET TODO: rename Count
             {
-                return valueCount;
+                get { return m_valueCount; }
             }
 
             public abstract int Ord(); // LUCENENET TODO: Make property ?

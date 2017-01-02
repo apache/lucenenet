@@ -49,7 +49,7 @@ namespace Lucene.Net.Util.Packed
 
         private int Iterations(int mem)
         {
-            int iterations = BulkOperation.ComputeIterations(valueCount, mem);
+            int iterations = BulkOperation.ComputeIterations(m_valueCount, mem);
             if (PackedIntsVersion < PackedInts.VERSION_BYTE_ALIGNED)
             {
                 // make sure iterations is a multiple of 8
@@ -66,7 +66,7 @@ namespace Lucene.Net.Util.Packed
 
             NextValues.Offset += NextValues.Length;
 
-            int remaining = valueCount - Position - 1;
+            int remaining = m_valueCount - Position - 1;
             if (remaining <= 0)
             {
                 throw new System.IO.EndOfStreamException();
@@ -75,9 +75,9 @@ namespace Lucene.Net.Util.Packed
 
             if (NextValues.Offset == NextValues.Longs.Length)
             {
-                long remainingBlocks = Format.ByteCount(PackedIntsVersion, remaining, bitsPerValue);
+                long remainingBlocks = Format.ByteCount(PackedIntsVersion, remaining, m_bitsPerValue);
                 int blocksToRead = (int)Math.Min(remainingBlocks, NextBlocks.Length);
-                @in.ReadBytes(NextBlocks, 0, blocksToRead);
+                m_in.ReadBytes(NextBlocks, 0, blocksToRead);
                 if (blocksToRead < NextBlocks.Length)
                 {
                     Arrays.Fill(NextBlocks, blocksToRead, NextBlocks.Length, (byte)0);
