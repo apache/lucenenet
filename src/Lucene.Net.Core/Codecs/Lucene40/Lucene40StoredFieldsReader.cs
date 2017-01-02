@@ -148,9 +148,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Returns number of documents. </summary>
-        public int Size() // LUCENENET TODO :Rename Count prop
+        public int Size // LUCENENET TODO :Rename Count
         {
-            return Size_Renamed;
+            get { return Size_Renamed; }
         }
 
         private void SeekIndex(int docID)
