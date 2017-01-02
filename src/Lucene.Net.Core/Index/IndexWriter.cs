@@ -4310,7 +4310,7 @@ namespace Lucene.Net.Index
                         string msg = holder.mergedDeletesAndUpdates.PendingDeleteCount + " new deletes";
                         if (mergedDVUpdates.Any())
                         {
-                            msg += " and " + mergedDVUpdates.Size() + " new field updates";
+                            msg += " and " + mergedDVUpdates.Size + " new field updates";
                         }
                         msg += " since merge started";
                         infoStream.Message("IW", msg);

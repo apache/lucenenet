@@ -87,9 +87,9 @@ namespace Lucene.Net.Index
                 return false;
             }
 
-            internal virtual int Size() // LUCENENET TODO: Rename Count property
+            internal virtual int Size // LUCENENET TODO: Rename Count
             {
-                return NumericDVUpdates.Count + BinaryDVUpdates.Count;
+                get { return NumericDVUpdates.Count + BinaryDVUpdates.Count; }
             }
 
             internal virtual AbstractDocValuesFieldUpdates GetUpdates(string field, DocValuesFieldUpdates.Type type)
