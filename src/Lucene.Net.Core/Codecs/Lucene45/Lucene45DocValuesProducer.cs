@@ -1009,7 +1009,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 this.Addresses = addresses;
                 this.Data = data;
                 this.NumValues = bytes.Count;
-                this.NumIndexValues = addresses.Size();
+                this.NumIndexValues = addresses.Size;
                 this.TermsEnum_Renamed = GetTermsEnum(data);
             }
 
