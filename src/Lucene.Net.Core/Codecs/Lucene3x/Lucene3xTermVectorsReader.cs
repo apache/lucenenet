@@ -212,9 +212,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         ///
         /// <returns> The number of documents in the reader </returns>
-        internal virtual int Size() // LUCENENET TODO: Rename to Count
+        internal virtual int Size // LUCENENET TODO: Rename Count
         {
-            return Size_Renamed;
+            get { return Size_Renamed; }
         }
 
         private class TVFields : Fields
