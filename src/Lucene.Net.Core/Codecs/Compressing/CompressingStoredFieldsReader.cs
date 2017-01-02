@@ -296,7 +296,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
                 else
                 {
-                    PackedInts.ReaderIterator it = PackedInts.GetReaderIteratorNoHeader(FieldsStream, PackedInts.Format.PACKED, PackedIntsVersion, chunkDocs, bitsPerLength, 1);
+                    PackedInts.IReaderIterator it = PackedInts.GetReaderIteratorNoHeader(FieldsStream, PackedInts.Format.PACKED, PackedIntsVersion, chunkDocs, bitsPerLength, 1);
                     int off = 0;
                     for (int i = 0; i < docID - docBase; ++i)
                     {
@@ -537,7 +537,7 @@ namespace Lucene.Net.Codecs.Compressing
                     }
                     else
                     {
-                        PackedInts.ReaderIterator it = PackedInts.GetReaderIteratorNoHeader(FieldsStream, PackedInts.Format.PACKED, OuterInstance.PackedIntsVersion, chunkDocs, bitsPerStoredFields, 1);
+                        PackedInts.IReaderIterator it = PackedInts.GetReaderIteratorNoHeader(FieldsStream, PackedInts.Format.PACKED, OuterInstance.PackedIntsVersion, chunkDocs, bitsPerStoredFields, 1);
                         for (int i = 0; i < chunkDocs; ++i)
                         {
                             NumStoredFields[i] = (int)it.Next();
@@ -555,7 +555,7 @@ namespace Lucene.Net.Codecs.Compressing
                     }
                     else
                     {
-                        PackedInts.ReaderIterator it = PackedInts.GetReaderIteratorNoHeader(FieldsStream, PackedInts.Format.PACKED, OuterInstance.PackedIntsVersion, chunkDocs, bitsPerLength, 1);
+                        PackedInts.IReaderIterator it = PackedInts.GetReaderIteratorNoHeader(FieldsStream, PackedInts.Format.PACKED, OuterInstance.PackedIntsVersion, chunkDocs, bitsPerLength, 1);
                         for (int i = 0; i < chunkDocs; ++i)
                         {
                             Lengths[i] = (int)it.Next();

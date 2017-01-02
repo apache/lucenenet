@@ -23,7 +23,7 @@ namespace Lucene.Net.Util.Packed
 
     using DataInput = Lucene.Net.Store.DataInput;
 
-    internal sealed class PackedReaderIterator : PackedInts.ReaderIteratorImpl
+    internal sealed class PackedReaderIterator : PackedInts.ReaderIterator
     {
         internal readonly int PackedIntsVersion;
         internal readonly PackedInts.Format Format;

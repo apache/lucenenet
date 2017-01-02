@@ -442,7 +442,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// A decoder for packed integers.
         /// </summary>
-        public interface Decoder // LUCENENET TODO: Rename with "I"
+        public interface IDecoder
         {
             /// <summary>
             /// The minimum number of long blocks to encode in a single iteration, when
@@ -520,7 +520,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// An encoder for packed integers.
         /// </summary>
-        public interface Encoder // LUCENENET TODO: Rename with "I"
+        public interface IEncoder
         {
             /// <summary>
             /// The minimum number of long blocks to encode in a single iteration, when
@@ -666,7 +666,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Run-once iterator interface, to decode previously saved PackedInts.
         /// </summary>
-        public interface ReaderIterator // LUCENENET TODO: Rename with "I"
+        public interface IReaderIterator
         {
             /// <summary>
             /// Returns next value </summary>
@@ -691,14 +691,15 @@ namespace Lucene.Net.Util.Packed
             int Ord(); // LUCENENET TODO: Make property ? check consistency
         }
 
-        internal abstract class ReaderIteratorImpl : ReaderIterator // LUCENENET TODO: Rename ReaderIterator after interface is renamed ?
+        // LUCENENET NOTE: Was ReaderIteratorImpl in Lucene
+        internal abstract class ReaderIterator : IReaderIterator
         {
             // LUCENENET TODO: Rename with m_
             protected readonly DataInput @in;
             protected readonly int bitsPerValue;
             protected readonly int valueCount;
 
-            protected ReaderIteratorImpl(int valueCount, int bitsPerValue, DataInput @in)
+            protected ReaderIterator(int valueCount, int bitsPerValue, DataInput @in)
             {
                 this.@in = @in;
                 this.bitsPerValue = bitsPerValue;
@@ -725,12 +726,12 @@ namespace Lucene.Net.Util.Packed
                 }
             }
 
-            public virtual int Size()
+            public virtual int Size() // LUCENENET TODO: make property, rename Count
             {
                 return valueCount;
             }
 
-            public abstract int Ord();
+            public abstract int Ord(); // LUCENENET TODO: Make property ?
         }
 
         /// <summary>
@@ -976,26 +977,26 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Get a <seealso cref="Decoder"/>.
+        /// Get a <seealso cref="IDecoder"/>.
         /// </summary>
         /// <param name="format">         the format used to store packed ints </param>
         /// <param name="version">        the compatibility version </param>
         /// <param name="bitsPerValue">   the number of bits per value </param>
         /// <returns> a decoder </returns>
-        public static Decoder GetDecoder(Format format, int version, int bitsPerValue)
+        public static IDecoder GetDecoder(Format format, int version, int bitsPerValue)
         {
             CheckVersion(version);
             return BulkOperation.Of(format, bitsPerValue);
         }
 
         /// <summary>
-        /// Get an <seealso cref="Encoder"/>.
+        /// Get an <seealso cref="IEncoder"/>.
         /// </summary>
         /// <param name="format">         the format used to store packed ints </param>
         /// <param name="version">        the compatibility version </param>
         /// <param name="bitsPerValue">   the number of bits per value </param>
         /// <returns> an encoder </returns>
-        public static Encoder GetEncoder(Format format, int version, int bitsPerValue)
+        public static IEncoder GetEncoder(Format format, int version, int bitsPerValue)
         {
             CheckVersion(version);
             return BulkOperation.Of(format, bitsPerValue);
@@ -1097,7 +1098,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Expert: Restore a <seealso cref="ReaderIterator"/> from a stream without reading
+        /// Expert: Restore a <seealso cref="IReaderIterator"/> from a stream without reading
         /// metadata at the beginning of the stream. this method is useful to restore
         /// data from streams which have been created using
         /// <seealso cref="PackedInts#getWriterNoHeader(DataOutput, Format, int, int, int)"/>.
@@ -1111,20 +1112,20 @@ namespace Lucene.Net.Util.Packed
         /// <returns>             a ReaderIterator </returns>
         /// <seealso cref= PackedInts#getWriterNoHeader(DataOutput, Format, int, int, int)
         /// @lucene.internal </seealso>
-        public static ReaderIterator GetReaderIteratorNoHeader(DataInput @in, Format format, int version, int valueCount, int bitsPerValue, int mem)
+        public static IReaderIterator GetReaderIteratorNoHeader(DataInput @in, Format format, int version, int valueCount, int bitsPerValue, int mem)
         {
             CheckVersion(version);
             return new PackedReaderIterator(format, version, valueCount, bitsPerValue, @in, mem);
         }
 
         /// <summary>
-        /// Retrieve PackedInts as a <seealso cref="ReaderIterator"/> </summary>
+        /// Retrieve PackedInts as a <seealso cref="IReaderIterator"/> </summary>
         /// <param name="in"> positioned at the beginning of a stored packed int structure. </param>
         /// <param name="mem"> how much memory the iterator is allowed to use to read-ahead (likely to speed up iteration) </param>
         /// <returns> an iterator to access the values </returns>
         /// <exception cref="IOException"> if the structure could not be retrieved.
         /// @lucene.internal </exception>
-        public static ReaderIterator GetReaderIterator(DataInput @in, int mem)
+        public static IReaderIterator GetReaderIterator(DataInput @in, int mem)
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int bitsPerValue = @in.ReadVInt();

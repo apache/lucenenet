@@ -454,12 +454,12 @@ namespace Lucene.Net.Codecs.BlockTerms
                             // Subsample the index terms
                             clone1.Seek(packedIndexStart);
                             
-                            PackedInts.ReaderIterator termsDictOffsetsIter = PackedInts.GetReaderIterator(clone1,
+                            PackedInts.IReaderIterator termsDictOffsetsIter = PackedInts.GetReaderIterator(clone1,
                                 PackedInts.DEFAULT_BUFFER_SIZE);
 
                             clone2.Seek(packedOffsetsStart);
                             
-                            PackedInts.ReaderIterator termOffsetsIter = PackedInts.GetReaderIterator(clone2,
+                            PackedInts.IReaderIterator termOffsetsIter = PackedInts.GetReaderIterator(clone2,
                                 PackedInts.DEFAULT_BUFFER_SIZE);
 
                             // TODO: often we can get by w/ fewer bits per

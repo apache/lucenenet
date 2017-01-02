@@ -159,7 +159,7 @@ namespace Lucene.Net.Util.Packed
 
                     { // test reader iterator next
                         IndexInput @in = d.OpenInput("out.bin", NewIOContext(Random()));
-                        PackedInts.ReaderIterator r = PackedInts.GetReaderIterator(@in, bufferSize);
+                        PackedInts.IReaderIterator r = PackedInts.GetReaderIterator(@in, bufferSize);
                         for (int i = 0; i < valueCount; i++)
                         {
                             Assert.AreEqual(values[i], r.Next(), "index=" + i + " valueCount=" + valueCount + " nbits=" + nbits + " for " + r.GetType().Name);
@@ -171,7 +171,7 @@ namespace Lucene.Net.Util.Packed
 
                     { // test reader iterator bulk next
                         IndexInput @in = d.OpenInput("out.bin", NewIOContext(Random()));
-                        PackedInts.ReaderIterator r = PackedInts.GetReaderIterator(@in, bufferSize);
+                        PackedInts.IReaderIterator r = PackedInts.GetReaderIterator(@in, bufferSize);
                         int i = 0;
                         while (i < valueCount)
                         {
@@ -232,7 +232,7 @@ namespace Lucene.Net.Util.Packed
 
                         // test iterator
                         @in.Seek(0L);
-                        PackedInts.ReaderIterator it = PackedInts.GetReaderIteratorNoHeader(@in, format, version, valueCount, bpv, RandomInts.NextIntBetween(Random(), 1, 1 << 16));
+                        PackedInts.IReaderIterator it = PackedInts.GetReaderIteratorNoHeader(@in, format, version, valueCount, bpv, RandomInts.NextIntBetween(Random(), 1, 1 << 16));
                         for (int i = 0; i < valueCount; ++i)
                         {
                             it.Next();
@@ -994,8 +994,8 @@ namespace Lucene.Net.Util.Packed
                     }
                     string msg = format + " " + bpv;
 
-                    PackedInts.Encoder encoder = PackedInts.GetEncoder(format, PackedInts.VERSION_CURRENT, bpv);
-                    PackedInts.Decoder decoder = PackedInts.GetDecoder(format, PackedInts.VERSION_CURRENT, bpv);
+                    PackedInts.IEncoder encoder = PackedInts.GetEncoder(format, PackedInts.VERSION_CURRENT, bpv);
+                    PackedInts.IDecoder decoder = PackedInts.GetDecoder(format, PackedInts.VERSION_CURRENT, bpv);
                     int longBlockCount = encoder.LongBlockCount;
                     int longValueCount = encoder.LongValueCount;
                     int byteBlockCount = encoder.ByteBlockCount;

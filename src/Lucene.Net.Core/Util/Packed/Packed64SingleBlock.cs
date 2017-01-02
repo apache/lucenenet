@@ -97,7 +97,7 @@ namespace Lucene.Net.Util.Packed
 
             // bulk get
             Debug.Assert(index % valuesPerBlock == 0);
-            PackedInts.Decoder decoder = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, bitsPerValue);
+            PackedInts.IDecoder decoder = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, bitsPerValue);
             Debug.Assert(decoder.LongBlockCount == 1);
             Debug.Assert(decoder.LongValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;

@@ -38,7 +38,7 @@ namespace Lucene.Net.Util
     {
         internal const int BLOCK_SIZE = 128;
         internal const int MAX_EXCEPTIONS = 24; // no more than 24 exceptions per block
-        internal static readonly PackedInts.Decoder[] DECODERS = new PackedInts.Decoder[32];
+        internal static readonly PackedInts.IDecoder[] DECODERS = new PackedInts.IDecoder[32];
         internal static readonly int[] ITERATIONS = new int[32];
         internal static readonly int[] BYTE_BLOCK_COUNTS = new int[32];
         internal static readonly int MAX_BYTE_BLOCK_COUNT;
@@ -230,7 +230,7 @@ namespace Lucene.Net.Util
 
                 if (BitsPerValue > 0)
                 {
-                    PackedInts.Encoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, BitsPerValue);
+                    PackedInts.IEncoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, BitsPerValue);
                     int numIterations = ITERATIONS[BitsPerValue];
                     encoder.Encode(Buffer, 0, Data.Bytes, Data.Length, numIterations);
                     Data.Length += encoder.ByteBlockCount * numIterations;
@@ -241,7 +241,7 @@ namespace Lucene.Net.Util
                     Debug.Assert(BitsPerException > 0);
                     Data.WriteByte((byte)(sbyte)NumExceptions);
                     Data.WriteByte((byte)(sbyte)BitsPerException);
-                    PackedInts.Encoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, BitsPerException);
+                    PackedInts.IEncoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, BitsPerException);
                     int numIterations = (NumExceptions + encoder.ByteValueCount - 1) / encoder.ByteValueCount;
                     encoder.Encode(Exceptions, 0, Data.Bytes, Data.Length, numIterations);
                     Data.Length += (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, NumExceptions, BitsPerException);

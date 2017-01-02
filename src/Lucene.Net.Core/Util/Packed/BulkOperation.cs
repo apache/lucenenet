@@ -25,7 +25,7 @@ namespace Lucene.Net.Util.Packed
     /// <summary>
     /// Efficient sequential read/write of packed integers.
     /// </summary>
-    internal abstract class BulkOperation : PackedInts.Decoder, PackedInts.Encoder
+    internal abstract class BulkOperation : PackedInts.IDecoder, PackedInts.IEncoder
     {
         public abstract void Encode(int[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations);
 

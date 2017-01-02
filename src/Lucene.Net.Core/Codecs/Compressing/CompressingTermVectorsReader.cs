@@ -255,7 +255,7 @@ namespace Lucene.Net.Codecs.Compressing
                     totalDistinctFields += vectorsStream.ReadVInt();
                 }
                 ++totalDistinctFields;
-                PackedInts.ReaderIterator it = PackedInts.GetReaderIteratorNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, totalDistinctFields, bitsPerFieldNum, 1);
+                PackedInts.IReaderIterator it = PackedInts.GetReaderIteratorNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, totalDistinctFields, bitsPerFieldNum, 1);
                 fieldNums = new int[totalDistinctFields];
                 for (int i = 0; i < totalDistinctFields; ++i)
                 {

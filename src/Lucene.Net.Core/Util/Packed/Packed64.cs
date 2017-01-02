@@ -180,7 +180,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(off + len <= arr.Length);
 
             int originalIndex = index;
-            PackedInts.Decoder decoder = BulkOperation.Of(PackedInts.Format.PACKED, bitsPerValue);
+            PackedInts.IDecoder decoder = BulkOperation.Of(PackedInts.Format.PACKED, bitsPerValue);
 
             // go to the next block where the value does not span across two blocks
             int offsetInBlocks = index % decoder.LongValueCount;
@@ -248,7 +248,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(off + len <= arr.Length);
 
             int originalIndex = index;
-            PackedInts.Encoder encoder = BulkOperation.Of(PackedInts.Format.PACKED, bitsPerValue);
+            PackedInts.IEncoder encoder = BulkOperation.Of(PackedInts.Format.PACKED, bitsPerValue);
 
             // go to the next block where the value does not span across two blocks
             int offsetInBlocks = index % encoder.LongValueCount;
