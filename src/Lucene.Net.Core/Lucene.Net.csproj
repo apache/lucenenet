@@ -866,13 +866,13 @@
     <Compile Include="Util\RollingBuffer.cs" />
     <Compile Include="Util\SentinelIntSet.cs" />
     <Compile Include="Util\SetOnce.cs" />
-    <Compile Include="Util\SimpleStringInterner.cs" />
+    <Compile Include="Support\SimpleStringInterner.cs" />
     <Compile Include="Util\SloppyMath.cs" />
     <Compile Include="Util\SmallFloat.cs" />
     <Compile Include="Util\Sorter.cs" />
     <Compile Include="Util\SPIClassIterator.cs" />
     <Compile Include="Util\StringHelper.cs" />
-    <Compile Include="Util\StringInterner.cs" />
+    <Compile Include="Support\StringInterner.cs" />
     <Compile Include="Util\TimSorter.cs" />
     <Compile Include="Util\ToStringUtils.cs" />
     <Compile Include="Util\UnicodeUtil.cs" />

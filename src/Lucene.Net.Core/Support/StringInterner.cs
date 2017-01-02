@@ -1,6 +1,6 @@
 using System;
 
-namespace Lucene.Net.Util
+namespace Lucene.Net.Support
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
     /// 
     /// LUCENENET specific.
     /// </summary>
-    public class StringInterner // LUCENENET TODO: move to support namespace ?
+    public class StringInterner
     {
         /// <summary>Returns a single object instance for each equal string. </summary>
         public virtual System.String Intern(System.String s)

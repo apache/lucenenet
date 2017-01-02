@@ -1,6 +1,7 @@
+using Lucene.Net.Util;
 using System;
 
-namespace Lucene.Net.Util
+namespace Lucene.Net.Support
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -24,7 +25,7 @@ namespace Lucene.Net.Util
     /// <summary> Simple lockless and memory barrier free String intern cache that is guaranteed
     /// to return the same String instance as String.intern() does.
     /// </summary>
-    public class SimpleStringInterner:StringInterner // LUCENENET TODO: move to support namespace
+    public class SimpleStringInterner : StringInterner
     {
         
         internal /*private*/ class Entry
