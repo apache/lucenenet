@@ -448,25 +448,25 @@ namespace Lucene.Net.Util.Packed
             /// The minimum number of long blocks to encode in a single iteration, when
             /// using long encoding.
             /// </summary>
-            int LongBlockCount(); // LUCENENET TODO: Make property, Rename Int64BlockCount ?
+            int LongBlockCount { get; } // LUCENENET TODO: Rename Int64BlockCount ?
 
             /// <summary>
             /// The number of values that can be stored in <seealso cref="#longBlockCount()"/> long
             /// blocks.
             /// </summary>
-            int LongValueCount(); // LUCENENET TODO: Make property, Rename Int64ValueCount ?
+            int LongValueCount { get; } // LUCENENET TODO: Rename Int64ValueCount ?
 
             /// <summary>
             /// The minimum number of byte blocks to encode in a single iteration, when
             /// using byte encoding.
             /// </summary>
-            int ByteBlockCount(); // LUCENENET TODO: Make property
+            int ByteBlockCount { get; }
 
             /// <summary>
             /// The number of values that can be stored in <seealso cref="#byteBlockCount()"/> byte
             /// blocks.
             /// </summary>
-            int ByteValueCount(); // LUCENENET TODO: Make property
+            int ByteValueCount { get; }
 
             /// <summary>
             /// Read <code>iterations * blockCount()</code> blocks from <code>blocks</code>,
@@ -526,25 +526,25 @@ namespace Lucene.Net.Util.Packed
             /// The minimum number of long blocks to encode in a single iteration, when
             /// using long encoding.
             /// </summary>
-            int LongBlockCount(); // LUCENENET TODO: Make property, Rename Int64BlockCount ?
+            int LongBlockCount { get; } // LUCENENET TODO: Rename Int64BlockCount ?
 
             /// <summary>
             /// The number of values that can be stored in <seealso cref="#longBlockCount()"/> long
             /// blocks.
             /// </summary>
-            int LongValueCount(); // LUCENENET TODO:  Make property, Rename Int64ValueCount ?
+            int LongValueCount { get; } // LUCENENET TODO:  Rename Int64ValueCount ?
 
             /// <summary>
             /// The minimum number of byte blocks to encode in a single iteration, when
             /// using byte encoding.
             /// </summary>
-            int ByteBlockCount(); // LUCENENET TODO: Make property
+            int ByteBlockCount { get; }
 
             /// <summary>
             /// The number of values that can be stored in <seealso cref="#byteBlockCount()"/> byte
             /// blocks.
             /// </summary>
-            int ByteValueCount(); // LUCENENET TODO: Make property
+            int ByteValueCount { get; }
 
             /// <summary>
             /// Read <code>iterations * valueCount()</code> values from <code>values</code>,

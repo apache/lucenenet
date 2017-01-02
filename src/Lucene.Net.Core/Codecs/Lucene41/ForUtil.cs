@@ -73,7 +73,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         }
                         PackedInts.Decoder decoder = PackedInts.GetDecoder(format, version, bpv);
                         int iterations = ComputeIterations(decoder);
-                        maxDataSize = Math.Max(maxDataSize, iterations * decoder.ByteValueCount());
+                        maxDataSize = Math.Max(maxDataSize, iterations * decoder.ByteValueCount);
                     }
                 }
             }
@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// </summary>
         private static int ComputeIterations(PackedInts.Decoder decoder)
         {
-            return (int)Math.Ceiling((float)Lucene41PostingsFormat.BLOCK_SIZE / decoder.ByteValueCount());
+            return (int)Math.Ceiling((float)Lucene41PostingsFormat.BLOCK_SIZE / decoder.ByteValueCount);
         }
 
         /// <summary>
@@ -177,9 +177,9 @@ namespace Lucene.Net.Codecs.Lucene41
             Debug.Assert(numBits > 0 && numBits <= 32, numBits.ToString());
             PackedInts.Encoder encoder = Encoders[numBits];
             int iters = Iterations[numBits];
-            Debug.Assert(iters * encoder.ByteValueCount() >= Lucene41PostingsFormat.BLOCK_SIZE);
+            Debug.Assert(iters * encoder.ByteValueCount >= Lucene41PostingsFormat.BLOCK_SIZE);
             int encodedSize = EncodedSizes[numBits];
-            Debug.Assert(iters * encoder.ByteBlockCount() >= encodedSize);
+            Debug.Assert(iters * encoder.ByteBlockCount >= encodedSize);
 
             @out.WriteByte((byte)numBits);
 
@@ -211,7 +211,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             PackedInts.Decoder decoder = Decoders[numBits];
             int iters = Iterations[numBits];
-            Debug.Assert(iters * decoder.ByteValueCount() >= Lucene41PostingsFormat.BLOCK_SIZE);
+            Debug.Assert(iters * decoder.ByteValueCount >= Lucene41PostingsFormat.BLOCK_SIZE);
 
             decoder.Decode(encoded, 0, decoded, 0, iters);
         }

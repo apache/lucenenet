@@ -64,24 +64,24 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(LongValueCount_Renamed * bitsPerValue == 64 * LongBlockCount_Renamed);
         }
 
-        public override int LongBlockCount()
+        public override int LongBlockCount
         {
-            return LongBlockCount_Renamed;
+            get { return LongBlockCount_Renamed; }
         }
 
-        public override int LongValueCount()
+        public override int LongValueCount
         {
-            return LongValueCount_Renamed;
+            get { return LongValueCount_Renamed; }
         }
 
-        public override int ByteBlockCount()
+        public override int ByteBlockCount
         {
-            return ByteBlockCount_Renamed;
+            get { return ByteBlockCount_Renamed; }
         }
 
-        public override int ByteValueCount()
+        public override int ByteValueCount
         {
-            return ByteValueCount_Renamed;
+            get { return ByteValueCount_Renamed; }
         }
 
         public override void Decode(long[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)

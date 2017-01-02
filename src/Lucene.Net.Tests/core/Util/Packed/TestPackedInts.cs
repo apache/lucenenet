@@ -996,14 +996,14 @@ namespace Lucene.Net.Util.Packed
 
                     PackedInts.Encoder encoder = PackedInts.GetEncoder(format, PackedInts.VERSION_CURRENT, bpv);
                     PackedInts.Decoder decoder = PackedInts.GetDecoder(format, PackedInts.VERSION_CURRENT, bpv);
-                    int longBlockCount = encoder.LongBlockCount();
-                    int longValueCount = encoder.LongValueCount();
-                    int byteBlockCount = encoder.ByteBlockCount();
-                    int byteValueCount = encoder.ByteValueCount();
-                    Assert.AreEqual(longBlockCount, decoder.LongBlockCount());
-                    Assert.AreEqual(longValueCount, decoder.LongValueCount());
-                    Assert.AreEqual(byteBlockCount, decoder.ByteBlockCount());
-                    Assert.AreEqual(byteValueCount, decoder.ByteValueCount());
+                    int longBlockCount = encoder.LongBlockCount;
+                    int longValueCount = encoder.LongValueCount;
+                    int byteBlockCount = encoder.ByteBlockCount;
+                    int byteValueCount = encoder.ByteValueCount;
+                    Assert.AreEqual(longBlockCount, decoder.LongBlockCount);
+                    Assert.AreEqual(longValueCount, decoder.LongValueCount);
+                    Assert.AreEqual(byteBlockCount, decoder.ByteBlockCount);
+                    Assert.AreEqual(byteValueCount, decoder.ByteValueCount);
 
                     int longIterations = Random().Next(100);
                     int byteIterations = longIterations * longValueCount / byteValueCount;

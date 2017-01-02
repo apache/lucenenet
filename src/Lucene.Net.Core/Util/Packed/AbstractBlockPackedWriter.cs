@@ -140,8 +140,8 @@ namespace Lucene.Net.Util.Packed
         protected void WriteValues(int bitsRequired)
         {
             PackedInts.Encoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, bitsRequired);
-            int iterations = Values.Length / encoder.ByteValueCount();
-            int blockSize = encoder.ByteBlockCount() * iterations;
+            int iterations = Values.Length / encoder.ByteValueCount;
+            int blockSize = encoder.ByteBlockCount * iterations;
             if (Blocks == null || Blocks.Length < blockSize)
             {
                 Blocks = new byte[blockSize];

@@ -98,8 +98,8 @@ namespace Lucene.Net.Util.Packed
             // bulk get
             Debug.Assert(index % valuesPerBlock == 0);
             PackedInts.Decoder decoder = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, bitsPerValue);
-            Debug.Assert(decoder.LongBlockCount() == 1);
-            Debug.Assert(decoder.LongValueCount() == valuesPerBlock);
+            Debug.Assert(decoder.LongBlockCount == 1);
+            Debug.Assert(decoder.LongValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
             decoder.Decode(Blocks, blockIndex, arr, off, nblocks);
@@ -149,8 +149,8 @@ namespace Lucene.Net.Util.Packed
             // bulk set
             Debug.Assert(index % valuesPerBlock == 0);
             BulkOperation op = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, bitsPerValue);
-            Debug.Assert(op.LongBlockCount() == 1);
-            Debug.Assert(op.LongValueCount() == valuesPerBlock);
+            Debug.Assert(op.LongBlockCount == 1);
+            Debug.Assert(op.LongValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
             op.Encode(arr, off, Blocks, blockIndex, nblocks);

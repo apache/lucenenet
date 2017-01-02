@@ -41,8 +41,8 @@ namespace Lucene.Net.Util.Packed
             BulkOperation = BulkOperation.Of(format, bitsPerValue);
             Iterations_Renamed = Iterations(mem);
             Debug.Assert(valueCount == 0 || Iterations_Renamed > 0);
-            NextBlocks = new byte[Iterations_Renamed * BulkOperation.ByteBlockCount()];
-            NextValues = new LongsRef(new long[Iterations_Renamed * BulkOperation.ByteValueCount()], 0, 0);
+            NextBlocks = new byte[Iterations_Renamed * BulkOperation.ByteBlockCount];
+            NextValues = new LongsRef(new long[Iterations_Renamed * BulkOperation.ByteValueCount], 0, 0);
             NextValues.Offset = NextValues.Longs.Length;
             Position = -1;
         }

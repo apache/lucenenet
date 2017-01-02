@@ -56,10 +56,10 @@ namespace Lucene.Net.Util
             for (int i = 1; i < ITERATIONS.Length; ++i)
             {
                 DECODERS[i] = PackedInts.GetDecoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, i);
-                Debug.Assert(BLOCK_SIZE % DECODERS[i].ByteValueCount() == 0);
-                ITERATIONS[i] = BLOCK_SIZE / DECODERS[i].ByteValueCount();
-                BYTE_BLOCK_COUNTS[i] = ITERATIONS[i] * DECODERS[i].ByteBlockCount();
-                maxByteBLockCount = Math.Max(maxByteBLockCount, DECODERS[i].ByteBlockCount());
+                Debug.Assert(BLOCK_SIZE % DECODERS[i].ByteValueCount == 0);
+                ITERATIONS[i] = BLOCK_SIZE / DECODERS[i].ByteValueCount;
+                BYTE_BLOCK_COUNTS[i] = ITERATIONS[i] * DECODERS[i].ByteBlockCount;
+                maxByteBLockCount = Math.Max(maxByteBLockCount, DECODERS[i].ByteBlockCount);
             }
             MAX_BYTE_BLOCK_COUNT = maxByteBLockCount;
         }
@@ -233,7 +233,7 @@ namespace Lucene.Net.Util
                     PackedInts.Encoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, BitsPerValue);
                     int numIterations = ITERATIONS[BitsPerValue];
                     encoder.Encode(Buffer, 0, Data.Bytes, Data.Length, numIterations);
-                    Data.Length += encoder.ByteBlockCount() * numIterations;
+                    Data.Length += encoder.ByteBlockCount * numIterations;
                 }
 
                 if (NumExceptions > 0)
@@ -242,7 +242,7 @@ namespace Lucene.Net.Util
                     Data.WriteByte((byte)(sbyte)NumExceptions);
                     Data.WriteByte((byte)(sbyte)BitsPerException);
                     PackedInts.Encoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, BitsPerException);
-                    int numIterations = (NumExceptions + encoder.ByteValueCount() - 1) / encoder.ByteValueCount();
+                    int numIterations = (NumExceptions + encoder.ByteValueCount - 1) / encoder.ByteValueCount;
                     encoder.Encode(Exceptions, 0, Data.Bytes, Data.Length, numIterations);
                     Data.Length += (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, NumExceptions, BitsPerException);
                     for (int i = 0; i < NumExceptions; ++i)
@@ -454,7 +454,7 @@ namespace Lucene.Net.Util
                     // there are exceptions
                     int numExceptions = Data[Offset++];
                     int bitsPerException = Data[Offset++];
-                    int numIterations = (numExceptions + DECODERS[bitsPerException].ByteValueCount() - 1) / DECODERS[bitsPerException].ByteValueCount();
+                    int numIterations = (numExceptions + DECODERS[bitsPerException].ByteValueCount - 1) / DECODERS[bitsPerException].ByteValueCount;
                     DECODERS[bitsPerException].Decode(Data, Offset, NextExceptions, 0, numIterations);
                     Offset += (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, numExceptions, bitsPerException);
                     for (int i = 0; i < numExceptions; ++i)

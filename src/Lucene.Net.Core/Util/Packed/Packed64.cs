@@ -183,10 +183,10 @@ namespace Lucene.Net.Util.Packed
             PackedInts.Decoder decoder = BulkOperation.Of(PackedInts.Format.PACKED, bitsPerValue);
 
             // go to the next block where the value does not span across two blocks
-            int offsetInBlocks = index % decoder.LongValueCount();
+            int offsetInBlocks = index % decoder.LongValueCount;
             if (offsetInBlocks != 0)
             {
-                for (int i = offsetInBlocks; i < decoder.LongValueCount() && len > 0; ++i)
+                for (int i = offsetInBlocks; i < decoder.LongValueCount && len > 0; ++i)
                 {
                     arr[off++] = Get(index++);
                     --len;
@@ -198,12 +198,12 @@ namespace Lucene.Net.Util.Packed
             }
 
             // bulk get
-            Debug.Assert(index % decoder.LongValueCount() == 0);
+            Debug.Assert(index % decoder.LongValueCount == 0);
             int blockIndex = (int)((ulong)((long)index * bitsPerValue) >> BLOCK_BITS);
             Debug.Assert((((long)index * bitsPerValue) & MOD_MASK) == 0);
-            int iterations = len / decoder.LongValueCount();
+            int iterations = len / decoder.LongValueCount;
             decoder.Decode(Blocks, blockIndex, arr, off, iterations);
-            int gotValues = iterations * decoder.LongValueCount();
+            int gotValues = iterations * decoder.LongValueCount;
             index += gotValues;
             len -= gotValues;
             Debug.Assert(len >= 0);
@@ -251,10 +251,10 @@ namespace Lucene.Net.Util.Packed
             PackedInts.Encoder encoder = BulkOperation.Of(PackedInts.Format.PACKED, bitsPerValue);
 
             // go to the next block where the value does not span across two blocks
-            int offsetInBlocks = index % encoder.LongValueCount();
+            int offsetInBlocks = index % encoder.LongValueCount;
             if (offsetInBlocks != 0)
             {
-                for (int i = offsetInBlocks; i < encoder.LongValueCount() && len > 0; ++i)
+                for (int i = offsetInBlocks; i < encoder.LongValueCount && len > 0; ++i)
                 {
                     Set(index++, arr[off++]);
                     --len;
@@ -266,12 +266,12 @@ namespace Lucene.Net.Util.Packed
             }
 
             // bulk set
-            Debug.Assert(index % encoder.LongValueCount() == 0);
+            Debug.Assert(index % encoder.LongValueCount == 0);
             int blockIndex = (int)((ulong)((long)index * bitsPerValue) >> BLOCK_BITS);
             Debug.Assert((((long)index * bitsPerValue) & MOD_MASK) == 0);
-            int iterations = len / encoder.LongValueCount();
+            int iterations = len / encoder.LongValueCount;
             encoder.Encode(arr, off, Blocks, blockIndex, iterations);
-            int setValues = iterations * encoder.LongValueCount();
+            int setValues = iterations * encoder.LongValueCount;
             index += setValues;
             len -= setValues;
             Debug.Assert(len >= 0);

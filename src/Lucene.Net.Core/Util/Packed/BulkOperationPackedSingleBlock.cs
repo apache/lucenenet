@@ -35,24 +35,24 @@ namespace Lucene.Net.Util.Packed
             this.Mask = (1L << bitsPerValue) - 1;
         }
 
-        public override sealed int LongBlockCount()
+        public override sealed int LongBlockCount
         {
-            return BLOCK_COUNT;
+            get { return BLOCK_COUNT; }
         }
 
-        public override sealed int ByteBlockCount()
+        public override sealed int ByteBlockCount
         {
-            return BLOCK_COUNT * 8;
+            get { return BLOCK_COUNT * 8; }
         }
 
-        public override int LongValueCount()
+        public override int LongValueCount
         {
-            return ValueCount;
+            get { return ValueCount; }
         }
 
-        public override sealed int ByteValueCount()
+        public override sealed int ByteValueCount
         {
-            return ValueCount;
+            get { return ValueCount; }
         }
 
         private static long ReadLong(byte[] blocks, int blocksOffset)

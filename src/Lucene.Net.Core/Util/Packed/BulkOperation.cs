@@ -43,13 +43,13 @@ namespace Lucene.Net.Util.Packed
 
         public abstract void Decode(long[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations);
 
-        public abstract int ByteValueCount(); // LUCENENET TODO: Make property
+        public abstract int ByteValueCount { get; }
 
-        public abstract int ByteBlockCount(); // LUCENENET TODO: Make property
+        public abstract int ByteBlockCount { get; }
 
-        public abstract int LongValueCount(); // LUCENENET TODO: Make property, Rename Int64ValueCount ?
+        public abstract int LongValueCount { get; } // LUCENENET TODO: Rename Int64ValueCount ?
 
-        public abstract int LongBlockCount(); // LUCENENET TODO: Make property, Rename Int64BlockCount ?
+        public abstract int LongBlockCount { get; } // LUCENENET TODO: Rename Int64BlockCount ?
 
         private static readonly BulkOperation[] PackedBulkOps = new BulkOperation[] {
             new BulkOperationPacked1(),
@@ -201,16 +201,16 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public int ComputeIterations(int valueCount, int ramBudget)
         {
-            int iterations = ramBudget / (ByteBlockCount() + 8 * ByteValueCount());
+            int iterations = ramBudget / (ByteBlockCount + 8 * ByteValueCount);
             if (iterations == 0)
             {
                 // at least 1
                 return 1;
             }
-            else if ((iterations - 1) * ByteValueCount() >= valueCount)
+            else if ((iterations - 1) * ByteValueCount >= valueCount)
             {
                 // don't allocate for more than the size of the reader
-                return (int)Math.Ceiling((double)valueCount / ByteValueCount());
+                return (int)Math.Ceiling((double)valueCount / ByteValueCount);
             }
             else
             {

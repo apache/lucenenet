@@ -42,8 +42,8 @@ namespace Lucene.Net.Util.Packed
             this.Format_Renamed = format;
             Encoder = BulkOperation.Of(format, bitsPerValue);
             Iterations = Encoder.ComputeIterations(valueCount, mem);
-            NextBlocks = new byte[Iterations * Encoder.ByteBlockCount()];
-            NextValues = new long[Iterations * Encoder.ByteValueCount()];
+            NextBlocks = new byte[Iterations * Encoder.ByteBlockCount];
+            NextValues = new long[Iterations * Encoder.ByteValueCount];
             Off = 0;
             Written = 0;
             Finished = false;
