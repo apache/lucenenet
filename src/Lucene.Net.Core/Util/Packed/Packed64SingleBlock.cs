@@ -73,14 +73,14 @@ namespace Lucene.Net.Util.Packed
         public override int Get(int index, long[] arr, int off, int len)
         {
             Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-            Debug.Assert(index >= 0 && index < valueCount);
-            len = Math.Min(len, valueCount - index);
+            Debug.Assert(index >= 0 && index < m_valueCount);
+            len = Math.Min(len, m_valueCount - index);
             Debug.Assert(off + len <= arr.Length);
 
             int originalIndex = index;
 
             // go to the next block boundary
-            int valuesPerBlock = 64 / bitsPerValue;
+            int valuesPerBlock = 64 / m_bitsPerValue;
             int offsetInBlock = index % valuesPerBlock;
             if (offsetInBlock != 0)
             {
@@ -97,7 +97,7 @@ namespace Lucene.Net.Util.Packed
 
             // bulk get
             Debug.Assert(index % valuesPerBlock == 0);
-            PackedInts.IDecoder decoder = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, bitsPerValue);
+            PackedInts.IDecoder decoder = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
             Debug.Assert(decoder.LongBlockCount == 1);
             Debug.Assert(decoder.LongValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
@@ -124,14 +124,14 @@ namespace Lucene.Net.Util.Packed
         public override int Set(int index, long[] arr, int off, int len)
         {
             Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-            Debug.Assert(index >= 0 && index < valueCount);
-            len = Math.Min(len, valueCount - index);
+            Debug.Assert(index >= 0 && index < m_valueCount);
+            len = Math.Min(len, m_valueCount - index);
             Debug.Assert(off + len <= arr.Length);
 
             int originalIndex = index;
 
             // go to the next block boundary
-            int valuesPerBlock = 64 / bitsPerValue;
+            int valuesPerBlock = 64 / m_bitsPerValue;
             int offsetInBlock = index % valuesPerBlock;
             if (offsetInBlock != 0)
             {
@@ -148,7 +148,7 @@ namespace Lucene.Net.Util.Packed
 
             // bulk set
             Debug.Assert(index % valuesPerBlock == 0);
-            BulkOperation op = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, bitsPerValue);
+            BulkOperation op = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
             Debug.Assert(op.LongBlockCount == 1);
             Debug.Assert(op.LongValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
@@ -176,9 +176,9 @@ namespace Lucene.Net.Util.Packed
         {
             Debug.Assert(fromIndex >= 0);
             Debug.Assert(fromIndex <= toIndex);
-            Debug.Assert(PackedInts.BitsRequired(val) <= bitsPerValue);
+            Debug.Assert(PackedInts.BitsRequired(val) <= m_bitsPerValue);
 
-            int valuesPerBlock = 64 / bitsPerValue;
+            int valuesPerBlock = 64 / m_bitsPerValue;
             if (toIndex - fromIndex <= valuesPerBlock << 1)
             {
                 // there needs to be at least one full block to set for the block
@@ -206,7 +206,7 @@ namespace Lucene.Net.Util.Packed
             long blockValue = 0L;
             for (int i = 0; i < valuesPerBlock; ++i)
             {
-                blockValue = blockValue | (val << (i * bitsPerValue));
+                blockValue = blockValue | (val << (i * m_bitsPerValue));
             }
             Arrays.Fill(Blocks, fromBlock, toBlock, blockValue);
 
@@ -227,7 +227,7 @@ namespace Lucene.Net.Util.Packed
 
         public override string ToString()
         {
-            return this.GetType().Name + "(bitsPerValue=" + bitsPerValue + ", size=" + Size + ", elements.length=" + Blocks.Length + ")";
+            return this.GetType().Name + "(bitsPerValue=" + m_bitsPerValue + ", size=" + Size + ", elements.length=" + Blocks.Length + ")";
         }
 
         public static Packed64SingleBlock Create(DataInput @in, int valueCount, int bitsPerValue)

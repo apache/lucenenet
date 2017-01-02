@@ -285,7 +285,7 @@ namespace Lucene.Net.Util.Packed
             {
                 foreach (Format format in Values())
                 {
-                    if (format.GetId() == id)
+                    if (format.Id == id)
                     {
                         return format;
                     }
@@ -298,11 +298,11 @@ namespace Lucene.Net.Util.Packed
                 this.id = id;
             }
 
-            public int id;
+            private int id; // LUCENENET specific - made private, since it is already exposed through public property
 
-            public int GetId()
+            public int Id
             {
-                return id;
+                get { return id; }
             }
 
             public virtual long ByteCount(int packedIntsVersion, int valueCount, int bitsPerValue)
@@ -346,18 +346,18 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public class FormatAndBits
         {
-            public readonly Format format;
-            public readonly int bitsPerValue;
+            public Format Format { get; private set; }
+            public int BitsPerValue { get; private set; }
 
             public FormatAndBits(Format format, int bitsPerValue)
             {
-                this.format = format;
-                this.bitsPerValue = bitsPerValue;
+                this.Format = format;
+                this.BitsPerValue = bitsPerValue;
             }
 
             public override string ToString()
             {
-                return "FormatAndBits(format=" + format + " bitsPerValue=" + bitsPerValue + ")";
+                return "FormatAndBits(format=" + Format + " bitsPerValue=" + BitsPerValue + ")";
             }
         }
 
@@ -817,15 +817,14 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         internal abstract class ReaderImpl : Reader
         {
-            // LUCENENET TODO: Rename with m_
-            protected readonly int bitsPerValue;
-            protected readonly int valueCount;
+            protected readonly int m_bitsPerValue;
+            protected readonly int m_valueCount;
 
             protected ReaderImpl(int valueCount, int bitsPerValue)
             {
-                this.bitsPerValue = bitsPerValue;
+                this.m_bitsPerValue = bitsPerValue;
                 Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
-                this.valueCount = valueCount;
+                this.m_valueCount = valueCount;
             }
 
             public override abstract long Get(int index);
@@ -834,40 +833,39 @@ namespace Lucene.Net.Util.Packed
             {
                 get
                 {
-                    return bitsPerValue;
+                    return m_bitsPerValue;
                 }
             }
 
             public override sealed int Size
             {
-                get { return valueCount; }
+                get { return m_valueCount; }
             }
         }
 
         public abstract class MutableImpl : Mutable
         {
-            // LUCENENET TODO: Rename with m_
-            protected readonly int valueCount;
-            protected readonly int bitsPerValue;
+            protected readonly int m_valueCount;
+            protected readonly int m_bitsPerValue;
 
             protected MutableImpl(int valueCount, int bitsPerValue)
             {
-                this.valueCount = valueCount;
+                this.m_valueCount = valueCount;
                 Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
-                this.bitsPerValue = bitsPerValue;
+                this.m_bitsPerValue = bitsPerValue;
             }
 
             public override sealed int BitsPerValue
             {
                 get
                 {
-                    return bitsPerValue;
+                    return m_bitsPerValue;
                 }
             }
 
             public override sealed int Size
             {
-                get { return valueCount; }
+                get { return m_valueCount; }
             }
         }
 
@@ -923,27 +921,26 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public abstract class Writer
         {
-            // LUCENENET TODO: Rename with m_
-            protected readonly DataOutput @out;
-            protected readonly int valueCount;
-            protected readonly int bitsPerValue;
+            protected readonly DataOutput m_out;
+            protected readonly int m_valueCount;
+            protected readonly int m_bitsPerValue;
 
             protected Writer(DataOutput @out, int valueCount, int bitsPerValue)
             {
                 Debug.Assert(bitsPerValue <= 64);
                 Debug.Assert(valueCount >= 0 || valueCount == -1);
-                this.@out = @out;
-                this.valueCount = valueCount;
-                this.bitsPerValue = bitsPerValue;
+                this.m_out = @out;
+                this.m_valueCount = valueCount;
+                this.m_bitsPerValue = bitsPerValue;
             }
 
             internal virtual void WriteHeader()
             {
-                Debug.Assert(valueCount != -1);
-                CodecUtil.WriteHeader(@out, CODEC_NAME, VERSION_CURRENT);
-                @out.WriteVInt(bitsPerValue);
-                @out.WriteVInt(valueCount);
-                @out.WriteVInt(Format.id);
+                Debug.Assert(m_valueCount != -1);
+                CodecUtil.WriteHeader(m_out, CODEC_NAME, VERSION_CURRENT);
+                m_out.WriteVInt(m_bitsPerValue);
+                m_out.WriteVInt(m_valueCount);
+                m_out.WriteVInt(Format.Id);
             }
 
             /// <summary>
@@ -956,9 +953,9 @@ namespace Lucene.Net.Util.Packed
 
             /// <summary>
             /// The number of bits per value. </summary>
-            public int BitsPerValue() // LUCENENET TODO: make property
+            public int BitsPerValue
             {
-                return bitsPerValue;
+                get { return m_bitsPerValue; }
             }
 
             /// <summary>
@@ -1183,25 +1180,25 @@ namespace Lucene.Net.Util.Packed
         private class DirectPackedReaderAnonymousInnerClassHelper : DirectPackedReader
         {
             private IndexInput @in;
-            private int ValueCount;
-            private long EndPointer;
+            private int valueCount;
+            private long endPointer;
 
             public DirectPackedReaderAnonymousInnerClassHelper(int bitsPerValue, int valueCount, IndexInput @in, long endPointer)
                 : base(bitsPerValue, valueCount, @in)
             {
                 this.@in = @in;
-                this.ValueCount = valueCount;
-                this.EndPointer = endPointer;
+                this.valueCount = valueCount;
+                this.endPointer = endPointer;
             }
 
             public override long Get(int index)
             {
                 long result = base.Get(index);
-                if (index == ValueCount - 1)
+                if (index == valueCount - 1)
                 {
                     try
                     {
-                        @in.Seek(EndPointer);
+                        @in.Seek(endPointer);
                     }
                     catch (System.IO.IOException e)
                     {
@@ -1272,7 +1269,7 @@ namespace Lucene.Net.Util.Packed
         public static Mutable GetMutable(int valueCount, int bitsPerValue, float acceptableOverheadRatio)
         {
             FormatAndBits formatAndBits = FastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
-            return GetMutable(valueCount, formatAndBits.bitsPerValue, formatAndBits.format);
+            return GetMutable(valueCount, formatAndBits.BitsPerValue, formatAndBits.Format);
         }
 
         /// <summary>
@@ -1410,7 +1407,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(valueCount >= 0);
 
             FormatAndBits formatAndBits = FastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
-            Writer writer = GetWriterNoHeader(@out, formatAndBits.format, valueCount, formatAndBits.bitsPerValue, DEFAULT_BUFFER_SIZE);
+            Writer writer = GetWriterNoHeader(@out, formatAndBits.Format, valueCount, formatAndBits.BitsPerValue, DEFAULT_BUFFER_SIZE);
             writer.WriteHeader();
             return writer;
         }

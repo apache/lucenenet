@@ -45,7 +45,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         internal PagedMutable(long size, int pageSize, PackedInts.FormatAndBits formatAndBits)
-            : this(size, pageSize, formatAndBits.bitsPerValue, formatAndBits.format)
+            : this(size, pageSize, formatAndBits.BitsPerValue, formatAndBits.Format)
         {
         }
 

@@ -140,7 +140,7 @@ namespace Lucene.Net.Codecs.Compressing
             for (int i = 0; i < BlockChunks; ++i)
             {
                 long delta = docBase - avgChunkDocs * i;
-                Debug.Assert(PackedInts.BitsRequired(MoveSignToLowOrderBit(delta)) <= writer.BitsPerValue());
+                Debug.Assert(PackedInts.BitsRequired(MoveSignToLowOrderBit(delta)) <= writer.BitsPerValue);
                 writer.Add(MoveSignToLowOrderBit(delta));
                 docBase += DocBaseDeltas[i];
             }
@@ -175,7 +175,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 startPointer += StartPointerDeltas[i];
                 long delta = startPointer - avgChunkSize * i;
-                Debug.Assert(PackedInts.BitsRequired(MoveSignToLowOrderBit(delta)) <= writer.BitsPerValue());
+                Debug.Assert(PackedInts.BitsRequired(MoveSignToLowOrderBit(delta)) <= writer.BitsPerValue);
                 writer.Add(MoveSignToLowOrderBit(delta));
             }
             writer.Finish();

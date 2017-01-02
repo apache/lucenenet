@@ -127,7 +127,7 @@ namespace Lucene.Net.Util.Packed
         public override long Get(int index)
         {
             // The abstract index in a bit stream
-            long majorBitPos = (long)index * bitsPerValue;
+            long majorBitPos = (long)index * m_bitsPerValue;
             // The index in the backing long-array
             int elementPos = (int)(((ulong)majorBitPos) >> BLOCK_BITS);
             //int elementPos = (int)((long)((ulong)majorBitPos >> BLOCK_BITS));
@@ -175,12 +175,12 @@ namespace Lucene.Net.Util.Packed
         public override int Get(int index, long[] arr, int off, int len)
         {
             Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-            Debug.Assert(index >= 0 && index < valueCount);
-            len = Math.Min(len, valueCount - index);
+            Debug.Assert(index >= 0 && index < m_valueCount);
+            len = Math.Min(len, m_valueCount - index);
             Debug.Assert(off + len <= arr.Length);
 
             int originalIndex = index;
-            PackedInts.IDecoder decoder = BulkOperation.Of(PackedInts.Format.PACKED, bitsPerValue);
+            PackedInts.IDecoder decoder = BulkOperation.Of(PackedInts.Format.PACKED, m_bitsPerValue);
 
             // go to the next block where the value does not span across two blocks
             int offsetInBlocks = index % decoder.LongValueCount;
@@ -199,8 +199,8 @@ namespace Lucene.Net.Util.Packed
 
             // bulk get
             Debug.Assert(index % decoder.LongValueCount == 0);
-            int blockIndex = (int)((ulong)((long)index * bitsPerValue) >> BLOCK_BITS);
-            Debug.Assert((((long)index * bitsPerValue) & MOD_MASK) == 0);
+            int blockIndex = (int)((ulong)((long)index * m_bitsPerValue) >> BLOCK_BITS);
+            Debug.Assert((((long)index * m_bitsPerValue) & MOD_MASK) == 0);
             int iterations = len / decoder.LongValueCount;
             decoder.Decode(Blocks, blockIndex, arr, off, iterations);
             int gotValues = iterations * decoder.LongValueCount;
@@ -224,7 +224,7 @@ namespace Lucene.Net.Util.Packed
         public override void Set(int index, long value)
         {
             // The abstract index in a contiguous bit stream
-            long majorBitPos = (long)index * bitsPerValue;
+            long majorBitPos = (long)index * m_bitsPerValue;
             // The index in the backing long-array
             int elementPos = (int)((long)((ulong)majorBitPos >> BLOCK_BITS)); // / BLOCK_SIZE
             // The number of value-bits in the second long
@@ -243,12 +243,12 @@ namespace Lucene.Net.Util.Packed
         public override int Set(int index, long[] arr, int off, int len)
         {
             Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-            Debug.Assert(index >= 0 && index < valueCount);
-            len = Math.Min(len, valueCount - index);
+            Debug.Assert(index >= 0 && index < m_valueCount);
+            len = Math.Min(len, m_valueCount - index);
             Debug.Assert(off + len <= arr.Length);
 
             int originalIndex = index;
-            PackedInts.IEncoder encoder = BulkOperation.Of(PackedInts.Format.PACKED, bitsPerValue);
+            PackedInts.IEncoder encoder = BulkOperation.Of(PackedInts.Format.PACKED, m_bitsPerValue);
 
             // go to the next block where the value does not span across two blocks
             int offsetInBlocks = index % encoder.LongValueCount;
@@ -267,8 +267,8 @@ namespace Lucene.Net.Util.Packed
 
             // bulk set
             Debug.Assert(index % encoder.LongValueCount == 0);
-            int blockIndex = (int)((ulong)((long)index * bitsPerValue) >> BLOCK_BITS);
-            Debug.Assert((((long)index * bitsPerValue) & MOD_MASK) == 0);
+            int blockIndex = (int)((ulong)((long)index * m_bitsPerValue) >> BLOCK_BITS);
+            Debug.Assert((((long)index * m_bitsPerValue) & MOD_MASK) == 0);
             int iterations = len / encoder.LongValueCount;
             encoder.Encode(arr, off, Blocks, blockIndex, iterations);
             int setValues = iterations * encoder.LongValueCount;
@@ -291,7 +291,7 @@ namespace Lucene.Net.Util.Packed
 
         public override string ToString()
         {
-            return "Packed64(bitsPerValue=" + bitsPerValue + ", size=" + Size + ", elements.length=" + Blocks.Length + ")";
+            return "Packed64(bitsPerValue=" + m_bitsPerValue + ", size=" + Size + ", elements.length=" + Blocks.Length + ")";
         }
 
         public override long RamBytesUsed()
@@ -310,7 +310,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(fromIndex <= toIndex);
 
             // minimum number of values that use an exact number of full blocks
-            int nAlignedValues = 64 / Gcd(64, bitsPerValue);
+            int nAlignedValues = 64 / Gcd(64, m_bitsPerValue);
             int span = toIndex - fromIndex;
             if (span <= 3 * nAlignedValues)
             {
@@ -334,10 +334,10 @@ namespace Lucene.Net.Util.Packed
             // compute the long[] blocks for nAlignedValues consecutive values and
             // use them to set as many values as possible without applying any mask
             // or shift
-            int nAlignedBlocks = (nAlignedValues * bitsPerValue) >> 6;
+            int nAlignedBlocks = (nAlignedValues * m_bitsPerValue) >> 6;
             long[] nAlignedValuesBlocks;
             {
-                Packed64 values = new Packed64(nAlignedValues, bitsPerValue);
+                Packed64 values = new Packed64(nAlignedValues, m_bitsPerValue);
                 for (int i = 0; i < nAlignedValues; ++i)
                 {
                     values.Set(i, val);
@@ -345,8 +345,8 @@ namespace Lucene.Net.Util.Packed
                 nAlignedValuesBlocks = values.Blocks;
                 Debug.Assert(nAlignedBlocks <= nAlignedValuesBlocks.Length);
             }
-            int startBlock = (int)((ulong)((long)fromIndex * bitsPerValue) >> 6);
-            int endBlock = (int)((ulong)((long)toIndex * bitsPerValue) >> 6);
+            int startBlock = (int)((ulong)((long)fromIndex * m_bitsPerValue) >> 6);
+            int endBlock = (int)((ulong)((long)toIndex * m_bitsPerValue) >> 6);
             for (int block = startBlock; block < endBlock; ++block)
             {
                 long blockValue = nAlignedValuesBlocks[block % nAlignedBlocks];
@@ -354,7 +354,7 @@ namespace Lucene.Net.Util.Packed
             }
 
             // fill the gap
-            for (int i = (int)(((long)endBlock << 6) / bitsPerValue); i < toIndex; ++i)
+            for (int i = (int)(((long)endBlock << 6) / m_bitsPerValue); i < toIndex; ++i)
             {
                 Set(i, val);
             }

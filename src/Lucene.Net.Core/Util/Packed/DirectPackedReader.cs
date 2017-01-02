@@ -47,7 +47,7 @@ namespace Lucene.Net.Util.Packed
 
         public override long Get(int index)
         {
-            long majorBitPos = (long)index * bitsPerValue;
+            long majorBitPos = (long)index * m_bitsPerValue;
             long elementPos = (long)((ulong)majorBitPos >> 3);
             try
             {
@@ -55,9 +55,9 @@ namespace Lucene.Net.Util.Packed
 
                 int bitPos = (int)(majorBitPos & 7);
                 // round up bits to a multiple of 8 to find total bytes needed to read
-                int roundedBits = ((bitPos + bitsPerValue + 7) & ~7);
+                int roundedBits = ((bitPos + m_bitsPerValue + 7) & ~7);
                 // the number of extra bits read at the end to shift out
-                int shiftRightBits = roundedBits - bitPos - bitsPerValue;
+                int shiftRightBits = roundedBits - bitPos - m_bitsPerValue;
 
                 long rawValue;
                 switch ((int)((uint)roundedBits >> 3))
@@ -102,7 +102,7 @@ namespace Lucene.Net.Util.Packed
                         break;
 
                     default:
-                        throw new InvalidOperationException("bitsPerValue too large: " + bitsPerValue);
+                        throw new InvalidOperationException("bitsPerValue too large: " + m_bitsPerValue);
                 }
                 return ((long)((ulong)rawValue >> shiftRightBits)) & ValueMask;
             }

@@ -166,7 +166,7 @@ namespace Lucene.Net.Codecs.Memory
                 int bitsPerValue = PackedInts.BitsRequired(uniqueValues.Count - 1);
                 FormatAndBits formatAndBits = PackedInts.FastestFormatAndBits(maxDoc, bitsPerValue,
                     acceptableOverheadRatio);
-                if (formatAndBits.bitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
+                if (formatAndBits.BitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
                 {
                     meta.WriteByte(MemoryDocValuesProducer.UNCOMPRESSED); // uncompressed
                     foreach (var nv in values)
@@ -188,11 +188,11 @@ namespace Lucene.Net.Codecs.Memory
                     }
 
                     meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                    data.WriteVInt(formatAndBits.format.id);
-                    data.WriteVInt(formatAndBits.bitsPerValue);
+                    data.WriteVInt(formatAndBits.Format.Id);
+                    data.WriteVInt(formatAndBits.BitsPerValue);
 
-                    PackedInts.Writer writer = PackedInts.GetWriterNoHeader(data, formatAndBits.format, maxDoc,
-                        formatAndBits.bitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
+                    PackedInts.Writer writer = PackedInts.GetWriterNoHeader(data, formatAndBits.Format, maxDoc,
+                        formatAndBits.BitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
                     foreach (var nv in values)
                     {
                         var v = encode[nv.HasValue ? nv.Value : 0];

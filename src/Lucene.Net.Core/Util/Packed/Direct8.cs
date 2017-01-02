@@ -88,10 +88,10 @@ namespace Lucene.Net.Util.Packed
         public override int Get(int index, long[] arr, int off, int len)
         {
             Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-            Debug.Assert(index >= 0 && index < valueCount);
+            Debug.Assert(index >= 0 && index < m_valueCount);
             Debug.Assert(off + len <= arr.Length);
 
-            int gets = Math.Min(valueCount - index, len);
+            int gets = Math.Min(m_valueCount - index, len);
             for (int i = index, o = off, end = index + gets; i < end; ++i, ++o)
             {
                 arr[o] = Values[i] & 0xFFL;
@@ -102,10 +102,10 @@ namespace Lucene.Net.Util.Packed
         public override int Set(int index, long[] arr, int off, int len)
         {
             Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-            Debug.Assert(index >= 0 && index < valueCount);
+            Debug.Assert(index >= 0 && index < m_valueCount);
             Debug.Assert(off + len <= arr.Length);
 
-            int sets = Math.Min(valueCount - index, len);
+            int sets = Math.Min(m_valueCount - index, len);
             for (int i = index, o = off, end = index + sets; i < end; ++i, ++o)
             {
                 Values[i] = (byte)arr[o];

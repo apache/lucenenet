@@ -69,10 +69,10 @@ namespace Lucene.Net.Util.Packed
         public override int Get(int index, long[] arr, int off, int len)
         {
             Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-            Debug.Assert(index >= 0 && index < valueCount);
+            Debug.Assert(index >= 0 && index < m_valueCount);
             Debug.Assert(off + len <= arr.Length);
 
-            int gets = Math.Min(valueCount - index, len);
+            int gets = Math.Min(m_valueCount - index, len);
             for (int i = index * 3, end = (index + gets) * 3; i < end; i += 3)
             {
                 arr[off++] = (Blocks[i] & 0xFFFFL) << 32 | (Blocks[i + 1] & 0xFFFFL) << 16 | (Blocks[i + 2] & 0xFFFFL);
@@ -91,10 +91,10 @@ namespace Lucene.Net.Util.Packed
         public override int Set(int index, long[] arr, int off, int len)
         {
             Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-            Debug.Assert(index >= 0 && index < valueCount);
+            Debug.Assert(index >= 0 && index < m_valueCount);
             Debug.Assert(off + len <= arr.Length);
 
-            int sets = Math.Min(valueCount - index, len);
+            int sets = Math.Min(m_valueCount - index, len);
             for (int i = off, o = index * 3, end = off + sets; i < end; ++i)
             {
                 long value = arr[i];
@@ -134,7 +134,7 @@ namespace Lucene.Net.Util.Packed
 
         public override string ToString()
         {
-            return this.GetType().Name + "(bitsPerValue=" + bitsPerValue + ", size=" + Size + ", elements.length=" + Blocks.Length + ")";
+            return this.GetType().Name + "(bitsPerValue=" + m_bitsPerValue + ", size=" + Size + ", elements.length=" + Blocks.Length + ")";
         }
     }
 }

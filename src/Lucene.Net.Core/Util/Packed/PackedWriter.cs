@@ -59,9 +59,9 @@ namespace Lucene.Net.Util.Packed
 
         public override void Add(long v)
         {
-            Debug.Assert(bitsPerValue == 64 || (v >= 0 && v <= PackedInts.MaxValue(bitsPerValue)), bitsPerValue.ToString());
+            Debug.Assert(m_bitsPerValue == 64 || (v >= 0 && v <= PackedInts.MaxValue(m_bitsPerValue)), m_bitsPerValue.ToString());
             Debug.Assert(!Finished);
-            if (valueCount != -1 && Written >= valueCount)
+            if (m_valueCount != -1 && Written >= m_valueCount)
             {
                 throw new System.IO.EndOfStreamException("Writing past end of stream");
             }
@@ -76,9 +76,9 @@ namespace Lucene.Net.Util.Packed
         public override void Finish()
         {
             Debug.Assert(!Finished);
-            if (valueCount != -1)
+            if (m_valueCount != -1)
             {
-                while (Written < valueCount)
+                while (Written < m_valueCount)
                 {
                     Add(0L);
                 }
@@ -90,8 +90,8 @@ namespace Lucene.Net.Util.Packed
         private void Flush()
         {
             Encoder.Encode(NextValues, 0, NextBlocks, 0, Iterations);
-            int blockCount = (int)Format_Renamed.ByteCount(PackedInts.VERSION_CURRENT, Off, bitsPerValue);
-            @out.WriteBytes(NextBlocks, blockCount);
+            int blockCount = (int)Format_Renamed.ByteCount(PackedInts.VERSION_CURRENT, Off, m_bitsPerValue);
+            m_out.WriteBytes(NextBlocks, blockCount);
             Arrays.Fill(NextValues, 0L);
             Off = 0;
         }

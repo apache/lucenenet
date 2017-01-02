@@ -128,16 +128,16 @@ namespace Lucene.Net.Util.Packed
                     @out.Dispose();
 
                     // ensure that finish() added the (valueCount-actualValueCount) missing values
-                    long bytes = w.Format.ByteCount(PackedInts.VERSION_CURRENT, valueCount, w.BitsPerValue());
+                    long bytes = w.Format.ByteCount(PackedInts.VERSION_CURRENT, valueCount, w.BitsPerValue);
                     Assert.AreEqual(bytes, fp - startFp);
 
                     { // test header
                         IndexInput @in = d.OpenInput("out.bin", NewIOContext(Random()));
                         // header = codec header | bitsPerValue | valueCount | format
                         CodecUtil.CheckHeader(@in, PackedInts.CODEC_NAME, PackedInts.VERSION_START, PackedInts.VERSION_CURRENT); // codec header
-                        Assert.AreEqual(w.BitsPerValue(), @in.ReadVInt());
+                        Assert.AreEqual(w.BitsPerValue, @in.ReadVInt());
                         Assert.AreEqual(valueCount, @in.ReadVInt());
-                        Assert.AreEqual(w.Format.id, @in.ReadVInt());
+                        Assert.AreEqual(w.Format.Id, @in.ReadVInt());
                         Assert.AreEqual(startFp, @in.FilePointer);
                         @in.Dispose();
                     }
