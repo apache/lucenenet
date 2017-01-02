@@ -133,6 +133,7 @@ namespace Lucene.Net.Analysis.Th
         [Test]
         public virtual void TestRandomStrings()
         {
+            fail("This test is somehow crashing NUnit and causing it not to complete");
             CheckRandomData(Random(), new ThaiAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
 

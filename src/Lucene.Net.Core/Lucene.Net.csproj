@@ -765,7 +765,6 @@
     <Compile Include="Util\Fst\ReverseBytesReader.cs" />
     <Compile Include="Util\Fst\Util.cs" />
     <Compile Include="Util\GrowableByteArrayDataOutput.cs" />
-    <Compile Include="Util\IAttribute.cs" />
     <Compile Include="Util\IAttributeReflector.cs" />
     <Compile Include="Util\IndexableBinaryStringTools.cs" />
     <Compile Include="Util\InfoStream.cs" />

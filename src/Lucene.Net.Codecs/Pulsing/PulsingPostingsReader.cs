@@ -703,7 +703,7 @@ namespace Lucene.Net.Codecs.Pulsing
         /// 
         /// @lucene.internal
         /// </summary>
-        internal sealed class PulsingEnumAttribute : AttributeImpl, IPulsingEnumAttribute
+        internal sealed class PulsingEnumAttribute : Util.Attribute, IPulsingEnumAttribute
         {
             // we could store 'other', but what if someone 'chained' multiple postings readers,
             // this could cause problems?

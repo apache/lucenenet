@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
     /// should be set in every <see cref="Core.Nodes.IFieldableNode"/>.
     /// </summary>
     /// <seealso cref="UniqueFieldQueryNodeProcessor"/>
-    public class UniqueFieldAttributeImpl : AttributeImpl, IUniqueFieldAttribute
+    public class UniqueFieldAttributeImpl : Attribute, IUniqueFieldAttribute // LUCENENET TODO: Rename UniqueFieldAttribute
     {
         private string uniqueField;
 
