@@ -186,16 +186,16 @@ namespace Lucene.Net.Util.Packed
 
             /// <summary>
             /// Whether or not there are remaining values. </summary>
-            public bool HasNext() // LUCENENET TODO: make property
+            public bool HasNext
             {
-                return POff < CurrentCount;
+                get { return POff < CurrentCount; }
             }
 
             /// <summary>
             /// Return the next long in the buffer. </summary>
             public long Next()
             {
-                Debug.Assert(HasNext());
+                Debug.Assert(HasNext);
                 long result = CurrentValues[POff++];
                 if (POff == CurrentCount)
                 {

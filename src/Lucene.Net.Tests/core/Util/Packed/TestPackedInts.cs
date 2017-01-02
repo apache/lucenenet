@@ -1203,11 +1203,11 @@ namespace Lucene.Net.Util.Packed
                     {
                         if (Random().NextBoolean())
                         {
-                            Assert.IsTrue(it.HasNext());
+                            Assert.IsTrue(it.HasNext);
                         }
                         Assert.AreEqual(arr[i], it.Next());
                     }
-                    Assert.IsFalse(it.HasNext());
+                    Assert.IsFalse(it.HasNext);
 
 
                     long[] target = new long[arr.Length + 1024]; // check the request for more is OK.
