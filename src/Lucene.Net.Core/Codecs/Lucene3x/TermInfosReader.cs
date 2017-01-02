@@ -186,9 +186,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Returns the number of term/value pairs in the set. </summary>
-        internal long Size() // LUCENENET TODO: Rename Count
+        internal long Size // LUCENENET TODO: Rename Count
         {
-            return Size_Renamed;
+            get { return Size_Renamed; }
         }
 
         private ThreadResources GetThreadResources()

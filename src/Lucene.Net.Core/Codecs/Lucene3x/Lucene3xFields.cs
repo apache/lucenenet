@@ -168,7 +168,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return TermsDict.Size();
+                return TermsDict.Size;
             }
         }
 
