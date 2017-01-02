@@ -343,7 +343,7 @@ namespace Lucene.Net.Join
             // Since we invoke .score(), and the comparators likely
             // do as well, cache it so it's only "really" computed
             // once:
-            scorer = new ScoreCachingWrappingScorer(scorer);
+            this.scorer = new ScoreCachingWrappingScorer(scorer);
             for (int compIdx = 0; compIdx < comparators.Length; compIdx++)
             {
                 comparators[compIdx].SetScorer(scorer);
