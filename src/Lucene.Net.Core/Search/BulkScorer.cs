@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Scores and collects all matching documents. </summary>
         /// <param name="collector"> The collector to which all matching documents are passed. </param>
-        public virtual void Score(Collector collector)
+        public virtual void Score(ICollector collector)
         {
             Score(collector, int.MaxValue);
         }
@@ -42,6 +42,6 @@ namespace Lucene.Net.Search
         /// <param name="collector"> The collector to which all matching documents are passed. </param>
         /// <param name="max"> Score up to, but not including, this doc </param>
         /// <returns> true if more matching documents may remain. </returns>
-        public abstract bool Score(Collector collector, int max);
+        public abstract bool Score(ICollector collector, int max);
     }
 }

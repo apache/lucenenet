@@ -132,7 +132,7 @@ namespace Lucene.Net.Search
             return collector.DocCounts;
         }
 
-        internal class MyCollector : Collector
+        internal class MyCollector : ICollector
         {
             internal TopDocsCollector<ScoreDoc> Collector;
             internal int DocBase;
@@ -145,12 +145,12 @@ namespace Lucene.Net.Search
                 Collector = TopScoreDocCollector.Create(10, true);
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return false; }
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 int freq = 0;
                 foreach (Scorer scorer in TqsSet)
@@ -164,13 +164,13 @@ namespace Lucene.Net.Search
                 Collector.Collect(doc);
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 this.DocBase = context.DocBase;
                 Collector.SetNextReader(context);
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 Collector.SetScorer(scorer);
                 TqsSet.Clear();

@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
-    /// A <seealso cref="Collector"/> implementation that collects the top-scoring hits,
+    /// A <seealso cref="ICollector"/> implementation that collects the top-scoring hits,
     /// returning them as a <seealso cref="TopDocs"/>. this is used by <seealso cref="IndexSearcher"/> to
     /// implement <seealso cref="TopDocs"/>-based search. Hits are sorted by score descending
     /// and then (when the scores are tied) docID ascending. When you create an

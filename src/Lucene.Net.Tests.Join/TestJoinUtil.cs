@@ -254,7 +254,7 @@ namespace Lucene.Net.Tests.Join
             dir.Dispose();
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private readonly TestJoinUtil OuterInstance;
 
@@ -265,11 +265,11 @@ namespace Lucene.Net.Tests.Join
 
             internal bool sawFive;
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public override void Collect(int docID)
+            public virtual void Collect(int docID)
             {
                 // Hairy / evil (depends on how BooleanScorer
                 // stores temporarily collected docIDs by
@@ -284,11 +284,11 @@ namespace Lucene.Net.Tests.Join
                 }
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }
@@ -523,7 +523,7 @@ namespace Lucene.Net.Tests.Join
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper2 : Collector
+        private class CollectorAnonymousInnerClassHelper2 : ICollector
         {
             private readonly TestJoinUtil OuterInstance;
 
@@ -546,24 +546,24 @@ namespace Lucene.Net.Tests.Join
 
             private int _docBase;
             
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 ActualResult.Set(doc + _docBase);
                 TopScoreDocCollector.Collect(doc);
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 _docBase = context.DocBase;
                 TopScoreDocCollector.SetNextReader(context);
             }
             
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 TopScoreDocCollector.SetScorer(scorer);
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return ScoreDocsInOrder; }
             }
@@ -760,7 +760,7 @@ namespace Lucene.Net.Tests.Join
             return context;
         }
 
-        private class CollectorAnonymousInnerClassHelper3 : Collector
+        private class CollectorAnonymousInnerClassHelper3 : ICollector
         {
             private readonly TestJoinUtil OuterInstance;
 
@@ -784,7 +784,7 @@ namespace Lucene.Net.Tests.Join
             private SortedSetDocValues docTermOrds;
             internal readonly BytesRef joinValue;
             
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 docTermOrds.SetDocument(doc);
                 long ord;
@@ -800,23 +800,23 @@ namespace Lucene.Net.Tests.Join
                 }
             }
             
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, FromField);
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return false; }
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper4 : Collector
+        private class CollectorAnonymousInnerClassHelper4 : ICollector
         {
             private readonly TestJoinUtil OuterInstance;
 
@@ -841,7 +841,7 @@ namespace Lucene.Net.Tests.Join
             private IBits docsWithField;
             private readonly BytesRef spare;
             
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 terms.Get(doc, spare);
                 BytesRef joinValue = spare;
@@ -858,24 +858,24 @@ namespace Lucene.Net.Tests.Join
                 joinScore.AddScore(scorer.Score());
             }
             
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 terms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, FromField, true);
                 docsWithField = FieldCache.DEFAULT.GetDocsWithField(context.AtomicReader, FromField);
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return false; }
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper5 : Collector
+        private class CollectorAnonymousInnerClassHelper5 : ICollector
         {
             private readonly TestJoinUtil OuterInstance;
 
@@ -897,7 +897,7 @@ namespace Lucene.Net.Tests.Join
                 _docToJoinScore = docToJoinScore;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 docTermOrds.SetDocument(doc);
                 long ord;
@@ -919,23 +919,23 @@ namespace Lucene.Net.Tests.Join
                 }
             }
             
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 docBase = context.DocBase;
                 docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, _toField);
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return false; }
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper6 : Collector
+        private class CollectorAnonymousInnerClassHelper6 : ICollector
         {
             private readonly TestJoinUtil OuterInstance;
 
@@ -959,7 +959,7 @@ namespace Lucene.Net.Tests.Join
                 DocToJoinScore = docToJoinScore;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 terms.Get(doc, spare);
                 JoinScore joinScore = JoinValueToJoinScores.ContainsKey(spare) ? JoinValueToJoinScores[spare] : null;
@@ -970,18 +970,18 @@ namespace Lucene.Net.Tests.Join
                 DocToJoinScore[docBase + doc] = joinScore;
             }
             
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 terms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, ToField, false);
                 docBase = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return false; }
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
             }
         }

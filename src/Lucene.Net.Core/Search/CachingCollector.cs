@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
     ///
     /// @lucene.experimental
     /// </summary>
-    public abstract class CachingCollector : Collector
+    public abstract class CachingCollector : ICollector
     {
         // Max out at 512K arrays
         private const int MAX_ARRAY_SIZE = 512 * 1024;
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
             private Scorer scorer;
             private float[] curScores;
 
-            internal ScoreCachingCollector(Collector other, double maxRAMMB)
+            internal ScoreCachingCollector(ICollector other, double maxRAMMB)
                 : base(other, maxRAMMB, true)
             {
                 cachedScorer = new CachedScorer();
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
                 cachedScores.Add(curScores);
             }
 
-            internal ScoreCachingCollector(Collector other, int maxDocsToCache)
+            internal ScoreCachingCollector(ICollector other, int maxDocsToCache)
                 : base(other, maxDocsToCache)
             {
                 cachedScorer = new CachedScorer();
@@ -195,7 +195,7 @@ namespace Lucene.Net.Search
                 other.Collect(doc);
             }
 
-            public override void Replay(Collector other)
+            public override void Replay(ICollector other)
             {
                 ReplayInit(other);
 
@@ -246,12 +246,12 @@ namespace Lucene.Net.Search
         // A CachingCollector which does not cache scores
         private sealed class NoScoreCachingCollector : CachingCollector
         {
-            internal NoScoreCachingCollector(Collector other, double maxRAMMB)
+            internal NoScoreCachingCollector(ICollector other, double maxRAMMB)
                 : base(other, maxRAMMB, false)
             {
             }
 
-            internal NoScoreCachingCollector(Collector other, int maxDocsToCache)
+            internal NoScoreCachingCollector(ICollector other, int maxDocsToCache)
                 : base(other, maxDocsToCache)
             {
             }
@@ -302,7 +302,7 @@ namespace Lucene.Net.Search
                 other.Collect(doc);
             }
 
-            public override void Replay(Collector other)
+            public override void Replay(ICollector other)
             {
                 ReplayInit(other);
 
@@ -350,7 +350,7 @@ namespace Lucene.Net.Search
         // up front. this is only relevant for the ScoreCaching
         // version -- if the wrapped Collector does not need
         // scores, it can avoid cachedScorer entirely.
-        protected readonly Collector other;
+        protected readonly ICollector other;
 
         protected readonly int maxDocsToCache;
         private readonly IList<SegStart> cachedSegs = new List<SegStart>();
@@ -372,11 +372,11 @@ namespace Lucene.Net.Search
         ///          whether documents are allowed to be collected out-of-order </param>
         public static CachingCollector Create(bool acceptDocsOutOfOrder, bool cacheScores, double maxRAMMB)
         {
-            Collector other = new CollectorAnonymousInnerClassHelper(acceptDocsOutOfOrder);
+            ICollector other = new CollectorAnonymousInnerClassHelper(acceptDocsOutOfOrder);
             return Create(other, cacheScores, maxRAMMB);
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private bool acceptDocsOutOfOrder;
 
@@ -385,20 +385,20 @@ namespace Lucene.Net.Search
                 this.acceptDocsOutOfOrder = acceptDocsOutOfOrder;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return acceptDocsOutOfOrder; }
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
         }
@@ -416,7 +416,7 @@ namespace Lucene.Net.Search
         ///          the maximum RAM in MB to consume for caching the documents and
         ///          scores. If the collector exceeds the threshold, no documents and
         ///          scores are cached. </param>
-        public static CachingCollector Create(Collector other, bool cacheScores, double maxRAMMB)
+        public static CachingCollector Create(ICollector other, bool cacheScores, double maxRAMMB)
         {
             return cacheScores ? (CachingCollector)new ScoreCachingCollector(other, maxRAMMB) : new NoScoreCachingCollector(other, maxRAMMB);
         }
@@ -434,13 +434,13 @@ namespace Lucene.Net.Search
         ///          the maximum number of documents for caching the documents and
         ///          possible the scores. If the collector exceeds the threshold,
         ///          no documents and scores are cached. </param>
-        public static CachingCollector Create(Collector other, bool cacheScores, int maxDocsToCache)
+        public static CachingCollector Create(ICollector other, bool cacheScores, int maxDocsToCache)
         {
             return cacheScores ? (CachingCollector)new ScoreCachingCollector(other, maxDocsToCache) : new NoScoreCachingCollector(other, maxDocsToCache);
         }
 
         // Prevent extension from non-internal classes
-        private CachingCollector(Collector other, double maxRAMMB, bool cacheScores)
+        private CachingCollector(ICollector other, double maxRAMMB, bool cacheScores)
         {
             this.other = other;
 
@@ -456,7 +456,7 @@ namespace Lucene.Net.Search
             maxDocsToCache = (int)((maxRAMMB * 1024 * 1024) / bytesPerDoc);
         }
 
-        private CachingCollector(Collector other, int maxDocsToCache)
+        private CachingCollector(ICollector other, int maxDocsToCache)
         {
             this.other = other;
 
@@ -466,7 +466,7 @@ namespace Lucene.Net.Search
             this.maxDocsToCache = maxDocsToCache;
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get { return other.AcceptsDocsOutOfOrder; }
         }
@@ -479,7 +479,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override void SetNextReader(AtomicReaderContext context)
+        public virtual void SetNextReader(AtomicReaderContext context)
         {
             other.SetNextReader(context);
             if (lastReaderContext != null)
@@ -489,9 +489,15 @@ namespace Lucene.Net.Search
             lastReaderContext = context;
         }
 
+        // LUCENENET specific - we need to implement these here, since our abstract base class
+        // is now an interface.
+        public abstract void SetScorer(Scorer scorer); // LUCENENET TODO: Copy documentation from ICollector
+
+        public abstract void Collect(int doc); // LUCENENET TODO: Copy documentation from ICollector
+
         /// <summary>
         /// Reused by the specialized inner classes. </summary>
-        internal virtual void ReplayInit(Collector other)
+        internal virtual void ReplayInit(ICollector other)
         {
             if (!IsCached)
             {
@@ -522,6 +528,6 @@ namespace Lucene.Net.Search
         /// <exception cref="IllegalArgumentException">
         ///           if the given Collect's does not support out-of-order collection,
         ///           while the collector passed to the ctor does. </exception>
-        public abstract void Replay(Collector other);
+        public abstract void Replay(ICollector other);
     }
 }

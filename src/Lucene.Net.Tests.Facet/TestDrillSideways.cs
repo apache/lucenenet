@@ -43,7 +43,7 @@ namespace Lucene.Net.Facet
     using OpenMode = Lucene.Net.Index.OpenMode;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
-    using Collector = Lucene.Net.Search.Collector;
+    using ICollector = Lucene.Net.Search.ICollector;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using Filter = Lucene.Net.Search.Filter;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
@@ -830,7 +830,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private readonly TestDrillSideways outerInstance;
 
@@ -844,22 +844,22 @@ namespace Lucene.Net.Facet
 
             internal int lastDocID;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Debug.Assert(doc > lastDocID);
                 lastDocID = doc;
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 lastDocID = -1;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return false; }
             }

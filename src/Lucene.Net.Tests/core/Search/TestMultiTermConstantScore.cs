@@ -284,7 +284,7 @@ namespace Lucene.Net.Search
             Assert.IsTrue(hits[0].Score > hits[1].Score);
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private readonly TestMultiTermConstantScore OuterInstance;
 
@@ -297,22 +297,22 @@ namespace Lucene.Net.Search
             private int @base;
             private Scorer scorer;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Assert.AreEqual(1.0f, scorer.Score(), SCORE_COMP_THRESH, "score for doc " + (doc + @base) + " was not correct");
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 @base = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }

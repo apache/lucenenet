@@ -103,19 +103,19 @@ namespace Lucene.Net.Search.Grouping
             IAbstractAllGroupsCollector<object> allGroupsCollector = CreateRandomCollector(groupField, canUseIDV);
             // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
             // so this cast is not necessary. Consider eliminating the Collector abstract class.
-            indexSearcher.Search(new TermQuery(new Term("content", "random")), allGroupsCollector as Collector);
+            indexSearcher.Search(new TermQuery(new Term("content", "random")), allGroupsCollector as ICollector);
             assertEquals(4, allGroupsCollector.GroupCount);
 
             allGroupsCollector = CreateRandomCollector(groupField, canUseIDV);
             // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
             // so this cast is not necessary. Consider eliminating the Collector abstract class.
-            indexSearcher.Search(new TermQuery(new Term("content", "some")), allGroupsCollector as Collector);
+            indexSearcher.Search(new TermQuery(new Term("content", "some")), allGroupsCollector as ICollector);
             assertEquals(3, allGroupsCollector.GroupCount);
 
             allGroupsCollector = CreateRandomCollector(groupField, canUseIDV);
             // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
             // so this cast is not necessary. Consider eliminating the Collector abstract class.
-            indexSearcher.Search(new TermQuery(new Term("content", "blob")), allGroupsCollector as Collector);
+            indexSearcher.Search(new TermQuery(new Term("content", "blob")), allGroupsCollector as ICollector);
             assertEquals(2, allGroupsCollector.GroupCount);
 
             indexSearcher.IndexReader.Dispose();

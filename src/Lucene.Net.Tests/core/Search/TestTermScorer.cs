@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
             Assert.IsTrue(doc0.Score == 1.6931472f, doc0.Score + " does not equal: " + 1.6931472f);
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private readonly TestTermScorer OuterInstance;
 
@@ -123,12 +123,12 @@ namespace Lucene.Net.Search
             private int @base;
             private Scorer scorer;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 float score = scorer.Score();
                 doc = doc + @base;
@@ -137,12 +137,12 @@ namespace Lucene.Net.Search
                 Assert.IsTrue(doc == 0 || doc == 5, "Doc: " + doc + " does not equal 0 or doc does not equal 5");
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 @base = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }

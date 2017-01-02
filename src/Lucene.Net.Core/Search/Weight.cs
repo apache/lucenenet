@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Optional method, to return a <seealso cref="BulkScorer"/> to
-        /// score the query and send hits to a <seealso cref="Collector"/>.
+        /// score the query and send hits to a <seealso cref="ICollector"/>.
         /// Only queries that have a different top-level approach
         /// need to override this; the default implementation
         /// pulls a normal <seealso cref="Scorer"/> and iterates and
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
                 this.scorer = scorer;
             }
 
-            public override bool Score(Collector collector, int max)
+            public override bool Score(ICollector collector, int max)
             {
                 // TODO: this may be sort of weird, when we are
                 // embedded in a BooleanScorer, because we are
@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            internal static bool ScoreRange(Collector collector, Scorer scorer, int currentDoc, int end)
+            internal static bool ScoreRange(ICollector collector, Scorer scorer, int currentDoc, int end)
             {
                 while (currentDoc < end)
                 {
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
                 return currentDoc != DocIdSetIterator.NO_MORE_DOCS;
             }
 
-            internal static void ScoreAll(Collector collector, Scorer scorer)
+            internal static void ScoreAll(ICollector collector, Scorer scorer)
             {
                 int doc;
                 while ((doc = scorer.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
@@ -197,10 +197,10 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns true iff this implementation scores docs only out of order. this
-        /// method is used in conjunction with <seealso cref="Collector"/>'s
-        /// <seealso cref="Collector#acceptsDocsOutOfOrder() acceptsDocsOutOfOrder"/> and
+        /// method is used in conjunction with <seealso cref="ICollector"/>'s
+        /// <seealso cref="ICollector#acceptsDocsOutOfOrder() acceptsDocsOutOfOrder"/> and
         /// <seealso cref="#bulkScorer(AtomicReaderContext, boolean, Bits)"/> to
-        /// create a matching <seealso cref="Scorer"/> instance for a given <seealso cref="Collector"/>, or
+        /// create a matching <seealso cref="Scorer"/> instance for a given <seealso cref="ICollector"/>, or
         /// vice versa.
         /// <p>
         /// <b>NOTE:</b> the default implementation returns <code>false</code>, i.e.

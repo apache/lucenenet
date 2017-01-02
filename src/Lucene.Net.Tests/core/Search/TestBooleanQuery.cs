@@ -399,7 +399,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            protected override void Search(IList<AtomicReaderContext> leaves, Weight weight, Collector collector)
+            protected override void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector)
             {
                 Assert.AreEqual(-1, collector.GetType().Name.IndexOf("OutOfOrder"));
                 base.Search(leaves, weight, collector);

@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
             iw.AddDocument(d);
         }
 
-        private void Search(Collector collector)
+        private void Search(ICollector collector)
         {
             searcher.Search(query, collector);
         }
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
 
                 myHc = new MyHitCollector();
                 long oneHour = 3600000;
-                Collector tlCollector = CreateTimedCollector(myHc, oneHour, false);
+                ICollector tlCollector = CreateTimedCollector(myHc, oneHour, false);
                 Search(tlCollector);
                 totalTLCResults = myHc.HitCount();
             }
@@ -159,7 +159,7 @@ namespace Lucene.Net.Search
             assertEquals("Wrong number of results!", totalResults, totalTLCResults);
         }
 
-        private Collector CreateTimedCollector(MyHitCollector hc, long timeAllowed, bool greedy)
+        private ICollector CreateTimedCollector(MyHitCollector hc, long timeAllowed, bool greedy)
         {
             TimeLimitingCollector res = new TimeLimitingCollector(hc, counter, timeAllowed);
             res.IsGreedy = (greedy); // set to true to make sure at least one doc is collected.
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search
             // setup
             MyHitCollector myHc = new MyHitCollector();
             myHc.SetSlowDown(SLOW_DOWN);
-            Collector tlCollector = CreateTimedCollector(myHc, TIME_ALLOWED, greedy);
+            ICollector tlCollector = CreateTimedCollector(myHc, TIME_ALLOWED, greedy);
 
             // search
             TimeLimitingCollector.TimeExceededException timoutException = null;
@@ -365,7 +365,7 @@ namespace Lucene.Net.Search
         }
 
         // counting collector that can slow down at collect().
-        internal class MyHitCollector : Collector
+        internal class MyHitCollector : ICollector
         {
             private readonly OpenBitSet bits = new OpenBitSet();
             private int slowdown = 0;
@@ -393,12 +393,12 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 // scorer is not needed
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 int docId = doc + docBase;
                 if (slowdown > 0)
@@ -424,12 +424,12 @@ namespace Lucene.Net.Search
                 lastDocCollected = docId;
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 docBase = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return false; }
             }

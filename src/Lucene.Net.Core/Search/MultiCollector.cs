@@ -20,15 +20,15 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
-    /// A <seealso cref="Collector"/> which allows running a search with several
-    /// <seealso cref="Collector"/>s. It offers a static <seealso cref="#wrap"/> method which accepts a
+    /// A <seealso cref="ICollector"/> which allows running a search with several
+    /// <seealso cref="ICollector"/>s. It offers a static <seealso cref="#wrap"/> method which accepts a
     /// list of collectors and wraps them with <seealso cref="MultiCollector"/>, while
     /// filtering out the <code>null</code> null ones.
     /// </summary>
-    public class MultiCollector : Collector
+    public class MultiCollector : ICollector
     {
         /// <summary>
-        /// Wraps a list of <seealso cref="Collector"/>s with a <seealso cref="MultiCollector"/>. this
+        /// Wraps a list of <seealso cref="ICollector"/>s with a <seealso cref="MultiCollector"/>. this
         /// method works as follows:
         /// <ul>
         /// <li>Filters out the <code>null</code> collectors, so they are not used
@@ -42,13 +42,13 @@ namespace Lucene.Net.Search
         /// <exception cref="IllegalArgumentException">
         ///           if either 0 collectors were input, or all collectors are
         ///           <code>null</code>. </exception>
-        public static Collector Wrap(params Collector[] collectors)
+        public static ICollector Wrap(params ICollector[] collectors)
         {
             // For the user's convenience, we allow null collectors to be passed.
             // However, to improve performance, these null collectors are found
             // and dropped from the array we save for actual collection time.
             int n = 0;
-            foreach (Collector c in collectors)
+            foreach (ICollector c in collectors)
             {
                 if (c != null)
                 {
@@ -63,8 +63,8 @@ namespace Lucene.Net.Search
             else if (n == 1)
             {
                 // only 1 Collector - return it.
-                Collector col = null;
-                foreach (Collector c in collectors)
+                ICollector col = null;
+                foreach (ICollector c in collectors)
                 {
                     if (c != null)
                     {
@@ -80,9 +80,9 @@ namespace Lucene.Net.Search
             }
             else
             {
-                Collector[] colls = new Collector[n];
+                ICollector[] colls = new ICollector[n];
                 n = 0;
-                foreach (Collector c in collectors)
+                foreach (ICollector c in collectors)
                 {
                     if (c != null)
                     {
@@ -93,18 +93,18 @@ namespace Lucene.Net.Search
             }
         }
 
-        private readonly Collector[] collectors;
+        private readonly ICollector[] collectors;
 
-        private MultiCollector(params Collector[] collectors)
+        private MultiCollector(params ICollector[] collectors)
         {
             this.collectors = collectors;
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get
             {
-                foreach (Collector c in collectors)
+                foreach (ICollector c in collectors)
                 {
                     if (!c.AcceptsDocsOutOfOrder)
                     {
@@ -115,25 +115,25 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override void Collect(int doc)
+        public virtual void Collect(int doc)
         {
-            foreach (Collector c in collectors)
+            foreach (ICollector c in collectors)
             {
                 c.Collect(doc);
             }
         }
 
-        public override void SetNextReader(AtomicReaderContext context)
+        public virtual void SetNextReader(AtomicReaderContext context)
         {
-            foreach (Collector c in collectors)
+            foreach (ICollector c in collectors)
             {
                 c.SetNextReader(context);
             }
         }
         
-        public override void SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
-            foreach (Collector c in collectors)
+            foreach (ICollector c in collectors)
             {
                 c.SetScorer(scorer);
             }

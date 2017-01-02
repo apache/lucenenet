@@ -148,7 +148,7 @@ namespace Lucene.Net.Index.Sorter
 
         internal class EarlyTerminatingSortingCollectorHelper : EarlyTerminatingSortingCollector
         {
-            public EarlyTerminatingSortingCollectorHelper(Collector @in, Sort sort, int numDocsToCollect)
+            public EarlyTerminatingSortingCollectorHelper(ICollector @in, Sort sort, int numDocsToCollect)
                 : base(@in, sort, numDocsToCollect)
             {
             }

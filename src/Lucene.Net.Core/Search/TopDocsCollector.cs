@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
     /// however, you might want to consider overriding all methods, in order to avoid
     /// a NullPointerException.
     /// </summary>
-    public abstract class TopDocsCollector<T> : Collector, ITopDocsCollector where T : ScoreDoc
+    public abstract class TopDocsCollector<T> : ICollector, ITopDocsCollector where T : ScoreDoc
     {
         /// <summary>
         /// this is used in case topDocs() is called with illegal parameters, or there
@@ -186,24 +186,28 @@ namespace Lucene.Net.Search
 
             return NewTopDocs(results, start);
         }
+
+        // LUCENENET specific - we need to implement these here, since our abstract base class
+        // is now an interface.
+        public abstract void SetScorer(Scorer scorer); // LUCENENET TODO: Copy documentation from ICollector
+
+        public abstract void Collect(int doc); // LUCENENET TODO: Copy documentation from ICollector
+
+        public abstract void SetNextReader(AtomicReaderContext context); // LUCENENET TODO: Copy documentation from ICollector
+
+        public abstract bool AcceptsDocsOutOfOrder { get; } // LUCENENET TODO: Copy documentation from ICollector
     }
 
     /// <summary>
     /// LUCENENET specific interface used to reference <see cref="TopDocsCollector{T}"/>
     /// without referencing its generic type.
     /// </summary>
-    public interface ITopDocsCollector
+    public interface ITopDocsCollector : ICollector
     {
         // From TopDocsCollector<T>
         int TotalHits { get; }
         TopDocs TopDocs();
         TopDocs TopDocs(int start);
         TopDocs TopDocs(int start, int howMany);
-
-        // From Collector // LUCENENET TODO: When Collector is made into/backed by an interface, this one should inherit it
-        void SetScorer(Scorer scorer);
-        void Collect(int doc);
-        void SetNextReader(AtomicReaderContext context);
-        bool AcceptsDocsOutOfOrder { get; }
     }
 }

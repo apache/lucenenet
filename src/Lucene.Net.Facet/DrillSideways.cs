@@ -142,10 +142,10 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Search, collecting hits with a <see cref="Collector"/>, and
+        /// Search, collecting hits with a <see cref="ICollector"/>, and
         /// computing drill down and sideways counts.
         /// </summary>
-        public virtual DrillSidewaysResult Search(DrillDownQuery query, Collector hitCollector)
+        public virtual DrillSidewaysResult Search(DrillDownQuery query, ICollector hitCollector)
         {
 
             IDictionary<string, int?> drillDownDims = query.Dims;
@@ -257,7 +257,7 @@ namespace Lucene.Net.Facet
         /// collected.  This will cause some performance loss;
         /// default is <c>false</c>.  Note that if you return true from
         /// this method (in a subclass) be sure your collector
-        /// also returns <c>false</c> from <see cref="Collector.AcceptsDocsOutOfOrder"/>: 
+        /// also returns <c>false</c> from <see cref="ICollector.AcceptsDocsOutOfOrder"/>: 
         /// this will trick <see cref="BooleanQuery"/> into also scoring all subDocs at
         /// once. 
         /// </summary>

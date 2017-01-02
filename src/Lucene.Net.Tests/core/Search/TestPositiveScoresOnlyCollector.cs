@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
             Weight fake = (new TermQuery(new Term("fake", "weight"))).CreateWeight(searcher);
             Scorer s = new SimpleScorer(fake);
             TopDocsCollector<ScoreDoc> tdc = TopScoreDocCollector.Create(Scores.Length, true);
-            Collector c = new PositiveScoresOnlyCollector(tdc);
+            ICollector c = new PositiveScoresOnlyCollector(tdc);
             c.SetScorer(s);
             while (s.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
             {

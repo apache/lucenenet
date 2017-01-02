@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
             store.Dispose();
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private readonly TestDocBoost OuterInstance;
 
@@ -98,22 +98,22 @@ namespace Lucene.Net.Search
             private int @base;
             private Scorer scorer;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Scores[doc + @base] = scorer.Score();
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 @base = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }

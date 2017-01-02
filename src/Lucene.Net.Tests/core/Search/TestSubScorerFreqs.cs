@@ -67,9 +67,9 @@ namespace Lucene.Net.Search
             Dir = null;
         }
 
-        private class CountingCollector : Collector
+        private class CountingCollector : ICollector
         {
-            internal readonly Collector Other;
+            internal readonly ICollector Other;
             internal int DocBase;
 
             public readonly IDictionary<int?, IDictionary<Query, float?>> DocCounts = new Dictionary<int?, IDictionary<Query, float?>>();
@@ -77,18 +77,18 @@ namespace Lucene.Net.Search
             internal readonly IDictionary<Query, Scorer> SubScorers = new Dictionary<Query, Scorer>();
             internal readonly ISet<string> Relationships;
 
-            public CountingCollector(Collector other)
+            public CountingCollector(ICollector other)
                 : this(other, new HashSet<string> { "MUST", "SHOULD", "MUST_NOT" })
             {
             }
 
-            public CountingCollector(Collector other, ISet<string> relationships)
+            public CountingCollector(ICollector other, ISet<string> relationships)
             {
                 this.Other = other;
                 this.Relationships = relationships;
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 Other.SetScorer(scorer);
                 SubScorers.Clear();
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
                 SubScorers[scorer.Weight.Query] = scorer;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 IDictionary<Query, float?> freqs = new Dictionary<Query, float?>();
                 foreach (KeyValuePair<Query, Scorer> ent in SubScorers)
@@ -120,13 +120,13 @@ namespace Lucene.Net.Search
                 Other.Collect(doc);
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 DocBase = context.DocBase;
                 Other.SetNextReader(context);
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return Other.AcceptsDocsOutOfOrder; }
             }

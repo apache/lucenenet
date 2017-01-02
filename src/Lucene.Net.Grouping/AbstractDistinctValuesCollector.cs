@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Index;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -25,7 +26,7 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="GC"></typeparam>
-    public abstract class AbstractDistinctValuesCollector<GC> : Collector, IAbstractDistinctValuesCollector<GC>
+    public abstract class AbstractDistinctValuesCollector<GC> : ICollector, IAbstractDistinctValuesCollector<GC>
         where GC : AbstractDistinctValuesCollector.IGroupCount<object>
     {
         /// <summary>
@@ -34,14 +35,20 @@ namespace Lucene.Net.Search.Grouping
         /// <returns>all unique values for each top N group</returns>
         public abstract IEnumerable<GC> Groups { get; }
 
-        public override bool AcceptsDocsOutOfOrder
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get { return true; }
         }
 
-        public override void SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
-        } 
+        }
+
+        // LUCENENET specific - we need to implement these here, since our abstract base class
+        // is now an interface.
+        public abstract void Collect(int doc); // LUCENENET TODO: Copy documentation from ICollector
+
+        public abstract void SetNextReader(AtomicReaderContext context); // LUCENENET TODO: Copy documentation from ICollector
     }
 
     /// <summary>

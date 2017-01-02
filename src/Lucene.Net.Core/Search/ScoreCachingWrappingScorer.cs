@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
     /// current document. Successive calls to <seealso cref="#score()"/> will return the same
     /// result and will not invoke the wrapped Scorer's score() method, unless the
     /// current document has changed.<br>
-    /// this class might be useful due to the changes done to the <seealso cref="Collector"/>
+    /// this class might be useful due to the changes done to the <seealso cref="ICollector"/>
     /// interface, in which the score is not computed for a document by default, only
     /// if the collector requests it. Some collectors may need to use the score in
     /// several places, however all they have in hand is a <seealso cref="scorer"/> object, and

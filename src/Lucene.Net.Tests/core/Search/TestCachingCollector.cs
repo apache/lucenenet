@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class NoOpCollector : Collector
+        private class NoOpCollector : ICollector
         {
             internal readonly bool AcceptDocsOutOfOrder;
 
@@ -75,19 +75,19 @@ namespace Lucene.Net.Search
                 this.AcceptDocsOutOfOrder = acceptDocsOutOfOrder;
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return AcceptDocsOutOfOrder; }
             }
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private readonly TestCachingCollector OuterInstance;
 
@@ -124,21 +124,21 @@ namespace Lucene.Net.Search
 
             internal int prevDocID;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Assert.AreEqual(prevDocID + 1, doc);
                 prevDocID = doc;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return false; }
             }

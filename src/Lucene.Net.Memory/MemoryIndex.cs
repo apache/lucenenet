@@ -557,7 +557,7 @@ namespace Lucene.Net.Index.Memory
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private readonly MemoryIndex outerInstance;
 
@@ -571,22 +571,22 @@ namespace Lucene.Net.Index.Memory
 
             private Scorer scorer;
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 scores[0] = scorer.Score();
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
         }

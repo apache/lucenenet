@@ -270,45 +270,45 @@ namespace Lucene.Net.Search
                 this.theScore = theScore;
             }
 
-            public override bool Score(Collector collector, int max)
+            public override bool Score(ICollector collector, int max)
             {
                 return bulkScorer.Score(WrapCollector(collector), max);
             }
 
-            private Collector WrapCollector(Collector collector)
+            private ICollector WrapCollector(ICollector collector)
             {
                 return new CollectorAnonymousInnerClassHelper(this, collector);
             }
 
-            private class CollectorAnonymousInnerClassHelper : Collector
+            private class CollectorAnonymousInnerClassHelper : ICollector
             {
                 private readonly ConstantBulkScorer outerInstance;
 
-                private Collector collector;
+                private ICollector collector;
 
-                public CollectorAnonymousInnerClassHelper(ConstantBulkScorer outerInstance, Lucene.Net.Search.Collector collector)
+                public CollectorAnonymousInnerClassHelper(ConstantBulkScorer outerInstance, Lucene.Net.Search.ICollector collector)
                 {
                     this.outerInstance = outerInstance;
                     this.collector = collector;
                 }
                 
-                public override void SetScorer(Scorer scorer)
+                public virtual void SetScorer(Scorer scorer)
                 {
                     // we must wrap again here, but using the value passed in as parameter:
                     collector.SetScorer(new ConstantScorer(outerInstance.outerInstance, scorer, outerInstance.weight, outerInstance.theScore));
                 }
 
-                public override void Collect(int doc)
+                public virtual void Collect(int doc)
                 {
                     collector.Collect(doc);
                 }
 
-                public override void SetNextReader(AtomicReaderContext context)
+                public virtual void SetNextReader(AtomicReaderContext context)
                 {
                     collector.SetNextReader(context);
                 }
 
-                public override bool AcceptsDocsOutOfOrder
+                public virtual bool AcceptsDocsOutOfOrder
                 {
                     get { return collector.AcceptsDocsOutOfOrder; }
                 }

@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
     /// of hits would skip it.</p>
     ///
     /// <p><b>NOTE:</b> Prior to 2.9, Lucene silently filtered
-    /// out hits with score <= 0.  As of 2.9, the core Collectors
+    /// out hits with score &lt;= 0.  As of 2.9, the core Collectors
     /// no longer do that.  It's very unusual to have such hits
     /// (a negative query boost, or function query returning
     /// negative custom scores, could cause it to happen).  If
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
     ///
     /// @since 2.9
     /// </summary>
-    public abstract class Collector // LUCENENET TODO: Make interface, or back by interface? We need an interface for Grouping
+    public interface ICollector // LUCENENET NOTE: This was an abstract class in Lucene, but made into an interface since we need one for Grouping's covariance
     {
         /// <summary>
         /// Called before successive calls to <seealso cref="#collect(int)"/>. Implementations
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="#collect(int)"/>), should save the passed-in Scorer and call
         /// scorer.score() when needed.
         /// </summary>
-        public abstract void SetScorer(Scorer scorer);
+        void SetScorer(Scorer scorer);
 
         /// <summary>
         /// Called once for every document matching a query, with the unbased document
@@ -141,7 +141,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="Lucene.Net.Index.IndexReader#document(int)"/> on every hit.
         /// Doing so can slow searches by an order of magnitude or more.
         /// </summary>
-        public abstract void Collect(int doc);
+        void Collect(int doc);
 
         /// <summary>
         /// Called before collecting from each <seealso cref="AtomicReaderContext"/>. All doc ids in
@@ -152,7 +152,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="context">
         ///          next atomic reader context </param>
-        public abstract void SetNextReader(AtomicReaderContext context);
+        void SetNextReader(AtomicReaderContext context);
 
         /// <summary>
         /// Return <code>true</code> if this collector does not
@@ -170,6 +170,6 @@ namespace Lucene.Net.Search
         /// order, so it's important to return <code>true</code>
         /// here.
         /// </summary>
-        public abstract bool AcceptsDocsOutOfOrder { get; }
+        bool AcceptsDocsOutOfOrder { get; }
     }
 }

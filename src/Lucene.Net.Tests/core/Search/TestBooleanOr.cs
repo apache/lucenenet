@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
 
             FixedBitSet hits = new FixedBitSet(docCount);
             AtomicInteger end = new AtomicInteger();
-            Collector c = new CollectorAnonymousInnerClassHelper(this, scorer, hits, end);
+            ICollector c = new CollectorAnonymousInnerClassHelper(this, scorer, hits, end);
 
             while (end.Get() < docCount)
             {
@@ -214,7 +214,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private readonly TestBooleanOr OuterInstance;
 
@@ -230,21 +230,21 @@ namespace Lucene.Net.Search
                 this.End = end;
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Assert.IsTrue(doc < End.Get(), "collected doc=" + doc + " beyond max=" + End);
                 Hits.Set(doc);
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }

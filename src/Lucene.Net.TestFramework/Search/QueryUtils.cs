@@ -314,7 +314,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private Query q;
             private IndexSearcher s;
@@ -347,12 +347,12 @@ namespace Lucene.Net.Search
             private Scorer scorer;
             private int leafPtr;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.sc = scorer;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 float score = sc.Score();
                 LastDoc[0] = doc;
@@ -390,7 +390,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 // confirm that skipping beyond the last doc, on the
                 // previous reader, hits NO_MORE_DOCS
@@ -415,7 +415,7 @@ namespace Lucene.Net.Search
                 LastDoc[0] = -1;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return false; }
             }
@@ -453,7 +453,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper2 : Collector
+        private class CollectorAnonymousInnerClassHelper2 : ICollector
         {
             private Query q;
             private IndexSearcher s;
@@ -478,12 +478,12 @@ namespace Lucene.Net.Search
             private int leafPtr;
             private IBits liveDocs;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 float score = scorer.Score();
                 try
@@ -514,7 +514,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 // confirm that skipping beyond the last doc, on the
                 // previous reader, hits NO_MORE_DOCS
@@ -538,7 +538,7 @@ namespace Lucene.Net.Search
                 liveDocs = ((AtomicReader)context.Reader).LiveDocs;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return false; }
             }

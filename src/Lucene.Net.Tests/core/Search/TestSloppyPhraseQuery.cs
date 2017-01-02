@@ -205,28 +205,28 @@ namespace Lucene.Net.Search
             return query;
         }
 
-        internal class MaxFreqCollector : Collector
+        internal class MaxFreqCollector : ICollector
         {
             internal float Max;
             internal int TotalHits;
             internal Scorer Scorer_Renamed;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.Scorer_Renamed = scorer;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 TotalHits++;
                 Max = Math.Max(Max, Scorer_Renamed.Freq);
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return false; }
             }
@@ -240,7 +240,7 @@ namespace Lucene.Net.Search
             QueryUtils.Check(Random(), pq, searcher, Similarity);
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private readonly TestSloppyPhraseQuery OuterInstance;
 
@@ -251,23 +251,23 @@ namespace Lucene.Net.Search
 
             internal Scorer scorer;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Assert.IsFalse(float.IsInfinity(scorer.Freq));
                 Assert.IsFalse(float.IsInfinity(scorer.Score()));
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 // do nothing
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return false; }
             }

@@ -110,17 +110,17 @@ namespace Lucene.Net.Search
             return sets;
         }
 
-        public class CountingHitCollector : Collector
+        public class CountingHitCollector : ICollector
         {
             internal int Count_Renamed = 0;
             internal int Sum_Renamed = 0;
             protected internal int DocBase = 0;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Count_Renamed++;
                 Sum_Renamed += DocBase + doc; // use it to avoid any possibility of being eliminated by hotspot
@@ -142,12 +142,12 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 DocBase = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }

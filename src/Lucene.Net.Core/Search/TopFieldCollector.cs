@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
     using Entry = Lucene.Net.Search.FieldValueHitQueue.Entry;
 
     /// <summary>
-    /// A <seealso cref="Collector"/> that sorts by <seealso cref="SortField"/> using
+    /// A <seealso cref="ICollector"/> that sorts by <seealso cref="SortField"/> using
     /// <seealso cref="FieldComparator"/>s.
     /// <p/>
     /// See the <seealso cref="#create(Lucene.Net.Search.Sort, int, boolean, boolean, boolean, boolean)"/> method

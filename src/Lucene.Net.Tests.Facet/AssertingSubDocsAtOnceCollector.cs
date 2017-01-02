@@ -22,7 +22,7 @@ namespace Lucene.Net.Facet
 
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Collector = Lucene.Net.Search.Collector;
+    using ICollector = Lucene.Net.Search.ICollector;
     using ChildScorer = Lucene.Net.Search.Scorer.ChildScorer;
     using Scorer = Lucene.Net.Search.Scorer;
     using System;
@@ -30,14 +30,14 @@ namespace Lucene.Net.Facet
     /// Verifies in collect() that all child subScorers are on
     ///  the collected doc. 
     /// </summary>
-    internal class AssertingSubDocsAtOnceCollector : Collector
+    internal class AssertingSubDocsAtOnceCollector : ICollector
     {
 
         // TODO: allow wrapping another Collector
 
         internal IList<Scorer> allScorers;
 
-        public override void SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
             // Gathers all scorers, including value and "under":
             allScorers = new List<Scorer>();
@@ -53,7 +53,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        public override void Collect(int docID)
+        public virtual void Collect(int docID)
         {
             foreach (Scorer s in allScorers)
             {
@@ -64,11 +64,11 @@ namespace Lucene.Net.Facet
             }
         }
 
-        public override void SetNextReader(AtomicReaderContext context)
+        public virtual void SetNextReader(AtomicReaderContext context)
         {
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get { return false; }
         }

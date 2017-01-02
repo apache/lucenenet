@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
                 correct.Add(Convert.ToInt32(results[i]));
             }
             SortedSet<int?> actual = new SortedSet<int?>();
-            Collector c = new SetCollector(actual);
+            ICollector c = new SetCollector(actual);
 
             searcher.Search(query, c);
 
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Just collects document ids into a set.
         /// </summary>
-        public class SetCollector : Collector
+        public class SetCollector : ICollector
         {
             internal readonly ISet<int?> Bag;
 
@@ -137,21 +137,21 @@ namespace Lucene.Net.Search
 
             internal int @base = 0;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Bag.Add(Convert.ToInt32(doc + @base));
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 @base = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }
@@ -466,13 +466,13 @@ namespace Lucene.Net.Search
                 return base.Search(query, filter, n, sort);
             }
 
-            public override void Search(Query query, Collector results)
+            public override void Search(Query query, ICollector results)
             {
                 CheckExplanations(query);
                 base.Search(query, results);
             }
 
-            public override void Search(Query query, Filter filter, Collector results)
+            public override void Search(Query query, Filter filter, ICollector results)
             {
                 CheckExplanations(query);
                 base.Search(query, filter, results);
@@ -493,7 +493,7 @@ namespace Lucene.Net.Search
         /// specified at when it is constructed.
         /// </summary>
         /// <seealso cref= CheckHits#verifyExplanation </seealso>
-        public class ExplanationAsserter : Collector
+        public class ExplanationAsserter : ICollector
         {
             internal Query q;
             internal IndexSearcher s;
@@ -518,12 +518,12 @@ namespace Lucene.Net.Search
                 this.Deep = deep;
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.Scorer_Renamed = scorer;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Explanation exp = null;
                 doc = doc + @base;
@@ -541,12 +541,12 @@ namespace Lucene.Net.Search
                 Assert.IsTrue(exp.IsMatch, "Explanation of [[" + d + "]] for #" + doc + " does not indicate match: " + exp.ToString());
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 @base = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }

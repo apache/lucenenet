@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CollectionStatistics = Lucene.Net.Search.CollectionStatistics;
-    using Collector = Lucene.Net.Search.Collector;
+    using ICollector = Lucene.Net.Search.ICollector;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Explanation = Lucene.Net.Search.Explanation;
@@ -514,7 +514,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public class CountingHitCollector : Collector
+        public class CountingHitCollector : ICollector
         {
             internal static int Count_Renamed = 0;
             internal static int Sum_Renamed = 0;
@@ -526,11 +526,11 @@ namespace Lucene.Net.Index
                 Sum_Renamed = 0;
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Count_Renamed++;
                 Sum_Renamed += doc + DocBase; // use it to avoid any possibility of being merged away
@@ -552,12 +552,12 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 DocBase = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }

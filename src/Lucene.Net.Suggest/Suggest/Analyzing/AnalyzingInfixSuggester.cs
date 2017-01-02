@@ -516,7 +516,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             // We sorted postings by weight during indexing, so we
             // only retrieve the first num hits now:
-            Collector c2 = new EarlyTerminatingSortingCollector(c, SORT, num);
+            ICollector c2 = new EarlyTerminatingSortingCollector(c, SORT, num);
             IndexSearcher searcher = searcherMgr.Acquire();
             List<LookupResult> results = null;
             try

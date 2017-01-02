@@ -24,7 +24,7 @@ namespace Lucene.Net.Facet
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IBits = Lucene.Net.Util.IBits;
     using BulkScorer = Lucene.Net.Search.BulkScorer;
-    using Collector = Lucene.Net.Search.Collector;
+    using ICollector = Lucene.Net.Search.ICollector;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
@@ -35,7 +35,7 @@ namespace Lucene.Net.Facet
     {
         //private static boolean DEBUG = false;
 
-        private readonly Collector drillDownCollector;
+        private readonly ICollector drillDownCollector;
 
         private readonly DocsAndCost[] dims;
 
@@ -53,7 +53,7 @@ namespace Lucene.Net.Facet
         private float collectScore;
 
         internal DrillSidewaysScorer(AtomicReaderContext context, Scorer baseScorer, 
-            Collector drillDownCollector, DocsAndCost[] dims, bool scoreSubDocsAtOnce)
+            ICollector drillDownCollector, DocsAndCost[] dims, bool scoreSubDocsAtOnce)
         {
             this.dims = dims;
             this.context = context;
@@ -62,7 +62,7 @@ namespace Lucene.Net.Facet
             this.scoreSubDocsAtOnce = scoreSubDocsAtOnce;
         }
 
-        public override bool Score(Collector collector, int maxDoc)
+        public override bool Score(ICollector collector, int maxDoc)
         {
             if (maxDoc != int.MaxValue)
             {
@@ -108,10 +108,10 @@ namespace Lucene.Net.Facet
             int numDims = dims.Length;
 
             IBits[] bits = new IBits[numBits];
-            Collector[] bitsSidewaysCollectors = new Collector[numBits];
+            ICollector[] bitsSidewaysCollectors = new ICollector[numBits];
 
             DocIdSetIterator[] disis = new DocIdSetIterator[numDims - numBits];
-            Collector[] sidewaysCollectors = new Collector[numDims - numBits];
+            ICollector[] sidewaysCollectors = new ICollector[numDims - numBits];
             long drillDownCost = 0;
             int disiUpto = 0;
             int bitsUpto = 0;
@@ -174,8 +174,8 @@ namespace Lucene.Net.Facet
         /// this case we just .Next() on base and .Advance() on
         /// the dim filters. 
         /// </summary>
-        private void DoQueryFirstScoring(Collector collector, DocIdSetIterator[] disis, 
-            Collector[] sidewaysCollectors, IBits[] bits, Collector[] bitsSidewaysCollectors)
+        private void DoQueryFirstScoring(ICollector collector, DocIdSetIterator[] disis, 
+            ICollector[] sidewaysCollectors, IBits[] bits, ICollector[] bitsSidewaysCollectors)
         {
             //if (DEBUG) {
             //  System.out.println("  doQueryFirstScoring");
@@ -184,7 +184,7 @@ namespace Lucene.Net.Facet
 
             while (docID != DocsEnum.NO_MORE_DOCS)
             {
-                Collector failedCollector = null;
+                ICollector failedCollector = null;
                 for (int i = 0; i < disis.Length; i++)
                 {
                     // TODO: should we sort this 2nd dimension of
@@ -265,7 +265,7 @@ namespace Lucene.Net.Facet
         /// Used when drill downs are highly constraining vs
         /// baseQuery. 
         /// </summary>
-        private void DoDrillDownAdvanceScoring(Collector collector, DocIdSetIterator[] disis, Collector[] sidewaysCollectors)
+        private void DoDrillDownAdvanceScoring(ICollector collector, DocIdSetIterator[] disis, ICollector[] sidewaysCollectors)
         {
             int maxDoc = context.Reader.MaxDoc;
             int numDims = dims.Length;
@@ -495,7 +495,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        private void DoUnionScoring(Collector collector, DocIdSetIterator[] disis, Collector[] sidewaysCollectors)
+        private void DoUnionScoring(ICollector collector, DocIdSetIterator[] disis, ICollector[] sidewaysCollectors)
         {
             //if (DEBUG) {
             //  System.out.println("  doUnionScoring");
@@ -661,7 +661,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        private void CollectHit(Collector collector, Collector[] sidewaysCollectors)
+        private void CollectHit(ICollector collector, ICollector[] sidewaysCollectors)
         {
             //if (DEBUG) {
             //  System.out.println("      hit");
@@ -684,7 +684,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        private void CollectHit(Collector collector, Collector[] sidewaysCollectors, Collector[] sidewaysCollectors2)
+        private void CollectHit(ICollector collector, ICollector[] sidewaysCollectors, ICollector[] sidewaysCollectors2)
         {
             //if (DEBUG) {
             //  System.out.println("      hit");
@@ -711,7 +711,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        private void CollectNearMiss(Collector sidewaysCollector)
+        private void CollectNearMiss(ICollector sidewaysCollector)
         {
             //if (DEBUG) {
             //  System.out.println("      missingDim=" + dim);
@@ -785,7 +785,7 @@ namespace Lucene.Net.Facet
             internal DocIdSetIterator disi;
             // Random access bits:
             internal IBits bits;
-            internal Collector sidewaysCollector;
+            internal ICollector sidewaysCollector;
             internal string dim;
 
             public virtual int CompareTo(DocsAndCost other)

@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
     /// exceeded, the search thread is stopped by throwing a
     /// <seealso cref="TimeExceededException"/>.
     /// </summary>
-    public class TimeLimitingCollector : Collector
+    public class TimeLimitingCollector : ICollector
     {
         /// <summary>
         /// Thrown when elapsed search time exceeds allowed search time. </summary>
@@ -81,19 +81,19 @@ namespace Lucene.Net.Search
 
         private long t0 = long.MinValue;
         private long timeout = long.MinValue;
-        private Collector collector;
+        private ICollector collector;
         private readonly Counter clock;
         private readonly long ticksAllowed;
         private bool greedy = false;
         private int docBase;
 
         /// <summary>
-        /// Create a TimeLimitedCollector wrapper over another <seealso cref="Collector"/> with a specified timeout. </summary>
-        /// <param name="collector"> the wrapped <seealso cref="Collector"/> </param>
+        /// Create a TimeLimitedCollector wrapper over another <seealso cref="ICollector"/> with a specified timeout. </summary>
+        /// <param name="collector"> the wrapped <seealso cref="ICollector"/> </param>
         /// <param name="clock"> the timer clock </param>
         /// <param name="ticksAllowed"> max time allowed for collecting
         /// hits after which <seealso cref="TimeExceededException"/> is thrown </param>
-        public TimeLimitingCollector(Collector collector, Counter clock, long ticksAllowed)
+        public TimeLimitingCollector(ICollector collector, Counter clock, long ticksAllowed)
         {
             this.collector = collector;
             this.clock = clock;
@@ -152,12 +152,12 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Calls <seealso cref="Collector#collect(int)"/> on the decorated <seealso cref="Collector"/>
+        /// Calls <seealso cref="ICollector#collect(int)"/> on the decorated <seealso cref="ICollector"/>
         /// unless the allowed time has passed, in which case it throws an exception.
         /// </summary>
         /// <exception cref="TimeExceededException">
         ///           if the time allowed has exceeded. </exception>
-        public override void Collect(int doc)
+        public virtual void Collect(int doc)
         {
             long time = clock.Get();
             if (timeout < time)
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
             collector.Collect(doc);
         }
 
-        public override void SetNextReader(AtomicReaderContext context)
+        public virtual void SetNextReader(AtomicReaderContext context)
         {
             collector.SetNextReader(context);
             this.docBase = context.DocBase;
@@ -184,12 +184,12 @@ namespace Lucene.Net.Search
             }
         }
         
-        public override void SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
             collector.SetScorer(scorer);
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get { return collector.AcceptsDocsOutOfOrder; }
         }
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
         /// reset the timer for each phase.  Once time is up subsequent phases need to timeout quickly.
         /// </summary>
         /// <param name="collector"> The actual collector performing search functionality </param>
-        public virtual void SetCollector(Collector collector)
+        public virtual void SetCollector(ICollector collector)
         {
             this.collector = collector;
         }

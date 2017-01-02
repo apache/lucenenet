@@ -25,10 +25,10 @@ namespace Lucene.Net.Search
     /// Randomize collection order. Don't forget to call <seealso cref="#flush()"/> when
     ///  collection is finished to collect buffered documents.
     /// </summary>
-    internal sealed class RandomOrderCollector : Collector
+    internal sealed class RandomOrderCollector : ICollector
     {
         internal readonly Random Random;
-        internal readonly Collector @in;
+        internal readonly ICollector @in;
         internal Scorer Scorer_Renamed;
         internal FakeScorer fakeScorer;
 
@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
         internal readonly float[] Scores;
         internal readonly int[] Freqs;
 
-        internal RandomOrderCollector(Random random, Collector @in)
+        internal RandomOrderCollector(Random random, ICollector @in)
         {
             if (!@in.AcceptsDocsOutOfOrder)
             {
@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
             Buffered = 0;
         }
 
-        public override void SetScorer(Scorer scorer)
+        public void SetScorer(Scorer scorer)
         {
             this.Scorer_Renamed = scorer;
             fakeScorer = new FakeScorer();
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
             Buffered = 0;
         }
 
-        public override void Collect(int doc)
+        public void Collect(int doc)
         {
             DocIDs[Buffered] = doc;
             Scores[Buffered] = Scorer_Renamed.Score();
@@ -111,12 +111,12 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        public bool AcceptsDocsOutOfOrder
         {
             get { return @in.AcceptsDocsOutOfOrder; }
         }
 
-        public override void SetNextReader(AtomicReaderContext context)
+        public void SetNextReader(AtomicReaderContext context)
         {
             throw new System.NotSupportedException();
         }

@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public abstract class AbstractSecondPassGroupingCollector<TGroupValue> : Collector, IAbstractSecondPassGroupingCollector<TGroupValue>
+    public abstract class AbstractSecondPassGroupingCollector<TGroupValue> : ICollector, IAbstractSecondPassGroupingCollector<TGroupValue>
     {
         protected readonly IDictionary<TGroupValue, AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>> groupMap;
         private readonly int maxDocsPerGroup;
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        public override void SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
             foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> group in groupMap.Values)
             {
@@ -90,7 +90,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        public override void Collect(int doc)
+        public virtual void Collect(int doc)
         {
             totalHitCount++;
             AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> group = RetrieveGroup(doc);
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search.Grouping
         /// <exception cref="IOException">If an I/O related error occurred</exception>
         protected abstract AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> RetrieveGroup(int doc);
 
-        public override void SetNextReader(AtomicReaderContext context)
+        public virtual void SetNextReader(AtomicReaderContext context)
         {
             //System.out.println("SP.setNextReader");
             foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> group in groupMap.Values)
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get { return false; }
         }

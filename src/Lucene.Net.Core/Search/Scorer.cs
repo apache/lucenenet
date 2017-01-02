@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
         /// Returns the score of the current document matching the query.
         /// Initially invalid, until <seealso cref="#nextDoc()"/> or <seealso cref="#advance(int)"/>
         /// is called the first time, or when called from within
-        /// <seealso cref="Collector#collect"/>.
+        /// <seealso cref="ICollector#collect"/>.
         /// </summary>
         public abstract float Score(); // LUCENENET NOTE: Often makes a calculation, so not a good candidate for a property, change to GetScore() to make this more clear
 

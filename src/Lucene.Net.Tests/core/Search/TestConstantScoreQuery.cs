@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, count[0], "invalid number of results");
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private readonly TestConstantScoreQuery OuterInstance;
 
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
 
             private Scorer scorer;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
                 Assert.AreEqual(ScorerClassName, scorer.GetType().Name, "Scorer is implemented by wrong class");
@@ -94,17 +94,17 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Assert.AreEqual(ExpectedScore, this.scorer.Score(), 0, "Score differs from expected");
                 Count[0]++;
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }

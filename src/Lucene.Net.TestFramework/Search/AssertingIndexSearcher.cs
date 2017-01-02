@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
             return (filter == null) ? query : new FilteredQuery(query, filter, TestUtil.RandomFilterStrategy(Random));
         }
 
-        protected override void Search(IList<AtomicReaderContext> leaves, Weight weight, Collector collector)
+        protected override void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector)
         {
             // TODO: shouldn't we AssertingCollector.wrap(collector) here?
             base.Search(leaves, AssertingWeight.Wrap(Random, weight), collector);

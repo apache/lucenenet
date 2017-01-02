@@ -300,7 +300,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Lower-level search API.
         ///
-        /// <p><seealso cref="Collector#collect(int)"/> is called for every matching
+        /// <p><seealso cref="ICollector#collect(int)"/> is called for every matching
         /// document.
         /// </summary>
         /// <param name="query"> to match documents </param>
@@ -308,7 +308,7 @@ namespace Lucene.Net.Search
         /// <param name="results"> to receive hits </param>
         /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
-        public virtual void Search(Query query, Filter filter, Collector results)
+        public virtual void Search(Query query, Filter filter, ICollector results)
         {
             Search(m_leafContexts, CreateNormalizedWeight(WrapFilter(query, filter)), results);
         }
@@ -316,11 +316,11 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Lower-level search API.
         ///
-        /// <p><seealso cref="Collector#collect(int)"/> is called for every matching document.
+        /// <p><seealso cref="ICollector#collect(int)"/> is called for every matching document.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
-        public virtual void Search(Query query, Collector results)
+        public virtual void Search(Query query, ICollector results)
         {
             Search(m_leafContexts, CreateNormalizedWeight(query), results);
         }
@@ -615,7 +615,7 @@ namespace Lucene.Net.Search
         /// Lower-level search API.
         ///
         /// <p>
-        /// <seealso cref="Collector#collect(int)"/> is called for every document. <br>
+        /// <seealso cref="ICollector#collect(int)"/> is called for every document. <br>
         ///
         /// <p>
         /// NOTE: this method executes the searches on all given leaves exclusively.
@@ -629,7 +629,7 @@ namespace Lucene.Net.Search
         ///          to receive hits </param>
         /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
-        protected virtual void Search(IList<AtomicReaderContext> leaves, Weight weight, Collector collector)
+        protected virtual void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector)
         {
             // TODO: should we make this
             // threaded...?  the Collector could be sync'd?

@@ -40,24 +40,24 @@ namespace Lucene.Net.Search
     {
         private const string UNSUPPORTED_MSG = "unsupported: used for back-compat testing only !";
 
-        internal sealed class JustCompileCollector : Collector
+        internal sealed class JustCompileCollector : ICollector
         {
-            public override void Collect(int doc)
+            public void Collect(int doc)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public bool AcceptsDocsOutOfOrder
             {
                 get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }

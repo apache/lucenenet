@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
             store.Dispose();
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private readonly TestSimilarity OuterInstance;
 
@@ -136,27 +136,27 @@ namespace Lucene.Net.Search
 
             private Scorer scorer;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Assert.AreEqual(1.0f, scorer.Score(), 0);
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper2 : Collector
+        private class CollectorAnonymousInnerClassHelper2 : ICollector
         {
             private readonly TestSimilarity OuterInstance;
 
@@ -169,29 +169,29 @@ namespace Lucene.Net.Search
             private int @base;
             private Scorer scorer;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 //System.out.println("Doc=" + doc + " score=" + score);
                 Assert.AreEqual((float)doc + @base + 1, scorer.Score(), 0);
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 @base = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper3 : Collector
+        private class CollectorAnonymousInnerClassHelper3 : ICollector
         {
             private readonly TestSimilarity OuterInstance;
 
@@ -202,28 +202,28 @@ namespace Lucene.Net.Search
 
             private Scorer scorer;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 //System.out.println("Doc=" + doc + " score=" + score);
                 Assert.AreEqual(1.0f, scorer.Score(), 0);
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper4 : Collector
+        private class CollectorAnonymousInnerClassHelper4 : ICollector
         {
             private readonly TestSimilarity OuterInstance;
 
@@ -234,22 +234,22 @@ namespace Lucene.Net.Search
 
             private Scorer scorer;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 //System.out.println("Doc=" + doc + " score=" + score);
                 Assert.AreEqual(2.0f, scorer.Score(), 0);
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }

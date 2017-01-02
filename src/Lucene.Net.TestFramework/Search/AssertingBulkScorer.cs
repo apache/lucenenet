@@ -28,8 +28,8 @@ namespace Lucene.Net.Search
     /// Wraps a Scorer with additional checks </summary>
     public class AssertingBulkScorer : BulkScorer
     {
-        private static readonly VirtualMethod SCORE_COLLECTOR = new VirtualMethod(typeof(BulkScorer), "Score", typeof(Collector));
-        private static readonly VirtualMethod SCORE_COLLECTOR_RANGE = new VirtualMethod(typeof(BulkScorer), "Score", typeof(Collector), typeof(int));
+        private static readonly VirtualMethod SCORE_COLLECTOR = new VirtualMethod(typeof(BulkScorer), "Score", typeof(ICollector));
+        private static readonly VirtualMethod SCORE_COLLECTOR_RANGE = new VirtualMethod(typeof(BulkScorer), "Score", typeof(ICollector), typeof(int));
 
         public static BulkScorer Wrap(Random random, BulkScorer other)
         {
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override void Score(Collector collector)
+        public override void Score(ICollector collector)
         {
             if (Random.NextBoolean())
             {
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override bool Score(Collector collector, int max)
+        public override bool Score(ICollector collector, int max)
         {
             return @in.Score(collector, max);
         }

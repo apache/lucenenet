@@ -26,12 +26,12 @@ namespace Lucene.Net.Facet
     /// <summary>
     /// Collects hits for subsequent faceting.  Once you've run
     /// a search and collect hits into this, instantiate one of
-    /// the <see cref="Collector"/> subclasses to do the facet
+    /// the <see cref="ICollector"/> subclasses to do the facet
     /// counting.  Use the <see cref="Search"/> utility methods to
     /// perform an "ordinary" search but also collect into a
     /// <see cref="Facets"/>. 
     /// </summary>
-    public class FacetsCollector : Collector
+    public class FacetsCollector : ICollector
     {
         private AtomicReaderContext context;
         private Scorer scorer;
@@ -185,7 +185,7 @@ namespace Lucene.Net.Facet
             return matchingDocs;
         }
 
-        public override sealed bool AcceptsDocsOutOfOrder
+        public bool AcceptsDocsOutOfOrder
         {
             get
             {
@@ -196,7 +196,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        public override sealed void Collect(int doc)
+        public void Collect(int doc)
         {
             docs.AddDoc(doc);
             if (keepScores)
@@ -212,12 +212,12 @@ namespace Lucene.Net.Facet
             totalHits++;
         }
 
-        public override sealed void SetScorer(Scorer scorer)
+        public void SetScorer(Scorer scorer)
         {
             this.scorer = scorer;
         }
 
-        public override sealed void SetNextReader(AtomicReaderContext context)
+        public void SetNextReader(AtomicReaderContext context)
         {
             if (docs != null)
             {
@@ -234,27 +234,27 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        /// into the provided <see cref="Collector"/>. 
+        /// into the provided <see cref="ICollector"/>. 
         /// </summary>
-        public static TopDocs Search(IndexSearcher searcher, Query q, int n, Collector fc)
+        public static TopDocs Search(IndexSearcher searcher, Query q, int n, ICollector fc)
         {
             return DoSearch(searcher, null, q, null, n, null, false, false, fc);
         }
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        /// into the provided <see cref="Collector"/>. 
+        /// into the provided <see cref="ICollector"/>. 
         /// </summary>
-        public static TopDocs Search(IndexSearcher searcher, Query q, Filter filter, int n, Collector fc)
+        public static TopDocs Search(IndexSearcher searcher, Query q, Filter filter, int n, ICollector fc)
         {
             return DoSearch(searcher, null, q, filter, n, null, false, false, fc);
         }
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        /// into the provided <see cref="Collector"/>. 
+        /// into the provided <see cref="ICollector"/>. 
         /// </summary>
-        public static TopFieldDocs Search(IndexSearcher searcher, Query q, Filter filter, int n, Sort sort, Collector fc)
+        public static TopFieldDocs Search(IndexSearcher searcher, Query q, Filter filter, int n, Sort sort, ICollector fc)
         {
             if (sort == null)
             {
@@ -265,9 +265,9 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        /// into the provided <see cref="Collector"/>. 
+        /// into the provided <see cref="ICollector"/>. 
         /// </summary>
-        public static TopFieldDocs Search(IndexSearcher searcher, Query q, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore, Collector fc)
+        public static TopFieldDocs Search(IndexSearcher searcher, Query q, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore, ICollector fc)
         {
             if (sort == null)
             {
@@ -278,27 +278,27 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        /// into the provided <see cref="Collector"/>. 
+        /// into the provided <see cref="ICollector"/>. 
         /// </summary>
-        public virtual TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, int n, Collector fc)
+        public virtual TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, int n, ICollector fc)
         {
             return DoSearch(searcher, after, q, null, n, null, false, false, fc);
         }
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        /// into the provided <see cref="Collector"/>. 
+        /// into the provided <see cref="ICollector"/>. 
         /// </summary>
-        public static TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, Collector fc)
+        public static TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, ICollector fc)
         {
             return DoSearch(searcher, after, q, filter, n, null, false, false, fc);
         }
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        /// into the provided <see cref="Collector"/>. 
+        /// into the provided <see cref="ICollector"/>. 
         /// </summary>
-        public static TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, Sort sort, Collector fc)
+        public static TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, Sort sort, ICollector fc)
         {
             if (sort == null)
             {
@@ -309,9 +309,9 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Utility method, to search and also collect all hits
-        /// into the provided <see cref="Collector"/>. 
+        /// into the provided <see cref="ICollector"/>. 
         /// </summary>
-        public static TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore, Collector fc)
+        public static TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore, ICollector fc)
         {
             if (sort == null)
             {
@@ -320,7 +320,7 @@ namespace Lucene.Net.Facet
             return DoSearch(searcher, after, q, filter, n, sort, doDocScores, doMaxScore, fc);
         }
 
-        private static TopDocs DoSearch(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore, Collector fc)
+        private static TopDocs DoSearch(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore, ICollector fc)
         {
 
             if (filter != null)

@@ -23,7 +23,7 @@ namespace Lucene.Net.Join
 	 */
 
 
-    internal abstract class TermsWithScoreCollector : Collector
+    internal abstract class TermsWithScoreCollector : ICollector
     {
         private const int InitialArraySize = 256;
 
@@ -56,12 +56,19 @@ namespace Lucene.Net.Join
             }
         }
 
-        public override void SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
             _scorer = scorer;
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        // LUCENENET specific - we need to implement these here, since our abstract base class
+        // is now an interface.
+        public abstract void Collect(int doc); // LUCENENET TODO: Copy documentation from ICollector
+
+        public abstract void SetNextReader(AtomicReaderContext context); // LUCENENET TODO: Copy documentation from ICollector
+
+
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get { return true; }
         }

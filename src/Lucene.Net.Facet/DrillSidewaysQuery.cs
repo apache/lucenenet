@@ -23,7 +23,7 @@ namespace Lucene.Net.Facet
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IBits = Lucene.Net.Util.IBits;
     using BulkScorer = Lucene.Net.Search.BulkScorer;
-    using Collector = Lucene.Net.Search.Collector;
+    using ICollector = Lucene.Net.Search.ICollector;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Explanation = Lucene.Net.Search.Explanation;
@@ -41,13 +41,13 @@ namespace Lucene.Net.Facet
     internal class DrillSidewaysQuery : Query
     {
         internal readonly Query baseQuery;
-        internal readonly Collector drillDownCollector;
-        internal readonly Collector[] drillSidewaysCollectors;
+        internal readonly ICollector drillDownCollector;
+        internal readonly ICollector[] drillSidewaysCollectors;
         internal readonly Query[] drillDownQueries;
         internal readonly bool scoreSubDocsAtOnce;
 
-        internal DrillSidewaysQuery(Query baseQuery, Collector drillDownCollector,
-            Collector[] drillSidewaysCollectors, Query[] drillDownQueries, bool scoreSubDocsAtOnce)
+        internal DrillSidewaysQuery(Query baseQuery, ICollector drillDownCollector,
+            ICollector[] drillSidewaysCollectors, Query[] drillDownQueries, bool scoreSubDocsAtOnce)
         {
             this.baseQuery = baseQuery;
             this.drillDownCollector = drillDownCollector;

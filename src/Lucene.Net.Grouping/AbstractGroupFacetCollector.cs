@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 
@@ -25,7 +26,7 @@ namespace Lucene.Net.Search.Grouping
     /// Base class for computing grouped facets.
     /// @lucene.experimental
     /// </summary>
-    public abstract class AbstractGroupFacetCollector : Collector
+    public abstract class AbstractGroupFacetCollector : ICollector
     {
         protected readonly string groupField;
         protected readonly string facetField;
@@ -111,11 +112,17 @@ namespace Lucene.Net.Search.Grouping
 
         protected abstract AbstractSegmentResult CreateSegmentResult();
 
-        public override void SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        // LUCENENET specific - need an abstract definition of this method, since our interface does not provide an implementation.
+        public abstract void Collect(int doc);
+
+        // LUCENENET specific - need an abstract definition of this method, since our interface does not provide an implementation.
+        public abstract void SetNextReader(AtomicReaderContext context);
+
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get { return true; }
         }

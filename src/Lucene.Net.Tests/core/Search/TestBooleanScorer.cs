@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
         {
             private int doc = -1;
 
-            public override bool Score(Collector c, int maxDoc)
+            public override bool Score(ICollector c, int maxDoc)
             {
                 Debug.Assert(doc == -1);
                 doc = 3000;
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private readonly TestBooleanScorer OuterInstance;
 
@@ -136,21 +136,21 @@ namespace Lucene.Net.Search
 
             internal int docBase;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Hits.Add(docBase + doc);
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 docBase = context.DocBase;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }
@@ -188,7 +188,7 @@ namespace Lucene.Net.Search
             d.Dispose();
         }
 
-        private class CollectorAnonymousInnerClassHelper2 : Collector
+        private class CollectorAnonymousInnerClassHelper2 : ICollector
         {
             private readonly TestBooleanScorer OuterInstance;
 
@@ -202,23 +202,23 @@ namespace Lucene.Net.Search
                 this.Count = count;
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 // Make sure we got BooleanScorer:
                 Type clazz = scorer.GetType();
                 Assert.AreEqual(typeof(FakeScorer).Name, clazz.Name, "Scorer is implemented by wrong class");
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Count[0]++;
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }
@@ -288,7 +288,7 @@ namespace Lucene.Net.Search
                         this.OuterInstance = outerInstance;
                     }
 
-                    public override bool Score(Collector collector, int max)
+                    public override bool Score(ICollector collector, int max)
                     {
                         collector.SetScorer(new FakeScorer());
                         collector.Collect(0);

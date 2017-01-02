@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
@@ -208,7 +209,7 @@ namespace Lucene.Net.Search.Grouping
     /// <see cref="AbstractAllGroupHeadsCollector{GH}"/> subclass
     /// without refering to its generic closing type.
     /// </summary>
-    public abstract class AbstractAllGroupHeadsCollector : Collector
+    public abstract class AbstractAllGroupHeadsCollector : ICollector
     {
         /// <summary>
         /// 
@@ -240,5 +241,16 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="doc">The document to retrieve the group head for.</param>
         /// <exception cref="IOException">If I/O related errors occur</exception>
         protected abstract void RetrieveGroupHeadAndAddIfNotExist(int doc);
+
+
+        // LUCENENET specific - we need to implement these here, since our abstract base class
+        // is now an interface.
+        public abstract void SetScorer(Scorer scorer); // LUCENENET TODO: Copy documentation from ICollector
+
+        public abstract void Collect(int doc); // LUCENENET TODO: Copy documentation from ICollector
+
+        public abstract void SetNextReader(AtomicReaderContext context); // LUCENENET TODO: Copy documentation from ICollector
+
+        public abstract bool AcceptsDocsOutOfOrder { get; } // LUCENENET TODO: Copy documentation from ICollector
     }
 }

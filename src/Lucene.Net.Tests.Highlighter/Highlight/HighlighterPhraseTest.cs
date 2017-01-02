@@ -135,7 +135,7 @@ namespace Lucene.Net.Search.Highlight
             }
         }
 
-        internal class ConcurrentSpanCollectorAnonymousHelper : Collector
+        internal class ConcurrentSpanCollectorAnonymousHelper : ICollector
         {
             private readonly HighlighterPhraseTest outerInstance;
             private readonly FixedBitSet bitset;
@@ -147,22 +147,22 @@ namespace Lucene.Net.Search.Highlight
 
             private int baseDoc;
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }
 
-            public override void Collect(int i)
+            public virtual void Collect(int i)
             {
                 bitset.Set(this.baseDoc + i);
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 this.baseDoc = context.DocBase;
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 // Do Nothing
             }

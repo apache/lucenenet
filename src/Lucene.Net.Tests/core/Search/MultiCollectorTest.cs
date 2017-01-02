@@ -25,14 +25,14 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class MultiCollectorTest : LuceneTestCase
     {
-        private class DummyCollector : Collector
+        private class DummyCollector : ICollector
         {
             internal bool AcceptsDocsOutOfOrderCalled = false;
             internal bool CollectCalled = false;
             internal bool SetNextReaderCalled = false;
             internal bool SetScorerCalled = false;
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get
                 {
@@ -41,17 +41,17 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 CollectCalled = true;
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 SetNextReaderCalled = true;
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 SetScorerCalled = true;
             }
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
 
             // Tests that the collector handles some null collectors well. If it
             // doesn't, an NPE would be thrown.
-            Collector c = MultiCollector.Wrap(new DummyCollector(), null, new DummyCollector());
+            ICollector c = MultiCollector.Wrap(new DummyCollector(), null, new DummyCollector());
             Assert.IsTrue(c is MultiCollector);
             Assert.IsTrue(c.AcceptsDocsOutOfOrder);
             c.Collect(1);
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
             // Tests that the collector handles some null collectors well. If it
             // doesn't, an NPE would be thrown.
             DummyCollector[] dcs = new DummyCollector[] { new DummyCollector(), new DummyCollector() };
-            Collector c = MultiCollector.Wrap(dcs);
+            ICollector c = MultiCollector.Wrap(dcs);
             Assert.IsTrue(c.AcceptsDocsOutOfOrder);
             c.Collect(1);
             c.SetNextReader(null);

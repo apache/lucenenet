@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
     /// Just counts the total number of hits.
     /// </summary>
 
-    public class TotalHitCountCollector : Collector
+    public class TotalHitCountCollector : ICollector
     {
         private int totalHits;
 
@@ -37,20 +37,20 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override void SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
         }
 
-        public override void Collect(int doc)
+        public virtual void Collect(int doc)
         {
             totalHits++;
         }
 
-        public override void SetNextReader(AtomicReaderContext context)
+        public virtual void SetNextReader(AtomicReaderContext context)
         {
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get { return true; }
         }

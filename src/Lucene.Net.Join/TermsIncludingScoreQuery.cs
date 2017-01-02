@@ -235,7 +235,7 @@ namespace Lucene.Net.Join
                 _doc = -1;
             }
             
-            public override bool Score(Collector collector, int max)
+            public override bool Score(ICollector collector, int max)
             {
                 FakeScorer fakeScorer = new FakeScorer();
                 collector.SetScorer(fakeScorer);

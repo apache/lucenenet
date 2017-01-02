@@ -21,7 +21,7 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Used by <seealso cref="BulkScorer"/>s that need to pass a {@link
-    ///  Scorer} to <seealso cref="Collector#setScorer"/>.
+    ///  Scorer} to <seealso cref="ICollector#setScorer"/>.
     /// </summary>
     internal sealed class FakeScorer : Scorer
     {

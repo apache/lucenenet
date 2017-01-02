@@ -230,18 +230,18 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            Collector firstRound;
+            ICollector firstRound;
             if (allGroupHeads || allGroups)
             {
-                List<Collector> collectors = new List<Collector>();
+                List<ICollector> collectors = new List<ICollector>();
                 // LUCENENET TODO: Make the Collector abstract class into an interface
                 // so we can remove the casting here
-                collectors.Add((Collector)firstPassCollector);
+                collectors.Add((ICollector)firstPassCollector);
                 if (allGroups)
                 {
                     // LUCENENET TODO: Make the Collector abstract class into an interface
                     // so we can remove the casting here
-                    collectors.Add((Collector)allGroupsCollector);
+                    collectors.Add((ICollector)allGroupsCollector);
                 }
                 if (allGroupHeads)
                 {
@@ -253,7 +253,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 // LUCENENET TODO: Make the Collector abstract class into an interface
                 // so we can remove the casting here
-                firstRound = (Collector)firstPassCollector;
+                firstRound = (ICollector)firstPassCollector;
             }
 
             CachingCollector cachedCollector = null;
@@ -316,13 +316,13 @@ namespace Lucene.Net.Search.Grouping
             {
                 // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
                 // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                cachedCollector.Replay(secondPassCollector as Collector);
+                cachedCollector.Replay(secondPassCollector as ICollector);
             }
             else
             {
                 // LUCENENET TODO: Create an ICollector interface that we can inherit our Collector interfaces from
                 // so this cast is not necessary. Consider eliminating the Collector abstract class.
-                searcher.Search(query, filter, secondPassCollector as Collector);
+                searcher.Search(query, filter, secondPassCollector as ICollector);
             }
 
             if (allGroups)

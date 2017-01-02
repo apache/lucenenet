@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
 
     internal sealed class BooleanScorer : BulkScorer
     {
-        private sealed class BooleanScorerCollector : Collector
+        private sealed class BooleanScorerCollector : ICollector
         {
             private BucketTable bucketTable;
             private int mask;
@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
                 this.bucketTable = bucketTable;
             }
 
-            public override void Collect(int doc)
+            public void Collect(int doc)
             {
                 BucketTable table = bucketTable;
                 int i = doc & BucketTable.MASK;
@@ -94,17 +94,17 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
                 // not needed by this implementation
             }
 
-            public override void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public Collector NewCollector(int mask)
+            public ICollector NewCollector(int mask)
             {
                 return new BooleanScorerCollector(mask, this);
             }
@@ -169,11 +169,11 @@ namespace Lucene.Net.Search
             //public boolean required = false;
             public bool Prohibited { get; set; }
 
-            public Collector Collector { get; set; }
+            public ICollector Collector { get; set; }
             public SubScorer Next { get; set; }
             public bool More { get; set; }
 
-            public SubScorer(BulkScorer scorer, bool required, bool prohibited, Collector collector, SubScorer next)
+            public SubScorer(BulkScorer scorer, bool required, bool prohibited, ICollector collector, SubScorer next)
             {
                 if (required)
                 {
@@ -227,7 +227,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override bool Score(Collector collector, int max)
+        public override bool Score(ICollector collector, int max)
         {
             bool more;
             Bucket tmp;

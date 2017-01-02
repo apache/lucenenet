@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public abstract class AbstractFirstPassGroupingCollector<TGroupValue> : Collector, IAbstractFirstPassGroupingCollector<TGroupValue>
+    public abstract class AbstractFirstPassGroupingCollector<TGroupValue> : ICollector, IAbstractFirstPassGroupingCollector<TGroupValue>
     {
         private readonly Sort groupSort;
         private readonly FieldComparator[] comparators;
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search.Grouping
             return result;
         }
 
-        public override void SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
             foreach (FieldComparator comparator in comparators)
             {
@@ -157,7 +157,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        public override void Collect(int doc)
+        public virtual void Collect(int doc)
         {
             //System.out.println("FP.collect doc=" + doc);
 
@@ -382,12 +382,12 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get { return false; }
         }
 
-        public override void SetNextReader(AtomicReaderContext context)
+        public virtual void SetNextReader(AtomicReaderContext context)
         {
             docBase = context.DocBase;
             for (int i = 0; i < comparators.Length; i++)

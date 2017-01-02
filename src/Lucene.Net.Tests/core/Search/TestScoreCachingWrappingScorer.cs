@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private sealed class ScoreCachingCollector : Collector
+        private sealed class ScoreCachingCollector : ICollector
         {
             internal int Idx = 0;
             internal Scorer Scorer_Renamed;
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
                 Mscores = new float[numToCollect];
             }
 
-            public override void Collect(int doc)
+            public void Collect(int doc)
             {
                 // just a sanity check to avoid IOOB.
                 if (Idx == Mscores.Length)
@@ -101,16 +101,16 @@ namespace Lucene.Net.Search
                 ++Idx;
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public override void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
                 this.Scorer_Renamed = new ScoreCachingWrappingScorer(scorer);
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }

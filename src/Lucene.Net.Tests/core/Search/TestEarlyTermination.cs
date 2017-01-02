@@ -67,14 +67,14 @@ namespace Lucene.Net.Search
             for (int i = 0; i < iters; ++i)
             {
                 IndexSearcher searcher = NewSearcher(reader);
-                Collector collector = new CollectorAnonymousInnerClassHelper(this);
+                ICollector collector = new CollectorAnonymousInnerClassHelper(this);
 
                 searcher.Search(new MatchAllDocsQuery(), collector);
             }
             reader.Dispose();
         }
 
-        private class CollectorAnonymousInnerClassHelper : Collector
+        private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private readonly TestEarlyTermination OuterInstance;
 
@@ -88,11 +88,11 @@ namespace Lucene.Net.Search
             internal readonly bool outOfOrder;
             internal bool collectionTerminated;
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
             }
 
-            public override void Collect(int doc)
+            public virtual void Collect(int doc)
             {
                 Assert.IsFalse(collectionTerminated);
                 if (Rarely())
@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 if (Random().NextBoolean())
                 {
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return outOfOrder; }
             }

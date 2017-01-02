@@ -259,7 +259,7 @@ namespace Lucene.Net.Search
                 this.filterBits = filterBits;
             }
 
-            public override bool Score(Collector collector, int maxDoc)
+            public override bool Score(ICollector collector, int maxDoc)
             {
                 // the normalization trick already applies the boost of this query,
                 // so we can use the wrapped scorer directly:

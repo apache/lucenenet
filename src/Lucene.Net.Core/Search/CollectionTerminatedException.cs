@@ -20,7 +20,7 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Throw this exception in <seealso cref="Collector#collect(int)"/> to prematurely
+    /// Throw this exception in <seealso cref="ICollector#collect(int)"/> to prematurely
     ///  terminate collection of the current leaf.
     ///  <p>Note: IndexSearcher swallows this exception and never re-throws it.
     ///  As a consequence, you should not catch it when calling

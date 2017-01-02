@@ -21,12 +21,12 @@ namespace Lucene.Net.Index.Sorter
 	 */
 
     /// <summary>
-    /// A <see cref="Collector"/> that early terminates collection of documents on a
+    /// A <see cref="ICollector"/> that early terminates collection of documents on a
     /// per-segment basis, if the segment was sorted according to the given
     /// <see cref="Sort"/>.
     /// 
     /// <para>
-    /// <b>NOTE:</b> the <see cref="Collector"/> detects sorted segments according to
+    /// <b>NOTE:</b> the <see cref="ICollector"/> detects sorted segments according to
     /// <see cref="SortingMergePolicy"/>, so it's best used in conjunction with it. Also,
     /// it collects up to a specified <see cref="numDocsToCollect"/> from each segment, 
     /// and therefore is mostly suitable for use in conjunction with collectors such as
@@ -40,7 +40,7 @@ namespace Lucene.Net.Index.Sorter
     /// been collected.
     /// </para>
     /// <para>
-    /// <b>NOTE</b>: This <see cref="Collector"/> uses <see cref="Sort.ToString()"/> to detect
+    /// <b>NOTE</b>: This <see cref="ICollector"/> uses <see cref="Sort.ToString()"/> to detect
     /// whether a segment was sorted with the same <see cref="Sort"/>. This has
     /// two implications:
     /// <ul>
@@ -50,17 +50,17 @@ namespace Lucene.Net.Index.Sorter
     /// <li>if you suddenly change the <see cref="IndexWriter"/>'s
     /// <see cref="SortingMergePolicy"/> to sort according to another criterion and if both
     /// the old and the new <see cref="Sort"/>s have the same identifier, this
-    /// <see cref="Collector"/> will incorrectly detect sorted segments.</li>
+    /// <see cref="ICollector"/> will incorrectly detect sorted segments.</li>
     /// </ul>
     /// 
     /// @lucene.experimental
     /// </para>
     /// </summary>
-    public class EarlyTerminatingSortingCollector : Collector
+    public class EarlyTerminatingSortingCollector : ICollector
     {
         /// <summary>
         /// The wrapped Collector </summary>
-        protected internal readonly Collector @in;
+        protected internal readonly ICollector @in;
         /// <summary>
         /// Sort used to sort the search results </summary>
         protected internal readonly Sort sort;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index.Sorter
         ///          the number of documents to collect on each segment. When wrapping
         ///          a <see cref="TopDocsCollector{T}"/>, this number should be the number of
         ///          hits. </param>
-        public EarlyTerminatingSortingCollector(Collector @in, Sort sort, int numDocsToCollect)
+        public EarlyTerminatingSortingCollector(ICollector @in, Sort sort, int numDocsToCollect)
         {
             if (numDocsToCollect <= 0)
             {
@@ -98,12 +98,12 @@ namespace Lucene.Net.Index.Sorter
             this.numDocsToCollect = numDocsToCollect;
         }
 
-        public override void SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
             @in.SetScorer(scorer);
         }
 
-        public override void Collect(int doc)
+        public virtual void Collect(int doc)
         {
             @in.Collect(doc);
             if (++numCollected >= segmentTotalCollect)
@@ -112,7 +112,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        public override void SetNextReader(AtomicReaderContext context)
+        public virtual void SetNextReader(AtomicReaderContext context)
         {
             @in.SetNextReader(context);
             segmentSorted = SortingMergePolicy.IsSorted(context.AtomicReader, sort);
@@ -120,7 +120,7 @@ namespace Lucene.Net.Index.Sorter
             numCollected = 0;
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get { return !segmentSorted && @in.AcceptsDocsOutOfOrder; }
         }

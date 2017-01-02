@@ -74,7 +74,7 @@ namespace Lucene.Net.Join
     /// 
     /// @lucene.experimental
     /// </summary>
-    public class ToParentBlockJoinCollector : Collector
+    public class ToParentBlockJoinCollector : ICollector
     {
         private readonly Sort sort;
 
@@ -151,7 +151,7 @@ namespace Lucene.Net.Join
             internal int[] counts;
         }
         
-        public override void Collect(int parentDoc)
+        public virtual void Collect(int parentDoc)
         {
             //System.out.println("\nC parentDoc=" + parentDoc);
             totalHitCount++;
@@ -303,7 +303,7 @@ namespace Lucene.Net.Join
             }
         }
         
-        public override void SetNextReader(AtomicReaderContext context)
+        public virtual void SetNextReader(AtomicReaderContext context)
         {
             currentReaderContext = context;
             docBase = context.DocBase;
@@ -313,7 +313,7 @@ namespace Lucene.Net.Join
             }
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get { return false; }
         }
@@ -337,7 +337,7 @@ namespace Lucene.Net.Join
             }
         }
 
-        public override void SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
             //System.out.println("C.setScorer scorer=" + value);
             // Since we invoke .score(), and the comparators likely
@@ -475,7 +475,7 @@ namespace Lucene.Net.Join
                 //System.out.println("parent doc=" + og.doc + " numChildDocs=" + numChildDocs + " maxDocsPG=" + maxDocsPerGroup);
 
                 // At this point we hold all docs w/ in each group, unsorted; we now sort them:
-                Collector collector;
+                ICollector collector;
                 if (withinGroupSort == null)
                 {
                     //System.out.println("sort by score");

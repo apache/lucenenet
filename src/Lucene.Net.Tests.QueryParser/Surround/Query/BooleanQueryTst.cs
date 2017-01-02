@@ -54,7 +54,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         public virtual int[] ExpectedDocNrs { get { return this.expectedDocNrs; } }
 
-        internal class TestCollector : Collector
+        internal class TestCollector : ICollector
         { // FIXME: use check hits from Lucene tests
             private int totalMatched;
             private bool[] encountered;
@@ -69,22 +69,22 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 this.parent = parent;
             }
 
-            public override void SetScorer(Scorer scorer)
+            public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override bool AcceptsDocsOutOfOrder
+            public virtual bool AcceptsDocsOutOfOrder
             {
                 get { return true; }
             }
 
-            public override void SetNextReader(AtomicReaderContext context)
+            public virtual void SetNextReader(AtomicReaderContext context)
             {
                 docBase = context.DocBase;
             }
 
-            public override void Collect(int docNr)
+            public virtual void Collect(int docNr)
             {
                 float score = scorer.Score();
                 docNr += docBase;

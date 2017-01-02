@@ -27,19 +27,19 @@ namespace Lucene.Net.Search
     ///  acceptsDocsOutOfOrder is respected.
     /// </summary>
 
-    public class AssertingCollector : Collector
+    public class AssertingCollector : ICollector
     {
-        public static Collector Wrap(Random random, Collector other, bool inOrder)
+        public static ICollector Wrap(Random random, ICollector other, bool inOrder)
         {
             return other is AssertingCollector ? other : new AssertingCollector(random, other, inOrder);
         }
 
         internal readonly Random Random;
-        internal readonly Collector @in;
+        internal readonly ICollector @in;
         internal readonly bool InOrder;
         internal int LastCollected;
 
-        internal AssertingCollector(Random random, Collector @in, bool inOrder)
+        internal AssertingCollector(Random random, ICollector @in, bool inOrder)
         {
             this.Random = random;
             this.@in = @in;
@@ -47,12 +47,12 @@ namespace Lucene.Net.Search
             LastCollected = -1;
         }
 
-        public override void SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
             @in.SetScorer(AssertingScorer.GetAssertingScorer(Random, scorer));
         }
 
-        public override void Collect(int doc)
+        public virtual void Collect(int doc)
         {
             if (InOrder || !AcceptsDocsOutOfOrder)
             {
@@ -62,12 +62,12 @@ namespace Lucene.Net.Search
             LastCollected = doc;
         }
 
-        public override void SetNextReader(AtomicReaderContext context)
+        public virtual void SetNextReader(AtomicReaderContext context)
         {
             LastCollected = -1;
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get { return @in.AcceptsDocsOutOfOrder; }
         }

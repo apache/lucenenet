@@ -20,21 +20,21 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
-    /// A <seealso cref="Collector"/> implementation which wraps another
-    /// <seealso cref="Collector"/> and makes sure only documents with
+    /// A <seealso cref="ICollector"/> implementation which wraps another
+    /// <seealso cref="ICollector"/> and makes sure only documents with
     /// scores &gt; 0 are collected.
     /// </summary>
-    public class PositiveScoresOnlyCollector : Collector
+    public class PositiveScoresOnlyCollector : ICollector
     {
-        private readonly Collector c;
+        private readonly ICollector c;
         private Scorer scorer;
 
-        public PositiveScoresOnlyCollector(Collector c)
+        public PositiveScoresOnlyCollector(ICollector c)
         {
             this.c = c;
         }
 
-        public override void Collect(int doc)
+        public virtual void Collect(int doc)
         {
             if (scorer.Score() > 0)
             {
@@ -42,12 +42,12 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override void SetNextReader(AtomicReaderContext context)
+        public virtual void SetNextReader(AtomicReaderContext context)
         {
             c.SetNextReader(context);
         }
         
-        public override void SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
             // Set a ScoreCachingWrappingScorer in case the wrapped Collector will call
             // score() also.
@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
             c.SetScorer(this.scorer);
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get { return c.AcceptsDocsOutOfOrder; }
         }

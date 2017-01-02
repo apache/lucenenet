@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
                 this.Ctx = new List<AtomicReaderContext> { ctx };
             }
 
-            public virtual void Search(Weight weight, Collector collector)
+            public virtual void Search(Weight weight, ICollector collector)
             {
                 Search(Ctx, weight, collector);
             }

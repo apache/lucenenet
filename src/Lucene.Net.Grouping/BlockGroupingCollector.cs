@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.Grouping
     /// </para>
     /// @lucene.experimental
     /// </summary>
-    public class BlockGroupingCollector : Collector
+    public class BlockGroupingCollector : ICollector
     {
         private int[] pendingSubDocs;
         private float[] pendingSubScores;
@@ -486,7 +486,7 @@ namespace Lucene.Net.Search.Grouping
                                  totalGroupCount);
         }
 
-        public override void SetScorer(Scorer scorer)
+        public virtual void SetScorer(Scorer scorer)
         {
             this.scorer = scorer;
             foreach (FieldComparator comparator in comparators)
@@ -495,7 +495,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        public override void Collect(int doc)
+        public virtual void Collect(int doc)
         {
 
             // System.out.println("C " + doc);
@@ -624,12 +624,12 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        public override bool AcceptsDocsOutOfOrder
+        public virtual bool AcceptsDocsOutOfOrder
         {
             get { return false; }
         }
 
-        public override void SetNextReader(AtomicReaderContext context)
+        public virtual void SetNextReader(AtomicReaderContext context)
         {
             if (subDocUpto != 0)
             {
