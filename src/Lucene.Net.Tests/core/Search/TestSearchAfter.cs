@@ -197,6 +197,8 @@ namespace Lucene.Net.Search
         [Test, LongRunningTest, HasTimeout]
         public virtual void TestQueries()
         {
+            fail("This test is somehow crashing NUnit and causing it not to complete");
+
             // because the first page has a null 'after', we get a normal collector.
             // so we need to run the test a few times to ensure we will collect multiple
             // pages.

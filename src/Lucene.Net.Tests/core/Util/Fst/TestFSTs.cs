@@ -273,6 +273,7 @@ namespace Lucene.Net.Util.Fst
         [Test, LongRunningTest, HasTimeout] // 45 minutes to be on the safe side
         public virtual void TestRandomWords()
         {
+            fail("This test is somehow crashing NUnit and causing it not to complete");
             TestRandomWords(1000, AtLeast(2));
             //testRandomWords(100, 1);
         }

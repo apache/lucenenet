@@ -33,6 +33,8 @@ namespace Lucene.Net.Index
         [Test, HasTimeout]
         public virtual void TestBasic()
         {
+            fail("This test is somehow crashing NUnit and causing it not to complete");
+
             ByteBlockPool pool = new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, Random().Next(100)));
 
             int NUM_STREAM = AtLeast(100);

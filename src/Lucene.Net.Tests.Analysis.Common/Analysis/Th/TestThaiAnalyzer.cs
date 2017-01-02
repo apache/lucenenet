@@ -147,6 +147,9 @@ namespace Lucene.Net.Analysis.Th
         [Test]
         public virtual void TestRandomHugeStrings()
         {
+            // LUCENENET NOTE: This is NOT a long running test - it should only take a few seconds
+            fail("This test is somehow crashing NUnit and causing it not to complete");
+
             Random random = Random();
             CheckRandomData(random, new ThaiAnalyzer(TEST_VERSION_CURRENT), 100 * RANDOM_MULTIPLIER, 8192);
         }
