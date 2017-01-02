@@ -152,12 +152,12 @@ namespace Lucene.Net.Index
             }
 
             // grow the structures to have room for more elements
-            if (Docs.Size() == Size)
+            if (Docs.Size == Size)
             {
                 Docs = Docs.Grow(Size + 1);
                 Offsets = Offsets.Grow(Size + 1);
                 Lengths = Lengths.Grow(Size + 1);
-                DocsWithField = FixedBitSet.EnsureCapacity(DocsWithField, (int)Docs.Size());
+                DocsWithField = FixedBitSet.EnsureCapacity(DocsWithField, (int)Docs.Size);
             }
 
             if (val != BinaryDocValuesUpdate.MISSING)
@@ -255,7 +255,7 @@ namespace Lucene.Net.Index
             Docs = Docs.Grow(newSize);
             Offsets = Offsets.Grow(newSize);
             Lengths = Lengths.Grow(newSize);
-            DocsWithField = FixedBitSet.EnsureCapacity(DocsWithField, (int)Docs.Size());
+            DocsWithField = FixedBitSet.EnsureCapacity(DocsWithField, (int)Docs.Size);
             for (int i = 0; i < otherUpdates.Size; i++)
             {
                 int doc = (int)otherUpdates.Docs.Get(i);

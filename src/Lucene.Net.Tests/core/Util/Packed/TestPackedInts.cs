@@ -793,7 +793,7 @@ namespace Lucene.Net.Util.Packed
             int pageSize = 1 << (TestUtil.NextInt(Random(), 6, 30));
             // supports 0 values?
             PagedGrowableWriter writer = new PagedGrowableWriter(0, pageSize, TestUtil.NextInt(Random(), 1, 64), Random().NextFloat());
-            Assert.AreEqual(0, writer.Size());
+            Assert.AreEqual(0, writer.Size);
 
             // compare against AppendingDeltaPackedLongBuffer
             AppendingDeltaPackedLongBuffer buf = new AppendingDeltaPackedLongBuffer();
@@ -808,7 +808,7 @@ namespace Lucene.Net.Util.Packed
                 }
             }
             writer = new PagedGrowableWriter(size, pageSize, TestUtil.NextInt(Random(), 1, 64), Random().NextFloat());
-            Assert.AreEqual(size, writer.Size());
+            Assert.AreEqual(size, writer.Size);
             for (int i = size - 1; i >= 0; --i)
             {
                 writer.Set(i, buf.Get(i));
@@ -822,10 +822,10 @@ namespace Lucene.Net.Util.Packed
             Assert.AreEqual(RamUsageEstimator.SizeOf(writer), writer.RamBytesUsed(), 8);
 
             // test copy
-            PagedGrowableWriter copy = writer.Resize(TestUtil.NextLong(Random(), writer.Size() / 2, writer.Size() * 3 / 2));
-            for (long i = 0; i < copy.Size(); ++i)
+            PagedGrowableWriter copy = writer.Resize(TestUtil.NextLong(Random(), writer.Size / 2, writer.Size * 3 / 2));
+            for (long i = 0; i < copy.Size; ++i)
             {
-                if (i < writer.Size())
+                if (i < writer.Size)
                 {
                     Assert.AreEqual(writer.Get(i), copy.Get(i));
                 }
@@ -836,10 +836,10 @@ namespace Lucene.Net.Util.Packed
             }
 
             // test grow
-            PagedGrowableWriter grow = writer.Grow(TestUtil.NextLong(Random(), writer.Size() / 2, writer.Size() * 3 / 2));
-            for (long i = 0; i < grow.Size(); ++i)
+            PagedGrowableWriter grow = writer.Grow(TestUtil.NextLong(Random(), writer.Size / 2, writer.Size * 3 / 2));
+            for (long i = 0; i < grow.Size; ++i)
             {
-                if (i < writer.Size())
+                if (i < writer.Size)
                 {
                     Assert.AreEqual(writer.Get(i), grow.Get(i));
                 }
@@ -858,7 +858,7 @@ namespace Lucene.Net.Util.Packed
             int pageSize = 1 << (TestUtil.NextInt(Random(), 6, 30));
             // supports 0 values?
             PagedMutable writer = new PagedMutable(0, pageSize, bitsPerValue, Random().NextFloat() / 2);
-            Assert.AreEqual(0, writer.Size());
+            Assert.AreEqual(0, writer.Size);
 
             // compare against AppendingDeltaPackedLongBuffer
             AppendingDeltaPackedLongBuffer buf = new AppendingDeltaPackedLongBuffer();
@@ -869,7 +869,7 @@ namespace Lucene.Net.Util.Packed
                 buf.Add(bitsPerValue == 64 ? Random().NextLong() : TestUtil.NextLong(Random(), 0, max));
             }
             writer = new PagedMutable(size, pageSize, bitsPerValue, Random().NextFloat());
-            Assert.AreEqual(size, writer.Size());
+            Assert.AreEqual(size, writer.Size);
             for (int i = size - 1; i >= 0; --i)
             {
                 writer.Set(i, buf.Get(i));
@@ -883,10 +883,10 @@ namespace Lucene.Net.Util.Packed
             Assert.AreEqual(RamUsageEstimator.SizeOf(writer) - RamUsageEstimator.SizeOf(writer.Format), writer.RamBytesUsed());
 
             // test copy
-            PagedMutable copy = writer.Resize(TestUtil.NextLong(Random(), writer.Size() / 2, writer.Size() * 3 / 2));
-            for (long i = 0; i < copy.Size(); ++i)
+            PagedMutable copy = writer.Resize(TestUtil.NextLong(Random(), writer.Size / 2, writer.Size * 3 / 2));
+            for (long i = 0; i < copy.Size; ++i)
             {
-                if (i < writer.Size())
+                if (i < writer.Size)
                 {
                     Assert.AreEqual(writer.Get(i), copy.Get(i));
                 }
@@ -897,10 +897,10 @@ namespace Lucene.Net.Util.Packed
             }
 
             // test grow
-            PagedMutable grow = writer.Grow(TestUtil.NextLong(Random(), writer.Size() / 2, writer.Size() * 3 / 2));
-            for (long i = 0; i < grow.Size(); ++i)
+            PagedMutable grow = writer.Grow(TestUtil.NextLong(Random(), writer.Size / 2, writer.Size * 3 / 2));
+            for (long i = 0; i < grow.Size; ++i)
             {
-                if (i < writer.Size())
+                if (i < writer.Size)
                 {
                     Assert.AreEqual(writer.Get(i), grow.Get(i));
                 }

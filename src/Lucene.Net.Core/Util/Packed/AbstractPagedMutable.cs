@@ -47,11 +47,11 @@ namespace Lucene.Net.Util.Packed
 
         protected void FillPages()
         {
-            int numPages = PackedInts.NumBlocks(Size_Renamed, PageSize());
+            int numPages = PackedInts.NumBlocks(Size_Renamed, PageSize);
             for (int i = 0; i < numPages; ++i)
             {
                 // do not allocate for more entries than necessary on the last page
-                int valueCount = i == numPages - 1 ? LastPageSize(Size_Renamed) : PageSize();
+                int valueCount = i == numPages - 1 ? LastPageSize(Size_Renamed) : PageSize;
                 SubMutables[i] = NewMutable(valueCount, BitsPerValue);
             }
         }
@@ -61,19 +61,19 @@ namespace Lucene.Net.Util.Packed
         internal int LastPageSize(long size)
         {
             int sz = IndexInPage(size);
-            return sz == 0 ? PageSize() : sz;
+            return sz == 0 ? PageSize : sz;
         }
 
-        internal int PageSize() // LUCENENET TODO: Make property, change to PageCount ?
+        internal int PageSize // LUCENENET TODO: change to PageCount ?
         {
-            return PageMask + 1;
+            get { return PageMask + 1; }
         }
 
         /// <summary>
         /// The number of values. </summary>
-        public long Size() // LUCENENET TODO: Make property, change to Count
+        public long Size // LUCENENET TODO: change to Count
         {
-            return Size_Renamed;
+            get { return Size_Renamed; }
         }
 
         internal int PageIndex(long index)
@@ -136,7 +136,7 @@ namespace Lucene.Net.Util.Packed
             long[] copyBuffer = new long[1024];
             for (int i = 0; i < copy.SubMutables.Length; ++i)
             {
-                int valueCount = i == copy.SubMutables.Length - 1 ? LastPageSize(newSize) : PageSize();
+                int valueCount = i == copy.SubMutables.Length - 1 ? LastPageSize(newSize) : PageSize;
                 int bpv = i < numCommonPages ? SubMutables[i].BitsPerValue : this.BitsPerValue;
                 copy.SubMutables[i] = NewMutable(valueCount, bpv);
                 if (i < numCommonPages)
@@ -153,7 +153,7 @@ namespace Lucene.Net.Util.Packed
         public T Grow(long minSize)
         {
             Debug.Assert(minSize >= 0);
-            if (minSize <= Size())
+            if (minSize <= Size)
             {
                 T result = (T)this;
                 return result;
@@ -171,12 +171,12 @@ namespace Lucene.Net.Util.Packed
         /// Similar to <seealso cref="ArrayUtil#grow(long[])"/>. </summary>
         public T Grow()
         {
-            return Grow(Size() + 1);
+            return Grow(Size + 1);
         }
 
         public override sealed string ToString()
         {
-            return this.GetType().Name + "(size=" + Size() + ",pageSize=" + PageSize() + ")";
+            return this.GetType().Name + "(size=" + Size + ",pageSize=" + PageSize + ")";
         }
     }
 }

@@ -63,7 +63,7 @@ namespace Lucene.Net.Util.Packed
 
         protected override PagedMutable NewUnfilledCopy(long newSize)
         {
-            return new PagedMutable(newSize, PageSize(), BitsPerValue, Format);
+            return new PagedMutable(newSize, PageSize, BitsPerValue, Format);
         }
 
         protected override long BaseRamBytesUsed()

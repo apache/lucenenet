@@ -60,7 +60,7 @@ namespace Lucene.Net.Util.Packed
 
         protected override PagedGrowableWriter NewUnfilledCopy(long newSize)
         {
-            return new PagedGrowableWriter(newSize, PageSize(), BitsPerValue, AcceptableOverheadRatio, false);
+            return new PagedGrowableWriter(newSize, PageSize, BitsPerValue, AcceptableOverheadRatio, false);
         }
 
         protected override long BaseRamBytesUsed()
