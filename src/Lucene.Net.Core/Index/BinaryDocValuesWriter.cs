@@ -45,76 +45,76 @@ namespace Lucene.Net.Index
         // 32 KB block sizes for PagedBytes storage:
         private const int BLOCK_BITS = 15;
 
-        private readonly PagedBytes Bytes;
-        private readonly DataOutput BytesOut;
+        private readonly PagedBytes bytes;
+        private readonly DataOutput bytesOut;
 
-        private readonly Counter IwBytesUsed;
-        private readonly AppendingDeltaPackedLongBuffer Lengths;
-        private FixedBitSet DocsWithField;
-        private readonly FieldInfo FieldInfo;
-        private int AddedValues;
-        private long BytesUsed;
+        private readonly Counter iwBytesUsed;
+        private readonly AppendingDeltaPackedLongBuffer lengths;
+        private FixedBitSet docsWithField;
+        private readonly FieldInfo fieldInfo;
+        private int addedValues;
+        private long bytesUsed;
 
         public BinaryDocValuesWriter(FieldInfo fieldInfo, Counter iwBytesUsed)
         {
-            this.FieldInfo = fieldInfo;
-            this.Bytes = new PagedBytes(BLOCK_BITS);
-            this.BytesOut = Bytes.GetDataOutput();
-            this.Lengths = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
-            this.IwBytesUsed = iwBytesUsed;
-            this.DocsWithField = new FixedBitSet(64);
-            this.BytesUsed = DocsWithFieldBytesUsed();
-            iwBytesUsed.AddAndGet(BytesUsed);
+            this.fieldInfo = fieldInfo;
+            this.bytes = new PagedBytes(BLOCK_BITS);
+            this.bytesOut = bytes.GetDataOutput();
+            this.lengths = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
+            this.iwBytesUsed = iwBytesUsed;
+            this.docsWithField = new FixedBitSet(64);
+            this.bytesUsed = DocsWithFieldBytesUsed();
+            iwBytesUsed.AddAndGet(bytesUsed);
         }
 
         public virtual void AddValue(int docID, BytesRef value)
         {
-            if (docID < AddedValues)
+            if (docID < addedValues)
             {
-                throw new System.ArgumentException("DocValuesField \"" + FieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
+                throw new System.ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
             }
             if (value == null)
             {
-                throw new System.ArgumentException("field=\"" + FieldInfo.Name + "\": null value not allowed");
+                throw new System.ArgumentException("field=\"" + fieldInfo.Name + "\": null value not allowed");
             }
             if (value.Length > MAX_LENGTH)
             {
-                throw new System.ArgumentException("DocValuesField \"" + FieldInfo.Name + "\" is too large, must be <= " + MAX_LENGTH);
+                throw new System.ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" is too large, must be <= " + MAX_LENGTH);
             }
 
             // Fill in any holes:
-            while (AddedValues < docID)
+            while (addedValues < docID)
             {
-                AddedValues++;
-                Lengths.Add(0);
+                addedValues++;
+                lengths.Add(0);
             }
-            AddedValues++;
-            Lengths.Add(value.Length);
+            addedValues++;
+            lengths.Add(value.Length);
             try
             {
-                BytesOut.WriteBytes(value.Bytes, value.Offset, value.Length);
+                bytesOut.WriteBytes(value.Bytes, value.Offset, value.Length);
             }
             catch (System.IO.IOException ioe)
             {
                 // Should never happen!
                 throw new Exception(ioe.Message, ioe);
             }
-            DocsWithField = FixedBitSet.EnsureCapacity(DocsWithField, docID);
-            DocsWithField.Set(docID);
+            docsWithField = FixedBitSet.EnsureCapacity(docsWithField, docID);
+            docsWithField.Set(docID);
             UpdateBytesUsed();
         }
 
         private long DocsWithFieldBytesUsed()
         {
             // size of the long[] + some overhead
-            return RamUsageEstimator.SizeOf(DocsWithField.Bits) + 64;
+            return RamUsageEstimator.SizeOf(docsWithField.Bits) + 64;
         }
 
         private void UpdateBytesUsed()
         {
-            long newBytesUsed = Lengths.RamBytesUsed() + Bytes.RamBytesUsed() + DocsWithFieldBytesUsed();
-            IwBytesUsed.AddAndGet(newBytesUsed - BytesUsed);
-            BytesUsed = newBytesUsed;
+            long newBytesUsed = lengths.RamBytesUsed() + bytes.RamBytesUsed() + DocsWithFieldBytesUsed();
+            iwBytesUsed.AddAndGet(newBytesUsed - bytesUsed);
+            bytesUsed = newBytesUsed;
         }
 
         public override void Finish(int maxDoc)
@@ -124,8 +124,8 @@ namespace Lucene.Net.Index
         public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
         {
             int maxDoc = state.SegmentInfo.DocCount;
-            Bytes.Freeze(false);
-            dvConsumer.AddBinaryField(FieldInfo, GetBytesIterator(maxDoc));
+            bytes.Freeze(false);
+            dvConsumer.AddBinaryField(fieldInfo, GetBytesIterator(maxDoc));
         }
 
         public override void Abort()
@@ -136,9 +136,9 @@ namespace Lucene.Net.Index
         {
             // Use yield return instead of ucsom IEnumerable
 
-            AppendingDeltaPackedLongBuffer.Iterator lengthsIterator = Lengths.GetIterator();
-            int size = (int)Lengths.Size;
-            DataInput bytesIterator = Bytes.GetDataInput();
+            AppendingDeltaPackedLongBuffer.Iterator lengthsIterator = lengths.GetIterator();
+            int size = (int)lengths.Size;
+            DataInput bytesIterator = bytes.GetDataInput();
             int maxDoc = maxDocParam;
             int upto = 0;
 
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
                     value.Length = length;
                     bytesIterator.ReadBytes(value.Bytes, value.Offset, value.Length);
 
-                    if (DocsWithField.Get(upto))
+                    if (docsWithField.Get(upto))
                     {
                         v = value;
                     }
