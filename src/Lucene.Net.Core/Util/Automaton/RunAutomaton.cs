@@ -42,9 +42,9 @@ namespace Lucene.Net.Util.Automaton
     {
         private readonly int _maxInterval;
         private readonly int _size;
-        protected readonly bool[] Accept;
-        protected readonly int Initial;
-        protected readonly int[] Transitions; // delta(state,c) = transitions[state*points.length +
+        protected readonly bool[] m_accept;
+        protected readonly int m_initial;
+        protected readonly int[] m_transitions; // delta(state,c) = transitions[state*points.length +
 
         // getCharClass(c)]
         private readonly int[] _points; // char interval start points
@@ -57,11 +57,11 @@ namespace Lucene.Net.Util.Automaton
         public override string ToString()
         {
             var b = new StringBuilder();
-            b.Append("initial state: ").Append(Initial).Append("\n");
+            b.Append("initial state: ").Append(m_initial).Append("\n");
             for (int i = 0; i < _size; i++)
             {
                 b.Append("state " + i);
-                if (Accept[i])
+                if (m_accept[i])
                 {
                     b.Append(" [accept]:\n");
                 }
@@ -71,7 +71,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 for (int j = 0; j < _points.Length; j++)
                 {
-                    int k = Transitions[i * _points.Length + j];
+                    int k = m_transitions[i * _points.Length + j];
                     if (k != -1)
                     {
                         int min = _points[j];
@@ -114,7 +114,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public bool IsAccept(int state)
         {
-            return Accept[state];
+            return m_accept[state];
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Lucene.Net.Util.Automaton
         {
             get
             {
-                return Initial;
+                return m_initial;
             }
         }
 
@@ -158,24 +158,24 @@ namespace Lucene.Net.Util.Automaton
             a.Determinize();
             _points = a.GetStartPoints();
             State[] states = a.GetNumberedStates();
-            Initial = a.initial.Number;
+            m_initial = a.initial.Number;
             _size = states.Length;
-            Accept = new bool[_size];
-            Transitions = new int[_size * _points.Length];
+            m_accept = new bool[_size];
+            m_transitions = new int[_size * _points.Length];
             for (int n = 0; n < _size * _points.Length; n++)
             {
-                Transitions[n] = -1;
+                m_transitions[n] = -1;
             }
             foreach (State s in states)
             {
                 int n = s.number;
-                Accept[n] = s.accept;
+                m_accept[n] = s.accept;
                 for (int c = 0; c < _points.Length; c++)
                 {
                     State q = s.Step(_points[c]);
                     if (q != null)
                     {
-                        Transitions[n * _points.Length + c] = q.number;
+                        m_transitions[n * _points.Length + c] = q.number;
                     }
                 }
             }
@@ -212,11 +212,11 @@ namespace Lucene.Net.Util.Automaton
         {
             if (_classmap == null)
             {
-                return Transitions[state * _points.Length + GetCharClass(c)];
+                return m_transitions[state * _points.Length + GetCharClass(c)];
             }
             else
             {
-                return Transitions[state * _points.Length + _classmap[c]];
+                return m_transitions[state * _points.Length + _classmap[c]];
             }
         }
 
@@ -224,7 +224,7 @@ namespace Lucene.Net.Util.Automaton
         {
             const int prime = 31;
             int result = 1;
-            result = prime * result + Initial;
+            result = prime * result + m_initial;
             result = prime * result + _maxInterval;
             result = prime * result + _points.Length;
             result = prime * result + _size;
@@ -246,7 +246,7 @@ namespace Lucene.Net.Util.Automaton
                 return false;
             }
             RunAutomaton other = (RunAutomaton)obj;
-            if (Initial != other.Initial)
+            if (m_initial != other.m_initial)
             {
                 return false;
             }
@@ -262,11 +262,11 @@ namespace Lucene.Net.Util.Automaton
             {
                 return false;
             }
-            if (!Arrays.Equals(Accept, other.Accept))
+            if (!Arrays.Equals(m_accept, other.m_accept))
             {
                 return false;
             }
-            if (!Arrays.Equals(Transitions, other.Transitions))
+            if (!Arrays.Equals(m_transitions, other.m_transitions))
             {
                 return false;
             }

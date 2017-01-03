@@ -39,7 +39,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public virtual bool Run(byte[] s, int offset, int length)
         {
-            var p = Initial;
+            var p = m_initial;
             var l = offset + length;
             for (int i = offset; i < l; i++)
             {
@@ -49,7 +49,7 @@ namespace Lucene.Net.Util.Automaton
                     return false;
                 }
             }
-            return Accept[p];
+            return m_accept[p];
         }
     }
 }
