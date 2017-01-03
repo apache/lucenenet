@@ -40,7 +40,7 @@ namespace Lucene.Net.Util
     {
         private void InitializeInstanceFields()
         {
-            Buffer = new BytesRefArray(BufferBytesUsed);
+            buffer = new BytesRefArray(bufferBytesUsed);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace Lucene.Net.Util
         {
             internal virtual void InitializeInstanceFields()
             {
-                BufferSize = OuterInstance.RamBufferSize.Bytes;
+                BufferSize = OuterInstance.ramBufferSize.Bytes;
             }
 
             private readonly OfflineSorter OuterInstance;
@@ -192,12 +192,12 @@ namespace Lucene.Net.Util
             }
         }
 
-        private readonly BufferSize RamBufferSize;
+        private readonly BufferSize ramBufferSize;
 
-        private readonly Counter BufferBytesUsed = Counter.NewCounter();
-        private BytesRefArray Buffer;
+        private readonly Counter bufferBytesUsed = Counter.NewCounter();
+        private BytesRefArray buffer;
         private SortInfo sortInfo;
-        private readonly int MaxTempFiles;
+        private readonly int maxTempFiles;
         private readonly IComparer<BytesRef> comparator;
 
         /// <summary>
@@ -240,8 +240,8 @@ namespace Lucene.Net.Util
                 throw new System.ArgumentException("maxTempFiles must be >= 2");
             }
 
-            this.RamBufferSize = ramBufferSize;
-            this.MaxTempFiles = maxTempfiles;
+            this.ramBufferSize = ramBufferSize;
+            this.maxTempFiles = maxTempfiles;
             this.comparator = comparator;
         }
 
@@ -273,7 +273,7 @@ namespace Lucene.Net.Util
                         sortInfo.Lines += lines;
 
                         // Handle intermediate merges.
-                        if (merges.Count == MaxTempFiles)
+                        if (merges.Count == maxTempFiles)
                         {
                             var intermediate = new FileInfo(Path.GetTempFileName());
                             try
@@ -370,7 +370,7 @@ namespace Lucene.Net.Util
         /// Sort a single partition in-memory. </summary>
         private FileInfo SortPartition(int len) // LUCENENET NOTE: made private, since protected is not valid in a sealed class
         {
-            var data = this.Buffer;
+            var data = this.buffer;
             FileInfo tempFile = FileSupport.CreateTempFile("sort", "partition", DefaultTempDir());
 
             long start = Environment.TickCount;
@@ -380,7 +380,7 @@ namespace Lucene.Net.Util
             {
                 BytesRef spare;
 
-                IBytesRefIterator iter = Buffer.Iterator(comparator);
+                IBytesRefIterator iter = buffer.Iterator(comparator);
                 while ((spare = iter.Next()) != null)
                 {
                     Debug.Assert(spare.Length <= ushort.MaxValue);
@@ -478,16 +478,16 @@ namespace Lucene.Net.Util
             while ((scratch.Bytes = reader.Read()) != null)
             {
                 scratch.Length = scratch.Bytes.Length;
-                Buffer.Append(scratch);
+                buffer.Append(scratch);
                 // Account for the created objects.
                 // (buffer slots do not account to buffer size.)
-                if (RamBufferSize.Bytes < BufferBytesUsed.Get())
+                if (ramBufferSize.Bytes < bufferBytesUsed.Get())
                 {
                     break;
                 }
             }
             sortInfo.ReadTime += (Environment.TickCount - start);
-            return Buffer.Size;
+            return buffer.Size;
         }
 
         internal class FileAndTop
