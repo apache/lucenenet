@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs
     {
         /// <summary>
         /// The codec to filter. </summary>
-        protected readonly Codec @delegate;
+        protected readonly Codec m_delegate;
 
         /// <summary>
         /// Sole constructor. When subclassing this codec,
@@ -59,47 +59,47 @@ namespace Lucene.Net.Codecs
         protected internal FilterCodec(string name, Codec @delegate)
             : base(name)
         {
-            this.@delegate = @delegate;
+            this.m_delegate = @delegate;
         }
 
         public override DocValuesFormat DocValuesFormat
         {
-            get { return @delegate.DocValuesFormat; }
+            get { return m_delegate.DocValuesFormat; }
         }
 
         public override FieldInfosFormat FieldInfosFormat
         {
-            get { return @delegate.FieldInfosFormat; }
+            get { return m_delegate.FieldInfosFormat; }
         }
 
         public override LiveDocsFormat LiveDocsFormat
         {
-            get { return @delegate.LiveDocsFormat; }
+            get { return m_delegate.LiveDocsFormat; }
         }
 
         public override NormsFormat NormsFormat
         {
-            get { return @delegate.NormsFormat; }
+            get { return m_delegate.NormsFormat; }
         }
 
         public override PostingsFormat PostingsFormat
         {
-            get { return @delegate.PostingsFormat; }
+            get { return m_delegate.PostingsFormat; }
         }
 
         public override SegmentInfoFormat SegmentInfoFormat
         {
-            get { return @delegate.SegmentInfoFormat; }
+            get { return m_delegate.SegmentInfoFormat; }
         }
 
         public override StoredFieldsFormat StoredFieldsFormat
         {
-            get { return @delegate.StoredFieldsFormat; }
+            get { return m_delegate.StoredFieldsFormat; }
         }
 
         public override TermVectorsFormat TermVectorsFormat
         {
-            get { return @delegate.TermVectorsFormat; }
+            get { return m_delegate.TermVectorsFormat; }
         }
     }
 }
