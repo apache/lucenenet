@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
             this.fieldInfo = fieldInfo;
             docState = docInverterPerField.docState;
             fieldState = docInverterPerField.fieldState;
-            similarity = docState.Similarity;
+            similarity = docState.similarity;
         }
 
         public int CompareTo(NormsConsumerPerField other)
@@ -50,9 +50,9 @@ namespace Lucene.Net.Index
                 if (consumer == null)
                 {
                     fieldInfo.NormType = DocValuesType.NUMERIC;
-                    consumer = new NumericDocValuesWriter(fieldInfo, docState.DocWriter.bytesUsed, false);
+                    consumer = new NumericDocValuesWriter(fieldInfo, docState.docWriter.bytesUsed, false);
                 }
-                consumer.AddValue(docState.DocID, similarity.ComputeNorm(fieldState));
+                consumer.AddValue(docState.docID, similarity.ComputeNorm(fieldState));
             }
         }
 

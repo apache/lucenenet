@@ -606,7 +606,7 @@ namespace Lucene.Net.Index
                 SegmentFlushTicket ticket = null;
                 try
                 {
-                    Debug.Assert(currentFullFlushDelQueue == null || flushingDWPT.DeleteQueue == currentFullFlushDelQueue, "expected: " + currentFullFlushDelQueue + "but was: " + flushingDWPT.DeleteQueue + " " + flushControl.IsFullFlush);
+                    Debug.Assert(currentFullFlushDelQueue == null || flushingDWPT.deleteQueue == currentFullFlushDelQueue, "expected: " + currentFullFlushDelQueue + "but was: " + flushingDWPT.deleteQueue + " " + flushControl.IsFullFlush);
                     /*
                      * Since with DWPT the flush process is concurrent and several DWPT
                      * could flush at the same time we must maintain the order of the

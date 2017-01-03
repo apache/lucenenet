@@ -215,13 +215,13 @@ namespace Lucene.Net.Index
                 // entire segment) and then throw an exc later in
                 // DocInverterPerField.java.  LengthFilter can always be
                 // used to prune the term before indexing:
-                if (DocState.MaxTermPrefix == null)
+                if (DocState.maxTermPrefix == null)
                 {
                     int saved = TermBytesRef.Length;
                     try
                     {
                         TermBytesRef.Length = Math.Min(30, DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8);
-                        DocState.MaxTermPrefix = TermBytesRef.ToString();
+                        DocState.maxTermPrefix = TermBytesRef.ToString();
                     }
                     finally
                     {

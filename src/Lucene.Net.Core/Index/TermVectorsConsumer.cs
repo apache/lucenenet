@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
             if (Writer == null)
             {
                 IOContext context = new IOContext(new FlushInfo(DocWriter.NumDocsInRAM, DocWriter.BytesUsed));
-                Writer = DocWriter.Codec.TermVectorsFormat.VectorsWriter(DocWriter.Directory, DocWriter.SegmentInfo, context);
+                Writer = DocWriter.codec.TermVectorsFormat.VectorsWriter(DocWriter.directory, DocWriter.SegmentInfo, context);
                 LastDocID = 0;
             }
         }
@@ -118,7 +118,7 @@ namespace Lucene.Net.Index
 
             InitTermVectorsWriter();
 
-            Fill(DocState.DocID);
+            Fill(DocState.docID);
 
             // Append term vectors to the real outputs:
             Writer.StartDocument(NumVectorFields);
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
             }
             Writer.FinishDocument();
 
-            Debug.Assert(LastDocID == DocState.DocID, "lastDocID=" + LastDocID + " docState.docID=" + DocState.DocID);
+            Debug.Assert(LastDocID == DocState.docID, "lastDocID=" + LastDocID + " docState.docID=" + DocState.docID);
 
             LastDocID++;
 

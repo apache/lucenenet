@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
         public DocFieldProcessor(DocumentsWriterPerThread docWriter, DocFieldConsumer consumer, StoredFieldsConsumer storedConsumer)
         {
             this.docState = docWriter.docState;
-            this.codec = docWriter.Codec;
+            this.codec = docWriter.codec;
             this.bytesUsed = docWriter.bytesUsed;
             this.consumer = consumer;
             this.storedConsumer = storedConsumer;
@@ -205,7 +205,7 @@ namespace Lucene.Net.Index
             // seen before (eg suddenly turning on norms or
             // vectors, etc.):
 
-            foreach (IIndexableField field in docState.Doc)
+            foreach (IIndexableField field in docState.doc)
             {
                 string fieldName = field.Name;
 
@@ -262,7 +262,7 @@ namespace Lucene.Net.Index
                 }
 
                 fp.AddField(field);
-                storedConsumer.AddField(docState.DocID, field, fp.fieldInfo);
+                storedConsumer.AddField(docState.docID, field, fp.fieldInfo);
             }
 
             // If we are writing vectors then we must visit

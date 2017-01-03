@@ -244,8 +244,8 @@ namespace Lucene.Net.Index
             protected void PublishFlushedSegment(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates globalPacket)
             {
                 Debug.Assert(newSegment != null);
-                Debug.Assert(newSegment.SegmentInfo != null);
-                FrozenBufferedUpdates segmentUpdates = newSegment.SegmentUpdates;
+                Debug.Assert(newSegment.segmentInfo != null);
+                FrozenBufferedUpdates segmentUpdates = newSegment.segmentUpdates;
                 //System.out.println("FLUSH: " + newSegment.segmentInfo.info.name);
                 if (indexWriter.infoStream.IsEnabled("DW"))
                 {
@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
                     indexWriter.infoStream.Message("DW", "flush: push buffered seg private updates: " + segmentUpdates);
                 }
                 // now publish!
-                indexWriter.PublishFlushedSegment(newSegment.SegmentInfo, segmentUpdates, globalPacket);
+                indexWriter.PublishFlushedSegment(newSegment.segmentInfo, segmentUpdates, globalPacket);
             }
 
             protected void FinishFlush(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates bufferedUpdates)

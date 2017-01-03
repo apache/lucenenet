@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
         {
             this.DocWriter = docWriter;
             this.DocState = docWriter.docState;
-            this.Codec = docWriter.Codec;
+            this.Codec = docWriter.codec;
         }
 
         private int NumStoredFields;
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
             {
                 if (FieldsWriter == null)
                 {
-                    FieldsWriter = Codec.StoredFieldsFormat.FieldsWriter(DocWriter.Directory, DocWriter.SegmentInfo, context);
+                    FieldsWriter = Codec.StoredFieldsFormat.FieldsWriter(DocWriter.directory, DocWriter.SegmentInfo, context);
                     LastDocID = 0;
                 }
             }
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
             Debug.Assert(DocWriter.TestPoint("StoredFieldsWriter.finishDocument start"));
 
             InitFieldsWriter(IOContext.DEFAULT);
-            Fill(DocState.DocID);
+            Fill(DocState.docID);
 
             if (FieldsWriter != null && NumStoredFields > 0)
             {

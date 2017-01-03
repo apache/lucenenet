@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
             this.NextTermsHash = nextTermsHash;
             this.BytesUsed = trackAllocations ? docWriter.bytesUsed : Counter.NewCounter();
             IntPool = new IntBlockPool(docWriter.intBlockAllocator);
-            BytePool = new ByteBlockPool(docWriter.ByteBlockAllocator);
+            BytePool = new ByteBlockPool(docWriter.byteBlockAllocator);
 
             if (nextTermsHash != null)
             {

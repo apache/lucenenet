@@ -198,14 +198,14 @@ namespace Lucene.Net.Index
             Debug.Assert(DocState.TestPoint("FreqProxTermsWriterPerField.newTerm start"));
 
             FreqProxPostingsArray postings = (FreqProxPostingsArray)TermsHashPerField.PostingsArray;
-            postings.LastDocIDs[termID] = DocState.DocID;
+            postings.LastDocIDs[termID] = DocState.docID;
             if (!HasFreq)
             {
-                postings.LastDocCodes[termID] = DocState.DocID;
+                postings.LastDocCodes[termID] = DocState.docID;
             }
             else
             {
-                postings.LastDocCodes[termID] = DocState.DocID << 1;
+                postings.LastDocCodes[termID] = DocState.docID << 1;
                 postings.TermFreqs[termID] = 1;
                 if (HasProx)
                 {
@@ -235,18 +235,18 @@ namespace Lucene.Net.Index
             if (!HasFreq)
             {
                 Debug.Assert(postings.TermFreqs == null);
-                if (DocState.DocID != postings.LastDocIDs[termID])
+                if (DocState.docID != postings.LastDocIDs[termID])
                 {
-                    Debug.Assert(DocState.DocID > postings.LastDocIDs[termID]);
+                    Debug.Assert(DocState.docID > postings.LastDocIDs[termID]);
                     TermsHashPerField.WriteVInt(0, postings.LastDocCodes[termID]);
-                    postings.LastDocCodes[termID] = DocState.DocID - postings.LastDocIDs[termID];
-                    postings.LastDocIDs[termID] = DocState.DocID;
+                    postings.LastDocCodes[termID] = DocState.docID - postings.LastDocIDs[termID];
+                    postings.LastDocIDs[termID] = DocState.docID;
                     FieldState.UniqueTermCount++;
                 }
             }
-            else if (DocState.DocID != postings.LastDocIDs[termID])
+            else if (DocState.docID != postings.LastDocIDs[termID])
             {
-                Debug.Assert(DocState.DocID > postings.LastDocIDs[termID], "id: " + DocState.DocID + " postings ID: " + postings.LastDocIDs[termID] + " termID: " + termID);
+                Debug.Assert(DocState.docID > postings.LastDocIDs[termID], "id: " + DocState.docID + " postings ID: " + postings.LastDocIDs[termID] + " termID: " + termID);
                 // Term not yet seen in the current doc but previously
                 // seen in other doc(s) since the last flush
 
@@ -263,8 +263,8 @@ namespace Lucene.Net.Index
                 }
                 postings.TermFreqs[termID] = 1;
                 FieldState.MaxTermFrequency = Math.Max(1, FieldState.MaxTermFrequency);
-                postings.LastDocCodes[termID] = (DocState.DocID - postings.LastDocIDs[termID]) << 1;
-                postings.LastDocIDs[termID] = DocState.DocID;
+                postings.LastDocCodes[termID] = (DocState.docID - postings.LastDocIDs[termID]) << 1;
+                postings.LastDocIDs[termID] = DocState.docID;
                 if (HasProx)
                 {
                     WriteProx(termID, FieldState.Position);
@@ -575,7 +575,7 @@ namespace Lucene.Net.Index
                         // TODO: can we do this reach-around in a cleaner way????
                         if (state.LiveDocs == null)
                         {
-                            state.LiveDocs = DocState.DocWriter.Codec.LiveDocsFormat.NewLiveDocs(state.SegmentInfo.DocCount);
+                            state.LiveDocs = DocState.docWriter.codec.LiveDocsFormat.NewLiveDocs(state.SegmentInfo.DocCount);
                         }
                         if (state.LiveDocs.Get(docID))
                         {

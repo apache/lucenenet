@@ -108,50 +108,50 @@ namespace Lucene.Net.Index
 
         public class DocState
         {
-            internal readonly DocumentsWriterPerThread DocWriter;
-            internal Analyzer Analyzer;
-            internal InfoStream InfoStream;
-            internal Similarity Similarity;
-            internal int DocID;
-            internal IEnumerable<IIndexableField> Doc;
-            internal string MaxTermPrefix;
+            internal readonly DocumentsWriterPerThread docWriter;
+            internal Analyzer analyzer;
+            internal InfoStream infoStream;
+            internal Similarity similarity;
+            internal int docID;
+            internal IEnumerable<IIndexableField> doc;
+            internal string maxTermPrefix;
 
             internal DocState(DocumentsWriterPerThread docWriter, InfoStream infoStream)
             {
-                this.DocWriter = docWriter;
-                this.InfoStream = infoStream;
+                this.docWriter = docWriter;
+                this.infoStream = infoStream;
             }
 
             // Only called by asserts
             public virtual bool TestPoint(string name)
             {
-                return DocWriter.TestPoint(name);
+                return docWriter.TestPoint(name);
             }
 
             public virtual void Clear()
             {
                 // don't hold onto doc nor analyzer, in case it is
                 // largish:
-                Doc = null;
-                Analyzer = null;
+                doc = null;
+                analyzer = null;
             }
         }
 
         internal class FlushedSegment
         {
-            internal readonly SegmentCommitInfo SegmentInfo;
-            internal readonly FieldInfos FieldInfos;
-            internal readonly FrozenBufferedUpdates SegmentUpdates;
-            internal readonly IMutableBits LiveDocs;
-            internal readonly int DelCount;
+            internal readonly SegmentCommitInfo segmentInfo;
+            internal readonly FieldInfos fieldInfos;
+            internal readonly FrozenBufferedUpdates segmentUpdates;
+            internal readonly IMutableBits liveDocs;
+            internal readonly int delCount;
 
             internal FlushedSegment(SegmentCommitInfo segmentInfo, FieldInfos fieldInfos, BufferedUpdates segmentUpdates, IMutableBits liveDocs, int delCount)
             {
-                this.SegmentInfo = segmentInfo;
-                this.FieldInfos = fieldInfos;
-                this.SegmentUpdates = segmentUpdates != null && segmentUpdates.Any() ? new FrozenBufferedUpdates(segmentUpdates, true) : null;
-                this.LiveDocs = liveDocs;
-                this.DelCount = delCount;
+                this.segmentInfo = segmentInfo;
+                this.fieldInfos = fieldInfos;
+                this.segmentUpdates = segmentUpdates != null && segmentUpdates.Any() ? new FrozenBufferedUpdates(segmentUpdates, true) : null;
+                this.liveDocs = liveDocs;
+                this.delCount = delCount;
             }
         }
 
@@ -164,81 +164,81 @@ namespace Lucene.Net.Index
         internal virtual void Abort(ISet<string> createdFiles)
         {
             //System.out.println(Thread.currentThread().getName() + ": now abort seg=" + segmentInfo.name);
-            HasAborted = Aborting = true;
+            hasAborted = aborting = true;
             try
             {
-                if (InfoStream.IsEnabled("DWPT"))
+                if (infoStream.IsEnabled("DWPT"))
                 {
-                    InfoStream.Message("DWPT", "now abort");
+                    infoStream.Message("DWPT", "now abort");
                 }
                 try
                 {
-                    Consumer.Abort();
+                    consumer.Abort();
                 }
                 catch (Exception t)
                 {
                 }
 
-                PendingUpdates.Clear();
-                CollectionsHelper.AddAll(createdFiles, Directory.CreatedFiles);
+                pendingUpdates.Clear();
+                CollectionsHelper.AddAll(createdFiles, directory.CreatedFiles);
             }
             finally
             {
-                Aborting = false;
-                if (InfoStream.IsEnabled("DWPT"))
+                aborting = false;
+                if (infoStream.IsEnabled("DWPT"))
                 {
-                    InfoStream.Message("DWPT", "done abort");
+                    infoStream.Message("DWPT", "done abort");
                 }
             }
         }
 
         private const bool INFO_VERBOSE = false;
-        internal readonly Codec Codec;
-        internal readonly TrackingDirectoryWrapper Directory;
-        internal readonly Directory DirectoryOrig;
+        internal readonly Codec codec;
+        internal readonly TrackingDirectoryWrapper directory;
+        internal readonly Directory directoryOrig;
         internal readonly DocState docState;
-        internal readonly DocConsumer Consumer;
+        internal readonly DocConsumer consumer;
         internal readonly Counter bytesUsed;
 
-        internal SegmentWriteState FlushState;
+        internal SegmentWriteState flushState;
 
         // Updates for our still-in-RAM (to be flushed next) segment
-        internal readonly BufferedUpdates PendingUpdates;
+        internal readonly BufferedUpdates pendingUpdates;
 
-        private readonly SegmentInfo SegmentInfo_Renamed; // Current segment we are working on
-        internal bool Aborting = false; // True if an abort is pending
-        internal bool HasAborted = false; // True if the last exception throws by #updateDocument was aborting
+        private readonly SegmentInfo segmentInfo; // Current segment we are working on
+        internal bool aborting = false; // True if an abort is pending
+        internal bool hasAborted = false; // True if the last exception throws by #updateDocument was aborting
 
-        private FieldInfos.Builder FieldInfos;
-        private readonly InfoStream InfoStream;
+        private FieldInfos.Builder fieldInfos;
+        private readonly InfoStream infoStream;
         private int numDocsInRAM;
-        internal readonly DocumentsWriterDeleteQueue DeleteQueue;
-        private readonly DeleteSlice DeleteSlice;
-        private readonly NumberFormatInfo Nf = CultureInfo.InvariantCulture.NumberFormat;
-        internal readonly Allocator ByteBlockAllocator;
+        internal readonly DocumentsWriterDeleteQueue deleteQueue;
+        private readonly DeleteSlice deleteSlice;
+        private readonly NumberFormatInfo nf = CultureInfo.InvariantCulture.NumberFormat;
+        internal readonly Allocator byteBlockAllocator;
         internal readonly IntBlockPool.Allocator intBlockAllocator;
-        private readonly LiveIndexWriterConfig IndexWriterConfig;
+        private readonly LiveIndexWriterConfig indexWriterConfig;
 
         public DocumentsWriterPerThread(string segmentName, Directory directory, LiveIndexWriterConfig indexWriterConfig, InfoStream infoStream, DocumentsWriterDeleteQueue deleteQueue, FieldInfos.Builder fieldInfos)
         {
-            this.DirectoryOrig = directory;
-            this.Directory = new TrackingDirectoryWrapper(directory);
-            this.FieldInfos = fieldInfos;
-            this.IndexWriterConfig = indexWriterConfig;
-            this.InfoStream = infoStream;
-            this.Codec = indexWriterConfig.Codec;
+            this.directoryOrig = directory;
+            this.directory = new TrackingDirectoryWrapper(directory);
+            this.fieldInfos = fieldInfos;
+            this.indexWriterConfig = indexWriterConfig;
+            this.infoStream = infoStream;
+            this.codec = indexWriterConfig.Codec;
             this.docState = new DocState(this, infoStream);
-            this.docState.Similarity = indexWriterConfig.Similarity;
+            this.docState.similarity = indexWriterConfig.Similarity;
             bytesUsed = Counter.NewCounter();
-            ByteBlockAllocator = new DirectTrackingAllocator(bytesUsed);
-            PendingUpdates = new BufferedUpdates();
+            byteBlockAllocator = new DirectTrackingAllocator(bytesUsed);
+            pendingUpdates = new BufferedUpdates();
             intBlockAllocator = new IntBlockAllocator(bytesUsed);
-            this.DeleteQueue = deleteQueue;
+            this.deleteQueue = deleteQueue;
             Debug.Assert(numDocsInRAM == 0, "num docs " + numDocsInRAM);
-            PendingUpdates.Clear();
-            DeleteSlice = deleteQueue.NewSlice();
+            pendingUpdates.Clear();
+            deleteSlice = deleteQueue.NewSlice();
 
-            SegmentInfo_Renamed = new SegmentInfo(DirectoryOrig, Constants.LUCENE_MAIN_VERSION, segmentName, -1, false, Codec, null);
+            segmentInfo = new SegmentInfo(directoryOrig, Constants.LUCENE_MAIN_VERSION, segmentName, -1, false, codec, null);
             Debug.Assert(numDocsInRAM == 0);
             if (INFO_VERBOSE && infoStream.IsEnabled("DWPT"))
             {
@@ -246,26 +246,26 @@ namespace Lucene.Net.Index
             }
             // this should be the last call in the ctor
             // it really sucks that we need to pull this within the ctor and pass this ref to the chain!
-            Consumer = indexWriterConfig.IndexingChain.GetChain(this);
+            consumer = indexWriterConfig.IndexingChain.GetChain(this);
         }
 
         internal virtual void SetAborting()
         {
-            Aborting = true;
+            aborting = true;
         }
 
         internal virtual bool CheckAndResetHasAborted()
         {
-            bool retval = HasAborted;
-            HasAborted = false;
+            bool retval = hasAborted;
+            hasAborted = false;
             return retval;
         }
 
         internal bool TestPoint(string message)
         {
-            if (InfoStream.IsEnabled("TP"))
+            if (infoStream.IsEnabled("TP"))
             {
-                InfoStream.Message("TP", message);
+                infoStream.Message("TP", message);
             }
             return true;
         }
@@ -273,20 +273,20 @@ namespace Lucene.Net.Index
         public virtual void UpdateDocument(IEnumerable<IIndexableField> doc, Analyzer analyzer, Term delTerm)
         {
             Debug.Assert(TestPoint("DocumentsWriterPerThread addDocument start"));
-            Debug.Assert(DeleteQueue != null);
-            docState.Doc = doc;
-            docState.Analyzer = analyzer;
-            docState.DocID = numDocsInRAM;
-            if (INFO_VERBOSE && InfoStream.IsEnabled("DWPT"))
+            Debug.Assert(deleteQueue != null);
+            docState.doc = doc;
+            docState.analyzer = analyzer;
+            docState.docID = numDocsInRAM;
+            if (INFO_VERBOSE && infoStream.IsEnabled("DWPT"))
             {
-                InfoStream.Message("DWPT", Thread.CurrentThread.Name + " update delTerm=" + delTerm + " docID=" + docState.DocID + " seg=" + SegmentInfo_Renamed.Name);
+                infoStream.Message("DWPT", Thread.CurrentThread.Name + " update delTerm=" + delTerm + " docID=" + docState.docID + " seg=" + segmentInfo.Name);
             }
             bool success = false;
             try
             {
                 try
                 {
-                    Consumer.ProcessDocument(FieldInfos);
+                    consumer.ProcessDocument(fieldInfos);
                 }
                 finally
                 {
@@ -298,10 +298,10 @@ namespace Lucene.Net.Index
             {
                 if (!success)
                 {
-                    if (!Aborting)
+                    if (!aborting)
                     {
                         // mark document as deleted
-                        DeleteDocID(docState.DocID);
+                        DeleteDocID(docState.docID);
                         numDocsInRAM++;
                     }
                     else
@@ -313,7 +313,7 @@ namespace Lucene.Net.Index
             success = false;
             try
             {
-                Consumer.FinishDocument();
+                consumer.FinishDocument();
                 success = true;
             }
             finally
@@ -329,11 +329,11 @@ namespace Lucene.Net.Index
         public virtual int UpdateDocuments(IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer analyzer, Term delTerm)
         {
             Debug.Assert(TestPoint("DocumentsWriterPerThread addDocuments start"));
-            Debug.Assert(DeleteQueue != null);
-            docState.Analyzer = analyzer;
-            if (INFO_VERBOSE && InfoStream.IsEnabled("DWPT"))
+            Debug.Assert(deleteQueue != null);
+            docState.analyzer = analyzer;
+            if (INFO_VERBOSE && infoStream.IsEnabled("DWPT"))
             {
-                InfoStream.Message("DWPT", Thread.CurrentThread.Name + " update delTerm=" + delTerm + " docID=" + docState.DocID + " seg=" + SegmentInfo_Renamed.Name);
+                infoStream.Message("DWPT", Thread.CurrentThread.Name + " update delTerm=" + delTerm + " docID=" + docState.docID + " seg=" + segmentInfo.Name);
             }
             int docCount = 0;
             bool allDocsIndexed = false;
@@ -341,14 +341,14 @@ namespace Lucene.Net.Index
             {
                 foreach (IEnumerable<IIndexableField> doc in docs)
                 {
-                    docState.Doc = doc;
-                    docState.DocID = numDocsInRAM;
+                    docState.doc = doc;
+                    docState.docID = numDocsInRAM;
                     docCount++;
 
                     bool success = false;
                     try
                     {
-                        Consumer.ProcessDocument(FieldInfos);
+                        consumer.ProcessDocument(fieldInfos);
                         success = true;
                     }
                     finally
@@ -356,7 +356,7 @@ namespace Lucene.Net.Index
                         if (!success)
                         {
                             // An exc is being thrown...
-                            if (!Aborting)
+                            if (!aborting)
                             {
                                 // Incr here because finishDocument will not
                                 // be called (because an exc is being thrown):
@@ -371,7 +371,7 @@ namespace Lucene.Net.Index
                     success = false;
                     try
                     {
-                        Consumer.FinishDocument();
+                        consumer.FinishDocument();
                         success = true;
                     }
                     finally
@@ -391,14 +391,14 @@ namespace Lucene.Net.Index
                 // this batch started:
                 if (delTerm != null)
                 {
-                    DeleteQueue.Add(delTerm, DeleteSlice);
-                    Debug.Assert(DeleteSlice.IsTailItem(delTerm), "expected the delete term as the tail item");
-                    DeleteSlice.Apply(PendingUpdates, numDocsInRAM - docCount);
+                    deleteQueue.Add(delTerm, deleteSlice);
+                    Debug.Assert(deleteSlice.IsTailItem(delTerm), "expected the delete term as the tail item");
+                    deleteSlice.Apply(pendingUpdates, numDocsInRAM - docCount);
                 }
             }
             finally
             {
-                if (!allDocsIndexed && !Aborting)
+                if (!allDocsIndexed && !aborting)
                 {
                     // the iterator threw an exception that is not aborting
                     // go and mark all docs from this block as deleted
@@ -429,21 +429,21 @@ namespace Lucene.Net.Index
             bool applySlice = numDocsInRAM != 0;
             if (delTerm != null)
             {
-                DeleteQueue.Add(delTerm, DeleteSlice);
-                Debug.Assert(DeleteSlice.IsTailItem(delTerm), "expected the delete term as the tail item");
+                deleteQueue.Add(delTerm, deleteSlice);
+                Debug.Assert(deleteSlice.IsTailItem(delTerm), "expected the delete term as the tail item");
             }
             else
             {
-                applySlice &= DeleteQueue.UpdateSlice(DeleteSlice);
+                applySlice &= deleteQueue.UpdateSlice(deleteSlice);
             }
 
             if (applySlice)
             {
-                DeleteSlice.Apply(PendingUpdates, numDocsInRAM);
+                deleteSlice.Apply(pendingUpdates, numDocsInRAM);
             } // if we don't need to apply we must reset!
             else
             {
-                DeleteSlice.Reset();
+                deleteSlice.Reset();
             }
             ++numDocsInRAM;
         }
@@ -452,7 +452,7 @@ namespace Lucene.Net.Index
         // used when we hit an exception when adding a document
         internal virtual void DeleteDocID(int docIDUpto)
         {
-            PendingUpdates.AddDocID(docIDUpto);
+            pendingUpdates.AddDocID(docIDUpto);
             // NOTE: we do not trigger flush here.  this is
             // potentially a RAM leak, if you have an app that tries
             // to add docs but every single doc always hits a
@@ -472,7 +472,7 @@ namespace Lucene.Net.Index
             get
             {
                 // public for FlushPolicy
-                return PendingUpdates.numTermDeletes.Get();
+                return pendingUpdates.numTermDeletes.Get();
             }
         }
 
@@ -496,15 +496,15 @@ namespace Lucene.Net.Index
         internal virtual FrozenBufferedUpdates PrepareFlush()
         {
             Debug.Assert(numDocsInRAM > 0);
-            FrozenBufferedUpdates globalUpdates = DeleteQueue.FreezeGlobalBuffer(DeleteSlice);
+            FrozenBufferedUpdates globalUpdates = deleteQueue.FreezeGlobalBuffer(deleteSlice);
             /* deleteSlice can possibly be null if we have hit non-aborting exceptions during indexing and never succeeded
             adding a document. */
-            if (DeleteSlice != null)
+            if (deleteSlice != null)
             {
                 // apply all deletes before we flush and release the delete slice
-                DeleteSlice.Apply(PendingUpdates, numDocsInRAM);
-                Debug.Assert(DeleteSlice.IsEmpty);
-                DeleteSlice.Reset();
+                deleteSlice.Apply(pendingUpdates, numDocsInRAM);
+                Debug.Assert(deleteSlice.IsEmpty);
+                deleteSlice.Reset();
             }
             return globalUpdates;
         }
@@ -514,75 +514,75 @@ namespace Lucene.Net.Index
         internal virtual FlushedSegment Flush()
         {
             Debug.Assert(numDocsInRAM > 0);
-            Debug.Assert(DeleteSlice.IsEmpty, "all deletes must be applied in prepareFlush");
-            SegmentInfo_Renamed.DocCount = numDocsInRAM;
-            SegmentWriteState flushState = new SegmentWriteState(InfoStream, Directory, SegmentInfo_Renamed, FieldInfos.Finish(), IndexWriterConfig.TermIndexInterval, PendingUpdates, new IOContext(new FlushInfo(numDocsInRAM, BytesUsed)));
+            Debug.Assert(deleteSlice.IsEmpty, "all deletes must be applied in prepareFlush");
+            segmentInfo.DocCount = numDocsInRAM;
+            SegmentWriteState flushState = new SegmentWriteState(infoStream, directory, segmentInfo, fieldInfos.Finish(), indexWriterConfig.TermIndexInterval, pendingUpdates, new IOContext(new FlushInfo(numDocsInRAM, BytesUsed)));
             double startMBUsed = BytesUsed / 1024.0 / 1024.0;
 
             // Apply delete-by-docID now (delete-byDocID only
             // happens when an exception is hit processing that
             // doc, eg if analyzer has some problem w/ the text):
-            if (PendingUpdates.docIDs.Count > 0)
+            if (pendingUpdates.docIDs.Count > 0)
             {
-                flushState.LiveDocs = Codec.LiveDocsFormat.NewLiveDocs(numDocsInRAM);
-                foreach (int delDocID in PendingUpdates.docIDs)
+                flushState.LiveDocs = codec.LiveDocsFormat.NewLiveDocs(numDocsInRAM);
+                foreach (int delDocID in pendingUpdates.docIDs)
                 {
                     flushState.LiveDocs.Clear(delDocID);
                 }
-                flushState.DelCountOnFlush = PendingUpdates.docIDs.Count;
-                PendingUpdates.bytesUsed.AddAndGet(-PendingUpdates.docIDs.Count * BufferedUpdates.BYTES_PER_DEL_DOCID);
-                PendingUpdates.docIDs.Clear();
+                flushState.DelCountOnFlush = pendingUpdates.docIDs.Count;
+                pendingUpdates.bytesUsed.AddAndGet(-pendingUpdates.docIDs.Count * BufferedUpdates.BYTES_PER_DEL_DOCID);
+                pendingUpdates.docIDs.Clear();
             }
 
-            if (Aborting)
+            if (aborting)
             {
-                if (InfoStream.IsEnabled("DWPT"))
+                if (infoStream.IsEnabled("DWPT"))
                 {
-                    InfoStream.Message("DWPT", "flush: skip because aborting is set");
+                    infoStream.Message("DWPT", "flush: skip because aborting is set");
                 }
                 return null;
             }
 
-            if (InfoStream.IsEnabled("DWPT"))
+            if (infoStream.IsEnabled("DWPT"))
             {
-                InfoStream.Message("DWPT", "flush postings as segment " + flushState.SegmentInfo.Name + " numDocs=" + numDocsInRAM);
+                infoStream.Message("DWPT", "flush postings as segment " + flushState.SegmentInfo.Name + " numDocs=" + numDocsInRAM);
             }
 
             bool success = false;
 
             try
             {
-                Consumer.Flush(flushState);
-                PendingUpdates.terms.Clear();
-                SegmentInfo_Renamed.SetFiles(new HashSet<string>(Directory.CreatedFiles));
+                consumer.Flush(flushState);
+                pendingUpdates.terms.Clear();
+                segmentInfo.SetFiles(new HashSet<string>(directory.CreatedFiles));
 
-                SegmentCommitInfo segmentInfoPerCommit = new SegmentCommitInfo(SegmentInfo_Renamed, 0, -1L, -1L);
-                if (InfoStream.IsEnabled("DWPT"))
+                SegmentCommitInfo segmentInfoPerCommit = new SegmentCommitInfo(segmentInfo, 0, -1L, -1L);
+                if (infoStream.IsEnabled("DWPT"))
                 {
-                    InfoStream.Message("DWPT", "new segment has " + (flushState.LiveDocs == null ? 0 : (flushState.SegmentInfo.DocCount - flushState.DelCountOnFlush)) + " deleted docs");
-                    InfoStream.Message("DWPT", "new segment has " + (flushState.FieldInfos.HasVectors ? "vectors" : "no vectors") + "; " + (flushState.FieldInfos.HasNorms ? "norms" : "no norms") + "; " + (flushState.FieldInfos.HasDocValues ? "docValues" : "no docValues") + "; " + (flushState.FieldInfos.HasProx ? "prox" : "no prox") + "; " + (flushState.FieldInfos.HasFreq ? "freqs" : "no freqs"));
-                    InfoStream.Message("DWPT", "flushedFiles=" + segmentInfoPerCommit.Files());
-                    InfoStream.Message("DWPT", "flushed codec=" + Codec);
+                    infoStream.Message("DWPT", "new segment has " + (flushState.LiveDocs == null ? 0 : (flushState.SegmentInfo.DocCount - flushState.DelCountOnFlush)) + " deleted docs");
+                    infoStream.Message("DWPT", "new segment has " + (flushState.FieldInfos.HasVectors ? "vectors" : "no vectors") + "; " + (flushState.FieldInfos.HasNorms ? "norms" : "no norms") + "; " + (flushState.FieldInfos.HasDocValues ? "docValues" : "no docValues") + "; " + (flushState.FieldInfos.HasProx ? "prox" : "no prox") + "; " + (flushState.FieldInfos.HasFreq ? "freqs" : "no freqs"));
+                    infoStream.Message("DWPT", "flushedFiles=" + segmentInfoPerCommit.Files());
+                    infoStream.Message("DWPT", "flushed codec=" + codec);
                 }
 
                 BufferedUpdates segmentDeletes;
-                if (PendingUpdates.queries.Count == 0 && PendingUpdates.numericUpdates.Count == 0 && PendingUpdates.binaryUpdates.Count == 0)
+                if (pendingUpdates.queries.Count == 0 && pendingUpdates.numericUpdates.Count == 0 && pendingUpdates.binaryUpdates.Count == 0)
                 {
-                    PendingUpdates.Clear();
+                    pendingUpdates.Clear();
                     segmentDeletes = null;
                 }
                 else
                 {
-                    segmentDeletes = PendingUpdates;
+                    segmentDeletes = pendingUpdates;
                 }
 
-                if (InfoStream.IsEnabled("DWPT"))
+                if (infoStream.IsEnabled("DWPT"))
                 {
                     double newSegmentSize = segmentInfoPerCommit.SizeInBytes() / 1024.0 / 1024.0;
-                    InfoStream.Message("DWPT", "flushed: segment=" + SegmentInfo_Renamed.Name + " ramUsed=" + startMBUsed.ToString(Nf) + " MB" + " newFlushedSize(includes docstores)=" + newSegmentSize.ToString(Nf) + " MB" + " docs/MB=" + (flushState.SegmentInfo.DocCount / newSegmentSize).ToString(Nf));
+                    infoStream.Message("DWPT", "flushed: segment=" + segmentInfo.Name + " ramUsed=" + startMBUsed.ToString(nf) + " MB" + " newFlushedSize(includes docstores)=" + newSegmentSize.ToString(nf) + " MB" + " docs/MB=" + (flushState.SegmentInfo.DocCount / newSegmentSize).ToString(nf));
                 }
 
-                Debug.Assert(SegmentInfo_Renamed != null);
+                Debug.Assert(segmentInfo != null);
 
                 FlushedSegment fs = new FlushedSegment(segmentInfoPerCommit, flushState.FieldInfos, segmentDeletes, flushState.LiveDocs, flushState.DelCountOnFlush);
                 SealFlushedSegment(fs);
@@ -614,7 +614,7 @@ namespace Lucene.Net.Index
         {
             Debug.Assert(flushedSegment != null);
 
-            SegmentCommitInfo newSegment = flushedSegment.SegmentInfo;
+            SegmentCommitInfo newSegment = flushedSegment.segmentInfo;
 
             IndexWriter.SetDiagnostics(newSegment.Info, IndexWriter.SOURCE_FLUSH);
 
@@ -623,9 +623,9 @@ namespace Lucene.Net.Index
             bool success = false;
             try
             {
-                if (IndexWriterConfig.UseCompoundFile)
+                if (indexWriterConfig.UseCompoundFile)
                 {
-                    CollectionsHelper.AddAll(FilesToDelete, IndexWriter.CreateCompoundFile(InfoStream, Directory, CheckAbort.NONE, newSegment.Info, context));
+                    CollectionsHelper.AddAll(FilesToDelete, IndexWriter.CreateCompoundFile(infoStream, directory, CheckAbort.NONE, newSegment.Info, context));
                     newSegment.Info.UseCompoundFile = true;
                 }
 
@@ -633,7 +633,7 @@ namespace Lucene.Net.Index
                 // creating CFS so that 1) .si isn't slurped into CFS,
                 // and 2) .si reflects useCompoundFile=true change
                 // above:
-                Codec.SegmentInfoFormat.SegmentInfoWriter.Write(Directory, newSegment.Info, flushedSegment.FieldInfos, context);
+                codec.SegmentInfoFormat.SegmentInfoWriter.Write(directory, newSegment.Info, flushedSegment.fieldInfos, context);
 
                 // TODO: ideally we would freeze newSegment here!!
                 // because any changes after writing the .si will be
@@ -641,13 +641,13 @@ namespace Lucene.Net.Index
 
                 // Must write deleted docs after the CFS so we don't
                 // slurp the del file into CFS:
-                if (flushedSegment.LiveDocs != null)
+                if (flushedSegment.liveDocs != null)
                 {
-                    int delCount = flushedSegment.DelCount;
+                    int delCount = flushedSegment.delCount;
                     Debug.Assert(delCount > 0);
-                    if (InfoStream.IsEnabled("DWPT"))
+                    if (infoStream.IsEnabled("DWPT"))
                     {
-                        InfoStream.Message("DWPT", "flush: write " + delCount + " deletes gen=" + flushedSegment.SegmentInfo.DelGen);
+                        infoStream.Message("DWPT", "flush: write " + delCount + " deletes gen=" + flushedSegment.segmentInfo.DelGen);
                     }
 
                     // TODO: we should prune the segment if it's 100%
@@ -659,9 +659,9 @@ namespace Lucene.Net.Index
                     // carry the changes; there's no reason to use
                     // filesystem as intermediary here.
 
-                    SegmentCommitInfo info = flushedSegment.SegmentInfo;
+                    SegmentCommitInfo info = flushedSegment.segmentInfo;
                     Codec codec = info.Info.Codec;
-                    codec.LiveDocsFormat.WriteLiveDocs(flushedSegment.LiveDocs, Directory, info, delCount, context);
+                    codec.LiveDocsFormat.WriteLiveDocs(flushedSegment.liveDocs, directory, info, delCount, context);
                     newSegment.DelCount = delCount;
                     newSegment.AdvanceDelGen();
                 }
@@ -672,9 +672,9 @@ namespace Lucene.Net.Index
             {
                 if (!success)
                 {
-                    if (InfoStream.IsEnabled("DWPT"))
+                    if (infoStream.IsEnabled("DWPT"))
                     {
-                        InfoStream.Message("DWPT", "hit exception creating compound file for newly flushed segment " + newSegment.Info.Name);
+                        infoStream.Message("DWPT", "hit exception creating compound file for newly flushed segment " + newSegment.Info.Name);
                     }
                 }
             }
@@ -686,13 +686,13 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return SegmentInfo_Renamed;
+                return segmentInfo;
             }
         }
 
         public virtual long BytesUsed
         {
-            get { return bytesUsed.Get() + PendingUpdates.bytesUsed.Get(); }
+            get { return bytesUsed.Get() + pendingUpdates.bytesUsed.Get(); }
         }
 
         /* Initial chunks size of the shared byte[] blocks used to
@@ -705,12 +705,12 @@ namespace Lucene.Net.Index
 
         private class IntBlockAllocator : IntBlockPool.Allocator
         {
-            private readonly Counter BytesUsed;
+            private readonly Counter bytesUsed;
 
             public IntBlockAllocator(Counter bytesUsed)
                 : base(IntBlockPool.INT_BLOCK_SIZE)
             {
-                this.BytesUsed = bytesUsed;
+                this.bytesUsed = bytesUsed;
             }
 
             /* Allocate another int[] from the shared pool */
@@ -718,19 +718,19 @@ namespace Lucene.Net.Index
             public override int[] GetIntBlock()
             {
                 int[] b = new int[IntBlockPool.INT_BLOCK_SIZE];
-                BytesUsed.AddAndGet(IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT);
+                bytesUsed.AddAndGet(IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT);
                 return b;
             }
 
             public override void RecycleIntBlocks(int[][] blocks, int offset, int length)
             {
-                BytesUsed.AddAndGet(-(length * (IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT)));
+                bytesUsed.AddAndGet(-(length * (IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT)));
             }
         }
 
         public override string ToString()
         {
-            return "DocumentsWriterPerThread [pendingDeletes=" + PendingUpdates + ", segment=" + (SegmentInfo_Renamed != null ? SegmentInfo_Renamed.Name : "null") + ", aborting=" + Aborting + ", numDocsInRAM=" + numDocsInRAM + ", deleteQueue=" + DeleteQueue + "]";
+            return "DocumentsWriterPerThread [pendingDeletes=" + pendingUpdates + ", segment=" + (segmentInfo != null ? segmentInfo.Name : "null") + ", aborting=" + aborting + ", numDocsInRAM=" + numDocsInRAM + ", deleteQueue=" + deleteQueue + "]";
         }
     }
 }

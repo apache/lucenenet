@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
                 // tokenized.
                 if (fieldType.IsIndexed && doInvert)
                 {
-                    bool analyzed = fieldType.IsTokenized && docState.Analyzer != null;
+                    bool analyzed = fieldType.IsTokenized && docState.analyzer != null;
 
                     // if the field omits norms, the boost cannot be indexed.
                     if (fieldType.OmitNorms && field.Boost != 1.0f)
@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
 
                     if (i > 0)
                     {
-                        fieldState.Position += analyzed ? docState.Analyzer.GetPositionIncrementGap(fieldInfo.Name) : 0;
+                        fieldState.Position += analyzed ? docState.analyzer.GetPositionIncrementGap(fieldInfo.Name) : 0;
                     }
 
                     /*
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
 
                     bool succeededInProcessingField = false;
 
-                    TokenStream stream = field.GetTokenStream(docState.Analyzer);
+                    TokenStream stream = field.GetTokenStream(docState.analyzer);
                     // reset the TokenStream to the first token
                     stream.Reset();
 
@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
                                 {
                                     if (!success)
                                     {
-                                        docState.DocWriter.SetAborting();
+                                        docState.docWriter.SetAborting();
                                     }
                                 }
                                 fieldState.Length++;
@@ -202,14 +202,14 @@ namespace Lucene.Net.Index
                         fieldState.Position += posIncrAttribute.PositionIncrement;
                         fieldState.Offset += offsetAttribute.EndOffset;
 
-                        if (docState.MaxTermPrefix != null)
+                        if (docState.maxTermPrefix != null)
                         {
-                            string msg = "Document contains at least one immense term in field=\"" + fieldInfo.Name + "\" (whose UTF8 encoding is longer than the max length " + DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8 + "), all of which were skipped.  Please correct the analyzer to not produce such terms.  The prefix of the first immense term is: '" + docState.MaxTermPrefix + "...'";
-                            if (docState.InfoStream.IsEnabled("IW"))
+                            string msg = "Document contains at least one immense term in field=\"" + fieldInfo.Name + "\" (whose UTF8 encoding is longer than the max length " + DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8 + "), all of which were skipped.  Please correct the analyzer to not produce such terms.  The prefix of the first immense term is: '" + docState.maxTermPrefix + "...'";
+                            if (docState.infoStream.IsEnabled("IW"))
                             {
-                                docState.InfoStream.Message("IW", "ERROR: " + msg);
+                                docState.infoStream.Message("IW", "ERROR: " + msg);
                             }
-                            docState.MaxTermPrefix = null;
+                            docState.maxTermPrefix = null;
                             throw new System.ArgumentException(msg);
                         }
 
@@ -226,13 +226,13 @@ namespace Lucene.Net.Index
                         {
                             stream.Dispose();
                         }
-                        if (!succeededInProcessingField && docState.InfoStream.IsEnabled("DW"))
+                        if (!succeededInProcessingField && docState.infoStream.IsEnabled("DW"))
                         {
-                            docState.InfoStream.Message("DW", "An exception was thrown while processing field " + fieldInfo.Name);
+                            docState.infoStream.Message("DW", "An exception was thrown while processing field " + fieldInfo.Name);
                         }
                     }
 
-                    fieldState.Offset += analyzed ? docState.Analyzer.GetOffsetGap(fieldInfo.Name) : 0;
+                    fieldState.Offset += analyzed ? docState.analyzer.GetOffsetGap(fieldInfo.Name) : 0;
                     fieldState.Boost *= field.Boost;
                 }
 

@@ -605,7 +605,7 @@ namespace Lucene.Net.Index
             bool success = false;
             try
             {
-                if (perThread.IsInitialized && perThread.dwpt.DeleteQueue != documentsWriter.deleteQueue)
+                if (perThread.IsInitialized && perThread.dwpt.deleteQueue != documentsWriter.deleteQueue)
                 {
                     // There is a flush-all in process and this DWPT is
                     // now stale -- enroll it for flush and try for
@@ -654,8 +654,8 @@ namespace Lucene.Net.Index
                         }
                         continue;
                     }
-                    Debug.Assert(next.dwpt.DeleteQueue == flushingQueue || next.dwpt.DeleteQueue == documentsWriter.deleteQueue, " flushingQueue: " + flushingQueue + " currentqueue: " + documentsWriter.deleteQueue + " perThread queue: " + next.dwpt.DeleteQueue + " numDocsInRam: " + next.dwpt.NumDocsInRAM);
-                    if (next.dwpt.DeleteQueue != flushingQueue)
+                    Debug.Assert(next.dwpt.deleteQueue == flushingQueue || next.dwpt.deleteQueue == documentsWriter.deleteQueue, " flushingQueue: " + flushingQueue + " currentqueue: " + documentsWriter.deleteQueue + " perThread queue: " + next.dwpt.deleteQueue + " numDocsInRam: " + next.dwpt.NumDocsInRAM);
+                    if (next.dwpt.deleteQueue != flushingQueue)
                     {
                         // this one is already a new DWPT
                         continue;
@@ -695,7 +695,7 @@ namespace Lucene.Net.Index
                 next.@Lock();
                 try
                 {
-                    Debug.Assert(!next.IsInitialized || next.dwpt.DeleteQueue == queue, "isInitialized: " + next.IsInitialized + " numDocs: " + (next.IsInitialized ? next.dwpt.NumDocsInRAM : 0));
+                    Debug.Assert(!next.IsInitialized || next.dwpt.deleteQueue == queue, "isInitialized: " + next.IsInitialized + " numDocs: " + (next.IsInitialized ? next.dwpt.NumDocsInRAM : 0));
                 }
                 finally
                 {
@@ -717,7 +717,7 @@ namespace Lucene.Net.Index
             //Debug.Assert(perThread.HeldByCurrentThread);
             Debug.Assert(perThread.IsInitialized);
             Debug.Assert(fullFlush);
-            Debug.Assert(dwpt.DeleteQueue != documentsWriter.deleteQueue);
+            Debug.Assert(dwpt.deleteQueue != documentsWriter.deleteQueue);
             if (dwpt.NumDocsInRAM > 0)
             {
                 lock (this)
@@ -748,7 +748,7 @@ namespace Lucene.Net.Index
             {
                 var nextNode = node.Next;
                 BlockedFlush blockedFlush = node.Value;
-                if (blockedFlush.Dwpt.DeleteQueue == flushingQueue)
+                if (blockedFlush.Dwpt.deleteQueue == flushingQueue)
                 {
                     blockedFlushes.Remove(node);
                     Debug.Assert(!flushingWriters.ContainsKey(blockedFlush.Dwpt), "DWPT is already flushing");
@@ -789,7 +789,7 @@ namespace Lucene.Net.Index
         {
             foreach (BlockedFlush blockedFlush in blockedFlushes)
             {
-                Debug.Assert(blockedFlush.Dwpt.DeleteQueue == flushingQueue);
+                Debug.Assert(blockedFlush.Dwpt.deleteQueue == flushingQueue);
             }
             return true;
         }
