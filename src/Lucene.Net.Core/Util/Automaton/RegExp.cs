@@ -375,18 +375,18 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public const int NONE = 0x0000;
 
-        private static bool Allow_mutation = false;
+        private static bool allow_mutation = false;
 
         internal Kind kind;
-        internal RegExp Exp1, Exp2;
+        internal RegExp exp1, exp2;
         internal string s;
         internal int c;
-        internal int Min, Max, Digits;
-        internal int From, To;
+        internal int min, max, digits;
+        internal int from, to;
 
         internal string b;
-        internal int Flags;
-        internal int Pos;
+        internal int flags;
+        internal int pos;
 
         internal RegExp()
         {
@@ -415,7 +415,7 @@ namespace Lucene.Net.Util.Automaton
         public RegExp(string s, int syntax_flags)
         {
             b = s;
-            Flags = syntax_flags;
+            flags = syntax_flags;
             RegExp e;
             if (s.Length == 0)
             {
@@ -424,21 +424,21 @@ namespace Lucene.Net.Util.Automaton
             else
             {
                 e = ParseUnionExp();
-                if (Pos < b.Length)
+                if (pos < b.Length)
                 {
-                    throw new System.ArgumentException("end-of-string expected at position " + Pos);
+                    throw new System.ArgumentException("end-of-string expected at position " + pos);
                 }
             }
             kind = e.kind;
-            Exp1 = e.Exp1;
-            Exp2 = e.Exp2;
+            exp1 = e.exp1;
+            exp2 = e.exp2;
             this.s = e.s;
             c = e.c;
-            Min = e.Min;
-            Max = e.Max;
-            Digits = e.Digits;
-            From = e.From;
-            To = e.To;
+            min = e.min;
+            max = e.max;
+            digits = e.digits;
+            from = e.from;
+            to = e.to;
             b = null;
         }
 
@@ -487,20 +487,20 @@ namespace Lucene.Net.Util.Automaton
         /// <returns> previous value of the flag </returns>
         public virtual bool SetAllowMutate(bool flag)
         {
-            bool b = Allow_mutation;
-            Allow_mutation = flag;
+            bool b = allow_mutation;
+            allow_mutation = flag;
             return b;
         }
 
         private Automaton ToAutomatonAllowMutate(IDictionary<string, Automaton> automata, IAutomatonProvider automaton_provider)
         {
             bool b = false;
-            if (Allow_mutation) // thread unsafe
+            if (allow_mutation) // thread unsafe
             {
                 b = Automaton.SetAllowMutate(true);
             }
             Automaton a = ToAutomaton(automata, automaton_provider);
-            if (Allow_mutation)
+            if (allow_mutation)
             {
                 Automaton.SetAllowMutate(b);
             }
@@ -515,47 +515,47 @@ namespace Lucene.Net.Util.Automaton
             {
                 case Kind.REGEXP_UNION:
                     list = new List<Automaton>();
-                    FindLeaves(Exp1, Kind.REGEXP_UNION, list, automata, automaton_provider);
-                    FindLeaves(Exp2, Kind.REGEXP_UNION, list, automata, automaton_provider);
+                    FindLeaves(exp1, Kind.REGEXP_UNION, list, automata, automaton_provider);
+                    FindLeaves(exp2, Kind.REGEXP_UNION, list, automata, automaton_provider);
                     a = BasicOperations.Union(list);
                     MinimizationOperations.Minimize(a);
                     break;
 
                 case Kind.REGEXP_CONCATENATION:
                     list = new List<Automaton>();
-                    FindLeaves(Exp1, Kind.REGEXP_CONCATENATION, list, automata, automaton_provider);
-                    FindLeaves(Exp2, Kind.REGEXP_CONCATENATION, list, automata, automaton_provider);
+                    FindLeaves(exp1, Kind.REGEXP_CONCATENATION, list, automata, automaton_provider);
+                    FindLeaves(exp2, Kind.REGEXP_CONCATENATION, list, automata, automaton_provider);
                     a = BasicOperations.Concatenate(list);
                     MinimizationOperations.Minimize(a);
                     break;
 
                 case Kind.REGEXP_INTERSECTION:
-                    a = Exp1.ToAutomaton(automata, automaton_provider).Intersection(Exp2.ToAutomaton(automata, automaton_provider));
+                    a = exp1.ToAutomaton(automata, automaton_provider).Intersection(exp2.ToAutomaton(automata, automaton_provider));
                     MinimizationOperations.Minimize(a);
                     break;
 
                 case Kind.REGEXP_OPTIONAL:
-                    a = Exp1.ToAutomaton(automata, automaton_provider).Optional();
+                    a = exp1.ToAutomaton(automata, automaton_provider).Optional();
                     MinimizationOperations.Minimize(a);
                     break;
 
                 case Kind.REGEXP_REPEAT:
-                    a = Exp1.ToAutomaton(automata, automaton_provider).Repeat();
+                    a = exp1.ToAutomaton(automata, automaton_provider).Repeat();
                     MinimizationOperations.Minimize(a);
                     break;
 
                 case Kind.REGEXP_REPEAT_MIN:
-                    a = Exp1.ToAutomaton(automata, automaton_provider).Repeat(Min);
+                    a = exp1.ToAutomaton(automata, automaton_provider).Repeat(min);
                     MinimizationOperations.Minimize(a);
                     break;
 
                 case Kind.REGEXP_REPEAT_MINMAX:
-                    a = Exp1.ToAutomaton(automata, automaton_provider).Repeat(Min, Max);
+                    a = exp1.ToAutomaton(automata, automaton_provider).Repeat(min, max);
                     MinimizationOperations.Minimize(a);
                     break;
 
                 case Kind.REGEXP_COMPLEMENT:
-                    a = Exp1.ToAutomaton(automata, automaton_provider).Complement();
+                    a = exp1.ToAutomaton(automata, automaton_provider).Complement();
                     MinimizationOperations.Minimize(a);
                     break;
 
@@ -564,7 +564,7 @@ namespace Lucene.Net.Util.Automaton
                     break;
 
                 case Kind.REGEXP_CHAR_RANGE:
-                    a = BasicAutomata.MakeCharRange(From, To);
+                    a = BasicAutomata.MakeCharRange(from, to);
                     break;
 
                 case Kind.REGEXP_ANYCHAR:
@@ -608,7 +608,7 @@ namespace Lucene.Net.Util.Automaton
                     break;
 
                 case Kind.REGEXP_INTERVAL:
-                    a = BasicAutomata.MakeInterval(Min, Max, Digits);
+                    a = BasicAutomata.MakeInterval(min, max, digits);
                     break;
             }
             return a;
@@ -618,8 +618,8 @@ namespace Lucene.Net.Util.Automaton
         {
             if (exp.kind == kind)
             {
-                FindLeaves(exp.Exp1, kind, list, automata, automaton_provider);
-                FindLeaves(exp.Exp2, kind, list, automata, automaton_provider);
+                FindLeaves(exp.exp1, kind, list, automata, automaton_provider);
+                FindLeaves(exp.exp2, kind, list, automata, automaton_provider);
             }
             else
             {
@@ -641,52 +641,52 @@ namespace Lucene.Net.Util.Automaton
             {
                 case Kind.REGEXP_UNION:
                     b.Append("(");
-                    Exp1.ToStringBuilder(b);
+                    exp1.ToStringBuilder(b);
                     b.Append("|");
-                    Exp2.ToStringBuilder(b);
+                    exp2.ToStringBuilder(b);
                     b.Append(")");
                     break;
 
                 case Kind.REGEXP_CONCATENATION:
-                    Exp1.ToStringBuilder(b);
-                    Exp2.ToStringBuilder(b);
+                    exp1.ToStringBuilder(b);
+                    exp2.ToStringBuilder(b);
                     break;
 
                 case Kind.REGEXP_INTERSECTION:
                     b.Append("(");
-                    Exp1.ToStringBuilder(b);
+                    exp1.ToStringBuilder(b);
                     b.Append("&");
-                    Exp2.ToStringBuilder(b);
+                    exp2.ToStringBuilder(b);
                     b.Append(")");
                     break;
 
                 case Kind.REGEXP_OPTIONAL:
                     b.Append("(");
-                    Exp1.ToStringBuilder(b);
+                    exp1.ToStringBuilder(b);
                     b.Append(")?");
                     break;
 
                 case Kind.REGEXP_REPEAT:
                     b.Append("(");
-                    Exp1.ToStringBuilder(b);
+                    exp1.ToStringBuilder(b);
                     b.Append(")*");
                     break;
 
                 case Kind.REGEXP_REPEAT_MIN:
                     b.Append("(");
-                    Exp1.ToStringBuilder(b);
-                    b.Append("){").Append(Min).Append(",}");
+                    exp1.ToStringBuilder(b);
+                    b.Append("){").Append(min).Append(",}");
                     break;
 
                 case Kind.REGEXP_REPEAT_MINMAX:
                     b.Append("(");
-                    Exp1.ToStringBuilder(b);
-                    b.Append("){").Append(Min).Append(",").Append(Max).Append("}");
+                    exp1.ToStringBuilder(b);
+                    b.Append("){").Append(min).Append(",").Append(max).Append("}");
                     break;
 
                 case Kind.REGEXP_COMPLEMENT:
                     b.Append("~(");
-                    Exp1.ToStringBuilder(b);
+                    exp1.ToStringBuilder(b);
                     b.Append(")");
                     break;
 
@@ -695,7 +695,7 @@ namespace Lucene.Net.Util.Automaton
                     break;
 
                 case Kind.REGEXP_CHAR_RANGE:
-                    b.Append("[\\").Append(Character.ToChars(From)).Append("-\\").Append(Character.ToChars(To)).Append("]");
+                    b.Append("[\\").Append(Character.ToChars(from)).Append("-\\").Append(Character.ToChars(to)).Append("]");
                     break;
 
                 case Kind.REGEXP_ANYCHAR:
@@ -719,20 +719,20 @@ namespace Lucene.Net.Util.Automaton
                     break;
 
                 case Kind.REGEXP_INTERVAL:
-                    string s1 = Convert.ToString(Min);
-                    string s2 = Convert.ToString(Max);
+                    string s1 = Convert.ToString(min);
+                    string s2 = Convert.ToString(max);
                     b.Append("<");
-                    if (Digits > 0)
+                    if (digits > 0)
                     {
-                        for (int i = s1.Length; i < Digits; i++)
+                        for (int i = s1.Length; i < digits; i++)
                         {
                             b.Append('0');
                         }
                     }
                     b.Append(s1).Append("-");
-                    if (Digits > 0)
+                    if (digits > 0)
                     {
-                        for (int i = s2.Length; i < Digits; i++)
+                        for (int i = s2.Length; i < digits; i++)
                         {
                             b.Append('0');
                         }
@@ -760,8 +760,8 @@ namespace Lucene.Net.Util.Automaton
                 case Kind.REGEXP_UNION:
                 case Kind.REGEXP_CONCATENATION:
                 case Kind.REGEXP_INTERSECTION:
-                    Exp1.GetIdentifiers(set);
-                    Exp2.GetIdentifiers(set);
+                    exp1.GetIdentifiers(set);
+                    exp2.GetIdentifiers(set);
                     break;
 
                 case Kind.REGEXP_OPTIONAL:
@@ -769,7 +769,7 @@ namespace Lucene.Net.Util.Automaton
                 case Kind.REGEXP_REPEAT_MIN:
                 case Kind.REGEXP_REPEAT_MINMAX:
                 case Kind.REGEXP_COMPLEMENT:
-                    Exp1.GetIdentifiers(set);
+                    exp1.GetIdentifiers(set);
                     break;
 
                 case Kind.REGEXP_AUTOMATON:
@@ -785,8 +785,8 @@ namespace Lucene.Net.Util.Automaton
         {
             RegExp r = new RegExp();
             r.kind = Kind.REGEXP_UNION;
-            r.Exp1 = exp1;
-            r.Exp2 = exp2;
+            r.exp1 = exp1;
+            r.exp2 = exp2;
             return r;
         }
 
@@ -798,20 +798,20 @@ namespace Lucene.Net.Util.Automaton
             }
             RegExp r = new RegExp();
             r.kind = Kind.REGEXP_CONCATENATION;
-            if (exp1.kind == Kind.REGEXP_CONCATENATION && (exp1.Exp2.kind == Kind.REGEXP_CHAR || exp1.Exp2.kind == Kind.REGEXP_STRING) && (exp2.kind == Kind.REGEXP_CHAR || exp2.kind == Kind.REGEXP_STRING))
+            if (exp1.kind == Kind.REGEXP_CONCATENATION && (exp1.exp2.kind == Kind.REGEXP_CHAR || exp1.exp2.kind == Kind.REGEXP_STRING) && (exp2.kind == Kind.REGEXP_CHAR || exp2.kind == Kind.REGEXP_STRING))
             {
-                r.Exp1 = exp1.Exp1;
-                r.Exp2 = MakeString(exp1.Exp2, exp2);
+                r.exp1 = exp1.exp1;
+                r.exp2 = MakeString(exp1.exp2, exp2);
             }
-            else if ((exp1.kind == Kind.REGEXP_CHAR || exp1.kind == Kind.REGEXP_STRING) && exp2.kind == Kind.REGEXP_CONCATENATION && (exp2.Exp1.kind == Kind.REGEXP_CHAR || exp2.Exp1.kind == Kind.REGEXP_STRING))
+            else if ((exp1.kind == Kind.REGEXP_CHAR || exp1.kind == Kind.REGEXP_STRING) && exp2.kind == Kind.REGEXP_CONCATENATION && (exp2.exp1.kind == Kind.REGEXP_CHAR || exp2.exp1.kind == Kind.REGEXP_STRING))
             {
-                r.Exp1 = MakeString(exp1, exp2.Exp1);
-                r.Exp2 = exp2.Exp2;
+                r.exp1 = MakeString(exp1, exp2.exp1);
+                r.exp2 = exp2.exp2;
             }
             else
             {
-                r.Exp1 = exp1;
-                r.Exp2 = exp2;
+                r.exp1 = exp1;
+                r.exp2 = exp2;
             }
             return r;
         }
@@ -842,8 +842,8 @@ namespace Lucene.Net.Util.Automaton
         {
             RegExp r = new RegExp();
             r.kind = Kind.REGEXP_INTERSECTION;
-            r.Exp1 = exp1;
-            r.Exp2 = exp2;
+            r.exp1 = exp1;
+            r.exp2 = exp2;
             return r;
         }
 
@@ -851,7 +851,7 @@ namespace Lucene.Net.Util.Automaton
         {
             RegExp r = new RegExp();
             r.kind = Kind.REGEXP_OPTIONAL;
-            r.Exp1 = exp;
+            r.exp1 = exp;
             return r;
         }
 
@@ -859,7 +859,7 @@ namespace Lucene.Net.Util.Automaton
         {
             RegExp r = new RegExp();
             r.kind = Kind.REGEXP_REPEAT;
-            r.Exp1 = exp;
+            r.exp1 = exp;
             return r;
         }
 
@@ -867,8 +867,8 @@ namespace Lucene.Net.Util.Automaton
         {
             RegExp r = new RegExp();
             r.kind = Kind.REGEXP_REPEAT_MIN;
-            r.Exp1 = exp;
-            r.Min = min;
+            r.exp1 = exp;
+            r.min = min;
             return r;
         }
 
@@ -876,9 +876,9 @@ namespace Lucene.Net.Util.Automaton
         {
             RegExp r = new RegExp();
             r.kind = Kind.REGEXP_REPEAT_MINMAX;
-            r.Exp1 = exp;
-            r.Min = min;
-            r.Max = max;
+            r.exp1 = exp;
+            r.min = min;
+            r.max = max;
             return r;
         }
 
@@ -886,7 +886,7 @@ namespace Lucene.Net.Util.Automaton
         {
             RegExp r = new RegExp();
             r.kind = Kind.REGEXP_COMPLEMENT;
-            r.Exp1 = exp;
+            r.exp1 = exp;
             return r;
         }
 
@@ -906,8 +906,8 @@ namespace Lucene.Net.Util.Automaton
             }
             RegExp r = new RegExp();
             r.kind = Kind.REGEXP_CHAR_RANGE;
-            r.From = from;
-            r.To = to;
+            r.from = from;
+            r.to = to;
             return r;
         }
 
@@ -952,26 +952,26 @@ namespace Lucene.Net.Util.Automaton
         {
             RegExp r = new RegExp();
             r.kind = Kind.REGEXP_INTERVAL;
-            r.Min = min;
-            r.Max = max;
-            r.Digits = digits;
+            r.min = min;
+            r.max = max;
+            r.digits = digits;
             return r;
         }
 
         private bool Peek(string s)
         {
-            return More() && s.IndexOf((char)Character.CodePointAt(b, Pos)) != -1;
+            return More() && s.IndexOf((char)Character.CodePointAt(b, pos)) != -1;
         }
 
         private bool Match(int c)
         {
-            if (Pos >= b.Length)
+            if (pos >= b.Length)
             {
                 return false;
             }
-            if (Character.CodePointAt(b, Pos) == c)
+            if (Character.CodePointAt(b, pos) == c)
             {
-                Pos += Character.CharCount(c);
+                pos += Character.CharCount(c);
                 return true;
             }
             return false;
@@ -979,7 +979,7 @@ namespace Lucene.Net.Util.Automaton
 
         private bool More()
         {
-            return Pos < b.Length;
+            return pos < b.Length;
         }
 
         private int Next()
@@ -988,14 +988,14 @@ namespace Lucene.Net.Util.Automaton
             {
                 throw new System.ArgumentException("unexpected end-of-string");
             }
-            int ch = Character.CodePointAt(b, Pos);
-            Pos += Character.CharCount(ch);
+            int ch = Character.CodePointAt(b, pos);
+            pos += Character.CharCount(ch);
             return ch;
         }
 
         private bool Check(int flag)
         {
-            return (Flags & flag) != 0;
+            return (flags & flag) != 0;
         }
 
         internal RegExp ParseUnionExp()
@@ -1047,27 +1047,27 @@ namespace Lucene.Net.Util.Automaton
                 }
                 else if (Match('{'))
                 {
-                    int start = Pos;
+                    int start = pos;
                     while (Peek("0123456789"))
                     {
                         Next();
                     }
-                    if (start == Pos)
+                    if (start == pos)
                     {
-                        throw new System.ArgumentException("integer expected at position " + Pos);
+                        throw new System.ArgumentException("integer expected at position " + pos);
                     }
-                    int n = Convert.ToInt32(b.Substring(start, Pos - start));
+                    int n = Convert.ToInt32(b.Substring(start, pos - start));
                     int m = -1;
                     if (Match(','))
                     {
-                        start = Pos;
+                        start = pos;
                         while (Peek("0123456789"))
                         {
                             Next();
                         }
-                        if (start != Pos)
+                        if (start != pos)
                         {
-                            m = Convert.ToInt32(b.Substring(start, Pos - start));
+                            m = Convert.ToInt32(b.Substring(start, pos - start));
                         }
                     }
                     else
@@ -1076,7 +1076,7 @@ namespace Lucene.Net.Util.Automaton
                     }
                     if (!Match('}'))
                     {
-                        throw new System.ArgumentException("expected '}' at position " + Pos);
+                        throw new System.ArgumentException("expected '}' at position " + pos);
                     }
                     if (m == -1)
                     {
@@ -1119,7 +1119,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 if (!Match(']'))
                 {
-                    throw new System.ArgumentException("expected ']' at position " + Pos);
+                    throw new System.ArgumentException("expected ']' at position " + pos);
                 }
                 return e;
             }
@@ -1168,16 +1168,16 @@ namespace Lucene.Net.Util.Automaton
             }
             else if (Match('"'))
             {
-                int start = Pos;
+                int start = pos;
                 while (More() && !Peek("\""))
                 {
                     Next();
                 }
                 if (!Match('"'))
                 {
-                    throw new System.ArgumentException("expected '\"' at position " + Pos);
+                    throw new System.ArgumentException("expected '\"' at position " + pos);
                 }
-                return MakeString(b.Substring(start, Pos - 1 - start));
+                return MakeString(b.Substring(start, pos - 1 - start));
             }
             else if (Match('('))
             {
@@ -1188,28 +1188,28 @@ namespace Lucene.Net.Util.Automaton
                 RegExp e = ParseUnionExp();
                 if (!Match(')'))
                 {
-                    throw new System.ArgumentException("expected ')' at position " + Pos);
+                    throw new System.ArgumentException("expected ')' at position " + pos);
                 }
                 return e;
             }
             else if ((Check(AUTOMATON) || Check(INTERVAL)) && Match('<'))
             {
-                int start = Pos;
+                int start = pos;
                 while (More() && !Peek(">"))
                 {
                     Next();
                 }
                 if (!Match('>'))
                 {
-                    throw new System.ArgumentException("expected '>' at position " + Pos);
+                    throw new System.ArgumentException("expected '>' at position " + pos);
                 }
-                string s = b.Substring(start, Pos - 1 - start);
+                string s = b.Substring(start, pos - 1 - start);
                 int i = s.IndexOf('-');
                 if (i == -1)
                 {
                     if (!Check(AUTOMATON))
                     {
-                        throw new System.ArgumentException("interval syntax error at position " + (Pos - 1));
+                        throw new System.ArgumentException("interval syntax error at position " + (pos - 1));
                     }
                     return MakeAutomaton(s);
                 }
@@ -1217,7 +1217,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     if (!Check(INTERVAL))
                     {
-                        throw new System.ArgumentException("illegal identifier at position " + (Pos - 1));
+                        throw new System.ArgumentException("illegal identifier at position " + (pos - 1));
                     }
                     try
                     {
@@ -1248,7 +1248,7 @@ namespace Lucene.Net.Util.Automaton
                     }
                     catch (System.FormatException e)
                     {
-                        throw new System.ArgumentException("interval syntax error at position " + (Pos - 1));
+                        throw new System.ArgumentException("interval syntax error at position " + (pos - 1));
                     }
                 }
             }
