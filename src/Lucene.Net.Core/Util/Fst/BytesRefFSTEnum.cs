@@ -62,7 +62,7 @@ namespace Lucene.Net.Util.Fst
         public BytesRefFSTEnum.InputOutput<T> SeekCeil(BytesRef target)
         {
             this.target = target;
-            targetLength = target.Length;
+            m_targetLength = target.Length;
             base.DoSeekCeil();
             return SetResult();
         }
@@ -72,7 +72,7 @@ namespace Lucene.Net.Util.Fst
         public BytesRefFSTEnum.InputOutput<T> SeekFloor(BytesRef target)
         {
             this.target = target;
-            targetLength = target.Length;
+            m_targetLength = target.Length;
             base.DoSeekFloor();
             return SetResult();
         }
@@ -86,10 +86,10 @@ namespace Lucene.Net.Util.Fst
         public BytesRefFSTEnum.InputOutput<T> SeekExact(BytesRef target)
         {
             this.target = target;
-            targetLength = target.Length;
+            m_targetLength = target.Length;
             if (base.DoSeekExact())
             {
-                Debug.Assert(upto == 1 + target.Length);
+                Debug.Assert(m_upto == 1 + target.Length);
                 return SetResult();
             }
             else
@@ -102,13 +102,13 @@ namespace Lucene.Net.Util.Fst
         {
             get
             {
-                if (upto - 1 == target.Length)
+                if (m_upto - 1 == target.Length)
                 {
                     return FST.END_LABEL;
                 }
                 else
                 {
-                    return target.Bytes[target.Offset + upto - 1] & 0xFF;
+                    return target.Bytes[target.Offset + m_upto - 1] & 0xFF;
                 }
             }
         }
@@ -118,29 +118,29 @@ namespace Lucene.Net.Util.Fst
             get
             {
                 // current.offset fixed at 1
-                return current.Bytes[upto] & 0xFF;
+                return current.Bytes[m_upto] & 0xFF;
             }
             set
             {
-                current.Bytes[upto] = (byte)value;
+                current.Bytes[m_upto] = (byte)value;
             }
         }
 
         protected override void Grow()
         {
-            current.Bytes = ArrayUtil.Grow(current.Bytes, upto + 1);
+            current.Bytes = ArrayUtil.Grow(current.Bytes, m_upto + 1);
         }
 
         private BytesRefFSTEnum.InputOutput<T> SetResult()
         {
-            if (upto == 0)
+            if (m_upto == 0)
             {
                 return null;
             }
             else
             {
-                current.Length = upto - 1;
-                result.Output = output[upto];
+                current.Length = m_upto - 1;
+                result.Output = m_output[m_upto];
                 return result;
             }
         }

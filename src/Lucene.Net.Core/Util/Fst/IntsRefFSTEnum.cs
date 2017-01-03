@@ -62,7 +62,7 @@ namespace Lucene.Net.Util.Fst
         public IntsRefFSTEnum.InputOutput<T> SeekCeil(IntsRef target)
         {
             this.target = target;
-            targetLength = target.Length;
+            m_targetLength = target.Length;
             base.DoSeekCeil();
             return SetResult();
         }
@@ -72,7 +72,7 @@ namespace Lucene.Net.Util.Fst
         public IntsRefFSTEnum.InputOutput<T> SeekFloor(IntsRef target)
         {
             this.target = target;
-            targetLength = target.Length;
+            m_targetLength = target.Length;
             base.DoSeekFloor();
             return SetResult();
         }
@@ -86,10 +86,10 @@ namespace Lucene.Net.Util.Fst
         public IntsRefFSTEnum.InputOutput<T> SeekExact(IntsRef target)
         {
             this.target = target;
-            targetLength = target.Length;
+            m_targetLength = target.Length;
             if (base.DoSeekExact())
             {
-                Debug.Assert(upto == 1 + target.Length);
+                Debug.Assert(m_upto == 1 + target.Length);
                 return SetResult();
             }
             else
@@ -102,13 +102,13 @@ namespace Lucene.Net.Util.Fst
         {
             get
             {
-                if (upto - 1 == target.Length)
+                if (m_upto - 1 == target.Length)
                 {
                     return FST.END_LABEL;
                 }
                 else
                 {
-                    return target.Ints[target.Offset + upto - 1];
+                    return target.Ints[target.Offset + m_upto - 1];
                 }
             }
         }
@@ -118,29 +118,29 @@ namespace Lucene.Net.Util.Fst
             get
             {
                 // current.offset fixed at 1
-                return current.Ints[upto];
+                return current.Ints[m_upto];
             }
             set
             {
-                current.Ints[upto] = value;
+                current.Ints[m_upto] = value;
             }
         }
 
         protected override void Grow()
         {
-            current.Ints = ArrayUtil.Grow(current.Ints, upto + 1);
+            current.Ints = ArrayUtil.Grow(current.Ints, m_upto + 1);
         }
 
         private IntsRefFSTEnum.InputOutput<T> SetResult()
         {
-            if (upto == 0)
+            if (m_upto == 0)
             {
                 return null;
             }
             else
             {
-                current.Length = upto - 1;
-                result.Output = output[upto];
+                current.Length = m_upto - 1;
+                result.Output = m_output[m_upto];
                 return result;
             }
         }
