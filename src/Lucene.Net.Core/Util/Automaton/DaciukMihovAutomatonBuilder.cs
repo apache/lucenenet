@@ -48,19 +48,19 @@ namespace Lucene.Net.Util.Automaton
             /// Labels of outgoing transitions. Indexed identically to <seealso cref="#states"/>.
             /// Labels must be sorted lexicographically.
             /// </summary>
-            internal int[] Labels = NO_LABELS;
+            internal int[] labels = NO_LABELS;
 
             /// <summary>
             /// States reachable from outgoing transitions. Indexed identically to
             /// <seealso cref="#labels"/>.
             /// </summary>
-            internal State[] States = NO_STATES;
+            internal State[] states = NO_STATES;
 
             /// <summary>
             /// <code>true</code> if this state corresponds to the end of at least one
             /// input sequence.
             /// </summary>
-            internal bool Is_final;
+            internal bool is_final;
 
             /// <summary>
             /// Returns the target state of a transition leaving this state and labeled
@@ -69,8 +69,8 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal State GetState(int label)
             {
-                int index = Array.BinarySearch(Labels, label);
-                return index >= 0 ? States[index] : null;
+                int index = Array.BinarySearch(labels, label);
+                return index >= 0 ? states[index] : null;
             }
 
             /// <summary>
@@ -85,7 +85,7 @@ namespace Lucene.Net.Util.Automaton
             public override bool Equals(object obj)
             {
                 State other = (State)obj;
-                return Is_final == other.Is_final && Array.Equals(this.Labels, other.Labels) && ReferenceEquals(this.States, other.States);
+                return is_final == other.is_final && Array.Equals(this.labels, other.labels) && ReferenceEquals(this.states, other.states);
             }
 
             /// <summary>
@@ -93,10 +93,10 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             public override int GetHashCode()
             {
-                int hash = Is_final ? 1 : 0;
+                int hash = is_final ? 1 : 0;
 
-                hash ^= hash * 31 + this.Labels.Length;
-                foreach (int c in this.Labels)
+                hash ^= hash * 31 + this.labels.Length;
+                foreach (int c in this.labels)
                 {
                     hash ^= hash * 31 + c;
                 }
@@ -107,7 +107,7 @@ namespace Lucene.Net.Util.Automaton
                  * in registry) and traversed in post-order, so any outgoing transitions
                  * are already interned.
                  */
-                foreach (State s in this.States)
+                foreach (State s in this.states)
                 {
                     hash ^= s.GetHashCode();
                 }
@@ -121,7 +121,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal bool HasChildren
             {
-                get { return Labels.Length > 0; }
+                get { return labels.Length > 0; }
             }
 
             /// <summary>
@@ -130,13 +130,13 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal State NewState(int label)
             {
-                Debug.Assert(Array.BinarySearch(Labels, label) < 0, "State already has transition labeled: " + label);
+                Debug.Assert(Array.BinarySearch(labels, label) < 0, "State already has transition labeled: " + label);
 
-                Labels = Arrays.CopyOf(Labels, Labels.Length + 1);
-                States = Arrays.CopyOf(States, States.Length + 1);
+                labels = Arrays.CopyOf(labels, labels.Length + 1);
+                states = Arrays.CopyOf(states, states.Length + 1);
 
-                Labels[Labels.Length - 1] = label;
-                return States[States.Length - 1] = new State();
+                labels[labels.Length - 1] = label;
+                return states[states.Length - 1] = new State();
             }
 
             /// <summary>
@@ -145,7 +145,7 @@ namespace Lucene.Net.Util.Automaton
             internal State LastChild() // LUCENENET NOTE: Kept this a method because there is another overload
             {
                 Debug.Assert(HasChildren, "No outgoing transitions.");
-                return States[States.Length - 1];
+                return states[states.Length - 1];
             }
 
             /// <summary>
@@ -154,11 +154,11 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal State LastChild(int label)
             {
-                int index = Labels.Length - 1;
+                int index = labels.Length - 1;
                 State s = null;
-                if (index >= 0 && Labels[index] == label)
+                if (index >= 0 && labels[index] == label)
                 {
-                    s = States[index];
+                    s = states[index];
                 }
                 Debug.Assert(s == GetState(label));
                 return s;
@@ -171,7 +171,7 @@ namespace Lucene.Net.Util.Automaton
             internal void ReplaceLastChild(State state)
             {
                 Debug.Assert(HasChildren, "No outgoing transitions.");
-                States[States.Length - 1] = state;
+                states[states.Length - 1] = state;
             }
 
             /// <summary>
@@ -199,22 +199,22 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// A "registry" for state interning.
         /// </summary>
-        private Dictionary<State, State> StateRegistry = new Dictionary<State, State>();
+        private Dictionary<State, State> stateRegistry = new Dictionary<State, State>();
 
         /// <summary>
         /// Root automaton state.
         /// </summary>
-        private State Root = new State();
+        private State root = new State();
 
         /// <summary>
         /// Previous sequence added to the automaton in <seealso cref="#add(CharsRef)"/>.
         /// </summary>
-        private CharsRef Previous_Renamed;
+        private CharsRef previous;
 
         /// <summary>
         /// A comparator used for enforcing sorted UTF8 order, used in assertions only.
         /// </summary>
-        private static readonly IComparer<CharsRef> Comparator = CharsRef.UTF16SortedAsUTF8Comparer;
+        private static readonly IComparer<CharsRef> comparator = CharsRef.UTF16SortedAsUTF8Comparer;
 
         /// <summary>
         /// Add another character sequence to this automaton. The sequence must be
@@ -223,13 +223,13 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public void Add(CharsRef current)
         {
-            Debug.Assert(StateRegistry != null, "Automaton already built.");
-            Debug.Assert(Previous_Renamed == null || Comparator.Compare(Previous_Renamed, current) <= 0, "Input must be in sorted UTF-8 order: " + Previous_Renamed + " >= " + current);
+            Debug.Assert(stateRegistry != null, "Automaton already built.");
+            Debug.Assert(previous == null || comparator.Compare(previous, current) <= 0, "Input must be in sorted UTF-8 order: " + previous + " >= " + current);
             Debug.Assert(SetPrevious(current));
 
             // Descend in the automaton (find matching prefix).
             int pos = 0, max = current.Length;
-            State next, state = Root;
+            State next, state = root;
             while (pos < max && (next = state.LastChild(Character.CodePointAt(current, pos))) != null)
             {
                 state = next;
@@ -252,18 +252,18 @@ namespace Lucene.Net.Util.Automaton
         /// <returns> Root automaton state. </returns>
         public State Complete()
         {
-            if (this.StateRegistry == null)
+            if (this.stateRegistry == null)
             {
                 throw new InvalidOperationException();
             }
 
-            if (Root.HasChildren)
+            if (root.HasChildren)
             {
-                ReplaceOrRegister(Root);
+                ReplaceOrRegister(root);
             }
 
-            StateRegistry = null;
-            return Root;
+            stateRegistry = null;
+            return root;
         }
 
         /// <summary>
@@ -278,12 +278,12 @@ namespace Lucene.Net.Util.Automaton
             }
 
             converted = new Util.Automaton.State();
-            converted.Accept = s.Is_final;
+            converted.Accept = s.is_final;
 
             visited[s] = converted;
             int i = 0;
-            int[] labels = s.Labels;
-            foreach (DaciukMihovAutomatonBuilder.State target in s.States)
+            int[] labels = s.labels;
+            foreach (DaciukMihovAutomatonBuilder.State target in s.states)
             {
                 converted.AddTransition(new Transition(labels[i++], Convert(target, visited)));
             }
@@ -319,7 +319,7 @@ namespace Lucene.Net.Util.Automaton
         {
             // don't need to copy, once we fix https://issues.apache.org/jira/browse/LUCENE-3277
             // still, called only from assert
-            Previous_Renamed = CharsRef.DeepCopyOf(current);
+            previous = CharsRef.DeepCopyOf(current);
             return true;
         }
 
@@ -337,13 +337,13 @@ namespace Lucene.Net.Util.Automaton
             }
 
             State registered;
-            if (StateRegistry.TryGetValue(child, out registered))
+            if (stateRegistry.TryGetValue(child, out registered))
             {
                 state.ReplaceLastChild(registered);
             }
             else
             {
-                StateRegistry[child] = child;
+                stateRegistry[child] = child;
             }
         }
 
@@ -360,7 +360,7 @@ namespace Lucene.Net.Util.Automaton
                 state = state.NewState(cp);
                 fromIndex += Character.CharCount(cp);
             }
-            state.Is_final = true;
+            state.is_final = true;
         }
     }
 }
