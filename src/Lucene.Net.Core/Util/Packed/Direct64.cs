@@ -31,12 +31,12 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     internal sealed class Direct64 : PackedInts.MutableImpl
     {
-        internal readonly long[] Values;
+        internal readonly long[] values;
 
         internal Direct64(int valueCount)
             : base(valueCount, 64)
         {
-            Values = new long[valueCount];
+            values = new long[valueCount];
         }
 
         internal Direct64(int packedIntsVersion, DataInput @in, int valueCount)
@@ -44,18 +44,18 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < valueCount; ++i)
             {
-                Values[i] = @in.ReadLong();
+                values[i] = @in.ReadLong();
             }
         }
 
         public override long Get(int index)
         {
-            return Values[index];
+            return values[index];
         }
 
         public override void Set(int index, long value)
         {
-            Values[index] = (value);
+            values[index] = (value);
         }
 
         public override long RamBytesUsed()
@@ -64,17 +64,17 @@ namespace Lucene.Net.Util.Packed
                 RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
                 + 2 * RamUsageEstimator.NUM_BYTES_INT // valueCount,bitsPerValue
                 + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // values ref 
-                + RamUsageEstimator.SizeOf(Values); 
+                + RamUsageEstimator.SizeOf(values); 
         }
 
         public override void Clear()
         {
-            Arrays.Fill(Values, 0L);
+            Arrays.Fill(values, 0L);
         }
 
         public override object GetArray()
         {
-            return Values;
+            return values;
         }
 
         public override bool HasArray
@@ -89,7 +89,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(off + len <= arr.Length);
 
             int gets = Math.Min(m_valueCount - index, len);
-            System.Array.Copy(Values, index, arr, off, gets);
+            System.Array.Copy(values, index, arr, off, gets);
             return gets;
         }
 
@@ -100,13 +100,13 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(off + len <= arr.Length);
 
             int sets = Math.Min(m_valueCount - index, len);
-            System.Array.Copy(arr, off, Values, index, sets);
+            System.Array.Copy(arr, off, values, index, sets);
             return sets;
         }
 
         public override void Fill(int fromIndex, int toIndex, long val)
         {
-            Arrays.Fill(Values, fromIndex, toIndex, val);
+            Arrays.Fill(values, fromIndex, toIndex, val);
         }
     }
 }
