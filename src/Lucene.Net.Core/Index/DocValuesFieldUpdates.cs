@@ -65,19 +65,19 @@ namespace Lucene.Net.Index
 
         public class Container
         {
-            internal readonly IDictionary<string, NumericDocValuesFieldUpdates> NumericDVUpdates = new Dictionary<string, NumericDocValuesFieldUpdates>();
-            internal readonly IDictionary<string, BinaryDocValuesFieldUpdates> BinaryDVUpdates = new Dictionary<string, BinaryDocValuesFieldUpdates>();
+            internal readonly IDictionary<string, NumericDocValuesFieldUpdates> numericDVUpdates = new Dictionary<string, NumericDocValuesFieldUpdates>();
+            internal readonly IDictionary<string, BinaryDocValuesFieldUpdates> binaryDVUpdates = new Dictionary<string, BinaryDocValuesFieldUpdates>();
 
             internal virtual bool Any()
             {
-                foreach (NumericDocValuesFieldUpdates updates in NumericDVUpdates.Values)
+                foreach (NumericDocValuesFieldUpdates updates in numericDVUpdates.Values)
                 {
                     if (updates.Any())
                     {
                         return true;
                     }
                 }
-                foreach (BinaryDocValuesFieldUpdates updates in BinaryDVUpdates.Values)
+                foreach (BinaryDocValuesFieldUpdates updates in binaryDVUpdates.Values)
                 {
                     if (updates.Any())
                     {
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
 
             internal virtual int Size // LUCENENET TODO: Rename Count
             {
-                get { return NumericDVUpdates.Count + BinaryDVUpdates.Count; }
+                get { return numericDVUpdates.Count + binaryDVUpdates.Count; }
             }
 
             internal virtual AbstractDocValuesFieldUpdates GetUpdates(string field, DocValuesFieldUpdates.Type type)
@@ -98,12 +98,12 @@ namespace Lucene.Net.Index
                 {
                     case DocValuesFieldUpdates.Type.NUMERIC:
                         NumericDocValuesFieldUpdates num;
-                        NumericDVUpdates.TryGetValue(field, out num);
+                        numericDVUpdates.TryGetValue(field, out num);
                         return num;
 
                     case DocValuesFieldUpdates.Type.BINARY:
                         BinaryDocValuesFieldUpdates bin;
-                        BinaryDVUpdates.TryGetValue(field, out bin);
+                        binaryDVUpdates.TryGetValue(field, out bin);
                         return bin;
 
                     default:
@@ -117,16 +117,16 @@ namespace Lucene.Net.Index
                 {
                     case DocValuesFieldUpdates.Type.NUMERIC:
                         NumericDocValuesFieldUpdates numericUpdates;
-                        Debug.Assert(!NumericDVUpdates.TryGetValue(field, out numericUpdates));
+                        Debug.Assert(!numericDVUpdates.TryGetValue(field, out numericUpdates));
                         numericUpdates = new NumericDocValuesFieldUpdates(field, maxDoc);
-                        NumericDVUpdates[field] = numericUpdates;
+                        numericDVUpdates[field] = numericUpdates;
                         return numericUpdates;
 
                     case DocValuesFieldUpdates.Type.BINARY:
                         BinaryDocValuesFieldUpdates binaryUpdates;
-                        Debug.Assert(!BinaryDVUpdates.TryGetValue(field, out binaryUpdates));
+                        Debug.Assert(!binaryDVUpdates.TryGetValue(field, out binaryUpdates));
                         binaryUpdates = new BinaryDocValuesFieldUpdates(field, maxDoc);
-                        BinaryDVUpdates[field] = binaryUpdates;
+                        binaryDVUpdates[field] = binaryUpdates;
                         return binaryUpdates;
 
                     default:
@@ -136,17 +136,17 @@ namespace Lucene.Net.Index
 
             public override string ToString()
             {
-                return "numericDVUpdates=" + NumericDVUpdates + " binaryDVUpdates=" + BinaryDVUpdates;
+                return "numericDVUpdates=" + numericDVUpdates + " binaryDVUpdates=" + binaryDVUpdates;
             }
         }
 
-        internal readonly string Field;
-        internal readonly DocValuesFieldUpdates.Type Type;
+        internal readonly string field;
+        internal readonly DocValuesFieldUpdates.Type type;
 
         protected internal AbstractDocValuesFieldUpdates(string field, DocValuesFieldUpdates.Type type)
         {
-            this.Field = field;
-            this.Type = type;
+            this.field = field;
+            this.type = type;
         }
 
         /// <summary>

@@ -492,12 +492,12 @@ namespace Lucene.Net.Index
                             clone.DocValuesGen = fi.DocValuesGen;
                         }
                         // create new fields or update existing ones to have NumericDV type
-                        foreach (string f in dvUpdates.NumericDVUpdates.Keys)
+                        foreach (string f in dvUpdates.numericDVUpdates.Keys)
                         {
                             builder.AddOrUpdate(f, NumericDocValuesField.TYPE);
                         }
                         // create new fields or update existing ones to have BinaryDV type
-                        foreach (string f in dvUpdates.BinaryDVUpdates.Keys)
+                        foreach (string f in dvUpdates.binaryDVUpdates.Keys)
                         {
                             builder.AddOrUpdate(f, BinaryDocValuesField.fType);
                         }
@@ -512,7 +512,7 @@ namespace Lucene.Net.Index
                         try
                         {
                             //          System.out.println("[" + Thread.currentThread().getName() + "] RLD.writeFieldUpdates: applying numeric updates; seg=" + info + " updates=" + numericFieldUpdates);
-                            foreach (KeyValuePair<string, NumericDocValuesFieldUpdates> e in dvUpdates.NumericDVUpdates)
+                            foreach (KeyValuePair<string, NumericDocValuesFieldUpdates> e in dvUpdates.numericDVUpdates)
                             {
                                 string field = e.Key;
                                 NumericDocValuesFieldUpdates fieldUpdates = e.Value;
@@ -525,7 +525,7 @@ namespace Lucene.Net.Index
                             }
 
                             //        System.out.println("[" + Thread.currentThread().getName() + "] RAU.writeFieldUpdates: applying binary updates; seg=" + info + " updates=" + dvUpdates.binaryDVUpdates);
-                            foreach (KeyValuePair<string, BinaryDocValuesFieldUpdates> e in dvUpdates.BinaryDVUpdates)
+                            foreach (KeyValuePair<string, BinaryDocValuesFieldUpdates> e in dvUpdates.binaryDVUpdates)
                             {
                                 string field = e.Key;
                                 BinaryDocValuesFieldUpdates dvFieldUpdates = e.Value;
@@ -592,7 +592,7 @@ namespace Lucene.Net.Index
                 // copy all the updates to mergingUpdates, so they can later be applied to the merged segment
                 if (isMerging)
                 {
-                    foreach (KeyValuePair<string, NumericDocValuesFieldUpdates> e in dvUpdates.NumericDVUpdates)
+                    foreach (KeyValuePair<string, NumericDocValuesFieldUpdates> e in dvUpdates.numericDVUpdates)
                     {
                         AbstractDocValuesFieldUpdates updates;
                         if (!mergingDVUpdates.TryGetValue(e.Key, out updates))
@@ -604,7 +604,7 @@ namespace Lucene.Net.Index
                             updates.Merge(e.Value);
                         }
                     }
-                    foreach (KeyValuePair<string, BinaryDocValuesFieldUpdates> e in dvUpdates.BinaryDVUpdates)
+                    foreach (KeyValuePair<string, BinaryDocValuesFieldUpdates> e in dvUpdates.binaryDVUpdates)
                     {
                         AbstractDocValuesFieldUpdates updates;
                         if (!mergingDVUpdates.TryGetValue(e.Key, out updates))

@@ -4140,10 +4140,10 @@ namespace Lucene.Net.Index
                             string field = e.Key;
                             AbstractDocValuesFieldUpdates updates = e.Value;
                             mergingFields[idx] = field;
-                            dvFieldUpdates[idx] = mergedDVUpdates.GetUpdates(field, updates.Type);
+                            dvFieldUpdates[idx] = mergedDVUpdates.GetUpdates(field, updates.type);
                             if (dvFieldUpdates[idx] == null)
                             {
-                                dvFieldUpdates[idx] = mergedDVUpdates.NewUpdates(field, updates.Type, mergeState.SegmentInfo.DocCount);
+                                dvFieldUpdates[idx] = mergedDVUpdates.NewUpdates(field, updates.type, mergeState.SegmentInfo.DocCount);
                             }
                             updatesIters[idx] = updates.GetIterator();
                             updatesIters[idx].NextDoc(); // advance to first update doc
