@@ -258,12 +258,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the SortFields being used by this hit queue. </summary>
-        internal virtual SortField[] Fields // LUCENENET TODO: Make GetFields() (array)
+        internal virtual SortField[] GetFields()
         {
-            get
-            {
-                return m_fields;
-            }
+            return m_fields;
         }
     }
 }

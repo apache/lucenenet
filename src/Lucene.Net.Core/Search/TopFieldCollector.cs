@@ -1404,7 +1404,7 @@ namespace Lucene.Net.Search
             }
 
             // If this is a maxScoring tracking collector and there were no results,
-            return new TopFieldDocs(m_totalHits, results, ((FieldValueHitQueue<Entry>)m_pq).Fields, maxScore);
+            return new TopFieldDocs(m_totalHits, results, ((FieldValueHitQueue<Entry>)m_pq).GetFields(), maxScore);
         }
 
         public override bool AcceptsDocsOutOfOrder
