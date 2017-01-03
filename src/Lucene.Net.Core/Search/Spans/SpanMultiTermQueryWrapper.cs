@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanMultiTermQueryWrapper<Q> : SpanQuery, ISpanMultiTermQueryWrapper where Q : MultiTermQuery
     {
-        protected readonly Q query;
+        protected readonly Q m_query;
 
         /// <summary>
         /// Create a new SpanMultiTermQueryWrapper.
@@ -57,9 +57,9 @@ namespace Lucene.Net.Search.Spans
         /// throw <seealso cref="UnsupportedOperationException"/> on rewriting this query! </param>
         public SpanMultiTermQueryWrapper(Q query)
         {
-            this.query = query;
+            this.m_query = query;
 
-            MultiTermQuery.RewriteMethod method = this.query.MultiTermRewriteMethod;
+            MultiTermQuery.RewriteMethod method = this.m_query.MultiTermRewriteMethod;
             if (method is ITopTermsRewrite)
             {
                 int pqsize = ((ITopTermsRewrite)method).Size;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                MultiTermQuery.RewriteMethod m = query.MultiTermRewriteMethod;
+                MultiTermQuery.RewriteMethod m = m_query.MultiTermRewriteMethod;
                 if (!(m is SpanRewriteMethod))
                 {
                     throw new System.NotSupportedException("You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search.Spans
             }
             set
             {
-                query.MultiTermRewriteMethod = value;
+                m_query.MultiTermRewriteMethod = value;
             }
         }
 
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return query.Field;
+                return m_query.Field;
             }
         }
 
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return query;
+                return m_query;
             }
         }
 
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Spans
         {
             StringBuilder builder = new StringBuilder();
             builder.Append("SpanMultiTermQueryWrapper(");
-            builder.Append(query.ToString(field));
+            builder.Append(m_query.ToString(field));
             builder.Append(")");
             if (Boost != 1F)
             {
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search.Spans
 
         public override Query Rewrite(IndexReader reader)
         {
-            Query q = query.Rewrite(reader);
+            Query q = m_query.Rewrite(reader);
             if (!(q is SpanQuery))
             {
                 throw new System.NotSupportedException("You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
@@ -143,7 +143,7 @@ namespace Lucene.Net.Search.Spans
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + query.GetHashCode();
+            result = prime * result + m_query.GetHashCode();
             return result;
         }
 
@@ -162,7 +162,7 @@ namespace Lucene.Net.Search.Spans
                 return false;
             }
             var other = (SpanMultiTermQueryWrapper<Q>)obj;
-            if (!query.Equals(other.query))
+            if (!m_query.Equals(other.m_query))
             {
                 return false;
             }
