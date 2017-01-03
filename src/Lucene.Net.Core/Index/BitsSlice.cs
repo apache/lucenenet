@@ -29,32 +29,32 @@ namespace Lucene.Net.Index
     /// </summary>
     internal sealed class BitsSlice : IBits
     {
-        private readonly IBits Parent;
-        private readonly int Start;
-        private readonly int Length_Renamed;
+        private readonly IBits parent;
+        private readonly int start;
+        private readonly int length;
 
         // start is inclusive; end is exclusive (length = end-start)
         public BitsSlice(IBits parent, ReaderSlice slice)
         {
-            this.Parent = parent;
-            this.Start = slice.Start;
-            this.Length_Renamed = slice.Length;
-            Debug.Assert(Length_Renamed >= 0, "length=" + Length_Renamed);
+            this.parent = parent;
+            this.start = slice.Start;
+            this.length = slice.Length;
+            Debug.Assert(length >= 0, "length=" + length);
         }
 
         public bool Get(int doc)
         {
-            if (doc >= Length_Renamed)
+            if (doc >= length)
             {
-                throw new Exception("doc " + doc + " is out of bounds 0 .. " + (Length_Renamed - 1));
+                throw new Exception("doc " + doc + " is out of bounds 0 .. " + (length - 1));
             }
-            Debug.Assert(doc < Length_Renamed, "doc=" + doc + " length=" + Length_Renamed);
-            return Parent.Get(doc + Start);
+            Debug.Assert(doc < length, "doc=" + doc + " length=" + length);
+            return parent.Get(doc + start);
         }
 
         public int Length
         {
-            get { return Length_Renamed; }
+            get { return length; }
         }
     }
 }
