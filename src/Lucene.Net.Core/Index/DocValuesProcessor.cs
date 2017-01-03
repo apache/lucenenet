@@ -32,13 +32,13 @@ namespace Lucene.Net.Index
         // TODO: somewhat wasteful we also keep a map here; would
         // be more efficient if we could "reuse" the map/hash
         // lookup DocFieldProcessor already did "above"
-        private readonly IDictionary<string, DocValuesWriter> Writers = new Dictionary<string, DocValuesWriter>();
+        private readonly IDictionary<string, DocValuesWriter> writers = new Dictionary<string, DocValuesWriter>();
 
-        private readonly Counter BytesUsed;
+        private readonly Counter bytesUsed;
 
         public DocValuesProcessor(Counter bytesUsed)
         {
-            this.BytesUsed = bytesUsed;
+            this.bytesUsed = bytesUsed;
         }
 
         public override void StartDocument()
@@ -84,14 +84,14 @@ namespace Lucene.Net.Index
 
         public override void Flush(SegmentWriteState state)
         {
-            if (Writers.Count > 0)
+            if (writers.Count > 0)
             {
                 DocValuesFormat fmt = state.SegmentInfo.Codec.DocValuesFormat;
                 DocValuesConsumer dvConsumer = fmt.FieldsConsumer(state);
                 bool success = false;
                 try
                 {
-                    foreach (DocValuesWriter writer in Writers.Values)
+                    foreach (DocValuesWriter writer in writers.Values)
                     {
                         writer.Finish(state.SegmentInfo.DocCount);
                         writer.Flush(state, dvConsumer);
@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
                     // null/"" depending on how docs landed in segments?
                     // but we can't detect all cases, and we should leave
                     // this behavior undefined. dv is not "schemaless": its column-stride.
-                    Writers.Clear();
+                    writers.Clear();
                     success = true;
                 }
                 finally
@@ -120,12 +120,12 @@ namespace Lucene.Net.Index
         internal void AddBinaryField(FieldInfo fieldInfo, int docID, BytesRef value)
         {
             DocValuesWriter writer;
-            Writers.TryGetValue(fieldInfo.Name, out writer);
+            writers.TryGetValue(fieldInfo.Name, out writer);
             BinaryDocValuesWriter binaryWriter;
             if (writer == null)
             {
-                binaryWriter = new BinaryDocValuesWriter(fieldInfo, BytesUsed);
-                Writers[fieldInfo.Name] = binaryWriter;
+                binaryWriter = new BinaryDocValuesWriter(fieldInfo, bytesUsed);
+                writers[fieldInfo.Name] = binaryWriter;
             }
             else if (!(writer is BinaryDocValuesWriter))
             {
@@ -141,12 +141,12 @@ namespace Lucene.Net.Index
         internal void AddSortedField(FieldInfo fieldInfo, int docID, BytesRef value)
         {
             DocValuesWriter writer;
-            Writers.TryGetValue(fieldInfo.Name, out writer);
+            writers.TryGetValue(fieldInfo.Name, out writer);
             SortedDocValuesWriter sortedWriter;
             if (writer == null)
             {
-                sortedWriter = new SortedDocValuesWriter(fieldInfo, BytesUsed);
-                Writers[fieldInfo.Name] = sortedWriter;
+                sortedWriter = new SortedDocValuesWriter(fieldInfo, bytesUsed);
+                writers[fieldInfo.Name] = sortedWriter;
             }
             else if (!(writer is SortedDocValuesWriter))
             {
@@ -162,12 +162,12 @@ namespace Lucene.Net.Index
         internal void AddSortedSetField(FieldInfo fieldInfo, int docID, BytesRef value)
         {
             DocValuesWriter writer;
-            Writers.TryGetValue(fieldInfo.Name, out writer);
+            writers.TryGetValue(fieldInfo.Name, out writer);
             SortedSetDocValuesWriter sortedSetWriter;
             if (writer == null)
             {
-                sortedSetWriter = new SortedSetDocValuesWriter(fieldInfo, BytesUsed);
-                Writers[fieldInfo.Name] = sortedSetWriter;
+                sortedSetWriter = new SortedSetDocValuesWriter(fieldInfo, bytesUsed);
+                writers[fieldInfo.Name] = sortedSetWriter;
             }
             else if (!(writer is SortedSetDocValuesWriter))
             {
@@ -183,12 +183,12 @@ namespace Lucene.Net.Index
         internal void AddNumericField(FieldInfo fieldInfo, int docID, long value)
         {
             DocValuesWriter writer;
-            Writers.TryGetValue(fieldInfo.Name, out writer);
+            writers.TryGetValue(fieldInfo.Name, out writer);
             NumericDocValuesWriter numericWriter;
             if (writer == null)
             {
-                numericWriter = new NumericDocValuesWriter(fieldInfo, BytesUsed, true);
-                Writers[fieldInfo.Name] = numericWriter;
+                numericWriter = new NumericDocValuesWriter(fieldInfo, bytesUsed, true);
+                writers[fieldInfo.Name] = numericWriter;
             }
             else if (!(writer is NumericDocValuesWriter))
             {
@@ -220,7 +220,7 @@ namespace Lucene.Net.Index
 
         public override void Abort()
         {
-            foreach (DocValuesWriter writer in Writers.Values)
+            foreach (DocValuesWriter writer in writers.Values)
             {
                 try
                 {
@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
                 {
                 }
             }
-            Writers.Clear();
+            writers.Clear();
         }
     }
 }
