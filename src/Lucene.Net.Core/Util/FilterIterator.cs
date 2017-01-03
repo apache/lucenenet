@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
     {
         private readonly IEnumerator<T> iter;
         private T next = default(T);
-        private bool NextIsSet = false;
+        private bool nextIsSet = false;
         private T current = default(T);
 
         /// <summary>
@@ -42,19 +42,19 @@ namespace Lucene.Net.Util
 
         public bool MoveNext()
         {
-            if (!(NextIsSet || SetNext()))
+            if (!(nextIsSet || SetNext()))
             {
                 return false;
             }
 
-            Debug.Assert(NextIsSet);
+            Debug.Assert(nextIsSet);
             try
             {
                 current = next;
             }
             finally
             {
-                NextIsSet = false;
+                nextIsSet = false;
                 next = default(T);
             }
             return true;
@@ -73,7 +73,7 @@ namespace Lucene.Net.Util
                 if (PredicateFunction(@object))
                 {
                     next = @object;
-                    NextIsSet = true;
+                    nextIsSet = true;
                     return true;
                 }
             }
