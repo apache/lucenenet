@@ -31,7 +31,7 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     internal sealed class Packed16ThreeBlocks : PackedInts.MutableImpl
     {
-        internal readonly short[] Blocks;
+        internal readonly short[] blocks;
 
         public static readonly int MAX_SIZE = int.MaxValue / 3;
 
@@ -42,7 +42,7 @@ namespace Lucene.Net.Util.Packed
             {
                 throw new System.IndexOutOfRangeException("MAX_SIZE exceeded");
             }
-            Blocks = new short[valueCount * 3];
+            blocks = new short[valueCount * 3];
         }
 
         internal Packed16ThreeBlocks(int packedIntsVersion, DataInput @in, int valueCount)
@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < 3 * valueCount; ++i)
             {
-                Blocks[i] = @in.ReadShort();
+                blocks[i] = @in.ReadShort();
             }
             // because packed ints have not always been byte-aligned
             int remaining = (int)(PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 48) - 3L * valueCount * 2);
@@ -63,7 +63,7 @@ namespace Lucene.Net.Util.Packed
         public override long Get(int index)
         {
             int o = index * 3;
-            return (Blocks[o] & 0xFFFFL) << 32 | (Blocks[o + 1] & 0xFFFFL) << 16 | (Blocks[o + 2] & 0xFFFFL);
+            return (blocks[o] & 0xFFFFL) << 32 | (blocks[o + 1] & 0xFFFFL) << 16 | (blocks[o + 2] & 0xFFFFL);
         }
 
         public override int Get(int index, long[] arr, int off, int len)
@@ -75,7 +75,7 @@ namespace Lucene.Net.Util.Packed
             int gets = Math.Min(m_valueCount - index, len);
             for (int i = index * 3, end = (index + gets) * 3; i < end; i += 3)
             {
-                arr[off++] = (Blocks[i] & 0xFFFFL) << 32 | (Blocks[i + 1] & 0xFFFFL) << 16 | (Blocks[i + 2] & 0xFFFFL);
+                arr[off++] = (blocks[i] & 0xFFFFL) << 32 | (blocks[i + 1] & 0xFFFFL) << 16 | (blocks[i + 2] & 0xFFFFL);
             }
             return gets;
         }
@@ -83,9 +83,9 @@ namespace Lucene.Net.Util.Packed
         public override void Set(int index, long value)
         {
             int o = index * 3;
-            Blocks[o] = (short)((long)((ulong)value >> 32));
-            Blocks[o + 1] = (short)((long)((ulong)value >> 16));
-            Blocks[o + 2] = (short)value;
+            blocks[o] = (short)((long)((ulong)value >> 32));
+            blocks[o + 1] = (short)((long)((ulong)value >> 16));
+            blocks[o + 2] = (short)value;
         }
 
         public override int Set(int index, long[] arr, int off, int len)
@@ -98,9 +98,9 @@ namespace Lucene.Net.Util.Packed
             for (int i = off, o = index * 3, end = off + sets; i < end; ++i)
             {
                 long value = arr[i];
-                Blocks[o++] = (short)((long)((ulong)value >> 32));
-                Blocks[o++] = (short)((long)((ulong)value >> 16));
-                Blocks[o++] = (short)value;
+                blocks[o++] = (short)((long)((ulong)value >> 32));
+                blocks[o++] = (short)((long)((ulong)value >> 16));
+                blocks[o++] = (short)value;
             }
             return sets;
         }
@@ -112,15 +112,15 @@ namespace Lucene.Net.Util.Packed
             short block3 = (short)val;
             for (int i = fromIndex * 3, end = toIndex * 3; i < end; i += 3)
             {
-                Blocks[i] = block1;
-                Blocks[i + 1] = block2;
-                Blocks[i + 2] = block3;
+                blocks[i] = block1;
+                blocks[i + 1] = block2;
+                blocks[i + 2] = block3;
             }
         }
 
         public override void Clear()
         {
-            Arrays.Fill(Blocks, (short)0);
+            Arrays.Fill(blocks, (short)0);
         }
 
         public override long RamBytesUsed()
@@ -129,12 +129,12 @@ namespace Lucene.Net.Util.Packed
                 RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
                 + 2 * RamUsageEstimator.NUM_BYTES_INT // valueCount,bitsPerValue
                 + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // blocks ref 
-                + RamUsageEstimator.SizeOf(Blocks);
+                + RamUsageEstimator.SizeOf(blocks);
         }
 
         public override string ToString()
         {
-            return this.GetType().Name + "(bitsPerValue=" + m_bitsPerValue + ", size=" + Size + ", elements.length=" + Blocks.Length + ")";
+            return this.GetType().Name + "(bitsPerValue=" + m_bitsPerValue + ", size=" + Size + ", elements.length=" + blocks.Length + ")";
         }
     }
 }
