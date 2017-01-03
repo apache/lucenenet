@@ -74,9 +74,9 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// True if any merging should happen </summary>
-        internal bool ShouldMerge() // LUCENENET TODO: Make property ? DocCount could throw exception
+        internal bool ShouldMerge
         {
-            return MergeState.SegmentInfo.DocCount > 0;
+            get { return MergeState.SegmentInfo.DocCount > 0; }
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         internal MergeState Merge()
         {
-            if (!ShouldMerge())
+            if (!ShouldMerge)
             {
                 throw new InvalidOperationException("Merge would result in 0 document segment");
             }

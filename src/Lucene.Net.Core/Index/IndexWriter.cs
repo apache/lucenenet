@@ -3226,7 +3226,7 @@ namespace Lucene.Net.Index
 
                 SegmentMerger merger = new SegmentMerger(mergeReaders, info, infoStream, trackingDir, config.TermIndexInterval, CheckAbort.NONE, globalFieldNumberMap, context, config.CheckIntegrityAtMerge);
 
-                if (!merger.ShouldMerge())
+                if (!merger.ShouldMerge)
                 {
                     return;
                 }
@@ -5045,7 +5045,7 @@ namespace Lucene.Net.Index
                 bool success3 = false;
                 try
                 {
-                    if (!merger.ShouldMerge())
+                    if (!merger.ShouldMerge)
                     {
                         // would result in a 0 document segment: nothing to merge!
                         mergeState = new MergeState(new List<AtomicReader>(), merge.info.Info, infoStream, checkAbort);
