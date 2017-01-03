@@ -53,8 +53,8 @@ namespace Lucene.Net.Index
     /// <seealso cref= IndexWriterConfig#setFlushPolicy(FlushPolicy) </seealso>
     internal abstract class FlushPolicy
     {
-        protected LiveIndexWriterConfig IWConfig;
-        protected InfoStream InfoStream;
+        protected LiveIndexWriterConfig m_indexWriterConfig;
+        protected InfoStream m_infoStream;
 
         /// <summary>
         /// Called for each delete term. If this is a delete triggered due to an update
@@ -97,8 +97,8 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                this.IWConfig = indexWriterConfig;
-                InfoStream = indexWriterConfig.InfoStream;
+                this.m_indexWriterConfig = indexWriterConfig;
+                m_infoStream = indexWriterConfig.InfoStream;
             }
         }
 
@@ -135,9 +135,9 @@ namespace Lucene.Net.Index
 
         private bool AssertMessage(string s)
         {
-            if (InfoStream.IsEnabled("FP"))
+            if (m_infoStream.IsEnabled("FP"))
             {
-                InfoStream.Message("FP", s);
+                m_infoStream.Message("FP", s);
             }
             return true;
         }
@@ -147,8 +147,8 @@ namespace Lucene.Net.Index
             FlushPolicy clone;
 
             clone = (FlushPolicy)base.MemberwiseClone();
-            clone.IWConfig = null;
-            clone.InfoStream = null;
+            clone.m_indexWriterConfig = null;
+            clone.m_infoStream = null;
             return clone;
         }
     }

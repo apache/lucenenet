@@ -63,38 +63,38 @@ namespace Lucene.Net.Index
             if (FlushOnDeleteTerms)
             {
                 // Flush this state by num del terms
-                int maxBufferedDeleteTerms = IWConfig.MaxBufferedDeleteTerms;
+                int maxBufferedDeleteTerms = m_indexWriterConfig.MaxBufferedDeleteTerms;
                 if (control.NumGlobalTermDeletes >= maxBufferedDeleteTerms)
                 {
                     control.SetApplyAllDeletes();
                 }
             }
-            if ((FlushOnRAM && control.DeleteBytesUsed > (1024 * 1024 * IWConfig.RAMBufferSizeMB)))
+            if ((FlushOnRAM && control.DeleteBytesUsed > (1024 * 1024 * m_indexWriterConfig.RAMBufferSizeMB)))
             {
                 control.SetApplyAllDeletes();
-                if (InfoStream.IsEnabled("FP"))
+                if (m_infoStream.IsEnabled("FP"))
                 {
-                    InfoStream.Message("FP", "force apply deletes bytesUsed=" + control.DeleteBytesUsed + " vs ramBuffer=" + (1024 * 1024 * IWConfig.RAMBufferSizeMB));
+                    m_infoStream.Message("FP", "force apply deletes bytesUsed=" + control.DeleteBytesUsed + " vs ramBuffer=" + (1024 * 1024 * m_indexWriterConfig.RAMBufferSizeMB));
                 }
             }
         }
 
         public override void OnInsert(DocumentsWriterFlushControl control, ThreadState state)
         {
-            if (FlushOnDocCount && state.dwpt.NumDocsInRAM >= IWConfig.MaxBufferedDocs)
+            if (FlushOnDocCount && state.dwpt.NumDocsInRAM >= m_indexWriterConfig.MaxBufferedDocs)
             {
                 // Flush this state by num docs
                 control.SetFlushPending(state);
             } // flush by RAM
             else if (FlushOnRAM)
             {
-                long limit = (long)(IWConfig.RAMBufferSizeMB * 1024d * 1024d);
+                long limit = (long)(m_indexWriterConfig.RAMBufferSizeMB * 1024d * 1024d);
                 long totalRam = control.ActiveBytes + control.DeleteBytesUsed;
                 if (totalRam >= limit)
                 {
-                    if (InfoStream.IsEnabled("FP"))
+                    if (m_infoStream.IsEnabled("FP"))
                     {
-                        InfoStream.Message("FP", "flush: activeBytes=" + control.ActiveBytes + " deleteBytes=" + control.DeleteBytesUsed + " vs limit=" + limit);
+                        m_infoStream.Message("FP", "flush: activeBytes=" + control.ActiveBytes + " deleteBytes=" + control.DeleteBytesUsed + " vs limit=" + limit);
                     }
                     MarkLargestWriterPending(control, state, totalRam);
                 }
@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
         /// </summary>
         protected internal virtual bool FlushOnDocCount
         {
-            get { return IWConfig.MaxBufferedDocs != IndexWriterConfig.DISABLE_AUTO_FLUSH; }
+            get { return m_indexWriterConfig.MaxBufferedDocs != IndexWriterConfig.DISABLE_AUTO_FLUSH; }
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
         /// </summary>
         protected internal virtual bool FlushOnDeleteTerms
         {
-            get { return IWConfig.MaxBufferedDeleteTerms != IndexWriterConfig.DISABLE_AUTO_FLUSH; }
+            get { return m_indexWriterConfig.MaxBufferedDeleteTerms != IndexWriterConfig.DISABLE_AUTO_FLUSH; }
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
         /// </summary>
         protected internal virtual bool FlushOnRAM
         {
-            get { return IWConfig.RAMBufferSizeMB != IndexWriterConfig.DISABLE_AUTO_FLUSH; }
+            get { return m_indexWriterConfig.RAMBufferSizeMB != IndexWriterConfig.DISABLE_AUTO_FLUSH; }
         }
     }
 }

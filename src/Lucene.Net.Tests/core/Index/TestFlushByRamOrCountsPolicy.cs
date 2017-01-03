@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
                 {
                     toFlush = state;
                 }
-                else if (FlushOnDeleteTerms && state.DocumentsWriterPerThread.NumDeleteTerms >= IWConfig.MaxBufferedDeleteTerms)
+                else if (FlushOnDeleteTerms && state.DocumentsWriterPerThread.NumDeleteTerms >= m_indexWriterConfig.MaxBufferedDeleteTerms)
                 {
                     toFlush = state;
                 }
@@ -416,11 +416,11 @@ namespace Lucene.Net.Index
                 {
                     toFlush = state;
                 }
-                else if (FlushOnDocCount && state.DocumentsWriterPerThread.NumDocsInRAM >= IWConfig.MaxBufferedDocs)
+                else if (FlushOnDocCount && state.DocumentsWriterPerThread.NumDocsInRAM >= m_indexWriterConfig.MaxBufferedDocs)
                 {
                     toFlush = state;
                 }
-                else if (FlushOnRAM && activeBytes >= (long)(IWConfig.RAMBufferSizeMB * 1024.0 * 1024.0))
+                else if (FlushOnRAM && activeBytes >= (long)(m_indexWriterConfig.RAMBufferSizeMB * 1024.0 * 1024.0))
                 {
                     toFlush = FindLargestNonPendingWriter(control, state);
                     Assert.IsFalse(toFlush.IsFlushPending);
