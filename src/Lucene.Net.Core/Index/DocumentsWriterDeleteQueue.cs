@@ -352,7 +352,7 @@ namespace Lucene.Net.Index
 
         public int NumGlobalTermDeletes
         {
-            get { return globalBufferedUpdates.NumTermDeletes.Get(); }
+            get { return globalBufferedUpdates.numTermDeletes.Get(); }
         }
 
         internal void Clear()
@@ -514,7 +514,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     ForceApplyGlobalSlice();
-                    return globalBufferedUpdates.Terms.Count;
+                    return globalBufferedUpdates.terms.Count;
                 }
                 finally
                 {
@@ -525,7 +525,7 @@ namespace Lucene.Net.Index
 
         public long BytesUsed
         {
-            get { return globalBufferedUpdates.BytesUsed.Get(); }
+            get { return globalBufferedUpdates.bytesUsed.Get(); }
         }
 
         public override string ToString()

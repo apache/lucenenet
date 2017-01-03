@@ -80,8 +80,8 @@ namespace Lucene.Net.Index
                 }
                 Assert.AreEqual(j + 1, queue.NumGlobalTermDeletes);
             }
-            assertEquals(uniqueValues, new HashSet<Term>(bd1.Terms.Keys));
-            assertEquals(uniqueValues, new HashSet<Term>(bd2.Terms.Keys));
+            assertEquals(uniqueValues, new HashSet<Term>(bd1.terms.Keys));
+            assertEquals(uniqueValues, new HashSet<Term>(bd2.terms.Keys));
             var frozenSet = new HashSet<Term>();
             foreach (Term t in queue.FreezeGlobalBuffer(null).TermsIterable())
             {
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
         {
             for (int i = start; i <= end; i++)
             {
-                Assert.AreEqual(Convert.ToInt32(end), deletes.Terms[new Term("id", ids[i].ToString())]);
+                Assert.AreEqual(Convert.ToInt32(end), deletes.terms[new Term("id", ids[i].ToString())]);
             }
         }
 
@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
                 queue.UpdateSlice(slice);
                 BufferedUpdates deletes = updateThread.Deletes;
                 slice.Apply(deletes, BufferedUpdates.MAX_INT);
-                assertEquals(uniqueValues, new HashSet<Term>(deletes.Terms.Keys));
+                assertEquals(uniqueValues, new HashSet<Term>(deletes.terms.Keys));
             }
             queue.TryApplyGlobalSlice();
             HashSet<Term> frozenSet = new HashSet<Term>();

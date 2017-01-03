@@ -431,9 +431,9 @@ namespace Lucene.Net.Index
             Debug.Assert(!writeOffsets || writePositions);
 
             IDictionary<Term, int?> segDeletes;
-            if (state.SegUpdates != null && state.SegUpdates.Terms.Count > 0)
+            if (state.SegUpdates != null && state.SegUpdates.terms.Count > 0)
             {
-                segDeletes = state.SegUpdates.Terms;
+                segDeletes = state.SegUpdates.terms;
             }
             else
             {

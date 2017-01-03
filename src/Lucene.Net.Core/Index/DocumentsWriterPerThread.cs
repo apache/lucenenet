@@ -472,7 +472,7 @@ namespace Lucene.Net.Index
             get
             {
                 // public for FlushPolicy
-                return PendingUpdates.NumTermDeletes.Get();
+                return PendingUpdates.numTermDeletes.Get();
             }
         }
 
@@ -522,16 +522,16 @@ namespace Lucene.Net.Index
             // Apply delete-by-docID now (delete-byDocID only
             // happens when an exception is hit processing that
             // doc, eg if analyzer has some problem w/ the text):
-            if (PendingUpdates.DocIDs.Count > 0)
+            if (PendingUpdates.docIDs.Count > 0)
             {
                 flushState.LiveDocs = Codec.LiveDocsFormat.NewLiveDocs(numDocsInRAM);
-                foreach (int delDocID in PendingUpdates.DocIDs)
+                foreach (int delDocID in PendingUpdates.docIDs)
                 {
                     flushState.LiveDocs.Clear(delDocID);
                 }
-                flushState.DelCountOnFlush = PendingUpdates.DocIDs.Count;
-                PendingUpdates.BytesUsed.AddAndGet(-PendingUpdates.DocIDs.Count * BufferedUpdates.BYTES_PER_DEL_DOCID);
-                PendingUpdates.DocIDs.Clear();
+                flushState.DelCountOnFlush = PendingUpdates.docIDs.Count;
+                PendingUpdates.bytesUsed.AddAndGet(-PendingUpdates.docIDs.Count * BufferedUpdates.BYTES_PER_DEL_DOCID);
+                PendingUpdates.docIDs.Clear();
             }
 
             if (Aborting)
@@ -553,7 +553,7 @@ namespace Lucene.Net.Index
             try
             {
                 Consumer.Flush(flushState);
-                PendingUpdates.Terms.Clear();
+                PendingUpdates.terms.Clear();
                 SegmentInfo_Renamed.SetFiles(new HashSet<string>(Directory.CreatedFiles));
 
                 SegmentCommitInfo segmentInfoPerCommit = new SegmentCommitInfo(SegmentInfo_Renamed, 0, -1L, -1L);
@@ -566,7 +566,7 @@ namespace Lucene.Net.Index
                 }
 
                 BufferedUpdates segmentDeletes;
-                if (PendingUpdates.Queries.Count == 0 && PendingUpdates.NumericUpdates.Count == 0 && PendingUpdates.BinaryUpdates.Count == 0)
+                if (PendingUpdates.queries.Count == 0 && PendingUpdates.numericUpdates.Count == 0 && PendingUpdates.binaryUpdates.Count == 0)
                 {
                     PendingUpdates.Clear();
                     segmentDeletes = null;
@@ -692,7 +692,7 @@ namespace Lucene.Net.Index
 
         public virtual long BytesUsed
         {
-            get { return bytesUsed.Get() + PendingUpdates.BytesUsed.Get(); }
+            get { return bytesUsed.Get() + PendingUpdates.bytesUsed.Get(); }
         }
 
         /* Initial chunks size of the shared byte[] blocks used to

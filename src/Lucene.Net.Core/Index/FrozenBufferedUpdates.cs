@@ -67,8 +67,8 @@ namespace Lucene.Net.Index
         public FrozenBufferedUpdates(BufferedUpdates deletes, bool isSegmentPrivate)
         {
             this.IsSegmentPrivate = isSegmentPrivate;
-            Debug.Assert(!isSegmentPrivate || deletes.Terms.Count == 0, "segment private package should only have del queries");
-            Term[] termsArray = deletes.Terms.Keys.ToArray(/*new Term[deletes.Terms.Count]*/);
+            Debug.Assert(!isSegmentPrivate || deletes.terms.Count == 0, "segment private package should only have del queries");
+            Term[] termsArray = deletes.terms.Keys.ToArray(/*new Term[deletes.Terms.Count]*/);
             termCount = termsArray.Length;
             ArrayUtil.TimSort(termsArray);
             PrefixCodedTerms.Builder builder = new PrefixCodedTerms.Builder();
@@ -78,10 +78,10 @@ namespace Lucene.Net.Index
             }
             Terms = builder.Finish();
 
-            Queries = new Query[deletes.Queries.Count];
-            QueryLimits = new int?[deletes.Queries.Count];
+            Queries = new Query[deletes.queries.Count];
+            QueryLimits = new int?[deletes.queries.Count];
             int upto = 0;
-            foreach (KeyValuePair<Query, int?> ent in deletes.Queries)
+            foreach (KeyValuePair<Query, int?> ent in deletes.queries)
             {
                 Queries[upto] = ent.Key;
                 QueryLimits[upto] = ent.Value;
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
             // updated.
             IList<NumericDocValuesUpdate> allNumericUpdates = new List<NumericDocValuesUpdate>();
             int numericUpdatesSize = 0;
-            foreach (var numericUpdates in deletes.NumericUpdates.Values)
+            foreach (var numericUpdates in deletes.numericUpdates.Values)
             {
                 foreach (NumericDocValuesUpdate update in numericUpdates.Values)
                 {
@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
             // updated.
             IList<BinaryDocValuesUpdate> allBinaryUpdates = new List<BinaryDocValuesUpdate>();
             int binaryUpdatesSize = 0;
-            foreach (var binaryUpdates in deletes.BinaryUpdates.Values)
+            foreach (var binaryUpdates in deletes.binaryUpdates.Values)
             {
                 foreach (BinaryDocValuesUpdate update in binaryUpdates.Values)
                 {
@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
 
             BytesUsed = (int)Terms.SizeInBytes + Queries.Length * BYTES_PER_DEL_QUERY + numericUpdatesSize + NumericDVUpdates.Length * RamUsageEstimator.NUM_BYTES_OBJECT_REF + binaryUpdatesSize + BinaryDVUpdates.Length * RamUsageEstimator.NUM_BYTES_OBJECT_REF;
 
-            NumTermDeletes = deletes.NumTermDeletes.Get();
+            NumTermDeletes = deletes.numTermDeletes.Get();
         }
 
         public virtual long DelGen

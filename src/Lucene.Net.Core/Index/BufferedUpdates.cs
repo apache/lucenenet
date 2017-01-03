@@ -117,14 +117,13 @@ namespace Lucene.Net.Index
          */
         internal static readonly int BYTES_PER_BINARY_UPDATE_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT;
 
-        internal readonly AtomicInteger NumTermDeletes = new AtomicInteger();
-        internal readonly AtomicInteger NumNumericUpdates = new AtomicInteger();
-        internal readonly AtomicInteger NumBinaryUpdates = new AtomicInteger();        
-        internal readonly IDictionary<Query, int?> Queries = new Dictionary<Query, int?>();
-        internal readonly IList<int?> DocIDs = new List<int?>();
-
-        // TODO LUCENENET make get access internal and make accessible from Tests
-        public IDictionary<Term, int?> Terms { get; private set; }
+        internal readonly AtomicInteger numTermDeletes = new AtomicInteger();
+        internal readonly AtomicInteger numNumericUpdates = new AtomicInteger();
+        internal readonly AtomicInteger numBinaryUpdates = new AtomicInteger();
+        internal readonly IDictionary<Term, int?> terms = new Dictionary<Term, int?>();
+        internal readonly IDictionary<Query, int?> queries = new Dictionary<Query, int?>();
+        internal readonly IList<int?> docIDs = new List<int?>();
+        
 
         // Map<dvField,Map<updateTerm,NumericUpdate>>
         // For each field we keep an ordered list of NumericUpdates, key'd by the
@@ -133,7 +132,7 @@ namespace Lucene.Net.Index
         // one that came in wins), and helps us detect faster if the same Term is
         // used to update the same field multiple times (so we later traverse it
         // only once).
-        internal readonly IDictionary<string, OrderedDictionary> NumericUpdates = new Dictionary<string, OrderedDictionary>();
+        internal readonly IDictionary<string, OrderedDictionary> numericUpdates = new Dictionary<string, OrderedDictionary>();
 
         // Map<dvField,Map<updateTerm,BinaryUpdate>>
         // For each field we keep an ordered list of BinaryUpdates, key'd by the
@@ -142,54 +141,53 @@ namespace Lucene.Net.Index
         // one that came in wins), and helps us detect faster if the same Term is
         // used to update the same field multiple times (so we later traverse it
         // only once).
-        internal readonly IDictionary<string, OrderedDictionary> BinaryUpdates = new Dictionary<string, OrderedDictionary>();
+        internal readonly IDictionary<string, OrderedDictionary> binaryUpdates = new Dictionary<string, OrderedDictionary>();
 
         public static readonly int MAX_INT = Convert.ToInt32(int.MaxValue);
 
-        internal readonly AtomicLong BytesUsed;
+        internal readonly AtomicLong bytesUsed;
 
         private const bool VERBOSE_DELETES = false;
 
-        internal long Gen;
+        internal long gen;
 
-        public BufferedUpdates()
+        internal BufferedUpdates() // LUCENENET NOTE: Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
         {
-            this.BytesUsed = new AtomicLong();
-            Terms = new Dictionary<Term, int?>();
+            this.bytesUsed = new AtomicLong();
         }
 
         public override string ToString()
         {
             if (VERBOSE_DELETES)
             {
-                return "gen=" + Gen + " numTerms=" + NumTermDeletes + ", terms=" + Terms + ", queries=" + Queries + ", docIDs=" + DocIDs + ", numericUpdates=" + NumericUpdates + ", binaryUpdates=" + BinaryUpdates + ", bytesUsed=" + BytesUsed;
+                return "gen=" + gen + " numTerms=" + numTermDeletes + ", terms=" + terms + ", queries=" + queries + ", docIDs=" + docIDs + ", numericUpdates=" + numericUpdates + ", binaryUpdates=" + binaryUpdates + ", bytesUsed=" + bytesUsed;
             }
             else
             {
-                string s = "gen=" + Gen;
-                if (NumTermDeletes.Get() != 0)
+                string s = "gen=" + gen;
+                if (numTermDeletes.Get() != 0)
                 {
-                    s += " " + NumTermDeletes.Get() + " deleted terms (unique count=" + Terms.Count + ")";
+                    s += " " + numTermDeletes.Get() + " deleted terms (unique count=" + terms.Count + ")";
                 }
-                if (Queries.Count != 0)
+                if (queries.Count != 0)
                 {
-                    s += " " + Queries.Count + " deleted queries";
+                    s += " " + queries.Count + " deleted queries";
                 }
-                if (DocIDs.Count != 0)
+                if (docIDs.Count != 0)
                 {
-                    s += " " + DocIDs.Count + " deleted docIDs";
+                    s += " " + docIDs.Count + " deleted docIDs";
                 }
-                if (NumNumericUpdates.Get() != 0)
+                if (numNumericUpdates.Get() != 0)
                 {
-                    s += " " + NumNumericUpdates.Get() + " numeric updates (unique count=" + NumericUpdates.Count + ")";
+                    s += " " + numNumericUpdates.Get() + " numeric updates (unique count=" + numericUpdates.Count + ")";
                 }
-                if (NumBinaryUpdates.Get() != 0)
+                if (numBinaryUpdates.Get() != 0)
                 {
-                    s += " " + NumBinaryUpdates.Get() + " binary updates (unique count=" + BinaryUpdates.Count + ")";
+                    s += " " + numBinaryUpdates.Get() + " binary updates (unique count=" + binaryUpdates.Count + ")";
                 }
-                if (BytesUsed.Get() != 0)
+                if (bytesUsed.Get() != 0)
                 {
-                    s += " bytesUsed=" + BytesUsed.Get();
+                    s += " bytesUsed=" + bytesUsed.Get();
                 }
 
                 return s;
@@ -199,25 +197,25 @@ namespace Lucene.Net.Index
         public virtual void AddQuery(Query query, int docIDUpto)
         {
             int? prev;
-            Queries.TryGetValue(query, out prev);
-            Queries[query] = docIDUpto;
+            queries.TryGetValue(query, out prev);
+            queries[query] = docIDUpto;
             // increment bytes used only if the query wasn't added so far.
             if (prev == null)
             {
-                BytesUsed.AddAndGet(BYTES_PER_DEL_QUERY);
+                bytesUsed.AddAndGet(BYTES_PER_DEL_QUERY);
             }
         }
 
         public virtual void AddDocID(int docID)
         {
-            DocIDs.Add(Convert.ToInt32(docID));
-            BytesUsed.AddAndGet(BYTES_PER_DEL_DOCID);
+            docIDs.Add(Convert.ToInt32(docID));
+            bytesUsed.AddAndGet(BYTES_PER_DEL_DOCID);
         }
 
         public virtual void AddTerm(Term term, int docIDUpto)
         {
             int? current;
-            Terms.TryGetValue(term, out current);
+            terms.TryGetValue(term, out current);
             if (current != null && docIDUpto < current)
             {
                 // Only record the new number if it's greater than the
@@ -230,25 +228,25 @@ namespace Lucene.Net.Index
                 return;
             }
 
-            Terms[term] = Convert.ToInt32(docIDUpto);
+            terms[term] = Convert.ToInt32(docIDUpto);
             // note that if current != null then it means there's already a buffered
             // delete on that term, therefore we seem to over-count. this over-counting
             // is done to respect IndexWriterConfig.setMaxBufferedDeleteTerms.
-            NumTermDeletes.IncrementAndGet();
+            numTermDeletes.IncrementAndGet();
             if (current == null)
             {
-                BytesUsed.AddAndGet(BYTES_PER_DEL_TERM + term.Bytes.Length + (RamUsageEstimator.NUM_BYTES_CHAR * term.Field.Length));
+                bytesUsed.AddAndGet(BYTES_PER_DEL_TERM + term.Bytes.Length + (RamUsageEstimator.NUM_BYTES_CHAR * term.Field.Length));
             }
         }
 
         public virtual void AddNumericUpdate(NumericDocValuesUpdate update, int docIDUpto)
         {
             OrderedDictionary fieldUpdates = null;
-            if (!NumericUpdates.TryGetValue(update.field, out fieldUpdates))
+            if (!numericUpdates.TryGetValue(update.field, out fieldUpdates))
             {
                 fieldUpdates = new OrderedDictionary();
-                NumericUpdates[update.field] = fieldUpdates;
-                BytesUsed.AddAndGet(BYTES_PER_NUMERIC_FIELD_ENTRY);
+                numericUpdates[update.field] = fieldUpdates;
+                bytesUsed.AddAndGet(BYTES_PER_NUMERIC_FIELD_ENTRY);
             }
 
             NumericDocValuesUpdate current = null;
@@ -274,21 +272,21 @@ namespace Lucene.Net.Index
                 fieldUpdates.Remove(update.term);
             }
             fieldUpdates[update.term] = update;
-            NumNumericUpdates.IncrementAndGet();
+            numNumericUpdates.IncrementAndGet();
             if (current == null)
             {
-                BytesUsed.AddAndGet(BYTES_PER_NUMERIC_UPDATE_ENTRY + update.SizeInBytes());
+                bytesUsed.AddAndGet(BYTES_PER_NUMERIC_UPDATE_ENTRY + update.SizeInBytes());
             }
         }
 
         public virtual void AddBinaryUpdate(BinaryDocValuesUpdate update, int docIDUpto)
         {
             OrderedDictionary fieldUpdates;
-            if (!BinaryUpdates.TryGetValue(update.field, out fieldUpdates))
+            if (!binaryUpdates.TryGetValue(update.field, out fieldUpdates))
             {
                 fieldUpdates = new OrderedDictionary();
-                BinaryUpdates[update.field] = fieldUpdates;
-                BytesUsed.AddAndGet(BYTES_PER_BINARY_FIELD_ENTRY);
+                binaryUpdates[update.field] = fieldUpdates;
+                bytesUsed.AddAndGet(BYTES_PER_BINARY_FIELD_ENTRY);
             }
 
             BinaryDocValuesUpdate current = null;
@@ -314,29 +312,29 @@ namespace Lucene.Net.Index
                 fieldUpdates.Remove(update.term);
             }
             fieldUpdates[update.term] = update;
-            NumBinaryUpdates.IncrementAndGet();
+            numBinaryUpdates.IncrementAndGet();
             if (current == null)
             {
-                BytesUsed.AddAndGet(BYTES_PER_BINARY_UPDATE_ENTRY + update.SizeInBytes());
+                bytesUsed.AddAndGet(BYTES_PER_BINARY_UPDATE_ENTRY + update.SizeInBytes());
             }
         }
 
         internal virtual void Clear()
         {
-            Terms.Clear();
-            Queries.Clear();
-            DocIDs.Clear();
-            NumericUpdates.Clear();
-            BinaryUpdates.Clear();
-            NumTermDeletes.Set(0);
-            NumNumericUpdates.Set(0);
-            NumBinaryUpdates.Set(0);
-            BytesUsed.Set(0);
+            terms.Clear();
+            queries.Clear();
+            docIDs.Clear();
+            numericUpdates.Clear();
+            binaryUpdates.Clear();
+            numTermDeletes.Set(0);
+            numNumericUpdates.Set(0);
+            numBinaryUpdates.Set(0);
+            bytesUsed.Set(0);
         }
 
         internal virtual bool Any()
         {
-            return Terms.Count > 0 || DocIDs.Count > 0 || Queries.Count > 0 || NumericUpdates.Count > 0 || BinaryUpdates.Count > 0;
+            return terms.Count > 0 || docIDs.Count > 0 || queries.Count > 0 || numericUpdates.Count > 0 || binaryUpdates.Count > 0;
         }
     }
 }
