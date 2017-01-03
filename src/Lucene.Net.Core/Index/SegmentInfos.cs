@@ -744,7 +744,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static StreamWriter InfoStream // LUCENENET TODO: Make this into TextWriter
         {
-            set
+            set // LUCENENET TODO: Change to SetInfoStream() for consistency
             {
                 SegmentInfos.infoStream = value;
             }
@@ -1317,9 +1317,9 @@ namespace Lucene.Net.Index
         /// Returns sum of all segment's docCounts.  Note that
         ///  this does not include deletions
         /// </summary>
-        public int TotalDocCount() // LUCENENET TODO: Make property
+        public int TotalDocCount
         {
-            return segments.Sum(info => info.Info.DocCount);
+            get { return segments.Sum(info => info.Info.DocCount); }
         }
 
         /// <summary>

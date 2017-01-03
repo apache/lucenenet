@@ -1317,7 +1317,7 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     EnsureOpen();
-                    return docWriter.NumDocs + segmentInfos.TotalDocCount();
+                    return docWriter.NumDocs + segmentInfos.TotalDocCount;
                 }
             }
         }
