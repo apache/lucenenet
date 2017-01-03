@@ -29,15 +29,15 @@ namespace Lucene.Net.Util.Packed
     {
         private static readonly int LOG2_LONG_SIZE = Number.NumberOfTrailingZeros((sizeof(long) * 8));
 
-        private readonly EliasFanoEncoder EfEncoder;
-        private readonly long NumEncoded_Renamed;
-        private long EfIndex = -1; // the decoding index.
-        private long SetBitForIndex = -1; // the index of the high bit at the decoding index.
+        private readonly EliasFanoEncoder efEncoder;
+        private readonly long numEncoded;
+        private long efIndex = -1; // the decoding index.
+        private long setBitForIndex = -1; // the index of the high bit at the decoding index.
 
         public const long NO_MORE_VALUES = -1L;
 
-        private readonly long NumIndexEntries;
-        private readonly long IndexMask;
+        private readonly long numIndexEntries;
+        private readonly long indexMask;
 
         /// <summary>
         /// Construct a decoder for a given <seealso cref="EliasFanoEncoder"/>.
@@ -45,10 +45,10 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public EliasFanoDecoder(EliasFanoEncoder efEncoder)
         {
-            this.EfEncoder = efEncoder;
-            this.NumEncoded_Renamed = efEncoder.NumEncoded; // not final in EliasFanoEncoder
-            this.NumIndexEntries = efEncoder.CurrentEntryIndex; // not final in EliasFanoEncoder
-            this.IndexMask = (1L << efEncoder.NIndexEntryBits) - 1;
+            this.efEncoder = efEncoder;
+            this.numEncoded = efEncoder.NumEncoded; // not final in EliasFanoEncoder
+            this.numIndexEntries = efEncoder.CurrentEntryIndex; // not final in EliasFanoEncoder
+            this.indexMask = (1L << efEncoder.NIndexEntryBits) - 1;
         }
 
         /// <returns> The Elias-Fano encoder that is decoded. </returns>
@@ -56,7 +56,7 @@ namespace Lucene.Net.Util.Packed
         {
             get
             {
-                return EfEncoder;
+                return efEncoder;
             }
         }
 
@@ -65,7 +65,7 @@ namespace Lucene.Net.Util.Packed
         /// <returns> The number of values encoded by the encoder. </returns>
         public virtual long NumEncoded
         {
-            get { return NumEncoded_Renamed; }
+            get { return numEncoded; }
         }
 
         /// <summary>
@@ -79,15 +79,15 @@ namespace Lucene.Net.Util.Packed
         /// <returns> The decoding index of the last decoded value, or as last set by <seealso cref="#advanceToIndex"/>. </returns>
         public virtual long CurrentIndex()
         {
-            if (EfIndex < 0)
+            if (efIndex < 0)
             {
                 throw new InvalidOperationException("index before sequence");
             }
-            if (EfIndex >= NumEncoded_Renamed)
+            if (efIndex >= numEncoded)
             {
                 throw new InvalidOperationException("index after sequence");
             }
-            return EfIndex;
+            return efIndex;
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace Lucene.Net.Util.Packed
         ///  <returns> The high value for the current decoding index. </returns>
         private long CurrentHighValue()
         {
-            return SetBitForIndex - EfIndex; // sequence of unary gaps
+            return setBitForIndex - efIndex; // sequence of unary gaps
         }
 
         /// <summary>
@@ -129,18 +129,18 @@ namespace Lucene.Net.Util.Packed
         ///  <returns> The low value for the current decoding index. </returns>
         private long CurrentLowValue()
         {
-            Debug.Assert(((EfIndex >= 0) && (EfIndex < NumEncoded_Renamed)), "efIndex " + EfIndex);
-            return UnPackValue(EfEncoder.LowerLongs, EfEncoder.NumLowBits, EfIndex, EfEncoder.LowerBitsMask);
+            Debug.Assert(((efIndex >= 0) && (efIndex < numEncoded)), "efIndex " + efIndex);
+            return UnPackValue(efEncoder.LowerLongs, efEncoder.NumLowBits, efIndex, efEncoder.LowerBitsMask);
         }
 
         ///  <returns> The given highValue shifted left by the number of low bits from by the EliasFanoSequence,
         ///           logically OR-ed with the given lowValue. </returns>
         private long CombineHighLowValues(long highValue, long lowValue)
         {
-            return (highValue << EfEncoder.NumLowBits) | lowValue;
+            return (highValue << efEncoder.NumLowBits) | lowValue;
         }
 
-        private long CurHighLong;
+        private long curHighLong;
 
         /* The implementation of forward decoding and backward decoding is done by the following method pairs.
          *
@@ -161,8 +161,8 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public virtual void ToBeforeSequence()
         {
-            EfIndex = -1;
-            SetBitForIndex = -1;
+            efIndex = -1;
+            setBitForIndex = -1;
         }
 
         /// <returns> the number of bits in a long after (setBitForIndex modulo Long.SIZE) </returns>
@@ -170,7 +170,7 @@ namespace Lucene.Net.Util.Packed
         {
             get
             {
-                int s = (int)(SetBitForIndex & ((sizeof(long) * 8) - 1));
+                int s = (int)(setBitForIndex & ((sizeof(long) * 8) - 1));
                 return s;
             }
         }
@@ -181,14 +181,14 @@ namespace Lucene.Net.Util.Packed
         /// <returns> true iff efIndex still smaller than numEncoded. </returns>
         private bool ToAfterCurrentHighBit()
         {
-            EfIndex += 1;
-            if (EfIndex >= NumEncoded_Renamed)
+            efIndex += 1;
+            if (efIndex >= numEncoded)
             {
                 return false;
             }
-            SetBitForIndex += 1;
-            int highIndex = (int)((long)((ulong)SetBitForIndex >> LOG2_LONG_SIZE));
-            CurHighLong = (long)((ulong)EfEncoder.UpperLongs[highIndex] >> CurrentRightShift);
+            setBitForIndex += 1;
+            int highIndex = (int)((long)((ulong)setBitForIndex >> LOG2_LONG_SIZE));
+            curHighLong = (long)((ulong)efEncoder.UpperLongs[highIndex] >> CurrentRightShift);
             return true;
         }
 
@@ -198,10 +198,10 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         private void ToNextHighLong()
         {
-            SetBitForIndex += (sizeof(long) * 8) - (SetBitForIndex & ((sizeof(long) * 8) - 1));
+            setBitForIndex += (sizeof(long) * 8) - (setBitForIndex & ((sizeof(long) * 8) - 1));
             //assert getCurrentRightShift() == 0;
-            int highIndex = (int)((long)((ulong)SetBitForIndex >> LOG2_LONG_SIZE));
-            CurHighLong = EfEncoder.UpperLongs[highIndex];
+            int highIndex = (int)((long)((ulong)setBitForIndex >> LOG2_LONG_SIZE));
+            curHighLong = efEncoder.UpperLongs[highIndex];
         }
 
         /// <summary>
@@ -210,11 +210,11 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         private void ToNextHighValue()
         {
-            while (CurHighLong == 0L)
+            while (curHighLong == 0L)
             {
                 ToNextHighLong(); // inlining and unrolling would simplify somewhat
             }
-            SetBitForIndex += Number.NumberOfTrailingZeros(CurHighLong);
+            setBitForIndex += Number.NumberOfTrailingZeros(curHighLong);
         }
 
         /// <summary>
@@ -250,10 +250,10 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public virtual bool AdvanceToIndex(long index)
         {
-            Debug.Assert(index > EfIndex);
-            if (index >= NumEncoded_Renamed)
+            Debug.Assert(index > efIndex);
+            if (index >= numEncoded)
             {
-                EfIndex = NumEncoded_Renamed;
+                efIndex = numEncoded;
                 return false;
             }
             if (!ToAfterCurrentHighBit())
@@ -261,15 +261,15 @@ namespace Lucene.Net.Util.Packed
                 Debug.Assert(false);
             }
             /* CHECKME: Add a (binary) search in the upperZeroBitPositions here. */
-            int curSetBits = Number.BitCount(CurHighLong);
-            while ((EfIndex + curSetBits) < index) // curHighLong has not enough set bits to reach index
+            int curSetBits = Number.BitCount(curHighLong);
+            while ((efIndex + curSetBits) < index) // curHighLong has not enough set bits to reach index
             {
-                EfIndex += curSetBits;
+                efIndex += curSetBits;
                 ToNextHighLong();
-                curSetBits = Number.BitCount(CurHighLong);
+                curSetBits = Number.BitCount(curHighLong);
             }
             // curHighLong has enough set bits to reach index
-            while (EfIndex < index)
+            while (efIndex < index)
             {
                 /* CHECKME: Instead of the linear search here, use (forward) broadword selection from
                  * "Broadword Implementation of Rank/Select Queries", Sebastiano Vigna, January 30, 2012.
@@ -290,114 +290,114 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public virtual long AdvanceToValue(long target)
         {
-            EfIndex += 1;
-            if (EfIndex >= NumEncoded_Renamed)
+            efIndex += 1;
+            if (efIndex >= numEncoded)
             {
                 return NO_MORE_VALUES;
             }
-            SetBitForIndex += 1; // the high bit at setBitForIndex belongs to the unary code for efIndex
+            setBitForIndex += 1; // the high bit at setBitForIndex belongs to the unary code for efIndex
 
-            int highIndex = (int)((long)((ulong)SetBitForIndex >> LOG2_LONG_SIZE));
-            long upperLong = EfEncoder.UpperLongs[highIndex];
-            CurHighLong = (long)((ulong)upperLong >> ((int)(SetBitForIndex & ((sizeof(long) * 8) - 1)))); // may contain the unary 1 bit for efIndex
+            int highIndex = (int)((long)((ulong)setBitForIndex >> LOG2_LONG_SIZE));
+            long upperLong = efEncoder.UpperLongs[highIndex];
+            curHighLong = (long)((ulong)upperLong >> ((int)(setBitForIndex & ((sizeof(long) * 8) - 1)))); // may contain the unary 1 bit for efIndex
 
             // determine index entry to advance to
-            long highTarget = (long)((ulong)target >> EfEncoder.NumLowBits);
+            long highTarget = (long)((ulong)target >> efEncoder.NumLowBits);
 
-            long indexEntryIndex = (highTarget / EfEncoder.IndexInterval) - 1;
+            long indexEntryIndex = (highTarget / efEncoder.IndexInterval) - 1;
             if (indexEntryIndex >= 0) // not before first index entry
             {
-                if (indexEntryIndex >= NumIndexEntries)
+                if (indexEntryIndex >= numIndexEntries)
                 {
-                    indexEntryIndex = NumIndexEntries - 1; // no further than last index entry
+                    indexEntryIndex = numIndexEntries - 1; // no further than last index entry
                 }
-                long indexHighValue = (indexEntryIndex + 1) * EfEncoder.IndexInterval;
+                long indexHighValue = (indexEntryIndex + 1) * efEncoder.IndexInterval;
                 Debug.Assert(indexHighValue <= highTarget);
-                if (indexHighValue > (SetBitForIndex - EfIndex)) // advance to just after zero bit position of index entry.
+                if (indexHighValue > (setBitForIndex - efIndex)) // advance to just after zero bit position of index entry.
                 {
-                    SetBitForIndex = UnPackValue(EfEncoder.UpperZeroBitPositionIndex, EfEncoder.NIndexEntryBits, indexEntryIndex, IndexMask);
-                    EfIndex = SetBitForIndex - indexHighValue; // the high bit at setBitForIndex belongs to the unary code for efIndex
-                    highIndex = (int)(((ulong)SetBitForIndex >> LOG2_LONG_SIZE));
-                    upperLong = EfEncoder.UpperLongs[highIndex];
-                    CurHighLong = (long)((ulong)upperLong >> ((int)(SetBitForIndex & ((sizeof(long) * 8) - 1)))); // may contain the unary 1 bit for efIndex
+                    setBitForIndex = UnPackValue(efEncoder.UpperZeroBitPositionIndex, efEncoder.NIndexEntryBits, indexEntryIndex, indexMask);
+                    efIndex = setBitForIndex - indexHighValue; // the high bit at setBitForIndex belongs to the unary code for efIndex
+                    highIndex = (int)(((ulong)setBitForIndex >> LOG2_LONG_SIZE));
+                    upperLong = efEncoder.UpperLongs[highIndex];
+                    curHighLong = (long)((ulong)upperLong >> ((int)(setBitForIndex & ((sizeof(long) * 8) - 1)))); // may contain the unary 1 bit for efIndex
                 }
-                Debug.Assert(EfIndex < NumEncoded_Renamed); // there is a high value to be found.
+                Debug.Assert(efIndex < numEncoded); // there is a high value to be found.
             }
 
-            int curSetBits = Number.BitCount(CurHighLong); // shifted right.
-            int curClearBits = (sizeof(long) * 8) - curSetBits - ((int)(SetBitForIndex & ((sizeof(long) * 8) - 1))); // subtract right shift, may be more than encoded
+            int curSetBits = Number.BitCount(curHighLong); // shifted right.
+            int curClearBits = (sizeof(long) * 8) - curSetBits - ((int)(setBitForIndex & ((sizeof(long) * 8) - 1))); // subtract right shift, may be more than encoded
 
-            while (((SetBitForIndex - EfIndex) + curClearBits) < highTarget)
+            while (((setBitForIndex - efIndex) + curClearBits) < highTarget)
             {
                 // curHighLong has not enough clear bits to reach highTarget
-                EfIndex += curSetBits;
-                if (EfIndex >= NumEncoded_Renamed)
+                efIndex += curSetBits;
+                if (efIndex >= numEncoded)
                 {
                     return NO_MORE_VALUES;
                 }
-                SetBitForIndex += (sizeof(long) * 8) - (SetBitForIndex & ((sizeof(long) * 8) - 1));
+                setBitForIndex += (sizeof(long) * 8) - (setBitForIndex & ((sizeof(long) * 8) - 1));
                 // highIndex = (int)(setBitForIndex >>> LOG2_LONG_SIZE);
-                Debug.Assert((highIndex + 1) == (int)((long)((ulong)SetBitForIndex >> LOG2_LONG_SIZE)));
+                Debug.Assert((highIndex + 1) == (int)((long)((ulong)setBitForIndex >> LOG2_LONG_SIZE)));
                 highIndex += 1;
-                upperLong = EfEncoder.UpperLongs[highIndex];
-                CurHighLong = upperLong;
-                curSetBits = Number.BitCount(CurHighLong);
+                upperLong = efEncoder.UpperLongs[highIndex];
+                curHighLong = upperLong;
+                curSetBits = Number.BitCount(curHighLong);
                 curClearBits = (sizeof(long) * 8) - curSetBits;
             }
             // curHighLong has enough clear bits to reach highTarget, and may not have enough set bits.
-            while (CurHighLong == 0L)
+            while (curHighLong == 0L)
             {
-                SetBitForIndex += (sizeof(long) * 8) - (SetBitForIndex & ((sizeof(long) * 8) - 1));
-                Debug.Assert((highIndex + 1) == (int)((ulong)SetBitForIndex >> LOG2_LONG_SIZE));
+                setBitForIndex += (sizeof(long) * 8) - (setBitForIndex & ((sizeof(long) * 8) - 1));
+                Debug.Assert((highIndex + 1) == (int)((ulong)setBitForIndex >> LOG2_LONG_SIZE));
                 highIndex += 1;
-                upperLong = EfEncoder.UpperLongs[highIndex];
-                CurHighLong = upperLong;
+                upperLong = efEncoder.UpperLongs[highIndex];
+                curHighLong = upperLong;
             }
 
             // curHighLong has enough clear bits to reach highTarget, has at least 1 set bit, and may not have enough set bits.
-            int rank = (int)(highTarget - (SetBitForIndex - EfIndex)); // the rank of the zero bit for highValue.
+            int rank = (int)(highTarget - (setBitForIndex - efIndex)); // the rank of the zero bit for highValue.
             Debug.Assert((rank <= (sizeof(long) * 8)), ("rank " + rank));
             if (rank >= 1)
             {
-                long invCurHighLong = ~CurHighLong;
+                long invCurHighLong = ~curHighLong;
                 int clearBitForValue = (rank <= 8) ? BroadWord.SelectNaive(invCurHighLong, rank) : BroadWord.Select(invCurHighLong, rank);
                 Debug.Assert(clearBitForValue <= ((sizeof(long) * 8) - 1));
-                SetBitForIndex += clearBitForValue + 1; // the high bit just before setBitForIndex is zero
+                setBitForIndex += clearBitForValue + 1; // the high bit just before setBitForIndex is zero
                 int oneBitsBeforeClearBit = clearBitForValue - rank + 1;
-                EfIndex += oneBitsBeforeClearBit; // the high bit at setBitForIndex and belongs to the unary code for efIndex
-                if (EfIndex >= NumEncoded_Renamed)
+                efIndex += oneBitsBeforeClearBit; // the high bit at setBitForIndex and belongs to the unary code for efIndex
+                if (efIndex >= numEncoded)
                 {
                     return NO_MORE_VALUES;
                 }
 
-                if ((SetBitForIndex & ((sizeof(long) * 8) - 1)) == 0L) // exhausted curHighLong
+                if ((setBitForIndex & ((sizeof(long) * 8) - 1)) == 0L) // exhausted curHighLong
                 {
-                    Debug.Assert((highIndex + 1) == (int)((ulong)SetBitForIndex >> LOG2_LONG_SIZE));
+                    Debug.Assert((highIndex + 1) == (int)((ulong)setBitForIndex >> LOG2_LONG_SIZE));
                     highIndex += 1;
-                    upperLong = EfEncoder.UpperLongs[highIndex];
-                    CurHighLong = upperLong;
+                    upperLong = efEncoder.UpperLongs[highIndex];
+                    curHighLong = upperLong;
                 }
                 else
                 {
-                    Debug.Assert(highIndex == (int)((ulong)SetBitForIndex >> LOG2_LONG_SIZE));
-                    CurHighLong = (long)((ulong)upperLong >> ((int)(SetBitForIndex & ((sizeof(long) * 8) - 1))));
+                    Debug.Assert(highIndex == (int)((ulong)setBitForIndex >> LOG2_LONG_SIZE));
+                    curHighLong = (long)((ulong)upperLong >> ((int)(setBitForIndex & ((sizeof(long) * 8) - 1))));
                 }
                 // curHighLong has enough clear bits to reach highTarget, and may not have enough set bits.
 
-                while (CurHighLong == 0L)
+                while (curHighLong == 0L)
                 {
-                    SetBitForIndex += (sizeof(long) * 8) - (SetBitForIndex & ((sizeof(long) * 8) - 1));
-                    Debug.Assert((highIndex + 1) == (int)((ulong)SetBitForIndex >> LOG2_LONG_SIZE));
+                    setBitForIndex += (sizeof(long) * 8) - (setBitForIndex & ((sizeof(long) * 8) - 1));
+                    Debug.Assert((highIndex + 1) == (int)((ulong)setBitForIndex >> LOG2_LONG_SIZE));
                     highIndex += 1;
-                    upperLong = EfEncoder.UpperLongs[highIndex];
-                    CurHighLong = upperLong;
+                    upperLong = efEncoder.UpperLongs[highIndex];
+                    curHighLong = upperLong;
                 }
             }
-            SetBitForIndex += Number.NumberOfTrailingZeros(CurHighLong);
-            Debug.Assert((SetBitForIndex - EfIndex) >= highTarget); // highTarget reached
+            setBitForIndex += Number.NumberOfTrailingZeros(curHighLong);
+            Debug.Assert((setBitForIndex - efIndex) >= highTarget); // highTarget reached
 
             // Linear search also with low values
-            long currentValue = CombineHighLowValues((SetBitForIndex - EfIndex), CurrentLowValue());
+            long currentValue = CombineHighLowValues((setBitForIndex - efIndex), CurrentLowValue());
             while (currentValue < target)
             {
                 currentValue = NextValue();
@@ -416,8 +416,8 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public virtual void ToAfterSequence()
         {
-            EfIndex = NumEncoded_Renamed; // just after last index
-            SetBitForIndex = ((long)((ulong)EfEncoder.LastEncoded >> EfEncoder.NumLowBits)) + NumEncoded_Renamed;
+            efIndex = numEncoded; // just after last index
+            setBitForIndex = ((long)((ulong)efEncoder.LastEncoded >> efEncoder.NumLowBits)) + numEncoded;
         }
 
         /// <returns> the number of bits in a long before (setBitForIndex modulo Long.SIZE) </returns>
@@ -425,7 +425,7 @@ namespace Lucene.Net.Util.Packed
         {
             get
             {
-                int s = (sizeof(long) * 8) - 1 - (int)(SetBitForIndex & ((sizeof(long) * 8) - 1));
+                int s = (sizeof(long) * 8) - 1 - (int)(setBitForIndex & ((sizeof(long) * 8) - 1));
                 return s;
             }
         }
@@ -436,14 +436,14 @@ namespace Lucene.Net.Util.Packed
         /// <returns> true iff efindex still >= 0 </returns>
         private bool ToBeforeCurrentHighBit()
         {
-            EfIndex -= 1;
-            if (EfIndex < 0)
+            efIndex -= 1;
+            if (efIndex < 0)
             {
                 return false;
             }
-            SetBitForIndex -= 1;
-            int highIndex = (int)((ulong)SetBitForIndex >> LOG2_LONG_SIZE);
-            CurHighLong = EfEncoder.UpperLongs[highIndex] << CurrentLeftShift;
+            setBitForIndex -= 1;
+            int highIndex = (int)((ulong)setBitForIndex >> LOG2_LONG_SIZE);
+            curHighLong = efEncoder.UpperLongs[highIndex] << CurrentLeftShift;
             return true;
         }
 
@@ -453,10 +453,10 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         private void ToPreviousHighLong()
         {
-            SetBitForIndex -= (SetBitForIndex & ((sizeof(long) * 8) - 1)) + 1;
+            setBitForIndex -= (setBitForIndex & ((sizeof(long) * 8) - 1)) + 1;
             //assert getCurrentLeftShift() == 0;
-            int highIndex = (int)((ulong)SetBitForIndex >> LOG2_LONG_SIZE);
-            CurHighLong = EfEncoder.UpperLongs[highIndex];
+            int highIndex = (int)((ulong)setBitForIndex >> LOG2_LONG_SIZE);
+            curHighLong = efEncoder.UpperLongs[highIndex];
         }
 
         /// <summary>
@@ -465,11 +465,11 @@ namespace Lucene.Net.Util.Packed
         ///  <returns> the previous encoded high value. </returns>
         private long PreviousHighValue()
         {
-            while (CurHighLong == 0L)
+            while (curHighLong == 0L)
             {
                 ToPreviousHighLong(); // inlining and unrolling would simplify somewhat
             }
-            SetBitForIndex -= Number.NumberOfLeadingZeros(CurHighLong);
+            setBitForIndex -= Number.NumberOfLeadingZeros(curHighLong);
             return CurrentHighValue();
         }
 
@@ -496,19 +496,19 @@ namespace Lucene.Net.Util.Packed
         private long BackToHighValue(long highTarget)
         {
             /* CHECKME: Add using the index as in advanceToHighValue */
-            int curSetBits = Number.BitCount(CurHighLong); // is shifted by getCurrentLeftShift()
+            int curSetBits = Number.BitCount(curHighLong); // is shifted by getCurrentLeftShift()
             int curClearBits = (sizeof(long) * 8) - curSetBits - CurrentLeftShift;
             while ((CurrentHighValue() - curClearBits) > highTarget)
             {
                 // curHighLong has not enough clear bits to reach highTarget
-                EfIndex -= curSetBits;
-                if (EfIndex < 0)
+                efIndex -= curSetBits;
+                if (efIndex < 0)
                 {
                     return NO_MORE_VALUES;
                 }
                 ToPreviousHighLong();
                 //assert getCurrentLeftShift() == 0;
-                curSetBits = Number.BitCount(CurHighLong);
+                curSetBits = Number.BitCount(curHighLong);
                 curClearBits = (sizeof(long) * 8) - curSetBits;
             }
             // curHighLong has enough clear bits to reach highTarget, but may not have enough set bits.
@@ -536,7 +536,7 @@ namespace Lucene.Net.Util.Packed
             {
                 return NO_MORE_VALUES;
             }
-            long highTarget = (long)((ulong)target >> EfEncoder.NumLowBits);
+            long highTarget = (long)((ulong)target >> efEncoder.NumLowBits);
             long highValue = BackToHighValue(highTarget);
             if (highValue == NO_MORE_VALUES)
             {
