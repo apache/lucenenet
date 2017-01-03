@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Similarities
     /// </summary>
     public class BM25Similarity : Similarity
     {
-        private readonly float K1_Renamed;
+        private readonly float k1;
         private readonly float b;
         // TODO: should we add a delta like sifaka.cs.uiuc.edu/~ylv2/pub/sigir11-bm25l.pdf ?
 
@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Similarities
         /// <param name="b"> Controls to what degree document length normalizes tf values. </param>
         public BM25Similarity(float k1, float b)
         {
-            this.K1_Renamed = k1;
+            this.k1 = k1;
             this.b = b;
         }
 
@@ -57,7 +57,7 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         public BM25Similarity()
         {
-            this.K1_Renamed = 1.2f;
+            this.k1 = 1.2f;
             this.b = 0.75f;
         }
 
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search.Similarities
         /// True if overlap tokens (tokens with a position of increment of zero) are
         /// discounted from the document's length.
         /// </summary>
-        private bool DiscountOverlaps_Renamed = true; // LUCENENET specific: made private, since value can be set/get through propery
+        private bool discountOverlaps = true; // LUCENENET specific: made private, since value can be set/get through propery
 
         /// <summary>
         /// Sets whether overlap tokens (Tokens with 0 position increment) are
@@ -135,11 +135,11 @@ namespace Lucene.Net.Search.Similarities
         {
             set
             {
-                DiscountOverlaps_Renamed = value;
+                discountOverlaps = value;
             }
             get
             {
-                return DiscountOverlaps_Renamed;
+                return discountOverlaps;
             }
         }
 
@@ -158,7 +158,7 @@ namespace Lucene.Net.Search.Similarities
 
         public override sealed long ComputeNorm(FieldInvertState state)
         {
-            int numTerms = DiscountOverlaps_Renamed ? state.Length - state.NumOverlap : state.Length;
+            int numTerms = discountOverlaps ? state.Length - state.NumOverlap : state.Length;
             return EncodeNormValue(state.Boost, numTerms);
         }
 
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search.Similarities
             float[] cache = new float[256];
             for (int i = 0; i < cache.Length; i++)
             {
-                cache[i] = K1_Renamed * ((1 - b) + b * DecodeNormValue((sbyte)i) / avgdl);
+                cache[i] = k1 * ((1 - b) + b * DecodeNormValue((sbyte)i) / avgdl);
             }
             return new BM25Stats(collectionStats.Field, idf, queryBoost, avgdl, cache);
         }
@@ -243,42 +243,42 @@ namespace Lucene.Net.Search.Similarities
 
         private class BM25DocScorer : SimScorer
         {
-            private readonly BM25Similarity OuterInstance;
+            private readonly BM25Similarity outerInstance;
 
-            private readonly BM25Stats Stats;
-            private readonly float WeightValue; // boost * idf * (k1 + 1)
-            private readonly NumericDocValues Norms;
-            private readonly float[] Cache;
+            private readonly BM25Stats stats;
+            private readonly float weightValue; // boost * idf * (k1 + 1)
+            private readonly NumericDocValues norms;
+            private readonly float[] cache;
 
             internal BM25DocScorer(BM25Similarity outerInstance, BM25Stats stats, NumericDocValues norms)
             {
-                this.OuterInstance = outerInstance;
-                this.Stats = stats;
-                this.WeightValue = stats.Weight * (outerInstance.K1_Renamed + 1);
-                this.Cache = stats.Cache;
-                this.Norms = norms;
+                this.outerInstance = outerInstance;
+                this.stats = stats;
+                this.weightValue = stats.Weight * (outerInstance.k1 + 1);
+                this.cache = stats.Cache;
+                this.norms = norms;
             }
 
             public override float Score(int doc, float freq)
             {
                 // if there are no norms, we act as if b=0
-                float norm = Norms == null ? OuterInstance.K1_Renamed : Cache[(sbyte)Norms.Get(doc) & 0xFF];
-                return WeightValue * freq / (freq + norm);
+                float norm = norms == null ? outerInstance.k1 : cache[(sbyte)norms.Get(doc) & 0xFF];
+                return weightValue * freq / (freq + norm);
             }
 
             public override Explanation Explain(int doc, Explanation freq)
             {
-                return OuterInstance.ExplainScore(doc, freq, Stats, Norms);
+                return outerInstance.ExplainScore(doc, freq, stats, norms);
             }
 
             public override float ComputeSlopFactor(int distance)
             {
-                return OuterInstance.SloppyFreq(distance);
+                return outerInstance.SloppyFreq(distance);
             }
 
             public override float ComputePayloadFactor(int doc, int start, int end, BytesRef payload)
             {
-                return OuterInstance.ScorePayload(doc, start, end, payload);
+                return outerInstance.ScorePayload(doc, start, end, payload);
             }
         }
 
@@ -354,11 +354,11 @@ namespace Lucene.Net.Search.Similarities
             Explanation tfNormExpl = new Explanation();
             tfNormExpl.Description = "tfNorm, computed from:";
             tfNormExpl.AddDetail(freq);
-            tfNormExpl.AddDetail(new Explanation(K1_Renamed, "parameter k1"));
+            tfNormExpl.AddDetail(new Explanation(k1, "parameter k1"));
             if (norms == null)
             {
                 tfNormExpl.AddDetail(new Explanation(0, "parameter b (norms omitted for field)"));
-                tfNormExpl.Value = (freq.Value * (K1_Renamed + 1)) / (freq.Value + K1_Renamed);
+                tfNormExpl.Value = (freq.Value * (k1 + 1)) / (freq.Value + k1);
             }
             else
             {
@@ -366,7 +366,7 @@ namespace Lucene.Net.Search.Similarities
                 tfNormExpl.AddDetail(new Explanation(b, "parameter b"));
                 tfNormExpl.AddDetail(new Explanation(stats.Avgdl, "avgFieldLength"));
                 tfNormExpl.AddDetail(new Explanation(doclen, "fieldLength"));
-                tfNormExpl.Value = (freq.Value * (K1_Renamed + 1)) / (freq.Value + K1_Renamed * (1 - b + b * doclen / stats.Avgdl));
+                tfNormExpl.Value = (freq.Value * (k1 + 1)) / (freq.Value + k1 * (1 - b + b * doclen / stats.Avgdl));
             }
             result.AddDetail(tfNormExpl);
             result.Value = boostExpl.Value * stats.Idf.Value * tfNormExpl.Value;
@@ -375,7 +375,7 @@ namespace Lucene.Net.Search.Similarities
 
         public override string ToString()
         {
-            return "BM25(k1=" + K1_Renamed + ",b=" + b + ")";
+            return "BM25(k1=" + k1 + ",b=" + b + ")";
         }
 
         /// <summary>
@@ -385,7 +385,7 @@ namespace Lucene.Net.Search.Similarities
         {
             get
             {
-                return K1_Renamed;
+                return k1;
             }
         }
 
