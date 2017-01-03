@@ -37,24 +37,24 @@ namespace Lucene.Net.Index
     // be configured as any number of files 1..N
     internal sealed class FreqProxTermsWriterPerField : TermsHashConsumerPerField, IComparable<FreqProxTermsWriterPerField>
     {
-        internal readonly FreqProxTermsWriter Parent;
-        internal readonly TermsHashPerField TermsHashPerField;
+        internal readonly FreqProxTermsWriter parent;
+        internal readonly TermsHashPerField termsHashPerField;
         internal readonly FieldInfo fieldInfo;
-        internal readonly DocumentsWriterPerThread.DocState DocState;
-        internal readonly FieldInvertState FieldState;
-        private bool HasFreq;
-        private bool HasProx;
-        private bool HasOffsets;
-        internal IPayloadAttribute PayloadAttribute;
-        internal IOffsetAttribute OffsetAttribute;
+        internal readonly DocumentsWriterPerThread.DocState docState;
+        internal readonly FieldInvertState fieldState;
+        private bool hasFreq;
+        private bool hasProx;
+        private bool hasOffsets;
+        internal IPayloadAttribute payloadAttribute;
+        internal IOffsetAttribute offsetAttribute;
 
         public FreqProxTermsWriterPerField(TermsHashPerField termsHashPerField, FreqProxTermsWriter parent, FieldInfo fieldInfo)
         {
-            this.TermsHashPerField = termsHashPerField;
-            this.Parent = parent;
+            this.termsHashPerField = termsHashPerField;
+            this.parent = parent;
             this.fieldInfo = fieldInfo;
-            DocState = termsHashPerField.DocState;
-            FieldState = termsHashPerField.FieldState;
+            docState = termsHashPerField.DocState;
+            fieldState = termsHashPerField.FieldState;
             SetIndexOptions(fieldInfo.IndexOptions);
         }
 
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (!HasProx)
+                if (!hasProx)
                 {
                     return 1;
                 }
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
             // Record, up front, whether our in-RAM format will be
             // with or without term freqs:
             SetIndexOptions(fieldInfo.IndexOptions);
-            PayloadAttribute = null;
+            payloadAttribute = null;
         }
 
         private void SetIndexOptions(IndexOptions? indexOptions) // LUCENENET TODO: Can we eliminate the nullable
@@ -106,13 +106,13 @@ namespace Lucene.Net.Index
             if (indexOptions == null)
             {
                 // field could later be updated with indexed=true, so set everything on
-                HasFreq = HasProx = HasOffsets = true;
+                hasFreq = hasProx = hasOffsets = true;
             }
             else
             {
-                HasFreq = indexOptions >= Index.IndexOptions.DOCS_AND_FREQS;
-                HasProx = indexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-                HasOffsets = indexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                hasFreq = indexOptions >= Index.IndexOptions.DOCS_AND_FREQS;
+                hasProx = indexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                hasOffsets = indexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             }
         }
 
@@ -130,173 +130,173 @@ namespace Lucene.Net.Index
 
         internal override void Start(IIndexableField f)
         {
-            if (FieldState.AttributeSource.HasAttribute<IPayloadAttribute>())
+            if (fieldState.AttributeSource.HasAttribute<IPayloadAttribute>())
             {
-                PayloadAttribute = FieldState.AttributeSource.GetAttribute<IPayloadAttribute>();
+                payloadAttribute = fieldState.AttributeSource.GetAttribute<IPayloadAttribute>();
             }
             else
             {
-                PayloadAttribute = null;
+                payloadAttribute = null;
             }
-            if (HasOffsets)
+            if (hasOffsets)
             {
-                OffsetAttribute = FieldState.AttributeSource.AddAttribute<IOffsetAttribute>();
+                offsetAttribute = fieldState.AttributeSource.AddAttribute<IOffsetAttribute>();
             }
             else
             {
-                OffsetAttribute = null;
+                offsetAttribute = null;
             }
         }
 
         internal void WriteProx(int termID, int proxCode)
         {
             //System.out.println("writeProx termID=" + termID + " proxCode=" + proxCode);
-            Debug.Assert(HasProx);
+            Debug.Assert(hasProx);
             BytesRef payload;
-            if (PayloadAttribute == null)
+            if (payloadAttribute == null)
             {
                 payload = null;
             }
             else
             {
-                payload = PayloadAttribute.Payload;
+                payload = payloadAttribute.Payload;
             }
 
             if (payload != null && payload.Length > 0)
             {
-                TermsHashPerField.WriteVInt(1, (proxCode << 1) | 1);
-                TermsHashPerField.WriteVInt(1, payload.Length);
-                TermsHashPerField.WriteBytes(1, payload.Bytes, payload.Offset, payload.Length);
+                termsHashPerField.WriteVInt(1, (proxCode << 1) | 1);
+                termsHashPerField.WriteVInt(1, payload.Length);
+                termsHashPerField.WriteBytes(1, payload.Bytes, payload.Offset, payload.Length);
                 hasPayloads = true;
             }
             else
             {
-                TermsHashPerField.WriteVInt(1, proxCode << 1);
+                termsHashPerField.WriteVInt(1, proxCode << 1);
             }
 
-            FreqProxPostingsArray postings = (FreqProxPostingsArray)TermsHashPerField.PostingsArray;
-            postings.LastPositions[termID] = FieldState.Position;
+            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.PostingsArray;
+            postings.lastPositions[termID] = fieldState.Position;
         }
 
         internal void WriteOffsets(int termID, int offsetAccum)
         {
-            Debug.Assert(HasOffsets);
-            int startOffset = offsetAccum + OffsetAttribute.StartOffset;
-            int endOffset = offsetAccum + OffsetAttribute.EndOffset;
-            FreqProxPostingsArray postings = (FreqProxPostingsArray)TermsHashPerField.PostingsArray;
-            Debug.Assert(startOffset - postings.LastOffsets[termID] >= 0);
-            TermsHashPerField.WriteVInt(1, startOffset - postings.LastOffsets[termID]);
-            TermsHashPerField.WriteVInt(1, endOffset - startOffset);
+            Debug.Assert(hasOffsets);
+            int startOffset = offsetAccum + offsetAttribute.StartOffset;
+            int endOffset = offsetAccum + offsetAttribute.EndOffset;
+            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.PostingsArray;
+            Debug.Assert(startOffset - postings.lastOffsets[termID] >= 0);
+            termsHashPerField.WriteVInt(1, startOffset - postings.lastOffsets[termID]);
+            termsHashPerField.WriteVInt(1, endOffset - startOffset);
 
-            postings.LastOffsets[termID] = startOffset;
+            postings.lastOffsets[termID] = startOffset;
         }
 
         internal override void NewTerm(int termID)
         {
             // First time we're seeing this term since the last
             // flush
-            Debug.Assert(DocState.TestPoint("FreqProxTermsWriterPerField.newTerm start"));
+            Debug.Assert(docState.TestPoint("FreqProxTermsWriterPerField.newTerm start"));
 
-            FreqProxPostingsArray postings = (FreqProxPostingsArray)TermsHashPerField.PostingsArray;
-            postings.LastDocIDs[termID] = DocState.docID;
-            if (!HasFreq)
+            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.PostingsArray;
+            postings.lastDocIDs[termID] = docState.docID;
+            if (!hasFreq)
             {
-                postings.LastDocCodes[termID] = DocState.docID;
+                postings.lastDocCodes[termID] = docState.docID;
             }
             else
             {
-                postings.LastDocCodes[termID] = DocState.docID << 1;
-                postings.TermFreqs[termID] = 1;
-                if (HasProx)
+                postings.lastDocCodes[termID] = docState.docID << 1;
+                postings.termFreqs[termID] = 1;
+                if (hasProx)
                 {
-                    WriteProx(termID, FieldState.Position);
-                    if (HasOffsets)
+                    WriteProx(termID, fieldState.Position);
+                    if (hasOffsets)
                     {
-                        WriteOffsets(termID, FieldState.Offset);
+                        WriteOffsets(termID, fieldState.Offset);
                     }
                 }
                 else
                 {
-                    Debug.Assert(!HasOffsets);
+                    Debug.Assert(!hasOffsets);
                 }
             }
-            FieldState.MaxTermFrequency = Math.Max(1, FieldState.MaxTermFrequency);
-            FieldState.UniqueTermCount++;
+            fieldState.MaxTermFrequency = Math.Max(1, fieldState.MaxTermFrequency);
+            fieldState.UniqueTermCount++;
         }
 
         internal override void AddTerm(int termID)
         {
-            Debug.Assert(DocState.TestPoint("FreqProxTermsWriterPerField.addTerm start"));
+            Debug.Assert(docState.TestPoint("FreqProxTermsWriterPerField.addTerm start"));
 
-            FreqProxPostingsArray postings = (FreqProxPostingsArray)TermsHashPerField.PostingsArray;
+            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.PostingsArray;
 
-            Debug.Assert(!HasFreq || postings.TermFreqs[termID] > 0);
+            Debug.Assert(!hasFreq || postings.termFreqs[termID] > 0);
 
-            if (!HasFreq)
+            if (!hasFreq)
             {
-                Debug.Assert(postings.TermFreqs == null);
-                if (DocState.docID != postings.LastDocIDs[termID])
+                Debug.Assert(postings.termFreqs == null);
+                if (docState.docID != postings.lastDocIDs[termID])
                 {
-                    Debug.Assert(DocState.docID > postings.LastDocIDs[termID]);
-                    TermsHashPerField.WriteVInt(0, postings.LastDocCodes[termID]);
-                    postings.LastDocCodes[termID] = DocState.docID - postings.LastDocIDs[termID];
-                    postings.LastDocIDs[termID] = DocState.docID;
-                    FieldState.UniqueTermCount++;
+                    Debug.Assert(docState.docID > postings.lastDocIDs[termID]);
+                    termsHashPerField.WriteVInt(0, postings.lastDocCodes[termID]);
+                    postings.lastDocCodes[termID] = docState.docID - postings.lastDocIDs[termID];
+                    postings.lastDocIDs[termID] = docState.docID;
+                    fieldState.UniqueTermCount++;
                 }
             }
-            else if (DocState.docID != postings.LastDocIDs[termID])
+            else if (docState.docID != postings.lastDocIDs[termID])
             {
-                Debug.Assert(DocState.docID > postings.LastDocIDs[termID], "id: " + DocState.docID + " postings ID: " + postings.LastDocIDs[termID] + " termID: " + termID);
+                Debug.Assert(docState.docID > postings.lastDocIDs[termID], "id: " + docState.docID + " postings ID: " + postings.lastDocIDs[termID] + " termID: " + termID);
                 // Term not yet seen in the current doc but previously
                 // seen in other doc(s) since the last flush
 
                 // Now that we know doc freq for previous doc,
                 // write it & lastDocCode
-                if (1 == postings.TermFreqs[termID])
+                if (1 == postings.termFreqs[termID])
                 {
-                    TermsHashPerField.WriteVInt(0, postings.LastDocCodes[termID] | 1);
+                    termsHashPerField.WriteVInt(0, postings.lastDocCodes[termID] | 1);
                 }
                 else
                 {
-                    TermsHashPerField.WriteVInt(0, postings.LastDocCodes[termID]);
-                    TermsHashPerField.WriteVInt(0, postings.TermFreqs[termID]);
+                    termsHashPerField.WriteVInt(0, postings.lastDocCodes[termID]);
+                    termsHashPerField.WriteVInt(0, postings.termFreqs[termID]);
                 }
-                postings.TermFreqs[termID] = 1;
-                FieldState.MaxTermFrequency = Math.Max(1, FieldState.MaxTermFrequency);
-                postings.LastDocCodes[termID] = (DocState.docID - postings.LastDocIDs[termID]) << 1;
-                postings.LastDocIDs[termID] = DocState.docID;
-                if (HasProx)
+                postings.termFreqs[termID] = 1;
+                fieldState.MaxTermFrequency = Math.Max(1, fieldState.MaxTermFrequency);
+                postings.lastDocCodes[termID] = (docState.docID - postings.lastDocIDs[termID]) << 1;
+                postings.lastDocIDs[termID] = docState.docID;
+                if (hasProx)
                 {
-                    WriteProx(termID, FieldState.Position);
-                    if (HasOffsets)
+                    WriteProx(termID, fieldState.Position);
+                    if (hasOffsets)
                     {
-                        postings.LastOffsets[termID] = 0;
-                        WriteOffsets(termID, FieldState.Offset);
+                        postings.lastOffsets[termID] = 0;
+                        WriteOffsets(termID, fieldState.Offset);
                     }
                 }
                 else
                 {
-                    Debug.Assert(!HasOffsets);
+                    Debug.Assert(!hasOffsets);
                 }
-                FieldState.UniqueTermCount++;
+                fieldState.UniqueTermCount++;
             }
             else
             {
-                FieldState.MaxTermFrequency = Math.Max(FieldState.MaxTermFrequency, ++postings.TermFreqs[termID]);
-                if (HasProx)
+                fieldState.MaxTermFrequency = Math.Max(fieldState.MaxTermFrequency, ++postings.termFreqs[termID]);
+                if (hasProx)
                 {
-                    WriteProx(termID, FieldState.Position - postings.LastPositions[termID]);
+                    WriteProx(termID, fieldState.Position - postings.lastPositions[termID]);
                 }
-                if (HasOffsets)
+                if (hasOffsets)
                 {
-                    WriteOffsets(termID, FieldState.Offset);
+                    WriteOffsets(termID, fieldState.Offset);
                 }
             }
         }
 
         internal override ParallelPostingsArray CreatePostingsArray(int size)
         {
-            return new FreqProxPostingsArray(size, HasFreq, HasProx, HasOffsets);
+            return new FreqProxPostingsArray(size, hasFreq, hasProx, hasOffsets);
         }
 
         internal sealed class FreqProxPostingsArray : ParallelPostingsArray
@@ -306,16 +306,16 @@ namespace Lucene.Net.Index
             {
                 if (writeFreqs)
                 {
-                    TermFreqs = new int[size];
+                    termFreqs = new int[size];
                 }
-                LastDocIDs = new int[size];
-                LastDocCodes = new int[size];
+                lastDocIDs = new int[size];
+                lastDocCodes = new int[size];
                 if (writeProx)
                 {
-                    LastPositions = new int[size];
+                    lastPositions = new int[size];
                     if (writeOffsets)
                     {
-                        LastOffsets = new int[size];
+                        lastOffsets = new int[size];
                     }
                 }
                 else
@@ -325,15 +325,15 @@ namespace Lucene.Net.Index
                 //System.out.println("PA init freqs=" + writeFreqs + " pos=" + writeProx + " offs=" + writeOffsets);
             }
 
-            internal int[] TermFreqs; // # times this term occurs in the current doc
-            internal int[] LastDocIDs; // Last docID where this term occurred
-            internal int[] LastDocCodes; // Code for prior doc
-            internal int[] LastPositions; // Last position where this term occurred
-            internal int[] LastOffsets; // Last endOffset where this term occurred
+            internal int[] termFreqs; // # times this term occurs in the current doc
+            internal int[] lastDocIDs; // Last docID where this term occurred
+            internal int[] lastDocCodes; // Code for prior doc
+            internal int[] lastPositions; // Last position where this term occurred
+            internal int[] lastOffsets; // Last endOffset where this term occurred
 
             internal override ParallelPostingsArray NewInstance(int size)
             {
-                return new FreqProxPostingsArray(size, TermFreqs != null, LastPositions != null, LastOffsets != null);
+                return new FreqProxPostingsArray(size, termFreqs != null, lastPositions != null, lastOffsets != null);
             }
 
             internal override void CopyTo(ParallelPostingsArray toArray, int numToCopy)
@@ -343,37 +343,37 @@ namespace Lucene.Net.Index
 
                 base.CopyTo(toArray, numToCopy);
 
-                Array.Copy(LastDocIDs, 0, to.LastDocIDs, 0, numToCopy);
-                Array.Copy(LastDocCodes, 0, to.LastDocCodes, 0, numToCopy);
-                if (LastPositions != null)
+                Array.Copy(lastDocIDs, 0, to.lastDocIDs, 0, numToCopy);
+                Array.Copy(lastDocCodes, 0, to.lastDocCodes, 0, numToCopy);
+                if (lastPositions != null)
                 {
-                    Debug.Assert(to.LastPositions != null);
-                    Array.Copy(LastPositions, 0, to.LastPositions, 0, numToCopy);
+                    Debug.Assert(to.lastPositions != null);
+                    Array.Copy(lastPositions, 0, to.lastPositions, 0, numToCopy);
                 }
-                if (LastOffsets != null)
+                if (lastOffsets != null)
                 {
-                    Debug.Assert(to.LastOffsets != null);
-                    Array.Copy(LastOffsets, 0, to.LastOffsets, 0, numToCopy);
+                    Debug.Assert(to.lastOffsets != null);
+                    Array.Copy(lastOffsets, 0, to.lastOffsets, 0, numToCopy);
                 }
-                if (TermFreqs != null)
+                if (termFreqs != null)
                 {
-                    Debug.Assert(to.TermFreqs != null);
-                    Array.Copy(TermFreqs, 0, to.TermFreqs, 0, numToCopy);
+                    Debug.Assert(to.termFreqs != null);
+                    Array.Copy(termFreqs, 0, to.termFreqs, 0, numToCopy);
                 }
             }
 
             internal override int BytesPerPosting()
             {
                 int bytes = ParallelPostingsArray.BYTES_PER_POSTING + 2 * RamUsageEstimator.NUM_BYTES_INT;
-                if (LastPositions != null)
+                if (lastPositions != null)
                 {
                     bytes += RamUsageEstimator.NUM_BYTES_INT;
                 }
-                if (LastOffsets != null)
+                if (lastOffsets != null)
                 {
                     bytes += RamUsageEstimator.NUM_BYTES_INT;
                 }
-                if (TermFreqs != null)
+                if (termFreqs != null)
                 {
                     bytes += RamUsageEstimator.NUM_BYTES_INT;
                 }
@@ -417,9 +417,9 @@ namespace Lucene.Net.Index
             bool writePositions = currentFieldIndexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             bool writeOffsets = currentFieldIndexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 
-            bool readTermFreq = this.HasFreq;
-            bool readPositions = this.HasProx;
-            bool readOffsets = this.HasOffsets;
+            bool readTermFreq = this.hasFreq;
+            bool readPositions = this.hasProx;
+            bool readOffsets = this.hasOffsets;
 
             //System.out.println("flush readTF=" + readTermFreq + " readPos=" + readPositions + " readOffs=" + readOffsets);
 
@@ -440,10 +440,10 @@ namespace Lucene.Net.Index
                 segDeletes = null;
             }
 
-            int[] termIDs = TermsHashPerField.SortPostings(termComp);
-            int numTerms = TermsHashPerField.BytesHash.Size;
+            int[] termIDs = termsHashPerField.SortPostings(termComp);
+            int numTerms = termsHashPerField.BytesHash.Size;
             BytesRef text = new BytesRef();
-            FreqProxPostingsArray postings = (FreqProxPostingsArray)TermsHashPerField.PostingsArray;
+            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.PostingsArray;
             ByteSliceReader freq = new ByteSliceReader();
             ByteSliceReader prox = new ByteSliceReader();
 
@@ -457,12 +457,12 @@ namespace Lucene.Net.Index
                 int termID = termIDs[i];
                 // Get BytesRef
                 int textStart = postings.TextStarts[termID];
-                TermsHashPerField.BytePool.SetBytesRef(text, textStart);
+                termsHashPerField.BytePool.SetBytesRef(text, textStart);
 
-                TermsHashPerField.InitReader(freq, termID, 0);
+                termsHashPerField.InitReader(freq, termID, 0);
                 if (readPositions || readOffsets)
                 {
-                    TermsHashPerField.InitReader(prox, termID, 1);
+                    termsHashPerField.InitReader(prox, termID, 1);
                 }
 
                 // TODO: really TermsHashPerField should take over most
@@ -506,19 +506,19 @@ namespace Lucene.Net.Index
                     int termFreq;
                     if (freq.Eof())
                     {
-                        if (postings.LastDocCodes[termID] != -1)
+                        if (postings.lastDocCodes[termID] != -1)
                         {
                             // Return last doc
-                            docID = postings.LastDocIDs[termID];
+                            docID = postings.lastDocIDs[termID];
                             if (readTermFreq)
                             {
-                                termFreq = postings.TermFreqs[termID];
+                                termFreq = postings.termFreqs[termID];
                             }
                             else
                             {
                                 termFreq = -1;
                             }
-                            postings.LastDocCodes[termID] = -1;
+                            postings.lastDocCodes[termID] = -1;
                         }
                         else
                         {
@@ -547,7 +547,7 @@ namespace Lucene.Net.Index
                             }
                         }
 
-                        Debug.Assert(docID != postings.LastDocIDs[termID]);
+                        Debug.Assert(docID != postings.lastDocIDs[termID]);
                     }
 
                     docFreq++;
@@ -575,7 +575,7 @@ namespace Lucene.Net.Index
                         // TODO: can we do this reach-around in a cleaner way????
                         if (state.LiveDocs == null)
                         {
-                            state.LiveDocs = DocState.docWriter.codec.LiveDocsFormat.NewLiveDocs(state.SegmentInfo.DocCount);
+                            state.LiveDocs = docState.docWriter.codec.LiveDocsFormat.NewLiveDocs(state.SegmentInfo.DocCount);
                         }
                         if (state.LiveDocs.Get(docID))
                         {
