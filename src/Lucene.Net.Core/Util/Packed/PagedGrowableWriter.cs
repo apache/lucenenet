@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     public sealed class PagedGrowableWriter : AbstractPagedMutable<PagedGrowableWriter>
     {
-        internal readonly float AcceptableOverheadRatio;
+        internal readonly float acceptableOverheadRatio;
 
         /// <summary>
         /// Create a new <seealso cref="PagedGrowableWriter"/> instance.
@@ -46,7 +46,7 @@ namespace Lucene.Net.Util.Packed
         internal PagedGrowableWriter(long size, int pageSize, int startBitsPerValue, float acceptableOverheadRatio, bool fillPages)
             : base(startBitsPerValue, size, pageSize)
         {
-            this.AcceptableOverheadRatio = acceptableOverheadRatio;
+            this.acceptableOverheadRatio = acceptableOverheadRatio;
             if (fillPages)
             {
                 FillPages();
@@ -55,12 +55,12 @@ namespace Lucene.Net.Util.Packed
 
         protected override Mutable NewMutable(int valueCount, int bitsPerValue)
         {
-            return new GrowableWriter(bitsPerValue, valueCount, AcceptableOverheadRatio);
+            return new GrowableWriter(bitsPerValue, valueCount, acceptableOverheadRatio);
         }
 
         protected override PagedGrowableWriter NewUnfilledCopy(long newSize)
         {
-            return new PagedGrowableWriter(newSize, PageSize, bitsPerValue, AcceptableOverheadRatio, false);
+            return new PagedGrowableWriter(newSize, PageSize, bitsPerValue, acceptableOverheadRatio, false);
         }
 
         protected override long BaseRamBytesUsed()
