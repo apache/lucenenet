@@ -48,8 +48,8 @@ namespace Lucene.Net.Util.Automaton
 
         internal int number;
 
-        internal int Id;
-        internal static int Next_id;
+        internal int id;
+        internal static int next_id;
 
         /// <summary>
         /// Constructs a new state. Initially, the new state is a reject state.
@@ -57,7 +57,7 @@ namespace Lucene.Net.Util.Automaton
         public State()
         {
             ResetTransitions();
-            Id = Next_id++;
+            id = next_id++;
         }
 
         /// <summary>
@@ -375,12 +375,12 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public virtual int CompareTo(State s)
         {
-            return s.Id - Id;
+            return s.id - id;
         }
 
         public override int GetHashCode()
         {
-            return Id;
+            return id;
         }
     }
 }
