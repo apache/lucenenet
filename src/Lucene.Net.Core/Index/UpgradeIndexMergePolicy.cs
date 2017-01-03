@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Wrapped <seealso cref="MergePolicy"/>. </summary>
-        protected readonly MergePolicy @base;
+        protected readonly MergePolicy m_base;
 
         /// <summary>
         /// Wrap the given <seealso cref="MergePolicy"/> and intercept forceMerge requests to
@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public UpgradeIndexMergePolicy(MergePolicy @base)
         {
-            this.@base = @base;
+            this.m_base = @base;
         }
 
         /// <summary>
@@ -73,12 +73,12 @@ namespace Lucene.Net.Index
         public override void SetIndexWriter(IndexWriter writer)
         {
             base.SetIndexWriter(writer);
-            @base.SetIndexWriter(writer);
+            m_base.SetIndexWriter(writer);
         }
 
         public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)
         {
-            return @base.FindMerges(null, segmentInfos);
+            return m_base.FindMerges(null, segmentInfos);
         }
 
         public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
                 return null;
             }
 
-            MergeSpecification spec = @base.FindForcedMerges(segmentInfos, maxSegmentCount, oldSegments);
+            MergeSpecification spec = m_base.FindForcedMerges(segmentInfos, maxSegmentCount, oldSegments);
 
             if (spec != null)
             {
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
             {
                 if (Verbose())
                 {
-                    Message("findForcedMerges: " + @base.GetType().Name + " does not want to merge all old segments, merge remaining ones into new segment: " + oldSegments);
+                    Message("findForcedMerges: " + m_base.GetType().Name + " does not want to merge all old segments, merge remaining ones into new segment: " + oldSegments);
                 }
                 IList<SegmentCommitInfo> newInfos = new List<SegmentCommitInfo>();
                 foreach (SegmentCommitInfo si in segmentInfos.Segments)
@@ -147,22 +147,22 @@ namespace Lucene.Net.Index
 
         public override MergeSpecification FindForcedDeletesMerges(SegmentInfos segmentInfos)
         {
-            return @base.FindForcedDeletesMerges(segmentInfos);
+            return m_base.FindForcedDeletesMerges(segmentInfos);
         }
 
         public override bool UseCompoundFile(SegmentInfos segments, SegmentCommitInfo newSegment)
         {
-            return @base.UseCompoundFile(segments, newSegment);
+            return m_base.UseCompoundFile(segments, newSegment);
         }
 
         public override void Dispose()
         {
-            @base.Dispose();
+            m_base.Dispose();
         }
 
         public override string ToString()
         {
-            return "[" + this.GetType().Name + "->" + @base + "]";
+            return "[" + this.GetType().Name + "->" + m_base + "]";
         }
 
         private bool Verbose()
