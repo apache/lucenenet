@@ -26,7 +26,7 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     public class EliasFanoDocIdSet : DocIdSet
     {
-        internal readonly EliasFanoEncoder EfEncoder;
+        internal readonly EliasFanoEncoder efEncoder;
 
         /// <summary>
         /// Construct an EliasFanoDocIdSet. For efficient encoding, the parameters should be chosen as low as possible. </summary>
@@ -34,7 +34,7 @@ namespace Lucene.Net.Util.Packed
         /// <param name="upperBound">  At least the highest document id that will be encoded. </param>
         public EliasFanoDocIdSet(int numValues, int upperBound)
         {
-            EfEncoder = new EliasFanoEncoder(numValues, upperBound);
+            efEncoder = new EliasFanoEncoder(numValues, upperBound);
         }
 
         /// <summary>
@@ -54,14 +54,14 @@ namespace Lucene.Net.Util.Packed
         ///              with <code>numValues</code> and <code>upperBound</code> as provided to the constructor.   </param>
         public virtual void EncodeFromDisi(DocIdSetIterator disi)
         {
-            while (EfEncoder.NumEncoded < EfEncoder.NumValues)
+            while (efEncoder.NumEncoded < efEncoder.NumValues)
             {
                 int x = disi.NextDoc();
                 if (x == DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    throw new System.ArgumentException("disi: " + disi.ToString() + "\nhas " + EfEncoder.NumEncoded + " docs, but at least " + EfEncoder.NumValues + " are required.");
+                    throw new System.ArgumentException("disi: " + disi.ToString() + "\nhas " + efEncoder.NumEncoded + " docs, but at least " + efEncoder.NumValues + " are required.");
                 }
-                EfEncoder.EncodeNext(x);
+                efEncoder.EncodeNext(x);
             }
         }
 
@@ -70,22 +70,22 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public override DocIdSetIterator GetIterator()
         {
-            if (EfEncoder.LastEncoded >= DocIdSetIterator.NO_MORE_DOCS)
+            if (efEncoder.LastEncoded >= DocIdSetIterator.NO_MORE_DOCS)
             {
-                throw new System.NotSupportedException("Highest encoded value too high for DocIdSetIterator.NO_MORE_DOCS: " + EfEncoder.LastEncoded);
+                throw new System.NotSupportedException("Highest encoded value too high for DocIdSetIterator.NO_MORE_DOCS: " + efEncoder.LastEncoded);
             }
             return new DocIdSetIteratorAnonymousInnerClassHelper(this);
         }
 
         private class DocIdSetIteratorAnonymousInnerClassHelper : DocIdSetIterator
         {
-            private readonly EliasFanoDocIdSet OuterInstance;
+            private readonly EliasFanoDocIdSet outerInstance;
 
             public DocIdSetIteratorAnonymousInnerClassHelper(EliasFanoDocIdSet outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 curDocId = -1;
-                efDecoder = outerInstance.EfEncoder.GetDecoder();
+                efDecoder = outerInstance.efEncoder.GetDecoder();
             }
 
             private int curDocId;
@@ -131,12 +131,12 @@ namespace Lucene.Net.Util.Packed
 
         public override bool Equals(object other)
         {
-            return ((other is EliasFanoDocIdSet)) && EfEncoder.Equals(((EliasFanoDocIdSet)other).EfEncoder);
+            return ((other is EliasFanoDocIdSet)) && efEncoder.Equals(((EliasFanoDocIdSet)other).efEncoder);
         }
 
         public override int GetHashCode()
         {
-            return EfEncoder.GetHashCode() ^ this.GetType().GetHashCode();
+            return efEncoder.GetHashCode() ^ this.GetType().GetHashCode();
         }
     }
 }
