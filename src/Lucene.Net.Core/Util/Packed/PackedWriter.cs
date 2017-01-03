@@ -27,78 +27,78 @@ namespace Lucene.Net.Util.Packed
 
     internal sealed class PackedWriter : PackedInts.Writer
     {
-        internal bool Finished;
-        internal readonly PackedInts.Format Format_Renamed;
-        internal readonly BulkOperation Encoder;
-        internal readonly byte[] NextBlocks;
-        internal readonly long[] NextValues;
-        internal readonly int Iterations;
-        internal int Off;
-        internal int Written;
+        internal bool finished;
+        internal readonly PackedInts.Format format;
+        internal readonly BulkOperation encoder;
+        internal readonly byte[] nextBlocks;
+        internal readonly long[] nextValues;
+        internal readonly int iterations;
+        internal int off;
+        internal int written;
 
         internal PackedWriter(PackedInts.Format format, DataOutput @out, int valueCount, int bitsPerValue, int mem)
             : base(@out, valueCount, bitsPerValue)
         {
-            this.Format_Renamed = format;
-            Encoder = BulkOperation.Of(format, bitsPerValue);
-            Iterations = Encoder.ComputeIterations(valueCount, mem);
-            NextBlocks = new byte[Iterations * Encoder.ByteBlockCount];
-            NextValues = new long[Iterations * Encoder.ByteValueCount];
-            Off = 0;
-            Written = 0;
-            Finished = false;
+            this.format = format;
+            encoder = BulkOperation.Of(format, bitsPerValue);
+            iterations = encoder.ComputeIterations(valueCount, mem);
+            nextBlocks = new byte[iterations * encoder.ByteBlockCount];
+            nextValues = new long[iterations * encoder.ByteValueCount];
+            off = 0;
+            written = 0;
+            finished = false;
         }
 
         protected internal override PackedInts.Format Format
         {
             get
             {
-                return Format_Renamed;
+                return format;
             }
         }
 
         public override void Add(long v)
         {
             Debug.Assert(m_bitsPerValue == 64 || (v >= 0 && v <= PackedInts.MaxValue(m_bitsPerValue)), m_bitsPerValue.ToString());
-            Debug.Assert(!Finished);
-            if (m_valueCount != -1 && Written >= m_valueCount)
+            Debug.Assert(!finished);
+            if (m_valueCount != -1 && written >= m_valueCount)
             {
                 throw new System.IO.EndOfStreamException("Writing past end of stream");
             }
-            NextValues[Off++] = v;
-            if (Off == NextValues.Length)
+            nextValues[off++] = v;
+            if (off == nextValues.Length)
             {
                 Flush();
             }
-            ++Written;
+            ++written;
         }
 
         public override void Finish()
         {
-            Debug.Assert(!Finished);
+            Debug.Assert(!finished);
             if (m_valueCount != -1)
             {
-                while (Written < m_valueCount)
+                while (written < m_valueCount)
                 {
                     Add(0L);
                 }
             }
             Flush();
-            Finished = true;
+            finished = true;
         }
 
         private void Flush()
         {
-            Encoder.Encode(NextValues, 0, NextBlocks, 0, Iterations);
-            int blockCount = (int)Format_Renamed.ByteCount(PackedInts.VERSION_CURRENT, Off, m_bitsPerValue);
-            m_out.WriteBytes(NextBlocks, blockCount);
-            Arrays.Fill(NextValues, 0L);
-            Off = 0;
+            encoder.Encode(nextValues, 0, nextBlocks, 0, iterations);
+            int blockCount = (int)format.ByteCount(PackedInts.VERSION_CURRENT, off, m_bitsPerValue);
+            m_out.WriteBytes(nextBlocks, blockCount);
+            Arrays.Fill(nextValues, 0L);
+            off = 0;
         }
 
         public override int Ord
         {
-            get { return Written - 1; }
+            get { return written - 1; }
         }
     }
 }
