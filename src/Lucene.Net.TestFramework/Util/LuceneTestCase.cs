@@ -105,6 +105,9 @@ namespace Lucene.Net.Util
     using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
     using Analysis;
     using Search.Similarities;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+    using Attributes;
 
     /*using After = org.junit.After;
     using AfterClass = org.junit.AfterClass;
@@ -2826,6 +2829,95 @@ namespace Lucene.Net.Util
                 new TaskMergeScheduler()
             };
         }
+
+
+
+
+        // LUCENENET specific - functionality for testing API consistency
+        //[Test, LuceneNetSpecific]
+        public virtual void TestProtectedFieldNames(Type typeFromTargetAssembly)
+        {
+            var names = GetInvalidProtectedFields(typeFromTargetAssembly.Assembly);
+
+            //if (VERBOSE)
+            //{
+                foreach (var name in names)
+                {
+                    Console.WriteLine("Invalid protected field name: " + name);
+                }
+            //}
+
+            Assert.IsFalse(names.Any(), "Invalid protected field names detected.");
+        }
+
+        //[Test, LuceneNetSpecific]
+        public virtual void TestPrivateFieldNames(Type typeFromTargetAssembly)
+        {
+            var names = GetInvalidPrivateFields(typeFromTargetAssembly.Assembly);
+
+            //if (VERBOSE)
+            //{
+            foreach (var name in names)
+            {
+                Console.WriteLine("Invalid private field name: " + name);
+            }
+            //}
+
+            Assert.IsFalse(names.Any(), "Invalid private field names detected.");
+        }
+
+
+        private static string[] GetInvalidPrivateFields(Assembly assembly)
+        {
+            var result = new List<string>();
+
+            var classes = assembly.GetTypes().Where(t => t.IsClass);
+
+            foreach (var c in classes)
+            {
+                var fields = c.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+
+                foreach (var field in fields)
+                {
+                    if (field.IsPrivate && !PrivateFieldName.IsMatch(field.Name))
+                    {
+                        result.Add(string.Concat(c.FullName, ".", field.Name));
+                    }
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        private static string[] GetInvalidProtectedFields(Assembly assembly)
+        {
+            var result = new List<string>();
+
+            var classes = assembly.GetTypes().Where(t => t.IsClass).ToList();
+
+            foreach (var c in classes)
+            {
+                if (!string.IsNullOrEmpty(c.Namespace) && c.Namespace.StartsWith("Lucene.Net.Support"))
+                {
+                    continue;
+                }
+
+                var fields = c.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+
+                foreach (var field in fields)
+                {
+                    if (field.IsFamily && !ProtectedFieldName.IsMatch(field.Name))
+                    {
+                        result.Add(string.Concat(c.FullName, ".", field.Name));
+                    }
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        private static Regex PrivateFieldName = new Regex("^[a-z][a-zA-Z0-9_]*$|^[A-Z0-9_]+$");
+        private static Regex ProtectedFieldName = new Regex("^m_[a-z][a-zA-Z0-9_]*$|^[A-Z0-9_]+$");
     }
 
     /*internal class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.ReaderClosedListener

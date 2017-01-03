@@ -496,6 +496,7 @@
     <Compile Include="core\Support\TestStringBuilderExtensions.cs" />
     <Compile Include="core\Support\TestTreeDictionary.cs" />
     <Compile Include="core\Support\TestTreeSet.cs" />
+    <Compile Include="core\TestApiConsistency.cs" />
     <Compile Include="core\TestAssertions.cs">
       <SubType>Code</SubType>
     </Compile>
