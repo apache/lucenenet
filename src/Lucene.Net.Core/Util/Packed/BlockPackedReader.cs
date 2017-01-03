@@ -27,21 +27,21 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     public sealed class BlockPackedReader : LongValues
     {
-        private readonly int BlockShift, BlockMask;
-        private readonly long ValueCount;
-        private readonly long[] MinValues;
-        private readonly PackedInts.Reader[] SubReaders;
+        private readonly int blockShift, blockMask;
+        private readonly long valueCount;
+        private readonly long[] minValues;
+        private readonly PackedInts.Reader[] subReaders;
 
         /// <summary>
         /// Sole constructor. </summary>
         public BlockPackedReader(IndexInput @in, int packedIntsVersion, int blockSize, long valueCount, bool direct)
         {
-            this.ValueCount = valueCount;
-            BlockShift = PackedInts.CheckBlockSize(blockSize, AbstractBlockPackedWriter.MIN_BLOCK_SIZE, AbstractBlockPackedWriter.MAX_BLOCK_SIZE);
-            BlockMask = blockSize - 1;
+            this.valueCount = valueCount;
+            blockShift = PackedInts.CheckBlockSize(blockSize, AbstractBlockPackedWriter.MIN_BLOCK_SIZE, AbstractBlockPackedWriter.MAX_BLOCK_SIZE);
+            blockMask = blockSize - 1;
             int numBlocks = PackedInts.NumBlocks(valueCount, blockSize);
             long[] minValues = null;
-            SubReaders = new PackedInts.Reader[numBlocks];
+            subReaders = new PackedInts.Reader[numBlocks];
             for (int i = 0; i < numBlocks; ++i)
             {
                 int token = @in.ReadByte() & 0xFF;
@@ -60,7 +60,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 if (bitsPerValue == 0)
                 {
-                    SubReaders[i] = new PackedInts.NullReader(blockSize);
+                    subReaders[i] = new PackedInts.NullReader(blockSize);
                 }
                 else
                 {
@@ -68,24 +68,24 @@ namespace Lucene.Net.Util.Packed
                     if (direct)
                     {
                         long pointer = @in.FilePointer;
-                        SubReaders[i] = PackedInts.GetDirectReaderNoHeader(@in, PackedInts.Format.PACKED, packedIntsVersion, size, bitsPerValue);
+                        subReaders[i] = PackedInts.GetDirectReaderNoHeader(@in, PackedInts.Format.PACKED, packedIntsVersion, size, bitsPerValue);
                         @in.Seek(pointer + PackedInts.Format.PACKED.ByteCount(packedIntsVersion, size, bitsPerValue));
                     }
                     else
                     {
-                        SubReaders[i] = PackedInts.GetReaderNoHeader(@in, PackedInts.Format.PACKED, packedIntsVersion, size, bitsPerValue);
+                        subReaders[i] = PackedInts.GetReaderNoHeader(@in, PackedInts.Format.PACKED, packedIntsVersion, size, bitsPerValue);
                     }
                 }
             }
-            this.MinValues = minValues;
+            this.minValues = minValues;
         }
 
         public override long Get(long index)
         {
-            Debug.Assert(index >= 0 && index < ValueCount);
-            int block = (int)((long)((ulong)index >> BlockShift));
-            int idx = (int)(index & BlockMask);
-            return (MinValues == null ? 0 : MinValues[block]) + SubReaders[block].Get(idx);
+            Debug.Assert(index >= 0 && index < valueCount);
+            int block = (int)((long)((ulong)index >> blockShift));
+            int idx = (int)(index & blockMask);
+            return (minValues == null ? 0 : minValues[block]) + subReaders[block].Get(idx);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Lucene.Net.Util.Packed
         public long RamBytesUsed()
         {
             long size = 0;
-            foreach (PackedInts.Reader reader in SubReaders)
+            foreach (PackedInts.Reader reader in subReaders)
             {
                 size += reader.RamBytesUsed();
             }
