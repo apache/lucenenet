@@ -32,18 +32,18 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     public class GrowableWriter : PackedInts.Mutable
     {
-        private long CurrentMask;
-        private PackedInts.Mutable Current;
-        private readonly float AcceptableOverheadRatio;
+        private long currentMask;
+        private PackedInts.Mutable current;
+        private readonly float acceptableOverheadRatio;
 
         /// <param name="startBitsPerValue">       the initial number of bits per value, may grow depending on the data </param>
         /// <param name="valueCount">              the number of values </param>
         /// <param name="acceptableOverheadRatio"> an acceptable overhead ratio </param>
         public GrowableWriter(int startBitsPerValue, int valueCount, float acceptableOverheadRatio)
         {
-            this.AcceptableOverheadRatio = acceptableOverheadRatio;
-            Current = PackedInts.GetMutable(valueCount, startBitsPerValue, this.AcceptableOverheadRatio);
-            CurrentMask = Mask(Current.BitsPerValue);
+            this.acceptableOverheadRatio = acceptableOverheadRatio;
+            current = PackedInts.GetMutable(valueCount, startBitsPerValue, this.acceptableOverheadRatio);
+            currentMask = Mask(current.BitsPerValue);
         }
 
         private static long Mask(int bitsPerValue)
@@ -53,19 +53,19 @@ namespace Lucene.Net.Util.Packed
 
         public override long Get(int index)
         {
-            return Current.Get(index);
+            return current.Get(index);
         }
 
         public override int Size
         {
-            get { return Current.Size; }
+            get { return current.Size; }
         }
 
         public override int BitsPerValue
         {
             get
             {
-                return Current.BitsPerValue;
+                return current.BitsPerValue;
             }
         }
 
@@ -73,57 +73,57 @@ namespace Lucene.Net.Util.Packed
         {
             get
             {
-                return Current;
+                return current;
             }
         }
 
         public override object GetArray()
         {
-            return Current.GetArray();
+            return current.GetArray();
         }
 
         public override bool HasArray
         {
-            get { return Current.HasArray; }
+            get { return current.HasArray; }
         }
 
         private void EnsureCapacity(long value)
         {
-            if ((value & CurrentMask) == value)
+            if ((value & currentMask) == value)
             {
                 return;
             }
             int bitsRequired = value < 0 ? 64 : PackedInts.BitsRequired(value);
-            Debug.Assert(bitsRequired > Current.BitsPerValue);
+            Debug.Assert(bitsRequired > current.BitsPerValue);
             int valueCount = Size;
-            PackedInts.Mutable next = PackedInts.GetMutable(valueCount, bitsRequired, AcceptableOverheadRatio);
-            PackedInts.Copy(Current, 0, next, 0, valueCount, PackedInts.DEFAULT_BUFFER_SIZE);
-            Current = next;
-            CurrentMask = Mask(Current.BitsPerValue);
+            PackedInts.Mutable next = PackedInts.GetMutable(valueCount, bitsRequired, acceptableOverheadRatio);
+            PackedInts.Copy(current, 0, next, 0, valueCount, PackedInts.DEFAULT_BUFFER_SIZE);
+            current = next;
+            currentMask = Mask(current.BitsPerValue);
         }
 
         public override void Set(int index, long value)
         {
             EnsureCapacity(value);
-            Current.Set(index, value);
+            current.Set(index, value);
         }
 
         public override void Clear()
         {
-            Current.Clear();
+            current.Clear();
         }
 
         public virtual GrowableWriter Resize(int newSize)
         {
-            GrowableWriter next = new GrowableWriter(BitsPerValue, newSize, AcceptableOverheadRatio);
+            GrowableWriter next = new GrowableWriter(BitsPerValue, newSize, acceptableOverheadRatio);
             int limit = Math.Min(Size, newSize);
-            PackedInts.Copy(Current, 0, next, 0, limit, PackedInts.DEFAULT_BUFFER_SIZE);
+            PackedInts.Copy(current, 0, next, 0, limit, PackedInts.DEFAULT_BUFFER_SIZE);
             return next;
         }
 
         public override int Get(int index, long[] arr, int off, int len)
         {
-            return Current.Get(index, arr, off, len);
+            return current.Get(index, arr, off, len);
         }
 
         public override int Set(int index, long[] arr, int off, int len)
@@ -138,13 +138,13 @@ namespace Lucene.Net.Util.Packed
                 max |= arr[i];
             }
             EnsureCapacity(max);
-            return Current.Set(index, arr, off, len);
+            return current.Set(index, arr, off, len);
         }
 
         public override void Fill(int fromIndex, int toIndex, long val)
         {
             EnsureCapacity(val);
-            Current.Fill(fromIndex, toIndex, val);
+            current.Fill(fromIndex, toIndex, val);
         }
 
         public override long RamBytesUsed()
@@ -154,12 +154,12 @@ namespace Lucene.Net.Util.Packed
                 + RamUsageEstimator.NUM_BYTES_OBJECT_REF 
                 + RamUsageEstimator.NUM_BYTES_LONG 
                 + RamUsageEstimator.NUM_BYTES_FLOAT) 
-                + Current.RamBytesUsed();
+                + current.RamBytesUsed();
         }
 
         public override void Save(DataOutput @out)
         {
-            Current.Save(@out);
+            current.Save(@out);
         }
     }
 }
