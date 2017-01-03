@@ -31,12 +31,12 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     internal sealed class Direct16 : PackedInts.MutableImpl
     {
-        internal readonly short[] Values;
+        internal readonly short[] values;
 
         internal Direct16(int valueCount)
             : base(valueCount, 16)
         {
-            Values = new short[valueCount];
+            values = new short[valueCount];
         }
 
         internal Direct16(int packedIntsVersion, DataInput @in, int valueCount)
@@ -44,7 +44,7 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < valueCount; ++i)
             {
-                Values[i] = @in.ReadShort();
+                values[i] = @in.ReadShort();
             }
             // because packed ints have not always been byte-aligned
             int remaining = (int)(PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 16) - 2L * valueCount);
@@ -56,12 +56,12 @@ namespace Lucene.Net.Util.Packed
 
         public override long Get(int index)
         {
-            return Values[index] & 0xFFFFL;
+            return values[index] & 0xFFFFL;
         }
 
         public override void Set(int index, long value)
         {
-            Values[index] = (short)(value);
+            values[index] = (short)(value);
         }
 
         public override long RamBytesUsed()
@@ -70,17 +70,17 @@ namespace Lucene.Net.Util.Packed
                 RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
                 + 2 * RamUsageEstimator.NUM_BYTES_INT // valueCount,bitsPerValue
                 + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // values ref
-                + RamUsageEstimator.SizeOf(Values);
+                + RamUsageEstimator.SizeOf(values);
         }
 
         public override void Clear()
         {
-            Arrays.Fill(Values, (short)0L);
+            Arrays.Fill(values, (short)0L);
         }
 
         public override object GetArray()
         {
-            return Values;
+            return values;
         }
 
         public override bool HasArray
@@ -97,7 +97,7 @@ namespace Lucene.Net.Util.Packed
             int gets = Math.Min(m_valueCount - index, len);
             for (int i = index, o = off, end = index + gets; i < end; ++i, ++o)
             {
-                arr[o] = Values[i] & 0xFFFFL;
+                arr[o] = values[i] & 0xFFFFL;
             }
             return gets;
         }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Util.Packed
             int sets = Math.Min(m_valueCount - index, len);
             for (int i = index, o = off, end = index + sets; i < end; ++i, ++o)
             {
-                Values[i] = (short)arr[o];
+                values[i] = (short)arr[o];
             }
             return sets;
         }
@@ -119,7 +119,7 @@ namespace Lucene.Net.Util.Packed
         public override void Fill(int fromIndex, int toIndex, long val)
         {
             Debug.Assert(val == (val & 0xFFFFL));
-            Arrays.Fill(Values, fromIndex, toIndex, (short)val);
+            Arrays.Fill(values, fromIndex, toIndex, (short)val);
         }
     }
 }
