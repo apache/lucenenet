@@ -44,8 +44,8 @@ namespace Lucene.Net.Search.Payloads
     ///  </seealso>
     public class PayloadTermQuery : SpanTermQuery
     {
-        protected PayloadFunction Function;
-        private bool IncludeSpanScore;
+        protected PayloadFunction m_function;
+        private bool includeSpanScore;
 
         public PayloadTermQuery(Term term, PayloadFunction function)
             : this(term, function, true)
@@ -55,8 +55,8 @@ namespace Lucene.Net.Search.Payloads
         public PayloadTermQuery(Term term, PayloadFunction function, bool includeSpanScore)
             : base(term)
         {
-            this.Function = function;
-            this.IncludeSpanScore = includeSpanScore;
+            this.m_function = function;
+            this.includeSpanScore = includeSpanScore;
         }
 
         public override Weight CreateWeight(IndexSearcher searcher)
@@ -128,11 +128,11 @@ namespace Lucene.Net.Search.Payloads
                         Payload = postings.Payload;
                         if (Payload != null)
                         {
-                            PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(m_doc, OuterInstance.OuterInstance.Term.Field, m_spans.Start, m_spans.End, PayloadsSeen, PayloadScore_Renamed, m_docScorer.ComputePayloadFactor(m_doc, m_spans.Start, m_spans.End, Payload));
+                            PayloadScore_Renamed = OuterInstance.OuterInstance.m_function.CurrentScore(m_doc, OuterInstance.OuterInstance.Term.Field, m_spans.Start, m_spans.End, PayloadsSeen, PayloadScore_Renamed, m_docScorer.ComputePayloadFactor(m_doc, m_spans.Start, m_spans.End, Payload));
                         }
                         else
                         {
-                            PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(m_doc, OuterInstance.OuterInstance.Term.Field, m_spans.Start, m_spans.End, PayloadsSeen, PayloadScore_Renamed, 1F);
+                            PayloadScore_Renamed = OuterInstance.OuterInstance.m_function.CurrentScore(m_doc, OuterInstance.OuterInstance.Term.Field, m_spans.Start, m_spans.End, PayloadsSeen, PayloadScore_Renamed, 1F);
                         }
                         PayloadsSeen++;
                     }
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Payloads
                 /// <exception cref="IOException"> if there is a low-level I/O error </exception>
                 public override float Score()
                 {
-                    return OuterInstance.OuterInstance.IncludeSpanScore ? GetSpanScore() * GetPayloadScore() : GetPayloadScore();
+                    return OuterInstance.OuterInstance.includeSpanScore ? GetSpanScore() * GetPayloadScore() : GetPayloadScore();
                 }
 
                 /// <summary>
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search.Payloads
                 ///         <seealso cref="PayloadFunction#docScore(int, String, int, float)"/> </returns>
                 protected internal virtual float GetPayloadScore()
                 {
-                    return OuterInstance.OuterInstance.Function.DocScore(m_doc, OuterInstance.OuterInstance.Term.Field, PayloadsSeen, PayloadScore_Renamed);
+                    return OuterInstance.OuterInstance.m_function.DocScore(m_doc, OuterInstance.OuterInstance.Term.Field, PayloadsSeen, PayloadScore_Renamed);
                 }
             }
 
@@ -196,11 +196,11 @@ namespace Lucene.Net.Search.Payloads
                         // GSI: I suppose we could toString the payload, but I don't think that
                         // would be a good idea
                         string field = ((SpanQuery)Query).Field;
-                        Explanation payloadExpl = OuterInstance.Function.Explain(doc, field, scorer.PayloadsSeen, scorer.PayloadScore_Renamed);
+                        Explanation payloadExpl = OuterInstance.m_function.Explain(doc, field, scorer.PayloadsSeen, scorer.PayloadScore_Renamed);
                         payloadExpl.Value = scorer.GetPayloadScore();
                         // combined
                         ComplexExplanation result = new ComplexExplanation();
-                        if (OuterInstance.IncludeSpanScore)
+                        if (OuterInstance.includeSpanScore)
                         {
                             result.AddDetail(expl);
                             result.AddDetail(payloadExpl);
@@ -226,8 +226,8 @@ namespace Lucene.Net.Search.Payloads
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + ((Function == null) ? 0 : Function.GetHashCode());
-            result = prime * result + (IncludeSpanScore ? 1231 : 1237);
+            result = prime * result + ((m_function == null) ? 0 : m_function.GetHashCode());
+            result = prime * result + (includeSpanScore ? 1231 : 1237);
             return result;
         }
 
@@ -246,18 +246,18 @@ namespace Lucene.Net.Search.Payloads
                 return false;
             }
             PayloadTermQuery other = (PayloadTermQuery)obj;
-            if (Function == null)
+            if (m_function == null)
             {
-                if (other.Function != null)
+                if (other.m_function != null)
                 {
                     return false;
                 }
             }
-            else if (!Function.Equals(other.Function))
+            else if (!m_function.Equals(other.m_function))
             {
                 return false;
             }
-            if (IncludeSpanScore != other.IncludeSpanScore)
+            if (includeSpanScore != other.includeSpanScore)
             {
                 return false;
             }
