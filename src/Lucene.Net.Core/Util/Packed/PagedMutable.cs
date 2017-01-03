@@ -57,13 +57,13 @@ namespace Lucene.Net.Util.Packed
 
         protected override Mutable NewMutable(int valueCount, int bitsPerValue)
         {
-            Debug.Assert(this.BitsPerValue >= bitsPerValue);
-            return PackedInts.GetMutable(valueCount, this.BitsPerValue, Format);
+            Debug.Assert(this.bitsPerValue >= bitsPerValue);
+            return PackedInts.GetMutable(valueCount, this.bitsPerValue, Format);
         }
 
         protected override PagedMutable NewUnfilledCopy(long newSize)
         {
-            return new PagedMutable(newSize, PageSize, BitsPerValue, Format);
+            return new PagedMutable(newSize, PageSize, bitsPerValue, Format);
         }
 
         protected override long BaseRamBytesUsed()

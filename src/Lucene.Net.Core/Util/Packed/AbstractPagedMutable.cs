@@ -29,30 +29,30 @@ namespace Lucene.Net.Util.Packed
         internal static readonly int MIN_BLOCK_SIZE = 1 << 6;
         internal static readonly int MAX_BLOCK_SIZE = 1 << 30;
 
-        internal readonly long Size_Renamed;
-        internal readonly int PageShift;
-        internal readonly int PageMask;
-        internal readonly PackedInts.Mutable[] SubMutables;
-        internal readonly int BitsPerValue;
+        internal readonly long size;
+        internal readonly int pageShift;
+        internal readonly int pageMask;
+        internal readonly PackedInts.Mutable[] subMutables;
+        internal readonly int bitsPerValue;
 
         internal AbstractPagedMutable(int bitsPerValue, long size, int pageSize)
         {
-            this.BitsPerValue = bitsPerValue;
-            this.Size_Renamed = size;
-            PageShift = PackedInts.CheckBlockSize(pageSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
-            PageMask = pageSize - 1;
+            this.bitsPerValue = bitsPerValue;
+            this.size = size;
+            pageShift = PackedInts.CheckBlockSize(pageSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
+            pageMask = pageSize - 1;
             int numPages = PackedInts.NumBlocks(size, pageSize);
-            SubMutables = new PackedInts.Mutable[numPages];
+            subMutables = new PackedInts.Mutable[numPages];
         }
 
         protected void FillPages()
         {
-            int numPages = PackedInts.NumBlocks(Size_Renamed, PageSize);
+            int numPages = PackedInts.NumBlocks(size, PageSize);
             for (int i = 0; i < numPages; ++i)
             {
                 // do not allocate for more entries than necessary on the last page
-                int valueCount = i == numPages - 1 ? LastPageSize(Size_Renamed) : PageSize;
-                SubMutables[i] = NewMutable(valueCount, BitsPerValue);
+                int valueCount = i == numPages - 1 ? LastPageSize(size) : PageSize;
+                subMutables[i] = NewMutable(valueCount, bitsPerValue);
             }
         }
 
@@ -66,42 +66,42 @@ namespace Lucene.Net.Util.Packed
 
         internal int PageSize // LUCENENET TODO: change to PageCount ?
         {
-            get { return PageMask + 1; }
+            get { return pageMask + 1; }
         }
 
         /// <summary>
         /// The number of values. </summary>
         public long Size // LUCENENET TODO: change to Count
         {
-            get { return Size_Renamed; }
+            get { return size; }
         }
 
         internal int PageIndex(long index)
         {
-            return (int)((long)((ulong)index >> PageShift));
+            return (int)((long)((ulong)index >> pageShift));
         }
 
         internal int IndexInPage(long index)
         {
-            return (int)index & PageMask;
+            return (int)index & pageMask;
         }
 
         public override sealed long Get(long index)
         {
-            Debug.Assert(index >= 0 && index < Size_Renamed);
+            Debug.Assert(index >= 0 && index < size);
             int pageIndex = PageIndex(index);
             int indexInPage = IndexInPage(index);
-            return SubMutables[pageIndex].Get(indexInPage);
+            return subMutables[pageIndex].Get(indexInPage);
         }
 
         /// <summary>
         /// Set value at <code>index</code>. </summary>
         public void Set(long index, long value)
         {
-            Debug.Assert(index >= 0 && index < Size_Renamed);
+            Debug.Assert(index >= 0 && index < size);
             int pageIndex = PageIndex(index);
             int indexInPage = IndexInPage(index);
-            SubMutables[pageIndex].Set(indexInPage, value);
+            subMutables[pageIndex].Set(indexInPage, value);
         }
 
         protected virtual long BaseRamBytesUsed()
@@ -114,8 +114,8 @@ namespace Lucene.Net.Util.Packed
         public virtual long RamBytesUsed()
         {
             long bytesUsed = RamUsageEstimator.AlignObjectSize(BaseRamBytesUsed());
-            bytesUsed += RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + (long)RamUsageEstimator.NUM_BYTES_OBJECT_REF * SubMutables.Length);
-            foreach (PackedInts.Mutable gw in SubMutables)
+            bytesUsed += RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + (long)RamUsageEstimator.NUM_BYTES_OBJECT_REF * subMutables.Length);
+            foreach (PackedInts.Mutable gw in subMutables)
             {
                 bytesUsed += gw.RamBytesUsed();
             }
@@ -132,17 +132,17 @@ namespace Lucene.Net.Util.Packed
         public T Resize(long newSize)
         {
             T copy = NewUnfilledCopy(newSize);
-            int numCommonPages = Math.Min(copy.SubMutables.Length, SubMutables.Length);
+            int numCommonPages = Math.Min(copy.subMutables.Length, subMutables.Length);
             long[] copyBuffer = new long[1024];
-            for (int i = 0; i < copy.SubMutables.Length; ++i)
+            for (int i = 0; i < copy.subMutables.Length; ++i)
             {
-                int valueCount = i == copy.SubMutables.Length - 1 ? LastPageSize(newSize) : PageSize;
-                int bpv = i < numCommonPages ? SubMutables[i].BitsPerValue : this.BitsPerValue;
-                copy.SubMutables[i] = NewMutable(valueCount, bpv);
+                int valueCount = i == copy.subMutables.Length - 1 ? LastPageSize(newSize) : PageSize;
+                int bpv = i < numCommonPages ? subMutables[i].BitsPerValue : this.bitsPerValue;
+                copy.subMutables[i] = NewMutable(valueCount, bpv);
                 if (i < numCommonPages)
                 {
-                    int copyLength = Math.Min(valueCount, SubMutables[i].Size);
-                    PackedInts.Copy(SubMutables[i], 0, copy.SubMutables[i], 0, copyLength, copyBuffer);
+                    int copyLength = Math.Min(valueCount, subMutables[i].Size);
+                    PackedInts.Copy(subMutables[i], 0, copy.subMutables[i], 0, copyLength, copyBuffer);
                 }
             }
             return copy;
