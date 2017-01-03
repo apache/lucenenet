@@ -136,15 +136,15 @@ namespace Lucene.Net.Search
         {
             set
             {
-                this.minNrShouldMatch = value;
+                this.m_minNrShouldMatch = value;
             }
             get
             {
-                return minNrShouldMatch;
+                return m_minNrShouldMatch;
             }
         }
 
-        protected int minNrShouldMatch = 0;
+        protected int m_minNrShouldMatch = 0;
 
         /// <summary>
         /// Adds a clause to a boolean query.
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search
 
             public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
-                if (scoreDocsInOrder || OuterInstance.minNrShouldMatch > 1)
+                if (scoreDocsInOrder || OuterInstance.m_minNrShouldMatch > 1)
                 {
                     // TODO: (LUCENE-4872) in some cases BooleanScorer may be faster for minNrShouldMatch
                     // but the same is even true of pure conjunctions...
@@ -419,7 +419,7 @@ namespace Lucene.Net.Search
                 }
 
                 // Check if we can and should return a BooleanScorer
-                return new BooleanScorer(this, m_disableCoord, OuterInstance.minNrShouldMatch, optional, prohibited, m_maxCoord);
+                return new BooleanScorer(this, m_disableCoord, OuterInstance.m_minNrShouldMatch, optional, prohibited, m_maxCoord);
             }
 
             public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
@@ -459,7 +459,7 @@ namespace Lucene.Net.Search
                     // no required and optional clauses.
                     return null;
                 }
-                else if (optional.Count < OuterInstance.minNrShouldMatch)
+                else if (optional.Count < OuterInstance.m_minNrShouldMatch)
                 {
                     // either >1 req scorer, or there are 0 req scorers and at least 1
                     // optional scorer. Therefore if there are not enough optional scorers
@@ -475,7 +475,7 @@ namespace Lucene.Net.Search
                 }
 
                 // simple disjunction
-                if (required.Count == 0 && prohibited.Count == 0 && OuterInstance.minNrShouldMatch <= 1 && optional.Count > 1)
+                if (required.Count == 0 && prohibited.Count == 0 && OuterInstance.m_minNrShouldMatch <= 1 && optional.Count > 1)
                 {
                     var coord = new float[optional.Count + 1];
                     for (int i = 0; i < coord.Length; i++)
@@ -486,14 +486,14 @@ namespace Lucene.Net.Search
                 }
 
                 // Return a BooleanScorer2
-                return new BooleanScorer2(this, m_disableCoord, OuterInstance.minNrShouldMatch, required, prohibited, optional, m_maxCoord);
+                return new BooleanScorer2(this, m_disableCoord, OuterInstance.m_minNrShouldMatch, required, prohibited, optional, m_maxCoord);
             }
 
             public override bool ScoresDocsOutOfOrder
             {
                 get
                 {
-                    if (OuterInstance.minNrShouldMatch > 1)
+                    if (OuterInstance.m_minNrShouldMatch > 1)
                     {
                         // BS2 (in-order) will be used by scorer()
                         return false;
@@ -520,7 +520,7 @@ namespace Lucene.Net.Search
 
         public override Query Rewrite(IndexReader reader)
         {
-            if (minNrShouldMatch == 0 && clauses.Count == 1) // optimize 1-clause queries
+            if (m_minNrShouldMatch == 0 && clauses.Count == 1) // optimize 1-clause queries
             {
                 BooleanClause c = clauses[0];
                 if (!c.IsProhibited) // just return clause
