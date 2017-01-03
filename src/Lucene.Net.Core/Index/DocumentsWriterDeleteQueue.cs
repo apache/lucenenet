@@ -68,16 +68,16 @@ namespace Lucene.Net.Index
     /// </summary>
     internal sealed class DocumentsWriterDeleteQueue
     {
-        private Node Tail; // LUCENENET NOTE: can't use type without specifying type parameter, also not volatile due to Interlocked
+        private Node tail; // LUCENENET NOTE: can't use type without specifying type parameter, also not volatile due to Interlocked
 
         // LUCENENET NOTE: no need for AtomicReferenceFieldUpdater, we can use Interlocked instead
-        private readonly DeleteSlice GlobalSlice;
+        private readonly DeleteSlice globalSlice;
 
-        private readonly BufferedUpdates GlobalBufferedUpdates;
+        private readonly BufferedUpdates globalBufferedUpdates;
         /* only acquired to update the global deletes */
-        private readonly ReentrantLock GlobalBufferLock = new ReentrantLock();
+        private readonly ReentrantLock globalBufferLock = new ReentrantLock();
 
-        internal readonly long Generation;
+        internal readonly long generation;
 
         internal DocumentsWriterDeleteQueue()
             : this(0)
@@ -91,14 +91,14 @@ namespace Lucene.Net.Index
 
         internal DocumentsWriterDeleteQueue(BufferedUpdates globalBufferedUpdates, long generation)
         {
-            this.GlobalBufferedUpdates = globalBufferedUpdates;
-            this.Generation = generation;
+            this.globalBufferedUpdates = globalBufferedUpdates;
+            this.generation = generation;
             /*
              * we use a sentinel instance as our initial tail. No slice will ever try to
              * apply this tail since the head is always omitted.
              */
-            Tail = new Node(null); // sentinel
-            GlobalSlice = new DeleteSlice(Tail);
+            tail = new Node(null); // sentinel
+            globalSlice = new DeleteSlice(tail);
         }
 
         internal void AddDelete(params Query[] queries)
@@ -142,8 +142,8 @@ namespace Lucene.Net.Index
              * will apply this delete next time we update our slice and one of the two
              * competing updates wins!
              */
-            slice.SliceTail = termNode;
-            Debug.Assert(slice.SliceHead != slice.SliceTail, "slice head and tail must differ after add");
+            slice.sliceTail = termNode;
+            Debug.Assert(slice.sliceHead != slice.sliceTail, "slice head and tail must differ after add");
             TryApplyGlobalSlice(); // TODO doing this each time is not necessary maybe
             // we can do it just every n times or so?
         }
@@ -156,9 +156,9 @@ namespace Lucene.Net.Index
              */
             while (true)
             {
-                Node currentTail = this.Tail;
-                Node tailNext = currentTail.Next;
-                if (Tail == currentTail)
+                Node currentTail = this.tail;
+                Node tailNext = currentTail.next;
+                if (tail == currentTail)
                 {
                     if (tailNext != null)
                     {
@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
                          * advanced but the tail itself might not be updated yet. help to
                          * advance the tail and try again updating it.
                          */
-                        Interlocked.CompareExchange(ref Tail, tailNext, currentTail); // can fail
+                        Interlocked.CompareExchange(ref tail, tailNext, currentTail); // can fail
                     }
                     else
                     {
@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
                              * thread could have advanced it already so we can ignore the return
                              * type of this CAS call
                              */
-                            Interlocked.CompareExchange(ref Tail, item, currentTail);
+                            Interlocked.CompareExchange(ref tail, item, currentTail);
                             return;
                         }
                     }
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
 
         internal bool AnyChanges()
         {
-            GlobalBufferLock.@Lock();
+            globalBufferLock.@Lock();
             try
             {
                 /*
@@ -201,17 +201,17 @@ namespace Lucene.Net.Index
                  * and if the global slice is up-to-date
                  * and if globalBufferedUpdates has changes
                  */
-                return GlobalBufferedUpdates.Any() || !GlobalSlice.IsEmpty || GlobalSlice.SliceTail != Tail || Tail.Next != null;
+                return globalBufferedUpdates.Any() || !globalSlice.IsEmpty || globalSlice.sliceTail != tail || tail.next != null;
             }
             finally
             {
-                GlobalBufferLock.Unlock();
+                globalBufferLock.Unlock();
             }
         }
 
         internal void TryApplyGlobalSlice()
         {
-            if (GlobalBufferLock.TryLock())
+            if (globalBufferLock.TryLock())
             {
                 /*
                  * The global buffer must be locked but we don't need to update them if
@@ -221,63 +221,63 @@ namespace Lucene.Net.Index
                  */
                 try
                 {
-                    if (UpdateSlice(GlobalSlice))
+                    if (UpdateSlice(globalSlice))
                     {
                         //          System.out.println(Thread.currentThread() + ": apply globalSlice");
-                        GlobalSlice.Apply(GlobalBufferedUpdates, BufferedUpdates.MAX_INT);
+                        globalSlice.Apply(globalBufferedUpdates, BufferedUpdates.MAX_INT);
                     }
                 }
                 finally
                 {
-                    GlobalBufferLock.Unlock();
+                    globalBufferLock.Unlock();
                 }
             }
         }
 
         internal FrozenBufferedUpdates FreezeGlobalBuffer(DeleteSlice callerSlice)
         {
-            GlobalBufferLock.@Lock();
+            globalBufferLock.@Lock();
             /*
              * Here we freeze the global buffer so we need to lock it, apply all
              * deletes in the queue and reset the global slice to let the GC prune the
              * queue.
              */
-            Node currentTail = Tail; // take the current tail make this local any
+            Node currentTail = tail; // take the current tail make this local any
             // Changes after this call are applied later
             // and not relevant here
             if (callerSlice != null)
             {
                 // Update the callers slices so we are on the same page
-                callerSlice.SliceTail = currentTail;
+                callerSlice.sliceTail = currentTail;
             }
             try
             {
-                if (GlobalSlice.SliceTail != currentTail)
+                if (globalSlice.sliceTail != currentTail)
                 {
-                    GlobalSlice.SliceTail = currentTail;
-                    GlobalSlice.Apply(GlobalBufferedUpdates, BufferedUpdates.MAX_INT);
+                    globalSlice.sliceTail = currentTail;
+                    globalSlice.Apply(globalBufferedUpdates, BufferedUpdates.MAX_INT);
                 }
 
-                FrozenBufferedUpdates packet = new FrozenBufferedUpdates(GlobalBufferedUpdates, false);
-                GlobalBufferedUpdates.Clear();
+                FrozenBufferedUpdates packet = new FrozenBufferedUpdates(globalBufferedUpdates, false);
+                globalBufferedUpdates.Clear();
                 return packet;
             }
             finally
             {
-                GlobalBufferLock.Unlock();
+                globalBufferLock.Unlock();
             }
         }
 
         internal DeleteSlice NewSlice()
         {
-            return new DeleteSlice(Tail);
+            return new DeleteSlice(tail);
         }
 
         internal bool UpdateSlice(DeleteSlice slice)
         {
-            if (slice.SliceTail != Tail) // If we are the same just
+            if (slice.sliceTail != tail) // If we are the same just
             {
-                slice.SliceTail = Tail;
+                slice.sliceTail = tail;
                 return true;
             }
             return false;
@@ -286,25 +286,25 @@ namespace Lucene.Net.Index
         internal class DeleteSlice
         {
             // No need to be volatile, slices are thread captive (only accessed by one thread)!
-            internal Node SliceHead; // we don't apply this one
+            internal Node sliceHead; // we don't apply this one
 
-            internal Node SliceTail;
+            internal Node sliceTail;
 
             internal DeleteSlice(Node currentTail)
             {
                 Debug.Assert(currentTail != null);
-                Debug.Assert(currentTail.Next == null);
+                Debug.Assert(currentTail.next == null);
                 /*
                  * Initially this is a 0 length slice pointing to the 'current' tail of
                  * the queue. Once we update the slice we only need to assign the tail and
                  * have a new slice
                  */
-                SliceHead = SliceTail = currentTail;
+                sliceHead = sliceTail = currentTail;
             }
 
             internal virtual void Apply(BufferedUpdates del, int docIDUpto)
             {
-                if (SliceHead == SliceTail)
+                if (sliceHead == sliceTail)
                 {
                     // 0 length slice
                     return;
@@ -315,21 +315,21 @@ namespace Lucene.Net.Index
                  * tail in this slice are not equal then there will be at least one more
                  * non-null node in the slice!
                  */
-                Node current = SliceHead;
+                Node current = sliceHead;
                 do
                 {
-                    current = current.Next;
+                    current = current.next;
                     Debug.Assert(current != null, "slice property violated between the head on the tail must not be a null node");
                     current.Apply(del, docIDUpto);
                     //        System.out.println(Thread.currentThread().getName() + ": pull " + current + " docIDUpto=" + docIDUpto);
-                } while (current != SliceTail);
+                } while (current != sliceTail);
                 Reset();
             }
 
             internal virtual void Reset()
             {
                 // Reset to a 0 length slice
-                SliceHead = SliceTail;
+                sliceHead = sliceTail;
             }
 
             /// <summary>
@@ -338,46 +338,46 @@ namespace Lucene.Net.Index
             /// </summary>
             internal virtual bool IsTailItem(object item)
             {
-                return SliceTail.Item == item;
+                return sliceTail.item == item;
             }
 
             internal virtual bool IsEmpty
             {
                 get
                 {
-                    return SliceHead == SliceTail;
+                    return sliceHead == sliceTail;
                 }
             }
         }
 
         public int NumGlobalTermDeletes
         {
-            get { return GlobalBufferedUpdates.NumTermDeletes.Get(); }
+            get { return globalBufferedUpdates.NumTermDeletes.Get(); }
         }
 
         internal void Clear()
         {
-            GlobalBufferLock.@Lock();
+            globalBufferLock.@Lock();
             try
             {
-                Node currentTail = Tail;
-                GlobalSlice.SliceHead = GlobalSlice.SliceTail = currentTail;
-                GlobalBufferedUpdates.Clear();
+                Node currentTail = tail;
+                globalSlice.sliceHead = globalSlice.sliceTail = currentTail;
+                globalBufferedUpdates.Clear();
             }
             finally
             {
-                GlobalBufferLock.Unlock();
+                globalBufferLock.Unlock();
             }
         }
 
         internal class Node // LUCENENET specific - made internal instead of private because it is used in internal APIs
         {
-            internal /*volatile*/ Node Next;
-            internal readonly object Item; // LUCENENET TODO: Can we make this generic like the original? Should make this a property as well
+            internal /*volatile*/ Node next;
+            internal readonly object item; // LUCENENET TODO: Can we make this generic like the original?
 
             internal Node(object item)
             {
-                this.Item = item;
+                this.item = item;
             }
 
             //internal static readonly AtomicReferenceFieldUpdater<Node, Node> NextUpdater = AtomicReferenceFieldUpdater.newUpdater(typeof(Node), typeof(Node), "next");
@@ -392,7 +392,7 @@ namespace Lucene.Net.Index
                 // LUCENENET NOTE: Interlocked.CompareExchange(location, value, comparand) is backwards from
                 // AtomicReferenceFieldUpdater.compareAndSet(obj, expect, update), so swapping val and cmp.
                 // Return true if the result of the CompareExchange is the same as the comparison.
-                return ReferenceEquals(Interlocked.CompareExchange(ref Next, val, cmp), cmp);
+                return ReferenceEquals(Interlocked.CompareExchange(ref next, val, cmp), cmp);
             }
         }
 
@@ -405,12 +405,12 @@ namespace Lucene.Net.Index
 
             internal override void Apply(BufferedUpdates bufferedDeletes, int docIDUpto)
             {
-                bufferedDeletes.AddTerm((Term)Item, docIDUpto);
+                bufferedDeletes.AddTerm((Term)item, docIDUpto);
             }
 
             public override string ToString()
             {
-                return "del=" + Item;
+                return "del=" + item;
             }
         }
 
@@ -423,7 +423,7 @@ namespace Lucene.Net.Index
 
             internal override void Apply(BufferedUpdates bufferedUpdates, int docIDUpto)
             {
-                foreach (Query query in (Query[])Item)
+                foreach (Query query in (Query[])item)
                 {
                     bufferedUpdates.AddQuery(query, docIDUpto);
                 }
@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
 
             internal override void Apply(BufferedUpdates bufferedUpdates, int docIDUpto)
             {
-                foreach (Term term in (Term[])Item)
+                foreach (Term term in (Term[])item)
                 {
                     bufferedUpdates.AddTerm(term, docIDUpto);
                 }
@@ -447,7 +447,7 @@ namespace Lucene.Net.Index
 
             public override string ToString()
             {
-                return "dels=" + Arrays.ToString((Term[])Item);
+                return "dels=" + Arrays.ToString((Term[])item);
             }
         }
 
@@ -460,12 +460,12 @@ namespace Lucene.Net.Index
 
             internal override void Apply(BufferedUpdates bufferedUpdates, int docIDUpto)
             {
-                bufferedUpdates.AddNumericUpdate((NumericDocValuesUpdate)Item, docIDUpto);
+                bufferedUpdates.AddNumericUpdate((NumericDocValuesUpdate)item, docIDUpto);
             }
 
             public override string ToString()
             {
-                return "update=" + Item;
+                return "update=" + item;
             }
         }
 
@@ -478,31 +478,31 @@ namespace Lucene.Net.Index
 
             internal override void Apply(BufferedUpdates bufferedUpdates, int docIDUpto)
             {
-                bufferedUpdates.AddBinaryUpdate((BinaryDocValuesUpdate)Item, docIDUpto);
+                bufferedUpdates.AddBinaryUpdate((BinaryDocValuesUpdate)item, docIDUpto);
             }
 
             public override string ToString()
             {
-                return "update=" + (BinaryDocValuesUpdate)Item;
+                return "update=" + (BinaryDocValuesUpdate)item;
             }
         }
 
         private bool ForceApplyGlobalSlice()
         {
-            GlobalBufferLock.@Lock();
-            Node currentTail = Tail;
+            globalBufferLock.@Lock();
+            Node currentTail = tail;
             try
             {
-                if (GlobalSlice.SliceTail != currentTail)
+                if (globalSlice.sliceTail != currentTail)
                 {
-                    GlobalSlice.SliceTail = currentTail;
-                    GlobalSlice.Apply(GlobalBufferedUpdates, BufferedUpdates.MAX_INT);
+                    globalSlice.sliceTail = currentTail;
+                    globalSlice.Apply(globalBufferedUpdates, BufferedUpdates.MAX_INT);
                 }
-                return GlobalBufferedUpdates.Any();
+                return globalBufferedUpdates.Any();
             }
             finally
             {
-                GlobalBufferLock.Unlock();
+                globalBufferLock.Unlock();
             }
         }
 
@@ -510,27 +510,27 @@ namespace Lucene.Net.Index
         {
             get
             {
-                GlobalBufferLock.@Lock();
+                globalBufferLock.@Lock();
                 try
                 {
                     ForceApplyGlobalSlice();
-                    return GlobalBufferedUpdates.Terms.Count;
+                    return globalBufferedUpdates.Terms.Count;
                 }
                 finally
                 {
-                    GlobalBufferLock.Unlock();
+                    globalBufferLock.Unlock();
                 }
             }
         }
 
         public long BytesUsed
         {
-            get { return GlobalBufferedUpdates.BytesUsed.Get(); }
+            get { return globalBufferedUpdates.BytesUsed.Get(); }
         }
 
         public override string ToString()
         {
-            return "DWDQ: [ generation: " + Generation + " ]";
+            return "DWDQ: [ generation: " + generation + " ]";
         }
     }
 }

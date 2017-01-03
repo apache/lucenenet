@@ -636,7 +636,7 @@ namespace Lucene.Net.Index
                 flushingQueue = DocumentsWriter.DeleteQueue;
                 // Set a new delete queue - all subsequent DWPT will use this queue until
                 // we do another full flush
-                DocumentsWriterDeleteQueue newQueue = new DocumentsWriterDeleteQueue(flushingQueue.Generation + 1);
+                DocumentsWriterDeleteQueue newQueue = new DocumentsWriterDeleteQueue(flushingQueue.generation + 1);
                 DocumentsWriter.DeleteQueue = newQueue;
             }
             int limit = PerThreadPool.NumThreadStatesActive;
