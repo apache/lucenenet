@@ -39,10 +39,10 @@ namespace Lucene.Net.Index
     /// </summary>
     internal sealed class DocumentsWriterStallControl
     {
-        private volatile bool Stalled;
-        private int NumWaiting; // only with assert
-        private bool WasStalled_Renamed; // only with assert
-        private readonly IDictionary<ThreadClass, bool?> Waiting = new IdentityHashMap<ThreadClass, bool?>(); // only with assert
+        private volatile bool stalled;
+        private int numWaiting; // only with assert
+        private bool wasStalled; // only with assert
+        private readonly IDictionary<ThreadClass, bool?> waiting = new IdentityHashMap<ThreadClass, bool?>(); // only with assert
 
         /// <summary>
         /// Update the stalled flag status. this method will set the stalled flag to
@@ -56,10 +56,10 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                this.Stalled = stalled;
+                this.stalled = stalled;
                 if (stalled)
                 {
-                    WasStalled_Renamed = true;
+                    wasStalled = true;
                 }
                 Monitor.PulseAll(this);
             }
@@ -71,11 +71,11 @@ namespace Lucene.Net.Index
         /// </summary>
         internal void WaitIfStalled()
         {
-            if (Stalled)
+            if (stalled)
             {
                 lock (this)
                 {
-                    if (Stalled) // react on the first wakeup call!
+                    if (stalled) // react on the first wakeup call!
                     {
                         // don't loop here, higher level logic will re-stall!
 #if !NETSTANDARD
@@ -103,26 +103,26 @@ namespace Lucene.Net.Index
 
         internal bool AnyStalledThreads() // LUCENENET TODO: Make property
         {
-            return Stalled;
+            return stalled;
         }
 
         private bool IncWaiters()
         {
-            NumWaiting++;
-            bool existed = Waiting.ContainsKey(ThreadClass.Current());
+            numWaiting++;
+            bool existed = waiting.ContainsKey(ThreadClass.Current());
             Debug.Assert(!existed);
-            Waiting[ThreadClass.Current()] = true;
+            waiting[ThreadClass.Current()] = true;
 
-            return NumWaiting > 0;
+            return numWaiting > 0;
         }
 
         private bool DecrWaiters()
         {
-            NumWaiting--;
-            bool removed = Waiting.Remove(ThreadClass.Current());
+            numWaiting--;
+            bool removed = waiting.Remove(ThreadClass.Current());
             Debug.Assert(removed);
 
-            return NumWaiting >= 0;
+            return numWaiting >= 0;
         }
 
         internal bool HasBlocked // for tests
@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    return NumWaiting > 0;
+                    return numWaiting > 0;
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return !Stalled; // volatile read!
+                return !stalled; // volatile read!
             }
         }
 
@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                return Waiting.ContainsKey(t);
+                return waiting.ContainsKey(t);
             }
         }
 
@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    return WasStalled_Renamed;
+                    return wasStalled;
                 }
             }
         }
