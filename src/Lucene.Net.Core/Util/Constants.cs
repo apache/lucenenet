@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Util
 {
@@ -177,13 +178,15 @@ namespace Lucene.Net.Util
         /// </summary>
         public static string MainVersionWithoutAlphaBeta()
         {
-            string[] parts = LUCENE_MAIN_VERSION.Split("\\.", true); // LUCENENET TODO: Use the Regex class and remove the superfluous StringHelperClass
+            string[] parts = MainVersionWithoutAlphaBetaRegex.Split(LUCENE_MAIN_VERSION);
             if (parts.Length == 4 && "0".Equals(parts[2]))
             {
                 return parts[0] + "." + parts[1];
             }
             return LUCENE_MAIN_VERSION;
         }
+
+        private static Regex MainVersionWithoutAlphaBetaRegex = new Regex("\\.", RegexOptions.Compiled);
 
         #region MEDIUM-TRUST Support
 

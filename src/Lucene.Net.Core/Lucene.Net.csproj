@@ -598,7 +598,6 @@
     <Compile Include="Store\SingleInstanceLockFactory.cs" />
     <Compile Include="Store\TrackingDirectoryWrapper.cs" />
     <Compile Include="Store\VerifyingLockFactory.cs" />
-    <Compile Include="StringHelperClass.cs" />
     <Compile Include="Support\AppSettings.cs" />
     <Compile Include="Support\AtomicBoolean.cs" />
     <Compile Include="Support\AtomicInteger.cs" />
