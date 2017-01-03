@@ -26,17 +26,17 @@ namespace Lucene.Net.Index
     {
         internal static readonly int BYTES_PER_POSTING = 3 * RamUsageEstimator.NUM_BYTES_INT;
 
-        internal readonly int Size;
-        internal readonly int[] TextStarts;
-        internal readonly int[] IntStarts;
-        internal readonly int[] ByteStarts;
+        internal readonly int size;
+        internal readonly int[] textStarts;
+        internal readonly int[] intStarts;
+        internal readonly int[] byteStarts;
 
         internal ParallelPostingsArray(int size)
         {
-            this.Size = size;
-            TextStarts = new int[size];
-            IntStarts = new int[size];
-            ByteStarts = new int[size];
+            this.size = size;
+            textStarts = new int[size];
+            intStarts = new int[size];
+            byteStarts = new int[size];
         }
 
         internal virtual int BytesPerPosting()
@@ -51,17 +51,17 @@ namespace Lucene.Net.Index
 
         internal ParallelPostingsArray Grow()
         {
-            int newSize = ArrayUtil.Oversize(Size + 1, BytesPerPosting());
+            int newSize = ArrayUtil.Oversize(size + 1, BytesPerPosting());
             ParallelPostingsArray newArray = NewInstance(newSize);
-            CopyTo(newArray, Size);
+            CopyTo(newArray, size);
             return newArray;
         }
 
         internal virtual void CopyTo(ParallelPostingsArray toArray, int numToCopy)
         {
-            Array.Copy(TextStarts, 0, toArray.TextStarts, 0, numToCopy);
-            Array.Copy(IntStarts, 0, toArray.IntStarts, 0, numToCopy);
-            Array.Copy(ByteStarts, 0, toArray.ByteStarts, 0, numToCopy);
+            Array.Copy(textStarts, 0, toArray.textStarts, 0, numToCopy);
+            Array.Copy(intStarts, 0, toArray.intStarts, 0, numToCopy);
+            Array.Copy(byteStarts, 0, toArray.byteStarts, 0, numToCopy);
         }
     }
 }

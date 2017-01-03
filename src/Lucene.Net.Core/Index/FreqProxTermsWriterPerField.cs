@@ -456,7 +456,7 @@ namespace Lucene.Net.Index
             {
                 int termID = termIDs[i];
                 // Get BytesRef
-                int textStart = postings.TextStarts[termID];
+                int textStart = postings.textStarts[termID];
                 termsHashPerField.BytePool.SetBytesRef(text, textStart);
 
                 termsHashPerField.InitReader(freq, termID, 0);

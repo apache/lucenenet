@@ -204,7 +204,7 @@ namespace Lucene.Net.Index
                 int freq = postings.Freqs[termID];
 
                 // Get BytesRef
-                termBytePool.SetBytesRef(flushTerm, postings.TextStarts[termID]);
+                termBytePool.SetBytesRef(flushTerm, postings.textStarts[termID]);
                 tv.StartTerm(flushTerm, freq);
 
                 if (DoVectorPositions || DoVectorOffsets)
@@ -351,9 +351,9 @@ namespace Lucene.Net.Index
 
                 base.CopyTo(toArray, numToCopy);
 
-                Array.Copy(Freqs, 0, to.Freqs, 0, Size);
-                Array.Copy(LastOffsets, 0, to.LastOffsets, 0, Size);
-                Array.Copy(LastPositions, 0, to.LastPositions, 0, Size);
+                Array.Copy(Freqs, 0, to.Freqs, 0, size);
+                Array.Copy(LastOffsets, 0, to.LastOffsets, 0, size);
+                Array.Copy(LastPositions, 0, to.LastPositions, 0, size);
             }
 
             internal override int BytesPerPosting()

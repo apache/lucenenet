@@ -111,10 +111,10 @@ namespace Lucene.Net.Index
         public void InitReader(ByteSliceReader reader, int termID, int stream)
         {
             Debug.Assert(stream < StreamCount);
-            int intStart = PostingsArray.IntStarts[termID];
+            int intStart = PostingsArray.intStarts[termID];
             int[] ints = IntPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
             int upto = intStart & IntBlockPool.INT_BLOCK_MASK;
-            reader.Init(BytePool, PostingsArray.ByteStarts[termID] + stream * ByteBlockPool.FIRST_LEVEL_SIZE, ints[upto + stream]);
+            reader.Init(BytePool, PostingsArray.byteStarts[termID] + stream * ByteBlockPool.FIRST_LEVEL_SIZE, ints[upto + stream]);
         }
 
         /// <summary>
@@ -174,21 +174,21 @@ namespace Lucene.Net.Index
                 IntUptoStart = IntPool.IntUpto;
                 IntPool.IntUpto += StreamCount;
 
-                PostingsArray.IntStarts[termID] = IntUptoStart + IntPool.IntOffset;
+                PostingsArray.intStarts[termID] = IntUptoStart + IntPool.IntOffset;
 
                 for (int i = 0; i < StreamCount; i++)
                 {
                     int upto = BytePool.NewSlice(ByteBlockPool.FIRST_LEVEL_SIZE);
                     IntUptos[IntUptoStart + i] = upto + BytePool.ByteOffset;
                 }
-                PostingsArray.ByteStarts[termID] = IntUptos[IntUptoStart];
+                PostingsArray.byteStarts[termID] = IntUptos[IntUptoStart];
 
                 Consumer.NewTerm(termID);
             }
             else
             {
                 termID = (-termID) - 1;
-                int intStart = PostingsArray.IntStarts[termID];
+                int intStart = PostingsArray.intStarts[termID];
                 IntUptos = IntPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
                 IntUptoStart = intStart & IntBlockPool.INT_BLOCK_MASK;
                 Consumer.AddTerm(termID);
@@ -249,21 +249,21 @@ namespace Lucene.Net.Index
                 IntUptoStart = IntPool.IntUpto;
                 IntPool.IntUpto += StreamCount;
 
-                PostingsArray.IntStarts[termID] = IntUptoStart + IntPool.IntOffset;
+                PostingsArray.intStarts[termID] = IntUptoStart + IntPool.IntOffset;
 
                 for (int i = 0; i < StreamCount; i++)
                 {
                     int upto = BytePool.NewSlice(ByteBlockPool.FIRST_LEVEL_SIZE);
                     IntUptos[IntUptoStart + i] = upto + BytePool.ByteOffset;
                 }
-                PostingsArray.ByteStarts[termID] = IntUptos[IntUptoStart];
+                PostingsArray.byteStarts[termID] = IntUptos[IntUptoStart];
 
                 Consumer.NewTerm(termID);
             }
             else
             {
                 termID = (-termID) - 1;
-                int intStart = PostingsArray.IntStarts[termID];
+                int intStart = PostingsArray.intStarts[termID];
                 IntUptos = IntPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
                 IntUptoStart = intStart & IntBlockPool.INT_BLOCK_MASK;
                 Consumer.AddTerm(termID);
@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
 
             if (DoNextCall)
             {
-                NextPerField.Add(PostingsArray.TextStarts[termID]);
+                NextPerField.Add(PostingsArray.textStarts[termID]);
             }
         }
 
@@ -346,25 +346,25 @@ namespace Lucene.Net.Index
                 if (perField.PostingsArray == null)
                 {
                     perField.PostingsArray = perField.Consumer.CreatePostingsArray(2);
-                    bytesUsed.AddAndGet(perField.PostingsArray.Size * perField.PostingsArray.BytesPerPosting());
+                    bytesUsed.AddAndGet(perField.PostingsArray.size * perField.PostingsArray.BytesPerPosting());
                 }
-                return perField.PostingsArray.TextStarts;
+                return perField.PostingsArray.textStarts;
             }
 
             public override int[] Grow()
             {
                 ParallelPostingsArray postingsArray = perField.PostingsArray;
-                int oldSize = perField.PostingsArray.Size;
+                int oldSize = perField.PostingsArray.size;
                 postingsArray = perField.PostingsArray = postingsArray.Grow();
-                bytesUsed.AddAndGet((postingsArray.BytesPerPosting() * (postingsArray.Size - oldSize)));
-                return postingsArray.TextStarts;
+                bytesUsed.AddAndGet((postingsArray.BytesPerPosting() * (postingsArray.size - oldSize)));
+                return postingsArray.textStarts;
             }
 
             public override int[] Clear()
             {
                 if (perField.PostingsArray != null)
                 {
-                    bytesUsed.AddAndGet(-(perField.PostingsArray.Size * perField.PostingsArray.BytesPerPosting()));
+                    bytesUsed.AddAndGet(-(perField.PostingsArray.size * perField.PostingsArray.BytesPerPosting()));
                     perField.PostingsArray = null;
                 }
                 return null;
