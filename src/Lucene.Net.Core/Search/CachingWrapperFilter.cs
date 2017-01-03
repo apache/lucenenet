@@ -158,7 +158,7 @@ namespace Lucene.Net.Search
         {
             public override DocIdSetIterator GetIterator()
             {
-                return DocIdSetIterator.Empty();
+                return DocIdSetIterator.GetEmpty();
             }
 
             public override bool IsCacheable

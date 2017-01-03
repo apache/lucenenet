@@ -114,14 +114,14 @@ namespace Lucene.Net.Queries
             DocIdSet docIdSet = filter.GetDocIdSet(context, null);
             if (docIdSet == null)
             {
-                return DocIdSetIterator.Empty();
+                return DocIdSetIterator.GetEmpty();
             }
             else
             {
                 DocIdSetIterator iter = docIdSet.GetIterator();
                 if (iter == null)
                 {
-                    return DocIdSetIterator.Empty();
+                    return DocIdSetIterator.GetEmpty();
                 }
                 else
                 {
@@ -231,11 +231,11 @@ namespace Lucene.Net.Queries
                 DocIdSetIterator disi;
                 if (dis == null)
                 {
-                    disi = DocIdSetIterator.Empty();
+                    disi = DocIdSetIterator.GetEmpty();
                 }
                 else
                 {
-                    disi = dis.GetIterator() ?? DocIdSetIterator.Empty();
+                    disi = dis.GetIterator() ?? DocIdSetIterator.GetEmpty();
                 }
 
                 switch (logic)

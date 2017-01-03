@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// An empty {@code DocIdSetIterator} instance </summary>
-        public static DocIdSetIterator Empty() // LUCENENET TODO: Rename GetEmpty() ? Empty() is a verb that makes it confusing
+        public static DocIdSetIterator GetEmpty()
         {
             return new DocIdSetIteratorAnonymousInnerClassHelper();
         }
