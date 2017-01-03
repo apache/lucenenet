@@ -57,7 +57,7 @@ namespace Lucene.Net.Util
 
         // Use a WeakHashMap so that if a Thread exits and is
         // GC'able, its entry may be removed:
-        private IDictionary<Thread, T> HardRefs = new HashMap<Thread, T>();
+        private IDictionary<Thread, T> hardRefs = new HashMap<Thread, T>();
 
         // Increase this to decrease frequency of purging in get:
         private static int PURGE_MULTIPLIER = 20;
@@ -67,7 +67,7 @@ namespace Lucene.Net.Util
         // PURGE_MULTIPLIER * stillAliveCount.  this keeps
         // amortized cost of purging linear.
         //private readonly AtomicInteger CountUntilPurge = new AtomicInteger(PURGE_MULTIPLIER);
-        private int CountUntilPurge = PURGE_MULTIPLIER;
+        private int countUntilPurge = PURGE_MULTIPLIER;
 
         protected internal virtual T InitialValue() // LUCENENET NOTE: Sometimes returns new instance - not a good candidate for a property
         {
@@ -101,16 +101,16 @@ namespace Lucene.Net.Util
         {
             t.Value = new WeakReference(@object);
 
-            lock (HardRefs)
+            lock (hardRefs)
             {
-                HardRefs[Thread.CurrentThread] = @object;
+                hardRefs[Thread.CurrentThread] = @object;
                 MaybePurge();
             }
         }
 
         private void MaybePurge()
         {
-            if (Interlocked.Decrement(ref CountUntilPurge) == 0)
+            if (Interlocked.Decrement(ref countUntilPurge) == 0)
             {
                 Purge();
             }
@@ -119,14 +119,14 @@ namespace Lucene.Net.Util
         // Purge dead threads
         private void Purge()
         {
-            lock (HardRefs)
+            lock (hardRefs)
             {
                 int stillAliveCount = 0;
                 //Placing in try-finally to ensure HardRef threads are removed in the case of an exception
                 List<Thread> Removed = new List<Thread>();
                 try
                 {
-                    for (IEnumerator<Thread> it = HardRefs.Keys.GetEnumerator(); it.MoveNext(); )
+                    for (IEnumerator<Thread> it = hardRefs.Keys.GetEnumerator(); it.MoveNext(); )
                     {
                         Thread t = it.Current;
                         if (!t.IsAlive)
@@ -143,7 +143,7 @@ namespace Lucene.Net.Util
                 {
                     foreach (Thread thd in Removed)
                     {
-                        HardRefs.Remove(thd);
+                        hardRefs.Remove(thd);
                     }
                 }
 
@@ -154,7 +154,7 @@ namespace Lucene.Net.Util
                     nextCount = 1000000;
                 }
 
-                Interlocked.Exchange(ref CountUntilPurge, nextCount);
+                Interlocked.Exchange(ref countUntilPurge, nextCount);
             }
         }
 
@@ -163,7 +163,7 @@ namespace Lucene.Net.Util
             // Clear the hard refs; then, the only remaining refs to
             // all values we were storing are weak (unless somewhere
             // else is still using them) and so GC may reclaim them:
-            HardRefs = null;
+            hardRefs = null;
             // Take care of the current thread right now; others will be
             // taken care of via the WeakReferences.
             if (t != null)
