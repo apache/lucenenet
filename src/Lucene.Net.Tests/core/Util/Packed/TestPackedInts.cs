@@ -880,7 +880,7 @@ namespace Lucene.Net.Util.Packed
             }
 
             // test ramBytesUsed
-            Assert.AreEqual(RamUsageEstimator.SizeOf(writer) - RamUsageEstimator.SizeOf(writer.Format), writer.RamBytesUsed());
+            Assert.AreEqual(RamUsageEstimator.SizeOf(writer) - RamUsageEstimator.SizeOf(writer.format), writer.RamBytesUsed());
 
             // test copy
             PagedMutable copy = writer.Resize(TestUtil.NextLong(Random(), writer.Size / 2, writer.Size * 3 / 2));

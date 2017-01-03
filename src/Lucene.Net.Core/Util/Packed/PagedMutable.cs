@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     public sealed class PagedMutable : AbstractPagedMutable<PagedMutable>
     {
-        internal readonly PackedInts.Format Format;
+        internal readonly PackedInts.Format format;
 
         /// <summary>
         /// Create a new <seealso cref="PagedMutable"/> instance.
@@ -52,18 +52,18 @@ namespace Lucene.Net.Util.Packed
         internal PagedMutable(long size, int pageSize, int bitsPerValue, PackedInts.Format format)
             : base(bitsPerValue, size, pageSize)
         {
-            this.Format = format;
+            this.format = format;
         }
 
         protected override Mutable NewMutable(int valueCount, int bitsPerValue)
         {
             Debug.Assert(this.bitsPerValue >= bitsPerValue);
-            return PackedInts.GetMutable(valueCount, this.bitsPerValue, Format);
+            return PackedInts.GetMutable(valueCount, this.bitsPerValue, format);
         }
 
         protected override PagedMutable NewUnfilledCopy(long newSize)
         {
-            return new PagedMutable(newSize, PageSize, bitsPerValue, Format);
+            return new PagedMutable(newSize, PageSize, bitsPerValue, format);
         }
 
         protected override long BaseRamBytesUsed()
