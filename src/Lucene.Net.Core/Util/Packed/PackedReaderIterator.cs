@@ -25,32 +25,32 @@ namespace Lucene.Net.Util.Packed
 
     internal sealed class PackedReaderIterator : PackedInts.ReaderIterator
     {
-        internal readonly int PackedIntsVersion;
-        internal readonly PackedInts.Format Format;
-        internal readonly BulkOperation BulkOperation;
-        internal readonly byte[] NextBlocks;
-        internal readonly LongsRef NextValues;
-        internal readonly int Iterations_Renamed;
-        internal int Position;
+        internal readonly int packedIntsVersion;
+        internal readonly PackedInts.Format format;
+        internal readonly BulkOperation bulkOperation;
+        internal readonly byte[] nextBlocks;
+        internal readonly LongsRef nextValues;
+        internal readonly int iterations;
+        internal int position;
 
         internal PackedReaderIterator(PackedInts.Format format, int packedIntsVersion, int valueCount, int bitsPerValue, DataInput @in, int mem)
             : base(valueCount, bitsPerValue, @in)
         {
-            this.Format = format;
-            this.PackedIntsVersion = packedIntsVersion;
-            BulkOperation = BulkOperation.Of(format, bitsPerValue);
-            Iterations_Renamed = Iterations(mem);
-            Debug.Assert(valueCount == 0 || Iterations_Renamed > 0);
-            NextBlocks = new byte[Iterations_Renamed * BulkOperation.ByteBlockCount];
-            NextValues = new LongsRef(new long[Iterations_Renamed * BulkOperation.ByteValueCount], 0, 0);
-            NextValues.Offset = NextValues.Longs.Length;
-            Position = -1;
+            this.format = format;
+            this.packedIntsVersion = packedIntsVersion;
+            bulkOperation = BulkOperation.Of(format, bitsPerValue);
+            iterations = Iterations(mem);
+            Debug.Assert(valueCount == 0 || iterations > 0);
+            nextBlocks = new byte[iterations * bulkOperation.ByteBlockCount];
+            nextValues = new LongsRef(new long[iterations * bulkOperation.ByteValueCount], 0, 0);
+            nextValues.Offset = nextValues.Longs.Length;
+            position = -1;
         }
 
         private int Iterations(int mem)
         {
-            int iterations = BulkOperation.ComputeIterations(m_valueCount, mem);
-            if (PackedIntsVersion < PackedInts.VERSION_BYTE_ALIGNED)
+            int iterations = bulkOperation.ComputeIterations(m_valueCount, mem);
+            if (packedIntsVersion < PackedInts.VERSION_BYTE_ALIGNED)
             {
                 // make sure iterations is a multiple of 8
                 iterations = (iterations + 7) & unchecked((int)0xFFFFFFF8);
@@ -60,41 +60,41 @@ namespace Lucene.Net.Util.Packed
 
         public override LongsRef Next(int count)
         {
-            Debug.Assert(NextValues.Length >= 0);
+            Debug.Assert(nextValues.Length >= 0);
             Debug.Assert(count > 0);
-            Debug.Assert(NextValues.Offset + NextValues.Length <= NextValues.Longs.Length);
+            Debug.Assert(nextValues.Offset + nextValues.Length <= nextValues.Longs.Length);
 
-            NextValues.Offset += NextValues.Length;
+            nextValues.Offset += nextValues.Length;
 
-            int remaining = m_valueCount - Position - 1;
+            int remaining = m_valueCount - position - 1;
             if (remaining <= 0)
             {
                 throw new System.IO.EndOfStreamException();
             }
             count = Math.Min(remaining, count);
 
-            if (NextValues.Offset == NextValues.Longs.Length)
+            if (nextValues.Offset == nextValues.Longs.Length)
             {
-                long remainingBlocks = Format.ByteCount(PackedIntsVersion, remaining, m_bitsPerValue);
-                int blocksToRead = (int)Math.Min(remainingBlocks, NextBlocks.Length);
-                m_in.ReadBytes(NextBlocks, 0, blocksToRead);
-                if (blocksToRead < NextBlocks.Length)
+                long remainingBlocks = format.ByteCount(packedIntsVersion, remaining, m_bitsPerValue);
+                int blocksToRead = (int)Math.Min(remainingBlocks, nextBlocks.Length);
+                m_in.ReadBytes(nextBlocks, 0, blocksToRead);
+                if (blocksToRead < nextBlocks.Length)
                 {
-                    Arrays.Fill(NextBlocks, blocksToRead, NextBlocks.Length, (byte)0);
+                    Arrays.Fill(nextBlocks, blocksToRead, nextBlocks.Length, (byte)0);
                 }
 
-                BulkOperation.Decode(NextBlocks, 0, NextValues.Longs, 0, Iterations_Renamed);
-                NextValues.Offset = 0;
+                bulkOperation.Decode(nextBlocks, 0, nextValues.Longs, 0, iterations);
+                nextValues.Offset = 0;
             }
 
-            NextValues.Length = Math.Min(NextValues.Longs.Length - NextValues.Offset, count);
-            Position += NextValues.Length;
-            return NextValues;
+            nextValues.Length = Math.Min(nextValues.Longs.Length - nextValues.Offset, count);
+            position += nextValues.Length;
+            return nextValues;
         }
 
         public override int Ord
         {
-            get { return Position; }
+            get { return position; }
         }
     }
 }
