@@ -24,30 +24,30 @@ namespace Lucene.Net.Util.Packed
     internal sealed class DirectPacked64SingleBlockReader : PackedInts.ReaderImpl
     {
         private readonly IndexInput @in;
-        private readonly long StartPointer;
-        private readonly int ValuesPerBlock;
-        private readonly long Mask;
+        private readonly long startPointer;
+        private readonly int valuesPerBlock;
+        private readonly long mask;
 
         internal DirectPacked64SingleBlockReader(int bitsPerValue, int valueCount, IndexInput @in)
             : base(valueCount, bitsPerValue)
         {
             this.@in = @in;
-            StartPointer = @in.FilePointer;
-            ValuesPerBlock = 64 / bitsPerValue;
-            Mask = ~(~0L << bitsPerValue);
+            startPointer = @in.FilePointer;
+            valuesPerBlock = 64 / bitsPerValue;
+            mask = ~(~0L << bitsPerValue);
         }
 
         public override long Get(int index)
         {
-            int blockOffset = index / ValuesPerBlock;
+            int blockOffset = index / valuesPerBlock;
             long skip = ((long)blockOffset) << 3;
             try
             {
-                @in.Seek(StartPointer + skip);
+                @in.Seek(startPointer + skip);
 
                 long block = @in.ReadLong();
-                int offsetInBlock = index % ValuesPerBlock;
-                return ((long)((ulong)block >> (offsetInBlock * m_bitsPerValue))) & Mask;
+                int offsetInBlock = index % valuesPerBlock;
+                return ((long)((ulong)block >> (offsetInBlock * m_bitsPerValue))) & mask;
             }
             catch (System.IO.IOException e)
             {
