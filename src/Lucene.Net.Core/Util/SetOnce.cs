@@ -45,7 +45,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private T Obj = default(T);
+        private T obj = default(T);
         private int set;
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= #set(Object) </seealso>
         public SetOnce(T obj)
         {
-            this.Obj = obj;
+            this.obj = obj;
             set = 1;
         }
 
@@ -77,7 +77,7 @@ namespace Lucene.Net.Util
             //if (set.compareAndSet(false, true))
             if (Interlocked.CompareExchange(ref set, 1, 0) == 0)
             {
-                this.Obj = obj;
+                this.obj = obj;
             }
             else
             {
@@ -89,12 +89,12 @@ namespace Lucene.Net.Util
         /// Returns the object set by <seealso cref="#set(Object)"/>. </summary>
         public T Get()
         {
-            return Obj;
+            return obj;
         }
 
         public object Clone()
         {
-            return Obj == null ? new SetOnce<T>() : new SetOnce<T>(Obj);
+            return obj == null ? new SetOnce<T>() : new SetOnce<T>(obj);
         }
     }
 }
