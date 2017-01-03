@@ -40,8 +40,8 @@ namespace Lucene.Net.Util.Packed
             return (n >> 63) ^ (n << 1);
         }
 
-        internal float[] Averages;
-        internal long[] MinValues;
+        internal float[] averages;
+        internal long[] minValues;
 
         /// <param name="initialPageCount">        the initial number of pages </param>
         /// <param name="pageSize">                the size of a single page </param>
@@ -49,8 +49,8 @@ namespace Lucene.Net.Util.Packed
         public MonotonicAppendingLongBuffer(int initialPageCount, int pageSize, float acceptableOverheadRatio)
             : base(initialPageCount, pageSize, acceptableOverheadRatio)
         {
-            Averages = new float[values.Length];
-            MinValues = new long[values.Length];
+            averages = new float[values.Length];
+            minValues = new long[values.Length];
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Lucene.Net.Util.Packed
             }
             else
             {
-                long @base = MinValues[block] + (long)(Averages[block] * (long)element);
+                long @base = minValues[block] + (long)(averages[block] * (long)element);
                 if (values[block] == null)
                 {
                     return @base;
@@ -111,7 +111,7 @@ namespace Lucene.Net.Util.Packed
                     int toFill = Math.Min(len, pending.Length - element);
                     for (int r = 0; r < toFill; r++, off++, element++)
                     {
-                        arr[off] = MinValues[block] + (long)(Averages[block] * (long)element);
+                        arr[off] = minValues[block] + (long)(averages[block] * (long)element);
                     }
                     return toFill;
                 }
@@ -121,7 +121,7 @@ namespace Lucene.Net.Util.Packed
                     int read = values[block].Get(element, arr, off, len);
                     for (int r = 0; r < read; r++, off++, element++)
                     {
-                        arr[off] = MinValues[block] + (long)(Averages[block] * (long)element) + ZigZagDecode(arr[off]);
+                        arr[off] = minValues[block] + (long)(averages[block] * (long)element) + ZigZagDecode(arr[off]);
                     }
                     return read;
                 }
@@ -131,19 +131,19 @@ namespace Lucene.Net.Util.Packed
         internal override void Grow(int newBlockCount)
         {
             base.Grow(newBlockCount);
-            this.Averages = Arrays.CopyOf(Averages, newBlockCount);
-            this.MinValues = Arrays.CopyOf(MinValues, newBlockCount);
+            this.averages = Arrays.CopyOf(averages, newBlockCount);
+            this.minValues = Arrays.CopyOf(minValues, newBlockCount);
         }
 
         internal override void PackPendingValues()
         {
             Debug.Assert(pendingOff > 0);
-            MinValues[valuesOff] = pending[0];
-            Averages[valuesOff] = pendingOff == 1 ? 0 : (float)(pending[pendingOff - 1] - pending[0]) / (pendingOff - 1);
+            minValues[valuesOff] = pending[0];
+            averages[valuesOff] = pendingOff == 1 ? 0 : (float)(pending[pendingOff - 1] - pending[0]) / (pendingOff - 1);
 
             for (int i = 0; i < pendingOff; ++i)
             {
-                pending[i] = ZigZagEncode(pending[i] - MinValues[valuesOff] - (long)(Averages[valuesOff] * (long)i));
+                pending[i] = ZigZagEncode(pending[i] - minValues[valuesOff] - (long)(averages[valuesOff] * (long)i));
             }
             long maxDelta = 0;
             for (int i = 0; i < pendingOff; ++i)
@@ -181,7 +181,7 @@ namespace Lucene.Net.Util.Packed
 
         public override long RamBytesUsed()
         {
-            return base.RamBytesUsed() + RamUsageEstimator.SizeOf(Averages) + RamUsageEstimator.SizeOf(MinValues);
+            return base.RamBytesUsed() + RamUsageEstimator.SizeOf(averages) + RamUsageEstimator.SizeOf(minValues);
         }
     }
 }
