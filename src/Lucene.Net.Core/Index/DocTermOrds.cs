@@ -119,62 +119,62 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Don't uninvert terms that exceed this count. </summary>
-        protected readonly int maxTermDocFreq; 
+        protected readonly int m_maxTermDocFreq; 
 
         /// <summary>
         /// Field we are uninverting. </summary>
-        protected readonly string field; 
+        protected readonly string m_field; 
 
         /// <summary>
         /// Number of terms in the field. </summary>
-        protected int numTermsInField; 
+        protected int m_numTermsInField; 
 
         /// <summary>
         /// Total number of references to term numbers. </summary>
-        protected long termInstances;
+        protected long m_termInstances;
 
         private long memsz;
 
         /// <summary>
         /// Total time to uninvert the field. </summary>
-        protected int total_time; 
+        protected int m_total_time; 
 
         /// <summary>
         /// Time for phase1 of the uninvert process. </summary>
-        protected int phase1_time;
+        protected int m_phase1_time;
 
         /// <summary>
         /// Holds the per-document ords or a pointer to the ords. </summary>
-        protected int[] index;
+        protected int[] m_index;
 
         /// <summary>
         /// Holds term ords for documents. </summary>
-        protected sbyte[][] tnums = new sbyte[256][]; // LUCENENET TODO: can this be byte??
+        protected sbyte[][] m_tnums = new sbyte[256][]; // LUCENENET TODO: can this be byte??
 
         /// <summary>
         /// Total bytes (sum of term lengths) for all indexed terms. </summary>
-        protected long sizeOfIndexedStrings;
+        protected long m_sizeOfIndexedStrings;
 
         /// <summary>
         /// Holds the indexed (by default every 128th) terms. </summary>
-        protected BytesRef[] indexedTermsArray;
+        protected BytesRef[] m_indexedTermsArray;
 
         /// <summary>
         /// If non-null, only terms matching this prefix were
         ///  indexed.
         /// </summary>
-        protected BytesRef prefix;
+        protected BytesRef m_prefix;
 
         /// <summary>
         /// Ordinal of the first term in the field, or 0 if the
         ///  <seealso cref="PostingsFormat"/> does not implement {@link
         ///  TermsEnum#ord}.
         /// </summary>
-        protected int ordBase;
+        protected int m_ordBase;
 
         /// <summary>
         /// Used while uninverting. </summary>
-        protected DocsEnum docsEnum;
+        protected DocsEnum m_docsEnum;
 
         /// <summary>
         /// Returns total bytes used. </summary>
@@ -186,13 +186,13 @@ namespace Lucene.Net.Index
                 return memsz;
             }
             long sz = 8 * 8 + 32; // local fields
-            if (index != null)
+            if (m_index != null)
             {
-                sz += index.Length * 4;
+                sz += m_index.Length * 4;
             }
-            if (tnums != null)
+            if (m_tnums != null)
             {
-                sz = tnums.Where(arr => arr != null).Aggregate(sz, (current, arr) => current + arr.Length);
+                sz = m_tnums.Where(arr => arr != null).Aggregate(sz, (current, arr) => current + arr.Length);
             }
             memsz = sz;
             return sz;
@@ -241,8 +241,8 @@ namespace Lucene.Net.Index
         protected DocTermOrds(string field, int maxTermDocFreq, int indexIntervalBits)
         {
             //System.out.println("DTO init field=" + field + " maxTDFreq=" + maxTermDocFreq);
-            this.field = field;
-            this.maxTermDocFreq = maxTermDocFreq;
+            this.m_field = field;
+            this.m_maxTermDocFreq = maxTermDocFreq;
             this.indexIntervalBits = indexIntervalBits;
             indexIntervalMask = (int)((uint)0xffffffff >> (32 - indexIntervalBits));
             indexInterval = 1 << indexIntervalBits;
@@ -262,7 +262,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual TermsEnum GetOrdTermsEnum(AtomicReader reader)
         {
-            if (indexedTermsArray == null)
+            if (m_indexedTermsArray == null)
             {
                 //System.out.println("GET normal enum");
                 Fields fields = reader.Fields;
@@ -270,7 +270,7 @@ namespace Lucene.Net.Index
                 {
                     return null;
                 }
-                Terms terms = fields.Terms(field);
+                Terms terms = fields.Terms(m_field);
                 if (terms == null)
                 {
                     return null;
@@ -292,7 +292,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual int NumTerms
         {
-            get { return numTermsInField; }
+            get { return m_numTermsInField; }
         }
 
         /// <summary>
@@ -302,7 +302,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return index == null;
+                return m_index == null;
             }
         }
 
@@ -325,14 +325,14 @@ namespace Lucene.Net.Index
         /// Call this only once (if you subclass!) </summary>
         protected virtual void Uninvert(AtomicReader reader, IBits liveDocs, BytesRef termPrefix)
         {
-            FieldInfo info = reader.FieldInfos.FieldInfo(field);
+            FieldInfo info = reader.FieldInfos.FieldInfo(m_field);
             if (info != null && info.HasDocValues)
             {
-                throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+                throw new InvalidOperationException("Type mismatch: " + m_field + " was indexed as " + info.DocValuesType);
             }
             //System.out.println("DTO uninvert field=" + field + " prefix=" + termPrefix);
             long startTime = Environment.TickCount;
-            prefix = termPrefix == null ? null : BytesRef.DeepCopyOf(termPrefix);
+            m_prefix = termPrefix == null ? null : BytesRef.DeepCopyOf(termPrefix);
 
             int maxDoc = reader.MaxDoc;
             int[] index = new int[maxDoc]; // immediate term numbers, or the index into the byte[] representing the last number
@@ -345,7 +345,7 @@ namespace Lucene.Net.Index
                 // No terms
                 return;
             }
-            Terms terms = fields.Terms(field);
+            Terms terms = fields.Terms(m_field);
             if (terms == null)
             {
                 // No terms
@@ -389,7 +389,7 @@ namespace Lucene.Net.Index
             // frequent terms ahead of time.
 
             int termNum = 0;
-            docsEnum = null;
+            m_docsEnum = null;
 
             // Loop begins with te positioned to first term (we call
             // seek above):
@@ -406,7 +406,7 @@ namespace Lucene.Net.Index
                 {
                     try
                     {
-                        ordBase = (int)te.Ord;
+                        m_ordBase = (int)te.Ord;
                         //System.out.println("got ordBase=" + ordBase);
                     }
                     catch (System.NotSupportedException uoe)
@@ -425,7 +425,7 @@ namespace Lucene.Net.Index
                 if (indexedTerms != null && (termNum & indexIntervalMask) == 0)
                 {
                     // Index this term
-                    sizeOfIndexedStrings += t.Length;
+                    m_sizeOfIndexedStrings += t.Length;
                     BytesRef indexedTerm = new BytesRef();
                     indexedTermsBytes.Copy(t, indexedTerm);
                     // TODO: really should 1) strip off useless suffix,
@@ -434,16 +434,16 @@ namespace Lucene.Net.Index
                 }
 
                 int df = te.DocFreq;
-                if (df <= maxTermDocFreq)
+                if (df <= m_maxTermDocFreq)
                 {
-                    docsEnum = te.Docs(liveDocs, docsEnum, DocsEnum.FLAG_NONE);
+                    m_docsEnum = te.Docs(liveDocs, m_docsEnum, DocsEnum.FLAG_NONE);
 
                     // dF, but takes deletions into account
                     int actualDF = 0;
 
                     for (; ; )
                     {
-                        int doc = docsEnum.NextDoc();
+                        int doc = m_docsEnum.NextDoc();
                         if (doc == DocIdSetIterator.NO_MORE_DOCS)
                         {
                             break;
@@ -451,7 +451,7 @@ namespace Lucene.Net.Index
                         //System.out.println("  chunk=" + chunk + " docs");
 
                         actualDF++;
-                        termInstances++;
+                        m_termInstances++;
 
                         //System.out.println("    docID=" + doc);
                         // add TNUM_OFFSET to the term number to make room for special reserved values:
@@ -550,19 +550,19 @@ namespace Lucene.Net.Index
                 }
             }
 
-            numTermsInField = termNum;
+            m_numTermsInField = termNum;
 
             long midPoint = Environment.TickCount;
 
-            if (termInstances == 0)
+            if (m_termInstances == 0)
             {
                 // we didn't invert anything
                 // lower memory consumption.
-                tnums = null;
+                m_tnums = null;
             }
             else
             {
-                this.index = index;
+                this.m_index = index;
 
                 //
                 // transform intermediate form into the final form, building a single byte[]
@@ -572,7 +572,7 @@ namespace Lucene.Net.Index
 
                 for (int pass = 0; pass < 256; pass++)
                 {
-                    var target = tnums[pass];
+                    var target = m_tnums[pass];
                     var pos = 0; // end in target;
                     if (target != null)
                     {
@@ -601,7 +601,7 @@ namespace Lucene.Net.Index
                                 if ((pos & 0xff000000) != 0)
                                 {
                                     // we only have 24 bits for the array index
-                                    throw new InvalidOperationException("Too many values for UnInvertedField faceting on field " + field);
+                                    throw new InvalidOperationException("Too many values for UnInvertedField faceting on field " + m_field);
                                 }
                                 var arr = bytes[doc];
                                 /*
@@ -649,7 +649,7 @@ namespace Lucene.Net.Index
                         target = newtarget;
                     }
 
-                    tnums[pass] = target;
+                    m_tnums[pass] = target;
 
                     if ((pass << 16) > maxDoc)
                     {
@@ -659,13 +659,13 @@ namespace Lucene.Net.Index
             }
             if (indexedTerms != null)
             {
-                indexedTermsArray = indexedTerms.ToArray();
+                m_indexedTermsArray = indexedTerms.ToArray();
             }
 
             long endTime = Environment.TickCount;
 
-            total_time = (int)(endTime - startTime);
-            phase1_time = (int)(midPoint - startTime);
+            m_total_time = (int)(endTime - startTime);
+            m_phase1_time = (int)(midPoint - startTime);
         }
 
         /// <summary>
@@ -741,8 +741,8 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
 
                 InitializeInstanceFields();
-                Debug.Assert(outerInstance.indexedTermsArray != null);
-                TermsEnum = reader.Fields.Terms(outerInstance.field).Iterator(null);
+                Debug.Assert(outerInstance.m_indexedTermsArray != null);
+                TermsEnum = reader.Fields.Terms(outerInstance.m_field).Iterator(null);
             }
 
             public override IComparer<BytesRef> Comparator
@@ -794,7 +794,7 @@ namespace Lucene.Net.Index
 
             public override long Ord
             {
-                get { return OuterInstance.ordBase + Ord_Renamed; }
+                get { return OuterInstance.m_ordBase + Ord_Renamed; }
             }
 
             public override SeekStatus SeekCeil(BytesRef target)
@@ -805,7 +805,7 @@ namespace Lucene.Net.Index
                     return SeekStatus.FOUND;
                 }
 
-                int startIdx = OuterInstance.indexedTermsArray.ToList().BinarySearch(target);
+                int startIdx = OuterInstance.m_indexedTermsArray.ToList().BinarySearch(target);
 
                 if (startIdx >= 0)
                 {
@@ -843,7 +843,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     // seek to the right block
-                    TermsEnum.SeekStatus seekStatus = TermsEnum.SeekCeil(OuterInstance.indexedTermsArray[startIdx]);
+                    TermsEnum.SeekStatus seekStatus = TermsEnum.SeekCeil(OuterInstance.m_indexedTermsArray[startIdx]);
                     Debug.Assert(seekStatus == TermsEnum.SeekStatus.FOUND);
                     Ord_Renamed = startIdx << OuterInstance.indexIntervalBits;
                     SetTerm();
@@ -871,12 +871,12 @@ namespace Lucene.Net.Index
 
             public override void SeekExact(long targetOrd)
             {
-                int delta = (int)(targetOrd - OuterInstance.ordBase - Ord_Renamed);
+                int delta = (int)(targetOrd - OuterInstance.m_ordBase - Ord_Renamed);
                 //System.out.println("  seek(ord) targetOrd=" + targetOrd + " delta=" + delta + " ord=" + ord + " ii=" + indexInterval);
                 if (delta < 0 || delta > OuterInstance.indexInterval)
                 {
                     int idx = (int)((long)((ulong)targetOrd >> OuterInstance.indexIntervalBits));
-                    BytesRef @base = OuterInstance.indexedTermsArray[idx];
+                    BytesRef @base = OuterInstance.m_indexedTermsArray[idx];
                     //System.out.println("  do seek term=" + base.utf8ToString());
                     Ord_Renamed = idx << OuterInstance.indexIntervalBits;
                     delta = (int)(targetOrd - Ord_Renamed);
@@ -907,7 +907,7 @@ namespace Lucene.Net.Index
             {
                 Term_Renamed = TermsEnum.Term;
                 //System.out.println("  setTerm() term=" + term.utf8ToString() + " vs prefix=" + (prefix == null ? "null" : prefix.utf8ToString()));
-                if (OuterInstance.prefix != null && !StringHelper.StartsWith(Term_Renamed, OuterInstance.prefix))
+                if (OuterInstance.m_prefix != null && !StringHelper.StartsWith(Term_Renamed, OuterInstance.m_prefix))
                 {
                     Term_Renamed = null;
                 }
@@ -1004,7 +1004,7 @@ namespace Lucene.Net.Index
                                 break;
                             }
                             Tnum += delta - TNUM_OFFSET;
-                            buffer[bufferUpto++] = OuterInstance.ordBase + Tnum;
+                            buffer[bufferUpto++] = OuterInstance.m_ordBase + Tnum;
                             //System.out.println("  tnum=" + tnum);
                             delta = 0;
                         }
@@ -1034,7 +1034,7 @@ namespace Lucene.Net.Index
                         }
                         Tnum += delta - TNUM_OFFSET;
                         //System.out.println("  tnum=" + tnum);
-                        buffer[bufferUpto++] = OuterInstance.ordBase + Tnum;
+                        buffer[bufferUpto++] = OuterInstance.m_ordBase + Tnum;
                         if (bufferUpto == buffer.Length)
                         {
                             break;
@@ -1048,14 +1048,14 @@ namespace Lucene.Net.Index
             public override void SetDocument(int docID)
             {
                 Tnum = 0;
-                int code = OuterInstance.index[docID];
+                int code = OuterInstance.m_index[docID];
                 if ((code & 0xff) == 1)
                 {
                     // a pointer
                     Upto = (int)((uint)code >> 8);
                     //System.out.println("    pointer!  upto=" + upto);
                     int whichArray = ((int)((uint)docID >> 16)) & 0xff;
-                    Arr = OuterInstance.tnums[whichArray];
+                    Arr = OuterInstance.m_tnums[whichArray];
                 }
                 else
                 {
