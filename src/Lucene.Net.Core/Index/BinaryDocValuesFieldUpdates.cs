@@ -38,109 +38,109 @@ namespace Lucene.Net.Index
     /// </summary>
     internal class BinaryDocValuesFieldUpdates : AbstractDocValuesFieldUpdates
     {
-        new internal sealed class Iterator : AbstractDocValuesFieldUpdates.IIterator
+        internal sealed class Iterator : AbstractDocValuesFieldUpdates.IIterator
         {
-            private readonly PagedGrowableWriter Offsets;
-            private readonly int Size;
-            private readonly PagedGrowableWriter Lengths;
-            private readonly PagedMutable Docs;
-            private readonly FixedBitSet DocsWithField;
-            private long Idx = 0; // long so we don't overflow if size == Integer.MAX_VALUE
-            private int Doc_Renamed = -1;
-            private readonly BytesRef Value_Renamed;
-            private int Offset, Length;
+            private readonly PagedGrowableWriter offsets;
+            private readonly int size;
+            private readonly PagedGrowableWriter lengths;
+            private readonly PagedMutable docs;
+            private readonly FixedBitSet docsWithField;
+            private long idx = 0; // long so we don't overflow if size == Integer.MAX_VALUE
+            private int doc = -1;
+            private readonly BytesRef value;
+            private int offset, length;
 
             internal Iterator(int size, PagedGrowableWriter offsets, PagedGrowableWriter lengths, PagedMutable docs, BytesRef values, FixedBitSet docsWithField)
             {
-                this.Offsets = offsets;
-                this.Size = size;
-                this.Lengths = lengths;
-                this.Docs = docs;
-                this.DocsWithField = docsWithField;
-                Value_Renamed = (BytesRef)values.Clone();
+                this.offsets = offsets;
+                this.size = size;
+                this.lengths = lengths;
+                this.docs = docs;
+                this.docsWithField = docsWithField;
+                value = (BytesRef)values.Clone();
             }
 
             public object Value
             {
                 get
                 {
-                    if (Offset == -1)
+                    if (offset == -1)
                     {
                         return null;
                     }
                     else
                     {
-                        Value_Renamed.Offset = Offset;
-                        Value_Renamed.Length = Length;
-                        return Value_Renamed;
+                        value.Offset = offset;
+                        value.Length = length;
+                        return value;
                     }
                 }
             }
 
             public int NextDoc()
             {
-                if (Idx >= Size)
+                if (idx >= size)
                 {
-                    Offset = -1;
-                    return Doc_Renamed = DocIdSetIterator.NO_MORE_DOCS;
+                    offset = -1;
+                    return doc = DocIdSetIterator.NO_MORE_DOCS;
                 }
-                Doc_Renamed = (int)Docs.Get(Idx);
-                ++Idx;
-                while (Idx < Size && Docs.Get(Idx) == Doc_Renamed)
+                doc = (int)docs.Get(idx);
+                ++idx;
+                while (idx < size && docs.Get(idx) == doc)
                 {
-                    ++Idx;
+                    ++idx;
                 }
                 // idx points to the "next" element
-                long prevIdx = Idx - 1;
-                if (!DocsWithField.Get((int)prevIdx))
+                long prevIdx = idx - 1;
+                if (!docsWithField.Get((int)prevIdx))
                 {
-                    Offset = -1;
+                    offset = -1;
                 }
                 else
                 {
                     // cannot change 'value' here because nextDoc is called before the
                     // value is used, and it's a waste to clone the BytesRef when we
                     // obtain the value
-                    Offset = (int)Offsets.Get(prevIdx);
-                    Length = (int)Lengths.Get(prevIdx);
+                    offset = (int)offsets.Get(prevIdx);
+                    length = (int)lengths.Get(prevIdx);
                 }
-                return Doc_Renamed;
+                return doc;
             }
 
             public int Doc
             {
-                get { return Doc_Renamed; }
+                get { return doc; }
             }
 
             public void Reset()
             {
-                Doc_Renamed = -1;
-                Offset = -1;
-                Idx = 0;
+                doc = -1;
+                offset = -1;
+                idx = 0;
             }
         }
 
-        private FixedBitSet DocsWithField;
-        private PagedMutable Docs;
-        private PagedGrowableWriter Offsets, Lengths;
-        private BytesRef Values;
-        private int Size;
+        private FixedBitSet docsWithField;
+        private PagedMutable docs;
+        private PagedGrowableWriter offsets, lengths;
+        private BytesRef values;
+        private int size;
 
         public BinaryDocValuesFieldUpdates(string field, int maxDoc)
             : base(field, DocValuesFieldUpdates.Type.BINARY)
         {
-            DocsWithField = new FixedBitSet(64);
-            Docs = new PagedMutable(1, 1024, PackedInts.BitsRequired(maxDoc - 1), PackedInts.COMPACT);
-            Offsets = new PagedGrowableWriter(1, 1024, 1, PackedInts.FAST);
-            Lengths = new PagedGrowableWriter(1, 1024, 1, PackedInts.FAST);
-            Values = new BytesRef(16); // start small
-            Size = 0;
+            docsWithField = new FixedBitSet(64);
+            docs = new PagedMutable(1, 1024, PackedInts.BitsRequired(maxDoc - 1), PackedInts.COMPACT);
+            offsets = new PagedGrowableWriter(1, 1024, 1, PackedInts.FAST);
+            lengths = new PagedGrowableWriter(1, 1024, 1, PackedInts.FAST);
+            values = new BytesRef(16); // start small
+            size = 0;
         }
 
         public override void Add(int doc, object value)
         {
             // TODO: if the Sorter interface changes to take long indexes, we can remove that limitation
-            if (Size == int.MaxValue)
+            if (size == int.MaxValue)
             {
                 throw new InvalidOperationException("cannot support more than Integer.MAX_VALUE doc/value entries");
             }
@@ -152,94 +152,94 @@ namespace Lucene.Net.Index
             }
 
             // grow the structures to have room for more elements
-            if (Docs.Size == Size)
+            if (docs.Size == size)
             {
-                Docs = Docs.Grow(Size + 1);
-                Offsets = Offsets.Grow(Size + 1);
-                Lengths = Lengths.Grow(Size + 1);
-                DocsWithField = FixedBitSet.EnsureCapacity(DocsWithField, (int)Docs.Size);
+                docs = docs.Grow(size + 1);
+                offsets = offsets.Grow(size + 1);
+                lengths = lengths.Grow(size + 1);
+                docsWithField = FixedBitSet.EnsureCapacity(docsWithField, (int)docs.Size);
             }
 
             if (val != BinaryDocValuesUpdate.MISSING)
             {
                 // only mark the document as having a value in that field if the value wasn't set to null (MISSING)
-                DocsWithField.Set(Size);
+                docsWithField.Set(size);
             }
 
-            Docs.Set(Size, doc);
-            Offsets.Set(Size, Values.Length);
-            Lengths.Set(Size, val.Length);
-            Values.Append(val);
-            ++Size;
+            docs.Set(size, doc);
+            offsets.Set(size, values.Length);
+            lengths.Set(size, val.Length);
+            values.Append(val);
+            ++size;
         }
 
         public override AbstractDocValuesFieldUpdates.IIterator GetIterator()
         {
-            PagedMutable docs = this.Docs;
-            PagedGrowableWriter offsets = this.Offsets;
-            PagedGrowableWriter lengths = this.Lengths;
-            BytesRef values = this.Values;
-            FixedBitSet docsWithField = this.DocsWithField;
-            new InPlaceMergeSorterAnonymousInnerClassHelper(this, docs, offsets, lengths, docsWithField).Sort(0, Size);
+            PagedMutable docs = this.docs;
+            PagedGrowableWriter offsets = this.offsets;
+            PagedGrowableWriter lengths = this.lengths;
+            BytesRef values = this.values;
+            FixedBitSet docsWithField = this.docsWithField;
+            new InPlaceMergeSorterAnonymousInnerClassHelper(this, docs, offsets, lengths, docsWithField).Sort(0, size);
 
-            return new Iterator(Size, offsets, lengths, docs, values, docsWithField);
+            return new Iterator(size, offsets, lengths, docs, values, docsWithField);
         }
 
         private class InPlaceMergeSorterAnonymousInnerClassHelper : InPlaceMergeSorter
         {
-            private readonly BinaryDocValuesFieldUpdates OuterInstance;
+            private readonly BinaryDocValuesFieldUpdates outerInstance;
 
-            private PagedMutable Docs;
-            private PagedGrowableWriter Offsets;
-            private PagedGrowableWriter Lengths;
-            private FixedBitSet DocsWithField;
+            private PagedMutable docs;
+            private PagedGrowableWriter offsets;
+            private PagedGrowableWriter lengths;
+            private FixedBitSet docsWithField;
 
             public InPlaceMergeSorterAnonymousInnerClassHelper(BinaryDocValuesFieldUpdates outerInstance, PagedMutable docs, PagedGrowableWriter offsets, PagedGrowableWriter lengths, FixedBitSet docsWithField)
             {
-                this.OuterInstance = outerInstance;
-                this.Docs = docs;
-                this.Offsets = offsets;
-                this.Lengths = lengths;
-                this.DocsWithField = docsWithField;
+                this.outerInstance = outerInstance;
+                this.docs = docs;
+                this.offsets = offsets;
+                this.lengths = lengths;
+                this.docsWithField = docsWithField;
             }
 
             protected override void Swap(int i, int j)
             {
-                long tmpDoc = Docs.Get(j);
-                Docs.Set(j, Docs.Get(i));
-                Docs.Set(i, tmpDoc);
+                long tmpDoc = docs.Get(j);
+                docs.Set(j, docs.Get(i));
+                docs.Set(i, tmpDoc);
 
-                long tmpOffset = Offsets.Get(j);
-                Offsets.Set(j, Offsets.Get(i));
-                Offsets.Set(i, tmpOffset);
+                long tmpOffset = offsets.Get(j);
+                offsets.Set(j, offsets.Get(i));
+                offsets.Set(i, tmpOffset);
 
-                long tmpLength = Lengths.Get(j);
-                Lengths.Set(j, Lengths.Get(i));
-                Lengths.Set(i, tmpLength);
+                long tmpLength = lengths.Get(j);
+                lengths.Set(j, lengths.Get(i));
+                lengths.Set(i, tmpLength);
 
-                bool tmpBool = DocsWithField.Get(j);
-                if (DocsWithField.Get(i))
+                bool tmpBool = docsWithField.Get(j);
+                if (docsWithField.Get(i))
                 {
-                    DocsWithField.Set(j);
+                    docsWithField.Set(j);
                 }
                 else
                 {
-                    DocsWithField.Clear(j);
+                    docsWithField.Clear(j);
                 }
                 if (tmpBool)
                 {
-                    DocsWithField.Set(i);
+                    docsWithField.Set(i);
                 }
                 else
                 {
-                    DocsWithField.Clear(i);
+                    docsWithField.Clear(i);
                 }
             }
 
             protected override int Compare(int i, int j)
             {
-                int x = (int)Docs.Get(i);
-                int y = (int)Docs.Get(j);
+                int x = (int)docs.Get(i);
+                int y = (int)docs.Get(j);
                 return (x < y) ? -1 : ((x == y) ? 0 : 1);
             }
         }
@@ -247,33 +247,33 @@ namespace Lucene.Net.Index
         public override void Merge(AbstractDocValuesFieldUpdates other)
         {
             BinaryDocValuesFieldUpdates otherUpdates = (BinaryDocValuesFieldUpdates)other;
-            int newSize = Size + otherUpdates.Size;
+            int newSize = size + otherUpdates.size;
             if (newSize > int.MaxValue)
             {
-                throw new InvalidOperationException("cannot support more than Integer.MAX_VALUE doc/value entries; size=" + Size + " other.size=" + otherUpdates.Size);
+                throw new InvalidOperationException("cannot support more than Integer.MAX_VALUE doc/value entries; size=" + size + " other.size=" + otherUpdates.size);
             }
-            Docs = Docs.Grow(newSize);
-            Offsets = Offsets.Grow(newSize);
-            Lengths = Lengths.Grow(newSize);
-            DocsWithField = FixedBitSet.EnsureCapacity(DocsWithField, (int)Docs.Size);
-            for (int i = 0; i < otherUpdates.Size; i++)
+            docs = docs.Grow(newSize);
+            offsets = offsets.Grow(newSize);
+            lengths = lengths.Grow(newSize);
+            docsWithField = FixedBitSet.EnsureCapacity(docsWithField, (int)docs.Size);
+            for (int i = 0; i < otherUpdates.size; i++)
             {
-                int doc = (int)otherUpdates.Docs.Get(i);
-                if (otherUpdates.DocsWithField.Get(i))
+                int doc = (int)otherUpdates.docs.Get(i);
+                if (otherUpdates.docsWithField.Get(i))
                 {
-                    DocsWithField.Set(Size);
+                    docsWithField.Set(size);
                 }
-                Docs.Set(Size, doc);
-                Offsets.Set(Size, Values.Length + otherUpdates.Offsets.Get(i)); // correct relative offset
-                Lengths.Set(Size, otherUpdates.Lengths.Get(i));
-                ++Size;
+                docs.Set(size, doc);
+                offsets.Set(size, values.Length + otherUpdates.offsets.Get(i)); // correct relative offset
+                lengths.Set(size, otherUpdates.lengths.Get(i));
+                ++size;
             }
-            Values.Append(otherUpdates.Values);
+            values.Append(otherUpdates.values);
         }
 
         public override bool Any()
         {
-            return Size > 0;
+            return size > 0;
         }
     }
 }
