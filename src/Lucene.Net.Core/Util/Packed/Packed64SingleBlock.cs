@@ -46,19 +46,19 @@ namespace Lucene.Net.Util.Packed
             return valueCount / valuesPerBlock + (valueCount % valuesPerBlock == 0 ? 0 : 1);
         }
 
-        internal readonly long[] Blocks;
+        internal readonly long[] blocks;
 
         internal Packed64SingleBlock(int valueCount, int bitsPerValue)
             : base(valueCount, bitsPerValue)
         {
             Debug.Assert(IsSupported(bitsPerValue));
             int valuesPerBlock = 64 / bitsPerValue;
-            Blocks = new long[RequiredCapacity(valueCount, valuesPerBlock)];
+            blocks = new long[RequiredCapacity(valueCount, valuesPerBlock)];
         }
 
         public override void Clear()
         {
-            Arrays.Fill(Blocks, 0L);
+            Arrays.Fill(blocks, 0L);
         }
 
         public override long RamBytesUsed()
@@ -67,7 +67,7 @@ namespace Lucene.Net.Util.Packed
                 RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
                 + 2 * RamUsageEstimator.NUM_BYTES_INT // valueCount,bitsPerValue
                 + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // blocks ref 
-                + RamUsageEstimator.SizeOf(Blocks);
+                + RamUsageEstimator.SizeOf(blocks);
         }
 
         public override int Get(int index, long[] arr, int off, int len)
@@ -102,7 +102,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(decoder.LongValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
-            decoder.Decode(Blocks, blockIndex, arr, off, nblocks);
+            decoder.Decode(blocks, blockIndex, arr, off, nblocks);
             int diff = nblocks * valuesPerBlock;
             index += diff;
             len -= diff;
@@ -153,7 +153,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(op.LongValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
-            op.Encode(arr, off, Blocks, blockIndex, nblocks);
+            op.Encode(arr, off, blocks, blockIndex, nblocks);
             int diff = nblocks * valuesPerBlock;
             index += diff;
             len -= diff;
@@ -208,7 +208,7 @@ namespace Lucene.Net.Util.Packed
             {
                 blockValue = blockValue | (val << (i * m_bitsPerValue));
             }
-            Arrays.Fill(Blocks, fromBlock, toBlock, blockValue);
+            Arrays.Fill(blocks, fromBlock, toBlock, blockValue);
 
             // fill the gap
             for (int i = valuesPerBlock * toBlock; i < toIndex; ++i)
@@ -227,15 +227,15 @@ namespace Lucene.Net.Util.Packed
 
         public override string ToString()
         {
-            return this.GetType().Name + "(bitsPerValue=" + m_bitsPerValue + ", size=" + Size + ", elements.length=" + Blocks.Length + ")";
+            return this.GetType().Name + "(bitsPerValue=" + m_bitsPerValue + ", size=" + Size + ", elements.length=" + blocks.Length + ")";
         }
 
         public static Packed64SingleBlock Create(DataInput @in, int valueCount, int bitsPerValue)
         {
             Packed64SingleBlock reader = Create(valueCount, bitsPerValue);
-            for (int i = 0; i < reader.Blocks.Length; ++i)
+            for (int i = 0; i < reader.blocks.Length; ++i)
             {
-                reader.Blocks[i] = @in.ReadLong();
+                reader.blocks[i] = @in.ReadLong();
             }
             return reader;
         }
@@ -303,7 +303,7 @@ namespace Lucene.Net.Util.Packed
                 int o = (int)((uint)index >> 6);
                 int b = index & 63;
                 int shift = b << 0;
-                return ((long)((ulong)Blocks[o] >> shift)) & 1L;
+                return ((long)((ulong)blocks[o] >> shift)) & 1L;
             }
 
             public override void Set(int index, long value)
@@ -311,7 +311,7 @@ namespace Lucene.Net.Util.Packed
                 int o = (int)((uint)index >> 6);
                 int b = index & 63;
                 int shift = b << 0;
-                Blocks[o] = (Blocks[o] & ~(1L << shift)) | (value << shift);
+                blocks[o] = (blocks[o] & ~(1L << shift)) | (value << shift);
             }
         }
 
@@ -327,7 +327,7 @@ namespace Lucene.Net.Util.Packed
                 int o = (int)((uint)index >> 5);
                 int b = index & 31;
                 int shift = b << 1;
-                return ((long)((ulong)Blocks[o] >> shift)) & 3L;
+                return ((long)((ulong)blocks[o] >> shift)) & 3L;
             }
 
             public override void Set(int index, long value)
@@ -335,7 +335,7 @@ namespace Lucene.Net.Util.Packed
                 int o = (int)((uint)index >> 5);
                 int b = index & 31;
                 int shift = b << 1;
-                Blocks[o] = (Blocks[o] & ~(3L << shift)) | (value << shift);
+                blocks[o] = (blocks[o] & ~(3L << shift)) | (value << shift);
             }
         }
 
@@ -351,7 +351,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 21;
                 int b = index % 21;
                 int shift = b * 3;
-                return ((long)((ulong)Blocks[o] >> shift)) & 7L;
+                return ((long)((ulong)blocks[o] >> shift)) & 7L;
             }
 
             public override void Set(int index, long value)
@@ -359,7 +359,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 21;
                 int b = index % 21;
                 int shift = b * 3;
-                Blocks[o] = (Blocks[o] & ~(7L << shift)) | (value << shift);
+                blocks[o] = (blocks[o] & ~(7L << shift)) | (value << shift);
             }
         }
 
@@ -375,7 +375,7 @@ namespace Lucene.Net.Util.Packed
                 int o = (int)((uint)index >> 4);
                 int b = index & 15;
                 int shift = b << 2;
-                return ((long)((ulong)Blocks[o] >> shift)) & 15L;
+                return ((long)((ulong)blocks[o] >> shift)) & 15L;
             }
 
             public override void Set(int index, long value)
@@ -383,7 +383,7 @@ namespace Lucene.Net.Util.Packed
                 int o = (int)((uint)index >> 4);
                 int b = index & 15;
                 int shift = b << 2;
-                Blocks[o] = (Blocks[o] & ~(15L << shift)) | (value << shift);
+                blocks[o] = (blocks[o] & ~(15L << shift)) | (value << shift);
             }
         }
 
@@ -399,7 +399,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 12;
                 int b = index % 12;
                 int shift = b * 5;
-                return ((long)((ulong)Blocks[o] >> shift)) & 31L;
+                return ((long)((ulong)blocks[o] >> shift)) & 31L;
             }
 
             public override void Set(int index, long value)
@@ -407,7 +407,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 12;
                 int b = index % 12;
                 int shift = b * 5;
-                Blocks[o] = (Blocks[o] & ~(31L << shift)) | (value << shift);
+                blocks[o] = (blocks[o] & ~(31L << shift)) | (value << shift);
             }
         }
 
@@ -423,7 +423,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 10;
                 int b = index % 10;
                 int shift = b * 6;
-                return ((long)((ulong)Blocks[o] >> shift)) & 63L;
+                return ((long)((ulong)blocks[o] >> shift)) & 63L;
             }
 
             public override void Set(int index, long value)
@@ -431,7 +431,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 10;
                 int b = index % 10;
                 int shift = b * 6;
-                Blocks[o] = (Blocks[o] & ~(63L << shift)) | (value << shift);
+                blocks[o] = (blocks[o] & ~(63L << shift)) | (value << shift);
             }
         }
 
@@ -447,7 +447,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 9;
                 int b = index % 9;
                 int shift = b * 7;
-                return ((long)((ulong)Blocks[o] >> shift)) & 127L;
+                return ((long)((ulong)blocks[o] >> shift)) & 127L;
             }
 
             public override void Set(int index, long value)
@@ -455,7 +455,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 9;
                 int b = index % 9;
                 int shift = b * 7;
-                Blocks[o] = (Blocks[o] & ~(127L << shift)) | (value << shift);
+                blocks[o] = (blocks[o] & ~(127L << shift)) | (value << shift);
             }
         }
 
@@ -471,7 +471,7 @@ namespace Lucene.Net.Util.Packed
                 int o = (int)((uint)index >> 3);
                 int b = index & 7;
                 int shift = b << 3;
-                return ((long)((ulong)Blocks[o] >> shift)) & 255L;
+                return ((long)((ulong)blocks[o] >> shift)) & 255L;
             }
 
             public override void Set(int index, long value)
@@ -479,7 +479,7 @@ namespace Lucene.Net.Util.Packed
                 int o = (int)((uint)index >> 3);
                 int b = index & 7;
                 int shift = b << 3;
-                Blocks[o] = (Blocks[o] & ~(255L << shift)) | (value << shift);
+                blocks[o] = (blocks[o] & ~(255L << shift)) | (value << shift);
             }
         }
 
@@ -495,7 +495,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 7;
                 int b = index % 7;
                 int shift = b * 9;
-                return ((long)((ulong)Blocks[o] >> shift)) & 511L;
+                return ((long)((ulong)blocks[o] >> shift)) & 511L;
             }
 
             public override void Set(int index, long value)
@@ -503,7 +503,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 7;
                 int b = index % 7;
                 int shift = b * 9;
-                Blocks[o] = (Blocks[o] & ~(511L << shift)) | (value << shift);
+                blocks[o] = (blocks[o] & ~(511L << shift)) | (value << shift);
             }
         }
 
@@ -519,7 +519,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 6;
                 int b = index % 6;
                 int shift = b * 10;
-                return ((long)((ulong)Blocks[o] >> shift)) & 1023L;
+                return ((long)((ulong)blocks[o] >> shift)) & 1023L;
             }
 
             public override void Set(int index, long value)
@@ -527,7 +527,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 6;
                 int b = index % 6;
                 int shift = b * 10;
-                Blocks[o] = (Blocks[o] & ~(1023L << shift)) | (value << shift);
+                blocks[o] = (blocks[o] & ~(1023L << shift)) | (value << shift);
             }
         }
 
@@ -543,7 +543,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 5;
                 int b = index % 5;
                 int shift = b * 12;
-                return ((long)((ulong)Blocks[o] >> shift)) & 4095L;
+                return ((long)((ulong)blocks[o] >> shift)) & 4095L;
             }
 
             public override void Set(int index, long value)
@@ -551,7 +551,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 5;
                 int b = index % 5;
                 int shift = b * 12;
-                Blocks[o] = (Blocks[o] & ~(4095L << shift)) | (value << shift);
+                blocks[o] = (blocks[o] & ~(4095L << shift)) | (value << shift);
             }
         }
 
@@ -567,7 +567,7 @@ namespace Lucene.Net.Util.Packed
                 int o = (int)((uint)index >> 2);
                 int b = index & 3;
                 int shift = b << 4;
-                return ((long)((ulong)Blocks[o] >> shift)) & 65535L;
+                return ((long)((ulong)blocks[o] >> shift)) & 65535L;
             }
 
             public override void Set(int index, long value)
@@ -575,7 +575,7 @@ namespace Lucene.Net.Util.Packed
                 int o = (int)((uint)index >> 2);
                 int b = index & 3;
                 int shift = b << 4;
-                Blocks[o] = (Blocks[o] & ~(65535L << shift)) | (value << shift);
+                blocks[o] = (blocks[o] & ~(65535L << shift)) | (value << shift);
             }
         }
 
@@ -591,7 +591,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 3;
                 int b = index % 3;
                 int shift = b * 21;
-                return ((long)((ulong)Blocks[o] >> shift)) & 2097151L;
+                return ((long)((ulong)blocks[o] >> shift)) & 2097151L;
             }
 
             public override void Set(int index, long value)
@@ -599,7 +599,7 @@ namespace Lucene.Net.Util.Packed
                 int o = index / 3;
                 int b = index % 3;
                 int shift = b * 21;
-                Blocks[o] = (Blocks[o] & ~(2097151L << shift)) | (value << shift);
+                blocks[o] = (blocks[o] & ~(2097151L << shift)) | (value << shift);
             }
         }
 
@@ -615,7 +615,7 @@ namespace Lucene.Net.Util.Packed
                 int o = (int)((uint)index >> 1);
                 int b = index & 1;
                 int shift = b << 5;
-                return ((long)((ulong)Blocks[o] >> shift)) & 4294967295L;
+                return ((long)((ulong)blocks[o] >> shift)) & 4294967295L;
             }
 
             public override void Set(int index, long value)
@@ -623,7 +623,7 @@ namespace Lucene.Net.Util.Packed
                 int o = (int)((uint)index >> 1);
                 int b = index & 1;
                 int shift = b << 5;
-                Blocks[o] = (Blocks[o] & ~(4294967295L << shift)) | (value << shift);
+                blocks[o] = (blocks[o] & ~(4294967295L << shift)) | (value << shift);
             }
         }
     }
