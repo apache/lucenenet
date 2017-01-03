@@ -50,7 +50,7 @@ namespace Lucene.Net.Search.Similarities
         /// True if overlap tokens (tokens with a position of increment of zero) are
         /// discounted from the document's length.
         /// </summary>
-        private bool DiscountOverlaps_Renamed = true; // LUCENENET Specific: made private, since it can be get/set through property
+        private bool discountOverlaps = true; // LUCENENET Specific: made private, since it can be get/set through property
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass
@@ -73,11 +73,11 @@ namespace Lucene.Net.Search.Similarities
         {
             set
             {
-                DiscountOverlaps_Renamed = value;
+                discountOverlaps = value;
             }
             get
             {
-                return DiscountOverlaps_Renamed;
+                return discountOverlaps;
             }
         }
 
@@ -245,7 +245,7 @@ namespace Lucene.Net.Search.Similarities
         public override long ComputeNorm(FieldInvertState state)
         {
             float numTerms;
-            if (DiscountOverlaps_Renamed)
+            if (discountOverlaps)
             {
                 numTerms = state.Length - state.NumOverlap;
             }
