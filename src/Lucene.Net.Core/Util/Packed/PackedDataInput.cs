@@ -31,8 +31,8 @@ namespace Lucene.Net.Util.Packed
     public sealed class PackedDataInput
     {
         internal readonly DataInput @in;
-        internal long Current;
-        internal int RemainingBits;
+        internal long current;
+        internal int remainingBits;
 
         /// <summary>
         /// Create a new instance that wraps <code>in</code>.
@@ -52,15 +52,15 @@ namespace Lucene.Net.Util.Packed
             long r = 0;
             while (bitsPerValue > 0)
             {
-                if (RemainingBits == 0)
+                if (remainingBits == 0)
                 {
-                    Current = @in.ReadByte() & 0xFF;
-                    RemainingBits = 8;
+                    current = @in.ReadByte() & 0xFF;
+                    remainingBits = 8;
                 }
-                int bits = Math.Min(bitsPerValue, RemainingBits);
-                r = (r << bits) | (((long)((ulong)Current >> (RemainingBits - bits))) & ((1L << bits) - 1));
+                int bits = Math.Min(bitsPerValue, remainingBits);
+                r = (r << bits) | (((long)((ulong)current >> (remainingBits - bits))) & ((1L << bits) - 1));
                 bitsPerValue -= bits;
-                RemainingBits -= bits;
+                remainingBits -= bits;
             }
             return r;
         }
@@ -71,7 +71,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public void SkipToNextByte()
         {
-            RemainingBits = 0;
+            remainingBits = 0;
         }
     }
 }
