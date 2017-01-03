@@ -152,17 +152,14 @@ namespace Lucene.Net.Search
             return lead.Scorer.Cost();
         }
 
-        public override ICollection<ChildScorer> Children
+        public override ICollection<ChildScorer> GetChildren()
         {
-            get
+            List<ChildScorer> children = new List<ChildScorer>(docsAndFreqs.Length);
+            foreach (DocsAndFreqs docs in docsAndFreqs)
             {
-                List<ChildScorer> children = new List<ChildScorer>(docsAndFreqs.Length);
-                foreach (DocsAndFreqs docs in docsAndFreqs)
-                {
-                    children.Add(new ChildScorer(docs.Scorer, "MUST"));
-                }
-                return children;
+                children.Add(new ChildScorer(docs.Scorer, "MUST"));
             }
+            return children;
         }
 
         internal sealed class DocsAndFreqs

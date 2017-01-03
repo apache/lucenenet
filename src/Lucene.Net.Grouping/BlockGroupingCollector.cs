@@ -132,12 +132,9 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            public override ICollection<ChildScorer> Children
+            public override ICollection<ChildScorer> GetChildren()
             {
-                get
-                {
-                    throw new InvalidOperationException();
-                }
+                throw new InvalidOperationException();
             }
         }
 

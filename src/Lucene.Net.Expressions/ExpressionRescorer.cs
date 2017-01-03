@@ -91,9 +91,9 @@ namespace Lucene.Net.Expressions
                 get { throw new NotSupportedException(); }
             }
 
-            public override ICollection<Scorer.ChildScorer> Children
+            public override ICollection<Scorer.ChildScorer> GetChildren()
             {
-                get { throw new NotSupportedException(); }
+                throw new NotSupportedException();
             }
         }
 

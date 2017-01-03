@@ -194,12 +194,9 @@ namespace Lucene.Net.Queries.Function
                 get { return scorer.Freq; }
             }
 
-            public override ICollection<ChildScorer> Children
+            public override ICollection<ChildScorer> GetChildren()
             {
-                get
-                {
-                    return Collections.Singleton(new ChildScorer(scorer, "CUSTOM"));
-                }
+                return Collections.Singleton(new ChildScorer(scorer, "CUSTOM"));
             }
 
             public Explanation Explain(int doc)

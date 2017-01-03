@@ -109,12 +109,9 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
             }
 
-            public override ICollection<ChildScorer> Children
+            public override ICollection<ChildScorer> GetChildren()
             {
-                get
-                {
-                    throw new System.NotSupportedException();
-                }
+                throw new System.NotSupportedException();
             }
         }
 

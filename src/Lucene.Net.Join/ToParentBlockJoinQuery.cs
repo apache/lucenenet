@@ -220,9 +220,9 @@ namespace Lucene.Net.Join
                 _nextChildDoc = firstChildDoc;
             }
 
-            public override ICollection<ChildScorer> Children
+            public override ICollection<ChildScorer> GetChildren()
             {
-                get { return Collections.Singleton(new ChildScorer(_childScorer, "BLOCK_JOIN")); }
+                return Collections.Singleton(new ChildScorer(_childScorer, "BLOCK_JOIN"));
             }
 
             internal virtual int ChildCount

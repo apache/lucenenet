@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
         /// is called the first time, or when called from within
         /// <seealso cref="ICollector#collect"/>.
         /// </summary>
-        public abstract float Score(); // LUCENENET NOTE: Often makes a calculation, so not a good candidate for a property, change to GetScore() to make this more clear
+        public abstract float Score(); // LUCENENET TODO: Often makes a calculation, so not a good candidate for a property, change to GetScore() to make this more clear
 
         /// <summary>
         /// returns parent Weight
@@ -78,12 +78,9 @@ namespace Lucene.Net.Search
         /// Returns child sub-scorers
         /// @lucene.experimental
         /// </summary>
-        public virtual ICollection<ChildScorer> Children // LUCENENET TODO: Make GetChildren() (conversion) (check consistency across API)
+        public virtual ICollection<ChildScorer> GetChildren()
         {
-            get
-            {
-                return new List<ChildScorer>();
-            }
+            return new List<ChildScorer>();
         }
 
         /// <summary>

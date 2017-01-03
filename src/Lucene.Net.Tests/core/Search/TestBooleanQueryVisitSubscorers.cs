@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    foreach (ChildScorer child in scorer.Children)
+                    foreach (ChildScorer child in scorer.GetChildren())
                     {
                         FillLeaves(child.Child, set);
                     }

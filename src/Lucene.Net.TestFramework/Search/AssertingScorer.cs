@@ -108,16 +108,13 @@ namespace Lucene.Net.Search
             return score;
         }
 
-        public override ICollection<ChildScorer> Children
+        public override ICollection<ChildScorer> GetChildren()
         {
-            get
-            {
-                // We cannot hide that we hold a single child, else
-                // collectors (e.g. ToParentBlockJoinCollector) that
-                // need to walk the scorer tree will miss/skip the
-                // Scorer we wrap:
-                return new List<ChildScorer>() { new ChildScorer(@in, "SHOULD") };
-            }
+            // We cannot hide that we hold a single child, else
+            // collectors (e.g. ToParentBlockJoinCollector) that
+            // need to walk the scorer tree will miss/skip the
+            // Scorer we wrap:
+            return new List<ChildScorer>() { new ChildScorer(@in, "SHOULD") };
         }
 
         public override int Freq

@@ -362,22 +362,19 @@ namespace Lucene.Net.Search
                 return docIdSetIterator.Cost();
             }
 
-            public override ICollection<ChildScorer> Children
+            public override ICollection<ChildScorer> GetChildren()
             {
-                get
+                if (outerInstance.m_query != null)
                 {
-                    if (outerInstance.m_query != null)
-                    {
-                        //LUCENE TO-DO
-                        //return Collections.singletonList(new ChildScorer((Scorer)DocIdSetIterator, "constant"));
-                        return new[] { new ChildScorer((Scorer)docIdSetIterator, "constant") };
-                    }
-                    else
-                    {
-                        //LUCENE TO-DO
-                        return new List<ChildScorer>();
-                        //return Collections.emptyList();
-                    }
+                    //LUCENE TO-DO
+                    //return Collections.singletonList(new ChildScorer((Scorer)DocIdSetIterator, "constant"));
+                    return new[] { new ChildScorer((Scorer)docIdSetIterator, "constant") };
+                }
+                else
+                {
+                    //LUCENE TO-DO
+                    return new List<ChildScorer>();
+                    //return Collections.emptyList();
                 }
             }
         }

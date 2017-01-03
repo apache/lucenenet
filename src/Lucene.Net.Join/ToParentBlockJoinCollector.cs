@@ -376,7 +376,7 @@ namespace Lucene.Net.Join
                     Enroll((ToParentBlockJoinQuery)scorer.Weight.Query, (ToParentBlockJoinQuery.BlockJoinScorer)scorer);
                 }
 
-                foreach (Scorer.ChildScorer sub in scorer.Children)
+                foreach (Scorer.ChildScorer sub in scorer.GetChildren())
                 {
                     //System.out.println("  add sub: " + sub.child + "; " + sub.child.getWeight().getQuery());
                     queue2.Enqueue(sub.Child);

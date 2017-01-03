@@ -46,7 +46,7 @@ namespace Lucene.Net.Facet
             while (upto < allScorers.Count)
             {
                 scorer = allScorers[upto++];
-                foreach (ChildScorer sub in scorer.Children)
+                foreach (ChildScorer sub in scorer.GetChildren())
                 {
                     allScorers.Add(sub.Child);
                 }

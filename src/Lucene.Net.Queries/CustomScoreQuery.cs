@@ -372,9 +372,9 @@ namespace Lucene.Net.Queries
                 get { return subQueryScorer.Freq; }
             }
 
-            public override ICollection<ChildScorer> Children
+            public override ICollection<ChildScorer> GetChildren()
             {
-                get { return Collections.Singleton(new ChildScorer(subQueryScorer, "CUSTOM")); }
+                return Collections.Singleton(new ChildScorer(subQueryScorer, "CUSTOM"));
             }
 
             public override int Advance(int target)

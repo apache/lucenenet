@@ -68,9 +68,9 @@ namespace Lucene.Net.Join
             get { throw new NotSupportedException(); }
         }
 
-        public override ICollection<ChildScorer> Children
+        public override ICollection<ChildScorer> GetChildren()
         {
-            get { throw new NotSupportedException(); }
+            throw new NotSupportedException();
         }
     }
 }

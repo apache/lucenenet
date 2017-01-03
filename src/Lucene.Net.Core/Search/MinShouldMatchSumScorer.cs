@@ -144,17 +144,14 @@ namespace Lucene.Net.Search
         {
         }
 
-        public override sealed ICollection<ChildScorer> Children
+        public override sealed ICollection<ChildScorer> GetChildren()
         {
-            get
+            List<ChildScorer> children = new List<ChildScorer>(numScorers);
+            for (int i = 0; i < numScorers; i++)
             {
-                List<ChildScorer> children = new List<ChildScorer>(numScorers);
-                for (int i = 0; i < numScorers; i++)
-                {
-                    children.Add(new ChildScorer(subScorers[i], "SHOULD"));
-                }
-                return children;
+                children.Add(new ChildScorer(subScorers[i], "SHOULD"));
             }
+            return children;
         }
 
         public override int NextDoc()

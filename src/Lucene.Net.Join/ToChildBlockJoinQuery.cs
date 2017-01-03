@@ -173,9 +173,9 @@ namespace Lucene.Net.Join
                 _acceptDocs = acceptDocs;
             }
 
-            public override ICollection<ChildScorer> Children
+            public override ICollection<ChildScorer> GetChildren()
             {
-                get { return Collections.Singleton(new ChildScorer(_parentScorer, "BLOCK_JOIN")); }
+                return Collections.Singleton(new ChildScorer(_parentScorer, "BLOCK_JOIN"));
             }
             
             public override int NextDoc()

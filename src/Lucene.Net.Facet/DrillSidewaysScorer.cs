@@ -762,12 +762,9 @@ namespace Lucene.Net.Facet
                 return outerInstance.baseScorer.Cost();
             }
 
-            public override ICollection<ChildScorer> Children
+            public override ICollection<ChildScorer> GetChildren()
             {
-                get
-                {
-                    return new[] { new Scorer.ChildScorer(outerInstance.baseScorer, "MUST") };
-                }
+                return new[] { new Scorer.ChildScorer(outerInstance.baseScorer, "MUST") };
             }
 
             public override Weight Weight

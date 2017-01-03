@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
 
             public virtual void SetSubScorers(Scorer scorer, string relationship)
             {
-                foreach (ChildScorer child in scorer.Children)
+                foreach (ChildScorer child in scorer.GetChildren())
                 {
                     if (scorer is AssertingScorer || Relationships.Contains(child.Relationship))
                     {

@@ -234,12 +234,9 @@ namespace Lucene.Net.Search
                 get { return scorer.Freq; }
             }
 
-            public override ICollection<ChildScorer> Children
+            public override ICollection<ChildScorer> GetChildren()
             {
-                get
-                {
-                    return new[] { new ChildScorer(scorer, "FILTERED") };
-                }
+                return new[] { new ChildScorer(scorer, "FILTERED") };
             }
 
             public override long Cost()
@@ -365,12 +362,9 @@ namespace Lucene.Net.Search
                 get { return scorer.Freq; }
             }
 
-            public override sealed ICollection<ChildScorer> Children
+            public override sealed ICollection<ChildScorer> GetChildren()
             {
-                get
-                {
-                    return new[] { new ChildScorer(scorer, "FILTERED") };
-                }
+                return new[] { new ChildScorer(scorer, "FILTERED") };
             }
 
             public override long Cost()

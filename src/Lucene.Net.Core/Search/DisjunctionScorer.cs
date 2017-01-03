@@ -121,17 +121,14 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override sealed ICollection<ChildScorer> Children
+        public override sealed ICollection<ChildScorer> GetChildren()
         {
-            get
+            List<ChildScorer> children = new List<ChildScorer>(m_numScorers);
+            for (int i = 0; i < m_numScorers; i++)
             {
-                List<ChildScorer> children = new List<ChildScorer>(m_numScorers);
-                for (int i = 0; i < m_numScorers; i++)
-                {
-                    children.Add(new ChildScorer(m_subScorers[i], "SHOULD"));
-                }
-                return children;
+                children.Add(new ChildScorer(m_subScorers[i], "SHOULD"));
             }
+            return children;
         }
 
         public override long Cost()

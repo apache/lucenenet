@@ -369,25 +369,22 @@ namespace Lucene.Net.Search
             return countingSumScorer.Cost();
         }
 
-        public override ICollection<ChildScorer> Children
+        public override ICollection<ChildScorer> GetChildren()
         {
-            get
+            List<ChildScorer> children = new List<ChildScorer>();
+            foreach (Scorer s in optionalScorers)
             {
-                List<ChildScorer> children = new List<ChildScorer>();
-                foreach (Scorer s in optionalScorers)
-                {
-                    children.Add(new ChildScorer(s, "SHOULD"));
-                }
-                foreach (Scorer s in prohibitedScorers)
-                {
-                    children.Add(new ChildScorer(s, "MUST_NOT"));
-                }
-                foreach (Scorer s in requiredScorers)
-                {
-                    children.Add(new ChildScorer(s, "MUST"));
-                }
-                return children;
+                children.Add(new ChildScorer(s, "SHOULD"));
             }
+            foreach (Scorer s in prohibitedScorers)
+            {
+                children.Add(new ChildScorer(s, "MUST_NOT"));
+            }
+            foreach (Scorer s in requiredScorers)
+            {
+                children.Add(new ChildScorer(s, "MUST"));
+            }
+            return children;
         }
     }
 }
