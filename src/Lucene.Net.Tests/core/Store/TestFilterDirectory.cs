@@ -32,15 +32,19 @@ namespace Lucene.Net.Store
         {
             // verify that all methods of Directory are overridden by FilterDirectory,
             // except those under the 'exclude' list
-            HashSet<MethodInfo> exclude = new HashSet<MethodInfo>();
-            exclude.Add(typeof(Directory).GetMethod("Copy", new Type[] { typeof(Directory), typeof(string), typeof(string), typeof(IOContext) }));
-            exclude.Add(typeof(Directory).GetMethod("CreateSlicer", new Type[] { typeof(string), typeof(IOContext) }));
-            exclude.Add(typeof(Directory).GetMethod("OpenChecksumInput", new Type[] { typeof(string), typeof(IOContext) }));
+
+            // LUCENENET specific - using string here because MethodInfo.GetHashCode() returns a different
+            // value even if the signature is the same. The string seems to be a reasonable way to check 
+            // equality between method signatures.
+            HashSet<string> exclude = new HashSet<string>();
+            exclude.Add(typeof(Directory).GetMethod("Copy", new Type[] { typeof(Directory), typeof(string), typeof(string), typeof(IOContext) }).ToString());
+            exclude.Add(typeof(Directory).GetMethod("CreateSlicer", new Type[] { typeof(string), typeof(IOContext) }).ToString());
+            exclude.Add(typeof(Directory).GetMethod("OpenChecksumInput", new Type[] { typeof(string), typeof(IOContext) }).ToString());
             foreach (MethodInfo m in typeof(FilterDirectory).GetMethods())
             {
                 if (m.DeclaringType == typeof(Directory))
                 {
-                    Assert.IsTrue(exclude.Contains(m), "method " + m.Name + " not overridden!");
+                    Assert.IsTrue(exclude.Contains(m.ToString()), "method " + m.Name + " not overridden!");
                 }
             }
         }
