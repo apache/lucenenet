@@ -30,8 +30,8 @@ namespace Lucene.Net.Util.Packed
     public sealed class PackedDataOutput
     {
         internal readonly DataOutput @out;
-        internal long Current;
-        internal int RemainingBits;
+        internal long current;
+        internal int remainingBits;
 
         /// <summary>
         /// Create a new instance that wraps <code>out</code>.
@@ -39,8 +39,8 @@ namespace Lucene.Net.Util.Packed
         public PackedDataOutput(DataOutput @out)
         {
             this.@out = @out;
-            Current = 0;
-            RemainingBits = 8;
+            current = 0;
+            remainingBits = 8;
         }
 
         /// <summary>
@@ -51,16 +51,16 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(bitsPerValue == 64 || (value >= 0 && value <= PackedInts.MaxValue(bitsPerValue)));
             while (bitsPerValue > 0)
             {
-                if (RemainingBits == 0)
+                if (remainingBits == 0)
                 {
-                    @out.WriteByte((byte)(sbyte)Current);
-                    Current = 0L;
-                    RemainingBits = 8;
+                    @out.WriteByte((byte)(sbyte)current);
+                    current = 0L;
+                    remainingBits = 8;
                 }
-                int bits = Math.Min(RemainingBits, bitsPerValue);
-                Current = Current | ((((long)((ulong)value >> (bitsPerValue - bits))) & ((1L << bits) - 1)) << (RemainingBits - bits));
+                int bits = Math.Min(remainingBits, bitsPerValue);
+                current = current | ((((long)((ulong)value >> (bitsPerValue - bits))) & ((1L << bits) - 1)) << (remainingBits - bits));
                 bitsPerValue -= bits;
-                RemainingBits -= bits;
+                remainingBits -= bits;
             }
         }
 
@@ -69,12 +69,12 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public void Flush()
         {
-            if (RemainingBits < 8)
+            if (remainingBits < 8)
             {
-                @out.WriteByte((byte)(sbyte)Current);
+                @out.WriteByte((byte)(sbyte)current);
             }
-            RemainingBits = 8;
-            Current = 0L;
+            remainingBits = 8;
+            current = 0L;
         }
     }
 }
