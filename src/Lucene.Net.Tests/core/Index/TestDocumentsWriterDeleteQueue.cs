@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
         public virtual void TestPartiallyAppliedGlobalSlice()
         {
             DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
-            System.Reflection.FieldInfo field = typeof(DocumentsWriterDeleteQueue).GetField("GlobalBufferLock", 
+            System.Reflection.FieldInfo field = typeof(DocumentsWriterDeleteQueue).GetField("globalBufferLock", 
                 BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.Instance);
             ReentrantLock @lock = (ReentrantLock)field.GetValue(queue);
             @lock.Lock();
