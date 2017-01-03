@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
         {
             this.Calendar = new GregorianCalendar().ToDateTime(1970, 1, 1, 0, 0, 0, (int)TestUtil.NextLong(random, 0, long.MaxValue));
             this.Random = random;
-            maxMergeSize = TestUtil.NextInt(random, 1024 * 1024, int.MaxValue);
+            m_maxMergeSize = TestUtil.NextInt(random, 1024 * 1024, int.MaxValue);
         }
 
         protected override long Size(SegmentCommitInfo info)
