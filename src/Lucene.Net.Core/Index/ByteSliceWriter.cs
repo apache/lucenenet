@@ -30,15 +30,15 @@ namespace Lucene.Net.Index
 
     internal sealed class ByteSliceWriter : DataOutput
     {
-        private byte[] Slice;
-        private int Upto;
-        private readonly ByteBlockPool Pool;
+        private byte[] slice;
+        private int upto;
+        private readonly ByteBlockPool pool;
 
-        internal int Offset0;
+        internal int offset0;
 
         public ByteSliceWriter(ByteBlockPool pool)
         {
-            this.Pool = pool;
+            this.pool = pool;
         }
 
         /// <summary>
@@ -46,27 +46,27 @@ namespace Lucene.Net.Index
         /// </summary>
         public void Init(int address)
         {
-            Slice = Pool.buffers[address >> ByteBlockPool.BYTE_BLOCK_SHIFT];
-            Debug.Assert(Slice != null);
-            Upto = address & ByteBlockPool.BYTE_BLOCK_MASK;
-            Offset0 = address;
-            Debug.Assert(Upto < Slice.Length);
+            slice = pool.buffers[address >> ByteBlockPool.BYTE_BLOCK_SHIFT];
+            Debug.Assert(slice != null);
+            upto = address & ByteBlockPool.BYTE_BLOCK_MASK;
+            offset0 = address;
+            Debug.Assert(upto < slice.Length);
         }
 
         /// <summary>
         /// Write byte into byte slice stream </summary>
         public override void WriteByte(byte b)
         {
-            Debug.Assert(Slice != null);
-            if (Slice[Upto] != 0)
+            Debug.Assert(slice != null);
+            if (slice[upto] != 0)
             {
-                Upto = Pool.AllocSlice(Slice, Upto);
-                Slice = Pool.Buffer;
-                Offset0 = Pool.ByteOffset;
-                Debug.Assert(Slice != null);
+                upto = pool.AllocSlice(slice, upto);
+                slice = pool.Buffer;
+                offset0 = pool.ByteOffset;
+                Debug.Assert(slice != null);
             }
-            Slice[Upto++] = (byte)b;
-            Debug.Assert(Upto != Slice.Length);
+            slice[upto++] = (byte)b;
+            Debug.Assert(upto != slice.Length);
         }
 
         public override void WriteBytes(byte[] b, int offset, int len)
@@ -74,16 +74,16 @@ namespace Lucene.Net.Index
             int offsetEnd = offset + len;
             while (offset < offsetEnd)
             {
-                if (Slice[Upto] != 0)
+                if (slice[upto] != 0)
                 {
                     // End marker
-                    Upto = Pool.AllocSlice(Slice, Upto);
-                    Slice = Pool.Buffer;
-                    Offset0 = Pool.ByteOffset;
+                    upto = pool.AllocSlice(slice, upto);
+                    slice = pool.Buffer;
+                    offset0 = pool.ByteOffset;
                 }
 
-                Slice[Upto++] = (byte)b[offset++];
-                Debug.Assert(Upto != Slice.Length);
+                slice[upto++] = (byte)b[offset++];
+                Debug.Assert(upto != slice.Length);
             }
         }
 
@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return Upto + (Offset0 & DocumentsWriterPerThread.BYTE_BLOCK_NOT_MASK);
+                return upto + (offset0 & DocumentsWriterPerThread.BYTE_BLOCK_NOT_MASK);
             }
         }
     }
