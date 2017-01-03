@@ -46,8 +46,8 @@ namespace Lucene.Net.Index
             foreach (KeyValuePair<string, DocFieldConsumerPerField> fieldToFlush in fieldsToFlush)
             {
                 DocInverterPerField perField = (DocInverterPerField)fieldToFlush.Value;
-                childFieldsToFlush[fieldToFlush.Key] = perField.Consumer;
-                endChildFieldsToFlush[fieldToFlush.Key] = perField.EndConsumer;
+                childFieldsToFlush[fieldToFlush.Key] = perField.consumer;
+                endChildFieldsToFlush[fieldToFlush.Key] = perField.endConsumer;
             }
 
             consumer.Flush(childFieldsToFlush, state);

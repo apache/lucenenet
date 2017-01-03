@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
             DocState = termsHash.DocState;
             this.TermsHash = termsHash;
             BytesUsed = termsHash.BytesUsed;
-            FieldState = docInverterPerField.FieldState;
+            FieldState = docInverterPerField.fieldState;
             this.Consumer = termsHash.Consumer.AddField(this, fieldInfo);
             PostingsBytesStartArray byteStarts = new PostingsBytesStartArray(this, BytesUsed);
             BytesHash = new BytesRefHash(TermBytePool, HASH_INIT_SIZE, byteStarts);

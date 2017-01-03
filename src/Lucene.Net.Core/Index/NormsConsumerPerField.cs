@@ -33,8 +33,8 @@ namespace Lucene.Net.Index
         public NormsConsumerPerField(DocInverterPerField docInverterPerField, FieldInfo fieldInfo, NormsConsumer parent)
         {
             this.fieldInfo = fieldInfo;
-            docState = docInverterPerField.DocState;
-            fieldState = docInverterPerField.FieldState;
+            docState = docInverterPerField.docState;
+            fieldState = docInverterPerField.fieldState;
             similarity = docState.Similarity;
         }
 

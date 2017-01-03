@@ -33,37 +33,37 @@ namespace Lucene.Net.Index
     internal sealed class DocInverterPerField : DocFieldConsumerPerField
     {
         internal readonly FieldInfo fieldInfo;
-        internal readonly InvertedDocConsumerPerField Consumer;
-        internal readonly InvertedDocEndConsumerPerField EndConsumer;
-        internal readonly DocumentsWriterPerThread.DocState DocState;
-        internal readonly FieldInvertState FieldState;
+        internal readonly InvertedDocConsumerPerField consumer;
+        internal readonly InvertedDocEndConsumerPerField endConsumer;
+        internal readonly DocumentsWriterPerThread.DocState docState;
+        internal readonly FieldInvertState fieldState;
 
         public DocInverterPerField(DocInverter parent, FieldInfo fieldInfo)
         {
             this.fieldInfo = fieldInfo;
-            DocState = parent.docState;
-            FieldState = new FieldInvertState(fieldInfo.Name);
-            this.Consumer = parent.consumer.AddField(this, fieldInfo);
-            this.EndConsumer = parent.endConsumer.AddField(this, fieldInfo);
+            docState = parent.docState;
+            fieldState = new FieldInvertState(fieldInfo.Name);
+            this.consumer = parent.consumer.AddField(this, fieldInfo);
+            this.endConsumer = parent.endConsumer.AddField(this, fieldInfo);
         }
 
         internal override void Abort()
         {
             try
             {
-                Consumer.Abort();
+                consumer.Abort();
             }
             finally
             {
-                EndConsumer.Abort();
+                endConsumer.Abort();
             }
         }
 
         public override void ProcessFields(IIndexableField[] fields, int count)
         {
-            FieldState.Reset();
+            fieldState.Reset();
 
-            bool doInvert = Consumer.Start(fields, count);
+            bool doInvert = consumer.Start(fields, count);
 
             for (int i = 0; i < count; i++)
             {
@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
                 // tokenized.
                 if (fieldType.IsIndexed && doInvert)
                 {
-                    bool analyzed = fieldType.IsTokenized && DocState.Analyzer != null;
+                    bool analyzed = fieldType.IsTokenized && docState.Analyzer != null;
 
                     // if the field omits norms, the boost cannot be indexed.
                     if (fieldType.OmitNorms && field.Boost != 1.0f)
@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
 
                     if (i > 0)
                     {
-                        FieldState.Position += analyzed ? DocState.Analyzer.GetPositionIncrementGap(fieldInfo.Name) : 0;
+                        fieldState.Position += analyzed ? docState.Analyzer.GetPositionIncrementGap(fieldInfo.Name) : 0;
                     }
 
                     /*
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
 
                     bool succeededInProcessingField = false;
 
-                    TokenStream stream = field.GetTokenStream(DocState.Analyzer);
+                    TokenStream stream = field.GetTokenStream(docState.Analyzer);
                     // reset the TokenStream to the first token
                     stream.Reset();
 
@@ -109,14 +109,14 @@ namespace Lucene.Net.Index
                     {
                         bool hasMoreTokens = stream.IncrementToken();
 
-                        FieldState.AttributeSource = stream;
+                        fieldState.AttributeSource = stream;
 
-                        IOffsetAttribute offsetAttribute = FieldState.AttributeSource.AddAttribute<IOffsetAttribute>();
-                        IPositionIncrementAttribute posIncrAttribute = FieldState.AttributeSource.AddAttribute<IPositionIncrementAttribute>();
+                        IOffsetAttribute offsetAttribute = fieldState.AttributeSource.AddAttribute<IOffsetAttribute>();
+                        IPositionIncrementAttribute posIncrAttribute = fieldState.AttributeSource.AddAttribute<IPositionIncrementAttribute>();
 
                         if (hasMoreTokens)
                         {
-                            Consumer.Start(field);
+                            consumer.Start(field);
 
                             do
                             {
@@ -132,11 +132,11 @@ namespace Lucene.Net.Index
                                 {
                                     throw new System.ArgumentException("position increment must be >=0 (got " + posIncr + ") for field '" + field.Name + "'");
                                 }
-                                if (FieldState.Position == 0 && posIncr == 0)
+                                if (fieldState.Position == 0 && posIncr == 0)
                                 {
                                     throw new System.ArgumentException("first position increment must be > 0 (got 0) for field '" + field.Name + "'");
                                 }
-                                int position = FieldState.Position + posIncr;
+                                int position = fieldState.Position + posIncr;
                                 if (position > 0)
                                 {
                                     // NOTE: confusing: this "mirrors" the
@@ -150,17 +150,17 @@ namespace Lucene.Net.Index
 
                                 // position is legal, we can safely place it in fieldState now.
                                 // not sure if anything will use fieldState after non-aborting exc...
-                                FieldState.Position = position;
+                                fieldState.Position = position;
 
                                 if (posIncr == 0)
                                 {
-                                    FieldState.NumOverlap++;
+                                    fieldState.NumOverlap++;
                                 }
 
                                 if (checkOffsets)
                                 {
-                                    int startOffset = FieldState.Offset + offsetAttribute.StartOffset;
-                                    int endOffset = FieldState.Offset + offsetAttribute.EndOffset;
+                                    int startOffset = fieldState.Offset + offsetAttribute.StartOffset;
+                                    int endOffset = fieldState.Offset + offsetAttribute.EndOffset;
                                     if (startOffset < 0 || endOffset < startOffset)
                                     {
                                         throw new System.ArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, " + "startOffset=" + startOffset + ",endOffset=" + endOffset + " for field '" + field.Name + "'");
@@ -181,35 +181,35 @@ namespace Lucene.Net.Index
                                     // internal state of the consumer is now
                                     // corrupt and should not be flushed to a
                                     // new segment:
-                                    Consumer.Add();
+                                    consumer.Add();
                                     success = true;
                                 }
                                 finally
                                 {
                                     if (!success)
                                     {
-                                        DocState.DocWriter.SetAborting();
+                                        docState.DocWriter.SetAborting();
                                     }
                                 }
-                                FieldState.Length++;
-                                FieldState.Position++;
+                                fieldState.Length++;
+                                fieldState.Position++;
                             } while (stream.IncrementToken());
                         }
                         // trigger streams to perform end-of-stream operations
                         stream.End();
                         // TODO: maybe add some safety? then again, its already checked
                         // when we come back around to the field...
-                        FieldState.Position += posIncrAttribute.PositionIncrement;
-                        FieldState.Offset += offsetAttribute.EndOffset;
+                        fieldState.Position += posIncrAttribute.PositionIncrement;
+                        fieldState.Offset += offsetAttribute.EndOffset;
 
-                        if (DocState.MaxTermPrefix != null)
+                        if (docState.MaxTermPrefix != null)
                         {
-                            string msg = "Document contains at least one immense term in field=\"" + fieldInfo.Name + "\" (whose UTF8 encoding is longer than the max length " + DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8 + "), all of which were skipped.  Please correct the analyzer to not produce such terms.  The prefix of the first immense term is: '" + DocState.MaxTermPrefix + "...'";
-                            if (DocState.InfoStream.IsEnabled("IW"))
+                            string msg = "Document contains at least one immense term in field=\"" + fieldInfo.Name + "\" (whose UTF8 encoding is longer than the max length " + DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8 + "), all of which were skipped.  Please correct the analyzer to not produce such terms.  The prefix of the first immense term is: '" + docState.MaxTermPrefix + "...'";
+                            if (docState.InfoStream.IsEnabled("IW"))
                             {
-                                DocState.InfoStream.Message("IW", "ERROR: " + msg);
+                                docState.InfoStream.Message("IW", "ERROR: " + msg);
                             }
-                            DocState.MaxTermPrefix = null;
+                            docState.MaxTermPrefix = null;
                             throw new System.ArgumentException(msg);
                         }
 
@@ -226,14 +226,14 @@ namespace Lucene.Net.Index
                         {
                             stream.Dispose();
                         }
-                        if (!succeededInProcessingField && DocState.InfoStream.IsEnabled("DW"))
+                        if (!succeededInProcessingField && docState.InfoStream.IsEnabled("DW"))
                         {
-                            DocState.InfoStream.Message("DW", "An exception was thrown while processing field " + fieldInfo.Name);
+                            docState.InfoStream.Message("DW", "An exception was thrown while processing field " + fieldInfo.Name);
                         }
                     }
 
-                    FieldState.Offset += analyzed ? DocState.Analyzer.GetOffsetGap(fieldInfo.Name) : 0;
-                    FieldState.Boost *= field.Boost;
+                    fieldState.Offset += analyzed ? docState.Analyzer.GetOffsetGap(fieldInfo.Name) : 0;
+                    fieldState.Boost *= field.Boost;
                 }
 
                 // LUCENE-2387: don't hang onto the field, so GC can
@@ -241,8 +241,8 @@ namespace Lucene.Net.Index
                 fields[i] = null;
             }
 
-            Consumer.Finish();
-            EndConsumer.Finish();
+            consumer.Finish();
+            endConsumer.Finish();
         }
 
         internal override FieldInfo FieldInfo
