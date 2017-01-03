@@ -26,56 +26,56 @@ namespace Lucene.Net.Util
     /// </summary>
     internal sealed class ArrayTimSorter<T> : TimSorter
     {
-        private readonly IComparer<T> Comparator;
-        private readonly T[] Arr;
-        private readonly T[] Tmp;
+        private readonly IComparer<T> comparator;
+        private readonly T[] arr;
+        private readonly T[] tmp;
 
         /// <summary>
         /// Create a new <seealso cref="ArrayTimSorter"/>. </summary>
         public ArrayTimSorter(T[] arr, IComparer<T> comparator, int maxTempSlots)
             : base(maxTempSlots)
         {
-            this.Arr = arr;
-            this.Comparator = comparator;
+            this.arr = arr;
+            this.comparator = comparator;
             if (maxTempSlots > 0)
             {
                 T[] tmp = new T[maxTempSlots];
-                this.Tmp = tmp;
+                this.tmp = tmp;
             }
             else
             {
-                this.Tmp = null;
+                this.tmp = null;
             }
         }
 
         protected override int Compare(int i, int j)
         {
-            return Comparator.Compare(Arr[i], Arr[j]);
+            return comparator.Compare(arr[i], arr[j]);
         }
 
         protected override void Swap(int i, int j)
         {
-            ArrayUtil.Swap(Arr, i, j);
+            ArrayUtil.Swap(arr, i, j);
         }
 
         protected override void Copy(int src, int dest)
         {
-            Arr[dest] = Arr[src];
+            arr[dest] = arr[src];
         }
 
         protected override void Save(int start, int len)
         {
-            Array.Copy(Arr, start, Tmp, 0, len);
+            Array.Copy(arr, start, tmp, 0, len);
         }
 
         protected override void Restore(int src, int dest)
         {
-            Arr[dest] = Tmp[src];
+            arr[dest] = tmp[src];
         }
 
         protected override int CompareSaved(int i, int j)
         {
-            return Comparator.Compare(Tmp[i], Arr[j]);
+            return comparator.Compare(tmp[i], arr[j]);
         }
     }
 }
