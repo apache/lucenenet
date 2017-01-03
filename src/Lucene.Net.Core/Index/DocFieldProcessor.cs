@@ -37,33 +37,33 @@ namespace Lucene.Net.Index
 
     internal sealed class DocFieldProcessor : DocConsumer
     {
-        internal readonly DocFieldConsumer Consumer;
-        internal readonly StoredFieldsConsumer StoredConsumer;
-        internal readonly Codec Codec;
+        internal readonly DocFieldConsumer consumer;
+        internal readonly StoredFieldsConsumer storedConsumer;
+        internal readonly Codec codec;
 
         // Holds all fields seen in current doc
         internal DocFieldProcessorPerField[] fields = new DocFieldProcessorPerField[1];
 
-        internal int FieldCount;
+        internal int fieldCount;
 
         // Hash table for all fields ever seen
-        internal DocFieldProcessorPerField[] FieldHash = new DocFieldProcessorPerField[2];
+        internal DocFieldProcessorPerField[] fieldHash = new DocFieldProcessorPerField[2];
 
-        internal int HashMask = 1;
-        internal int TotalFieldCount;
+        internal int hashMask = 1;
+        internal int totalFieldCount;
 
-        internal int FieldGen;
-        internal readonly DocumentsWriterPerThread.DocState DocState;
+        internal int fieldGen;
+        internal readonly DocumentsWriterPerThread.DocState docState;
 
-        internal readonly Counter BytesUsed;
+        internal readonly Counter bytesUsed;
 
         public DocFieldProcessor(DocumentsWriterPerThread docWriter, DocFieldConsumer consumer, StoredFieldsConsumer storedConsumer)
         {
-            this.DocState = docWriter.docState;
-            this.Codec = docWriter.Codec;
-            this.BytesUsed = docWriter.bytesUsed;
-            this.Consumer = consumer;
-            this.StoredConsumer = storedConsumer;
+            this.docState = docWriter.docState;
+            this.codec = docWriter.Codec;
+            this.bytesUsed = docWriter.bytesUsed;
+            this.consumer = consumer;
+            this.storedConsumer = storedConsumer;
         }
 
         public override void Flush(SegmentWriteState state)
@@ -75,16 +75,16 @@ namespace Lucene.Net.Index
                 childFields[f.FieldInfo.Name] = f;
             }
 
-            Debug.Assert(fields.Count == TotalFieldCount);
+            Debug.Assert(fields.Count == totalFieldCount);
 
-            StoredConsumer.Flush(state);
-            Consumer.Flush(childFields, state);
+            storedConsumer.Flush(state);
+            consumer.Flush(childFields, state);
 
             // Important to save after asking consumer to flush so
             // consumer can alter the FieldInfo* if necessary.  EG,
             // FreqProxTermsWriter does this with
             // FieldInfo.storePayload.
-            FieldInfosWriter infosWriter = Codec.FieldInfosFormat.FieldInfosWriter;
+            FieldInfosWriter infosWriter = codec.FieldInfosFormat.FieldInfosWriter;
             infosWriter.Write(state.Directory, state.SegmentInfo.Name, "", state.FieldInfos, IOContext.DEFAULT);
         }
 
@@ -92,7 +92,7 @@ namespace Lucene.Net.Index
         {
             Exception th = null;
 
-            foreach (DocFieldProcessorPerField field in FieldHash)
+            foreach (DocFieldProcessorPerField field in fieldHash)
             {
                 DocFieldProcessorPerField fieldNext = field;
                 while (fieldNext != null)
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                StoredConsumer.Abort();
+                storedConsumer.Abort();
             }
             catch (Exception t)
             {
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                Consumer.Abort();
+                consumer.Abort();
             }
             catch (Exception t)
             {
@@ -152,31 +152,31 @@ namespace Lucene.Net.Index
         public ICollection<DocFieldConsumerPerField> Fields()
         {
             ICollection<DocFieldConsumerPerField> fields = new HashSet<DocFieldConsumerPerField>();
-            for (int i = 0; i < FieldHash.Length; i++)
+            for (int i = 0; i < fieldHash.Length; i++)
             {
-                DocFieldProcessorPerField field = FieldHash[i];
+                DocFieldProcessorPerField field = fieldHash[i];
                 while (field != null)
                 {
                     fields.Add(field.Consumer);
                     field = field.Next;
                 }
             }
-            Debug.Assert(fields.Count == TotalFieldCount);
+            Debug.Assert(fields.Count == totalFieldCount);
             return fields;
         }
 
         private void Rehash()
         {
-            int newHashSize = (FieldHash.Length * 2);
-            Debug.Assert(newHashSize > FieldHash.Length);
+            int newHashSize = (fieldHash.Length * 2);
+            Debug.Assert(newHashSize > fieldHash.Length);
 
             DocFieldProcessorPerField[] newHashArray = new DocFieldProcessorPerField[newHashSize];
 
             // Rehash
             int newHashMask = newHashSize - 1;
-            for (int j = 0; j < FieldHash.Length; j++)
+            for (int j = 0; j < fieldHash.Length; j++)
             {
-                DocFieldProcessorPerField fp0 = FieldHash[j];
+                DocFieldProcessorPerField fp0 = fieldHash[j];
                 while (fp0 != null)
                 {
                     int hashPos2 = fp0.FieldInfo.Name.GetHashCode() & newHashMask;
@@ -187,31 +187,31 @@ namespace Lucene.Net.Index
                 }
             }
 
-            FieldHash = newHashArray;
-            HashMask = newHashMask;
+            fieldHash = newHashArray;
+            hashMask = newHashMask;
         }
 
         public override void ProcessDocument(FieldInfos.Builder fieldInfos)
         {
-            Consumer.StartDocument();
-            StoredConsumer.StartDocument();
+            consumer.StartDocument();
+            storedConsumer.StartDocument();
 
-            FieldCount = 0;
+            fieldCount = 0;
 
-            int thisFieldGen = FieldGen++;
+            int thisFieldGen = fieldGen++;
 
             // Absorb any new fields first seen in this document.
             // Also absorb any changes to fields we had already
             // seen before (eg suddenly turning on norms or
             // vectors, etc.):
 
-            foreach (IIndexableField field in DocState.Doc)
+            foreach (IIndexableField field in docState.Doc)
             {
                 string fieldName = field.Name;
 
                 // Make sure we have a PerField allocated
-                int hashPos = fieldName.GetHashCode() & HashMask;
-                DocFieldProcessorPerField fp = FieldHash[hashPos];
+                int hashPos = fieldName.GetHashCode() & hashMask;
+                DocFieldProcessorPerField fp = fieldHash[hashPos];
                 while (fp != null && !fp.FieldInfo.Name.Equals(fieldName))
                 {
                     fp = fp.Next;
@@ -227,11 +227,11 @@ namespace Lucene.Net.Index
                     FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.FieldType);
 
                     fp = new DocFieldProcessorPerField(this, fi);
-                    fp.Next = FieldHash[hashPos];
-                    FieldHash[hashPos] = fp;
-                    TotalFieldCount++;
+                    fp.Next = fieldHash[hashPos];
+                    fieldHash[hashPos] = fp;
+                    totalFieldCount++;
 
-                    if (TotalFieldCount >= FieldHash.Length / 2)
+                    if (totalFieldCount >= fieldHash.Length / 2)
                     {
                         Rehash();
                     }
@@ -249,20 +249,20 @@ namespace Lucene.Net.Index
                     // First time we're seeing this field for this doc
                     fp.FieldCount = 0;
 
-                    if (FieldCount == fields.Length)
+                    if (fieldCount == fields.Length)
                     {
                         int newSize = fields.Length * 2;
                         DocFieldProcessorPerField[] newArray = new DocFieldProcessorPerField[newSize];
-                        Array.Copy(fields, 0, newArray, 0, FieldCount);
+                        Array.Copy(fields, 0, newArray, 0, fieldCount);
                         fields = newArray;
                     }
 
-                    fields[FieldCount++] = fp;
+                    fields[fieldCount++] = fp;
                     fp.LastGen = thisFieldGen;
                 }
 
                 fp.AddField(field);
-                StoredConsumer.AddField(DocState.DocID, field, fp.FieldInfo);
+                storedConsumer.AddField(docState.DocID, field, fp.FieldInfo);
             }
 
             // If we are writing vectors then we must visit
@@ -271,8 +271,8 @@ namespace Lucene.Net.Index
             // sort the subset of fields that have vectors
             // enabled; we could save [small amount of] CPU
             // here.
-            ArrayUtil.IntroSort(fields, 0, FieldCount, fieldsComp);
-            for (int i = 0; i < FieldCount; i++)
+            ArrayUtil.IntroSort(fields, 0, fieldCount, fieldsComp);
+            for (int i = 0; i < fieldCount; i++)
             {
                 DocFieldProcessorPerField perField = fields[i];
                 perField.Consumer.ProcessFields(perField.Fields, perField.FieldCount);
@@ -297,11 +297,11 @@ namespace Lucene.Net.Index
         {
             try
             {
-                StoredConsumer.FinishDocument();
+                storedConsumer.FinishDocument();
             }
             finally
             {
-                Consumer.FinishDocument();
+                consumer.FinishDocument();
             }
         }
     }

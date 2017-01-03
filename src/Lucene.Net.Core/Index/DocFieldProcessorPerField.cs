@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
 
         public DocFieldProcessorPerField(DocFieldProcessor docFieldProcessor, FieldInfo fieldInfo)
         {
-            this.Consumer = docFieldProcessor.Consumer.AddField(fieldInfo);
+            this.Consumer = docFieldProcessor.consumer.AddField(fieldInfo);
             this.FieldInfo = fieldInfo;
         }
 
