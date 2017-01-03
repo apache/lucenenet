@@ -118,9 +118,9 @@ namespace Lucene.Net.Index
 
         /// @deprecated separate norms are not supported in >= 4.0
         [Obsolete("separate norms are not supported in >= 4.0")]
-        internal bool HasSeparateNorms() // LUCENENET TODO: Make property
+        internal bool HasSeparateNorms
         {
-            return GetAttribute(Lucene3xSegmentInfoFormat.NORMGEN_KEY) != null;
+            get { return GetAttribute(Lucene3xSegmentInfoFormat.NORMGEN_KEY) != null; }
         }
 
         /// <summary>

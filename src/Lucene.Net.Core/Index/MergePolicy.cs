@@ -701,7 +701,7 @@ namespace Lucene.Net.Index
             IndexWriter w = writer.Get();
             Debug.Assert(w != null);
             bool hasDeletions = w.NumDeletedDocs(info) > 0;
-            return !hasDeletions && !info.Info.HasSeparateNorms() && info.Info.Dir == w.Directory && UseCompoundFile(infos, info) == info.Info.UseCompoundFile;
+            return !hasDeletions && !info.Info.HasSeparateNorms && info.Info.Dir == w.Directory && UseCompoundFile(infos, info) == info.Info.UseCompoundFile;
         }
 
         /// <summary>
