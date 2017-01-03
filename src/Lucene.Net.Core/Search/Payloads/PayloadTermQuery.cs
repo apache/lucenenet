@@ -66,12 +66,12 @@ namespace Lucene.Net.Search.Payloads
 
         protected class PayloadTermWeight : SpanWeight
         {
-            private readonly PayloadTermQuery OuterInstance;
+            private readonly PayloadTermQuery outerInstance;
 
             public PayloadTermWeight(PayloadTermQuery outerInstance, PayloadTermQuery query, IndexSearcher searcher)
                 : base(query, searcher)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
@@ -83,16 +83,16 @@ namespace Lucene.Net.Search.Payloads
             {
                 private readonly PayloadTermQuery.PayloadTermWeight OuterInstance;
 
-                protected BytesRef Payload;
-                protected internal float PayloadScore_Renamed;
-                protected internal int PayloadsSeen;
-                internal readonly TermSpans TermSpans;
+                protected BytesRef m_payload;
+                protected internal float m_payloadScore;
+                protected internal int m_payloadsSeen;
+                internal readonly TermSpans termSpans;
 
                 public PayloadTermSpanScorer(PayloadTermQuery.PayloadTermWeight outerInstance, TermSpans spans, Weight weight, Similarity.SimScorer docScorer)
                     : base(spans, weight, docScorer)
                 {
                     this.OuterInstance = outerInstance;
-                    TermSpans = spans;
+                    termSpans = spans;
                 }
 
                 protected override bool SetFreqCurrentDoc()
@@ -104,8 +104,8 @@ namespace Lucene.Net.Search.Payloads
                     m_doc = m_spans.Doc;
                     m_freq = 0.0f;
                     m_numMatches = 0;
-                    PayloadScore_Renamed = 0;
-                    PayloadsSeen = 0;
+                    m_payloadScore = 0;
+                    m_payloadsSeen = 0;
                     while (m_more && m_doc == m_spans.Doc)
                     {
                         int matchLength = m_spans.End - m_spans.Start;
@@ -122,19 +122,19 @@ namespace Lucene.Net.Search.Payloads
 
                 protected internal virtual void ProcessPayload(Similarity similarity)
                 {
-                    if (TermSpans.IsPayloadAvailable)
+                    if (termSpans.IsPayloadAvailable)
                     {
-                        DocsAndPositionsEnum postings = TermSpans.Postings;
-                        Payload = postings.Payload;
-                        if (Payload != null)
+                        DocsAndPositionsEnum postings = termSpans.Postings;
+                        m_payload = postings.Payload;
+                        if (m_payload != null)
                         {
-                            PayloadScore_Renamed = OuterInstance.OuterInstance.m_function.CurrentScore(m_doc, OuterInstance.OuterInstance.Term.Field, m_spans.Start, m_spans.End, PayloadsSeen, PayloadScore_Renamed, m_docScorer.ComputePayloadFactor(m_doc, m_spans.Start, m_spans.End, Payload));
+                            m_payloadScore = OuterInstance.outerInstance.m_function.CurrentScore(m_doc, OuterInstance.outerInstance.Term.Field, m_spans.Start, m_spans.End, m_payloadsSeen, m_payloadScore, m_docScorer.ComputePayloadFactor(m_doc, m_spans.Start, m_spans.End, m_payload));
                         }
                         else
                         {
-                            PayloadScore_Renamed = OuterInstance.OuterInstance.m_function.CurrentScore(m_doc, OuterInstance.OuterInstance.Term.Field, m_spans.Start, m_spans.End, PayloadsSeen, PayloadScore_Renamed, 1F);
+                            m_payloadScore = OuterInstance.outerInstance.m_function.CurrentScore(m_doc, OuterInstance.outerInstance.Term.Field, m_spans.Start, m_spans.End, m_payloadsSeen, m_payloadScore, 1F);
                         }
-                        PayloadsSeen++;
+                        m_payloadsSeen++;
                     }
                     else
                     {
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Payloads
                 /// <exception cref="IOException"> if there is a low-level I/O error </exception>
                 public override float Score()
                 {
-                    return OuterInstance.OuterInstance.includeSpanScore ? GetSpanScore() * GetPayloadScore() : GetPayloadScore();
+                    return OuterInstance.outerInstance.includeSpanScore ? GetSpanScore() * GetPayloadScore() : GetPayloadScore();
                 }
 
                 /// <summary>
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search.Payloads
                 ///         <seealso cref="PayloadFunction#docScore(int, String, int, float)"/> </returns>
                 protected internal virtual float GetPayloadScore()
                 {
-                    return OuterInstance.OuterInstance.m_function.DocScore(m_doc, OuterInstance.OuterInstance.Term.Field, PayloadsSeen, PayloadScore_Renamed);
+                    return OuterInstance.outerInstance.m_function.DocScore(m_doc, OuterInstance.outerInstance.Term.Field, m_payloadsSeen, m_payloadScore);
                 }
             }
 
@@ -196,11 +196,11 @@ namespace Lucene.Net.Search.Payloads
                         // GSI: I suppose we could toString the payload, but I don't think that
                         // would be a good idea
                         string field = ((SpanQuery)Query).Field;
-                        Explanation payloadExpl = OuterInstance.m_function.Explain(doc, field, scorer.PayloadsSeen, scorer.PayloadScore_Renamed);
+                        Explanation payloadExpl = outerInstance.m_function.Explain(doc, field, scorer.m_payloadsSeen, scorer.m_payloadScore);
                         payloadExpl.Value = scorer.GetPayloadScore();
                         // combined
                         ComplexExplanation result = new ComplexExplanation();
-                        if (OuterInstance.includeSpanScore)
+                        if (outerInstance.includeSpanScore)
                         {
                             result.AddDetail(expl);
                             result.AddDetail(payloadExpl);
