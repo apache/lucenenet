@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         protected internal override bool Accept()
         {
-            return words.Contains(termAtt.Buffer(), 0, termAtt.Length);
+            return words.Contains(termAtt.GetBuffer(), 0, termAtt.Length);
         }
     }
 }

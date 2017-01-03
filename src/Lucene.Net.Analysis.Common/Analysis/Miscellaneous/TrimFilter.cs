@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 return false;
             }
 
-            char[] termBuffer = termAtt.Buffer();
+            char[] termBuffer = termAtt.GetBuffer();
             int len = termAtt.Length;
             //TODO: Is this the right behavior or should we return false?  Currently, "  ", returns true, so I think this should
             //also return true

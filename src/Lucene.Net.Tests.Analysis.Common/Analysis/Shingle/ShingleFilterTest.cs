@@ -484,7 +484,7 @@ namespace Lucene.Net.Analysis.Shingle
 
             for (int i = 0; i < tokensToCompare.Length; i++)
             {
-                text[i] = new string(tokensToCompare[i].Buffer(), 0, tokensToCompare[i].Length);
+                text[i] = new string(tokensToCompare[i].GetBuffer(), 0, tokensToCompare[i].Length);
                 startOffsets[i] = tokensToCompare[i].StartOffset;
                 endOffsets[i] = tokensToCompare[i].EndOffset;
             }

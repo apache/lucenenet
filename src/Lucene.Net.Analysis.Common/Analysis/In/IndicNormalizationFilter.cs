@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.In
         {
             if (input.IncrementToken())
             {
-                termAtt.Length = normalizer.Normalize(termAtt.Buffer(), termAtt.Length);
+                termAtt.Length = normalizer.Normalize(termAtt.GetBuffer(), termAtt.Length);
                 return true;
             }
             else

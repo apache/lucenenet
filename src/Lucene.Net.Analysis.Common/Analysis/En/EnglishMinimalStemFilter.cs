@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!keywordAttr.IsKeyword)
                 {
-                    int newlen = stemmer.Stem(termAtt.Buffer(), termAtt.Length);
+                    int newlen = stemmer.Stem(termAtt.GetBuffer(), termAtt.Length);
                     termAtt.Length = newlen;
                 }
                 return true;

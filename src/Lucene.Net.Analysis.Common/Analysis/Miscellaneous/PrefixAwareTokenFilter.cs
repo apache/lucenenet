@@ -120,7 +120,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     return;
                 }
                 ClearAttributes();
-                termAtt.CopyBuffer(value.Buffer(), 0, value.Length);
+                termAtt.CopyBuffer(value.GetBuffer(), 0, value.Length);
                 posIncrAtt.PositionIncrement = value.PositionIncrement;
                 flagsAtt.Flags = value.Flags;
                 offsetAtt.SetOffset(value.StartOffset, value.EndOffset);
@@ -135,7 +135,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 return null;
             }
-            token.CopyBuffer(p_termAtt.Buffer(), 0, p_termAtt.Length);
+            token.CopyBuffer(p_termAtt.GetBuffer(), 0, p_termAtt.Length);
             token.PositionIncrement = p_posIncrAtt.PositionIncrement;
             token.Flags = p_flagsAtt.Flags;
             token.SetOffset(p_offsetAtt.StartOffset, p_offsetAtt.EndOffset);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 return null;
             }
-            token.CopyBuffer(termAtt.Buffer(), 0, termAtt.Length);
+            token.CopyBuffer(termAtt.GetBuffer(), 0, termAtt.Length);
             token.PositionIncrement = posIncrAtt.PositionIncrement;
             token.Flags = flagsAtt.Flags;
             token.SetOffset(offsetAtt.StartOffset, offsetAtt.EndOffset);

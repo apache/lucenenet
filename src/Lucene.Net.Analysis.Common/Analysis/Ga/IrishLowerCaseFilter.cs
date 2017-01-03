@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Ga
         {
             if (input.IncrementToken())
             {
-                char[] chArray = termAtt.Buffer();
+                char[] chArray = termAtt.GetBuffer();
                 int chLen = termAtt.Length;
                 int idx = 0;
 

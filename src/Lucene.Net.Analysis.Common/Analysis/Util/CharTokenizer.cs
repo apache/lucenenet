@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis.Util
             int length = 0;
             int start = -1; // this variable is always initialized
             int end = -1;
-            char[] buffer = termAtt.Buffer();
+            char[] buffer = termAtt.GetBuffer();
             while (true)
             {
                 if (bufferIndex >= dataLen)

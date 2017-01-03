@@ -190,7 +190,7 @@ namespace Lucene.Net.Analysis.Synonym
                 while (tok1 != null && (pos1 <= pos2 || tok2 == null))
                 {
                     var tok = new Token(tok1.StartOffset, tok1.EndOffset, tok1.Type);
-                    tok.CopyBuffer(tok1.Buffer(), 0, tok1.Length);
+                    tok.CopyBuffer(tok1.GetBuffer(), 0, tok1.Length);
                     tok.PositionIncrement = pos1 - pos;
                     result.Add(tok);
                     pos = pos1;
@@ -200,7 +200,7 @@ namespace Lucene.Net.Analysis.Synonym
                 while (tok2 != null && (pos2 <= pos1 || tok1 == null))
                 {
                     var tok = new Token(tok2.StartOffset, tok2.EndOffset, tok2.Type);
-                    tok.CopyBuffer(tok2.Buffer(), 0, tok2.Length);
+                    tok.CopyBuffer(tok2.GetBuffer(), 0, tok2.Length);
                     tok.PositionIncrement = pos2 - pos;
                     result.Add(tok);
                     pos = pos2;

@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             while (input.IncrementToken())
             {
-                char[] term = termAttribute.Buffer();
+                char[] term = termAttribute.GetBuffer();
                 int length = termAttribute.Length;
                 int posIncrement = posIncAttribute.PositionIncrement;
 

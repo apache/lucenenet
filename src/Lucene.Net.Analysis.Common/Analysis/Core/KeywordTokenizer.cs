@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Core
                 ClearAttributes();
                 done = true;
                 int upto = 0;
-                char[] buffer = termAtt.Buffer();
+                char[] buffer = termAtt.GetBuffer();
                 while (true)
                 {
                     int length = input.Read(buffer, upto, buffer.Length - upto);

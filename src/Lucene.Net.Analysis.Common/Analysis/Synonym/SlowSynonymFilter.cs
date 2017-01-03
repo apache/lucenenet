@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Synonym
                     return false;
                 }
                 var termAtt = firstTok.AddAttribute<ICharTermAttribute>();
-                SlowSynonymMap result = map.submap != null ? map.submap.Get(termAtt.Buffer(), 0, termAtt.Length) : null;
+                SlowSynonymMap result = map.submap != null ? map.submap.Get(termAtt.GetBuffer(), 0, termAtt.Length) : null;
                 if (result == null)
                 {
                     Copy(this, firstTok);
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Synonym
                     IOffsetAttribute lastOffsetAtt = lastTok.AddAttribute<IOffsetAttribute>();
 
                     newOffsetAtt.SetOffset(newOffsetAtt.StartOffset, lastOffsetAtt.EndOffset);
-                    newTermAtt.CopyBuffer(repTok.Buffer(), 0, repTok.Length);
+                    newTermAtt.CopyBuffer(repTok.GetBuffer(), 0, repTok.Length);
                     repPos += repTok.PositionIncrement;
                     if (i == 0) // make position of first token equal to original
                     {
@@ -273,7 +273,7 @@ namespace Lucene.Net.Analysis.Synonym
                     }
                     // check for positionIncrement!=1?  if>1, should not match, if==0, check multiple at this level?
                     var termAtt = tok.GetAttribute<ICharTermAttribute>();
-                    SlowSynonymMap subMap = map.submap.Get(termAtt.Buffer(), 0, termAtt.Length);
+                    SlowSynonymMap subMap = map.submap.Get(termAtt.GetBuffer(), 0, termAtt.Length);
 
                     if (subMap != null)
                     {

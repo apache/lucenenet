@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Ckb
         {
             if (input.IncrementToken())
             {
-                int newlen = normalizer.normalize(termAtt.Buffer(), termAtt.Length);
+                int newlen = normalizer.normalize(termAtt.GetBuffer(), termAtt.Length);
                 termAtt.Length = newlen;
                 return true;
             }

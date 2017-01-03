@@ -66,10 +66,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
                 if (!keywordAtt.IsKeyword) // don't muck with already-keyworded terms
                 {
-                    BytesRef stem = stemmerOverrideMap.Get(termAtt.Buffer(), termAtt.Length, scratchArc, fstReader);
+                    BytesRef stem = stemmerOverrideMap.Get(termAtt.GetBuffer(), termAtt.Length, scratchArc, fstReader);
                     if (stem != null)
                     {
-                        char[] buffer = spare.Chars = termAtt.Buffer();
+                        char[] buffer = spare.Chars = termAtt.GetBuffer();
                         UnicodeUtil.UTF8toUTF16(stem.Bytes, stem.Offset, stem.Length, spare);
                         if (spare.Chars != buffer)
                         {

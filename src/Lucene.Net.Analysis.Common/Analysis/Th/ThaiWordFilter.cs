@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Th
                 if (end != BreakIterator.DONE)
                 {
                     clonedToken.CopyTo(this);
-                    termAtt.CopyBuffer(clonedTermAtt.Buffer(), start, end - start);
+                    termAtt.CopyBuffer(clonedTermAtt.GetBuffer(), start, end - start);
                     if (hasIllegalOffsets)
                     {
                         offsetAtt.SetOffset(clonedOffsetAtt.StartOffset, clonedOffsetAtt.EndOffset);
@@ -134,7 +134,7 @@ namespace Lucene.Net.Analysis.Th
             }
 
             // reinit CharacterIterator
-            charIterator.SetText(clonedTermAtt.Buffer(), 0, clonedTermAtt.Length);
+            charIterator.SetText(clonedTermAtt.GetBuffer(), 0, clonedTermAtt.Length);
             breaker.SetText(new string(charIterator.Text, charIterator.Start, charIterator.Length));
             int end2 = breaker.Next();
             if (end2 != BreakIterator.DONE)

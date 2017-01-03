@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             while (!exhausted && input.IncrementToken())
             {
-                char[] term = termAttribute.Buffer();
+                char[] term = termAttribute.GetBuffer();
                 int termLength = termAttribute.Length;
                 lastEndOffset = offsetAttribute.EndOffset;
 
@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             RestoreState(savedState);
             savedState = null;
 
-            char[] term = termAttribute.Buffer();
+            char[] term = termAttribute.GetBuffer();
             int length = hyphenated.Length;
             if (length > termAttribute.Length)
             {

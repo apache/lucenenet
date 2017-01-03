@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 return false;
             }
 
-            char[] buffer = charTermAttribute.Buffer();
+            char[] buffer = charTermAttribute.GetBuffer();
             int length = charTermAttribute.Length;
 
 

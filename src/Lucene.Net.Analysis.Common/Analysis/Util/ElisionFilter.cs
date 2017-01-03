@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (input.IncrementToken())
             {
-                char[] termBuffer = termAtt.Buffer();
+                char[] termBuffer = termAtt.GetBuffer();
                 int termLength = termAtt.Length;
 
                 int index = -1;

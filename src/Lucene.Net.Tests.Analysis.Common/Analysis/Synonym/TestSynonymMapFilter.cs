@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Synonym
         private void AssertEquals(CharTermAttribute term, string expected)
         {
             assertEquals(expected.Length, term.Length);
-            char[] buffer = term.Buffer();
+            char[] buffer = term.GetBuffer();
             for (int chIDX = 0; chIDX < expected.Length; chIDX++)
             {
                 assertEquals(expected[chIDX], buffer[chIDX]);

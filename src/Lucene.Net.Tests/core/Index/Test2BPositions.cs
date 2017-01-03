@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
                 {
                     ClearAttributes();
                     TermAtt.Length = 1;
-                    TermAtt.Buffer()[0] = 'a';
+                    TermAtt.GetBuffer()[0] = 'a';
                     PosIncAtt.PositionIncrement = 1 + Index;
                     Index++;
                     return true;

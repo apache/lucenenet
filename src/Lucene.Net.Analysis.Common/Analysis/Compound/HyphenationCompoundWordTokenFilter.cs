@@ -199,7 +199,7 @@ namespace Lucene.Net.Analysis.Compound
         protected override void Decompose()
         {
             // get the hyphenation points
-            Hyphenation.Hyphenation hyphens = hyphenator.Hyphenate(termAtt.Buffer(), 0, termAtt.Length, 1, 1);
+            Hyphenation.Hyphenation hyphens = hyphenator.Hyphenate(termAtt.GetBuffer(), 0, termAtt.Length, 1, 1);
             // No hyphen points found -> exit
             if (hyphens == null)
             {
@@ -234,7 +234,7 @@ namespace Lucene.Net.Analysis.Compound
                     }
 
                     // check the dictionary
-                    if (dictionary == null || dictionary.Contains(termAtt.Buffer(), start, partLength))
+                    if (dictionary == null || dictionary.Contains(termAtt.GetBuffer(), start, partLength))
                     {
                         if (this.onlyLongestMatch)
                         {
@@ -255,7 +255,7 @@ namespace Lucene.Net.Analysis.Compound
                             tokens.AddLast(new CompoundToken(this, start, partLength));
                         }
                     }
-                    else if (dictionary.Contains(termAtt.Buffer(), start, partLength - 1))
+                    else if (dictionary.Contains(termAtt.GetBuffer(), start, partLength - 1))
                     {
                         // check the dictionary again with a word that is one character
                         // shorter

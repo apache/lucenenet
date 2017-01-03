@@ -157,7 +157,7 @@ namespace Lucene.Net.Analysis.Path
                         if (added)
                         {
                             resultToken.Length = 0;
-                            resultToken.Append(termAtt.Buffer(), 0, length);
+                            resultToken.Append(termAtt.GetBuffer(), 0, length);
                         }
                         return added;
                     }
@@ -218,7 +218,7 @@ namespace Lucene.Net.Analysis.Path
             termAtt.Length = length;
             offsetAtt.SetOffset(CorrectOffset(startPosition), CorrectOffset(startPosition + length));
             resultToken.Length = 0;
-            resultToken.Append(termAtt.Buffer(), 0, length);
+            resultToken.Append(termAtt.GetBuffer(), 0, length);
             return true;
         }
 

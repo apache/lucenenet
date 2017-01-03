@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             int skippedPositions = 0;
             while (true)
             {
-                if (stopWords.Contains(termAtt.Buffer(), 0, termAtt.Length))
+                if (stopWords.Contains(termAtt.GetBuffer(), 0, termAtt.Length))
                 {
                     int posInc = posIncAtt.PositionIncrement;
                     int endOffset = offsetAtt.EndOffset;

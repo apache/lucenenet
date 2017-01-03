@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 return true;
             }
 
-            buffer = new List<CharsRef>(dedup ? stemmer.UniqueStems(termAtt.Buffer(), termAtt.Length) : stemmer.Stem(termAtt.Buffer(), termAtt.Length));
+            buffer = new List<CharsRef>(dedup ? stemmer.UniqueStems(termAtt.GetBuffer(), termAtt.Length) : stemmer.Stem(termAtt.GetBuffer(), termAtt.Length));
 
             if (buffer.Count == 0) // we do not know this word, return it unchanged
             {

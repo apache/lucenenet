@@ -249,7 +249,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     }
 
                     int termLength = termAttribute.Length;
-                    char[] termBuffer = termAttribute.Buffer();
+                    char[] termBuffer = termAttribute.GetBuffer();
 
                     accumPosInc += posIncAttribute.PositionIncrement;
 
@@ -486,7 +486,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 savedBuffer = new char[ArrayUtil.Oversize(termAttribute.Length, RamUsageEstimator.NUM_BYTES_CHAR)];
             }
 
-            Array.Copy(termAttribute.Buffer(), 0, savedBuffer, 0, termAttribute.Length);
+            Array.Copy(termAttribute.GetBuffer(), 0, savedBuffer, 0, termAttribute.Length);
             iterator.text = savedBuffer;
 
             hasSavedState = true;
@@ -696,7 +696,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 {
                     outerInstance.termAttribute.ResizeBuffer(buffer.Length);
                 }
-                char[] termbuffer = outerInstance.termAttribute.Buffer();
+                char[] termbuffer = outerInstance.termAttribute.GetBuffer();
 
                 //buffer.GetChars(0, buffer.Length, termbuffer, 0);
                 buffer.CopyTo(0, termbuffer, 0, buffer.Length);

@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Payloads
         {
             if (input.IncrementToken())
             {
-                char[] buffer = termAtt.Buffer();
+                char[] buffer = termAtt.GetBuffer();
                 int length = termAtt.Length;
                 for (int i = 0; i < length; i++)
                 {

@@ -539,7 +539,7 @@ namespace Lucene.Net.Analysis
         /// <param name="prototype"> source Token to copy fields from </param>
         public virtual void Reinit(Token prototype)
         {
-            CopyBuffer(prototype.Buffer(), 0, prototype.Length);
+            CopyBuffer(prototype.GetBuffer(), 0, prototype.Length);
             positionIncrement = prototype.positionIncrement;
             flags = prototype.flags;
             startOffset = prototype.startOffset;

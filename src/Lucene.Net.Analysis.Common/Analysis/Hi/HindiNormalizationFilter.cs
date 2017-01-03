@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Hi
             {
                 if (!keywordAtt.IsKeyword)
                 {
-                    termAtt.Length = normalizer.Normalize(termAtt.Buffer(), termAtt.Length);
+                    termAtt.Length = normalizer.Normalize(termAtt.GetBuffer(), termAtt.Length);
                 }
                 return true;
             }

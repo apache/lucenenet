@@ -301,7 +301,7 @@ namespace Lucene.Net.Analysis.Cjk
                 index -= last;
             }
 
-            char[] termBuffer = termAtt.Buffer();
+            char[] termBuffer = termAtt.GetBuffer();
             int len = termAtt.Length;
             int start = offsetAtt.StartOffset;
             int end = offsetAtt.EndOffset;

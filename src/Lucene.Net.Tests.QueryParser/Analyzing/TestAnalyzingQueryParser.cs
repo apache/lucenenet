@@ -258,7 +258,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
             {
                 if (input.IncrementToken())
                 {
-                    char[] term = termAtt.Buffer();
+                    char[] term = termAtt.GetBuffer();
                     for (int i = 0; i < term.Length; i++)
                         switch (term[i])
                         {

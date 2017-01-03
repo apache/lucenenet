@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             get
             {
-                return keywordSet.Contains(termAtt.Buffer(), 0, termAtt.Length);
+                return keywordSet.Contains(termAtt.GetBuffer(), 0, termAtt.Length);
             }
         }
     }

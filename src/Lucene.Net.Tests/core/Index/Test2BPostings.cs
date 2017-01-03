@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
                 {
                     ClearAttributes();
                     TermAtt.Length = 1;
-                    TermAtt.Buffer()[0] = (char)Index++;
+                    TermAtt.GetBuffer()[0] = (char)Index++;
                     return true;
                 }
                 return false;

@@ -311,7 +311,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             input.state = CaptureState();
             input.consumed = false;
-            input.term.CopyChars(termAtt.Buffer(), 0, termAtt.Length);
+            input.term.CopyChars(termAtt.GetBuffer(), 0, termAtt.Length);
 
             nextWrite = RollIncr(nextWrite);
 
@@ -381,7 +381,7 @@ namespace Lucene.Net.Analysis.Synonym
                         //assert !futureInputs[nextWrite].keepOrig;
                         if (input.IncrementToken())
                         {
-                            buffer = termAtt.Buffer();
+                            buffer = termAtt.GetBuffer();
                             bufferLen = termAtt.Length;
                             PendingInput pendingInput = futureInputs[nextWrite];
                             lastStartOffset = pendingInput.startOffset = offsetAtt.StartOffset;

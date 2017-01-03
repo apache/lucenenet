@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.En
             {
                 return false;
             }
-            char[] buffer = termAtt.Buffer();
+            char[] buffer = termAtt.GetBuffer();
             int bufferLength = termAtt.Length;
 
             if (bufferLength >= 2 && (buffer[bufferLength - 2] == '\'' ||

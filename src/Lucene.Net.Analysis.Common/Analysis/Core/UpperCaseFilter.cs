@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Core
         {
             if (input.IncrementToken())
             {
-                charUtils.ToUpper(termAtt.Buffer(), 0, termAtt.Length);
+                charUtils.ToUpper(termAtt.GetBuffer(), 0, termAtt.Length);
                 return true;
             }
             else

@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Standard
                 return false;
             }
 
-            char[] buffer = termAtt.Buffer();
+            char[] buffer = termAtt.GetBuffer();
             int bufferLength = termAtt.Length;
             string type = typeAtt.Type;
 

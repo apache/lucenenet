@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis
             SkippedPositions = 0;
             while (input.IncrementToken())
             {
-                if (!Filter.Run(TermAtt.Buffer(), 0, TermAtt.Length))
+                if (!Filter.Run(TermAtt.GetBuffer(), 0, TermAtt.Length))
                 {
                     PosIncrAtt.PositionIncrement = PosIncrAtt.PositionIncrement + SkippedPositions;
                     return true;

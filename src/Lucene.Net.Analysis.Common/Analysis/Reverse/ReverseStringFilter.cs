@@ -106,9 +106,9 @@ namespace Lucene.Net.Analysis.Reverse
                 {
                     len++;
                     termAtt.ResizeBuffer(len);
-                    termAtt.Buffer()[len - 1] = marker;
+                    termAtt.GetBuffer()[len - 1] = marker;
                 }
-                Reverse(matchVersion, termAtt.Buffer(), 0, len);
+                Reverse(matchVersion, termAtt.GetBuffer(), 0, len);
                 termAtt.Length = len;
                 return true;
             }
