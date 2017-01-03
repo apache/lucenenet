@@ -48,8 +48,8 @@ namespace Lucene.Net.Index
     public abstract class BaseCompositeReader<R> : CompositeReader
         where R : IndexReader
     {
-        private readonly R[] SubReaders;
-        private readonly int[] Starts; // 1st docno for each reader
+        private readonly R[] subReaders;
+        private readonly int[] starts; // 1st docno for each reader
         private readonly int maxDoc;
         private readonly int numDocs;
 
@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
         /// List view solely for <seealso cref="#getSequentialSubReaders()"/>,
         /// for effectiveness the array is used internally.
         /// </summary>
-        private readonly IList<R> SubReadersList;
+        private readonly IList<R> subReadersList;
 
         /// <summary>
         /// Constructs a {@code BaseCompositeReader} on the given subReaders. </summary>
@@ -68,13 +68,13 @@ namespace Lucene.Net.Index
         /// to do this. </param>
         protected BaseCompositeReader(R[] subReaders)
         {
-            this.SubReaders = subReaders;
-            this.SubReadersList = subReaders.ToList();// Collections.unmodifiableList(Arrays.asList(subReaders));
-            Starts = new int[subReaders.Length + 1]; // build starts array
+            this.subReaders = subReaders;
+            this.subReadersList = subReaders.ToList();// Collections.unmodifiableList(Arrays.asList(subReaders));
+            starts = new int[subReaders.Length + 1]; // build starts array
             int maxDoc = 0, numDocs = 0;
             for (int i = 0; i < subReaders.Length; i++)
             {
-                Starts[i] = maxDoc;
+                starts[i] = maxDoc;
                 IndexReader r = subReaders[i];
                 maxDoc += r.MaxDoc; // compute maxDocs
                 if (maxDoc < 0) // overflow
@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
                 numDocs += r.NumDocs; // compute numDocs
                 r.RegisterParentReader(this);
             }
-            Starts[subReaders.Length] = maxDoc;
+            starts[subReaders.Length] = maxDoc;
             this.maxDoc = maxDoc;
             this.numDocs = numDocs;
         }
@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             int i = ReaderIndex(docID); // find subreader num
-            return SubReaders[i].GetTermVectors(docID - Starts[i]); // dispatch to subreader
+            return subReaders[i].GetTermVectors(docID - starts[i]); // dispatch to subreader
         }
 
         public override sealed int NumDocs
@@ -118,16 +118,16 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             int i = ReaderIndex(docID); // find subreader num
-            SubReaders[i].Document(docID - Starts[i], visitor); // dispatch to subreader
+            subReaders[i].Document(docID - starts[i], visitor); // dispatch to subreader
         }
 
         public override sealed int DocFreq(Term term)
         {
             EnsureOpen();
             int total = 0; // sum freqs in subreaders
-            for (int i = 0; i < SubReaders.Length; i++)
+            for (int i = 0; i < subReaders.Length; i++)
             {
-                total += SubReaders[i].DocFreq(term);
+                total += subReaders[i].DocFreq(term);
             }
             return total;
         }
@@ -136,9 +136,9 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             long total = 0; // sum freqs in subreaders
-            for (int i = 0; i < SubReaders.Length; i++)
+            for (int i = 0; i < subReaders.Length; i++)
             {
-                long sub = SubReaders[i].TotalTermFreq(term);
+                long sub = subReaders[i].TotalTermFreq(term);
                 if (sub == -1)
                 {
                     return -1;
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             long total = 0; // sum doc freqs in subreaders
-            foreach (R reader in SubReaders)
+            foreach (R reader in subReaders)
             {
                 long sub = reader.GetSumDocFreq(field);
                 if (sub == -1)
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             int total = 0; // sum doc counts in subreaders
-            foreach (R reader in SubReaders)
+            foreach (R reader in subReaders)
             {
                 int sub = reader.GetDocCount(field);
                 if (sub == -1)
@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             long total = 0; // sum doc total term freqs in subreaders
-            foreach (R reader in SubReaders)
+            foreach (R reader in subReaders)
             {
                 long sub = reader.GetSumTotalTermFreq(field);
                 if (sub == -1)
@@ -204,23 +204,23 @@ namespace Lucene.Net.Index
             {
                 throw new System.ArgumentException("docID must be >= 0 and < maxDoc=" + maxDoc + " (got docID=" + docID + ")");
             }
-            return ReaderUtil.SubIndex(docID, this.Starts);
+            return ReaderUtil.SubIndex(docID, this.starts);
         }
 
         /// <summary>
         /// Helper method for subclasses to get the docBase of the given sub-reader index. </summary>
         protected internal int ReaderBase(int readerIndex)
         {
-            if (readerIndex < 0 || readerIndex >= SubReaders.Length)
+            if (readerIndex < 0 || readerIndex >= subReaders.Length)
             {
                 throw new System.ArgumentException("readerIndex must be >= 0 and < getSequentialSubReaders().size()");
             }
-            return this.Starts[readerIndex];
+            return this.starts[readerIndex];
         }
 
         protected internal override sealed IList<IndexReader> GetSequentialSubReaders() // LUCENENET TODO: Change to IList<R> (and see if it compiles - it should because R has a constraint)
         {
-            return SubReadersList.Cast<IndexReader>().ToList();
+            return subReadersList.Cast<IndexReader>().ToList();
         }
     }
 }
