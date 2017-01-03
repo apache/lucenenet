@@ -84,32 +84,32 @@ namespace Lucene.Net.Util.Packed
 
     public class EliasFanoEncoder
     {
-        internal readonly long NumValues;
-        private readonly long UpperBound;
-        internal readonly int NumLowBits;
-        internal readonly long LowerBitsMask;
-        internal readonly long[] UpperLongs;
-        internal readonly long[] LowerLongs;
+        internal readonly long numValues;
+        private readonly long upperBound;
+        internal readonly int numLowBits;
+        internal readonly long lowerBitsMask;
+        internal readonly long[] upperLongs;
+        internal readonly long[] lowerLongs;
         private static readonly int LOG2_LONG_SIZE = Number.NumberOfTrailingZeros(sizeof(long) * 8);
 
-        internal long NumEncoded = 0L;
-        internal long LastEncoded = 0L;
+        internal long numEncoded = 0L;
+        internal long lastEncoded = 0L;
 
         /// <summary>
         /// The default index interval for zero upper bits. </summary>
         public const long DEFAULT_INDEX_INTERVAL = 256;
 
-        internal readonly long NumIndexEntries;
-        internal readonly long IndexInterval;
-        internal readonly int NIndexEntryBits;
+        internal readonly long numIndexEntries;
+        internal readonly long indexInterval;
+        internal readonly int nIndexEntryBits;
 
         /// <summary>
         /// upperZeroBitPositionIndex[i] (filled using packValue) will contain the bit position
         ///  just after the zero bit ((i+1) * indexInterval) in the upper bits.
         /// </summary>
-        internal readonly long[] UpperZeroBitPositionIndex;
+        internal readonly long[] upperZeroBitPositionIndex;
 
-        internal long CurrentEntryIndex; // also indicates how many entries in the index are valid.
+        internal long currentEntryIndex; // also indicates how many entries in the index are valid.
 
         /// <summary>
         /// Construct an Elias-Fano encoder.
@@ -143,59 +143,59 @@ namespace Lucene.Net.Util.Packed
             {
                 throw new System.ArgumentException("numValues should not be negative: " + numValues);
             }
-            this.NumValues = numValues;
+            this.numValues = numValues;
             if ((numValues > 0L) && (upperBound < 0L))
             {
                 throw new System.ArgumentException("upperBound should not be negative: " + upperBound + " when numValues > 0");
             }
-            this.UpperBound = numValues > 0 ? upperBound : -1L; // if there is no value, -1 is the best upper bound
+            this.upperBound = numValues > 0 ? upperBound : -1L; // if there is no value, -1 is the best upper bound
             int nLowBits = 0;
-            if (this.NumValues > 0) // nLowBits = max(0; floor(2log(upperBound/numValues)))
+            if (this.numValues > 0) // nLowBits = max(0; floor(2log(upperBound/numValues)))
             {
-                long lowBitsFac = this.UpperBound / this.NumValues;
+                long lowBitsFac = this.upperBound / this.numValues;
                 if (lowBitsFac > 0)
                 {
                     nLowBits = 63 - Number.NumberOfLeadingZeros(lowBitsFac); // see Long.numberOfLeadingZeros javadocs
                 }
             }
-            this.NumLowBits = nLowBits;
-            this.LowerBitsMask = (long)(unchecked((ulong)long.MaxValue) >> (sizeof(long) * 8 - 1 - this.NumLowBits));
+            this.numLowBits = nLowBits;
+            this.lowerBitsMask = (long)(unchecked((ulong)long.MaxValue) >> (sizeof(long) * 8 - 1 - this.numLowBits));
 
-            long numLongsForLowBits = NumLongsForBits(numValues * NumLowBits);
+            long numLongsForLowBits = NumLongsForBits(numValues * numLowBits);
             if (numLongsForLowBits > int.MaxValue)
             {
                 throw new System.ArgumentException("numLongsForLowBits too large to index a long array: " + numLongsForLowBits);
             }
-            this.LowerLongs = new long[(int)numLongsForLowBits];
+            this.lowerLongs = new long[(int)numLongsForLowBits];
 
-            long numHighBitsClear = (long)((ulong)((this.UpperBound > 0) ? this.UpperBound : 0) >> this.NumLowBits);
-            Debug.Assert(numHighBitsClear <= (2 * this.NumValues));
-            long numHighBitsSet = this.NumValues;
+            long numHighBitsClear = (long)((ulong)((this.upperBound > 0) ? this.upperBound : 0) >> this.numLowBits);
+            Debug.Assert(numHighBitsClear <= (2 * this.numValues));
+            long numHighBitsSet = this.numValues;
 
             long numLongsForHighBits = NumLongsForBits(numHighBitsClear + numHighBitsSet);
             if (numLongsForHighBits > int.MaxValue)
             {
                 throw new System.ArgumentException("numLongsForHighBits too large to index a long array: " + numLongsForHighBits);
             }
-            this.UpperLongs = new long[(int)numLongsForHighBits];
+            this.upperLongs = new long[(int)numLongsForHighBits];
             if (indexInterval < 2)
             {
                 throw new System.ArgumentException("indexInterval should at least 2: " + indexInterval);
             }
             // For the index:
-            long maxHighValue = (long)((ulong)upperBound >> this.NumLowBits);
+            long maxHighValue = (long)((ulong)upperBound >> this.numLowBits);
             long nIndexEntries = maxHighValue / indexInterval; // no zero value index entry
-            this.NumIndexEntries = (nIndexEntries >= 0) ? nIndexEntries : 0;
+            this.numIndexEntries = (nIndexEntries >= 0) ? nIndexEntries : 0;
             long maxIndexEntry = maxHighValue + numValues - 1; // clear upper bits, set upper bits, start at zero
-            this.NIndexEntryBits = (maxIndexEntry <= 0) ? 0 : (64 - Number.NumberOfLeadingZeros(maxIndexEntry));
-            long numLongsForIndexBits = NumLongsForBits(NumIndexEntries * NIndexEntryBits);
+            this.nIndexEntryBits = (maxIndexEntry <= 0) ? 0 : (64 - Number.NumberOfLeadingZeros(maxIndexEntry));
+            long numLongsForIndexBits = NumLongsForBits(numIndexEntries * nIndexEntryBits);
             if (numLongsForIndexBits > int.MaxValue)
             {
                 throw new System.ArgumentException("numLongsForIndexBits too large to index a long array: " + numLongsForIndexBits);
             }
-            this.UpperZeroBitPositionIndex = new long[(int)numLongsForIndexBits];
-            this.CurrentEntryIndex = 0;
-            this.IndexInterval = indexInterval;
+            this.upperZeroBitPositionIndex = new long[(int)numLongsForIndexBits];
+            this.currentEntryIndex = 0;
+            this.indexInterval = indexInterval;
         }
 
         /// <summary>
@@ -223,43 +223,43 @@ namespace Lucene.Net.Util.Packed
         ///         </ul> </exception>
         public virtual void EncodeNext(long x)
         {
-            if (NumEncoded >= NumValues)
+            if (numEncoded >= numValues)
             {
-                throw new InvalidOperationException("encodeNext called more than " + NumValues + " times.");
+                throw new InvalidOperationException("encodeNext called more than " + numValues + " times.");
             }
-            if (LastEncoded > x)
+            if (lastEncoded > x)
             {
-                throw new System.ArgumentException(x + " smaller than previous " + LastEncoded);
+                throw new System.ArgumentException(x + " smaller than previous " + lastEncoded);
             }
-            if (x > UpperBound)
+            if (x > upperBound)
             {
-                throw new System.ArgumentException(x + " larger than upperBound " + UpperBound);
+                throw new System.ArgumentException(x + " larger than upperBound " + upperBound);
             }
-            long highValue = (long)((ulong)x >> NumLowBits);
+            long highValue = (long)((ulong)x >> numLowBits);
             EncodeUpperBits(highValue);
-            EncodeLowerBits(x & LowerBitsMask);
-            LastEncoded = x;
+            EncodeLowerBits(x & lowerBitsMask);
+            lastEncoded = x;
             // Add index entries:
-            long indexValue = (CurrentEntryIndex + 1) * IndexInterval;
+            long indexValue = (currentEntryIndex + 1) * indexInterval;
             while (indexValue <= highValue)
             {
-                long afterZeroBitPosition = indexValue + NumEncoded;
-                PackValue(afterZeroBitPosition, UpperZeroBitPositionIndex, NIndexEntryBits, CurrentEntryIndex);
-                CurrentEntryIndex += 1;
-                indexValue += IndexInterval;
+                long afterZeroBitPosition = indexValue + numEncoded;
+                PackValue(afterZeroBitPosition, upperZeroBitPositionIndex, nIndexEntryBits, currentEntryIndex);
+                currentEntryIndex += 1;
+                indexValue += indexInterval;
             }
-            NumEncoded++;
+            numEncoded++;
         }
 
         private void EncodeUpperBits(long highValue)
         {
-            long nextHighBitNum = NumEncoded + highValue; // sequence of unary gaps
-            UpperLongs[(int)((long)((ulong)nextHighBitNum >> LOG2_LONG_SIZE))] |= (1L << (int)(nextHighBitNum & ((sizeof(long) * 8) - 1)));
+            long nextHighBitNum = numEncoded + highValue; // sequence of unary gaps
+            upperLongs[(int)((long)((ulong)nextHighBitNum >> LOG2_LONG_SIZE))] |= (1L << (int)(nextHighBitNum & ((sizeof(long) * 8) - 1)));
         }
 
         private void EncodeLowerBits(long lowValue)
         {
-            PackValue(lowValue, LowerLongs, NumLowBits, NumEncoded);
+            PackValue(lowValue, lowerLongs, numLowBits, numEncoded);
         }
 
         private static void PackValue(long value, long[] longArray, int numBits, long packIndex)
@@ -315,46 +315,46 @@ namespace Lucene.Net.Util.Packed
         /// Expert. The low bits. </summary>
         public virtual long[] GetLowerBits()
         {
-            return LowerLongs;
+            return lowerLongs;
         }
 
         /// <summary>
         /// Expert. The high bits. </summary>
         public virtual long[] GetUpperBits()
         {
-            return UpperLongs;
+            return upperLongs;
         }
 
         /// <summary>
         /// Expert. The index bits. </summary>
         public virtual long[] GetIndexBits()
         {
-            return UpperZeroBitPositionIndex;
+            return upperZeroBitPositionIndex;
         }
 
         public override string ToString()
         {
             StringBuilder s = new StringBuilder("EliasFanoSequence");
-            s.Append(" numValues " + NumValues);
-            s.Append(" numEncoded " + NumEncoded);
-            s.Append(" upperBound " + UpperBound);
-            s.Append(" lastEncoded " + LastEncoded);
-            s.Append(" numLowBits " + NumLowBits);
-            s.Append("\nupperLongs[" + UpperLongs.Length + "]");
-            for (int i = 0; i < UpperLongs.Length; i++)
+            s.Append(" numValues " + numValues);
+            s.Append(" numEncoded " + numEncoded);
+            s.Append(" upperBound " + upperBound);
+            s.Append(" lastEncoded " + lastEncoded);
+            s.Append(" numLowBits " + numLowBits);
+            s.Append("\nupperLongs[" + upperLongs.Length + "]");
+            for (int i = 0; i < upperLongs.Length; i++)
             {
-                s.Append(" " + ToStringUtils.LongHex(UpperLongs[i]));
+                s.Append(" " + ToStringUtils.LongHex(upperLongs[i]));
             }
-            s.Append("\nlowerLongs[" + LowerLongs.Length + "]");
-            for (int i = 0; i < LowerLongs.Length; i++)
+            s.Append("\nlowerLongs[" + lowerLongs.Length + "]");
+            for (int i = 0; i < lowerLongs.Length; i++)
             {
-                s.Append(" " + ToStringUtils.LongHex(LowerLongs[i]));
+                s.Append(" " + ToStringUtils.LongHex(lowerLongs[i]));
             }
-            s.Append("\nindexInterval: " + IndexInterval + ", nIndexEntryBits: " + NIndexEntryBits);
-            s.Append("\nupperZeroBitPositionIndex[" + UpperZeroBitPositionIndex.Length + "]");
-            for (int i = 0; i < UpperZeroBitPositionIndex.Length; i++)
+            s.Append("\nindexInterval: " + indexInterval + ", nIndexEntryBits: " + nIndexEntryBits);
+            s.Append("\nupperZeroBitPositionIndex[" + upperZeroBitPositionIndex.Length + "]");
+            for (int i = 0; i < upperZeroBitPositionIndex.Length; i++)
             {
-                s.Append(" " + ToStringUtils.LongHex(UpperZeroBitPositionIndex[i]));
+                s.Append(" " + ToStringUtils.LongHex(upperZeroBitPositionIndex[i]));
             }
             return s.ToString();
         }
@@ -367,12 +367,12 @@ namespace Lucene.Net.Util.Packed
             }
             EliasFanoEncoder oefs = (EliasFanoEncoder)other;
             // no equality needed for upperBound
-            return (this.NumValues == oefs.NumValues) && (this.NumEncoded == oefs.NumEncoded) && (this.NumLowBits == oefs.NumLowBits) && (this.NumIndexEntries == oefs.NumIndexEntries) && (this.IndexInterval == oefs.IndexInterval) && Arrays.Equals(this.UpperLongs, oefs.UpperLongs) && Arrays.Equals(this.LowerLongs, oefs.LowerLongs); // no need to check index content
+            return (this.numValues == oefs.numValues) && (this.numEncoded == oefs.numEncoded) && (this.numLowBits == oefs.numLowBits) && (this.numIndexEntries == oefs.numIndexEntries) && (this.indexInterval == oefs.indexInterval) && Arrays.Equals(this.upperLongs, oefs.upperLongs) && Arrays.Equals(this.lowerLongs, oefs.lowerLongs); // no need to check index content
         }
 
         public override int GetHashCode()
         {
-            int h = ((int)(31 * (NumValues + 7 * (NumEncoded + 5 * (NumLowBits + 3 * (NumIndexEntries + 11 * IndexInterval)))))) ^ Arrays.GetHashCode(UpperLongs) ^ Arrays.GetHashCode(LowerLongs);
+            int h = ((int)(31 * (numValues + 7 * (numEncoded + 5 * (numLowBits + 3 * (numIndexEntries + 11 * indexInterval)))))) ^ Arrays.GetHashCode(upperLongs) ^ Arrays.GetHashCode(lowerLongs);
             return h;
         }
     }

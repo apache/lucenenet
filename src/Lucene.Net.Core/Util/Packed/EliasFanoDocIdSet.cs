@@ -54,12 +54,12 @@ namespace Lucene.Net.Util.Packed
         ///              with <code>numValues</code> and <code>upperBound</code> as provided to the constructor.   </param>
         public virtual void EncodeFromDisi(DocIdSetIterator disi)
         {
-            while (efEncoder.NumEncoded < efEncoder.NumValues)
+            while (efEncoder.numEncoded < efEncoder.numValues)
             {
                 int x = disi.NextDoc();
                 if (x == DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    throw new System.ArgumentException("disi: " + disi.ToString() + "\nhas " + efEncoder.NumEncoded + " docs, but at least " + efEncoder.NumValues + " are required.");
+                    throw new System.ArgumentException("disi: " + disi.ToString() + "\nhas " + efEncoder.numEncoded + " docs, but at least " + efEncoder.numValues + " are required.");
                 }
                 efEncoder.EncodeNext(x);
             }
@@ -70,9 +70,9 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public override DocIdSetIterator GetIterator()
         {
-            if (efEncoder.LastEncoded >= DocIdSetIterator.NO_MORE_DOCS)
+            if (efEncoder.lastEncoded >= DocIdSetIterator.NO_MORE_DOCS)
             {
-                throw new System.NotSupportedException("Highest encoded value too high for DocIdSetIterator.NO_MORE_DOCS: " + efEncoder.LastEncoded);
+                throw new System.NotSupportedException("Highest encoded value too high for DocIdSetIterator.NO_MORE_DOCS: " + efEncoder.lastEncoded);
             }
             return new DocIdSetIteratorAnonymousInnerClassHelper(this);
         }
