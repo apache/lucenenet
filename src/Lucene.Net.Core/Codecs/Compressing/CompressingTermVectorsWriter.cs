@@ -531,7 +531,7 @@ namespace Lucene.Net.Codecs.Compressing
                     Debug.Assert(flags >= 0);
                     writer.Add(flags);
                 }
-                Debug.Assert(writer.Ord() == fieldFlags.Length - 1);
+                Debug.Assert(writer.Ord == fieldFlags.Length - 1);
                 writer.Finish();
             }
             else
@@ -546,7 +546,7 @@ namespace Lucene.Net.Codecs.Compressing
                         writer.Add(fd.Flags);
                     }
                 }
-                Debug.Assert(writer.Ord() == totalFields - 1);
+                Debug.Assert(writer.Ord == totalFields - 1);
                 writer.Finish();
             }
         }
@@ -571,7 +571,7 @@ namespace Lucene.Net.Codecs.Compressing
                     writer.Add(fd.NumTerms);
                 }
             }
-            Debug.Assert(writer.Ord() == totalFields - 1);
+            Debug.Assert(writer.Ord == totalFields - 1);
             writer.Finish();
         }
 

@@ -130,9 +130,9 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Return the number of values which have been added. </summary>
-        public virtual long Ord() // LUCENENET TODO: Make property ? Check consistency across API
+        public virtual long Ord
         {
-            return Ord_Renamed;
+            get { return Ord_Renamed; }
         }
 
         protected abstract void Flush();

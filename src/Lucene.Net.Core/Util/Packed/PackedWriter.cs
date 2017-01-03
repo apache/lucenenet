@@ -96,9 +96,9 @@ namespace Lucene.Net.Util.Packed
             Off = 0;
         }
 
-        public override int Ord()
+        public override int Ord
         {
-            return Written - 1;
+            get { return Written - 1; }
         }
     }
 }

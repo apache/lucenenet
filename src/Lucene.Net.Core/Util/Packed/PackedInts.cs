@@ -685,7 +685,7 @@ namespace Lucene.Net.Util.Packed
 
             /// <summary>
             /// Returns the current position </summary>
-            int Ord(); // LUCENENET TODO: Make property ? check consistency
+            int Ord { get; }
         }
 
         // LUCENENET NOTE: Was ReaderIteratorImpl in Lucene
@@ -727,7 +727,7 @@ namespace Lucene.Net.Util.Packed
                 get { return m_valueCount; }
             }
 
-            public abstract int Ord(); // LUCENENET TODO: Make property ?
+            public abstract int Ord { get; }
         }
 
         /// <summary>
@@ -966,7 +966,7 @@ namespace Lucene.Net.Util.Packed
             /// Returns the current ord in the stream (number of values that have been
             /// written so far minus one).
             /// </summary>
-            public abstract int Ord(); // LUCENENET TODO: make property ? check consistency
+            public abstract int Ord { get; }
         }
 
         /// <summary>

@@ -340,7 +340,7 @@ namespace Lucene.Net.Codecs.Compressing
                         }
                     }
                 }
-                reader.Skip(totalTerms - reader.Ord());
+                reader.Skip(totalTerms - reader.Ord);
 
                 reader.Reset(vectorsStream, totalTerms);
                 // skip
@@ -680,7 +680,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
                 termIndex += termCount;
             }
-            reader.Skip(totalPositions - reader.Ord());
+            reader.Skip(totalPositions - reader.Ord);
             return positions;
         }
 

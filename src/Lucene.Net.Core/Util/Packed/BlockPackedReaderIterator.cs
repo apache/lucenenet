@@ -289,9 +289,9 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Return the offset of the next value to read. </summary>
-        public long Ord() // LUCENENET TODO: make property ? check consistency
+        public long Ord
         {
-            return Ord_Renamed;
+            get { return Ord_Renamed; }
         }
     }
 }
