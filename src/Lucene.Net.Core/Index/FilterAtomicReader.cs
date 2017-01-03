@@ -66,29 +66,29 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// The underlying Fields instance. </summary>
-            protected readonly Fields input;
+            protected readonly Fields m_input;
 
             /// <summary>
             /// Creates a new FilterFields. </summary>
             /// <param name="input"> the underlying Fields instance. </param>
             public FilterFields(Fields input)
             {
-                this.input = input;
+                this.m_input = input;
             }
 
             public override IEnumerator<string> GetEnumerator()
             {
-                return input.GetEnumerator();
+                return m_input.GetEnumerator();
             }
 
             public override Terms Terms(string field)
             {
-                return input.Terms(field);
+                return m_input.Terms(field);
             }
 
             public override int Size
             {
-                get { return input.Size; }
+                get { return m_input.Size; }
             }
         }
 
@@ -102,39 +102,39 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// The underlying Terms instance. </summary>
-            protected readonly Terms input;
+            protected readonly Terms m_input;
 
             /// <summary>
             /// Creates a new FilterTerms </summary>
             /// <param name="input"> the underlying Terms instance. </param>
             public FilterTerms(Terms input)
             {
-                this.input = input;
+                this.m_input = input;
             }
 
             public override TermsEnum Iterator(TermsEnum reuse)
             {
-                return input.Iterator(reuse);
+                return m_input.Iterator(reuse);
             }
 
             public override IComparer<BytesRef> Comparator
             {
                 get
                 {
-                    return input.Comparator;
+                    return m_input.Comparator;
                 }
             }
 
             public override long Size
             {
-                get { return input.Size; }
+                get { return m_input.Size; }
             }
 
             public override long SumTotalTermFreq
             {
                 get
                 {
-                    return input.SumTotalTermFreq;
+                    return m_input.SumTotalTermFreq;
                 }
             }
 
@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return input.SumDocFreq;
+                    return m_input.SumDocFreq;
                 }
             }
 
@@ -150,28 +150,28 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return input.DocCount;
+                    return m_input.DocCount;
                 }
             }
 
             public override bool HasFreqs
             {
-                get { return input.HasFreqs; }
+                get { return m_input.HasFreqs; }
             }
 
             public override bool HasOffsets
             {
-                get { return input.HasOffsets; }
+                get { return m_input.HasOffsets; }
             }
 
             public override bool HasPositions
             {
-                get { return input.HasPositions; }
+                get { return m_input.HasPositions; }
             }
 
             public override bool HasPayloads
             {
-                get { return input.HasPayloads; }
+                get { return m_input.HasPayloads; }
             }
         }
 

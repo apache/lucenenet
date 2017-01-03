@@ -92,7 +92,7 @@ namespace Lucene.Net.Index
 
             public override TermsEnum Intersect(CompiledAutomaton automaton, BytesRef bytes)
             {
-                TermsEnum termsEnum = input.Intersect(automaton, bytes);
+                TermsEnum termsEnum = m_input.Intersect(automaton, bytes);
                 Debug.Assert(termsEnum != null);
                 Debug.Assert(bytes == null || bytes.IsValid());
                 return new AssertingTermsEnum(termsEnum);

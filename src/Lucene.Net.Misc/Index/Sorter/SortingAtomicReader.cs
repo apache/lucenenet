@@ -59,7 +59,7 @@ namespace Lucene.Net.Index.Sorter
 
             public override Terms Terms(string field)
             {
-                Terms terms = this.input.Terms(field);
+                Terms terms = this.m_input.Terms(field);
                 if (terms == null)
                 {
                     return null;
@@ -86,12 +86,12 @@ namespace Lucene.Net.Index.Sorter
 
             public override TermsEnum Iterator(TermsEnum reuse)
             {
-                return new SortingTermsEnum(input.Iterator(reuse), docMap, indexOptions);
+                return new SortingTermsEnum(m_input.Iterator(reuse), docMap, indexOptions);
             }
 
             public override TermsEnum Intersect(CompiledAutomaton compiled, BytesRef startTerm)
             {
-                return new SortingTermsEnum(input.Intersect(compiled, startTerm), docMap, indexOptions);
+                return new SortingTermsEnum(m_input.Intersect(compiled, startTerm), docMap, indexOptions);
             }
         }
 
