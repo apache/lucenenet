@@ -147,25 +147,25 @@ namespace Lucene.Net.Util
             {
                 // Advance the least costly iterator first
                 iterators[0].AdvanceWord(wordNum);
-                wordNum = iterators[0].WordNum;
+                wordNum = iterators[0].wordNum;
                 if (wordNum == DocIdSetIterator.NO_MORE_DOCS)
                 {
                     break;
                 }
-                byte word = iterators[0].Word;
+                byte word = iterators[0].word;
                 for (i = 1; i < numSets; ++i)
                 {
-                    if (iterators[i].WordNum < wordNum)
+                    if (iterators[i].wordNum < wordNum)
                     {
                         iterators[i].AdvanceWord(wordNum);
                     }
-                    if (iterators[i].WordNum > wordNum)
+                    if (iterators[i].wordNum > wordNum)
                     {
-                        wordNum = iterators[i].WordNum;
+                        wordNum = iterators[i].wordNum;
                         goto mainContinue;
                     }
-                    Debug.Assert(iterators[i].WordNum == wordNum);
-                    word &= iterators[i].Word;
+                    Debug.Assert(iterators[i].wordNum == wordNum);
+                    word &= iterators[i].word;
                     if (word == 0)
                     {
                         // There are common words, but they don't share any bit
@@ -217,31 +217,31 @@ namespace Lucene.Net.Util
             }
 
             Iterator top = iterators.Top;
-            if (top.WordNum == int.MaxValue)
+            if (top.wordNum == int.MaxValue)
             {
                 return EMPTY;
             }
-            int wordNum = top.WordNum;
-            byte word = top.Word;
+            int wordNum = top.wordNum;
+            byte word = top.word;
             WordBuilder builder = (WordBuilder)(new WordBuilder()).SetIndexInterval(indexInterval);
             while (true)
             {
                 top.NextWord();
                 iterators.UpdateTop();
                 top = iterators.Top;
-                if (top.WordNum == wordNum)
+                if (top.wordNum == wordNum)
                 {
-                    word |= top.Word;
+                    word |= top.word;
                 }
                 else
                 {
                     builder.AddWord(wordNum, word);
-                    if (top.WordNum == int.MaxValue)
+                    if (top.wordNum == int.MaxValue)
                     {
                         break;
                     }
-                    wordNum = top.WordNum;
-                    word = top.Word;
+                    wordNum = top.wordNum;
+                    word = top.word;
                 }
             }
             return builder.Build();
@@ -256,7 +256,7 @@ namespace Lucene.Net.Util
 
             protected internal override bool LessThan(Iterator a, Iterator b)
             {
-                return a.WordNum < b.WordNum;
+                return a.wordNum < b.wordNum;
             }
         }
 
@@ -271,23 +271,23 @@ namespace Lucene.Net.Util
         public class WordBuilder
         {
             internal readonly GrowableByteArrayDataOutput @out;
-            internal readonly GrowableByteArrayDataOutput DirtyWords;
-            internal int Clean;
-            internal int LastWordNum;
-            internal int NumSequences;
-            internal int IndexInterval_Renamed;
-            internal int Cardinality;
-            internal bool Reverse;
+            internal readonly GrowableByteArrayDataOutput dirtyWords;
+            internal int clean;
+            internal int lastWordNum;
+            internal int numSequences;
+            internal int indexInterval;
+            internal int cardinality;
+            internal bool reverse;
 
             internal WordBuilder()
             {
                 @out = new GrowableByteArrayDataOutput(1024);
-                DirtyWords = new GrowableByteArrayDataOutput(128);
-                Clean = 0;
-                LastWordNum = -1;
-                NumSequences = 0;
-                IndexInterval_Renamed = DEFAULT_INDEX_INTERVAL;
-                Cardinality = 0;
+                dirtyWords = new GrowableByteArrayDataOutput(128);
+                clean = 0;
+                lastWordNum = -1;
+                numSequences = 0;
+                indexInterval = DEFAULT_INDEX_INTERVAL;
+                cardinality = 0;
             }
 
             /// <summary>
@@ -305,7 +305,7 @@ namespace Lucene.Net.Util
                 {
                     throw new System.ArgumentException("indexInterval must be >= " + MIN_INDEX_INTERVAL);
                 }
-                this.IndexInterval_Renamed = indexInterval;
+                this.indexInterval = indexInterval;
                 return this;
             }
 
@@ -340,10 +340,10 @@ namespace Lucene.Net.Util
 
             private bool SequenceIsConsistent()
             {
-                for (int i = 1; i < DirtyWords.Length; ++i)
+                for (int i = 1; i < dirtyWords.Length; ++i)
                 {
-                    Debug.Assert(DirtyWords.Bytes[i - 1] != 0 || DirtyWords.Bytes[i] != 0);
-                    Debug.Assert((byte)DirtyWords.Bytes[i - 1] != 0xFF || (byte)DirtyWords.Bytes[i] != 0xFF);
+                    Debug.Assert(dirtyWords.Bytes[i - 1] != 0 || dirtyWords.Bytes[i] != 0);
+                    Debug.Assert((byte)dirtyWords.Bytes[i - 1] != 0xFF || (byte)dirtyWords.Bytes[i] != 0xFF);
                 }
                 return true;
             }
@@ -353,120 +353,120 @@ namespace Lucene.Net.Util
                 Debug.Assert(SequenceIsConsistent());
                 try
                 {
-                    WriteHeader(Reverse, Clean, DirtyWords.Length);
+                    WriteHeader(reverse, clean, dirtyWords.Length);
                 }
                 catch (System.IO.IOException cannotHappen)
                 {
                     throw new InvalidOperationException(cannotHappen.ToString(), cannotHappen);
                 }
-                @out.WriteBytes(DirtyWords.Bytes, 0, DirtyWords.Length);
-                DirtyWords.Length = 0;
-                ++NumSequences;
+                @out.WriteBytes(dirtyWords.Bytes, 0, dirtyWords.Length);
+                dirtyWords.Length = 0;
+                ++numSequences;
             }
 
             internal virtual void AddWord(int wordNum, byte word)
             {
-                Debug.Assert(wordNum > LastWordNum);
+                Debug.Assert(wordNum > lastWordNum);
                 Debug.Assert(word != 0);
 
-                if (!Reverse)
+                if (!reverse)
                 {
-                    if (LastWordNum == -1)
+                    if (lastWordNum == -1)
                     {
-                        Clean = 2 + wordNum; // special case for the 1st sequence
-                        DirtyWords.WriteByte(word);
+                        clean = 2 + wordNum; // special case for the 1st sequence
+                        dirtyWords.WriteByte(word);
                     }
                     else
                     {
-                        switch (wordNum - LastWordNum)
+                        switch (wordNum - lastWordNum)
                         {
                             case 1:
-                                if (word == 0xFF && (byte)DirtyWords.Bytes[DirtyWords.Length - 1] == 0xFF)
+                                if (word == 0xFF && (byte)dirtyWords.Bytes[dirtyWords.Length - 1] == 0xFF)
                                 {
-                                    --DirtyWords.Length;
+                                    --dirtyWords.Length;
                                     WriteSequence();
-                                    Reverse = true;
-                                    Clean = 2;
+                                    reverse = true;
+                                    clean = 2;
                                 }
                                 else
                                 {
-                                    DirtyWords.WriteByte(word);
+                                    dirtyWords.WriteByte(word);
                                 }
                                 break;
 
                             case 2:
-                                DirtyWords.WriteByte(0);
-                                DirtyWords.WriteByte(word);
+                                dirtyWords.WriteByte(0);
+                                dirtyWords.WriteByte(word);
                                 break;
 
                             default:
                                 WriteSequence();
-                                Clean = wordNum - LastWordNum - 1;
-                                DirtyWords.WriteByte(word);
+                                clean = wordNum - lastWordNum - 1;
+                                dirtyWords.WriteByte(word);
                                 break;
                         }
                     }
                 }
                 else
                 {
-                    Debug.Assert(LastWordNum >= 0);
-                    switch (wordNum - LastWordNum)
+                    Debug.Assert(lastWordNum >= 0);
+                    switch (wordNum - lastWordNum)
                     {
                         case 1:
                             if (word == 0xFF)
                             {
-                                if (DirtyWords.Length == 0)
+                                if (dirtyWords.Length == 0)
                                 {
-                                    ++Clean;
+                                    ++clean;
                                 }
-                                else if ((byte)DirtyWords.Bytes[DirtyWords.Length - 1] == 0xFF)
+                                else if ((byte)dirtyWords.Bytes[dirtyWords.Length - 1] == 0xFF)
                                 {
-                                    --DirtyWords.Length;
+                                    --dirtyWords.Length;
                                     WriteSequence();
-                                    Clean = 2;
+                                    clean = 2;
                                 }
                                 else
                                 {
-                                    DirtyWords.WriteByte(word);
+                                    dirtyWords.WriteByte(word);
                                 }
                             }
                             else
                             {
-                                DirtyWords.WriteByte(word);
+                                dirtyWords.WriteByte(word);
                             }
                             break;
 
                         case 2:
-                            DirtyWords.WriteByte(0);
-                            DirtyWords.WriteByte(word);
+                            dirtyWords.WriteByte(0);
+                            dirtyWords.WriteByte(word);
                             break;
 
                         default:
                             WriteSequence();
-                            Reverse = false;
-                            Clean = wordNum - LastWordNum - 1;
-                            DirtyWords.WriteByte(word);
+                            reverse = false;
+                            clean = wordNum - lastWordNum - 1;
+                            dirtyWords.WriteByte(word);
                             break;
                     }
                 }
-                LastWordNum = wordNum;
-                Cardinality += BitUtil.BitCount(word);
+                lastWordNum = wordNum;
+                cardinality += BitUtil.BitCount(word);
             }
 
             /// <summary>
             /// Build a new <seealso cref="WAH8DocIdSet"/>. </summary>
             public virtual WAH8DocIdSet Build()
             {
-                if (Cardinality == 0)
+                if (cardinality == 0)
                 {
-                    Debug.Assert(LastWordNum == -1);
+                    Debug.Assert(lastWordNum == -1);
                     return EMPTY;
                 }
                 WriteSequence();
                 byte[] data = Arrays.CopyOf((byte[])(Array)@out.Bytes, @out.Length);
 
                 // Now build the index
-                int valueCount = (NumSequences - 1) / IndexInterval_Renamed + 1;
+                int valueCount = (numSequences - 1) / indexInterval + 1;
                 MonotonicAppendingLongBuffer indexPositions, indexWordNums;
                 if (valueCount <= 1)
                 {
@@ -481,20 +481,20 @@ namespace Lucene.Net.Util
 
                     positions.Add(0L);
                     wordNums.Add(0L);
-                    Iterator it = new Iterator(data, Cardinality, int.MaxValue, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
+                    Iterator it = new Iterator(data, cardinality, int.MaxValue, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
                     Debug.Assert(it.@in.Position == 0);
-                    Debug.Assert(it.WordNum == -1);
+                    Debug.Assert(it.wordNum == -1);
                     for (int i = 1; i < valueCount; ++i)
                     {
                         // skip indexInterval sequences
-                        for (int j = 0; j < IndexInterval_Renamed; ++j)
+                        for (int j = 0; j < indexInterval; ++j)
                         {
                             bool readSequence = it.ReadSequence();
                             Debug.Assert(readSequence);
                             it.SkipDirtyBytes();
                         }
                         int position = it.@in.Position;
-                        int wordNum = it.WordNum;
+                        int wordNum = it.wordNum;
                         positions.Add(position);
                         wordNums.Add(wordNum + 1);
                     }
@@ -504,7 +504,7 @@ namespace Lucene.Net.Util
                     indexWordNums = wordNums;
                 }
 
-                return new WAH8DocIdSet(data, Cardinality, IndexInterval_Renamed, indexPositions, indexWordNums);
+                return new WAH8DocIdSet(data, cardinality, indexInterval, indexPositions, indexWordNums);
             }
         }
 
@@ -512,44 +512,44 @@ namespace Lucene.Net.Util
         /// A builder for <seealso cref="WAH8DocIdSet"/>s. </summary>
         public sealed class Builder : WordBuilder
         {
-            private int LastDocID;
-            private int WordNum, Word;
+            private int lastDocID;
+            private int wordNum, word;
 
             /// <summary>
             /// Sole constructor </summary>
             public Builder()
                 : base()
             {
-                LastDocID = -1;
-                WordNum = -1;
-                Word = 0;
+                lastDocID = -1;
+                wordNum = -1;
+                word = 0;
             }
 
             /// <summary>
             /// Add a document to this builder. Documents must be added in order. </summary>
             public Builder Add(int docID)
             {
-                if (docID <= LastDocID)
+                if (docID <= lastDocID)
                 {
-                    throw new System.ArgumentException("Doc ids must be added in-order, got " + docID + " which is <= lastDocID=" + LastDocID);
+                    throw new System.ArgumentException("Doc ids must be added in-order, got " + docID + " which is <= lastDocID=" + lastDocID);
                 }
                 int wordNum = WordNum(docID);
-                if (this.WordNum == -1)
+                if (this.wordNum == -1)
                 {
-                    this.WordNum = wordNum;
-                    Word = 1 << (docID & 0x07);
+                    this.wordNum = wordNum;
+                    word = 1 << (docID & 0x07);
                 }
-                else if (wordNum == this.WordNum)
+                else if (wordNum == this.wordNum)
                 {
-                    Word |= 1 << (docID & 0x07);
+                    word |= 1 << (docID & 0x07);
                 }
                 else
                 {
-                    AddWord(this.WordNum, (byte)Word);
-                    this.WordNum = wordNum;
-                    Word = 1 << (docID & 0x07);
+                    AddWord(this.wordNum, (byte)word);
+                    this.wordNum = wordNum;
+                    word = 1 << (docID & 0x07);
                 }
-                LastDocID = docID;
+                lastDocID = docID;
                 return this;
             }
 
@@ -571,30 +571,30 @@ namespace Lucene.Net.Util
 
             public override WAH8DocIdSet Build()
             {
-                if (this.WordNum != -1)
+                if (this.wordNum != -1)
                 {
-                    AddWord(WordNum, (byte)Word);
+                    AddWord(wordNum, (byte)word);
                 }
                 return base.Build();
             }
         }
 
         // where the doc IDs are stored
-        private readonly byte[] Data;
+        private readonly byte[] data;
 
-        private readonly int Cardinality_Renamed;
-        private readonly int IndexInterval;
+        private readonly int cardinality;
+        private readonly int indexInterval;
 
         // index for advance(int)
-        private readonly MonotonicAppendingLongBuffer Positions, WordNums; // wordNums[i] starts at the sequence at positions[i]
+        private readonly MonotonicAppendingLongBuffer positions, wordNums; // wordNums[i] starts at the sequence at positions[i]
 
         internal WAH8DocIdSet(byte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer positions, MonotonicAppendingLongBuffer wordNums)
         {
-            this.Data = data;
-            this.Cardinality_Renamed = cardinality;
-            this.IndexInterval = indexInterval;
-            this.Positions = positions;
-            this.WordNums = wordNums;
+            this.data = data;
+            this.cardinality = cardinality;
+            this.indexInterval = indexInterval;
+            this.positions = positions;
+            this.wordNums = wordNums;
         }
 
         public override bool IsCacheable
@@ -607,7 +607,7 @@ namespace Lucene.Net.Util
 
         public override DocIdSetIterator GetIterator()
         {
-            return new Iterator(Data, Cardinality_Renamed, IndexInterval, Positions, WordNums);
+            return new Iterator(data, cardinality, indexInterval, positions, wordNums);
         }
 
         internal static int ReadCleanLength(ByteArrayDataInput @in, int token)
@@ -649,108 +649,108 @@ namespace Lucene.Net.Util
             }
 
             internal readonly ByteArrayDataInput @in;
-            internal readonly int Cardinality;
-            internal readonly int IndexInterval;
-            internal readonly MonotonicAppendingLongBuffer Positions, WordNums;
-            internal readonly int IndexThreshold_Renamed;
-            internal int AllOnesLength;
-            internal int DirtyLength;
+            internal readonly int cardinality;
+            internal readonly int indexInterval;
+            internal readonly MonotonicAppendingLongBuffer positions, wordNums;
+            internal readonly int indexThreshold;
+            internal int allOnesLength;
+            internal int dirtyLength;
 
-            internal int WordNum; // byte offset
-            internal byte Word; // current word
-            internal int BitList; // list of bits set in the current word
-            internal int SequenceNum; // in which sequence are we?
+            internal int wordNum; // byte offset
+            internal byte word; // current word
+            internal int bitList; // list of bits set in the current word
+            internal int sequenceNum; // in which sequence are we?
 
-            internal int DocID_Renamed;
+            internal int docID;
 
             internal Iterator(byte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer positions, MonotonicAppendingLongBuffer wordNums)
             {
                 this.@in = new ByteArrayDataInput(data);
-                this.Cardinality = cardinality;
-                this.IndexInterval = indexInterval;
-                this.Positions = positions;
-                this.WordNums = wordNums;
-                WordNum = -1;
-                Word = 0;
-                BitList = 0;
-                SequenceNum = -1;
-                DocID_Renamed = -1;
-                IndexThreshold_Renamed = IndexThreshold(cardinality, indexInterval);
+                this.cardinality = cardinality;
+                this.indexInterval = indexInterval;
+                this.positions = positions;
+                this.wordNums = wordNums;
+                wordNum = -1;
+                word = 0;
+                bitList = 0;
+                sequenceNum = -1;
+                docID = -1;
+                indexThreshold = IndexThreshold(cardinality, indexInterval);
             }
 
             internal virtual bool ReadSequence()
             {
                 if (@in.Eof)
                 {
-                    WordNum = int.MaxValue;
+                    wordNum = int.MaxValue;
                     return false;
                 }
                 int token = @in.ReadByte() & 0xFF;
                 if ((token & (1 << 7)) == 0)
                 {
                     int cleanLength = ReadCleanLength(@in, token);
-                    WordNum += cleanLength;
+                    wordNum += cleanLength;
                 }
                 else
                 {
-                    AllOnesLength = ReadCleanLength(@in, token);
+                    allOnesLength = ReadCleanLength(@in, token);
                 }
-                DirtyLength = ReadDirtyLength(@in, token);
-                Debug.Assert(@in.Length - @in.Position >= DirtyLength, @in.Position + " " + @in.Length + " " + DirtyLength);
-                ++SequenceNum;
+                dirtyLength = ReadDirtyLength(@in, token);
+                Debug.Assert(@in.Length - @in.Position >= dirtyLength, @in.Position + " " + @in.Length + " " + dirtyLength);
+                ++sequenceNum;
                 return true;
             }
 
             internal virtual void SkipDirtyBytes(int count)
             {
                 Debug.Assert(count >= 0);
-                Debug.Assert(count <= AllOnesLength + DirtyLength);
-                WordNum += count;
-                if (count <= AllOnesLength)
+                Debug.Assert(count <= allOnesLength + dirtyLength);
+                wordNum += count;
+                if (count <= allOnesLength)
                 {
-                    AllOnesLength -= count;
+                    allOnesLength -= count;
                 }
                 else
                 {
-                    count -= AllOnesLength;
-                    AllOnesLength = 0;
+                    count -= allOnesLength;
+                    allOnesLength = 0;
                     @in.SkipBytes(count);
-                    DirtyLength -= count;
+                    dirtyLength -= count;
                 }
             }
 
             internal virtual void SkipDirtyBytes()
             {
-                WordNum += AllOnesLength + DirtyLength;
-                @in.SkipBytes(DirtyLength);
-                AllOnesLength = 0;
-                DirtyLength = 0;
+                wordNum += allOnesLength + dirtyLength;
+                @in.SkipBytes(dirtyLength);
+                allOnesLength = 0;
+                dirtyLength = 0;
             }
 
             internal virtual void NextWord()
             {
-                if (AllOnesLength > 0)
+                if (allOnesLength > 0)
                 {
-                    Word = 0xFF;
-                    ++WordNum;
-                    --AllOnesLength;
+                    word = 0xFF;
+                    ++wordNum;
+                    --allOnesLength;
                     return;
                 }
-                if (DirtyLength > 0)
+                if (dirtyLength > 0)
                 {
-                    Word = @in.ReadByte();
-                    ++WordNum;
-                    --DirtyLength;
-                    if (Word != 0)
+                    word = @in.ReadByte();
+                    ++wordNum;
+                    --dirtyLength;
+                    if (word != 0)
                     {
                         return;
                     }
-                    if (DirtyLength > 0)
+                    if (dirtyLength > 0)
                     {
-                        Word = @in.ReadByte();
-                        ++WordNum;
-                        --DirtyLength;
-                        Debug.Assert(Word != 0); // never more than one consecutive 0
+                        word = @in.ReadByte();
+                        ++wordNum;
+                        --dirtyLength;
+                        Debug.Assert(word != 0); // never more than one consecutive 0
                         return;
                     }
                 }
@@ -763,10 +763,10 @@ namespace Lucene.Net.Util
             internal virtual int ForwardBinarySearch(int targetWordNum)
             {
                 // advance forward and double the window at each step
-                int indexSize = (int)WordNums.Size;
-                int lo = SequenceNum / IndexInterval, hi = lo + 1;
-                Debug.Assert(SequenceNum == -1 || WordNums.Get(lo) <= WordNum);
-                Debug.Assert(lo + 1 == WordNums.Size || WordNums.Get(lo + 1) > WordNum);
+                int indexSize = (int)wordNums.Size;
+                int lo = sequenceNum / indexInterval, hi = lo + 1;
+                Debug.Assert(sequenceNum == -1 || wordNums.Get(lo) <= wordNum);
+                Debug.Assert(lo + 1 == wordNums.Size || wordNums.Get(lo + 1) > wordNum);
                 while (true)
                 {
                     if (hi >= indexSize)
@@ -774,7 +774,7 @@ namespace Lucene.Net.Util
                         hi = indexSize - 1;
                         break;
                     }
-                    else if (WordNums.Get(hi) >= targetWordNum)
+                    else if (wordNums.Get(hi) >= targetWordNum)
                     {
                         break;
                     }
@@ -787,7 +787,7 @@ namespace Lucene.Net.Util
                 while (lo <= hi)
                 {
                     int mid = (int)((uint)(lo + hi) >> 1);
-                    int midWordNum = (int)WordNums.Get(mid);
+                    int midWordNum = (int)wordNums.Get(mid);
                     if (midWordNum <= targetWordNum)
                     {
                         lo = mid + 1;
@@ -797,33 +797,33 @@ namespace Lucene.Net.Util
                         hi = mid - 1;
                     }
                 }
-                Debug.Assert(WordNums.Get(hi) <= targetWordNum);
-                Debug.Assert(hi + 1 == WordNums.Size || WordNums.Get(hi + 1) > targetWordNum);
+                Debug.Assert(wordNums.Get(hi) <= targetWordNum);
+                Debug.Assert(hi + 1 == wordNums.Size || wordNums.Get(hi + 1) > targetWordNum);
                 return hi;
             }
 
             internal virtual void AdvanceWord(int targetWordNum)
             {
-                Debug.Assert(targetWordNum > WordNum);
-                int delta = targetWordNum - WordNum;
-                if (delta <= AllOnesLength + DirtyLength + 1)
+                Debug.Assert(targetWordNum > wordNum);
+                int delta = targetWordNum - wordNum;
+                if (delta <= allOnesLength + dirtyLength + 1)
                 {
                     SkipDirtyBytes(delta - 1);
                 }
                 else
                 {
                     SkipDirtyBytes();
-                    Debug.Assert(DirtyLength == 0);
-                    if (delta > IndexThreshold_Renamed)
+                    Debug.Assert(dirtyLength == 0);
+                    if (delta > indexThreshold)
                     {
                         // use the index
                         int i = ForwardBinarySearch(targetWordNum);
-                        int position = (int)Positions.Get(i);
+                        int position = (int)positions.Get(i);
                         if (position > @in.Position) // if the binary search returned a backward offset, don't move
                         {
-                            WordNum = (int)WordNums.Get(i) - 1;
+                            wordNum = (int)wordNums.Get(i) - 1;
                             @in.Position = position;
-                            SequenceNum = i * IndexInterval - 1;
+                            sequenceNum = i * indexInterval - 1;
                         }
                     }
 
@@ -833,8 +833,8 @@ namespace Lucene.Net.Util
                         {
                             return;
                         }
-                        delta = targetWordNum - WordNum;
-                        if (delta <= AllOnesLength + DirtyLength + 1)
+                        delta = targetWordNum - wordNum;
+                        if (delta <= allOnesLength + dirtyLength + 1)
                         {
                             if (delta > 1)
                             {
@@ -851,44 +851,44 @@ namespace Lucene.Net.Util
 
             public override int DocID
             {
-                get { return DocID_Renamed; }
+                get { return docID; }
             }
 
             public override int NextDoc()
             {
-                if (BitList != 0) // there are remaining bits in the current word
+                if (bitList != 0) // there are remaining bits in the current word
                 {
-                    DocID_Renamed = (WordNum << 3) | ((BitList & 0x0F) - 1);
-                    BitList = (int)((uint)BitList >> 4);
-                    return DocID_Renamed;
+                    docID = (wordNum << 3) | ((bitList & 0x0F) - 1);
+                    bitList = (int)((uint)bitList >> 4);
+                    return docID;
                 }
                 NextWord();
-                if (WordNum == int.MaxValue)
+                if (wordNum == int.MaxValue)
                 {
-                    return DocID_Renamed = NO_MORE_DOCS;
+                    return docID = NO_MORE_DOCS;
                 }
-                BitList = BitUtil.BitList(Word);
-                Debug.Assert(BitList != 0);
-                DocID_Renamed = (WordNum << 3) | ((BitList & 0x0F) - 1);
-                BitList = (int)((uint)BitList >> 4);
-                return DocID_Renamed;
+                bitList = BitUtil.BitList(word);
+                Debug.Assert(bitList != 0);
+                docID = (wordNum << 3) | ((bitList & 0x0F) - 1);
+                bitList = (int)((uint)bitList >> 4);
+                return docID;
             }
 
             public override int Advance(int target)
             {
-                Debug.Assert(target > DocID_Renamed);
+                Debug.Assert(target > docID);
                 int targetWordNum = WordNum(target);
-                if (targetWordNum > this.WordNum)
+                if (targetWordNum > this.wordNum)
                 {
                     AdvanceWord(targetWordNum);
-                    BitList = BitUtil.BitList(Word);
+                    bitList = BitUtil.BitList(word);
                 }
                 return SlowAdvance(target);
             }
 
             public override long Cost()
             {
-                return Cardinality;
+                return cardinality;
             }
         }
 
@@ -896,7 +896,7 @@ namespace Lucene.Net.Util
         /// Return the number of documents in this <seealso cref="DocIdSet"/> in constant time. </summary>
         public int Cardinality()
         {
-            return Cardinality_Renamed;
+            return cardinality;
         }
 
         /// <summary>
@@ -904,9 +904,9 @@ namespace Lucene.Net.Util
         public long RamBytesUsed()
         {
             return RamUsageEstimator.AlignObjectSize(3 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 2 * RamUsageEstimator.NUM_BYTES_INT) 
-                + RamUsageEstimator.SizeOf(Data) 
-                + Positions.RamBytesUsed() 
-                + WordNums.RamBytesUsed();
+                + RamUsageEstimator.SizeOf(data) 
+                + positions.RamBytesUsed() 
+                + wordNums.RamBytesUsed();
         }
     }
 }
