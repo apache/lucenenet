@@ -44,11 +44,11 @@ namespace Lucene.Net.Util
         internal const int STACKSIZE = 40; // depends on MINRUN
         internal const int MIN_GALLOP = 7;
 
-        internal readonly int MaxTempSlots;
-        internal int MinRun_Renamed;
-        internal int To;
-        internal int StackSize;
-        internal int[] RunEnds;
+        internal readonly int maxTempSlots;
+        internal int minRun;
+        internal int to;
+        internal int stackSize;
+        internal int[] runEnds;
 
         /// <summary>
         /// Create a new <seealso cref="TimSorter"/>. </summary>
@@ -56,8 +56,8 @@ namespace Lucene.Net.Util
         protected TimSorter(int maxTempSlots)
             : base()
         {
-            RunEnds = new int[1 + STACKSIZE];
-            this.MaxTempSlots = maxTempSlots;
+            runEnds = new int[1 + STACKSIZE];
+            this.maxTempSlots = maxTempSlots;
         }
 
         /// <summary>
@@ -79,29 +79,29 @@ namespace Lucene.Net.Util
 
         internal virtual int RunLen(int i)
         {
-            int off = StackSize - i;
-            return RunEnds[off] - RunEnds[off - 1];
+            int off = stackSize - i;
+            return runEnds[off] - runEnds[off - 1];
         }
 
         internal virtual int RunBase(int i)
         {
-            return RunEnds[StackSize - i - 1];
+            return runEnds[stackSize - i - 1];
         }
 
         internal virtual int RunEnd(int i)
         {
-            return RunEnds[StackSize - i];
+            return runEnds[stackSize - i];
         }
 
         internal virtual void SetRunEnd(int i, int runEnd)
         {
-            RunEnds[StackSize - i] = runEnd;
+            runEnds[stackSize - i] = runEnd;
         }
 
         internal virtual void PushRunLen(int len)
         {
-            RunEnds[StackSize + 1] = RunEnds[StackSize] + len;
-            ++StackSize;
+            runEnds[stackSize + 1] = runEnds[stackSize] + len;
+            ++stackSize;
         }
 
         /// <summary>
@@ -111,8 +111,8 @@ namespace Lucene.Net.Util
         internal virtual int NextRun()
         {
             int runBase = RunEnd(0);
-            Debug.Assert(runBase < To);
-            if (runBase == To - 1)
+            Debug.Assert(runBase < to);
+            if (runBase == to - 1)
             {
                 return 1;
             }
@@ -120,7 +120,7 @@ namespace Lucene.Net.Util
             if (Compare(runBase, runBase + 1) > 0)
             {
                 // run must be strictly descending
-                while (o < To && Compare(o - 1, o) > 0)
+                while (o < to && Compare(o - 1, o) > 0)
                 {
                     ++o;
                 }
@@ -129,24 +129,24 @@ namespace Lucene.Net.Util
             else
             {
                 // run must be non-descending
-                while (o < To && Compare(o - 1, o) <= 0)
+                while (o < to && Compare(o - 1, o) <= 0)
                 {
                     ++o;
                 }
             }
-            int runHi = Math.Max(o, Math.Min(To, runBase + MinRun_Renamed));
+            int runHi = Math.Max(o, Math.Min(to, runBase + minRun));
             BinarySort(runBase, runHi, o);
             return runHi - runBase;
         }
 
         internal virtual void EnsureInvariants()
         {
-            while (StackSize > 1)
+            while (stackSize > 1)
             {
                 int runLen0 = RunLen(0);
                 int runLen1 = RunLen(1);
 
-                if (StackSize > 2)
+                if (stackSize > 2)
                 {
                     int runLen2 = RunLen(2);
 
@@ -177,7 +177,7 @@ namespace Lucene.Net.Util
 
         internal virtual void ExhaustStack()
         {
-            while (StackSize > 1)
+            while (stackSize > 1)
             {
                 MergeAt(0);
             }
@@ -185,23 +185,23 @@ namespace Lucene.Net.Util
 
         internal virtual void Reset(int from, int to)
         {
-            StackSize = 0;
-            Array.Clear(RunEnds, 0, RunEnds.Length);
-            RunEnds[0] = from;
-            this.To = to;
+            stackSize = 0;
+            Array.Clear(runEnds, 0, runEnds.Length);
+            runEnds[0] = from;
+            this.to = to;
             int length = to - from;
-            this.MinRun_Renamed = length <= THRESHOLD ? length : MinRun(length);
+            this.minRun = length <= THRESHOLD ? length : MinRun(length);
         }
 
         internal virtual void MergeAt(int n)
         {
-            Debug.Assert(StackSize >= 2);
+            Debug.Assert(stackSize >= 2);
             Merge(RunBase(n + 1), RunBase(n), RunEnd(n));
             for (int j = n + 1; j > 0; --j)
             {
                 SetRunEnd(j, RunEnd(j - 1));
             }
-            --StackSize;
+            --stackSize;
         }
 
         internal virtual void Merge(int lo, int mid, int hi)
@@ -213,11 +213,11 @@ namespace Lucene.Net.Util
             lo = Upper2(lo, mid, mid);
             hi = Lower2(mid, hi, mid - 1);
 
-            if (hi - mid <= mid - lo && hi - mid <= MaxTempSlots)
+            if (hi - mid <= mid - lo && hi - mid <= maxTempSlots)
             {
                 MergeHi(lo, mid, hi);
             }
-            else if (mid - lo <= MaxTempSlots)
+            else if (mid - lo <= maxTempSlots)
             {
                 MergeLo(lo, mid, hi);
             }
@@ -255,7 +255,7 @@ namespace Lucene.Net.Util
                     Swap(lo++, mid++);
                 }
             }
-            else if (len2 < len1 && len2 <= MaxTempSlots)
+            else if (len2 < len1 && len2 <= maxTempSlots)
             {
                 Save(mid, len2);
                 for (int i = lo + len1 - 1, j = hi - 1; i >= lo; --i, --j)
@@ -267,7 +267,7 @@ namespace Lucene.Net.Util
                     Restore(i, j);
                 }
             }
-            else if (len1 <= MaxTempSlots)
+            else if (len1 <= maxTempSlots)
             {
                 Save(lo, len1);
                 for (int i = mid, j = lo; i < hi; ++i, ++j)
