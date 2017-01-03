@@ -124,12 +124,12 @@ namespace Lucene.Net.Util
 
         // These two maps must always be in sync!!!
         // So they are private, final and read-only from the outside (read-only iterators)
-        private readonly GeneralKeyedCollection<Type, AttributeImplItem> Attributes;
+        private readonly GeneralKeyedCollection<Type, AttributeImplItem> attributes;
 
-        private readonly GeneralKeyedCollection<Type, AttributeImplItem> AttributeImpls;
-        private readonly State[] CurrentState_Renamed;
+        private readonly GeneralKeyedCollection<Type, AttributeImplItem> attributeImpls;
+        private readonly State[] currentState;
 
-        private readonly AttributeFactory Factory;
+        private readonly AttributeFactory factory;
 
         /// <summary>
         /// An AttributeSource using the default attribute factory <seealso cref="AttributeSource.AttributeFactory#DEFAULT_ATTRIBUTE_FACTORY"/>.
@@ -148,10 +148,10 @@ namespace Lucene.Net.Util
             {
                 throw new System.ArgumentException("input AttributeSource must not be null");
             }
-            this.Attributes = input.Attributes;
-            this.AttributeImpls = input.AttributeImpls;
-            this.CurrentState_Renamed = input.CurrentState_Renamed;
-            this.Factory = input.Factory;
+            this.attributes = input.attributes;
+            this.attributeImpls = input.attributeImpls;
+            this.currentState = input.currentState;
+            this.factory = input.factory;
         }
 
         /// <summary>
@@ -159,10 +159,10 @@ namespace Lucene.Net.Util
         /// </summary>
         public AttributeSource(AttributeFactory factory)
         {
-            this.Attributes = new GeneralKeyedCollection<Type, AttributeImplItem>(att => att.Key);
-            this.AttributeImpls = new GeneralKeyedCollection<Type, AttributeImplItem>(att => att.Key);
-            this.CurrentState_Renamed = new State[1];
-            this.Factory = factory;
+            this.attributes = new GeneralKeyedCollection<Type, AttributeImplItem>(att => att.Key);
+            this.attributeImpls = new GeneralKeyedCollection<Type, AttributeImplItem>(att => att.Key);
+            this.currentState = new State[1];
+            this.factory = factory;
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public AttributeFactory GetAttributeFactory()
         {
-            return this.Factory;
+            return this.factory;
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public IEnumerator<Type> GetAttributeClassesEnumerator()
         {
-            return Attributes.Keys.GetEnumerator();
+            return attributes.Keys.GetEnumerator();
         }
 
         /// <summary>
@@ -301,7 +301,7 @@ namespace Lucene.Net.Util
         public void AddAttributeImpl(Attribute att)
         {
             Type clazz = att.GetType();
-            if (AttributeImpls.ContainsKey(clazz))
+            if (attributeImpls.ContainsKey(clazz))
             {
                 return;
             }
@@ -314,14 +314,14 @@ namespace Lucene.Net.Util
                 Type curInterface = (Type)curInterfaceRef.Target;
                 Debug.Assert(curInterface != null, "We have a strong reference on the class holding the interfaces, so they should never get evicted");
                 // Attribute is a superclass of this interface
-                if (!Attributes.ContainsKey(curInterface))
+                if (!attributes.ContainsKey(curInterface))
                 {
                     // invalidate state to force recomputation in captureState()
-                    this.CurrentState_Renamed[0] = null;
-                    Attributes.Add(new AttributeImplItem(curInterface, att));
-                    if (!AttributeImpls.ContainsKey(clazz))
+                    this.currentState[0] = null;
+                    attributes.Add(new AttributeImplItem(curInterface, att));
+                    if (!attributeImpls.ContainsKey(clazz))
                     {
-                        AttributeImpls.Add(new AttributeImplItem(clazz, att));
+                        attributeImpls.Add(new AttributeImplItem(clazz, att));
                     }
                 }
             }
@@ -331,20 +331,20 @@ namespace Lucene.Net.Util
             where T : IAttribute
         {
             var attClass = typeof(T);
-            if (!Attributes.ContainsKey(attClass))
+            if (!attributes.ContainsKey(attClass))
             {
                 if (!(attClass.GetTypeInfo().IsInterface && typeof(IAttribute).IsAssignableFrom(attClass)))
                 {
                     throw new ArgumentException("AddAttribute() only accepts an interface that extends IAttribute, but " + attClass.FullName + " does not fulfil this contract.");
                 }
 
-                AddAttributeImpl(this.Factory.CreateAttributeInstance<T>());
+                AddAttributeImpl(this.factory.CreateAttributeInstance<T>());
             }
 
             T returnAttr;
             try
             {
-                returnAttr = (T)(IAttribute)Attributes[attClass].Value;
+                returnAttr = (T)(IAttribute)attributes[attClass].Value;
             }
             catch (KeyNotFoundException knf)
             {
@@ -357,7 +357,7 @@ namespace Lucene.Net.Util
         /// Returns true, iff this AttributeSource has any attributes </summary>
         public bool HasAttributes
         {
-            get { return this.Attributes.Count > 0; }
+            get { return this.attributes.Count > 0; }
         }
 
         /// <summary>
@@ -367,7 +367,7 @@ namespace Lucene.Net.Util
         public bool HasAttribute<T>() where T : IAttribute
         {
             var attClass = typeof(T);
-            return this.Attributes.ContainsKey(attClass);
+            return this.attributes.ContainsKey(attClass);
         }
 
         /// <summary>
@@ -383,22 +383,22 @@ namespace Lucene.Net.Util
         public virtual T GetAttribute<T>() where T : IAttribute
         {
             var attClass = typeof(T);
-            if (!Attributes.ContainsKey(attClass))
+            if (!attributes.ContainsKey(attClass))
             {
                 throw new System.ArgumentException("this AttributeSource does not have the attribute '" + attClass.Name + "'.");
             }
-            return (T)(IAttribute)this.Attributes[attClass].Value;
+            return (T)(IAttribute)this.attributes[attClass].Value;
         }
 
         private State GetCurrentState()
         {
-            State s = CurrentState_Renamed[0];
+            State s = currentState[0];
             if (s != null || !HasAttributes)
             {
                 return s;
             }
-            var c = s = CurrentState_Renamed[0] = new State();
-            var it = AttributeImpls.Values().GetEnumerator();
+            var c = s = currentState[0] = new State();
+            var it = attributeImpls.Values().GetEnumerator();
             it.MoveNext();
             c.attribute = it.Current.Value;
             while (it.MoveNext())
@@ -456,11 +456,11 @@ namespace Lucene.Net.Util
 
             do
             {
-                if (!AttributeImpls.ContainsKey(state.attribute.GetType()))
+                if (!attributeImpls.ContainsKey(state.attribute.GetType()))
                 {
                     throw new System.ArgumentException("State contains Attribute of type " + state.attribute.GetType().Name + " that is not in in this AttributeSource");
                 }
-                state.attribute.CopyTo(AttributeImpls[state.attribute.GetType()].Value);
+                state.attribute.CopyTo(attributeImpls[state.attribute.GetType()].Value);
                 state = state.next;
             } while (state != null);
         }
@@ -493,7 +493,7 @@ namespace Lucene.Net.Util
                         return false;
                     }
 
-                    if (this.AttributeImpls.Count != other.AttributeImpls.Count)
+                    if (this.attributeImpls.Count != other.attributeImpls.Count)
                     {
                         return false;
                     }
@@ -599,7 +599,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public AttributeSource CloneAttributes()
         {
-            AttributeSource clone = new AttributeSource(this.Factory);
+            AttributeSource clone = new AttributeSource(this.factory);
 
             if (HasAttributes)
             {
@@ -609,16 +609,16 @@ namespace Lucene.Net.Util
                     //clone.AttributeImpls[state.attribute.GetType()] = state.attribute.Clone();
                     var impl = (Attribute)state.attribute.Clone();
 
-                    if (!clone.AttributeImpls.ContainsKey(impl.GetType()))
+                    if (!clone.attributeImpls.ContainsKey(impl.GetType()))
                     {
-                        clone.AttributeImpls.Add(new AttributeImplItem(impl.GetType(), impl));
+                        clone.attributeImpls.Add(new AttributeImplItem(impl.GetType(), impl));
                     }
                 }
 
                 // now the interfaces
-                foreach (var entry in this.Attributes)
+                foreach (var entry in this.attributes)
                 {
-                    clone.Attributes.Add(new AttributeImplItem(entry.Key, clone.AttributeImpls[entry.Value.GetType()].Value));
+                    clone.attributes.Add(new AttributeImplItem(entry.Key, clone.attributeImpls[entry.Value.GetType()].Value));
                 }
             }
 
@@ -637,7 +637,7 @@ namespace Lucene.Net.Util
         {
             for (State state = GetCurrentState(); state != null; state = state.next)
             {
-                Attribute targetImpl = target.AttributeImpls[state.attribute.GetType()].Value;
+                Attribute targetImpl = target.attributeImpls[state.attribute.GetType()].Value;
                 if (targetImpl == null)
                 {
                     throw new System.ArgumentException("this AttributeSource contains Attribute of type " + state.attribute.GetType().Name + " that is not in the target");
