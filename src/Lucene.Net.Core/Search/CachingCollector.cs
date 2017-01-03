@@ -141,58 +141,58 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                if (curDocs == null)
+                if (m_curDocs == null)
                 {
                     // Cache was too large
                     cachedScorer.score = scorer.Score();
                     cachedScorer.doc = doc;
-                    other.Collect(doc);
+                    m_other.Collect(doc);
                     return;
                 }
 
                 // Allocate a bigger array or abort caching
-                if (upto == curDocs.Length)
+                if (m_upto == m_curDocs.Length)
                 {
-                    @base += upto;
+                    m_base += m_upto;
 
                     // Compute next array length - don't allocate too big arrays
-                    int nextLength = 8 * curDocs.Length;
+                    int nextLength = 8 * m_curDocs.Length;
                     if (nextLength > MAX_ARRAY_SIZE)
                     {
                         nextLength = MAX_ARRAY_SIZE;
                     }
 
-                    if (@base + nextLength > maxDocsToCache)
+                    if (m_base + nextLength > m_maxDocsToCache)
                     {
                         // try to allocate a smaller array
-                        nextLength = maxDocsToCache - @base;
+                        nextLength = m_maxDocsToCache - m_base;
                         if (nextLength <= 0)
                         {
                             // Too many docs to collect -- clear cache
-                            curDocs = null;
+                            m_curDocs = null;
                             curScores = null;
-                            cachedSegs.Clear();
-                            cachedDocs.Clear();
+                            m_cachedSegs.Clear();
+                            m_cachedDocs.Clear();
                             cachedScores.Clear();
                             cachedScorer.score = scorer.Score();
                             cachedScorer.doc = doc;
-                            other.Collect(doc);
+                            m_other.Collect(doc);
                             return;
                         }
                     }
 
-                    curDocs = new int[nextLength];
-                    cachedDocs.Add(curDocs);
+                    m_curDocs = new int[nextLength];
+                    m_cachedDocs.Add(m_curDocs);
                     curScores = new float[nextLength];
                     cachedScores.Add(curScores);
-                    upto = 0;
+                    m_upto = 0;
                 }
 
-                curDocs[upto] = doc;
-                cachedScorer.score = curScores[upto] = scorer.Score();
-                upto++;
+                m_curDocs[m_upto] = doc;
+                cachedScorer.score = curScores[m_upto] = scorer.Score();
+                m_upto++;
                 cachedScorer.doc = doc;
-                other.Collect(doc);
+                m_other.Collect(doc);
             }
 
             public override void Replay(ICollector other)
@@ -202,24 +202,24 @@ namespace Lucene.Net.Search
                 int curUpto = 0;
                 int curBase = 0;
                 int chunkUpto = 0;
-                curDocs = EMPTY_INT_ARRAY;
-                foreach (SegStart seg in cachedSegs)
+                m_curDocs = EMPTY_INT_ARRAY;
+                foreach (SegStart seg in m_cachedSegs)
                 {
                     other.SetNextReader(seg.ReaderContext);
                     other.SetScorer(cachedScorer);
                     while (curBase + curUpto < seg.End)
                     {
-                        if (curUpto == curDocs.Length)
+                        if (curUpto == m_curDocs.Length)
                         {
-                            curBase += curDocs.Length;
-                            curDocs = cachedDocs[chunkUpto];
+                            curBase += m_curDocs.Length;
+                            m_curDocs = m_cachedDocs[chunkUpto];
                             curScores = cachedScores[chunkUpto];
                             chunkUpto++;
                             curUpto = 0;
                         }
                         cachedScorer.score = curScores[curUpto];
-                        cachedScorer.doc = curDocs[curUpto];
-                        other.Collect(curDocs[curUpto++]);
+                        cachedScorer.doc = m_curDocs[curUpto];
+                        other.Collect(m_curDocs[curUpto++]);
                     }
                 }
             }
@@ -227,14 +227,14 @@ namespace Lucene.Net.Search
             public override void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
-                other.SetScorer(cachedScorer);
+                m_other.SetScorer(cachedScorer);
             }
 
             public override string ToString()
             {
                 if (IsCached)
                 {
-                    return "CachingCollector (" + (@base + upto) + " docs & scores cached)";
+                    return "CachingCollector (" + (m_base + m_upto) + " docs & scores cached)";
                 }
                 else
                 {
@@ -258,48 +258,48 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                if (curDocs == null)
+                if (m_curDocs == null)
                 {
                     // Cache was too large
-                    other.Collect(doc);
+                    m_other.Collect(doc);
                     return;
                 }
 
                 // Allocate a bigger array or abort caching
-                if (upto == curDocs.Length)
+                if (m_upto == m_curDocs.Length)
                 {
-                    @base += upto;
+                    m_base += m_upto;
 
                     // Compute next array length - don't allocate too big arrays
-                    int nextLength = 8 * curDocs.Length;
+                    int nextLength = 8 * m_curDocs.Length;
                     if (nextLength > MAX_ARRAY_SIZE)
                     {
                         nextLength = MAX_ARRAY_SIZE;
                     }
 
-                    if (@base + nextLength > maxDocsToCache)
+                    if (m_base + nextLength > m_maxDocsToCache)
                     {
                         // try to allocate a smaller array
-                        nextLength = maxDocsToCache - @base;
+                        nextLength = m_maxDocsToCache - m_base;
                         if (nextLength <= 0)
                         {
                             // Too many docs to collect -- clear cache
-                            curDocs = null;
-                            cachedSegs.Clear();
-                            cachedDocs.Clear();
-                            other.Collect(doc);
+                            m_curDocs = null;
+                            m_cachedSegs.Clear();
+                            m_cachedDocs.Clear();
+                            m_other.Collect(doc);
                             return;
                         }
                     }
 
-                    curDocs = new int[nextLength];
-                    cachedDocs.Add(curDocs);
-                    upto = 0;
+                    m_curDocs = new int[nextLength];
+                    m_cachedDocs.Add(m_curDocs);
+                    m_upto = 0;
                 }
 
-                curDocs[upto] = doc;
-                upto++;
-                other.Collect(doc);
+                m_curDocs[m_upto] = doc;
+                m_upto++;
+                m_other.Collect(doc);
             }
 
             public override void Replay(ICollector other)
@@ -309,34 +309,34 @@ namespace Lucene.Net.Search
                 int curUpto = 0;
                 int curbase = 0;
                 int chunkUpto = 0;
-                curDocs = EMPTY_INT_ARRAY;
-                foreach (SegStart seg in cachedSegs)
+                m_curDocs = EMPTY_INT_ARRAY;
+                foreach (SegStart seg in m_cachedSegs)
                 {
                     other.SetNextReader(seg.ReaderContext);
                     while (curbase + curUpto < seg.End)
                     {
-                        if (curUpto == curDocs.Length)
+                        if (curUpto == m_curDocs.Length)
                         {
-                            curbase += curDocs.Length;
-                            curDocs = cachedDocs[chunkUpto];
+                            curbase += m_curDocs.Length;
+                            m_curDocs = m_cachedDocs[chunkUpto];
                             chunkUpto++;
                             curUpto = 0;
                         }
-                        other.Collect(curDocs[curUpto++]);
+                        other.Collect(m_curDocs[curUpto++]);
                     }
                 }
             }
 
             public override void SetScorer(Scorer scorer)
             {
-                other.SetScorer(scorer);
+                m_other.SetScorer(scorer);
             }
 
             public override string ToString()
             {
                 if (IsCached)
                 {
-                    return "CachingCollector (" + (@base + upto) + " docs cached)";
+                    return "CachingCollector (" + (m_base + m_upto) + " docs cached)";
                 }
                 else
                 {
@@ -350,18 +350,18 @@ namespace Lucene.Net.Search
         // up front. this is only relevant for the ScoreCaching
         // version -- if the wrapped Collector does not need
         // scores, it can avoid cachedScorer entirely.
-        protected readonly ICollector other;
+        protected readonly ICollector m_other;
 
-        protected readonly int maxDocsToCache;
-        private readonly IList<SegStart> cachedSegs = new List<SegStart>();
-        protected readonly IList<int[]> cachedDocs;
+        protected readonly int m_maxDocsToCache;
+        private readonly IList<SegStart> m_cachedSegs = new List<SegStart>();
+        protected readonly IList<int[]> m_cachedDocs;
 
         private AtomicReaderContext lastReaderContext;
 
-        protected int[] curDocs;
-        protected int upto;
-        protected int @base;
-        protected int lastDocBase;
+        protected int[] m_curDocs;
+        protected int m_upto;
+        protected int m_base;
+        protected int m_lastDocBase;
 
         /// <summary>
         /// Creates a <seealso cref="CachingCollector"/> which does not wrap another collector.
@@ -442,49 +442,49 @@ namespace Lucene.Net.Search
         // Prevent extension from non-internal classes
         private CachingCollector(ICollector other, double maxRAMMB, bool cacheScores)
         {
-            this.other = other;
+            this.m_other = other;
 
-            cachedDocs = new List<int[]>();
-            curDocs = new int[INITIAL_ARRAY_SIZE];
-            cachedDocs.Add(curDocs);
+            m_cachedDocs = new List<int[]>();
+            m_curDocs = new int[INITIAL_ARRAY_SIZE];
+            m_cachedDocs.Add(m_curDocs);
 
             int bytesPerDoc = RamUsageEstimator.NUM_BYTES_INT;
             if (cacheScores)
             {
                 bytesPerDoc += RamUsageEstimator.NUM_BYTES_FLOAT;
             }
-            maxDocsToCache = (int)((maxRAMMB * 1024 * 1024) / bytesPerDoc);
+            m_maxDocsToCache = (int)((maxRAMMB * 1024 * 1024) / bytesPerDoc);
         }
 
         private CachingCollector(ICollector other, int maxDocsToCache)
         {
-            this.other = other;
+            this.m_other = other;
 
-            cachedDocs = new List<int[]>();
-            curDocs = new int[INITIAL_ARRAY_SIZE];
-            cachedDocs.Add(curDocs);
-            this.maxDocsToCache = maxDocsToCache;
+            m_cachedDocs = new List<int[]>();
+            m_curDocs = new int[INITIAL_ARRAY_SIZE];
+            m_cachedDocs.Add(m_curDocs);
+            this.m_maxDocsToCache = maxDocsToCache;
         }
 
         public virtual bool AcceptsDocsOutOfOrder
         {
-            get { return other.AcceptsDocsOutOfOrder; }
+            get { return m_other.AcceptsDocsOutOfOrder; }
         }
 
         public virtual bool IsCached
         {
             get
             {
-                return curDocs != null;
+                return m_curDocs != null;
             }
         }
 
         public virtual void SetNextReader(AtomicReaderContext context)
         {
-            other.SetNextReader(context);
+            m_other.SetNextReader(context);
             if (lastReaderContext != null)
             {
-                cachedSegs.Add(new SegStart(lastReaderContext, @base + upto));
+                m_cachedSegs.Add(new SegStart(lastReaderContext, m_base + m_upto));
             }
             lastReaderContext = context;
         }
@@ -504,7 +504,7 @@ namespace Lucene.Net.Search
                 throw new InvalidOperationException("cannot replay: cache was cleared because too much RAM was required");
             }
 
-            if (!other.AcceptsDocsOutOfOrder && this.other.AcceptsDocsOutOfOrder)
+            if (!other.AcceptsDocsOutOfOrder && this.m_other.AcceptsDocsOutOfOrder)
             {
                 throw new System.ArgumentException("cannot replay: given collector does not support " + "out-of-order collection, while the wrapped collector does. " + "Therefore cached documents may be out-of-order.");
             }
@@ -512,7 +512,7 @@ namespace Lucene.Net.Search
             //System.out.println("CC: replay totHits=" + (upto + base));
             if (lastReaderContext != null)
             {
-                cachedSegs.Add(new SegStart(lastReaderContext, @base + upto));
+                m_cachedSegs.Add(new SegStart(lastReaderContext, m_base + m_upto));
                 lastReaderContext = null;
             }
         }
