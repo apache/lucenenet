@@ -169,7 +169,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns true if there are no set bits </summary>
-        public virtual bool Empty // LUCENENET TODO: rename IsEmpty (or invert and make Any() ?)
+        public virtual bool IsEmpty
         {
             get
             {
