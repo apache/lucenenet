@@ -2879,6 +2879,11 @@ namespace Lucene.Net.Util
 
                 foreach (var field in fields)
                 {
+                    if (field.Name.EndsWith("k__BackingField")) // Ignore auto-implemented properties
+                    {
+                        continue;
+                    }
+
                     if (field.IsPrivate && !PrivateFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", field.Name));
@@ -2906,6 +2911,11 @@ namespace Lucene.Net.Util
 
                 foreach (var field in fields)
                 {
+                    if (field.Name.EndsWith("k__BackingField")) // Ignore auto-implemented properties
+                    {
+                        continue;
+                    }
+
                     if (field.IsFamily && !ProtectedFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", field.Name));
