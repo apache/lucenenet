@@ -52,14 +52,14 @@ namespace Lucene.Net.Util
     /// </summary>
     public class QueryBuilder
     {
-        private Analyzer Analyzer_Renamed;
-        private bool EnablePositionIncrements_Renamed = true;
+        private Analyzer analyzer;
+        private bool enablePositionIncrements = true;
 
         /// <summary>
         /// Creates a new QueryBuilder using the given analyzer. </summary>
         public QueryBuilder(Analyzer analyzer)
         {
-            this.Analyzer_Renamed = analyzer;
+            this.analyzer = analyzer;
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Lucene.Net.Util
             {
                 throw new System.ArgumentException("invalid operator: only SHOULD or MUST are allowed");
             }
-            return CreateFieldQuery(Analyzer_Renamed, @operator, field, queryText, false, 0);
+            return CreateFieldQuery(analyzer, @operator, field, queryText, false, 0);
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Lucene.Net.Util
         ///         {@code MultiPhraseQuery}, based on the analysis of {@code queryText} </returns>
         public virtual Query CreatePhraseQuery(string field, string queryText, int phraseSlop)
         {
-            return CreateFieldQuery(Analyzer_Renamed, Occur.MUST, field, queryText, true, phraseSlop);
+            return CreateFieldQuery(analyzer, Occur.MUST, field, queryText, true, phraseSlop);
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Lucene.Net.Util
                 return CreateBooleanQuery(field, queryText, Occur.MUST);
             }
 
-            Query query = CreateFieldQuery(Analyzer_Renamed, Occur.SHOULD, field, queryText, false, 0);
+            Query query = CreateFieldQuery(analyzer, Occur.SHOULD, field, queryText, false, 0);
             if (query is BooleanQuery)
             {
                 BooleanQuery bq = (BooleanQuery)query;
@@ -155,11 +155,11 @@ namespace Lucene.Net.Util
         {
             get
             {
-                return Analyzer_Renamed;
+                return analyzer;
             }
             set
             {
-                this.Analyzer_Renamed = value;
+                this.analyzer = value;
             }
         }
 
@@ -170,11 +170,11 @@ namespace Lucene.Net.Util
         {
             get
             {
-                return EnablePositionIncrements_Renamed;
+                return enablePositionIncrements;
             }
             set
             {
-                this.EnablePositionIncrements_Renamed = value;
+                this.enablePositionIncrements = value;
             }
         }
 
@@ -374,7 +374,7 @@ namespace Lucene.Net.Util
 
                             if (positionIncrement > 0 && multiTerms.Count > 0)
                             {
-                                if (EnablePositionIncrements_Renamed)
+                                if (enablePositionIncrements)
                                 {
                                     mpq.Add(multiTerms.ToArray(), position);
                                 }
@@ -387,7 +387,7 @@ namespace Lucene.Net.Util
                             position += positionIncrement;
                             multiTerms.Add(new Term(field, BytesRef.DeepCopyOf(bytes)));
                         }
-                        if (EnablePositionIncrements_Renamed)
+                        if (enablePositionIncrements)
                         {
                             mpq.Add(multiTerms.ToArray(), position);
                         }
@@ -423,7 +423,7 @@ namespace Lucene.Net.Util
                             // safe to ignore, because we know the number of tokens
                         }
 
-                        if (EnablePositionIncrements_Renamed)
+                        if (enablePositionIncrements)
                         {
                             position += positionIncrement;
                             pq.Add(new Term(field, BytesRef.DeepCopyOf(bytes)), position);
