@@ -41,10 +41,10 @@ namespace Lucene.Net.Index
         public DocInverterPerField(DocInverter parent, FieldInfo fieldInfo)
         {
             this.fieldInfo = fieldInfo;
-            DocState = parent.DocState;
+            DocState = parent.docState;
             FieldState = new FieldInvertState(fieldInfo.Name);
-            this.Consumer = parent.Consumer.AddField(this, fieldInfo);
-            this.EndConsumer = parent.EndConsumer.AddField(this, fieldInfo);
+            this.Consumer = parent.consumer.AddField(this, fieldInfo);
+            this.EndConsumer = parent.endConsumer.AddField(this, fieldInfo);
         }
 
         internal override void Abort()

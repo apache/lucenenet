@@ -26,16 +26,16 @@ namespace Lucene.Net.Index
     /// </summary>
     internal sealed class DocInverter : DocFieldConsumer
     {
-        internal readonly InvertedDocConsumer Consumer;
-        internal readonly InvertedDocEndConsumer EndConsumer;
+        internal readonly InvertedDocConsumer consumer;
+        internal readonly InvertedDocEndConsumer endConsumer;
 
-        internal readonly DocumentsWriterPerThread.DocState DocState;
+        internal readonly DocumentsWriterPerThread.DocState docState;
 
         public DocInverter(DocumentsWriterPerThread.DocState docState, InvertedDocConsumer consumer, InvertedDocEndConsumer endConsumer)
         {
-            this.DocState = docState;
-            this.Consumer = consumer;
-            this.EndConsumer = endConsumer;
+            this.docState = docState;
+            this.consumer = consumer;
+            this.endConsumer = endConsumer;
         }
 
         internal override void Flush(IDictionary<string, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state)
@@ -50,33 +50,33 @@ namespace Lucene.Net.Index
                 endChildFieldsToFlush[fieldToFlush.Key] = perField.EndConsumer;
             }
 
-            Consumer.Flush(childFieldsToFlush, state);
-            EndConsumer.Flush(endChildFieldsToFlush, state);
+            consumer.Flush(childFieldsToFlush, state);
+            endConsumer.Flush(endChildFieldsToFlush, state);
         }
 
         public override void StartDocument()
         {
-            Consumer.StartDocument();
-            EndConsumer.StartDocument();
+            consumer.StartDocument();
+            endConsumer.StartDocument();
         }
 
         public override void FinishDocument()
         {
             // TODO: allow endConsumer.finishDocument to also return
             // a DocWriter
-            EndConsumer.FinishDocument();
-            Consumer.FinishDocument();
+            endConsumer.FinishDocument();
+            consumer.FinishDocument();
         }
 
         internal override void Abort()
         {
             try
             {
-                Consumer.Abort();
+                consumer.Abort();
             }
             finally
             {
-                EndConsumer.Abort();
+                endConsumer.Abort();
             }
         }
 
