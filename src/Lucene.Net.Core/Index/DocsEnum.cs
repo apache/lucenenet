@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static readonly int FLAG_FREQS = 0x1;
 
-        private AttributeSource Atts = null;
+        private AttributeSource atts = null;
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass
@@ -71,11 +71,11 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (Atts == null)
+                if (atts == null)
                 {
-                    Atts = new AttributeSource();
+                    atts = new AttributeSource();
                 }
-                return Atts;
+                return atts;
             }
         }
     }
