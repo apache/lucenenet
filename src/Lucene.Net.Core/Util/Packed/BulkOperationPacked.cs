@@ -24,80 +24,80 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     internal class BulkOperationPacked : BulkOperation
     {
-        private readonly int BitsPerValue;
-        private readonly int LongBlockCount_Renamed;
-        private readonly int LongValueCount_Renamed;
-        private readonly int ByteBlockCount_Renamed;
-        private readonly int ByteValueCount_Renamed;
-        private readonly long Mask;
-        private readonly int IntMask;
+        private readonly int bitsPerValue;
+        private readonly int longBlockCount;
+        private readonly int longValueCount;
+        private readonly int byteBlockCount;
+        private readonly int byteValueCount;
+        private readonly long mask;
+        private readonly int intMask;
 
         public BulkOperationPacked(int bitsPerValue)
         {
-            this.BitsPerValue = bitsPerValue;
+            this.bitsPerValue = bitsPerValue;
             Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64);
             int blocks = bitsPerValue;
             while ((blocks & 1) == 0)
             {
                 blocks = (int)((uint)blocks >> 1);
             }
-            this.LongBlockCount_Renamed = blocks;
-            this.LongValueCount_Renamed = 64 * LongBlockCount_Renamed / bitsPerValue;
-            int byteBlockCount = 8 * LongBlockCount_Renamed;
-            int byteValueCount = LongValueCount_Renamed;
+            this.longBlockCount = blocks;
+            this.longValueCount = 64 * longBlockCount / bitsPerValue;
+            int byteBlockCount = 8 * longBlockCount;
+            int byteValueCount = longValueCount;
             while ((byteBlockCount & 1) == 0 && (byteValueCount & 1) == 0)
             {
                 byteBlockCount = (int)((uint)byteBlockCount >> 1);
                 byteValueCount = (int)((uint)byteValueCount >> 1);
             }
-            this.ByteBlockCount_Renamed = byteBlockCount;
-            this.ByteValueCount_Renamed = byteValueCount;
+            this.byteBlockCount = byteBlockCount;
+            this.byteValueCount = byteValueCount;
             if (bitsPerValue == 64)
             {
-                this.Mask = ~0L;
+                this.mask = ~0L;
             }
             else
             {
-                this.Mask = (1L << bitsPerValue) - 1;
+                this.mask = (1L << bitsPerValue) - 1;
             }
-            this.IntMask = (int)Mask;
-            Debug.Assert(LongValueCount_Renamed * bitsPerValue == 64 * LongBlockCount_Renamed);
+            this.intMask = (int)mask;
+            Debug.Assert(longValueCount * bitsPerValue == 64 * longBlockCount);
         }
 
         public override int LongBlockCount
         {
-            get { return LongBlockCount_Renamed; }
+            get { return longBlockCount; }
         }
 
         public override int LongValueCount
         {
-            get { return LongValueCount_Renamed; }
+            get { return longValueCount; }
         }
 
         public override int ByteBlockCount
         {
-            get { return ByteBlockCount_Renamed; }
+            get { return byteBlockCount; }
         }
 
         public override int ByteValueCount
         {
-            get { return ByteValueCount_Renamed; }
+            get { return byteValueCount; }
         }
 
         public override void Decode(long[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
         {
             int bitsLeft = 64;
-            for (int i = 0; i < LongValueCount_Renamed * iterations; ++i)
+            for (int i = 0; i < longValueCount * iterations; ++i)
             {
-                bitsLeft -= BitsPerValue;
+                bitsLeft -= bitsPerValue;
                 if (bitsLeft < 0)
                 {
-                    values[valuesOffset++] = ((blocks[blocksOffset++] & ((1L << (BitsPerValue + bitsLeft)) - 1)) << -bitsLeft) | ((long)((ulong)blocks[blocksOffset] >> (64 + bitsLeft)));
+                    values[valuesOffset++] = ((blocks[blocksOffset++] & ((1L << (bitsPerValue + bitsLeft)) - 1)) << -bitsLeft) | ((long)((ulong)blocks[blocksOffset] >> (64 + bitsLeft)));
                     bitsLeft += 64;
                 }
                 else
                 {
-                    values[valuesOffset++] = ((long)((ulong)blocks[blocksOffset] >> bitsLeft)) & Mask;
+                    values[valuesOffset++] = ((long)((ulong)blocks[blocksOffset] >> bitsLeft)) & mask;
                 }
             }
         }
@@ -105,8 +105,8 @@ namespace Lucene.Net.Util.Packed
         public override void Decode(byte[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
         {
             long nextValue = 0L;
-            int bitsLeft = BitsPerValue;
-            for (int i = 0; i < iterations * ByteBlockCount_Renamed; ++i)
+            int bitsLeft = bitsPerValue;
+            for (int i = 0; i < iterations * byteBlockCount; ++i)
             {
                 long bytes = blocks[blocksOffset++] & 0xFFL;
                 if (bitsLeft > 8)
@@ -120,37 +120,37 @@ namespace Lucene.Net.Util.Packed
                     // flush
                     int bits = 8 - bitsLeft;
                     values[valuesOffset++] = nextValue | ((long)((ulong)bytes >> bits));
-                    while (bits >= BitsPerValue)
+                    while (bits >= bitsPerValue)
                     {
-                        bits -= BitsPerValue;
-                        values[valuesOffset++] = ((long)((ulong)bytes >> bits)) & Mask;
+                        bits -= bitsPerValue;
+                        values[valuesOffset++] = ((long)((ulong)bytes >> bits)) & mask;
                     }
                     // then buffer
-                    bitsLeft = BitsPerValue - bits;
+                    bitsLeft = bitsPerValue - bits;
                     nextValue = (bytes & ((1L << bits) - 1)) << bitsLeft;
                 }
             }
-            Debug.Assert(bitsLeft == BitsPerValue);
+            Debug.Assert(bitsLeft == bitsPerValue);
         }
 
         public override void Decode(long[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations)
         {
-            if (BitsPerValue > 32)
+            if (bitsPerValue > 32)
             {
-                throw new System.NotSupportedException("Cannot decode " + BitsPerValue + "-bits values into an int[]");
+                throw new System.NotSupportedException("Cannot decode " + bitsPerValue + "-bits values into an int[]");
             }
             int bitsLeft = 64;
-            for (int i = 0; i < LongValueCount_Renamed * iterations; ++i)
+            for (int i = 0; i < longValueCount * iterations; ++i)
             {
-                bitsLeft -= BitsPerValue;
+                bitsLeft -= bitsPerValue;
                 if (bitsLeft < 0)
                 {
-                    values[valuesOffset++] = (int)(((blocks[blocksOffset++] & ((1L << (BitsPerValue + bitsLeft)) - 1)) << -bitsLeft) | ((long)((ulong)blocks[blocksOffset] >> (64 + bitsLeft))));
+                    values[valuesOffset++] = (int)(((blocks[blocksOffset++] & ((1L << (bitsPerValue + bitsLeft)) - 1)) << -bitsLeft) | ((long)((ulong)blocks[blocksOffset] >> (64 + bitsLeft))));
                     bitsLeft += 64;
                 }
                 else
                 {
-                    values[valuesOffset++] = (int)(((long)((ulong)blocks[blocksOffset] >> bitsLeft)) & Mask);
+                    values[valuesOffset++] = (int)(((long)((ulong)blocks[blocksOffset] >> bitsLeft)) & mask);
                 }
             }
         }
@@ -158,8 +158,8 @@ namespace Lucene.Net.Util.Packed
         public override void Decode(byte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations)
         {
             int nextValue = 0;
-            int bitsLeft = BitsPerValue;
-            for (int i = 0; i < iterations * ByteBlockCount_Renamed; ++i)
+            int bitsLeft = bitsPerValue;
+            for (int i = 0; i < iterations * byteBlockCount; ++i)
             {
                 int bytes = blocks[blocksOffset++] & 0xFF;
                 if (bitsLeft > 8)
@@ -173,26 +173,26 @@ namespace Lucene.Net.Util.Packed
                     // flush
                     int bits = 8 - bitsLeft;
                     values[valuesOffset++] = nextValue | ((int)((uint)bytes >> bits));
-                    while (bits >= BitsPerValue)
+                    while (bits >= bitsPerValue)
                     {
-                        bits -= BitsPerValue;
-                        values[valuesOffset++] = ((int)((uint)bytes >> bits)) & IntMask;
+                        bits -= bitsPerValue;
+                        values[valuesOffset++] = ((int)((uint)bytes >> bits)) & intMask;
                     }
                     // then buffer
-                    bitsLeft = BitsPerValue - bits;
+                    bitsLeft = bitsPerValue - bits;
                     nextValue = (bytes & ((1 << bits) - 1)) << bitsLeft;
                 }
             }
-            Debug.Assert(bitsLeft == BitsPerValue);
+            Debug.Assert(bitsLeft == bitsPerValue);
         }
 
         public override void Encode(long[] values, int valuesOffset, long[] blocks, int blocksOffset, int iterations)
         {
             long nextBlock = 0;
             int bitsLeft = 64;
-            for (int i = 0; i < LongValueCount_Renamed * iterations; ++i)
+            for (int i = 0; i < longValueCount * iterations; ++i)
             {
-                bitsLeft -= BitsPerValue;
+                bitsLeft -= bitsPerValue;
                 if (bitsLeft > 0)
                 {
                     nextBlock |= values[valuesOffset++] << bitsLeft;
@@ -218,9 +218,9 @@ namespace Lucene.Net.Util.Packed
         {
             long nextBlock = 0;
             int bitsLeft = 64;
-            for (int i = 0; i < LongValueCount_Renamed * iterations; ++i)
+            for (int i = 0; i < longValueCount * iterations; ++i)
             {
-                bitsLeft -= BitsPerValue;
+                bitsLeft -= bitsPerValue;
                 if (bitsLeft > 0)
                 {
                     nextBlock |= (values[valuesOffset++] & 0xFFFFFFFFL) << bitsLeft;
@@ -246,20 +246,20 @@ namespace Lucene.Net.Util.Packed
         {
             int nextBlock = 0;
             int bitsLeft = 8;
-            for (int i = 0; i < ByteValueCount_Renamed * iterations; ++i)
+            for (int i = 0; i < byteValueCount * iterations; ++i)
             {
                 long v = values[valuesOffset++];
-                Debug.Assert(BitsPerValue == 64 || PackedInts.BitsRequired(v) <= BitsPerValue);
-                if (BitsPerValue < bitsLeft)
+                Debug.Assert(bitsPerValue == 64 || PackedInts.BitsRequired(v) <= bitsPerValue);
+                if (bitsPerValue < bitsLeft)
                 {
                     // just buffer
-                    nextBlock |= (int)(v << (bitsLeft - BitsPerValue));
-                    bitsLeft -= BitsPerValue;
+                    nextBlock |= (int)(v << (bitsLeft - bitsPerValue));
+                    bitsLeft -= bitsPerValue;
                 }
                 else
                 {
                     // flush as many blocks as possible
-                    int bits = BitsPerValue - bitsLeft;
+                    int bits = bitsPerValue - bitsLeft;
                     blocks[blocksOffset++] = (byte)(nextBlock | ((long)((ulong)v >> bits)));
                     while (bits >= 8)
                     {
@@ -278,20 +278,20 @@ namespace Lucene.Net.Util.Packed
         {
             int nextBlock = 0;
             int bitsLeft = 8;
-            for (int i = 0; i < ByteValueCount_Renamed * iterations; ++i)
+            for (int i = 0; i < byteValueCount * iterations; ++i)
             {
                 int v = values[valuesOffset++];
-                Debug.Assert(PackedInts.BitsRequired(v & 0xFFFFFFFFL) <= BitsPerValue);
-                if (BitsPerValue < bitsLeft)
+                Debug.Assert(PackedInts.BitsRequired(v & 0xFFFFFFFFL) <= bitsPerValue);
+                if (bitsPerValue < bitsLeft)
                 {
                     // just buffer
-                    nextBlock |= v << (bitsLeft - BitsPerValue);
-                    bitsLeft -= BitsPerValue;
+                    nextBlock |= v << (bitsLeft - bitsPerValue);
+                    bitsLeft -= bitsPerValue;
                 }
                 else
                 {
                     // flush as many blocks as possible
-                    int bits = BitsPerValue - bitsLeft;
+                    int bits = bitsPerValue - bitsLeft;
                     blocks[blocksOffset++] = (byte)(nextBlock | ((int)((uint)v >> bits)));
                     while (bits >= 8)
                     {
