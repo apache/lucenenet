@@ -905,7 +905,7 @@ namespace Lucene.Net.Index
                     deleter = new IndexFileDeleter(directory, config.IndexDeletionPolicy, segmentInfos, infoStream, this, initialIndexExists);
                 }
 
-                if (deleter.StartingCommitDeleted)
+                if (deleter.startingCommitDeleted)
                 {
                     // Deletion policy deleted the "head" commit point.
                     // We have to mark ourself as changed so that if we
