@@ -68,33 +68,33 @@ namespace Lucene.Net.Util
         /// A builder for <seealso cref="PForDeltaDocIdSet"/>. </summary>
         public class Builder
         {
-            internal readonly GrowableByteArrayDataOutput Data;
-            internal readonly int[] Buffer = new int[BLOCK_SIZE];
-            internal readonly int[] ExceptionIndices = new int[BLOCK_SIZE];
-            internal readonly int[] Exceptions = new int[BLOCK_SIZE];
-            internal int BufferSize;
-            internal int PreviousDoc;
-            internal int Cardinality;
-            internal int IndexInterval_Renamed;
-            internal int NumBlocks;
+            internal readonly GrowableByteArrayDataOutput data;
+            internal readonly int[] buffer = new int[BLOCK_SIZE];
+            internal readonly int[] exceptionIndices = new int[BLOCK_SIZE];
+            internal readonly int[] exceptions = new int[BLOCK_SIZE];
+            internal int bufferSize;
+            internal int previousDoc;
+            internal int cardinality;
+            internal int indexInterval;
+            internal int numBlocks;
 
             // temporary variables used when compressing blocks
-            internal readonly int[] Freqs = new int[32];
+            internal readonly int[] freqs = new int[32];
 
-            internal int BitsPerValue;
-            internal int NumExceptions;
-            internal int BitsPerException;
+            internal int bitsPerValue;
+            internal int numExceptions;
+            internal int bitsPerException;
 
             /// <summary>
             /// Sole constructor. </summary>
             public Builder()
             {
-                Data = new GrowableByteArrayDataOutput(128);
-                BufferSize = 0;
-                PreviousDoc = -1;
-                IndexInterval_Renamed = 2;
-                Cardinality = 0;
-                NumBlocks = 0;
+                data = new GrowableByteArrayDataOutput(128);
+                bufferSize = 0;
+                previousDoc = -1;
+                indexInterval = 2;
+                cardinality = 0;
+                numBlocks = 0;
             }
 
             /// <summary>
@@ -107,7 +107,7 @@ namespace Lucene.Net.Util
                 {
                     throw new System.ArgumentException("indexInterval must be >= 1");
                 }
-                this.IndexInterval_Renamed = indexInterval;
+                this.indexInterval = indexInterval;
                 return this;
             }
 
@@ -115,18 +115,18 @@ namespace Lucene.Net.Util
             /// Add a document to this builder. Documents must be added in order. </summary>
             public virtual Builder Add(int doc)
             {
-                if (doc <= PreviousDoc)
+                if (doc <= previousDoc)
                 {
-                    throw new System.ArgumentException("Doc IDs must be provided in order, but previousDoc=" + PreviousDoc + " and doc=" + doc);
+                    throw new System.ArgumentException("Doc IDs must be provided in order, but previousDoc=" + previousDoc + " and doc=" + doc);
                 }
-                Buffer[BufferSize++] = doc - PreviousDoc - 1;
-                if (BufferSize == BLOCK_SIZE)
+                buffer[bufferSize++] = doc - previousDoc - 1;
+                if (bufferSize == BLOCK_SIZE)
                 {
                     EncodeBlock();
-                    BufferSize = 0;
+                    bufferSize = 0;
                 }
-                PreviousDoc = doc;
-                ++Cardinality;
+                previousDoc = doc;
+                ++cardinality;
                 return this;
             }
 
@@ -143,10 +143,10 @@ namespace Lucene.Net.Util
 
             internal virtual void ComputeFreqs()
             {
-                Arrays.Fill(Freqs, 0);
-                for (int i = 0; i < BufferSize; ++i)
+                Arrays.Fill(freqs, 0);
+                for (int i = 0; i < bufferSize; ++i)
                 {
-                    ++Freqs[32 - Number.NumberOfLeadingZeros(Buffer[i])];
+                    ++freqs[32 - Number.NumberOfLeadingZeros(buffer[i])];
                 }
             }
 
@@ -158,7 +158,7 @@ namespace Lucene.Net.Util
                 {
                     blockSize += 2 + numExceptions + format.ByteCount(PackedInts.VERSION_CURRENT, numExceptions, bitsPerException); // indices of the exceptions -  2 additional bytes in case of exceptions: numExceptions and bitsPerException
                 }
-                if (BufferSize < BLOCK_SIZE)
+                if (bufferSize < BLOCK_SIZE)
                 {
                     blockSize += 1; // length of the block
                 }
@@ -170,11 +170,11 @@ namespace Lucene.Net.Util
                 int deltaSum = 0;
                 for (int i = 0; i < BLOCK_SIZE; ++i)
                 {
-                    deltaSum += 1 + Buffer[i];
+                    deltaSum += 1 + buffer[i];
                 }
                 int blockSize = (int)((uint)(deltaSum + 0x07) >> 3); // round to the next byte
                 ++blockSize; // header
-                if (BufferSize < BLOCK_SIZE)
+                if (bufferSize < BLOCK_SIZE)
                 {
                     blockSize += 1; // length of the block
                 }
@@ -184,70 +184,70 @@ namespace Lucene.Net.Util
             internal virtual int ComputeOptimalNumberOfBits()
             {
                 ComputeFreqs();
-                BitsPerValue = 31;
-                NumExceptions = 0;
-                while (BitsPerValue > 0 && Freqs[BitsPerValue] == 0)
+                bitsPerValue = 31;
+                numExceptions = 0;
+                while (bitsPerValue > 0 && freqs[bitsPerValue] == 0)
                 {
-                    --BitsPerValue;
+                    --bitsPerValue;
                 }
-                int actualBitsPerValue = BitsPerValue;
-                int blockSize = PforBlockSize(BitsPerValue, NumExceptions, BitsPerException);
+                int actualBitsPerValue = bitsPerValue;
+                int blockSize = PforBlockSize(bitsPerValue, numExceptions, bitsPerException);
 
                 // Now try different values for bitsPerValue and pick the best one
-                for (int bitsPerValue = this.BitsPerValue - 1, numExceptions = Freqs[this.BitsPerValue]; bitsPerValue >= 0 && numExceptions <= MAX_EXCEPTIONS; numExceptions += Freqs[bitsPerValue--])
+                for (int bitsPerValue = this.bitsPerValue - 1, numExceptions = freqs[this.bitsPerValue]; bitsPerValue >= 0 && numExceptions <= MAX_EXCEPTIONS; numExceptions += freqs[bitsPerValue--])
                 {
                     int newBlockSize = PforBlockSize(bitsPerValue, numExceptions, actualBitsPerValue - bitsPerValue);
                     if (newBlockSize < blockSize)
                     {
-                        this.BitsPerValue = bitsPerValue;
-                        this.NumExceptions = numExceptions;
+                        this.bitsPerValue = bitsPerValue;
+                        this.numExceptions = numExceptions;
                         blockSize = newBlockSize;
                     }
                 }
-                this.BitsPerException = actualBitsPerValue - BitsPerValue;
-                Debug.Assert(BufferSize < BLOCK_SIZE || NumExceptions < BufferSize);
+                this.bitsPerException = actualBitsPerValue - bitsPerValue;
+                Debug.Assert(bufferSize < BLOCK_SIZE || numExceptions < bufferSize);
                 return blockSize;
             }
 
             internal virtual void PforEncode()
             {
-                if (NumExceptions > 0)
+                if (numExceptions > 0)
                 {
-                    int mask = (1 << BitsPerValue) - 1;
+                    int mask = (1 << bitsPerValue) - 1;
                     int ex = 0;
-                    for (int i = 0; i < BufferSize; ++i)
+                    for (int i = 0; i < bufferSize; ++i)
                     {
-                        if (Buffer[i] > mask)
+                        if (buffer[i] > mask)
                         {
-                            ExceptionIndices[ex] = i;
-                            Exceptions[ex++] = (int)((uint)Buffer[i] >> BitsPerValue);
-                            Buffer[i] &= mask;
+                            exceptionIndices[ex] = i;
+                            exceptions[ex++] = (int)((uint)buffer[i] >> bitsPerValue);
+                            buffer[i] &= mask;
                         }
                     }
-                    Debug.Assert(ex == NumExceptions);
-                    Arrays.Fill(Exceptions, NumExceptions, BLOCK_SIZE, 0);
+                    Debug.Assert(ex == numExceptions);
+                    Arrays.Fill(exceptions, numExceptions, BLOCK_SIZE, 0);
                 }
 
-                if (BitsPerValue > 0)
+                if (bitsPerValue > 0)
                 {
-                    PackedInts.IEncoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, BitsPerValue);
-                    int numIterations = ITERATIONS[BitsPerValue];
-                    encoder.Encode(Buffer, 0, Data.Bytes, Data.Length, numIterations);
-                    Data.Length += encoder.ByteBlockCount * numIterations;
+                    PackedInts.IEncoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, bitsPerValue);
+                    int numIterations = ITERATIONS[bitsPerValue];
+                    encoder.Encode(buffer, 0, data.Bytes, data.Length, numIterations);
+                    data.Length += encoder.ByteBlockCount * numIterations;
                 }
 
-                if (NumExceptions > 0)
+                if (numExceptions > 0)
                 {
-                    Debug.Assert(BitsPerException > 0);
-                    Data.WriteByte((byte)(sbyte)NumExceptions);
-                    Data.WriteByte((byte)(sbyte)BitsPerException);
-                    PackedInts.IEncoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, BitsPerException);
-                    int numIterations = (NumExceptions + encoder.ByteValueCount - 1) / encoder.ByteValueCount;
-                    encoder.Encode(Exceptions, 0, Data.Bytes, Data.Length, numIterations);
-                    Data.Length += (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, NumExceptions, BitsPerException);
-                    for (int i = 0; i < NumExceptions; ++i)
+                    Debug.Assert(bitsPerException > 0);
+                    data.WriteByte((byte)(sbyte)numExceptions);
+                    data.WriteByte((byte)(sbyte)bitsPerException);
+                    PackedInts.IEncoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, bitsPerException);
+                    int numIterations = (numExceptions + encoder.ByteValueCount - 1) / encoder.ByteValueCount;
+                    encoder.Encode(exceptions, 0, data.Bytes, data.Length, numIterations);
+                    data.Length += (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, numExceptions, bitsPerException);
+                    for (int i = 0; i < numExceptions; ++i)
                     {
-                        Data.WriteByte((byte)(sbyte)ExceptionIndices[i]);
+                        data.WriteByte((byte)(sbyte)exceptionIndices[i]);
                     }
                 }
             }
@@ -257,10 +257,10 @@ namespace Lucene.Net.Util
                 int current = 0;
                 for (int i = 0, doc = -1; i < BLOCK_SIZE; ++i)
                 {
-                    doc += 1 + Buffer[i];
+                    doc += 1 + buffer[i];
                     while (doc >= 8)
                     {
-                        Data.WriteByte((byte)(sbyte)current);
+                        data.WriteByte((byte)(sbyte)current);
                         current = 0;
                         doc -= 8;
                     }
@@ -268,14 +268,14 @@ namespace Lucene.Net.Util
                 }
                 if (current != 0)
                 {
-                    Data.WriteByte((byte)(sbyte)current);
+                    data.WriteByte((byte)(sbyte)current);
                 }
             }
 
             internal virtual void EncodeBlock()
             {
-                int originalLength = Data.Length;
-                Arrays.Fill(Buffer, BufferSize, BLOCK_SIZE, 0);
+                int originalLength = data.Length;
+                Arrays.Fill(buffer, bufferSize, BLOCK_SIZE, 0);
                 int unaryBlockSize = UnaryBlockSize();
                 int pforBlockSize = ComputeOptimalNumberOfBits();
                 int blockSize;
@@ -283,51 +283,51 @@ namespace Lucene.Net.Util
                 {
                     // use pfor
                     blockSize = pforBlockSize;
-                    Data.Bytes = ArrayUtil.Grow(Data.Bytes, Data.Length + blockSize + MAX_BYTE_BLOCK_COUNT);
-                    int token = BufferSize < BLOCK_SIZE ? LAST_BLOCK : 0;
-                    token |= BitsPerValue;
-                    if (NumExceptions > 0)
+                    data.Bytes = ArrayUtil.Grow(data.Bytes, data.Length + blockSize + MAX_BYTE_BLOCK_COUNT);
+                    int token = bufferSize < BLOCK_SIZE ? LAST_BLOCK : 0;
+                    token |= bitsPerValue;
+                    if (numExceptions > 0)
                     {
                         token |= HAS_EXCEPTIONS;
                     }
-                    Data.WriteByte((byte)(sbyte)token);
+                    data.WriteByte((byte)(sbyte)token);
                     PforEncode();
                 }
                 else
                 {
                     // use unary
                     blockSize = unaryBlockSize;
-                    int token = UNARY | (BufferSize < BLOCK_SIZE ? LAST_BLOCK : 0);
-                    Data.WriteByte((byte)(sbyte)token);
+                    int token = UNARY | (bufferSize < BLOCK_SIZE ? LAST_BLOCK : 0);
+                    data.WriteByte((byte)(sbyte)token);
                     UnaryEncode();
                 }
 
-                if (BufferSize < BLOCK_SIZE)
+                if (bufferSize < BLOCK_SIZE)
                 {
-                    Data.WriteByte((byte)(sbyte)BufferSize);
+                    data.WriteByte((byte)(sbyte)bufferSize);
                 }
 
-                ++NumBlocks;
+                ++numBlocks;
 
-                Debug.Assert(Data.Length - originalLength == blockSize, (Data.Length - originalLength) + " <> " + blockSize);
+                Debug.Assert(data.Length - originalLength == blockSize, (data.Length - originalLength) + " <> " + blockSize);
             }
 
             /// <summary>
             /// Build the <seealso cref="PForDeltaDocIdSet"/> instance. </summary>
             public virtual PForDeltaDocIdSet Build()
             {
-                Debug.Assert(BufferSize < BLOCK_SIZE);
+                Debug.Assert(bufferSize < BLOCK_SIZE);
 
-                if (Cardinality == 0)
+                if (cardinality == 0)
                 {
-                    Debug.Assert(PreviousDoc == -1);
+                    Debug.Assert(previousDoc == -1);
                     return EMPTY;
                 }
 
                 EncodeBlock();
-                var dataArr = Arrays.CopyOf(Data.Bytes, Data.Length + MAX_BYTE_BLOCK_COUNT);
+                var dataArr = Arrays.CopyOf(data.Bytes, data.Length + MAX_BYTE_BLOCK_COUNT);
 
-                int indexSize = (NumBlocks - 1) / IndexInterval_Renamed + 1;
+                int indexSize = (numBlocks - 1) / indexInterval + 1;
                 MonotonicAppendingLongBuffer docIDs, offsets;
                 if (indexSize <= 1)
                 {
@@ -340,12 +340,12 @@ namespace Lucene.Net.Util
                     docIDs = new MonotonicAppendingLongBuffer(initialPageCount, pageSize, PackedInts.COMPACT);
                     offsets = new MonotonicAppendingLongBuffer(initialPageCount, pageSize, PackedInts.COMPACT);
                     // Now build the index
-                    Iterator it = new Iterator(dataArr, Cardinality, int.MaxValue, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
+                    Iterator it = new Iterator(dataArr, cardinality, int.MaxValue, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
                     for (int k = 0; k < indexSize; ++k)
                     {
                         docIDs.Add(it.DocID + 1);
-                        offsets.Add(it.Offset);
-                        for (int i = 0; i < IndexInterval_Renamed; ++i)
+                        offsets.Add(it.offset);
+                        for (int i = 0; i < indexInterval; ++i)
                         {
                             it.SkipBlock();
                             if (it.DocID == DocIdSetIterator.NO_MORE_DOCS)
@@ -360,21 +360,21 @@ namespace Lucene.Net.Util
                     offsets.Freeze();
                 }
 
-                return new PForDeltaDocIdSet(dataArr, Cardinality, IndexInterval_Renamed, docIDs, offsets);
+                return new PForDeltaDocIdSet(dataArr, cardinality, indexInterval, docIDs, offsets);
             }
         }
 
-        internal readonly byte[] Data;
-        internal readonly MonotonicAppendingLongBuffer DocIDs, Offsets; // for the index
-        internal readonly int Cardinality_Renamed, IndexInterval;
+        internal readonly byte[] data;
+        internal readonly MonotonicAppendingLongBuffer docIDs, offsets; // for the index
+        internal readonly int cardinality, indexInterval;
 
         internal PForDeltaDocIdSet(byte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer docIDs, MonotonicAppendingLongBuffer offsets)
         {
-            this.Data = data;
-            this.Cardinality_Renamed = cardinality;
-            this.IndexInterval = indexInterval;
-            this.DocIDs = docIDs;
-            this.Offsets = offsets;
+            this.data = data;
+            this.cardinality = cardinality;
+            this.indexInterval = indexInterval;
+            this.docIDs = docIDs;
+            this.offsets = offsets;
         }
 
         public override bool IsCacheable
@@ -387,54 +387,54 @@ namespace Lucene.Net.Util
 
         public override DocIdSetIterator GetIterator()
         {
-            if (Data == null)
+            if (data == null)
             {
                 return null;
             }
             else
             {
-                return new Iterator(Data, Cardinality_Renamed, IndexInterval, DocIDs, Offsets);
+                return new Iterator(data, cardinality, indexInterval, docIDs, offsets);
             }
         }
 
         internal class Iterator : DocIdSetIterator
         {
             // index
-            internal readonly int IndexInterval;
+            internal readonly int indexInterval;
 
-            internal readonly MonotonicAppendingLongBuffer DocIDs, Offsets;
+            internal readonly MonotonicAppendingLongBuffer docIDs, offsets;
 
-            internal readonly int Cardinality;
-            internal readonly byte[] Data;
-            internal int Offset; // offset in data
+            internal readonly int cardinality;
+            internal readonly byte[] data;
+            internal int offset; // offset in data
 
-            internal readonly int[] NextDocs;
+            internal readonly int[] nextDocs;
             internal int i; // index in nextDeltas
 
-            internal readonly int[] NextExceptions;
+            internal readonly int[] nextExceptions;
 
-            internal int BlockIdx;
-            internal int DocID_Renamed;
+            internal int blockIdx;
+            internal int docID;
 
             internal Iterator(byte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer docIDs, MonotonicAppendingLongBuffer offsets)
             {
-                this.Data = data;
-                this.Cardinality = cardinality;
-                this.IndexInterval = indexInterval;
-                this.DocIDs = docIDs;
-                this.Offsets = offsets;
-                Offset = 0;
-                NextDocs = new int[BLOCK_SIZE];
-                Arrays.Fill(NextDocs, -1);
+                this.data = data;
+                this.cardinality = cardinality;
+                this.indexInterval = indexInterval;
+                this.docIDs = docIDs;
+                this.offsets = offsets;
+                offset = 0;
+                nextDocs = new int[BLOCK_SIZE];
+                Arrays.Fill(nextDocs, -1);
                 i = BLOCK_SIZE;
-                NextExceptions = new int[BLOCK_SIZE];
-                BlockIdx = -1;
-                DocID_Renamed = -1;
+                nextExceptions = new int[BLOCK_SIZE];
+                blockIdx = -1;
+                docID = -1;
             }
 
             public override int DocID
             {
-                get { return DocID_Renamed; }
+                get { return docID; }
             }
 
             internal virtual void PforDecompress(byte token)
@@ -442,43 +442,43 @@ namespace Lucene.Net.Util
                 int bitsPerValue = token & 0x1F;
                 if (bitsPerValue == 0)
                 {
-                    Arrays.Fill(NextDocs, 0);
+                    Arrays.Fill(nextDocs, 0);
                 }
                 else
                 {
-                    DECODERS[bitsPerValue].Decode(Data, Offset, NextDocs, 0, ITERATIONS[bitsPerValue]);
-                    Offset += BYTE_BLOCK_COUNTS[bitsPerValue];
+                    DECODERS[bitsPerValue].Decode(data, offset, nextDocs, 0, ITERATIONS[bitsPerValue]);
+                    offset += BYTE_BLOCK_COUNTS[bitsPerValue];
                 }
                 if ((token & HAS_EXCEPTIONS) != 0)
                 {
                     // there are exceptions
-                    int numExceptions = Data[Offset++];
-                    int bitsPerException = Data[Offset++];
+                    int numExceptions = data[offset++];
+                    int bitsPerException = data[offset++];
                     int numIterations = (numExceptions + DECODERS[bitsPerException].ByteValueCount - 1) / DECODERS[bitsPerException].ByteValueCount;
-                    DECODERS[bitsPerException].Decode(Data, Offset, NextExceptions, 0, numIterations);
-                    Offset += (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, numExceptions, bitsPerException);
+                    DECODERS[bitsPerException].Decode(data, offset, nextExceptions, 0, numIterations);
+                    offset += (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, numExceptions, bitsPerException);
                     for (int i = 0; i < numExceptions; ++i)
                     {
-                        NextDocs[Data[Offset++]] |= NextExceptions[i] << bitsPerValue;
+                        nextDocs[data[offset++]] |= nextExceptions[i] << bitsPerValue;
                     }
                 }
-                for (int previousDoc = DocID_Renamed, i = 0; i < BLOCK_SIZE; ++i)
+                for (int previousDoc = docID, i = 0; i < BLOCK_SIZE; ++i)
                 {
-                    int doc = previousDoc + 1 + NextDocs[i];
-                    previousDoc = NextDocs[i] = doc;
+                    int doc = previousDoc + 1 + nextDocs[i];
+                    previousDoc = nextDocs[i] = doc;
                 }
             }
 
             internal virtual void UnaryDecompress(byte token)
             {
                 Debug.Assert((token & HAS_EXCEPTIONS) == 0);
-                int docID = this.DocID_Renamed;
+                int docID = this.docID;
                 for (int i = 0; i < BLOCK_SIZE; )
                 {
-                    var b = Data[Offset++];
+                    var b = data[offset++];
                     for (int bitList = BitUtil.BitList(b); bitList != 0; ++i, bitList = (int)((uint)bitList >> 4))
                     {
-                        NextDocs[i] = docID + (bitList & 0x0F);
+                        nextDocs[i] = docID + (bitList & 0x0F);
                     }
                     docID += 8;
                 }
@@ -486,7 +486,7 @@ namespace Lucene.Net.Util
 
             internal virtual void DecompressBlock()
             {
-                var token = Data[Offset++];
+                var token = data[offset++];
 
                 if ((token & UNARY) != 0)
                 {
@@ -499,17 +499,17 @@ namespace Lucene.Net.Util
 
                 if ((token & LAST_BLOCK) != 0)
                 {
-                    int blockSize = Data[Offset++];
-                    Arrays.Fill(NextDocs, blockSize, BLOCK_SIZE, NO_MORE_DOCS);
+                    int blockSize = data[offset++];
+                    Arrays.Fill(nextDocs, blockSize, BLOCK_SIZE, NO_MORE_DOCS);
                 }
-                ++BlockIdx;
+                ++blockIdx;
             }
 
             internal virtual void SkipBlock()
             {
                 Debug.Assert(i == BLOCK_SIZE);
                 DecompressBlock();
-                DocID_Renamed = NextDocs[BLOCK_SIZE - 1];
+                docID = nextDocs[BLOCK_SIZE - 1];
             }
 
             public override int NextDoc()
@@ -519,16 +519,16 @@ namespace Lucene.Net.Util
                     DecompressBlock();
                     i = 0;
                 }
-                return DocID_Renamed = NextDocs[i++];
+                return docID = nextDocs[i++];
             }
 
             internal virtual int ForwardBinarySearch(int target)
             {
                 // advance forward and double the window at each step
-                int indexSize = (int)DocIDs.Size;
-                int lo = Math.Max(BlockIdx / IndexInterval, 0), hi = lo + 1;
-                Debug.Assert(BlockIdx == -1 || DocIDs.Get(lo) <= DocID_Renamed);
-                Debug.Assert(lo + 1 == DocIDs.Size || DocIDs.Get(lo + 1) > DocID_Renamed);
+                int indexSize = (int)docIDs.Size;
+                int lo = Math.Max(blockIdx / indexInterval, 0), hi = lo + 1;
+                Debug.Assert(blockIdx == -1 || docIDs.Get(lo) <= docID);
+                Debug.Assert(lo + 1 == docIDs.Size || docIDs.Get(lo + 1) > docID);
                 while (true)
                 {
                     if (hi >= indexSize)
@@ -536,7 +536,7 @@ namespace Lucene.Net.Util
                         hi = indexSize - 1;
                         break;
                     }
-                    else if (DocIDs.Get(hi) >= target)
+                    else if (docIDs.Get(hi) >= target)
                     {
                         break;
                     }
@@ -549,7 +549,7 @@ namespace Lucene.Net.Util
                 while (lo <= hi)
                 {
                     int mid = (int)((uint)(lo + hi) >> 1);
-                    int midDocID = (int)DocIDs.Get(mid);
+                    int midDocID = (int)docIDs.Get(mid);
                     if (midDocID <= target)
                     {
                         lo = mid + 1;
@@ -559,32 +559,32 @@ namespace Lucene.Net.Util
                         hi = mid - 1;
                     }
                 }
-                Debug.Assert(DocIDs.Get(hi) <= target);
-                Debug.Assert(hi + 1 == DocIDs.Size || DocIDs.Get(hi + 1) > target);
+                Debug.Assert(docIDs.Get(hi) <= target);
+                Debug.Assert(hi + 1 == docIDs.Size || docIDs.Get(hi + 1) > target);
                 return hi;
             }
 
             public override int Advance(int target)
             {
-                Debug.Assert(target > DocID_Renamed);
-                if (NextDocs[BLOCK_SIZE - 1] < target)
+                Debug.Assert(target > docID);
+                if (nextDocs[BLOCK_SIZE - 1] < target)
                 {
                     // not in the next block, now use the index
                     int index = ForwardBinarySearch(target);
-                    int offset = (int)Offsets.Get(index);
-                    if (offset > this.Offset)
+                    int offset = (int)offsets.Get(index);
+                    if (offset > this.offset)
                     {
-                        this.Offset = offset;
-                        DocID_Renamed = (int)DocIDs.Get(index) - 1;
-                        BlockIdx = index * IndexInterval - 1;
+                        this.offset = offset;
+                        docID = (int)docIDs.Get(index) - 1;
+                        blockIdx = index * indexInterval - 1;
                         while (true)
                         {
                             DecompressBlock();
-                            if (NextDocs[BLOCK_SIZE - 1] >= target)
+                            if (nextDocs[BLOCK_SIZE - 1] >= target)
                             {
                                 break;
                             }
-                            DocID_Renamed = NextDocs[BLOCK_SIZE - 1];
+                            docID = nextDocs[BLOCK_SIZE - 1];
                         }
                         i = 0;
                     }
@@ -594,7 +594,7 @@ namespace Lucene.Net.Util
 
             public override long Cost()
             {
-                return Cardinality;
+                return cardinality;
             }
         }
 
@@ -602,14 +602,14 @@ namespace Lucene.Net.Util
         /// Return the number of documents in this <seealso cref="DocIdSet"/> in constant time. </summary>
         public int Cardinality()
         {
-            return Cardinality_Renamed;
+            return cardinality;
         }
 
         /// <summary>
         /// Return the memory usage of this instance. </summary>
         public long RamBytesUsed()
         {
-            return RamUsageEstimator.AlignObjectSize(3 * RamUsageEstimator.NUM_BYTES_OBJECT_REF) + DocIDs.RamBytesUsed() + Offsets.RamBytesUsed();
+            return RamUsageEstimator.AlignObjectSize(3 * RamUsageEstimator.NUM_BYTES_OBJECT_REF) + docIDs.RamBytesUsed() + offsets.RamBytesUsed();
         }
     }
 }
