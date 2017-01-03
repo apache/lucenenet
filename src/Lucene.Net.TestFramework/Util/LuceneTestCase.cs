@@ -2879,7 +2879,7 @@ namespace Lucene.Net.Util
 
                 foreach (var field in fields)
                 {
-                    if (field.IsPrivate && !PrivateFieldName.IsMatch(field.Name))
+                    if (field.IsPrivate && !PrivateFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", field.Name));
                     }
@@ -2906,7 +2906,7 @@ namespace Lucene.Net.Util
 
                 foreach (var field in fields)
                 {
-                    if (field.IsFamily && !ProtectedFieldName.IsMatch(field.Name))
+                    if (field.IsFamily && !ProtectedFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", field.Name));
                     }
