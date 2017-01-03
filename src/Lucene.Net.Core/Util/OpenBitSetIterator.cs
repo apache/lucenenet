@@ -31,13 +31,13 @@ namespace Lucene.Net.Util
         // for efficiency, or have a common root interface?  (or
         // maybe both?  could ask for a SetBitsIterator, etc...
 
-        internal readonly long[] Arr;
-        internal readonly int Words;
+        internal readonly long[] arr;
+        internal readonly int words;
         private int i = -1;
-        private long Word;
-        private int WordShift;
-        private int IndexArray;
-        private int CurDocId = -1;
+        private long word;
+        private int wordShift;
+        private int indexArray;
+        private int curDocId = -1;
 
         public OpenBitSetIterator(OpenBitSet obs)
             : this(obs.GetBits(), obs.NumWords)
@@ -46,29 +46,29 @@ namespace Lucene.Net.Util
 
         public OpenBitSetIterator(long[] bits, int numWords)
         {
-            Arr = bits;
-            Words = numWords;
+            arr = bits;
+            words = numWords;
         }
 
         // 64 bit shifts
         private void Shift()
         {
-            if ((int)Word == 0)
+            if ((int)word == 0)
             {
-                WordShift += 32;
-                Word = (long)((ulong)Word >> 32);
+                wordShift += 32;
+                word = (long)((ulong)word >> 32);
             }
-            if ((Word & 0x0000FFFF) == 0)
+            if ((word & 0x0000FFFF) == 0)
             {
-                WordShift += 16;
-                Word = (long)((ulong)Word >> 16);
+                wordShift += 16;
+                word = (long)((ulong)word >> 16);
             }
-            if ((Word & 0x000000FF) == 0)
+            if ((word & 0x000000FF) == 0)
             {
-                WordShift += 8;
-                Word = (long)((ulong)Word >> 8);
+                wordShift += 8;
+                word = (long)((ulong)word >> 8);
             }
-            IndexArray = BitUtil.BitList((byte)Word);
+            indexArray = BitUtil.BitList((byte)word);
         }
 
         /// <summary>
@@ -97,22 +97,22 @@ namespace Lucene.Net.Util
 
         public override int NextDoc()
         {
-            if (IndexArray == 0)
+            if (indexArray == 0)
             {
-                if (Word != 0)
+                if (word != 0)
                 {
-                    Word = (long)((ulong)Word >> 8);
-                    WordShift += 8;
+                    word = (long)((ulong)word >> 8);
+                    wordShift += 8;
                 }
 
-                while (Word == 0)
+                while (word == 0)
                 {
-                    if (++i >= Words)
+                    if (++i >= words)
                     {
-                        return CurDocId = NO_MORE_DOCS;
+                        return curDocId = NO_MORE_DOCS;
                     }
-                    Word = Arr[i];
-                    WordShift = -1; // loop invariant code motion should move this
+                    word = arr[i];
+                    wordShift = -1; // loop invariant code motion should move this
                 }
 
                 // after the first time, should I go with a linear search, or
@@ -120,58 +120,58 @@ namespace Lucene.Net.Util
                 Shift();
             }
 
-            int bitIndex = (IndexArray & 0x0f) + WordShift;
-            IndexArray = (int)((uint)IndexArray >> 4);
+            int bitIndex = (indexArray & 0x0f) + wordShift;
+            indexArray = (int)((uint)indexArray >> 4);
             // should i<<6 be cached as a separate variable?
             // it would only save one cycle in the best circumstances.
-            return CurDocId = (i << 6) + bitIndex;
+            return curDocId = (i << 6) + bitIndex;
         }
 
         public override int Advance(int target)
         {
-            IndexArray = 0;
+            indexArray = 0;
             i = target >> 6;
-            if (i >= Words)
+            if (i >= words)
             {
-                Word = 0; // setup so next() will also return -1
-                return CurDocId = NO_MORE_DOCS;
+                word = 0; // setup so next() will also return -1
+                return curDocId = NO_MORE_DOCS;
             }
-            WordShift = target & 0x3f;
-            Word = (long)((ulong)Arr[i] >> WordShift);
-            if (Word != 0)
+            wordShift = target & 0x3f;
+            word = (long)((ulong)arr[i] >> wordShift);
+            if (word != 0)
             {
-                WordShift--; // compensate for 1 based arrIndex
+                wordShift--; // compensate for 1 based arrIndex
             }
             else
             {
-                while (Word == 0)
+                while (word == 0)
                 {
-                    if (++i >= Words)
+                    if (++i >= words)
                     {
-                        return CurDocId = NO_MORE_DOCS;
+                        return curDocId = NO_MORE_DOCS;
                     }
-                    Word = Arr[i];
+                    word = arr[i];
                 }
-                WordShift = -1;
+                wordShift = -1;
             }
 
             Shift();
 
-            int bitIndex = (IndexArray & 0x0f) + WordShift;
-            IndexArray = (int)((uint)IndexArray >> 4);
+            int bitIndex = (indexArray & 0x0f) + wordShift;
+            indexArray = (int)((uint)indexArray >> 4);
             // should i<<6 be cached as a separate variable?
             // it would only save one cycle in the best circumstances.
-            return CurDocId = (i << 6) + bitIndex;
+            return curDocId = (i << 6) + bitIndex;
         }
 
         public override int DocID
         {
-            get { return CurDocId; }
+            get { return curDocId; }
         }
 
         public override long Cost()
         {
-            return Words / 64;
+            return words / 64;
         }
     }
 }

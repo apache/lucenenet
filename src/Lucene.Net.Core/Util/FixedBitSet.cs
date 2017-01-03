@@ -386,7 +386,7 @@ namespace Lucene.Net.Util
             if (iter is OpenBitSetIterator && iter.DocID == -1)
             {
                 OpenBitSetIterator obs = (OpenBitSetIterator)iter;
-                Or(obs.Arr, obs.Words);
+                Or(obs.arr, obs.words);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 obs.Advance(numBits);
@@ -461,7 +461,7 @@ namespace Lucene.Net.Util
             if (iter is OpenBitSetIterator && iter.DocID == -1)
             {
                 OpenBitSetIterator obs = (OpenBitSetIterator)iter;
-                And(obs.Arr, obs.Words);
+                And(obs.arr, obs.words);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 obs.Advance(numBits);
@@ -539,7 +539,7 @@ namespace Lucene.Net.Util
             if (iter is OpenBitSetIterator && iter.DocID == -1)
             {
                 OpenBitSetIterator obs = (OpenBitSetIterator)iter;
-                AndNot(obs.Arr, obs.Words);
+                AndNot(obs.arr, obs.words);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 obs.Advance(numBits);
