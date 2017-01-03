@@ -57,19 +57,19 @@ namespace Lucene.Net.Analysis.Util
             this.len = end;
         }
 
-        public virtual char[] Array
+        public virtual char[] Array // LUCENENET TODO: change to GetArray()
         {
             get
             {
                 return buf;
             }
         }
-        public virtual int Size()
+        public virtual int Size() // LUCENENET TODO: make property, rename Count
         {
             return len;
         }
 
-        public virtual int Capacity()
+        public virtual int Capacity() // LUCENENET TODO: make property
         {
             return buf.Length;
         }
