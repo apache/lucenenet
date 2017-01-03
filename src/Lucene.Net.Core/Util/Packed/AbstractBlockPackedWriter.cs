@@ -47,12 +47,12 @@ namespace Lucene.Net.Util.Packed
             @out.WriteByte((byte)(sbyte)i);
         }
 
-        protected DataOutput @out;
-        protected readonly long[] Values;
-        protected byte[] Blocks;
-        protected int Off;
-        protected long Ord_Renamed;
-        protected bool Finished;
+        protected DataOutput m_out;
+        protected readonly long[] m_values;
+        protected byte[] m_blocks;
+        protected int m_off;
+        protected long m_ord;
+        protected bool m_finished;
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -61,7 +61,7 @@ namespace Lucene.Net.Util.Packed
         {
             PackedInts.CheckBlockSize(blockSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
             Reset(@out);
-            Values = new long[blockSize];
+            m_values = new long[blockSize];
         }
 
         /// <summary>
@@ -69,15 +69,15 @@ namespace Lucene.Net.Util.Packed
         public virtual void Reset(DataOutput @out)
         {
             Debug.Assert(@out != null);
-            this.@out = @out;
-            Off = 0;
-            Ord_Renamed = 0L;
-            Finished = false;
+            this.m_out = @out;
+            m_off = 0;
+            m_ord = 0L;
+            m_finished = false;
         }
 
         private void CheckNotFinished()
         {
-            if (Finished)
+            if (m_finished)
             {
                 throw new InvalidOperationException("Already finished");
             }
@@ -88,29 +88,29 @@ namespace Lucene.Net.Util.Packed
         public virtual void Add(long l)
         {
             CheckNotFinished();
-            if (Off == Values.Length)
+            if (m_off == m_values.Length)
             {
                 Flush();
             }
-            Values[Off++] = l;
-            ++Ord_Renamed;
+            m_values[m_off++] = l;
+            ++m_ord;
         }
 
         // For testing only
         internal virtual void AddBlockOfZeros()
         {
             CheckNotFinished();
-            if (Off != 0 && Off != Values.Length)
+            if (m_off != 0 && m_off != m_values.Length)
             {
-                throw new InvalidOperationException("" + Off);
+                throw new InvalidOperationException("" + m_off);
             }
-            if (Off == Values.Length)
+            if (m_off == m_values.Length)
             {
                 Flush();
             }
-            Arrays.Fill(Values, 0);
-            Off = Values.Length;
-            Ord_Renamed += Values.Length;
+            Arrays.Fill(m_values, 0);
+            m_off = m_values.Length;
+            m_ord += m_values.Length;
         }
 
         /// <summary>
@@ -121,18 +121,18 @@ namespace Lucene.Net.Util.Packed
         public virtual void Finish()
         {
             CheckNotFinished();
-            if (Off > 0)
+            if (m_off > 0)
             {
                 Flush();
             }
-            Finished = true;
+            m_finished = true;
         }
 
         /// <summary>
         /// Return the number of values which have been added. </summary>
         public virtual long Ord
         {
-            get { return Ord_Renamed; }
+            get { return m_ord; }
         }
 
         protected abstract void Flush();
@@ -140,19 +140,19 @@ namespace Lucene.Net.Util.Packed
         protected void WriteValues(int bitsRequired)
         {
             PackedInts.IEncoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, bitsRequired);
-            int iterations = Values.Length / encoder.ByteValueCount;
+            int iterations = m_values.Length / encoder.ByteValueCount;
             int blockSize = encoder.ByteBlockCount * iterations;
-            if (Blocks == null || Blocks.Length < blockSize)
+            if (m_blocks == null || m_blocks.Length < blockSize)
             {
-                Blocks = new byte[blockSize];
+                m_blocks = new byte[blockSize];
             }
-            if (Off < Values.Length)
+            if (m_off < m_values.Length)
             {
-                Arrays.Fill(Values, Off, Values.Length, 0L);
+                Arrays.Fill(m_values, m_off, m_values.Length, 0L);
             }
-            encoder.Encode(Values, 0, Blocks, 0, iterations);
-            int blockCount = (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, Off, bitsRequired);
-            @out.WriteBytes(Blocks, blockCount);
+            encoder.Encode(m_values, 0, m_blocks, 0, iterations);
+            int blockCount = (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, m_off, bitsRequired);
+            m_out.WriteBytes(m_blocks, blockCount);
         }
     }
 }

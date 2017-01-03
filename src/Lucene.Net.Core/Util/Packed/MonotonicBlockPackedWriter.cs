@@ -70,33 +70,33 @@ namespace Lucene.Net.Util.Packed
 
         protected override void Flush()
         {
-            Debug.Assert(Off > 0);
+            Debug.Assert(m_off > 0);
 
             // TODO: perform a true linear regression?
-            long min = Values[0];
-            float avg = Off == 1 ? 0f : (float)(Values[Off - 1] - min) / (Off - 1);
+            long min = m_values[0];
+            float avg = m_off == 1 ? 0f : (float)(m_values[m_off - 1] - min) / (m_off - 1);
 
             long maxZigZagDelta = 0;
-            for (int i = 0; i < Off; ++i)
+            for (int i = 0; i < m_off; ++i)
             {
-                Values[i] = ZigZagEncode(Values[i] - min - (long)(avg * i));
-                maxZigZagDelta = Math.Max(maxZigZagDelta, Values[i]);
+                m_values[i] = ZigZagEncode(m_values[i] - min - (long)(avg * i));
+                maxZigZagDelta = Math.Max(maxZigZagDelta, m_values[i]);
             }
 
-            @out.WriteVLong(min);
-            @out.WriteInt(Number.FloatToIntBits(avg));
+            m_out.WriteVLong(min);
+            m_out.WriteInt(Number.FloatToIntBits(avg));
             if (maxZigZagDelta == 0)
             {
-                @out.WriteVInt(0);
+                m_out.WriteVInt(0);
             }
             else
             {
                 int bitsRequired = PackedInts.BitsRequired(maxZigZagDelta);
-                @out.WriteVInt(bitsRequired);
+                m_out.WriteVInt(bitsRequired);
                 WriteValues(bitsRequired);
             }
 
-            Off = 0;
+            m_off = 0;
         }
     }
 }

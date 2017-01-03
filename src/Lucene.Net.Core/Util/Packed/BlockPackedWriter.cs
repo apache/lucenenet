@@ -67,12 +67,12 @@ namespace Lucene.Net.Util.Packed
 
         protected override void Flush()
         {
-            Debug.Assert(Off > 0);
+            Debug.Assert(m_off > 0);
             long min = long.MaxValue, max = long.MinValue;
-            for (int i = 0; i < Off; ++i)
+            for (int i = 0; i < m_off; ++i)
             {
-                min = Math.Min(Values[i], min);
-                max = Math.Max(Values[i], max);
+                min = Math.Min(m_values[i], min);
+                max = Math.Max(m_values[i], max);
             }
 
             long delta = max - min;
@@ -89,26 +89,26 @@ namespace Lucene.Net.Util.Packed
             }
 
             int token = (bitsRequired << BPV_SHIFT) | (min == 0 ? MIN_VALUE_EQUALS_0 : 0);
-            @out.WriteByte((byte)(sbyte)token);
+            m_out.WriteByte((byte)(sbyte)token);
 
             if (min != 0)
             {
-                WriteVLong(@out, ZigZagEncode(min) - 1);
+                WriteVLong(m_out, ZigZagEncode(min) - 1);
             }
 
             if (bitsRequired > 0)
             {
                 if (min != 0)
                 {
-                    for (int i = 0; i < Off; ++i)
+                    for (int i = 0; i < m_off; ++i)
                     {
-                        Values[i] -= min;
+                        m_values[i] -= min;
                     }
                 }
                 WriteValues(bitsRequired);
             }
 
-            Off = 0;
+            m_off = 0;
         }
     }
 }
