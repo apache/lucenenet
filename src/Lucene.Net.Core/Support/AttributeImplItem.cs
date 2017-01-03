@@ -36,7 +36,7 @@ namespace Lucene.Net.Support
             this.Value = value;
         }
 
-        internal Type Key;
-        internal Util.Attribute Value;
+        public Type Key { get; set; }
+        public Util.Attribute Value { get; set; }
     }
 }
