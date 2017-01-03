@@ -26,7 +26,7 @@ namespace Lucene.Net.Store
     public class BufferedChecksumIndexInput : ChecksumIndexInput
     {
         internal readonly IndexInput main;
-        internal readonly IChecksum Digest;
+        internal readonly IChecksum digest;
 
         /// <summary>
         /// Creates a new BufferedChecksumIndexInput </summary>
@@ -34,20 +34,20 @@ namespace Lucene.Net.Store
             : base("BufferedChecksumIndexInput(" + main + ")")
         {
             this.main = main;
-            this.Digest = new BufferedChecksum(new CRC32());
+            this.digest = new BufferedChecksum(new CRC32());
         }
 
         public override byte ReadByte()
         {
             byte b = main.ReadByte();
-            Digest.Update(b);
+            digest.Update(b);
             return b;
         }
 
         public override void ReadBytes(byte[] b, int offset, int len)
         {
             main.ReadBytes(b, offset, len);
-            Digest.Update(b, offset, len);
+            digest.Update(b, offset, len);
         }
 
         /*
@@ -62,7 +62,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return Digest.Value;
+                return digest.Value;
             }
         }
 
