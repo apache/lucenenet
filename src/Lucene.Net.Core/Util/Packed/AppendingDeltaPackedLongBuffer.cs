@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     public sealed class AppendingDeltaPackedLongBuffer : AbstractAppendingLongBuffer
     {
-        internal long[] MinValues;
+        internal long[] minValues;
 
         /// <summary>
         /// Create <seealso cref="AppendingDeltaPackedLongBuffer"/> </summary>
@@ -39,7 +39,7 @@ namespace Lucene.Net.Util.Packed
         public AppendingDeltaPackedLongBuffer(int initialPageCount, int pageSize, float acceptableOverheadRatio)
             : base(initialPageCount, pageSize, acceptableOverheadRatio)
         {
-            MinValues = new long[values.Length];
+            minValues = new long[values.Length];
         }
 
         /// <summary>
@@ -68,11 +68,11 @@ namespace Lucene.Net.Util.Packed
             }
             else if (values[block] == null)
             {
-                return MinValues[block];
+                return minValues[block];
             }
             else
             {
-                return MinValues[block] + values[block].Get(element);
+                return minValues[block] + values[block].Get(element);
             }
         }
 
@@ -88,7 +88,7 @@ namespace Lucene.Net.Util.Packed
             {
                 /* packed block */
                 int read = values[block].Get(element, arr, off, len);
-                long d = MinValues[block];
+                long d = minValues[block];
                 for (int r = 0; r < read; r++, off++)
                 {
                     arr[off] += d;
@@ -109,7 +109,7 @@ namespace Lucene.Net.Util.Packed
             }
             long delta = maxValue - minValue;
 
-            MinValues[valuesOff] = minValue;
+            minValues[valuesOff] = minValue;
             if (delta == 0)
             {
                 values[valuesOff] = new PackedInts.NullReader(pendingOff);
@@ -134,7 +134,7 @@ namespace Lucene.Net.Util.Packed
         internal override void Grow(int newBlockCount)
         {
             base.Grow(newBlockCount);
-            this.MinValues = Arrays.CopyOf(MinValues, newBlockCount);
+            this.minValues = Arrays.CopyOf(minValues, newBlockCount);
         }
 
         internal override long BaseRamBytesUsed()
@@ -144,7 +144,7 @@ namespace Lucene.Net.Util.Packed
 
         public override long RamBytesUsed()
         {
-            return base.RamBytesUsed() + RamUsageEstimator.SizeOf(MinValues);
+            return base.RamBytesUsed() + RamUsageEstimator.SizeOf(minValues);
         }
 
         public override Iterator GetIterator() // LUCENENET TODO: This can be done from the base class
