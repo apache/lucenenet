@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(flushPolicy.FlushOnRAM);
             DocumentsWriter docsWriter = writer.DocsWriter;
             Assert.IsNotNull(docsWriter);
-            DocumentsWriterFlushControl flushControl = docsWriter.FlushControl;
+            DocumentsWriterFlushControl flushControl = docsWriter.flushControl;
             Assert.AreEqual(0, flushControl.FlushBytes, " bytes must be 0 after init");
 
             IndexThread[] threads = new IndexThread[numThreads];
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
             }
             if (ensureNotStalled)
             {
-                Assert.IsFalse(docsWriter.FlushControl.StallControl.WasStalled);
+                Assert.IsFalse(docsWriter.flushControl.StallControl.WasStalled);
             }
             writer.Dispose();
             Assert.AreEqual(0, flushControl.ActiveBytes);
@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
                 Assert.IsFalse(flushPolicy.FlushOnRAM);
                 DocumentsWriter docsWriter = writer.DocsWriter;
                 Assert.IsNotNull(docsWriter);
-                DocumentsWriterFlushControl flushControl = docsWriter.FlushControl;
+                DocumentsWriterFlushControl flushControl = docsWriter.flushControl;
                 Assert.AreEqual(0, flushControl.FlushBytes, " bytes must be 0 after init");
 
                 IndexThread[] threads = new IndexThread[numThreads[i]];
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
             flushPolicy = (MockDefaultFlushPolicy)writer.Config.FlushPolicy;
             DocumentsWriter docsWriter = writer.DocsWriter;
             Assert.IsNotNull(docsWriter);
-            DocumentsWriterFlushControl flushControl = docsWriter.FlushControl;
+            DocumentsWriterFlushControl flushControl = docsWriter.flushControl;
 
             Assert.AreEqual(0, flushControl.FlushBytes, " bytes must be 0 after init");
 
@@ -228,8 +228,8 @@ namespace Lucene.Net.Index
             Assert.AreEqual(numDocumentsToIndex, r.MaxDoc);
             if (!flushPolicy.FlushOnRAM)
             {
-                assertFalse("never stall if we don't flush on RAM", docsWriter.FlushControl.StallControl.WasStalled);
-                assertFalse("never block if we don't flush on RAM", docsWriter.FlushControl.StallControl.HasBlocked);
+                assertFalse("never stall if we don't flush on RAM", docsWriter.flushControl.StallControl.WasStalled);
+                assertFalse("never block if we don't flush on RAM", docsWriter.flushControl.StallControl.HasBlocked);
             }
             r.Dispose();
             writer.Dispose();
@@ -272,17 +272,17 @@ namespace Lucene.Net.Index
                 }
                 DocumentsWriter docsWriter = writer.DocsWriter;
                 Assert.IsNotNull(docsWriter);
-                DocumentsWriterFlushControl flushControl = docsWriter.FlushControl;
+                DocumentsWriterFlushControl flushControl = docsWriter.flushControl;
                 Assert.AreEqual(0, flushControl.FlushBytes, " all flushes must be due");
                 Assert.AreEqual(numDocumentsToIndex, writer.NumDocs());
                 Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
                 if (numThreads[i] == 1)
                 {
-                    assertFalse("single thread must not block numThreads: " + numThreads[i], docsWriter.FlushControl.StallControl.HasBlocked);
+                    assertFalse("single thread must not block numThreads: " + numThreads[i], docsWriter.flushControl.StallControl.HasBlocked);
                 }
-                if (docsWriter.FlushControl.PeakNetBytes > (2d * iwc.RAMBufferSizeMB * 1024d * 1024d))
+                if (docsWriter.flushControl.PeakNetBytes > (2d * iwc.RAMBufferSizeMB * 1024d * 1024d))
                 {
-                    Assert.IsTrue(docsWriter.FlushControl.StallControl.WasStalled);
+                    Assert.IsTrue(docsWriter.flushControl.StallControl.WasStalled);
                 }
                 AssertActiveBytesAfter(flushControl);
                 writer.Dispose(true);

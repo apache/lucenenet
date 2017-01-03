@@ -102,44 +102,44 @@ namespace Lucene.Net.Index
     /// </summary>
     internal sealed class DocumentsWriter : IDisposable
     {
-        private readonly Directory Directory;
+        private readonly Directory directory;
 
-        private volatile bool Closed;
+        private volatile bool closed;
 
-        private readonly InfoStream InfoStream;
+        private readonly InfoStream infoStream;
 
-        private readonly LiveIndexWriterConfig LIWConfig;
+        private readonly LiveIndexWriterConfig config;
 
-        private readonly AtomicInteger NumDocsInRAM = new AtomicInteger(0);
+        private readonly AtomicInteger numDocsInRAM = new AtomicInteger(0);
 
         // TODO: cut over to BytesRefHash in BufferedDeletes
-        internal volatile DocumentsWriterDeleteQueue DeleteQueue = new DocumentsWriterDeleteQueue();
+        internal volatile DocumentsWriterDeleteQueue deleteQueue = new DocumentsWriterDeleteQueue();
 
-        private readonly DocumentsWriterFlushQueue TicketQueue = new DocumentsWriterFlushQueue();
+        private readonly DocumentsWriterFlushQueue ticketQueue = new DocumentsWriterFlushQueue();
         /*
          * we preserve changes during a full flush since IW might not checkout before
          * we release all changes. NRT Readers otherwise suddenly return true from
          * isCurrent while there are actually changes currently committed. See also
          * #anyChanges() & #flushAllThreads
          */
-        private volatile bool PendingChangesInCurrentFullFlush;
+        private volatile bool pendingChangesInCurrentFullFlush;
 
-        internal readonly DocumentsWriterPerThreadPool PerThreadPool;
-        internal readonly FlushPolicy FlushPolicy;
-        internal readonly DocumentsWriterFlushControl FlushControl;
-        private readonly IndexWriter Writer;
-        private readonly ConcurrentQueue<IEvent> Events;
+        internal readonly DocumentsWriterPerThreadPool perThreadPool;
+        internal readonly FlushPolicy flushPolicy;
+        internal readonly DocumentsWriterFlushControl flushControl;
+        private readonly IndexWriter writer;
+        private readonly ConcurrentQueue<IEvent> events;
 
         internal DocumentsWriter(IndexWriter writer, LiveIndexWriterConfig config, Directory directory)
         {
-            this.Directory = directory;
-            this.LIWConfig = config;
-            this.InfoStream = config.InfoStream;
-            this.PerThreadPool = config.IndexerThreadPool;
-            FlushPolicy = config.FlushPolicy;
-            this.Writer = writer;
-            this.Events = new ConcurrentQueue<IEvent>();
-            FlushControl = new DocumentsWriterFlushControl(this, config, writer.bufferedUpdatesStream);
+            this.directory = directory;
+            this.config = config;
+            this.infoStream = config.InfoStream;
+            this.perThreadPool = config.IndexerThreadPool;
+            flushPolicy = config.FlushPolicy;
+            this.writer = writer;
+            this.events = new ConcurrentQueue<IEvent>();
+            flushControl = new DocumentsWriterFlushControl(this, config, writer.bufferedUpdatesStream);
         }
 
         internal bool DeleteQueries(params Query[] queries)
@@ -147,9 +147,9 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 // TODO why is this synchronized?
-                DocumentsWriterDeleteQueue deleteQueue = this.DeleteQueue;
+                DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
                 deleteQueue.AddDelete(queries);
-                FlushControl.DoOnDelete();
+                flushControl.DoOnDelete();
                 return ApplyAllDeletes(deleteQueue);
             }
         }
@@ -162,9 +162,9 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 // TODO why is this synchronized?
-                DocumentsWriterDeleteQueue deleteQueue = this.DeleteQueue;
+                DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
                 deleteQueue.AddDelete(terms);
-                FlushControl.DoOnDelete();
+                flushControl.DoOnDelete();
                 return ApplyAllDeletes(deleteQueue);
             }
         }
@@ -173,9 +173,9 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                DocumentsWriterDeleteQueue deleteQueue = this.DeleteQueue;
+                DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
                 deleteQueue.AddNumericUpdate(new NumericDocValuesUpdate(term, field, value));
-                FlushControl.DoOnDelete();
+                flushControl.DoOnDelete();
                 return ApplyAllDeletes(deleteQueue);
             }
         }
@@ -184,25 +184,25 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                DocumentsWriterDeleteQueue deleteQueue = this.DeleteQueue;
+                DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
                 deleteQueue.AddBinaryUpdate(new BinaryDocValuesUpdate(term, field, value));
-                FlushControl.DoOnDelete();
+                flushControl.DoOnDelete();
                 return ApplyAllDeletes(deleteQueue);
             }
         }
 
         internal DocumentsWriterDeleteQueue CurrentDeleteSession
         {
-            get { return DeleteQueue; }
+            get { return deleteQueue; }
         }
 
         private bool ApplyAllDeletes(DocumentsWriterDeleteQueue deleteQueue)
         {
-            if (FlushControl.GetAndResetApplyAllDeletes())
+            if (flushControl.GetAndResetApplyAllDeletes())
             {
-                if (deleteQueue != null && !FlushControl.IsFullFlush)
+                if (deleteQueue != null && !flushControl.IsFullFlush)
                 {
-                    TicketQueue.AddDeletes(deleteQueue);
+                    ticketQueue.AddDeletes(deleteQueue);
                 }
                 PutEvent(ApplyDeletesEvent.INSTANCE); // apply deletes event forces a purge
                 return true;
@@ -214,11 +214,11 @@ namespace Lucene.Net.Index
         {
             if (forced)
             {
-                return TicketQueue.ForcePurge(writer);
+                return ticketQueue.ForcePurge(writer);
             }
             else
             {
-                return TicketQueue.TryPurge(writer);
+                return ticketQueue.TryPurge(writer);
             }
         }
 
@@ -228,13 +228,13 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return NumDocsInRAM.Get();
+                return numDocsInRAM.Get();
             }
         }
 
         private void EnsureOpen()
         {
-            if (Closed)
+            if (closed)
             {
                 throw new AlreadyClosedException("this IndexWriter is closed");
             }
@@ -255,15 +255,15 @@ namespace Lucene.Net.Index
                 HashSet<string> newFilesSet = new HashSet<string>();
                 try
                 {
-                    DeleteQueue.Clear();
-                    if (InfoStream.IsEnabled("DW"))
+                    deleteQueue.Clear();
+                    if (infoStream.IsEnabled("DW"))
                     {
-                        InfoStream.Message("DW", "abort");
+                        infoStream.Message("DW", "abort");
                     }
-                    int limit = PerThreadPool.NumThreadStatesActive;
+                    int limit = perThreadPool.NumThreadStatesActive;
                     for (int i = 0; i < limit; i++)
                     {
-                        ThreadState perThread = PerThreadPool.GetThreadState(i);
+                        ThreadState perThread = perThreadPool.GetThreadState(i);
                         perThread.@Lock();
                         try
                         {
@@ -274,16 +274,16 @@ namespace Lucene.Net.Index
                             perThread.Unlock();
                         }
                     }
-                    FlushControl.AbortPendingFlushes(newFilesSet);
+                    flushControl.AbortPendingFlushes(newFilesSet);
                     PutEvent(new DeleteNewFilesEvent(newFilesSet));
-                    FlushControl.WaitForFlush();
+                    flushControl.WaitForFlush();
                     success = true;
                 }
                 finally
                 {
-                    if (InfoStream.IsEnabled("DW"))
+                    if (infoStream.IsEnabled("DW"))
                     {
-                        InfoStream.Message("DW", "done abort; abortedFiles=" + newFilesSet + " success=" + success);
+                        infoStream.Message("DW", "done abort; abortedFiles=" + newFilesSet + " success=" + success);
                     }
                 }
             }
@@ -294,33 +294,33 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 //Debug.Assert(indexWriter.HoldsFullFlushLock());
-                if (InfoStream.IsEnabled("DW"))
+                if (infoStream.IsEnabled("DW"))
                 {
-                    InfoStream.Message("DW", "lockAndAbortAll");
+                    infoStream.Message("DW", "lockAndAbortAll");
                 }
                 bool success = false;
                 try
                 {
-                    DeleteQueue.Clear();
-                    int limit = PerThreadPool.MaxThreadStates;
+                    deleteQueue.Clear();
+                    int limit = perThreadPool.MaxThreadStates;
                     HashSet<string> newFilesSet = new HashSet<string>();
                     for (int i = 0; i < limit; i++)
                     {
-                        ThreadState perThread = PerThreadPool.GetThreadState(i);
+                        ThreadState perThread = perThreadPool.GetThreadState(i);
                         perThread.@Lock();
                         AbortThreadState(perThread, newFilesSet);
                     }
-                    DeleteQueue.Clear();
-                    FlushControl.AbortPendingFlushes(newFilesSet);
+                    deleteQueue.Clear();
+                    flushControl.AbortPendingFlushes(newFilesSet);
                     PutEvent(new DeleteNewFilesEvent(newFilesSet));
-                    FlushControl.WaitForFlush();
+                    flushControl.WaitForFlush();
                     success = true;
                 }
                 finally
                 {
-                    if (InfoStream.IsEnabled("DW"))
+                    if (infoStream.IsEnabled("DW"))
                     {
-                        InfoStream.Message("DW", "finished lockAndAbortAll success=" + success);
+                        infoStream.Message("DW", "finished lockAndAbortAll success=" + success);
                     }
                     if (!success)
                     {
@@ -346,17 +346,17 @@ namespace Lucene.Net.Index
                     finally
                     {
                         perThread.dwpt.CheckAndResetHasAborted();
-                        FlushControl.DoOnAbort(perThread);
+                        flushControl.DoOnAbort(perThread);
                     }
                 }
                 else
                 {
-                    FlushControl.DoOnAbort(perThread);
+                    flushControl.DoOnAbort(perThread);
                 }
             }
             else
             {
-                Debug.Assert(Closed);
+                Debug.Assert(closed);
             }
         }
 
@@ -365,16 +365,16 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 //Debug.Assert(indexWriter.HoldsFullFlushLock());
-                if (InfoStream.IsEnabled("DW"))
+                if (infoStream.IsEnabled("DW"))
                 {
-                    InfoStream.Message("DW", "unlockAll");
+                    infoStream.Message("DW", "unlockAll");
                 }
-                int limit = PerThreadPool.MaxThreadStates;
+                int limit = perThreadPool.MaxThreadStates;
                 for (int i = 0; i < limit; i++)
                 {
                     try
                     {
-                        ThreadState perThread = PerThreadPool.GetThreadState(i);
+                        ThreadState perThread = perThreadPool.GetThreadState(i);
                         //if (perThread.HeldByCurrentThread)
                         //{
                         perThread.Unlock();
@@ -382,9 +382,9 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception e)
                     {
-                        if (InfoStream.IsEnabled("DW"))
+                        if (infoStream.IsEnabled("DW"))
                         {
-                            InfoStream.Message("DW", "unlockAll: could not unlock state: " + i + " msg:" + e.Message);
+                            infoStream.Message("DW", "unlockAll: could not unlock state: " + i + " msg:" + e.Message);
                         }
                         // ignore & keep on unlocking
                     }
@@ -394,9 +394,9 @@ namespace Lucene.Net.Index
 
         internal bool AnyChanges() // LUCENENET TODO: Make property ?
         {
-            if (InfoStream.IsEnabled("DW"))
+            if (infoStream.IsEnabled("DW"))
             {
-                InfoStream.Message("DW", "anyChanges? numDocsInRam=" + NumDocsInRAM.Get() + " deletes=" + AnyDeletions() + " hasTickets:" + TicketQueue.HasTickets + " pendingChangesInFullFlush: " + PendingChangesInCurrentFullFlush);
+                infoStream.Message("DW", "anyChanges? numDocsInRam=" + numDocsInRAM.Get() + " deletes=" + AnyDeletions() + " hasTickets:" + ticketQueue.HasTickets + " pendingChangesInFullFlush: " + pendingChangesInCurrentFullFlush);
             }
             /*
              * changes are either in a DWPT or in the deleteQueue.
@@ -405,14 +405,14 @@ namespace Lucene.Net.Index
              * before they are published to the IW. ie we need to check if the
              * ticket queue has any tickets.
              */
-            return NumDocsInRAM.Get() != 0 || AnyDeletions() || TicketQueue.HasTickets || PendingChangesInCurrentFullFlush;
+            return numDocsInRAM.Get() != 0 || AnyDeletions() || ticketQueue.HasTickets || pendingChangesInCurrentFullFlush;
         }
 
         public int BufferedDeleteTermsSize
         {
             get
             {
-                return DeleteQueue.BufferedUpdatesTermsSize;
+                return deleteQueue.BufferedUpdatesTermsSize;
             }
         }
 
@@ -421,56 +421,56 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return DeleteQueue.NumGlobalTermDeletes;
+                return deleteQueue.NumGlobalTermDeletes;
             }
         }
 
         public bool AnyDeletions() // LUCENENET TODO: Make property ?
         {
-            return DeleteQueue.AnyChanges();
+            return deleteQueue.AnyChanges();
         }
 
         public void Dispose()
         {
-            Closed = true;
-            FlushControl.SetClosed();
+            closed = true;
+            flushControl.SetClosed();
         }
 
         private bool PreUpdate()
         {
             EnsureOpen();
             bool hasEvents = false;
-            if (FlushControl.AnyStalledThreads() || FlushControl.NumQueuedFlushes > 0)
+            if (flushControl.AnyStalledThreads() || flushControl.NumQueuedFlushes > 0)
             {
                 // Help out flushing any queued DWPTs so we can un-stall:
-                if (InfoStream.IsEnabled("DW"))
+                if (infoStream.IsEnabled("DW"))
                 {
-                    InfoStream.Message("DW", "DocumentsWriter has queued dwpt; will hijack this thread to flush pending segment(s)");
+                    infoStream.Message("DW", "DocumentsWriter has queued dwpt; will hijack this thread to flush pending segment(s)");
                 }
                 do
                 {
                     // Try pick up pending threads here if possible
                     DocumentsWriterPerThread flushingDWPT;
-                    while ((flushingDWPT = FlushControl.NextPendingFlush()) != null)
+                    while ((flushingDWPT = flushControl.NextPendingFlush()) != null)
                     {
                         // Don't push the delete here since the update could fail!
                         hasEvents |= DoFlush(flushingDWPT);
                     }
 
-                    if (InfoStream.IsEnabled("DW"))
+                    if (infoStream.IsEnabled("DW"))
                     {
-                        if (FlushControl.AnyStalledThreads())
+                        if (flushControl.AnyStalledThreads())
                         {
-                            InfoStream.Message("DW", "WARNING DocumentsWriter has stalled threads; waiting");
+                            infoStream.Message("DW", "WARNING DocumentsWriter has stalled threads; waiting");
                         }
                     }
 
-                    FlushControl.WaitIfStalled(); // block if stalled
-                } while (FlushControl.NumQueuedFlushes != 0); // still queued DWPTs try help flushing
+                    flushControl.WaitIfStalled(); // block if stalled
+                } while (flushControl.NumQueuedFlushes != 0); // still queued DWPTs try help flushing
 
-                if (InfoStream.IsEnabled("DW"))
+                if (infoStream.IsEnabled("DW"))
                 {
-                    InfoStream.Message("DW", "continue indexing after helping out flushing DocumentsWriter is healthy");
+                    infoStream.Message("DW", "continue indexing after helping out flushing DocumentsWriter is healthy");
                 }
             }
             return hasEvents;
@@ -478,14 +478,14 @@ namespace Lucene.Net.Index
 
         private bool PostUpdate(DocumentsWriterPerThread flushingDWPT, bool hasEvents)
         {
-            hasEvents |= ApplyAllDeletes(DeleteQueue);
+            hasEvents |= ApplyAllDeletes(deleteQueue);
             if (flushingDWPT != null)
             {
                 hasEvents |= DoFlush(flushingDWPT);
             }
             else
             {
-                DocumentsWriterPerThread nextPendingFlush = FlushControl.NextPendingFlush();
+                DocumentsWriterPerThread nextPendingFlush = flushControl.NextPendingFlush();
                 if (nextPendingFlush != null)
                 {
                     hasEvents |= DoFlush(nextPendingFlush);
@@ -499,8 +499,8 @@ namespace Lucene.Net.Index
         {
             if (state.IsActive && state.dwpt == null)
             {
-                FieldInfos.Builder infos = new FieldInfos.Builder(Writer.globalFieldNumberMap);
-                state.dwpt = new DocumentsWriterPerThread(Writer.NewSegmentName(), Directory, LIWConfig, InfoStream, DeleteQueue, infos);
+                FieldInfos.Builder infos = new FieldInfos.Builder(writer.globalFieldNumberMap);
+                state.dwpt = new DocumentsWriterPerThread(writer.NewSegmentName(), directory, config, infoStream, deleteQueue, infos);
             }
         }
 
@@ -508,7 +508,7 @@ namespace Lucene.Net.Index
         {
             bool hasEvents = PreUpdate();
 
-            ThreadState perThread = FlushControl.ObtainAndLock();
+            ThreadState perThread = flushControl.ObtainAndLock();
             DocumentsWriterPerThread flushingDWPT;
 
             try
@@ -525,7 +525,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     int docCount = dwpt.UpdateDocuments(docs, analyzer, delTerm);
-                    NumDocsInRAM.AddAndGet(docCount);
+                    numDocsInRAM.AddAndGet(docCount);
                 }
                 finally
                 {
@@ -536,11 +536,11 @@ namespace Lucene.Net.Index
                             PutEvent(new DeleteNewFilesEvent(dwpt.PendingFilesToDelete));
                         }
                         SubtractFlushedNumDocs(dwptNumDocs);
-                        FlushControl.DoOnAbort(perThread);
+                        flushControl.DoOnAbort(perThread);
                     }
                 }
                 bool isUpdate = delTerm != null;
-                flushingDWPT = FlushControl.DoAfterDocument(perThread, isUpdate);
+                flushingDWPT = flushControl.DoAfterDocument(perThread, isUpdate);
             }
             finally
             {
@@ -554,7 +554,7 @@ namespace Lucene.Net.Index
         {
             bool hasEvents = PreUpdate();
 
-            ThreadState perThread = FlushControl.ObtainAndLock();
+            ThreadState perThread = flushControl.ObtainAndLock();
 
             DocumentsWriterPerThread flushingDWPT;
             try
@@ -571,7 +571,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     dwpt.UpdateDocument(doc, analyzer, delTerm);
-                    NumDocsInRAM.IncrementAndGet();
+                    numDocsInRAM.IncrementAndGet();
                 }
                 finally
                 {
@@ -582,11 +582,11 @@ namespace Lucene.Net.Index
                             PutEvent(new DeleteNewFilesEvent(dwpt.PendingFilesToDelete));
                         }
                         SubtractFlushedNumDocs(dwptNumDocs);
-                        FlushControl.DoOnAbort(perThread);
+                        flushControl.DoOnAbort(perThread);
                     }
                 }
                 bool isUpdate = delTerm != null;
-                flushingDWPT = FlushControl.DoAfterDocument(perThread, isUpdate);
+                flushingDWPT = flushControl.DoAfterDocument(perThread, isUpdate);
             }
             finally
             {
@@ -606,7 +606,7 @@ namespace Lucene.Net.Index
                 SegmentFlushTicket ticket = null;
                 try
                 {
-                    Debug.Assert(CurrentFullFlushDelQueue == null || flushingDWPT.DeleteQueue == CurrentFullFlushDelQueue, "expected: " + CurrentFullFlushDelQueue + "but was: " + flushingDWPT.DeleteQueue + " " + FlushControl.IsFullFlush);
+                    Debug.Assert(currentFullFlushDelQueue == null || flushingDWPT.DeleteQueue == currentFullFlushDelQueue, "expected: " + currentFullFlushDelQueue + "but was: " + flushingDWPT.DeleteQueue + " " + flushControl.IsFullFlush);
                     /*
                      * Since with DWPT the flush process is concurrent and several DWPT
                      * could flush at the same time we must maintain the order of the
@@ -624,7 +624,7 @@ namespace Lucene.Net.Index
                     try
                     {
                         // Each flush is assigned a ticket in the order they acquire the ticketQueue lock
-                        ticket = TicketQueue.AddFlushTicket(flushingDWPT);
+                        ticket = ticketQueue.AddFlushTicket(flushingDWPT);
 
                         int flushingDocsInRam = flushingDWPT.NumDocsInRAM;
                         bool dwptSuccess = false;
@@ -632,7 +632,7 @@ namespace Lucene.Net.Index
                         {
                             // flush concurrently without locking
                             FlushedSegment newSegment = flushingDWPT.Flush();
-                            TicketQueue.AddSegment(ticket, newSegment);
+                            ticketQueue.AddSegment(ticket, newSegment);
                             dwptSuccess = true;
                         }
                         finally
@@ -659,14 +659,14 @@ namespace Lucene.Net.Index
                             // In the case of a failure make sure we are making progress and
                             // apply all the deletes since the segment flush failed since the flush
                             // ticket could hold global deletes see FlushTicket#canPublish()
-                            TicketQueue.MarkTicketFailed(ticket);
+                            ticketQueue.MarkTicketFailed(ticket);
                         }
                     }
                     /*
                      * Now we are done and try to flush the ticket queue if the head of the
                      * queue has already finished the flush.
                      */
-                    if (TicketQueue.TicketCount >= PerThreadPool.NumThreadStatesActive)
+                    if (ticketQueue.TicketCount >= perThreadPool.NumThreadStatesActive)
                     {
                         // this means there is a backlog: the one
                         // thread in innerPurge can't keep up with all
@@ -678,11 +678,11 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    FlushControl.DoAfterFlush(flushingDWPT);
+                    flushControl.DoAfterFlush(flushingDWPT);
                     flushingDWPT.CheckAndResetHasAborted();
                 }
 
-                flushingDWPT = FlushControl.NextPendingFlush();
+                flushingDWPT = flushControl.NextPendingFlush();
             }
             if (hasEvents)
             {
@@ -692,15 +692,15 @@ namespace Lucene.Net.Index
             // buffer, force them all to apply now. this is to
             // prevent too-frequent flushing of a long tail of
             // tiny segments:
-            double ramBufferSizeMB = LIWConfig.RAMBufferSizeMB;
-            if (ramBufferSizeMB != Index.IndexWriterConfig.DISABLE_AUTO_FLUSH && FlushControl.DeleteBytesUsed > (1024 * 1024 * ramBufferSizeMB / 2))
+            double ramBufferSizeMB = config.RAMBufferSizeMB;
+            if (ramBufferSizeMB != Index.IndexWriterConfig.DISABLE_AUTO_FLUSH && flushControl.DeleteBytesUsed > (1024 * 1024 * ramBufferSizeMB / 2))
             {
-                if (InfoStream.IsEnabled("DW"))
+                if (infoStream.IsEnabled("DW"))
                 {
-                    InfoStream.Message("DW", "force apply deletes bytesUsed=" + FlushControl.DeleteBytesUsed + " vs ramBuffer=" + (1024 * 1024 * ramBufferSizeMB));
+                    infoStream.Message("DW", "force apply deletes bytesUsed=" + flushControl.DeleteBytesUsed + " vs ramBuffer=" + (1024 * 1024 * ramBufferSizeMB));
                 }
                 hasEvents = true;
-                if (!this.ApplyAllDeletes(DeleteQueue))
+                if (!this.ApplyAllDeletes(deleteQueue))
                 {
                     PutEvent(ApplyDeletesEvent.INSTANCE);
                 }
@@ -711,22 +711,22 @@ namespace Lucene.Net.Index
 
         internal void SubtractFlushedNumDocs(int numFlushed)
         {
-            int oldValue = NumDocsInRAM.Get();
-            while (!NumDocsInRAM.CompareAndSet(oldValue, oldValue - numFlushed))
+            int oldValue = numDocsInRAM.Get();
+            while (!numDocsInRAM.CompareAndSet(oldValue, oldValue - numFlushed))
             {
-                oldValue = NumDocsInRAM.Get();
+                oldValue = numDocsInRAM.Get();
             }
         }
 
         // for asserts
-        private volatile DocumentsWriterDeleteQueue CurrentFullFlushDelQueue = null;
+        private volatile DocumentsWriterDeleteQueue currentFullFlushDelQueue = null;
 
         // for asserts
         private bool SetFlushingDeleteQueue(DocumentsWriterDeleteQueue session)
         {
             lock (this)
             {
-                CurrentFullFlushDelQueue = session;
+                currentFullFlushDelQueue = session;
                 return true;
             }
         }
@@ -740,49 +740,49 @@ namespace Lucene.Net.Index
         internal bool FlushAllThreads(IndexWriter indexWriter)
         {
             DocumentsWriterDeleteQueue flushingDeleteQueue;
-            if (InfoStream.IsEnabled("DW"))
+            if (infoStream.IsEnabled("DW"))
             {
-                InfoStream.Message("DW", "startFullFlush");
+                infoStream.Message("DW", "startFullFlush");
             }
 
             lock (this)
             {
-                PendingChangesInCurrentFullFlush = AnyChanges();
-                flushingDeleteQueue = DeleteQueue;
+                pendingChangesInCurrentFullFlush = AnyChanges();
+                flushingDeleteQueue = deleteQueue;
                 /* Cutover to a new delete queue.  this must be synced on the flush control
                  * otherwise a new DWPT could sneak into the loop with an already flushing
                  * delete queue */
-                FlushControl.MarkForFullFlush(); // swaps the delQueue synced on FlushControl
+                flushControl.MarkForFullFlush(); // swaps the delQueue synced on FlushControl
                 Debug.Assert(SetFlushingDeleteQueue(flushingDeleteQueue));
             }
-            Debug.Assert(CurrentFullFlushDelQueue != null);
-            Debug.Assert(CurrentFullFlushDelQueue != DeleteQueue);
+            Debug.Assert(currentFullFlushDelQueue != null);
+            Debug.Assert(currentFullFlushDelQueue != deleteQueue);
 
             bool anythingFlushed = false;
             try
             {
                 DocumentsWriterPerThread flushingDWPT;
                 // Help out with flushing:
-                while ((flushingDWPT = FlushControl.NextPendingFlush()) != null)
+                while ((flushingDWPT = flushControl.NextPendingFlush()) != null)
                 {
                     anythingFlushed |= DoFlush(flushingDWPT);
                 }
                 // If a concurrent flush is still in flight wait for it
-                FlushControl.WaitForFlush();
+                flushControl.WaitForFlush();
                 if (!anythingFlushed && flushingDeleteQueue.AnyChanges()) // apply deletes if we did not flush any document
                 {
-                    if (InfoStream.IsEnabled("DW"))
+                    if (infoStream.IsEnabled("DW"))
                     {
-                        InfoStream.Message("DW", Thread.CurrentThread.Name + ": flush naked frozen global deletes");
+                        infoStream.Message("DW", Thread.CurrentThread.Name + ": flush naked frozen global deletes");
                     }
-                    TicketQueue.AddDeletes(flushingDeleteQueue);
+                    ticketQueue.AddDeletes(flushingDeleteQueue);
                 }
-                TicketQueue.ForcePurge(indexWriter);
-                Debug.Assert(!flushingDeleteQueue.AnyChanges() && !TicketQueue.HasTickets);
+                ticketQueue.ForcePurge(indexWriter);
+                Debug.Assert(!flushingDeleteQueue.AnyChanges() && !ticketQueue.HasTickets);
             }
             finally
             {
-                Debug.Assert(flushingDeleteQueue == CurrentFullFlushDelQueue);
+                Debug.Assert(flushingDeleteQueue == currentFullFlushDelQueue);
             }
             return anythingFlushed;
         }
@@ -791,26 +791,26 @@ namespace Lucene.Net.Index
         {
             try
             {
-                if (InfoStream.IsEnabled("DW"))
+                if (infoStream.IsEnabled("DW"))
                 {
-                    InfoStream.Message("DW", Thread.CurrentThread.Name + " finishFullFlush success=" + success);
+                    infoStream.Message("DW", Thread.CurrentThread.Name + " finishFullFlush success=" + success);
                 }
                 Debug.Assert(SetFlushingDeleteQueue(null));
                 if (success)
                 {
                     // Release the flush lock
-                    FlushControl.FinishFullFlush();
+                    flushControl.FinishFullFlush();
                 }
                 else
                 {
                     HashSet<string> newFilesSet = new HashSet<string>();
-                    FlushControl.AbortFullFlushes(newFilesSet);
+                    flushControl.AbortFullFlushes(newFilesSet);
                     PutEvent(new DeleteNewFilesEvent(newFilesSet));
                 }
             }
             finally
             {
-                PendingChangesInCurrentFullFlush = false;
+                pendingChangesInCurrentFullFlush = false;
             }
         }
 
@@ -818,24 +818,24 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return LIWConfig;
+                return config;
             }
         }
 
         private void PutEvent(IEvent @event)
         {
-            Events.Enqueue(@event);
+            events.Enqueue(@event);
         }
 
         internal sealed class ApplyDeletesEvent : IEvent
         {
             internal static readonly IEvent INSTANCE = new ApplyDeletesEvent();
-            private int InstCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
+            private int instCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
 
             internal ApplyDeletesEvent()
             {
-                Debug.Assert(InstCount == 0);
-                InstCount++;
+                Debug.Assert(instCount == 0);
+                instCount++;
             }
 
             public void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
@@ -847,12 +847,12 @@ namespace Lucene.Net.Index
         internal sealed class MergePendingEvent : IEvent
         {
             internal static readonly IEvent INSTANCE = new MergePendingEvent();
-            private int InstCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
+            private int instCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
 
             internal MergePendingEvent()
             {
-                Debug.Assert(InstCount == 0);
-                InstCount++;
+                Debug.Assert(instCount == 0);
+                instCount++;
             }
 
             public void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
@@ -864,12 +864,12 @@ namespace Lucene.Net.Index
         internal sealed class ForcedPurgeEvent : IEvent
         {
             internal static readonly IEvent INSTANCE = new ForcedPurgeEvent();
-            private int InstCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
+            private int instCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
 
             internal ForcedPurgeEvent()
             {
-                Debug.Assert(InstCount == 0);
-                InstCount++;
+                Debug.Assert(instCount == 0);
+                instCount++;
             }
 
             public void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
@@ -880,37 +880,37 @@ namespace Lucene.Net.Index
 
         internal class FlushFailedEvent : IEvent
         {
-            private readonly SegmentInfo Info;
+            private readonly SegmentInfo info;
 
             public FlushFailedEvent(SegmentInfo info)
             {
-                this.Info = info;
+                this.info = info;
             }
 
             public void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
             {
-                writer.FlushFailed(Info);
+                writer.FlushFailed(info);
             }
         }
 
         internal class DeleteNewFilesEvent : IEvent
         {
-            private readonly ICollection<string> Files;
+            private readonly ICollection<string> files;
 
             public DeleteNewFilesEvent(ICollection<string> files)
             {
-                this.Files = files;
+                this.files = files;
             }
 
             public void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
             {
-                writer.DeleteNewFiles(Files);
+                writer.DeleteNewFiles(files);
             }
         }
 
         public ConcurrentQueue<IEvent> EventQueue
         {
-            get { return Events; }
+            get { return events; }
         }
     }
 }

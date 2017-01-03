@@ -1254,7 +1254,7 @@ namespace Lucene.Net.Index
                 {
                     closed = true;
                 }
-                Debug.Assert(docWriter.PerThreadPool.NumDeactivatedThreadStates() == docWriter.PerThreadPool.MaxThreadStates, "" + docWriter.PerThreadPool.NumDeactivatedThreadStates() + " " + docWriter.PerThreadPool.MaxThreadStates);
+                Debug.Assert(docWriter.perThreadPool.NumDeactivatedThreadStates() == docWriter.perThreadPool.MaxThreadStates, "" + docWriter.perThreadPool.NumDeactivatedThreadStates() + " " + docWriter.perThreadPool.MaxThreadStates);
             }
             catch (System.OutOfMemoryException oom)
             {
@@ -2578,7 +2578,7 @@ namespace Lucene.Net.Index
                     IOUtils.Close(writeLock); // release write lock
                     writeLock = null;
 
-                    Debug.Assert(docWriter.PerThreadPool.NumDeactivatedThreadStates() == docWriter.PerThreadPool.MaxThreadStates, "" + docWriter.PerThreadPool.NumDeactivatedThreadStates() + " " + docWriter.PerThreadPool.MaxThreadStates);
+                    Debug.Assert(docWriter.perThreadPool.NumDeactivatedThreadStates() == docWriter.perThreadPool.MaxThreadStates, "" + docWriter.perThreadPool.NumDeactivatedThreadStates() + " " + docWriter.perThreadPool.MaxThreadStates);
                 }
 
                 success = true;
@@ -3967,7 +3967,7 @@ namespace Lucene.Net.Index
         public long RamSizeInBytes()
         {
             EnsureOpen();
-            return docWriter.FlushControl.NetBytes + bufferedUpdatesStream.BytesUsed;
+            return docWriter.flushControl.NetBytes + bufferedUpdatesStream.BytesUsed;
         }
 
         // for testing only
