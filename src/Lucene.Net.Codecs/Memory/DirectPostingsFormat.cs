@@ -360,8 +360,8 @@ namespace Lucene.Net.Codecs.Memory
 
                 while ((term = termsEnum.Next()) != null)
                 {
-                    int docFreq = termsEnum.DocFreq();
-                    long totalTermFreq = termsEnum.TotalTermFreq();
+                    int docFreq = termsEnum.DocFreq;
+                    long totalTermFreq = termsEnum.TotalTermFreq;
 
                     // if (DEBUG) {
                     //   System.out.println("  term=" + term.utf8ToString());
@@ -857,7 +857,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override TermState TermState()
+                public override TermState GetTermState()
                 {
                     OrdTermState state = new OrdTermState();
                     state.Ord = termOrd;
@@ -960,32 +960,38 @@ namespace Lucene.Net.Codecs.Memory
                     get { return scratch; }
                 }
 
-                public override long Ord()
+                public override long Ord
                 {
-                    return termOrd;
+                    get { return termOrd; }
                 }
 
-                public override int DocFreq()
+                public override int DocFreq
                 {
-                    if (outerInstance.terms[termOrd] is LowFreqTerm)
+                    get
                     {
-                        return ((LowFreqTerm) outerInstance.terms[termOrd]).docFreq;
-                    }
-                    else
-                    {
-                        return ((HighFreqTerm) outerInstance.terms[termOrd]).docIDs.Length;
+                        if (outerInstance.terms[termOrd] is LowFreqTerm)
+                        {
+                            return ((LowFreqTerm)outerInstance.terms[termOrd]).docFreq;
+                        }
+                        else
+                        {
+                            return ((HighFreqTerm)outerInstance.terms[termOrd]).docIDs.Length;
+                        }
                     }
                 }
 
-                public override long TotalTermFreq()
+                public override long TotalTermFreq
                 {
-                    if (outerInstance.terms[termOrd] is LowFreqTerm)
+                    get
                     {
-                        return ((LowFreqTerm) outerInstance.terms[termOrd]).totalTermFreq;
-                    }
-                    else
-                    {
-                        return ((HighFreqTerm) outerInstance.terms[termOrd]).totalTermFreq;
+                        if (outerInstance.terms[termOrd] is LowFreqTerm)
+                        {
+                            return ((LowFreqTerm)outerInstance.terms[termOrd]).totalTermFreq;
+                        }
+                        else
+                        {
+                            return ((HighFreqTerm)outerInstance.terms[termOrd]).totalTermFreq;
+                        }
                     }
                 }
 
@@ -1652,7 +1658,7 @@ namespace Lucene.Net.Codecs.Memory
                     ;
                 }
 
-                public override TermState TermState()
+                public override TermState GetTermState()
                 {
                     OrdTermState state = new OrdTermState();
                     state.Ord = termOrd;
@@ -1664,32 +1670,38 @@ namespace Lucene.Net.Codecs.Memory
                     get { return scratch; }
                 }
 
-                public override long Ord()
+                public override long Ord
                 {
-                    return termOrd;
+                    get { return termOrd; }
                 }
 
-                public override int DocFreq()
+                public override int DocFreq
                 {
-                    if (outerInstance.terms[termOrd] is LowFreqTerm)
+                    get
                     {
-                        return ((LowFreqTerm) outerInstance.terms[termOrd]).docFreq;
-                    }
-                    else
-                    {
-                        return ((HighFreqTerm) outerInstance.terms[termOrd]).docIDs.Length;
+                        if (outerInstance.terms[termOrd] is LowFreqTerm)
+                        {
+                            return ((LowFreqTerm)outerInstance.terms[termOrd]).docFreq;
+                        }
+                        else
+                        {
+                            return ((HighFreqTerm)outerInstance.terms[termOrd]).docIDs.Length;
+                        }
                     }
                 }
 
-                public override long TotalTermFreq()
+                public override long TotalTermFreq
                 {
-                    if (outerInstance.terms[termOrd] is LowFreqTerm)
+                    get
                     {
-                        return ((LowFreqTerm) outerInstance.terms[termOrd]).totalTermFreq;
-                    }
-                    else
-                    {
-                        return ((HighFreqTerm) outerInstance.terms[termOrd]).totalTermFreq;
+                        if (outerInstance.terms[termOrd] is LowFreqTerm)
+                        {
+                            return ((LowFreqTerm)outerInstance.terms[termOrd]).totalTermFreq;
+                        }
+                        else
+                        {
+                            return ((HighFreqTerm)outerInstance.terms[termOrd]).totalTermFreq;
+                        }
                     }
                 }
 

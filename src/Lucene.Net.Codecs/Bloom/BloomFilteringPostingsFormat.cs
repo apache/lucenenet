@@ -330,7 +330,7 @@ namespace Lucene.Net.Codecs.Bloom
                     DELEGATE_TERMS_ENUM = null;
                 }
 
-                private TermsEnum Delegate()
+                private TermsEnum Delegate() // LUCENENET TODO: Make property
                 {
                     // pull the iterator only if we really need it -
                     // this can be a relativly heavy operation depending on the 
@@ -378,19 +378,19 @@ namespace Lucene.Net.Codecs.Bloom
                     get { return Delegate().Term; }
                 }
 
-                public override long Ord()
+                public override long Ord
                 {
-                    return Delegate().Ord();
+                    get { return Delegate().Ord; }
                 }
 
-                public override int DocFreq()
+                public override int DocFreq
                 {
-                    return Delegate().DocFreq();
+                    get { return Delegate().DocFreq; }
                 }
 
-                public override long TotalTermFreq()
+                public override long TotalTermFreq
                 {
-                    return Delegate().TotalTermFreq();
+                    get { return Delegate().TotalTermFreq; }
                 }
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs,

@@ -384,14 +384,14 @@ namespace Lucene.Net.Util.Fst
                     BytesRef term2 = termsEnum2.Next();
                     Assert.IsNotNull(term2);
                     Assert.AreEqual(term, term2);
-                    Assert.AreEqual(termsEnum.DocFreq(), termsEnum2.DocFreq());
-                    Assert.AreEqual(termsEnum.TotalTermFreq(), termsEnum2.TotalTermFreq());
+                    Assert.AreEqual(termsEnum.DocFreq, termsEnum2.DocFreq);
+                    Assert.AreEqual(termsEnum.TotalTermFreq, termsEnum2.TotalTermFreq);
 
                     if (ord == 0)
                     {
                         try
                         {
-                            termsEnum.Ord();
+                            var _ = termsEnum.Ord;
                         }
                         catch (System.NotSupportedException uoe)
                         {
@@ -409,7 +409,7 @@ namespace Lucene.Net.Util.Fst
                     }
                     else
                     {
-                        output = termsEnum.DocFreq();
+                        output = termsEnum.DocFreq;
                     }
                     builder.Add(Util.ToIntsRef(term, scratchIntsRef), (long)output);
                     ord++;
@@ -457,7 +457,7 @@ namespace Lucene.Net.Util.Fst
                                     Console.WriteLine("TEST: next");
                                     if (storeOrd)
                                     {
-                                        Console.WriteLine("  ord=" + termsEnum.Ord());
+                                        Console.WriteLine("  ord=" + termsEnum.Ord);
                                     }
                                 }
                                 if (termsEnum.Next() != null)
@@ -507,12 +507,12 @@ namespace Lucene.Net.Util.Fst
                 if (storeOrd)
                 {
                     // fst stored the ord
-                    Assert.AreEqual(termsEnum.Ord(), fstEnum.Current.Output, "term=" + termsEnum.Term.Utf8ToString() + " " + termsEnum.Term);
+                    Assert.AreEqual(termsEnum.Ord, fstEnum.Current.Output, "term=" + termsEnum.Term.Utf8ToString() + " " + termsEnum.Term);
                 }
                 else
                 {
                     // fst stored the docFreq
-                    Assert.AreEqual(termsEnum.DocFreq(), fstEnum.Current.Output, "term=" + termsEnum.Term.Utf8ToString() + " " + termsEnum.Term);
+                    Assert.AreEqual(termsEnum.DocFreq, fstEnum.Current.Output, "term=" + termsEnum.Term.Utf8ToString() + " " + termsEnum.Term);
                 }
             }
         }

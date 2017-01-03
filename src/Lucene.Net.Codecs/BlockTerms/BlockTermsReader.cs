@@ -753,16 +753,22 @@ namespace Lucene.Net.Codecs.BlockTerms
                     get { return _term; }
                 }
 
-                public override int DocFreq()
+                public override int DocFreq
                 {
-                    DecodeMetaData();
-                    return _state.DocFreq;
+                    get
+                    {
+                        DecodeMetaData();
+                        return _state.DocFreq;
+                    }
                 }
 
-                public override long TotalTermFreq()
+                public override long TotalTermFreq
                 {
-                    DecodeMetaData();
-                    return _state.TotalTermFreq;
+                    get
+                    {
+                        DecodeMetaData();
+                        return _state.TotalTermFreq;
+                    }
                 }
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
@@ -795,7 +801,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _term.CopyBytes(target);
                 }
 
-                public override TermState TermState()
+                public override TermState GetTermState()
                 {
                     DecodeMetaData();
                     return (TermState) _state.Clone();
@@ -838,12 +844,15 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 }
 
-                public override long Ord()
+                public override long Ord
                 {
-                    if (!_doOrd)
-                        throw new NotSupportedException();
+                    get
+                    {
+                        if (!_doOrd)
+                            throw new NotSupportedException();
 
-                    return _state.Ord;
+                        return _state.Ord;
+                    }
                 }
 
                 // Does initial decode of next block of terms; this

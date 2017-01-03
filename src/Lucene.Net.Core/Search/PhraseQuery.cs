@@ -372,7 +372,7 @@ namespace Lucene.Net.Search
                         // term does exist, but has no positions
                         throw new InvalidOperationException("field \"" + t.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + t.Text() + ")");
                     }
-                    postingsFreqs[i] = new PostingsAndFreq(postingsEnum, te.DocFreq(), (int)outerInstance.positions[i], t);
+                    postingsFreqs[i] = new PostingsAndFreq(postingsEnum, te.DocFreq, (int)outerInstance.positions[i], t);
                 }
 
                 // sort by increasing docFreq order

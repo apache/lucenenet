@@ -138,7 +138,7 @@ namespace Lucene.Net.Search.Spans
                         TermsEnum termsEnum = terms.Iterator(null);
                         if (termsEnum.SeekExact(m_term.Bytes))
                         {
-                            state = termsEnum.TermState();
+                            state = termsEnum.GetTermState();
                         }
                         else
                         {

@@ -158,14 +158,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override int DocFreq()
+        public override int DocFreq
         {
-            return tenum.DocFreq();
+            get { return tenum.DocFreq; }
         }
 
-        public override long TotalTermFreq()
+        public override long TotalTermFreq
         {
-            return tenum.TotalTermFreq();
+            get { return tenum.TotalTermFreq; }
         }
 
         /// <summary>
@@ -195,9 +195,9 @@ namespace Lucene.Net.Index
             throw new System.NotSupportedException(this.GetType().Name + " does not support seeking");
         }
 
-        public override long Ord()
+        public override long Ord
         {
-            return tenum.Ord();
+            get { return tenum.Ord; }
         }
 
         public override DocsEnum Docs(IBits bits, DocsEnum reuse, int flags)
@@ -222,10 +222,10 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns the filtered enums term state
         /// </summary>
-        public override TermState TermState()
+        public override TermState GetTermState()
         {
             Debug.Assert(tenum != null);
-            return tenum.TermState();
+            return tenum.GetTermState();
         }
 
         public override BytesRef Next()

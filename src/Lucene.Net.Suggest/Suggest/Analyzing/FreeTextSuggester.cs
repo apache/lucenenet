@@ -388,10 +388,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         }
                         if (ngramCount == 1)
                         {
-                            totTokens += termsEnum.TotalTermFreq();
+                            totTokens += termsEnum.TotalTermFreq;
                         }
 
-                        builder.Add(Lucene.Net.Util.Fst.Util.ToIntsRef(term, scratchInts), EncodeWeight(termsEnum.TotalTermFreq()));
+                        builder.Add(Lucene.Net.Util.Fst.Util.ToIntsRef(term, scratchInts), EncodeWeight(termsEnum.TotalTermFreq));
                     }
 
                     fst = builder.Finish();

@@ -154,23 +154,23 @@ namespace Lucene.Net.Search
             public override bool Collect(BytesRef bytes)
             {
                 int pos = PendingTerms.Add(bytes);
-                DocVisitCount += TermsEnum.DocFreq();
+                DocVisitCount += TermsEnum.DocFreq;
                 if (PendingTerms.Size >= TermCountLimit || DocVisitCount >= DocCountCutoff)
                 {
                     HasCutOff = true;
                     return false;
                 }
 
-                TermState termState = TermsEnum.TermState();
+                TermState termState = TermsEnum.GetTermState();
                 Debug.Assert(termState != null);
                 if (pos < 0)
                 {
                     pos = (-pos) - 1;
-                    Array.termState[pos].Register(termState, m_readerContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
+                    Array.termState[pos].Register(termState, m_readerContext.Ord, TermsEnum.DocFreq, TermsEnum.TotalTermFreq);
                 }
                 else
                 {
-                    Array.termState[pos] = new TermContext(m_topReaderContext, termState, m_readerContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
+                    Array.termState[pos] = new TermContext(m_topReaderContext, termState, m_readerContext.Ord, TermsEnum.DocFreq, TermsEnum.TotalTermFreq);
                 }
                 return true;
             }

@@ -418,7 +418,7 @@ namespace Lucene.Net.Index
                             Console.WriteLine("TEST:   next() expected=" + expected.Utf8ToString() + " actual=" + (actual == null ? "null" : actual.Utf8ToString()));
                         }
                         Assert.AreEqual(expected, actual);
-                        Assert.AreEqual(1, te.DocFreq());
+                        Assert.AreEqual(1, te.DocFreq);
                         docsEnum = TestUtil.Docs(Random(), te, null, docsEnum, DocsEnum.FLAG_NONE);
                         int docID = docsEnum.NextDoc();
                         Assert.IsTrue(docID != DocIdSetIterator.NO_MORE_DOCS);
@@ -869,7 +869,7 @@ namespace Lucene.Net.Index
                         Assert.AreEqual(validTerms[loc], t2);
                         if (Random().Next(40) == 17 && termStates.Count < 100)
                         {
-                            termStates.Add(new TermAndState(validTerms[loc], te.TermState()));
+                            termStates.Add(new TermAndState(validTerms[loc], te.GetTermState()));
                         }
                     }
                 }

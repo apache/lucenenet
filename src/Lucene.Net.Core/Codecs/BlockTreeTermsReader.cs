@@ -1082,7 +1082,7 @@ namespace Lucene.Net.Codecs
                     return true;
                 }
 
-                public override TermState TermState()
+                public override TermState GetTermState()
                 {
                     CurrentFrame.DecodeMetaData();
                     return (TermState)CurrentFrame.TermState.Clone();
@@ -1160,18 +1160,24 @@ namespace Lucene.Net.Codecs
                     get { return Term_Renamed; }
                 }
 
-                public override int DocFreq()
+                public override int DocFreq
                 {
-                    //if (DEBUG) System.out.println("BTIR.docFreq");
-                    CurrentFrame.DecodeMetaData();
-                    //if (DEBUG) System.out.println("  return " + currentFrame.termState.docFreq);
-                    return CurrentFrame.TermState.DocFreq;
+                    get
+                    {
+                        //if (DEBUG) System.out.println("BTIR.docFreq");
+                        CurrentFrame.DecodeMetaData();
+                        //if (DEBUG) System.out.println("  return " + currentFrame.termState.docFreq);
+                        return CurrentFrame.TermState.DocFreq;
+                    }
                 }
 
-                public override long TotalTermFreq()
+                public override long TotalTermFreq
                 {
-                    CurrentFrame.DecodeMetaData();
-                    return CurrentFrame.TermState.TotalTermFreq;
+                    get
+                    {
+                        CurrentFrame.DecodeMetaData();
+                        return CurrentFrame.TermState.TotalTermFreq;
+                    }
                 }
 
                 public override DocsEnum Docs(IBits skipDocs, DocsEnum reuse, int flags)
@@ -1501,9 +1507,9 @@ namespace Lucene.Net.Codecs
                     throw new System.NotSupportedException();
                 }
 
-                public override long Ord()
+                public override long Ord
                 {
-                    throw new System.NotSupportedException();
+                    get { throw new System.NotSupportedException(); }
                 }
 
                 public override SeekStatus SeekCeil(BytesRef text)
@@ -2569,20 +2575,26 @@ namespace Lucene.Net.Codecs
                     }
                 }
 
-                public override int DocFreq()
+                public override int DocFreq
                 {
-                    Debug.Assert(!Eof);
-                    //if (DEBUG) System.out.println("BTR.docFreq");
-                    CurrentFrame.DecodeMetaData();
-                    //if (DEBUG) System.out.println("  return " + currentFrame.state.docFreq);
-                    return CurrentFrame.State.DocFreq;
+                    get
+                    {
+                        Debug.Assert(!Eof);
+                        //if (DEBUG) System.out.println("BTR.docFreq");
+                        CurrentFrame.DecodeMetaData();
+                        //if (DEBUG) System.out.println("  return " + currentFrame.state.docFreq);
+                        return CurrentFrame.State.DocFreq;
+                    }
                 }
 
-                public override long TotalTermFreq()
+                public override long TotalTermFreq
                 {
-                    Debug.Assert(!Eof);
-                    CurrentFrame.DecodeMetaData();
-                    return CurrentFrame.State.TotalTermFreq;
+                    get
+                    {
+                        Debug.Assert(!Eof);
+                        CurrentFrame.DecodeMetaData();
+                        return CurrentFrame.State.TotalTermFreq;
+                    }
                 }
 
                 public override DocsEnum Docs(IBits skipDocs, DocsEnum reuse, int flags)
@@ -2635,7 +2647,7 @@ namespace Lucene.Net.Codecs
                     }
                 }
 
-                public override TermState TermState()
+                public override TermState GetTermState()
                 {
                     Debug.Assert(!Eof);
                     CurrentFrame.DecodeMetaData();
@@ -2649,9 +2661,9 @@ namespace Lucene.Net.Codecs
                     throw new NotSupportedException();
                 }
 
-                public override long Ord()
+                public override long Ord
                 {
-                    throw new NotSupportedException();
+                    get { throw new NotSupportedException(); }
                 }
 
                 // Not static -- references term, postingsReader,

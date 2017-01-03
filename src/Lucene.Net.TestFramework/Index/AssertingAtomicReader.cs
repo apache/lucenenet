@@ -174,22 +174,31 @@ namespace Lucene.Net.Index
                 return result;
             }
 
-            public override long Ord()
+            public override long Ord
             {
-                Debug.Assert(State == State_e.POSITIONED, "Ord() called on unpositioned TermsEnum");
-                return base.Ord();
+                get
+                {
+                    Debug.Assert(State == State_e.POSITIONED, "Ord() called on unpositioned TermsEnum");
+                    return base.Ord;
+                }
             }
 
-            public override int DocFreq()
+            public override int DocFreq
             {
-                Debug.Assert(State == State_e.POSITIONED, "DocFreq() called on unpositioned TermsEnum");
-                return base.DocFreq();
+                get
+                {
+                    Debug.Assert(State == State_e.POSITIONED, "DocFreq() called on unpositioned TermsEnum");
+                    return base.DocFreq;
+                }
             }
 
-            public override long TotalTermFreq()
+            public override long TotalTermFreq
             {
-                Debug.Assert(State == State_e.POSITIONED, "totalTermFreq() called on unpositioned TermsEnum");
-                return base.TotalTermFreq();
+                get
+                {
+                    Debug.Assert(State == State_e.POSITIONED, "totalTermFreq() called on unpositioned TermsEnum");
+                    return base.TotalTermFreq;
+                }
             }
 
             public override BytesRef Term
@@ -239,10 +248,10 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override TermState TermState()
+            public override TermState GetTermState()
             {
                 Debug.Assert(State == State_e.POSITIONED, "termState() called on unpositioned TermsEnum");
-                return base.TermState();
+                return base.GetTermState();
             }
 
             public override void SeekExact(BytesRef term, TermState state)

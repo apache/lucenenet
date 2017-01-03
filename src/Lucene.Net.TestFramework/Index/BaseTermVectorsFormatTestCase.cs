@@ -543,7 +543,7 @@ namespace Lucene.Net.Index
                 BytesRef nextTerm = termsEnum.Next();
                 Assert.AreEqual(sortedTerms[i], nextTerm);
                 Assert.AreEqual(sortedTerms[i], termsEnum.Term);
-                Assert.AreEqual(1, termsEnum.DocFreq());
+                Assert.AreEqual(1, termsEnum.DocFreq);
 
                 FixedBitSet bits = new FixedBitSet(1);
                 DocsEnum docsEnum = termsEnum.Docs(bits, Random().NextBoolean() ? null : this.docsEnum.Value);

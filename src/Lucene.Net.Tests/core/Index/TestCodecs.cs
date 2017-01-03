@@ -654,7 +654,7 @@ namespace Lucene.Net.Index
                     TermData term2 = field.Terms[Random().Next(field.Terms.Length)];
                     TermsEnum.SeekStatus status = termsEnum.SeekCeil(new BytesRef(term2.Text2));
                     Assert.AreEqual(status, TermsEnum.SeekStatus.FOUND);
-                    Assert.AreEqual(term2.Docs.Length, termsEnum.DocFreq());
+                    Assert.AreEqual(term2.Docs.Length, termsEnum.DocFreq);
                     if (field.OmitTF)
                     {
                         this.VerifyDocs(term2.Docs, term2.Positions, TestUtil.Docs(Random(), termsEnum, null, null, DocsEnum.FLAG_NONE), false);
@@ -681,7 +681,7 @@ namespace Lucene.Net.Index
                     {
                         Assert.AreEqual(status, TermsEnum.SeekStatus.FOUND);
                         Assert.IsTrue(termsEnum.Term.BytesEquals(new BytesRef(term2.Text2)));
-                        Assert.AreEqual(term2.Docs.Length, termsEnum.DocFreq());
+                        Assert.AreEqual(term2.Docs.Length, termsEnum.DocFreq);
                         if (field.OmitTF)
                         {
                             this.VerifyDocs(term2.Docs, term2.Positions, TestUtil.Docs(Random(), termsEnum, null, null, DocsEnum.FLAG_NONE), false);
@@ -712,7 +712,7 @@ namespace Lucene.Net.Index
                     for (int i = field.Terms.Length - 1; i >= 0; i--)
                     {
                         Assert.AreEqual(TermsEnum.SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef(field.Terms[i].Text2)), Thread.CurrentThread.Name + ": field=" + field.FieldInfo.Name + " term=" + field.Terms[i].Text2);
-                        Assert.AreEqual(field.Terms[i].Docs.Length, termsEnum.DocFreq());
+                        Assert.AreEqual(field.Terms[i].Docs.Length, termsEnum.DocFreq);
                     }
 
                     // Seek to each term by ord, backwards
@@ -721,7 +721,7 @@ namespace Lucene.Net.Index
                         try
                         {
                             termsEnum.SeekExact(i);
-                            Assert.AreEqual(field.Terms[i].Docs.Length, termsEnum.DocFreq());
+                            Assert.AreEqual(field.Terms[i].Docs.Length, termsEnum.DocFreq);
                             Assert.IsTrue(termsEnum.Term.BytesEquals(new BytesRef(field.Terms[i].Text2)));
                         }
                         catch (System.NotSupportedException uoe)

@@ -141,7 +141,7 @@ namespace Lucene.Net.Index
             while ((termBR = termsEnum.Next()) != null)
             {
                 int value = Convert.ToInt32(termBR.Utf8ToString());
-                Assert.AreEqual(value, termsEnum.TotalTermFreq());
+                Assert.AreEqual(value, termsEnum.TotalTermFreq);
                 // don't really need to check more than this, as CheckIndex
                 // will verify that totalTermFreq == total number of positions seen
                 // from a docsAndPositionsEnum.

@@ -471,7 +471,7 @@ namespace Lucene.Net.Index
                             BytesRef term2;
                             while ((term2 = termsEnum3.Next()) != null)
                             {
-                                Console.WriteLine("      " + term2.Utf8ToString() + ": freq=" + termsEnum3.TotalTermFreq());
+                                Console.WriteLine("      " + term2.Utf8ToString() + ": freq=" + termsEnum3.TotalTermFreq);
                                 dpEnum = termsEnum3.DocsAndPositions(null, dpEnum);
                                 if (dpEnum != null)
                                 {
@@ -510,7 +510,7 @@ namespace Lucene.Net.Index
                             BytesRef term2;
                             while ((term2 = termsEnum3.Next()) != null)
                             {
-                                Console.WriteLine("      " + term2.Utf8ToString() + ": freq=" + termsEnum3.TotalTermFreq());
+                                Console.WriteLine("      " + term2.Utf8ToString() + ": freq=" + termsEnum3.TotalTermFreq);
                                 dpEnum = termsEnum3.DocsAndPositions(null, dpEnum);
                                 if (dpEnum != null)
                                 {
@@ -655,7 +655,7 @@ namespace Lucene.Net.Index
 
                 if (!hasDeletes)
                 {
-                    Assert.AreEqual(termsEnum1.DocFreq(), termsEnum2.DocFreq());
+                    Assert.AreEqual(termsEnum1.DocFreq, termsEnum2.DocFreq);
                 }
 
                 Assert.AreEqual(term1, term2, "len1=" + len1 + " len2=" + len2 + " deletes?=" + hasDeletes);
@@ -733,7 +733,7 @@ namespace Lucene.Net.Index
                 {
                     BytesRef term2 = termsEnum2.Next();
                     Assert.AreEqual(term1, term2);
-                    Assert.AreEqual(termsEnum1.TotalTermFreq(), termsEnum2.TotalTermFreq());
+                    Assert.AreEqual(termsEnum1.TotalTermFreq, termsEnum2.TotalTermFreq);
 
                     dpEnum1 = termsEnum1.DocsAndPositions(null, dpEnum1);
                     dpEnum2 = termsEnum2.DocsAndPositions(null, dpEnum2);

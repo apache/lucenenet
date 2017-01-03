@@ -618,19 +618,19 @@ namespace Lucene.Net.Codecs.Lucene3x
                 get { return TermAndPostings[CurrentTerm].Term; }
             }
 
-            public override long Ord()
+            public override long Ord
             {
-                throw new System.NotSupportedException();
+                get { throw new System.NotSupportedException(); }
             }
 
-            public override int DocFreq()
+            public override int DocFreq
             {
-                return 1;
+                get { return 1; }
             }
 
-            public override long TotalTermFreq()
+            public override long TotalTermFreq
             {
-                return TermAndPostings[CurrentTerm].Freq;
+                get { return TermAndPostings[CurrentTerm].Freq; }
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags) // ignored

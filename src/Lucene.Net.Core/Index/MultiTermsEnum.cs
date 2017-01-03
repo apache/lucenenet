@@ -334,9 +334,9 @@ namespace Lucene.Net.Index
             throw new System.NotSupportedException();
         }
 
-        public override long Ord()
+        public override long Ord
         {
-            throw new System.NotSupportedException();
+            get { throw new System.NotSupportedException(); }
         }
 
         private void PullTop()
@@ -405,29 +405,35 @@ namespace Lucene.Net.Index
             return current;
         }
 
-        public override int DocFreq()
+        public override int DocFreq
         {
-            int sum = 0;
-            for (int i = 0; i < numTop; i++)
+            get
             {
-                sum += top[i].Terms.DocFreq();
+                int sum = 0;
+                for (int i = 0; i < numTop; i++)
+                {
+                    sum += top[i].Terms.DocFreq;
+                }
+                return sum;
             }
-            return sum;
         }
 
-        public override long TotalTermFreq()
+        public override long TotalTermFreq
         {
-            long sum = 0;
-            for (int i = 0; i < numTop; i++)
+            get
             {
-                long v = top[i].Terms.TotalTermFreq();
-                if (v == -1)
+                long sum = 0;
+                for (int i = 0; i < numTop; i++)
                 {
-                    return v;
+                    long v = top[i].Terms.TotalTermFreq;
+                    if (v == -1)
+                    {
+                        return v;
+                    }
+                    sum += v;
                 }
-                sum += v;
+                return sum;
             }
-            return sum;
         }
 
         public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)

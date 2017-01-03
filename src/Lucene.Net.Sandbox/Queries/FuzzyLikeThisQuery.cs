@@ -229,7 +229,7 @@ namespace Lucene.Net.Sandbox.Queries
                         while ((possibleMatch = fe.Next()) != null)
                         {
                             numVariants++;
-                            totalVariantDocFreqs += fe.DocFreq();
+                            totalVariantDocFreqs += fe.DocFreq;
                             float score = boostAtt.Boost;
                             if (variantsQ.Size < MAX_VARIANTS_PER_TERM || score > minScore)
                             {

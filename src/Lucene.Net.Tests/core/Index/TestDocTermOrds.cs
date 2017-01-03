@@ -399,7 +399,7 @@ namespace Lucene.Net.Index
                 te.SeekExact(0);
                 while (true)
                 {
-                    Console.WriteLine("  ord=" + te.Ord() + " term=" + te.Term.Utf8ToString());
+                    Console.WriteLine("  ord=" + te.Ord + " term=" + te.Term.Utf8ToString());
                     if (te.Next() == null)
                     {
                         break;
@@ -497,43 +497,43 @@ namespace Lucene.Net.Index
 
             // next()
             Assert.AreEqual("beer", termsEnum.Next().Utf8ToString());
-            Assert.AreEqual(0, termsEnum.Ord());
+            Assert.AreEqual(0, termsEnum.Ord);
             Assert.AreEqual("hello", termsEnum.Next().Utf8ToString());
-            Assert.AreEqual(1, termsEnum.Ord());
+            Assert.AreEqual(1, termsEnum.Ord);
             Assert.AreEqual("world", termsEnum.Next().Utf8ToString());
-            Assert.AreEqual(2, termsEnum.Ord());
+            Assert.AreEqual(2, termsEnum.Ord);
 
             // seekCeil()
             Assert.AreEqual(SeekStatus.NOT_FOUND, termsEnum.SeekCeil(new BytesRef("ha!")));
             Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(1, termsEnum.Ord());
+            Assert.AreEqual(1, termsEnum.Ord);
             Assert.AreEqual(SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef("beer")));
             Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(0, termsEnum.Ord());
+            Assert.AreEqual(0, termsEnum.Ord);
             Assert.AreEqual(SeekStatus.END, termsEnum.SeekCeil(new BytesRef("zzz")));
 
             // seekExact()
             Assert.IsTrue(termsEnum.SeekExact(new BytesRef("beer")));
             Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(0, termsEnum.Ord());
+            Assert.AreEqual(0, termsEnum.Ord);
             Assert.IsTrue(termsEnum.SeekExact(new BytesRef("hello")));
             Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(1, termsEnum.Ord());
+            Assert.AreEqual(1, termsEnum.Ord);
             Assert.IsTrue(termsEnum.SeekExact(new BytesRef("world")));
             Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(2, termsEnum.Ord());
+            Assert.AreEqual(2, termsEnum.Ord);
             Assert.IsFalse(termsEnum.SeekExact(new BytesRef("bogus")));
 
             // seek(ord)
             termsEnum.SeekExact(0);
             Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(0, termsEnum.Ord());
+            Assert.AreEqual(0, termsEnum.Ord);
             termsEnum.SeekExact(1);
             Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(1, termsEnum.Ord());
+            Assert.AreEqual(1, termsEnum.Ord);
             termsEnum.SeekExact(2);
             Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(2, termsEnum.Ord());
+            Assert.AreEqual(2, termsEnum.Ord);
             ireader.Dispose();
             directory.Dispose();
         }

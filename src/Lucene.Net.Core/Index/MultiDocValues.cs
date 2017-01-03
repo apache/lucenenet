@@ -485,7 +485,7 @@ namespace Lucene.Net.Index
                     for (int i = 0; i < mte.MatchCount; i++)
                     {
                         int segmentIndex = matches[i].Index;
-                        long segmentOrd = matches[i].Terms.Ord();
+                        long segmentOrd = matches[i].Terms.Ord;
                         long delta = globalOrd - segmentOrd;
                         // for each unique term, just mark the first segment index/delta where it occurs
                         if (i == 0)

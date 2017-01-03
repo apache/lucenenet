@@ -102,9 +102,9 @@ namespace Lucene.Net.Search.Spell
                     BytesRef next;
                     while ((next = termsEnum.Next()) != null)
                     {
-                        if (IsFrequent(termsEnum.DocFreq()))
+                        if (IsFrequent(termsEnum.DocFreq))
                         {
-                            freq = termsEnum.DocFreq();
+                            freq = termsEnum.DocFreq;
                             spare.CopyBytes(next);
                             return spare;
                         }

@@ -453,7 +453,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override TermState TermState()
+                public override TermState GetTermState()
                 {
                     DecodeMetaData();
                     return (TermState)state.Clone();
@@ -464,14 +464,14 @@ namespace Lucene.Net.Codecs.Memory
                     get { return term; }
                 }
 
-                public override int DocFreq()
+                public override int DocFreq
                 {
-                    return state.DocFreq;
+                    get { return state.DocFreq; }
                 }
 
-                public override long TotalTermFreq()
+                public override long TotalTermFreq
                 {
-                    return state.TotalTermFreq;
+                    get { return state.TotalTermFreq; }
                 }
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
@@ -497,9 +497,9 @@ namespace Lucene.Net.Codecs.Memory
                     throw new System.NotSupportedException();
                 }
 
-                public override long Ord()
+                public override long Ord
                 {
-                    throw new System.NotSupportedException();
+                    get { throw new System.NotSupportedException(); }
                 }
             }
 

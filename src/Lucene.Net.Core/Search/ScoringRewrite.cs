@@ -172,20 +172,20 @@ namespace Lucene.Net.Search
             public override bool Collect(BytesRef bytes)
             {
                 int e = terms.Add(bytes);
-                TermState state = termsEnum.TermState();
+                TermState state = termsEnum.GetTermState();
                 Debug.Assert(state != null);
                 if (e < 0)
                 {
                     // duplicate term: update docFreq
                     int pos = (-e) - 1;
-                    array.termState[pos].Register(state, m_readerContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+                    array.termState[pos].Register(state, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                     Debug.Assert(array.boost[pos] == boostAtt.Boost, "boost should be equal in all segment TermsEnums");
                 }
                 else
                 {
                     // new entry: we populate the entry initially
                     array.boost[e] = boostAtt.Boost;
-                    array.termState[e] = new TermContext(m_topReaderContext, state, m_readerContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+                    array.termState[e] = new TermContext(m_topReaderContext, state, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                     outerInstance.CheckMaxClauseCount(terms.Size);
                 }
                 return true;

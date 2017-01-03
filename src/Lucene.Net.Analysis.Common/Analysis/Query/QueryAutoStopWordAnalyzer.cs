@@ -134,7 +134,7 @@ namespace Lucene.Net.Analysis.Query
                     BytesRef text;
                     while ((text = te.Next()) != null)
                     {
-                        if (te.DocFreq() > maxDocFreq)
+                        if (te.DocFreq > maxDocFreq)
                         {
                             UnicodeUtil.UTF8toUTF16(text, spare);
                             stopWords.Add(spare.ToString());

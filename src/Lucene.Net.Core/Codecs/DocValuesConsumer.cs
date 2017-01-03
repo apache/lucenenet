@@ -950,7 +950,7 @@ namespace Lucene.Net.Codecs
 
             protected override AcceptStatus Accept(BytesRef term)
             {
-                return LiveTerms.Get(Ord()) ? AcceptStatus.YES : AcceptStatus.NO;
+                return LiveTerms.Get(Ord) ? AcceptStatus.YES : AcceptStatus.NO;
             }
         }
 

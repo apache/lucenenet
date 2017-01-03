@@ -355,7 +355,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                         {
                             continue;
                         }
-                        facetOrd = (int)facetOrdTermsEnum.Ord();
+                        facetOrd = (int)facetOrdTermsEnum.Ord;
                     }
                     else
                     {
@@ -381,7 +381,7 @@ namespace Lucene.Net.Search.Grouping.Terms
 
                     if (seekStatus != TermsEnum.SeekStatus.END)
                     {
-                        startFacetOrd = (int)facetOrdTermsEnum.Ord();
+                        startFacetOrd = (int)facetOrdTermsEnum.Ord;
                     }
                     else
                     {
@@ -395,7 +395,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                     seekStatus = facetOrdTermsEnum.SeekCeil(facetEndPrefix);
                     if (seekStatus != TermsEnum.SeekStatus.END)
                     {
-                        endFacetOrd = (int)facetOrdTermsEnum.Ord();
+                        endFacetOrd = (int)facetOrdTermsEnum.Ord;
                     }
                     else
                     {

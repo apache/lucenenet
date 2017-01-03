@@ -210,7 +210,7 @@ namespace Lucene.Net.Search.Highlight
             int totalTokens = 0;
             while (termsEnum.Next() != null)
             {
-                totalTokens += (int)termsEnum.TotalTermFreq();
+                totalTokens += (int)termsEnum.TotalTermFreq;
             }
             Token[] tokensInOriginalOrder = new Token[totalTokens];
             List<Token> unsortedTokens = null;

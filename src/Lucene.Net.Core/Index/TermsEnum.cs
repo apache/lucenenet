@@ -120,25 +120,25 @@ namespace Lucene.Net.Index
         public abstract void SeekExact(long ord);
 
         /// <summary>
-        /// Expert: Seeks a specific position by <seealso cref="TermState"/> previously obtained
-        /// from <seealso cref="#termState()"/>. Callers should maintain the <seealso cref="TermState"/> to
+        /// Expert: Seeks a specific position by <seealso cref="GetTermState"/> previously obtained
+        /// from <seealso cref="#termState()"/>. Callers should maintain the <seealso cref="GetTermState"/> to
         /// use this method. Low-level implementations may position the TermsEnum
         /// without re-seeking the term dictionary.
         /// <p>
-        /// Seeking by <seealso cref="TermState"/> should only be used iff the state was obtained
+        /// Seeking by <seealso cref="GetTermState"/> should only be used iff the state was obtained
         /// from the same <seealso cref="TermsEnum"/> instance.
         /// <p>
-        /// NOTE: Using this method with an incompatible <seealso cref="TermState"/> might leave
+        /// NOTE: Using this method with an incompatible <seealso cref="GetTermState"/> might leave
         /// this <seealso cref="TermsEnum"/> in undefined state. On a segment level
-        /// <seealso cref="TermState"/> instances are compatible only iff the source and the
+        /// <seealso cref="GetTermState"/> instances are compatible only iff the source and the
         /// target <seealso cref="TermsEnum"/> operate on the same field. If operating on segment
         /// level, TermState instances must not be used across segments.
         /// <p>
-        /// NOTE: A seek by <seealso cref="TermState"/> might not restore the
+        /// NOTE: A seek by <seealso cref="GetTermState"/> might not restore the
         /// <seealso cref="AttributeSource"/>'s state. <seealso cref="AttributeSource"/> states must be
         /// maintained separately if this method is used. </summary>
         /// <param name="term"> the term the TermState corresponds to </param>
-        /// <param name="state"> the <seealso cref="TermState"/>
+        /// <param name="state"> the <seealso cref="GetTermState"/>
         ///  </param>
         public virtual void SeekExact(BytesRef term, TermState state)
         {
@@ -160,14 +160,14 @@ namespace Lucene.Net.Index
         ///  UnsupportedOperationException}).  Do not call this
         ///  when the enum is unpositioned.
         /// </summary>
-        public abstract long Ord(); // LUCENENET TODO: make property ? Or rename GetOrd() ?
+        public abstract long Ord { get; } // LUCENENET NOTE: Although this isn't a great candidate for a property, did so to make API consistent
 
         /// <summary>
         /// Returns the number of documents containing the current
         ///  term.  Do not call this when the enum is unpositioned.
         ///  <seealso cref="SeekStatus#END"/>.
         /// </summary>
-        public abstract int DocFreq(); // LUCENENET TODO: make property ?
+        public abstract int DocFreq { get; } // LUCENENET NOTE: Although this isn't a great candidate for a property, did so to make API consistent
 
         /// <summary>
         /// Returns the total number of occurrences of this term
@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
         ///  other term measures, this measure does not take
         ///  deleted documents into account.
         /// </summary>
-        public abstract long TotalTermFreq(); // LUCENENET TODO: make property ?
+        public abstract long TotalTermFreq { get; } // LUCENENET NOTE: Although this isn't a great candidate for a property, did so to make API consistent
 
         /// <summary>
         /// Get <seealso cref="DocsEnum"/> for the current term.  Do not
@@ -241,13 +241,13 @@ namespace Lucene.Net.Index
         /// Expert: Returns the TermsEnums internal state to position the TermsEnum
         /// without re-seeking the term dictionary.
         /// <p>
-        /// NOTE: A seek by <seealso cref="TermState"/> might not capture the
+        /// NOTE: A seek by <seealso cref="GetTermState"/> might not capture the
         /// <seealso cref="AttributeSource"/>'s state. Callers must maintain the
         /// <seealso cref="AttributeSource"/> states separately
         /// </summary>
-        /// <seealso cref= TermState </seealso>
+        /// <seealso cref= GetTermState </seealso>
         /// <seealso cref= #seekExact(BytesRef, TermState) </seealso>
-        public virtual TermState TermState() // LUCENENET TODO: Rename GetTermState() ?
+        public virtual TermState GetTermState() // LUCENENET NOTE: Renamed from TermState()
         {
             return new TermStateAnonymousInnerClassHelper(this);
         }
@@ -305,19 +305,19 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override int DocFreq()
+            public override int DocFreq
             {
-                throw new InvalidOperationException("this method should never be called");
+                get { throw new InvalidOperationException("this method should never be called"); }
             }
 
-            public override long TotalTermFreq()
+            public override long TotalTermFreq
             {
-                throw new InvalidOperationException("this method should never be called");
+                get { throw new InvalidOperationException("this method should never be called"); }
             }
 
-            public override long Ord()
+            public override long Ord
             {
-                throw new InvalidOperationException("this method should never be called");
+                get { throw new InvalidOperationException("this method should never be called"); }
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
@@ -346,7 +346,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override TermState TermState()
+            public override TermState GetTermState()
             {
                 throw new InvalidOperationException("this method should never be called");
             }

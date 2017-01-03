@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
             while (termsEnum.Next() != null)
             {
                 string term = termsEnum.Term.Utf8ToString();
-                int freq = (int)termsEnum.TotalTermFreq();
+                int freq = (int)termsEnum.TotalTermFreq;
                 Assert.IsTrue(DocHelper.FIELD_2_TEXT.IndexOf(term) != -1);
                 Assert.IsTrue(freq > 0);
             }

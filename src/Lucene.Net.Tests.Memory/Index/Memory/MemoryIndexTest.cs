@@ -553,7 +553,7 @@ namespace Lucene.Net.Index.Memory
             {
                 assertNotNull(memTermEnum.Next());
 
-                assertEquals(termEnum.TotalTermFreq(), memTermEnum.TotalTermFreq());
+                assertEquals(termEnum.TotalTermFreq, memTermEnum.TotalTermFreq);
 
                 DocsAndPositionsEnum docsPosEnum = termEnum.DocsAndPositions(null, null, 0);
                 DocsAndPositionsEnum memDocsPosEnum = memTermEnum.DocsAndPositions(null, null, 0);

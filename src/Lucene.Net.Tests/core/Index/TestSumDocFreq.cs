@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
                 TermsEnum termsEnum = terms.Iterator(null);
                 while (termsEnum.Next() != null)
                 {
-                    computedSumDocFreq += termsEnum.DocFreq();
+                    computedSumDocFreq += termsEnum.DocFreq;
                 }
                 Assert.AreEqual(computedSumDocFreq, sumDocFreq);
             }

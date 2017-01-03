@@ -253,7 +253,7 @@ namespace Lucene.Net.Index
                 while (tis.Next() != null)
                 {
                     @out.Write("  term=" + field + ":" + tis.Term);
-                    @out.WriteLine("    DF=" + tis.DocFreq());
+                    @out.WriteLine("    DF=" + tis.DocFreq);
 
                     DocsAndPositionsEnum positions = tis.DocsAndPositions(reader.LiveDocs, null);
 

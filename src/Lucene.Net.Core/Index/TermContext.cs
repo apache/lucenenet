@@ -105,9 +105,9 @@ namespace Lucene.Net.Index
                         TermsEnum termsEnum = terms.Iterator(null);
                         if (termsEnum.SeekExact(bytes))
                         {
-                            TermState termState = termsEnum.TermState();
+                            TermState termState = termsEnum.GetTermState();
                             //if (DEBUG) System.out.println("    found");
-                            perReaderTermState.Register(termState, ctx.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+                            perReaderTermState.Register(termState, ctx.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                         }
                     }
                 }

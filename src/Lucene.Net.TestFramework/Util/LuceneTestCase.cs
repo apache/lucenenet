@@ -2012,8 +2012,8 @@ namespace Lucene.Net.Util
                     AssertDocsAndPositionsEnumEquals(info, leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions));
                     AssertDocsAndPositionsEnumEquals(info, leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions));
 
-                    AssertPositionsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions));
-                    AssertPositionsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions));
+                    AssertPositionsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq, leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions));
+                    AssertPositionsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq, leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions));
 
                     // with freqs:
                     AssertDocsEnumEquals(info, leftDocs = leftTermsEnum.Docs(null, leftDocs), rightDocs = rightTermsEnum.Docs(null, rightDocs), true);
@@ -2024,12 +2024,12 @@ namespace Lucene.Net.Util
                     AssertDocsEnumEquals(info, leftDocs = leftTermsEnum.Docs(randomBits, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs, DocsEnum.FLAG_NONE), false);
 
                     // with freqs:
-                    AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(null, leftDocs), rightDocs = rightTermsEnum.Docs(null, rightDocs), true);
-                    AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(randomBits, leftDocs), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs), true);
+                    AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq, leftDocs = leftTermsEnum.Docs(null, leftDocs), rightDocs = rightTermsEnum.Docs(null, rightDocs), true);
+                    AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq, leftDocs = leftTermsEnum.Docs(randomBits, leftDocs), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs), true);
 
                     // w/o freqs:
-                    AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(null, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(null, rightDocs, DocsEnum.FLAG_NONE), false);
-                    AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(randomBits, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs, DocsEnum.FLAG_NONE), false);
+                    AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq, leftDocs = leftTermsEnum.Docs(null, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(null, rightDocs, DocsEnum.FLAG_NONE), false);
+                    AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq, leftDocs = leftTermsEnum.Docs(randomBits, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs, DocsEnum.FLAG_NONE), false);
                 }
             }
             Assert.IsNull(rightTermsEnum.Next(), info);
@@ -2280,10 +2280,10 @@ namespace Lucene.Net.Util
         /// </summary>
         public void AssertTermStatsEquals(string info, TermsEnum leftTermsEnum, TermsEnum rightTermsEnum)
         {
-            Assert.AreEqual(leftTermsEnum.DocFreq(), rightTermsEnum.DocFreq(), info);
-            if (leftTermsEnum.TotalTermFreq() != -1 && rightTermsEnum.TotalTermFreq() != -1)
+            Assert.AreEqual(leftTermsEnum.DocFreq, rightTermsEnum.DocFreq, info);
+            if (leftTermsEnum.TotalTermFreq != -1 && rightTermsEnum.TotalTermFreq != -1)
             {
-                Assert.AreEqual(leftTermsEnum.TotalTermFreq(), rightTermsEnum.TotalTermFreq(), info);
+                Assert.AreEqual(leftTermsEnum.TotalTermFreq, rightTermsEnum.TotalTermFreq, info);
             }
         }
 

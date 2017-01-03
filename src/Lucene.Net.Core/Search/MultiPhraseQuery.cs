@@ -257,7 +257,7 @@ namespace Lucene.Net.Search
                                 continue;
                             }
                             termsEnum.SeekExact(term.Bytes, termState);
-                            docFreq += termsEnum.DocFreq();
+                            docFreq += termsEnum.DocFreq;
                         }
 
                         if (docFreq == 0)
@@ -285,7 +285,7 @@ namespace Lucene.Net.Search
                             throw new InvalidOperationException("field \"" + term.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
                         }
 
-                        docFreq = termsEnum.DocFreq();
+                        docFreq = termsEnum.DocFreq;
                     }
 
                     postingsFreqs[pos] = new PhraseQuery.PostingsAndFreq(postingsEnum, docFreq, (int)outerInstance.positions[pos], terms);

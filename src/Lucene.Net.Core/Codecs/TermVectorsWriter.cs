@@ -314,7 +314,7 @@ namespace Lucene.Net.Codecs
                 {
                     termCount++;
 
-                    int freq = (int)termsEnum.TotalTermFreq();
+                    int freq = (int)termsEnum.TotalTermFreq;
 
                     StartTerm(termsEnum.Term, freq);
 

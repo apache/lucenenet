@@ -406,7 +406,7 @@ namespace Lucene.Net.Index
                 {
                     try
                     {
-                        ordBase = (int)te.Ord();
+                        ordBase = (int)te.Ord;
                         //System.out.println("got ordBase=" + ordBase);
                     }
                     catch (System.NotSupportedException uoe)
@@ -433,7 +433,7 @@ namespace Lucene.Net.Index
                     indexedTerms.Add(indexedTerm);
                 }
 
-                int df = te.DocFreq();
+                int df = te.DocFreq;
                 if (df <= maxTermDocFreq)
                 {
                     docsEnum = te.Docs(liveDocs, docsEnum, DocsEnum.FLAG_NONE);
@@ -782,19 +782,19 @@ namespace Lucene.Net.Index
                 return SetTerm(); // this is extra work if we know we are in bounds...
             }
 
-            public override int DocFreq()
+            public override int DocFreq
             {
-                return TermsEnum.DocFreq();
+                get { return TermsEnum.DocFreq; }
             }
 
-            public override long TotalTermFreq()
+            public override long TotalTermFreq
             {
-                return TermsEnum.TotalTermFreq();
+                get { return TermsEnum.TotalTermFreq; }
             }
 
-            public override long Ord()
+            public override long Ord
             {
-                return OuterInstance.ordBase + Ord_Renamed;
+                get { return OuterInstance.ordBase + Ord_Renamed; }
             }
 
             public override SeekStatus SeekCeil(BytesRef target)
@@ -1097,11 +1097,11 @@ namespace Lucene.Net.Index
                 {
                     if (Te.SeekCeil(key) == SeekStatus.FOUND)
                     {
-                        return Te.Ord();
+                        return Te.Ord;
                     }
                     else
                     {
-                        return -Te.Ord() - 1;
+                        return -Te.Ord - 1;
                     }
                 }
                 catch (System.IO.IOException e)

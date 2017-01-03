@@ -355,19 +355,19 @@ namespace Lucene.Net.Index.Memory
                     get { return br; }
                 }
 
-                public override long Ord()
+                public override long Ord
                 {
-                    return termUpto;
+                    get { return termUpto; }
                 }
 
-                public override int DocFreq()
+                public override int DocFreq
                 {
-                    return 1;
+                    get { return 1; }
                 }
 
-                public override long TotalTermFreq()
+                public override long TotalTermFreq
                 {
-                    return info.sliceArray.freq[info.sortedTerms[termUpto]];
+                    get { return info.sliceArray.freq[info.sortedTerms[termUpto]]; }
                 }
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
@@ -403,7 +403,7 @@ namespace Lucene.Net.Index.Memory
                     this.SeekExact(((OrdTermState)state).Ord);
                 }
 
-                public override TermState TermState()
+                public override TermState GetTermState()
                 {
                     OrdTermState ts = new OrdTermState();
                     ts.Ord = termUpto;

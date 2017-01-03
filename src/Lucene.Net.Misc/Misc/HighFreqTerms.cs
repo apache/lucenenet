@@ -208,7 +208,7 @@ namespace Lucene.Net.Misc
                 BytesRef term = null;
                 while ((term = termsEnum.Next()) != null)
                 {
-                    InsertWithOverflow(new TermStats(field, term, termsEnum.DocFreq(), termsEnum.TotalTermFreq()));
+                    InsertWithOverflow(new TermStats(field, term, termsEnum.DocFreq, termsEnum.TotalTermFreq));
                 }
             }
         }

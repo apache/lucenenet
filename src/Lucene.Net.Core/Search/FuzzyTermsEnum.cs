@@ -294,14 +294,14 @@ namespace Lucene.Net.Search
         }
 
         // proxy all other enum calls to the actual enum
-        public override int DocFreq()
+        public override int DocFreq
         {
-            return actualEnum.DocFreq();
+            get { return actualEnum.DocFreq; }
         }
 
-        public override long TotalTermFreq()
+        public override long TotalTermFreq
         {
-            return actualEnum.TotalTermFreq();
+            get { return actualEnum.TotalTermFreq; }
         }
 
         public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
@@ -319,9 +319,9 @@ namespace Lucene.Net.Search
             actualEnum.SeekExact(term, state);
         }
 
-        public override TermState TermState()
+        public override TermState GetTermState()
         {
-            return actualEnum.TermState();
+            return actualEnum.GetTermState();
         }
 
         public override IComparer<BytesRef> Comparator
@@ -332,9 +332,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override long Ord()
+        public override long Ord
         {
-            return actualEnum.Ord();
+            get { return actualEnum.Ord; }
         }
 
         public override bool SeekExact(BytesRef text)

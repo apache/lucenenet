@@ -468,9 +468,9 @@ namespace Lucene.Net.Codecs.ramonly
                 throw new System.NotSupportedException();
             }
 
-            public override long Ord()
+            public override long Ord
             {
-                throw new System.NotSupportedException();
+                get { throw new System.NotSupportedException(); }
             }
 
             public override BytesRef Term
@@ -482,14 +482,14 @@ namespace Lucene.Net.Codecs.ramonly
                 }
             }
 
-            public override int DocFreq()
+            public override int DocFreq
             {
-                return RamField.TermToDocs[Current].Docs.Count;
+                get { return RamField.TermToDocs[Current].Docs.Count; }
             }
 
-            public override long TotalTermFreq()
+            public override long TotalTermFreq
             {
-                return RamField.TermToDocs[Current].TotalTermFreq;
+                get { return RamField.TermToDocs[Current].TotalTermFreq; }
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)

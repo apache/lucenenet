@@ -1040,11 +1040,11 @@ namespace Lucene.Net.Codecs.Lucene45
                     }
                     else if (status == TermsEnum.SeekStatus.FOUND)
                     {
-                        return TermsEnum_Renamed.Ord();
+                        return TermsEnum_Renamed.Ord;
                     }
                     else
                     {
-                        return -TermsEnum_Renamed.Ord() - 1;
+                        return -TermsEnum_Renamed.Ord - 1;
                     }
                 }
                 catch (Exception)
@@ -1219,9 +1219,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     get { return term; }
                 }
 
-                public override long Ord()
+                public override long Ord
                 {
-                    return currentOrd;
+                    get { return currentOrd; }
                 }
 
                 public override IComparer<BytesRef> Comparator
@@ -1232,14 +1232,14 @@ namespace Lucene.Net.Codecs.Lucene45
                     }
                 }
 
-                public override int DocFreq()
+                public override int DocFreq
                 {
-                    throw new System.NotSupportedException();
+                    get { throw new System.NotSupportedException(); }
                 }
 
-                public override long TotalTermFreq()
+                public override long TotalTermFreq
                 {
-                    return -1;
+                    get { return -1; }
                 }
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)

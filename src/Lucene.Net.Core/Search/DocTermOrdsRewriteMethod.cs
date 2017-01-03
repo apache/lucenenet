@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
                     // fill into a bitset
                     do
                     {
-                        termSet.Set(termsEnum.Ord());
+                        termSet.Set(termsEnum.Ord);
                     } while (termsEnum.Next() != null);
                 }
                 else

@@ -439,19 +439,19 @@ namespace Lucene.Net.Codecs.SimpleText
                 get { return _current.Key; }
             }
 
-            public override long Ord()
+            public override long Ord
             {
-                throw new NotSupportedException();
+                get { throw new NotSupportedException(); }
             }
 
-            public override int DocFreq()
+            public override int DocFreq
             {
-                return 1;
+                get { return 1; }
             }
 
-            public override long TotalTermFreq()
+            public override long TotalTermFreq
             {
-                return _current.Value.FREQ;
+                get { return _current.Value.FREQ; }
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)

@@ -82,7 +82,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     terms.Get(doc, @ref);
                     if (termsEnum.SeekExact(@ref))
                     {
-                        return termsEnum.DocFreq();
+                        return termsEnum.DocFreq;
                     }
                     else
                     {

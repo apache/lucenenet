@@ -577,7 +577,7 @@ namespace Lucene.Net.Queries.Mlt
                 {
                     continue;
                 }
-                var freq = (int)termsEnum.TotalTermFreq();
+                var freq = (int)termsEnum.TotalTermFreq;
 
                 // increment frequency
                 Int cnt;

@@ -838,9 +838,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                 throw new System.NotSupportedException();
             }
 
-            public override long Ord()
+            public override long Ord
             {
-                throw new System.NotSupportedException();
+                get { throw new System.NotSupportedException(); }
             }
 
             public override SeekStatus SeekCeil(BytesRef term)
@@ -1067,14 +1067,14 @@ namespace Lucene.Net.Codecs.Lucene3x
                 get { return Current; }
             }
 
-            public override int DocFreq()
+            public override int DocFreq
             {
-                return TermEnum.DocFreq;
+                get { return TermEnum.DocFreq; }
             }
 
-            public override long TotalTermFreq()
+            public override long TotalTermFreq
             {
-                return -1;
+                get { return -1; }
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)

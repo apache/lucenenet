@@ -779,7 +779,7 @@ namespace Lucene.Net.Codecs.Memory
                 fstEnum = new BytesRefFSTEnum<BytesRef>(fst);
             }
 
-            internal void decodeMetaData()
+            internal void decodeMetaData() // LUCENENET TODO: Rename pascal case
             {
                 if (!didDecode)
                 {
@@ -905,16 +905,22 @@ namespace Lucene.Net.Codecs.Memory
                 return current.Input;
             }
 
-            public override int DocFreq()
+            public override int DocFreq
             {
-                decodeMetaData();
-                return docFreq_Renamed;
+                get
+                {
+                    decodeMetaData();
+                    return docFreq_Renamed;
+                }
             }
 
-            public override long TotalTermFreq()
+            public override long TotalTermFreq
             {
-                decodeMetaData();
-                return totalTermFreq_Renamed;
+                get
+                {
+                    decodeMetaData();
+                    return totalTermFreq_Renamed;
+                }
             }
 
             public override IComparer<BytesRef> Comparator
@@ -931,10 +937,13 @@ namespace Lucene.Net.Codecs.Memory
                 throw new System.NotSupportedException();
             }
 
-            public override long Ord()
+            public override long Ord
             {
-                // NOTE: we could add this...
-                throw new System.NotSupportedException();
+                get
+                {
+                    // NOTE: we could add this...
+                    throw new System.NotSupportedException();
+                }
             }
         }
 

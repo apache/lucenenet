@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.Sinks
             assertEquals(1, vector.Size);
             TermsEnum termsEnum = vector.Iterator(null);
             termsEnum.Next();
-            assertEquals(2, termsEnum.TotalTermFreq());
+            assertEquals(2, termsEnum.TotalTermFreq);
             DocsAndPositionsEnum positions = termsEnum.DocsAndPositions(null, null);
             assertTrue(positions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             assertEquals(2, positions.Freq);

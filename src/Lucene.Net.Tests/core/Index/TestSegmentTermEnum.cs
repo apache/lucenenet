@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
             long ordB;
             try
             {
-                ordB = terms.Ord();
+                ordB = terms.Ord;
             }
             catch (System.NotSupportedException uoe)
             {
@@ -119,24 +119,24 @@ namespace Lucene.Net.Index
             termEnum.Next();
             // assert that term is 'aaa'
             Assert.AreEqual("aaa", termEnum.Term.Utf8ToString());
-            Assert.AreEqual(200, termEnum.DocFreq());
+            Assert.AreEqual(200, termEnum.DocFreq);
             // go to the second term (bbb)
             termEnum.Next();
             // assert that term is 'bbb'
             Assert.AreEqual("bbb", termEnum.Term.Utf8ToString());
-            Assert.AreEqual(100, termEnum.DocFreq());
+            Assert.AreEqual(100, termEnum.DocFreq);
 
             // create enumeration of terms after term 'aaa',
             // including 'aaa'
             termEnum.SeekCeil(new BytesRef("aaa"));
             // assert that term is 'aaa'
             Assert.AreEqual("aaa", termEnum.Term.Utf8ToString());
-            Assert.AreEqual(200, termEnum.DocFreq());
+            Assert.AreEqual(200, termEnum.DocFreq);
             // go to term 'bbb'
             termEnum.Next();
             // assert that term is 'bbb'
             Assert.AreEqual("bbb", termEnum.Term.Utf8ToString());
-            Assert.AreEqual(100, termEnum.DocFreq());
+            Assert.AreEqual(100, termEnum.DocFreq);
             reader.Dispose();
         }
 

@@ -196,7 +196,7 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     if (set == null)
                     {
-                        int size = this.termsEnum.DocFreq();
+                        int size = this.termsEnum.DocFreq;
                         if (size <= 0)
                         {
                             size = 16;

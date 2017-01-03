@@ -169,13 +169,13 @@ namespace Lucene.Net.Search
                     }
                 }
                 ScoreTerm t2;
-                TermState state = termsEnum.TermState();
+                TermState state = termsEnum.GetTermState();
                 Debug.Assert(state != null);
                 if (visitedTerms.TryGetValue(bytes, out t2))
                 {
                     // if the term is already in the PQ, only update docFreq of term in PQ
                     Debug.Assert(t2.Boost == boost, "boost should be equal in all segment TermsEnums");
-                    t2.TermState.Register(state, m_readerContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+                    t2.TermState.Register(state, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                 }
                 else
                 {
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
                     st.Boost = boost;
                     visitedTerms[st.Bytes] = st;
                     Debug.Assert(st.TermState.DocFreq == 0);
-                    st.TermState.Register(state, m_readerContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+                    st.TermState.Register(state, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                     stQueue.Add(st);
                     // possibly drop entries from queue
                     if (stQueue.Size > maxSize)

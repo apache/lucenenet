@@ -486,7 +486,7 @@ namespace Lucene.Net.Search.Spell
                     continue;
                 }
 
-                int df = e.DocFreq();
+                int df = e.DocFreq;
 
                 // check docFreq if required
                 if (df <= docfreq)

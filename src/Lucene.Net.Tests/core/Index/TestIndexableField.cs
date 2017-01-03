@@ -320,14 +320,14 @@ namespace Lucene.Net.Index
                             Assert.IsNotNull(tfv);
                             TermsEnum termsEnum = tfv.Iterator(null);
                             Assert.AreEqual(new BytesRef("" + counter), termsEnum.Next());
-                            Assert.AreEqual(1, termsEnum.TotalTermFreq());
+                            Assert.AreEqual(1, termsEnum.TotalTermFreq);
                             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
                             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                             Assert.AreEqual(1, dpEnum.Freq);
                             Assert.AreEqual(1, dpEnum.NextPosition());
 
                             Assert.AreEqual(new BytesRef("text"), termsEnum.Next());
-                            Assert.AreEqual(1, termsEnum.TotalTermFreq());
+                            Assert.AreEqual(1, termsEnum.TotalTermFreq);
                             dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
                             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                             Assert.AreEqual(1, dpEnum.Freq);

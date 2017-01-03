@@ -1113,7 +1113,7 @@ namespace Lucene.Net.Index
                         lastTerm.CopyBytes(term);
                     }
 
-                    int docFreq = termsEnum.DocFreq();
+                    int docFreq = termsEnum.DocFreq;
                     if (docFreq <= 0)
                     {
                         throw new Exception("docfreq: " + docFreq + " is out of bounds");
@@ -1125,9 +1125,9 @@ namespace Lucene.Net.Index
 
                     if (hasFreqs == false)
                     {
-                        if (termsEnum.TotalTermFreq() != -1)
+                        if (termsEnum.TotalTermFreq != -1)
                         {
-                            throw new Exception("field \"" + field + "\" hasFreqs is false, but TermsEnum.totalTermFreq()=" + termsEnum.TotalTermFreq() + " (should be -1)");
+                            throw new Exception("field \"" + field + "\" hasFreqs is false, but TermsEnum.totalTermFreq()=" + termsEnum.TotalTermFreq + " (should be -1)");
                         }
                     }
 
@@ -1136,7 +1136,7 @@ namespace Lucene.Net.Index
                         long ord = -1;
                         try
                         {
-                            ord = termsEnum.Ord();
+                            ord = termsEnum.Ord;
                         }
                         catch (System.NotSupportedException uoe)
                         {
@@ -1275,7 +1275,7 @@ namespace Lucene.Net.Index
                         status.DelTermCount++;
                     }
 
-                    long totalTermFreq2 = termsEnum.TotalTermFreq();
+                    long totalTermFreq2 = termsEnum.TotalTermFreq;
                     bool hasTotalTermFreq = hasFreqs && totalTermFreq2 != -1;
 
                     // Re-count if there are deleted docs:
@@ -1490,7 +1490,7 @@ namespace Lucene.Net.Index
                             throw new Exception("seek to last term " + lastTerm + " failed");
                         }
 
-                        int expectedDocFreq = termsEnum.DocFreq();
+                        int expectedDocFreq = termsEnum.DocFreq;
                         DocsEnum d = termsEnum.Docs(null, null, DocsEnum.FLAG_NONE);
                         int docFreq = 0;
                         while (d.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
@@ -1562,7 +1562,7 @@ namespace Lucene.Net.Index
                                     throw new Exception("seek to existing term " + seekTerms[i] + " failed");
                                 }
 
-                                totDocFreq += termsEnum.DocFreq();
+                                totDocFreq += termsEnum.DocFreq;
                                 docs = termsEnum.Docs(null, docs, DocsEnum.FLAG_NONE);
                                 if (docs == null)
                                 {

@@ -279,11 +279,11 @@ namespace Lucene.Net.Queries
                     {
                         if (termContext == null)
                         {
-                            contextArray[i] = new TermContext(reader.Context, termsEnum.TermState(), context.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+                            contextArray[i] = new TermContext(reader.Context, termsEnum.GetTermState(), context.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                         }
                         else
                         {
-                            termContext.Register(termsEnum.TermState(), context.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+                            termContext.Register(termsEnum.GetTermState(), context.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                         }
 
                     }

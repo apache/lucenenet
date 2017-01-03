@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(terms.Next() != null);
             try
             {
-                Assert.AreEqual(0, terms.Ord());
+                Assert.AreEqual(0, terms.Ord);
             }
             catch (System.NotSupportedException uoe)
             {

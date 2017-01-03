@@ -140,7 +140,7 @@ namespace Lucene.Net.Sandbox.Queries
                 }
                 else
                 {
-                    if (termsEnum.DocFreq() > 1)
+                    if (termsEnum.DocFreq > 1)
                     {
                         // unset potential duplicates
                         docs = termsEnum.Docs(acceptDocs, docs, DocsEnum.FLAG_NONE);

@@ -697,7 +697,7 @@ namespace Lucene.Net.Index
 
             // NOTE: can be empty list if we are using liveDocs:
             SeedPostings expected = GetSeedPostings(term.Utf8ToString(), Fields[field][term], useLiveDocs, maxIndexOptions);
-            Assert.AreEqual(expected.DocFreq, termsEnum.DocFreq());
+            Assert.AreEqual(expected.DocFreq, termsEnum.DocFreq);
 
             bool allowFreqs = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS && maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
             bool doCheckFreqs = allowFreqs && (alwaysTestMax || Random().Next(3) <= 2);
@@ -1166,7 +1166,7 @@ namespace Lucene.Net.Index
                 if (options.Contains(Option.TERM_STATE) && !useTermState && Random().Next(5) == 1)
                 {
                     // Save away this TermState:
-                    termStates.Add(termsEnum.TermState());
+                    termStates.Add(termsEnum.GetTermState());
                     termStateTerms.Add(fieldAndTerm);
                     savedTermState = true;
                 }
@@ -1177,7 +1177,7 @@ namespace Lucene.Net.Index
                 if (options.Contains(Option.TERM_STATE) && !useTermState && !savedTermState && Random().Next(5) == 1)
                 {
                     // Save away this TermState:
-                    termStates.Add(termsEnum.TermState());
+                    termStates.Add(termsEnum.GetTermState());
                     termStateTerms.Add(fieldAndTerm);
                     useTermState = true;
                 }

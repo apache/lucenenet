@@ -114,19 +114,19 @@ namespace Lucene.Net.Index
             get { return Term_Renamed; }
         }
 
-        public override long Ord()
+        public override long Ord
         {
-            return CurrentOrd;
+            get { return CurrentOrd; }
         }
 
-        public override int DocFreq()
+        public override int DocFreq
         {
-            throw new System.NotSupportedException();
+            get { throw new System.NotSupportedException(); }
         }
 
-        public override long TotalTermFreq()
+        public override long TotalTermFreq
         {
-            return -1;
+            get { return -1; }
         }
 
         public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
             this.SeekExact(((OrdTermState)state).Ord);
         }
 
-        public override TermState TermState()
+        public override TermState GetTermState()
         {
             OrdTermState state = new OrdTermState();
             state.Ord = CurrentOrd;

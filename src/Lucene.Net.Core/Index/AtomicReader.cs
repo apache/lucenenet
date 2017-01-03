@@ -118,7 +118,7 @@ namespace Lucene.Net.Index
             TermsEnum termsEnum = terms.Iterator(null);
             if (termsEnum.SeekExact(term.Bytes))
             {
-                return termsEnum.DocFreq();
+                return termsEnum.DocFreq;
             }
             else
             {
@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
             TermsEnum termsEnum = terms.Iterator(null);
             if (termsEnum.SeekExact(term.Bytes))
             {
-                return termsEnum.TotalTermFreq();
+                return termsEnum.TotalTermFreq;
             }
             else
             {

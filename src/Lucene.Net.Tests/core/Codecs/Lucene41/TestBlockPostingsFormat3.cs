@@ -353,28 +353,28 @@ namespace Lucene.Net.Codecs.Lucene41
                     AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions));
                     AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions));
 
-                    AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions));
-                    AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions));
+                    AssertPositionsSkipping(leftTermsEnum.DocFreq, leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions));
+                    AssertPositionsSkipping(leftTermsEnum.DocFreq, leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions));
                     // with payloads only
                     AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsAndPositionsEnum.FLAG_PAYLOADS), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsAndPositionsEnum.FLAG_PAYLOADS));
                     AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsAndPositionsEnum.FLAG_PAYLOADS), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsAndPositionsEnum.FLAG_PAYLOADS));
 
-                    AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsAndPositionsEnum.FLAG_PAYLOADS), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsAndPositionsEnum.FLAG_PAYLOADS));
-                    AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsAndPositionsEnum.FLAG_PAYLOADS), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsAndPositionsEnum.FLAG_PAYLOADS));
+                    AssertPositionsSkipping(leftTermsEnum.DocFreq, leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsAndPositionsEnum.FLAG_PAYLOADS), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsAndPositionsEnum.FLAG_PAYLOADS));
+                    AssertPositionsSkipping(leftTermsEnum.DocFreq, leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsAndPositionsEnum.FLAG_PAYLOADS), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsAndPositionsEnum.FLAG_PAYLOADS));
 
                     // with offsets only
                     AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsAndPositionsEnum.FLAG_OFFSETS), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsAndPositionsEnum.FLAG_OFFSETS));
                     AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsAndPositionsEnum.FLAG_OFFSETS), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsAndPositionsEnum.FLAG_OFFSETS));
 
-                    AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsAndPositionsEnum.FLAG_OFFSETS), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsAndPositionsEnum.FLAG_OFFSETS));
-                    AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsAndPositionsEnum.FLAG_OFFSETS), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsAndPositionsEnum.FLAG_OFFSETS));
+                    AssertPositionsSkipping(leftTermsEnum.DocFreq, leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsAndPositionsEnum.FLAG_OFFSETS), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsAndPositionsEnum.FLAG_OFFSETS));
+                    AssertPositionsSkipping(leftTermsEnum.DocFreq, leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsAndPositionsEnum.FLAG_OFFSETS), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsAndPositionsEnum.FLAG_OFFSETS));
 
                     // with positions only
                     AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsEnum.FLAG_NONE), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsEnum.FLAG_NONE));
                     AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsEnum.FLAG_NONE), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsEnum.FLAG_NONE));
 
-                    AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsEnum.FLAG_NONE), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsEnum.FLAG_NONE));
-                    AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsEnum.FLAG_NONE), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsEnum.FLAG_NONE));
+                    AssertPositionsSkipping(leftTermsEnum.DocFreq, leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsEnum.FLAG_NONE), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsEnum.FLAG_NONE));
+                    AssertPositionsSkipping(leftTermsEnum.DocFreq, leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsEnum.FLAG_NONE), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsEnum.FLAG_NONE));
 
                     // with freqs:
                     AssertDocsEnum(leftDocs = leftTermsEnum.Docs(null, leftDocs), rightDocs = rightTermsEnum.Docs(null, rightDocs));
@@ -385,12 +385,12 @@ namespace Lucene.Net.Codecs.Lucene41
                     AssertDocsEnum(leftDocs = leftTermsEnum.Docs(randomBits, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs, DocsEnum.FLAG_NONE));
 
                     // with freqs:
-                    AssertDocsSkipping(leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(null, leftDocs), rightDocs = rightTermsEnum.Docs(null, rightDocs));
-                    AssertDocsSkipping(leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(randomBits, leftDocs), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs));
+                    AssertDocsSkipping(leftTermsEnum.DocFreq, leftDocs = leftTermsEnum.Docs(null, leftDocs), rightDocs = rightTermsEnum.Docs(null, rightDocs));
+                    AssertDocsSkipping(leftTermsEnum.DocFreq, leftDocs = leftTermsEnum.Docs(randomBits, leftDocs), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs));
 
                     // w/o freqs:
-                    AssertDocsSkipping(leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(null, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(null, rightDocs, DocsEnum.FLAG_NONE));
-                    AssertDocsSkipping(leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(randomBits, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs, DocsEnum.FLAG_NONE));
+                    AssertDocsSkipping(leftTermsEnum.DocFreq, leftDocs = leftTermsEnum.Docs(null, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(null, rightDocs, DocsEnum.FLAG_NONE));
+                    AssertDocsSkipping(leftTermsEnum.DocFreq, leftDocs = leftTermsEnum.Docs(randomBits, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs, DocsEnum.FLAG_NONE));
                 }
             }
             Assert.IsNull(rightTermsEnum.Next());
@@ -401,10 +401,10 @@ namespace Lucene.Net.Codecs.Lucene41
         /// </summary>
         public virtual void AssertTermStats(TermsEnum leftTermsEnum, TermsEnum rightTermsEnum)
         {
-            Assert.AreEqual(leftTermsEnum.DocFreq(), rightTermsEnum.DocFreq());
-            if (leftTermsEnum.TotalTermFreq() != -1 && rightTermsEnum.TotalTermFreq() != -1)
+            Assert.AreEqual(leftTermsEnum.DocFreq, rightTermsEnum.DocFreq);
+            if (leftTermsEnum.TotalTermFreq != -1 && rightTermsEnum.TotalTermFreq != -1)
             {
-                Assert.AreEqual(leftTermsEnum.TotalTermFreq(), rightTermsEnum.TotalTermFreq());
+                Assert.AreEqual(leftTermsEnum.TotalTermFreq, rightTermsEnum.TotalTermFreq);
             }
         }
 

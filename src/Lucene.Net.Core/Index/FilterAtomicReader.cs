@@ -216,19 +216,19 @@ namespace Lucene.Net.Index
                 get { return input.Term; }
             }
 
-            public override long Ord()
+            public override long Ord
             {
-                return input.Ord();
+                get { return input.Ord; }
             }
 
-            public override int DocFreq()
+            public override int DocFreq
             {
-                return input.DocFreq();
+                get { return input.DocFreq; }
             }
 
-            public override long TotalTermFreq()
+            public override long TotalTermFreq
             {
-                return input.TotalTermFreq();
+                get { return input.TotalTermFreq; }
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)

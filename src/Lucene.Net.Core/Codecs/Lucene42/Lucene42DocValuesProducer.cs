@@ -796,19 +796,19 @@ namespace Lucene.Net.Codecs.Lucene42
                 get { return @in.Current.Input; }
             }
 
-            public override long Ord()
+            public override long Ord
             {
-                return @in.Current.Output.Value;
+                get { return @in.Current.Output.Value; }
             }
 
-            public override int DocFreq()
+            public override int DocFreq
             {
-                throw new System.NotSupportedException();
+                get { throw new System.NotSupportedException(); }
             }
 
-            public override long TotalTermFreq()
+            public override long TotalTermFreq
             {
-                throw new System.NotSupportedException();
+                get { throw new System.NotSupportedException(); }
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)

@@ -176,9 +176,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 get { return _fstEnum.Current.Input; }
             }
 
-            public override long Ord()
+            public override long Ord
             {
-                throw new NotSupportedException();
+                get { throw new NotSupportedException(); }
             }
 
             public override void SeekExact(long ord)
@@ -186,14 +186,14 @@ namespace Lucene.Net.Codecs.SimpleText
                 throw new NotSupportedException();
             }
 
-            public override int DocFreq()
+            public override int DocFreq
             {
-                return _docFreq;
+                get { return _docFreq; }
             }
 
-            public override long TotalTermFreq()
+            public override long TotalTermFreq
             {
-                return _indexOptions == IndexOptions.DOCS_ONLY ? - 1 : _totalTermFreq;
+                get { return _indexOptions == IndexOptions.DOCS_ONLY ? -1 : _totalTermFreq; }
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
