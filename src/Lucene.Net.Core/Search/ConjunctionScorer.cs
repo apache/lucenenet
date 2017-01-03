@@ -25,8 +25,8 @@ namespace Lucene.Net.Search
     /// Scorer for conjunctions, sets of queries, all of which are required. </summary>
     internal class ConjunctionScorer : Scorer
     {
-        protected int lastDoc = -1;
-        protected readonly DocsAndFreqs[] docsAndFreqs;
+        protected int m_lastDoc = -1;
+        protected readonly DocsAndFreqs[] m_docsAndFreqs;
         private readonly DocsAndFreqs lead;
         private readonly float coord;
 
@@ -39,16 +39,16 @@ namespace Lucene.Net.Search
             : base(weight)
         {
             this.coord = coord;
-            this.docsAndFreqs = new DocsAndFreqs[scorers.Length];
+            this.m_docsAndFreqs = new DocsAndFreqs[scorers.Length];
             for (int i = 0; i < scorers.Length; i++)
             {
-                docsAndFreqs[i] = new DocsAndFreqs(scorers[i]);
+                m_docsAndFreqs[i] = new DocsAndFreqs(scorers[i]);
             }
             // Sort the array the first time to allow the least frequent DocsEnum to
             // lead the matching.
-            ArrayUtil.TimSort(docsAndFreqs, new ComparatorAnonymousInnerClassHelper(this));
+            ArrayUtil.TimSort(m_docsAndFreqs, new ComparatorAnonymousInnerClassHelper(this));
 
-            lead = docsAndFreqs[0]; // least frequent DocsEnum leads the intersection
+            lead = m_docsAndFreqs[0]; // least frequent DocsEnum leads the intersection
         }
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<DocsAndFreqs>
@@ -86,20 +86,20 @@ namespace Lucene.Net.Search
                 // return that value.
                 for (; ; )
                 {
-                    for (int i = 1; i < docsAndFreqs.Length; i++)
+                    for (int i = 1; i < m_docsAndFreqs.Length; i++)
                     {
                         // invariant: docsAndFreqs[i].doc <= doc at this point.
 
                         // docsAndFreqs[i].doc may already be equal to doc if we "broke advanceHead"
                         // on the previous iteration and the advance on the lead scorer exactly matched.
-                        if (docsAndFreqs[i].Doc < doc)
+                        if (m_docsAndFreqs[i].Doc < doc)
                         {
-                            docsAndFreqs[i].Doc = docsAndFreqs[i].Scorer.Advance(doc);
+                            m_docsAndFreqs[i].Doc = m_docsAndFreqs[i].Scorer.Advance(doc);
 
-                            if (docsAndFreqs[i].Doc > doc)
+                            if (m_docsAndFreqs[i].Doc > doc)
                             {
                                 // DocsEnum beyond the current doc - break and advance lead to the new highest doc.
-                                doc = docsAndFreqs[i].Doc;
+                                doc = m_docsAndFreqs[i].Doc;
                                 goto advanceHeadBreak;
                             }
                         }
@@ -117,25 +117,25 @@ namespace Lucene.Net.Search
         public override int Advance(int target)
         {
             lead.Doc = lead.Scorer.Advance(target);
-            return lastDoc = DoNext(lead.Doc);
+            return m_lastDoc = DoNext(lead.Doc);
         }
 
         public override int DocID
         {
-            get { return lastDoc; }
+            get { return m_lastDoc; }
         }
 
         public override int NextDoc()
         {
             lead.Doc = lead.Scorer.NextDoc();
-            return lastDoc = DoNext(lead.Doc);
+            return m_lastDoc = DoNext(lead.Doc);
         }
 
         public override float Score()
         {
             // TODO: sum into a double and cast to float if we ever send required clauses to BS1
             float sum = 0.0f;
-            foreach (DocsAndFreqs docs in docsAndFreqs)
+            foreach (DocsAndFreqs docs in m_docsAndFreqs)
             {
                 sum += docs.Scorer.Score();
             }
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
 
         public override int Freq
         {
-            get { return docsAndFreqs.Length; }
+            get { return m_docsAndFreqs.Length; }
         }
 
         public override long Cost()
@@ -154,8 +154,8 @@ namespace Lucene.Net.Search
 
         public override ICollection<ChildScorer> GetChildren()
         {
-            List<ChildScorer> children = new List<ChildScorer>(docsAndFreqs.Length);
-            foreach (DocsAndFreqs docs in docsAndFreqs)
+            List<ChildScorer> children = new List<ChildScorer>(m_docsAndFreqs.Length);
+            foreach (DocsAndFreqs docs in m_docsAndFreqs)
             {
                 children.Add(new ChildScorer(docs.Scorer, "MUST"));
             }
