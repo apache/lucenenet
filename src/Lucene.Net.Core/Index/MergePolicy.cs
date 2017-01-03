@@ -177,7 +177,6 @@ namespace Lucene.Net.Index
                         readers.Add(reader);
                     }
                 }
-                //return readers; // LUCENENET TODO: Collections.UnmodifiableList(readers)
                 return Collections.UnmodifiableList(readers);
             }
 

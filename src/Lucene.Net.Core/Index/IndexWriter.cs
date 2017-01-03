@@ -3964,7 +3964,7 @@ namespace Lucene.Net.Index
         /// Expert:  Return the total size of all index files currently cached in memory.
         /// Useful for size management with flushRamDocs()
         /// </summary>
-        public long RamSizeInBytes() // LUCENENET TODO: Make property ?
+        public long RamSizeInBytes()
         {
             EnsureOpen();
             return docWriter.FlushControl.NetBytes + bufferedUpdatesStream.BytesUsed;
