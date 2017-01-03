@@ -2847,7 +2847,7 @@ namespace Lucene.Net.Util
                 }
             //}
 
-            Assert.IsFalse(names.Any(), "Invalid protected field names detected.");
+            Assert.IsFalse(names.Any(), names.Count() + " invalid protected field names detected.");
         }
 
         //[Test, LuceneNetSpecific]
@@ -2863,7 +2863,7 @@ namespace Lucene.Net.Util
             }
             //}
 
-            Assert.IsFalse(names.Any(), "Invalid private field names detected.");
+            Assert.IsFalse(names.Any(), names.Count() + " invalid private field names detected.");
         }
 
 
@@ -2884,7 +2884,7 @@ namespace Lucene.Net.Util
                         continue;
                     }
 
-                    if (field.IsPrivate && !PrivateFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
+                    if ((field.IsPrivate || field.IsAssembly) && !PrivateFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", field.Name));
                     }
