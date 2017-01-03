@@ -28,11 +28,11 @@ namespace Lucene.Net.Store
         /// The default buffer size in bytes ({@value #DEFAULT_BUFFER_SIZE}). </summary>
         public const int DEFAULT_BUFFER_SIZE = 16384;
 
-        private readonly int BufferSize_Renamed;
-        private readonly byte[] Buffer;
-        private long BufferStart = 0; // position in file of buffer
-        private int BufferPosition = 0; // position in buffer
-        private readonly CRC32 Crc = new CRC32();
+        private readonly int bufferSize;
+        private readonly byte[] buffer;
+        private long bufferStart = 0; // position in file of buffer
+        private int bufferPosition = 0; // position in buffer
+        private readonly CRC32 crc = new CRC32();
 
         /// <summary>
         /// Creates a new <seealso cref="BufferedIndexOutput"/> with the default buffer size
@@ -53,30 +53,30 @@ namespace Lucene.Net.Store
             {
                 throw new System.ArgumentException("bufferSize must be greater than 0 (got " + bufferSize + ")");
             }
-            this.BufferSize_Renamed = bufferSize;
-            Buffer = new byte[bufferSize];
+            this.bufferSize = bufferSize;
+            buffer = new byte[bufferSize];
         }
 
         public override void WriteByte(byte b)
         {
-            if (BufferPosition >= BufferSize_Renamed)
+            if (bufferPosition >= bufferSize)
             {
                 Flush();
             }
-            Buffer[BufferPosition++] = b;
+            buffer[bufferPosition++] = b;
         }
 
         public override void WriteBytes(byte[] b, int offset, int length)
         {
-            int bytesLeft = BufferSize_Renamed - BufferPosition;
+            int bytesLeft = bufferSize - bufferPosition;
             // is there enough space in the buffer?
             if (bytesLeft >= length)
             {
                 // we add the data to the end of the buffer
-                System.Buffer.BlockCopy(b, offset, Buffer, BufferPosition, length);
-                BufferPosition += length;
+                System.Buffer.BlockCopy(b, offset, buffer, bufferPosition, length);
+                bufferPosition += length;
                 // if the buffer is full, flush it
-                if (BufferSize_Renamed - BufferPosition == 0)
+                if (bufferSize - bufferPosition == 0)
                 {
                     Flush();
                 }
@@ -84,17 +84,17 @@ namespace Lucene.Net.Store
             else
             {
                 // is data larger then buffer?
-                if (length > BufferSize_Renamed)
+                if (length > bufferSize)
                 {
                     // we flush the buffer
-                    if (BufferPosition > 0)
+                    if (bufferPosition > 0)
                     {
                         Flush();
                     }
                     // and write data at once
-                    Crc.Update((byte[])(Array)b, offset, length);
+                    crc.Update((byte[])(Array)b, offset, length);
                     FlushBuffer(b, offset, length);
-                    BufferStart += length;
+                    bufferStart += length;
                 }
                 else
                 {
@@ -104,15 +104,15 @@ namespace Lucene.Net.Store
                     while (pos < length)
                     {
                         pieceLength = (length - pos < bytesLeft) ? length - pos : bytesLeft;
-                        System.Buffer.BlockCopy(b, pos + offset, Buffer, BufferPosition, pieceLength);
+                        System.Buffer.BlockCopy(b, pos + offset, buffer, bufferPosition, pieceLength);
                         pos += pieceLength;
-                        BufferPosition += pieceLength;
+                        bufferPosition += pieceLength;
                         // if the buffer is full, flush it
-                        bytesLeft = BufferSize_Renamed - BufferPosition;
+                        bytesLeft = bufferSize - bufferPosition;
                         if (bytesLeft == 0)
                         {
                             Flush();
-                            bytesLeft = BufferSize_Renamed;
+                            bytesLeft = bufferSize;
                         }
                     }
                 }
@@ -121,10 +121,10 @@ namespace Lucene.Net.Store
 
         public override void Flush()
         {
-            Crc.Update((byte[])(Array)Buffer, 0, BufferPosition);
-            FlushBuffer(Buffer, BufferPosition);
-            BufferStart += BufferPosition;
-            BufferPosition = 0;
+            crc.Update((byte[])(Array)buffer, 0, bufferPosition);
+            FlushBuffer(buffer, bufferPosition);
+            bufferStart += bufferPosition;
+            bufferPosition = 0;
         }
 
         /// <summary>
@@ -154,14 +154,14 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return BufferStart + BufferPosition;
+                return bufferStart + bufferPosition;
             }
         }
 
         public override void Seek(long pos)
         {
             Flush();
-            BufferStart = pos;
+            bufferStart = pos;
         }
 
         public override abstract long Length { get; }
@@ -174,7 +174,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return BufferSize_Renamed;
+                return bufferSize;
             }
         }
 
@@ -183,7 +183,7 @@ namespace Lucene.Net.Store
             get
             {
                 Flush();
-                return Crc.Value;
+                return crc.Value;
             }
         }
     }
