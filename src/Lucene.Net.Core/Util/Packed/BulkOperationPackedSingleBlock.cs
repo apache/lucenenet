@@ -24,15 +24,15 @@ namespace Lucene.Net.Util.Packed
     {
         private const int BLOCK_COUNT = 1;
 
-        private readonly int BitsPerValue;
-        private readonly int ValueCount;
-        private readonly long Mask;
+        private readonly int bitsPerValue;
+        private readonly int valueCount;
+        private readonly long mask;
 
         public BulkOperationPackedSingleBlock(int bitsPerValue)
         {
-            this.BitsPerValue = bitsPerValue;
-            this.ValueCount = 64 / bitsPerValue;
-            this.Mask = (1L << bitsPerValue) - 1;
+            this.bitsPerValue = bitsPerValue;
+            this.valueCount = 64 / bitsPerValue;
+            this.mask = (1L << bitsPerValue) - 1;
         }
 
         public override sealed int LongBlockCount
@@ -47,12 +47,12 @@ namespace Lucene.Net.Util.Packed
 
         public override int LongValueCount
         {
-            get { return ValueCount; }
+            get { return valueCount; }
         }
 
         public override sealed int ByteValueCount
         {
-            get { return ValueCount; }
+            get { return valueCount; }
         }
 
         private static long ReadLong(byte[] blocks, int blocksOffset)
@@ -65,22 +65,22 @@ namespace Lucene.Net.Util.Packed
 
         private int Decode(long block, long[] values, int valuesOffset)
         {
-            values[valuesOffset++] = block & Mask;
-            for (int j = 1; j < ValueCount; ++j)
+            values[valuesOffset++] = block & mask;
+            for (int j = 1; j < valueCount; ++j)
             {
-                block = (long)((ulong)block >> BitsPerValue);
-                values[valuesOffset++] = block & Mask;
+                block = (long)((ulong)block >> bitsPerValue);
+                values[valuesOffset++] = block & mask;
             }
             return valuesOffset;
         }
 
         private int Decode(long block, int[] values, int valuesOffset)
         {
-            values[valuesOffset++] = (int)(block & Mask);
-            for (int j = 1; j < ValueCount; ++j)
+            values[valuesOffset++] = (int)(block & mask);
+            for (int j = 1; j < valueCount; ++j)
             {
-                block = (long)((ulong)block >> BitsPerValue);
-                values[valuesOffset++] = (int)(block & Mask);
+                block = (long)((ulong)block >> bitsPerValue);
+                values[valuesOffset++] = (int)(block & mask);
             }
             return valuesOffset;
         }
@@ -88,9 +88,9 @@ namespace Lucene.Net.Util.Packed
         private long Encode(long[] values, int valuesOffset)
         {
             long block = values[valuesOffset++];
-            for (int j = 1; j < ValueCount; ++j)
+            for (int j = 1; j < valueCount; ++j)
             {
-                block |= values[valuesOffset++] << (j * BitsPerValue);
+                block |= values[valuesOffset++] << (j * bitsPerValue);
             }
             return block;
         }
@@ -98,9 +98,9 @@ namespace Lucene.Net.Util.Packed
         private long Encode(int[] values, int valuesOffset)
         {
             long block = values[valuesOffset++] & 0xFFFFFFFFL;
-            for (int j = 1; j < ValueCount; ++j)
+            for (int j = 1; j < valueCount; ++j)
             {
-                block |= (values[valuesOffset++] & 0xFFFFFFFFL) << (j * BitsPerValue);
+                block |= (values[valuesOffset++] & 0xFFFFFFFFL) << (j * bitsPerValue);
             }
             return block;
         }
@@ -126,9 +126,9 @@ namespace Lucene.Net.Util.Packed
 
         public override void Decode(long[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations)
         {
-            if (BitsPerValue > 32)
+            if (bitsPerValue > 32)
             {
-                throw new System.NotSupportedException("Cannot decode " + BitsPerValue + "-bits values into an int[]");
+                throw new System.NotSupportedException("Cannot decode " + bitsPerValue + "-bits values into an int[]");
             }
             for (int i = 0; i < iterations; ++i)
             {
@@ -139,9 +139,9 @@ namespace Lucene.Net.Util.Packed
 
         public override void Decode(byte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations)
         {
-            if (BitsPerValue > 32)
+            if (bitsPerValue > 32)
             {
-                throw new System.NotSupportedException("Cannot decode " + BitsPerValue + "-bits values into an int[]");
+                throw new System.NotSupportedException("Cannot decode " + bitsPerValue + "-bits values into an int[]");
             }
             for (int i = 0; i < iterations; ++i)
             {
@@ -156,7 +156,7 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < iterations; ++i)
             {
                 blocks[blocksOffset++] = Encode(values, valuesOffset);
-                valuesOffset += ValueCount;
+                valuesOffset += valueCount;
             }
         }
 
@@ -165,7 +165,7 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < iterations; ++i)
             {
                 blocks[blocksOffset++] = Encode(values, valuesOffset);
-                valuesOffset += ValueCount;
+                valuesOffset += valueCount;
             }
         }
 
@@ -174,7 +174,7 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < iterations; ++i)
             {
                 long block = Encode(values, valuesOffset);
-                valuesOffset += ValueCount;
+                valuesOffset += valueCount;
                 blocksOffset = WriteLong(block, blocks, blocksOffset);
             }
         }
@@ -184,7 +184,7 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < iterations; ++i)
             {
                 long block = Encode(values, valuesOffset);
-                valuesOffset += ValueCount;
+                valuesOffset += valueCount;
                 blocksOffset = WriteLong(block, blocks, blocksOffset);
             }
         }
