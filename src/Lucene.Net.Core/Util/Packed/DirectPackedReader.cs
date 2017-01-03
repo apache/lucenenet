@@ -26,22 +26,22 @@ namespace Lucene.Net.Util.Packed
     internal class DirectPackedReader : PackedInts.ReaderImpl
     {
         private readonly IndexInput @in;
-        private readonly long StartPointer;
-        private readonly long ValueMask;
+        private readonly long startPointer;
+        private readonly long valueMask;
 
         public DirectPackedReader(int bitsPerValue, int valueCount, IndexInput @in)
             : base(valueCount, bitsPerValue)
         {
             this.@in = @in;
 
-            StartPointer = @in.FilePointer;
+            startPointer = @in.FilePointer;
             if (bitsPerValue == 64)
             {
-                ValueMask = -1L;
+                valueMask = -1L;
             }
             else
             {
-                ValueMask = (1L << bitsPerValue) - 1;
+                valueMask = (1L << bitsPerValue) - 1;
             }
         }
 
@@ -51,7 +51,7 @@ namespace Lucene.Net.Util.Packed
             long elementPos = (long)((ulong)majorBitPos >> 3);
             try
             {
-                @in.Seek(StartPointer + elementPos);
+                @in.Seek(startPointer + elementPos);
 
                 int bitPos = (int)(majorBitPos & 7);
                 // round up bits to a multiple of 8 to find total bytes needed to read
@@ -104,7 +104,7 @@ namespace Lucene.Net.Util.Packed
                     default:
                         throw new InvalidOperationException("bitsPerValue too large: " + m_bitsPerValue);
                 }
-                return ((long)((ulong)rawValue >> shiftRightBits)) & ValueMask;
+                return ((long)((ulong)rawValue >> shiftRightBits)) & valueMask;
             }
             catch (System.IO.IOException ioe)
             {
