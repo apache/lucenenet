@@ -92,14 +92,14 @@ namespace Lucene.Net.Util.Packed
         }
 
         internal DataInput @in;
-        internal readonly int PackedIntsVersion;
-        internal long ValueCount;
-        internal readonly int BlockSize;
-        internal readonly long[] Values;
-        internal readonly LongsRef ValuesRef;
-        internal byte[] Blocks;
-        internal int Off;
-        internal long Ord_Renamed;
+        internal readonly int packedIntsVersion;
+        internal long valueCount;
+        internal readonly int blockSize;
+        internal readonly long[] values;
+        internal readonly LongsRef valuesRef;
+        internal byte[] blocks;
+        internal int off;
+        internal long ord;
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -109,10 +109,10 @@ namespace Lucene.Net.Util.Packed
         public BlockPackedReaderIterator(DataInput @in, int packedIntsVersion, int blockSize, long valueCount)
         {
             PackedInts.CheckBlockSize(blockSize, AbstractBlockPackedWriter.MIN_BLOCK_SIZE, AbstractBlockPackedWriter.MAX_BLOCK_SIZE);
-            this.PackedIntsVersion = packedIntsVersion;
-            this.BlockSize = blockSize;
-            this.Values = new long[blockSize];
-            this.ValuesRef = new LongsRef(this.Values, 0, 0);
+            this.packedIntsVersion = packedIntsVersion;
+            this.blockSize = blockSize;
+            this.values = new long[blockSize];
+            this.valuesRef = new LongsRef(this.values, 0, 0);
             Reset(@in, valueCount);
         }
 
@@ -124,9 +124,9 @@ namespace Lucene.Net.Util.Packed
         {
             this.@in = @in;
             Debug.Assert(valueCount >= 0);
-            this.ValueCount = valueCount;
-            Off = BlockSize;
-            Ord_Renamed = 0;
+            this.valueCount = valueCount;
+            off = blockSize;
+            ord = 0;
         }
 
         /// <summary>
@@ -134,15 +134,15 @@ namespace Lucene.Net.Util.Packed
         public void Skip(long count)
         {
             Debug.Assert(count >= 0);
-            if (Ord_Renamed + count > ValueCount || Ord_Renamed + count < 0)
+            if (ord + count > valueCount || ord + count < 0)
             {
                 throw new System.IO.EndOfStreamException();
             }
 
             // 1. skip buffered values
-            int skipBuffer = (int)Math.Min(count, BlockSize - Off);
-            Off += skipBuffer;
-            Ord_Renamed += skipBuffer;
+            int skipBuffer = (int)Math.Min(count, blockSize - off);
+            off += skipBuffer;
+            ord += skipBuffer;
             count -= skipBuffer;
             if (count == 0L)
             {
@@ -150,8 +150,8 @@ namespace Lucene.Net.Util.Packed
             }
 
             // 2. skip as many blocks as necessary
-            Debug.Assert(Off == BlockSize);
-            while (count >= BlockSize)
+            Debug.Assert(off == blockSize);
+            while (count >= blockSize)
             {
                 int token = @in.ReadByte() & 0xFF;
                 int bitsPerValue = (int)((uint)token >> AbstractBlockPackedWriter.BPV_SHIFT);
@@ -163,10 +163,10 @@ namespace Lucene.Net.Util.Packed
                 {
                     ReadVLong(@in);
                 }
-                long blockBytes = PackedInts.Format.PACKED.ByteCount(PackedIntsVersion, BlockSize, bitsPerValue);
+                long blockBytes = PackedInts.Format.PACKED.ByteCount(packedIntsVersion, blockSize, bitsPerValue);
                 SkipBytes(blockBytes);
-                Ord_Renamed += BlockSize;
-                count -= BlockSize;
+                ord += blockSize;
+                count -= blockSize;
             }
             if (count == 0L)
             {
@@ -174,10 +174,10 @@ namespace Lucene.Net.Util.Packed
             }
 
             // 3. skip last values
-            Debug.Assert(count < BlockSize);
+            Debug.Assert(count < blockSize);
             Refill();
-            Ord_Renamed += count;
-            Off += (int)count;
+            ord += count;
+            off += (int)count;
         }
 
         private void SkipBytes(long count)
@@ -189,15 +189,15 @@ namespace Lucene.Net.Util.Packed
             }
             else
             {
-                if (Blocks == null)
+                if (blocks == null)
                 {
-                    Blocks = new byte[BlockSize];
+                    blocks = new byte[blockSize];
                 }
                 long skipped = 0;
                 while (skipped < count)
                 {
-                    int toSkip = (int)Math.Min(Blocks.Length, count - skipped);
-                    @in.ReadBytes(Blocks, 0, toSkip);
+                    int toSkip = (int)Math.Min(blocks.Length, count - skipped);
+                    @in.ReadBytes(blocks, 0, toSkip);
                     skipped += toSkip;
                 }
             }
@@ -207,16 +207,16 @@ namespace Lucene.Net.Util.Packed
         /// Read the next value. </summary>
         public long Next()
         {
-            if (Ord_Renamed == ValueCount)
+            if (ord == valueCount)
             {
                 throw new System.IO.EndOfStreamException();
             }
-            if (Off == BlockSize)
+            if (off == blockSize)
             {
                 Refill();
             }
-            long value = Values[Off++];
-            ++Ord_Renamed;
+            long value = values[off++];
+            ++ord;
             return value;
         }
 
@@ -225,23 +225,23 @@ namespace Lucene.Net.Util.Packed
         public LongsRef Next(int count)
         {
             Debug.Assert(count > 0);
-            if (Ord_Renamed == ValueCount)
+            if (ord == valueCount)
             {
                 throw new System.IO.EndOfStreamException();
             }
-            if (Off == BlockSize)
+            if (off == blockSize)
             {
                 Refill();
             }
 
-            count = Math.Min(count, BlockSize - Off);
-            count = (int)Math.Min(count, ValueCount - Ord_Renamed);
+            count = Math.Min(count, blockSize - off);
+            count = (int)Math.Min(count, valueCount - ord);
 
-            ValuesRef.Offset = Off;
-            ValuesRef.Length = count;
-            Off += count;
-            Ord_Renamed += count;
-            return ValuesRef;
+            valuesRef.Offset = off;
+            valuesRef.Length = count;
+            off += count;
+            ord += count;
+            return valuesRef;
         }
 
         private void Refill()
@@ -258,40 +258,40 @@ namespace Lucene.Net.Util.Packed
 
             if (bitsPerValue == 0)
             {
-                Arrays.Fill(Values, minValue);
+                Arrays.Fill(values, minValue);
             }
             else
             {
-                PackedInts.IDecoder decoder = PackedInts.GetDecoder(PackedInts.Format.PACKED, PackedIntsVersion, bitsPerValue);
-                int iterations = BlockSize / decoder.ByteValueCount;
+                PackedInts.IDecoder decoder = PackedInts.GetDecoder(PackedInts.Format.PACKED, packedIntsVersion, bitsPerValue);
+                int iterations = blockSize / decoder.ByteValueCount;
                 int blocksSize = iterations * decoder.ByteBlockCount;
-                if (Blocks == null || Blocks.Length < blocksSize)
+                if (blocks == null || blocks.Length < blocksSize)
                 {
-                    Blocks = new byte[blocksSize];
+                    blocks = new byte[blocksSize];
                 }
 
-                int valueCount = (int)Math.Min(this.ValueCount - Ord_Renamed, BlockSize);
-                int blocksCount = (int)PackedInts.Format.PACKED.ByteCount(PackedIntsVersion, valueCount, bitsPerValue);
-                @in.ReadBytes(Blocks, 0, blocksCount);
+                int valueCount = (int)Math.Min(this.valueCount - ord, blockSize);
+                int blocksCount = (int)PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, bitsPerValue);
+                @in.ReadBytes(blocks, 0, blocksCount);
 
-                decoder.Decode(Blocks, 0, Values, 0, iterations);
+                decoder.Decode(blocks, 0, values, 0, iterations);
 
                 if (minValue != 0)
                 {
                     for (int i = 0; i < valueCount; ++i)
                     {
-                        Values[i] += minValue;
+                        values[i] += minValue;
                     }
                 }
             }
-            Off = 0;
+            off = 0;
         }
 
         /// <summary>
         /// Return the offset of the next value to read. </summary>
         public long Ord
         {
-            get { return Ord_Renamed; }
+            get { return ord; }
         }
     }
 }
