@@ -98,7 +98,7 @@ namespace Lucene.Net.Util.Automaton
             path.SafeSet(s.number, true);
             foreach (Transition t in s.GetTransitions())
             {
-                if (path.SafeGet(t.To.number) || (!visited.SafeGet(t.To.number) && !IsFinite(t.To, path, visited)))
+                if (path.SafeGet(t.to.number) || (!visited.SafeGet(t.to.number) && !IsFinite(t.to, path, visited)))
                 {
                     return false;
                 }
@@ -132,10 +132,10 @@ namespace Lucene.Net.Util.Automaton
                     var iter = s.GetTransitions().GetEnumerator();
                     iter.MoveNext();
                     Transition t = iter.Current;
-                    if (t.Min_Renamed == t.Max_Renamed && !visited.Contains(t.To))
+                    if (t.min == t.max && !visited.Contains(t.to))
                     {
-                        b.AppendCodePoint(t.Min_Renamed);
-                        s = t.To;
+                        b.AppendCodePoint(t.min);
+                        s = t.to;
                         done = false;
                     }
                 }
@@ -166,11 +166,11 @@ namespace Lucene.Net.Util.Automaton
                     iter.MoveNext();
                     Transition t = iter.Current;
 
-                    if (t.Min_Renamed == t.Max_Renamed && !visited.Contains(t.To))
+                    if (t.min == t.max && !visited.Contains(t.to))
                     {
                         @ref.Grow(++@ref.Length);
-                        @ref.Bytes[@ref.Length - 1] = (byte)t.Min_Renamed;
-                        s = t.To;
+                        @ref.Bytes[@ref.Length - 1] = (byte)t.min;
+                        s = t.to;
                         done = false;
                     }
                 }
@@ -255,7 +255,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 foreach (Transition t in r.GetTransitions())
                 {
-                    m[t.To].Add(new Transition(t.Min_Renamed, t.Max_Renamed, r));
+                    m[t.to].Add(new Transition(t.min, t.max, r));
                 }
             }
             foreach (State r in states)
@@ -312,16 +312,16 @@ namespace Lucene.Net.Util.Automaton
             pathstates.Add(s);
             foreach (Transition t in s.GetTransitions())
             {
-                if (pathstates.Contains(t.To))
+                if (pathstates.Contains(t.to))
                 {
                     return false;
                 }
-                for (int n = t.Min_Renamed; n <= t.Max_Renamed; n++)
+                for (int n = t.min; n <= t.max; n++)
                 {
                     path.Grow(path.Length + 1);
                     path.Ints[path.Length] = n;
                     path.Length++;
-                    if (t.To.accept)
+                    if (t.to.accept)
                     {
                         strings.Add(IntsRef.DeepCopyOf(path));
                         if (limit >= 0 && strings.Count > limit)
@@ -329,7 +329,7 @@ namespace Lucene.Net.Util.Automaton
                             return false;
                         }
                     }
-                    if (!GetFiniteStrings(t.To, pathstates, strings, path, limit))
+                    if (!GetFiniteStrings(t.to, pathstates, strings, path, limit))
                     {
                         return false;
                     }

@@ -69,7 +69,7 @@ namespace Lucene.Net.Util.Automaton
             if (a.initial.numTransitions == 1)
             {
                 Transition t = a.initial.TransitionsArray[0];
-                if (t.To == a.initial && t.Min_Renamed == Character.MIN_CODE_POINT && t.Max_Renamed == Character.MAX_CODE_POINT)
+                if (t.to == a.initial && t.min == Character.MIN_CODE_POINT && t.max == Character.MAX_CODE_POINT)
                 {
                     return;
                 }
@@ -242,7 +242,7 @@ namespace Lucene.Net.Util.Automaton
                 s.accept = states[s.number].accept;
                 foreach (Transition t in states[s.number].GetTransitions())
                 {
-                    s.AddTransition(new Transition(t.Min_Renamed, t.Max_Renamed, newstates[t.To.number]));
+                    s.AddTransition(new Transition(t.min, t.max, newstates[t.to.number]));
                 }
             }
             a.ClearNumberedStates();

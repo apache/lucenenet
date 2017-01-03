@@ -495,7 +495,7 @@ namespace Lucene.Net.Util.Automaton
                         {
                             if (t.Min <= points[n] && points[n] <= t.Max)
                             {
-                                p.Add(t.To);
+                                p.Add(t.to);
                             }
                         }
                     }

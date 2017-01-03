@@ -295,18 +295,18 @@ namespace Lucene.Net.Util.Automaton
                     for (int i = 0; i < s.numTransitions; i++)
                     {
                         Transition t = s.TransitionsArray[i];
-                        if (!visited.Contains(t.To))
+                        if (!visited.Contains(t.to))
                         {
-                            visited.Add(t.To);
-                            worklist.AddLast(t.To);
-                            t.To.number = upto;
+                            visited.Add(t.to);
+                            worklist.AddLast(t.to);
+                            t.to.number = upto;
                             if (upto == states.Length)
                             {
                                 State[] newArray = new State[ArrayUtil.Oversize(1 + upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
                                 Array.Copy(states, 0, newArray, 0, upto);
                                 states = newArray;
                             }
-                            states[upto] = t.To;
+                            states[upto] = t.to;
                             upto++;
                         }
                     }
@@ -371,10 +371,10 @@ namespace Lucene.Net.Util.Automaton
                 }
                 foreach (Transition t in s.GetTransitions())
                 {
-                    if (!visited.Contains(t.To))
+                    if (!visited.Contains(t.to))
                     {
-                        visited.Add(t.To);
-                        worklist.AddLast(t.To);
+                        visited.Add(t.to);
+                        worklist.AddLast(t.to);
                     }
                 }
             }
@@ -392,16 +392,16 @@ namespace Lucene.Net.Util.Automaton
             foreach (State p in GetNumberedStates())
             {
                 int maxi = Character.MIN_CODE_POINT;
-                p.SortTransitions(Transition.CompareByMinMaxThenDest);
+                p.SortTransitions(Transition.COMPARE_BY_MIN_MAX_THEN_DEST);
                 foreach (Transition t in p.GetTransitions())
                 {
-                    if (t.Min_Renamed > maxi)
+                    if (t.min > maxi)
                     {
-                        p.AddTransition(new Transition(maxi, (t.Min_Renamed - 1), s));
+                        p.AddTransition(new Transition(maxi, (t.min - 1), s));
                     }
-                    if (t.Max_Renamed + 1 > maxi)
+                    if (t.max + 1 > maxi)
                     {
-                        maxi = t.Max_Renamed + 1;
+                        maxi = t.max + 1;
                     }
                 }
                 if (maxi <= Character.MAX_CODE_POINT)
@@ -452,10 +452,10 @@ namespace Lucene.Net.Util.Automaton
             {
                 foreach (Transition t in s.GetTransitions())
                 {
-                    pointset.Add(t.Min_Renamed);
-                    if (t.Max_Renamed < Character.MAX_CODE_POINT)
+                    pointset.Add(t.min);
+                    if (t.max < Character.MAX_CODE_POINT)
                     {
-                        pointset.Add((t.Max_Renamed + 1));
+                        pointset.Add((t.max + 1));
                     }
                 }
             }
@@ -495,7 +495,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 for (int i = 0; i < s.numTransitions; i++)
                 {
-                    map[s.TransitionsArray[i].To.Number].Add(s);
+                    map[s.TransitionsArray[i].to.Number].Add(s);
                 }
             }
             LinkedList<State> worklist = new LinkedList<State>(live);
@@ -544,7 +544,7 @@ namespace Lucene.Net.Util.Automaton
                 for (int i = 0; i < s.numTransitions; i++)
                 {
                     Transition t = s.TransitionsArray[i];
-                    if (liveSet.SafeGet(t.To.Number))
+                    if (liveSet.SafeGet(t.to.Number))
                     {
                         s.TransitionsArray[upto++] = s.TransitionsArray[i];
                     }
@@ -577,7 +577,7 @@ namespace Lucene.Net.Util.Automaton
             Transition[][] transitions = new Transition[states.Length][];
             foreach (State s in states)
             {
-                s.SortTransitions(Transition.CompareByMinMaxThenDest);
+                s.SortTransitions(Transition.COMPARE_BY_MIN_MAX_THEN_DEST);
                 s.TrimTransitionsArray();
                 transitions[s.number] = s.TransitionsArray;
                 Debug.Assert(s.TransitionsArray != null);
@@ -675,12 +675,12 @@ namespace Lucene.Net.Util.Automaton
 
                 for (int n1 = 0; n1 < t1.Length; n1++)
                 {
-                    int min1 = t1[n1].Min_Renamed, max1 = t1[n1].Max_Renamed;
+                    int min1 = t1[n1].min, max1 = t1[n1].max;
 
                     hash = HashHelpers.CombineHashCodes(hash, min1.GetHashCode());
                     hash = HashHelpers.CombineHashCodes(hash, max1.GetHashCode());
 
-                    State next = t1[n1].To;
+                    State next = t1[n1].to;
                     if (!visited.Contains(next))
                     {
                         worklist.AddLast(next);
@@ -820,7 +820,7 @@ namespace Lucene.Net.Util.Automaton
                     }
                     foreach (Transition t in s.GetTransitions())
                     {
-                        p.AddTransition(new Transition(t.Min_Renamed, t.Max_Renamed, m[t.To]));
+                        p.AddTransition(new Transition(t.min, t.max, m[t.to]));
                     }
                 }
             }

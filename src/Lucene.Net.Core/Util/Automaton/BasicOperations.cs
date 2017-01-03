@@ -413,15 +413,15 @@ namespace Lucene.Net.Util.Automaton
                 Transition[] t2 = transitions2[p.S2.number];
                 for (int n1 = 0, b2 = 0; n1 < t1.Length; n1++)
                 {
-                    while (b2 < t2.Length && t2[b2].Max_Renamed < t1[n1].Min_Renamed)
+                    while (b2 < t2.Length && t2[b2].max < t1[n1].min)
                     {
                         b2++;
                     }
-                    for (int n2 = b2; n2 < t2.Length && t1[n1].Max_Renamed >= t2[n2].Min_Renamed; n2++)
+                    for (int n2 = b2; n2 < t2.Length && t1[n1].max >= t2[n2].min; n2++)
                     {
-                        if (t2[n2].Max_Renamed >= t1[n1].Min_Renamed)
+                        if (t2[n2].max >= t1[n1].min)
                         {
-                            StatePair q = new StatePair(t1[n1].To, t2[n2].To);
+                            StatePair q = new StatePair(t1[n1].to, t2[n2].to);
                             StatePair r;
                             newstates.TryGetValue(q, out r);
                             if (r == null)
@@ -431,8 +431,8 @@ namespace Lucene.Net.Util.Automaton
                                 newstates[q] = q;
                                 r = q;
                             }
-                            int min = t1[n1].Min_Renamed > t2[n2].Min_Renamed ? t1[n1].Min_Renamed : t2[n2].Min_Renamed;
-                            int max = t1[n1].Max_Renamed < t2[n2].Max_Renamed ? t1[n1].Max_Renamed : t2[n2].Max_Renamed;
+                            int min = t1[n1].min > t2[n2].min ? t1[n1].min : t2[n2].min;
+                            int max = t1[n1].max < t2[n2].max ? t1[n1].max : t2[n2].max;
                             p.s.AddTransition(new Transition(min, max, r.s));
                         }
                     }
@@ -512,28 +512,28 @@ namespace Lucene.Net.Util.Automaton
                 Transition[] t2 = transitions2[p.S2.number];
                 for (int n1 = 0, b2 = 0; n1 < t1.Length; n1++)
                 {
-                    while (b2 < t2.Length && t2[b2].Max_Renamed < t1[n1].Min_Renamed)
+                    while (b2 < t2.Length && t2[b2].max < t1[n1].min)
                     {
                         b2++;
                     }
-                    int min1 = t1[n1].Min_Renamed, max1 = t1[n1].Max_Renamed;
+                    int min1 = t1[n1].min, max1 = t1[n1].max;
 
-                    for (int n2 = b2; n2 < t2.Length && t1[n1].Max_Renamed >= t2[n2].Min_Renamed; n2++)
+                    for (int n2 = b2; n2 < t2.Length && t1[n1].max >= t2[n2].min; n2++)
                     {
-                        if (t2[n2].Min_Renamed > min1)
+                        if (t2[n2].min > min1)
                         {
                             return false;
                         }
-                        if (t2[n2].Max_Renamed < Character.MAX_CODE_POINT)
+                        if (t2[n2].max < Character.MAX_CODE_POINT)
                         {
-                            min1 = t2[n2].Max_Renamed + 1;
+                            min1 = t2[n2].max + 1;
                         }
                         else
                         {
                             min1 = Character.MAX_CODE_POINT;
                             max1 = Character.MIN_CODE_POINT;
                         }
-                        StatePair q = new StatePair(t1[n1].To, t2[n2].To);
+                        StatePair q = new StatePair(t1[n1].to, t2[n2].to);
                         if (!visited.Contains(q))
                         {
                             worklist.AddLast(q);
@@ -759,8 +759,8 @@ namespace Lucene.Net.Util.Automaton
 
             public void Add(Transition t)
             {
-                Find(t.Min_Renamed).Starts.Add(t);
-                Find(1 + t.Max_Renamed).Ends.Add(t);
+                Find(t.min).Starts.Add(t);
+                Find(1 + t.max).Ends.Add(t);
             }
 
             public override string ToString()
@@ -895,9 +895,9 @@ namespace Lucene.Net.Util.Automaton
                     for (int j = 0; j < limit; j++)
                     {
                         Transition t = transitions[j];
-                        int num = t.To.number;
+                        int num = t.to.number;
                         statesSet.Decr(num);
-                        accCount -= t.To.accept ? 1 : 0;
+                        accCount -= t.to.accept ? 1 : 0;
                     }
                     points.Points[i].Ends.Count = 0;
 
@@ -908,9 +908,9 @@ namespace Lucene.Net.Util.Automaton
                     for (int j = 0; j < limit; j++)
                     {
                         Transition t = transitions[j];
-                        int num = t.To.number;
+                        int num = t.to.number;
                         statesSet.Incr(num);
-                        accCount += t.To.accept ? 1 : 0;
+                        accCount += t.to.accept ? 1 : 0;
                     }
                     lastPoint = point;
                     points.Points[i].Starts.Count = 0;
@@ -1043,7 +1043,7 @@ namespace Lucene.Net.Util.Automaton
                 var iter = a.initial.GetTransitions().GetEnumerator();
                 iter.MoveNext();
                 Transition t = iter.Current; ;
-                return t.To == a.initial && t.Min_Renamed == Character.MIN_CODE_POINT && t.Max_Renamed == Character.MAX_CODE_POINT;
+                return t.to == a.initial && t.min == Character.MIN_CODE_POINT && t.max == Character.MAX_CODE_POINT;
             }
             return false;
         }

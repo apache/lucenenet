@@ -202,9 +202,9 @@ namespace Lucene.Net.Util.Automaton
             for (int i = 0; i < numTransitions; i++)
             {
                 Transition t = TransitionsArray[i];
-                if (t.Min_Renamed <= c && c <= t.Max_Renamed)
+                if (t.min <= c && c <= t.max)
                 {
-                    return t.To;
+                    return t.to;
                 }
             }
             return null;
@@ -221,9 +221,9 @@ namespace Lucene.Net.Util.Automaton
             for (int i = 0; i < numTransitions; i++)
             {
                 Transition t = TransitionsArray[i];
-                if (t.Min_Renamed <= c && c <= t.Max_Renamed)
+                if (t.min <= c && c <= t.max)
                 {
-                    dest.Add(t.To);
+                    dest.Add(t.to);
                 }
             }
         }
@@ -268,20 +268,20 @@ namespace Lucene.Net.Util.Automaton
             {
                 return;
             }
-            SortTransitions(Transition.CompareByDestThenMinMax);
+            SortTransitions(Transition.COMPARE_BY_DEST_THEN_MIN_MAX);
             State p = null;
             int min = -1, max = -1;
             int upto = 0;
             for (int i = 0; i < numTransitions; i++)
             {
                 Transition t = TransitionsArray[i];
-                if (p == t.To)
+                if (p == t.to)
                 {
-                    if (t.Min_Renamed <= max + 1)
+                    if (t.min <= max + 1)
                     {
-                        if (t.Max_Renamed > max)
+                        if (t.max > max)
                         {
-                            max = t.Max_Renamed;
+                            max = t.max;
                         }
                     }
                     else
@@ -290,8 +290,8 @@ namespace Lucene.Net.Util.Automaton
                         {
                             TransitionsArray[upto++] = new Transition(min, max, p);
                         }
-                        min = t.Min_Renamed;
-                        max = t.Max_Renamed;
+                        min = t.min;
+                        max = t.max;
                     }
                 }
                 else
@@ -300,9 +300,9 @@ namespace Lucene.Net.Util.Automaton
                     {
                         TransitionsArray[upto++] = new Transition(min, max, p);
                     }
-                    p = t.To;
-                    min = t.Min_Renamed;
-                    max = t.Max_Renamed;
+                    p = t.to;
+                    min = t.min;
+                    max = t.max;
                 }
             }
 

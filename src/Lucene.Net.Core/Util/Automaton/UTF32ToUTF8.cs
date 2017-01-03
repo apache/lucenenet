@@ -341,7 +341,7 @@ namespace Lucene.Net.Util.Automaton
                 for (int i = 0; i < utf32State.numTransitions; i++)
                 {
                     Transition t = utf32State.TransitionsArray[i];
-                    State destUTF32 = t.To;
+                    State destUTF32 = t.to;
                     State destUTF8 = map[destUTF32.number];
                     if (destUTF8 == null)
                     {
@@ -350,7 +350,7 @@ namespace Lucene.Net.Util.Automaton
                         map[destUTF32.number] = destUTF8;
                         pending.Add(destUTF32);
                     }
-                    ConvertOneEdge(utf8State, destUTF8, t.Min_Renamed, t.Max_Renamed);
+                    ConvertOneEdge(utf8State, destUTF8, t.min, t.max);
                 }
             }
 

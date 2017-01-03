@@ -215,7 +215,7 @@ namespace Lucene.Net.Util.Automaton
             Transition maxTransition = null;
             foreach (Transition transition in SortedTransitions[state])
             {
-                if (transition.Min_Renamed < leadLabel)
+                if (transition.min < leadLabel)
                 {
                     maxTransition = transition;
                 }
@@ -225,13 +225,13 @@ namespace Lucene.Net.Util.Automaton
 
             // Append floorLabel
             int floorLabel;
-            if (maxTransition.Max_Renamed > leadLabel - 1)
+            if (maxTransition.max > leadLabel - 1)
             {
                 floorLabel = leadLabel - 1;
             }
             else
             {
-                floorLabel = maxTransition.Max_Renamed;
+                floorLabel = maxTransition.max;
             }
             if (idx >= term.Bytes.Length)
             {
@@ -240,7 +240,7 @@ namespace Lucene.Net.Util.Automaton
             //if (DEBUG) System.out.println("  add floorLabel=" + (char) floorLabel + " idx=" + idx);
             term.Bytes[idx] = (byte)floorLabel;
 
-            state = maxTransition.To.Number;
+            state = maxTransition.to.Number;
             idx++;
 
             // Push down to last accept state
@@ -265,8 +265,8 @@ namespace Lucene.Net.Util.Automaton
                         term.Grow(1 + idx);
                     }
                     //if (DEBUG) System.out.println("  push maxLabel=" + (char) lastTransition.max + " idx=" + idx);
-                    term.Bytes[idx] = (byte)lastTransition.Max_Renamed;
-                    state = lastTransition.To.Number;
+                    term.Bytes[idx] = (byte)lastTransition.max;
+                    state = lastTransition.to.Number;
                     idx++;
                 }
             }
@@ -375,7 +375,7 @@ namespace Lucene.Net.Util.Automaton
                             //if (DEBUG) System.out.println("  return " + output.utf8ToString());
                             return output;
                         }
-                        else if (label - 1 < transitions[0].Min_Renamed)
+                        else if (label - 1 < transitions[0].min)
                         {
                             if (RunAutomaton.IsAccept(state))
                             {

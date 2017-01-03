@@ -47,9 +47,9 @@ namespace Lucene.Net.Util.Automaton
          * CLASS INVARIANT: min<=max
          */
 
-        internal readonly int Min_Renamed;
-        internal readonly int Max_Renamed;
-        internal readonly State To;
+        internal readonly int min;
+        internal readonly int max;
+        internal readonly State to;
 
         /// <summary>
         /// Constructs a new singleton interval transition.
@@ -59,8 +59,8 @@ namespace Lucene.Net.Util.Automaton
         public Transition(int c, State to)
         {
             Debug.Assert(c >= 0);
-            Min_Renamed = Max_Renamed = c;
-            this.To = to;
+            min = max = c;
+            this.to = to;
         }
 
         /// <summary>
@@ -79,9 +79,9 @@ namespace Lucene.Net.Util.Automaton
                 max = min;
                 min = t;
             }
-            this.Min_Renamed = min;
-            this.Max_Renamed = max;
-            this.To = to;
+            this.min = min;
+            this.max = max;
+            this.to = to;
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Lucene.Net.Util.Automaton
         {
             get
             {
-                return Min_Renamed;
+                return min;
             }
         }
 
@@ -100,7 +100,7 @@ namespace Lucene.Net.Util.Automaton
         {
             get
             {
-                return Max_Renamed;
+                return max;
             }
         }
 
@@ -110,7 +110,7 @@ namespace Lucene.Net.Util.Automaton
         {
             get
             {
-                return To;
+                return to;
             }
         }
 
@@ -125,7 +125,7 @@ namespace Lucene.Net.Util.Automaton
             if (obj is Transition)
             {
                 Transition t = (Transition)obj;
-                return t.Min_Renamed == Min_Renamed && t.Max_Renamed == Max_Renamed && t.To == To;
+                return t.min == min && t.max == max && t.to == to;
             }
             else
             {
@@ -140,7 +140,7 @@ namespace Lucene.Net.Util.Automaton
         /// <returns> hash code </returns>
         public override int GetHashCode()
         {
-            return Min_Renamed * 2 + Max_Renamed * 3;
+            return min * 2 + max * 3;
         }
 
         /// <summary>
@@ -204,24 +204,24 @@ namespace Lucene.Net.Util.Automaton
         public override string ToString()
         {
             StringBuilder b = new StringBuilder();
-            AppendCharString(Min_Renamed, b);
-            if (Min_Renamed != Max_Renamed)
+            AppendCharString(min, b);
+            if (min != max)
             {
                 b.Append("-");
-                AppendCharString(Max_Renamed, b);
+                AppendCharString(max, b);
             }
-            b.Append(" -> ").Append(To.number);
+            b.Append(" -> ").Append(to.number);
             return b.ToString();
         }
 
         internal virtual void AppendDot(StringBuilder b)
         {
-            b.Append(" -> ").Append(To.number).Append(" [label=\"");
-            AppendCharString(Min_Renamed, b);
-            if (Min_Renamed != Max_Renamed)
+            b.Append(" -> ").Append(to.number).Append(" [label=\"");
+            AppendCharString(min, b);
+            if (min != max)
             {
                 b.Append("-");
-                AppendCharString(Max_Renamed, b);
+                AppendCharString(max, b);
             }
             b.Append("\"]\n");
         }
@@ -230,66 +230,67 @@ namespace Lucene.Net.Util.Automaton
         {
             public int Compare(Transition t1, Transition t2)
             {
-                if (t1.To != t2.To)
+                if (t1.to != t2.to)
                 {
-                    if (t1.To.number < t2.To.number)
+                    if (t1.to.number < t2.to.number)
                     {
                         return -1;
                     }
-                    else if (t1.To.number > t2.To.number)
+                    else if (t1.to.number > t2.to.number)
                     {
                         return 1;
                     }
                 }
-                if (t1.Min_Renamed < t2.Min_Renamed)
+                if (t1.min < t2.min)
                 {
                     return -1;
                 }
-                if (t1.Min_Renamed > t2.Min_Renamed)
+                if (t1.min > t2.min)
                 {
                     return 1;
                 }
-                if (t1.Max_Renamed > t2.Max_Renamed)
+                if (t1.max > t2.max)
                 {
                     return -1;
                 }
-                if (t1.Max_Renamed < t2.Max_Renamed)
+                if (t1.max < t2.max)
                 {
                     return 1;
                 }
                 return 0;
             }
         }
-
-        public static readonly IComparer<Transition> CompareByDestThenMinMax = new CompareByDestThenMinMaxSingle();
+        
+        // LUCENENET NOTE: Renamed to follow convention of static fields/constants
+        public static readonly IComparer<Transition> COMPARE_BY_DEST_THEN_MIN_MAX = new CompareByDestThenMinMaxSingle();
 
         private sealed class CompareByMinMaxThenDestSingle : IComparer<Transition>
         {
             public int Compare(Transition t1, Transition t2)
             {
-                if (t1.Min_Renamed < t2.Min_Renamed)
+                if (t1.min < t2.min)
                 {
                     return -1;
                 }
-                if (t1.Min_Renamed > t2.Min_Renamed)
+                if (t1.min > t2.min)
                 {
                     return 1;
                 }
-                if (t1.Max_Renamed > t2.Max_Renamed)
+                if (t1.max > t2.max)
                 {
                     return -1;
                 }
-                if (t1.Max_Renamed < t2.Max_Renamed)
+                if (t1.max < t2.max)
                 {
                     return 1;
                 }
-                if (t1.To != t2.To)
+                if (t1.to != t2.to)
                 {
-                    if (t1.To.number < t2.To.number)
+                    if (t1.to.number < t2.to.number)
                     {
                         return -1;
                     }
-                    if (t1.To.number > t2.To.number)
+                    if (t1.to.number > t2.to.number)
                     {
                         return 1;
                     }
@@ -298,6 +299,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
-        public static readonly IComparer<Transition> CompareByMinMaxThenDest = new CompareByMinMaxThenDestSingle();
+        // LUCENENET NOTE: Renamed to follow convention of static fields/constants
+        public static readonly IComparer<Transition> COMPARE_BY_MIN_MAX_THEN_DEST = new CompareByMinMaxThenDestSingle();
     }
 }
