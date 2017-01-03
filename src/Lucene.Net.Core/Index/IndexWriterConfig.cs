@@ -535,7 +535,7 @@ namespace Lucene.Net.Index
             {
                 throw new System.ArgumentException("PerThreadHardLimit must be greater than 0 and less than 2048MB");
             }
-            this.PerThreadHardLimitMB = perThreadHardLimitMB;
+            this.perThreadHardLimitMB = perThreadHardLimitMB;
             return this;
         }
 
@@ -543,7 +543,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return PerThreadHardLimitMB;
+                return perThreadHardLimitMB;
             }
         }
 

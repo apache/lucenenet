@@ -131,11 +131,11 @@ namespace Lucene.Net.Index
         /// Sets the hard upper bound on RAM usage for a single
         ///  segment, after which the segment is forced to flush.
         /// </summary>
-        internal volatile int PerThreadHardLimitMB;
+        internal volatile int perThreadHardLimitMB;
 
         /// <summary>
         /// <seealso cref="LuceneVersion"/> that <seealso cref="IndexWriter"/> should emulate. </summary>
-        internal readonly LuceneVersion MatchVersion;
+        internal readonly LuceneVersion matchVersion;
 
         /// <summary>
         /// True if segment flushes should use compound file format </summary>
@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
         internal LiveIndexWriterConfig(Analyzer analyzer, LuceneVersion matchVersion)
         {
             this.analyzer = analyzer;
-            this.MatchVersion = matchVersion;
+            this.matchVersion = matchVersion;
             ramBufferSizeMB = IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB;
             maxBufferedDocs = IndexWriterConfig.DEFAULT_MAX_BUFFERED_DOCS;
             maxBufferedDeleteTerms = IndexWriterConfig.DEFAULT_MAX_BUFFERED_DELETE_TERMS;
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
             flushPolicy = new FlushByRamOrCountsPolicy();
             readerPooling = IndexWriterConfig.DEFAULT_READER_POOLING;
             indexerThreadPool = new ThreadAffinityDocumentsWriterThreadPool(IndexWriterConfig.DEFAULT_MAX_THREAD_STATES);
-            PerThreadHardLimitMB = IndexWriterConfig.DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB;
+            perThreadHardLimitMB = IndexWriterConfig.DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB;
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
             ramBufferSizeMB = config.RAMBufferSizeMB;
             readerTermsIndexDivisor = config.ReaderTermsIndexDivisor;
             termIndexInterval = config.TermIndexInterval;
-            MatchVersion = config.MatchVersion;
+            matchVersion = config.matchVersion;
             analyzer = config.Analyzer;
             delPolicy = config.IndexDeletionPolicy;
             commit = config.IndexCommit;
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
             indexerThreadPool = config.IndexerThreadPool;
             readerPooling = config.ReaderPooling;
             flushPolicy = config.FlushPolicy;
-            PerThreadHardLimitMB = config.RAMPerThreadHardLimitMB;
+            perThreadHardLimitMB = config.RAMPerThreadHardLimitMB;
             useCompoundFile = config.UseCompoundFile;
             checkIntegrityAtMerge = config.CheckIntegrityAtMerge;
         }
@@ -670,7 +670,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return PerThreadHardLimitMB;
+                return perThreadHardLimitMB;
             }
         }
 
@@ -761,7 +761,7 @@ namespace Lucene.Net.Index
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("matchVersion=").Append(MatchVersion).Append("\n");
+            sb.Append("matchVersion=").Append(matchVersion).Append("\n");
             sb.Append("analyzer=").Append(analyzer == null ? "null" : analyzer.GetType().Name).Append("\n");
             sb.Append("ramBufferSizeMB=").Append(RAMBufferSizeMB).Append("\n");
             sb.Append("maxBufferedDocs=").Append(MaxBufferedDocs).Append("\n");
