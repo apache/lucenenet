@@ -49,8 +49,8 @@ namespace Lucene.Net.Util.Packed
         public MonotonicAppendingLongBuffer(int initialPageCount, int pageSize, float acceptableOverheadRatio)
             : base(initialPageCount, pageSize, acceptableOverheadRatio)
         {
-            Averages = new float[Values.Length];
-            MinValues = new long[Values.Length];
+            Averages = new float[values.Length];
+            MinValues = new long[values.Length];
         }
 
         /// <summary>
@@ -78,37 +78,37 @@ namespace Lucene.Net.Util.Packed
 
         internal override long Get(int block, int element)
         {
-            if (block == ValuesOff)
+            if (block == valuesOff)
             {
-                return Pending[element];
+                return pending[element];
             }
             else
             {
                 long @base = MinValues[block] + (long)(Averages[block] * (long)element);
-                if (Values[block] == null)
+                if (values[block] == null)
                 {
                     return @base;
                 }
                 else
                 {
-                    return @base + ZigZagDecode(Values[block].Get(element));
+                    return @base + ZigZagDecode(values[block].Get(element));
                 }
             }
         }
 
         internal override int Get(int block, int element, long[] arr, int off, int len)
         {
-            if (block == ValuesOff)
+            if (block == valuesOff)
             {
-                int sysCopyToRead = Math.Min(len, PendingOff - element);
-                Array.Copy(Pending, element, arr, off, sysCopyToRead);
+                int sysCopyToRead = Math.Min(len, pendingOff - element);
+                Array.Copy(pending, element, arr, off, sysCopyToRead);
                 return sysCopyToRead;
             }
             else
             {
-                if (Values[block] == null)
+                if (values[block] == null)
                 {
-                    int toFill = Math.Min(len, Pending.Length - element);
+                    int toFill = Math.Min(len, pending.Length - element);
                     for (int r = 0; r < toFill; r++, off++, element++)
                     {
                         arr[off] = MinValues[block] + (long)(Averages[block] * (long)element);
@@ -118,7 +118,7 @@ namespace Lucene.Net.Util.Packed
                 else
                 {
                     /* packed block */
-                    int read = Values[block].Get(element, arr, off, len);
+                    int read = values[block].Get(element, arr, off, len);
                     for (int r = 0; r < read; r++, off++, element++)
                     {
                         arr[off] = MinValues[block] + (long)(Averages[block] * (long)element) + ZigZagDecode(arr[off]);
@@ -137,40 +137,40 @@ namespace Lucene.Net.Util.Packed
 
         internal override void PackPendingValues()
         {
-            Debug.Assert(PendingOff > 0);
-            MinValues[ValuesOff] = Pending[0];
-            Averages[ValuesOff] = PendingOff == 1 ? 0 : (float)(Pending[PendingOff - 1] - Pending[0]) / (PendingOff - 1);
+            Debug.Assert(pendingOff > 0);
+            MinValues[valuesOff] = pending[0];
+            Averages[valuesOff] = pendingOff == 1 ? 0 : (float)(pending[pendingOff - 1] - pending[0]) / (pendingOff - 1);
 
-            for (int i = 0; i < PendingOff; ++i)
+            for (int i = 0; i < pendingOff; ++i)
             {
-                Pending[i] = ZigZagEncode(Pending[i] - MinValues[ValuesOff] - (long)(Averages[ValuesOff] * (long)i));
+                pending[i] = ZigZagEncode(pending[i] - MinValues[valuesOff] - (long)(Averages[valuesOff] * (long)i));
             }
             long maxDelta = 0;
-            for (int i = 0; i < PendingOff; ++i)
+            for (int i = 0; i < pendingOff; ++i)
             {
-                if (Pending[i] < 0)
+                if (pending[i] < 0)
                 {
                     maxDelta = -1;
                     break;
                 }
                 else
                 {
-                    maxDelta = Math.Max(maxDelta, Pending[i]);
+                    maxDelta = Math.Max(maxDelta, pending[i]);
                 }
             }
             if (maxDelta == 0)
             {
-                Values[ValuesOff] = new PackedInts.NullReader(PendingOff);
+                values[valuesOff] = new PackedInts.NullReader(pendingOff);
             }
             else
             {
                 int bitsRequired = maxDelta < 0 ? 64 : PackedInts.BitsRequired(maxDelta);
-                PackedInts.Mutable mutable = PackedInts.GetMutable(PendingOff, bitsRequired, AcceptableOverheadRatio);
-                for (int i = 0; i < PendingOff; )
+                PackedInts.Mutable mutable = PackedInts.GetMutable(pendingOff, bitsRequired, acceptableOverheadRatio);
+                for (int i = 0; i < pendingOff; )
                 {
-                    i += mutable.Set(i, Pending, i, PendingOff - i);
+                    i += mutable.Set(i, pending, i, pendingOff - i);
                 }
-                Values[ValuesOff] = mutable;
+                values[valuesOff] = mutable;
             }
         }
 

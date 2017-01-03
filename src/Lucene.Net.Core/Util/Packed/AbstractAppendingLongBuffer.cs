@@ -30,28 +30,28 @@ namespace Lucene.Net.Util.Packed
         // since their goal is to try to have small numbers of bits per value
         internal static readonly int MAX_PAGE_SIZE = 1 << 20;
 
-        internal readonly int PageShift, PageMask;
-        internal PackedInts.Reader[] Values;
-        private long ValuesBytes;
-        internal int ValuesOff;
-        internal long[] Pending;
-        internal int PendingOff;
-        internal float AcceptableOverheadRatio;
+        internal readonly int pageShift, pageMask;
+        internal PackedInts.Reader[] values;
+        private long valuesBytes;
+        internal int valuesOff;
+        internal long[] pending;
+        internal int pendingOff;
+        internal float acceptableOverheadRatio;
 
         internal AbstractAppendingLongBuffer(int initialBlockCount, int pageSize, float acceptableOverheadRatio)
         {
-            Values = new PackedInts.Reader[initialBlockCount];
-            Pending = new long[pageSize];
-            PageShift = PackedInts.CheckBlockSize(pageSize, MIN_PAGE_SIZE, MAX_PAGE_SIZE);
-            PageMask = pageSize - 1;
-            ValuesOff = 0;
-            PendingOff = 0;
-            this.AcceptableOverheadRatio = acceptableOverheadRatio;
+            values = new PackedInts.Reader[initialBlockCount];
+            pending = new long[pageSize];
+            pageShift = PackedInts.CheckBlockSize(pageSize, MIN_PAGE_SIZE, MAX_PAGE_SIZE);
+            pageMask = pageSize - 1;
+            valuesOff = 0;
+            pendingOff = 0;
+            this.acceptableOverheadRatio = acceptableOverheadRatio;
         }
 
         public int PageSize // LUCENENET TODO: rename PageCount ?
         {
-            get { return PageMask + 1; }
+            get { return pageMask + 1; }
         }
 
         /// <summary>
@@ -60,14 +60,14 @@ namespace Lucene.Net.Util.Packed
         {
             get
             {
-                long size = PendingOff;
-                if (ValuesOff > 0)
+                long size = pendingOff;
+                if (valuesOff > 0)
                 {
-                    size += Values[ValuesOff - 1].Size;
+                    size += values[valuesOff - 1].Size;
                 }
-                if (ValuesOff > 1)
+                if (valuesOff > 1)
                 {
-                    size += (long)(ValuesOff - 1) * PageSize;
+                    size += (long)(valuesOff - 1) * PageSize;
                 }
                 return size;
             }
@@ -77,30 +77,30 @@ namespace Lucene.Net.Util.Packed
         /// Append a value to this buffer. </summary>
         public void Add(long l)
         {
-            if (Pending == null)
+            if (pending == null)
             {
                 throw new Exception("this buffer is frozen");
             }
-            if (PendingOff == Pending.Length)
+            if (pendingOff == pending.Length)
             {
                 // check size
-                if (Values.Length == ValuesOff)
+                if (values.Length == valuesOff)
                 {
-                    int newLength = ArrayUtil.Oversize(ValuesOff + 1, 8);
+                    int newLength = ArrayUtil.Oversize(valuesOff + 1, 8);
                     Grow(newLength);
                 }
                 PackPendingValues();
-                ValuesBytes += Values[ValuesOff].RamBytesUsed();
-                ++ValuesOff;
+                valuesBytes += values[valuesOff].RamBytesUsed();
+                ++valuesOff;
                 // reset pending buffer
-                PendingOff = 0;
+                pendingOff = 0;
             }
-            Pending[PendingOff++] = l;
+            pending[pendingOff++] = l;
         }
 
         internal virtual void Grow(int newBlockCount)
         {
-            Array.Resize<PackedInts.Reader>(ref Values, newBlockCount);
+            Array.Resize<PackedInts.Reader>(ref values, newBlockCount);
         }
 
         internal abstract void PackPendingValues();
@@ -108,8 +108,8 @@ namespace Lucene.Net.Util.Packed
         public override sealed long Get(long index)
         {
             Debug.Assert(index >= 0 && index < Size);
-            int block = (int)(index >> PageShift);
-            int element = (int)(index & PageMask);
+            int block = (int)(index >> pageShift);
+            int element = (int)(index & pageMask);
             return Get(block, element);
         }
 
@@ -124,8 +124,8 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(index >= 0 && index < Size);
             Debug.Assert(off + len <= arr.Length);
 
-            int block = (int)(index >> PageShift);
-            int element = (int)(index & PageMask);
+            int block = (int)(index >> pageShift);
+            int element = (int)(index & pageMask);
             return Get(block, element, arr, off, len);
         }
 
@@ -145,41 +145,41 @@ namespace Lucene.Net.Util.Packed
 
         public sealed class Iterator
         {
-            private readonly AbstractAppendingLongBuffer OuterInstance;
+            private readonly AbstractAppendingLongBuffer outerInstance;
 
-            internal long[] CurrentValues;
-            internal int VOff, POff;
-            internal int CurrentCount; // number of entries of the current page
+            internal long[] currentValues;
+            internal int vOff, pOff;
+            internal int currentCount; // number of entries of the current page
 
             internal Iterator(AbstractAppendingLongBuffer outerInstance)
             {
-                this.OuterInstance = outerInstance;
-                VOff = POff = 0;
-                if (outerInstance.ValuesOff == 0)
+                this.outerInstance = outerInstance;
+                vOff = pOff = 0;
+                if (outerInstance.valuesOff == 0)
                 {
-                    CurrentValues = outerInstance.Pending;
-                    CurrentCount = outerInstance.PendingOff;
+                    currentValues = outerInstance.pending;
+                    currentCount = outerInstance.pendingOff;
                 }
                 else
                 {
-                    CurrentValues = new long[outerInstance.Values[0].Size];
+                    currentValues = new long[outerInstance.values[0].Size];
                     FillValues();
                 }
             }
 
             internal void FillValues()
             {
-                if (VOff == OuterInstance.ValuesOff)
+                if (vOff == outerInstance.valuesOff)
                 {
-                    CurrentValues = OuterInstance.Pending;
-                    CurrentCount = OuterInstance.PendingOff;
+                    currentValues = outerInstance.pending;
+                    currentCount = outerInstance.pendingOff;
                 }
                 else
                 {
-                    CurrentCount = OuterInstance.Values[VOff].Size;
-                    for (int k = 0; k < CurrentCount; )
+                    currentCount = outerInstance.values[vOff].Size;
+                    for (int k = 0; k < currentCount; )
                     {
-                        k += OuterInstance.Get(VOff, k, CurrentValues, k, CurrentCount - k);
+                        k += outerInstance.Get(vOff, k, currentValues, k, currentCount - k);
                     }
                 }
             }
@@ -188,7 +188,7 @@ namespace Lucene.Net.Util.Packed
             /// Whether or not there are remaining values. </summary>
             public bool HasNext
             {
-                get { return POff < CurrentCount; }
+                get { return pOff < currentCount; }
             }
 
             /// <summary>
@@ -196,18 +196,18 @@ namespace Lucene.Net.Util.Packed
             public long Next()
             {
                 Debug.Assert(HasNext);
-                long result = CurrentValues[POff++];
-                if (POff == CurrentCount)
+                long result = currentValues[pOff++];
+                if (pOff == currentCount)
                 {
-                    VOff += 1;
-                    POff = 0;
-                    if (VOff <= OuterInstance.ValuesOff)
+                    vOff += 1;
+                    pOff = 0;
+                    if (vOff <= outerInstance.valuesOff)
                     {
                         FillValues();
                     }
                     else
                     {
-                        CurrentCount = 0;
+                        currentCount = 0;
                     }
                 }
                 return result;
@@ -229,27 +229,27 @@ namespace Lucene.Net.Util.Packed
         public virtual long RamBytesUsed()
         {
             // TODO: this is called per-doc-per-norms/dv-field, can we optimize this?
-            long bytesUsed = RamUsageEstimator.AlignObjectSize(BaseRamBytesUsed()) + (Pending != null ? RamUsageEstimator.SizeOf(Pending) : 0L) + RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + (long)RamUsageEstimator.NUM_BYTES_OBJECT_REF * Values.Length); // values
+            long bytesUsed = RamUsageEstimator.AlignObjectSize(BaseRamBytesUsed()) + (pending != null ? RamUsageEstimator.SizeOf(pending) : 0L) + RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + (long)RamUsageEstimator.NUM_BYTES_OBJECT_REF * values.Length); // values
 
-            return bytesUsed + ValuesBytes;
+            return bytesUsed + valuesBytes;
         }
 
         /// <summary>
         /// Pack all pending values in this buffer. Subsequent calls to <seealso cref="#add(long)"/> will fail. </summary>
         public virtual void Freeze()
         {
-            if (PendingOff > 0)
+            if (pendingOff > 0)
             {
-                if (Values.Length == ValuesOff)
+                if (values.Length == valuesOff)
                 {
-                    Grow(ValuesOff + 1); // don't oversize!
+                    Grow(valuesOff + 1); // don't oversize!
                 }
                 PackPendingValues();
-                ValuesBytes += Values[ValuesOff].RamBytesUsed();
-                ++ValuesOff;
-                PendingOff = 0;
+                valuesBytes += values[valuesOff].RamBytesUsed();
+                ++valuesOff;
+                pendingOff = 0;
             }
-            Pending = null;
+            pending = null;
         }
     }
 }

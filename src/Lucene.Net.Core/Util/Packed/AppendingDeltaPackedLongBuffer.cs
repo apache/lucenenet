@@ -39,7 +39,7 @@ namespace Lucene.Net.Util.Packed
         public AppendingDeltaPackedLongBuffer(int initialPageCount, int pageSize, float acceptableOverheadRatio)
             : base(initialPageCount, pageSize, acceptableOverheadRatio)
         {
-            MinValues = new long[Values.Length];
+            MinValues = new long[values.Length];
         }
 
         /// <summary>
@@ -62,32 +62,32 @@ namespace Lucene.Net.Util.Packed
 
         internal override long Get(int block, int element)
         {
-            if (block == ValuesOff)
+            if (block == valuesOff)
             {
-                return Pending[element];
+                return pending[element];
             }
-            else if (Values[block] == null)
+            else if (values[block] == null)
             {
                 return MinValues[block];
             }
             else
             {
-                return MinValues[block] + Values[block].Get(element);
+                return MinValues[block] + values[block].Get(element);
             }
         }
 
         internal override int Get(int block, int element, long[] arr, int off, int len)
         {
-            if (block == ValuesOff)
+            if (block == valuesOff)
             {
-                int sysCopyToRead = Math.Min(len, PendingOff - element);
-                Array.Copy(Pending, element, arr, off, sysCopyToRead);
+                int sysCopyToRead = Math.Min(len, pendingOff - element);
+                Array.Copy(pending, element, arr, off, sysCopyToRead);
                 return sysCopyToRead;
             }
             else
             {
                 /* packed block */
-                int read = Values[block].Get(element, arr, off, len);
+                int read = values[block].Get(element, arr, off, len);
                 long d = MinValues[block];
                 for (int r = 0; r < read; r++, off++)
                 {
@@ -100,34 +100,34 @@ namespace Lucene.Net.Util.Packed
         internal override void PackPendingValues()
         {
             // compute max delta
-            long minValue = Pending[0];
-            long maxValue = Pending[0];
-            for (int i = 1; i < PendingOff; ++i)
+            long minValue = pending[0];
+            long maxValue = pending[0];
+            for (int i = 1; i < pendingOff; ++i)
             {
-                minValue = Math.Min(minValue, Pending[i]);
-                maxValue = Math.Max(maxValue, Pending[i]);
+                minValue = Math.Min(minValue, pending[i]);
+                maxValue = Math.Max(maxValue, pending[i]);
             }
             long delta = maxValue - minValue;
 
-            MinValues[ValuesOff] = minValue;
+            MinValues[valuesOff] = minValue;
             if (delta == 0)
             {
-                Values[ValuesOff] = new PackedInts.NullReader(PendingOff);
+                values[valuesOff] = new PackedInts.NullReader(pendingOff);
             }
             else
             {
                 // build a new packed reader
                 int bitsRequired = delta < 0 ? 64 : PackedInts.BitsRequired(delta);
-                for (int i = 0; i < PendingOff; ++i)
+                for (int i = 0; i < pendingOff; ++i)
                 {
-                    Pending[i] -= minValue;
+                    pending[i] -= minValue;
                 }
-                PackedInts.Mutable mutable = PackedInts.GetMutable(PendingOff, bitsRequired, AcceptableOverheadRatio);
-                for (int i = 0; i < PendingOff; )
+                PackedInts.Mutable mutable = PackedInts.GetMutable(pendingOff, bitsRequired, acceptableOverheadRatio);
+                for (int i = 0; i < pendingOff; )
                 {
-                    i += mutable.Set(i, Pending, i, PendingOff - i);
+                    i += mutable.Set(i, pending, i, pendingOff - i);
                 }
-                Values[ValuesOff] = mutable;
+                values[valuesOff] = mutable;
             }
         }
 

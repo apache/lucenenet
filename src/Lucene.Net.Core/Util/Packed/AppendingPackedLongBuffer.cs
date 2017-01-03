@@ -57,50 +57,50 @@ namespace Lucene.Net.Util.Packed
 
         internal override long Get(int block, int element)
         {
-            if (block == ValuesOff)
+            if (block == valuesOff)
             {
-                return Pending[element];
+                return pending[element];
             }
             else
             {
-                return Values[block].Get(element);
+                return values[block].Get(element);
             }
         }
 
         internal override int Get(int block, int element, long[] arr, int off, int len)
         {
-            if (block == ValuesOff)
+            if (block == valuesOff)
             {
-                int sysCopyToRead = Math.Min(len, PendingOff - element);
-                Array.Copy(Pending, element, arr, off, sysCopyToRead);
+                int sysCopyToRead = Math.Min(len, pendingOff - element);
+                Array.Copy(pending, element, arr, off, sysCopyToRead);
                 return sysCopyToRead;
             }
             else
             {
                 /* packed block */
-                return Values[block].Get(element, arr, off, len);
+                return values[block].Get(element, arr, off, len);
             }
         }
 
         internal override void PackPendingValues()
         {
             // compute max delta
-            long minValue = Pending[0];
-            long maxValue = Pending[0];
-            for (int i = 1; i < PendingOff; ++i)
+            long minValue = pending[0];
+            long maxValue = pending[0];
+            for (int i = 1; i < pendingOff; ++i)
             {
-                minValue = Math.Min(minValue, Pending[i]);
-                maxValue = Math.Max(maxValue, Pending[i]);
+                minValue = Math.Min(minValue, pending[i]);
+                maxValue = Math.Max(maxValue, pending[i]);
             }
 
             // build a new packed reader
             int bitsRequired = minValue < 0 ? 64 : PackedInts.BitsRequired(maxValue);
-            PackedInts.Mutable mutable = PackedInts.GetMutable(PendingOff, bitsRequired, AcceptableOverheadRatio);
-            for (int i = 0; i < PendingOff; )
+            PackedInts.Mutable mutable = PackedInts.GetMutable(pendingOff, bitsRequired, acceptableOverheadRatio);
+            for (int i = 0; i < pendingOff; )
             {
-                i += mutable.Set(i, Pending, i, PendingOff - i);
+                i += mutable.Set(i, pending, i, pendingOff - i);
             }
-            Values[ValuesOff] = mutable;
+            values[valuesOff] = mutable;
         }
 
         public override Iterator GetIterator() // LUCENENET TODO: This can be done from the base class
