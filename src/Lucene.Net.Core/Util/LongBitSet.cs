@@ -31,8 +31,8 @@ namespace Lucene.Net.Util
     public sealed class LongBitSet // LUCENENET TODO: Rename Int64BitSet ?
     {
         private readonly long[] bits;
-        private readonly long NumBits;
-        private readonly int NumWords;
+        private readonly long numBits;
+        private readonly int numWords;
 
         /// <summary>
         /// If the given <seealso cref="LongBitSet"/> is large enough to hold
@@ -76,19 +76,19 @@ namespace Lucene.Net.Util
 
         public LongBitSet(long numBits)
         {
-            this.NumBits = numBits;
+            this.numBits = numBits;
             bits = new long[Bits2words(numBits)];
-            NumWords = bits.Length;
+            numWords = bits.Length;
         }
 
         public LongBitSet(long[] storedBits, long numBits)
         {
-            this.NumWords = Bits2words(numBits);
-            if (NumWords > storedBits.Length)
+            this.numWords = Bits2words(numBits);
+            if (numWords > storedBits.Length)
             {
                 throw new System.ArgumentException("The given long array is too small  to hold " + numBits + " bits");
             }
-            this.NumBits = numBits;
+            this.numBits = numBits;
             this.bits = storedBits;
         }
 
@@ -96,7 +96,7 @@ namespace Lucene.Net.Util
         /// Returns the number of bits stored in this bitset. </summary>
         public long Length
         {
-            get { return NumBits; }
+            get { return numBits; }
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Lucene.Net.Util
 
         public bool Get(long index)
         {
-            Debug.Assert(index >= 0 && index < NumBits, "index=" + index);
+            Debug.Assert(index >= 0 && index < numBits, "index=" + index);
             int i = (int)(index >> 6); // div 64
             // signed shift will keep a negative index and force an
             // array-index-out-of-bounds-exception, removing the need for an explicit check.
@@ -132,7 +132,7 @@ namespace Lucene.Net.Util
 
         public void Set(long index)
         {
-            Debug.Assert(index >= 0 && index < NumBits, "index=" + index + " numBits=" + NumBits);
+            Debug.Assert(index >= 0 && index < numBits, "index=" + index + " numBits=" + numBits);
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)(index & 0x3f); // mod 64
             long bitmask = 1L << bit;
@@ -141,7 +141,7 @@ namespace Lucene.Net.Util
 
         public bool GetAndSet(long index)
         {
-            Debug.Assert(index >= 0 && index < NumBits);
+            Debug.Assert(index >= 0 && index < numBits);
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)(index & 0x3f); // mod 64
             long bitmask = 1L << bit;
@@ -152,7 +152,7 @@ namespace Lucene.Net.Util
 
         public void Clear(long index)
         {
-            Debug.Assert(index >= 0 && index < NumBits);
+            Debug.Assert(index >= 0 && index < numBits);
             int wordNum = (int)(index >> 6);
             int bit = (int)(index & 0x03f);
             long bitmask = 1L << bit;
@@ -161,7 +161,7 @@ namespace Lucene.Net.Util
 
         public bool GetAndClear(long index)
         {
-            Debug.Assert(index >= 0 && index < NumBits);
+            Debug.Assert(index >= 0 && index < numBits);
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)(index & 0x3f); // mod 64
             long bitmask = 1L << bit;
@@ -176,7 +176,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public long NextSetBit(long index)
         {
-            Debug.Assert(index >= 0 && index < NumBits);
+            Debug.Assert(index >= 0 && index < numBits);
             int i = (int)(index >> 6);
             int subIndex = (int)(index & 0x3f); // index within the word
             long word = bits[i] >> subIndex; // skip all the bits to the right of index
@@ -186,7 +186,7 @@ namespace Lucene.Net.Util
                 return index + Number.NumberOfTrailingZeros(word);
             }
 
-            while (++i < NumWords)
+            while (++i < numWords)
             {
                 word = bits[i];
                 if (word != 0)
@@ -204,7 +204,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public long PrevSetBit(long index)
         {
-            Debug.Assert(index >= 0 && index < NumBits, "index=" + index + " numBits=" + NumBits);
+            Debug.Assert(index >= 0 && index < numBits, "index=" + index + " numBits=" + numBits);
             int i = (int)(index >> 6);
             int subIndex = (int)(index & 0x3f); // index within the word
             long word = (bits[i] << (63 - subIndex)); // skip all the bits to the left of index
@@ -230,8 +230,8 @@ namespace Lucene.Net.Util
         /// this = this OR other </summary>
         public void Or(LongBitSet other)
         {
-            Debug.Assert(other.NumWords <= NumWords, "numWords=" + NumWords + ", other.numWords=" + other.NumWords);
-            int pos = Math.Min(NumWords, other.NumWords);
+            Debug.Assert(other.numWords <= numWords, "numWords=" + numWords + ", other.numWords=" + other.numWords);
+            int pos = Math.Min(numWords, other.numWords);
             while (--pos >= 0)
             {
                 bits[pos] |= other.bits[pos];
@@ -242,8 +242,8 @@ namespace Lucene.Net.Util
         /// this = this XOR other </summary>
         public void Xor(LongBitSet other)
         {
-            Debug.Assert(other.NumWords <= NumWords, "numWords=" + NumWords + ", other.numWords=" + other.NumWords);
-            int pos = Math.Min(NumWords, other.NumWords);
+            Debug.Assert(other.numWords <= numWords, "numWords=" + numWords + ", other.numWords=" + other.numWords);
+            int pos = Math.Min(numWords, other.numWords);
             while (--pos >= 0)
             {
                 bits[pos] ^= other.bits[pos];
@@ -254,7 +254,7 @@ namespace Lucene.Net.Util
         /// returns true if the sets have any elements in common </summary>
         public bool Intersects(LongBitSet other)
         {
-            int pos = Math.Min(NumWords, other.NumWords);
+            int pos = Math.Min(numWords, other.numWords);
             while (--pos >= 0)
             {
                 if ((bits[pos] & other.bits[pos]) != 0)
@@ -269,14 +269,14 @@ namespace Lucene.Net.Util
         /// this = this AND other </summary>
         public void And(LongBitSet other)
         {
-            int pos = Math.Min(NumWords, other.NumWords);
+            int pos = Math.Min(numWords, other.numWords);
             while (--pos >= 0)
             {
                 bits[pos] &= other.bits[pos];
             }
-            if (NumWords > other.NumWords)
+            if (numWords > other.numWords)
             {
-                Arrays.Fill(bits, other.NumWords, NumWords, 0L);
+                Arrays.Fill(bits, other.numWords, numWords, 0L);
             }
         }
 
@@ -284,7 +284,7 @@ namespace Lucene.Net.Util
         /// this = this AND NOT other </summary>
         public void AndNot(LongBitSet other)
         {
-            int pos = Math.Min(NumWords, other.bits.Length);
+            int pos = Math.Min(numWords, other.bits.Length);
             while (--pos >= 0)
             {
                 bits[pos] &= ~other.bits[pos];
@@ -302,8 +302,8 @@ namespace Lucene.Net.Util
         /// <param name="endIndex"> one-past the last bit to flip </param>
         public void Flip(long startIndex, long endIndex)
         {
-            Debug.Assert(startIndex >= 0 && startIndex < NumBits);
-            Debug.Assert(endIndex >= 0 && endIndex <= NumBits);
+            Debug.Assert(startIndex >= 0 && startIndex < numBits);
+            Debug.Assert(endIndex >= 0 && endIndex <= numBits);
             if (endIndex <= startIndex)
             {
                 return;
@@ -348,8 +348,8 @@ namespace Lucene.Net.Util
         /// <param name="endIndex"> one-past the last bit to set </param>
         public void Set(long startIndex, long endIndex)
         {
-            Debug.Assert(startIndex >= 0 && startIndex < NumBits);
-            Debug.Assert(endIndex >= 0 && endIndex <= NumBits);
+            Debug.Assert(startIndex >= 0 && startIndex < numBits);
+            Debug.Assert(endIndex >= 0 && endIndex <= numBits);
             if (endIndex <= startIndex)
             {
                 return;
@@ -380,8 +380,8 @@ namespace Lucene.Net.Util
         /// <param name="endIndex"> one-past the last bit to clear </param>
         public void Clear(long startIndex, long endIndex)
         {
-            Debug.Assert(startIndex >= 0 && startIndex < NumBits);
-            Debug.Assert(endIndex >= 0 && endIndex <= NumBits);
+            Debug.Assert(startIndex >= 0 && startIndex < numBits);
+            Debug.Assert(endIndex >= 0 && endIndex <= numBits);
             if (endIndex <= startIndex)
             {
                 return;
@@ -415,7 +415,7 @@ namespace Lucene.Net.Util
         {
             long[] bits = new long[this.bits.Length];
             Array.Copy(this.bits, 0, bits, 0, bits.Length);
-            return new LongBitSet(bits, NumBits);
+            return new LongBitSet(bits, numBits);
         }
 
         /// <summary>
@@ -431,7 +431,7 @@ namespace Lucene.Net.Util
                 return false;
             }
             LongBitSet other = (LongBitSet)o;
-            if (NumBits != other.Length)
+            if (numBits != other.Length)
             {
                 return false;
             }
@@ -441,7 +441,7 @@ namespace Lucene.Net.Util
         public override int GetHashCode()
         {
             long h = 0;
-            for (int i = NumWords; --i >= 0; )
+            for (int i = numWords; --i >= 0; )
             {
                 h ^= bits[i];
                 h = (h << 1) | ((long)((ulong)h >> 63)); // rotate left
