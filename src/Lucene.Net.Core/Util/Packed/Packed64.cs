@@ -51,17 +51,17 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Values are stores contiguously in the blocks array.
         /// </summary>
-        private readonly long[] Blocks;
+        private readonly long[] blocks;
 
         /// <summary>
         /// A right-aligned mask of width BitsPerValue used by <seealso cref="#get(int)"/>.
         /// </summary>
-        private readonly long MaskRight;
+        private readonly long maskRight;
 
         /// <summary>
         /// Optimization: Saves one lookup in <seealso cref="#get(int)"/>.
         /// </summary>
-        private readonly int BpvMinusBlockSize;
+        private readonly int bpvMinusBlockSize;
 
         /// <summary>
         /// Creates an array with the internal structures adjusted for the given
@@ -73,7 +73,7 @@ namespace Lucene.Net.Util.Packed
         {
             PackedInts.Format format = PackedInts.Format.PACKED;
             int longCount = format.LongCount(PackedInts.VERSION_CURRENT, valueCount, bitsPerValue);
-            this.Blocks = new long[longCount];
+            this.blocks = new long[longCount];
             //            MaskRight = ~0L << (int)((uint)(BLOCK_SIZE - bitsPerValue) >> (BLOCK_SIZE - bitsPerValue));    //original
             //            MaskRight = (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue);          //mod
 
@@ -81,11 +81,11 @@ namespace Lucene.Net.Util.Packed
             var b = (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue);          //mod
             Debug.Assert(a == b, "a: " + a, ", b: " + b);*/
 
-            MaskRight = (long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));    //mod
+            maskRight = (long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));    //mod
 
             //Debug.Assert((long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue)) == (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));
 
-            BpvMinusBlockSize = bitsPerValue - BLOCK_SIZE;
+            bpvMinusBlockSize = bitsPerValue - BLOCK_SIZE;
         }
 
         /// <summary>
@@ -101,11 +101,11 @@ namespace Lucene.Net.Util.Packed
             PackedInts.Format format = PackedInts.Format.PACKED;
             long byteCount = format.ByteCount(packedIntsVersion, valueCount, bitsPerValue); // to know how much to read
             int longCount = format.LongCount(PackedInts.VERSION_CURRENT, valueCount, bitsPerValue); // to size the array
-            Blocks = new long[longCount];
+            blocks = new long[longCount];
             // read as many longs as we can
             for (int i = 0; i < byteCount / 8; ++i)
             {
-                Blocks[i] = @in.ReadLong();
+                blocks[i] = @in.ReadLong();
             }
             int remaining = (int)(byteCount % 8);
             if (remaining != 0)
@@ -116,10 +116,10 @@ namespace Lucene.Net.Util.Packed
                 {
                     lastLong |= (@in.ReadByte() & 0xFFL) << (56 - i * 8);
                 }
-                Blocks[Blocks.Length - 1] = lastLong;
+                blocks[blocks.Length - 1] = lastLong;
             }
-            MaskRight = (long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));
-            BpvMinusBlockSize = bitsPerValue - BLOCK_SIZE;
+            maskRight = (long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));
+            bpvMinusBlockSize = bitsPerValue - BLOCK_SIZE;
         }
 
         /// <param name="index"> the position of the value. </param>
@@ -132,14 +132,14 @@ namespace Lucene.Net.Util.Packed
             int elementPos = (int)(((ulong)majorBitPos) >> BLOCK_BITS);
             //int elementPos = (int)((long)((ulong)majorBitPos >> BLOCK_BITS));
             // The number of value-bits in the second long
-            long endBits = (majorBitPos & MOD_MASK) + BpvMinusBlockSize;
+            long endBits = (majorBitPos & MOD_MASK) + bpvMinusBlockSize;
 
             if (endBits <= 0) // Single block
             {
-                return ((long)((ulong)Blocks[elementPos] >> (int)-endBits)) & MaskRight;
+                return ((long)((ulong)blocks[elementPos] >> (int)-endBits)) & maskRight;
             }
             // Two blocks
-            return ((Blocks[elementPos] << (int)endBits) | ((long)((ulong)Blocks[elementPos + 1] >> (int)(BLOCK_SIZE - endBits)))) & MaskRight;
+            return ((blocks[elementPos] << (int)endBits) | ((long)((ulong)blocks[elementPos + 1] >> (int)(BLOCK_SIZE - endBits)))) & maskRight;
         }
 
         /*/// <param name="index"> the position of the value. </param>
@@ -202,7 +202,7 @@ namespace Lucene.Net.Util.Packed
             int blockIndex = (int)((ulong)((long)index * m_bitsPerValue) >> BLOCK_BITS);
             Debug.Assert((((long)index * m_bitsPerValue) & MOD_MASK) == 0);
             int iterations = len / decoder.LongValueCount;
-            decoder.Decode(Blocks, blockIndex, arr, off, iterations);
+            decoder.Decode(blocks, blockIndex, arr, off, iterations);
             int gotValues = iterations * decoder.LongValueCount;
             index += gotValues;
             len -= gotValues;
@@ -228,16 +228,16 @@ namespace Lucene.Net.Util.Packed
             // The index in the backing long-array
             int elementPos = (int)((long)((ulong)majorBitPos >> BLOCK_BITS)); // / BLOCK_SIZE
             // The number of value-bits in the second long
-            long endBits = (majorBitPos & MOD_MASK) + BpvMinusBlockSize;
+            long endBits = (majorBitPos & MOD_MASK) + bpvMinusBlockSize;
 
             if (endBits <= 0) // Single block
             {
-                Blocks[elementPos] = Blocks[elementPos] & ~(MaskRight << (int)-endBits) | (value << (int)-endBits);
+                blocks[elementPos] = blocks[elementPos] & ~(maskRight << (int)-endBits) | (value << (int)-endBits);
                 return;
             }
             // Two blocks
-            Blocks[elementPos] = Blocks[elementPos] & ~((long)((ulong)MaskRight >> (int)endBits)) | ((long)((ulong)value >> (int)endBits));
-            Blocks[elementPos + 1] = Blocks[elementPos + 1] & ((long)(unchecked((ulong)~0L) >> (int)endBits)) | (value << (int)(BLOCK_SIZE - endBits));
+            blocks[elementPos] = blocks[elementPos] & ~((long)((ulong)maskRight >> (int)endBits)) | ((long)((ulong)value >> (int)endBits));
+            blocks[elementPos + 1] = blocks[elementPos + 1] & ((long)(unchecked((ulong)~0L) >> (int)endBits)) | (value << (int)(BLOCK_SIZE - endBits));
         }
 
         public override int Set(int index, long[] arr, int off, int len)
@@ -270,7 +270,7 @@ namespace Lucene.Net.Util.Packed
             int blockIndex = (int)((ulong)((long)index * m_bitsPerValue) >> BLOCK_BITS);
             Debug.Assert((((long)index * m_bitsPerValue) & MOD_MASK) == 0);
             int iterations = len / encoder.LongValueCount;
-            encoder.Encode(arr, off, Blocks, blockIndex, iterations);
+            encoder.Encode(arr, off, blocks, blockIndex, iterations);
             int setValues = iterations * encoder.LongValueCount;
             index += setValues;
             len -= setValues;
@@ -291,7 +291,7 @@ namespace Lucene.Net.Util.Packed
 
         public override string ToString()
         {
-            return "Packed64(bitsPerValue=" + m_bitsPerValue + ", size=" + Size + ", elements.length=" + Blocks.Length + ")";
+            return "Packed64(bitsPerValue=" + m_bitsPerValue + ", size=" + Size + ", elements.length=" + blocks.Length + ")";
         }
 
         public override long RamBytesUsed()
@@ -301,7 +301,7 @@ namespace Lucene.Net.Util.Packed
                 + 3 * RamUsageEstimator.NUM_BYTES_INT // bpvMinusBlockSize,valueCount,bitsPerValue
                 + RamUsageEstimator.NUM_BYTES_LONG // maskRight
                 + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // blocks ref
-                + RamUsageEstimator.SizeOf(Blocks);
+                + RamUsageEstimator.SizeOf(blocks);
         }
 
         public override void Fill(int fromIndex, int toIndex, long val)
@@ -342,7 +342,7 @@ namespace Lucene.Net.Util.Packed
                 {
                     values.Set(i, val);
                 }
-                nAlignedValuesBlocks = values.Blocks;
+                nAlignedValuesBlocks = values.blocks;
                 Debug.Assert(nAlignedBlocks <= nAlignedValuesBlocks.Length);
             }
             int startBlock = (int)((ulong)((long)fromIndex * m_bitsPerValue) >> 6);
@@ -350,7 +350,7 @@ namespace Lucene.Net.Util.Packed
             for (int block = startBlock; block < endBlock; ++block)
             {
                 long blockValue = nAlignedValuesBlocks[block % nAlignedBlocks];
-                Blocks[block] = blockValue;
+                blocks[block] = blockValue;
             }
 
             // fill the gap
@@ -378,7 +378,7 @@ namespace Lucene.Net.Util.Packed
 
         public override void Clear()
         {
-            Arrays.Fill(Blocks, 0L);
+            Arrays.Fill(blocks, 0L);
         }
     }
 }
