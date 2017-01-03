@@ -2916,7 +2916,7 @@ namespace Lucene.Net.Util
             return result.ToArray();
         }
 
-        private static Regex PrivateFieldName = new Regex("^[a-z][a-zA-Z0-9_]*$|^[A-Z0-9_]+$");
+        private static Regex PrivateFieldName = new Regex("^_?[a-z][a-zA-Z0-9_]*$|^[A-Z0-9_]+$");
         private static Regex ProtectedFieldName = new Regex("^m_[a-z][a-zA-Z0-9_]*$|^[A-Z0-9_]+$");
     }
 
