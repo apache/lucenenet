@@ -30,10 +30,10 @@ namespace Lucene.Net.Store
     /// </summary>
     public class ByteArrayDataOutput : DataOutput
     {
-        private byte[] Bytes;
+        private byte[] bytes;
 
-        private int Pos;
-        private int Limit;
+        private int pos;
+        private int limit;
 
         public ByteArrayDataOutput(byte[] bytes)
         {
@@ -57,30 +57,30 @@ namespace Lucene.Net.Store
 
         public virtual void Reset(byte[] bytes, int offset, int len)
         {
-            this.Bytes = bytes;
-            Pos = offset;
-            Limit = offset + len;
+            this.bytes = bytes;
+            pos = offset;
+            limit = offset + len;
         }
 
         public virtual int Position
         {
             get
             {
-                return Pos;
+                return pos;
             }
         }
 
         public override void WriteByte(byte b)
         {
-            Debug.Assert(Pos < Limit);
-            Bytes[Pos++] = b;
+            Debug.Assert(pos < limit);
+            bytes[pos++] = b;
         }
 
         public override void WriteBytes(byte[] b, int offset, int length)
         {
-            Debug.Assert(Pos + length <= Limit);
-            System.Buffer.BlockCopy(b, offset, Bytes, Pos, length);
-            Pos += length;
+            Debug.Assert(pos + length <= limit);
+            System.Buffer.BlockCopy(b, offset, bytes, pos, length);
+            pos += length;
         }
     }
 }
