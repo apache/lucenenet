@@ -48,34 +48,34 @@ namespace Lucene.Net.Index
     internal class AutomatonTermsEnum : FilteredTermsEnum
     {
         // a tableized array-based form of the DFA
-        private readonly ByteRunAutomaton RunAutomaton;
+        private readonly ByteRunAutomaton runAutomaton;
 
         // common suffix of the automaton
-        private readonly BytesRef CommonSuffixRef;
+        private readonly BytesRef commonSuffixRef;
 
         // true if the automaton accepts a finite language
-        private readonly bool? Finite;
+        private readonly bool? finite;
 
         // array of sorted transitions for each state, indexed by state number
-        private readonly Transition[][] AllTransitions;
+        private readonly Transition[][] allTransitions;
 
         // for path tracking: each long records gen when we last
         // visited the state; we use gens to avoid having to clear
-        private readonly long[] Visited;
+        private readonly long[] visited;
 
-        private long CurGen;
+        private long curGen;
 
         // the reference used for seeking forwards through the term dictionary
-        private readonly BytesRef SeekBytesRef = new BytesRef(10);
+        private readonly BytesRef seekBytesRef = new BytesRef(10);
 
         // true if we are enumerating an infinite portion of the DFA.
         // in this case it is faster to drive the query based on the terms dictionary.
         // when this is true, linearUpperBound indicate the end of range
         // of terms where we should simply do sequential reads instead.
-        private bool Linear_Renamed = false;
+        private bool linear = false;
 
-        private readonly BytesRef LinearUpperBound = new BytesRef(10);
-        private readonly IComparer<BytesRef> TermComp;
+        private readonly BytesRef linearUpperBound = new BytesRef(10);
+        private readonly IComparer<BytesRef> termComp;
 
         /// <summary>
         /// Construct an enumerator based upon an automaton, enumerating the specified
@@ -87,16 +87,16 @@ namespace Lucene.Net.Index
         public AutomatonTermsEnum(TermsEnum tenum, CompiledAutomaton compiled)
             : base(tenum)
         {
-            this.Finite = compiled.Finite;
-            this.RunAutomaton = compiled.RunAutomaton;
-            Debug.Assert(this.RunAutomaton != null);
-            this.CommonSuffixRef = compiled.CommonSuffixRef;
-            this.AllTransitions = compiled.SortedTransitions;
+            this.finite = compiled.Finite;
+            this.runAutomaton = compiled.RunAutomaton;
+            Debug.Assert(this.runAutomaton != null);
+            this.commonSuffixRef = compiled.CommonSuffixRef;
+            this.allTransitions = compiled.SortedTransitions;
 
             // used for path tracking, where each bit is a numbered state.
-            Visited = new long[RunAutomaton.Size];
+            visited = new long[runAutomaton.Size];
 
-            TermComp = Comparator;
+            termComp = Comparator;
         }
 
         /// <summary>
@@ -105,20 +105,20 @@ namespace Lucene.Net.Index
         /// </summary>
         protected override AcceptStatus Accept(BytesRef term)
         {
-            if (CommonSuffixRef == null || StringHelper.EndsWith(term, CommonSuffixRef))
+            if (commonSuffixRef == null || StringHelper.EndsWith(term, commonSuffixRef))
             {
-                if (RunAutomaton.Run(term.Bytes, term.Offset, term.Length))
+                if (runAutomaton.Run(term.Bytes, term.Offset, term.Length))
                 {
-                    return Linear_Renamed ? AcceptStatus.YES : AcceptStatus.YES_AND_SEEK;
+                    return linear ? AcceptStatus.YES : AcceptStatus.YES_AND_SEEK;
                 }
                 else
                 {
-                    return (Linear_Renamed && TermComp.Compare(term, LinearUpperBound) < 0) ? AcceptStatus.NO : AcceptStatus.NO_AND_SEEK;
+                    return (linear && termComp.Compare(term, linearUpperBound) < 0) ? AcceptStatus.NO : AcceptStatus.NO_AND_SEEK;
                 }
             }
             else
             {
-                return (Linear_Renamed && TermComp.Compare(term, LinearUpperBound) < 0) ? AcceptStatus.NO : AcceptStatus.NO_AND_SEEK;
+                return (linear && termComp.Compare(term, linearUpperBound) < 0) ? AcceptStatus.NO : AcceptStatus.NO_AND_SEEK;
             }
         }
 
@@ -127,22 +127,22 @@ namespace Lucene.Net.Index
             //System.out.println("ATE.nextSeekTerm term=" + term);
             if (term == null)
             {
-                Debug.Assert(SeekBytesRef.Length == 0);
+                Debug.Assert(seekBytesRef.Length == 0);
                 // return the empty term, as its valid
-                if (RunAutomaton.IsAccept(RunAutomaton.InitialState))
+                if (runAutomaton.IsAccept(runAutomaton.InitialState))
                 {
-                    return SeekBytesRef;
+                    return seekBytesRef;
                 }
             }
             else
             {
-                SeekBytesRef.CopyBytes(term);
+                seekBytesRef.CopyBytes(term);
             }
 
             // seek to the next possible string;
             if (NextString())
             {
-                return SeekBytesRef; // reposition
+                return seekBytesRef; // reposition
             }
             else
             {
@@ -157,19 +157,19 @@ namespace Lucene.Net.Index
         /// </summary>
         private void SetLinear(int position)
         {
-            Debug.Assert(Linear_Renamed == false);
+            Debug.Assert(linear == false);
 
-            int state = RunAutomaton.InitialState;
+            int state = runAutomaton.InitialState;
             int maxInterval = 0xff;
             for (int i = 0; i < position; i++)
             {
-                state = RunAutomaton.Step(state, SeekBytesRef.Bytes[i] & 0xff);
+                state = runAutomaton.Step(state, seekBytesRef.Bytes[i] & 0xff);
                 Debug.Assert(state >= 0, "state=" + state);
             }
-            for (int i = 0; i < AllTransitions[state].Length; i++)
+            for (int i = 0; i < allTransitions[state].Length; i++)
             {
-                Transition t = AllTransitions[state][i];
-                if (t.Min <= (SeekBytesRef.Bytes[position] & 0xff) && (SeekBytesRef.Bytes[position] & 0xff) <= t.Max)
+                Transition t = allTransitions[state][i];
+                if (t.Min <= (seekBytesRef.Bytes[position] & 0xff) && (seekBytesRef.Bytes[position] & 0xff) <= t.Max)
                 {
                     maxInterval = t.Max;
                     break;
@@ -181,18 +181,18 @@ namespace Lucene.Net.Index
                 maxInterval++;
             }
             int length = position + 1; // value + maxTransition
-            if (LinearUpperBound.Bytes.Length < length)
+            if (linearUpperBound.Bytes.Length < length)
             {
-                LinearUpperBound.Bytes = new byte[length];
+                linearUpperBound.Bytes = new byte[length];
             }
-            Array.Copy(SeekBytesRef.Bytes, 0, LinearUpperBound.Bytes, 0, position);
-            LinearUpperBound.Bytes[position] = (byte)maxInterval;
-            LinearUpperBound.Length = length;
+            Array.Copy(seekBytesRef.Bytes, 0, linearUpperBound.Bytes, 0, position);
+            linearUpperBound.Bytes[position] = (byte)maxInterval;
+            linearUpperBound.Length = length;
 
-            Linear_Renamed = true;
+            linear = true;
         }
 
-        private readonly IntsRef SavedStates = new IntsRef(10);
+        private readonly IntsRef savedStates = new IntsRef(10);
 
         /// <summary>
         /// Increments the byte buffer to the next String in binary order after s that will not put
@@ -207,26 +207,26 @@ namespace Lucene.Net.Index
         {
             int state;
             int pos = 0;
-            SavedStates.Grow(SeekBytesRef.Length + 1);
-            int[] states = SavedStates.Ints;
-            states[0] = RunAutomaton.InitialState;
+            savedStates.Grow(seekBytesRef.Length + 1);
+            int[] states = savedStates.Ints;
+            states[0] = runAutomaton.InitialState;
 
             while (true)
             {
-                CurGen++;
-                Linear_Renamed = false;
+                curGen++;
+                linear = false;
                 // walk the automaton until a character is rejected.
-                for (state = states[pos]; pos < SeekBytesRef.Length; pos++)
+                for (state = states[pos]; pos < seekBytesRef.Length; pos++)
                 {
-                    Visited[state] = CurGen;
-                    int nextState = RunAutomaton.Step(state, SeekBytesRef.Bytes[pos] & 0xff);
+                    visited[state] = curGen;
+                    int nextState = runAutomaton.Step(state, seekBytesRef.Bytes[pos] & 0xff);
                     if (nextState == -1)
                     {
                         break;
                     }
                     states[pos + 1] = nextState;
                     // we found a loop, record it for faster enumeration
-                    if ((Finite == false) && !Linear_Renamed && Visited[nextState] == CurGen)
+                    if ((finite == false) && !linear && visited[nextState] == curGen)
                     {
                         SetLinear(pos);
                     }
@@ -245,8 +245,8 @@ namespace Lucene.Net.Index
                     {
                         return false;
                     }
-                    int newState = RunAutomaton.Step(states[pos], SeekBytesRef.Bytes[pos] & 0xff);
-                    if (newState >= 0 && RunAutomaton.IsAccept(newState))
+                    int newState = runAutomaton.Step(states[pos], seekBytesRef.Bytes[pos] & 0xff);
+                    if (newState >= 0 && runAutomaton.IsAccept(newState))
                     /* String is good to go as-is */
                     {
                         return true;
@@ -254,7 +254,7 @@ namespace Lucene.Net.Index
                     /* else advance further */
                     // TODO: paranoia? if we backtrack thru an infinite DFA, the loop detection is important!
                     // for now, restart from scratch for all infinite DFAs
-                    if (Finite == false)
+                    if (finite == false)
                     {
                         pos = 0;
                     }
@@ -286,9 +286,9 @@ namespace Lucene.Net.Index
              * character, if it exists.
              */
             int c = 0;
-            if (position < SeekBytesRef.Length)
+            if (position < seekBytesRef.Length)
             {
-                c = SeekBytesRef.Bytes[position] & 0xff;
+                c = seekBytesRef.Bytes[position] & 0xff;
                 // if the next byte is 0xff and is not part of the useful portion,
                 // then by definition it puts us in a reject state, and therefore this
                 // path is dead. there cannot be any higher transitions. backtrack.
@@ -298,10 +298,10 @@ namespace Lucene.Net.Index
                 }
             }
 
-            SeekBytesRef.Length = position;
-            Visited[state] = CurGen;
+            seekBytesRef.Length = position;
+            visited[state] = curGen;
 
-            Transition[] transitions = AllTransitions[state];
+            Transition[] transitions = allTransitions[state];
 
             // find the minimal path (lexicographic order) that is >= c
 
@@ -312,34 +312,34 @@ namespace Lucene.Net.Index
                 {
                     int nextChar = Math.Max(c, transition.Min);
                     // append either the next sequential char, or the minimum transition
-                    SeekBytesRef.Grow(SeekBytesRef.Length + 1);
-                    SeekBytesRef.Length++;
-                    SeekBytesRef.Bytes[SeekBytesRef.Length - 1] = (byte)nextChar;
+                    seekBytesRef.Grow(seekBytesRef.Length + 1);
+                    seekBytesRef.Length++;
+                    seekBytesRef.Bytes[seekBytesRef.Length - 1] = (byte)nextChar;
                     state = transition.Dest.Number;
                     /*
                      * as long as is possible, continue down the minimal path in
                      * lexicographic order. if a loop or accept state is encountered, stop.
                      */
-                    while (Visited[state] != CurGen && !RunAutomaton.IsAccept(state))
+                    while (visited[state] != curGen && !runAutomaton.IsAccept(state))
                     {
-                        Visited[state] = CurGen;
+                        visited[state] = curGen;
                         /*
                          * Note: we work with a DFA with no transitions to dead states.
                          * so the below is ok, if it is not an accept state,
                          * then there MUST be at least one transition.
                          */
-                        transition = AllTransitions[state][0];
+                        transition = allTransitions[state][0];
                         state = transition.Dest.Number;
 
                         // append the minimum transition
-                        SeekBytesRef.Grow(SeekBytesRef.Length + 1);
-                        SeekBytesRef.Length++;
-                        SeekBytesRef.Bytes[SeekBytesRef.Length - 1] = (byte)transition.Min;
+                        seekBytesRef.Grow(seekBytesRef.Length + 1);
+                        seekBytesRef.Length++;
+                        seekBytesRef.Bytes[seekBytesRef.Length - 1] = (byte)transition.Min;
 
                         // we found a loop, record it for faster enumeration
-                        if ((Finite == false) && !Linear_Renamed && Visited[state] == CurGen)
+                        if ((finite == false) && !linear && visited[state] == curGen)
                         {
-                            SetLinear(SeekBytesRef.Length - 1);
+                            SetLinear(seekBytesRef.Length - 1);
                         }
                     }
                     return true;
@@ -359,13 +359,13 @@ namespace Lucene.Net.Index
         {
             while (position-- > 0)
             {
-                int nextChar = SeekBytesRef.Bytes[position] & 0xff;
+                int nextChar = seekBytesRef.Bytes[position] & 0xff;
                 // if a character is 0xff its a dead-end too,
                 // because there is no higher character in binary sort order.
                 if (nextChar++ != 0xff)
                 {
-                    SeekBytesRef.Bytes[position] = (byte)nextChar;
-                    SeekBytesRef.Length = position + 1;
+                    seekBytesRef.Bytes[position] = (byte)nextChar;
+                    seekBytesRef.Length = position + 1;
                     return position;
                 }
             }
