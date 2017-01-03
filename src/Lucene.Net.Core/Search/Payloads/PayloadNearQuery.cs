@@ -48,8 +48,8 @@ namespace Lucene.Net.Search.Payloads
     /// <seealso cref= Lucene.Net.Search.Similarities.Similarity.SimScorer#computePayloadFactor(int, int, int, BytesRef) </seealso>
     public class PayloadNearQuery : SpanNearQuery
     {
-        protected string fieldName;
-        protected PayloadFunction function;
+        protected string m_fieldName;
+        protected PayloadFunction m_function;
 
         public PayloadNearQuery(SpanQuery[] clauses, int slop, bool inOrder)
             : this(clauses, slop, inOrder, new AveragePayloadFunction())
@@ -59,8 +59,8 @@ namespace Lucene.Net.Search.Payloads
         public PayloadNearQuery(SpanQuery[] clauses, int slop, bool inOrder, PayloadFunction function)
             : base(clauses, slop, inOrder)
         {
-            fieldName = clauses[0].Field; // all clauses must have same field
-            this.function = function;
+            m_fieldName = clauses[0].Field; // all clauses must have same field
+            this.m_function = function;
         }
 
         public override Weight CreateWeight(IndexSearcher searcher)
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Payloads
             {
                 newClauses[i] = (SpanQuery)m_clauses[i].Clone();
             }
-            PayloadNearQuery boostingNearQuery = new PayloadNearQuery(newClauses, m_slop, m_inOrder, function);
+            PayloadNearQuery boostingNearQuery = new PayloadNearQuery(newClauses, m_slop, m_inOrder, m_function);
             boostingNearQuery.Boost = Boost;
             return boostingNearQuery;
         }
@@ -112,8 +112,8 @@ namespace Lucene.Net.Search.Payloads
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + ((fieldName == null) ? 0 : fieldName.GetHashCode());
-            result = prime * result + ((function == null) ? 0 : function.GetHashCode());
+            result = prime * result + ((m_fieldName == null) ? 0 : m_fieldName.GetHashCode());
+            result = prime * result + ((m_function == null) ? 0 : m_function.GetHashCode());
             return result;
         }
 
@@ -132,25 +132,25 @@ namespace Lucene.Net.Search.Payloads
                 return false;
             }
             PayloadNearQuery other = (PayloadNearQuery)obj;
-            if (fieldName == null)
+            if (m_fieldName == null)
             {
-                if (other.fieldName != null)
+                if (other.m_fieldName != null)
                 {
                     return false;
                 }
             }
-            else if (!fieldName.Equals(other.fieldName))
+            else if (!m_fieldName.Equals(other.m_fieldName))
             {
                 return false;
             }
-            if (function == null)
+            if (m_function == null)
             {
-                if (other.function != null)
+                if (other.m_function != null)
                 {
                     return false;
                 }
             }
-            else if (!function.Equals(other.function))
+            else if (!m_function.Equals(other.m_function))
             {
                 return false;
             }
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search.Payloads
                         expl.Value = scoreExplanation.Value;
                         string field = ((SpanQuery)Query).Field;
                         // now the payloads part
-                        Explanation payloadExpl = outerInstance.function.Explain(doc, field, scorer.payloadsSeen, scorer.payloadScore);
+                        Explanation payloadExpl = outerInstance.m_function.Explain(doc, field, scorer.payloadsSeen, scorer.payloadScore);
                         // combined
                         ComplexExplanation result = new ComplexExplanation();
                         result.AddDetail(expl);
@@ -267,7 +267,7 @@ namespace Lucene.Net.Search.Payloads
                     scratch.Bytes = thePayload;
                     scratch.Offset = 0;
                     scratch.Length = thePayload.Length;
-                    payloadScore = outerInstance.function.CurrentScore(m_doc, outerInstance.fieldName, start, end, payloadsSeen, payloadScore, m_docScorer.ComputePayloadFactor(m_doc, spans.Start, spans.End, scratch));
+                    payloadScore = outerInstance.m_function.CurrentScore(m_doc, outerInstance.m_fieldName, start, end, payloadsSeen, payloadScore, m_docScorer.ComputePayloadFactor(m_doc, spans.Start, spans.End, scratch));
                     ++payloadsSeen;
                 }
             }
@@ -297,7 +297,7 @@ namespace Lucene.Net.Search.Payloads
 
             public override float Score()
             {
-                return base.Score() * outerInstance.function.DocScore(m_doc, outerInstance.fieldName, payloadsSeen, payloadScore);
+                return base.Score() * outerInstance.m_function.DocScore(m_doc, outerInstance.m_fieldName, payloadsSeen, payloadScore);
             }
         }
     }
