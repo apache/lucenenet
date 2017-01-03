@@ -29,12 +29,12 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class NamedSPILoader<S> : IEnumerable<S> where S : NamedSPILoader.INamedSPI
     {
-        private volatile IDictionary<string, S> Services = CollectionsHelper.EmptyMap<string, S>();
-        private readonly Type Clazz;
+        private volatile IDictionary<string, S> services = CollectionsHelper.EmptyMap<string, S>();
+        private readonly Type clazz;
 
         public NamedSPILoader(Type clazz)
         {
-            this.Clazz = clazz;
+            this.clazz = clazz;
             // if clazz' classloader is not a parent of the given one, we scan clazz's classloader, too:
 
             Reload();
@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
         {
             lock (this)
             {
-                IDictionary<string, S> services = new Dictionary<string, S>(this.Services);
+                IDictionary<string, S> services = new Dictionary<string, S>(this.services);
                 SPIClassIterator<S> loader = SPIClassIterator<S>.Get();
 
                 // Ensure there is a default constructor (the SPIClassIterator contains types that don't)
@@ -79,7 +79,7 @@ namespace Lucene.Net.Util
                         throw new InvalidOperationException("Cannot instantiate SPI class: " + c.Name, e);
                     }
                 }
-                this.Services = CollectionsHelper.UnmodifiableMap(services);
+                this.services = CollectionsHelper.UnmodifiableMap(services);
             }
         }
 
@@ -114,21 +114,21 @@ namespace Lucene.Net.Util
         public S Lookup(string name)
         {
             S service;
-            if (Services.TryGetValue(name, out service))
+            if (services.TryGetValue(name, out service))
             {
                 return service;
             }
-            throw new System.ArgumentException("A SPI class of type " + Clazz.Name + " with name '" + name + "' does not exist. " + "You need to add the corresponding JAR file supporting this SPI to your classpath." + "The current classpath supports the following names: " + AvailableServices());
+            throw new System.ArgumentException("A SPI class of type " + clazz.Name + " with name '" + name + "' does not exist. " + "You need to add the corresponding JAR file supporting this SPI to your classpath." + "The current classpath supports the following names: " + AvailableServices());
         }
 
         public ISet<string> AvailableServices()
         {
-            return new HashSet<string>(Services.Keys);
+            return new HashSet<string>(services.Keys);
         }
 
         public IEnumerator<S> GetEnumerator()
         {
-            return Services.Values.GetEnumerator();
+            return services.Values.GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
