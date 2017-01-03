@@ -48,23 +48,23 @@ namespace Lucene.Net.Index
     internal class BufferedUpdatesStream
     {
         // TODO: maybe linked list?
-        private readonly IList<FrozenBufferedUpdates> Updates = new List<FrozenBufferedUpdates>();
+        private readonly IList<FrozenBufferedUpdates> updates = new List<FrozenBufferedUpdates>();
 
         // Starts at 1 so that SegmentInfos that have never had
         // deletes applied (whose bufferedDelGen defaults to 0)
         // will be correct:
-        private long NextGen_Renamed = 1;
+        private long nextGen = 1;
 
         // used only by assert
-        private Term LastDeleteTerm;
+        private Term lastDeleteTerm;
 
-        private readonly InfoStream InfoStream;
+        private readonly InfoStream infoStream;
         private readonly AtomicLong bytesUsed = new AtomicLong();
         private readonly AtomicInteger numTerms = new AtomicInteger();
 
         public BufferedUpdatesStream(InfoStream infoStream)
         {
-            this.InfoStream = infoStream;
+            this.infoStream = infoStream;
         }
 
         // Appends a new packet of buffered deletes to the stream,
@@ -80,17 +80,17 @@ namespace Lucene.Net.Index
                  * updates. If the pushed packets get our of order would loose documents
                  * since deletes are applied to the wrong segments.
                  */
-                packet.DelGen = NextGen_Renamed++;
+                packet.DelGen = nextGen++;
                 Debug.Assert(packet.Any());
                 Debug.Assert(CheckDeleteStats());
-                Debug.Assert(packet.DelGen < NextGen_Renamed);
-                Debug.Assert(Updates.Count == 0 || Updates[Updates.Count - 1].DelGen < packet.DelGen, "Delete packets must be in order");
-                Updates.Add(packet);
+                Debug.Assert(packet.DelGen < nextGen);
+                Debug.Assert(updates.Count == 0 || updates[updates.Count - 1].DelGen < packet.DelGen, "Delete packets must be in order");
+                updates.Add(packet);
                 numTerms.AddAndGet(packet.NumTermDeletes);
                 bytesUsed.AddAndGet(packet.BytesUsed);
-                if (InfoStream.IsEnabled("BD"))
+                if (infoStream.IsEnabled("BD"))
                 {
-                    InfoStream.Message("BD", "push deletes " + packet + " delGen=" + packet.DelGen + " packetCount=" + Updates.Count + " totBytesUsed=" + bytesUsed.Get());
+                    infoStream.Message("BD", "push deletes " + packet + " delGen=" + packet.DelGen + " packetCount=" + updates.Count + " totBytesUsed=" + bytesUsed.Get());
                 }
                 Debug.Assert(CheckDeleteStats());
                 return packet.DelGen;
@@ -101,8 +101,8 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                Updates.Clear();
-                NextGen_Renamed = 1;
+                updates.Clear();
+                nextGen = 1;
                 numTerms.Set(0);
                 bytesUsed.Set(0);
             }
@@ -182,26 +182,26 @@ namespace Lucene.Net.Index
 
                 if (infos.Count == 0)
                 {
-                    return new ApplyDeletesResult(false, NextGen_Renamed++, null);
+                    return new ApplyDeletesResult(false, nextGen++, null);
                 }
 
                 Debug.Assert(CheckDeleteStats());
 
                 if (!Any())
                 {
-                    if (InfoStream.IsEnabled("BD"))
+                    if (infoStream.IsEnabled("BD"))
                     {
-                        InfoStream.Message("BD", "applyDeletes: no deletes; skipping");
+                        infoStream.Message("BD", "applyDeletes: no deletes; skipping");
                     }
-                    return new ApplyDeletesResult(false, NextGen_Renamed++, null);
+                    return new ApplyDeletesResult(false, nextGen++, null);
                 }
 
-                if (InfoStream.IsEnabled("BD"))
+                if (infoStream.IsEnabled("BD"))
                 {
-                    InfoStream.Message("BD", "applyDeletes: infos=" + infos + " packetCount=" + Updates.Count);
+                    infoStream.Message("BD", "applyDeletes: infos=" + infos + " packetCount=" + updates.Count);
                 }
 
-                long gen = NextGen_Renamed++;
+                long gen = nextGen++;
 
                 List<SegmentCommitInfo> infos2 = new List<SegmentCommitInfo>();
                 infos2.AddRange(infos);
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
                 bool anyNewDeletes = false;
 
                 int infosIDX = infos2.Count - 1;
-                int delIDX = Updates.Count - 1;
+                int delIDX = updates.Count - 1;
 
                 IList<SegmentCommitInfo> allDeleted = null;
 
@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
                 {
                     //System.out.println("BD: cycle delIDX=" + delIDX + " infoIDX=" + infosIDX);
 
-                    FrozenBufferedUpdates packet = delIDX >= 0 ? Updates[delIDX] : null;
+                    FrozenBufferedUpdates packet = delIDX >= 0 ? updates[delIDX] : null;
                     SegmentCommitInfo info = infos2[infosIDX];
                     long segGen = info.BufferedDeletesGen;
 
@@ -296,9 +296,9 @@ namespace Lucene.Net.Index
                             allDeleted.Add(info);
                         }
 
-                        if (InfoStream.IsEnabled("BD"))
+                        if (infoStream.IsEnabled("BD"))
                         {
-                            InfoStream.Message("BD", "seg=" + info + " segGen=" + segGen + " segDeletes=[" + packet + "]; coalesced deletes=[" + (coalescedUpdates == null ? "null" : coalescedUpdates.ToString()) + "] newDelCount=" + delCount + (segAllDeletes ? " 100% deleted" : ""));
+                            infoStream.Message("BD", "seg=" + info + " segGen=" + segGen + " segDeletes=[" + packet + "]; coalesced deletes=[" + (coalescedUpdates == null ? "null" : coalescedUpdates.ToString()) + "] newDelCount=" + delCount + (segAllDeletes ? " 100% deleted" : ""));
                         }
 
                         if (coalescedUpdates == null)
@@ -358,9 +358,9 @@ namespace Lucene.Net.Index
                                 allDeleted.Add(info);
                             }
 
-                            if (InfoStream.IsEnabled("BD"))
+                            if (infoStream.IsEnabled("BD"))
                             {
-                                InfoStream.Message("BD", "seg=" + info + " segGen=" + segGen + " coalesced deletes=[" + coalescedUpdates + "] newDelCount=" + delCount + (segAllDeletes ? " 100% deleted" : ""));
+                                infoStream.Message("BD", "seg=" + info + " segGen=" + segGen + " coalesced deletes=[" + coalescedUpdates + "] newDelCount=" + delCount + (segAllDeletes ? " 100% deleted" : ""));
                             }
                         }
                         info.SetBufferedDeletesGen(gen);
@@ -370,9 +370,9 @@ namespace Lucene.Net.Index
                 }
 
                 Debug.Assert(CheckDeleteStats());
-                if (InfoStream.IsEnabled("BD"))
+                if (infoStream.IsEnabled("BD"))
                 {
-                    InfoStream.Message("BD", "applyDeletes took " + (Environment.TickCount - t0) + " msec");
+                    infoStream.Message("BD", "applyDeletes took " + (Environment.TickCount - t0) + " msec");
                 }
                 // assert infos != segmentInfos || !any() : "infos=" + infos + " segmentInfos=" + segmentInfos + " any=" + any;
 
@@ -384,7 +384,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                return NextGen_Renamed++;
+                return nextGen++;
             }
         }
 
@@ -404,14 +404,14 @@ namespace Lucene.Net.Index
                     minGen = Math.Min(info.BufferedDeletesGen, minGen);
                 }
 
-                if (InfoStream.IsEnabled("BD"))
+                if (infoStream.IsEnabled("BD"))
                 {
-                    InfoStream.Message("BD", "prune sis=" + segmentInfos + " minGen=" + minGen + " packetCount=" + Updates.Count);
+                    infoStream.Message("BD", "prune sis=" + segmentInfos + " minGen=" + minGen + " packetCount=" + updates.Count);
                 }
-                int limit = Updates.Count;
+                int limit = updates.Count;
                 for (int delIDX = 0; delIDX < limit; delIDX++)
                 {
-                    if (Updates[delIDX].DelGen >= minGen)
+                    if (updates[delIDX].DelGen >= minGen)
                     {
                         Prune(delIDX);
                         Debug.Assert(CheckDeleteStats());
@@ -432,19 +432,19 @@ namespace Lucene.Net.Index
             {
                 if (count > 0)
                 {
-                    if (InfoStream.IsEnabled("BD"))
+                    if (infoStream.IsEnabled("BD"))
                     {
-                        InfoStream.Message("BD", "pruneDeletes: prune " + count + " packets; " + (Updates.Count - count) + " packets remain");
+                        infoStream.Message("BD", "pruneDeletes: prune " + count + " packets; " + (updates.Count - count) + " packets remain");
                     }
                     for (int delIDX = 0; delIDX < count; delIDX++)
                     {
-                        FrozenBufferedUpdates packet = Updates[delIDX];
+                        FrozenBufferedUpdates packet = updates[delIDX];
                         numTerms.AddAndGet(-packet.NumTermDeletes);
                         Debug.Assert(numTerms.Get() >= 0);
                         bytesUsed.AddAndGet(-packet.BytesUsed);
                         Debug.Assert(bytesUsed.Get() >= 0);
                     }
-                    Updates.SubList(0, count).Clear();
+                    updates.SubList(0, count).Clear();
                 }
             }
         }
@@ -690,10 +690,10 @@ namespace Lucene.Net.Index
         {
             if (term != null)
             {
-                Debug.Assert(LastDeleteTerm == null || term.CompareTo(LastDeleteTerm) > 0, "lastTerm=" + LastDeleteTerm + " vs term=" + term);
+                Debug.Assert(lastDeleteTerm == null || term.CompareTo(lastDeleteTerm) > 0, "lastTerm=" + lastDeleteTerm + " vs term=" + term);
             }
             // TODO: we re-use term now in our merged iterable, but we shouldn't clone, instead copy for this assert
-            LastDeleteTerm = term == null ? null : new Term(term.Field, BytesRef.DeepCopyOf(term.Bytes));
+            lastDeleteTerm = term == null ? null : new Term(term.Field, BytesRef.DeepCopyOf(term.Bytes));
             return true;
         }
 
@@ -702,7 +702,7 @@ namespace Lucene.Net.Index
         {
             int numTerms2 = 0;
             long bytesUsed2 = 0;
-            foreach (FrozenBufferedUpdates packet in Updates)
+            foreach (FrozenBufferedUpdates packet in updates)
             {
                 numTerms2 += packet.NumTermDeletes;
                 bytesUsed2 += packet.BytesUsed;
