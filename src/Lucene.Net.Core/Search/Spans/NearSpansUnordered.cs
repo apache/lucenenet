@@ -34,31 +34,31 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class NearSpansUnordered : Spans
     {
-        private SpanNearQuery Query;
+        private SpanNearQuery query;
 
-        private IList<SpansCell> Ordered = new List<SpansCell>(); // spans in query order
+        private IList<SpansCell> ordered = new List<SpansCell>(); // spans in query order
         private Spans[] subSpans;
-        private int Slop; // from query
+        private int slop; // from query
 
-        private SpansCell First; // linked list of spans
-        private SpansCell Last; // sorted by doc only
+        private SpansCell first; // linked list of spans
+        private SpansCell last; // sorted by doc only
 
-        private int TotalLength; // sum of current lengths
+        private int totalLength; // sum of current lengths
 
-        private CellQueue Queue; // sorted queue of spans
-        private SpansCell Max; // max element in queue
+        private CellQueue queue; // sorted queue of spans
+        private SpansCell max; // max element in queue
 
-        private bool More = true; // true iff not done
-        private bool FirstTime = true; // true before first next()
+        private bool more = true; // true iff not done
+        private bool firstTime = true; // true before first next()
 
         private class CellQueue : PriorityQueue<SpansCell>
         {
-            private readonly NearSpansUnordered OuterInstance;
+            private readonly NearSpansUnordered outerInstance;
 
             public CellQueue(NearSpansUnordered outerInstance, int size)
                 : base(size)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override bool LessThan(SpansCell spans1, SpansCell spans2)
@@ -106,19 +106,19 @@ namespace Lucene.Net.Search.Spans
             {
                 if (length != -1)
                 {
-                    outerInstance.TotalLength -= length; // subtract old length
+                    outerInstance.totalLength -= length; // subtract old length
                 }
                 if (condition)
                 {
                     length = End - Start;
-                    outerInstance.TotalLength += length; // add new length
+                    outerInstance.totalLength += length; // add new length
 
-                    if (outerInstance.Max == null || Doc > outerInstance.Max.Doc || (Doc == outerInstance.Max.Doc) && (End > outerInstance.Max.End))
+                    if (outerInstance.max == null || Doc > outerInstance.max.Doc || (Doc == outerInstance.max.Doc) && (End > outerInstance.max.End))
                     {
-                        outerInstance.Max = this;
+                        outerInstance.max = this;
                     }
                 }
-                outerInstance.More = condition;
+                outerInstance.more = condition;
                 return condition;
             }
 
@@ -168,16 +168,16 @@ namespace Lucene.Net.Search.Spans
 
         public NearSpansUnordered(SpanNearQuery query, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
-            this.Query = query;
-            this.Slop = query.Slop;
+            this.query = query;
+            this.slop = query.Slop;
 
             SpanQuery[] clauses = query.Clauses;
-            Queue = new CellQueue(this, clauses.Length);
+            queue = new CellQueue(this, clauses.Length);
             subSpans = new Spans[clauses.Length];
             for (int i = 0; i < clauses.Length; i++)
             {
                 SpansCell cell = new SpansCell(this, clauses[i].GetSpans(context, acceptDocs, termContexts), i);
-                Ordered.Add(cell);
+                ordered.Add(cell);
                 subSpans[i] = cell.spans;
             }
         }
@@ -192,29 +192,29 @@ namespace Lucene.Net.Search.Spans
 
         public override bool Next()
         {
-            if (FirstTime)
+            if (firstTime)
             {
                 InitList(true);
                 ListToQueue(); // initialize queue
-                FirstTime = false;
+                firstTime = false;
             }
-            else if (More)
+            else if (more)
             {
                 if (Min.Next()) // trigger further scanning
                 {
-                    Queue.UpdateTop(); // maintain queue
+                    queue.UpdateTop(); // maintain queue
                 }
                 else
                 {
-                    More = false;
+                    more = false;
                 }
             }
 
-            while (More)
+            while (more)
             {
                 bool queueStale = false;
 
-                if (Min.Doc != Max.Doc) // maintain list
+                if (Min.Doc != max.Doc) // maintain list
                 {
                     QueueToList();
                     queueStale = true;
@@ -222,14 +222,14 @@ namespace Lucene.Net.Search.Spans
 
                 // skip to doc w/ all clauses
 
-                while (More && First.Doc < Last.Doc)
+                while (more && first.Doc < last.Doc)
                 {
-                    More = First.SkipTo(Last.Doc); // skip first upto last
+                    more = first.SkipTo(last.Doc); // skip first upto last
                     FirstToLast(); // and move it to the end
                     queueStale = true;
                 }
 
-                if (!More)
+                if (!more)
                 {
                     return false;
                 }
@@ -247,10 +247,10 @@ namespace Lucene.Net.Search.Spans
                     return true;
                 }
 
-                More = Min.Next();
-                if (More)
+                more = Min.Next();
+                if (more)
                 {
-                    Queue.UpdateTop(); // maintain queue
+                    queue.UpdateTop(); // maintain queue
                 }
             }
             return false; // no more matches
@@ -258,39 +258,39 @@ namespace Lucene.Net.Search.Spans
 
         public override bool SkipTo(int target)
         {
-            if (FirstTime) // initialize
+            if (firstTime) // initialize
             {
                 InitList(false);
-                for (SpansCell cell = First; More && cell != null; cell = cell.next)
+                for (SpansCell cell = first; more && cell != null; cell = cell.next)
                 {
-                    More = cell.SkipTo(target); // skip all
+                    more = cell.SkipTo(target); // skip all
                 }
-                if (More)
+                if (more)
                 {
                     ListToQueue();
                 }
-                FirstTime = false;
+                firstTime = false;
             } // normal case
             else
             {
-                while (More && Min.Doc < target) // skip as needed
+                while (more && Min.Doc < target) // skip as needed
                 {
                     if (Min.SkipTo(target))
                     {
-                        Queue.UpdateTop();
+                        queue.UpdateTop();
                     }
                     else
                     {
-                        More = false;
+                        more = false;
                     }
                 }
             }
-            return More && (AtMatch || Next());
+            return more && (AtMatch || Next());
         }
 
         private SpansCell Min
         {
-            get { return Queue.Top; }
+            get { return queue.Top; }
         }
 
         public override int Doc
@@ -311,7 +311,7 @@ namespace Lucene.Net.Search.Spans
         public override int End
         
         {
-            get { return Max.End; }
+            get { return max.End; }
         }
 
         public override ICollection<byte[]> Payload
@@ -319,7 +319,7 @@ namespace Lucene.Net.Search.Spans
             get
             {
                 var matchPayload = new HashSet<byte[]>();
-                for (var cell = First; cell != null; cell = cell.next)
+                for (var cell = first; cell != null; cell = cell.next)
                 {
                     if (cell.IsPayloadAvailable)
                     {
@@ -361,19 +361,19 @@ namespace Lucene.Net.Search.Spans
 
         public override string ToString()
         {
-            return this.GetType().Name + "(" + Query.ToString() + ")@" + (FirstTime ? "START" : (More ? (Doc + ":" + Start + "-" + End) : "END"));
+            return this.GetType().Name + "(" + query.ToString() + ")@" + (firstTime ? "START" : (more ? (Doc + ":" + Start + "-" + End) : "END"));
         }
 
         private void InitList(bool next)
         {
-            for (int i = 0; More && i < Ordered.Count; i++)
+            for (int i = 0; more && i < ordered.Count; i++)
             {
-                SpansCell cell = Ordered[i];
+                SpansCell cell = ordered[i];
                 if (next)
                 {
-                    More = cell.Next(); // move to first entry
+                    more = cell.Next(); // move to first entry
                 }
-                if (More)
+                if (more)
                 {
                     AddToList(cell); // add to list
                 }
@@ -382,47 +382,47 @@ namespace Lucene.Net.Search.Spans
 
         private void AddToList(SpansCell cell)
         {
-            if (Last != null) // add next to end of list
+            if (last != null) // add next to end of list
             {
-                Last.next = cell;
+                last.next = cell;
             }
             else
             {
-                First = cell;
+                first = cell;
             }
-            Last = cell;
+            last = cell;
             cell.next = null;
         }
 
         private void FirstToLast()
         {
-            Last.next = First; // move first to end of list
-            Last = First;
-            First = First.next;
-            Last.next = null;
+            last.next = first; // move first to end of list
+            last = first;
+            first = first.next;
+            last.next = null;
         }
 
         private void QueueToList()
         {
-            Last = First = null;
-            while (Queue.Top != null)
+            last = first = null;
+            while (queue.Top != null)
             {
-                AddToList(Queue.Pop());
+                AddToList(queue.Pop());
             }
         }
 
         private void ListToQueue()
         {
-            Queue.Clear(); // rebuild queue
-            for (SpansCell cell = First; cell != null; cell = cell.next)
+            queue.Clear(); // rebuild queue
+            for (SpansCell cell = first; cell != null; cell = cell.next)
             {
-                Queue.Add(cell); // add to queue from list
+                queue.Add(cell); // add to queue from list
             }
         }
 
         private bool AtMatch
         {
-            get { return (Min.Doc == Max.Doc) && ((Max.End - Min.Start - TotalLength) <= Slop); }
+            get { return (Min.Doc == max.Doc) && ((max.End - Min.Start - totalLength) <= slop); }
         }
     }
 }
