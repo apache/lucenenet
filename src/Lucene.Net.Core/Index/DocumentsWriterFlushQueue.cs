@@ -28,13 +28,13 @@ namespace Lucene.Net.Index
     /// </summary>
     internal class DocumentsWriterFlushQueue
     {
-        private readonly LinkedList<FlushTicket> Queue = new LinkedList<FlushTicket>();
+        private readonly LinkedList<FlushTicket> queue = new LinkedList<FlushTicket>();
 
         // we track tickets separately since count must be present even before the ticket is
         // constructed ie. queue.size would not reflect it.
-        private readonly AtomicInteger TicketCount_Renamed = new AtomicInteger();
+        private readonly AtomicInteger ticketCount = new AtomicInteger();
 
-        private readonly ReentrantLock PurgeLock = new ReentrantLock();
+        private readonly ReentrantLock purgeLock = new ReentrantLock();
 
         internal virtual void AddDeletes(DocumentsWriterDeleteQueue deleteQueue)
         {
@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
-                    Queue.AddLast(new GlobalDeletesTicket(deleteQueue.FreezeGlobalBuffer(null)));
+                    queue.AddLast(new GlobalDeletesTicket(deleteQueue.FreezeGlobalBuffer(null)));
                     success = true;
                 }
                 finally
@@ -60,13 +60,13 @@ namespace Lucene.Net.Index
 
         private void IncTickets()
         {
-            int numTickets = TicketCount_Renamed.IncrementAndGet();
+            int numTickets = ticketCount.IncrementAndGet();
             Debug.Assert(numTickets > 0);
         }
 
         private void DecTickets()
         {
-            int numTickets = TicketCount_Renamed.DecrementAndGet();
+            int numTickets = ticketCount.DecrementAndGet();
             Debug.Assert(numTickets >= 0);
         }
 
@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
                 {
                     // prepare flush freezes the global deletes - do in synced block!
                     SegmentFlushTicket ticket = new SegmentFlushTicket(dwpt.PrepareFlush());
-                    Queue.AddLast(ticket);
+                    queue.AddLast(ticket);
                     success = true;
                     return ticket;
                 }
@@ -119,8 +119,8 @@ namespace Lucene.Net.Index
         {
             get
             {
-                Debug.Assert(TicketCount_Renamed.Get() >= 0, "ticketCount should be >= 0 but was: " + TicketCount_Renamed.Get());
-                return TicketCount_Renamed.Get() != 0;
+                Debug.Assert(ticketCount.Get() >= 0, "ticketCount should be >= 0 but was: " + ticketCount.Get());
+                return ticketCount.Get() != 0;
             }
         }
 
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
                 bool canPublish;
                 lock (this)
                 {
-                    head = Queue.Count <= 0 ? null : Queue.First.Value;
+                    head = queue.Count <= 0 ? null : queue.First.Value;
                     canPublish = head != null && head.CanPublish; // do this synced
                 }
                 if (canPublish)
@@ -155,9 +155,9 @@ namespace Lucene.Net.Index
                         lock (this)
                         {
                             // finally remove the published ticket from the queue
-                            FlushTicket poll = Queue.First.Value;
-                            Queue.RemoveFirst();
-                            TicketCount_Renamed.DecrementAndGet();
+                            FlushTicket poll = queue.First.Value;
+                            queue.RemoveFirst();
+                            ticketCount.DecrementAndGet();
                             Debug.Assert(poll == head);
                         }
                     }
@@ -174,14 +174,14 @@ namespace Lucene.Net.Index
         {
             //Debug.Assert(!Thread.HoldsLock(this));
             //Debug.Assert(!Thread.holdsLock(writer));
-            PurgeLock.@Lock();
+            purgeLock.@Lock();
             try
             {
                 return InnerPurge(writer);
             }
             finally
             {
-                PurgeLock.Unlock();
+                purgeLock.Unlock();
             }
         }
 
@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
         {
             //Debug.Assert(!Thread.holdsLock(this));
             //Debug.Assert(!Thread.holdsLock(writer));
-            if (PurgeLock.TryLock())
+            if (purgeLock.TryLock())
             {
                 try
                 {
@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    PurgeLock.Unlock();
+                    purgeLock.Unlock();
                 }
             }
             return 0;
@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return TicketCount_Renamed.Get();
+                return ticketCount.Get();
             }
         }
 
@@ -215,20 +215,20 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                Queue.Clear();
-                TicketCount_Renamed.Set(0);
+                queue.Clear();
+                ticketCount.Set(0);
             }
         }
 
         internal abstract class FlushTicket
         {
-            protected internal FrozenBufferedUpdates FrozenUpdates;
-            protected internal bool Published = false;
+            protected internal FrozenBufferedUpdates frozenUpdates;
+            protected internal bool published = false;
 
             protected FlushTicket(FrozenBufferedUpdates frozenUpdates)
             {
                 Debug.Assert(frozenUpdates != null);
-                this.FrozenUpdates = frozenUpdates;
+                this.frozenUpdates = frozenUpdates;
             }
 
             protected internal abstract void Publish(IndexWriter writer);
@@ -291,10 +291,10 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                Debug.Assert(!Published, "ticket was already publised - can not publish twice");
-                Published = true;
+                Debug.Assert(!published, "ticket was already publised - can not publish twice");
+                published = true;
                 // its a global ticket - no segment to publish
-                FinishFlush(writer, null, FrozenUpdates);
+                FinishFlush(writer, null, frozenUpdates);
             }
 
             protected internal override bool CanPublish
@@ -305,8 +305,8 @@ namespace Lucene.Net.Index
 
         internal sealed class SegmentFlushTicket : FlushTicket
         {
-            internal FlushedSegment Segment_Renamed;
-            internal bool Failed = false;
+            internal FlushedSegment segment;
+            internal bool failed = false;
 
             internal SegmentFlushTicket(FrozenBufferedUpdates frozenDeletes) // LUCENENET NOTE: Made internal rather than protected because class is sealed
                 : base(frozenDeletes)
@@ -315,26 +315,26 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                Debug.Assert(!Published, "ticket was already publised - can not publish twice");
-                Published = true;
-                FinishFlush(writer, Segment_Renamed, FrozenUpdates);
+                Debug.Assert(!published, "ticket was already publised - can not publish twice");
+                published = true;
+                FinishFlush(writer, segment, frozenUpdates);
             }
 
             internal void SetSegment(FlushedSegment segment) // LUCENENET NOTE: Made internal rather than protected because class is sealed
             {
-                Debug.Assert(!Failed);
-                this.Segment_Renamed = segment;
+                Debug.Assert(!failed);
+                this.segment = segment;
             }
 
             internal void SetFailed() // LUCENENET NOTE: Made internal rather than protected because class is sealed
             {
-                Debug.Assert(Segment_Renamed == null);
-                Failed = true;
+                Debug.Assert(segment == null);
+                failed = true;
             }
 
             protected internal override bool CanPublish
             {
-                get { return Segment_Renamed != null || Failed; }
+                get { return segment != null || failed; }
             }
         }
     }
