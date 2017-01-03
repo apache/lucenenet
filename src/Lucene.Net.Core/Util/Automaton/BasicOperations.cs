@@ -829,9 +829,9 @@ namespace Lucene.Net.Util.Automaton
                 worklist.Remove(s);
 
                 // Collate all outgoing transitions by min/1+max:
-                for (int i = 0; i < s.Values.Length; i++)
+                for (int i = 0; i < s.values.Length; i++)
                 {
-                    State s0 = allStates[s.Values[i]];
+                    State s0 = allStates[s.values[i]];
                     for (int j = 0; j < s0.numTransitions; j++)
                     {
                         points.Add(s0.TransitionsArray[j]);
@@ -849,12 +849,12 @@ namespace Lucene.Net.Util.Automaton
                 int lastPoint = -1;
                 int accCount = 0;
 
-                State r = s.State;
+                State r = s.state;
                 for (int i = 0; i < points.Count; i++)
                 {
                     int point = points.Points[i].Point;
 
-                    if (statesSet.Upto > 0)
+                    if (statesSet.upto > 0)
                     {
                         Debug.Assert(lastPoint != -1);
 
@@ -916,7 +916,7 @@ namespace Lucene.Net.Util.Automaton
                     points.Points[i].Starts.Count = 0;
                 }
                 points.Reset();
-                Debug.Assert(statesSet.Upto == 0, "upto=" + statesSet.Upto);
+                Debug.Assert(statesSet.upto == 0, "upto=" + statesSet.upto);
             }
             a.deterministic = true;
             a.SetNumberedStates(newStatesArray, newStateUpto);

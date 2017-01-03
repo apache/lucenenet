@@ -27,86 +27,86 @@ namespace Lucene.Net.Util.Automaton
     // BasicOperations.determinize
     internal sealed class SortedIntSet : IEquatable<SortedIntSet>, IEquatable<SortedIntSet.FrozenIntSet>
     {
-        internal int[] Values;
-        internal int[] Counts;
-        internal int Upto;
-        private int HashCode_Renamed;
+        internal int[] values;
+        internal int[] counts;
+        internal int upto;
+        private int hashCode;
 
         // If we hold more than this many states, we switch from
         // O(N^2) linear ops to O(N log(N)) TreeMap
         private const int TREE_MAP_CUTOVER = 30;
 
-        private readonly IDictionary<int, int> Map = new SortedDictionary<int, int>();
+        private readonly IDictionary<int, int> map = new SortedDictionary<int, int>();
 
-        private bool UseTreeMap;
+        private bool useTreeMap;
 
-        internal State State;
+        internal State state;
 
         public SortedIntSet(int capacity)
         {
-            Values = new int[capacity];
-            Counts = new int[capacity];
+            values = new int[capacity];
+            counts = new int[capacity];
         }
 
         // Adds this state to the set
         public void Incr(int num)
         {
-            if (UseTreeMap)
+            if (useTreeMap)
             {
                 int key = num;
                 int val;
-                if (!Map.TryGetValue(key, out val))
+                if (!map.TryGetValue(key, out val))
                 {
-                    Map[key] = 1;
+                    map[key] = 1;
                 }
                 else
                 {
-                    Map[key] = 1 + val;
+                    map[key] = 1 + val;
                 }
                 return;
             }
 
-            if (Upto == Values.Length)
+            if (upto == values.Length)
             {
-                Values = ArrayUtil.Grow(Values, 1 + Upto);
-                Counts = ArrayUtil.Grow(Counts, 1 + Upto);
+                values = ArrayUtil.Grow(values, 1 + upto);
+                counts = ArrayUtil.Grow(counts, 1 + upto);
             }
 
-            for (int i = 0; i < Upto; i++)
+            for (int i = 0; i < upto; i++)
             {
-                if (Values[i] == num)
+                if (values[i] == num)
                 {
-                    Counts[i]++;
+                    counts[i]++;
                     return;
                 }
-                else if (num < Values[i])
+                else if (num < values[i])
                 {
                     // insert here
-                    int j = Upto - 1;
+                    int j = upto - 1;
                     while (j >= i)
                     {
-                        Values[1 + j] = Values[j];
-                        Counts[1 + j] = Counts[j];
+                        values[1 + j] = values[j];
+                        counts[1 + j] = counts[j];
                         j--;
                     }
-                    Values[i] = num;
-                    Counts[i] = 1;
-                    Upto++;
+                    values[i] = num;
+                    counts[i] = 1;
+                    upto++;
                     return;
                 }
             }
 
             // append
-            Values[Upto] = num;
-            Counts[Upto] = 1;
-            Upto++;
+            values[upto] = num;
+            counts[upto] = 1;
+            upto++;
 
-            if (Upto == TREE_MAP_CUTOVER)
+            if (upto == TREE_MAP_CUTOVER)
             {
-                UseTreeMap = true;
-                for (int i = 0; i < Upto; i++)
+                useTreeMap = true;
+                for (int i = 0; i < upto; i++)
                 {
-                    Map[Values[i]] = Counts[i];
+                    map[values[i]] = counts[i];
                 }
             }
         }
@@ -114,41 +114,41 @@ namespace Lucene.Net.Util.Automaton
         // Removes this state from the set, if count decrs to 0
         public void Decr(int num)
         {
-            if (UseTreeMap)
+            if (useTreeMap)
             {
-                int count = Map[num];
+                int count = map[num];
                 if (count == 1)
                 {
-                    Map.Remove(num);
+                    map.Remove(num);
                 }
                 else
                 {
-                    Map[num] = count - 1;
+                    map[num] = count - 1;
                 }
                 // Fall back to simple arrays once we touch zero again
-                if (Map.Count == 0)
+                if (map.Count == 0)
                 {
-                    UseTreeMap = false;
-                    Upto = 0;
+                    useTreeMap = false;
+                    upto = 0;
                 }
                 return;
             }
 
-            for (int i = 0; i < Upto; i++)
+            for (int i = 0; i < upto; i++)
             {
-                if (Values[i] == num)
+                if (values[i] == num)
                 {
-                    Counts[i]--;
-                    if (Counts[i] == 0)
+                    counts[i]--;
+                    if (counts[i] == 0)
                     {
-                        int limit = Upto - 1;
+                        int limit = upto - 1;
                         while (i < limit)
                         {
-                            Values[i] = Values[i + 1];
-                            Counts[i] = Counts[i + 1];
+                            values[i] = values[i + 1];
+                            counts[i] = counts[i + 1];
                             i++;
                         }
-                        Upto = limit;
+                        upto = limit;
                     }
                     return;
                 }
@@ -158,49 +158,49 @@ namespace Lucene.Net.Util.Automaton
 
         public void ComputeHash()
         {
-            if (UseTreeMap)
+            if (useTreeMap)
             {
-                if (Map.Count > Values.Length)
+                if (map.Count > values.Length)
                 {
-                    int size = ArrayUtil.Oversize(Map.Count, RamUsageEstimator.NUM_BYTES_INT);
-                    Values = new int[size];
-                    Counts = new int[size];
+                    int size = ArrayUtil.Oversize(map.Count, RamUsageEstimator.NUM_BYTES_INT);
+                    values = new int[size];
+                    counts = new int[size];
                 }
-                HashCode_Renamed = Map.Count;
-                Upto = 0;
-                foreach (int state in Map.Keys)
+                hashCode = map.Count;
+                upto = 0;
+                foreach (int state in map.Keys)
                 {
-                    HashCode_Renamed = 683 * HashCode_Renamed + state;
-                    Values[Upto++] = state;
+                    hashCode = 683 * hashCode + state;
+                    values[upto++] = state;
                 }
             }
             else
             {
-                HashCode_Renamed = Upto;
-                for (int i = 0; i < Upto; i++)
+                hashCode = upto;
+                for (int i = 0; i < upto; i++)
                 {
-                    HashCode_Renamed = 683 * HashCode_Renamed + Values[i];
+                    hashCode = 683 * hashCode + values[i];
                 }
             }
         }
 
         public FrozenIntSet ToFrozenIntSet() // LUCENENET TODO: This didn't exist in the original
         {
-            int[] c = new int[Upto];
-            Array.Copy(Values, 0, c, 0, Upto);
-            return new FrozenIntSet(c, this.HashCode_Renamed, this.State);
+            int[] c = new int[upto];
+            Array.Copy(values, 0, c, 0, upto);
+            return new FrozenIntSet(c, this.hashCode, this.state);
         }
 
         public FrozenIntSet Freeze(State state)
         {
-            int[] c = new int[Upto];
-            Array.Copy(Values, 0, c, 0, Upto);
-            return new FrozenIntSet(c, HashCode_Renamed, state);
+            int[] c = new int[upto];
+            Array.Copy(values, 0, c, 0, upto);
+            return new FrozenIntSet(c, hashCode, state);
         }
 
         public override int GetHashCode()
         {
-            return HashCode_Renamed;
+            return hashCode;
         }
 
         public override bool Equals(object _other)
@@ -215,17 +215,17 @@ namespace Lucene.Net.Util.Automaton
                 return false;
             }
             FrozenIntSet other = (FrozenIntSet)_other;
-            if (HashCode_Renamed != other.HashCode_Renamed)
+            if (hashCode != other.hashCode)
             {
                 return false;
             }
-            if (other.Values.Length != Upto)
+            if (other.values.Length != upto)
             {
                 return false;
             }
-            for (int i = 0; i < Upto; i++)
+            for (int i = 0; i < upto; i++)
             {
-                if (other.Values[i] != Values[i])
+                if (other.values[i] != values[i])
                 {
                     return false;
                 }
@@ -246,18 +246,18 @@ namespace Lucene.Net.Util.Automaton
                 return false;
             }
 
-            if (HashCode_Renamed != other.HashCode_Renamed)
+            if (hashCode != other.hashCode)
             {
                 return false;
             }
-            if (other.Values.Length != Upto)
+            if (other.values.Length != upto)
             {
                 return false;
             }
 
-            for (int i = 0; i < Upto; i++)
+            for (int i = 0; i < upto; i++)
             {
-                if (other.Values[i] != Values[i])
+                if (other.values[i] != values[i])
                 {
                     return false;
                 }
@@ -269,13 +269,13 @@ namespace Lucene.Net.Util.Automaton
         public override string ToString()
         {
             StringBuilder sb = (new StringBuilder()).Append('[');
-            for (int i = 0; i < Upto; i++)
+            for (int i = 0; i < upto; i++)
             {
                 if (i > 0)
                 {
                     sb.Append(' ');
                 }
-                sb.Append(Values[i]).Append(':').Append(Counts[i]);
+                sb.Append(values[i]).Append(':').Append(counts[i]);
             }
             sb.Append(']');
             return sb.ToString();
@@ -283,27 +283,27 @@ namespace Lucene.Net.Util.Automaton
 
         public sealed class FrozenIntSet : IEquatable<SortedIntSet>, IEquatable<FrozenIntSet>
         {
-            internal readonly int[] Values;
-            internal readonly int HashCode_Renamed;
-            internal readonly State State;
+            internal readonly int[] values;
+            internal readonly int hashCode;
+            internal readonly State state;
 
             public FrozenIntSet(int[] values, int hashCode, State state)
             {
-                this.Values = values;
-                this.HashCode_Renamed = hashCode;
-                this.State = state;
+                this.values = values;
+                this.hashCode = hashCode;
+                this.state = state;
             }
 
             public FrozenIntSet(int num, State state)
             {
-                this.Values = new int[] { num };
-                this.State = state;
-                this.HashCode_Renamed = 683 + num;
+                this.values = new int[] { num };
+                this.state = state;
+                this.hashCode = 683 + num;
             }
 
             public override int GetHashCode()
             {
-                return HashCode_Renamed;
+                return hashCode;
             }
 
             public override bool Equals(object _other)
@@ -315,17 +315,17 @@ namespace Lucene.Net.Util.Automaton
                 if (_other is FrozenIntSet)
                 {
                     FrozenIntSet other = (FrozenIntSet)_other;
-                    if (HashCode_Renamed != other.HashCode_Renamed)
+                    if (hashCode != other.hashCode)
                     {
                         return false;
                     }
-                    if (other.Values.Length != Values.Length)
+                    if (other.values.Length != values.Length)
                     {
                         return false;
                     }
-                    for (int i = 0; i < Values.Length; i++)
+                    for (int i = 0; i < values.Length; i++)
                     {
-                        if (other.Values[i] != Values[i])
+                        if (other.values[i] != values[i])
                         {
                             return false;
                         }
@@ -335,17 +335,17 @@ namespace Lucene.Net.Util.Automaton
                 else if (_other is SortedIntSet)
                 {
                     SortedIntSet other = (SortedIntSet)_other;
-                    if (HashCode_Renamed != other.HashCode_Renamed)
+                    if (hashCode != other.hashCode)
                     {
                         return false;
                     }
-                    if (other.Values.Length != Values.Length)
+                    if (other.values.Length != values.Length)
                     {
                         return false;
                     }
-                    for (int i = 0; i < Values.Length; i++)
+                    for (int i = 0; i < values.Length; i++)
                     {
-                        if (other.Values[i] != Values[i])
+                        if (other.values[i] != values[i])
                         {
                             return false;
                         }
@@ -363,17 +363,17 @@ namespace Lucene.Net.Util.Automaton
                     return false;
                 }
 
-                if (HashCode_Renamed != other.HashCode_Renamed)
+                if (hashCode != other.hashCode)
                 {
                     return false;
                 }
-                if (other.Values.Length != Values.Length)
+                if (other.values.Length != values.Length)
                 {
                     return false;
                 }
-                for (int i = 0; i < Values.Length; i++)
+                for (int i = 0; i < values.Length; i++)
                 {
-                    if (other.Values[i] != Values[i])
+                    if (other.values[i] != values[i])
                     {
                         return false;
                     }
@@ -388,17 +388,17 @@ namespace Lucene.Net.Util.Automaton
                     return false;
                 }
 
-                if (HashCode_Renamed != other.HashCode_Renamed)
+                if (hashCode != other.hashCode)
                 {
                     return false;
                 }
-                if (other.Values.Length != Values.Length)
+                if (other.values.Length != values.Length)
                 {
                     return false;
                 }
-                for (int i = 0; i < Values.Length; i++)
+                for (int i = 0; i < values.Length; i++)
                 {
-                    if (other.Values[i] != Values[i])
+                    if (other.values[i] != values[i])
                     {
                         return false;
                     }
@@ -409,13 +409,13 @@ namespace Lucene.Net.Util.Automaton
             public override string ToString()
             {
                 StringBuilder sb = (new StringBuilder()).Append('[');
-                for (int i = 0; i < Values.Length; i++)
+                for (int i = 0; i < values.Length; i++)
                 {
                     if (i > 0)
                     {
                         sb.Append(' ');
                     }
-                    sb.Append(Values[i]);
+                    sb.Append(values[i]);
                 }
                 sb.Append(']');
                 return sb.ToString();
