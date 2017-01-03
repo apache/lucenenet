@@ -66,8 +66,8 @@ namespace Lucene.Net.Search
             Assert.IsTrue(q is NGramPhraseQuery);
             Assert.AreSame(pq1, q);
             pq1 = (NGramPhraseQuery)q;
-            Assert.AreEqual(new Term[] { new Term("f", "AB"), new Term("f", "BC") }, pq1.Terms);
-            Assert.AreEqual(new int[] { 0, 1 }, pq1.Positions);
+            Assert.AreEqual(new Term[] { new Term("f", "AB"), new Term("f", "BC") }, pq1.GetTerms());
+            Assert.AreEqual(new int[] { 0, 1 }, pq1.GetPositions());
 
             // bi-gram test ABCD => AB/BC/CD => AB//CD
             PhraseQuery pq2 = new NGramPhraseQuery(2);
@@ -79,8 +79,8 @@ namespace Lucene.Net.Search
             Assert.IsTrue(q is PhraseQuery);
             Assert.AreNotSame(pq2, q);
             pq2 = (PhraseQuery)q;
-            Assert.AreEqual(new Term[] { new Term("f", "AB"), new Term("f", "CD") }, pq2.Terms);
-            Assert.AreEqual(new int[] { 0, 2 }, pq2.Positions);
+            Assert.AreEqual(new Term[] { new Term("f", "AB"), new Term("f", "CD") }, pq2.GetTerms());
+            Assert.AreEqual(new int[] { 0, 2 }, pq2.GetPositions());
 
             // tri-gram test ABCDEFGH => ABC/BCD/CDE/DEF/EFG/FGH => ABC///DEF//FGH
             PhraseQuery pq3 = new NGramPhraseQuery(3);
@@ -95,8 +95,8 @@ namespace Lucene.Net.Search
             Assert.IsTrue(q is PhraseQuery);
             Assert.AreNotSame(pq3, q);
             pq3 = (PhraseQuery)q;
-            Assert.AreEqual(new Term[] { new Term("f", "ABC"), new Term("f", "DEF"), new Term("f", "FGH") }, pq3.Terms);
-            Assert.AreEqual(new int[] { 0, 3, 5 }, pq3.Positions);
+            Assert.AreEqual(new Term[] { new Term("f", "ABC"), new Term("f", "DEF"), new Term("f", "FGH") }, pq3.GetTerms());
+            Assert.AreEqual(new int[] { 0, 3, 5 }, pq3.GetPositions());
 
             // LUCENE-4970: boosting test
             PhraseQuery pq4 = new NGramPhraseQuery(2);

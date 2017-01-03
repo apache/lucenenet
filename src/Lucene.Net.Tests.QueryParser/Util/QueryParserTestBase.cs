@@ -1121,8 +1121,8 @@ namespace Lucene.Net.QueryParsers.Util
             PhraseQuery pq = (PhraseQuery)GetQuery(qtxt, qp);
             //System.out.println("Query text: "+qtxt);
             //System.out.println("Result: "+pq);
-            Term[] t = pq.Terms;
-            int[] pos = pq.Positions;
+            Term[] t = pq.GetTerms();
+            int[] pos = pq.GetPositions();
             for (int i = 0; i < t.Length; i++)
             {
                 //System.out.println(i+". "+t[i]+"  pos: "+pos[i]);

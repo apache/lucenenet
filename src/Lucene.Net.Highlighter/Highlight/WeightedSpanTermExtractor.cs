@@ -78,14 +78,14 @@ namespace Lucene.Net.Search.Highlight
             else if (query is PhraseQuery)
             {
                 PhraseQuery phraseQuery = (PhraseQuery)query;
-                Term[] phraseQueryTerms = phraseQuery.Terms;
+                Term[] phraseQueryTerms = phraseQuery.GetTerms();
                 SpanQuery[] clauses = new SpanQuery[phraseQueryTerms.Length];
                 for (int i = 0; i < phraseQueryTerms.Length; i++)
                 {
                     clauses[i] = new SpanTermQuery(phraseQueryTerms[i]);
                 }
                 int slop = phraseQuery.Slop;
-                int[] positions = phraseQuery.Positions;
+                int[] positions = phraseQuery.GetPositions();
                 // add largest position increment to slop
                 if (positions.Length > 0)
                 {

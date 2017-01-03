@@ -136,28 +136,22 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the set of terms in this phrase. </summary>
-        public virtual Term[] Terms // LUCENENET TODO: Make GetTerms() (array, conversion)
+        public virtual Term[] GetTerms()
         {
-            get
-            {
-                return terms.ToArray();
-            }
+            return terms.ToArray();
         }
 
         /// <summary>
         /// Returns the relative positions of terms in this phrase.
         /// </summary>
-        public virtual int[] Positions // LUCENENET TODO: Make GetPositions() (array, conversion)
+        public virtual int[] GetPositions()
         {
-            get
+            int[] result = new int[positions.Count];
+            for (int i = 0; i < positions.Count; i++)
             {
-                int[] result = new int[positions.Count];
-                for (int i = 0; i < positions.Count; i++)
-                {
-                    result[i] = (int)positions[i];
-                }
-                return result;
+                result[i] = (int)positions[i];
             }
+            return result;
         }
 
         public override Query Rewrite(IndexReader reader)

@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Payloads
             }
             else if (query is PhraseQuery)
             {
-                Term[] phraseQueryTerms = ((PhraseQuery)query).Terms;
+                Term[] phraseQueryTerms = ((PhraseQuery)query).GetTerms();
                 SpanQuery[] clauses = new SpanQuery[phraseQueryTerms.Length];
                 for (int i = 0; i < phraseQueryTerms.Length; i++)
                 {

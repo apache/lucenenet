@@ -61,9 +61,9 @@ namespace Lucene.Net.Search.VectorHighlight
                 if (!phraseHighlight && flatQuery is PhraseQuery)
                 {
                     PhraseQuery pq = (PhraseQuery)flatQuery;
-                    if (pq.Terms.Length > 1)
+                    if (pq.GetTerms().Length > 1)
                     {
-                        foreach (Term term in pq.Terms)
+                        foreach (Term term in pq.GetTerms())
                             rootMap.AddTerm(term, flatQuery.Boost);
                     }
                 }
@@ -113,11 +113,11 @@ namespace Lucene.Net.Search.VectorHighlight
                 if (!flatQueries.Contains(sourceQuery))
                 {
                     PhraseQuery pq = (PhraseQuery)sourceQuery;
-                    if (pq.Terms.Length > 1)
+                    if (pq.GetTerms().Length > 1)
                         flatQueries.Add(pq);
-                    else if (pq.Terms.Length == 1)
+                    else if (pq.GetTerms().Length == 1)
                     {
-                        Query flat = new TermQuery(pq.Terms[0]);
+                        Query flat = new TermQuery(pq.GetTerms()[0]);
                         flat.Boost = pq.Boost;
                         flatQueries.Add(flat);
                     }
@@ -240,8 +240,8 @@ namespace Lucene.Net.Search.VectorHighlight
         private void CheckOverlap(ICollection<Query> expandQueries, PhraseQuery a, PhraseQuery b)
         {
             if (a.Slop != b.Slop) return;
-            Term[] ats = a.Terms;
-            Term[] bts = b.Terms;
+            Term[] ats = a.GetTerms();
+            Term[] bts = b.GetTerms();
             if (fieldMatch && !ats[0].Field.Equals(bts[0].Field)) return;
             CheckOverlap(expandQueries, ats, bts, a.Slop, a.Boost);
             CheckOverlap(expandQueries, bts, ats, b.Slop, b.Boost);
@@ -319,7 +319,7 @@ namespace Lucene.Net.Search.VectorHighlight
             else if (query is PhraseQuery)
             {
                 PhraseQuery pq = (PhraseQuery)query;
-                Term[] terms = pq.Terms;
+                Term[] terms = pq.GetTerms();
                 return terms[0].Field;
             }
             else if (query is MultiTermQuery)
@@ -361,7 +361,7 @@ namespace Lucene.Net.Search.VectorHighlight
                     termSet.Add(((TermQuery)query).Term.Text());
                 else if (query is PhraseQuery)
                 {
-                    foreach (Term term in ((PhraseQuery)query).Terms)
+                    foreach (Term term in ((PhraseQuery)query).GetTerms())
                         termSet.Add(term.Text());
                 }
                 else if (query is MultiTermQuery && reader != null)
@@ -470,7 +470,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 else if (query is PhraseQuery)
                 {
                     PhraseQuery pq = (PhraseQuery)query;
-                    Term[] terms = pq.Terms;
+                    Term[] terms = pq.GetTerms();
                     IDictionary<string, QueryPhraseMap> map = subMap;
                     QueryPhraseMap qpm = null;
                     foreach (Term term in terms)

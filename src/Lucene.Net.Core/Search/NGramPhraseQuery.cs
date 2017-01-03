@@ -51,15 +51,15 @@ namespace Lucene.Net.Search
             }
 
             // check whether optimizable or not
-            if (n < 2 || Terms.Length < 3) // too short to optimize -  non-overlap n-gram cannot be optimized
+            if (n < 2 || GetTerms().Length < 3) // too short to optimize -  non-overlap n-gram cannot be optimized
             {
                 return base.Rewrite(reader);
             }
 
             // check all posIncrement is 1
             // if not, cannot optimize
-            int[] positions = Positions;
-            Term[] terms = Terms;
+            int[] positions = GetPositions();
+            Term[] terms = GetTerms();
             int prevPosition = positions[0];
             for (int i = 1; i < positions.Length; i++)
             {
@@ -110,8 +110,8 @@ namespace Lucene.Net.Search
         {
             return Number.FloatToIntBits(Boost) 
                 ^ Slop 
-                ^ Terms.GetHashCode() 
-                ^ Positions.GetHashCode() 
+                ^ GetTerms().GetHashCode() 
+                ^ GetPositions().GetHashCode() 
                 ^ n;
         }
     }
