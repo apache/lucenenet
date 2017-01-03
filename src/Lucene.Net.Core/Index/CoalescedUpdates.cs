@@ -30,39 +30,39 @@ namespace Lucene.Net.Index
 
     internal class CoalescedUpdates
     {
-        internal readonly IDictionary<Query, int> Queries = new Dictionary<Query, int>();
-        internal readonly IList<IEnumerable<Term>> Iterables = new List<IEnumerable<Term>>();
-        internal readonly IList<NumericDocValuesUpdate> NumericDVUpdates = new List<NumericDocValuesUpdate>();
-        internal readonly IList<BinaryDocValuesUpdate> BinaryDVUpdates = new List<BinaryDocValuesUpdate>();
+        internal readonly IDictionary<Query, int> queries = new Dictionary<Query, int>();
+        internal readonly IList<IEnumerable<Term>> iterables = new List<IEnumerable<Term>>();
+        internal readonly IList<NumericDocValuesUpdate> numericDVUpdates = new List<NumericDocValuesUpdate>();
+        internal readonly IList<BinaryDocValuesUpdate> binaryDVUpdates = new List<BinaryDocValuesUpdate>();
 
         public override string ToString()
         {
             // note: we could add/collect more debugging information
-            return "CoalescedUpdates(termSets=" + Iterables.Count + ",queries=" + Queries.Count + ",numericDVUpdates=" + NumericDVUpdates.Count + ",binaryDVUpdates=" + BinaryDVUpdates.Count + ")";
+            return "CoalescedUpdates(termSets=" + iterables.Count + ",queries=" + queries.Count + ",numericDVUpdates=" + numericDVUpdates.Count + ",binaryDVUpdates=" + binaryDVUpdates.Count + ")";
         }
 
         internal virtual void Update(FrozenBufferedUpdates @in)
         {
-            Iterables.Add(@in.TermsIterable());
+            iterables.Add(@in.TermsIterable());
 
             for (int queryIdx = 0; queryIdx < @in.Queries.Length; queryIdx++)
             {
                 Query query = @in.Queries[queryIdx];
-                Queries[query] = BufferedUpdates.MAX_INT;
+                queries[query] = BufferedUpdates.MAX_INT;
             }
 
             foreach (NumericDocValuesUpdate nu in @in.NumericDVUpdates)
             {
                 NumericDocValuesUpdate clone = new NumericDocValuesUpdate(nu.term, nu.field, (long?)nu.value);
                 clone.docIDUpto = int.MaxValue;
-                NumericDVUpdates.Add(clone);
+                numericDVUpdates.Add(clone);
             }
 
             foreach (BinaryDocValuesUpdate bu in @in.BinaryDVUpdates)
             {
                 BinaryDocValuesUpdate clone = new BinaryDocValuesUpdate(bu.term, bu.field, (BytesRef)bu.value);
                 clone.docIDUpto = int.MaxValue;
-                BinaryDVUpdates.Add(clone);
+                binaryDVUpdates.Add(clone);
             }
         }
 
@@ -81,19 +81,19 @@ namespace Lucene.Net.Index
 
         private class IterableAnonymousInnerClassHelper : IEnumerable<Term>
         {
-            private readonly CoalescedUpdates OuterInstance;
+            private readonly CoalescedUpdates outerInstance;
 
             public IterableAnonymousInnerClassHelper(CoalescedUpdates outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual IEnumerator<Term> GetEnumerator()
             {
-                IEnumerator<Term>[] subs = new IEnumerator<Term>[OuterInstance.Iterables.Count];
-                for (int i = 0; i < OuterInstance.Iterables.Count; i++)
+                IEnumerator<Term>[] subs = new IEnumerator<Term>[outerInstance.iterables.Count];
+                for (int i = 0; i < outerInstance.iterables.Count; i++)
                 {
-                    subs[i] = OuterInstance.Iterables[i].GetEnumerator();
+                    subs[i] = outerInstance.iterables[i].GetEnumerator();
                 }
                 return new MergedIterator<Term>(subs);
             }
@@ -116,11 +116,11 @@ namespace Lucene.Net.Index
 
         private class IterableAnonymousInnerClassHelper2 : IEnumerable<QueryAndLimit>
         {
-            private readonly CoalescedUpdates OuterInstance;
+            private readonly CoalescedUpdates outerInstance;
 
             public IterableAnonymousInnerClassHelper2(CoalescedUpdates outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual IEnumerator<QueryAndLimit> GetEnumerator()
@@ -135,14 +135,14 @@ namespace Lucene.Net.Index
 
             private class IteratorAnonymousInnerClassHelper : IEnumerator<QueryAndLimit>
             {
-                private readonly IterableAnonymousInnerClassHelper2 OuterInstance;
+                private readonly IterableAnonymousInnerClassHelper2 outerInstance;
                 private readonly IEnumerator<KeyValuePair<Query, int>> iter;
                 private QueryAndLimit current;
 
                 public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper2 outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
-                    iter = OuterInstance.OuterInstance.Queries.GetEnumerator();
+                    this.outerInstance = outerInstance;
+                    iter = this.outerInstance.outerInstance.queries.GetEnumerator();
                 }
 
                 public void Dispose()

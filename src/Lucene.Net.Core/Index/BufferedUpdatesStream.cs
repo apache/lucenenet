@@ -263,8 +263,8 @@ namespace Lucene.Net.Index
                                 //System.out.println("    del coalesced");
                                 delCount += (int)ApplyTermDeletes(coalescedUpdates.TermsIterable(), rld, reader);
                                 delCount += (int)ApplyQueryDeletes(coalescedUpdates.QueriesIterable(), rld, reader);
-                                ApplyDocValuesUpdates(coalescedUpdates.NumericDVUpdates, rld, reader, dvUpdates);
-                                ApplyDocValuesUpdates(coalescedUpdates.BinaryDVUpdates, rld, reader, dvUpdates);
+                                ApplyDocValuesUpdates(coalescedUpdates.numericDVUpdates, rld, reader, dvUpdates);
+                                ApplyDocValuesUpdates(coalescedUpdates.binaryDVUpdates, rld, reader, dvUpdates);
                             }
                             //System.out.println("    del exact");
                             // Don't delete by Term here; DocumentsWriterPerThread
@@ -332,8 +332,8 @@ namespace Lucene.Net.Index
                                 delCount += (int)ApplyTermDeletes(coalescedUpdates.TermsIterable(), rld, reader);
                                 delCount += (int)ApplyQueryDeletes(coalescedUpdates.QueriesIterable(), rld, reader);
                                 AbstractDocValuesFieldUpdates.Container dvUpdates = new AbstractDocValuesFieldUpdates.Container();
-                                ApplyDocValuesUpdates(coalescedUpdates.NumericDVUpdates, rld, reader, dvUpdates);
-                                ApplyDocValuesUpdates(coalescedUpdates.BinaryDVUpdates, rld, reader, dvUpdates);
+                                ApplyDocValuesUpdates(coalescedUpdates.numericDVUpdates, rld, reader, dvUpdates);
+                                ApplyDocValuesUpdates(coalescedUpdates.binaryDVUpdates, rld, reader, dvUpdates);
                                 if (dvUpdates.Any())
                                 {
                                     rld.WriteFieldUpdates(info.Info.Dir, dvUpdates);
