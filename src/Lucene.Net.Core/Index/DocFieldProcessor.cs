@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
                 DocFieldProcessorPerField fieldNext = field;
                 while (fieldNext != null)
                 {
-                    DocFieldProcessorPerField next = fieldNext.Next;
+                    DocFieldProcessorPerField next = fieldNext.next;
                     try
                     {
                         fieldNext.Abort();
@@ -157,8 +157,8 @@ namespace Lucene.Net.Index
                 DocFieldProcessorPerField field = fieldHash[i];
                 while (field != null)
                 {
-                    fields.Add(field.Consumer);
-                    field = field.Next;
+                    fields.Add(field.consumer);
+                    field = field.next;
                 }
             }
             Debug.Assert(fields.Count == totalFieldCount);
@@ -179,9 +179,9 @@ namespace Lucene.Net.Index
                 DocFieldProcessorPerField fp0 = fieldHash[j];
                 while (fp0 != null)
                 {
-                    int hashPos2 = fp0.FieldInfo.Name.GetHashCode() & newHashMask;
-                    DocFieldProcessorPerField nextFP0 = fp0.Next;
-                    fp0.Next = newHashArray[hashPos2];
+                    int hashPos2 = fp0.fieldInfo.Name.GetHashCode() & newHashMask;
+                    DocFieldProcessorPerField nextFP0 = fp0.next;
+                    fp0.next = newHashArray[hashPos2];
                     newHashArray[hashPos2] = fp0;
                     fp0 = nextFP0;
                 }
@@ -212,9 +212,9 @@ namespace Lucene.Net.Index
                 // Make sure we have a PerField allocated
                 int hashPos = fieldName.GetHashCode() & hashMask;
                 DocFieldProcessorPerField fp = fieldHash[hashPos];
-                while (fp != null && !fp.FieldInfo.Name.Equals(fieldName))
+                while (fp != null && !fp.fieldInfo.Name.Equals(fieldName))
                 {
-                    fp = fp.Next;
+                    fp = fp.next;
                 }
 
                 if (fp == null)
@@ -227,7 +227,7 @@ namespace Lucene.Net.Index
                     FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.FieldType);
 
                     fp = new DocFieldProcessorPerField(this, fi);
-                    fp.Next = fieldHash[hashPos];
+                    fp.next = fieldHash[hashPos];
                     fieldHash[hashPos] = fp;
                     totalFieldCount++;
 
@@ -241,13 +241,13 @@ namespace Lucene.Net.Index
                     // need to addOrUpdate so that FieldInfos can update globalFieldNumbers
                     // with the correct DocValue type (LUCENE-5192)
                     FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.FieldType);
-                    Debug.Assert(fi == fp.FieldInfo, "should only have updated an existing FieldInfo instance");
+                    Debug.Assert(fi == fp.fieldInfo, "should only have updated an existing FieldInfo instance");
                 }
 
-                if (thisFieldGen != fp.LastGen)
+                if (thisFieldGen != fp.lastGen)
                 {
                     // First time we're seeing this field for this doc
-                    fp.FieldCount = 0;
+                    fp.fieldCount = 0;
 
                     if (fieldCount == fields.Length)
                     {
@@ -258,11 +258,11 @@ namespace Lucene.Net.Index
                     }
 
                     fields[fieldCount++] = fp;
-                    fp.LastGen = thisFieldGen;
+                    fp.lastGen = thisFieldGen;
                 }
 
                 fp.AddField(field);
-                storedConsumer.AddField(docState.DocID, field, fp.FieldInfo);
+                storedConsumer.AddField(docState.DocID, field, fp.fieldInfo);
             }
 
             // If we are writing vectors then we must visit
@@ -275,7 +275,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < fieldCount; i++)
             {
                 DocFieldProcessorPerField perField = fields[i];
-                perField.Consumer.ProcessFields(perField.Fields, perField.FieldCount);
+                perField.consumer.ProcessFields(perField.fields, perField.fieldCount);
             }
         }
 
@@ -289,7 +289,7 @@ namespace Lucene.Net.Index
 
             public virtual int Compare(DocFieldProcessorPerField o1, DocFieldProcessorPerField o2)
             {
-                return o1.FieldInfo.Name.CompareTo(o2.FieldInfo.Name);
+                return o1.fieldInfo.Name.CompareTo(o2.fieldInfo.Name);
             }
         }
 

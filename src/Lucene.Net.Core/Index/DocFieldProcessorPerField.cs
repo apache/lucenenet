@@ -28,37 +28,37 @@ namespace Lucene.Net.Index
 
     internal sealed class DocFieldProcessorPerField
     {
-        internal readonly DocFieldConsumerPerField Consumer;
-        internal readonly FieldInfo FieldInfo;
+        internal readonly DocFieldConsumerPerField consumer;
+        internal readonly FieldInfo fieldInfo;
 
-        internal DocFieldProcessorPerField Next;
-        internal int LastGen = -1;
+        internal DocFieldProcessorPerField next;
+        internal int lastGen = -1;
 
-        internal int FieldCount;
-        internal IIndexableField[] Fields = new IIndexableField[1];
+        internal int fieldCount;
+        internal IIndexableField[] fields = new IIndexableField[1];
 
         public DocFieldProcessorPerField(DocFieldProcessor docFieldProcessor, FieldInfo fieldInfo)
         {
-            this.Consumer = docFieldProcessor.consumer.AddField(fieldInfo);
-            this.FieldInfo = fieldInfo;
+            this.consumer = docFieldProcessor.consumer.AddField(fieldInfo);
+            this.fieldInfo = fieldInfo;
         }
 
         public void AddField(IIndexableField field)
         {
-            if (FieldCount == Fields.Length)
+            if (fieldCount == fields.Length)
             {
-                int newSize = ArrayUtil.Oversize(FieldCount + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
+                int newSize = ArrayUtil.Oversize(fieldCount + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
                 IIndexableField[] newArray = new IIndexableField[newSize];
-                Array.Copy(Fields, 0, newArray, 0, FieldCount);
-                Fields = newArray;
+                Array.Copy(fields, 0, newArray, 0, fieldCount);
+                fields = newArray;
             }
 
-            Fields[FieldCount++] = field;
+            fields[fieldCount++] = field;
         }
 
         public void Abort()
         {
-            Consumer.Abort();
+            consumer.Abort();
         }
     }
 }
