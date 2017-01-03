@@ -86,8 +86,8 @@ namespace Lucene.Net.Index
                 Debug.Assert(packet.DelGen < nextGen);
                 Debug.Assert(updates.Count == 0 || updates[updates.Count - 1].DelGen < packet.DelGen, "Delete packets must be in order");
                 updates.Add(packet);
-                numTerms.AddAndGet(packet.NumTermDeletes);
-                bytesUsed.AddAndGet(packet.BytesUsed);
+                numTerms.AddAndGet(packet.numTermDeletes);
+                bytesUsed.AddAndGet(packet.bytesUsed);
                 if (infoStream.IsEnabled("BD"))
                 {
                     infoStream.Message("BD", "push deletes " + packet + " delGen=" + packet.DelGen + " packetCount=" + updates.Count + " totBytesUsed=" + bytesUsed.Get());
@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
                         {
                             coalescedUpdates = new CoalescedUpdates();
                         }
-                        if (!packet.IsSegmentPrivate)
+                        if (!packet.isSegmentPrivate)
                         {
                             /*
                              * Only coalesce if we are NOT on a segment private del packet: the segment private del packet
@@ -246,7 +246,7 @@ namespace Lucene.Net.Index
                     }
                     else if (packet != null && segGen == packet.DelGen)
                     {
-                        Debug.Assert(packet.IsSegmentPrivate, "Packet and Segments deletegen can only match on a segment private del packet gen=" + segGen);
+                        Debug.Assert(packet.isSegmentPrivate, "Packet and Segments deletegen can only match on a segment private del packet gen=" + segGen);
                         //System.out.println("  eq");
 
                         // Lock order: IW -> BD -> RP
@@ -270,8 +270,8 @@ namespace Lucene.Net.Index
                             // Don't delete by Term here; DocumentsWriterPerThread
                             // already did that on flush:
                             delCount += (int)ApplyQueryDeletes(packet.QueriesIterable(), rld, reader);
-                            ApplyDocValuesUpdates(Arrays.AsList(packet.NumericDVUpdates), rld, reader, dvUpdates);
-                            ApplyDocValuesUpdates(Arrays.AsList(packet.BinaryDVUpdates), rld, reader, dvUpdates);
+                            ApplyDocValuesUpdates(Arrays.AsList(packet.numericDVUpdates), rld, reader, dvUpdates);
+                            ApplyDocValuesUpdates(Arrays.AsList(packet.binaryDVUpdates), rld, reader, dvUpdates);
                             if (dvUpdates.Any())
                             {
                                 rld.WriteFieldUpdates(info.Info.Dir, dvUpdates);
@@ -439,9 +439,9 @@ namespace Lucene.Net.Index
                     for (int delIDX = 0; delIDX < count; delIDX++)
                     {
                         FrozenBufferedUpdates packet = updates[delIDX];
-                        numTerms.AddAndGet(-packet.NumTermDeletes);
+                        numTerms.AddAndGet(-packet.numTermDeletes);
                         Debug.Assert(numTerms.Get() >= 0);
-                        bytesUsed.AddAndGet(-packet.BytesUsed);
+                        bytesUsed.AddAndGet(-packet.bytesUsed);
                         Debug.Assert(bytesUsed.Get() >= 0);
                     }
                     updates.SubList(0, count).Clear();
@@ -704,8 +704,8 @@ namespace Lucene.Net.Index
             long bytesUsed2 = 0;
             foreach (FrozenBufferedUpdates packet in updates)
             {
-                numTerms2 += packet.NumTermDeletes;
-                bytesUsed2 += packet.BytesUsed;
+                numTerms2 += packet.numTermDeletes;
+                bytesUsed2 += packet.bytesUsed;
             }
             Debug.Assert(numTerms2 == numTerms.Get(), "numTerms2=" + numTerms2 + " vs " + numTerms.Get());
             Debug.Assert(bytesUsed2 == bytesUsed.Get(), "bytesUsed2=" + bytesUsed2 + " vs " + bytesUsed);

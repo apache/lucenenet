@@ -45,20 +45,20 @@ namespace Lucene.Net.Index
         {
             iterables.Add(@in.TermsIterable());
 
-            for (int queryIdx = 0; queryIdx < @in.Queries.Length; queryIdx++)
+            for (int queryIdx = 0; queryIdx < @in.queries.Length; queryIdx++)
             {
-                Query query = @in.Queries[queryIdx];
+                Query query = @in.queries[queryIdx];
                 queries[query] = BufferedUpdates.MAX_INT;
             }
 
-            foreach (NumericDocValuesUpdate nu in @in.NumericDVUpdates)
+            foreach (NumericDocValuesUpdate nu in @in.numericDVUpdates)
             {
                 NumericDocValuesUpdate clone = new NumericDocValuesUpdate(nu.term, nu.field, (long?)nu.value);
                 clone.docIDUpto = int.MaxValue;
                 numericDVUpdates.Add(clone);
             }
 
-            foreach (BinaryDocValuesUpdate bu in @in.BinaryDVUpdates)
+            foreach (BinaryDocValuesUpdate bu in @in.binaryDVUpdates)
             {
                 BinaryDocValuesUpdate clone = new BinaryDocValuesUpdate(bu.term, bu.field, (BytesRef)bu.value);
                 clone.docIDUpto = int.MaxValue;

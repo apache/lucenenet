@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
                 {
                     FrozenBufferedUpdates freezeGlobalBuffer = queue.FreezeGlobalBuffer(null);
                     Assert.AreEqual(termsSinceFreeze, freezeGlobalBuffer.termCount);
-                    Assert.AreEqual(queriesSinceFreeze, ((Query[])freezeGlobalBuffer.Queries.Clone()).Length);
+                    Assert.AreEqual(queriesSinceFreeze, ((Query[])freezeGlobalBuffer.queries.Clone()).Length);
                     queriesSinceFreeze = 0;
                     termsSinceFreeze = 0;
                     Assert.IsFalse(queue.AnyChanges());

@@ -42,31 +42,31 @@ namespace Lucene.Net.Index
         internal static readonly int BYTES_PER_DEL_QUERY = RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_INT + 24;
 
         // Terms, in sorted order:
-        internal readonly PrefixCodedTerms Terms;
+        internal readonly PrefixCodedTerms terms;
 
         internal int termCount; // just for debugging
 
         // Parallel array of deleted query, and the docIDUpto for each
-        internal readonly Query[] Queries;
+        internal readonly Query[] queries;
 
-        internal readonly int?[] QueryLimits;
+        internal readonly int?[] queryLimits;
 
         // numeric DV update term and their updates
-        internal readonly NumericDocValuesUpdate[] NumericDVUpdates;
+        internal readonly NumericDocValuesUpdate[] numericDVUpdates;
 
         // binary DV update term and their updates
-        internal readonly BinaryDocValuesUpdate[] BinaryDVUpdates;
+        internal readonly BinaryDocValuesUpdate[] binaryDVUpdates;
 
-        internal readonly int BytesUsed;
-        internal readonly int NumTermDeletes;
-        private long Gen = -1; // assigned by BufferedDeletesStream once pushed
-        internal readonly bool IsSegmentPrivate; // set to true iff this frozen packet represents
+        internal readonly int bytesUsed;
+        internal readonly int numTermDeletes;
+        private long gen = -1; // assigned by BufferedDeletesStream once pushed
+        internal readonly bool isSegmentPrivate; // set to true iff this frozen packet represents
         // a segment private deletes. in that case is should
         // only have Queries
 
         public FrozenBufferedUpdates(BufferedUpdates deletes, bool isSegmentPrivate)
         {
-            this.IsSegmentPrivate = isSegmentPrivate;
+            this.isSegmentPrivate = isSegmentPrivate;
             Debug.Assert(!isSegmentPrivate || deletes.terms.Count == 0, "segment private package should only have del queries");
             Term[] termsArray = deletes.terms.Keys.ToArray(/*new Term[deletes.Terms.Count]*/);
             termCount = termsArray.Length;
@@ -76,15 +76,15 @@ namespace Lucene.Net.Index
             {
                 builder.Add(term);
             }
-            Terms = builder.Finish();
+            terms = builder.Finish();
 
-            Queries = new Query[deletes.queries.Count];
-            QueryLimits = new int?[deletes.queries.Count];
+            queries = new Query[deletes.queries.Count];
+            queryLimits = new int?[deletes.queries.Count];
             int upto = 0;
             foreach (KeyValuePair<Query, int?> ent in deletes.queries)
             {
-                Queries[upto] = ent.Key;
-                QueryLimits[upto] = ent.Value;
+                queries[upto] = ent.Key;
+                queryLimits[upto] = ent.Value;
                 upto++;
             }
 
@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
                     numericUpdatesSize += update.SizeInBytes();
                 }
             }
-            NumericDVUpdates = allNumericUpdates.ToArray();
+            numericDVUpdates = allNumericUpdates.ToArray();
 
             // TODO if a Term affects multiple fields, we could keep the updates key'd by Term
             // so that it maps to all fields it affects, sorted by their docUpto, and traverse
@@ -118,24 +118,24 @@ namespace Lucene.Net.Index
                     binaryUpdatesSize += update.SizeInBytes();
                 }
             }
-            BinaryDVUpdates = allBinaryUpdates.ToArray();
+            binaryDVUpdates = allBinaryUpdates.ToArray();
 
-            BytesUsed = (int)Terms.SizeInBytes + Queries.Length * BYTES_PER_DEL_QUERY + numericUpdatesSize + NumericDVUpdates.Length * RamUsageEstimator.NUM_BYTES_OBJECT_REF + binaryUpdatesSize + BinaryDVUpdates.Length * RamUsageEstimator.NUM_BYTES_OBJECT_REF;
+            bytesUsed = (int)terms.SizeInBytes + queries.Length * BYTES_PER_DEL_QUERY + numericUpdatesSize + numericDVUpdates.Length * RamUsageEstimator.NUM_BYTES_OBJECT_REF + binaryUpdatesSize + binaryDVUpdates.Length * RamUsageEstimator.NUM_BYTES_OBJECT_REF;
 
-            NumTermDeletes = deletes.numTermDeletes.Get();
+            numTermDeletes = deletes.numTermDeletes.Get();
         }
 
         public virtual long DelGen
         {
             set
             {
-                Debug.Assert(this.Gen == -1);
-                this.Gen = value;
+                Debug.Assert(this.gen == -1);
+                this.gen = value;
             }
             get
             {
-                Debug.Assert(Gen != -1);
-                return Gen;
+                Debug.Assert(gen != -1);
+                return gen;
             }
         }
 
@@ -146,16 +146,16 @@ namespace Lucene.Net.Index
 
         private class IterableAnonymousInnerClassHelper : IEnumerable<Term>
         {
-            private readonly FrozenBufferedUpdates OuterInstance;
+            private readonly FrozenBufferedUpdates outerInstance;
 
             public IterableAnonymousInnerClassHelper(FrozenBufferedUpdates outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual IEnumerator<Term> GetEnumerator()
             {
-                return OuterInstance.Terms.GetEnumerator();
+                return outerInstance.terms.GetEnumerator();
             }
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -171,11 +171,11 @@ namespace Lucene.Net.Index
 
         private class IterableAnonymousInnerClassHelper2 : IEnumerable<QueryAndLimit>
         {
-            private readonly FrozenBufferedUpdates OuterInstance;
+            private readonly FrozenBufferedUpdates outerInstance;
 
             public IterableAnonymousInnerClassHelper2(FrozenBufferedUpdates outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual IEnumerator<QueryAndLimit> GetEnumerator()
@@ -190,14 +190,14 @@ namespace Lucene.Net.Index
 
             private class IteratorAnonymousInnerClassHelper : IEnumerator<QueryAndLimit>
             {
-                private readonly IterableAnonymousInnerClassHelper2 OuterInstance;
+                private readonly IterableAnonymousInnerClassHelper2 outerInstance;
                 private int upto, i;
                 private QueryAndLimit current;
 
                 public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper2 outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
-                    upto = OuterInstance.OuterInstance.Queries.Length;
+                    this.outerInstance = outerInstance;
+                    upto = this.outerInstance.outerInstance.queries.Length;
                     i = 0;
                 }
 
@@ -205,7 +205,7 @@ namespace Lucene.Net.Index
                 {
                     if (i < upto)
                     {
-                        current = new QueryAndLimit(OuterInstance.OuterInstance.Queries[i], OuterInstance.OuterInstance.QueryLimits[i]);
+                        current = new QueryAndLimit(outerInstance.outerInstance.queries[i], outerInstance.outerInstance.queryLimits[i]);
                         i++;
                         return true;
                     }
@@ -239,17 +239,17 @@ namespace Lucene.Net.Index
         public override string ToString()
         {
             string s = "";
-            if (NumTermDeletes != 0)
+            if (numTermDeletes != 0)
             {
-                s += " " + NumTermDeletes + " deleted terms (unique count=" + termCount + ")";
+                s += " " + numTermDeletes + " deleted terms (unique count=" + termCount + ")";
             }
-            if (Queries.Length != 0)
+            if (queries.Length != 0)
             {
-                s += " " + Queries.Length + " deleted queries";
+                s += " " + queries.Length + " deleted queries";
             }
-            if (BytesUsed != 0)
+            if (bytesUsed != 0)
             {
-                s += " bytesUsed=" + BytesUsed;
+                s += " bytesUsed=" + bytesUsed;
             }
 
             return s;
@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
 
         public virtual bool Any() // LUCENENET TODO: Make property?
         {
-            return termCount > 0 || Queries.Length > 0 || NumericDVUpdates.Length > 0 || BinaryDVUpdates.Length > 0;
+            return termCount > 0 || queries.Length > 0 || numericDVUpdates.Length > 0 || binaryDVUpdates.Length > 0;
         }
     }
 }
