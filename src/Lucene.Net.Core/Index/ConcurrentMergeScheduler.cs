@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// List of currently active <seealso cref="MergeThread"/>s. </summary>
-        protected internal IList<MergeThread> mergeThreads = new List<MergeThread>();
+        protected internal IList<MergeThread> m_mergeThreads = new List<MergeThread>();
 
         /// <summary>
         /// Default {@code maxThreadCount}.
@@ -69,25 +69,25 @@ namespace Lucene.Net.Index
         // ones run, up until maxMergeCount merges at which point
         // we forcefully pause incoming threads (that presumably
         // are the ones causing so much merging).
-        private int MaxThreadCount_Renamed = DEFAULT_MAX_THREAD_COUNT;
+        private int maxThreadCount = DEFAULT_MAX_THREAD_COUNT;
 
         // Max number of merges we accept before forcefully
         // throttling the incoming threads
-        private int MaxMergeCount_Renamed = DEFAULT_MAX_MERGE_COUNT;
+        private int maxMergeCount = DEFAULT_MAX_MERGE_COUNT;
 
         /// <summary>
         /// <seealso cref="Directory"/> that holds the index. </summary>
-        protected internal Directory dir;
+        protected internal Directory m_dir;
 
         /// <summary>
         /// <seealso cref="IndexWriter"/> that owns this instance. </summary>
-        protected internal IndexWriter writer;
+        protected internal IndexWriter m_writer;
 
         /// <summary>
         /// How many <seealso cref="MergeThread"/>s have kicked off (this is use
         ///  to name them).
         /// </summary>
-        protected internal int mergeThreadCount;
+        protected internal int m_mergeThreadCount;
 
         /// <summary>
         /// Sole constructor, with all settings set to default
@@ -122,8 +122,8 @@ namespace Lucene.Net.Index
             {
                 throw new System.ArgumentException("maxThreadCount should be <= maxMergeCount (= " + maxMergeCount + ")");
             }
-            this.MaxThreadCount_Renamed = maxThreadCount;
-            this.MaxMergeCount_Renamed = maxMergeCount;
+            this.maxThreadCount = maxThreadCount;
+            this.maxMergeCount = maxMergeCount;
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return MaxThreadCount_Renamed;
+                return maxThreadCount;
             }
         }
 
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return MaxMergeCount_Renamed;
+                return maxMergeCount;
             }
         }
 
@@ -224,13 +224,13 @@ namespace Lucene.Net.Index
                 IList<MergeThread> activeMerges = new List<MergeThread>();
 
                 int threadIdx = 0;
-                while (threadIdx < mergeThreads.Count)
+                while (threadIdx < m_mergeThreads.Count)
                 {
-                    MergeThread mergeThread = mergeThreads[threadIdx];
+                    MergeThread mergeThread = m_mergeThreads[threadIdx];
                     if (!mergeThread.IsAlive)
                     {
                         // Prune any dead threads
-                        mergeThreads.RemoveAt(threadIdx);
+                        m_mergeThreads.RemoveAt(threadIdx);
                         continue;
                     }
                     if (mergeThread.CurrentMerge != null)
@@ -255,7 +255,7 @@ namespace Lucene.Net.Index
                     }
 
                     // pause the thread if maxThreadCount is smaller than the number of merge threads.
-                    bool doPause = threadIdx < activeMergeCount - MaxThreadCount_Renamed;
+                    bool doPause = threadIdx < activeMergeCount - maxThreadCount;
 
                     if (IsVerbose)
                     {
@@ -301,7 +301,7 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual bool IsVerbose
         {
-            get { return writer != null && writer.infoStream.IsEnabled("CMS"); }
+            get { return m_writer != null && m_writer.infoStream.IsEnabled("CMS"); }
         }
 
         /// <summary>
@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
         /// </summary>
         protected internal virtual void Message(string message)
         {
-            writer.infoStream.Message("CMS", message);
+            m_writer.infoStream.Message("CMS", message);
         }
 
         private void InitMergeThreadPriority()
@@ -347,7 +347,7 @@ namespace Lucene.Net.Index
                     MergeThread toSync = null;
                     lock (this)
                     {
-                        foreach (MergeThread t in mergeThreads)
+                        foreach (MergeThread t in m_mergeThreads)
                         {
                             if (t.IsAlive)
                             {
@@ -388,19 +388,22 @@ namespace Lucene.Net.Index
         /// Returns the number of merge threads that are alive. Note that this number
         /// is &lt;= <seealso cref="#mergeThreads"/> size.
         /// </summary>
-        protected virtual int MergeThreadCount() // LUCENENET TODO: make property ? CLS naming conflict...
+        protected virtual int MergeThreadCount
         {
-            lock (this)
+            get
             {
-                int count = 0;
-                foreach (MergeThread mt in mergeThreads)
+                lock (this)
                 {
-                    if (mt.IsAlive && mt.CurrentMerge != null)
+                    int count = 0;
+                    foreach (MergeThread mt in m_mergeThreads)
                     {
-                        count++;
+                        if (mt.IsAlive && mt.CurrentMerge != null)
+                        {
+                            count++;
+                        }
                     }
+                    return count;
                 }
-                return count;
             }
         }
 
@@ -410,11 +413,11 @@ namespace Lucene.Net.Index
             {
                 //Debug.Assert(!Thread.holdsLock(writer));
 
-                this.writer = writer;
+                this.m_writer = writer;
 
                 InitMergeThreadPriority();
 
-                dir = writer.Directory;
+                m_dir = writer.Directory;
 
                 // First, quickly run through the newly proposed merges
                 // and add any orthogonal merges (ie a merge not
@@ -434,7 +437,7 @@ namespace Lucene.Net.Index
                 while (true)
                 {
                     long startStallTime = 0;
-                    while (writer.HasPendingMerges && MergeThreadCount() >= MaxMergeCount_Renamed)
+                    while (writer.HasPendingMerges && MergeThreadCount >= maxMergeCount)
                     {
                         // this means merging has fallen too far behind: we
                         // have already created maxMergeCount threads, and
@@ -489,7 +492,7 @@ namespace Lucene.Net.Index
                         // OK to spawn a new merge thread to handle this
                         // merge:
                         MergeThread merger = GetMergeThread(writer, merge);
-                        mergeThreads.Add(merger);
+                        m_mergeThreads.Add(merger);
                         if (IsVerbose)
                         {
                             Message("    launch new thread [" + merger.Name + "]");
@@ -519,7 +522,7 @@ namespace Lucene.Net.Index
         /// Does the actual merge, by calling <seealso cref="IndexWriter#merge"/> </summary>
         protected virtual void DoMerge(MergePolicy.OneMerge merge)
         {
-            writer.Merge(merge);
+            m_writer.Merge(merge);
         }
 
         /// <summary>
@@ -531,7 +534,7 @@ namespace Lucene.Net.Index
                 MergeThread thread = new MergeThread(this, writer, merge);
                 thread.SetThreadPriority((ThreadPriority)mergeThreadPriority);
                 thread.IsBackground = true;
-                thread.Name = "Lucene Merge Thread #" + mergeThreadCount++;
+                thread.Name = "Lucene Merge Thread #" + m_mergeThreadCount++;
                 return thread;
             }
         }
@@ -680,7 +683,7 @@ namespace Lucene.Net.Index
                     {
                         //System.out.println(Thread.currentThread().getName() + ": CMS: exc");
                         //exc.printStackTrace(System.out);
-                        if (!OuterInstance.SuppressExceptions)
+                        if (!OuterInstance.suppressExceptions)
                         {
                             // suppressExceptions is normally only set during
                             // testing.
@@ -720,30 +723,30 @@ namespace Lucene.Net.Index
             {
                 throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
             }
-            throw new MergePolicy.MergeException(exc, dir);
+            throw new MergePolicy.MergeException(exc, m_dir);
         }
 
-        private bool SuppressExceptions;
+        private bool suppressExceptions;
 
         /// <summary>
         /// Used for testing </summary>
         public virtual void SetSuppressExceptions()
         {
-            SuppressExceptions = true;
+            suppressExceptions = true;
         }
 
         /// <summary>
         /// Used for testing </summary>
         public virtual void ClearSuppressExceptions()
         {
-            SuppressExceptions = false;
+            suppressExceptions = false;
         }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder(this.GetType().Name + ": ");
-            sb.Append("maxThreadCount=").Append(MaxThreadCount_Renamed).Append(", ");
-            sb.Append("maxMergeCount=").Append(MaxMergeCount_Renamed).Append(", ");
+            sb.Append("maxThreadCount=").Append(maxThreadCount).Append(", ");
+            sb.Append("maxMergeCount=").Append(maxMergeCount).Append(", ");
             sb.Append("mergeThreadPriority=").Append(mergeThreadPriority);
             return sb.ToString();
         }
@@ -751,9 +754,9 @@ namespace Lucene.Net.Index
         public override IMergeScheduler Clone()
         {
             ConcurrentMergeScheduler clone = (ConcurrentMergeScheduler)base.Clone();
-            clone.writer = null;
-            clone.dir = null;
-            clone.mergeThreads = new List<MergeThread>();
+            clone.m_writer = null;
+            clone.m_dir = null;
+            clone.m_mergeThreads = new List<MergeThread>();
             return clone;
         }
     }
