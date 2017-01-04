@@ -82,21 +82,21 @@ namespace Lucene.Net.Codecs.Lucene3x
         public const int FIELD_IS_NUMERIC_FLOAT = 3 << _NUMERIC_BIT_SHIFT;
         public const int FIELD_IS_NUMERIC_DOUBLE = 4 << _NUMERIC_BIT_SHIFT;
 
-        private readonly FieldInfos FieldInfos;
-        private readonly IndexInput FieldsStream;
-        private readonly IndexInput IndexStream;
-        private int NumTotalDocs;
-        private int Size;
-        private bool Closed;
-        private readonly int Format;
+        private readonly FieldInfos fieldInfos;
+        private readonly IndexInput fieldsStream;
+        private readonly IndexInput indexStream;
+        private int numTotalDocs;
+        private int size;
+        private bool closed;
+        private readonly int format;
 
         // The docID offset where our docs begin in the index
         // file.  this will be 0 if we have our own private file.
-        private int DocStoreOffset;
+        private int docStoreOffset;
 
         // when we are inside a compound share doc store (CFX),
         // (lucene 3.0 indexes only), we privately open our own fd.
-        private readonly CompoundFileDirectory StoreCFSReader;
+        private readonly CompoundFileDirectory storeCFSReader;
 
         /// <summary>
         /// Returns a cloned FieldsReader that shares open
@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public override object Clone()
         {
             EnsureOpen();
-            return new Lucene3xStoredFieldsReader(FieldInfos, NumTotalDocs, Size, Format, DocStoreOffset, (IndexInput)FieldsStream.Clone(), (IndexInput)IndexStream.Clone());
+            return new Lucene3xStoredFieldsReader(fieldInfos, numTotalDocs, size, format, docStoreOffset, (IndexInput)fieldsStream.Clone(), (IndexInput)indexStream.Clone());
         }
 
         /// <summary>
@@ -139,14 +139,14 @@ namespace Lucene.Net.Codecs.Lucene3x
         // Used only by clone
         private Lucene3xStoredFieldsReader(FieldInfos fieldInfos, int numTotalDocs, int size, int format, int docStoreOffset, IndexInput fieldsStream, IndexInput indexStream)
         {
-            this.FieldInfos = fieldInfos;
-            this.NumTotalDocs = numTotalDocs;
-            this.Size = size;
-            this.Format = format;
-            this.DocStoreOffset = docStoreOffset;
-            this.FieldsStream = fieldsStream;
-            this.IndexStream = indexStream;
-            this.StoreCFSReader = null;
+            this.fieldInfos = fieldInfos;
+            this.numTotalDocs = numTotalDocs;
+            this.size = size;
+            this.format = format;
+            this.docStoreOffset = docStoreOffset;
+            this.fieldsStream = fieldsStream;
+            this.indexStream = indexStream;
+            this.storeCFSReader = null;
         }
 
         public Lucene3xStoredFieldsReader(Directory d, SegmentInfo si, FieldInfos fn, IOContext context)
@@ -155,55 +155,55 @@ namespace Lucene.Net.Codecs.Lucene3x
             int docStoreOffset = Lucene3xSegmentInfoFormat.GetDocStoreOffset(si);
             int size = si.DocCount;
             bool success = false;
-            FieldInfos = fn;
+            fieldInfos = fn;
             try
             {
                 if (docStoreOffset != -1 && Lucene3xSegmentInfoFormat.GetDocStoreIsCompoundFile(si))
                 {
-                    d = StoreCFSReader = new CompoundFileDirectory(si.Dir, IndexFileNames.SegmentFileName(segment, "", Lucene3xCodec.COMPOUND_FILE_STORE_EXTENSION), context, false);
+                    d = storeCFSReader = new CompoundFileDirectory(si.Dir, IndexFileNames.SegmentFileName(segment, "", Lucene3xCodec.COMPOUND_FILE_STORE_EXTENSION), context, false);
                 }
                 else
                 {
-                    StoreCFSReader = null;
+                    storeCFSReader = null;
                 }
-                FieldsStream = d.OpenInput(IndexFileNames.SegmentFileName(segment, "", FIELDS_EXTENSION), context);
+                fieldsStream = d.OpenInput(IndexFileNames.SegmentFileName(segment, "", FIELDS_EXTENSION), context);
                 string indexStreamFN = IndexFileNames.SegmentFileName(segment, "", FIELDS_INDEX_EXTENSION);
-                IndexStream = d.OpenInput(indexStreamFN, context);
+                indexStream = d.OpenInput(indexStreamFN, context);
 
-                Format = IndexStream.ReadInt();
+                format = indexStream.ReadInt();
 
-                if (Format < FORMAT_MINIMUM)
+                if (format < FORMAT_MINIMUM)
                 {
-                    throw new IndexFormatTooOldException(IndexStream, Format, FORMAT_MINIMUM, FORMAT_CURRENT);
+                    throw new IndexFormatTooOldException(indexStream, format, FORMAT_MINIMUM, FORMAT_CURRENT);
                 }
-                if (Format > FORMAT_CURRENT)
+                if (format > FORMAT_CURRENT)
                 {
-                    throw new IndexFormatTooNewException(IndexStream, Format, FORMAT_MINIMUM, FORMAT_CURRENT);
+                    throw new IndexFormatTooNewException(indexStream, format, FORMAT_MINIMUM, FORMAT_CURRENT);
                 }
 
-                long indexSize = IndexStream.Length - FORMAT_SIZE;
+                long indexSize = indexStream.Length - FORMAT_SIZE;
 
                 if (docStoreOffset != -1)
                 {
                     // We read only a slice out of this shared fields file
-                    this.DocStoreOffset = docStoreOffset;
-                    this.Size = size;
+                    this.docStoreOffset = docStoreOffset;
+                    this.size = size;
 
                     // Verify the file is long enough to hold all of our
                     // docs
-                    Debug.Assert(((int)(indexSize / 8)) >= size + this.DocStoreOffset, "indexSize=" + indexSize + " size=" + size + " docStoreOffset=" + docStoreOffset);
+                    Debug.Assert(((int)(indexSize / 8)) >= size + this.docStoreOffset, "indexSize=" + indexSize + " size=" + size + " docStoreOffset=" + docStoreOffset);
                 }
                 else
                 {
-                    this.DocStoreOffset = 0;
-                    this.Size = (int)(indexSize >> 3);
+                    this.docStoreOffset = 0;
+                    this.size = (int)(indexSize >> 3);
                     // Verify two sources of "maxDoc" agree:
-                    if (this.Size != si.DocCount)
+                    if (this.size != si.DocCount)
                     {
-                        throw new CorruptIndexException("doc counts differ for segment " + segment + ": fieldsReader shows " + this.Size + " but segmentInfo shows " + si.DocCount);
+                        throw new CorruptIndexException("doc counts differ for segment " + segment + ": fieldsReader shows " + this.size + " but segmentInfo shows " + si.DocCount);
                     }
                 }
-                NumTotalDocs = (int)(indexSize >> 3);
+                numTotalDocs = (int)(indexSize >> 3);
                 success = true;
             }
             finally
@@ -229,7 +229,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// <exception cref="AlreadyClosedException"> if this FieldsReader is closed </exception>
         private void EnsureOpen()
         {
-            if (Closed)
+            if (closed)
             {
                 throw new AlreadyClosedException("this FieldsReader is closed");
             }
@@ -244,31 +244,31 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (disposing)
             {
-                if (!Closed)
+                if (!closed)
                 {
-                    IOUtils.Close(FieldsStream, IndexStream, StoreCFSReader);
-                    Closed = true;
+                    IOUtils.Close(fieldsStream, indexStream, storeCFSReader);
+                    closed = true;
                 }
             }
         }
 
         private void SeekIndex(int docID)
         {
-            IndexStream.Seek(FORMAT_SIZE + (docID + DocStoreOffset) * 8L);
+            indexStream.Seek(FORMAT_SIZE + (docID + docStoreOffset) * 8L);
         }
 
         public override sealed void VisitDocument(int n, StoredFieldVisitor visitor)
         {
             SeekIndex(n);
-            FieldsStream.Seek(IndexStream.ReadLong());
+            fieldsStream.Seek(indexStream.ReadLong());
 
-            int numFields = FieldsStream.ReadVInt();
+            int numFields = fieldsStream.ReadVInt();
             for (int fieldIDX = 0; fieldIDX < numFields; fieldIDX++)
             {
-                int fieldNumber = FieldsStream.ReadVInt();
-                FieldInfo fieldInfo = FieldInfos.FieldInfo(fieldNumber);
+                int fieldNumber = fieldsStream.ReadVInt();
+                FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
-                int bits = FieldsStream.ReadByte() & 0xFF;
+                int bits = fieldsStream.ReadByte() & 0xFF;
                 Debug.Assert(bits <= (FIELD_IS_NUMERIC_MASK | FIELD_IS_BINARY), "bits=" + bits.ToString("x"));
 
                 switch (visitor.NeedsField(fieldInfo))
@@ -295,19 +295,19 @@ namespace Lucene.Net.Codecs.Lucene3x
                 switch (numeric)
                 {
                     case FIELD_IS_NUMERIC_INT:
-                        visitor.Int32Field(info, FieldsStream.ReadInt());
+                        visitor.Int32Field(info, fieldsStream.ReadInt());
                         return;
 
                     case FIELD_IS_NUMERIC_LONG:
-                        visitor.Int64Field(info, FieldsStream.ReadLong());
+                        visitor.Int64Field(info, fieldsStream.ReadLong());
                         return;
 
                     case FIELD_IS_NUMERIC_FLOAT:
-                        visitor.SingleField(info, Number.IntBitsToFloat(FieldsStream.ReadInt()));
+                        visitor.SingleField(info, Number.IntBitsToFloat(fieldsStream.ReadInt()));
                         return;
 
                     case FIELD_IS_NUMERIC_DOUBLE:
-                        visitor.DoubleField(info, BitConverter.Int64BitsToDouble(FieldsStream.ReadLong()));
+                        visitor.DoubleField(info, BitConverter.Int64BitsToDouble(fieldsStream.ReadLong()));
                         return;
 
                     default:
@@ -316,9 +316,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                int length = FieldsStream.ReadVInt();
+                int length = fieldsStream.ReadVInt();
                 var bytes = new byte[length];
-                FieldsStream.ReadBytes(bytes, 0, length);
+                fieldsStream.ReadBytes(bytes, 0, length);
                 if ((bits & FIELD_IS_BINARY) != 0)
                 {
                     visitor.BinaryField(info, bytes);
@@ -339,12 +339,12 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     case FIELD_IS_NUMERIC_INT:
                     case FIELD_IS_NUMERIC_FLOAT:
-                        FieldsStream.ReadInt();
+                        fieldsStream.ReadInt();
                         return;
 
                     case FIELD_IS_NUMERIC_LONG:
                     case FIELD_IS_NUMERIC_DOUBLE:
-                        FieldsStream.ReadLong();
+                        fieldsStream.ReadLong();
                         return;
 
                     default:
@@ -353,8 +353,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                int length = FieldsStream.ReadVInt();
-                FieldsStream.Seek(FieldsStream.FilePointer + length);
+                int length = fieldsStream.ReadVInt();
+                fieldsStream.Seek(fieldsStream.FilePointer + length);
             }
         }
 
