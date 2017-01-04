@@ -244,13 +244,13 @@ namespace Lucene.Net.Analysis
             /// <summary>
             /// Original source of the tokens.
             /// </summary>
-            protected internal readonly Tokenizer source;
+            protected readonly Tokenizer m_source;
 
             /// <summary>
             /// Sink tokenstream, such as the outer tokenfilter decorating
             /// the chain. this can be the source if there are no filters.
             /// </summary>
-            protected internal readonly TokenStream sink;
+            protected readonly TokenStream m_sink;
 
             /// <summary>
             /// Internal cache only used by <seealso cref="Analyzer#tokenStream(String, String)"/>. </summary>
@@ -265,8 +265,8 @@ namespace Lucene.Net.Analysis
             ///          the analyzer's resulting token stream </param>
             public TokenStreamComponents(Tokenizer source, TokenStream result)
             {
-                this.source = source;
-                this.sink = result;
+                this.m_source = source;
+                this.m_sink = result;
             }
 
             /// <summary>
@@ -276,8 +276,8 @@ namespace Lucene.Net.Analysis
             ///          the analyzer's tokenizer </param>
             public TokenStreamComponents(Tokenizer source)
             {
-                this.source = source;
-                this.sink = source;
+                this.m_source = source;
+                this.m_sink = source;
             }
 
             /// <summary>
@@ -290,7 +290,7 @@ namespace Lucene.Net.Analysis
             ///           if the component's reset method throws an <seealso cref="IOException"/> </exception>
             protected internal virtual void SetReader(TextReader reader)
             {
-                source.SetReader(reader);
+                m_source.SetReader(reader);
             }
 
             /// <summary>
@@ -301,7 +301,7 @@ namespace Lucene.Net.Analysis
             {
                 get
                 {
-                    return sink;
+                    return m_sink;
                 }
             }
 
@@ -313,7 +313,7 @@ namespace Lucene.Net.Analysis
             {
                 get
                 {
-                    return source;
+                    return m_source;
                 }
             }
         }
