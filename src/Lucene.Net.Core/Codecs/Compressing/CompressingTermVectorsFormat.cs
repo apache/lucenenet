@@ -30,10 +30,10 @@ namespace Lucene.Net.Codecs.Compressing
     /// </summary>
     public class CompressingTermVectorsFormat : TermVectorsFormat
     {
-        private readonly string FormatName;
-        private readonly string SegmentSuffix;
-        private readonly CompressionMode CompressionMode;
-        private readonly int ChunkSize;
+        private readonly string formatName;
+        private readonly string segmentSuffix;
+        private readonly CompressionMode compressionMode;
+        private readonly int chunkSize;
 
         /// <summary>
         /// Create a new <seealso cref="CompressingTermVectorsFormat"/>.
@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// speeds so that you can pick the one that best fits your indexing and
         /// searching throughput. You should never instantiate two
         /// <seealso cref="CompressingTermVectorsFormat"/>s that have the same name but
-        /// different <seealso cref="CompressionMode"/>s.
+        /// different <seealso cref="compressionMode"/>s.
         /// <p>
         /// <code>chunkSize</code> is the minimum byte size of a chunk of documents.
         /// Higher values of <code>chunkSize</code> should improve the compression
@@ -57,34 +57,34 @@ namespace Lucene.Net.Codecs.Compressing
         /// </summary>
         /// <param name="formatName"> the name of the <seealso cref="StoredFieldsFormat"/> </param>
         /// <param name="segmentSuffix"> a suffix to append to files created by this format </param>
-        /// <param name="compressionMode"> the <seealso cref="CompressionMode"/> to use </param>
+        /// <param name="compressionMode"> the <seealso cref="compressionMode"/> to use </param>
         /// <param name="chunkSize"> the minimum number of bytes of a single chunk of stored documents </param>
-        /// <seealso cref= CompressionMode </seealso>
+        /// <seealso cref= compressionMode </seealso>
         public CompressingTermVectorsFormat(string formatName, string segmentSuffix, CompressionMode compressionMode, int chunkSize)
         {
-            this.FormatName = formatName;
-            this.SegmentSuffix = segmentSuffix;
-            this.CompressionMode = compressionMode;
+            this.formatName = formatName;
+            this.segmentSuffix = segmentSuffix;
+            this.compressionMode = compressionMode;
             if (chunkSize < 1)
             {
                 throw new System.ArgumentException("chunkSize must be >= 1");
             }
-            this.ChunkSize = chunkSize;
+            this.chunkSize = chunkSize;
         }
 
         public override sealed TermVectorsReader VectorsReader(Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)
         {
-            return new CompressingTermVectorsReader(directory, segmentInfo, SegmentSuffix, fieldInfos, context, FormatName, CompressionMode);
+            return new CompressingTermVectorsReader(directory, segmentInfo, segmentSuffix, fieldInfos, context, formatName, compressionMode);
         }
 
         public override sealed TermVectorsWriter VectorsWriter(Directory directory, SegmentInfo segmentInfo, IOContext context)
         {
-            return new CompressingTermVectorsWriter(directory, segmentInfo, SegmentSuffix, context, FormatName, CompressionMode, ChunkSize);
+            return new CompressingTermVectorsWriter(directory, segmentInfo, segmentSuffix, context, formatName, compressionMode, chunkSize);
         }
 
         public override string ToString()
         {
-            return this.GetType().Name + "(compressionMode=" + CompressionMode + ", chunkSize=" + ChunkSize + ")";
+            return this.GetType().Name + "(compressionMode=" + compressionMode + ", chunkSize=" + chunkSize + ")";
         }
     }
 }
