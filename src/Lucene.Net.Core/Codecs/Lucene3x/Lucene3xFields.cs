@@ -1143,7 +1143,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 docs.LiveDocs = liveDocs;
                 docs.Seek(termEnum);
-                docs.Freq_Renamed = 1;
+                docs.freq = 1;
                 docID = -1;
                 return this;
             }

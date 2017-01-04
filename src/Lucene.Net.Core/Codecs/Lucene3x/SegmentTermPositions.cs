@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         protected internal sealed override void SkippingDoc()
         {
             // we remember to skip a document lazily
-            LazySkipProxCount += Freq_Renamed;
+            LazySkipProxCount += freq;
         }
 
         public sealed override bool Next()
@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             if (base.Next()) // run super
             {
-                ProxCount = Freq_Renamed; // note frequency
+                ProxCount = freq; // note frequency
                 Position = 0; // reset position
                 return true;
             }

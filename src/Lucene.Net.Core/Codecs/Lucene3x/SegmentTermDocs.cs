@@ -33,25 +33,25 @@ namespace Lucene.Net.Codecs.Lucene3x
     internal class SegmentTermDocs
     {
         //protected SegmentReader parent;
-        private readonly FieldInfos FieldInfos;
+        private readonly FieldInfos fieldInfos;
 
-        private readonly TermInfosReader Tis;
+        private readonly TermInfosReader tis;
         protected IBits m_liveDocs;
         protected IndexInput m_freqStream;
         protected int m_count;
         protected internal int m_df;
-        internal int Doc_Renamed = 0;
-        internal int Freq_Renamed;
+        internal int doc = 0;
+        internal int freq;
 
-        private int SkipInterval;
-        private int MaxSkipLevels;
-        private Lucene3xSkipListReader SkipListReader;
+        private int skipInterval;
+        private int maxSkipLevels;
+        private Lucene3xSkipListReader skipListReader;
 
-        private long FreqBasePointer;
-        private long ProxBasePointer;
+        private long freqBasePointer;
+        private long proxBasePointer;
 
-        private long SkipPointer;
-        private bool HaveSkipped;
+        private long skipPointer;
+        private bool haveSkipped;
 
         protected bool m_currentFieldStoresPayloads;
         protected IndexOptions? m_indexOptions;
@@ -59,15 +59,15 @@ namespace Lucene.Net.Codecs.Lucene3x
         public SegmentTermDocs(IndexInput freqStream, TermInfosReader tis, FieldInfos fieldInfos)
         {
             this.m_freqStream = (IndexInput)freqStream.Clone();
-            this.Tis = tis;
-            this.FieldInfos = fieldInfos;
-            SkipInterval = tis.SkipInterval;
-            MaxSkipLevels = tis.MaxSkipLevels;
+            this.tis = tis;
+            this.fieldInfos = fieldInfos;
+            skipInterval = tis.SkipInterval;
+            maxSkipLevels = tis.MaxSkipLevels;
         }
 
         public virtual void Seek(Term term)
         {
-            TermInfo ti = Tis.Get(term);
+            TermInfo ti = tis.Get(term);
             Seek(ti, term);
         }
 
@@ -89,7 +89,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             Term term;
 
             // use comparison of fieldinfos to verify that termEnum belongs to the same segment as this SegmentTermDocs
-            if (segmentTermEnum.FieldInfos == FieldInfos) // optimized case
+            if (segmentTermEnum.FieldInfos == fieldInfos) // optimized case
             {
                 term = segmentTermEnum.Term();
                 ti = segmentTermEnum.TermInfo();
@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             else
             {
                 term = segmentTermEnum.Term();
-                ti = Tis.Get(term);
+                ti = tis.Get(term);
             }
 
             Seek(ti, term);
@@ -106,7 +106,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         internal virtual void Seek(TermInfo ti, Term term)
         {
             m_count = 0;
-            FieldInfo fi = FieldInfos.FieldInfo(term.Field);
+            FieldInfo fi = fieldInfos.FieldInfo(term.Field);
             this.m_indexOptions = (fi != null) ? fi.IndexOptions : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             m_currentFieldStoresPayloads = (fi != null) && fi.HasPayloads;
             if (ti == null)
@@ -116,12 +116,12 @@ namespace Lucene.Net.Codecs.Lucene3x
             else
             {
                 m_df = ti.DocFreq;
-                Doc_Renamed = 0;
-                FreqBasePointer = ti.FreqPointer;
-                ProxBasePointer = ti.ProxPointer;
-                SkipPointer = FreqBasePointer + ti.SkipOffset;
-                m_freqStream.Seek(FreqBasePointer);
-                HaveSkipped = false;
+                doc = 0;
+                freqBasePointer = ti.FreqPointer;
+                proxBasePointer = ti.ProxPointer;
+                skipPointer = freqBasePointer + ti.SkipOffset;
+                m_freqStream.Seek(freqBasePointer);
+                haveSkipped = false;
             }
         }
 
@@ -136,21 +136,21 @@ namespace Lucene.Net.Codecs.Lucene3x
             if (disposing)
             {
                 m_freqStream.Dispose();
-                if (SkipListReader != null)
+                if (skipListReader != null)
                 {
-                    SkipListReader.Dispose();
+                    skipListReader.Dispose();
                 }
             }
         }
 
         public int Doc
         {
-            get { return Doc_Renamed; }
+            get { return doc; }
         }
 
         public int Freq
         {
-            get { return Freq_Renamed; }
+            get { return freq; }
         }
 
         protected internal virtual void SkippingDoc()
@@ -169,25 +169,25 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 if (m_indexOptions == IndexOptions.DOCS_ONLY)
                 {
-                    Doc_Renamed += docCode;
+                    doc += docCode;
                 }
                 else
                 {
-                    Doc_Renamed += (int)((uint)docCode >> 1); // shift off low bit
+                    doc += (int)((uint)docCode >> 1); // shift off low bit
                     if ((docCode & 1) != 0) // if low bit is set
                     {
-                        Freq_Renamed = 1; // freq is one
+                        freq = 1; // freq is one
                     }
                     else
                     {
-                        Freq_Renamed = m_freqStream.ReadVInt(); // else read freq
-                        Debug.Assert(Freq_Renamed != 1);
+                        freq = m_freqStream.ReadVInt(); // else read freq
+                        Debug.Assert(freq != 1);
                     }
                 }
 
                 m_count++;
 
-                if (m_liveDocs == null || m_liveDocs.Get(Doc_Renamed))
+                if (m_liveDocs == null || m_liveDocs.Get(doc))
                 {
                     break;
                 }
@@ -212,21 +212,21 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     // manually inlined call to next() for speed
                     int docCode = m_freqStream.ReadVInt();
-                    Doc_Renamed += (int)((uint)docCode >> 1); // shift off low bit
+                    doc += (int)((uint)docCode >> 1); // shift off low bit
                     if ((docCode & 1) != 0) // if low bit is set
                     {
-                        Freq_Renamed = 1; // freq is one
+                        freq = 1; // freq is one
                     }
                     else
                     {
-                        Freq_Renamed = m_freqStream.ReadVInt(); // else read freq
+                        freq = m_freqStream.ReadVInt(); // else read freq
                     }
                     m_count++;
 
-                    if (m_liveDocs == null || m_liveDocs.Get(Doc_Renamed))
+                    if (m_liveDocs == null || m_liveDocs.Get(doc))
                     {
-                        docs[i] = Doc_Renamed;
-                        freqs[i] = Freq_Renamed;
+                        docs[i] = doc;
+                        freqs[i] = freq;
                         ++i;
                     }
                 }
@@ -240,12 +240,12 @@ namespace Lucene.Net.Codecs.Lucene3x
             while (i < length && m_count < m_df)
             {
                 // manually inlined call to next() for speed
-                Doc_Renamed += m_freqStream.ReadVInt();
+                doc += m_freqStream.ReadVInt();
                 m_count++;
 
-                if (m_liveDocs == null || m_liveDocs.Get(Doc_Renamed))
+                if (m_liveDocs == null || m_liveDocs.Get(doc))
                 {
-                    docs[i] = Doc_Renamed;
+                    docs[i] = doc;
                     // Hardware freq to 1 when term freqs were not
                     // stored in the index
                     freqs[i] = 1;
@@ -266,26 +266,26 @@ namespace Lucene.Net.Codecs.Lucene3x
         public virtual bool SkipTo(int target)
         {
             // don't skip if the target is close (within skipInterval docs away)
-            if ((target - SkipInterval) >= Doc_Renamed && m_df >= SkipInterval) // optimized case
+            if ((target - skipInterval) >= doc && m_df >= skipInterval) // optimized case
             {
-                if (SkipListReader == null)
+                if (skipListReader == null)
                 {
-                    SkipListReader = new Lucene3xSkipListReader((IndexInput)m_freqStream.Clone(), MaxSkipLevels, SkipInterval); // lazily clone
+                    skipListReader = new Lucene3xSkipListReader((IndexInput)m_freqStream.Clone(), maxSkipLevels, skipInterval); // lazily clone
                 }
 
-                if (!HaveSkipped) // lazily initialize skip stream
+                if (!haveSkipped) // lazily initialize skip stream
                 {
-                    SkipListReader.Init(SkipPointer, FreqBasePointer, ProxBasePointer, m_df, m_currentFieldStoresPayloads);
-                    HaveSkipped = true;
+                    skipListReader.Init(skipPointer, freqBasePointer, proxBasePointer, m_df, m_currentFieldStoresPayloads);
+                    haveSkipped = true;
                 }
 
-                int newCount = SkipListReader.SkipTo(target);
+                int newCount = skipListReader.SkipTo(target);
                 if (newCount > m_count)
                 {
-                    m_freqStream.Seek(SkipListReader.FreqPointer);
-                    SkipProx(SkipListReader.ProxPointer, SkipListReader.PayloadLength);
+                    m_freqStream.Seek(skipListReader.FreqPointer);
+                    SkipProx(skipListReader.ProxPointer, skipListReader.PayloadLength);
 
-                    Doc_Renamed = SkipListReader.Doc;
+                    doc = skipListReader.Doc;
                     m_count = newCount;
                 }
             }
@@ -297,7 +297,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     return false;
                 }
-            } while (target > Doc_Renamed);
+            } while (target > doc);
             return true;
         }
     }
