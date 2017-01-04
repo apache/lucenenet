@@ -73,52 +73,52 @@ namespace Lucene.Net.Codecs.Compressing
         internal const int PAYLOADS = 0x04;
         internal static readonly int FLAGS_BITS = PackedInts.BitsRequired(POSITIONS | OFFSETS | PAYLOADS);
 
-        private readonly Directory Directory;
-        private readonly string Segment;
-        private readonly string SegmentSuffix;
-        private CompressingStoredFieldsIndexWriter IndexWriter;
-        private IndexOutput VectorsStream;
+        private readonly Directory directory;
+        private readonly string segment;
+        private readonly string segmentSuffix;
+        private CompressingStoredFieldsIndexWriter indexWriter;
+        private IndexOutput vectorsStream;
 
-        private readonly CompressionMode CompressionMode;
-        private readonly Compressor Compressor;
-        private readonly int ChunkSize;
+        private readonly CompressionMode compressionMode;
+        private readonly Compressor compressor;
+        private readonly int chunkSize;
 
         /// <summary>
         /// a pending doc </summary>
         private class DocData
         {
-            private readonly CompressingTermVectorsWriter OuterInstance;
+            private readonly CompressingTermVectorsWriter outerInstance;
 
-            internal readonly int NumFields;
-            internal readonly LinkedList<FieldData> Fields;
-            internal readonly int PosStart, OffStart, PayStart;
+            internal readonly int numFields;
+            internal readonly LinkedList<FieldData> fields;
+            internal readonly int posStart, offStart, payStart;
 
-            internal DocData(CompressingTermVectorsWriter OuterInstance, int numFields, int posStart, int offStart, int payStart)
+            internal DocData(CompressingTermVectorsWriter outerInstance, int numFields, int posStart, int offStart, int payStart)
             {
-                this.OuterInstance = OuterInstance;
-                this.NumFields = numFields;
-                this.Fields = new LinkedList<FieldData>();
-                this.PosStart = posStart;
-                this.OffStart = offStart;
-                this.PayStart = payStart;
+                this.outerInstance = outerInstance;
+                this.numFields = numFields;
+                this.fields = new LinkedList<FieldData>();
+                this.posStart = posStart;
+                this.offStart = offStart;
+                this.payStart = payStart;
             }
 
             internal virtual FieldData AddField(int fieldNum, int numTerms, bool positions, bool offsets, bool payloads)
             {
                 FieldData field;
-                if (Fields.Count == 0)
+                if (fields.Count == 0)
                 {
-                    field = new FieldData(OuterInstance, fieldNum, numTerms, positions, offsets, payloads, PosStart, OffStart, PayStart);
+                    field = new FieldData(outerInstance, fieldNum, numTerms, positions, offsets, payloads, posStart, offStart, payStart);
                 }
                 else
                 {
-                    FieldData last = Fields.Last.Value;
-                    int posStart = last.PosStart + (last.HasPositions ? last.TotalPositions : 0);
-                    int offStart = last.OffStart + (last.HasOffsets ? last.TotalPositions : 0);
-                    int payStart = last.PayStart + (last.HasPayloads ? last.TotalPositions : 0);
-                    field = new FieldData(OuterInstance, fieldNum, numTerms, positions, offsets, payloads, posStart, offStart, payStart);
+                    FieldData last = fields.Last.Value;
+                    int posStart = last.posStart + (last.hasPositions ? last.totalPositions : 0);
+                    int offStart = last.offStart + (last.hasOffsets ? last.totalPositions : 0);
+                    int payStart = last.payStart + (last.hasPayloads ? last.totalPositions : 0);
+                    field = new FieldData(outerInstance, fieldNum, numTerms, positions, offsets, payloads, posStart, offStart, payStart);
                 }
-                Fields.AddLast(field);
+                fields.AddLast(field);
                 return field;
             }
         }
@@ -127,11 +127,11 @@ namespace Lucene.Net.Codecs.Compressing
         {
             FieldData last = null;
             //for (IEnumerator<DocData> it = PendingDocs.Reverse(); it.MoveNext();)
-            foreach (DocData doc in PendingDocs.Reverse())
+            foreach (DocData doc in pendingDocs.Reverse())
             {
-                if (!(doc.Fields.Count == 0))
+                if (!(doc.fields.Count == 0))
                 {
-                    last = doc.Fields.Last.Value;
+                    last = doc.fields.Last.Value;
                     break;
                 }
             }
@@ -142,12 +142,12 @@ namespace Lucene.Net.Codecs.Compressing
             }
             else
             {
-                int posStart = last.PosStart + (last.HasPositions ? last.TotalPositions : 0);
-                int offStart = last.OffStart + (last.HasOffsets ? last.TotalPositions : 0);
-                int payStart = last.PayStart + (last.HasPayloads ? last.TotalPositions : 0);
+                int posStart = last.posStart + (last.hasPositions ? last.totalPositions : 0);
+                int offStart = last.offStart + (last.hasOffsets ? last.totalPositions : 0);
+                int payStart = last.payStart + (last.hasPayloads ? last.totalPositions : 0);
                 newDoc = new DocData(this, numVectorFields, posStart, offStart, payStart);
             }
-            PendingDocs.AddLast(newDoc);
+            pendingDocs.AddLast(newDoc);
             return newDoc;
         }
 
@@ -155,127 +155,127 @@ namespace Lucene.Net.Codecs.Compressing
         /// a pending field </summary>
         private class FieldData
         {
-            private readonly CompressingTermVectorsWriter OuterInstance;
+            private readonly CompressingTermVectorsWriter outerInstance;
 
-            internal readonly bool HasPositions, HasOffsets, HasPayloads;
-            internal readonly int FieldNum, Flags, NumTerms;
-            internal readonly int[] Freqs, PrefixLengths, SuffixLengths;
-            internal readonly int PosStart, OffStart, PayStart;
-            internal int TotalPositions;
-            internal int Ord;
+            internal readonly bool hasPositions, hasOffsets, hasPayloads;
+            internal readonly int fieldNum, flags, numTerms;
+            internal readonly int[] freqs, prefixLengths, suffixLengths;
+            internal readonly int posStart, offStart, payStart;
+            internal int totalPositions;
+            internal int ord;
 
-            internal FieldData(CompressingTermVectorsWriter OuterInstance, int fieldNum, int numTerms, bool positions, bool offsets, bool payloads, int posStart, int offStart, int payStart)
+            internal FieldData(CompressingTermVectorsWriter outerInstance, int fieldNum, int numTerms, bool positions, bool offsets, bool payloads, int posStart, int offStart, int payStart)
             {
-                this.OuterInstance = OuterInstance;
-                this.FieldNum = fieldNum;
-                this.NumTerms = numTerms;
-                this.HasPositions = positions;
-                this.HasOffsets = offsets;
-                this.HasPayloads = payloads;
-                this.Flags = (positions ? POSITIONS : 0) | (offsets ? OFFSETS : 0) | (payloads ? PAYLOADS : 0);
-                this.Freqs = new int[numTerms];
-                this.PrefixLengths = new int[numTerms];
-                this.SuffixLengths = new int[numTerms];
-                this.PosStart = posStart;
-                this.OffStart = offStart;
-                this.PayStart = payStart;
-                TotalPositions = 0;
-                Ord = 0;
+                this.outerInstance = outerInstance;
+                this.fieldNum = fieldNum;
+                this.numTerms = numTerms;
+                this.hasPositions = positions;
+                this.hasOffsets = offsets;
+                this.hasPayloads = payloads;
+                this.flags = (positions ? POSITIONS : 0) | (offsets ? OFFSETS : 0) | (payloads ? PAYLOADS : 0);
+                this.freqs = new int[numTerms];
+                this.prefixLengths = new int[numTerms];
+                this.suffixLengths = new int[numTerms];
+                this.posStart = posStart;
+                this.offStart = offStart;
+                this.payStart = payStart;
+                totalPositions = 0;
+                ord = 0;
             }
 
             internal virtual void AddTerm(int freq, int prefixLength, int suffixLength)
             {
-                Freqs[Ord] = freq;
-                PrefixLengths[Ord] = prefixLength;
-                SuffixLengths[Ord] = suffixLength;
-                ++Ord;
+                freqs[ord] = freq;
+                prefixLengths[ord] = prefixLength;
+                suffixLengths[ord] = suffixLength;
+                ++ord;
             }
 
             internal virtual void AddPosition(int position, int startOffset, int length, int payloadLength)
             {
-                if (HasPositions)
+                if (hasPositions)
                 {
-                    if (PosStart + TotalPositions == OuterInstance.PositionsBuf.Length)
+                    if (posStart + totalPositions == outerInstance.positionsBuf.Length)
                     {
-                        OuterInstance.PositionsBuf = ArrayUtil.Grow(OuterInstance.PositionsBuf);
+                        outerInstance.positionsBuf = ArrayUtil.Grow(outerInstance.positionsBuf);
                     }
-                    OuterInstance.PositionsBuf[PosStart + TotalPositions] = position;
+                    outerInstance.positionsBuf[posStart + totalPositions] = position;
                 }
-                if (HasOffsets)
+                if (hasOffsets)
                 {
-                    if (OffStart + TotalPositions == OuterInstance.StartOffsetsBuf.Length)
+                    if (offStart + totalPositions == outerInstance.startOffsetsBuf.Length)
                     {
-                        int newLength = ArrayUtil.Oversize(OffStart + TotalPositions, 4);
-                        OuterInstance.StartOffsetsBuf = Arrays.CopyOf(OuterInstance.StartOffsetsBuf, newLength);
-                        OuterInstance.LengthsBuf = Arrays.CopyOf(OuterInstance.LengthsBuf, newLength);
+                        int newLength = ArrayUtil.Oversize(offStart + totalPositions, 4);
+                        outerInstance.startOffsetsBuf = Arrays.CopyOf(outerInstance.startOffsetsBuf, newLength);
+                        outerInstance.lengthsBuf = Arrays.CopyOf(outerInstance.lengthsBuf, newLength);
                     }
-                    OuterInstance.StartOffsetsBuf[OffStart + TotalPositions] = startOffset;
-                    OuterInstance.LengthsBuf[OffStart + TotalPositions] = length;
+                    outerInstance.startOffsetsBuf[offStart + totalPositions] = startOffset;
+                    outerInstance.lengthsBuf[offStart + totalPositions] = length;
                 }
-                if (HasPayloads)
+                if (hasPayloads)
                 {
-                    if (PayStart + TotalPositions == OuterInstance.PayloadLengthsBuf.Length)
+                    if (payStart + totalPositions == outerInstance.payloadLengthsBuf.Length)
                     {
-                        OuterInstance.PayloadLengthsBuf = ArrayUtil.Grow(OuterInstance.PayloadLengthsBuf);
+                        outerInstance.payloadLengthsBuf = ArrayUtil.Grow(outerInstance.payloadLengthsBuf);
                     }
-                    OuterInstance.PayloadLengthsBuf[PayStart + TotalPositions] = payloadLength;
+                    outerInstance.payloadLengthsBuf[payStart + totalPositions] = payloadLength;
                 }
-                ++TotalPositions;
+                ++totalPositions;
             }
         }
 
-        private int NumDocs; // total number of docs seen
-        private readonly LinkedList<DocData> PendingDocs; // pending docs
-        private DocData CurDoc; // current document
-        private FieldData CurField; // current field
-        private readonly BytesRef LastTerm;
-        private int[] PositionsBuf, StartOffsetsBuf, LengthsBuf, PayloadLengthsBuf;
-        private readonly GrowableByteArrayDataOutput TermSuffixes; // buffered term suffixes
-        private readonly GrowableByteArrayDataOutput PayloadBytes; // buffered term payloads
-        private readonly BlockPackedWriter Writer;
+        private int numDocs; // total number of docs seen
+        private readonly LinkedList<DocData> pendingDocs; // pending docs
+        private DocData curDoc; // current document
+        private FieldData curField; // current field
+        private readonly BytesRef lastTerm;
+        private int[] positionsBuf, startOffsetsBuf, lengthsBuf, payloadLengthsBuf;
+        private readonly GrowableByteArrayDataOutput termSuffixes; // buffered term suffixes
+        private readonly GrowableByteArrayDataOutput payloadBytes; // buffered term payloads
+        private readonly BlockPackedWriter writer;
 
         /// <summary>
         /// Sole constructor. </summary>
         public CompressingTermVectorsWriter(Directory directory, SegmentInfo si, string segmentSuffix, IOContext context, string formatName, CompressionMode compressionMode, int chunkSize)
         {
             Debug.Assert(directory != null);
-            this.Directory = directory;
-            this.Segment = si.Name;
-            this.SegmentSuffix = segmentSuffix;
-            this.CompressionMode = compressionMode;
-            this.Compressor = compressionMode.NewCompressor();
-            this.ChunkSize = chunkSize;
+            this.directory = directory;
+            this.segment = si.Name;
+            this.segmentSuffix = segmentSuffix;
+            this.compressionMode = compressionMode;
+            this.compressor = compressionMode.NewCompressor();
+            this.chunkSize = chunkSize;
 
-            NumDocs = 0;
-            PendingDocs = new LinkedList<DocData>();
-            TermSuffixes = new GrowableByteArrayDataOutput(ArrayUtil.Oversize(chunkSize, 1));
-            PayloadBytes = new GrowableByteArrayDataOutput(ArrayUtil.Oversize(1, 1));
-            LastTerm = new BytesRef(ArrayUtil.Oversize(30, 1));
+            numDocs = 0;
+            pendingDocs = new LinkedList<DocData>();
+            termSuffixes = new GrowableByteArrayDataOutput(ArrayUtil.Oversize(chunkSize, 1));
+            payloadBytes = new GrowableByteArrayDataOutput(ArrayUtil.Oversize(1, 1));
+            lastTerm = new BytesRef(ArrayUtil.Oversize(30, 1));
 
             bool success = false;
-            IndexOutput indexStream = directory.CreateOutput(IndexFileNames.SegmentFileName(Segment, segmentSuffix, VECTORS_INDEX_EXTENSION), context);
+            IndexOutput indexStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, segmentSuffix, VECTORS_INDEX_EXTENSION), context);
             try
             {
-                VectorsStream = directory.CreateOutput(IndexFileNames.SegmentFileName(Segment, segmentSuffix, VECTORS_EXTENSION), context);
+                vectorsStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, segmentSuffix, VECTORS_EXTENSION), context);
 
                 string codecNameIdx = formatName + CODEC_SFX_IDX;
                 string codecNameDat = formatName + CODEC_SFX_DAT;
                 CodecUtil.WriteHeader(indexStream, codecNameIdx, VERSION_CURRENT);
-                CodecUtil.WriteHeader(VectorsStream, codecNameDat, VERSION_CURRENT);
-                Debug.Assert(CodecUtil.HeaderLength(codecNameDat) == VectorsStream.FilePointer);
+                CodecUtil.WriteHeader(vectorsStream, codecNameDat, VERSION_CURRENT);
+                Debug.Assert(CodecUtil.HeaderLength(codecNameDat) == vectorsStream.FilePointer);
                 Debug.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.FilePointer);
 
-                IndexWriter = new CompressingStoredFieldsIndexWriter(indexStream);
+                indexWriter = new CompressingStoredFieldsIndexWriter(indexStream);
                 indexStream = null;
 
-                VectorsStream.WriteVInt(PackedInts.VERSION_CURRENT);
-                VectorsStream.WriteVInt(chunkSize);
-                Writer = new BlockPackedWriter(VectorsStream, BLOCK_SIZE);
+                vectorsStream.WriteVInt(PackedInts.VERSION_CURRENT);
+                vectorsStream.WriteVInt(chunkSize);
+                writer = new BlockPackedWriter(vectorsStream, BLOCK_SIZE);
 
-                PositionsBuf = new int[1024];
-                StartOffsetsBuf = new int[1024];
-                LengthsBuf = new int[1024];
-                PayloadLengthsBuf = new int[1024];
+                positionsBuf = new int[1024];
+                startOffsetsBuf = new int[1024];
+                lengthsBuf = new int[1024];
+                payloadLengthsBuf = new int[1024];
 
                 success = true;
             }
@@ -295,12 +295,12 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 try
                 {
-                    IOUtils.Close(VectorsStream, IndexWriter);
+                    IOUtils.Close(vectorsStream, indexWriter);
                 }
                 finally
                 {
-                    VectorsStream = null;
-                    IndexWriter = null;
+                    vectorsStream = null;
+                    indexWriter = null;
                 }
             }
         }
@@ -308,80 +308,80 @@ namespace Lucene.Net.Codecs.Compressing
         public override void Abort()
         {
             IOUtils.CloseWhileHandlingException(this);
-            IOUtils.DeleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, SegmentSuffix, VECTORS_EXTENSION), IndexFileNames.SegmentFileName(Segment, SegmentSuffix, VECTORS_INDEX_EXTENSION));
+            IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, segmentSuffix, VECTORS_EXTENSION), IndexFileNames.SegmentFileName(segment, segmentSuffix, VECTORS_INDEX_EXTENSION));
         }
 
         public override void StartDocument(int numVectorFields)
         {
-            CurDoc = AddDocData(numVectorFields);
+            curDoc = AddDocData(numVectorFields);
         }
 
         public override void FinishDocument()
         {
             // append the payload bytes of the doc after its terms
-            TermSuffixes.WriteBytes(PayloadBytes.Bytes, PayloadBytes.Length);
-            PayloadBytes.Length = 0;
-            ++NumDocs;
+            termSuffixes.WriteBytes(payloadBytes.Bytes, payloadBytes.Length);
+            payloadBytes.Length = 0;
+            ++numDocs;
             if (TriggerFlush())
             {
                 Flush();
             }
-            CurDoc = null;
+            curDoc = null;
         }
 
         public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
         {
-            CurField = CurDoc.AddField(info.Number, numTerms, positions, offsets, payloads);
-            LastTerm.Length = 0;
+            curField = curDoc.AddField(info.Number, numTerms, positions, offsets, payloads);
+            lastTerm.Length = 0;
         }
 
         public override void FinishField()
         {
-            CurField = null;
+            curField = null;
         }
 
         public override void StartTerm(BytesRef term, int freq)
         {
             Debug.Assert(freq >= 1);
-            int prefix = StringHelper.BytesDifference(LastTerm, term);
-            CurField.AddTerm(freq, prefix, term.Length - prefix);
-            TermSuffixes.WriteBytes(term.Bytes, term.Offset + prefix, term.Length - prefix);
+            int prefix = StringHelper.BytesDifference(lastTerm, term);
+            curField.AddTerm(freq, prefix, term.Length - prefix);
+            termSuffixes.WriteBytes(term.Bytes, term.Offset + prefix, term.Length - prefix);
             // copy last term
-            if (LastTerm.Bytes.Length < term.Length)
+            if (lastTerm.Bytes.Length < term.Length)
             {
-                LastTerm.Bytes = new byte[ArrayUtil.Oversize(term.Length, 1)];
+                lastTerm.Bytes = new byte[ArrayUtil.Oversize(term.Length, 1)];
             }
-            LastTerm.Offset = 0;
-            LastTerm.Length = term.Length;
-            Array.Copy(term.Bytes, term.Offset, LastTerm.Bytes, 0, term.Length);
+            lastTerm.Offset = 0;
+            lastTerm.Length = term.Length;
+            Array.Copy(term.Bytes, term.Offset, lastTerm.Bytes, 0, term.Length);
         }
 
         public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
         {
-            Debug.Assert(CurField.Flags != 0);
-            CurField.AddPosition(position, startOffset, endOffset - startOffset, payload == null ? 0 : payload.Length);
-            if (CurField.HasPayloads && payload != null)
+            Debug.Assert(curField.flags != 0);
+            curField.AddPosition(position, startOffset, endOffset - startOffset, payload == null ? 0 : payload.Length);
+            if (curField.hasPayloads && payload != null)
             {
-                PayloadBytes.WriteBytes(payload.Bytes, payload.Offset, payload.Length);
+                payloadBytes.WriteBytes(payload.Bytes, payload.Offset, payload.Length);
             }
         }
 
         private bool TriggerFlush()
         {
-            return TermSuffixes.Length >= ChunkSize || PendingDocs.Count >= MAX_DOCUMENTS_PER_CHUNK;
+            return termSuffixes.Length >= chunkSize || pendingDocs.Count >= MAX_DOCUMENTS_PER_CHUNK;
         }
 
         private void Flush()
         {
-            int chunkDocs = PendingDocs.Count;
+            int chunkDocs = pendingDocs.Count;
             Debug.Assert(chunkDocs > 0, chunkDocs.ToString());
 
             // write the index file
-            IndexWriter.WriteIndex(chunkDocs, VectorsStream.FilePointer);
+            indexWriter.WriteIndex(chunkDocs, vectorsStream.FilePointer);
 
-            int docBase = NumDocs - chunkDocs;
-            VectorsStream.WriteVInt(docBase);
-            VectorsStream.WriteVInt(chunkDocs);
+            int docBase = numDocs - chunkDocs;
+            vectorsStream.WriteVInt(docBase);
+            vectorsStream.WriteVInt(chunkDocs);
 
             // total number of fields of the chunk
             int totalFields = FlushNumFields(chunkDocs);
@@ -408,34 +408,34 @@ namespace Lucene.Net.Codecs.Compressing
                 FlushPayloadLengths();
 
                 // compress terms and payloads and write them to the output
-                Compressor.Compress(TermSuffixes.Bytes, 0, TermSuffixes.Length, VectorsStream);
+                compressor.Compress(termSuffixes.Bytes, 0, termSuffixes.Length, vectorsStream);
             }
 
             // reset
-            PendingDocs.Clear();
-            CurDoc = null;
-            CurField = null;
-            TermSuffixes.Length = 0;
+            pendingDocs.Clear();
+            curDoc = null;
+            curField = null;
+            termSuffixes.Length = 0;
         }
 
         private int FlushNumFields(int chunkDocs)
         {
             if (chunkDocs == 1)
             {
-                int numFields = PendingDocs.First.Value.NumFields;
-                VectorsStream.WriteVInt(numFields);
+                int numFields = pendingDocs.First.Value.numFields;
+                vectorsStream.WriteVInt(numFields);
                 return numFields;
             }
             else
             {
-                Writer.Reset(VectorsStream);
+                writer.Reset(vectorsStream);
                 int totalFields = 0;
-                foreach (DocData dd in PendingDocs)
+                foreach (DocData dd in pendingDocs)
                 {
-                    Writer.Add(dd.NumFields);
-                    totalFields += dd.NumFields;
+                    writer.Add(dd.numFields);
+                    totalFields += dd.numFields;
                 }
-                Writer.Finish();
+                writer.Finish();
                 return totalFields;
             }
         }
@@ -445,11 +445,11 @@ namespace Lucene.Net.Codecs.Compressing
         private int[] FlushFieldNums()
         {
             SortedSet<int> fieldNums = new SortedSet<int>();
-            foreach (DocData dd in PendingDocs)
+            foreach (DocData dd in pendingDocs)
             {
-                foreach (FieldData fd in dd.Fields)
+                foreach (FieldData fd in dd.fields)
                 {
-                    fieldNums.Add(fd.FieldNum);
+                    fieldNums.Add(fd.fieldNum);
                 }
             }
 
@@ -457,12 +457,12 @@ namespace Lucene.Net.Codecs.Compressing
             Debug.Assert(numDistinctFields > 0);
             int bitsRequired = PackedInts.BitsRequired(fieldNums.Last());
             int token = (Math.Min(numDistinctFields - 1, 0x07) << 5) | bitsRequired;
-            VectorsStream.WriteByte((byte)(sbyte)token);
+            vectorsStream.WriteByte((byte)(sbyte)token);
             if (numDistinctFields - 1 >= 0x07)
             {
-                VectorsStream.WriteVInt(numDistinctFields - 1 - 0x07);
+                vectorsStream.WriteVInt(numDistinctFields - 1 - 0x07);
             }
-            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(VectorsStream, PackedInts.Format.PACKED, fieldNums.Count, bitsRequired, 1);
+            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, fieldNums.Count, bitsRequired, 1);
             foreach (int fieldNum in fieldNums)
             {
                 writer.Add(fieldNum);
@@ -480,12 +480,12 @@ namespace Lucene.Net.Codecs.Compressing
 
         private void FlushFields(int totalFields, int[] fieldNums)
         {
-            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(VectorsStream, PackedInts.Format.PACKED, totalFields, PackedInts.BitsRequired(fieldNums.Length - 1), 1);
-            foreach (DocData dd in PendingDocs)
+            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, totalFields, PackedInts.BitsRequired(fieldNums.Length - 1), 1);
+            foreach (DocData dd in pendingDocs)
             {
-                foreach (FieldData fd in dd.Fields)
+                foreach (FieldData fd in dd.fields)
                 {
-                    int fieldNumIndex = Array.BinarySearch(fieldNums, fd.FieldNum);
+                    int fieldNumIndex = Array.BinarySearch(fieldNums, fd.fieldNum);
                     Debug.Assert(fieldNumIndex >= 0);
                     writer.Add(fieldNumIndex);
                 }
@@ -500,18 +500,18 @@ namespace Lucene.Net.Codecs.Compressing
             int[] fieldFlags = new int[fieldNums.Length];
             Arrays.Fill(fieldFlags, -1);
             bool breakOuterLoop;
-            foreach (DocData dd in PendingDocs)
+            foreach (DocData dd in pendingDocs)
             {
                 breakOuterLoop = false;
-                foreach (FieldData fd in dd.Fields)
+                foreach (FieldData fd in dd.fields)
                 {
-                    int fieldNumOff = Array.BinarySearch(fieldNums, fd.FieldNum);
+                    int fieldNumOff = Array.BinarySearch(fieldNums, fd.fieldNum);
                     Debug.Assert(fieldNumOff >= 0);
                     if (fieldFlags[fieldNumOff] == -1)
                     {
-                        fieldFlags[fieldNumOff] = fd.Flags;
+                        fieldFlags[fieldNumOff] = fd.flags;
                     }
-                    else if (fieldFlags[fieldNumOff] != fd.Flags)
+                    else if (fieldFlags[fieldNumOff] != fd.flags)
                     {
                         nonChangingFlags = false;
                         breakOuterLoop = true;
@@ -524,8 +524,8 @@ namespace Lucene.Net.Codecs.Compressing
             if (nonChangingFlags)
             {
                 // write one flag per field num
-                VectorsStream.WriteVInt(0);
-                PackedInts.Writer writer = PackedInts.GetWriterNoHeader(VectorsStream, PackedInts.Format.PACKED, fieldFlags.Length, FLAGS_BITS, 1);
+                vectorsStream.WriteVInt(0);
+                PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, fieldFlags.Length, FLAGS_BITS, 1);
                 foreach (int flags in fieldFlags)
                 {
                     Debug.Assert(flags >= 0);
@@ -537,13 +537,13 @@ namespace Lucene.Net.Codecs.Compressing
             else
             {
                 // write one flag for every field instance
-                VectorsStream.WriteVInt(1);
-                PackedInts.Writer writer = PackedInts.GetWriterNoHeader(VectorsStream, PackedInts.Format.PACKED, totalFields, FLAGS_BITS, 1);
-                foreach (DocData dd in PendingDocs)
+                vectorsStream.WriteVInt(1);
+                PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, totalFields, FLAGS_BITS, 1);
+                foreach (DocData dd in pendingDocs)
                 {
-                    foreach (FieldData fd in dd.Fields)
+                    foreach (FieldData fd in dd.fields)
                     {
-                        writer.Add(fd.Flags);
+                        writer.Add(fd.flags);
                     }
                 }
                 Debug.Assert(writer.Ord == totalFields - 1);
@@ -554,21 +554,21 @@ namespace Lucene.Net.Codecs.Compressing
         private void FlushNumTerms(int totalFields)
         {
             int maxNumTerms = 0;
-            foreach (DocData dd in PendingDocs)
+            foreach (DocData dd in pendingDocs)
             {
-                foreach (FieldData fd in dd.Fields)
+                foreach (FieldData fd in dd.fields)
                 {
-                    maxNumTerms |= fd.NumTerms;
+                    maxNumTerms |= fd.numTerms;
                 }
             }
             int bitsRequired = PackedInts.BitsRequired(maxNumTerms);
-            VectorsStream.WriteVInt(bitsRequired);
-            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(VectorsStream, PackedInts.Format.PACKED, totalFields, bitsRequired, 1);
-            foreach (DocData dd in PendingDocs)
+            vectorsStream.WriteVInt(bitsRequired);
+            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, totalFields, bitsRequired, 1);
+            foreach (DocData dd in pendingDocs)
             {
-                foreach (FieldData fd in dd.Fields)
+                foreach (FieldData fd in dd.fields)
                 {
-                    writer.Add(fd.NumTerms);
+                    writer.Add(fd.numTerms);
                 }
             }
             Debug.Assert(writer.Ord == totalFields - 1);
@@ -577,73 +577,73 @@ namespace Lucene.Net.Codecs.Compressing
 
         private void FlushTermLengths()
         {
-            Writer.Reset(VectorsStream);
-            foreach (DocData dd in PendingDocs)
+            writer.Reset(vectorsStream);
+            foreach (DocData dd in pendingDocs)
             {
-                foreach (FieldData fd in dd.Fields)
+                foreach (FieldData fd in dd.fields)
                 {
-                    for (int i = 0; i < fd.NumTerms; ++i)
+                    for (int i = 0; i < fd.numTerms; ++i)
                     {
-                        Writer.Add(fd.PrefixLengths[i]);
+                        writer.Add(fd.prefixLengths[i]);
                     }
                 }
             }
-            Writer.Finish();
-            Writer.Reset(VectorsStream);
-            foreach (DocData dd in PendingDocs)
+            writer.Finish();
+            writer.Reset(vectorsStream);
+            foreach (DocData dd in pendingDocs)
             {
-                foreach (FieldData fd in dd.Fields)
+                foreach (FieldData fd in dd.fields)
                 {
-                    for (int i = 0; i < fd.NumTerms; ++i)
+                    for (int i = 0; i < fd.numTerms; ++i)
                     {
-                        Writer.Add(fd.SuffixLengths[i]);
+                        writer.Add(fd.suffixLengths[i]);
                     }
                 }
             }
-            Writer.Finish();
+            writer.Finish();
         }
 
         private void FlushTermFreqs()
         {
-            Writer.Reset(VectorsStream);
-            foreach (DocData dd in PendingDocs)
+            writer.Reset(vectorsStream);
+            foreach (DocData dd in pendingDocs)
             {
-                foreach (FieldData fd in dd.Fields)
+                foreach (FieldData fd in dd.fields)
                 {
-                    for (int i = 0; i < fd.NumTerms; ++i)
+                    for (int i = 0; i < fd.numTerms; ++i)
                     {
-                        Writer.Add(fd.Freqs[i] - 1);
+                        writer.Add(fd.freqs[i] - 1);
                     }
                 }
             }
-            Writer.Finish();
+            writer.Finish();
         }
 
         private void FlushPositions()
         {
-            Writer.Reset(VectorsStream);
-            foreach (DocData dd in PendingDocs)
+            writer.Reset(vectorsStream);
+            foreach (DocData dd in pendingDocs)
             {
-                foreach (FieldData fd in dd.Fields)
+                foreach (FieldData fd in dd.fields)
                 {
-                    if (fd.HasPositions)
+                    if (fd.hasPositions)
                     {
                         int pos = 0;
-                        for (int i = 0; i < fd.NumTerms; ++i)
+                        for (int i = 0; i < fd.numTerms; ++i)
                         {
                             int previousPosition = 0;
-                            for (int j = 0; j < fd.Freqs[i]; ++j)
+                            for (int j = 0; j < fd.freqs[i]; ++j)
                             {
-                                int position = PositionsBuf[fd.PosStart + pos++];
-                                Writer.Add(position - previousPosition);
+                                int position = positionsBuf[fd.posStart + pos++];
+                                writer.Add(position - previousPosition);
                                 previousPosition = position;
                             }
                         }
-                        Debug.Assert(pos == fd.TotalPositions);
+                        Debug.Assert(pos == fd.totalPositions);
                     }
                 }
             }
-            Writer.Finish();
+            writer.Finish();
         }
 
         private void FlushOffsets(int[] fieldNums)
@@ -651,23 +651,23 @@ namespace Lucene.Net.Codecs.Compressing
             bool hasOffsets = false;
             long[] sumPos = new long[fieldNums.Length];
             long[] sumOffsets = new long[fieldNums.Length];
-            foreach (DocData dd in PendingDocs)
+            foreach (DocData dd in pendingDocs)
             {
-                foreach (FieldData fd in dd.Fields)
+                foreach (FieldData fd in dd.fields)
                 {
-                    hasOffsets |= fd.HasOffsets;
-                    if (fd.HasOffsets && fd.HasPositions)
+                    hasOffsets |= fd.hasOffsets;
+                    if (fd.hasOffsets && fd.hasPositions)
                     {
-                        int fieldNumOff = Array.BinarySearch(fieldNums, fd.FieldNum);
+                        int fieldNumOff = Array.BinarySearch(fieldNums, fd.fieldNum);
                         int pos = 0;
-                        for (int i = 0; i < fd.NumTerms; ++i)
+                        for (int i = 0; i < fd.numTerms; ++i)
                         {
                             int previousPos = 0;
                             int previousOff = 0;
-                            for (int j = 0; j < fd.Freqs[i]; ++j)
+                            for (int j = 0; j < fd.freqs[i]; ++j)
                             {
-                                int position = PositionsBuf[fd.PosStart + pos];
-                                int startOffset = StartOffsetsBuf[fd.OffStart + pos];
+                                int position = positionsBuf[fd.posStart + pos];
+                                int startOffset = startOffsetsBuf[fd.offStart + pos];
                                 sumPos[fieldNumOff] += position - previousPos;
                                 sumOffsets[fieldNumOff] += startOffset - previousOff;
                                 previousPos = position;
@@ -675,7 +675,7 @@ namespace Lucene.Net.Codecs.Compressing
                                 ++pos;
                             }
                         }
-                        Debug.Assert(pos == fd.TotalPositions);
+                        Debug.Assert(pos == fd.totalPositions);
                     }
                 }
             }
@@ -695,28 +695,28 @@ namespace Lucene.Net.Codecs.Compressing
             // start offsets
             for (int i = 0; i < fieldNums.Length; ++i)
             {
-                VectorsStream.WriteInt(Number.FloatToIntBits(charsPerTerm[i]));
+                vectorsStream.WriteInt(Number.FloatToIntBits(charsPerTerm[i]));
             }
 
-            Writer.Reset(VectorsStream);
-            foreach (DocData dd in PendingDocs)
+            writer.Reset(vectorsStream);
+            foreach (DocData dd in pendingDocs)
             {
-                foreach (FieldData fd in dd.Fields)
+                foreach (FieldData fd in dd.fields)
                 {
-                    if ((fd.Flags & OFFSETS) != 0)
+                    if ((fd.flags & OFFSETS) != 0)
                     {
-                        int fieldNumOff = Array.BinarySearch(fieldNums, fd.FieldNum);
+                        int fieldNumOff = Array.BinarySearch(fieldNums, fd.fieldNum);
                         float cpt = charsPerTerm[fieldNumOff];
                         int pos = 0;
-                        for (int i = 0; i < fd.NumTerms; ++i)
+                        for (int i = 0; i < fd.numTerms; ++i)
                         {
                             int previousPos = 0;
                             int previousOff = 0;
-                            for (int j = 0; j < fd.Freqs[i]; ++j)
+                            for (int j = 0; j < fd.freqs[i]; ++j)
                             {
-                                int position = fd.HasPositions ? PositionsBuf[fd.PosStart + pos] : 0;
-                                int startOffset = StartOffsetsBuf[fd.OffStart + pos];
-                                Writer.Add(startOffset - previousOff - (int)(cpt * (position - previousPos)));
+                                int position = fd.hasPositions ? positionsBuf[fd.posStart + pos] : 0;
+                                int startOffset = startOffsetsBuf[fd.offStart + pos];
+                                writer.Add(startOffset - previousOff - (int)(cpt * (position - previousPos)));
                                 previousPos = position;
                                 previousOff = startOffset;
                                 ++pos;
@@ -725,62 +725,62 @@ namespace Lucene.Net.Codecs.Compressing
                     }
                 }
             }
-            Writer.Finish();
+            writer.Finish();
 
             // lengths
-            Writer.Reset(VectorsStream);
-            foreach (DocData dd in PendingDocs)
+            writer.Reset(vectorsStream);
+            foreach (DocData dd in pendingDocs)
             {
-                foreach (FieldData fd in dd.Fields)
+                foreach (FieldData fd in dd.fields)
                 {
-                    if ((fd.Flags & OFFSETS) != 0)
+                    if ((fd.flags & OFFSETS) != 0)
                     {
                         int pos = 0;
-                        for (int i = 0; i < fd.NumTerms; ++i)
+                        for (int i = 0; i < fd.numTerms; ++i)
                         {
-                            for (int j = 0; j < fd.Freqs[i]; ++j)
+                            for (int j = 0; j < fd.freqs[i]; ++j)
                             {
-                                Writer.Add(LengthsBuf[fd.OffStart + pos++] - fd.PrefixLengths[i] - fd.SuffixLengths[i]);
+                                writer.Add(lengthsBuf[fd.offStart + pos++] - fd.prefixLengths[i] - fd.suffixLengths[i]);
                             }
                         }
-                        Debug.Assert(pos == fd.TotalPositions);
+                        Debug.Assert(pos == fd.totalPositions);
                     }
                 }
             }
-            Writer.Finish();
+            writer.Finish();
         }
 
         private void FlushPayloadLengths()
         {
-            Writer.Reset(VectorsStream);
-            foreach (DocData dd in PendingDocs)
+            writer.Reset(vectorsStream);
+            foreach (DocData dd in pendingDocs)
             {
-                foreach (FieldData fd in dd.Fields)
+                foreach (FieldData fd in dd.fields)
                 {
-                    if (fd.HasPayloads)
+                    if (fd.hasPayloads)
                     {
-                        for (int i = 0; i < fd.TotalPositions; ++i)
+                        for (int i = 0; i < fd.totalPositions; ++i)
                         {
-                            Writer.Add(PayloadLengthsBuf[fd.PayStart + i]);
+                            writer.Add(payloadLengthsBuf[fd.payStart + i]);
                         }
                     }
                 }
             }
-            Writer.Finish();
+            writer.Finish();
         }
 
         public override void Finish(FieldInfos fis, int numDocs)
         {
-            if (!(PendingDocs.Count == 0))
+            if (!(pendingDocs.Count == 0))
             {
                 Flush();
             }
-            if (numDocs != this.NumDocs)
+            if (numDocs != this.numDocs)
             {
-                throw new Exception("Wrote " + this.NumDocs + " docs, finish called with numDocs=" + numDocs);
+                throw new Exception("Wrote " + this.numDocs + " docs, finish called with numDocs=" + numDocs);
             }
-            IndexWriter.Finish(numDocs, VectorsStream.FilePointer);
-            CodecUtil.WriteFooter(VectorsStream);
+            indexWriter.Finish(numDocs, vectorsStream.FilePointer);
+            CodecUtil.WriteFooter(vectorsStream);
         }
 
         public override IComparer<BytesRef> Comparator
@@ -793,23 +793,23 @@ namespace Lucene.Net.Codecs.Compressing
 
         public override void AddProx(int numProx, DataInput positions, DataInput offsets)
         {
-            Debug.Assert((CurField.HasPositions) == (positions != null));
-            Debug.Assert((CurField.HasOffsets) == (offsets != null));
+            Debug.Assert((curField.hasPositions) == (positions != null));
+            Debug.Assert((curField.hasOffsets) == (offsets != null));
 
-            if (CurField.HasPositions)
+            if (curField.hasPositions)
             {
-                int posStart = CurField.PosStart + CurField.TotalPositions;
-                if (posStart + numProx > PositionsBuf.Length)
+                int posStart = curField.posStart + curField.totalPositions;
+                if (posStart + numProx > positionsBuf.Length)
                 {
-                    PositionsBuf = ArrayUtil.Grow(PositionsBuf, posStart + numProx);
+                    positionsBuf = ArrayUtil.Grow(positionsBuf, posStart + numProx);
                 }
                 int position = 0;
-                if (CurField.HasPayloads)
+                if (curField.hasPayloads)
                 {
-                    int payStart = CurField.PayStart + CurField.TotalPositions;
-                    if (payStart + numProx > PayloadLengthsBuf.Length)
+                    int payStart = curField.payStart + curField.totalPositions;
+                    if (payStart + numProx > payloadLengthsBuf.Length)
                     {
-                        PayloadLengthsBuf = ArrayUtil.Grow(PayloadLengthsBuf, payStart + numProx);
+                        payloadLengthsBuf = ArrayUtil.Grow(payloadLengthsBuf, payStart + numProx);
                     }
                     for (int i = 0; i < numProx; ++i)
                     {
@@ -818,15 +818,15 @@ namespace Lucene.Net.Codecs.Compressing
                         {
                             // this position has a payload
                             int payloadLength = positions.ReadVInt();
-                            PayloadLengthsBuf[payStart + i] = payloadLength;
-                            PayloadBytes.CopyBytes(positions, payloadLength);
+                            payloadLengthsBuf[payStart + i] = payloadLength;
+                            payloadBytes.CopyBytes(positions, payloadLength);
                         }
                         else
                         {
-                            PayloadLengthsBuf[payStart + i] = 0;
+                            payloadLengthsBuf[payStart + i] = 0;
                         }
                         position += (int)((uint)code >> 1);
-                        PositionsBuf[posStart + i] = position;
+                        positionsBuf[posStart + i] = position;
                     }
                 }
                 else
@@ -834,19 +834,19 @@ namespace Lucene.Net.Codecs.Compressing
                     for (int i = 0; i < numProx; ++i)
                     {
                         position += ((int)((uint)positions.ReadVInt() >> 1));
-                        PositionsBuf[posStart + i] = position;
+                        positionsBuf[posStart + i] = position;
                     }
                 }
             }
 
-            if (CurField.HasOffsets)
+            if (curField.hasOffsets)
             {
-                int offStart = CurField.OffStart + CurField.TotalPositions;
-                if (offStart + numProx > StartOffsetsBuf.Length)
+                int offStart = curField.offStart + curField.totalPositions;
+                if (offStart + numProx > startOffsetsBuf.Length)
                 {
                     int newLength = ArrayUtil.Oversize(offStart + numProx, 4);
-                    StartOffsetsBuf = Arrays.CopyOf(StartOffsetsBuf, newLength);
-                    LengthsBuf = Arrays.CopyOf(LengthsBuf, newLength);
+                    startOffsetsBuf = Arrays.CopyOf(startOffsetsBuf, newLength);
+                    lengthsBuf = Arrays.CopyOf(lengthsBuf, newLength);
                 }
                 int lastOffset = 0, startOffset, endOffset;
                 for (int i = 0; i < numProx; ++i)
@@ -854,12 +854,12 @@ namespace Lucene.Net.Codecs.Compressing
                     startOffset = lastOffset + offsets.ReadVInt();
                     endOffset = startOffset + offsets.ReadVInt();
                     lastOffset = endOffset;
-                    StartOffsetsBuf[offStart + i] = startOffset;
-                    LengthsBuf[offStart + i] = endOffset - startOffset;
+                    startOffsetsBuf[offStart + i] = startOffset;
+                    lengthsBuf[offStart + i] = endOffset - startOffset;
                 }
             }
 
-            CurField.TotalPositions += numProx;
+            curField.totalPositions += numProx;
         }
 
         public override int Merge(MergeState mergeState)
@@ -884,7 +884,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int maxDoc = reader.MaxDoc;
                 IBits liveDocs = reader.LiveDocs;
 
-                if (matchingVectorsReader == null || matchingVectorsReader.Version != VERSION_CURRENT || matchingVectorsReader.CompressionMode != CompressionMode || matchingVectorsReader.ChunkSize != ChunkSize || matchingVectorsReader.PackedIntsVersion != PackedInts.VERSION_CURRENT)
+                if (matchingVectorsReader == null || matchingVectorsReader.Version != VERSION_CURRENT || matchingVectorsReader.CompressionMode != compressionMode || matchingVectorsReader.ChunkSize != chunkSize || matchingVectorsReader.PackedIntsVersion != PackedInts.VERSION_CURRENT)
                 {
                     // naive merge...
                     for (int i = NextLiveDoc(0, liveDocs, maxDoc); i < maxDoc; i = NextLiveDoc(i + 1, liveDocs, maxDoc))
@@ -911,7 +911,7 @@ namespace Lucene.Net.Codecs.Compressing
                         {
                             vectorsStream.Seek(startPointer);
                         }
-                        if ((PendingDocs.Count == 0) && (i == 0 || index.GetStartPointer(i - 1) < startPointer)) // start of a chunk
+                        if ((pendingDocs.Count == 0) && (i == 0 || index.GetStartPointer(i - 1) < startPointer)) // start of a chunk
                         {
                             int docBase = vectorsStream.ReadVInt();
                             int chunkDocs = vectorsStream.ReadVInt();
@@ -920,12 +920,12 @@ namespace Lucene.Net.Codecs.Compressing
                             {
                                 long chunkEnd = index.GetStartPointer(docBase + chunkDocs);
                                 long chunkLength = chunkEnd - vectorsStream.FilePointer;
-                                IndexWriter.WriteIndex(chunkDocs, this.VectorsStream.FilePointer);
-                                this.VectorsStream.WriteVInt(docCount);
-                                this.VectorsStream.WriteVInt(chunkDocs);
-                                this.VectorsStream.CopyBytes(vectorsStream, chunkLength);
+                                indexWriter.WriteIndex(chunkDocs, this.vectorsStream.FilePointer);
+                                this.vectorsStream.WriteVInt(docCount);
+                                this.vectorsStream.WriteVInt(chunkDocs);
+                                this.vectorsStream.CopyBytes(vectorsStream, chunkLength);
                                 docCount += chunkDocs;
-                                this.NumDocs += chunkDocs;
+                                this.numDocs += chunkDocs;
                                 mergeState.CheckAbort.Work(300 * chunkDocs);
                                 i = NextLiveDoc(docBase + chunkDocs, liveDocs, maxDoc);
                             }
