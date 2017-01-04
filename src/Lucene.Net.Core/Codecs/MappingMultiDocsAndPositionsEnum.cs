@@ -30,14 +30,14 @@ namespace Lucene.Net.Codecs
     /// </summary>
     public sealed class MappingMultiDocsAndPositionsEnum : DocsAndPositionsEnum
     {
-        private MultiDocsAndPositionsEnum.EnumWithSlice[] Subs_Renamed;
-        internal int NumSubs_Renamed;
-        internal int Upto;
-        internal MergeState.DocMap CurrentMap;
-        internal DocsAndPositionsEnum Current;
-        internal int CurrentBase;
-        internal int Doc = -1;
-        private MergeState MergeState_Renamed;
+        private MultiDocsAndPositionsEnum.EnumWithSlice[] subs;
+        internal int numSubs;
+        internal int upto;
+        internal MergeState.DocMap currentMap;
+        internal DocsAndPositionsEnum current;
+        internal int currentBase;
+        internal int doc = -1;
+        private MergeState mergeState;
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -47,10 +47,10 @@ namespace Lucene.Net.Codecs
 
         internal MappingMultiDocsAndPositionsEnum Reset(MultiDocsAndPositionsEnum postingsEnum)
         {
-            this.NumSubs_Renamed = postingsEnum.NumSubs;
-            this.Subs_Renamed = postingsEnum.GetSubs();
-            Upto = -1;
-            Current = null;
+            this.numSubs = postingsEnum.NumSubs;
+            this.subs = postingsEnum.GetSubs();
+            upto = -1;
+            current = null;
             return this;
         }
 
@@ -62,11 +62,11 @@ namespace Lucene.Net.Codecs
         {
             get
             {
-                return this.MergeState_Renamed; // LUCENENET specific - per MSDN properties should always have a getter
+                return this.mergeState; // LUCENENET specific - per MSDN properties should always have a getter
             }
             set
             {
-                this.MergeState_Renamed = value;
+                this.mergeState = value;
             }
         }
 
@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs
         {
             get
             {
-                return NumSubs_Renamed;
+                return numSubs;
             }
         }
 
@@ -85,17 +85,17 @@ namespace Lucene.Net.Codecs
         /// Returns sub-readers we are merging. </summary>
         public MultiDocsAndPositionsEnum.EnumWithSlice[] GetSubs()
         {
-            return Subs_Renamed;
+            return subs;
         }
 
         public override int Freq
         {
-            get { return Current.Freq; }
+            get { return current.Freq; }
         }
 
         public override int DocID
         {
-            get { return Doc; }
+            get { return doc; }
         }
 
         public override int Advance(int target)
@@ -107,67 +107,67 @@ namespace Lucene.Net.Codecs
         {
             while (true)
             {
-                if (Current == null)
+                if (current == null)
                 {
-                    if (Upto == NumSubs_Renamed - 1)
+                    if (upto == numSubs - 1)
                     {
-                        return this.Doc = NO_MORE_DOCS;
+                        return this.doc = NO_MORE_DOCS;
                     }
                     else
                     {
-                        Upto++;
-                        int reader = Subs_Renamed[Upto].Slice.ReaderIndex;
-                        Current = Subs_Renamed[Upto].DocsAndPositionsEnum;
-                        CurrentBase = MergeState_Renamed.DocBase[reader];
-                        CurrentMap = MergeState_Renamed.DocMaps[reader];
+                        upto++;
+                        int reader = subs[upto].Slice.ReaderIndex;
+                        current = subs[upto].DocsAndPositionsEnum;
+                        currentBase = mergeState.DocBase[reader];
+                        currentMap = mergeState.DocMaps[reader];
                     }
                 }
 
-                int doc = Current.NextDoc();
+                int doc = current.NextDoc();
                 if (doc != NO_MORE_DOCS)
                 {
                     // compact deletions
-                    doc = CurrentMap.Get(doc);
+                    doc = currentMap.Get(doc);
                     if (doc == -1)
                     {
                         continue;
                     }
-                    return this.Doc = CurrentBase + doc;
+                    return this.doc = currentBase + doc;
                 }
                 else
                 {
-                    Current = null;
+                    current = null;
                 }
             }
         }
 
         public override int NextPosition()
         {
-            return Current.NextPosition();
+            return current.NextPosition();
         }
 
         public override int StartOffset
         {
-            get { return Current.StartOffset; }
+            get { return current.StartOffset; }
         }
 
         public override int EndOffset
         {
-            get { return Current.EndOffset; }
+            get { return current.EndOffset; }
         }
 
         public override BytesRef Payload
         {
             get
             {
-                return Current.Payload;
+                return current.Payload;
             }
         }
 
         public override long Cost()
         {
             long cost = 0;
-            foreach (MultiDocsAndPositionsEnum.EnumWithSlice enumWithSlice in Subs_Renamed)
+            foreach (MultiDocsAndPositionsEnum.EnumWithSlice enumWithSlice in subs)
             {
                 cost += enumWithSlice.DocsAndPositionsEnum.Cost();
             }
