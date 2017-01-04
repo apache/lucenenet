@@ -53,11 +53,11 @@ namespace Lucene.Net.Search
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<DocsAndFreqs>
         {
-            private readonly ConjunctionScorer OuterInstance;
+            private readonly ConjunctionScorer outerInstance;
 
             public ComparatorAnonymousInnerClassHelper(ConjunctionScorer outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual int Compare(DocsAndFreqs o1, DocsAndFreqs o2)
