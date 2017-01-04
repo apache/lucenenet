@@ -77,38 +77,38 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Extension of vectors index file </summary>
         public const string VECTORS_INDEX_EXTENSION = "tvx";
 
-        private readonly FieldInfos FieldInfos;
+        private readonly FieldInfos fieldInfos;
 
-        private IndexInput Tvx;
-        private IndexInput Tvd;
-        private IndexInput Tvf;
-        private int Size_Renamed;
-        private int NumTotalDocs;
+        private IndexInput tvx;
+        private IndexInput tvd;
+        private IndexInput tvf;
+        private int size;
+        private int numTotalDocs;
 
         // The docID offset where our docs begin in the index
         // file.  this will be 0 if we have our own private file.
-        private int DocStoreOffset;
+        private int docStoreOffset;
 
         // when we are inside a compound share doc store (CFX),
         // (lucene 3.0 indexes only), we privately open our own fd.
         // TODO: if we are worried, maybe we could eliminate the
         // extra fd somehow when you also have vectors...
-        private readonly CompoundFileDirectory StoreCFSReader;
+        private readonly CompoundFileDirectory storeCFSReader;
 
-        private readonly int Format;
+        private readonly int format;
 
         // used by clone
         internal Lucene3xTermVectorsReader(FieldInfos fieldInfos, IndexInput tvx, IndexInput tvd, IndexInput tvf, int size, int numTotalDocs, int docStoreOffset, int format)
         {
-            this.FieldInfos = fieldInfos;
-            this.Tvx = tvx;
-            this.Tvd = tvd;
-            this.Tvf = tvf;
-            this.Size_Renamed = size;
-            this.NumTotalDocs = numTotalDocs;
-            this.DocStoreOffset = docStoreOffset;
-            this.Format = format;
-            this.StoreCFSReader = null;
+            this.fieldInfos = fieldInfos;
+            this.tvx = tvx;
+            this.tvd = tvd;
+            this.tvf = tvf;
+            this.size = size;
+            this.numTotalDocs = numTotalDocs;
+            this.docStoreOffset = docStoreOffset;
+            this.format = format;
+            this.storeCFSReader = null;
         }
 
         public Lucene3xTermVectorsReader(Directory d, SegmentInfo si, FieldInfos fieldInfos, IOContext context)
@@ -123,43 +123,43 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (docStoreOffset != -1 && Lucene3xSegmentInfoFormat.GetDocStoreIsCompoundFile(si))
                 {
-                    d = StoreCFSReader = new CompoundFileDirectory(si.Dir, IndexFileNames.SegmentFileName(segment, "", Lucene3xCodec.COMPOUND_FILE_STORE_EXTENSION), context, false);
+                    d = storeCFSReader = new CompoundFileDirectory(si.Dir, IndexFileNames.SegmentFileName(segment, "", Lucene3xCodec.COMPOUND_FILE_STORE_EXTENSION), context, false);
                 }
                 else
                 {
-                    StoreCFSReader = null;
+                    storeCFSReader = null;
                 }
                 string idxName = IndexFileNames.SegmentFileName(segment, "", VECTORS_INDEX_EXTENSION);
-                Tvx = d.OpenInput(idxName, context);
-                Format = CheckValidFormat(Tvx);
+                tvx = d.OpenInput(idxName, context);
+                format = CheckValidFormat(tvx);
                 string fn = IndexFileNames.SegmentFileName(segment, "", VECTORS_DOCUMENTS_EXTENSION);
-                Tvd = d.OpenInput(fn, context);
-                int tvdFormat = CheckValidFormat(Tvd);
+                tvd = d.OpenInput(fn, context);
+                int tvdFormat = CheckValidFormat(tvd);
                 fn = IndexFileNames.SegmentFileName(segment, "", VECTORS_FIELDS_EXTENSION);
-                Tvf = d.OpenInput(fn, context);
-                int tvfFormat = CheckValidFormat(Tvf);
+                tvf = d.OpenInput(fn, context);
+                int tvfFormat = CheckValidFormat(tvf);
 
-                Debug.Assert(Format == tvdFormat);
-                Debug.Assert(Format == tvfFormat);
+                Debug.Assert(format == tvdFormat);
+                Debug.Assert(format == tvfFormat);
 
-                NumTotalDocs = (int)(Tvx.Length >> 4);
+                numTotalDocs = (int)(tvx.Length >> 4);
 
                 if (-1 == docStoreOffset)
                 {
-                    this.DocStoreOffset = 0;
-                    this.Size_Renamed = NumTotalDocs;
-                    Debug.Assert(size == 0 || NumTotalDocs == size);
+                    this.docStoreOffset = 0;
+                    this.size = numTotalDocs;
+                    Debug.Assert(size == 0 || numTotalDocs == size);
                 }
                 else
                 {
-                    this.DocStoreOffset = docStoreOffset;
-                    this.Size_Renamed = size;
+                    this.docStoreOffset = docStoreOffset;
+                    this.size = size;
                     // Verify the file is long enough to hold all of our
                     // docs
-                    Debug.Assert(NumTotalDocs >= size + docStoreOffset, "numTotalDocs=" + NumTotalDocs + " size=" + size + " docStoreOffset=" + docStoreOffset);
+                    Debug.Assert(numTotalDocs >= size + docStoreOffset, "numTotalDocs=" + numTotalDocs + " size=" + size + " docStoreOffset=" + docStoreOffset);
                 }
 
-                this.FieldInfos = fieldInfos;
+                this.fieldInfos = fieldInfos;
                 success = true;
             }
             finally
@@ -185,7 +185,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         // Not private to avoid synthetic access$NNN methods
         internal virtual void SeekTvx(int docNum)
         {
-            Tvx.Seek((docNum + DocStoreOffset) * 16L + FORMAT_SIZE);
+            tvx.Seek((docNum + docStoreOffset) * 16L + FORMAT_SIZE);
         }
 
         private int CheckValidFormat(IndexInput @in)
@@ -206,7 +206,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (disposing)
             {
-                IOUtils.Close(Tvx, Tvd, Tvf, StoreCFSReader);
+                IOUtils.Close(tvx, tvd, tvf, storeCFSReader);
             }
         }
 
@@ -214,42 +214,42 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// <returns> The number of documents in the reader </returns>
         internal virtual int Size // LUCENENET TODO: Rename Count
         {
-            get { return Size_Renamed; }
+            get { return size; }
         }
 
         private class TVFields : Fields
         {
-            private readonly Lucene3xTermVectorsReader OuterInstance;
+            private readonly Lucene3xTermVectorsReader outerInstance;
 
-            private readonly int[] FieldNumbers;
-            private readonly long[] FieldFPs;
-            private readonly IDictionary<int, int> FieldNumberToIndex = new Dictionary<int, int>();
+            private readonly int[] fieldNumbers;
+            private readonly long[] fieldFPs;
+            private readonly IDictionary<int, int> fieldNumberToIndex = new Dictionary<int, int>();
 
             public TVFields(Lucene3xTermVectorsReader outerInstance, int docID)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 outerInstance.SeekTvx(docID);
-                outerInstance.Tvd.Seek(outerInstance.Tvx.ReadLong());
+                outerInstance.tvd.Seek(outerInstance.tvx.ReadLong());
 
-                int fieldCount = outerInstance.Tvd.ReadVInt();
+                int fieldCount = outerInstance.tvd.ReadVInt();
                 Debug.Assert(fieldCount >= 0);
                 if (fieldCount != 0)
                 {
-                    FieldNumbers = new int[fieldCount];
-                    FieldFPs = new long[fieldCount];
+                    fieldNumbers = new int[fieldCount];
+                    fieldFPs = new long[fieldCount];
                     for (int fieldUpto = 0; fieldUpto < fieldCount; fieldUpto++)
                     {
-                        int fieldNumber = outerInstance.Tvd.ReadVInt();
-                        FieldNumbers[fieldUpto] = fieldNumber;
-                        FieldNumberToIndex[fieldNumber] = fieldUpto;
+                        int fieldNumber = outerInstance.tvd.ReadVInt();
+                        fieldNumbers[fieldUpto] = fieldNumber;
+                        fieldNumberToIndex[fieldNumber] = fieldUpto;
                     }
 
-                    long position = outerInstance.Tvx.ReadLong();
-                    FieldFPs[0] = position;
+                    long position = outerInstance.tvx.ReadLong();
+                    fieldFPs[0] = position;
                     for (int fieldUpto = 1; fieldUpto < fieldCount; fieldUpto++)
                     {
-                        position += outerInstance.Tvd.ReadVLong();
-                        FieldFPs[fieldUpto] = position;
+                        position += outerInstance.tvd.ReadVLong();
+                        fieldFPs[fieldUpto] = position;
                     }
                 }
                 else
@@ -257,8 +257,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                     // TODO: we can improve writer here, eg write 0 into
                     // tvx file, so we know on first read from tvx that
                     // this doc has no TVs
-                    FieldNumbers = null;
-                    FieldFPs = null;
+                    fieldNumbers = null;
+                    fieldFPs = null;
                 }
             }
 
@@ -269,22 +269,22 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             private class IteratorAnonymousInnerClassHelper : IEnumerator<string>
             {
-                private readonly TVFields OuterInstance;
+                private readonly TVFields outerInstance;
                 private string current;
                 private int i, upTo;
 
                 public IteratorAnonymousInnerClassHelper(TVFields outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
-                    upTo = OuterInstance.FieldNumbers.Length;
+                    this.outerInstance = outerInstance;
+                    upTo = this.outerInstance.fieldNumbers.Length;
                     i = 0;
                 }
 
                 public bool MoveNext()
                 {
-                    if (OuterInstance.FieldNumbers != null && i < upTo)
+                    if (outerInstance.fieldNumbers != null && i < upTo)
                     {
-                        current = OuterInstance.OuterInstance.FieldInfos.FieldInfo(OuterInstance.FieldNumbers[i++]).Name;
+                        current = outerInstance.outerInstance.fieldInfos.FieldInfo(outerInstance.fieldNumbers[i++]).Name;
                         return true;
                     }
                     return false;
@@ -318,7 +318,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override Terms Terms(string field)
             {
-                FieldInfo fieldInfo = OuterInstance.FieldInfos.FieldInfo(field);
+                FieldInfo fieldInfo = outerInstance.fieldInfos.FieldInfo(field);
                 if (fieldInfo == null)
                 {
                     // No such field
@@ -326,26 +326,26 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
 
                 int fieldIndex;
-                if (!FieldNumberToIndex.TryGetValue(fieldInfo.Number, out fieldIndex))
+                if (!fieldNumberToIndex.TryGetValue(fieldInfo.Number, out fieldIndex))
                 {
                     // Term vectors were not indexed for this field
                     return null;
                 }
 
-                return new TVTerms(OuterInstance, FieldFPs[fieldIndex]);
+                return new TVTerms(outerInstance, fieldFPs[fieldIndex]);
             }
 
             public override int Size
             {
                 get
                 {
-                    if (FieldNumbers == null)
+                    if (fieldNumbers == null)
                     {
                         return 0;
                     }
                     else
                     {
-                        return FieldNumbers.Length;
+                        return fieldNumbers.Length;
                     }
                 }
             }
@@ -353,24 +353,24 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private class TVTerms : Terms
         {
-            private readonly Lucene3xTermVectorsReader OuterInstance;
+            private readonly Lucene3xTermVectorsReader outerInstance;
 
-            private readonly int NumTerms;
-            private readonly long TvfFPStart;
-            private readonly bool StorePositions;
-            private readonly bool StoreOffsets;
-            private readonly bool UnicodeSortOrder;
+            private readonly int numTerms;
+            private readonly long tvfFPStart;
+            private readonly bool storePositions;
+            private readonly bool storeOffsets;
+            private readonly bool unicodeSortOrder;
 
             public TVTerms(Lucene3xTermVectorsReader outerInstance, long tvfFP)
             {
-                this.OuterInstance = outerInstance;
-                outerInstance.Tvf.Seek(tvfFP);
-                NumTerms = outerInstance.Tvf.ReadVInt();
-                byte bits = outerInstance.Tvf.ReadByte();
-                StorePositions = (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0;
-                StoreOffsets = (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0;
-                TvfFPStart = outerInstance.Tvf.FilePointer;
-                UnicodeSortOrder = outerInstance.SortTermsByUnicode();
+                this.outerInstance = outerInstance;
+                outerInstance.tvf.Seek(tvfFP);
+                numTerms = outerInstance.tvf.ReadVInt();
+                byte bits = outerInstance.tvf.ReadByte();
+                storePositions = (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0;
+                storeOffsets = (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0;
+                tvfFPStart = outerInstance.tvf.FilePointer;
+                unicodeSortOrder = outerInstance.SortTermsByUnicode();
             }
 
             public override TermsEnum Iterator(TermsEnum reuse)
@@ -379,22 +379,22 @@ namespace Lucene.Net.Codecs.Lucene3x
                 if (reuse is TVTermsEnum)
                 {
                     termsEnum = (TVTermsEnum)reuse;
-                    if (!termsEnum.CanReuse(OuterInstance.Tvf))
+                    if (!termsEnum.CanReuse(outerInstance.tvf))
                     {
-                        termsEnum = new TVTermsEnum(OuterInstance);
+                        termsEnum = new TVTermsEnum(outerInstance);
                     }
                 }
                 else
                 {
-                    termsEnum = new TVTermsEnum(OuterInstance);
+                    termsEnum = new TVTermsEnum(outerInstance);
                 }
-                termsEnum.Reset(NumTerms, TvfFPStart, StorePositions, StoreOffsets, UnicodeSortOrder);
+                termsEnum.Reset(numTerms, tvfFPStart, storePositions, storeOffsets, unicodeSortOrder);
                 return termsEnum;
             }
 
             public override long Size
             {
-                get { return NumTerms; }
+                get { return numTerms; }
             }
 
             public override long SumTotalTermFreq
@@ -410,7 +410,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 get
                 {
                     // Every term occurs in just one doc:
-                    return NumTerms;
+                    return numTerms;
                 }
             }
 
@@ -426,7 +426,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 get
                 {
-                    if (UnicodeSortOrder)
+                    if (unicodeSortOrder)
                     {
                         return BytesRef.UTF8SortedAsUnicodeComparer;
                     }
@@ -444,12 +444,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override bool HasOffsets
             {
-                get { return StoreOffsets; }
+                get { return storeOffsets; }
             }
 
             public override bool HasPositions
             {
-                get { return StorePositions; }
+                get { return storePositions; }
             }
 
             public override bool HasPayloads
@@ -460,62 +460,62 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal class TermAndPostings
         {
-            internal BytesRef Term;
-            internal int Freq;
-            internal int[] Positions;
-            internal int[] StartOffsets;
-            internal int[] EndOffsets;
+            internal BytesRef Term { get; set; }
+            internal int Freq { get; set; }
+            internal int[] Positions { get; set; }
+            internal int[] StartOffsets { get; set; }
+            internal int[] EndOffsets { get; set; }
         }
 
         private class TVTermsEnum : TermsEnum
         {
-            private readonly Lucene3xTermVectorsReader OuterInstance;
+            private readonly Lucene3xTermVectorsReader outerInstance;
 
-            internal bool UnicodeSortOrder;
-            internal readonly IndexInput OrigTVF;
-            internal readonly IndexInput Tvf;
-            internal int NumTerms;
-            internal int CurrentTerm;
-            internal bool StorePositions;
-            internal bool StoreOffsets;
+            internal bool unicodeSortOrder;
+            internal readonly IndexInput origTVF;
+            internal readonly IndexInput tvf;
+            internal int numTerms;
+            internal int currentTerm;
+            internal bool storePositions;
+            internal bool storeOffsets;
 
-            internal TermAndPostings[] TermAndPostings;
+            internal TermAndPostings[] termAndPostings;
 
             // NOTE: tvf is pre-positioned by caller
             public TVTermsEnum(Lucene3xTermVectorsReader outerInstance)
             {
-                this.OuterInstance = outerInstance;
-                this.OrigTVF = outerInstance.Tvf;
-                Tvf = (IndexInput)OrigTVF.Clone();
+                this.outerInstance = outerInstance;
+                this.origTVF = outerInstance.tvf;
+                tvf = (IndexInput)origTVF.Clone();
             }
 
             public virtual bool CanReuse(IndexInput tvf)
             {
-                return tvf == OrigTVF;
+                return tvf == origTVF;
             }
 
             public virtual void Reset(int numTerms, long tvfFPStart, bool storePositions, bool storeOffsets, bool unicodeSortOrder)
             {
-                this.NumTerms = numTerms;
-                this.StorePositions = storePositions;
-                this.StoreOffsets = storeOffsets;
-                CurrentTerm = -1;
-                Tvf.Seek(tvfFPStart);
-                this.UnicodeSortOrder = unicodeSortOrder;
+                this.numTerms = numTerms;
+                this.storePositions = storePositions;
+                this.storeOffsets = storeOffsets;
+                currentTerm = -1;
+                tvf.Seek(tvfFPStart);
+                this.unicodeSortOrder = unicodeSortOrder;
                 ReadVectors();
                 if (unicodeSortOrder)
                 {
-                    Array.Sort(TermAndPostings, new ComparatorAnonymousInnerClassHelper(this));
+                    Array.Sort(termAndPostings, new ComparatorAnonymousInnerClassHelper(this));
                 }
             }
 
             private class ComparatorAnonymousInnerClassHelper : IComparer<TermAndPostings>
             {
-                private readonly TVTermsEnum OuterInstance;
+                private readonly TVTermsEnum outerInstance;
 
                 public ComparatorAnonymousInnerClassHelper(TVTermsEnum outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 public virtual int Compare(TermAndPostings left, TermAndPostings right)
@@ -526,29 +526,29 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             private void ReadVectors()
             {
-                TermAndPostings = new TermAndPostings[NumTerms];
+                termAndPostings = new TermAndPostings[numTerms];
                 BytesRef lastTerm = new BytesRef();
-                for (int i = 0; i < NumTerms; i++)
+                for (int i = 0; i < numTerms; i++)
                 {
                     TermAndPostings t = new TermAndPostings();
                     BytesRef term = new BytesRef();
                     term.CopyBytes(lastTerm);
-                    int start = Tvf.ReadVInt();
-                    int deltaLen = Tvf.ReadVInt();
+                    int start = tvf.ReadVInt();
+                    int deltaLen = tvf.ReadVInt();
                     term.Length = start + deltaLen;
                     term.Grow(term.Length);
-                    Tvf.ReadBytes(term.Bytes, start, deltaLen);
+                    tvf.ReadBytes(term.Bytes, start, deltaLen);
                     t.Term = term;
-                    int freq = Tvf.ReadVInt();
+                    int freq = tvf.ReadVInt();
                     t.Freq = freq;
 
-                    if (StorePositions)
+                    if (storePositions)
                     {
                         int[] positions = new int[freq];
                         int pos = 0;
                         for (int posUpto = 0; posUpto < freq; posUpto++)
                         {
-                            int delta = Tvf.ReadVInt();
+                            int delta = tvf.ReadVInt();
                             if (delta == -1)
                             {
                                 delta = 0; // LUCENE-1542 correction
@@ -559,21 +559,21 @@ namespace Lucene.Net.Codecs.Lucene3x
                         t.Positions = positions;
                     }
 
-                    if (StoreOffsets)
+                    if (storeOffsets)
                     {
                         int[] startOffsets = new int[freq];
                         int[] endOffsets = new int[freq];
                         int offset = 0;
                         for (int posUpto = 0; posUpto < freq; posUpto++)
                         {
-                            startOffsets[posUpto] = offset + Tvf.ReadVInt();
-                            offset = endOffsets[posUpto] = startOffsets[posUpto] + Tvf.ReadVInt();
+                            startOffsets[posUpto] = offset + tvf.ReadVInt();
+                            offset = endOffsets[posUpto] = startOffsets[posUpto] + tvf.ReadVInt();
                         }
                         t.StartOffsets = startOffsets;
                         t.EndOffsets = endOffsets;
                     }
                     lastTerm.CopyBytes(term);
-                    TermAndPostings[i] = t;
+                    termAndPostings[i] = t;
                 }
             }
 
@@ -581,21 +581,21 @@ namespace Lucene.Net.Codecs.Lucene3x
             public override SeekStatus SeekCeil(BytesRef text)
             {
                 IComparer<BytesRef> comparator = Comparator;
-                for (int i = 0; i < NumTerms; i++)
+                for (int i = 0; i < numTerms; i++)
                 {
-                    int cmp = comparator.Compare(text, TermAndPostings[i].Term);
+                    int cmp = comparator.Compare(text, termAndPostings[i].Term);
                     if (cmp < 0)
                     {
-                        CurrentTerm = i;
+                        currentTerm = i;
                         return SeekStatus.NOT_FOUND;
                     }
                     else if (cmp == 0)
                     {
-                        CurrentTerm = i;
+                        currentTerm = i;
                         return SeekStatus.FOUND;
                     }
                 }
-                CurrentTerm = TermAndPostings.Length;
+                currentTerm = termAndPostings.Length;
                 return SeekStatus.END;
             }
 
@@ -606,7 +606,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override BytesRef Next()
             {
-                if (++CurrentTerm >= NumTerms)
+                if (++currentTerm >= numTerms)
                 {
                     return null;
                 }
@@ -615,7 +615,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override BytesRef Term
             {
-                get { return TermAndPostings[CurrentTerm].Term; }
+                get { return termAndPostings[currentTerm].Term; }
             }
 
             public override long Ord
@@ -630,7 +630,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override long TotalTermFreq
             {
-                get { return TermAndPostings[CurrentTerm].Freq; }
+                get { return termAndPostings[currentTerm].Freq; }
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags) // ignored
@@ -644,13 +644,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     docsEnum = new TVDocsEnum();
                 }
-                docsEnum.Reset(liveDocs, TermAndPostings[CurrentTerm]);
+                docsEnum.Reset(liveDocs, termAndPostings[currentTerm]);
                 return docsEnum;
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
-                if (!StorePositions && !StoreOffsets)
+                if (!storePositions && !storeOffsets)
                 {
                     return null;
                 }
@@ -664,7 +664,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     docsAndPositionsEnum = new TVDocsAndPositionsEnum();
                 }
-                docsAndPositionsEnum.Reset(liveDocs, TermAndPostings[CurrentTerm]);
+                docsAndPositionsEnum.Reset(liveDocs, termAndPostings[currentTerm]);
                 return docsAndPositionsEnum;
             }
 
@@ -672,7 +672,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 get
                 {
-                    if (UnicodeSortOrder)
+                    if (unicodeSortOrder)
                     {
                         return BytesRef.UTF8SortedAsUnicodeComparer;
                     }
@@ -688,52 +688,52 @@ namespace Lucene.Net.Codecs.Lucene3x
         // freq() already by TermsEnum.totalTermFreq
         private class TVDocsEnum : DocsEnum
         {
-            internal bool DidNext;
-            internal int Doc = -1;
-            internal int Freq_Renamed;
-            internal IBits LiveDocs;
+            internal bool didNext;
+            internal int doc = -1;
+            internal int freq;
+            internal IBits liveDocs;
 
             public override int Freq
             {
-                get { return Freq_Renamed; }
+                get { return freq; }
             }
 
             public override int DocID
             {
-                get { return Doc; }
+                get { return doc; }
             }
 
             public override int NextDoc()
             {
-                if (!DidNext && (LiveDocs == null || LiveDocs.Get(0)))
+                if (!didNext && (liveDocs == null || liveDocs.Get(0)))
                 {
-                    DidNext = true;
-                    return (Doc = 0);
+                    didNext = true;
+                    return (doc = 0);
                 }
                 else
                 {
-                    return (Doc = NO_MORE_DOCS);
+                    return (doc = NO_MORE_DOCS);
                 }
             }
 
             public override int Advance(int target)
             {
-                if (!DidNext && target == 0)
+                if (!didNext && target == 0)
                 {
                     return NextDoc();
                 }
                 else
                 {
-                    return (Doc = NO_MORE_DOCS);
+                    return (doc = NO_MORE_DOCS);
                 }
             }
 
             public virtual void Reset(IBits liveDocs, TermAndPostings termAndPostings)
             {
-                this.LiveDocs = liveDocs;
-                this.Freq_Renamed = termAndPostings.Freq;
-                this.Doc = -1;
-                DidNext = false;
+                this.liveDocs = liveDocs;
+                this.freq = termAndPostings.Freq;
+                this.doc = -1;
+                didNext = false;
             }
 
             public override long Cost()
@@ -744,69 +744,69 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private class TVDocsAndPositionsEnum : DocsAndPositionsEnum
         {
-            private bool DidNext;
-            private int Doc = -1;
-            private int NextPos;
-            private IBits LiveDocs;
-            private int[] Positions;
-            private int[] StartOffsets;
-            private int[] EndOffsets;
+            private bool didNext;
+            private int doc = -1;
+            private int nextPos;
+            private IBits liveDocs;
+            private int[] positions;
+            private int[] startOffsets;
+            private int[] endOffsets;
 
             public override int Freq
             {
                 get
                 {
-                    if (Positions != null)
+                    if (positions != null)
                     {
-                        return Positions.Length;
+                        return positions.Length;
                     }
                     else
                     {
-                        Debug.Assert(StartOffsets != null);
-                        return StartOffsets.Length;
+                        Debug.Assert(startOffsets != null);
+                        return startOffsets.Length;
                     }
                 }
             }
 
             public override int DocID
             {
-                get { return Doc; }
+                get { return doc; }
             }
 
             public override int NextDoc()
             {
-                if (!DidNext && (LiveDocs == null || LiveDocs.Get(0)))
+                if (!didNext && (liveDocs == null || liveDocs.Get(0)))
                 {
-                    DidNext = true;
-                    return (Doc = 0);
+                    didNext = true;
+                    return (doc = 0);
                 }
                 else
                 {
-                    return (Doc = NO_MORE_DOCS);
+                    return (doc = NO_MORE_DOCS);
                 }
             }
 
             public override int Advance(int target)
             {
-                if (!DidNext && target == 0)
+                if (!didNext && target == 0)
                 {
                     return NextDoc();
                 }
                 else
                 {
-                    return (Doc = NO_MORE_DOCS);
+                    return (doc = NO_MORE_DOCS);
                 }
             }
 
             public virtual void Reset(IBits liveDocs, TermAndPostings termAndPostings)
             {
-                this.LiveDocs = liveDocs;
-                this.Positions = termAndPostings.Positions;
-                this.StartOffsets = termAndPostings.StartOffsets;
-                this.EndOffsets = termAndPostings.EndOffsets;
-                this.Doc = -1;
-                DidNext = false;
-                NextPos = 0;
+                this.liveDocs = liveDocs;
+                this.positions = termAndPostings.Positions;
+                this.startOffsets = termAndPostings.StartOffsets;
+                this.endOffsets = termAndPostings.EndOffsets;
+                this.doc = -1;
+                didNext = false;
+                nextPos = 0;
             }
 
             public override BytesRef Payload
@@ -819,15 +819,15 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int NextPosition()
             {
-                Debug.Assert((Positions != null && NextPos < Positions.Length) || StartOffsets != null && NextPos < StartOffsets.Length);
+                Debug.Assert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
 
-                if (Positions != null)
+                if (positions != null)
                 {
-                    return Positions[NextPos++];
+                    return positions[nextPos++];
                 }
                 else
                 {
-                    NextPos++;
+                    nextPos++;
                     return -1;
                 }
             }
@@ -836,9 +836,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 get
                 {
-                    if (StartOffsets != null)
+                    if (startOffsets != null)
                     {
-                        return StartOffsets[NextPos - 1];
+                        return startOffsets[nextPos - 1];
                     }
                     else
                     {
@@ -851,9 +851,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 get
                 {
-                    if (EndOffsets != null)
+                    if (endOffsets != null)
                     {
-                        return EndOffsets[NextPos - 1];
+                        return endOffsets[nextPos - 1];
                     }
                     else
                     {
@@ -870,7 +870,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override Fields Get(int docID)
         {
-            if (Tvx != null)
+            if (tvx != null)
             {
                 Fields fields = new TVFields(this, docID);
                 if (fields.Size == 0)
@@ -899,14 +899,14 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             // These are null when a TermVectorsReader was created
             // on a segment that did not have term vectors saved
-            if (Tvx != null && Tvd != null && Tvf != null)
+            if (tvx != null && tvd != null && tvf != null)
             {
-                cloneTvx = (IndexInput)Tvx.Clone();
-                cloneTvd = (IndexInput)Tvd.Clone();
-                cloneTvf = (IndexInput)Tvf.Clone();
+                cloneTvx = (IndexInput)tvx.Clone();
+                cloneTvd = (IndexInput)tvd.Clone();
+                cloneTvf = (IndexInput)tvf.Clone();
             }
 
-            return new Lucene3xTermVectorsReader(FieldInfos, cloneTvx, cloneTvd, cloneTvf, Size_Renamed, NumTotalDocs, DocStoreOffset, Format);
+            return new Lucene3xTermVectorsReader(fieldInfos, cloneTvx, cloneTvd, cloneTvf, size, numTotalDocs, docStoreOffset, format);
         }
 
         // If this returns, we do the surrogates shuffle so that the
