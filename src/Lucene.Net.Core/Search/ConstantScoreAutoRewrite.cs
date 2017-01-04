@@ -105,8 +105,8 @@ namespace Lucene.Net.Search
 
             CutOffTermCollector col = new CutOffTermCollector(docCountCutoff, termCountLimit);
             CollectTerms(reader, query, col);
-            int size = col.PendingTerms.Size;
-            if (col.HasCutOff)
+            int size = col.pendingTerms.Size;
+            if (col.hasCutOff)
             {
                 return MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE.Rewrite(reader, query);
             }
@@ -115,14 +115,14 @@ namespace Lucene.Net.Search
                 BooleanQuery bq = GetTopLevelQuery();
                 if (size > 0)
                 {
-                    BytesRefHash pendingTerms = col.PendingTerms;
-                    int[] sort = pendingTerms.Sort(col.TermsEnum.Comparator);
+                    BytesRefHash pendingTerms = col.pendingTerms;
+                    int[] sort = pendingTerms.Sort(col.termsEnum.Comparator);
                     for (int i = 0; i < size; i++)
                     {
                         int pos = sort[i];
                         // docFreq is not used for constant score here, we pass 1
                         // to explicitely set a fake value, so it's not calculated
-                        AddClause(bq, new Term(query.m_field, pendingTerms.Get(pos, new BytesRef())), 1, 1.0f, col.Array.termState[pos]);
+                        AddClause(bq, new Term(query.m_field, pendingTerms.Get(pos, new BytesRef())), 1, 1.0f, col.array.termState[pos]);
                     }
                 }
                 // Strip scores
@@ -136,52 +136,52 @@ namespace Lucene.Net.Search
         {
             private void InitializeInstanceFields()
             {
-                PendingTerms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, Array);
+                pendingTerms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, array);
             }
 
             internal CutOffTermCollector(int docCountCutoff, int termCountLimit)
             {
                 InitializeInstanceFields();
-                this.DocCountCutoff = docCountCutoff;
-                this.TermCountLimit = termCountLimit;
+                this.docCountCutoff = docCountCutoff;
+                this.termCountLimit = termCountLimit;
             }
 
             public override void SetNextEnum(TermsEnum termsEnum)
             {
-                this.TermsEnum = termsEnum;
+                this.termsEnum = termsEnum;
             }
 
             public override bool Collect(BytesRef bytes)
             {
-                int pos = PendingTerms.Add(bytes);
-                DocVisitCount += TermsEnum.DocFreq;
-                if (PendingTerms.Size >= TermCountLimit || DocVisitCount >= DocCountCutoff)
+                int pos = pendingTerms.Add(bytes);
+                docVisitCount += termsEnum.DocFreq;
+                if (pendingTerms.Size >= termCountLimit || docVisitCount >= docCountCutoff)
                 {
-                    HasCutOff = true;
+                    hasCutOff = true;
                     return false;
                 }
 
-                TermState termState = TermsEnum.GetTermState();
+                TermState termState = termsEnum.GetTermState();
                 Debug.Assert(termState != null);
                 if (pos < 0)
                 {
                     pos = (-pos) - 1;
-                    Array.termState[pos].Register(termState, m_readerContext.Ord, TermsEnum.DocFreq, TermsEnum.TotalTermFreq);
+                    array.termState[pos].Register(termState, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                 }
                 else
                 {
-                    Array.termState[pos] = new TermContext(m_topReaderContext, termState, m_readerContext.Ord, TermsEnum.DocFreq, TermsEnum.TotalTermFreq);
+                    array.termState[pos] = new TermContext(m_topReaderContext, termState, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                 }
                 return true;
             }
 
-            internal int DocVisitCount = 0;
-            internal bool HasCutOff = false;
-            internal TermsEnum TermsEnum;
+            internal int docVisitCount = 0;
+            internal bool hasCutOff = false;
+            internal TermsEnum termsEnum;
 
-            internal readonly int DocCountCutoff, TermCountLimit;
-            internal readonly TermStateByteStart Array = new TermStateByteStart(16);
-            internal BytesRefHash PendingTerms;
+            internal readonly int docCountCutoff, termCountLimit;
+            internal readonly TermStateByteStart array = new TermStateByteStart(16);
+            internal BytesRefHash pendingTerms;
         }
 
         public override int GetHashCode()
