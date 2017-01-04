@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
             foreach (TermsHashConsumerPerField field in fieldsToFlush.Values)
             {
                 TermVectorsConsumerPerField perField = (TermVectorsConsumerPerField)field;
-                perField.TermsHashPerField.Reset();
+                perField.termsHashPerField.Reset();
                 perField.ShrinkHash();
             }
         }

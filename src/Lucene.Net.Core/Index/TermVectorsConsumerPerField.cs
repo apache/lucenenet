@@ -30,29 +30,29 @@ namespace Lucene.Net.Index
 
     internal sealed class TermVectorsConsumerPerField : TermsHashConsumerPerField
     {
-        internal readonly TermsHashPerField TermsHashPerField;
-        internal readonly TermVectorsConsumer TermsWriter;
-        internal readonly FieldInfo FieldInfo;
-        internal readonly DocumentsWriterPerThread.DocState DocState;
-        internal readonly FieldInvertState FieldState;
+        internal readonly TermsHashPerField termsHashPerField;
+        internal readonly TermVectorsConsumer termsWriter;
+        internal readonly FieldInfo fieldInfo;
+        internal readonly DocumentsWriterPerThread.DocState docState;
+        internal readonly FieldInvertState fieldState;
 
-        internal bool DoVectors;
-        internal bool DoVectorPositions;
-        internal bool DoVectorOffsets;
-        internal bool DoVectorPayloads;
+        internal bool doVectors;
+        internal bool doVectorPositions;
+        internal bool doVectorOffsets;
+        internal bool doVectorPayloads;
 
-        internal int MaxNumPostings;
-        internal IOffsetAttribute OffsetAttribute;
-        internal IPayloadAttribute PayloadAttribute;
-        internal bool HasPayloads; // if enabled, and we actually saw any for this field
+        internal int maxNumPostings;
+        internal IOffsetAttribute offsetAttribute;
+        internal IPayloadAttribute payloadAttribute;
+        internal bool hasPayloads; // if enabled, and we actually saw any for this field
 
         public TermVectorsConsumerPerField(TermsHashPerField termsHashPerField, TermVectorsConsumer termsWriter, FieldInfo fieldInfo)
         {
-            this.TermsHashPerField = termsHashPerField;
-            this.TermsWriter = termsWriter;
-            this.FieldInfo = fieldInfo;
-            DocState = termsHashPerField.docState;
-            FieldState = termsHashPerField.fieldState;
+            this.termsHashPerField = termsHashPerField;
+            this.termsWriter = termsWriter;
+            this.fieldInfo = fieldInfo;
+            docState = termsHashPerField.docState;
+            fieldState = termsHashPerField.fieldState;
         }
 
         internal override int StreamCount
@@ -65,11 +65,11 @@ namespace Lucene.Net.Index
 
         internal override bool Start(IIndexableField[] fields, int count)
         {
-            DoVectors = false;
-            DoVectorPositions = false;
-            DoVectorOffsets = false;
-            DoVectorPayloads = false;
-            HasPayloads = false;
+            doVectors = false;
+            doVectorPositions = false;
+            doVectorOffsets = false;
+            doVectorPayloads = false;
+            hasPayloads = false;
 
             for (int i = 0; i < count; i++)
             {
@@ -78,12 +78,12 @@ namespace Lucene.Net.Index
                 {
                     if (field.FieldType.StoreTermVectors)
                     {
-                        DoVectors = true;
-                        DoVectorPositions |= field.FieldType.StoreTermVectorPositions;
-                        DoVectorOffsets |= field.FieldType.StoreTermVectorOffsets;
-                        if (DoVectorPositions)
+                        doVectors = true;
+                        doVectorPositions |= field.FieldType.StoreTermVectorPositions;
+                        doVectorOffsets |= field.FieldType.StoreTermVectorOffsets;
+                        if (doVectorPositions)
                         {
-                            DoVectorPayloads |= field.FieldType.StoreTermVectorPayloads;
+                            doVectorPayloads |= field.FieldType.StoreTermVectorPayloads;
                         }
                         else if (field.FieldType.StoreTermVectorPayloads)
                         {
@@ -128,22 +128,22 @@ namespace Lucene.Net.Index
                 }
             }
 
-            if (DoVectors)
+            if (doVectors)
             {
-                TermsWriter.hasVectors = true;
-                if (TermsHashPerField.bytesHash.Size != 0)
+                termsWriter.hasVectors = true;
+                if (termsHashPerField.bytesHash.Size != 0)
                 {
                     // Only necessary if previous doc hit a
                     // non-aborting exception while writing vectors in
                     // this field:
-                    TermsHashPerField.Reset();
+                    termsHashPerField.Reset();
                 }
             }
 
             // TODO: only if needed for performance
             //perThread.postingsCount = 0;
 
-            return DoVectors;
+            return doVectors;
         }
 
         public void Abort()
@@ -157,65 +157,65 @@ namespace Lucene.Net.Index
         ///  the real term vectors files in the Directory. 	  /// </summary>
         internal override void Finish()
         {
-            if (!DoVectors || TermsHashPerField.bytesHash.Size == 0)
+            if (!doVectors || termsHashPerField.bytesHash.Size == 0)
             {
                 return;
             }
 
-            TermsWriter.AddFieldToFlush(this);
+            termsWriter.AddFieldToFlush(this);
         }
 
         internal void FinishDocument()
         {
-            Debug.Assert(DocState.TestPoint("TermVectorsTermsWriterPerField.finish start"));
+            Debug.Assert(docState.TestPoint("TermVectorsTermsWriterPerField.finish start"));
 
-            int numPostings = TermsHashPerField.bytesHash.Size;
+            int numPostings = termsHashPerField.bytesHash.Size;
 
-            BytesRef flushTerm = TermsWriter.flushTerm;
+            BytesRef flushTerm = termsWriter.flushTerm;
 
             Debug.Assert(numPostings >= 0);
 
-            if (numPostings > MaxNumPostings)
+            if (numPostings > maxNumPostings)
             {
-                MaxNumPostings = numPostings;
+                maxNumPostings = numPostings;
             }
 
             // this is called once, after inverting all occurrences
             // of a given field in the doc.  At this point we flush
             // our hash into the DocWriter.
 
-            Debug.Assert(TermsWriter.VectorFieldsInOrder(FieldInfo));
+            Debug.Assert(termsWriter.VectorFieldsInOrder(fieldInfo));
 
-            TermVectorsPostingsArray postings = (TermVectorsPostingsArray)TermsHashPerField.postingsArray;
-            TermVectorsWriter tv = TermsWriter.writer;
+            TermVectorsPostingsArray postings = (TermVectorsPostingsArray)termsHashPerField.postingsArray;
+            TermVectorsWriter tv = termsWriter.writer;
 
-            int[] termIDs = TermsHashPerField.SortPostings(tv.Comparator);
+            int[] termIDs = termsHashPerField.SortPostings(tv.Comparator);
 
-            tv.StartField(FieldInfo, numPostings, DoVectorPositions, DoVectorOffsets, HasPayloads);
+            tv.StartField(fieldInfo, numPostings, doVectorPositions, doVectorOffsets, hasPayloads);
 
-            ByteSliceReader posReader = DoVectorPositions ? TermsWriter.vectorSliceReaderPos : null;
-            ByteSliceReader offReader = DoVectorOffsets ? TermsWriter.vectorSliceReaderOff : null;
+            ByteSliceReader posReader = doVectorPositions ? termsWriter.vectorSliceReaderPos : null;
+            ByteSliceReader offReader = doVectorOffsets ? termsWriter.vectorSliceReaderOff : null;
 
-            ByteBlockPool termBytePool = TermsHashPerField.termBytePool;
+            ByteBlockPool termBytePool = termsHashPerField.termBytePool;
 
             for (int j = 0; j < numPostings; j++)
             {
                 int termID = termIDs[j];
-                int freq = postings.Freqs[termID];
+                int freq = postings.freqs[termID];
 
                 // Get BytesRef
                 termBytePool.SetBytesRef(flushTerm, postings.textStarts[termID]);
                 tv.StartTerm(flushTerm, freq);
 
-                if (DoVectorPositions || DoVectorOffsets)
+                if (doVectorPositions || doVectorOffsets)
                 {
                     if (posReader != null)
                     {
-                        TermsHashPerField.InitReader(posReader, termID, 0);
+                        termsHashPerField.InitReader(posReader, termID, 0);
                     }
                     if (offReader != null)
                     {
-                        TermsHashPerField.InitReader(offReader, termID, 1);
+                        termsHashPerField.InitReader(offReader, termID, 1);
                     }
                     tv.AddProx(freq, posReader, offReader);
                 }
@@ -223,95 +223,95 @@ namespace Lucene.Net.Index
             }
             tv.FinishField();
 
-            TermsHashPerField.Reset();
+            termsHashPerField.Reset();
 
-            FieldInfo.SetStoreTermVectors();
+            fieldInfo.SetStoreTermVectors();
         }
 
         internal void ShrinkHash()
         {
-            TermsHashPerField.ShrinkHash(MaxNumPostings);
-            MaxNumPostings = 0;
+            termsHashPerField.ShrinkHash(maxNumPostings);
+            maxNumPostings = 0;
         }
 
         internal override void Start(IIndexableField f)
         {
-            if (DoVectorOffsets)
+            if (doVectorOffsets)
             {
-                OffsetAttribute = FieldState.AttributeSource.AddAttribute<IOffsetAttribute>();
+                offsetAttribute = fieldState.AttributeSource.AddAttribute<IOffsetAttribute>();
             }
             else
             {
-                OffsetAttribute = null;
+                offsetAttribute = null;
             }
-            if (DoVectorPayloads && FieldState.AttributeSource.HasAttribute<IPayloadAttribute>())
+            if (doVectorPayloads && fieldState.AttributeSource.HasAttribute<IPayloadAttribute>())
             {
-                PayloadAttribute = FieldState.AttributeSource.GetAttribute<IPayloadAttribute>();
+                payloadAttribute = fieldState.AttributeSource.GetAttribute<IPayloadAttribute>();
             }
             else
             {
-                PayloadAttribute = null;
+                payloadAttribute = null;
             }
         }
 
         internal void WriteProx(TermVectorsPostingsArray postings, int termID)
         {
-            if (DoVectorOffsets)
+            if (doVectorOffsets)
             {
-                int startOffset = FieldState.Offset + OffsetAttribute.StartOffset;
-                int endOffset = FieldState.Offset + OffsetAttribute.EndOffset;
+                int startOffset = fieldState.Offset + offsetAttribute.StartOffset;
+                int endOffset = fieldState.Offset + offsetAttribute.EndOffset;
 
-                TermsHashPerField.WriteVInt(1, startOffset - postings.LastOffsets[termID]);
-                TermsHashPerField.WriteVInt(1, endOffset - startOffset);
-                postings.LastOffsets[termID] = endOffset;
+                termsHashPerField.WriteVInt(1, startOffset - postings.lastOffsets[termID]);
+                termsHashPerField.WriteVInt(1, endOffset - startOffset);
+                postings.lastOffsets[termID] = endOffset;
             }
 
-            if (DoVectorPositions)
+            if (doVectorPositions)
             {
                 BytesRef payload;
-                if (PayloadAttribute == null)
+                if (payloadAttribute == null)
                 {
                     payload = null;
                 }
                 else
                 {
-                    payload = PayloadAttribute.Payload;
+                    payload = payloadAttribute.Payload;
                 }
 
-                int pos = FieldState.Position - postings.LastPositions[termID];
+                int pos = fieldState.Position - postings.lastPositions[termID];
                 if (payload != null && payload.Length > 0)
                 {
-                    TermsHashPerField.WriteVInt(0, (pos << 1) | 1);
-                    TermsHashPerField.WriteVInt(0, payload.Length);
-                    TermsHashPerField.WriteBytes(0, payload.Bytes, payload.Offset, payload.Length);
-                    HasPayloads = true;
+                    termsHashPerField.WriteVInt(0, (pos << 1) | 1);
+                    termsHashPerField.WriteVInt(0, payload.Length);
+                    termsHashPerField.WriteBytes(0, payload.Bytes, payload.Offset, payload.Length);
+                    hasPayloads = true;
                 }
                 else
                 {
-                    TermsHashPerField.WriteVInt(0, pos << 1);
+                    termsHashPerField.WriteVInt(0, pos << 1);
                 }
-                postings.LastPositions[termID] = FieldState.Position;
+                postings.lastPositions[termID] = fieldState.Position;
             }
         }
 
         internal override void NewTerm(int termID)
         {
-            Debug.Assert(DocState.TestPoint("TermVectorsTermsWriterPerField.newTerm start"));
-            TermVectorsPostingsArray postings = (TermVectorsPostingsArray)TermsHashPerField.postingsArray;
+            Debug.Assert(docState.TestPoint("TermVectorsTermsWriterPerField.newTerm start"));
+            TermVectorsPostingsArray postings = (TermVectorsPostingsArray)termsHashPerField.postingsArray;
 
-            postings.Freqs[termID] = 1;
-            postings.LastOffsets[termID] = 0;
-            postings.LastPositions[termID] = 0;
+            postings.freqs[termID] = 1;
+            postings.lastOffsets[termID] = 0;
+            postings.lastPositions[termID] = 0;
 
             WriteProx(postings, termID);
         }
 
         internal override void AddTerm(int termID)
         {
-            Debug.Assert(DocState.TestPoint("TermVectorsTermsWriterPerField.addTerm start"));
-            TermVectorsPostingsArray postings = (TermVectorsPostingsArray)TermsHashPerField.postingsArray;
+            Debug.Assert(docState.TestPoint("TermVectorsTermsWriterPerField.addTerm start"));
+            TermVectorsPostingsArray postings = (TermVectorsPostingsArray)termsHashPerField.postingsArray;
 
-            postings.Freqs[termID]++;
+            postings.freqs[termID]++;
 
             WriteProx(postings, termID);
         }
@@ -330,14 +330,14 @@ namespace Lucene.Net.Index
             public TermVectorsPostingsArray(int size)
                 : base(size)
             {
-                Freqs = new int[size];
-                LastOffsets = new int[size];
-                LastPositions = new int[size];
+                freqs = new int[size];
+                lastOffsets = new int[size];
+                lastPositions = new int[size];
             }
 
-            internal int[] Freqs; // How many times this term occurred in the current doc
-            internal int[] LastOffsets; // Last offset we saw
-            internal int[] LastPositions; // Last position where this term occurred
+            internal int[] freqs; // How many times this term occurred in the current doc
+            internal int[] lastOffsets; // Last offset we saw
+            internal int[] lastPositions; // Last position where this term occurred
 
             internal override ParallelPostingsArray NewInstance(int size)
             {
@@ -351,9 +351,9 @@ namespace Lucene.Net.Index
 
                 base.CopyTo(toArray, numToCopy);
 
-                Array.Copy(Freqs, 0, to.Freqs, 0, size);
-                Array.Copy(LastOffsets, 0, to.LastOffsets, 0, size);
-                Array.Copy(LastPositions, 0, to.LastPositions, 0, size);
+                Array.Copy(freqs, 0, to.freqs, 0, size);
+                Array.Copy(lastOffsets, 0, to.lastOffsets, 0, size);
+                Array.Copy(lastPositions, 0, to.lastPositions, 0, size);
             }
 
             internal override int BytesPerPosting()
