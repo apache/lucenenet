@@ -136,14 +136,14 @@ namespace Lucene.Net.Store
         public abstract class With
         {
             private Lock @lock;
-            private long LockWaitTimeout;
+            private long lockWaitTimeout;
 
             /// <summary>
             /// Constructs an executor that will grab the named lock. </summary>
             public With(Lock @lock, long lockWaitTimeout)
             {
                 this.@lock = @lock;
-                this.LockWaitTimeout = lockWaitTimeout;
+                this.lockWaitTimeout = lockWaitTimeout;
             }
 
             /// <summary>
@@ -163,7 +163,7 @@ namespace Lucene.Net.Store
                 bool locked = false;
                 try
                 {
-                    locked = @lock.Obtain(LockWaitTimeout);
+                    locked = @lock.Obtain(lockWaitTimeout);
                     return DoBody();
                 }
                 finally
