@@ -181,71 +181,71 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// The underlying TermsEnum instance. </summary>
-            protected internal readonly TermsEnum input;
+            protected internal readonly TermsEnum m_input;
 
             /// <summary>
             /// Creates a new FilterTermsEnum </summary>
             /// <param name="input"> the underlying TermsEnum instance. </param>
             public FilterTermsEnum(TermsEnum input)
             {
-                this.input = input;
+                this.m_input = input;
             }
 
             public override AttributeSource Attributes
             {
-                get { return input.Attributes; }
+                get { return m_input.Attributes; }
             }
 
             public override SeekStatus SeekCeil(BytesRef text)
             {
-                return input.SeekCeil(text);
+                return m_input.SeekCeil(text);
             }
 
             public override void SeekExact(long ord)
             {
-                input.SeekExact(ord);
+                m_input.SeekExact(ord);
             }
 
             public override BytesRef Next()
             {
-                return input.Next();
+                return m_input.Next();
             }
 
             public override BytesRef Term
             {
-                get { return input.Term; }
+                get { return m_input.Term; }
             }
 
             public override long Ord
             {
-                get { return input.Ord; }
+                get { return m_input.Ord; }
             }
 
             public override int DocFreq
             {
-                get { return input.DocFreq; }
+                get { return m_input.DocFreq; }
             }
 
             public override long TotalTermFreq
             {
-                get { return input.TotalTermFreq; }
+                get { return m_input.TotalTermFreq; }
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
-                return input.Docs(liveDocs, reuse, flags);
+                return m_input.Docs(liveDocs, reuse, flags);
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
-                return input.DocsAndPositions(liveDocs, reuse, flags);
+                return m_input.DocsAndPositions(liveDocs, reuse, flags);
             }
 
             public override IComparer<BytesRef> Comparator
             {
                 get
                 {
-                    return input.Comparator;
+                    return m_input.Comparator;
                 }
             }
         }
@@ -257,44 +257,44 @@ namespace Lucene.Net.Index
             /// <summary>
             /// The underlying DocsEnum instance.
             /// </summary>
-            protected internal DocsEnum input;
+            protected internal DocsEnum m_input;
 
             /// <summary>
             /// Create a new FilterDocsEnum </summary>
             /// <param name="input"> the underlying DocsEnum instance. </param>
             public FilterDocsEnum(DocsEnum input)
             {
-                this.input = input;
+                this.m_input = input;
             }
 
             public override AttributeSource Attributes
             {
-                get { return input.Attributes; }
+                get { return m_input.Attributes; }
             }
 
             public override int DocID
             {
-                get { return input.DocID; }
+                get { return m_input.DocID; }
             }
 
             public override int Freq
             {
-                get { return input.Freq; }
+                get { return m_input.Freq; }
             }
 
             public override int NextDoc()
             {
-                return input.NextDoc();
+                return m_input.NextDoc();
             }
 
             public override int Advance(int target)
             {
-                return input.Advance(target);
+                return m_input.Advance(target);
             }
 
             public override long Cost()
             {
-                return input.Cost();
+                return m_input.Cost();
             }
         }
 
@@ -304,67 +304,67 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// The underlying DocsAndPositionsEnum instance. </summary>
-            protected internal readonly DocsAndPositionsEnum input;
+            protected internal readonly DocsAndPositionsEnum m_input;
 
             /// <summary>
             /// Create a new FilterDocsAndPositionsEnum </summary>
             /// <param name="input"> the underlying DocsAndPositionsEnum instance. </param>
             public FilterDocsAndPositionsEnum(DocsAndPositionsEnum input)
             {
-                this.input = input;
+                this.m_input = input;
             }
 
             public override AttributeSource Attributes
             {
-                get { return input.Attributes; }
+                get { return m_input.Attributes; }
             }
 
             public override int DocID
             {
-                get { return input.DocID; }
+                get { return m_input.DocID; }
             }
 
             public override int Freq
             {
-                get { return input.Freq; }
+                get { return m_input.Freq; }
             }
 
             public override int NextDoc()
             {
-                return input.NextDoc();
+                return m_input.NextDoc();
             }
 
             public override int Advance(int target)
             {
-                return input.Advance(target);
+                return m_input.Advance(target);
             }
 
             public override int NextPosition()
             {
-                return input.NextPosition();
+                return m_input.NextPosition();
             }
 
             public override int StartOffset
             {
-                get { return input.StartOffset; }
+                get { return m_input.StartOffset; }
             }
 
             public override int EndOffset
             {
-                get { return input.EndOffset; }
+                get { return m_input.EndOffset; }
             }
 
             public override BytesRef Payload
             {
                 get
                 {
-                    return input.Payload;
+                    return m_input.Payload;
                 }
             }
 
             public override long Cost()
             {
-                return input.Cost();
+                return m_input.Cost();
             }
         }
 

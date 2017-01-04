@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
                 public override BytesRef Next()
                 {
                     BytesRef text;
-                    while ((text = input.Next()) != null)
+                    while ((text = m_input.Next()) != null)
                     {
                         if (text.Utf8ToString().IndexOf('e') != -1)
                         {
@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
                 {
-                    return new TestPositions(base.DocsAndPositions(liveDocs, reuse == null ? null : ((FilterDocsAndPositionsEnum)reuse).input, flags));
+                    return new TestPositions(base.DocsAndPositions(liveDocs, reuse == null ? null : ((FilterDocsAndPositionsEnum)reuse).m_input, flags));
                 }
             }
 
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
                 public override int NextDoc()
                 {
                     int doc;
-                    while ((doc = input.NextDoc()) != NO_MORE_DOCS)
+                    while ((doc = m_input.NextDoc()) != NO_MORE_DOCS)
                     {
                         if ((doc % 2) == 1)
                         {

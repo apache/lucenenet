@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
                 // and randomly *not* unwrap?
                 if (reuse is AssertingTermsEnum)
                 {
-                    reuse = ((AssertingTermsEnum)reuse).input;
+                    reuse = ((AssertingTermsEnum)reuse).m_input;
                 }
                 TermsEnum termsEnum = base.Iterator(reuse);
                 Debug.Assert(termsEnum != null);
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
                 // and randomly *not* unwrap?
                 if (reuse is AssertingDocsEnum)
                 {
-                    reuse = ((AssertingDocsEnum)reuse).input;
+                    reuse = ((AssertingDocsEnum)reuse).m_input;
                 }
                 DocsEnum docs = base.Docs(liveDocs, reuse, flags);
                 return docs == null ? null : new AssertingDocsEnum(docs);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
                 // and randomly *not* unwrap?
                 if (reuse is AssertingDocsAndPositionsEnum)
                 {
-                    reuse = ((AssertingDocsAndPositionsEnum)reuse).input;
+                    reuse = ((AssertingDocsAndPositionsEnum)reuse).m_input;
                 }
                 DocsAndPositionsEnum docs = base.DocsAndPositions(liveDocs, reuse, flags);
                 return docs == null ? null : new AssertingDocsAndPositionsEnum(docs);
@@ -303,7 +303,7 @@ namespace Lucene.Net.Index
             {
                 Debug.Assert(State != DocsEnumState.FINISHED, "nextDoc() called after NO_MORE_DOCS");
                 int nextDoc = base.NextDoc();
-                Debug.Assert(nextDoc > Doc, "backwards nextDoc from " + Doc + " to " + nextDoc + " " + input);
+                Debug.Assert(nextDoc > Doc, "backwards nextDoc from " + Doc + " to " + nextDoc + " " + m_input);
                 if (nextDoc == DocIdSetIterator.NO_MORE_DOCS)
                 {
                     State = DocsEnumState.FINISHED;
@@ -338,7 +338,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    Debug.Assert(Doc == base.DocID, " invalid docID() in " + input.GetType() + " " + base.DocID + " instead of " + Doc);
+                    Debug.Assert(Doc == base.DocID, " invalid docID() in " + m_input.GetType() + " " + base.DocID + " instead of " + Doc);
                     return Doc;
                 }
             }
@@ -416,7 +416,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    Debug.Assert(Doc == base.DocID, " invalid docID() in " + input.GetType() + " " + base.DocID + " instead of " + Doc);
+                    Debug.Assert(Doc == base.DocID, " invalid docID() in " + m_input.GetType() + " " + base.DocID + " instead of " + Doc);
                     return Doc;
                 }
             }

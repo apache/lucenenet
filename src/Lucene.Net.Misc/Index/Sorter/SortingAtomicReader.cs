@@ -158,7 +158,7 @@ namespace Lucene.Net.Index.Sorter
                     inReuse = reuse;
                 }
 
-                DocsEnum inDocs = input.Docs(NewToOld(liveDocs), inReuse, flags);
+                DocsEnum inDocs = m_input.Docs(NewToOld(liveDocs), inReuse, flags);
                 bool withFreqs = indexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0 && (flags & DocsEnum.FLAG_FREQS) != 0;
                 return new SortingDocsEnum(docMap.Count, wrapReuse, inDocs, withFreqs, docMap);
             }
@@ -180,7 +180,7 @@ namespace Lucene.Net.Index.Sorter
                     inReuse = reuse;
                 }
 
-                DocsAndPositionsEnum inDocsAndPositions = input.DocsAndPositions(NewToOld(liveDocs), inReuse, flags);
+                DocsAndPositionsEnum inDocsAndPositions = m_input.DocsAndPositions(NewToOld(liveDocs), inReuse, flags);
                 if (inDocsAndPositions == null)
                 {
                     return null;
@@ -527,7 +527,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 get
                 {
-                    return base.input;
+                    return base.m_input;
                 }
             }
         }
@@ -793,7 +793,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 get
                 {
-                    return input;
+                    return m_input;
                 }
             }
         }
