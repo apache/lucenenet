@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
             {
                 BucketTable table = bucketTable;
                 int i = doc & BucketTable.MASK;
-                Bucket bucket = table.Buckets[i];
+                Bucket bucket = table.buckets[i];
 
                 if (bucket.Doc != doc) // invalid bucket
                 {
@@ -83,8 +83,8 @@ namespace Lucene.Net.Search
                     bucket.Bits = mask; // initialize mask
                     bucket.Coord = 1; // initialize coord
 
-                    bucket.Next = table.First; // push onto valid list
-                    table.First = bucket;
+                    bucket.Next = table.first; // push onto valid list
+                    table.first = bucket;
                 } // valid bucket
                 else
                 {
@@ -137,8 +137,8 @@ namespace Lucene.Net.Search
             public static readonly int SIZE = 1 << 11;
             public static readonly int MASK = SIZE - 1;
 
-            internal readonly Bucket[] Buckets = new Bucket[SIZE];
-            internal Bucket First = null; // head of valid list
+            internal readonly Bucket[] buckets = new Bucket[SIZE];
+            internal Bucket first = null; // head of valid list
 
             public BucketTable()
             {
@@ -146,7 +146,7 @@ namespace Lucene.Net.Search
                 // each sub:
                 for (int idx = 0; idx < SIZE; idx++)
                 {
-                    Buckets[idx] = new Bucket();
+                    buckets[idx] = new Bucket();
                 }
             }
 
@@ -237,7 +237,7 @@ namespace Lucene.Net.Search
             collector.SetScorer(fs);
             do
             {
-                bucketTable.First = null;
+                bucketTable.first = null;
 
                 while (current != null) // more queued
                 {
@@ -257,8 +257,8 @@ namespace Lucene.Net.Search
                         {
                             tmp = current;
                             current = current.Next;
-                            tmp.Next = bucketTable.First;
-                            bucketTable.First = tmp;
+                            tmp.Next = bucketTable.first;
+                            bucketTable.first = tmp;
                             continue;
                         }
 
@@ -274,10 +274,10 @@ namespace Lucene.Net.Search
                     current = current.Next; // pop the queue
                 }
 
-                if (bucketTable.First != null)
+                if (bucketTable.first != null)
                 {
-                    current = bucketTable.First;
-                    bucketTable.First = current.Next;
+                    current = bucketTable.first;
+                    bucketTable.first = current.Next;
                     return true;
                 }
 
@@ -292,7 +292,7 @@ namespace Lucene.Net.Search
                         more |= sub.More;
                     }
                 }
-                current = bucketTable.First;
+                current = bucketTable.first;
             } while (current != null || more);
 
             return false;
