@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Payloads
 
             protected class PayloadTermSpanScorer : SpanScorer
             {
-                private readonly PayloadTermQuery.PayloadTermWeight OuterInstance;
+                private readonly PayloadTermQuery.PayloadTermWeight outerInstance;
 
                 protected BytesRef m_payload;
                 protected internal float m_payloadScore;
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search.Payloads
                 public PayloadTermSpanScorer(PayloadTermQuery.PayloadTermWeight outerInstance, TermSpans spans, Weight weight, Similarity.SimScorer docScorer)
                     : base(spans, weight, docScorer)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                     termSpans = spans;
                 }
 
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Payloads
 
                         m_freq += m_docScorer.ComputeSlopFactor(matchLength);
                         m_numMatches++;
-                        ProcessPayload(OuterInstance.m_similarity);
+                        ProcessPayload(outerInstance.m_similarity);
 
                         m_more = m_spans.Next(); // this moves positions to the next match in this
                         // document
@@ -128,11 +128,11 @@ namespace Lucene.Net.Search.Payloads
                         m_payload = postings.Payload;
                         if (m_payload != null)
                         {
-                            m_payloadScore = OuterInstance.outerInstance.m_function.CurrentScore(m_doc, OuterInstance.outerInstance.Term.Field, m_spans.Start, m_spans.End, m_payloadsSeen, m_payloadScore, m_docScorer.ComputePayloadFactor(m_doc, m_spans.Start, m_spans.End, m_payload));
+                            m_payloadScore = outerInstance.outerInstance.m_function.CurrentScore(m_doc, outerInstance.outerInstance.Term.Field, m_spans.Start, m_spans.End, m_payloadsSeen, m_payloadScore, m_docScorer.ComputePayloadFactor(m_doc, m_spans.Start, m_spans.End, m_payload));
                         }
                         else
                         {
-                            m_payloadScore = OuterInstance.outerInstance.m_function.CurrentScore(m_doc, OuterInstance.outerInstance.Term.Field, m_spans.Start, m_spans.End, m_payloadsSeen, m_payloadScore, 1F);
+                            m_payloadScore = outerInstance.outerInstance.m_function.CurrentScore(m_doc, outerInstance.outerInstance.Term.Field, m_spans.Start, m_spans.End, m_payloadsSeen, m_payloadScore, 1F);
                         }
                         m_payloadsSeen++;
                     }
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Payloads
                 /// <exception cref="IOException"> if there is a low-level I/O error </exception>
                 public override float Score()
                 {
-                    return OuterInstance.outerInstance.includeSpanScore ? GetSpanScore() * GetPayloadScore() : GetPayloadScore();
+                    return outerInstance.outerInstance.includeSpanScore ? GetSpanScore() * GetPayloadScore() : GetPayloadScore();
                 }
 
                 /// <summary>
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search.Payloads
                 ///         <seealso cref="PayloadFunction#docScore(int, String, int, float)"/> </returns>
                 protected internal virtual float GetPayloadScore()
                 {
-                    return OuterInstance.outerInstance.m_function.DocScore(m_doc, OuterInstance.outerInstance.Term.Field, m_payloadsSeen, m_payloadScore);
+                    return outerInstance.outerInstance.m_function.DocScore(m_doc, outerInstance.outerInstance.Term.Field, m_payloadsSeen, m_payloadScore);
                 }
             }
 
