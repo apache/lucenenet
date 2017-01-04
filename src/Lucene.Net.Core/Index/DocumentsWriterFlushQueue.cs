@@ -222,13 +222,13 @@ namespace Lucene.Net.Index
 
         internal abstract class FlushTicket
         {
-            protected internal FrozenBufferedUpdates frozenUpdates;
-            protected internal bool published = false;
+            protected FrozenBufferedUpdates m_frozenUpdates;
+            protected bool m_published = false;
 
             protected FlushTicket(FrozenBufferedUpdates frozenUpdates)
             {
                 Debug.Assert(frozenUpdates != null);
-                this.frozenUpdates = frozenUpdates;
+                this.m_frozenUpdates = frozenUpdates;
             }
 
             protected internal abstract void Publish(IndexWriter writer);
@@ -291,10 +291,10 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                Debug.Assert(!published, "ticket was already publised - can not publish twice");
-                published = true;
+                Debug.Assert(!m_published, "ticket was already publised - can not publish twice");
+                m_published = true;
                 // its a global ticket - no segment to publish
-                FinishFlush(writer, null, frozenUpdates);
+                FinishFlush(writer, null, m_frozenUpdates);
             }
 
             protected internal override bool CanPublish
@@ -315,9 +315,9 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                Debug.Assert(!published, "ticket was already publised - can not publish twice");
-                published = true;
-                FinishFlush(writer, segment, frozenUpdates);
+                Debug.Assert(!m_published, "ticket was already publised - can not publish twice");
+                m_published = true;
+                FinishFlush(writer, segment, m_frozenUpdates);
             }
 
             internal void SetSegment(FlushedSegment segment) // LUCENENET NOTE: Made internal rather than protected because class is sealed
