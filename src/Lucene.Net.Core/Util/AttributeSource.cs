@@ -202,15 +202,15 @@ namespace Lucene.Net.Util
 
         private class IteratorAnonymousInnerClassHelper : IEnumerator<Attribute>
         {
-            private readonly AttributeSource OuterInstance;
+            private readonly AttributeSource outerInstance;
 
-            private AttributeSource.State InitState;
+            private AttributeSource.State initState;
             private Attribute current;
 
             public IteratorAnonymousInnerClassHelper(AttributeSource outerInstance, AttributeSource.State initState)
             {
-                this.OuterInstance = outerInstance;
-                this.InitState = initState;
+                this.outerInstance = outerInstance;
+                this.initState = initState;
                 state = initState;
             }
 
@@ -542,16 +542,16 @@ namespace Lucene.Net.Util
 
         private class AttributeReflectorAnonymousInnerClassHelper : IAttributeReflector
         {
-            private readonly AttributeSource OuterInstance;
+            private readonly AttributeSource outerInstance;
 
-            private bool PrependAttClass;
-            private StringBuilder Buffer;
+            private bool prependAttClass;
+            private StringBuilder buffer;
 
             public AttributeReflectorAnonymousInnerClassHelper(AttributeSource outerInstance, bool prependAttClass, StringBuilder buffer)
             {
-                this.OuterInstance = outerInstance;
-                this.PrependAttClass = prependAttClass;
-                this.Buffer = buffer;
+                this.outerInstance = outerInstance;
+                this.prependAttClass = prependAttClass;
+                this.buffer = buffer;
             }
 
             public void Reflect<T>(string key, object value)
@@ -562,15 +562,15 @@ namespace Lucene.Net.Util
 
             public void Reflect(Type attClass, string key, object value)
             {
-                if (Buffer.Length > 0)
+                if (buffer.Length > 0)
                 {
-                    Buffer.Append(',');
+                    buffer.Append(',');
                 }
-                if (PrependAttClass)
+                if (prependAttClass)
                 {
-                    Buffer.Append(attClass.Name).Append('#');
+                    buffer.Append(attClass.Name).Append('#');
                 }
-                Buffer.Append(key).Append('=').Append(object.ReferenceEquals(value, null) ? "null" : value);
+                buffer.Append(key).Append('=').Append(object.ReferenceEquals(value, null) ? "null" : value);
             }
         }
 
