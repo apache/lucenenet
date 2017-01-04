@@ -135,36 +135,36 @@ namespace Lucene.Net.Index
 
             internal virtual void InitializeInstanceFields()
             {
-                Output = new RAMOutputStream(Buffer);
+                output = new RAMOutputStream(buffer);
             }
 
-            private RAMFile Buffer = new RAMFile();
-            private RAMOutputStream Output;
-            private Term LastTerm = new Term("");
+            private RAMFile buffer = new RAMFile();
+            private RAMOutputStream output;
+            private Term lastTerm = new Term("");
 
             /// <summary>
             /// add a term </summary>
             public virtual void Add(Term term)
             {
-                Debug.Assert(LastTerm.Equals(new Term("")) || term.CompareTo(LastTerm) > 0);
+                Debug.Assert(lastTerm.Equals(new Term("")) || term.CompareTo(lastTerm) > 0);
 
                 try
                 {
-                    int prefix = SharedPrefix(LastTerm.Bytes, term.Bytes);
+                    int prefix = SharedPrefix(lastTerm.Bytes, term.Bytes);
                     int suffix = term.Bytes.Length - prefix;
-                    if (term.Field.Equals(LastTerm.Field))
+                    if (term.Field.Equals(lastTerm.Field))
                     {
-                        Output.WriteVInt(prefix << 1);
+                        output.WriteVInt(prefix << 1);
                     }
                     else
                     {
-                        Output.WriteVInt(prefix << 1 | 1);
-                        Output.WriteString(term.Field);
+                        output.WriteVInt(prefix << 1 | 1);
+                        output.WriteString(term.Field);
                     }
-                    Output.WriteVInt(suffix);
-                    Output.WriteBytes(term.Bytes.Bytes, term.Bytes.Offset + prefix, suffix);
-                    LastTerm.Bytes.CopyBytes(term.Bytes);
-                    LastTerm.Field = term.Field;
+                    output.WriteVInt(suffix);
+                    output.WriteBytes(term.Bytes.Bytes, term.Bytes.Offset + prefix, suffix);
+                    lastTerm.Bytes.CopyBytes(term.Bytes);
+                    lastTerm.Field = term.Field;
                 }
                 catch (IOException e)
                 {
@@ -178,8 +178,8 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    Output.Dispose();
-                    return new PrefixCodedTerms(Buffer);
+                    output.Dispose();
+                    return new PrefixCodedTerms(buffer);
                 }
                 catch (IOException e)
                 {
