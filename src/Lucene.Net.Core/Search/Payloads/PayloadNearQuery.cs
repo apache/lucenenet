@@ -189,7 +189,7 @@ namespace Lucene.Net.Search.Payloads
                         expl.Value = scoreExplanation.Value;
                         string field = ((SpanQuery)Query).Field;
                         // now the payloads part
-                        Explanation payloadExpl = outerInstance.m_function.Explain(doc, field, scorer.payloadsSeen, scorer.payloadScore);
+                        Explanation payloadExpl = outerInstance.m_function.Explain(doc, field, scorer.payloadsSeen, scorer.m_payloadScore);
                         // combined
                         ComplexExplanation result = new ComplexExplanation();
                         result.AddDetail(expl);
@@ -208,8 +208,8 @@ namespace Lucene.Net.Search.Payloads
         {
             private readonly PayloadNearQuery outerInstance;
 
-            internal new Spans spans;
-            protected internal float payloadScore;
+            internal Spans spans;
+            protected internal float m_payloadScore;
             internal int payloadsSeen;
 
             protected internal PayloadNearSpanScorer(PayloadNearQuery outerInstance, Spans spans, Weight weight, Similarity similarity, Similarity.SimScorer docScorer)
@@ -267,7 +267,7 @@ namespace Lucene.Net.Search.Payloads
                     scratch.Bytes = thePayload;
                     scratch.Offset = 0;
                     scratch.Length = thePayload.Length;
-                    payloadScore = outerInstance.m_function.CurrentScore(m_doc, outerInstance.m_fieldName, start, end, payloadsSeen, payloadScore, m_docScorer.ComputePayloadFactor(m_doc, spans.Start, spans.End, scratch));
+                    m_payloadScore = outerInstance.m_function.CurrentScore(m_doc, outerInstance.m_fieldName, start, end, payloadsSeen, m_payloadScore, m_docScorer.ComputePayloadFactor(m_doc, spans.Start, spans.End, scratch));
                     ++payloadsSeen;
                 }
             }
@@ -281,7 +281,7 @@ namespace Lucene.Net.Search.Payloads
                 }
                 m_doc = spans.Doc;
                 m_freq = 0.0f;
-                payloadScore = 0;
+                m_payloadScore = 0;
                 payloadsSeen = 0;
                 do
                 {
@@ -297,7 +297,7 @@ namespace Lucene.Net.Search.Payloads
 
             public override float Score()
             {
-                return base.Score() * outerInstance.m_function.DocScore(m_doc, outerInstance.m_fieldName, payloadsSeen, payloadScore);
+                return base.Score() * outerInstance.m_function.DocScore(m_doc, outerInstance.m_fieldName, payloadsSeen, m_payloadScore);
             }
         }
     }
