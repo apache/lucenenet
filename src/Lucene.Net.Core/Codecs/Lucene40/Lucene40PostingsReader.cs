@@ -233,7 +233,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (docsEnum.StartFreqIn == FreqIn)
                 {
                     // we only reuse if the the actual the incoming enum has the same liveDocs as the given liveDocs
-                    return liveDocs == docsEnum.LiveDocs;
+                    return liveDocs == docsEnum.m_liveDocs;
                 }
             }
             return false;
@@ -307,90 +307,90 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             private readonly Lucene40PostingsReader OuterInstance;
 
-            protected internal readonly int[] Docs = new int[BUFFERSIZE];
-            protected internal readonly int[] Freqs = new int[BUFFERSIZE];
+            protected readonly int[] m_docs = new int[BUFFERSIZE];
+            protected readonly int[] m_freqs = new int[BUFFERSIZE];
 
             internal readonly IndexInput FreqIn; // reuse
             internal readonly IndexInput StartFreqIn; // reuse
             internal Lucene40SkipListReader Skipper; // reuse - lazy loaded
 
-            protected internal bool IndexOmitsTF; // does current field omit term freq?
-            protected internal bool StorePayloads; // does current field store payloads?
-            protected internal bool StoreOffsets; // does current field store offsets?
+            protected bool m_indexOmitsTF; // does current field omit term freq?
+            protected bool m_storePayloads; // does current field store payloads?
+            protected bool m_storeOffsets; // does current field store offsets?
 
-            protected internal int Limit; // number of docs in this posting
-            protected internal int Ord; // how many docs we've read
-            protected internal int Doc; // doc we last read
-            protected internal int Accum; // accumulator for doc deltas
-            protected internal int Freq_Renamed; // freq we last read
-            protected internal int MaxBufferedDocId;
+            protected int m_limit; // number of docs in this posting
+            protected int m_ord; // how many docs we've read
+            protected int m_doc; // doc we last read
+            protected int m_accum; // accumulator for doc deltas
+            protected int m_freq; // freq we last read
+            protected int m_maxBufferedDocId;
 
-            protected internal int Start;
-            protected internal int Count;
+            protected int m_start;
+            protected int m_count;
 
-            protected internal long FreqOffset;
-            protected internal long SkipOffset;
+            protected long m_freqOffset;
+            protected long m_skipOffset;
 
-            protected internal bool Skipped;
-            protected internal readonly IBits LiveDocs;
+            protected bool m_skipped;
+            protected internal readonly IBits m_liveDocs;
 
             internal SegmentDocsEnumBase(Lucene40PostingsReader outerInstance, IndexInput startFreqIn, IBits liveDocs)
             {
                 this.OuterInstance = outerInstance;
                 this.StartFreqIn = startFreqIn;
                 this.FreqIn = (IndexInput)startFreqIn.Clone();
-                this.LiveDocs = liveDocs;
+                this.m_liveDocs = liveDocs;
             }
 
             internal virtual DocsEnum Reset(FieldInfo fieldInfo, StandardTermState termState)
             {
-                IndexOmitsTF = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY;
-                StorePayloads = fieldInfo.HasPayloads;
-                StoreOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-                FreqOffset = termState.FreqOffset;
-                SkipOffset = termState.SkipOffset;
+                m_indexOmitsTF = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY;
+                m_storePayloads = fieldInfo.HasPayloads;
+                m_storeOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                m_freqOffset = termState.FreqOffset;
+                m_skipOffset = termState.SkipOffset;
 
                 // TODO: for full enum case (eg segment merging) this
                 // seek is unnecessary; maybe we can avoid in such
                 // cases
                 FreqIn.Seek(termState.FreqOffset);
-                Limit = termState.DocFreq;
-                Debug.Assert(Limit > 0);
-                Ord = 0;
-                Doc = -1;
-                Accum = 0;
+                m_limit = termState.DocFreq;
+                Debug.Assert(m_limit > 0);
+                m_ord = 0;
+                m_doc = -1;
+                m_accum = 0;
                 // if (DEBUG) System.out.println("  sde limit=" + limit + " freqFP=" + freqOffset);
-                Skipped = false;
+                m_skipped = false;
 
-                Start = -1;
-                Count = 0;
-                Freq_Renamed = 1;
-                if (IndexOmitsTF)
+                m_start = -1;
+                m_count = 0;
+                m_freq = 1;
+                if (m_indexOmitsTF)
                 {
-                    CollectionsHelper.Fill(Freqs, 1);
+                    CollectionsHelper.Fill(m_freqs, 1);
                 }
-                MaxBufferedDocId = -1;
+                m_maxBufferedDocId = -1;
                 return this;
             }
 
             public override sealed int Freq
             {
-                get { return Freq_Renamed; }
+                get { return m_freq; }
             }
 
             public override sealed int DocID
             {
-                get { return Doc; }
+                get { return m_doc; }
             }
 
             public override sealed int Advance(int target)
             {
                 // last doc in our buffer is >= target, binary search + next()
-                if (++Start < Count && MaxBufferedDocId >= target)
+                if (++m_start < m_count && m_maxBufferedDocId >= target)
                 {
-                    if ((Count - Start) > 32) // 32 seemed to be a sweetspot here so use binsearch if the pending results are a lot
+                    if ((m_count - m_start) > 32) // 32 seemed to be a sweetspot here so use binsearch if the pending results are a lot
                     {
-                        Start = BinarySearch(Count - 1, Start, target, Docs);
+                        m_start = BinarySearch(m_count - 1, m_start, target, m_docs);
                         return NextDoc();
                     }
                     else
@@ -399,9 +399,9 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                 }
 
-                Start = Count; // buffer is consumed
+                m_start = m_count; // buffer is consumed
 
-                return Doc = SkipTo(target);
+                return m_doc = SkipTo(target);
             }
 
             private int BinarySearch(int hi, int low, int target, int[] docs)
@@ -446,23 +446,23 @@ namespace Lucene.Net.Codecs.Lucene40
             protected internal int Refill()
             {
                 int doc = NextUnreadDoc();
-                Count = 0;
-                Start = -1;
+                m_count = 0;
+                m_start = -1;
                 if (doc == NO_MORE_DOCS)
                 {
                     return NO_MORE_DOCS;
                 }
-                int numDocs = Math.Min(Docs.Length, Limit - Ord);
-                Ord += numDocs;
-                if (IndexOmitsTF)
+                int numDocs = Math.Min(m_docs.Length, m_limit - m_ord);
+                m_ord += numDocs;
+                if (m_indexOmitsTF)
                 {
-                    Count = FillDocs(numDocs);
+                    m_count = FillDocs(numDocs);
                 }
                 else
                 {
-                    Count = FillDocsAndFreqs(numDocs);
+                    m_count = FillDocsAndFreqs(numDocs);
                 }
-                MaxBufferedDocId = Count > 0 ? Docs[Count - 1] : NO_MORE_DOCS;
+                m_maxBufferedDocId = m_count > 0 ? m_docs[m_count - 1] : NO_MORE_DOCS;
                 return doc;
             }
 
@@ -471,23 +471,23 @@ namespace Lucene.Net.Codecs.Lucene40
             private int FillDocs(int size)
             {
                 IndexInput freqIn = this.FreqIn;
-                int[] docs = this.Docs;
-                int docAc = Accum;
+                int[] docs = this.m_docs;
+                int docAc = m_accum;
                 for (int i = 0; i < size; i++)
                 {
                     docAc += freqIn.ReadVInt();
                     docs[i] = docAc;
                 }
-                Accum = docAc;
+                m_accum = docAc;
                 return size;
             }
 
             private int FillDocsAndFreqs(int size)
             {
                 IndexInput freqIn = this.FreqIn;
-                int[] docs = this.Docs;
-                int[] freqs = this.Freqs;
-                int docAc = Accum;
+                int[] docs = this.m_docs;
+                int[] freqs = this.m_freqs;
+                int docAc = m_accum;
                 for (int i = 0; i < size; i++)
                 {
                     int code = freqIn.ReadVInt();
@@ -495,13 +495,13 @@ namespace Lucene.Net.Codecs.Lucene40
                     freqs[i] = ReadFreq(freqIn, code);
                     docs[i] = docAc;
                 }
-                Accum = docAc;
+                m_accum = docAc;
                 return size;
             }
 
             private int SkipTo(int target)
             {
-                if ((target - OuterInstance.SkipInterval) >= Accum && Limit >= OuterInstance.SkipMinimum)
+                if ((target - OuterInstance.SkipInterval) >= m_accum && m_limit >= OuterInstance.SkipMinimum)
                 {
                     // There are enough docs in the posting to have
                     // skip data, and it isn't too close.
@@ -512,25 +512,25 @@ namespace Lucene.Net.Codecs.Lucene40
                         Skipper = new Lucene40SkipListReader((IndexInput)FreqIn.Clone(), OuterInstance.MaxSkipLevels, OuterInstance.SkipInterval);
                     }
 
-                    if (!Skipped)
+                    if (!m_skipped)
                     {
                         // this is the first time this posting has
                         // skipped since reset() was called, so now we
                         // load the skip data for this posting
 
-                        Skipper.Init(FreqOffset + SkipOffset, FreqOffset, 0, Limit, StorePayloads, StoreOffsets);
+                        Skipper.Init(m_freqOffset + m_skipOffset, m_freqOffset, 0, m_limit, m_storePayloads, m_storeOffsets);
 
-                        Skipped = true;
+                        m_skipped = true;
                     }
 
                     int newOrd = Skipper.SkipTo(target);
 
-                    if (newOrd > Ord)
+                    if (newOrd > m_ord)
                     {
                         // Skipper moved
 
-                        Ord = newOrd;
-                        Accum = Skipper.Doc;
+                        m_ord = newOrd;
+                        m_accum = Skipper.Doc;
                         FreqIn.Seek(Skipper.FreqPointer);
                     }
                 }
@@ -539,7 +539,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override long Cost()
             {
-                return Limit;
+                return m_limit;
             }
         }
 
@@ -551,44 +551,44 @@ namespace Lucene.Net.Codecs.Lucene40
                 : base(outerInstance, startFreqIn, null)
             {
                 this.OuterInstance = outerInstance;
-                Debug.Assert(LiveDocs == null);
+                Debug.Assert(m_liveDocs == null);
             }
 
             public override int NextDoc()
             {
-                if (++Start < Count)
+                if (++m_start < m_count)
                 {
-                    Freq_Renamed = Freqs[Start];
-                    return Doc = Docs[Start];
+                    m_freq = m_freqs[m_start];
+                    return m_doc = m_docs[m_start];
                 }
-                return Doc = Refill();
+                return m_doc = Refill();
             }
 
             protected internal override int LinearScan(int scanTo)
             {
-                int[] docs = this.Docs;
-                int upTo = Count;
-                for (int i = Start; i < upTo; i++)
+                int[] docs = this.m_docs;
+                int upTo = m_count;
+                for (int i = m_start; i < upTo; i++)
                 {
                     int d = docs[i];
                     if (scanTo <= d)
                     {
-                        Start = i;
-                        Freq_Renamed = Freqs[i];
-                        return Doc = docs[i];
+                        m_start = i;
+                        m_freq = m_freqs[i];
+                        return m_doc = docs[i];
                     }
                 }
-                return Doc = Refill();
+                return m_doc = Refill();
             }
 
             protected internal override int ScanTo(int target)
             {
-                int docAcc = Accum;
+                int docAcc = m_accum;
                 int frq = 1;
                 IndexInput freqIn = this.FreqIn;
-                bool omitTF = IndexOmitsTF;
-                int loopLimit = Limit;
-                for (int i = Ord; i < loopLimit; i++)
+                bool omitTF = m_indexOmitsTF;
+                int loopLimit = m_limit;
+                for (int i = m_ord; i < loopLimit; i++)
                 {
                     int code = freqIn.ReadVInt();
                     if (omitTF)
@@ -602,32 +602,32 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     if (docAcc >= target)
                     {
-                        Freq_Renamed = frq;
-                        Ord = i + 1;
-                        return Accum = docAcc;
+                        m_freq = frq;
+                        m_ord = i + 1;
+                        return m_accum = docAcc;
                     }
                 }
-                Ord = Limit;
-                Freq_Renamed = frq;
-                Accum = docAcc;
+                m_ord = m_limit;
+                m_freq = frq;
+                m_accum = docAcc;
                 return NO_MORE_DOCS;
             }
 
             protected internal override int NextUnreadDoc()
             {
-                if (Ord++ < Limit)
+                if (m_ord++ < m_limit)
                 {
                     int code = FreqIn.ReadVInt();
-                    if (IndexOmitsTF)
+                    if (m_indexOmitsTF)
                     {
-                        Accum += code;
+                        m_accum += code;
                     }
                     else
                     {
-                        Accum += (int)((uint)code >> 1); // shift off low bit
-                        Freq_Renamed = ReadFreq(FreqIn, code);
+                        m_accum += (int)((uint)code >> 1); // shift off low bit
+                        m_freq = ReadFreq(FreqIn, code);
                     }
-                    return Accum;
+                    return m_accum;
                 }
                 else
                 {
@@ -649,48 +649,48 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override int NextDoc()
             {
-                IBits liveDocs = this.LiveDocs;
-                for (int i = Start + 1; i < Count; i++)
+                IBits liveDocs = this.m_liveDocs;
+                for (int i = m_start + 1; i < m_count; i++)
                 {
-                    int d = Docs[i];
+                    int d = m_docs[i];
                     if (liveDocs.Get(d))
                     {
-                        Start = i;
-                        Freq_Renamed = Freqs[i];
-                        return Doc = d;
+                        m_start = i;
+                        m_freq = m_freqs[i];
+                        return m_doc = d;
                     }
                 }
-                Start = Count;
-                return Doc = Refill();
+                m_start = m_count;
+                return m_doc = Refill();
             }
 
             protected internal override int LinearScan(int scanTo)
             {
-                int[] docs = this.Docs;
-                int upTo = Count;
-                IBits liveDocs = this.LiveDocs;
-                for (int i = Start; i < upTo; i++)
+                int[] docs = this.m_docs;
+                int upTo = m_count;
+                IBits liveDocs = this.m_liveDocs;
+                for (int i = m_start; i < upTo; i++)
                 {
                     int d = docs[i];
                     if (scanTo <= d && liveDocs.Get(d))
                     {
-                        Start = i;
-                        Freq_Renamed = Freqs[i];
-                        return Doc = docs[i];
+                        m_start = i;
+                        m_freq = m_freqs[i];
+                        return m_doc = docs[i];
                     }
                 }
-                return Doc = Refill();
+                return m_doc = Refill();
             }
 
             protected internal override int ScanTo(int target)
             {
-                int docAcc = Accum;
+                int docAcc = m_accum;
                 int frq = 1;
                 IndexInput freqIn = this.FreqIn;
-                bool omitTF = IndexOmitsTF;
-                int loopLimit = Limit;
-                IBits liveDocs = this.LiveDocs;
-                for (int i = Ord; i < loopLimit; i++)
+                bool omitTF = m_indexOmitsTF;
+                int loopLimit = m_limit;
+                IBits liveDocs = this.m_liveDocs;
+                for (int i = m_ord; i < loopLimit; i++)
                 {
                     int code = freqIn.ReadVInt();
                     if (omitTF)
@@ -704,26 +704,26 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     if (docAcc >= target && liveDocs.Get(docAcc))
                     {
-                        Freq_Renamed = frq;
-                        Ord = i + 1;
-                        return Accum = docAcc;
+                        m_freq = frq;
+                        m_ord = i + 1;
+                        return m_accum = docAcc;
                     }
                 }
-                Ord = Limit;
-                Freq_Renamed = frq;
-                Accum = docAcc;
+                m_ord = m_limit;
+                m_freq = frq;
+                m_accum = docAcc;
                 return NO_MORE_DOCS;
             }
 
             protected internal override int NextUnreadDoc()
             {
-                int docAcc = Accum;
+                int docAcc = m_accum;
                 int frq = 1;
                 IndexInput freqIn = this.FreqIn;
-                bool omitTF = IndexOmitsTF;
-                int loopLimit = Limit;
-                IBits liveDocs = this.LiveDocs;
-                for (int i = Ord; i < loopLimit; i++)
+                bool omitTF = m_indexOmitsTF;
+                int loopLimit = m_limit;
+                IBits liveDocs = this.m_liveDocs;
+                for (int i = m_ord; i < loopLimit; i++)
                 {
                     int code = freqIn.ReadVInt();
                     if (omitTF)
@@ -737,14 +737,14 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     if (liveDocs.Get(docAcc))
                     {
-                        Freq_Renamed = frq;
-                        Ord = i + 1;
-                        return Accum = docAcc;
+                        m_freq = frq;
+                        m_ord = i + 1;
+                        return m_accum = docAcc;
                     }
                 }
-                Ord = Limit;
-                Freq_Renamed = frq;
-                Accum = docAcc;
+                m_ord = m_limit;
+                m_freq = frq;
+                m_accum = docAcc;
                 return NO_MORE_DOCS;
             }
         }
