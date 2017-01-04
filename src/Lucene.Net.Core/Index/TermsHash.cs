@@ -120,10 +120,10 @@ namespace Lucene.Net.Index
             foreach (KeyValuePair<string, InvertedDocConsumerPerField> entry in fieldsToFlush)
             {
                 TermsHashPerField perField = (TermsHashPerField)entry.Value;
-                childFields[entry.Key] = perField.Consumer;
+                childFields[entry.Key] = perField.consumer;
                 if (nextTermsHash != null)
                 {
-                    nextChildFields[entry.Key] = perField.NextPerField;
+                    nextChildFields[entry.Key] = perField.nextPerField;
                 }
             }
 

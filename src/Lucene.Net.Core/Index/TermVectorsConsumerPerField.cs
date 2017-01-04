@@ -51,8 +51,8 @@ namespace Lucene.Net.Index
             this.TermsHashPerField = termsHashPerField;
             this.TermsWriter = termsWriter;
             this.FieldInfo = fieldInfo;
-            DocState = termsHashPerField.DocState;
-            FieldState = termsHashPerField.FieldState;
+            DocState = termsHashPerField.docState;
+            FieldState = termsHashPerField.fieldState;
         }
 
         internal override int StreamCount
@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
             if (DoVectors)
             {
                 TermsWriter.HasVectors = true;
-                if (TermsHashPerField.BytesHash.Size != 0)
+                if (TermsHashPerField.bytesHash.Size != 0)
                 {
                     // Only necessary if previous doc hit a
                     // non-aborting exception while writing vectors in
@@ -157,7 +157,7 @@ namespace Lucene.Net.Index
         ///  the real term vectors files in the Directory. 	  /// </summary>
         internal override void Finish()
         {
-            if (!DoVectors || TermsHashPerField.BytesHash.Size == 0)
+            if (!DoVectors || TermsHashPerField.bytesHash.Size == 0)
             {
                 return;
             }
@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
         {
             Debug.Assert(DocState.TestPoint("TermVectorsTermsWriterPerField.finish start"));
 
-            int numPostings = TermsHashPerField.BytesHash.Size;
+            int numPostings = TermsHashPerField.bytesHash.Size;
 
             BytesRef flushTerm = TermsWriter.FlushTerm;
 
@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
 
             Debug.Assert(TermsWriter.VectorFieldsInOrder(FieldInfo));
 
-            TermVectorsPostingsArray postings = (TermVectorsPostingsArray)TermsHashPerField.PostingsArray;
+            TermVectorsPostingsArray postings = (TermVectorsPostingsArray)TermsHashPerField.postingsArray;
             TermVectorsWriter tv = TermsWriter.Writer;
 
             int[] termIDs = TermsHashPerField.SortPostings(tv.Comparator);
@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
             ByteSliceReader posReader = DoVectorPositions ? TermsWriter.VectorSliceReaderPos : null;
             ByteSliceReader offReader = DoVectorOffsets ? TermsWriter.VectorSliceReaderOff : null;
 
-            ByteBlockPool termBytePool = TermsHashPerField.TermBytePool;
+            ByteBlockPool termBytePool = TermsHashPerField.termBytePool;
 
             for (int j = 0; j < numPostings; j++)
             {
@@ -297,7 +297,7 @@ namespace Lucene.Net.Index
         internal override void NewTerm(int termID)
         {
             Debug.Assert(DocState.TestPoint("TermVectorsTermsWriterPerField.newTerm start"));
-            TermVectorsPostingsArray postings = (TermVectorsPostingsArray)TermsHashPerField.PostingsArray;
+            TermVectorsPostingsArray postings = (TermVectorsPostingsArray)TermsHashPerField.postingsArray;
 
             postings.Freqs[termID] = 1;
             postings.LastOffsets[termID] = 0;
@@ -309,7 +309,7 @@ namespace Lucene.Net.Index
         internal override void AddTerm(int termID)
         {
             Debug.Assert(DocState.TestPoint("TermVectorsTermsWriterPerField.addTerm start"));
-            TermVectorsPostingsArray postings = (TermVectorsPostingsArray)TermsHashPerField.PostingsArray;
+            TermVectorsPostingsArray postings = (TermVectorsPostingsArray)TermsHashPerField.postingsArray;
 
             postings.Freqs[termID]++;
 

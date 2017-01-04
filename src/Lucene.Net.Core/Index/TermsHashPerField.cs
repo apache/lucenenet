@@ -32,54 +32,54 @@ namespace Lucene.Net.Index
     {
         private const int HASH_INIT_SIZE = 4;
 
-        internal readonly TermsHashConsumerPerField Consumer;
+        internal readonly TermsHashConsumerPerField consumer;
 
-        internal readonly TermsHash TermsHash;
+        internal readonly TermsHash termsHash;
 
-        internal readonly TermsHashPerField NextPerField;
-        internal readonly DocumentsWriterPerThread.DocState DocState;
-        internal readonly FieldInvertState FieldState;
-        internal ITermToBytesRefAttribute TermAtt;
-        internal BytesRef TermBytesRef;
+        internal readonly TermsHashPerField nextPerField;
+        internal readonly DocumentsWriterPerThread.DocState docState;
+        internal readonly FieldInvertState fieldState;
+        internal ITermToBytesRefAttribute termAtt;
+        internal BytesRef termBytesRef;
 
         // Copied from our perThread
-        internal readonly IntBlockPool IntPool;
+        internal readonly IntBlockPool intPool;
 
-        internal readonly ByteBlockPool BytePool;
-        internal readonly ByteBlockPool TermBytePool;
+        internal readonly ByteBlockPool bytePool;
+        internal readonly ByteBlockPool termBytePool;
 
-        internal readonly int StreamCount;
-        internal readonly int NumPostingInt;
+        internal readonly int streamCount;
+        internal readonly int numPostingInt;
 
-        internal readonly FieldInfo FieldInfo;
+        internal readonly FieldInfo fieldInfo;
 
-        internal readonly BytesRefHash BytesHash;
+        internal readonly BytesRefHash bytesHash;
 
-        internal ParallelPostingsArray PostingsArray;
-        private readonly Counter BytesUsed;
+        internal ParallelPostingsArray postingsArray;
+        private readonly Counter bytesUsed;
 
         public TermsHashPerField(DocInverterPerField docInverterPerField, TermsHash termsHash, TermsHash nextTermsHash, FieldInfo fieldInfo)
         {
-            IntPool = termsHash.intPool;
-            BytePool = termsHash.bytePool;
-            TermBytePool = termsHash.termBytePool;
-            DocState = termsHash.docState;
-            this.TermsHash = termsHash;
-            BytesUsed = termsHash.bytesUsed;
-            FieldState = docInverterPerField.fieldState;
-            this.Consumer = termsHash.consumer.AddField(this, fieldInfo);
-            PostingsBytesStartArray byteStarts = new PostingsBytesStartArray(this, BytesUsed);
-            BytesHash = new BytesRefHash(TermBytePool, HASH_INIT_SIZE, byteStarts);
-            StreamCount = Consumer.StreamCount;
-            NumPostingInt = 2 * StreamCount;
-            this.FieldInfo = fieldInfo;
+            intPool = termsHash.intPool;
+            bytePool = termsHash.bytePool;
+            termBytePool = termsHash.termBytePool;
+            docState = termsHash.docState;
+            this.termsHash = termsHash;
+            bytesUsed = termsHash.bytesUsed;
+            fieldState = docInverterPerField.fieldState;
+            this.consumer = termsHash.consumer.AddField(this, fieldInfo);
+            PostingsBytesStartArray byteStarts = new PostingsBytesStartArray(this, bytesUsed);
+            bytesHash = new BytesRefHash(termBytePool, HASH_INIT_SIZE, byteStarts);
+            streamCount = consumer.StreamCount;
+            numPostingInt = 2 * streamCount;
+            this.fieldInfo = fieldInfo;
             if (nextTermsHash != null)
             {
-                NextPerField = (TermsHashPerField)nextTermsHash.AddField(docInverterPerField, fieldInfo);
+                nextPerField = (TermsHashPerField)nextTermsHash.AddField(docInverterPerField, fieldInfo);
             }
             else
             {
-                NextPerField = null;
+                nextPerField = null;
             }
         }
 
@@ -87,41 +87,41 @@ namespace Lucene.Net.Index
         {
             // Fully free the bytesHash on each flush but keep the pool untouched
             // bytesHash.clear will clear the ByteStartArray and in turn the ParallelPostingsArray too
-            BytesHash.Clear(false);
+            bytesHash.Clear(false);
         }
 
         public void Reset()
         {
-            BytesHash.Clear(false);
-            if (NextPerField != null)
+            bytesHash.Clear(false);
+            if (nextPerField != null)
             {
-                NextPerField.Reset();
+                nextPerField.Reset();
             }
         }
 
         public override void Abort()
         {
             Reset();
-            if (NextPerField != null)
+            if (nextPerField != null)
             {
-                NextPerField.Abort();
+                nextPerField.Abort();
             }
         }
 
         public void InitReader(ByteSliceReader reader, int termID, int stream)
         {
-            Debug.Assert(stream < StreamCount);
-            int intStart = PostingsArray.intStarts[termID];
-            int[] ints = IntPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
+            Debug.Assert(stream < streamCount);
+            int intStart = postingsArray.intStarts[termID];
+            int[] ints = intPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
             int upto = intStart & IntBlockPool.INT_BLOCK_MASK;
-            reader.Init(BytePool, PostingsArray.byteStarts[termID] + stream * ByteBlockPool.FIRST_LEVEL_SIZE, ints[upto + stream]);
+            reader.Init(bytePool, postingsArray.byteStarts[termID] + stream * ByteBlockPool.FIRST_LEVEL_SIZE, ints[upto + stream]);
         }
 
         /// <summary>
         /// Collapse the hash table & sort in-place. </summary>
         public int[] SortPostings(IComparer<BytesRef> termComp)
         {
-            return BytesHash.Sort(termComp);
+            return bytesHash.Sort(termComp);
         }
 
         private bool DoCall;
@@ -129,22 +129,22 @@ namespace Lucene.Net.Index
 
         internal override void Start(IIndexableField f)
         {
-            TermAtt = FieldState.AttributeSource.GetAttribute<ITermToBytesRefAttribute>();
-            TermBytesRef = TermAtt.BytesRef;
-            Consumer.Start(f);
-            if (NextPerField != null)
+            termAtt = fieldState.AttributeSource.GetAttribute<ITermToBytesRefAttribute>();
+            termBytesRef = termAtt.BytesRef;
+            consumer.Start(f);
+            if (nextPerField != null)
             {
-                NextPerField.Start(f);
+                nextPerField.Start(f);
             }
         }
 
         internal override bool Start(IIndexableField[] fields, int count)
         {
-            DoCall = Consumer.Start(fields, count);
-            BytesHash.Reinit();
-            if (NextPerField != null)
+            DoCall = consumer.Start(fields, count);
+            bytesHash.Reinit();
+            if (nextPerField != null)
             {
-                DoNextCall = NextPerField.Start(fields, count);
+                DoNextCall = nextPerField.Start(fields, count);
             }
             return DoCall || DoNextCall;
         }
@@ -154,51 +154,51 @@ namespace Lucene.Net.Index
         // textStart, so we hash by textStart
         public void Add(int textStart)
         {
-            int termID = BytesHash.AddByPoolOffset(textStart);
+            int termID = bytesHash.AddByPoolOffset(textStart);
             if (termID >= 0) // New posting
             {
                 // First time we are seeing this token since we last
                 // flushed the hash.
                 // Init stream slices
-                if (NumPostingInt + IntPool.IntUpto > IntBlockPool.INT_BLOCK_SIZE)
+                if (numPostingInt + intPool.IntUpto > IntBlockPool.INT_BLOCK_SIZE)
                 {
-                    IntPool.NextBuffer();
+                    intPool.NextBuffer();
                 }
 
-                if (ByteBlockPool.BYTE_BLOCK_SIZE - BytePool.ByteUpto < NumPostingInt * ByteBlockPool.FIRST_LEVEL_SIZE)
+                if (ByteBlockPool.BYTE_BLOCK_SIZE - bytePool.ByteUpto < numPostingInt * ByteBlockPool.FIRST_LEVEL_SIZE)
                 {
-                    BytePool.NextBuffer();
+                    bytePool.NextBuffer();
                 }
 
-                IntUptos = IntPool.Buffer;
-                IntUptoStart = IntPool.IntUpto;
-                IntPool.IntUpto += StreamCount;
+                IntUptos = intPool.Buffer;
+                IntUptoStart = intPool.IntUpto;
+                intPool.IntUpto += streamCount;
 
-                PostingsArray.intStarts[termID] = IntUptoStart + IntPool.IntOffset;
+                postingsArray.intStarts[termID] = IntUptoStart + intPool.IntOffset;
 
-                for (int i = 0; i < StreamCount; i++)
+                for (int i = 0; i < streamCount; i++)
                 {
-                    int upto = BytePool.NewSlice(ByteBlockPool.FIRST_LEVEL_SIZE);
-                    IntUptos[IntUptoStart + i] = upto + BytePool.ByteOffset;
+                    int upto = bytePool.NewSlice(ByteBlockPool.FIRST_LEVEL_SIZE);
+                    IntUptos[IntUptoStart + i] = upto + bytePool.ByteOffset;
                 }
-                PostingsArray.byteStarts[termID] = IntUptos[IntUptoStart];
+                postingsArray.byteStarts[termID] = IntUptos[IntUptoStart];
 
-                Consumer.NewTerm(termID);
+                consumer.NewTerm(termID);
             }
             else
             {
                 termID = (-termID) - 1;
-                int intStart = PostingsArray.intStarts[termID];
-                IntUptos = IntPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
+                int intStart = postingsArray.intStarts[termID];
+                IntUptos = intPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
                 IntUptoStart = intStart & IntBlockPool.INT_BLOCK_MASK;
-                Consumer.AddTerm(termID);
+                consumer.AddTerm(termID);
             }
         }
 
         // Primary entry point (for first TermsHash)
         internal override void Add()
         {
-            TermAtt.FillBytesRef();
+            termAtt.FillBytesRef();
 
             // We are first in the chain so we must "intern" the
             // term text into textStart address
@@ -206,7 +206,7 @@ namespace Lucene.Net.Index
             int termID;
             try
             {
-                termID = BytesHash.Add(TermBytesRef);
+                termID = bytesHash.Add(termBytesRef);
             }
             catch (BytesRefHash.MaxBytesLengthExceededException)
             {
@@ -215,63 +215,63 @@ namespace Lucene.Net.Index
                 // entire segment) and then throw an exc later in
                 // DocInverterPerField.java.  LengthFilter can always be
                 // used to prune the term before indexing:
-                if (DocState.maxTermPrefix == null)
+                if (docState.maxTermPrefix == null)
                 {
-                    int saved = TermBytesRef.Length;
+                    int saved = termBytesRef.Length;
                     try
                     {
-                        TermBytesRef.Length = Math.Min(30, DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8);
-                        DocState.maxTermPrefix = TermBytesRef.ToString();
+                        termBytesRef.Length = Math.Min(30, DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8);
+                        docState.maxTermPrefix = termBytesRef.ToString();
                     }
                     finally
                     {
-                        TermBytesRef.Length = saved;
+                        termBytesRef.Length = saved;
                     }
                 }
-                Consumer.SkippingLongTerm();
+                consumer.SkippingLongTerm();
                 return;
             }
             if (termID >= 0) // New posting
             {
-                BytesHash.ByteStart(termID);
+                bytesHash.ByteStart(termID);
                 // Init stream slices
-                if (NumPostingInt + IntPool.IntUpto > IntBlockPool.INT_BLOCK_SIZE)
+                if (numPostingInt + intPool.IntUpto > IntBlockPool.INT_BLOCK_SIZE)
                 {
-                    IntPool.NextBuffer();
+                    intPool.NextBuffer();
                 }
 
-                if (ByteBlockPool.BYTE_BLOCK_SIZE - BytePool.ByteUpto < NumPostingInt * ByteBlockPool.FIRST_LEVEL_SIZE)
+                if (ByteBlockPool.BYTE_BLOCK_SIZE - bytePool.ByteUpto < numPostingInt * ByteBlockPool.FIRST_LEVEL_SIZE)
                 {
-                    BytePool.NextBuffer();
+                    bytePool.NextBuffer();
                 }
 
-                IntUptos = IntPool.Buffer;
-                IntUptoStart = IntPool.IntUpto;
-                IntPool.IntUpto += StreamCount;
+                IntUptos = intPool.Buffer;
+                IntUptoStart = intPool.IntUpto;
+                intPool.IntUpto += streamCount;
 
-                PostingsArray.intStarts[termID] = IntUptoStart + IntPool.IntOffset;
+                postingsArray.intStarts[termID] = IntUptoStart + intPool.IntOffset;
 
-                for (int i = 0; i < StreamCount; i++)
+                for (int i = 0; i < streamCount; i++)
                 {
-                    int upto = BytePool.NewSlice(ByteBlockPool.FIRST_LEVEL_SIZE);
-                    IntUptos[IntUptoStart + i] = upto + BytePool.ByteOffset;
+                    int upto = bytePool.NewSlice(ByteBlockPool.FIRST_LEVEL_SIZE);
+                    IntUptos[IntUptoStart + i] = upto + bytePool.ByteOffset;
                 }
-                PostingsArray.byteStarts[termID] = IntUptos[IntUptoStart];
+                postingsArray.byteStarts[termID] = IntUptos[IntUptoStart];
 
-                Consumer.NewTerm(termID);
+                consumer.NewTerm(termID);
             }
             else
             {
                 termID = (-termID) - 1;
-                int intStart = PostingsArray.intStarts[termID];
-                IntUptos = IntPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
+                int intStart = postingsArray.intStarts[termID];
+                IntUptos = intPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
                 IntUptoStart = intStart & IntBlockPool.INT_BLOCK_MASK;
-                Consumer.AddTerm(termID);
+                consumer.AddTerm(termID);
             }
 
             if (DoNextCall)
             {
-                NextPerField.Add(PostingsArray.textStarts[termID]);
+                nextPerField.Add(postingsArray.textStarts[termID]);
             }
         }
 
@@ -286,15 +286,15 @@ namespace Lucene.Net.Index
         internal void WriteByte(int stream, byte b)
         {
             int upto = IntUptos[IntUptoStart + stream];
-            var bytes = BytePool.buffers[upto >> ByteBlockPool.BYTE_BLOCK_SHIFT];
+            var bytes = bytePool.buffers[upto >> ByteBlockPool.BYTE_BLOCK_SHIFT];
             Debug.Assert(bytes != null);
             int offset = upto & ByteBlockPool.BYTE_BLOCK_MASK;
             if (bytes[offset] != 0)
             {
                 // End of slice; allocate a new one
-                offset = BytePool.AllocSlice(bytes, offset);
-                bytes = BytePool.Buffer;
-                IntUptos[IntUptoStart + stream] = offset + BytePool.ByteOffset;
+                offset = bytePool.AllocSlice(bytes, offset);
+                bytes = bytePool.Buffer;
+                IntUptos[IntUptoStart + stream] = offset + bytePool.ByteOffset;
             }
             bytes[offset] = b;
             (IntUptos[IntUptoStart + stream])++;
@@ -312,7 +312,7 @@ namespace Lucene.Net.Index
 
         internal void WriteVInt(int stream, int i)
         {
-            Debug.Assert(stream < StreamCount);
+            Debug.Assert(stream < streamCount);
             while ((i & ~0x7F) != 0)
             {
                 WriteByte(stream, unchecked((sbyte)((i & 0x7f) | 0x80)));
@@ -323,10 +323,10 @@ namespace Lucene.Net.Index
 
         internal override void Finish()
         {
-            Consumer.Finish();
-            if (NextPerField != null)
+            consumer.Finish();
+            if (nextPerField != null)
             {
-                NextPerField.Finish();
+                nextPerField.Finish();
             }
         }
 
@@ -343,29 +343,29 @@ namespace Lucene.Net.Index
 
             public override int[] Init()
             {
-                if (perField.PostingsArray == null)
+                if (perField.postingsArray == null)
                 {
-                    perField.PostingsArray = perField.Consumer.CreatePostingsArray(2);
-                    bytesUsed.AddAndGet(perField.PostingsArray.size * perField.PostingsArray.BytesPerPosting());
+                    perField.postingsArray = perField.consumer.CreatePostingsArray(2);
+                    bytesUsed.AddAndGet(perField.postingsArray.size * perField.postingsArray.BytesPerPosting());
                 }
-                return perField.PostingsArray.textStarts;
+                return perField.postingsArray.textStarts;
             }
 
             public override int[] Grow()
             {
-                ParallelPostingsArray postingsArray = perField.PostingsArray;
-                int oldSize = perField.PostingsArray.size;
-                postingsArray = perField.PostingsArray = postingsArray.Grow();
+                ParallelPostingsArray postingsArray = perField.postingsArray;
+                int oldSize = perField.postingsArray.size;
+                postingsArray = perField.postingsArray = postingsArray.Grow();
                 bytesUsed.AddAndGet((postingsArray.BytesPerPosting() * (postingsArray.size - oldSize)));
                 return postingsArray.textStarts;
             }
 
             public override int[] Clear()
             {
-                if (perField.PostingsArray != null)
+                if (perField.postingsArray != null)
                 {
-                    bytesUsed.AddAndGet(-(perField.PostingsArray.size * perField.PostingsArray.BytesPerPosting()));
-                    perField.PostingsArray = null;
+                    bytesUsed.AddAndGet(-(perField.postingsArray.size * perField.postingsArray.BytesPerPosting()));
+                    perField.postingsArray = null;
                 }
                 return null;
             }

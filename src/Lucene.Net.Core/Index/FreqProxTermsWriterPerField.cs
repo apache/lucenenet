@@ -53,8 +53,8 @@ namespace Lucene.Net.Index
             this.termsHashPerField = termsHashPerField;
             this.parent = parent;
             this.fieldInfo = fieldInfo;
-            docState = termsHashPerField.DocState;
-            fieldState = termsHashPerField.FieldState;
+            docState = termsHashPerField.docState;
+            fieldState = termsHashPerField.fieldState;
             SetIndexOptions(fieldInfo.IndexOptions);
         }
 
@@ -174,7 +174,7 @@ namespace Lucene.Net.Index
                 termsHashPerField.WriteVInt(1, proxCode << 1);
             }
 
-            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.PostingsArray;
+            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.postingsArray;
             postings.lastPositions[termID] = fieldState.Position;
         }
 
@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
             Debug.Assert(hasOffsets);
             int startOffset = offsetAccum + offsetAttribute.StartOffset;
             int endOffset = offsetAccum + offsetAttribute.EndOffset;
-            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.PostingsArray;
+            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.postingsArray;
             Debug.Assert(startOffset - postings.lastOffsets[termID] >= 0);
             termsHashPerField.WriteVInt(1, startOffset - postings.lastOffsets[termID]);
             termsHashPerField.WriteVInt(1, endOffset - startOffset);
@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
             // flush
             Debug.Assert(docState.TestPoint("FreqProxTermsWriterPerField.newTerm start"));
 
-            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.PostingsArray;
+            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.postingsArray;
             postings.lastDocIDs[termID] = docState.docID;
             if (!hasFreq)
             {
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
         {
             Debug.Assert(docState.TestPoint("FreqProxTermsWriterPerField.addTerm start"));
 
-            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.PostingsArray;
+            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.postingsArray;
 
             Debug.Assert(!hasFreq || postings.termFreqs[termID] > 0);
 
@@ -441,9 +441,9 @@ namespace Lucene.Net.Index
             }
 
             int[] termIDs = termsHashPerField.SortPostings(termComp);
-            int numTerms = termsHashPerField.BytesHash.Size;
+            int numTerms = termsHashPerField.bytesHash.Size;
             BytesRef text = new BytesRef();
-            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.PostingsArray;
+            FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.postingsArray;
             ByteSliceReader freq = new ByteSliceReader();
             ByteSliceReader prox = new ByteSliceReader();
 
@@ -457,7 +457,7 @@ namespace Lucene.Net.Index
                 int termID = termIDs[i];
                 // Get BytesRef
                 int textStart = postings.textStarts[termID];
-                termsHashPerField.BytePool.SetBytesRef(text, textStart);
+                termsHashPerField.bytePool.SetBytesRef(text, textStart);
 
                 termsHashPerField.InitReader(freq, termID, 0);
                 if (readPositions || readOffsets)
