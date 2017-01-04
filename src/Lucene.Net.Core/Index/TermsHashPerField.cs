@@ -124,8 +124,8 @@ namespace Lucene.Net.Index
             return bytesHash.Sort(termComp);
         }
 
-        private bool DoCall;
-        private bool DoNextCall;
+        private bool doCall;
+        private bool doNextCall;
 
         internal override void Start(IIndexableField f)
         {
@@ -140,13 +140,13 @@ namespace Lucene.Net.Index
 
         internal override bool Start(IIndexableField[] fields, int count)
         {
-            DoCall = consumer.Start(fields, count);
+            doCall = consumer.Start(fields, count);
             bytesHash.Reinit();
             if (nextPerField != null)
             {
-                DoNextCall = nextPerField.Start(fields, count);
+                doNextCall = nextPerField.Start(fields, count);
             }
-            return DoCall || DoNextCall;
+            return doCall || doNextCall;
         }
 
         // Secondary entry point (for 2nd & subsequent TermsHash),
@@ -170,18 +170,18 @@ namespace Lucene.Net.Index
                     bytePool.NextBuffer();
                 }
 
-                IntUptos = intPool.Buffer;
-                IntUptoStart = intPool.IntUpto;
+                intUptos = intPool.Buffer;
+                intUptoStart = intPool.IntUpto;
                 intPool.IntUpto += streamCount;
 
-                postingsArray.intStarts[termID] = IntUptoStart + intPool.IntOffset;
+                postingsArray.intStarts[termID] = intUptoStart + intPool.IntOffset;
 
                 for (int i = 0; i < streamCount; i++)
                 {
                     int upto = bytePool.NewSlice(ByteBlockPool.FIRST_LEVEL_SIZE);
-                    IntUptos[IntUptoStart + i] = upto + bytePool.ByteOffset;
+                    intUptos[intUptoStart + i] = upto + bytePool.ByteOffset;
                 }
-                postingsArray.byteStarts[termID] = IntUptos[IntUptoStart];
+                postingsArray.byteStarts[termID] = intUptos[intUptoStart];
 
                 consumer.NewTerm(termID);
             }
@@ -189,8 +189,8 @@ namespace Lucene.Net.Index
             {
                 termID = (-termID) - 1;
                 int intStart = postingsArray.intStarts[termID];
-                IntUptos = intPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
-                IntUptoStart = intStart & IntBlockPool.INT_BLOCK_MASK;
+                intUptos = intPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
+                intUptoStart = intStart & IntBlockPool.INT_BLOCK_MASK;
                 consumer.AddTerm(termID);
             }
         }
@@ -245,18 +245,18 @@ namespace Lucene.Net.Index
                     bytePool.NextBuffer();
                 }
 
-                IntUptos = intPool.Buffer;
-                IntUptoStart = intPool.IntUpto;
+                intUptos = intPool.Buffer;
+                intUptoStart = intPool.IntUpto;
                 intPool.IntUpto += streamCount;
 
-                postingsArray.intStarts[termID] = IntUptoStart + intPool.IntOffset;
+                postingsArray.intStarts[termID] = intUptoStart + intPool.IntOffset;
 
                 for (int i = 0; i < streamCount; i++)
                 {
                     int upto = bytePool.NewSlice(ByteBlockPool.FIRST_LEVEL_SIZE);
-                    IntUptos[IntUptoStart + i] = upto + bytePool.ByteOffset;
+                    intUptos[intUptoStart + i] = upto + bytePool.ByteOffset;
                 }
-                postingsArray.byteStarts[termID] = IntUptos[IntUptoStart];
+                postingsArray.byteStarts[termID] = intUptos[intUptoStart];
 
                 consumer.NewTerm(termID);
             }
@@ -264,19 +264,19 @@ namespace Lucene.Net.Index
             {
                 termID = (-termID) - 1;
                 int intStart = postingsArray.intStarts[termID];
-                IntUptos = intPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
-                IntUptoStart = intStart & IntBlockPool.INT_BLOCK_MASK;
+                intUptos = intPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
+                intUptoStart = intStart & IntBlockPool.INT_BLOCK_MASK;
                 consumer.AddTerm(termID);
             }
 
-            if (DoNextCall)
+            if (doNextCall)
             {
                 nextPerField.Add(postingsArray.textStarts[termID]);
             }
         }
 
-        internal int[] IntUptos;
-        internal int IntUptoStart;
+        internal int[] intUptos;
+        internal int intUptoStart;
 
         internal void WriteByte(int stream, sbyte b)
         {
@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
 
         internal void WriteByte(int stream, byte b)
         {
-            int upto = IntUptos[IntUptoStart + stream];
+            int upto = intUptos[intUptoStart + stream];
             var bytes = bytePool.buffers[upto >> ByteBlockPool.BYTE_BLOCK_SHIFT];
             Debug.Assert(bytes != null);
             int offset = upto & ByteBlockPool.BYTE_BLOCK_MASK;
@@ -294,10 +294,10 @@ namespace Lucene.Net.Index
                 // End of slice; allocate a new one
                 offset = bytePool.AllocSlice(bytes, offset);
                 bytes = bytePool.Buffer;
-                IntUptos[IntUptoStart + stream] = offset + bytePool.ByteOffset;
+                intUptos[intUptoStart + stream] = offset + bytePool.ByteOffset;
             }
             bytes[offset] = b;
-            (IntUptos[IntUptoStart + stream])++;
+            (intUptos[intUptoStart + stream])++;
         }
 
         public void WriteBytes(int stream, byte[] b, int offset, int len)
