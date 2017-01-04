@@ -27,33 +27,33 @@ namespace Lucene.Net.Codecs.Lucene3x
     [Obsolete("(4.0) this is only used to read indexes created")]
     internal sealed class Lucene3xSkipListReader : MultiLevelSkipListReader
     {
-        private bool CurrentFieldStoresPayloads;
-        private long[] FreqPointer_Renamed;
-        private long[] ProxPointer_Renamed;
-        private int[] PayloadLength_Renamed;
+        private bool currentFieldStoresPayloads;
+        private long[] freqPointer;
+        private long[] proxPointer;
+        private int[] payloadLength;
 
-        private long LastFreqPointer;
-        private long LastProxPointer;
-        private int LastPayloadLength;
+        private long lastFreqPointer;
+        private long lastProxPointer;
+        private int lastPayloadLength;
 
         public Lucene3xSkipListReader(IndexInput skipStream, int maxSkipLevels, int skipInterval)
             : base(skipStream, maxSkipLevels, skipInterval)
         {
-            FreqPointer_Renamed = new long[maxSkipLevels];
-            ProxPointer_Renamed = new long[maxSkipLevels];
-            PayloadLength_Renamed = new int[maxSkipLevels];
+            freqPointer = new long[maxSkipLevels];
+            proxPointer = new long[maxSkipLevels];
+            payloadLength = new int[maxSkipLevels];
         }
 
         public void Init(long skipPointer, long freqBasePointer, long proxBasePointer, int df, bool storesPayloads)
         {
             base.Init(skipPointer, df);
-            this.CurrentFieldStoresPayloads = storesPayloads;
-            LastFreqPointer = freqBasePointer;
-            LastProxPointer = proxBasePointer;
+            this.currentFieldStoresPayloads = storesPayloads;
+            lastFreqPointer = freqBasePointer;
+            lastProxPointer = proxBasePointer;
 
-            CollectionsHelper.Fill(FreqPointer_Renamed, freqBasePointer);
-            CollectionsHelper.Fill(ProxPointer_Renamed, proxBasePointer);
-            CollectionsHelper.Fill(PayloadLength_Renamed, 0);
+            CollectionsHelper.Fill(freqPointer, freqBasePointer);
+            CollectionsHelper.Fill(proxPointer, proxBasePointer);
+            CollectionsHelper.Fill(payloadLength, 0);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return LastFreqPointer;
+                return lastFreqPointer;
             }
         }
 
@@ -76,7 +76,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return LastProxPointer;
+                return lastProxPointer;
             }
         }
 
@@ -89,30 +89,30 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return LastPayloadLength;
+                return lastPayloadLength;
             }
         }
 
         protected override void SeekChild(int level)
         {
             base.SeekChild(level);
-            FreqPointer_Renamed[level] = LastFreqPointer;
-            ProxPointer_Renamed[level] = LastProxPointer;
-            PayloadLength_Renamed[level] = LastPayloadLength;
+            freqPointer[level] = lastFreqPointer;
+            proxPointer[level] = lastProxPointer;
+            payloadLength[level] = lastPayloadLength;
         }
 
         protected override void SetLastSkipData(int level)
         {
             base.SetLastSkipData(level);
-            LastFreqPointer = FreqPointer_Renamed[level];
-            LastProxPointer = ProxPointer_Renamed[level];
-            LastPayloadLength = PayloadLength_Renamed[level];
+            lastFreqPointer = freqPointer[level];
+            lastProxPointer = proxPointer[level];
+            lastPayloadLength = payloadLength[level];
         }
 
         protected override int ReadSkipData(int level, IndexInput skipStream)
         {
             int delta;
-            if (CurrentFieldStoresPayloads)
+            if (currentFieldStoresPayloads)
             {
                 // the current field stores payloads.
                 // if the doc delta is odd then we have
@@ -122,7 +122,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 delta = skipStream.ReadVInt();
                 if ((delta & 1) != 0)
                 {
-                    PayloadLength_Renamed[level] = skipStream.ReadVInt();
+                    payloadLength[level] = skipStream.ReadVInt();
                 }
                 delta = (int)((uint)delta >> 1);
             }
@@ -131,8 +131,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                 delta = skipStream.ReadVInt();
             }
 
-            FreqPointer_Renamed[level] += skipStream.ReadVInt();
-            ProxPointer_Renamed[level] += skipStream.ReadVInt();
+            freqPointer[level] += skipStream.ReadVInt();
+            proxPointer[level] += skipStream.ReadVInt();
 
             return delta;
         }
