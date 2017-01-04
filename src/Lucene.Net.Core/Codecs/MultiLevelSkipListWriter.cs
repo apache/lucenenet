@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs
     {
         /// <summary>
         /// number of levels in this skip list </summary>
-        protected internal int NumberOfSkipLevels;
+        protected internal int m_numberOfSkipLevels;
 
         /// <summary>
         /// the skip interval in the list with level = 0 </summary>
@@ -79,17 +79,17 @@ namespace Lucene.Net.Codecs
             // calculate the maximum number of skip levels for this document frequency
             if (df <= skipInterval)
             {
-                NumberOfSkipLevels = 1;
+                m_numberOfSkipLevels = 1;
             }
             else
             {
-                NumberOfSkipLevels = 1 + MathUtil.Log(df / skipInterval, skipMultiplier);
+                m_numberOfSkipLevels = 1 + MathUtil.Log(df / skipInterval, skipMultiplier);
             }
 
             // make sure it does not exceed maxSkipLevels
-            if (NumberOfSkipLevels > maxSkipLevels)
+            if (m_numberOfSkipLevels > maxSkipLevels)
             {
-                NumberOfSkipLevels = maxSkipLevels;
+                m_numberOfSkipLevels = maxSkipLevels;
             }
         }
 
@@ -107,8 +107,8 @@ namespace Lucene.Net.Codecs
         /// Allocates internal skip buffers. </summary>
         protected virtual void Init()
         {
-            SkipBuffer = new RAMOutputStream[NumberOfSkipLevels];
-            for (int i = 0; i < NumberOfSkipLevels; i++)
+            SkipBuffer = new RAMOutputStream[m_numberOfSkipLevels];
+            for (int i = 0; i < m_numberOfSkipLevels; i++)
             {
                 SkipBuffer[i] = new RAMOutputStream();
             }
@@ -151,7 +151,7 @@ namespace Lucene.Net.Codecs
             df /= SkipInterval;
 
             // determine max level
-            while ((df % SkipMultiplier) == 0 && numLevels < NumberOfSkipLevels)
+            while ((df % SkipMultiplier) == 0 && numLevels < m_numberOfSkipLevels)
             {
                 numLevels++;
                 df /= SkipMultiplier;
@@ -190,7 +190,7 @@ namespace Lucene.Net.Codecs
                 return skipPointer;
             }
 
-            for (int level = NumberOfSkipLevels - 1; level > 0; level--)
+            for (int level = m_numberOfSkipLevels - 1; level > 0; level--)
             {
                 long length = SkipBuffer[level].FilePointer;
                 if (length > 0)

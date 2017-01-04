@@ -94,7 +94,7 @@ namespace Lucene.Net.Codecs.Sep
 	        set
 	        {
 	            _posOutput = value;
-                for (var i = 0; i < NumberOfSkipLevels; i++)
+                for (var i = 0; i < m_numberOfSkipLevels; i++)
 	            {
 	                _posIndex[i] = value.Index();
 	            }
@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Sep
 
 	        Arrays.Fill(_lastSkipDoc, 0);
 	        Arrays.Fill(_lastSkipPayloadLength, -1); // we don't have to write the first length in the skip list
-	        for (int i = 0; i < NumberOfSkipLevels; i++)
+	        for (int i = 0; i < m_numberOfSkipLevels; i++)
 	        {
 	            _docIndex[i].CopyFrom(topDocIndex, true);
 	            if (_freqOutput != null)
