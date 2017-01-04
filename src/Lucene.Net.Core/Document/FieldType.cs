@@ -39,7 +39,7 @@ namespace Lucene.Net.Documents
         private bool omitNorms;
         private IndexOptions? indexOptions = Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
         private NumericType? numericType;
-        private bool Frozen;
+        private bool frozen;
         private int numericPrecisionStep = NumericUtils.PRECISION_STEP_DEFAULT;
         private DocValuesType? docValueType;
 
@@ -71,7 +71,7 @@ namespace Lucene.Net.Documents
 
         private void CheckIfFrozen()
         {
-            if (Frozen)
+            if (frozen)
             {
                 throw new Exception("this FieldType is already frozen and cannot be changed");
             }
@@ -84,7 +84,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void Freeze()
         {
-            this.Frozen = true;
+            this.frozen = true;
         }
 
         /// <summary>
