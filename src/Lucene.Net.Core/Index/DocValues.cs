@@ -177,23 +177,23 @@ namespace Lucene.Net.Index
 
         private class BitsAnonymousInnerClassHelper : IBits
         {
-            private Lucene.Net.Index.SortedDocValues Dv;
-            private int MaxDoc;
+            private Lucene.Net.Index.SortedDocValues dv;
+            private int maxDoc;
 
             public BitsAnonymousInnerClassHelper(Lucene.Net.Index.SortedDocValues dv, int maxDoc)
             {
-                this.Dv = dv;
-                this.MaxDoc = maxDoc;
+                this.dv = dv;
+                this.maxDoc = maxDoc;
             }
 
             public virtual bool Get(int index)
             {
-                return Dv.GetOrd(index) >= 0;
+                return dv.GetOrd(index) >= 0;
             }
 
             public virtual int Length
             {
-                get { return MaxDoc; }
+                get { return maxDoc; }
             }
         }
 
@@ -207,24 +207,24 @@ namespace Lucene.Net.Index
 
         private class BitsAnonymousInnerClassHelper2 : IBits
         {
-            private Lucene.Net.Index.SortedSetDocValues Dv;
-            private int MaxDoc;
+            private Lucene.Net.Index.SortedSetDocValues dv;
+            private int maxDoc;
 
             public BitsAnonymousInnerClassHelper2(Lucene.Net.Index.SortedSetDocValues dv, int maxDoc)
             {
-                this.Dv = dv;
-                this.MaxDoc = maxDoc;
+                this.dv = dv;
+                this.maxDoc = maxDoc;
             }
 
             public virtual bool Get(int index)
             {
-                Dv.SetDocument(index);
-                return Dv.NextOrd() != SortedSetDocValues.NO_MORE_ORDS;
+                dv.SetDocument(index);
+                return dv.NextOrd() != SortedSetDocValues.NO_MORE_ORDS;
             }
 
             public virtual int Length
             {
-                get { return MaxDoc; }
+                get { return maxDoc; }
             }
         }
     }
