@@ -686,30 +686,30 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class TVFields : Fields
         {
-            private readonly CompressingTermVectorsReader OuterInstance;
+            private readonly CompressingTermVectorsReader outerInstance;
 
-            internal readonly int[] FieldNums, FieldFlags, FieldNumOffs, NumTerms, FieldLengths;
-            internal readonly int[][] PrefixLengths, SuffixLengths, TermFreqs, PositionIndex, Positions, StartOffsets, Lengths, PayloadIndex;
-            internal readonly BytesRef SuffixBytes, PayloadBytes;
+            internal readonly int[] fieldNums, fieldFlags, fieldNumOffs, numTerms, fieldLengths;
+            internal readonly int[][] prefixLengths, suffixLengths, termFreqs, positionIndex, positions, startOffsets, lengths, payloadIndex;
+            internal readonly BytesRef suffixBytes, payloadBytes;
 
             public TVFields(CompressingTermVectorsReader outerInstance, int[] fieldNums, int[] fieldFlags, int[] fieldNumOffs, int[] numTerms, int[] fieldLengths, int[][] prefixLengths, int[][] suffixLengths, int[][] termFreqs, int[][] positionIndex, int[][] positions, int[][] startOffsets, int[][] lengths, BytesRef payloadBytes, int[][] payloadIndex, BytesRef suffixBytes)
             {
-                this.OuterInstance = outerInstance;
-                this.FieldNums = fieldNums;
-                this.FieldFlags = fieldFlags;
-                this.FieldNumOffs = fieldNumOffs;
-                this.NumTerms = numTerms;
-                this.FieldLengths = fieldLengths;
-                this.PrefixLengths = prefixLengths;
-                this.SuffixLengths = suffixLengths;
-                this.TermFreqs = termFreqs;
-                this.PositionIndex = positionIndex;
-                this.Positions = positions;
-                this.StartOffsets = startOffsets;
-                this.Lengths = lengths;
-                this.PayloadBytes = payloadBytes;
-                this.PayloadIndex = payloadIndex;
-                this.SuffixBytes = suffixBytes;
+                this.outerInstance = outerInstance;
+                this.fieldNums = fieldNums;
+                this.fieldFlags = fieldFlags;
+                this.fieldNumOffs = fieldNumOffs;
+                this.numTerms = numTerms;
+                this.fieldLengths = fieldLengths;
+                this.prefixLengths = prefixLengths;
+                this.suffixLengths = suffixLengths;
+                this.termFreqs = termFreqs;
+                this.positionIndex = positionIndex;
+                this.positions = positions;
+                this.startOffsets = startOffsets;
+                this.lengths = lengths;
+                this.payloadBytes = payloadBytes;
+                this.payloadIndex = payloadIndex;
+                this.suffixBytes = suffixBytes;
             }
 
             public override IEnumerator<string> GetEnumerator()
@@ -721,81 +721,81 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 int i = 0;
 
-                while (i < FieldNumOffs.Length)
+                while (i < fieldNumOffs.Length)
                 {
-                    int fieldNum = FieldNums[FieldNumOffs[i++]];
-                    yield return OuterInstance.fieldInfos.FieldInfo(fieldNum).Name;
+                    int fieldNum = fieldNums[fieldNumOffs[i++]];
+                    yield return outerInstance.fieldInfos.FieldInfo(fieldNum).Name;
                 }
             }
 
             public override Terms Terms(string field)
             {
-                FieldInfo fieldInfo = OuterInstance.fieldInfos.FieldInfo(field);
+                FieldInfo fieldInfo = outerInstance.fieldInfos.FieldInfo(field);
                 if (fieldInfo == null)
                 {
                     return null;
                 }
                 int idx = -1;
-                for (int i = 0; i < FieldNumOffs.Length; ++i)
+                for (int i = 0; i < fieldNumOffs.Length; ++i)
                 {
-                    if (FieldNums[FieldNumOffs[i]] == fieldInfo.Number)
+                    if (fieldNums[fieldNumOffs[i]] == fieldInfo.Number)
                     {
                         idx = i;
                         break;
                     }
                 }
 
-                if (idx == -1 || NumTerms[idx] == 0)
+                if (idx == -1 || numTerms[idx] == 0)
                 {
                     // no term
                     return null;
                 }
                 int fieldOff = 0, fieldLen = -1;
-                for (int i = 0; i < FieldNumOffs.Length; ++i)
+                for (int i = 0; i < fieldNumOffs.Length; ++i)
                 {
                     if (i < idx)
                     {
-                        fieldOff += FieldLengths[i];
+                        fieldOff += fieldLengths[i];
                     }
                     else
                     {
-                        fieldLen = FieldLengths[i];
+                        fieldLen = fieldLengths[i];
                         break;
                     }
                 }
                 Debug.Assert(fieldLen >= 0);
-                return new TVTerms(OuterInstance, NumTerms[idx], FieldFlags[idx], PrefixLengths[idx], SuffixLengths[idx], TermFreqs[idx], PositionIndex[idx], Positions[idx], StartOffsets[idx], Lengths[idx], PayloadIndex[idx], PayloadBytes, new BytesRef(SuffixBytes.Bytes, SuffixBytes.Offset + fieldOff, fieldLen));
+                return new TVTerms(outerInstance, numTerms[idx], fieldFlags[idx], prefixLengths[idx], suffixLengths[idx], termFreqs[idx], positionIndex[idx], positions[idx], startOffsets[idx], lengths[idx], payloadIndex[idx], payloadBytes, new BytesRef(suffixBytes.Bytes, suffixBytes.Offset + fieldOff, fieldLen));
             }
 
             public override int Size
             {
-                get { return FieldNumOffs.Length; }
+                get { return fieldNumOffs.Length; }
             }
         }
 
         private class TVTerms : Terms
         {
-            private readonly CompressingTermVectorsReader OuterInstance;
+            private readonly CompressingTermVectorsReader outerInstance;
 
-            private readonly int NumTerms, Flags;
-            private readonly int[] PrefixLengths, SuffixLengths, TermFreqs, PositionIndex, Positions, StartOffsets, Lengths, PayloadIndex;
-            private readonly BytesRef TermBytes, PayloadBytes;
+            private readonly int numTerms, flags;
+            private readonly int[] prefixLengths, suffixLengths, termFreqs, positionIndex, positions, startOffsets, lengths, payloadIndex;
+            private readonly BytesRef termBytes, payloadBytes;
 
             internal TVTerms(CompressingTermVectorsReader outerInstance, int numTerms, int flags, int[] prefixLengths, int[] suffixLengths, int[] termFreqs, int[] positionIndex, int[] positions, int[] startOffsets, int[] lengths, int[] payloadIndex, BytesRef payloadBytes, BytesRef termBytes)
             {
-                this.OuterInstance = outerInstance;
-                this.NumTerms = numTerms;
-                this.Flags = flags;
-                this.PrefixLengths = prefixLengths;
-                this.SuffixLengths = suffixLengths;
-                this.TermFreqs = termFreqs;
-                this.PositionIndex = positionIndex;
-                this.Positions = positions;
-                this.StartOffsets = startOffsets;
-                this.Lengths = lengths;
-                this.PayloadIndex = payloadIndex;
-                this.PayloadBytes = payloadBytes;
-                this.TermBytes = termBytes;
+                this.outerInstance = outerInstance;
+                this.numTerms = numTerms;
+                this.flags = flags;
+                this.prefixLengths = prefixLengths;
+                this.suffixLengths = suffixLengths;
+                this.termFreqs = termFreqs;
+                this.positionIndex = positionIndex;
+                this.positions = positions;
+                this.startOffsets = startOffsets;
+                this.lengths = lengths;
+                this.payloadIndex = payloadIndex;
+                this.payloadBytes = payloadBytes;
+                this.termBytes = termBytes;
             }
 
             public override TermsEnum Iterator(TermsEnum reuse)
@@ -809,7 +809,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     termsEnum = new TVTermsEnum();
                 }
-                termsEnum.Reset(NumTerms, Flags, PrefixLengths, SuffixLengths, TermFreqs, PositionIndex, Positions, StartOffsets, Lengths, PayloadIndex, PayloadBytes, new ByteArrayDataInput((byte[])(Array)TermBytes.Bytes, TermBytes.Offset, TermBytes.Length));
+                termsEnum.Reset(numTerms, flags, prefixLengths, suffixLengths, termFreqs, positionIndex, positions, startOffsets, lengths, payloadIndex, payloadBytes, new ByteArrayDataInput((byte[])(Array)termBytes.Bytes, termBytes.Offset, termBytes.Length));
                 return termsEnum;
             }
 
@@ -823,7 +823,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override long Size
             {
-                get { return NumTerms; }
+                get { return numTerms; }
             }
 
             public override long SumTotalTermFreq
@@ -838,7 +838,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 get
                 {
-                    return NumTerms;
+                    return numTerms;
                 }
             }
 
@@ -857,79 +857,79 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override bool HasOffsets
             {
-                get { return (Flags & CompressingTermVectorsWriter.OFFSETS) != 0; }
+                get { return (flags & CompressingTermVectorsWriter.OFFSETS) != 0; }
             }
 
             public override bool HasPositions
             {
-                get { return (Flags & CompressingTermVectorsWriter.POSITIONS) != 0; }
+                get { return (flags & CompressingTermVectorsWriter.POSITIONS) != 0; }
             }
 
             public override bool HasPayloads
             {
-                get { return (Flags & CompressingTermVectorsWriter.PAYLOADS) != 0; }
+                get { return (flags & CompressingTermVectorsWriter.PAYLOADS) != 0; }
             }
         }
 
         private class TVTermsEnum : TermsEnum
         {
-            private int NumTerms, StartPos, Ord_Renamed;
-            private int[] PrefixLengths, SuffixLengths, TermFreqs, PositionIndex, Positions, StartOffsets, Lengths, PayloadIndex;
+            private int numTerms, startPos, ord;
+            private int[] prefixLengths, suffixLengths, termFreqs, positionIndex, positions, startOffsets, lengths, payloadIndex;
             private ByteArrayDataInput @in;
-            private BytesRef Payloads;
-            private readonly BytesRef Term_Renamed;
+            private BytesRef payloads;
+            private readonly BytesRef term;
 
             internal TVTermsEnum()
             {
-                Term_Renamed = new BytesRef(16);
+                term = new BytesRef(16);
             }
 
             internal virtual void Reset(int numTerms, int flags, int[] prefixLengths, int[] suffixLengths, int[] termFreqs, int[] positionIndex, int[] positions, int[] startOffsets, int[] lengths, int[] payloadIndex, BytesRef payloads, ByteArrayDataInput @in)
             {
-                this.NumTerms = numTerms;
-                this.PrefixLengths = prefixLengths;
-                this.SuffixLengths = suffixLengths;
-                this.TermFreqs = termFreqs;
-                this.PositionIndex = positionIndex;
-                this.Positions = positions;
-                this.StartOffsets = startOffsets;
-                this.Lengths = lengths;
-                this.PayloadIndex = payloadIndex;
-                this.Payloads = payloads;
+                this.numTerms = numTerms;
+                this.prefixLengths = prefixLengths;
+                this.suffixLengths = suffixLengths;
+                this.termFreqs = termFreqs;
+                this.positionIndex = positionIndex;
+                this.positions = positions;
+                this.startOffsets = startOffsets;
+                this.lengths = lengths;
+                this.payloadIndex = payloadIndex;
+                this.payloads = payloads;
                 this.@in = @in;
-                StartPos = @in.Position;
+                startPos = @in.Position;
                 Reset();
             }
 
             internal virtual void Reset()
             {
-                Term_Renamed.Length = 0;
-                @in.Position = StartPos;
-                Ord_Renamed = -1;
+                term.Length = 0;
+                @in.Position = startPos;
+                ord = -1;
             }
 
             public override BytesRef Next()
             {
-                if (Ord_Renamed == NumTerms - 1)
+                if (ord == numTerms - 1)
                 {
                     return null;
                 }
                 else
                 {
-                    Debug.Assert(Ord_Renamed < NumTerms);
-                    ++Ord_Renamed;
+                    Debug.Assert(ord < numTerms);
+                    ++ord;
                 }
 
                 // read term
-                Term_Renamed.Offset = 0;
-                Term_Renamed.Length = PrefixLengths[Ord_Renamed] + SuffixLengths[Ord_Renamed];
-                if (Term_Renamed.Length > Term_Renamed.Bytes.Length)
+                term.Offset = 0;
+                term.Length = prefixLengths[ord] + suffixLengths[ord];
+                if (term.Length > term.Bytes.Length)
                 {
-                    Term_Renamed.Bytes = ArrayUtil.Grow(Term_Renamed.Bytes, Term_Renamed.Length);
+                    term.Bytes = ArrayUtil.Grow(term.Bytes, term.Length);
                 }
-                @in.ReadBytes(Term_Renamed.Bytes, PrefixLengths[Ord_Renamed], SuffixLengths[Ord_Renamed]);
+                @in.ReadBytes(term.Bytes, prefixLengths[ord], suffixLengths[ord]);
 
-                return Term_Renamed;
+                return term;
             }
 
             public override IComparer<BytesRef> Comparator
@@ -942,7 +942,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override TermsEnum.SeekStatus SeekCeil(BytesRef text)
             {
-                if (Ord_Renamed < NumTerms && Ord_Renamed >= 0)
+                if (ord < numTerms && ord >= 0)
                 {
                     int cmp = Term.CompareTo(text);
                     if (cmp == 0)
@@ -981,7 +981,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override BytesRef Term
             {
-                get { return Term_Renamed; }
+                get { return term; }
             }
 
             public override long Ord
@@ -996,7 +996,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override long TotalTermFreq
             {
-                get { return TermFreqs[Ord_Renamed]; }
+                get { return termFreqs[ord]; }
             }
 
             public override sealed DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
@@ -1011,13 +1011,13 @@ namespace Lucene.Net.Codecs.Compressing
                     docsEnum = new TVDocsEnum();
                 }
 
-                docsEnum.Reset(liveDocs, TermFreqs[Ord_Renamed], PositionIndex[Ord_Renamed], Positions, StartOffsets, Lengths, Payloads, PayloadIndex);
+                docsEnum.Reset(liveDocs, termFreqs[ord], positionIndex[ord], positions, startOffsets, lengths, payloads, payloadIndex);
                 return docsEnum;
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
-                if (Positions == null && StartOffsets == null)
+                if (positions == null && startOffsets == null)
                 {
                     return null;
                 }
@@ -1028,46 +1028,46 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class TVDocsEnum : DocsAndPositionsEnum
         {
-            private IBits LiveDocs;
-            private int Doc = -1;
-            private int TermFreq;
-            private int PositionIndex;
-            private int[] Positions;
-            private int[] StartOffsets;
-            private int[] Lengths;
-            private readonly BytesRef Payload_Renamed;
-            private int[] PayloadIndex;
-            private int BasePayloadOffset;
+            private IBits liveDocs;
+            private int doc = -1;
+            private int termFreq;
+            private int positionIndex;
+            private int[] positions;
+            private int[] startOffsets;
+            private int[] lengths;
+            private readonly BytesRef payload;
+            private int[] payloadIndex;
+            private int basePayloadOffset;
             private int i;
 
             internal TVDocsEnum()
             {
-                Payload_Renamed = new BytesRef();
+                payload = new BytesRef();
             }
 
             public virtual void Reset(IBits liveDocs, int freq, int positionIndex, int[] positions, int[] startOffsets, int[] lengths, BytesRef payloads, int[] payloadIndex)
             {
-                this.LiveDocs = liveDocs;
-                this.TermFreq = freq;
-                this.PositionIndex = positionIndex;
-                this.Positions = positions;
-                this.StartOffsets = startOffsets;
-                this.Lengths = lengths;
-                this.BasePayloadOffset = payloads.Offset;
-                this.Payload_Renamed.Bytes = payloads.Bytes;
-                Payload_Renamed.Offset = Payload_Renamed.Length = 0;
-                this.PayloadIndex = payloadIndex;
+                this.liveDocs = liveDocs;
+                this.termFreq = freq;
+                this.positionIndex = positionIndex;
+                this.positions = positions;
+                this.startOffsets = startOffsets;
+                this.lengths = lengths;
+                this.basePayloadOffset = payloads.Offset;
+                this.payload.Bytes = payloads.Bytes;
+                payload.Offset = payload.Length = 0;
+                this.payloadIndex = payloadIndex;
 
-                Doc = i = -1;
+                doc = i = -1;
             }
 
             private void CheckDoc()
             {
-                if (Doc == NO_MORE_DOCS)
+                if (doc == NO_MORE_DOCS)
                 {
                     throw new Exception("DocsEnum exhausted");
                 }
-                else if (Doc == -1)
+                else if (doc == -1)
                 {
                     throw new Exception("DocsEnum not started");
                 }
@@ -1080,7 +1080,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     throw new Exception("Position enum not started");
                 }
-                else if (i >= TermFreq)
+                else if (i >= termFreq)
                 {
                     throw new Exception("Read past last position");
                 }
@@ -1088,30 +1088,30 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override int NextPosition()
             {
-                if (Doc != 0)
+                if (doc != 0)
                 {
                     throw new Exception();
                 }
-                else if (i >= TermFreq - 1)
+                else if (i >= termFreq - 1)
                 {
                     throw new Exception("Read past last position");
                 }
 
                 ++i;
 
-                if (PayloadIndex != null)
+                if (payloadIndex != null)
                 {
-                    Payload_Renamed.Offset = BasePayloadOffset + PayloadIndex[PositionIndex + i];
-                    Payload_Renamed.Length = PayloadIndex[PositionIndex + i + 1] - PayloadIndex[PositionIndex + i];
+                    payload.Offset = basePayloadOffset + payloadIndex[positionIndex + i];
+                    payload.Length = payloadIndex[positionIndex + i + 1] - payloadIndex[positionIndex + i];
                 }
 
-                if (Positions == null)
+                if (positions == null)
                 {
                     return -1;
                 }
                 else
                 {
-                    return Positions[PositionIndex + i];
+                    return positions[positionIndex + i];
                 }
             }
 
@@ -1120,13 +1120,13 @@ namespace Lucene.Net.Codecs.Compressing
                 get
                 {
                     CheckPosition();
-                    if (StartOffsets == null)
+                    if (startOffsets == null)
                     {
                         return -1;
                     }
                     else
                     {
-                        return StartOffsets[PositionIndex + i];
+                        return startOffsets[positionIndex + i];
                     }
                 }
             }
@@ -1136,13 +1136,13 @@ namespace Lucene.Net.Codecs.Compressing
                 get
                 {
                     CheckPosition();
-                    if (StartOffsets == null)
+                    if (startOffsets == null)
                     {
                         return -1;
                     }
                     else
                     {
-                        return StartOffsets[PositionIndex + i] + Lengths[PositionIndex + i];
+                        return startOffsets[positionIndex + i] + lengths[positionIndex + i];
                     }
                 }
             }
@@ -1152,13 +1152,13 @@ namespace Lucene.Net.Codecs.Compressing
                 get
                 {
                     CheckPosition();
-                    if (PayloadIndex == null || Payload_Renamed.Length == 0)
+                    if (payloadIndex == null || payload.Length == 0)
                     {
                         return null;
                     }
                     else
                     {
-                        return Payload_Renamed;
+                        return payload;
                     }
                 }
             }
@@ -1168,24 +1168,24 @@ namespace Lucene.Net.Codecs.Compressing
                 get
                 {
                     CheckDoc();
-                    return TermFreq;
+                    return termFreq;
                 }
             }
 
             public override int DocID
             {
-                get { return Doc; }
+                get { return doc; }
             }
 
             public override int NextDoc()
             {
-                if (Doc == -1 && (LiveDocs == null || LiveDocs.Get(0)))
+                if (doc == -1 && (liveDocs == null || liveDocs.Get(0)))
                 {
-                    return (Doc = 0);
+                    return (doc = 0);
                 }
                 else
                 {
-                    return (Doc = NO_MORE_DOCS);
+                    return (doc = NO_MORE_DOCS);
                 }
             }
 
