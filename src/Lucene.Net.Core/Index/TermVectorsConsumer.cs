@@ -32,30 +32,30 @@ namespace Lucene.Net.Index
 
     internal sealed class TermVectorsConsumer : TermsHashConsumer
     {
-        internal TermVectorsWriter Writer;
-        internal readonly DocumentsWriterPerThread DocWriter;
-        internal readonly DocumentsWriterPerThread.DocState DocState;
-        internal readonly BytesRef FlushTerm = new BytesRef();
+        internal TermVectorsWriter writer;
+        internal readonly DocumentsWriterPerThread docWriter;
+        internal readonly DocumentsWriterPerThread.DocState docState;
+        internal readonly BytesRef flushTerm = new BytesRef();
 
         // Used by perField when serializing the term vectors
-        internal readonly ByteSliceReader VectorSliceReaderPos = new ByteSliceReader();
+        internal readonly ByteSliceReader vectorSliceReaderPos = new ByteSliceReader();
 
-        internal readonly ByteSliceReader VectorSliceReaderOff = new ByteSliceReader();
-        internal bool HasVectors;
-        internal int NumVectorFields;
-        internal int LastDocID;
-        private TermVectorsConsumerPerField[] PerFields = new TermVectorsConsumerPerField[1];
+        internal readonly ByteSliceReader vectorSliceReaderOff = new ByteSliceReader();
+        internal bool hasVectors;
+        internal int numVectorFields;
+        internal int lastDocID;
+        private TermVectorsConsumerPerField[] perFields = new TermVectorsConsumerPerField[1];
 
         public TermVectorsConsumer(DocumentsWriterPerThread docWriter)
         {
-            this.DocWriter = docWriter;
-            DocState = docWriter.docState;
+            this.docWriter = docWriter;
+            docState = docWriter.docState;
         }
 
         // LUCENENE specific - original was internal, but FreqProxTermsWriter requires public (little point, since both are internal classes)
         public override void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state)
         {
-            if (Writer != null)
+            if (writer != null)
             {
                 int numDocs = state.SegmentInfo.DocCount;
                 Debug.Assert(numDocs > 0);
@@ -64,14 +64,14 @@ namespace Lucene.Net.Index
                 {
                     Fill(numDocs);
                     Debug.Assert(state.SegmentInfo != null);
-                    Writer.Finish(state.FieldInfos, numDocs);
+                    writer.Finish(state.FieldInfos, numDocs);
                 }
                 finally
                 {
-                    IOUtils.Close(Writer);
-                    Writer = null;
-                    LastDocID = 0;
-                    HasVectors = false;
+                    IOUtils.Close(writer);
+                    writer = null;
+                    lastDocID = 0;
+                    hasVectors = false;
                 }
             }
 
@@ -89,72 +89,72 @@ namespace Lucene.Net.Index
         /// </summary>
         internal void Fill(int docID)
         {
-            while (LastDocID < docID)
+            while (lastDocID < docID)
             {
-                Writer.StartDocument(0);
-                Writer.FinishDocument();
-                LastDocID++;
+                writer.StartDocument(0);
+                writer.FinishDocument();
+                lastDocID++;
             }
         }
 
         private void InitTermVectorsWriter()
         {
-            if (Writer == null)
+            if (writer == null)
             {
-                IOContext context = new IOContext(new FlushInfo(DocWriter.NumDocsInRAM, DocWriter.BytesUsed));
-                Writer = DocWriter.codec.TermVectorsFormat.VectorsWriter(DocWriter.directory, DocWriter.SegmentInfo, context);
-                LastDocID = 0;
+                IOContext context = new IOContext(new FlushInfo(docWriter.NumDocsInRAM, docWriter.BytesUsed));
+                writer = docWriter.codec.TermVectorsFormat.VectorsWriter(docWriter.directory, docWriter.SegmentInfo, context);
+                lastDocID = 0;
             }
         }
 
         internal override void FinishDocument(TermsHash termsHash)
         {
-            Debug.Assert(DocWriter.TestPoint("TermVectorsTermsWriter.finishDocument start"));
+            Debug.Assert(docWriter.TestPoint("TermVectorsTermsWriter.finishDocument start"));
 
-            if (!HasVectors)
+            if (!hasVectors)
             {
                 return;
             }
 
             InitTermVectorsWriter();
 
-            Fill(DocState.docID);
+            Fill(docState.docID);
 
             // Append term vectors to the real outputs:
-            Writer.StartDocument(NumVectorFields);
-            for (int i = 0; i < NumVectorFields; i++)
+            writer.StartDocument(numVectorFields);
+            for (int i = 0; i < numVectorFields; i++)
             {
-                PerFields[i].FinishDocument();
+                perFields[i].FinishDocument();
             }
-            Writer.FinishDocument();
+            writer.FinishDocument();
 
-            Debug.Assert(LastDocID == DocState.docID, "lastDocID=" + LastDocID + " docState.docID=" + DocState.docID);
+            Debug.Assert(lastDocID == docState.docID, "lastDocID=" + lastDocID + " docState.docID=" + docState.docID);
 
-            LastDocID++;
+            lastDocID++;
 
             termsHash.Reset();
             Reset();
-            Debug.Assert(DocWriter.TestPoint("TermVectorsTermsWriter.finishDocument end"));
+            Debug.Assert(docWriter.TestPoint("TermVectorsTermsWriter.finishDocument end"));
         }
 
         public override void Abort()
         {
-            HasVectors = false;
+            hasVectors = false;
 
-            if (Writer != null)
+            if (writer != null)
             {
-                Writer.Abort();
-                Writer = null;
+                writer.Abort();
+                writer = null;
             }
 
-            LastDocID = 0;
+            lastDocID = 0;
             Reset();
         }
 
         internal void Reset()
         {
-            Arrays.Fill(PerFields, null); // don't hang onto stuff from previous doc
-            NumVectorFields = 0;
+            Arrays.Fill(perFields, null); // don't hang onto stuff from previous doc
+            numVectorFields = 0;
         }
 
         public override TermsHashConsumerPerField AddField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo)
@@ -164,15 +164,15 @@ namespace Lucene.Net.Index
 
         internal void AddFieldToFlush(TermVectorsConsumerPerField fieldToFlush)
         {
-            if (NumVectorFields == PerFields.Length)
+            if (numVectorFields == perFields.Length)
             {
-                int newSize = ArrayUtil.Oversize(NumVectorFields + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
+                int newSize = ArrayUtil.Oversize(numVectorFields + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
                 TermVectorsConsumerPerField[] newArray = new TermVectorsConsumerPerField[newSize];
-                Array.Copy(PerFields, 0, newArray, 0, NumVectorFields);
-                PerFields = newArray;
+                Array.Copy(perFields, 0, newArray, 0, numVectorFields);
+                perFields = newArray;
             }
 
-            PerFields[NumVectorFields++] = fieldToFlush;
+            perFields[numVectorFields++] = fieldToFlush;
         }
 
         internal override void StartDocument()

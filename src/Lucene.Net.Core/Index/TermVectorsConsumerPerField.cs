@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
 
             if (DoVectors)
             {
-                TermsWriter.HasVectors = true;
+                TermsWriter.hasVectors = true;
                 if (TermsHashPerField.bytesHash.Size != 0)
                 {
                     // Only necessary if previous doc hit a
@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
 
             int numPostings = TermsHashPerField.bytesHash.Size;
 
-            BytesRef flushTerm = TermsWriter.FlushTerm;
+            BytesRef flushTerm = TermsWriter.flushTerm;
 
             Debug.Assert(numPostings >= 0);
 
@@ -187,14 +187,14 @@ namespace Lucene.Net.Index
             Debug.Assert(TermsWriter.VectorFieldsInOrder(FieldInfo));
 
             TermVectorsPostingsArray postings = (TermVectorsPostingsArray)TermsHashPerField.postingsArray;
-            TermVectorsWriter tv = TermsWriter.Writer;
+            TermVectorsWriter tv = TermsWriter.writer;
 
             int[] termIDs = TermsHashPerField.SortPostings(tv.Comparator);
 
             tv.StartField(FieldInfo, numPostings, DoVectorPositions, DoVectorOffsets, HasPayloads);
 
-            ByteSliceReader posReader = DoVectorPositions ? TermsWriter.VectorSliceReaderPos : null;
-            ByteSliceReader offReader = DoVectorOffsets ? TermsWriter.VectorSliceReaderOff : null;
+            ByteSliceReader posReader = DoVectorPositions ? TermsWriter.vectorSliceReaderPos : null;
+            ByteSliceReader offReader = DoVectorOffsets ? TermsWriter.vectorSliceReaderOff : null;
 
             ByteBlockPool termBytePool = TermsHashPerField.termBytePool;
 
