@@ -82,35 +82,35 @@ namespace Lucene.Net.Util
 
         private class DocIdBitSetIterator : DocIdSetIterator
         {
-            private int DocId;
+            private int docId;
             private readonly BitArray bitSet;
 
             internal DocIdBitSetIterator(BitArray bitSet)
             {
                 this.bitSet = bitSet;
-                this.DocId = -1;
+                this.docId = -1;
             }
 
             public override int DocID
             {
-                get { return DocId; }
+                get { return docId; }
             }
 
             public override int NextDoc()
             {
                 // (docId + 1) on next line requires -1 initial value for docNr:
-                var d = bitSet.NextSetBit(DocId + 1);
+                var d = bitSet.NextSetBit(docId + 1);
                 // -1 returned by BitSet.nextSetBit() when exhausted
-                DocId = d == -1 ? NO_MORE_DOCS : d;
-                return DocId;
+                docId = d == -1 ? NO_MORE_DOCS : d;
+                return docId;
             }
 
             public override int Advance(int target)
             {
                 int d = bitSet.NextSetBit(target);
                 // -1 returned by BitSet.nextSetBit() when exhausted
-                DocId = d == -1 ? NO_MORE_DOCS : d;
-                return DocId;
+                docId = d == -1 ? NO_MORE_DOCS : d;
+                return docId;
             }
 
             public override long Cost()
