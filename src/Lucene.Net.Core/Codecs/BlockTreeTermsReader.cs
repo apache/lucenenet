@@ -84,7 +84,7 @@ namespace Lucene.Net.Codecs
     {
         private void InitializeInstanceFields()
         {
-            NO_OUTPUT = FstOutputs.NoOutput;
+            NO_OUTPUT = fstOutputs.NoOutput;
         }
 
         // Open input to the main terms dict file (_X.tib)
@@ -540,7 +540,7 @@ namespace Lucene.Net.Codecs
             }
         }
 
-        internal readonly Outputs<BytesRef> FstOutputs = ByteSequenceOutputs.Singleton;
+        internal readonly Outputs<BytesRef> fstOutputs = ByteSequenceOutputs.Singleton;
         internal BytesRef NO_OUTPUT;
 
         /// <summary>
@@ -1144,14 +1144,14 @@ namespace Lucene.Net.Codecs
                         // passed to findTargetArc
                         arc = outerInstance.index.FindTargetArc(target, arc, GetArc(1 + idx), fstReader);
                         Debug.Assert(arc != null);
-                        output = outerInstance.outerInstance.FstOutputs.Add(output, arc.Output);
+                        output = outerInstance.outerInstance.fstOutputs.Add(output, arc.Output);
                         idx++;
                     }
 
                     f.arc = arc;
                     f.outputPrefix = output;
                     Debug.Assert(arc.IsFinal);
-                    f.Load(outerInstance.outerInstance.FstOutputs.Add(output, arc.NextFinalOutput));
+                    f.Load(outerInstance.outerInstance.fstOutputs.Add(output, arc.NextFinalOutput));
                     return f;
                 }
 
@@ -1891,7 +1891,7 @@ namespace Lucene.Net.Codecs
                             Debug.Assert(arc.Label == (target.Bytes[target.Offset + targetUpto] & 0xFF), "arc.label=" + (char)arc.Label + " targetLabel=" + (char)(target.Bytes[target.Offset + targetUpto] & 0xFF));
                             if (arc.Output != outerInstance.outerInstance.NO_OUTPUT)
                             {
-                                output = outerInstance.outerInstance.FstOutputs.Add(output, arc.Output);
+                                output = outerInstance.outerInstance.fstOutputs.Add(output, arc.Output);
                             }
                             if (arc.IsFinal)
                             {
@@ -1993,7 +1993,7 @@ namespace Lucene.Net.Codecs
 
                         //term.length = 0;
                         targetUpto = 0;
-                        currentFrame = PushFrame(arc, outerInstance.outerInstance.FstOutputs.Add(output, arc.NextFinalOutput), 0);
+                        currentFrame = PushFrame(arc, outerInstance.outerInstance.fstOutputs.Add(output, arc.NextFinalOutput), 0);
                     }
 
                     // if (DEBUG) {
@@ -2056,7 +2056,7 @@ namespace Lucene.Net.Codecs
                             Debug.Assert(arc.Output != null);
                             if (arc.Output != outerInstance.outerInstance.NO_OUTPUT)
                             {
-                                output = outerInstance.outerInstance.FstOutputs.Add(output, arc.Output);
+                                output = outerInstance.outerInstance.fstOutputs.Add(output, arc.Output);
                             }
 
                             // if (DEBUG) {
@@ -2067,7 +2067,7 @@ namespace Lucene.Net.Codecs
                             if (arc.IsFinal)
                             {
                                 //if (DEBUG) System.out.println("    arc is final!");
-                                currentFrame = PushFrame(arc, outerInstance.outerInstance.FstOutputs.Add(output, arc.NextFinalOutput), targetUpto);
+                                currentFrame = PushFrame(arc, outerInstance.outerInstance.fstOutputs.Add(output, arc.NextFinalOutput), targetUpto);
                                 //if (DEBUG) System.out.println("    curFrame.ord=" + currentFrame.ord + " hasTerms=" + currentFrame.hasTerms);
                             }
                         }
@@ -2182,7 +2182,7 @@ namespace Lucene.Net.Codecs
                             // reverse vLong byte order)
                             if (arc.Output != outerInstance.outerInstance.NO_OUTPUT)
                             {
-                                output = outerInstance.outerInstance.FstOutputs.Add(output, arc.Output);
+                                output = outerInstance.outerInstance.fstOutputs.Add(output, arc.Output);
                             }
                             if (arc.IsFinal)
                             {
@@ -2278,7 +2278,7 @@ namespace Lucene.Net.Codecs
 
                         //term.length = 0;
                         targetUpto = 0;
-                        currentFrame = PushFrame(arc, outerInstance.outerInstance.FstOutputs.Add(output, arc.NextFinalOutput), 0);
+                        currentFrame = PushFrame(arc, outerInstance.outerInstance.fstOutputs.Add(output, arc.NextFinalOutput), 0);
                     }
 
                     //if (DEBUG) {
@@ -2343,7 +2343,7 @@ namespace Lucene.Net.Codecs
                             Debug.Assert(arc.Output != null);
                             if (arc.Output != outerInstance.outerInstance.NO_OUTPUT)
                             {
-                                output = outerInstance.outerInstance.FstOutputs.Add(output, arc.Output);
+                                output = outerInstance.outerInstance.fstOutputs.Add(output, arc.Output);
                             }
 
                             //if (DEBUG) {
@@ -2354,7 +2354,7 @@ namespace Lucene.Net.Codecs
                             if (arc.IsFinal)
                             {
                                 //if (DEBUG) System.out.println("    arc is final!");
-                                currentFrame = PushFrame(arc, outerInstance.outerInstance.FstOutputs.Add(output, arc.NextFinalOutput), targetUpto);
+                                currentFrame = PushFrame(arc, outerInstance.outerInstance.fstOutputs.Add(output, arc.NextFinalOutput), targetUpto);
                                 //if (DEBUG) System.out.println("    curFrame.ord=" + currentFrame.ord + " hasTerms=" + currentFrame.hasTerms);
                             }
                         }
