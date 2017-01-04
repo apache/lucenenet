@@ -51,14 +51,14 @@ namespace Lucene.Net.Index
         // SegmentReaders:
         private readonly AtomicInteger @ref = new AtomicInteger(1);
 
-        internal readonly FieldsProducer Fields;
-        internal readonly DocValuesProducer NormsProducer;
+        internal readonly FieldsProducer fields;
+        internal readonly DocValuesProducer normsProducer;
 
-        internal readonly int TermsIndexDivisor;
+        internal readonly int termsIndexDivisor;
 
-        internal readonly StoredFieldsReader FieldsReaderOrig;
-        internal readonly TermVectorsReader TermVectorsReaderOrig;
-        internal readonly CompoundFileDirectory CfsReader;
+        internal readonly StoredFieldsReader fieldsReaderOrig;
+        internal readonly TermVectorsReader termVectorsReaderOrig;
+        internal readonly CompoundFileDirectory cfsReader;
 
         // TODO: make a single thread local w/ a
         // Thingy class holding fieldsReader, termVectorsReader,
@@ -68,16 +68,16 @@ namespace Lucene.Net.Index
 
         private class AnonymousFieldsReaderLocal : DisposableThreadLocal<StoredFieldsReader>
         {
-            private readonly SegmentCoreReaders OuterInstance;
+            private readonly SegmentCoreReaders outerInstance;
 
             public AnonymousFieldsReaderLocal(SegmentCoreReaders outerInstance)
             {
-                OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override StoredFieldsReader InitialValue()
             {
-                return (StoredFieldsReader)OuterInstance.FieldsReaderOrig.Clone();
+                return (StoredFieldsReader)outerInstance.fieldsReaderOrig.Clone();
             }
         }
 
@@ -85,24 +85,24 @@ namespace Lucene.Net.Index
 
         private class AnonymousTermVectorsLocal : DisposableThreadLocal<TermVectorsReader>
         {
-            private readonly SegmentCoreReaders OuterInstance;
+            private readonly SegmentCoreReaders outerInstance;
 
             public AnonymousTermVectorsLocal(SegmentCoreReaders outerInstance)
             {
-                OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override TermVectorsReader InitialValue()
             {
-                return (OuterInstance.TermVectorsReaderOrig == null) ? null : (TermVectorsReader)OuterInstance.TermVectorsReaderOrig.Clone();
+                return (outerInstance.termVectorsReaderOrig == null) ? null : (TermVectorsReader)outerInstance.termVectorsReaderOrig.Clone();
             }
         }
 
-        internal readonly DisposableThreadLocal<IDictionary<string, object>> normsLocal = new IDisposableThreadLocalAnonymousInnerClassHelper3();
+        internal readonly DisposableThreadLocal<IDictionary<string, object>> normsLocal = new DisposableThreadLocalAnonymousInnerClassHelper3();
 
-        private class IDisposableThreadLocalAnonymousInnerClassHelper3 : DisposableThreadLocal<IDictionary<string, object>>
+        private class DisposableThreadLocalAnonymousInnerClassHelper3 : DisposableThreadLocal<IDictionary<string, object>>
         {
-            public IDisposableThreadLocalAnonymousInnerClassHelper3()
+            public DisposableThreadLocalAnonymousInnerClassHelper3()
             {
             }
 
@@ -133,34 +133,34 @@ namespace Lucene.Net.Index
             {
                 if (si.Info.UseCompoundFile)
                 {
-                    cfsDir = CfsReader = new CompoundFileDirectory(dir, IndexFileNames.SegmentFileName(si.Info.Name, "", IndexFileNames.COMPOUND_FILE_EXTENSION), context, false);
+                    cfsDir = cfsReader = new CompoundFileDirectory(dir, IndexFileNames.SegmentFileName(si.Info.Name, "", IndexFileNames.COMPOUND_FILE_EXTENSION), context, false);
                 }
                 else
                 {
-                    CfsReader = null;
+                    cfsReader = null;
                     cfsDir = dir;
                 }
 
                 FieldInfos fieldInfos = owner.FieldInfos;
 
-                this.TermsIndexDivisor = termsIndexDivisor;
+                this.termsIndexDivisor = termsIndexDivisor;
                 PostingsFormat format = codec.PostingsFormat;
                 SegmentReadState segmentReadState = new SegmentReadState(cfsDir, si.Info, fieldInfos, context, termsIndexDivisor);
                 // Ask codec for its Fields
-                Fields = format.FieldsProducer(segmentReadState);
-                Debug.Assert(Fields != null);
+                fields = format.FieldsProducer(segmentReadState);
+                Debug.Assert(fields != null);
                 // ask codec for its Norms:
                 // TODO: since we don't write any norms file if there are no norms,
                 // kinda jaky to assume the codec handles the case of no norms file at all gracefully?!
 
                 if (fieldInfos.HasNorms)
                 {
-                    NormsProducer = codec.NormsFormat.NormsProducer(segmentReadState);
-                    Debug.Assert(NormsProducer != null);
+                    normsProducer = codec.NormsFormat.NormsProducer(segmentReadState);
+                    Debug.Assert(normsProducer != null);
                 }
                 else
                 {
-                    NormsProducer = null;
+                    normsProducer = null;
                 }
 
                 StoredFieldsFormat sff = si.Info.Codec.StoredFieldsFormat;
@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
                 try
                 {
 #endif
-                    FieldsReaderOrig = sff.FieldsReader(cfsDir, si.Info, fieldInfos, context);
+                    fieldsReaderOrig = sff.FieldsReader(cfsDir, si.Info, fieldInfos, context);
 #if !NETSTANDARD
                 }
                 catch (System.AccessViolationException ave)
@@ -180,11 +180,11 @@ namespace Lucene.Net.Index
 
                 if (fieldInfos.HasVectors) // open term vector files only as needed
                 {
-                    TermVectorsReaderOrig = si.Info.Codec.TermVectorsFormat.VectorsReader(cfsDir, si.Info, fieldInfos, context);
+                    termVectorsReaderOrig = si.Info.Codec.TermVectorsFormat.VectorsReader(cfsDir, si.Info, fieldInfos, context);
                 }
                 else
                 {
-                    TermVectorsReaderOrig = null;
+                    termVectorsReaderOrig = null;
                 }
 
                 success = true;
@@ -221,7 +221,7 @@ namespace Lucene.Net.Index
 
         internal NumericDocValues GetNormValues(FieldInfo fi)
         {
-            Debug.Assert(NormsProducer != null);
+            Debug.Assert(normsProducer != null);
 
             IDictionary<string, object> normFields = normsLocal.Get();
 
@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
             var norms = ret as NumericDocValues;
             if (norms == null)
             {
-                norms = NormsProducer.GetNumeric(fi);
+                norms = normsProducer.GetNumeric(fi);
                 normFields[fi.Name] = norms;
             }
 
@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
                 Exception th = null;
                 try
                 {
-                    IOUtils.Close(termVectorsLocal, fieldsReaderLocal, normsLocal, Fields, TermVectorsReaderOrig, FieldsReaderOrig, CfsReader, NormsProducer);
+                    IOUtils.Close(termVectorsLocal, fieldsReaderLocal, normsLocal, fields, termVectorsReaderOrig, fieldsReaderOrig, cfsReader, normsProducer);
                 }
                 catch (Exception throwable)
                 {
@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
         /// Returns approximate RAM bytes used </summary>
         public long RamBytesUsed()
         {
-            return ((NormsProducer != null) ? NormsProducer.RamBytesUsed() : 0) + ((Fields != null) ? Fields.RamBytesUsed() : 0) + ((FieldsReaderOrig != null) ? FieldsReaderOrig.RamBytesUsed() : 0) + ((TermVectorsReaderOrig != null) ? TermVectorsReaderOrig.RamBytesUsed() : 0);
+            return ((normsProducer != null) ? normsProducer.RamBytesUsed() : 0) + ((fields != null) ? fields.RamBytesUsed() : 0) + ((fieldsReaderOrig != null) ? fieldsReaderOrig.RamBytesUsed() : 0) + ((termVectorsReaderOrig != null) ? termVectorsReaderOrig.RamBytesUsed() : 0);
         }
     }
 }

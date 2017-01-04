@@ -206,7 +206,7 @@ namespace Lucene.Net.Index
         // initialize the per-field DocValuesProducer
         private void InitDocValuesProducers(Codec codec)
         {
-            Directory dir = core.CfsReader != null ? core.CfsReader : si.Info.Dir;
+            Directory dir = core.cfsReader != null ? core.cfsReader : si.Info.Dir;
             DocValuesFormat dvFormat = codec.DocValuesFormat;
             IDictionary<long?, IList<FieldInfo>> genInfos = GetGenInfos();
 
@@ -352,7 +352,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return core.Fields;
+                return core.fields;
             }
         }
 
@@ -479,7 +479,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return core.TermsIndexDivisor;
+                return core.termsIndexDivisor;
             }
         }
 
@@ -732,15 +732,15 @@ namespace Lucene.Net.Index
             }
 
             // terms/postings
-            if (core.Fields != null)
+            if (core.fields != null)
             {
-                core.Fields.CheckIntegrity();
+                core.fields.CheckIntegrity();
             }
 
             // norms
-            if (core.NormsProducer != null)
+            if (core.normsProducer != null)
             {
-                core.NormsProducer.CheckIntegrity();
+                core.normsProducer.CheckIntegrity();
             }
 
             // docvalues
