@@ -306,7 +306,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        Abort(FilesToDelete);
+                        Abort(filesToDelete);
                     }
                 }
             }
@@ -320,7 +320,7 @@ namespace Lucene.Net.Index
             {
                 if (!success)
                 {
-                    Abort(FilesToDelete);
+                    Abort(filesToDelete);
                 }
             }
             FinishDocument(delTerm);
@@ -364,7 +364,7 @@ namespace Lucene.Net.Index
                             }
                             else
                             {
-                                Abort(FilesToDelete);
+                                Abort(filesToDelete);
                             }
                         }
                     }
@@ -378,7 +378,7 @@ namespace Lucene.Net.Index
                     {
                         if (!success)
                         {
-                            Abort(FilesToDelete);
+                            Abort(filesToDelete);
                         }
                     }
 
@@ -594,16 +594,16 @@ namespace Lucene.Net.Index
             {
                 if (!success)
                 {
-                    Abort(FilesToDelete);
+                    Abort(filesToDelete);
                 }
             }
         }
 
-        private readonly HashSet<string> FilesToDelete = new HashSet<string>();
+        private readonly HashSet<string> filesToDelete = new HashSet<string>();
 
         public virtual ISet<string> PendingFilesToDelete
         {
-            get { return FilesToDelete; }
+            get { return filesToDelete; }
         }
 
         /// <summary>
@@ -625,7 +625,7 @@ namespace Lucene.Net.Index
             {
                 if (indexWriterConfig.UseCompoundFile)
                 {
-                    CollectionsHelper.AddAll(FilesToDelete, IndexWriter.CreateCompoundFile(infoStream, directory, CheckAbort.NONE, newSegment.Info, context));
+                    CollectionsHelper.AddAll(filesToDelete, IndexWriter.CreateCompoundFile(infoStream, directory, CheckAbort.NONE, newSegment.Info, context));
                     newSegment.Info.UseCompoundFile = true;
                 }
 
