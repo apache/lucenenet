@@ -33,64 +33,64 @@ namespace Lucene.Net.Codecs.Lucene3x
     [Obsolete("(4.0)")]
     internal sealed class TermBuffer
     {
-        private string Field;
-        private Term Term; // cached
+        private string field;
+        private Term term; // cached
 
-        private BytesRef Bytes = new BytesRef(10);
+        private BytesRef bytes = new BytesRef(10);
 
         // Cannot be -1 since (strangely) we write that
         // fieldNumber into index for first indexed term:
-        private int CurrentFieldNumber = -2;
+        private int currentFieldNumber = -2;
 
-        private static readonly IComparer<BytesRef> Utf8AsUTF16Comparator = BytesRef.UTF8SortedAsUTF16Comparer;
+        private static readonly IComparer<BytesRef> utf8AsUTF16Comparator = BytesRef.UTF8SortedAsUTF16Comparer;
 
-        internal int NewSuffixStart; // only valid right after .read is called
+        internal int newSuffixStart; // only valid right after .read is called
 
         public int CompareTo(TermBuffer other)
         {
-            if (Field == other.Field) // fields are interned
+            if (field == other.field) // fields are interned
             // (only by PreFlex codec)
             {
-                return Utf8AsUTF16Comparator.Compare(Bytes, other.Bytes);
+                return utf8AsUTF16Comparator.Compare(bytes, other.bytes);
             }
             else
             {
-                return Field.CompareTo(other.Field);
+                return field.CompareTo(other.field);
             }
         }
 
         public void Read(IndexInput input, FieldInfos fieldInfos)
         {
-            this.Term = null; // invalidate cache
-            NewSuffixStart = input.ReadVInt();
+            this.term = null; // invalidate cache
+            newSuffixStart = input.ReadVInt();
             int length = input.ReadVInt();
-            int totalLength = NewSuffixStart + length;
+            int totalLength = newSuffixStart + length;
             Debug.Assert(totalLength <= ByteBlockPool.BYTE_BLOCK_SIZE - 2, "termLength=" + totalLength + ",resource=" + input);
-            if (Bytes.Bytes.Length < totalLength)
+            if (bytes.Bytes.Length < totalLength)
             {
-                Bytes.Grow(totalLength);
+                bytes.Grow(totalLength);
             }
-            Bytes.Length = totalLength;
-            input.ReadBytes(Bytes.Bytes, NewSuffixStart, length);
+            bytes.Length = totalLength;
+            input.ReadBytes(bytes.Bytes, newSuffixStart, length);
             int fieldNumber = input.ReadVInt();
-            if (fieldNumber != CurrentFieldNumber)
+            if (fieldNumber != currentFieldNumber)
             {
-                CurrentFieldNumber = fieldNumber;
+                currentFieldNumber = fieldNumber;
                 // NOTE: too much sneakiness here, seriously this is a negative vint?!
-                if (CurrentFieldNumber == -1)
+                if (currentFieldNumber == -1)
                 {
-                    Field = "";
+                    field = "";
                 }
                 else
                 {
-                    Debug.Assert(fieldInfos.FieldInfo(CurrentFieldNumber) != null, CurrentFieldNumber.ToString());
+                    Debug.Assert(fieldInfos.FieldInfo(currentFieldNumber) != null, currentFieldNumber.ToString());
                     
-                    Field = StringHelper.Intern(fieldInfos.FieldInfo(CurrentFieldNumber).Name);
+                    field = StringHelper.Intern(fieldInfos.FieldInfo(currentFieldNumber).Name);
                 }
             }
             else
             {
-                Debug.Assert(Field.Equals(fieldInfos.FieldInfo(fieldNumber).Name), "currentFieldNumber=" + CurrentFieldNumber + " field=" + Field + " vs " + fieldInfos.FieldInfo(fieldNumber) == null ? "null" : fieldInfos.FieldInfo(fieldNumber).Name);
+                Debug.Assert(field.Equals(fieldInfos.FieldInfo(fieldNumber).Name), "currentFieldNumber=" + currentFieldNumber + " field=" + field + " vs " + fieldInfos.FieldInfo(fieldNumber) == null ? "null" : fieldInfos.FieldInfo(fieldNumber).Name);
             }
         }
 
@@ -101,38 +101,38 @@ namespace Lucene.Net.Codecs.Lucene3x
                 Reset();
                 return;
             }
-            Bytes.CopyBytes(term.Bytes);
-            Field = StringHelper.Intern(term.Field);
+            bytes.CopyBytes(term.Bytes);
+            field = StringHelper.Intern(term.Field);
 
-            CurrentFieldNumber = -1;
-            this.Term = term;
+            currentFieldNumber = -1;
+            this.term = term;
         }
 
         public void Set(TermBuffer other)
         {
-            Field = other.Field;
-            CurrentFieldNumber = other.CurrentFieldNumber;
+            field = other.field;
+            currentFieldNumber = other.currentFieldNumber;
             // dangerous to copy Term over, since the underlying
             // BytesRef could subsequently be modified:
-            Term = null;
-            Bytes.CopyBytes(other.Bytes);
+            term = null;
+            bytes.CopyBytes(other.bytes);
         }
 
         public void Reset()
         {
-            Field = null;
-            Term = null;
-            CurrentFieldNumber = -1;
+            field = null;
+            term = null;
+            currentFieldNumber = -1;
         }
 
         public Term ToTerm()
         {
-            if (Field == null) // unset
+            if (field == null) // unset
             {
                 return null;
             }
 
-            return Term ?? (Term = new Term(Field, BytesRef.DeepCopyOf(Bytes)));
+            return term ?? (term = new Term(field, BytesRef.DeepCopyOf(bytes)));
         }
 
         public object Clone()
@@ -145,7 +145,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             catch (InvalidOperationException e)
             {
             }
-            clone.Bytes = BytesRef.DeepCopyOf(Bytes);
+            clone.bytes = BytesRef.DeepCopyOf(bytes);
             return clone;
         }
     }

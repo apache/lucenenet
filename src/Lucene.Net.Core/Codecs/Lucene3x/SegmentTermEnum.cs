@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
 
             termBuffer.Read(input, fieldInfos);
-            newSuffixStart = termBuffer.NewSuffixStart;
+            newSuffixStart = termBuffer.newSuffixStart;
 
             termInfo.DocFreq = input.ReadVInt(); // read doc freq
             termInfo.FreqPointer += input.ReadVLong(); // read freq pointer
