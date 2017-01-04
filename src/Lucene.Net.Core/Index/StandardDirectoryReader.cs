@@ -385,7 +385,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (directory != commit.Directory)
+                if (m_directory != commit.Directory)
                 {
                     throw new System.IO.IOException("the specified commit does not match the specified Directory");
                 }
@@ -400,7 +400,7 @@ namespace Lucene.Net.Index
 
         private DirectoryReader DoOpenFromCommit(IndexCommit commit)
         {
-            return (DirectoryReader)new FindSegmentsFileAnonymousInnerClassHelper2(this, directory).Run(commit);
+            return (DirectoryReader)new FindSegmentsFileAnonymousInnerClassHelper2(this, m_directory).Run(commit);
         }
 
         private class FindSegmentsFileAnonymousInnerClassHelper2 : SegmentInfos.FindSegmentsFile
@@ -416,14 +416,14 @@ namespace Lucene.Net.Index
             protected internal override object DoBody(string segmentFileName)
             {
                 SegmentInfos infos = new SegmentInfos();
-                infos.Read(outerInstance.directory, segmentFileName);
+                infos.Read(outerInstance.m_directory, segmentFileName);
                 return outerInstance.DoOpenIfChanged(infos);
             }
         }
 
         internal DirectoryReader DoOpenIfChanged(SegmentInfos infos)
         {
-            return StandardDirectoryReader.Open(directory, infos, GetSequentialSubReaders().OfType<AtomicReader>().ToList(), termInfosIndexDivisor);
+            return StandardDirectoryReader.Open(m_directory, infos, GetSequentialSubReaders().OfType<AtomicReader>().ToList(), termInfosIndexDivisor);
         }
 
         public override long Version
@@ -448,7 +448,7 @@ namespace Lucene.Net.Index
                     // yet commit), then the reader will still see itself as
                     // current:
                     SegmentInfos sis = new SegmentInfos();
-                    sis.Read(directory);
+                    sis.Read(m_directory);
 
                     // we loaded SegmentInfos from the directory
                     return sis.Version == segmentInfos.Version;
@@ -504,7 +504,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return new ReaderCommit(segmentInfos, directory);
+                return new ReaderCommit(segmentInfos, m_directory);
             }
         }
 
