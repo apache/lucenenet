@@ -199,7 +199,7 @@ namespace Lucene.Net.Util.Automaton
         {
             get
             {
-                return Singleton != null;
+                return singleton != null;
             }
         }
 
@@ -711,7 +711,7 @@ namespace Lucene.Net.Util.Automaton
             if (IsSingleton)
             {
                 b.Append("singleton: ");
-                int length = singleton.Length;// codePointCount(0, singleton.Length);
+                int length = singleton.CodePointCount(0, singleton.Length);
                 int[] codepoints = new int[length];
                 for (int i = 0, j = 0, cp = 0; i < singleton.Length; i += Character.CharCount(cp))
                 {

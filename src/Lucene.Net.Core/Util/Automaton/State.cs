@@ -71,11 +71,11 @@ namespace Lucene.Net.Util.Automaton
 
         private class TransitionsIterable : IEnumerable<Transition>
         {
-            private readonly State OuterInstance;
+            private readonly State outerInstance;
 
             public TransitionsIterable(State outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual IEnumerator<Transition> GetEnumerator()
@@ -90,14 +90,14 @@ namespace Lucene.Net.Util.Automaton
 
             private class IteratorAnonymousInnerClassHelper : IEnumerator<Transition>
             {
-                private readonly TransitionsIterable OuterInstance;
+                private readonly TransitionsIterable outerInstance;
                 private Transition current;
                 private int i, upTo;
 
                 public IteratorAnonymousInnerClassHelper(TransitionsIterable outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
-                    upTo = OuterInstance.OuterInstance.numTransitions;
+                    this.outerInstance = outerInstance;
+                    upTo = this.outerInstance.outerInstance.numTransitions;
                     i = 0;
                 }
 
@@ -105,7 +105,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     if (i < upTo)
                     {
-                        current = OuterInstance.OuterInstance.TransitionsArray[i++];
+                        current = outerInstance.outerInstance.TransitionsArray[i++];
                         return true;
                     }
                     return false;
