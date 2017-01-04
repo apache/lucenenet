@@ -37,19 +37,19 @@ namespace Lucene.Net.Codecs.Compressing
             return (((long)((ulong)n >> 1)) ^ -(n & 1));
         }
 
-        internal readonly int MaxDoc;
-        internal readonly int[] DocBases;
-        internal readonly long[] StartPointers;
-        internal readonly int[] AvgChunkDocs;
-        internal readonly long[] AvgChunkSizes;
-        internal readonly PackedInts.Reader[] DocBasesDeltas; // delta from the avg
-        internal readonly PackedInts.Reader[] StartPointersDeltas; // delta from the avg
+        internal readonly int maxDoc;
+        internal readonly int[] docBases;
+        internal readonly long[] startPointers;
+        internal readonly int[] avgChunkDocs;
+        internal readonly long[] avgChunkSizes;
+        internal readonly PackedInts.Reader[] docBasesDeltas; // delta from the avg
+        internal readonly PackedInts.Reader[] startPointersDeltas; // delta from the avg
 
         // It is the responsibility of the caller to close fieldsIndexIn after this constructor
         // has been called
         internal CompressingStoredFieldsIndexReader(IndexInput fieldsIndexIn, SegmentInfo si)
         {
-            MaxDoc = si.DocCount;
+            maxDoc = si.DocCount;
             int[] docBases = new int[16];
             long[] startPointers = new long[16];
             int[] avgChunkDocs = new int[16];
@@ -102,21 +102,21 @@ namespace Lucene.Net.Codecs.Compressing
                 ++blockCount;
             }
 
-            this.DocBases = Arrays.CopyOf(docBases, blockCount);
-            this.StartPointers = Arrays.CopyOf(startPointers, blockCount);
-            this.AvgChunkDocs = Arrays.CopyOf(avgChunkDocs, blockCount);
-            this.AvgChunkSizes = Arrays.CopyOf(avgChunkSizes, blockCount);
-            this.DocBasesDeltas = Arrays.CopyOf(docBasesDeltas, blockCount);
-            this.StartPointersDeltas = Arrays.CopyOf(startPointersDeltas, blockCount);
+            this.docBases = Arrays.CopyOf(docBases, blockCount);
+            this.startPointers = Arrays.CopyOf(startPointers, blockCount);
+            this.avgChunkDocs = Arrays.CopyOf(avgChunkDocs, blockCount);
+            this.avgChunkSizes = Arrays.CopyOf(avgChunkSizes, blockCount);
+            this.docBasesDeltas = Arrays.CopyOf(docBasesDeltas, blockCount);
+            this.startPointersDeltas = Arrays.CopyOf(startPointersDeltas, blockCount);
         }
 
         private int Block(int docID)
         {
-            int lo = 0, hi = DocBases.Length - 1;
+            int lo = 0, hi = docBases.Length - 1;
             while (lo <= hi)
             {
                 int mid = (int)((uint)(lo + hi) >> 1);
-                int midValue = DocBases[mid];
+                int midValue = docBases[mid];
                 if (midValue == docID)
                 {
                     return mid;
@@ -135,21 +135,21 @@ namespace Lucene.Net.Codecs.Compressing
 
         private int RelativeDocBase(int block, int relativeChunk)
         {
-            int expected = AvgChunkDocs[block] * relativeChunk;
-            long delta = MoveLowOrderBitToSign(DocBasesDeltas[block].Get(relativeChunk));
+            int expected = avgChunkDocs[block] * relativeChunk;
+            long delta = MoveLowOrderBitToSign(docBasesDeltas[block].Get(relativeChunk));
             return expected + (int)delta;
         }
 
         private long RelativeStartPointer(int block, int relativeChunk)
         {
-            long expected = AvgChunkSizes[block] * relativeChunk;
-            long delta = MoveLowOrderBitToSign(StartPointersDeltas[block].Get(relativeChunk));
+            long expected = avgChunkSizes[block] * relativeChunk;
+            long delta = MoveLowOrderBitToSign(startPointersDeltas[block].Get(relativeChunk));
             return expected + delta;
         }
 
         private int RelativeChunk(int block, int relativeDoc)
         {
-            int lo = 0, hi = DocBasesDeltas[block].Size - 1;
+            int lo = 0, hi = docBasesDeltas[block].Size - 1;
             while (lo <= hi)
             {
                 int mid = (int)((uint)(lo + hi) >> 1);
@@ -172,13 +172,13 @@ namespace Lucene.Net.Codecs.Compressing
 
         internal long GetStartPointer(int docID)
         {
-            if (docID < 0 || docID >= MaxDoc)
+            if (docID < 0 || docID >= maxDoc)
             {
-                throw new System.ArgumentException("docID out of range [0-" + MaxDoc + "]: " + docID);
+                throw new System.ArgumentException("docID out of range [0-" + maxDoc + "]: " + docID);
             }
             int block = Block(docID);
-            int relativeChunk = RelativeChunk(block, docID - DocBases[block]);
-            return StartPointers[block] + RelativeStartPointer(block, relativeChunk);
+            int relativeChunk = RelativeChunk(block, docID - docBases[block]);
+            return startPointers[block] + RelativeStartPointer(block, relativeChunk);
         }
 
         public object Clone()
@@ -190,19 +190,19 @@ namespace Lucene.Net.Codecs.Compressing
         {
             long res = 0;
 
-            foreach (PackedInts.Reader r in DocBasesDeltas)
+            foreach (PackedInts.Reader r in docBasesDeltas)
             {
                 res += r.RamBytesUsed();
             }
-            foreach (PackedInts.Reader r in StartPointersDeltas)
+            foreach (PackedInts.Reader r in startPointersDeltas)
             {
                 res += r.RamBytesUsed();
             }
 
-            res += RamUsageEstimator.SizeOf(DocBases);
-            res += RamUsageEstimator.SizeOf(StartPointers);
-            res += RamUsageEstimator.SizeOf(AvgChunkDocs);
-            res += RamUsageEstimator.SizeOf(AvgChunkSizes);
+            res += RamUsageEstimator.SizeOf(docBases);
+            res += RamUsageEstimator.SizeOf(startPointers);
+            res += RamUsageEstimator.SizeOf(avgChunkDocs);
+            res += RamUsageEstimator.SizeOf(avgChunkSizes);
 
             return res;
         }
