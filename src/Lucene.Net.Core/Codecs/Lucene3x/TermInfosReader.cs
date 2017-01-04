@@ -40,68 +40,68 @@ namespace Lucene.Net.Codecs.Lucene3x
     [Obsolete("(4.0) this class has been replaced by")]
     internal sealed class TermInfosReader : IDisposable
     {
-        private readonly Directory Directory;
-        private readonly string Segment;
-        private readonly FieldInfos FieldInfos;
+        private readonly Directory directory;
+        private readonly string segment;
+        private readonly FieldInfos fieldInfos;
 
         private readonly DisposableThreadLocal<ThreadResources> threadResources = new DisposableThreadLocal<ThreadResources>();
-        private readonly SegmentTermEnum OrigEnum;
-        private readonly long Size_Renamed;
+        private readonly SegmentTermEnum origEnum;
+        private readonly long size;
 
-        private readonly TermInfosReaderIndex Index;
-        private readonly int IndexLength;
+        private readonly TermInfosReaderIndex index;
+        private readonly int indexLength;
 
-        private readonly int TotalIndexInterval;
+        private readonly int totalIndexInterval;
 
         private const int DEFAULT_CACHE_SIZE = 1024;
 
         // Just adds term's ord to TermInfo
         public sealed class TermInfoAndOrd : TermInfo
         {
-            internal readonly long TermOrd;
+            internal readonly long termOrd;
 
             public TermInfoAndOrd(TermInfo ti, long termOrd)
                 : base(ti)
             {
                 Debug.Assert(termOrd >= 0);
-                this.TermOrd = termOrd;
+                this.termOrd = termOrd;
             }
         }
 
         private class CloneableTerm : DoubleBarrelLRUCache.CloneableKey
         {
-            internal Term Term;
+            internal Term term;
 
             public CloneableTerm(Term t)
             {
-                this.Term = t;
+                this.term = t;
             }
 
             public override bool Equals(object other)
             {
                 CloneableTerm t = (CloneableTerm)other;
-                return this.Term.Equals(t.Term);
+                return this.term.Equals(t.term);
             }
 
             public override int GetHashCode()
             {
-                return Term.GetHashCode();
+                return term.GetHashCode();
             }
 
             public override DoubleBarrelLRUCache.CloneableKey Clone()
             {
-                return new CloneableTerm(Term);
+                return new CloneableTerm(term);
             }
         }
 
-        private readonly DoubleBarrelLRUCache<CloneableTerm, TermInfoAndOrd> TermsCache = new DoubleBarrelLRUCache<CloneableTerm, TermInfoAndOrd>(DEFAULT_CACHE_SIZE);
+        private readonly DoubleBarrelLRUCache<CloneableTerm, TermInfoAndOrd> termsCache = new DoubleBarrelLRUCache<CloneableTerm, TermInfoAndOrd>(DEFAULT_CACHE_SIZE);
 
         /// <summary>
         /// Per-thread resources managed by ThreadLocal
         /// </summary>
         private sealed class ThreadResources
         {
-            internal SegmentTermEnum TermEnum;
+            internal SegmentTermEnum termEnum;
         }
 
         internal TermInfosReader(Directory dir, string seg, FieldInfos fis, IOContext context, int indexDivisor)
@@ -115,25 +115,25 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             try
             {
-                Directory = dir;
-                Segment = seg;
-                FieldInfos = fis;
+                directory = dir;
+                segment = seg;
+                fieldInfos = fis;
 
-                OrigEnum = new SegmentTermEnum(Directory.OpenInput(IndexFileNames.SegmentFileName(Segment, "", Lucene3xPostingsFormat.TERMS_EXTENSION), context), FieldInfos, false);
-                Size_Renamed = OrigEnum.size;
+                origEnum = new SegmentTermEnum(directory.OpenInput(IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_EXTENSION), context), fieldInfos, false);
+                size = origEnum.size;
 
                 if (indexDivisor != -1)
                 {
                     // Load terms index
-                    TotalIndexInterval = OrigEnum.indexInterval * indexDivisor;
+                    totalIndexInterval = origEnum.indexInterval * indexDivisor;
 
-                    string indexFileName = IndexFileNames.SegmentFileName(Segment, "", Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION);
-                    SegmentTermEnum indexEnum = new SegmentTermEnum(Directory.OpenInput(indexFileName, context), FieldInfos, true);
+                    string indexFileName = IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION);
+                    SegmentTermEnum indexEnum = new SegmentTermEnum(directory.OpenInput(indexFileName, context), fieldInfos, true);
 
                     try
                     {
-                        Index = new TermInfosReaderIndex(indexEnum, indexDivisor, dir.FileLength(indexFileName), TotalIndexInterval);
-                        IndexLength = Index.Length;
+                        index = new TermInfosReaderIndex(indexEnum, indexDivisor, dir.FileLength(indexFileName), totalIndexInterval);
+                        indexLength = index.Length;
                     }
                     finally
                     {
@@ -143,9 +143,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                 else
                 {
                     // Do not load terms index:
-                    TotalIndexInterval = -1;
-                    Index = null;
-                    IndexLength = -1;
+                    totalIndexInterval = -1;
+                    index = null;
+                    indexLength = -1;
                 }
                 success = true;
             }
@@ -167,7 +167,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return OrigEnum.skipInterval;
+                return origEnum.skipInterval;
             }
         }
 
@@ -175,20 +175,20 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return OrigEnum.maxSkipLevels;
+                return origEnum.maxSkipLevels;
             }
         }
 
         public void Dispose()
         {
-            IOUtils.Close(OrigEnum, threadResources);
+            IOUtils.Close(origEnum, threadResources);
         }
 
         /// <summary>
         /// Returns the number of term/value pairs in the set. </summary>
         internal long Size // LUCENENET TODO: Rename Count
         {
-            get { return Size_Renamed; }
+            get { return size; }
         }
 
         private ThreadResources GetThreadResources()
@@ -197,19 +197,19 @@ namespace Lucene.Net.Codecs.Lucene3x
             if (resources == null)
             {
                 resources = new ThreadResources();
-                resources.TermEnum = Terms();
+                resources.termEnum = Terms();
                 threadResources.Set(resources);
             }
             return resources;
         }
 
-        private static readonly IComparer<BytesRef> LegacyComparator = BytesRef.UTF8SortedAsUTF16Comparer;
+        private static readonly IComparer<BytesRef> legacyComparator = BytesRef.UTF8SortedAsUTF16Comparer;
 
         private int CompareAsUTF16(Term term1, Term term2)
         {
             if (term1.Field.Equals(term2.Field))
             {
-                return LegacyComparator.Compare(term1.Bytes, term2.Bytes);
+                return legacyComparator.Compare(term1.Bytes, term2.Bytes);
             }
             else
             {
@@ -228,13 +228,13 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Returns the TermInfo for a Term in the set, or null. </summary>
         private TermInfo Get(Term term, bool mustSeekEnum)
         {
-            if (Size_Renamed == 0)
+            if (size == 0)
             {
                 return null;
             }
 
             EnsureIndexIsRead();
-            TermInfoAndOrd tiOrd = TermsCache.Get(new CloneableTerm(term));
+            TermInfoAndOrd tiOrd = termsCache.Get(new CloneableTerm(term));
             ThreadResources resources = GetThreadResources();
 
             if (!mustSeekEnum && tiOrd != null)
@@ -242,12 +242,12 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return tiOrd;
             }
 
-            return SeekEnum(resources.TermEnum, term, tiOrd, true);
+            return SeekEnum(resources.termEnum, term, tiOrd, true);
         }
 
         public void CacheCurrentTerm(SegmentTermEnum enumerator)
         {
-            TermsCache.Put(new CloneableTerm(enumerator.Term()), new TermInfoAndOrd(enumerator.termInfo, enumerator.position));
+            termsCache.Put(new CloneableTerm(enumerator.Term()), new TermInfoAndOrd(enumerator.termInfo, enumerator.position));
         }
 
         internal static Term DeepCopyOf(Term other)
@@ -259,7 +259,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (useCache)
             {
-                return SeekEnum(enumerator, term, TermsCache.Get(new CloneableTerm(DeepCopyOf(term))), useCache);
+                return SeekEnum(enumerator, term, termsCache.Get(new CloneableTerm(DeepCopyOf(term))), useCache);
             }
             else
             {
@@ -269,7 +269,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal TermInfo SeekEnum(SegmentTermEnum enumerator, Term term, TermInfoAndOrd tiOrd, bool useCache)
         {
-            if (Size_Renamed == 0)
+            if (size == 0)
             {
                 return null;
             }
@@ -277,8 +277,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             // optimize sequential access: first try scanning cached enum w/o seeking
             if (enumerator.Term() != null && ((enumerator.Prev() != null && CompareAsUTF16(term, enumerator.Prev()) > 0) || CompareAsUTF16(term, enumerator.Term()) >= 0)) // term is at or past current
             {
-                int enumOffset = (int)(enumerator.position / TotalIndexInterval) + 1;
-                if (IndexLength == enumOffset || Index.CompareTo(term, enumOffset) < 0) // but before end of block
+                int enumOffset = (int)(enumerator.position / totalIndexInterval) + 1;
+                if (indexLength == enumOffset || index.CompareTo(term, enumOffset) < 0) // but before end of block
                 {
                     // no need to seek
 
@@ -298,13 +298,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                             {
                                 if (useCache)
                                 {
-                                    TermsCache.Put(new CloneableTerm(DeepCopyOf(term)), new TermInfoAndOrd(ti, enumerator.position));
+                                    termsCache.Put(new CloneableTerm(DeepCopyOf(term)), new TermInfoAndOrd(ti, enumerator.position));
                                 }
                             }
                             else
                             {
                                 Debug.Assert(SameTermInfo(ti, tiOrd, enumerator));
-                                Debug.Assert(enumerator.position == tiOrd.TermOrd);
+                                Debug.Assert(enumerator.position == tiOrd.termOrd);
                             }
                         }
                     }
@@ -321,15 +321,15 @@ namespace Lucene.Net.Codecs.Lucene3x
             int indexPos;
             if (tiOrd != null)
             {
-                indexPos = (int)(tiOrd.TermOrd / TotalIndexInterval);
+                indexPos = (int)(tiOrd.termOrd / totalIndexInterval);
             }
             else
             {
                 // Must do binary search:
-                indexPos = Index.GetIndexOffset(term);
+                indexPos = index.GetIndexOffset(term);
             }
 
-            Index.SeekEnum(enumerator, indexPos);
+            index.SeekEnum(enumerator, indexPos);
             enumerator.ScanTo(term);
             TermInfo ti_;
 
@@ -340,13 +340,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     if (useCache)
                     {
-                        TermsCache.Put(new CloneableTerm(DeepCopyOf(term)), new TermInfoAndOrd(ti_, enumerator.position));
+                        termsCache.Put(new CloneableTerm(DeepCopyOf(term)), new TermInfoAndOrd(ti_, enumerator.position));
                     }
                 }
                 else
                 {
                     Debug.Assert(SameTermInfo(ti_, tiOrd, enumerator));
-                    Debug.Assert(enumerator.position == tiOrd.TermOrd);
+                    Debug.Assert(enumerator.position == tiOrd.termOrd);
                 }
             }
             else
@@ -381,7 +381,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private void EnsureIndexIsRead()
         {
-            if (Index == null)
+            if (index == null)
             {
                 throw new InvalidOperationException("terms index was not loaded when this reader was created");
             }
@@ -391,16 +391,16 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Returns the position of a Term in the set or -1. </summary>
         internal long GetPosition(Term term)
         {
-            if (Size_Renamed == 0)
+            if (size == 0)
             {
                 return -1;
             }
 
             EnsureIndexIsRead();
-            int indexOffset = Index.GetIndexOffset(term);
+            int indexOffset = index.GetIndexOffset(term);
 
-            SegmentTermEnum enumerator = GetThreadResources().TermEnum;
-            Index.SeekEnum(enumerator, indexOffset);
+            SegmentTermEnum enumerator = GetThreadResources().termEnum;
+            index.SeekEnum(enumerator, indexOffset);
 
             while (CompareAsUTF16(term, enumerator.Term()) > 0 && enumerator.Next())
             {
@@ -420,7 +420,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Returns an enumeration of all the Terms and TermInfos in the set. </summary>
         public SegmentTermEnum Terms()
         {
-            return (SegmentTermEnum)OrigEnum.Clone();
+            return (SegmentTermEnum)origEnum.Clone();
         }
 
         /// <summary>
@@ -428,12 +428,12 @@ namespace Lucene.Net.Codecs.Lucene3x
         public SegmentTermEnum Terms(Term term)
         {
             Get(term, true);
-            return (SegmentTermEnum)GetThreadResources().TermEnum.Clone();
+            return (SegmentTermEnum)GetThreadResources().termEnum.Clone();
         }
 
         internal long RamBytesUsed()
         {
-            return Index == null ? 0 : Index.RamBytesUsed();
+            return index == null ? 0 : index.RamBytesUsed();
         }
     }
 }
