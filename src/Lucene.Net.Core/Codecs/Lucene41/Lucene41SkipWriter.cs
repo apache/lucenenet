@@ -45,68 +45,68 @@ namespace Lucene.Net.Codecs.Lucene41
     {
         // private boolean DEBUG = Lucene41PostingsReader.DEBUG;
 
-        private int[] LastSkipDoc;
-        private long[] LastSkipDocPointer;
-        private long[] LastSkipPosPointer;
-        private long[] LastSkipPayPointer;
-        private int[] LastPayloadByteUpto;
+        private int[] lastSkipDoc;
+        private long[] lastSkipDocPointer;
+        private long[] lastSkipPosPointer;
+        private long[] lastSkipPayPointer;
+        private int[] lastPayloadByteUpto;
 
-        private readonly IndexOutput DocOut;
-        private readonly IndexOutput PosOut;
-        private readonly IndexOutput PayOut;
+        private readonly IndexOutput docOut;
+        private readonly IndexOutput posOut;
+        private readonly IndexOutput payOut;
 
-        private int CurDoc;
-        private long CurDocPointer;
-        private long CurPosPointer;
-        private long CurPayPointer;
-        private int CurPosBufferUpto;
-        private int CurPayloadByteUpto;
-        private bool FieldHasPositions;
-        private bool FieldHasOffsets;
-        private bool FieldHasPayloads;
+        private int curDoc;
+        private long curDocPointer;
+        private long curPosPointer;
+        private long curPayPointer;
+        private int curPosBufferUpto;
+        private int curPayloadByteUpto;
+        private bool fieldHasPositions;
+        private bool fieldHasOffsets;
+        private bool fieldHasPayloads;
 
         public Lucene41SkipWriter(int maxSkipLevels, int blockSize, int docCount, IndexOutput docOut, IndexOutput posOut, IndexOutput payOut)
             : base(blockSize, 8, maxSkipLevels, docCount)
         {
-            this.DocOut = docOut;
-            this.PosOut = posOut;
-            this.PayOut = payOut;
+            this.docOut = docOut;
+            this.posOut = posOut;
+            this.payOut = payOut;
 
-            LastSkipDoc = new int[maxSkipLevels];
-            LastSkipDocPointer = new long[maxSkipLevels];
+            lastSkipDoc = new int[maxSkipLevels];
+            lastSkipDocPointer = new long[maxSkipLevels];
             if (posOut != null)
             {
-                LastSkipPosPointer = new long[maxSkipLevels];
+                lastSkipPosPointer = new long[maxSkipLevels];
                 if (payOut != null)
                 {
-                    LastSkipPayPointer = new long[maxSkipLevels];
+                    lastSkipPayPointer = new long[maxSkipLevels];
                 }
-                LastPayloadByteUpto = new int[maxSkipLevels];
+                lastPayloadByteUpto = new int[maxSkipLevels];
             }
         }
 
         public void SetField(bool fieldHasPositions, bool fieldHasOffsets, bool fieldHasPayloads)
         {
-            this.FieldHasPositions = fieldHasPositions;
-            this.FieldHasOffsets = fieldHasOffsets;
-            this.FieldHasPayloads = fieldHasPayloads;
+            this.fieldHasPositions = fieldHasPositions;
+            this.fieldHasOffsets = fieldHasOffsets;
+            this.fieldHasPayloads = fieldHasPayloads;
         }
 
         public override void ResetSkip()
         {
             base.ResetSkip();
-            CollectionsHelper.Fill(LastSkipDoc, 0);
-            CollectionsHelper.Fill(LastSkipDocPointer, DocOut.FilePointer);
-            if (FieldHasPositions)
+            CollectionsHelper.Fill(lastSkipDoc, 0);
+            CollectionsHelper.Fill(lastSkipDocPointer, docOut.FilePointer);
+            if (fieldHasPositions)
             {
-                CollectionsHelper.Fill(LastSkipPosPointer, PosOut.FilePointer);
-                if (FieldHasPayloads)
+                CollectionsHelper.Fill(lastSkipPosPointer, posOut.FilePointer);
+                if (fieldHasPayloads)
                 {
-                    CollectionsHelper.Fill(LastPayloadByteUpto, 0);
+                    CollectionsHelper.Fill(lastPayloadByteUpto, 0);
                 }
-                if (FieldHasOffsets || FieldHasPayloads)
+                if (fieldHasOffsets || fieldHasPayloads)
                 {
-                    CollectionsHelper.Fill(LastSkipPayPointer, PayOut.FilePointer);
+                    CollectionsHelper.Fill(lastSkipPayPointer, payOut.FilePointer);
                 }
             }
         }
@@ -116,45 +116,45 @@ namespace Lucene.Net.Codecs.Lucene41
         /// </summary>
         public void BufferSkip(int doc, int numDocs, long posFP, long payFP, int posBufferUpto, int payloadByteUpto)
         {
-            this.CurDoc = doc;
-            this.CurDocPointer = DocOut.FilePointer;
-            this.CurPosPointer = posFP;
-            this.CurPayPointer = payFP;
-            this.CurPosBufferUpto = posBufferUpto;
-            this.CurPayloadByteUpto = payloadByteUpto;
+            this.curDoc = doc;
+            this.curDocPointer = docOut.FilePointer;
+            this.curPosPointer = posFP;
+            this.curPayPointer = payFP;
+            this.curPosBufferUpto = posBufferUpto;
+            this.curPayloadByteUpto = payloadByteUpto;
             BufferSkip(numDocs);
         }
 
         protected override void WriteSkipData(int level, IndexOutput skipBuffer)
         {
-            int delta = CurDoc - LastSkipDoc[level];
+            int delta = curDoc - lastSkipDoc[level];
             // if (DEBUG) {
             //   System.out.println("writeSkipData level=" + level + " lastDoc=" + curDoc + " delta=" + delta + " curDocPointer=" + curDocPointer);
             // }
             skipBuffer.WriteVInt(delta);
-            LastSkipDoc[level] = CurDoc;
+            lastSkipDoc[level] = curDoc;
 
-            skipBuffer.WriteVInt((int)(CurDocPointer - LastSkipDocPointer[level]));
-            LastSkipDocPointer[level] = CurDocPointer;
+            skipBuffer.WriteVInt((int)(curDocPointer - lastSkipDocPointer[level]));
+            lastSkipDocPointer[level] = curDocPointer;
 
-            if (FieldHasPositions)
+            if (fieldHasPositions)
             {
                 // if (DEBUG) {
                 //   System.out.println("  curPosPointer=" + curPosPointer + " curPosBufferUpto=" + curPosBufferUpto);
                 // }
-                skipBuffer.WriteVInt((int)(CurPosPointer - LastSkipPosPointer[level]));
-                LastSkipPosPointer[level] = CurPosPointer;
-                skipBuffer.WriteVInt(CurPosBufferUpto);
+                skipBuffer.WriteVInt((int)(curPosPointer - lastSkipPosPointer[level]));
+                lastSkipPosPointer[level] = curPosPointer;
+                skipBuffer.WriteVInt(curPosBufferUpto);
 
-                if (FieldHasPayloads)
+                if (fieldHasPayloads)
                 {
-                    skipBuffer.WriteVInt(CurPayloadByteUpto);
+                    skipBuffer.WriteVInt(curPayloadByteUpto);
                 }
 
-                if (FieldHasOffsets || FieldHasPayloads)
+                if (fieldHasOffsets || fieldHasPayloads)
                 {
-                    skipBuffer.WriteVInt((int)(CurPayPointer - LastSkipPayPointer[level]));
-                    LastSkipPayPointer[level] = CurPayPointer;
+                    skipBuffer.WriteVInt((int)(curPayPointer - lastSkipPayPointer[level]));
+                    lastSkipPayPointer[level] = curPayPointer;
                 }
             }
         }
