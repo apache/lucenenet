@@ -50,16 +50,16 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Field's type
         /// </summary>
-        protected internal readonly FieldType mType;
+        protected readonly FieldType m_type;
 
         /// <summary>
         /// Field's name
         /// </summary>
-        protected internal readonly string mName;
+        protected readonly string m_name;
 
         /// <summary>
         /// Field's value </summary>
-        protected internal object fieldsData;
+        protected object m_fieldsData;
 
         /// <summary>
         /// Pre-analyzed tokenStream for indexed fields; this is
@@ -67,14 +67,14 @@ namespace Lucene.Net.Documents
         /// have both; eg maybe field has a String value but you
         /// customize how it's tokenized
         /// </summary>
-        protected internal TokenStream tokenStream;
+        protected TokenStream m_tokenStream;
 
         private TokenStream internalTokenStream;
 
         /// <summary>
         /// Field's boost </summary>
         /// <seealso cref= #boost() </seealso>
-        protected internal float mBoost = 1.0f;
+        protected float m_boost = 1.0f;
 
         /// <summary>
         /// Expert: creates a field with no initial value.
@@ -89,12 +89,12 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentNullException("name", "name cannot be null");
             }
-            this.mName = name;
+            this.m_name = name;
             if (type == null)
             {
                 throw new System.ArgumentNullException("type", "type cannot be null");
             }
-            this.mType = type;
+            this.m_type = type;
         }
 
         /// <summary>
@@ -129,9 +129,9 @@ namespace Lucene.Net.Documents
                 throw new System.ArgumentException("non-tokenized fields must use String values");
             }
 
-            this.mName = name;
-            this.fieldsData = reader;
-            this.mType = type;
+            this.m_name = name;
+            this.m_fieldsData = reader;
+            this.m_type = type;
         }
 
         /// <summary>
@@ -162,10 +162,10 @@ namespace Lucene.Net.Documents
                 throw new System.ArgumentException("TokenStream fields cannot be stored");
             }
 
-            this.mName = name;
-            this.fieldsData = null;
-            this.tokenStream = tokenStream;
-            this.mType = type;
+            this.m_name = name;
+            this.m_fieldsData = null;
+            this.m_tokenStream = tokenStream;
+            this.m_type = type;
         }
 
         /// <summary>
@@ -223,9 +223,9 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentException("Fields with BytesRef values cannot be indexed");
             }
-            this.fieldsData = bytes;
-            this.mType = type;
-            this.mName = name;
+            this.m_fieldsData = bytes;
+            this.m_type = type;
+            this.m_name = name;
         }
 
         // TODO: allow direct construction of int, long, float, double value too..?
@@ -258,9 +258,9 @@ namespace Lucene.Net.Documents
                 throw new System.ArgumentException("cannot store term vector information " + "for a field that is not indexed");
             }
 
-            this.mType = type;
-            this.mName = name;
-            this.fieldsData = value;
+            this.m_type = type;
+            this.m_name = name;
+            this.m_fieldsData = value;
         }
 
         /// <summary>
@@ -270,7 +270,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual string GetStringValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            return fieldsData == null ? null : fieldsData.ToString();
+            return m_fieldsData == null ? null : m_fieldsData.ToString();
 
             /*if (FieldsData is string || FieldsData is Number)
             {
@@ -289,7 +289,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual TextReader GetReaderValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            return fieldsData is TextReader ? (TextReader)fieldsData : null;
+            return m_fieldsData is TextReader ? (TextReader)m_fieldsData : null;
         }
 
         /// <summary>
@@ -298,7 +298,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual TokenStream GetTokenStreamValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            return tokenStream;
+            return m_tokenStream;
         }
 
         /// <summary>
@@ -319,11 +319,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetStringValue(string value)
         {
-            if (!(fieldsData is string))
+            if (!(m_fieldsData is string))
             {
-                throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to string");
+                throw new ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to string");
             }
-            fieldsData = value;
+            m_fieldsData = value;
         }
 
         /// <summary>
@@ -332,11 +332,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetReaderValue(TextReader value)
         {
-            if (!(fieldsData is TextReader))
+            if (!(m_fieldsData is TextReader))
             {
-                throw new ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to TextReader");
+                throw new ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to TextReader");
             }
-            fieldsData = value;
+            m_fieldsData = value;
         }
 
         /// <summary>
@@ -348,15 +348,15 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetBytesValue(BytesRef value)
         {
-            if (!(fieldsData is BytesRef))
+            if (!(m_fieldsData is BytesRef))
             {
-                throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to BytesRef");
+                throw new System.ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to BytesRef");
             }
-            if (mType.IsIndexed)
+            if (m_type.IsIndexed)
             {
                 throw new System.ArgumentException("cannot set a BytesRef value on an indexed field");
             }
-            fieldsData = value;
+            m_fieldsData = value;
         }
 
         /// <summary>
@@ -374,11 +374,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetByteValue(byte value)
         {
-            if (!(fieldsData is byte?))
+            if (!(m_fieldsData is byte?))
             {
-                throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Byte");
+                throw new System.ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to Byte");
             }
-            fieldsData = Convert.ToByte(value);
+            m_fieldsData = Convert.ToByte(value);
         }
 
         /// <summary>
@@ -387,11 +387,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetInt16Value(short value) // LUCENENET specific: Renamed from SetShortValue to follow .NET conventions
         {
-            if (!(fieldsData is short?))
+            if (!(m_fieldsData is short?))
             {
-                throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Short");
+                throw new System.ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to Short");
             }
-            fieldsData = Convert.ToInt16(value);
+            m_fieldsData = Convert.ToInt16(value);
         }
 
         /// <summary>
@@ -400,11 +400,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetInt32Value(int value) // LUCENENET specific: Renamed from SetIntValue to follow .NET conventions
         {
-            if (!(fieldsData is int?))
+            if (!(m_fieldsData is int?))
             {
-                throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Integer");
+                throw new System.ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to Integer");
             }
-            fieldsData = Convert.ToInt32(value);
+            m_fieldsData = Convert.ToInt32(value);
         }
 
         /// <summary>
@@ -413,11 +413,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetInt64Value(long value) // LUCENENET specific: Renamed from SetLongValue to follow .NET conventions
         {
-            if (!(fieldsData is long?))
+            if (!(m_fieldsData is long?))
             {
-                throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Long");
+                throw new System.ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to Long");
             }
-            fieldsData = Convert.ToInt64(value);
+            m_fieldsData = Convert.ToInt64(value);
         }
 
         /// <summary>
@@ -426,11 +426,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetSingleValue(float value) // LUCENENET specific: Renamed from SetFloatValue to follow .NET conventions
         {
-            if (!(fieldsData is float?))
+            if (!(m_fieldsData is float?))
             {
-                throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Float");
+                throw new System.ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to Float");
             }
-            fieldsData = Convert.ToSingle(value);
+            m_fieldsData = Convert.ToSingle(value);
         }
 
         /// <summary>
@@ -439,11 +439,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetDoubleValue(double value)
         {
-            if (!(fieldsData is double?))
+            if (!(m_fieldsData is double?))
             {
-                throw new System.ArgumentException("cannot change value type from " + fieldsData.GetType().Name + " to Double");
+                throw new System.ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to Double");
             }
-            fieldsData = Convert.ToDouble(value);
+            m_fieldsData = Convert.ToDouble(value);
         }
 
         // LUCENENET TODO: Add SetValue() overloads for each type?
@@ -457,20 +457,20 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetTokenStream(TokenStream tokenStream)
         {
-            if (!mType.IsIndexed || !mType.IsTokenized)
+            if (!m_type.IsIndexed || !m_type.IsTokenized)
             {
                 throw new System.ArgumentException("TokenStream fields must be indexed and tokenized");
             }
-            if (mType.NumericType != null)
+            if (m_type.NumericType != null)
             {
                 throw new System.ArgumentException("cannot set private TokenStream on numeric fields");
             }
-            this.tokenStream = tokenStream;
+            this.m_tokenStream = tokenStream;
         }
 
         public virtual string Name
         {
-            get { return mName; }
+            get { return m_name; }
         }
 
         /// <summary>
@@ -482,25 +482,25 @@ namespace Lucene.Net.Documents
         {
             get
             {
-                return mBoost;
+                return m_boost;
             }
             set
             {
                 if (value != 1.0f)
                 {
-                    if (mType.IsIndexed == false || mType.OmitNorms)
+                    if (m_type.IsIndexed == false || m_type.OmitNorms)
                     {
                         throw new System.ArgumentException("You cannot set an index-time boost on an unindexed field, or one that omits norms");
                     }
                 }
-                this.mBoost = value;
+                this.m_boost = value;
             }
         }
 
         public virtual object GetNumericValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
             // LUCENENET TODO: There was no expensive conversion from string in the original
-            string str = fieldsData as string;
+            string str = m_fieldsData as string;
             if (str != null)
             {
                 long ret;
@@ -510,9 +510,9 @@ namespace Lucene.Net.Documents
                 }
             }
 
-            if (fieldsData is int || fieldsData is float || fieldsData is double || fieldsData is long)
+            if (m_fieldsData is int || m_fieldsData is float || m_fieldsData is double || m_fieldsData is long)
             {
-                return fieldsData;
+                return m_fieldsData;
             }
 
             return null;
@@ -520,9 +520,9 @@ namespace Lucene.Net.Documents
 
         public virtual BytesRef GetBinaryValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            if (fieldsData is BytesRef)
+            if (m_fieldsData is BytesRef)
             {
-                return (BytesRef)fieldsData;
+                return (BytesRef)m_fieldsData;
             }
             else
             {
@@ -535,14 +535,14 @@ namespace Lucene.Net.Documents
         public override string ToString()
         {
             StringBuilder result = new StringBuilder();
-            result.Append(mType.ToString());
+            result.Append(m_type.ToString());
             result.Append('<');
-            result.Append(mName);
+            result.Append(m_name);
             result.Append(':');
 
-            if (fieldsData != null)
+            if (m_fieldsData != null)
             {
-                result.Append(fieldsData);
+                result.Append(m_fieldsData);
             }
 
             result.Append('>');
@@ -553,7 +553,7 @@ namespace Lucene.Net.Documents
         /// Returns the <seealso cref="FieldType"/> for this field. </summary>
         public virtual IIndexableFieldType FieldType
         {
-            get { return mType; }
+            get { return m_type; }
         }
 
         public virtual TokenStream GetTokenStream(Analyzer analyzer)
@@ -569,11 +569,11 @@ namespace Lucene.Net.Documents
                 {
                     // lazy init the TokenStream as it is heavy to instantiate
                     // (attributes,...) if not needed (stored field loading)
-                    internalTokenStream = new NumericTokenStream(mType.NumericPrecisionStep);
+                    internalTokenStream = new NumericTokenStream(m_type.NumericPrecisionStep);
                 }
                 var nts = (NumericTokenStream)internalTokenStream;
                 // initialize value in TokenStream
-                object val = fieldsData;
+                object val = m_fieldsData;
                 switch (numericType)
                 {
                     case NumericType.INT:
@@ -614,9 +614,9 @@ namespace Lucene.Net.Documents
                 return internalTokenStream;
             }
 
-            if (tokenStream != null)
+            if (m_tokenStream != null)
             {
-                return tokenStream;
+                return m_tokenStream;
             }
             else if (GetReaderValue() != null)
             {

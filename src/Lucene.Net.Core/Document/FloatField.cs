@@ -150,7 +150,7 @@ namespace Lucene.Net.Documents
         public FloatField(string name, float value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
-            fieldsData = Convert.ToSingle(value);
+            m_fieldsData = Convert.ToSingle(value);
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentException("type.numericType() must be FLOAT but got " + type.NumericType);
             }
-            fieldsData = Convert.ToSingle(value);
+            m_fieldsData = Convert.ToSingle(value);
         }
     }
 }

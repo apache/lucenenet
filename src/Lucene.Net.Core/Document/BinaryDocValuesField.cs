@@ -57,7 +57,7 @@ namespace Lucene.Net.Documents
         public BinaryDocValuesField(string name, BytesRef value)
             : base(name, fType)
         {
-            fieldsData = value;
+            m_fieldsData = value;
         }
     }
 }

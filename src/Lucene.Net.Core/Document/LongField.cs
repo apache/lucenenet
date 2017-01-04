@@ -160,7 +160,7 @@ namespace Lucene.Net.Documents
         public LongField(string name, long value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
-            fieldsData = Convert.ToInt64(value);
+            m_fieldsData = Convert.ToInt64(value);
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentException("type.numericType() must be LONG but got " + type.NumericType);
             }
-            fieldsData = Convert.ToInt64(value);
+            m_fieldsData = Convert.ToInt64(value);
         }
     }
 }

@@ -57,7 +57,7 @@ namespace Lucene.Net.Documents
         public SortedSetDocValuesField(string name, BytesRef bytes)
             : base(name, TYPE)
         {
-            fieldsData = bytes;
+            m_fieldsData = bytes;
         }
     }
 }

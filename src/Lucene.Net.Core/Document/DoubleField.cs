@@ -150,7 +150,7 @@ namespace Lucene.Net.Documents
         public DoubleField(string name, double value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
-            fieldsData = Convert.ToDouble(value);
+            m_fieldsData = Convert.ToDouble(value);
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentException("type.numericType() must be DOUBLE but got " + type.NumericType);
             }
-            fieldsData = Convert.ToDouble(value);
+            m_fieldsData = Convert.ToDouble(value);
         }
     }
 }

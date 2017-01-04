@@ -150,7 +150,7 @@ namespace Lucene.Net.Documents
         public IntField(string name, int value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
-            fieldsData = Convert.ToInt32(value);
+            m_fieldsData = Convert.ToInt32(value);
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentException("type.NumericType must be INT but got " + type.NumericType);
             }
-            fieldsData = Convert.ToInt32(value);
+            m_fieldsData = Convert.ToInt32(value);
         }
     }
 }
