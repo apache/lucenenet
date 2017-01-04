@@ -207,7 +207,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public class BooleanWeight : Weight
         {
-            private readonly BooleanQuery OuterInstance;
+            private readonly BooleanQuery outerInstance;
 
             /// <summary>
             /// The Similarity implementation. </summary>
@@ -215,13 +215,13 @@ namespace Lucene.Net.Search
 
             protected List<Weight> m_weights;
             protected int m_maxCoord; // num optional + num required
-            private readonly bool m_disableCoord;
+            private readonly bool disableCoord;
 
             public BooleanWeight(BooleanQuery outerInstance, IndexSearcher searcher, bool disableCoord)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.m_similarity = searcher.Similarity;
-                this.m_disableCoord = disableCoord;
+                this.disableCoord = disableCoord;
                 m_weights = new List<Weight>(outerInstance.clauses.Count);
                 for (int i = 0; i < outerInstance.clauses.Count; i++)
                 {
@@ -249,7 +249,7 @@ namespace Lucene.Net.Search
             {
                 get
                 {
-                    return OuterInstance;
+                    return outerInstance;
                 }
             }
 
@@ -260,14 +260,14 @@ namespace Lucene.Net.Search
                 {
                     // call sumOfSquaredWeights for all clauses in case of side effects
                     float s = m_weights[i].GetValueForNormalization(); // sum sub weights
-                    if (!OuterInstance.clauses[i].IsProhibited)
+                    if (!outerInstance.clauses[i].IsProhibited)
                     {
                         // only add to sum for non-prohibited clauses
                         sum += s;
                     }
                 }
 
-                sum *= OuterInstance.Boost * OuterInstance.Boost; // boost each sub-weight
+                sum *= outerInstance.Boost * outerInstance.Boost; // boost each sub-weight
 
                 return sum;
             }
@@ -283,7 +283,7 @@ namespace Lucene.Net.Search
 
             public override void Normalize(float norm, float topLevelBoost)
             {
-                topLevelBoost *= OuterInstance.Boost; // incorporate boost
+                topLevelBoost *= outerInstance.Boost; // incorporate boost
                 foreach (Weight w in m_weights)
                 {
                     // normalize all clauses, (even if prohibited in case of side affects)
@@ -293,14 +293,14 @@ namespace Lucene.Net.Search
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                int minShouldMatch = OuterInstance.MinimumNumberShouldMatch;
+                int minShouldMatch = outerInstance.MinimumNumberShouldMatch;
                 ComplexExplanation sumExpl = new ComplexExplanation();
                 sumExpl.Description = "sum of:";
                 int coord = 0;
                 float sum = 0.0f;
                 bool fail = false;
                 int shouldMatchCount = 0;
-                IEnumerator<BooleanClause> cIter = OuterInstance.clauses.GetEnumerator();
+                IEnumerator<BooleanClause> cIter = outerInstance.clauses.GetEnumerator();
                 for (IEnumerator<Weight> wIter = m_weights.GetEnumerator(); wIter.MoveNext(); )
                 {
                     Weight w = wIter.Current;
@@ -363,7 +363,7 @@ namespace Lucene.Net.Search
                 sumExpl.Match = 0 < coord ? true : false;
                 sumExpl.Value = sum;
 
-                float coordFactor = m_disableCoord ? 1.0f : Coord(coord, m_maxCoord);
+                float coordFactor = disableCoord ? 1.0f : Coord(coord, m_maxCoord);
                 if (coordFactor == 1.0f)
                 {
                     return sumExpl; // eliminate wrapper
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search
 
             public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
-                if (scoreDocsInOrder || OuterInstance.m_minNrShouldMatch > 1)
+                if (scoreDocsInOrder || outerInstance.m_minNrShouldMatch > 1)
                 {
                     // TODO: (LUCENE-4872) in some cases BooleanScorer may be faster for minNrShouldMatch
                     // but the same is even true of pure conjunctions...
@@ -388,7 +388,7 @@ namespace Lucene.Net.Search
 
                 IList<BulkScorer> prohibited = new List<BulkScorer>();
                 IList<BulkScorer> optional = new List<BulkScorer>();
-                IEnumerator<BooleanClause> cIter = OuterInstance.clauses.GetEnumerator();
+                IEnumerator<BooleanClause> cIter = outerInstance.clauses.GetEnumerator();
                 foreach (Weight w in m_weights)
                 {
                     cIter.MoveNext();
@@ -419,7 +419,7 @@ namespace Lucene.Net.Search
                 }
 
                 // Check if we can and should return a BooleanScorer
-                return new BooleanScorer(this, m_disableCoord, OuterInstance.m_minNrShouldMatch, optional, prohibited, m_maxCoord);
+                return new BooleanScorer(this, disableCoord, outerInstance.m_minNrShouldMatch, optional, prohibited, m_maxCoord);
             }
 
             public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
@@ -427,7 +427,7 @@ namespace Lucene.Net.Search
                 IList<Scorer> required = new List<Scorer>();
                 IList<Scorer> prohibited = new List<Scorer>();
                 IList<Scorer> optional = new List<Scorer>();
-                IEnumerator<BooleanClause> cIter = OuterInstance.clauses.GetEnumerator();
+                IEnumerator<BooleanClause> cIter = outerInstance.clauses.GetEnumerator();
                 foreach (Weight w in m_weights)
                 {
                     cIter.MoveNext();
@@ -459,7 +459,7 @@ namespace Lucene.Net.Search
                     // no required and optional clauses.
                     return null;
                 }
-                else if (optional.Count < OuterInstance.m_minNrShouldMatch)
+                else if (optional.Count < outerInstance.m_minNrShouldMatch)
                 {
                     // either >1 req scorer, or there are 0 req scorers and at least 1
                     // optional scorer. Therefore if there are not enough optional scorers
@@ -470,35 +470,35 @@ namespace Lucene.Net.Search
                 // simple conjunction
                 if (optional.Count == 0 && prohibited.Count == 0)
                 {
-                    float coord = m_disableCoord ? 1.0f : Coord(required.Count, m_maxCoord);
+                    float coord = disableCoord ? 1.0f : Coord(required.Count, m_maxCoord);
                     return new ConjunctionScorer(this, required.ToArray(), coord);
                 }
 
                 // simple disjunction
-                if (required.Count == 0 && prohibited.Count == 0 && OuterInstance.m_minNrShouldMatch <= 1 && optional.Count > 1)
+                if (required.Count == 0 && prohibited.Count == 0 && outerInstance.m_minNrShouldMatch <= 1 && optional.Count > 1)
                 {
                     var coord = new float[optional.Count + 1];
                     for (int i = 0; i < coord.Length; i++)
                     {
-                        coord[i] = m_disableCoord ? 1.0f : Coord(i, m_maxCoord);
+                        coord[i] = disableCoord ? 1.0f : Coord(i, m_maxCoord);
                     }
                     return new DisjunctionSumScorer(this, optional.ToArray(), coord);
                 }
 
                 // Return a BooleanScorer2
-                return new BooleanScorer2(this, m_disableCoord, OuterInstance.m_minNrShouldMatch, required, prohibited, optional, m_maxCoord);
+                return new BooleanScorer2(this, disableCoord, outerInstance.m_minNrShouldMatch, required, prohibited, optional, m_maxCoord);
             }
 
             public override bool ScoresDocsOutOfOrder
             {
                 get
                 {
-                    if (OuterInstance.m_minNrShouldMatch > 1)
+                    if (outerInstance.m_minNrShouldMatch > 1)
                     {
                         // BS2 (in-order) will be used by scorer()
                         return false;
                     }
-                    foreach (BooleanClause c in OuterInstance.clauses)
+                    foreach (BooleanClause c in outerInstance.clauses)
                     {
                         if (c.IsRequired)
                         {
