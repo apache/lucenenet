@@ -32,12 +32,12 @@ namespace Lucene.Net.Codecs.Lucene41
     /// @lucene.experimental </seealso>
     public sealed class Lucene41PostingsReader : PostingsReaderBase
     {
-        private readonly IndexInput DocIn;
-        private readonly IndexInput PosIn;
-        private readonly IndexInput PayIn;
+        private readonly IndexInput docIn;
+        private readonly IndexInput posIn;
+        private readonly IndexInput payIn;
 
         private readonly ForUtil forUtil;
-        private int Version;
+        private int version;
 
         // public static boolean DEBUG = false;
 
@@ -52,24 +52,24 @@ namespace Lucene.Net.Codecs.Lucene41
             try
             {
                 docIn = dir.OpenInput(IndexFileNames.SegmentFileName(segmentInfo.Name, segmentSuffix, Lucene41PostingsFormat.DOC_EXTENSION), ioContext);
-                Version = CodecUtil.CheckHeader(docIn, Lucene41PostingsWriter.DOC_CODEC, Lucene41PostingsWriter.VERSION_START, Lucene41PostingsWriter.VERSION_CURRENT);
+                version = CodecUtil.CheckHeader(docIn, Lucene41PostingsWriter.DOC_CODEC, Lucene41PostingsWriter.VERSION_START, Lucene41PostingsWriter.VERSION_CURRENT);
                 forUtil = new ForUtil(docIn);
 
                 if (fieldInfos.HasProx)
                 {
                     posIn = dir.OpenInput(IndexFileNames.SegmentFileName(segmentInfo.Name, segmentSuffix, Lucene41PostingsFormat.POS_EXTENSION), ioContext);
-                    CodecUtil.CheckHeader(posIn, Lucene41PostingsWriter.POS_CODEC, Version, Version);
+                    CodecUtil.CheckHeader(posIn, Lucene41PostingsWriter.POS_CODEC, version, version);
 
                     if (fieldInfos.HasPayloads || fieldInfos.HasOffsets)
                     {
                         payIn = dir.OpenInput(IndexFileNames.SegmentFileName(segmentInfo.Name, segmentSuffix, Lucene41PostingsFormat.PAY_EXTENSION), ioContext);
-                        CodecUtil.CheckHeader(payIn, Lucene41PostingsWriter.PAY_CODEC, Version, Version);
+                        CodecUtil.CheckHeader(payIn, Lucene41PostingsWriter.PAY_CODEC, version, version);
                     }
                 }
 
-                this.DocIn = docIn;
-                this.PosIn = posIn;
-                this.PayIn = payIn;
+                this.docIn = docIn;
+                this.posIn = posIn;
+                this.payIn = payIn;
                 success = true;
             }
             finally
@@ -130,7 +130,7 @@ namespace Lucene.Net.Codecs.Lucene41
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-                IOUtils.Close(DocIn, PosIn, PayIn);
+                IOUtils.Close(docIn, posIn, payIn);
         }
 
         public override void DecodeTerm(long[] longs, DataInput @in, FieldInfo fieldInfo, BlockTermState _termState, bool absolute)
@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 termState.PosStartFP = 0;
                 termState.PayStartFP = 0;
             }
-            if (Version < Lucene41PostingsWriter.VERSION_META_ARRAY) // backward compatibility
+            if (version < Lucene41PostingsWriter.VERSION_META_ARRAY) // backward compatibility
             {
                 DecodeTerm(@in, fieldInfo, termState);
                 return;
@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs.Lucene41
             if (reuse is BlockDocsEnum)
             {
                 docsEnum = (BlockDocsEnum)reuse;
-                if (!docsEnum.CanReuse(DocIn, fieldInfo))
+                if (!docsEnum.CanReuse(docIn, fieldInfo))
                 {
                     docsEnum = new BlockDocsEnum(this, fieldInfo);
                 }
@@ -260,7 +260,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 if (reuse is BlockDocsAndPositionsEnum)
                 {
                     docsAndPositionsEnum = (BlockDocsAndPositionsEnum)reuse;
-                    if (!docsAndPositionsEnum.CanReuse(DocIn, fieldInfo))
+                    if (!docsAndPositionsEnum.CanReuse(docIn, fieldInfo))
                     {
                         docsAndPositionsEnum = new BlockDocsAndPositionsEnum(this, fieldInfo);
                     }
@@ -277,7 +277,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 if (reuse is EverythingEnum)
                 {
                     everythingEnum = (EverythingEnum)reuse;
-                    if (!everythingEnum.CanReuse(DocIn, fieldInfo))
+                    if (!everythingEnum.CanReuse(docIn, fieldInfo))
                     {
                         everythingEnum = new EverythingEnum(this, fieldInfo);
                     }
@@ -292,115 +292,115 @@ namespace Lucene.Net.Codecs.Lucene41
 
         internal sealed class BlockDocsEnum : DocsEnum
         {
-            private readonly Lucene41PostingsReader OuterInstance;
+            private readonly Lucene41PostingsReader outerInstance;
 
-            private readonly byte[] Encoded;
+            private readonly byte[] encoded;
 
-            private readonly int[] DocDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
-            private readonly int[] FreqBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] docDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] freqBuffer = new int[ForUtil.MAX_DATA_SIZE];
 
-            private int DocBufferUpto;
+            private int docBufferUpto;
 
-            private Lucene41SkipReader Skipper;
-            private bool Skipped;
+            private Lucene41SkipReader skipper;
+            private bool skipped;
 
-            internal readonly IndexInput StartDocIn;
+            internal readonly IndexInput startDocIn;
 
-            internal IndexInput DocIn;
-            internal readonly bool IndexHasFreq;
-            internal readonly bool IndexHasPos;
-            internal readonly bool IndexHasOffsets;
-            internal readonly bool IndexHasPayloads;
+            internal IndexInput docIn;
+            internal readonly bool indexHasFreq;
+            internal readonly bool indexHasPos;
+            internal readonly bool indexHasOffsets;
+            internal readonly bool indexHasPayloads;
 
-            private int DocFreq; // number of docs in this posting list
-            private long TotalTermFreq; // sum of freqs in this posting list (or DocFreq when omitted)
-            private int DocUpto; // how many docs we've read
-            private int Doc; // doc we last read
-            private int Accum; // accumulator for doc deltas
-            private int Freq_Renamed; // freq we last read
+            private int docFreq; // number of docs in this posting list
+            private long totalTermFreq; // sum of freqs in this posting list (or DocFreq when omitted)
+            private int docUpto; // how many docs we've read
+            private int doc; // doc we last read
+            private int accum; // accumulator for doc deltas
+            private int freq; // freq we last read
 
             // Where this term's postings start in the .doc file:
-            private long DocTermStartFP;
+            private long docTermStartFP;
 
             // Where this term's skip data starts (after
             // docTermStartFP) in the .doc file (or -1 if there is
             // no skip data for this term):
-            private long SkipOffset;
+            private long skipOffset;
 
             // docID for next skip point, we won't use skipper if
             // target docID is not larger than this
-            private int NextSkipDoc;
+            private int nextSkipDoc;
 
-            private IBits LiveDocs;
+            private IBits liveDocs;
 
-            private bool NeedsFreq; // true if the caller actually needs frequencies
-            private int SingletonDocID; // docid when there is a single pulsed posting, otherwise -1
+            private bool needsFreq; // true if the caller actually needs frequencies
+            private int singletonDocID; // docid when there is a single pulsed posting, otherwise -1
 
             public BlockDocsEnum(Lucene41PostingsReader outerInstance, FieldInfo fieldInfo)
             {
-                this.OuterInstance = outerInstance;
-                this.StartDocIn = outerInstance.DocIn;
-                this.DocIn = null;
-                IndexHasFreq = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
-                IndexHasPos = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-                IndexHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-                IndexHasPayloads = fieldInfo.HasPayloads;
-                Encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
+                this.outerInstance = outerInstance;
+                this.startDocIn = outerInstance.docIn;
+                this.docIn = null;
+                indexHasFreq = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
+                indexHasPos = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                indexHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                indexHasPayloads = fieldInfo.HasPayloads;
+                encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
             }
 
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
-                return docIn == StartDocIn && IndexHasFreq == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS) && IndexHasPos == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) && IndexHasPayloads == fieldInfo.HasPayloads;
+                return docIn == startDocIn && indexHasFreq == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS) && indexHasPos == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) && indexHasPayloads == fieldInfo.HasPayloads;
             }
 
             public DocsEnum Reset(IBits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState, int flags)
             {
-                this.LiveDocs = liveDocs;
+                this.liveDocs = liveDocs;
                 // if (DEBUG) {
                 //   System.out.println("  FPR.reset: termState=" + termState);
                 // }
-                DocFreq = termState.DocFreq;
-                TotalTermFreq = IndexHasFreq ? termState.TotalTermFreq : DocFreq;
-                DocTermStartFP = termState.DocStartFP;
-                SkipOffset = termState.SkipOffset;
-                SingletonDocID = termState.SingletonDocID;
-                if (DocFreq > 1)
+                docFreq = termState.DocFreq;
+                totalTermFreq = indexHasFreq ? termState.TotalTermFreq : docFreq;
+                docTermStartFP = termState.DocStartFP;
+                skipOffset = termState.SkipOffset;
+                singletonDocID = termState.SingletonDocID;
+                if (docFreq > 1)
                 {
-                    if (DocIn == null)
+                    if (docIn == null)
                     {
                         // lazy init
-                        DocIn = (IndexInput)StartDocIn.Clone();
+                        docIn = (IndexInput)startDocIn.Clone();
                     }
-                    DocIn.Seek(DocTermStartFP);
+                    docIn.Seek(docTermStartFP);
                 }
 
-                Doc = -1;
-                this.NeedsFreq = (flags & DocsEnum.FLAG_FREQS) != 0;
-                if (!IndexHasFreq)
+                doc = -1;
+                this.needsFreq = (flags & DocsEnum.FLAG_FREQS) != 0;
+                if (!indexHasFreq)
                 {
-                    CollectionsHelper.Fill(FreqBuffer, 1);
+                    CollectionsHelper.Fill(freqBuffer, 1);
                 }
-                Accum = 0;
-                DocUpto = 0;
-                NextSkipDoc = Lucene41PostingsFormat.BLOCK_SIZE - 1; // we won't skip if target is found in first block
-                DocBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
-                Skipped = false;
+                accum = 0;
+                docUpto = 0;
+                nextSkipDoc = Lucene41PostingsFormat.BLOCK_SIZE - 1; // we won't skip if target is found in first block
+                docBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
+                skipped = false;
                 return this;
             }
 
             public override int Freq
             {
-                get { return Freq_Renamed; }
+                get { return freq; }
             }
 
             public override int DocID
             {
-                get { return Doc; }
+                get { return doc; }
             }
 
             private void RefillDocs()
             {
-                int left = DocFreq - DocUpto;
+                int left = docFreq - docUpto;
                 Debug.Assert(left > 0);
 
                 if (left >= Lucene41PostingsFormat.BLOCK_SIZE)
@@ -408,27 +408,27 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("    fill doc block from fp=" + docIn.getFilePointer());
                     // }
-                    OuterInstance.forUtil.ReadBlock(DocIn, Encoded, DocDeltaBuffer);
+                    outerInstance.forUtil.ReadBlock(docIn, encoded, docDeltaBuffer);
 
-                    if (IndexHasFreq)
+                    if (indexHasFreq)
                     {
                         // if (DEBUG) {
                         //   System.out.println("    fill freq block from fp=" + docIn.getFilePointer());
                         // }
-                        if (NeedsFreq)
+                        if (needsFreq)
                         {
-                            OuterInstance.forUtil.ReadBlock(DocIn, Encoded, FreqBuffer);
+                            outerInstance.forUtil.ReadBlock(docIn, encoded, freqBuffer);
                         }
                         else
                         {
-                            OuterInstance.forUtil.SkipBlock(DocIn); // skip over freqs
+                            outerInstance.forUtil.SkipBlock(docIn); // skip over freqs
                         }
                     }
                 }
-                else if (DocFreq == 1)
+                else if (docFreq == 1)
                 {
-                    DocDeltaBuffer[0] = SingletonDocID;
-                    FreqBuffer[0] = (int)TotalTermFreq;
+                    docDeltaBuffer[0] = singletonDocID;
+                    freqBuffer[0] = (int)totalTermFreq;
                 }
                 else
                 {
@@ -436,9 +436,9 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("    fill last vInt block from fp=" + docIn.getFilePointer());
                     // }
-                    ReadVIntBlock(DocIn, DocDeltaBuffer, FreqBuffer, left, IndexHasFreq);
+                    ReadVIntBlock(docIn, docDeltaBuffer, freqBuffer, left, indexHasFreq);
                 }
-                DocBufferUpto = 0;
+                docBufferUpto = 0;
             }
 
             public override int NextDoc()
@@ -452,14 +452,14 @@ namespace Lucene.Net.Codecs.Lucene41
                     //   System.out.println("  docUpto=" + docUpto + " (of df=" + DocFreq + ") docBufferUpto=" + docBufferUpto);
                     // }
 
-                    if (DocUpto == DocFreq)
+                    if (docUpto == docFreq)
                     {
                         // if (DEBUG) {
                         //   System.out.println("  return doc=END");
                         // }
-                        return Doc = NO_MORE_DOCS;
+                        return doc = NO_MORE_DOCS;
                     }
-                    if (DocBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
+                    if (docBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
                     {
                         RefillDocs();
                     }
@@ -467,23 +467,23 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("    accum=" + accum + " docDeltaBuffer[" + docBufferUpto + "]=" + docDeltaBuffer[docBufferUpto]);
                     // }
-                    Accum += DocDeltaBuffer[DocBufferUpto];
-                    DocUpto++;
+                    accum += docDeltaBuffer[docBufferUpto];
+                    docUpto++;
 
-                    if (LiveDocs == null || LiveDocs.Get(Accum))
+                    if (liveDocs == null || liveDocs.Get(accum))
                     {
-                        Doc = Accum;
-                        Freq_Renamed = FreqBuffer[DocBufferUpto];
-                        DocBufferUpto++;
+                        doc = accum;
+                        freq = freqBuffer[docBufferUpto];
+                        docBufferUpto++;
                         // if (DEBUG) {
                         //   System.out.println("  return doc=" + doc + " freq=" + freq);
                         // }
-                        return Doc;
+                        return doc;
                     }
                     // if (DEBUG) {
                     //   System.out.println("  doc=" + accum + " is deleted; try next doc");
                     // }
-                    DocBufferUpto++;
+                    docBufferUpto++;
                 }
             }
 
@@ -496,54 +496,54 @@ namespace Lucene.Net.Codecs.Lucene41
 
                 // current skip docID < docIDs generated from current buffer <= next skip docID
                 // we don't need to skip if target is buffered already
-                if (DocFreq > Lucene41PostingsFormat.BLOCK_SIZE && target > NextSkipDoc)
+                if (docFreq > Lucene41PostingsFormat.BLOCK_SIZE && target > nextSkipDoc)
                 {
                     // if (DEBUG) {
                     //   System.out.println("load skipper");
                     // }
 
-                    if (Skipper == null)
+                    if (skipper == null)
                     {
                         // Lazy init: first time this enum has ever been used for skipping
-                        Skipper = new Lucene41SkipReader((IndexInput)DocIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, IndexHasPos, IndexHasOffsets, IndexHasPayloads);
+                        skipper = new Lucene41SkipReader((IndexInput)docIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, indexHasPos, indexHasOffsets, indexHasPayloads);
                     }
 
-                    if (!Skipped)
+                    if (!skipped)
                     {
-                        Debug.Assert(SkipOffset != -1);
+                        Debug.Assert(skipOffset != -1);
                         // this is the first time this enum has skipped
                         // since reset() was called; load the skip data:
-                        Skipper.Init(DocTermStartFP + SkipOffset, DocTermStartFP, 0, 0, DocFreq);
-                        Skipped = true;
+                        skipper.Init(docTermStartFP + skipOffset, docTermStartFP, 0, 0, docFreq);
+                        skipped = true;
                     }
 
                     // always plus one to fix the result, since skip position in Lucene41SkipReader
                     // is a little different from MultiLevelSkipListReader
-                    int newDocUpto = Skipper.SkipTo(target) + 1;
+                    int newDocUpto = skipper.SkipTo(target) + 1;
 
-                    if (newDocUpto > DocUpto)
+                    if (newDocUpto > docUpto)
                     {
                         // Skipper moved
                         // if (DEBUG) {
                         //   System.out.println("skipper moved to docUpto=" + newDocUpto + " vs current=" + docUpto + "; docID=" + skipper.getDoc() + " fp=" + skipper.getDocPointer());
                         // }
                         Debug.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0, "got " + newDocUpto);
-                        DocUpto = newDocUpto;
+                        docUpto = newDocUpto;
 
                         // Force to read next block
-                        DocBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
-                        Accum = Skipper.Doc; // actually, this is just lastSkipEntry
-                        DocIn.Seek(Skipper.DocPointer); // now point to the block we want to search
+                        docBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
+                        accum = skipper.Doc; // actually, this is just lastSkipEntry
+                        docIn.Seek(skipper.DocPointer); // now point to the block we want to search
                     }
                     // next time we call advance, this is used to
                     // foresee whether skipper is necessary.
-                    NextSkipDoc = Skipper.NextSkipDoc;
+                    nextSkipDoc = skipper.NextSkipDoc;
                 }
-                if (DocUpto == DocFreq)
+                if (docUpto == docFreq)
                 {
-                    return Doc = NO_MORE_DOCS;
+                    return doc = NO_MORE_DOCS;
                 }
-                if (DocBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
+                if (docBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
                 {
                     RefillDocs();
                 }
@@ -555,185 +555,185 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("  scan doc=" + accum + " docBufferUpto=" + docBufferUpto);
                     // }
-                    Accum += DocDeltaBuffer[DocBufferUpto];
-                    DocUpto++;
+                    accum += docDeltaBuffer[docBufferUpto];
+                    docUpto++;
 
-                    if (Accum >= target)
+                    if (accum >= target)
                     {
                         break;
                     }
-                    DocBufferUpto++;
-                    if (DocUpto == DocFreq)
+                    docBufferUpto++;
+                    if (docUpto == docFreq)
                     {
-                        return Doc = NO_MORE_DOCS;
+                        return doc = NO_MORE_DOCS;
                     }
                 }
 
-                if (LiveDocs == null || LiveDocs.Get(Accum))
+                if (liveDocs == null || liveDocs.Get(accum))
                 {
                     // if (DEBUG) {
                     //   System.out.println("  return doc=" + accum);
                     // }
-                    Freq_Renamed = FreqBuffer[DocBufferUpto];
-                    DocBufferUpto++;
-                    return Doc = Accum;
+                    freq = freqBuffer[docBufferUpto];
+                    docBufferUpto++;
+                    return doc = accum;
                 }
                 else
                 {
                     // if (DEBUG) {
                     //   System.out.println("  now do nextDoc()");
                     // }
-                    DocBufferUpto++;
+                    docBufferUpto++;
                     return NextDoc();
                 }
             }
 
             public override long Cost()
             {
-                return DocFreq;
+                return docFreq;
             }
         }
 
         internal sealed class BlockDocsAndPositionsEnum : DocsAndPositionsEnum
         {
-            private readonly Lucene41PostingsReader OuterInstance;
+            private readonly Lucene41PostingsReader outerInstance;
 
-            private readonly byte[] Encoded;
+            private readonly byte[] encoded;
 
-            private readonly int[] DocDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
-            private readonly int[] FreqBuffer = new int[ForUtil.MAX_DATA_SIZE];
-            private readonly int[] PosDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] docDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] freqBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] posDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
 
-            private int DocBufferUpto;
-            private int PosBufferUpto;
+            private int docBufferUpto;
+            private int posBufferUpto;
 
-            private Lucene41SkipReader Skipper;
-            private bool Skipped;
+            private Lucene41SkipReader skipper;
+            private bool skipped;
 
-            internal readonly IndexInput StartDocIn;
+            internal readonly IndexInput startDocIn;
 
-            internal IndexInput DocIn;
-            internal readonly IndexInput PosIn;
+            internal IndexInput docIn;
+            internal readonly IndexInput posIn;
 
-            internal readonly bool IndexHasOffsets;
-            internal readonly bool IndexHasPayloads;
+            internal readonly bool indexHasOffsets;
+            internal readonly bool indexHasPayloads;
 
-            private int DocFreq; // number of docs in this posting list
-            private long TotalTermFreq; // number of positions in this posting list
-            private int DocUpto; // how many docs we've read
-            private int Doc; // doc we last read
-            private int Accum; // accumulator for doc deltas
-            private int Freq_Renamed; // freq we last read
-            private int Position; // current position
+            private int docFreq; // number of docs in this posting list
+            private long totalTermFreq; // number of positions in this posting list
+            private int docUpto; // how many docs we've read
+            private int doc; // doc we last read
+            private int accum; // accumulator for doc deltas
+            private int freq; // freq we last read
+            private int position; // current position
 
             // how many positions "behind" we are; nextPosition must
             // skip these to "catch up":
-            private int PosPendingCount;
+            private int posPendingCount;
 
             // Lazy pos seek: if != -1 then we must seek to this FP
             // before reading positions:
-            private long PosPendingFP;
+            private long posPendingFP;
 
             // Where this term's postings start in the .doc file:
-            private long DocTermStartFP;
+            private long docTermStartFP;
 
             // Where this term's postings start in the .pos file:
-            private long PosTermStartFP;
+            private long posTermStartFP;
 
             // Where this term's payloads/offsets start in the .pay
             // file:
-            private long PayTermStartFP;
+            private long payTermStartFP;
 
             // File pointer where the last (vInt encoded) pos delta
             // block is.  We need this to know whether to bulk
             // decode vs vInt decode the block:
-            private long LastPosBlockFP;
+            private long lastPosBlockFP;
 
             // Where this term's skip data starts (after
             // docTermStartFP) in the .doc file (or -1 if there is
             // no skip data for this term):
-            private long SkipOffset;
+            private long skipOffset;
 
-            private int NextSkipDoc;
+            private int nextSkipDoc;
 
-            private IBits LiveDocs;
-            private int SingletonDocID; // docid when there is a single pulsed posting, otherwise -1
+            private IBits liveDocs;
+            private int singletonDocID; // docid when there is a single pulsed posting, otherwise -1
 
             public BlockDocsAndPositionsEnum(Lucene41PostingsReader outerInstance, FieldInfo fieldInfo)
             {
-                this.OuterInstance = outerInstance;
-                this.StartDocIn = outerInstance.DocIn;
-                this.DocIn = null;
-                this.PosIn = (IndexInput)outerInstance.PosIn.Clone();
-                Encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
-                IndexHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-                IndexHasPayloads = fieldInfo.HasPayloads;
+                this.outerInstance = outerInstance;
+                this.startDocIn = outerInstance.docIn;
+                this.docIn = null;
+                this.posIn = (IndexInput)outerInstance.posIn.Clone();
+                encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
+                indexHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                indexHasPayloads = fieldInfo.HasPayloads;
             }
 
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
-                return docIn == StartDocIn && IndexHasOffsets == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && IndexHasPayloads == fieldInfo.HasPayloads;
+                return docIn == startDocIn && indexHasOffsets == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && indexHasPayloads == fieldInfo.HasPayloads;
             }
 
             public DocsAndPositionsEnum Reset(IBits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState)
             {
-                this.LiveDocs = liveDocs;
+                this.liveDocs = liveDocs;
                 // if (DEBUG) {
                 //   System.out.println("  FPR.reset: termState=" + termState);
                 // }
-                DocFreq = termState.DocFreq;
-                DocTermStartFP = termState.DocStartFP;
-                PosTermStartFP = termState.PosStartFP;
-                PayTermStartFP = termState.PayStartFP;
-                SkipOffset = termState.SkipOffset;
-                TotalTermFreq = termState.TotalTermFreq;
-                SingletonDocID = termState.SingletonDocID;
-                if (DocFreq > 1)
+                docFreq = termState.DocFreq;
+                docTermStartFP = termState.DocStartFP;
+                posTermStartFP = termState.PosStartFP;
+                payTermStartFP = termState.PayStartFP;
+                skipOffset = termState.SkipOffset;
+                totalTermFreq = termState.TotalTermFreq;
+                singletonDocID = termState.SingletonDocID;
+                if (docFreq > 1)
                 {
-                    if (DocIn == null)
+                    if (docIn == null)
                     {
                         // lazy init
-                        DocIn = (IndexInput)StartDocIn.Clone();
+                        docIn = (IndexInput)startDocIn.Clone();
                     }
-                    DocIn.Seek(DocTermStartFP);
+                    docIn.Seek(docTermStartFP);
                 }
-                PosPendingFP = PosTermStartFP;
-                PosPendingCount = 0;
+                posPendingFP = posTermStartFP;
+                posPendingCount = 0;
                 if (termState.TotalTermFreq < Lucene41PostingsFormat.BLOCK_SIZE)
                 {
-                    LastPosBlockFP = PosTermStartFP;
+                    lastPosBlockFP = posTermStartFP;
                 }
                 else if (termState.TotalTermFreq == Lucene41PostingsFormat.BLOCK_SIZE)
                 {
-                    LastPosBlockFP = -1;
+                    lastPosBlockFP = -1;
                 }
                 else
                 {
-                    LastPosBlockFP = PosTermStartFP + termState.LastPosBlockOffset;
+                    lastPosBlockFP = posTermStartFP + termState.LastPosBlockOffset;
                 }
 
-                Doc = -1;
-                Accum = 0;
-                DocUpto = 0;
-                NextSkipDoc = Lucene41PostingsFormat.BLOCK_SIZE - 1;
-                DocBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
-                Skipped = false;
+                doc = -1;
+                accum = 0;
+                docUpto = 0;
+                nextSkipDoc = Lucene41PostingsFormat.BLOCK_SIZE - 1;
+                docBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
+                skipped = false;
                 return this;
             }
 
             public override int Freq
             {
-                get { return Freq_Renamed; }
+                get { return freq; }
             }
 
             public override int DocID
             {
-                get { return Doc; }
+                get { return doc; }
             }
 
             private void RefillDocs()
             {
-                int left = DocFreq - DocUpto;
+                int left = docFreq - docUpto;
                 Debug.Assert(left > 0);
 
                 if (left >= Lucene41PostingsFormat.BLOCK_SIZE)
@@ -741,16 +741,16 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("    fill doc block from fp=" + docIn.getFilePointer());
                     // }
-                    OuterInstance.forUtil.ReadBlock(DocIn, Encoded, DocDeltaBuffer);
+                    outerInstance.forUtil.ReadBlock(docIn, encoded, docDeltaBuffer);
                     // if (DEBUG) {
                     //   System.out.println("    fill freq block from fp=" + docIn.getFilePointer());
                     // }
-                    OuterInstance.forUtil.ReadBlock(DocIn, Encoded, FreqBuffer);
+                    outerInstance.forUtil.ReadBlock(docIn, encoded, freqBuffer);
                 }
-                else if (DocFreq == 1)
+                else if (docFreq == 1)
                 {
-                    DocDeltaBuffer[0] = SingletonDocID;
-                    FreqBuffer[0] = (int)TotalTermFreq;
+                    docDeltaBuffer[0] = singletonDocID;
+                    freqBuffer[0] = (int)totalTermFreq;
                 }
                 else
                 {
@@ -758,9 +758,9 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("    fill last vInt doc block from fp=" + docIn.getFilePointer());
                     // }
-                    ReadVIntBlock(DocIn, DocDeltaBuffer, FreqBuffer, left, true);
+                    ReadVIntBlock(docIn, docDeltaBuffer, freqBuffer, left, true);
                 }
-                DocBufferUpto = 0;
+                docBufferUpto = 0;
             }
 
             private void RefillPositions()
@@ -768,38 +768,38 @@ namespace Lucene.Net.Codecs.Lucene41
                 // if (DEBUG) {
                 //   System.out.println("      refillPositions");
                 // }
-                if (PosIn.FilePointer == LastPosBlockFP)
+                if (posIn.FilePointer == lastPosBlockFP)
                 {
                     // if (DEBUG) {
                     //   System.out.println("        vInt pos block @ fp=" + posIn.getFilePointer() + " hasPayloads=" + indexHasPayloads + " hasOffsets=" + indexHasOffsets);
                     // }
-                    int count = (int)(TotalTermFreq % Lucene41PostingsFormat.BLOCK_SIZE);
+                    int count = (int)(totalTermFreq % Lucene41PostingsFormat.BLOCK_SIZE);
                     int payloadLength = 0;
                     for (int i = 0; i < count; i++)
                     {
-                        int code = PosIn.ReadVInt();
-                        if (IndexHasPayloads)
+                        int code = posIn.ReadVInt();
+                        if (indexHasPayloads)
                         {
                             if ((code & 1) != 0)
                             {
-                                payloadLength = PosIn.ReadVInt();
+                                payloadLength = posIn.ReadVInt();
                             }
-                            PosDeltaBuffer[i] = (int)((uint)code >> 1);
+                            posDeltaBuffer[i] = (int)((uint)code >> 1);
                             if (payloadLength != 0)
                             {
-                                PosIn.Seek(PosIn.FilePointer + payloadLength);
+                                posIn.Seek(posIn.FilePointer + payloadLength);
                             }
                         }
                         else
                         {
-                            PosDeltaBuffer[i] = code;
+                            posDeltaBuffer[i] = code;
                         }
-                        if (IndexHasOffsets)
+                        if (indexHasOffsets)
                         {
-                            if ((PosIn.ReadVInt() & 1) != 0)
+                            if ((posIn.ReadVInt() & 1) != 0)
                             {
                                 // offset length changed
-                                PosIn.ReadVInt();
+                                posIn.ReadVInt();
                             }
                         }
                     }
@@ -809,7 +809,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("        bulk pos block @ fp=" + posIn.getFilePointer());
                     // }
-                    OuterInstance.forUtil.ReadBlock(PosIn, Encoded, PosDeltaBuffer);
+                    outerInstance.forUtil.ReadBlock(posIn, encoded, posDeltaBuffer);
                 }
             }
 
@@ -823,31 +823,31 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("    docUpto=" + docUpto + " (of df=" + DocFreq + ") docBufferUpto=" + docBufferUpto);
                     // }
-                    if (DocUpto == DocFreq)
+                    if (docUpto == docFreq)
                     {
-                        return Doc = NO_MORE_DOCS;
+                        return doc = NO_MORE_DOCS;
                     }
-                    if (DocBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
+                    if (docBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
                     {
                         RefillDocs();
                     }
                     // if (DEBUG) {
                     //   System.out.println("    accum=" + accum + " docDeltaBuffer[" + docBufferUpto + "]=" + docDeltaBuffer[docBufferUpto]);
                     // }
-                    Accum += DocDeltaBuffer[DocBufferUpto];
-                    Freq_Renamed = FreqBuffer[DocBufferUpto];
-                    PosPendingCount += Freq_Renamed;
-                    DocBufferUpto++;
-                    DocUpto++;
+                    accum += docDeltaBuffer[docBufferUpto];
+                    freq = freqBuffer[docBufferUpto];
+                    posPendingCount += freq;
+                    docBufferUpto++;
+                    docUpto++;
 
-                    if (LiveDocs == null || LiveDocs.Get(Accum))
+                    if (liveDocs == null || liveDocs.Get(accum))
                     {
-                        Doc = Accum;
-                        Position = 0;
+                        doc = accum;
+                        position = 0;
                         // if (DEBUG) {
                         //   System.out.println("    return doc=" + doc + " freq=" + freq + " posPendingCount=" + posPendingCount);
                         // }
-                        return Doc;
+                        return doc;
                     }
                     // if (DEBUG) {
                     //   System.out.println("    doc=" + accum + " is deleted; try next doc");
@@ -862,35 +862,35 @@ namespace Lucene.Net.Codecs.Lucene41
                 //   System.out.println("  FPR.advance target=" + target);
                 // }
 
-                if (DocFreq > Lucene41PostingsFormat.BLOCK_SIZE && target > NextSkipDoc)
+                if (docFreq > Lucene41PostingsFormat.BLOCK_SIZE && target > nextSkipDoc)
                 {
                     // if (DEBUG) {
                     //   System.out.println("    try skipper");
                     // }
-                    if (Skipper == null)
+                    if (skipper == null)
                     {
                         // Lazy init: first time this enum has ever been used for skipping
                         // if (DEBUG) {
                         //   System.out.println("    create skipper");
                         // }
-                        Skipper = new Lucene41SkipReader((IndexInput)DocIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, IndexHasOffsets, IndexHasPayloads);
+                        skipper = new Lucene41SkipReader((IndexInput)docIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, indexHasOffsets, indexHasPayloads);
                     }
 
-                    if (!Skipped)
+                    if (!skipped)
                     {
-                        Debug.Assert(SkipOffset != -1);
+                        Debug.Assert(skipOffset != -1);
                         // this is the first time this enum has skipped
                         // since reset() was called; load the skip data:
                         // if (DEBUG) {
                         //   System.out.println("    init skipper");
                         // }
-                        Skipper.Init(DocTermStartFP + SkipOffset, DocTermStartFP, PosTermStartFP, PayTermStartFP, DocFreq);
-                        Skipped = true;
+                        skipper.Init(docTermStartFP + skipOffset, docTermStartFP, posTermStartFP, payTermStartFP, docFreq);
+                        skipped = true;
                     }
 
-                    int newDocUpto = Skipper.SkipTo(target) + 1;
+                    int newDocUpto = skipper.SkipTo(target) + 1;
 
-                    if (newDocUpto > DocUpto)
+                    if (newDocUpto > docUpto)
                     {
                         // Skipper moved
                         // if (DEBUG) {
@@ -898,22 +898,22 @@ namespace Lucene.Net.Codecs.Lucene41
                         // }
 
                         Debug.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0, "got " + newDocUpto);
-                        DocUpto = newDocUpto;
+                        docUpto = newDocUpto;
 
                         // Force to read next block
-                        DocBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
-                        Accum = Skipper.Doc;
-                        DocIn.Seek(Skipper.DocPointer);
-                        PosPendingFP = Skipper.PosPointer;
-                        PosPendingCount = Skipper.PosBufferUpto;
+                        docBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
+                        accum = skipper.Doc;
+                        docIn.Seek(skipper.DocPointer);
+                        posPendingFP = skipper.PosPointer;
+                        posPendingCount = skipper.PosBufferUpto;
                     }
-                    NextSkipDoc = Skipper.NextSkipDoc;
+                    nextSkipDoc = skipper.NextSkipDoc;
                 }
-                if (DocUpto == DocFreq)
+                if (docUpto == docFreq)
                 {
-                    return Doc = NO_MORE_DOCS;
+                    return doc = NO_MORE_DOCS;
                 }
-                if (DocBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
+                if (docBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
                 {
                     RefillDocs();
                 }
@@ -925,29 +925,29 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("  scan doc=" + accum + " docBufferUpto=" + docBufferUpto);
                     // }
-                    Accum += DocDeltaBuffer[DocBufferUpto];
-                    Freq_Renamed = FreqBuffer[DocBufferUpto];
-                    PosPendingCount += Freq_Renamed;
-                    DocBufferUpto++;
-                    DocUpto++;
+                    accum += docDeltaBuffer[docBufferUpto];
+                    freq = freqBuffer[docBufferUpto];
+                    posPendingCount += freq;
+                    docBufferUpto++;
+                    docUpto++;
 
-                    if (Accum >= target)
+                    if (accum >= target)
                     {
                         break;
                     }
-                    if (DocUpto == DocFreq)
+                    if (docUpto == docFreq)
                     {
-                        return Doc = NO_MORE_DOCS;
+                        return doc = NO_MORE_DOCS;
                     }
                 }
 
-                if (LiveDocs == null || LiveDocs.Get(Accum))
+                if (liveDocs == null || liveDocs.Get(accum))
                 {
                     // if (DEBUG) {
                     //   System.out.println("  return doc=" + accum);
                     // }
-                    Position = 0;
-                    return Doc = Accum;
+                    position = 0;
+                    return doc = accum;
                 }
                 else
                 {
@@ -965,15 +965,15 @@ namespace Lucene.Net.Codecs.Lucene41
             private void SkipPositions()
             {
                 // Skip positions now:
-                int toSkip = PosPendingCount - Freq_Renamed;
+                int toSkip = posPendingCount - freq;
                 // if (DEBUG) {
                 //   System.out.println("      FPR.skipPositions: toSkip=" + toSkip);
                 // }
 
-                int leftInBlock = Lucene41PostingsFormat.BLOCK_SIZE - PosBufferUpto;
+                int leftInBlock = Lucene41PostingsFormat.BLOCK_SIZE - posBufferUpto;
                 if (toSkip < leftInBlock)
                 {
-                    PosBufferUpto += toSkip;
+                    posBufferUpto += toSkip;
                     // if (DEBUG) {
                     //   System.out.println("        skip w/in block to posBufferUpto=" + posBufferUpto);
                     // }
@@ -986,18 +986,18 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("        skip whole block @ fp=" + posIn.getFilePointer());
                         // }
-                        Debug.Assert(PosIn.FilePointer != LastPosBlockFP);
-                        OuterInstance.forUtil.SkipBlock(PosIn);
+                        Debug.Assert(posIn.FilePointer != lastPosBlockFP);
+                        outerInstance.forUtil.SkipBlock(posIn);
                         toSkip -= Lucene41PostingsFormat.BLOCK_SIZE;
                     }
                     RefillPositions();
-                    PosBufferUpto = toSkip;
+                    posBufferUpto = toSkip;
                     // if (DEBUG) {
                     //   System.out.println("        skip w/in block to posBufferUpto=" + posBufferUpto);
                     // }
                 }
 
-                Position = 0;
+                position = 0;
             }
 
             public override int NextPosition()
@@ -1005,35 +1005,35 @@ namespace Lucene.Net.Codecs.Lucene41
                 // if (DEBUG) {
                 //   System.out.println("    FPR.nextPosition posPendingCount=" + posPendingCount + " posBufferUpto=" + posBufferUpto);
                 // }
-                if (PosPendingFP != -1)
+                if (posPendingFP != -1)
                 {
                     // if (DEBUG) {
                     //   System.out.println("      seek to pendingFP=" + posPendingFP);
                     // }
-                    PosIn.Seek(PosPendingFP);
-                    PosPendingFP = -1;
+                    posIn.Seek(posPendingFP);
+                    posPendingFP = -1;
 
                     // Force buffer refill:
-                    PosBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
+                    posBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
                 }
 
-                if (PosPendingCount > Freq_Renamed)
+                if (posPendingCount > freq)
                 {
                     SkipPositions();
-                    PosPendingCount = Freq_Renamed;
+                    posPendingCount = freq;
                 }
 
-                if (PosBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
+                if (posBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
                 {
                     RefillPositions();
-                    PosBufferUpto = 0;
+                    posBufferUpto = 0;
                 }
-                Position += PosDeltaBuffer[PosBufferUpto++];
-                PosPendingCount--;
+                position += posDeltaBuffer[posBufferUpto++];
+                posPendingCount--;
                 // if (DEBUG) {
                 //   System.out.println("      return pos=" + position);
                 // }
-                return Position;
+                return position;
             }
 
             public override int StartOffset
@@ -1056,202 +1056,202 @@ namespace Lucene.Net.Codecs.Lucene41
 
             public override long Cost()
             {
-                return DocFreq;
+                return docFreq;
             }
         }
 
         // Also handles payloads + offsets
         internal sealed class EverythingEnum : DocsAndPositionsEnum
         {
-            private readonly Lucene41PostingsReader OuterInstance;
+            private readonly Lucene41PostingsReader outerInstance;
 
-            private readonly byte[] Encoded;
+            private readonly byte[] encoded;
 
-            private readonly int[] DocDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
-            private readonly int[] FreqBuffer = new int[ForUtil.MAX_DATA_SIZE];
-            private readonly int[] PosDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] docDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] freqBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            private readonly int[] posDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
 
-            private readonly int[] PayloadLengthBuffer;
-            private readonly int[] OffsetStartDeltaBuffer;
-            private readonly int[] OffsetLengthBuffer;
+            private readonly int[] payloadLengthBuffer;
+            private readonly int[] offsetStartDeltaBuffer;
+            private readonly int[] offsetLengthBuffer;
 
-            private byte[] PayloadBytes;
-            private int PayloadByteUpto;
-            private int PayloadLength;
+            private byte[] payloadBytes;
+            private int payloadByteUpto;
+            private int payloadLength;
 
-            private int LastStartOffset;
-            private int StartOffset_Renamed;
-            private int EndOffset_Renamed;
+            private int lastStartOffset;
+            private int startOffset;
+            private int endOffset;
 
-            private int DocBufferUpto;
-            private int PosBufferUpto;
+            private int docBufferUpto;
+            private int posBufferUpto;
 
-            private Lucene41SkipReader Skipper;
-            private bool Skipped;
+            private Lucene41SkipReader skipper;
+            private bool skipped;
 
-            internal readonly IndexInput StartDocIn;
+            internal readonly IndexInput startDocIn;
 
-            internal IndexInput DocIn;
-            internal readonly IndexInput PosIn;
-            internal readonly IndexInput PayIn;
-            internal readonly BytesRef Payload_Renamed;
+            internal IndexInput docIn;
+            internal readonly IndexInput posIn;
+            internal readonly IndexInput payIn;
+            internal readonly BytesRef payload;
 
-            internal readonly bool IndexHasOffsets;
-            internal readonly bool IndexHasPayloads;
+            internal readonly bool indexHasOffsets;
+            internal readonly bool indexHasPayloads;
 
-            private int DocFreq; // number of docs in this posting list
-            private long TotalTermFreq; // number of positions in this posting list
-            private int DocUpto; // how many docs we've read
-            private int Doc; // doc we last read
-            private int Accum; // accumulator for doc deltas
-            private int Freq_Renamed; // freq we last read
-            private int Position; // current position
+            private int docFreq; // number of docs in this posting list
+            private long totalTermFreq; // number of positions in this posting list
+            private int docUpto; // how many docs we've read
+            private int doc; // doc we last read
+            private int accum; // accumulator for doc deltas
+            private int freq; // freq we last read
+            private int position; // current position
 
             // how many positions "behind" we are; nextPosition must
             // skip these to "catch up":
-            private int PosPendingCount;
+            private int posPendingCount;
 
             // Lazy pos seek: if != -1 then we must seek to this FP
             // before reading positions:
-            private long PosPendingFP;
+            private long posPendingFP;
 
             // Lazy pay seek: if != -1 then we must seek to this FP
             // before reading payloads/offsets:
-            private long PayPendingFP;
+            private long payPendingFP;
 
             // Where this term's postings start in the .doc file:
-            private long DocTermStartFP;
+            private long docTermStartFP;
 
             // Where this term's postings start in the .pos file:
-            private long PosTermStartFP;
+            private long posTermStartFP;
 
             // Where this term's payloads/offsets start in the .pay
             // file:
-            private long PayTermStartFP;
+            private long payTermStartFP;
 
             // File pointer where the last (vInt encoded) pos delta
             // block is.  We need this to know whether to bulk
             // decode vs vInt decode the block:
-            private long LastPosBlockFP;
+            private long lastPosBlockFP;
 
             // Where this term's skip data starts (after
             // docTermStartFP) in the .doc file (or -1 if there is
             // no skip data for this term):
-            private long SkipOffset;
+            private long skipOffset;
 
-            private int NextSkipDoc;
+            private int nextSkipDoc;
 
-            private IBits LiveDocs;
+            private IBits liveDocs;
 
-            private bool NeedsOffsets; // true if we actually need offsets
-            private bool NeedsPayloads; // true if we actually need payloads
-            private int SingletonDocID; // docid when there is a single pulsed posting, otherwise -1
+            private bool needsOffsets; // true if we actually need offsets
+            private bool needsPayloads; // true if we actually need payloads
+            private int singletonDocID; // docid when there is a single pulsed posting, otherwise -1
 
             public EverythingEnum(Lucene41PostingsReader outerInstance, FieldInfo fieldInfo)
             {
-                this.OuterInstance = outerInstance;
-                this.StartDocIn = outerInstance.DocIn;
-                this.DocIn = null;
-                this.PosIn = (IndexInput)outerInstance.PosIn.Clone();
-                this.PayIn = (IndexInput)outerInstance.PayIn.Clone();
-                Encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
-                IndexHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-                if (IndexHasOffsets)
+                this.outerInstance = outerInstance;
+                this.startDocIn = outerInstance.docIn;
+                this.docIn = null;
+                this.posIn = (IndexInput)outerInstance.posIn.Clone();
+                this.payIn = (IndexInput)outerInstance.payIn.Clone();
+                encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
+                indexHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                if (indexHasOffsets)
                 {
-                    OffsetStartDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
-                    OffsetLengthBuffer = new int[ForUtil.MAX_DATA_SIZE];
+                    offsetStartDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
+                    offsetLengthBuffer = new int[ForUtil.MAX_DATA_SIZE];
                 }
                 else
                 {
-                    OffsetStartDeltaBuffer = null;
-                    OffsetLengthBuffer = null;
-                    StartOffset_Renamed = -1;
-                    EndOffset_Renamed = -1;
+                    offsetStartDeltaBuffer = null;
+                    offsetLengthBuffer = null;
+                    startOffset = -1;
+                    endOffset = -1;
                 }
 
-                IndexHasPayloads = fieldInfo.HasPayloads;
-                if (IndexHasPayloads)
+                indexHasPayloads = fieldInfo.HasPayloads;
+                if (indexHasPayloads)
                 {
-                    PayloadLengthBuffer = new int[ForUtil.MAX_DATA_SIZE];
-                    PayloadBytes = new byte[128];
-                    Payload_Renamed = new BytesRef();
+                    payloadLengthBuffer = new int[ForUtil.MAX_DATA_SIZE];
+                    payloadBytes = new byte[128];
+                    payload = new BytesRef();
                 }
                 else
                 {
-                    PayloadLengthBuffer = null;
-                    PayloadBytes = null;
-                    Payload_Renamed = null;
+                    payloadLengthBuffer = null;
+                    payloadBytes = null;
+                    payload = null;
                 }
             }
 
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
-                return docIn == StartDocIn && IndexHasOffsets == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && IndexHasPayloads == fieldInfo.HasPayloads;
+                return docIn == startDocIn && indexHasOffsets == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && indexHasPayloads == fieldInfo.HasPayloads;
             }
 
             public EverythingEnum Reset(IBits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState, int flags)
             {
-                this.LiveDocs = liveDocs;
+                this.liveDocs = liveDocs;
                 // if (DEBUG) {
                 //   System.out.println("  FPR.reset: termState=" + termState);
                 // }
-                DocFreq = termState.DocFreq;
-                DocTermStartFP = termState.DocStartFP;
-                PosTermStartFP = termState.PosStartFP;
-                PayTermStartFP = termState.PayStartFP;
-                SkipOffset = termState.SkipOffset;
-                TotalTermFreq = termState.TotalTermFreq;
-                SingletonDocID = termState.SingletonDocID;
-                if (DocFreq > 1)
+                docFreq = termState.DocFreq;
+                docTermStartFP = termState.DocStartFP;
+                posTermStartFP = termState.PosStartFP;
+                payTermStartFP = termState.PayStartFP;
+                skipOffset = termState.SkipOffset;
+                totalTermFreq = termState.TotalTermFreq;
+                singletonDocID = termState.SingletonDocID;
+                if (docFreq > 1)
                 {
-                    if (DocIn == null)
+                    if (docIn == null)
                     {
                         // lazy init
-                        DocIn = (IndexInput)StartDocIn.Clone();
+                        docIn = (IndexInput)startDocIn.Clone();
                     }
-                    DocIn.Seek(DocTermStartFP);
+                    docIn.Seek(docTermStartFP);
                 }
-                PosPendingFP = PosTermStartFP;
-                PayPendingFP = PayTermStartFP;
-                PosPendingCount = 0;
+                posPendingFP = posTermStartFP;
+                payPendingFP = payTermStartFP;
+                posPendingCount = 0;
                 if (termState.TotalTermFreq < Lucene41PostingsFormat.BLOCK_SIZE)
                 {
-                    LastPosBlockFP = PosTermStartFP;
+                    lastPosBlockFP = posTermStartFP;
                 }
                 else if (termState.TotalTermFreq == Lucene41PostingsFormat.BLOCK_SIZE)
                 {
-                    LastPosBlockFP = -1;
+                    lastPosBlockFP = -1;
                 }
                 else
                 {
-                    LastPosBlockFP = PosTermStartFP + termState.LastPosBlockOffset;
+                    lastPosBlockFP = posTermStartFP + termState.LastPosBlockOffset;
                 }
 
-                this.NeedsOffsets = (flags & DocsAndPositionsEnum.FLAG_OFFSETS) != 0;
-                this.NeedsPayloads = (flags & DocsAndPositionsEnum.FLAG_PAYLOADS) != 0;
+                this.needsOffsets = (flags & DocsAndPositionsEnum.FLAG_OFFSETS) != 0;
+                this.needsPayloads = (flags & DocsAndPositionsEnum.FLAG_PAYLOADS) != 0;
 
-                Doc = -1;
-                Accum = 0;
-                DocUpto = 0;
-                NextSkipDoc = Lucene41PostingsFormat.BLOCK_SIZE - 1;
-                DocBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
-                Skipped = false;
+                doc = -1;
+                accum = 0;
+                docUpto = 0;
+                nextSkipDoc = Lucene41PostingsFormat.BLOCK_SIZE - 1;
+                docBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
+                skipped = false;
                 return this;
             }
 
             public override int Freq
             {
-                get { return Freq_Renamed; }
+                get { return freq; }
             }
 
             public override int DocID
             {
-                get { return Doc; }
+                get { return doc; }
             }
 
             private void RefillDocs()
             {
-                int left = DocFreq - DocUpto;
+                int left = docFreq - docUpto;
                 Debug.Assert(left > 0);
 
                 if (left >= Lucene41PostingsFormat.BLOCK_SIZE)
@@ -1259,25 +1259,25 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("    fill doc block from fp=" + docIn.getFilePointer());
                     // }
-                    OuterInstance.forUtil.ReadBlock(DocIn, Encoded, DocDeltaBuffer);
+                    outerInstance.forUtil.ReadBlock(docIn, encoded, docDeltaBuffer);
                     // if (DEBUG) {
                     //   System.out.println("    fill freq block from fp=" + docIn.getFilePointer());
                     // }
-                    OuterInstance.forUtil.ReadBlock(DocIn, Encoded, FreqBuffer);
+                    outerInstance.forUtil.ReadBlock(docIn, encoded, freqBuffer);
                 }
-                else if (DocFreq == 1)
+                else if (docFreq == 1)
                 {
-                    DocDeltaBuffer[0] = SingletonDocID;
-                    FreqBuffer[0] = (int)TotalTermFreq;
+                    docDeltaBuffer[0] = singletonDocID;
+                    freqBuffer[0] = (int)totalTermFreq;
                 }
                 else
                 {
                     // if (DEBUG) {
                     //   System.out.println("    fill last vInt doc block from fp=" + docIn.getFilePointer());
                     // }
-                    ReadVIntBlock(DocIn, DocDeltaBuffer, FreqBuffer, left, true);
+                    ReadVIntBlock(docIn, docDeltaBuffer, freqBuffer, left, true);
                 }
-                DocBufferUpto = 0;
+                docBufferUpto = 0;
             }
 
             private void RefillPositions()
@@ -1285,114 +1285,114 @@ namespace Lucene.Net.Codecs.Lucene41
                 // if (DEBUG) {
                 //   System.out.println("      refillPositions");
                 // }
-                if (PosIn.FilePointer == LastPosBlockFP)
+                if (posIn.FilePointer == lastPosBlockFP)
                 {
                     // if (DEBUG) {
                     //   System.out.println("        vInt pos block @ fp=" + posIn.getFilePointer() + " hasPayloads=" + indexHasPayloads + " hasOffsets=" + indexHasOffsets);
                     // }
-                    int count = (int)(TotalTermFreq % Lucene41PostingsFormat.BLOCK_SIZE);
+                    int count = (int)(totalTermFreq % Lucene41PostingsFormat.BLOCK_SIZE);
                     int payloadLength = 0;
                     int offsetLength = 0;
-                    PayloadByteUpto = 0;
+                    payloadByteUpto = 0;
                     for (int i = 0; i < count; i++)
                     {
-                        int code = PosIn.ReadVInt();
-                        if (IndexHasPayloads)
+                        int code = posIn.ReadVInt();
+                        if (indexHasPayloads)
                         {
                             if ((code & 1) != 0)
                             {
-                                payloadLength = PosIn.ReadVInt();
+                                payloadLength = posIn.ReadVInt();
                             }
                             // if (DEBUG) {
                             //   System.out.println("        i=" + i + " payloadLen=" + payloadLength);
                             // }
-                            PayloadLengthBuffer[i] = payloadLength;
-                            PosDeltaBuffer[i] = (int)((uint)code >> 1);
+                            payloadLengthBuffer[i] = payloadLength;
+                            posDeltaBuffer[i] = (int)((uint)code >> 1);
                             if (payloadLength != 0)
                             {
-                                if (PayloadByteUpto + payloadLength > PayloadBytes.Length)
+                                if (payloadByteUpto + payloadLength > payloadBytes.Length)
                                 {
-                                    PayloadBytes = ArrayUtil.Grow(PayloadBytes, PayloadByteUpto + payloadLength);
+                                    payloadBytes = ArrayUtil.Grow(payloadBytes, payloadByteUpto + payloadLength);
                                 }
                                 //System.out.println("          read payload @ pos.fp=" + posIn.getFilePointer());
-                                PosIn.ReadBytes(PayloadBytes, PayloadByteUpto, payloadLength);
-                                PayloadByteUpto += payloadLength;
+                                posIn.ReadBytes(payloadBytes, payloadByteUpto, payloadLength);
+                                payloadByteUpto += payloadLength;
                             }
                         }
                         else
                         {
-                            PosDeltaBuffer[i] = code;
+                            posDeltaBuffer[i] = code;
                         }
 
-                        if (IndexHasOffsets)
+                        if (indexHasOffsets)
                         {
                             // if (DEBUG) {
                             //   System.out.println("        i=" + i + " read offsets from posIn.fp=" + posIn.getFilePointer());
                             // }
-                            int deltaCode = PosIn.ReadVInt();
+                            int deltaCode = posIn.ReadVInt();
                             if ((deltaCode & 1) != 0)
                             {
-                                offsetLength = PosIn.ReadVInt();
+                                offsetLength = posIn.ReadVInt();
                             }
-                            OffsetStartDeltaBuffer[i] = (int)((uint)deltaCode >> 1);
-                            OffsetLengthBuffer[i] = offsetLength;
+                            offsetStartDeltaBuffer[i] = (int)((uint)deltaCode >> 1);
+                            offsetLengthBuffer[i] = offsetLength;
                             // if (DEBUG) {
                             //   System.out.println("          startOffDelta=" + offsetStartDeltaBuffer[i] + " offsetLen=" + offsetLengthBuffer[i]);
                             // }
                         }
                     }
-                    PayloadByteUpto = 0;
+                    payloadByteUpto = 0;
                 }
                 else
                 {
                     // if (DEBUG) {
                     //   System.out.println("        bulk pos block @ fp=" + posIn.getFilePointer());
                     // }
-                    OuterInstance.forUtil.ReadBlock(PosIn, Encoded, PosDeltaBuffer);
+                    outerInstance.forUtil.ReadBlock(posIn, encoded, posDeltaBuffer);
 
-                    if (IndexHasPayloads)
+                    if (indexHasPayloads)
                     {
                         // if (DEBUG) {
                         //   System.out.println("        bulk payload block @ pay.fp=" + payIn.getFilePointer());
                         // }
-                        if (NeedsPayloads)
+                        if (needsPayloads)
                         {
-                            OuterInstance.forUtil.ReadBlock(PayIn, Encoded, PayloadLengthBuffer);
-                            int numBytes = PayIn.ReadVInt();
+                            outerInstance.forUtil.ReadBlock(payIn, encoded, payloadLengthBuffer);
+                            int numBytes = payIn.ReadVInt();
                             // if (DEBUG) {
                             //   System.out.println("        " + numBytes + " payload bytes @ pay.fp=" + payIn.getFilePointer());
                             // }
-                            if (numBytes > PayloadBytes.Length)
+                            if (numBytes > payloadBytes.Length)
                             {
-                                PayloadBytes = ArrayUtil.Grow(PayloadBytes, numBytes);
+                                payloadBytes = ArrayUtil.Grow(payloadBytes, numBytes);
                             }
-                            PayIn.ReadBytes(PayloadBytes, 0, numBytes);
+                            payIn.ReadBytes(payloadBytes, 0, numBytes);
                         }
                         else
                         {
                             // this works, because when writing a vint block we always force the first length to be written
-                            OuterInstance.forUtil.SkipBlock(PayIn); // skip over lengths
-                            int numBytes = PayIn.ReadVInt(); // read length of payloadBytes
-                            PayIn.Seek(PayIn.FilePointer + numBytes); // skip over payloadBytes
+                            outerInstance.forUtil.SkipBlock(payIn); // skip over lengths
+                            int numBytes = payIn.ReadVInt(); // read length of payloadBytes
+                            payIn.Seek(payIn.FilePointer + numBytes); // skip over payloadBytes
                         }
-                        PayloadByteUpto = 0;
+                        payloadByteUpto = 0;
                     }
 
-                    if (IndexHasOffsets)
+                    if (indexHasOffsets)
                     {
                         // if (DEBUG) {
                         //   System.out.println("        bulk offset block @ pay.fp=" + payIn.getFilePointer());
                         // }
-                        if (NeedsOffsets)
+                        if (needsOffsets)
                         {
-                            OuterInstance.forUtil.ReadBlock(PayIn, Encoded, OffsetStartDeltaBuffer);
-                            OuterInstance.forUtil.ReadBlock(PayIn, Encoded, OffsetLengthBuffer);
+                            outerInstance.forUtil.ReadBlock(payIn, encoded, offsetStartDeltaBuffer);
+                            outerInstance.forUtil.ReadBlock(payIn, encoded, offsetLengthBuffer);
                         }
                         else
                         {
                             // this works, because when writing a vint block we always force the first length to be written
-                            OuterInstance.forUtil.SkipBlock(PayIn); // skip over starts
-                            OuterInstance.forUtil.SkipBlock(PayIn); // skip over lengths
+                            outerInstance.forUtil.SkipBlock(payIn); // skip over starts
+                            outerInstance.forUtil.SkipBlock(payIn); // skip over lengths
                         }
                     }
                 }
@@ -1408,32 +1408,32 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("    docUpto=" + docUpto + " (of df=" + DocFreq + ") docBufferUpto=" + docBufferUpto);
                     // }
-                    if (DocUpto == DocFreq)
+                    if (docUpto == docFreq)
                     {
-                        return Doc = NO_MORE_DOCS;
+                        return doc = NO_MORE_DOCS;
                     }
-                    if (DocBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
+                    if (docBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
                     {
                         RefillDocs();
                     }
                     // if (DEBUG) {
                     //   System.out.println("    accum=" + accum + " docDeltaBuffer[" + docBufferUpto + "]=" + docDeltaBuffer[docBufferUpto]);
                     // }
-                    Accum += DocDeltaBuffer[DocBufferUpto];
-                    Freq_Renamed = FreqBuffer[DocBufferUpto];
-                    PosPendingCount += Freq_Renamed;
-                    DocBufferUpto++;
-                    DocUpto++;
+                    accum += docDeltaBuffer[docBufferUpto];
+                    freq = freqBuffer[docBufferUpto];
+                    posPendingCount += freq;
+                    docBufferUpto++;
+                    docUpto++;
 
-                    if (LiveDocs == null || LiveDocs.Get(Accum))
+                    if (liveDocs == null || liveDocs.Get(accum))
                     {
-                        Doc = Accum;
+                        doc = accum;
                         // if (DEBUG) {
                         //   System.out.println("    return doc=" + doc + " freq=" + freq + " posPendingCount=" + posPendingCount);
                         // }
-                        Position = 0;
-                        LastStartOffset = 0;
-                        return Doc;
+                        position = 0;
+                        lastStartOffset = 0;
+                        return doc;
                     }
 
                     // if (DEBUG) {
@@ -1449,61 +1449,61 @@ namespace Lucene.Net.Codecs.Lucene41
                 //   System.out.println("  FPR.advance target=" + target);
                 // }
 
-                if (DocFreq > Lucene41PostingsFormat.BLOCK_SIZE && target > NextSkipDoc)
+                if (docFreq > Lucene41PostingsFormat.BLOCK_SIZE && target > nextSkipDoc)
                 {
                     // if (DEBUG) {
                     //   System.out.println("    try skipper");
                     // }
 
-                    if (Skipper == null)
+                    if (skipper == null)
                     {
                         // Lazy init: first time this enum has ever been used for skipping
                         // if (DEBUG) {
                         //   System.out.println("    create skipper");
                         // }
-                        Skipper = new Lucene41SkipReader((IndexInput)DocIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, IndexHasOffsets, IndexHasPayloads);
+                        skipper = new Lucene41SkipReader((IndexInput)docIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, indexHasOffsets, indexHasPayloads);
                     }
 
-                    if (!Skipped)
+                    if (!skipped)
                     {
-                        Debug.Assert(SkipOffset != -1);
+                        Debug.Assert(skipOffset != -1);
                         // this is the first time this enum has skipped
                         // since reset() was called; load the skip data:
                         // if (DEBUG) {
                         //   System.out.println("    init skipper");
                         // }
-                        Skipper.Init(DocTermStartFP + SkipOffset, DocTermStartFP, PosTermStartFP, PayTermStartFP, DocFreq);
-                        Skipped = true;
+                        skipper.Init(docTermStartFP + skipOffset, docTermStartFP, posTermStartFP, payTermStartFP, docFreq);
+                        skipped = true;
                     }
 
-                    int newDocUpto = Skipper.SkipTo(target) + 1;
+                    int newDocUpto = skipper.SkipTo(target) + 1;
 
-                    if (newDocUpto > DocUpto)
+                    if (newDocUpto > docUpto)
                     {
                         // Skipper moved
                         // if (DEBUG) {
                         //   System.out.println("    skipper moved to docUpto=" + newDocUpto + " vs current=" + docUpto + "; docID=" + skipper.getDoc() + " fp=" + skipper.getDocPointer() + " pos.fp=" + skipper.getPosPointer() + " pos.bufferUpto=" + skipper.getPosBufferUpto() + " pay.fp=" + skipper.getPayPointer() + " lastStartOffset=" + lastStartOffset);
                         // }
                         Debug.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0, "got " + newDocUpto);
-                        DocUpto = newDocUpto;
+                        docUpto = newDocUpto;
 
                         // Force to read next block
-                        DocBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
-                        Accum = Skipper.Doc;
-                        DocIn.Seek(Skipper.DocPointer);
-                        PosPendingFP = Skipper.PosPointer;
-                        PayPendingFP = Skipper.PayPointer;
-                        PosPendingCount = Skipper.PosBufferUpto;
-                        LastStartOffset = 0; // new document
-                        PayloadByteUpto = Skipper.PayloadByteUpto;
+                        docBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
+                        accum = skipper.Doc;
+                        docIn.Seek(skipper.DocPointer);
+                        posPendingFP = skipper.PosPointer;
+                        payPendingFP = skipper.PayPointer;
+                        posPendingCount = skipper.PosBufferUpto;
+                        lastStartOffset = 0; // new document
+                        payloadByteUpto = skipper.PayloadByteUpto;
                     }
-                    NextSkipDoc = Skipper.NextSkipDoc;
+                    nextSkipDoc = skipper.NextSkipDoc;
                 }
-                if (DocUpto == DocFreq)
+                if (docUpto == docFreq)
                 {
-                    return Doc = NO_MORE_DOCS;
+                    return doc = NO_MORE_DOCS;
                 }
-                if (DocBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
+                if (docBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
                 {
                     RefillDocs();
                 }
@@ -1514,30 +1514,30 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("  scan doc=" + accum + " docBufferUpto=" + docBufferUpto);
                     // }
-                    Accum += DocDeltaBuffer[DocBufferUpto];
-                    Freq_Renamed = FreqBuffer[DocBufferUpto];
-                    PosPendingCount += Freq_Renamed;
-                    DocBufferUpto++;
-                    DocUpto++;
+                    accum += docDeltaBuffer[docBufferUpto];
+                    freq = freqBuffer[docBufferUpto];
+                    posPendingCount += freq;
+                    docBufferUpto++;
+                    docUpto++;
 
-                    if (Accum >= target)
+                    if (accum >= target)
                     {
                         break;
                     }
-                    if (DocUpto == DocFreq)
+                    if (docUpto == docFreq)
                     {
-                        return Doc = NO_MORE_DOCS;
+                        return doc = NO_MORE_DOCS;
                     }
                 }
 
-                if (LiveDocs == null || LiveDocs.Get(Accum))
+                if (liveDocs == null || liveDocs.Get(accum))
                 {
                     // if (DEBUG) {
                     //   System.out.println("  return doc=" + accum);
                     // }
-                    Position = 0;
-                    LastStartOffset = 0;
-                    return Doc = Accum;
+                    position = 0;
+                    lastStartOffset = 0;
+                    return doc = accum;
                 }
                 else
                 {
@@ -1555,22 +1555,22 @@ namespace Lucene.Net.Codecs.Lucene41
             private void SkipPositions()
             {
                 // Skip positions now:
-                int toSkip = PosPendingCount - Freq_Renamed;
+                int toSkip = posPendingCount - freq;
                 // if (DEBUG) {
                 //   System.out.println("      FPR.skipPositions: toSkip=" + toSkip);
                 // }
 
-                int leftInBlock = Lucene41PostingsFormat.BLOCK_SIZE - PosBufferUpto;
+                int leftInBlock = Lucene41PostingsFormat.BLOCK_SIZE - posBufferUpto;
                 if (toSkip < leftInBlock)
                 {
-                    int end = PosBufferUpto + toSkip;
-                    while (PosBufferUpto < end)
+                    int end = posBufferUpto + toSkip;
+                    while (posBufferUpto < end)
                     {
-                        if (IndexHasPayloads)
+                        if (indexHasPayloads)
                         {
-                            PayloadByteUpto += PayloadLengthBuffer[PosBufferUpto];
+                            payloadByteUpto += payloadLengthBuffer[posBufferUpto];
                         }
-                        PosBufferUpto++;
+                        posBufferUpto++;
                     }
                     // if (DEBUG) {
                     //   System.out.println("        skip w/in block to posBufferUpto=" + posBufferUpto);
@@ -1584,44 +1584,44 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("        skip whole block @ fp=" + posIn.getFilePointer());
                         // }
-                        Debug.Assert(PosIn.FilePointer != LastPosBlockFP);
-                        OuterInstance.forUtil.SkipBlock(PosIn);
+                        Debug.Assert(posIn.FilePointer != lastPosBlockFP);
+                        outerInstance.forUtil.SkipBlock(posIn);
 
-                        if (IndexHasPayloads)
+                        if (indexHasPayloads)
                         {
                             // Skip payloadLength block:
-                            OuterInstance.forUtil.SkipBlock(PayIn);
+                            outerInstance.forUtil.SkipBlock(payIn);
 
                             // Skip payloadBytes block:
-                            int numBytes = PayIn.ReadVInt();
-                            PayIn.Seek(PayIn.FilePointer + numBytes);
+                            int numBytes = payIn.ReadVInt();
+                            payIn.Seek(payIn.FilePointer + numBytes);
                         }
 
-                        if (IndexHasOffsets)
+                        if (indexHasOffsets)
                         {
-                            OuterInstance.forUtil.SkipBlock(PayIn);
-                            OuterInstance.forUtil.SkipBlock(PayIn);
+                            outerInstance.forUtil.SkipBlock(payIn);
+                            outerInstance.forUtil.SkipBlock(payIn);
                         }
                         toSkip -= Lucene41PostingsFormat.BLOCK_SIZE;
                     }
                     RefillPositions();
-                    PayloadByteUpto = 0;
-                    PosBufferUpto = 0;
-                    while (PosBufferUpto < toSkip)
+                    payloadByteUpto = 0;
+                    posBufferUpto = 0;
+                    while (posBufferUpto < toSkip)
                     {
-                        if (IndexHasPayloads)
+                        if (indexHasPayloads)
                         {
-                            PayloadByteUpto += PayloadLengthBuffer[PosBufferUpto];
+                            payloadByteUpto += payloadLengthBuffer[posBufferUpto];
                         }
-                        PosBufferUpto++;
+                        posBufferUpto++;
                     }
                     // if (DEBUG) {
                     //   System.out.println("        skip w/in block to posBufferUpto=" + posBufferUpto);
                     // }
                 }
 
-                Position = 0;
-                LastStartOffset = 0;
+                position = 0;
+                lastStartOffset = 0;
             }
 
             public override int NextPosition()
@@ -1629,72 +1629,72 @@ namespace Lucene.Net.Codecs.Lucene41
                 // if (DEBUG) {
                 //   System.out.println("    FPR.nextPosition posPendingCount=" + posPendingCount + " posBufferUpto=" + posBufferUpto + " payloadByteUpto=" + payloadByteUpto)// ;
                 // }
-                if (PosPendingFP != -1)
+                if (posPendingFP != -1)
                 {
                     // if (DEBUG) {
                     //   System.out.println("      seek pos to pendingFP=" + posPendingFP);
                     // }
-                    PosIn.Seek(PosPendingFP);
-                    PosPendingFP = -1;
+                    posIn.Seek(posPendingFP);
+                    posPendingFP = -1;
 
-                    if (PayPendingFP != -1)
+                    if (payPendingFP != -1)
                     {
                         // if (DEBUG) {
                         //   System.out.println("      seek pay to pendingFP=" + payPendingFP);
                         // }
-                        PayIn.Seek(PayPendingFP);
-                        PayPendingFP = -1;
+                        payIn.Seek(payPendingFP);
+                        payPendingFP = -1;
                     }
 
                     // Force buffer refill:
-                    PosBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
+                    posBufferUpto = Lucene41PostingsFormat.BLOCK_SIZE;
                 }
 
-                if (PosPendingCount > Freq_Renamed)
+                if (posPendingCount > freq)
                 {
                     SkipPositions();
-                    PosPendingCount = Freq_Renamed;
+                    posPendingCount = freq;
                 }
 
-                if (PosBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
+                if (posBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
                 {
                     RefillPositions();
-                    PosBufferUpto = 0;
+                    posBufferUpto = 0;
                 }
-                Position += PosDeltaBuffer[PosBufferUpto];
+                position += posDeltaBuffer[posBufferUpto];
 
-                if (IndexHasPayloads)
+                if (indexHasPayloads)
                 {
-                    PayloadLength = PayloadLengthBuffer[PosBufferUpto];
-                    Payload_Renamed.Bytes = PayloadBytes;
-                    Payload_Renamed.Offset = PayloadByteUpto;
-                    Payload_Renamed.Length = PayloadLength;
-                    PayloadByteUpto += PayloadLength;
+                    payloadLength = payloadLengthBuffer[posBufferUpto];
+                    payload.Bytes = payloadBytes;
+                    payload.Offset = payloadByteUpto;
+                    payload.Length = payloadLength;
+                    payloadByteUpto += payloadLength;
                 }
 
-                if (IndexHasOffsets)
+                if (indexHasOffsets)
                 {
-                    StartOffset_Renamed = LastStartOffset + OffsetStartDeltaBuffer[PosBufferUpto];
-                    EndOffset_Renamed = StartOffset_Renamed + OffsetLengthBuffer[PosBufferUpto];
-                    LastStartOffset = StartOffset_Renamed;
+                    startOffset = lastStartOffset + offsetStartDeltaBuffer[posBufferUpto];
+                    endOffset = startOffset + offsetLengthBuffer[posBufferUpto];
+                    lastStartOffset = startOffset;
                 }
 
-                PosBufferUpto++;
-                PosPendingCount--;
+                posBufferUpto++;
+                posPendingCount--;
                 // if (DEBUG) {
                 //   System.out.println("      return pos=" + position);
                 // }
-                return Position;
+                return position;
             }
 
             public override int StartOffset
             {
-                get { return StartOffset_Renamed; }
+                get { return startOffset; }
             }
 
             public override int EndOffset
             {
-                get { return EndOffset_Renamed; }
+                get { return endOffset; }
             }
 
             public override BytesRef Payload
@@ -1704,20 +1704,20 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("    FPR.getPayload payloadLength=" + payloadLength + " payloadByteUpto=" + payloadByteUpto);
                     // }
-                    if (PayloadLength == 0)
+                    if (payloadLength == 0)
                     {
                         return null;
                     }
                     else
                     {
-                        return Payload_Renamed;
+                        return payload;
                     }
                 }
             }
 
             public override long Cost()
             {
-                return DocFreq;
+                return docFreq;
             }
         }
 
@@ -1728,19 +1728,19 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public override void CheckIntegrity()
         {
-            if (Version >= Lucene41PostingsWriter.VERSION_CHECKSUM)
+            if (version >= Lucene41PostingsWriter.VERSION_CHECKSUM)
             {
-                if (DocIn != null)
+                if (docIn != null)
                 {
-                    CodecUtil.ChecksumEntireFile(DocIn);
+                    CodecUtil.ChecksumEntireFile(docIn);
                 }
-                if (PosIn != null)
+                if (posIn != null)
                 {
-                    CodecUtil.ChecksumEntireFile(PosIn);
+                    CodecUtil.ChecksumEntireFile(posIn);
                 }
-                if (PayIn != null)
+                if (payIn != null)
                 {
-                    CodecUtil.ChecksumEntireFile(PayIn);
+                    CodecUtil.ChecksumEntireFile(payIn);
                 }
             }
         }
