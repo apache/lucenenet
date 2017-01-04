@@ -70,8 +70,8 @@ namespace Lucene.Net.Codecs.Lucene40
     [Obsolete("Only for reading old 4.0-4.5 segments, and supporting IndexWriter.AddIndexes()")]
     public class Lucene40SegmentInfoFormat : SegmentInfoFormat
     {
-        private readonly SegmentInfoReader Reader = new Lucene40SegmentInfoReader();
-        private readonly SegmentInfoWriter Writer = new Lucene40SegmentInfoWriter();
+        private readonly SegmentInfoReader reader = new Lucene40SegmentInfoReader();
+        private readonly SegmentInfoWriter writer = new Lucene40SegmentInfoWriter();
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -83,7 +83,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             get
             {
-                return Reader;
+                return reader;
             }
         }
 
@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             get
             {
-                return Writer;
+                return writer;
             }
         }
 
