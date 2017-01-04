@@ -173,31 +173,31 @@ namespace Lucene.Net.Codecs.Compressing
 
         private sealed class LZ4FastCompressor : Compressor
         {
-            private readonly LZ4.HashTable Ht;
+            private readonly LZ4.HashTable ht;
 
             internal LZ4FastCompressor()
             {
-                Ht = new LZ4.HashTable();
+                ht = new LZ4.HashTable();
             }
 
             public override void Compress(byte[] bytes, int off, int len, DataOutput @out)
             {
-                LZ4.Compress(bytes, off, len, @out, Ht);
+                LZ4.Compress(bytes, off, len, @out, ht);
             }
         }
 
         private sealed class LZ4HighCompressor : Compressor
         {
-            internal readonly LZ4.HCHashTable Ht;
+            internal readonly LZ4.HCHashTable ht;
 
             internal LZ4HighCompressor()
             {
-                Ht = new LZ4.HCHashTable();
+                ht = new LZ4.HCHashTable();
             }
 
             public override void Compress(byte[] bytes, int off, int len, DataOutput @out)
             {
-                LZ4.CompressHC(bytes, off, len, @out, Ht);
+                LZ4.CompressHC(bytes, off, len, @out, ht);
             }
         }
 
