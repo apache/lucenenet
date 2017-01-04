@@ -40,9 +40,9 @@ namespace Lucene.Net.Util
         /// </summary>
         public sealed class FixedBitSetIterator : DocIdSetIterator
         {
-            internal readonly int NumBits, NumWords;
+            internal readonly int numBits, numWords;
             internal readonly long[] bits;
-            internal int Doc = -1;
+            internal int doc = -1;
 
             /// <summary>
             /// Creates an iterator over the given <seealso cref="FixedBitSet"/>. </summary>
@@ -56,52 +56,52 @@ namespace Lucene.Net.Util
             public FixedBitSetIterator(long[] bits, int numBits, int wordLength)
             {
                 this.bits = bits;
-                this.NumBits = numBits;
-                this.NumWords = wordLength;
+                this.numBits = numBits;
+                this.numWords = wordLength;
             }
 
             public override int NextDoc()
             {
-                if (Doc == NO_MORE_DOCS || ++Doc >= NumBits)
+                if (doc == NO_MORE_DOCS || ++doc >= numBits)
                 {
-                    return Doc = NO_MORE_DOCS;
+                    return doc = NO_MORE_DOCS;
                 }
-                int i = Doc >> 6;
-                int subIndex = Doc & 0x3f; // index within the word
+                int i = doc >> 6;
+                int subIndex = doc & 0x3f; // index within the word
                 long word = bits[i] >> subIndex; // skip all the bits to the right of index
 
                 if (word != 0)
                 {
-                    return Doc = Doc + Number.NumberOfTrailingZeros(word);
+                    return doc = doc + Number.NumberOfTrailingZeros(word);
                 }
 
-                while (++i < NumWords)
+                while (++i < numWords)
                 {
                     word = bits[i];
                     if (word != 0)
                     {
-                        return Doc = (i << 6) + Number.NumberOfTrailingZeros(word);
+                        return doc = (i << 6) + Number.NumberOfTrailingZeros(word);
                     }
                 }
 
-                return Doc = NO_MORE_DOCS;
+                return doc = NO_MORE_DOCS;
             }
 
             public override int DocID
             {
-                get { return Doc; }
+                get { return doc; }
             }
 
             public override long Cost()
             {
-                return NumBits;
+                return numBits;
             }
 
             public override int Advance(int target)
             {
-                if (Doc == NO_MORE_DOCS || target >= NumBits)
+                if (doc == NO_MORE_DOCS || target >= numBits)
                 {
-                    return Doc = NO_MORE_DOCS;
+                    return doc = NO_MORE_DOCS;
                 }
                 int i = target >> 6;
                 int subIndex = target & 0x3f; // index within the word
@@ -109,19 +109,19 @@ namespace Lucene.Net.Util
 
                 if (word != 0)
                 {
-                    return Doc = target + Number.NumberOfTrailingZeros(word);
+                    return doc = target + Number.NumberOfTrailingZeros(word);
                 }
 
-                while (++i < NumWords)
+                while (++i < numWords)
                 {
                     word = bits[i];
                     if (word != 0)
                     {
-                        return Doc = (i << 6) + Number.NumberOfTrailingZeros(word);
+                        return doc = (i << 6) + Number.NumberOfTrailingZeros(word);
                     }
                 }
 
-                return Doc = NO_MORE_DOCS;
+                return doc = NO_MORE_DOCS;
             }
         }
 
@@ -394,7 +394,7 @@ namespace Lucene.Net.Util
             else if (iter is FixedBitSetIterator && iter.DocID == -1)
             {
                 FixedBitSetIterator fbs = (FixedBitSetIterator)iter;
-                Or(fbs.bits, fbs.NumWords);
+                Or(fbs.bits, fbs.numWords);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 fbs.Advance(numBits);
@@ -469,7 +469,7 @@ namespace Lucene.Net.Util
             else if (iter is FixedBitSetIterator && iter.DocID == -1)
             {
                 FixedBitSetIterator fbs = (FixedBitSetIterator)iter;
-                And(fbs.bits, fbs.NumWords);
+                And(fbs.bits, fbs.numWords);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 fbs.Advance(numBits);
@@ -547,7 +547,7 @@ namespace Lucene.Net.Util
             else if (iter is FixedBitSetIterator && iter.DocID == -1)
             {
                 FixedBitSetIterator fbs = (FixedBitSetIterator)iter;
-                AndNot(fbs.bits, fbs.NumWords);
+                AndNot(fbs.bits, fbs.numWords);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 fbs.Advance(numBits);
