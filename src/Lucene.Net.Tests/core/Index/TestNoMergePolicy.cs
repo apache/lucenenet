@@ -64,12 +64,6 @@ namespace Lucene.Net.Index
             // behavior/error occurs
             foreach (MethodInfo m in typeof(NoMergePolicy).GetMethods())
             {
-                // LUCENENET specific - only check those methods that can be overridden.
-                if (m.DeclaringType != typeof(NoMergePolicy) && m.IsFinal)
-                {
-                    continue;
-                }
-
                 // getDeclaredMethods() returns just those methods that are declared on
                 // NoMergePolicy. getMethods() returns those that are visible in that
                 // context, including ones from Object. So just filter out Object. If in
@@ -79,7 +73,7 @@ namespace Lucene.Net.Index
                 {
                     continue;
                 }
-                if (m.DeclaringType != typeof(object) && !m.IsFinal)
+                if (m.DeclaringType != typeof(object) && !m.IsFinal && m.IsVirtual)
                 {
                     Assert.IsTrue(m.DeclaringType == typeof(NoMergePolicy), m + " is not overridden ! Declaring Type: " + m.DeclaringType);
                 }

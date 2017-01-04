@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
                 // context, including ones from Object. So just filter out Object. If in
                 // the future IndexDeletionPolicy will become a class that extends a
                 // different class than Object, this will need to change.
-                if (m.DeclaringType != typeof(object))
+                if (m.DeclaringType != typeof(object) && !m.IsFinal && m.IsVirtual)
                 {
                     Assert.IsTrue(m.DeclaringType == typeof(NoDeletionPolicy), m + " is not overridden !");
                 }

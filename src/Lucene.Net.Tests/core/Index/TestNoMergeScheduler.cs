@@ -57,18 +57,12 @@ namespace Lucene.Net.Index
             // no unexpected behavior/error occurs
             foreach (MethodInfo m in typeof(NoMergeScheduler).GetMethods())
             {
-                // LUCENENET specific - only check those methods that can be overridden.
-                if (m.DeclaringType != typeof(NoMergeScheduler) && m.IsFinal)
-                {
-                    continue;
-                }
-
                 // getDeclaredMethods() returns just those methods that are declared on
                 // NoMergeScheduler. getMethods() returns those that are visible in that
                 // context, including ones from Object. So just filter out Object. If in
                 // the future MergeScheduler will extend a different class than Object,
                 // this will need to change.
-                if (m.DeclaringType != typeof(object))
+                if (m.DeclaringType != typeof(object) && !m.IsFinal && m.IsVirtual)
                 {
                     Assert.IsTrue(m.DeclaringType == typeof(NoMergeScheduler), m + " is not overridden !");
                 }

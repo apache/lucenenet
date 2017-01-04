@@ -129,6 +129,9 @@ namespace Lucene.Net.Support
             return codePoint >= MIN_SUPPLEMENTARY_CODE_POINT ? 2 : 1;
         }
 
+        // LUCENENET TODO: In Java, the last parameter is count on Character.
+        // On String, endIndex is the index AFTER the last character of the range.
+        // This is sure to be a source of bugs.
         public static int CodePointCount(string seq, int beginIndex, int endIndex)
         {
             int length = seq.Length;
