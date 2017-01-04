@@ -727,56 +727,56 @@ namespace Lucene.Net.Index
         {
             internal void InitializeInstanceFields()
             {
-                Ord_Renamed = -OuterInstance.indexInterval - 1;
+                ord = -outerInstance.indexInterval - 1;
             }
 
-            private readonly DocTermOrds OuterInstance;
+            private readonly DocTermOrds outerInstance;
 
-            internal readonly TermsEnum TermsEnum;
-            internal BytesRef Term_Renamed;
-            internal long Ord_Renamed; // force "real" seek
+            internal readonly TermsEnum termsEnum;
+            internal BytesRef term;
+            internal long ord; // force "real" seek
 
             public OrdWrappedTermsEnum(DocTermOrds outerInstance, AtomicReader reader)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
 
                 InitializeInstanceFields();
                 Debug.Assert(outerInstance.m_indexedTermsArray != null);
-                TermsEnum = reader.Fields.Terms(outerInstance.m_field).Iterator(null);
+                termsEnum = reader.Fields.Terms(outerInstance.m_field).Iterator(null);
             }
 
             public override IComparer<BytesRef> Comparator
             {
                 get
                 {
-                    return TermsEnum.Comparator;
+                    return termsEnum.Comparator;
                 }
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
-                return TermsEnum.Docs(liveDocs, reuse, flags);
+                return termsEnum.Docs(liveDocs, reuse, flags);
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
-                return TermsEnum.DocsAndPositions(liveDocs, reuse, flags);
+                return termsEnum.DocsAndPositions(liveDocs, reuse, flags);
             }
 
             public override BytesRef Term
             {
-                get { return Term_Renamed; }
+                get { return term; }
             }
 
             public override BytesRef Next()
             {
-                if (++Ord_Renamed < 0)
+                if (++ord < 0)
                 {
-                    Ord_Renamed = 0;
+                    ord = 0;
                 }
-                if (TermsEnum.Next() == null)
+                if (termsEnum.Next() == null)
                 {
-                    Term_Renamed = null;
+                    term = null;
                     return null;
                 }
                 return SetTerm(); // this is extra work if we know we are in bounds...
@@ -784,37 +784,37 @@ namespace Lucene.Net.Index
 
             public override int DocFreq
             {
-                get { return TermsEnum.DocFreq; }
+                get { return termsEnum.DocFreq; }
             }
 
             public override long TotalTermFreq
             {
-                get { return TermsEnum.TotalTermFreq; }
+                get { return termsEnum.TotalTermFreq; }
             }
 
             public override long Ord
             {
-                get { return OuterInstance.m_ordBase + Ord_Renamed; }
+                get { return outerInstance.m_ordBase + ord; }
             }
 
             public override SeekStatus SeekCeil(BytesRef target)
             {
                 // already here
-                if (Term_Renamed != null && Term_Renamed.Equals(target))
+                if (term != null && term.Equals(target))
                 {
                     return SeekStatus.FOUND;
                 }
 
-                int startIdx = OuterInstance.m_indexedTermsArray.ToList().BinarySearch(target);
+                int startIdx = outerInstance.m_indexedTermsArray.ToList().BinarySearch(target);
 
                 if (startIdx >= 0)
                 {
                     // we hit the term exactly... lucky us!
-                    TermsEnum.SeekStatus seekStatus = TermsEnum.SeekCeil(target);
+                    TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(target);
                     Debug.Assert(seekStatus == TermsEnum.SeekStatus.FOUND);
-                    Ord_Renamed = startIdx << OuterInstance.indexIntervalBits;
+                    ord = startIdx << outerInstance.indexIntervalBits;
                     SetTerm();
-                    Debug.Assert(Term_Renamed != null);
+                    Debug.Assert(term != null);
                     return SeekStatus.FOUND;
                 }
 
@@ -824,18 +824,18 @@ namespace Lucene.Net.Index
                 if (startIdx == 0)
                 {
                     // our target occurs *before* the first term
-                    TermsEnum.SeekStatus seekStatus = TermsEnum.SeekCeil(target);
+                    TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(target);
                     Debug.Assert(seekStatus == TermsEnum.SeekStatus.NOT_FOUND);
-                    Ord_Renamed = 0;
+                    ord = 0;
                     SetTerm();
-                    Debug.Assert(Term_Renamed != null);
+                    Debug.Assert(term != null);
                     return SeekStatus.NOT_FOUND;
                 }
 
                 // back up to the start of the block
                 startIdx--;
 
-                if ((Ord_Renamed >> OuterInstance.indexIntervalBits) == startIdx && Term_Renamed != null && Term_Renamed.CompareTo(target) <= 0)
+                if ((ord >> outerInstance.indexIntervalBits) == startIdx && term != null && term.CompareTo(target) <= 0)
                 {
                     // we are already in the right block and the current term is before the term we want,
                     // so we don't need to seek.
@@ -843,23 +843,23 @@ namespace Lucene.Net.Index
                 else
                 {
                     // seek to the right block
-                    TermsEnum.SeekStatus seekStatus = TermsEnum.SeekCeil(OuterInstance.m_indexedTermsArray[startIdx]);
+                    TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(outerInstance.m_indexedTermsArray[startIdx]);
                     Debug.Assert(seekStatus == TermsEnum.SeekStatus.FOUND);
-                    Ord_Renamed = startIdx << OuterInstance.indexIntervalBits;
+                    ord = startIdx << outerInstance.indexIntervalBits;
                     SetTerm();
-                    Debug.Assert(Term_Renamed != null); // should be non-null since it's in the index
+                    Debug.Assert(term != null); // should be non-null since it's in the index
                 }
 
-                while (Term_Renamed != null && Term_Renamed.CompareTo(target) < 0)
+                while (term != null && term.CompareTo(target) < 0)
                 {
                     Next();
                 }
 
-                if (Term_Renamed == null)
+                if (term == null)
                 {
                     return SeekStatus.END;
                 }
-                else if (Term_Renamed.CompareTo(target) == 0)
+                else if (term.CompareTo(target) == 0)
                 {
                     return SeekStatus.FOUND;
                 }
@@ -871,16 +871,16 @@ namespace Lucene.Net.Index
 
             public override void SeekExact(long targetOrd)
             {
-                int delta = (int)(targetOrd - OuterInstance.m_ordBase - Ord_Renamed);
+                int delta = (int)(targetOrd - outerInstance.m_ordBase - ord);
                 //System.out.println("  seek(ord) targetOrd=" + targetOrd + " delta=" + delta + " ord=" + ord + " ii=" + indexInterval);
-                if (delta < 0 || delta > OuterInstance.indexInterval)
+                if (delta < 0 || delta > outerInstance.indexInterval)
                 {
-                    int idx = (int)((long)((ulong)targetOrd >> OuterInstance.indexIntervalBits));
-                    BytesRef @base = OuterInstance.m_indexedTermsArray[idx];
+                    int idx = (int)((long)((ulong)targetOrd >> outerInstance.indexIntervalBits));
+                    BytesRef @base = outerInstance.m_indexedTermsArray[idx];
                     //System.out.println("  do seek term=" + base.utf8ToString());
-                    Ord_Renamed = idx << OuterInstance.indexIntervalBits;
-                    delta = (int)(targetOrd - Ord_Renamed);
-                    TermsEnum.SeekStatus seekStatus = TermsEnum.SeekCeil(@base);
+                    ord = idx << outerInstance.indexIntervalBits;
+                    delta = (int)(targetOrd - ord);
+                    TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(@base);
                     Debug.Assert(seekStatus == TermsEnum.SeekStatus.FOUND);
                 }
                 else
@@ -890,28 +890,28 @@ namespace Lucene.Net.Index
 
                 while (--delta >= 0)
                 {
-                    BytesRef br = TermsEnum.Next();
+                    BytesRef br = termsEnum.Next();
                     if (br == null)
                     {
                         Debug.Assert(false);
                         return;
                     }
-                    Ord_Renamed++;
+                    ord++;
                 }
 
                 SetTerm();
-                Debug.Assert(Term_Renamed != null);
+                Debug.Assert(term != null);
             }
 
             private BytesRef SetTerm()
             {
-                Term_Renamed = TermsEnum.Term;
+                term = termsEnum.Term;
                 //System.out.println("  setTerm() term=" + term.utf8ToString() + " vs prefix=" + (prefix == null ? "null" : prefix.utf8ToString()));
-                if (OuterInstance.m_prefix != null && !StringHelper.StartsWith(Term_Renamed, OuterInstance.m_prefix))
+                if (outerInstance.m_prefix != null && !StringHelper.StartsWith(term, outerInstance.m_prefix))
                 {
-                    Term_Renamed = null;
+                    term = null;
                 }
-                return Term_Renamed;
+                return term;
             }
         }
 
@@ -941,43 +941,43 @@ namespace Lucene.Net.Index
 
         private class Iterator : SortedSetDocValues
         {
-            private readonly DocTermOrds OuterInstance;
+            private readonly DocTermOrds outerInstance;
 
-            private readonly AtomicReader Reader;
-            private readonly TermsEnum Te; // used internally for lookupOrd() and lookupTerm()
+            private readonly AtomicReader reader;
+            private readonly TermsEnum te; // used internally for lookupOrd() and lookupTerm()
 
             // currently we read 5 at a time (using the logic of the old iterator)
-            private readonly int[] Buffer = new int[5];
+            private readonly int[] buffer = new int[5];
 
-            private int BufferUpto;
-            private int BufferLength;
+            private int bufferUpto;
+            private int bufferLength;
 
-            private int Tnum;
-            private int Upto;
-            private sbyte[] Arr;
+            private int tnum;
+            private int upto;
+            private sbyte[] arr;
 
             internal Iterator(DocTermOrds outerInstance, AtomicReader reader)
             {
-                this.OuterInstance = outerInstance;
-                this.Reader = reader;
-                this.Te = TermsEnum();
+                this.outerInstance = outerInstance;
+                this.reader = reader;
+                this.te = TermsEnum();
             }
 
             public override long NextOrd()
             {
-                while (BufferUpto == BufferLength)
+                while (bufferUpto == bufferLength)
                 {
-                    if (BufferLength < Buffer.Length)
+                    if (bufferLength < buffer.Length)
                     {
                         return NO_MORE_ORDS;
                     }
                     else
                     {
-                        BufferLength = Read(Buffer);
-                        BufferUpto = 0;
+                        bufferLength = Read(buffer);
+                        bufferUpto = 0;
                     }
                 }
-                return Buffer[BufferUpto++];
+                return buffer[bufferUpto++];
             }
 
             /// <summary>
@@ -988,11 +988,11 @@ namespace Lucene.Net.Index
             internal virtual int Read(int[] buffer)
             {
                 int bufferUpto = 0;
-                if (Arr == null)
+                if (arr == null)
                 {
                     // code is inlined into upto
                     //System.out.println("inlined");
-                    int code = Upto;
+                    int code = upto;
                     int delta = 0;
                     for (; ; )
                     {
@@ -1003,8 +1003,8 @@ namespace Lucene.Net.Index
                             {
                                 break;
                             }
-                            Tnum += delta - TNUM_OFFSET;
-                            buffer[bufferUpto++] = OuterInstance.m_ordBase + Tnum;
+                            tnum += delta - TNUM_OFFSET;
+                            buffer[bufferUpto++] = outerInstance.m_ordBase + tnum;
                             //System.out.println("  tnum=" + tnum);
                             delta = 0;
                         }
@@ -1019,7 +1019,7 @@ namespace Lucene.Net.Index
                         int delta = 0;
                         for (; ; )
                         {
-                            sbyte b = Arr[Upto++];
+                            sbyte b = arr[upto++];
                             delta = (delta << 7) | (b & 0x7f);
                             //System.out.println("    cycle: upto=" + upto + " delta=" + delta + " b=" + b);
                             if ((b & 0x80) == 0)
@@ -1032,9 +1032,9 @@ namespace Lucene.Net.Index
                         {
                             break;
                         }
-                        Tnum += delta - TNUM_OFFSET;
+                        tnum += delta - TNUM_OFFSET;
                         //System.out.println("  tnum=" + tnum);
-                        buffer[bufferUpto++] = OuterInstance.m_ordBase + Tnum;
+                        buffer[bufferUpto++] = outerInstance.m_ordBase + tnum;
                         if (bufferUpto == buffer.Length)
                         {
                             break;
@@ -1047,24 +1047,24 @@ namespace Lucene.Net.Index
 
             public override void SetDocument(int docID)
             {
-                Tnum = 0;
-                int code = OuterInstance.m_index[docID];
+                tnum = 0;
+                int code = outerInstance.m_index[docID];
                 if ((code & 0xff) == 1)
                 {
                     // a pointer
-                    Upto = (int)((uint)code >> 8);
+                    upto = (int)((uint)code >> 8);
                     //System.out.println("    pointer!  upto=" + upto);
                     int whichArray = ((int)((uint)docID >> 16)) & 0xff;
-                    Arr = OuterInstance.m_tnums[whichArray];
+                    arr = outerInstance.m_tnums[whichArray];
                 }
                 else
                 {
                     //System.out.println("    inline!");
-                    Arr = null;
-                    Upto = code;
+                    arr = null;
+                    upto = code;
                 }
-                BufferUpto = 0;
-                BufferLength = Read(Buffer);
+                bufferUpto = 0;
+                bufferLength = Read(buffer);
             }
 
             public override void LookupOrd(long ord, BytesRef result)
@@ -1072,7 +1072,7 @@ namespace Lucene.Net.Index
                 BytesRef @ref = null;
                 try
                 {
-                    @ref = OuterInstance.LookupTerm(Te, (int)ord);
+                    @ref = outerInstance.LookupTerm(te, (int)ord);
                 }
                 catch (System.IO.IOException e)
                 {
@@ -1087,7 +1087,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return OuterInstance.NumTerms;
+                    return outerInstance.NumTerms;
                 }
             }
 
@@ -1095,13 +1095,13 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    if (Te.SeekCeil(key) == SeekStatus.FOUND)
+                    if (te.SeekCeil(key) == SeekStatus.FOUND)
                     {
-                        return Te.Ord;
+                        return te.Ord;
                     }
                     else
                     {
-                        return -Te.Ord - 1;
+                        return -te.Ord - 1;
                     }
                 }
                 catch (System.IO.IOException e)
@@ -1114,7 +1114,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    return OuterInstance.GetOrdTermsEnum(Reader);
+                    return outerInstance.GetOrdTermsEnum(reader);
                 }
                 catch (System.IO.IOException e)
                 {
