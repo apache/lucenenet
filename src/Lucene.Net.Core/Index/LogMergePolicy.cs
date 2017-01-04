@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual bool Verbose() // LUCENENET TODO: Make property
         {
-            IndexWriter w = writer.Get();
+            IndexWriter w = m_writer.Get();
             return w != null && w.infoStream.IsEnabled("LMP");
         }
 
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
         {
             if (Verbose())
             {
-                writer.Get().infoStream.Message("LMP", message);
+                m_writer.Get().infoStream.Message("LMP", message);
             }
         }
 
@@ -199,7 +199,7 @@ namespace Lucene.Net.Index
         {
             if (m_calibrateSizeByDeletes)
             {
-                int delCount = writer.Get().NumDeletedDocs(info);
+                int delCount = m_writer.Get().NumDeletedDocs(info);
                 Debug.Assert(delCount <= info.Info.DocCount);
                 return (info.Info.DocCount - (long)delCount);
             }
@@ -474,7 +474,7 @@ namespace Lucene.Net.Index
 
             var spec = new MergeSpecification();
             int firstSegmentWithDeletions = -1;
-            IndexWriter w = writer.Get();
+            IndexWriter w = m_writer.Get();
             Debug.Assert(w != null);
             for (int i = 0; i < numSegments; i++)
             {
@@ -570,7 +570,7 @@ namespace Lucene.Net.Index
             IList<SegmentInfoAndLevel> levels = new List<SegmentInfoAndLevel>();
             var norm = (float)Math.Log(m_mergeFactor);
 
-            ICollection<SegmentCommitInfo> mergingSegments = writer.Get().MergingSegments;
+            ICollection<SegmentCommitInfo> mergingSegments = m_writer.Get().MergingSegments;
 
             for (int i = 0; i < numSegments; i++)
             {
@@ -594,7 +594,7 @@ namespace Lucene.Net.Index
                     {
                         extra += " [skip: too large]";
                     }
-                    Message("seg=" + writer.Get().SegString(info) + " level=" + infoLevel.level + " size=" + String.Format(CultureInfo.InvariantCulture, "{0:0.00} MB", segBytes / 1024 / 1024.0) + extra);
+                    Message("seg=" + m_writer.Get().SegString(info) + " level=" + infoLevel.level + " size=" + String.Format(CultureInfo.InvariantCulture, "{0:0.00} MB", segBytes / 1024 / 1024.0) + extra);
                 }
             }
 
@@ -702,7 +702,7 @@ namespace Lucene.Net.Index
                         }
                         if (Verbose())
                         {
-                            Message("  add merge=" + writer.Get().SegString(mergeInfos) + " start=" + start + " end=" + end);
+                            Message("  add merge=" + m_writer.Get().SegString(mergeInfos) + " start=" + start + " end=" + end);
                         }
                         spec.Add(new OneMerge(mergeInfos));
                     }
@@ -759,7 +759,7 @@ namespace Lucene.Net.Index
             sb.Append("calibrateSizeByDeletes=").Append(m_calibrateSizeByDeletes).Append(", ");
             sb.Append("maxMergeDocs=").Append(m_maxMergeDocs).Append(", ");
             sb.Append("maxCFSSegmentSizeMB=").Append(MaxCFSSegmentSizeMB).Append(", ");
-            sb.Append("noCFSRatio=").Append(noCFSRatio_);
+            sb.Append("noCFSRatio=").Append(m_noCFSRatio);
             sb.Append("]");
             return sb.ToString();
         }

@@ -167,13 +167,13 @@ namespace Lucene.Net.Index
 
         private bool Verbose()
         {
-            IndexWriter w = writer.Get();
+            IndexWriter w = m_writer.Get();
             return w != null && w.infoStream.IsEnabled("UPGMP");
         }
 
         private void Message(string message)
         {
-            writer.Get().infoStream.Message("UPGMP", message);
+            m_writer.Get().infoStream.Message("UPGMP", message);
         }
     }
 }

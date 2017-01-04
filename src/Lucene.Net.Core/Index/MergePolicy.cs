@@ -210,11 +210,11 @@ namespace Lucene.Net.Index
 
             private class DocMapAnonymousInnerClassHelper : DocMap
             {
-                private readonly OneMerge OuterInstance;
+                private readonly OneMerge outerInstance;
 
                 public DocMapAnonymousInnerClassHelper(OneMerge outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 public override int Map(int docID)
@@ -536,36 +536,36 @@ namespace Lucene.Net.Index
         /// Default ratio for compound file system usage. Set to <tt>1.0</tt>, always use
         /// compound file system.
         /// </summary>
-        protected internal static readonly double DEFAULT_NO_CFS_RATIO = 1.0;
+        protected static readonly double DEFAULT_NO_CFS_RATIO = 1.0;
 
         /// <summary>
         /// Default max segment size in order to use compound file system. Set to <seealso cref="Long#MAX_VALUE"/>.
         /// </summary>
-        protected internal static readonly long DEFAULT_MAX_CFS_SEGMENT_SIZE = long.MaxValue;
+        protected static readonly long DEFAULT_MAX_CFS_SEGMENT_SIZE = long.MaxValue;
 
         /// <summary>
         /// <seealso cref="IndexWriter"/> that contains this instance. </summary>
-        protected internal SetOnce<IndexWriter> writer;
+        protected SetOnce<IndexWriter> m_writer;
 
         /// <summary>
         /// If the size of the merge segment exceeds this ratio of
         ///  the total index size then it will remain in
         ///  non-compound format
         /// </summary>
-        protected internal double noCFSRatio_ = DEFAULT_NO_CFS_RATIO;
+        protected double m_noCFSRatio = DEFAULT_NO_CFS_RATIO;
 
         /// <summary>
         /// If the size of the merged segment exceeds
         ///  this value then it will not use compound file format.
         /// </summary>
-        protected internal long maxCFSSegmentSize = DEFAULT_MAX_CFS_SEGMENT_SIZE;
+        protected long m_maxCFSSegmentSize = DEFAULT_MAX_CFS_SEGMENT_SIZE;
 
         public virtual object Clone()
         {
             MergePolicy clone;
             clone = (MergePolicy)base.MemberwiseClone();
 
-            clone.writer = new SetOnce<IndexWriter>();
+            clone.m_writer = new SetOnce<IndexWriter>();
             return clone;
         }
 
@@ -586,9 +586,9 @@ namespace Lucene.Net.Index
         /// </summary>
         protected MergePolicy(double defaultNoCFSRatio, long defaultMaxCFSSegmentSize)
         {
-            writer = new SetOnce<IndexWriter>();
-            this.noCFSRatio_ = defaultNoCFSRatio;
-            this.maxCFSSegmentSize = defaultMaxCFSSegmentSize;
+            m_writer = new SetOnce<IndexWriter>();
+            this.m_noCFSRatio = defaultNoCFSRatio;
+            this.m_maxCFSSegmentSize = defaultMaxCFSSegmentSize;
         }
 
         /// <summary>
@@ -599,7 +599,7 @@ namespace Lucene.Net.Index
         /// <seealso cref= SetOnce </seealso>
         public virtual void SetIndexWriter(IndexWriter writer)
         {
-            this.writer.Set(writer);
+            this.m_writer.Set(writer);
         }
 
         /// <summary>
@@ -661,7 +661,7 @@ namespace Lucene.Net.Index
                 return false;
             }
             long mergedInfoSize = Size(mergedInfo);
-            if (mergedInfoSize > maxCFSSegmentSize)
+            if (mergedInfoSize > m_maxCFSSegmentSize)
             {
                 return false;
             }
@@ -685,7 +685,7 @@ namespace Lucene.Net.Index
         protected virtual long Size(SegmentCommitInfo info)
         {
             long byteSize = info.SizeInBytes();
-            int delCount = writer.Get().NumDeletedDocs(info);
+            int delCount = m_writer.Get().NumDeletedDocs(info);
             double delRatio = (info.Info.DocCount <= 0 ? 0.0f : ((float)delCount / (float)info.Info.DocCount));
             Debug.Assert(delRatio <= 1.0);
             return (info.Info.DocCount <= 0 ? byteSize : (long)(byteSize * (1.0 - delRatio)));
@@ -698,7 +698,7 @@ namespace Lucene.Net.Index
         /// </summary>
         protected bool IsMerged(SegmentInfos infos, SegmentCommitInfo info)
         {
-            IndexWriter w = writer.Get();
+            IndexWriter w = m_writer.Get();
             Debug.Assert(w != null);
             bool hasDeletions = w.NumDeletedDocs(info) > 0;
             return !hasDeletions && !info.Info.HasSeparateNorms && info.Info.Dir == w.Directory && UseCompoundFile(infos, info) == info.Info.UseCompoundFile;
@@ -712,7 +712,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return noCFSRatio_;
+                return m_noCFSRatio;
             }
             set
             {
@@ -720,7 +720,7 @@ namespace Lucene.Net.Index
                 {
                     throw new System.ArgumentException("noCFSRatio must be 0.0 to 1.0 inclusive; got " + value);
                 }
-                this.noCFSRatio_ = value;
+                this.m_noCFSRatio = value;
             }
         }
 
@@ -730,7 +730,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return maxCFSSegmentSize / 1024 / 1024.0;
+                return m_maxCFSSegmentSize / 1024 / 1024.0;
             }
             set
             {
@@ -739,7 +739,7 @@ namespace Lucene.Net.Index
                     throw new System.ArgumentException("maxCFSSegmentSizeMB must be >=0 (got " + value + ")");
                 }
                 value *= 1024 * 1024;
-                this.maxCFSSegmentSize = (value > long.MaxValue) ? long.MaxValue : (long)value;
+                this.m_maxCFSSegmentSize = (value > long.MaxValue) ? long.MaxValue : (long)value;
             }
         }
     }
