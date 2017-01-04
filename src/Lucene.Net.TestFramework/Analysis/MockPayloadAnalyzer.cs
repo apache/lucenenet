@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 PayloadAttr.Payload = new BytesRef(("pos: " + Pos)/*.getBytes(IOUtils.CHARSET_UTF_8)*/);
                 int posIncr;

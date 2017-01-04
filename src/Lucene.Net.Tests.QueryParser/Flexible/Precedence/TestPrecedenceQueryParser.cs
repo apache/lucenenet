@@ -91,7 +91,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
                     return true;
                 }
                 else
-                    while (input.IncrementToken())
+                    while (m_input.IncrementToken())
                         if (termAtt.toString().equals("phrase"))
                         {
                             inPhrase = true;

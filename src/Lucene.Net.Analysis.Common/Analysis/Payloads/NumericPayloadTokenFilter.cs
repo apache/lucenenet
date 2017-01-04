@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Payloads
 
         public override sealed bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 if (typeAtt.Type.Equals(typeMatch))
                 {

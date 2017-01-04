@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Core
             public override sealed bool IncrementToken()
             {
                 bool isTokenAvailable = false;
-                while (input.IncrementToken())
+                while (m_input.IncrementToken())
                 {
                     if (typeAtt.Type == UAX29URLEmailTokenizer.TOKEN_TYPES[UAX29URLEmailTokenizer.URL])
                     {
@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Core
             public override sealed bool IncrementToken()
             {
                 bool isTokenAvailable = false;
-                while (input.IncrementToken())
+                while (m_input.IncrementToken())
                 {
                     if (typeAtt.Type == UAX29URLEmailTokenizer.TOKEN_TYPES[UAX29URLEmailTokenizer.EMAIL])
                     {

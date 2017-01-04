@@ -134,7 +134,7 @@ namespace Lucene.Net.Analysis.Sinks
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 // capture state lazily - maybe no SinkFilter accepts this state
                 AttributeSource.State state = null;

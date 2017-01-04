@@ -85,7 +85,7 @@ namespace Lucene.Net.Collation
 
 		public override bool IncrementToken()
 		{
-			if (this.input.IncrementToken())
+			if (this.m_input.IncrementToken())
 			{
 				var collationKey = this.collator.GetSortKey(this.termAtt.ToString()).KeyData.ToSByteArray();
 				var encodedLength = IndexableBinaryStringTools.GetEncodedLength(collationKey, 0, collationKey.Length);

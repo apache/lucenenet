@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis
 
             // return the first non-stop word found
             SkippedPositions = 0;
-            while (input.IncrementToken())
+            while (m_input.IncrementToken())
             {
                 if (!Filter.Run(TermAtt.GetBuffer(), 0, TermAtt.Length))
                 {

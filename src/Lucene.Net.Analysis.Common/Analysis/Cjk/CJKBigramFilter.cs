@@ -272,7 +272,7 @@ namespace Lucene.Net.Analysis.Cjk
                 {
                     return false;
                 }
-                else if (input.IncrementToken())
+                else if (m_input.IncrementToken())
                 {
                     return true;
                 }

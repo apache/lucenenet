@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.El
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 if (!keywordAttr.IsKeyword)
                 {

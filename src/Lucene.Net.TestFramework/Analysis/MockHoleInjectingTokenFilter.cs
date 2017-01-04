@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 int posInc = PosIncAtt.PositionIncrement;
 

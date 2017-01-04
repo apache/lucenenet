@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         public override sealed bool IncrementToken()
         {
-            while (input.IncrementToken())
+            while (m_input.IncrementToken())
             {
                 char[] term = termAttribute.GetBuffer();
                 int length = termAttribute.Length;

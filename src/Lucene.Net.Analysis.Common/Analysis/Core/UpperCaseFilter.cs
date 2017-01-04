@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Core
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 charUtils.ToUpper(termAtt.GetBuffer(), 0, termAtt.Length);
                 return true;

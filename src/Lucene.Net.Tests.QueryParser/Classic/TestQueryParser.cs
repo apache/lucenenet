@@ -417,7 +417,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     return true;
                 }
 
-                if (input.IncrementToken())
+                if (m_input.IncrementToken())
                 {
                     AddSynonym = TermAtt.ToString().Equals("国");
                     return true;

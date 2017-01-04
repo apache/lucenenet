@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Payloads
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 char[] buffer = termAtt.GetBuffer();
                 int length = termAtt.Length;

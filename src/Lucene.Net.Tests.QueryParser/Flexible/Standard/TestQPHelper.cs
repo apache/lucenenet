@@ -93,7 +93,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     return true;
                 }
                 else
-                    while (input.IncrementToken())
+                    while (m_input.IncrementToken())
                     {
                         if (termAtt.toString().equals("phrase"))
                         {

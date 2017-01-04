@@ -74,7 +74,7 @@
             }
             else if (tokenCount < maxTokenCount)
             {
-                if (input.IncrementToken())
+                if (m_input.IncrementToken())
                 {
                     tokenCount++;
                     return true;
@@ -87,7 +87,7 @@
             }
             else
             {
-                while (consumeAllTokens && input.IncrementToken()) // NOOP
+                while (consumeAllTokens && m_input.IncrementToken()) // NOOP
                 {
                 }
                 return false;

@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.Highlight
 
         public override bool IncrementToken()
         {
-            if (offsetCount < offsetLimit && input.IncrementToken())
+            if (offsetCount < offsetLimit && m_input.IncrementToken())
             {
                 int offsetLength = offsetAttrib.EndOffset - offsetAttrib.StartOffset;
                 offsetCount += offsetLength;

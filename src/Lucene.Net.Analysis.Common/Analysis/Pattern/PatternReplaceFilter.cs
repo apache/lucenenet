@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Pattern
 
         public override bool IncrementToken()
         {
-            if (!input.IncrementToken())
+            if (!m_input.IncrementToken())
             {
                 return false;
             }

@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Reverse
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 int len = termAtt.Length;
                 if (marker != NOMARKER)

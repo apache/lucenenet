@@ -122,7 +122,7 @@ namespace Lucene.Net.Analysis.Compound
             }
 
             current = null; // not really needed, but for safety
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 // Only words longer than minWordSize get processed
                 if (termAtt.Length >= this.minWordSize)

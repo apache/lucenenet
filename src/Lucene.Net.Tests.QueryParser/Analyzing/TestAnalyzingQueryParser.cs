@@ -256,7 +256,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
 
             public sealed override bool IncrementToken()
             {
-                if (input.IncrementToken())
+                if (m_input.IncrementToken())
                 {
                     char[] term = termAtt.GetBuffer();
                     for (int i = 0; i < term.Length; i++)

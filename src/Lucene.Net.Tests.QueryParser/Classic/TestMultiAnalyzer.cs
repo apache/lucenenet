@@ -152,7 +152,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 }
                 else
                 {
-                    bool next = input.IncrementToken();
+                    bool next = m_input.IncrementToken();
                     if (!next)
                     {
                         return false;
@@ -214,7 +214,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
             public override sealed bool IncrementToken()
             {
-                while (input.IncrementToken())
+                while (m_input.IncrementToken())
                 {
                     if (termAtt.toString().equals("the"))
                     {

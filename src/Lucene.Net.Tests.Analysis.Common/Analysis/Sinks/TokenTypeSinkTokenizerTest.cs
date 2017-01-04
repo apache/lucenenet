@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Sinks
 
             public override sealed bool IncrementToken()
             {
-                if (!input.IncrementToken())
+                if (!m_input.IncrementToken())
                 {
                     return false;
                 }

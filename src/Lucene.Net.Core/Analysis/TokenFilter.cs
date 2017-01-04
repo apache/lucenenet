@@ -26,14 +26,14 @@ namespace Lucene.Net.Analysis
     {
         /// <summary>
         /// The source of tokens for this filter. </summary>
-        protected internal readonly TokenStream input;
+        protected readonly TokenStream m_input;
 
         /// <summary>
         /// Construct a token stream filtering the given input. </summary>
         protected internal TokenFilter(TokenStream input)
             : base(input)
         {
-            this.input = input;
+            this.m_input = input;
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public override void End()
         {
-            input.End();
+            m_input.End();
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public override void Dispose()
         {
-            input.Dispose();
+            m_input.Dispose();
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public override void Reset()
         {
-            input.Reset();
+            m_input.Reset();
         }
     }
 }

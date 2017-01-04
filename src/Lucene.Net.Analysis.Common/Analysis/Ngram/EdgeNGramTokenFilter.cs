@@ -169,7 +169,7 @@ namespace Lucene.Net.Analysis.Ngram
             {
                 if (curTermBuffer == null)
                 {
-                    if (!input.IncrementToken())
+                    if (!m_input.IncrementToken())
                     {
                         return false;
                     }

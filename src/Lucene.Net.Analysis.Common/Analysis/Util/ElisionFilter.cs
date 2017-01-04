@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 char[] termBuffer = termAtt.GetBuffer();
                 int termLength = termAtt.Length;

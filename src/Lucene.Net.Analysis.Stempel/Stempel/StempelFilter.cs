@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Stempel
         /// </summary>
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 if (!keywordAtt.IsKeyword && termAtt.Length > minLength)
                 {

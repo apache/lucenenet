@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.Snowball
         /// Returns the next input Token, after being stemmed </summary>
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 if (!keywordAttr.IsKeyword)
                 {

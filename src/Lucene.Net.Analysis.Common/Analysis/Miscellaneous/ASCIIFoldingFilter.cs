@@ -101,7 +101,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 state = null;
                 return true;
             }
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 char[] buffer = termAtt.GetBuffer();
                 int length = termAtt.Length;

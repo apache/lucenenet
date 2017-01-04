@@ -159,7 +159,7 @@ namespace Lucene.Net.Analysis.Ngram
 
             public override sealed bool IncrementToken()
             {
-                if (input.IncrementToken())
+                if (m_input.IncrementToken())
                 {
                     if (started)
                     {

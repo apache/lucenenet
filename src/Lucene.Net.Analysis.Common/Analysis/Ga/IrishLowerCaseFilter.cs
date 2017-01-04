@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Ga
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 char[] chArray = termAtt.GetBuffer();
                 int chLen = termAtt.Length;

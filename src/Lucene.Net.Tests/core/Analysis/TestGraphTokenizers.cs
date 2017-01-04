@@ -280,7 +280,7 @@ namespace Lucene.Net.Analysis
             {
                 while (true)
                 {
-                    bool gotOne = input.IncrementToken();
+                    bool gotOne = m_input.IncrementToken();
                     if (!gotOne)
                     {
                         return false;

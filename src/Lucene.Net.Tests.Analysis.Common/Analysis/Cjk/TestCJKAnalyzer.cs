@@ -181,7 +181,7 @@ namespace Lucene.Net.Analysis.Cjk
 
             public override sealed bool IncrementToken()
             {
-                if (input.IncrementToken())
+                if (m_input.IncrementToken())
                 {
                     typeAtt.Type = StandardTokenizer.TOKEN_TYPES[StandardTokenizer.IDEOGRAPHIC];
                     return true;

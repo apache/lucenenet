@@ -236,7 +236,7 @@ namespace Lucene.Net.Analysis.Synonym
             }
             else
             {
-                if (!exhausted && input.IncrementToken())
+                if (!exhausted && m_input.IncrementToken())
                 {
                     return this;
                 }
@@ -312,7 +312,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         public override void Reset()
         {
-            input.Reset();
+            m_input.Reset();
             replacement = null;
             exhausted = false;
         }

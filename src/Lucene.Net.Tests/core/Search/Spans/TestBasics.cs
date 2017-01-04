@@ -72,7 +72,7 @@ namespace Lucene.Net.Search.Spans
 
             public override bool IncrementToken()
             {
-                if (input.IncrementToken())
+                if (m_input.IncrementToken())
                 {
                     PayloadAttr.Payload = new BytesRef(("pos: " + Pos).GetBytes(IOUtils.CHARSET_UTF_8));
                     Pos++;

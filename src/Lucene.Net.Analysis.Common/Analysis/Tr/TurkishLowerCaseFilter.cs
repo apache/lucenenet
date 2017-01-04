@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Tr
 #else
             CultureInfo.CurrentUICulture = cultureInfo;
 #endif
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 char[] buffer = termAtt.GetBuffer();
                 int length = termAtt.Length;

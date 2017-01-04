@@ -287,7 +287,7 @@ namespace Lucene.Net.Analysis.Sinks
             public override sealed bool IncrementToken()
             {
                 bool hasNext;
-                for (hasNext = input.IncrementToken(); hasNext && count % modCount != 0; hasNext = input.IncrementToken())
+                for (hasNext = m_input.IncrementToken(); hasNext && count % modCount != 0; hasNext = m_input.IncrementToken())
                 {
                     count++;
                 }

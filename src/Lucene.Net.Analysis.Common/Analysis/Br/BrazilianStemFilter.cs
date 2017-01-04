@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Br
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 string term = termAtt.ToString();
                 // Check the exclusion table.

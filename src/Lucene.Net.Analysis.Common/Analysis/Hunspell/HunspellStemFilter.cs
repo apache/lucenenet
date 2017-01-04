@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 return true;
             }
 
-            if (!input.IncrementToken())
+            if (!m_input.IncrementToken())
             {
                 return false;
             }

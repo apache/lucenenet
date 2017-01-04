@@ -166,7 +166,7 @@ namespace Lucene.Net.Analysis.Pattern
                 return true;
             }
 
-            if (!input.IncrementToken())
+            if (!m_input.IncrementToken())
             {
                 return false;
             }

@@ -379,7 +379,7 @@ namespace Lucene.Net.Analysis.Synonym
                         // than its input can set future inputs keepOrig
                         // to true:
                         //assert !futureInputs[nextWrite].keepOrig;
-                        if (input.IncrementToken())
+                        if (m_input.IncrementToken())
                         {
                             buffer = termAtt.GetBuffer();
                             bufferLen = termAtt.Length;

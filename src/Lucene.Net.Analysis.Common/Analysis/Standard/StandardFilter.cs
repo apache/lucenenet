@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Standard
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
 #pragma warning restore 612, 618
             {
-                return input.IncrementToken(); // TODO: add some niceties for the new grammar
+                return m_input.IncrementToken(); // TODO: add some niceties for the new grammar
             }
             else
             {
@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis.Standard
 
         public bool IncrementTokenClassic()
         {
-            if (!input.IncrementToken())
+            if (!m_input.IncrementToken())
             {
                 return false;
             }

@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.CommonGrams
                 SaveTermBuffer();
                 return true;
             }
-            else if (!input.IncrementToken())
+            else if (!m_input.IncrementToken())
             {
                 return false;
             }

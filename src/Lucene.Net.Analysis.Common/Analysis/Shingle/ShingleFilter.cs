@@ -441,7 +441,7 @@ namespace Lucene.Net.Analysis.Shingle
             }
             else if (!exhausted)
             {
-                if (input.IncrementToken())
+                if (m_input.IncrementToken())
                 {
                     if (null == target)
                     {
@@ -480,7 +480,7 @@ namespace Lucene.Net.Analysis.Shingle
                 else
                 {
                     exhausted = true;
-                    input.End();
+                    m_input.End();
                     endState = CaptureState();
                     numFillerTokensToInsert = Math.Min(posIncrAtt.PositionIncrement, maxShingleSize - 1);
                     if (numFillerTokensToInsert > 0)

@@ -223,7 +223,7 @@ namespace Lucene.Net.Analysis.Compound
 
             public override sealed bool IncrementToken()
             {
-                if (input.IncrementToken())
+                if (m_input.IncrementToken())
                 {
                     retainAtt.Retain = true;
                     return true;

@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Payloads
 
         public override sealed bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 string type = typeAtt.Type;
                 if (type != null && type.Length > 0)

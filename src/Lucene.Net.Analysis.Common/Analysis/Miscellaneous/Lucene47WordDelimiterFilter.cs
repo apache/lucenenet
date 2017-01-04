@@ -188,7 +188,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 if (!hasSavedState)
                 {
                     // process a new input word
-                    if (!input.IncrementToken())
+                    if (!m_input.IncrementToken())
                     {
                         return false;
                     }

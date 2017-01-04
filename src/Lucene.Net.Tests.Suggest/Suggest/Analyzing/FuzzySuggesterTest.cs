@@ -639,7 +639,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             public override sealed bool IncrementToken()
             {
                 int skippedPositions = 0;
-                while (input.IncrementToken())
+                while (m_input.IncrementToken())
                 {
                     if (termAtt.Length != 1 || !IsStopChar(termAtt.GetBuffer()[0], numStopChars))
                     {

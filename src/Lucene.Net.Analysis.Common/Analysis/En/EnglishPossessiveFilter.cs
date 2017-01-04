@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.En
 
         public override bool IncrementToken()
         {
-            if (!input.IncrementToken())
+            if (!m_input.IncrementToken())
             {
                 return false;
             }

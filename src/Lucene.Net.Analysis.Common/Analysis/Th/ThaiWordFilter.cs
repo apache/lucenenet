@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Th
                 hasMoreTokensInClone = false;
             }
 
-            if (!input.IncrementToken())
+            if (!m_input.IncrementToken())
             {
                 return false;
             }

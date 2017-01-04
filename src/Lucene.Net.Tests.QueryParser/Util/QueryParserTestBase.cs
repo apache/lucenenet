@@ -67,7 +67,7 @@ namespace Lucene.Net.QueryParsers.Util
                     return true;
                 }
                 else
-                    while (input.IncrementToken())
+                    while (m_input.IncrementToken())
                     {
                         if (termAtt.toString().Equals("phrase"))
                         {
@@ -1211,7 +1211,7 @@ namespace Lucene.Net.QueryParsers.Util
                     return true;
                 }
 
-                if (input.IncrementToken())
+                if (m_input.IncrementToken())
                 {
                     addSynonym = termAtt.toString().equals("dogs");
                     return true;
@@ -1269,7 +1269,7 @@ namespace Lucene.Net.QueryParsers.Util
 
             public override sealed bool IncrementToken()
             {
-                if (input.IncrementToken())
+                if (m_input.IncrementToken())
                 {
                     string term = termAtt.toString();
                     termAtt.SetEmpty().Append("collated").Append(term);

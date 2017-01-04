@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Ar
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 int newlen = normalizer.Normalize(termAtt.GetBuffer(), termAtt.Length);
                 termAtt.Length = newlen;

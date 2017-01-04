@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 Random.NextBytes((byte[])(Array)Bytes);
                 Payload.Length = Random.Next(MAXLENGTH);

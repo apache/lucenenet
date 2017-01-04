@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.En
         ///  <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public override bool IncrementToken()
         {
-            if (!input.IncrementToken())
+            if (!m_input.IncrementToken())
             {
                 return false;
             }

@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Payloads
 
             public override bool IncrementToken()
             {
-                if (input.IncrementToken())
+                if (m_input.IncrementToken())
                 {
                     if (FieldName.Equals(FIELD))
                     {

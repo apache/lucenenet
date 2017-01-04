@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Nl
         /// </summary>
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 string term = termAtt.ToString();
 

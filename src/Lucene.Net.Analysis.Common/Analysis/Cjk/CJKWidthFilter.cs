@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Cjk
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 char[] text = termAtt.GetBuffer();
                 int length = termAtt.Length;

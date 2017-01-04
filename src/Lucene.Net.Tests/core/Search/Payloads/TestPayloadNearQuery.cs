@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Payloads
             public sealed override bool IncrementToken()
             {
                 bool result = false;
-                if (input.IncrementToken())
+                if (m_input.IncrementToken())
                 {
                     if (NumSeen % 2 == 0)
                     {

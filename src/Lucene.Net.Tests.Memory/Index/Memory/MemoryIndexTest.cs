@@ -272,7 +272,7 @@ namespace Lucene.Net.Index.Memory
 
             public override bool IncrementToken()
             {
-                if (input.IncrementToken())
+                if (m_input.IncrementToken())
                 {
                     if (termAtt.Length > 0 && termAtt.GetBuffer()[0] == 't')
                     {

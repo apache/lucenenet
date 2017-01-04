@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.No
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 if (!keywordAttr.IsKeyword)
                 {

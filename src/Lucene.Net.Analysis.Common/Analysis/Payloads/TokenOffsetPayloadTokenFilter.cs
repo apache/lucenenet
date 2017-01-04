@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Payloads
 
         public override sealed bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 byte[] data = new byte[8];
                 PayloadHelper.EncodeInt(offsetAtt.StartOffset, data, 0);

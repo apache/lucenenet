@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 return false;
             }
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 tokenPosition += posIncAtt.PositionIncrement;
                 if (tokenPosition <= maxTokenPosition)
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
                 else
                 {
-                    while (consumeAllTokens && input.IncrementToken()) // NOOP
+                    while (consumeAllTokens && m_input.IncrementToken()) // NOOP
                     {
                     }
                     exhausted = true;

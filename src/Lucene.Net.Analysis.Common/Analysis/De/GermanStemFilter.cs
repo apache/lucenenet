@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.De
         /// <returns>  Returns true for next token in the stream, or false at EOS </returns>
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 string term = termAtt.ToString();
 

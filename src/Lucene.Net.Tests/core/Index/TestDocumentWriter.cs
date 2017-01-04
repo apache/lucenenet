@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
                         return true;
                     }
 
-                    bool hasNext = input.IncrementToken();
+                    bool hasNext = m_input.IncrementToken();
                     if (!hasNext)
                     {
                         return false;

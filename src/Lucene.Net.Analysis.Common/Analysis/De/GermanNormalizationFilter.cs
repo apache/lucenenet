@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.De
 
         public override bool IncrementToken()
         {
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 int state = N;
                 char[] buffer = termAtt.GetBuffer();

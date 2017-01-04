@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         /// </summary>
         public override bool IncrementToken()
         {
-            while (!exhausted && input.IncrementToken())
+            while (!exhausted && m_input.IncrementToken())
             {
                 State current = CaptureState();
 

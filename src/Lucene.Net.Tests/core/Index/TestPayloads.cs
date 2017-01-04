@@ -435,7 +435,7 @@ namespace Lucene.Net.Index
 
             public sealed override bool IncrementToken()
             {
-                bool hasNext = input.IncrementToken();
+                bool hasNext = m_input.IncrementToken();
                 if (!hasNext)
                 {
                     return false;

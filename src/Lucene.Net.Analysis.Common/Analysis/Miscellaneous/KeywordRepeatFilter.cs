@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 state = null;
                 return true;
             }
-            if (input.IncrementToken())
+            if (m_input.IncrementToken())
             {
                 state = CaptureState();
                 keywordAttribute.IsKeyword = true;

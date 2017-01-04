@@ -182,7 +182,7 @@ namespace Lucene.Net.Analysis.Core
                     bufferedState = null;
                     return true;
                 }
-                else if (input.IncrementToken())
+                else if (m_input.IncrementToken())
                 {
                     if (termAtt.ToString().Equals("the"))
                     {

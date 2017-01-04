@@ -468,7 +468,7 @@ namespace Lucene.Net.Index
                 {
                     throw new IOException(CRASH_FAIL_MESSAGE);
                 }
-                return input.IncrementToken();
+                return m_input.IncrementToken();
             }
 
             public override void Reset()
@@ -683,7 +683,7 @@ namespace Lucene.Net.Index
                     {
                         throw new IOException();
                     }
-                    return input.IncrementToken();
+                    return m_input.IncrementToken();
                 }
 
                 public override void Reset()
