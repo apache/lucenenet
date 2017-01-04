@@ -80,8 +80,8 @@ namespace Lucene.Net.Codecs.Lucene45
         /// </summary>
         public static readonly int SORTED_SET_SINGLE_VALUED_SORTED = 1;
 
-        internal IndexOutput Data, Meta;
-        internal readonly int MaxDoc;
+        internal IndexOutput data, meta;
+        internal readonly int maxDoc;
 
         /// <summary>
         /// expert: Creates a new writer </summary>
@@ -91,12 +91,12 @@ namespace Lucene.Net.Codecs.Lucene45
             try
             {
                 string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, dataExtension);
-                Data = state.Directory.CreateOutput(dataName, state.Context);
-                CodecUtil.WriteHeader(Data, dataCodec, Lucene45DocValuesFormat.VERSION_CURRENT);
+                data = state.Directory.CreateOutput(dataName, state.Context);
+                CodecUtil.WriteHeader(data, dataCodec, Lucene45DocValuesFormat.VERSION_CURRENT);
                 string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, metaExtension);
-                Meta = state.Directory.CreateOutput(metaName, state.Context);
-                CodecUtil.WriteHeader(Meta, metaCodec, Lucene45DocValuesFormat.VERSION_CURRENT);
-                MaxDoc = state.SegmentInfo.DocCount;
+                meta = state.Directory.CreateOutput(metaName, state.Context);
+                CodecUtil.WriteHeader(meta, metaCodec, Lucene45DocValuesFormat.VERSION_CURRENT);
+                maxDoc = state.SegmentInfo.DocCount;
                 success = true;
             }
             finally
@@ -195,29 +195,29 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 format = DELTA_COMPRESSED;
             }
-            Meta.WriteVInt(field.Number);
-            Meta.WriteByte((byte)Lucene45DocValuesFormat.NUMERIC);
-            Meta.WriteVInt(format);
+            meta.WriteVInt(field.Number);
+            meta.WriteByte((byte)Lucene45DocValuesFormat.NUMERIC);
+            meta.WriteVInt(format);
             if (missing)
             {
-                Meta.WriteLong(Data.FilePointer);
+                meta.WriteLong(data.FilePointer);
                 WriteMissingBitset(values);
             }
             else
             {
-                Meta.WriteLong(-1L);
+                meta.WriteLong(-1L);
             }
-            Meta.WriteVInt(PackedInts.VERSION_CURRENT);
-            Meta.WriteLong(Data.FilePointer);
-            Meta.WriteVLong(count);
-            Meta.WriteVInt(BLOCK_SIZE);
+            meta.WriteVInt(PackedInts.VERSION_CURRENT);
+            meta.WriteLong(data.FilePointer);
+            meta.WriteVLong(count);
+            meta.WriteVInt(BLOCK_SIZE);
 
             switch (format)
             {
                 case GCD_COMPRESSED:
-                    Meta.WriteLong(minValue);
-                    Meta.WriteLong(gcd);
-                    BlockPackedWriter quotientWriter = new BlockPackedWriter(Data, BLOCK_SIZE);
+                    meta.WriteLong(minValue);
+                    meta.WriteLong(gcd);
+                    BlockPackedWriter quotientWriter = new BlockPackedWriter(data, BLOCK_SIZE);
                     foreach (long? nv in values)
                     {
                         long value = nv == null ? 0 : nv.Value;
@@ -227,7 +227,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     break;
 
                 case DELTA_COMPRESSED:
-                    BlockPackedWriter writer = new BlockPackedWriter(Data, BLOCK_SIZE);
+                    BlockPackedWriter writer = new BlockPackedWriter(data, BLOCK_SIZE);
                     foreach (long? nv in values)
                     {
                         writer.Add(nv == null ? 0 : nv.Value);
@@ -238,14 +238,14 @@ namespace Lucene.Net.Codecs.Lucene45
                 case TABLE_COMPRESSED:
                     long[] decode = uniqueValues.ToArray();//LUCENE TO-DO Hadd oparamerter before
                     Dictionary<long, int> encode = new Dictionary<long, int>();
-                    Meta.WriteVInt(decode.Length);
+                    meta.WriteVInt(decode.Length);
                     for (int i = 0; i < decode.Length; i++)
                     {
-                        Meta.WriteLong(decode[i]);
+                        meta.WriteLong(decode[i]);
                         encode[decode[i]] = i;
                     }
                     int bitsRequired = PackedInts.BitsRequired(uniqueValues.Count - 1);
-                    PackedInts.Writer ordsWriter = PackedInts.GetWriterNoHeader(Data, PackedInts.Format.PACKED, (int)count, bitsRequired, PackedInts.DEFAULT_BUFFER_SIZE);
+                    PackedInts.Writer ordsWriter = PackedInts.GetWriterNoHeader(data, PackedInts.Format.PACKED, (int)count, bitsRequired, PackedInts.DEFAULT_BUFFER_SIZE);
                     foreach (long? nv in values)
                     {
                         ordsWriter.Add(encode[nv == null ? 0 : nv.Value]);
@@ -268,7 +268,7 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 if (count == 8)
                 {
-                    Data.WriteByte((byte)bits);
+                    data.WriteByte((byte)bits);
                     count = 0;
                     bits = 0;
                 }
@@ -280,18 +280,18 @@ namespace Lucene.Net.Codecs.Lucene45
             }
             if (count > 0)
             {
-                Data.WriteByte((byte)bits);
+                data.WriteByte((byte)bits);
             }
         }
 
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
             // write the byte[] data
-            Meta.WriteVInt(field.Number);
-            Meta.WriteByte((byte)Lucene45DocValuesFormat.BINARY);
+            meta.WriteVInt(field.Number);
+            meta.WriteByte((byte)Lucene45DocValuesFormat.BINARY);
             int minLength = int.MaxValue;
             int maxLength = int.MinValue;
-            long startFP = Data.FilePointer;
+            long startFP = data.FilePointer;
             long count = 0;
             bool missing = false;
             foreach (BytesRef v in values)
@@ -310,34 +310,34 @@ namespace Lucene.Net.Codecs.Lucene45
                 maxLength = Math.Max(maxLength, length);
                 if (v != null)
                 {
-                    Data.WriteBytes(v.Bytes, v.Offset, v.Length);
+                    data.WriteBytes(v.Bytes, v.Offset, v.Length);
                 }
                 count++;
             }
-            Meta.WriteVInt(minLength == maxLength ? BINARY_FIXED_UNCOMPRESSED : BINARY_VARIABLE_UNCOMPRESSED);
+            meta.WriteVInt(minLength == maxLength ? BINARY_FIXED_UNCOMPRESSED : BINARY_VARIABLE_UNCOMPRESSED);
             if (missing)
             {
-                Meta.WriteLong(Data.FilePointer);
+                meta.WriteLong(data.FilePointer);
                 WriteMissingBitset(values);
             }
             else
             {
-                Meta.WriteLong(-1L);
+                meta.WriteLong(-1L);
             }
-            Meta.WriteVInt(minLength);
-            Meta.WriteVInt(maxLength);
-            Meta.WriteVLong(count);
-            Meta.WriteLong(startFP);
+            meta.WriteVInt(minLength);
+            meta.WriteVInt(maxLength);
+            meta.WriteVLong(count);
+            meta.WriteLong(startFP);
 
             // if minLength == maxLength, its a fixed-length byte[], we are done (the addresses are implicit)
             // otherwise, we need to record the length fields...
             if (minLength != maxLength)
             {
-                Meta.WriteLong(Data.FilePointer);
-                Meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                Meta.WriteVInt(BLOCK_SIZE);
+                meta.WriteLong(data.FilePointer);
+                meta.WriteVInt(PackedInts.VERSION_CURRENT);
+                meta.WriteVInt(BLOCK_SIZE);
 
-                MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(Data, BLOCK_SIZE);
+                MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(data, BLOCK_SIZE);
                 long addr = 0;
                 foreach (BytesRef v in values)
                 {
@@ -371,12 +371,12 @@ namespace Lucene.Net.Codecs.Lucene45
             else
             {
                 // header
-                Meta.WriteVInt(field.Number);
-                Meta.WriteByte((byte)Lucene45DocValuesFormat.BINARY);
-                Meta.WriteVInt(BINARY_PREFIX_COMPRESSED);
-                Meta.WriteLong(-1L);
+                meta.WriteVInt(field.Number);
+                meta.WriteByte((byte)Lucene45DocValuesFormat.BINARY);
+                meta.WriteVInt(BINARY_PREFIX_COMPRESSED);
+                meta.WriteLong(-1L);
                 // now write the bytes: sharing prefixes within a block
-                long startFP = Data.FilePointer;
+                long startFP = data.FilePointer;
                 // currently, we have to store the delta from expected for every 1/nth term
                 // we could avoid this, but its not much and less overall RAM than the previous approach!
                 RAMOutputStream addressBuffer = new RAMOutputStream();
@@ -387,40 +387,40 @@ namespace Lucene.Net.Codecs.Lucene45
                 {
                     if (count % ADDRESS_INTERVAL == 0)
                     {
-                        termAddresses.Add(Data.FilePointer - startFP);
+                        termAddresses.Add(data.FilePointer - startFP);
                         // force the first term in a block to be abs-encoded
                         lastTerm.Length = 0;
                     }
 
                     // prefix-code
                     int sharedPrefix = StringHelper.BytesDifference(lastTerm, v);
-                    Data.WriteVInt(sharedPrefix);
-                    Data.WriteVInt(v.Length - sharedPrefix);
-                    Data.WriteBytes(v.Bytes, v.Offset + sharedPrefix, v.Length - sharedPrefix);
+                    data.WriteVInt(sharedPrefix);
+                    data.WriteVInt(v.Length - sharedPrefix);
+                    data.WriteBytes(v.Bytes, v.Offset + sharedPrefix, v.Length - sharedPrefix);
                     lastTerm.CopyBytes(v);
                     count++;
                 }
-                long indexStartFP = Data.FilePointer;
+                long indexStartFP = data.FilePointer;
                 // write addresses of indexed terms
                 termAddresses.Finish();
-                addressBuffer.WriteTo(Data);
+                addressBuffer.WriteTo(data);
                 addressBuffer = null;
                 termAddresses = null;
-                Meta.WriteVInt(minLength);
-                Meta.WriteVInt(maxLength);
-                Meta.WriteVLong(count);
-                Meta.WriteLong(startFP);
-                Meta.WriteVInt(ADDRESS_INTERVAL);
-                Meta.WriteLong(indexStartFP);
-                Meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                Meta.WriteVInt(BLOCK_SIZE);
+                meta.WriteVInt(minLength);
+                meta.WriteVInt(maxLength);
+                meta.WriteVLong(count);
+                meta.WriteLong(startFP);
+                meta.WriteVInt(ADDRESS_INTERVAL);
+                meta.WriteLong(indexStartFP);
+                meta.WriteVInt(PackedInts.VERSION_CURRENT);
+                meta.WriteVInt(BLOCK_SIZE);
             }
         }
 
         public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
-            Meta.WriteVInt(field.Number);
-            Meta.WriteByte((byte)Lucene45DocValuesFormat.SORTED);
+            meta.WriteVInt(field.Number);
+            meta.WriteByte((byte)Lucene45DocValuesFormat.SORTED);
             AddTermsDict(field, values);
             AddNumericField(field, docToOrd, false);
         }
@@ -432,18 +432,18 @@ namespace Lucene.Net.Codecs.Lucene45
 
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
-            Meta.WriteVInt(field.Number);
-            Meta.WriteByte((byte)Lucene45DocValuesFormat.SORTED_SET);
+            meta.WriteVInt(field.Number);
+            meta.WriteByte((byte)Lucene45DocValuesFormat.SORTED_SET);
 
             if (IsSingleValued(docToOrdCount))
             {
-                Meta.WriteVInt(SORTED_SET_SINGLE_VALUED_SORTED);
+                meta.WriteVInt(SORTED_SET_SINGLE_VALUED_SORTED);
                 // The field is single-valued, we can encode it as SORTED
                 AddSortedField(field, values, GetSortedSetEnumerable(docToOrdCount, ords));
                 return;
             }
 
-            Meta.WriteVInt(SORTED_SET_WITH_ADDRESSES);
+            meta.WriteVInt(SORTED_SET_WITH_ADDRESSES);
 
             // write the ord -> byte[] as a binary field
             AddTermsDict(field, values);
@@ -453,16 +453,16 @@ namespace Lucene.Net.Codecs.Lucene45
             AddNumericField(field, ords, false);
 
             // write the doc -> ord count as a absolute index to the stream
-            Meta.WriteVInt(field.Number);
-            Meta.WriteByte((byte)Lucene45DocValuesFormat.NUMERIC);
-            Meta.WriteVInt(DELTA_COMPRESSED);
-            Meta.WriteLong(-1L);
-            Meta.WriteVInt(PackedInts.VERSION_CURRENT);
-            Meta.WriteLong(Data.FilePointer);
-            Meta.WriteVLong(MaxDoc);
-            Meta.WriteVInt(BLOCK_SIZE);
+            meta.WriteVInt(field.Number);
+            meta.WriteByte((byte)Lucene45DocValuesFormat.NUMERIC);
+            meta.WriteVInt(DELTA_COMPRESSED);
+            meta.WriteLong(-1L);
+            meta.WriteVInt(PackedInts.VERSION_CURRENT);
+            meta.WriteLong(data.FilePointer);
+            meta.WriteVLong(maxDoc);
+            meta.WriteVInt(BLOCK_SIZE);
 
-            var writer = new MonotonicBlockPackedWriter(Data, BLOCK_SIZE);
+            var writer = new MonotonicBlockPackedWriter(data, BLOCK_SIZE);
             long addr = 0;
             foreach (long? v in docToOrdCount)
             {
@@ -654,14 +654,14 @@ throw new NotImplementedException();
                 bool success = false;
                 try
                 {
-                    if (Meta != null)
+                    if (meta != null)
                     {
-                        Meta.WriteVInt(-1); // write EOF marker
-                        CodecUtil.WriteFooter(Meta); // write checksum
+                        meta.WriteVInt(-1); // write EOF marker
+                        CodecUtil.WriteFooter(meta); // write checksum
                     }
-                    if (Data != null)
+                    if (data != null)
                     {
-                        CodecUtil.WriteFooter(Data); // write checksum
+                        CodecUtil.WriteFooter(data); // write checksum
                     }
                     success = true;
                 }
@@ -669,13 +669,13 @@ throw new NotImplementedException();
                 {
                     if (success)
                     {
-                        IOUtils.Close(Data, Meta);
+                        IOUtils.Close(data, meta);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(Data, Meta);
+                        IOUtils.CloseWhileHandlingException(data, meta);
                     }
-                    Meta = Data = null;
+                    meta = data = null;
                 }
             }
         }
