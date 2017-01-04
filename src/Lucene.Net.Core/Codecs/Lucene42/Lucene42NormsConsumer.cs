@@ -47,23 +47,23 @@ namespace Lucene.Net.Codecs.Lucene42
         internal const sbyte UNCOMPRESSED = 2;
         internal const sbyte GCD_COMPRESSED = 3;
 
-        internal IndexOutput Data, Meta;
-        internal readonly int MaxDoc;
-        internal readonly float AcceptableOverheadRatio;
+        internal IndexOutput data, meta;
+        internal readonly int maxDoc;
+        internal readonly float acceptableOverheadRatio;
 
         internal Lucene42NormsConsumer(SegmentWriteState state, string dataCodec, string dataExtension, string metaCodec, string metaExtension, float acceptableOverheadRatio)
         {
-            this.AcceptableOverheadRatio = acceptableOverheadRatio;
-            MaxDoc = state.SegmentInfo.DocCount;
+            this.acceptableOverheadRatio = acceptableOverheadRatio;
+            maxDoc = state.SegmentInfo.DocCount;
             bool success = false;
             try
             {
                 string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, dataExtension);
-                Data = state.Directory.CreateOutput(dataName, state.Context);
-                CodecUtil.WriteHeader(Data, dataCodec, Lucene42DocValuesProducer.VERSION_CURRENT);
+                data = state.Directory.CreateOutput(dataName, state.Context);
+                CodecUtil.WriteHeader(data, dataCodec, Lucene42DocValuesProducer.VERSION_CURRENT);
                 string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, metaExtension);
-                Meta = state.Directory.CreateOutput(metaName, state.Context);
-                CodecUtil.WriteHeader(Meta, metaCodec, Lucene42DocValuesProducer.VERSION_CURRENT);
+                meta = state.Directory.CreateOutput(metaName, state.Context);
+                CodecUtil.WriteHeader(meta, metaCodec, Lucene42DocValuesProducer.VERSION_CURRENT);
                 success = true;
             }
             finally
@@ -77,9 +77,9 @@ namespace Lucene.Net.Codecs.Lucene42
 
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
-            Meta.WriteVInt(field.Number);
-            Meta.WriteByte((byte)NUMBER);
-            Meta.WriteLong(Data.FilePointer);
+            meta.WriteVInt(field.Number);
+            meta.WriteByte((byte)NUMBER);
+            meta.WriteLong(data.FilePointer);
             long minValue = long.MaxValue;
             long maxValue = long.MinValue;
             long gcd = 0;
@@ -126,39 +126,39 @@ namespace Lucene.Net.Codecs.Lucene42
 
                     ++count;
                 }
-                Debug.Assert(count == MaxDoc);
+                Debug.Assert(count == maxDoc);
             }
 
             if (uniqueValues != null)
             {
                 // small number of unique values
                 int bitsPerValue = PackedInts.BitsRequired(uniqueValues.Count - 1);
-                FormatAndBits formatAndBits = PackedInts.FastestFormatAndBits(MaxDoc, bitsPerValue, AcceptableOverheadRatio);
+                FormatAndBits formatAndBits = PackedInts.FastestFormatAndBits(maxDoc, bitsPerValue, acceptableOverheadRatio);
                 if (formatAndBits.BitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
                 {
-                    Meta.WriteByte((byte)UNCOMPRESSED); // uncompressed
+                    meta.WriteByte((byte)UNCOMPRESSED); // uncompressed
                     foreach (long? nv in values)
                     {
-                        Data.WriteByte(nv == null ? (byte)0 : (byte)(sbyte)nv.Value);
+                        data.WriteByte(nv == null ? (byte)0 : (byte)(sbyte)nv.Value);
                     }
                 }
                 else
                 {
-                    Meta.WriteByte((byte)TABLE_COMPRESSED); // table-compressed
+                    meta.WriteByte((byte)TABLE_COMPRESSED); // table-compressed
                     var decode = uniqueValues.ToArray();
                     var encode = new Dictionary<long, int>();
-                    Data.WriteVInt(decode.Length);
+                    data.WriteVInt(decode.Length);
                     for (int i = 0; i < decode.Length; i++)
                     {
-                        Data.WriteLong(decode[i]);
+                        data.WriteLong(decode[i]);
                         encode[decode[i]] = i;
                     }
 
-                    Meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                    Data.WriteVInt(formatAndBits.Format.Id);
-                    Data.WriteVInt(formatAndBits.BitsPerValue);
+                    meta.WriteVInt(PackedInts.VERSION_CURRENT);
+                    data.WriteVInt(formatAndBits.Format.Id);
+                    data.WriteVInt(formatAndBits.BitsPerValue);
 
-                    PackedInts.Writer writer = PackedInts.GetWriterNoHeader(Data, formatAndBits.Format, MaxDoc, formatAndBits.BitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
+                    PackedInts.Writer writer = PackedInts.GetWriterNoHeader(data, formatAndBits.Format, maxDoc, formatAndBits.BitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
                     foreach (long? nv in values)
                     {
                         writer.Add(encode[nv == null ? 0 : nv.Value]);
@@ -168,13 +168,13 @@ namespace Lucene.Net.Codecs.Lucene42
             }
             else if (gcd != 0 && gcd != 1)
             {
-                Meta.WriteByte((byte)GCD_COMPRESSED);
-                Meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                Data.WriteLong(minValue);
-                Data.WriteLong(gcd);
-                Data.WriteVInt(BLOCK_SIZE);
+                meta.WriteByte((byte)GCD_COMPRESSED);
+                meta.WriteVInt(PackedInts.VERSION_CURRENT);
+                data.WriteLong(minValue);
+                data.WriteLong(gcd);
+                data.WriteVInt(BLOCK_SIZE);
 
-                var writer = new BlockPackedWriter(Data, BLOCK_SIZE);
+                var writer = new BlockPackedWriter(data, BLOCK_SIZE);
                 foreach (long? nv in values)
                 {
                     long value = nv == null ? 0 : nv.Value;
@@ -184,12 +184,12 @@ namespace Lucene.Net.Codecs.Lucene42
             }
             else
             {
-                Meta.WriteByte((byte)DELTA_COMPRESSED); // delta-compressed
+                meta.WriteByte((byte)DELTA_COMPRESSED); // delta-compressed
 
-                Meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                Data.WriteVInt(BLOCK_SIZE);
+                meta.WriteVInt(PackedInts.VERSION_CURRENT);
+                data.WriteVInt(BLOCK_SIZE);
 
-                var writer = new BlockPackedWriter(Data, BLOCK_SIZE);
+                var writer = new BlockPackedWriter(data, BLOCK_SIZE);
                 foreach (long? nv in values)
                 {
                     writer.Add(nv == null ? 0 : nv.Value);
@@ -205,14 +205,14 @@ namespace Lucene.Net.Codecs.Lucene42
                 bool success = false;
                 try
                 {
-                    if (Meta != null)
+                    if (meta != null)
                     {
-                        Meta.WriteVInt(-1); // write EOF marker
-                        CodecUtil.WriteFooter(Meta); // write checksum
+                        meta.WriteVInt(-1); // write EOF marker
+                        CodecUtil.WriteFooter(meta); // write checksum
                     }
-                    if (Data != null)
+                    if (data != null)
                     {
-                        CodecUtil.WriteFooter(Data); // write checksum
+                        CodecUtil.WriteFooter(data); // write checksum
                     }
                     success = true;
                 }
@@ -220,13 +220,13 @@ namespace Lucene.Net.Codecs.Lucene42
                 {
                     if (success)
                     {
-                        IOUtils.Close(Data, Meta);
+                        IOUtils.Close(data, meta);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(Data, Meta);
+                        IOUtils.CloseWhileHandlingException(data, meta);
                     }
-                    Meta = Data = null;
+                    meta = data = null;
                 }
             }
         }
