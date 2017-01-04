@@ -77,24 +77,24 @@ namespace Lucene.Net.Codecs.Lucene40
         internal static readonly long HEADER_LENGTH_DOCS = CodecUtil.HeaderLength(CODEC_NAME_DOCS);
         internal static readonly long HEADER_LENGTH_INDEX = CodecUtil.HeaderLength(CODEC_NAME_INDEX);
 
-        private FieldInfos FieldInfos;
+        private FieldInfos fieldInfos;
 
-        private IndexInput Tvx;
-        private IndexInput Tvd;
-        private IndexInput Tvf;
-        private int Size_Renamed;
-        private int NumTotalDocs;
+        private IndexInput tvx;
+        private IndexInput tvd;
+        private IndexInput tvf;
+        private int size;
+        private int numTotalDocs;
 
         /// <summary>
         /// Used by clone. </summary>
         internal Lucene40TermVectorsReader(FieldInfos fieldInfos, IndexInput tvx, IndexInput tvd, IndexInput tvf, int size, int numTotalDocs)
         {
-            this.FieldInfos = fieldInfos;
-            this.Tvx = tvx;
-            this.Tvd = tvd;
-            this.Tvf = tvf;
-            this.Size_Renamed = size;
-            this.NumTotalDocs = numTotalDocs;
+            this.fieldInfos = fieldInfos;
+            this.tvx = tvx;
+            this.tvd = tvd;
+            this.tvf = tvf;
+            this.size = size;
+            this.numTotalDocs = numTotalDocs;
         }
 
         /// <summary>
@@ -109,27 +109,27 @@ namespace Lucene.Net.Codecs.Lucene40
             try
             {
                 string idxName = IndexFileNames.SegmentFileName(segment, "", VECTORS_INDEX_EXTENSION);
-                Tvx = d.OpenInput(idxName, context);
-                int tvxVersion = CodecUtil.CheckHeader(Tvx, CODEC_NAME_INDEX, VERSION_START, VERSION_CURRENT);
+                tvx = d.OpenInput(idxName, context);
+                int tvxVersion = CodecUtil.CheckHeader(tvx, CODEC_NAME_INDEX, VERSION_START, VERSION_CURRENT);
 
                 string fn = IndexFileNames.SegmentFileName(segment, "", VECTORS_DOCUMENTS_EXTENSION);
-                Tvd = d.OpenInput(fn, context);
-                int tvdVersion = CodecUtil.CheckHeader(Tvd, CODEC_NAME_DOCS, VERSION_START, VERSION_CURRENT);
+                tvd = d.OpenInput(fn, context);
+                int tvdVersion = CodecUtil.CheckHeader(tvd, CODEC_NAME_DOCS, VERSION_START, VERSION_CURRENT);
                 fn = IndexFileNames.SegmentFileName(segment, "", VECTORS_FIELDS_EXTENSION);
-                Tvf = d.OpenInput(fn, context);
-                int tvfVersion = CodecUtil.CheckHeader(Tvf, CODEC_NAME_FIELDS, VERSION_START, VERSION_CURRENT);
-                Debug.Assert(HEADER_LENGTH_INDEX == Tvx.FilePointer);
-                Debug.Assert(HEADER_LENGTH_DOCS == Tvd.FilePointer);
-                Debug.Assert(HEADER_LENGTH_FIELDS == Tvf.FilePointer);
+                tvf = d.OpenInput(fn, context);
+                int tvfVersion = CodecUtil.CheckHeader(tvf, CODEC_NAME_FIELDS, VERSION_START, VERSION_CURRENT);
+                Debug.Assert(HEADER_LENGTH_INDEX == tvx.FilePointer);
+                Debug.Assert(HEADER_LENGTH_DOCS == tvd.FilePointer);
+                Debug.Assert(HEADER_LENGTH_FIELDS == tvf.FilePointer);
                 Debug.Assert(tvxVersion == tvdVersion);
                 Debug.Assert(tvxVersion == tvfVersion);
 
-                NumTotalDocs = (int)(Tvx.Length - HEADER_LENGTH_INDEX >> 4);
+                numTotalDocs = (int)(tvx.Length - HEADER_LENGTH_INDEX >> 4);
 
-                this.Size_Renamed = NumTotalDocs;
-                Debug.Assert(size == 0 || NumTotalDocs == size);
+                this.size = numTotalDocs;
+                Debug.Assert(size == 0 || numTotalDocs == size);
 
-                this.FieldInfos = fieldInfos;
+                this.fieldInfos = fieldInfos;
                 success = true;
             }
             finally
@@ -157,7 +157,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             get
             {
-                return Tvd;
+                return tvd;
             }
         }
 
@@ -166,14 +166,14 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             get
             {
-                return Tvf;
+                return tvf;
             }
         }
 
         // Not private to avoid synthetic access$NNN methods
         internal virtual void SeekTvx(int docNum)
         {
-            Tvx.Seek(docNum * 16L + HEADER_LENGTH_INDEX);
+            tvx.Seek(docNum * 16L + HEADER_LENGTH_INDEX);
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         internal void RawDocs(int[] tvdLengths, int[] tvfLengths, int startDocID, int numDocs)
         {
-            if (Tvx == null)
+            if (tvx == null)
             {
                 CollectionsHelper.Fill(tvdLengths, 0);
                 CollectionsHelper.Fill(tvfLengths, 0);
@@ -195,11 +195,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
             SeekTvx(startDocID);
 
-            long tvdPosition = Tvx.ReadLong();
-            Tvd.Seek(tvdPosition);
+            long tvdPosition = tvx.ReadLong();
+            tvd.Seek(tvdPosition);
 
-            long tvfPosition = Tvx.ReadLong();
-            Tvf.Seek(tvfPosition);
+            long tvfPosition = tvx.ReadLong();
+            tvf.Seek(tvfPosition);
 
             long lastTvdPosition = tvdPosition;
             long lastTvfPosition = tvfPosition;
@@ -208,16 +208,16 @@ namespace Lucene.Net.Codecs.Lucene40
             while (count < numDocs)
             {
                 int docID = startDocID + count + 1;
-                Debug.Assert(docID <= NumTotalDocs);
-                if (docID < NumTotalDocs)
+                Debug.Assert(docID <= numTotalDocs);
+                if (docID < numTotalDocs)
                 {
-                    tvdPosition = Tvx.ReadLong();
-                    tvfPosition = Tvx.ReadLong();
+                    tvdPosition = tvx.ReadLong();
+                    tvfPosition = tvx.ReadLong();
                 }
                 else
                 {
-                    tvdPosition = Tvd.Length;
-                    tvfPosition = Tvf.Length;
+                    tvdPosition = tvd.Length;
+                    tvfPosition = tvf.Length;
                     Debug.Assert(count == numDocs - 1);
                 }
                 tvdLengths[count] = (int)(tvdPosition - lastTvdPosition);
@@ -231,49 +231,49 @@ namespace Lucene.Net.Codecs.Lucene40
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-                IOUtils.Close(Tvx, Tvd, Tvf);
+                IOUtils.Close(tvx, tvd, tvf);
         }
 
         ///
         /// <returns> The number of documents in the reader </returns>
         internal virtual int Size // LUCENENET TODO: Rename Count
         {
-            get { return Size_Renamed; }
+            get { return size; }
         }
 
         private class TVFields : Fields
         {
-            private readonly Lucene40TermVectorsReader OuterInstance;
+            private readonly Lucene40TermVectorsReader outerInstance;
 
-            private readonly int[] FieldNumbers;
-            private readonly long[] FieldFPs;
-            private readonly IDictionary<int, int> FieldNumberToIndex = new Dictionary<int, int>();
+            private readonly int[] fieldNumbers;
+            private readonly long[] fieldFPs;
+            private readonly IDictionary<int, int> fieldNumberToIndex = new Dictionary<int, int>();
 
             public TVFields(Lucene40TermVectorsReader outerInstance, int docID)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 outerInstance.SeekTvx(docID);
-                outerInstance.Tvd.Seek(outerInstance.Tvx.ReadLong());
+                outerInstance.tvd.Seek(outerInstance.tvx.ReadLong());
 
-                int fieldCount = outerInstance.Tvd.ReadVInt();
+                int fieldCount = outerInstance.tvd.ReadVInt();
                 Debug.Assert(fieldCount >= 0);
                 if (fieldCount != 0)
                 {
-                    FieldNumbers = new int[fieldCount];
-                    FieldFPs = new long[fieldCount];
+                    fieldNumbers = new int[fieldCount];
+                    fieldFPs = new long[fieldCount];
                     for (int fieldUpto = 0; fieldUpto < fieldCount; fieldUpto++)
                     {
-                        int fieldNumber = outerInstance.Tvd.ReadVInt();
-                        FieldNumbers[fieldUpto] = fieldNumber;
-                        FieldNumberToIndex[fieldNumber] = fieldUpto;
+                        int fieldNumber = outerInstance.tvd.ReadVInt();
+                        fieldNumbers[fieldUpto] = fieldNumber;
+                        fieldNumberToIndex[fieldNumber] = fieldUpto;
                     }
 
-                    long position = outerInstance.Tvx.ReadLong();
-                    FieldFPs[0] = position;
+                    long position = outerInstance.tvx.ReadLong();
+                    fieldFPs[0] = position;
                     for (int fieldUpto = 1; fieldUpto < fieldCount; fieldUpto++)
                     {
-                        position += outerInstance.Tvd.ReadVLong();
-                        FieldFPs[fieldUpto] = position;
+                        position += outerInstance.tvd.ReadVLong();
+                        fieldFPs[fieldUpto] = position;
                     }
                 }
                 else
@@ -281,8 +281,8 @@ namespace Lucene.Net.Codecs.Lucene40
                     // TODO: we can improve writer here, eg write 0 into
                     // tvx file, so we know on first read from tvx that
                     // this doc has no TVs
-                    FieldNumbers = null;
-                    FieldFPs = null;
+                    fieldNumbers = null;
+                    fieldFPs = null;
                 }
             }
 
@@ -294,15 +294,15 @@ namespace Lucene.Net.Codecs.Lucene40
             private IEnumerable<string> GetFieldInfoEnumerable()
             {
                 int fieldUpto = 0;
-                while (FieldNumbers != null && fieldUpto < FieldNumbers.Length)
+                while (fieldNumbers != null && fieldUpto < fieldNumbers.Length)
                 {
-                    yield return OuterInstance.FieldInfos.FieldInfo(FieldNumbers[fieldUpto++]).Name;
+                    yield return outerInstance.fieldInfos.FieldInfo(fieldNumbers[fieldUpto++]).Name;
                 }
             }
 
             public override Terms Terms(string field)
             {
-                FieldInfo fieldInfo = OuterInstance.FieldInfos.FieldInfo(field);
+                FieldInfo fieldInfo = outerInstance.fieldInfos.FieldInfo(field);
                 if (fieldInfo == null)
                 {
                     // No such field
@@ -310,26 +310,26 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
 
                 int fieldIndex;
-                if (!FieldNumberToIndex.TryGetValue(fieldInfo.Number, out fieldIndex))
+                if (!fieldNumberToIndex.TryGetValue(fieldInfo.Number, out fieldIndex))
                 {
                     // Term vectors were not indexed for this field
                     return null;
                 }
 
-                return new TVTerms(OuterInstance, FieldFPs[fieldIndex]);
+                return new TVTerms(outerInstance, fieldFPs[fieldIndex]);
             }
 
             public override int Size
             {
                 get
                 {
-                    if (FieldNumbers == null)
+                    if (fieldNumbers == null)
                     {
                         return 0;
                     }
                     else
                     {
-                        return FieldNumbers.Length;
+                        return fieldNumbers.Length;
                     }
                 }
             }
@@ -337,24 +337,24 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private class TVTerms : Terms
         {
-            private readonly Lucene40TermVectorsReader OuterInstance;
+            private readonly Lucene40TermVectorsReader outerInstance;
 
-            private readonly int NumTerms;
-            private readonly long TvfFPStart;
-            private readonly bool StorePositions;
-            private readonly bool StoreOffsets;
-            private readonly bool StorePayloads;
+            private readonly int numTerms;
+            private readonly long tvfFPStart;
+            private readonly bool storePositions;
+            private readonly bool storeOffsets;
+            private readonly bool storePayloads;
 
             public TVTerms(Lucene40TermVectorsReader outerInstance, long tvfFP)
             {
-                this.OuterInstance = outerInstance;
-                outerInstance.Tvf.Seek(tvfFP);
-                NumTerms = outerInstance.Tvf.ReadVInt();
-                byte bits = outerInstance.Tvf.ReadByte();
-                StorePositions = (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0;
-                StoreOffsets = (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0;
-                StorePayloads = (bits & STORE_PAYLOAD_WITH_TERMVECTOR) != 0;
-                TvfFPStart = outerInstance.Tvf.FilePointer;
+                this.outerInstance = outerInstance;
+                outerInstance.tvf.Seek(tvfFP);
+                numTerms = outerInstance.tvf.ReadVInt();
+                byte bits = outerInstance.tvf.ReadByte();
+                storePositions = (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0;
+                storeOffsets = (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0;
+                storePayloads = (bits & STORE_PAYLOAD_WITH_TERMVECTOR) != 0;
+                tvfFPStart = outerInstance.tvf.FilePointer;
             }
 
             public override TermsEnum Iterator(TermsEnum reuse)
@@ -363,22 +363,22 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (reuse is TVTermsEnum)
                 {
                     termsEnum = (TVTermsEnum)reuse;
-                    if (!termsEnum.CanReuse(OuterInstance.Tvf))
+                    if (!termsEnum.CanReuse(outerInstance.tvf))
                     {
-                        termsEnum = new TVTermsEnum(OuterInstance);
+                        termsEnum = new TVTermsEnum(outerInstance);
                     }
                 }
                 else
                 {
-                    termsEnum = new TVTermsEnum(OuterInstance);
+                    termsEnum = new TVTermsEnum(outerInstance);
                 }
-                termsEnum.Reset(NumTerms, TvfFPStart, StorePositions, StoreOffsets, StorePayloads);
+                termsEnum.Reset(numTerms, tvfFPStart, storePositions, storeOffsets, storePayloads);
                 return termsEnum;
             }
 
             public override long Size
             {
-                get { return NumTerms; }
+                get { return numTerms; }
             }
 
             public override long SumTotalTermFreq
@@ -394,7 +394,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 get
                 {
                     // Every term occurs in just one doc:
-                    return NumTerms;
+                    return numTerms;
                 }
             }
 
@@ -423,86 +423,86 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override bool HasOffsets
             {
-                get { return StoreOffsets; }
+                get { return storeOffsets; }
             }
 
             public override bool HasPositions
             {
-                get { return StorePositions; }
+                get { return storePositions; }
             }
 
             public override bool HasPayloads
             {
-                get { return StorePayloads; }
+                get { return storePayloads; }
             }
         }
 
         private class TVTermsEnum : TermsEnum
         {
-            private readonly Lucene40TermVectorsReader OuterInstance;
+            private readonly Lucene40TermVectorsReader outerInstance;
 
-            private readonly IndexInput OrigTVF;
-            private readonly IndexInput Tvf;
-            private int NumTerms;
-            private int NextTerm;
-            private int Freq;
-            private readonly BytesRef LastTerm = new BytesRef();
-            private readonly BytesRef Term_Renamed = new BytesRef();
-            private bool StorePositions;
-            private bool StoreOffsets;
-            private bool StorePayloads;
-            private long TvfFP;
+            private readonly IndexInput origTVF;
+            private readonly IndexInput tvf;
+            private int numTerms;
+            private int nextTerm;
+            private int freq;
+            private readonly BytesRef lastTerm = new BytesRef();
+            private readonly BytesRef term = new BytesRef();
+            private bool storePositions;
+            private bool storeOffsets;
+            private bool storePayloads;
+            private long tvfFP;
 
-            private int[] Positions;
-            private int[] StartOffsets;
-            private int[] EndOffsets;
+            private int[] positions;
+            private int[] startOffsets;
+            private int[] endOffsets;
 
             // one shared byte[] for any term's payloads
-            private int[] PayloadOffsets;
+            private int[] payloadOffsets;
 
-            private int LastPayloadLength;
-            private byte[] PayloadData;
+            private int lastPayloadLength;
+            private byte[] payloadData;
 
             // NOTE: tvf is pre-positioned by caller
             public TVTermsEnum(Lucene40TermVectorsReader outerInstance)
             {
-                this.OuterInstance = outerInstance;
-                this.OrigTVF = outerInstance.Tvf;
-                Tvf = (IndexInput)OrigTVF.Clone();
+                this.outerInstance = outerInstance;
+                this.origTVF = outerInstance.tvf;
+                tvf = (IndexInput)origTVF.Clone();
             }
 
             public virtual bool CanReuse(IndexInput tvf)
             {
-                return tvf == OrigTVF;
+                return tvf == origTVF;
             }
 
             public virtual void Reset(int numTerms, long tvfFPStart, bool storePositions, bool storeOffsets, bool storePayloads)
             {
-                this.NumTerms = numTerms;
-                this.StorePositions = storePositions;
-                this.StoreOffsets = storeOffsets;
-                this.StorePayloads = storePayloads;
-                NextTerm = 0;
-                Tvf.Seek(tvfFPStart);
-                TvfFP = tvfFPStart;
-                Positions = null;
-                StartOffsets = null;
-                EndOffsets = null;
-                PayloadOffsets = null;
-                PayloadData = null;
-                LastPayloadLength = -1;
+                this.numTerms = numTerms;
+                this.storePositions = storePositions;
+                this.storeOffsets = storeOffsets;
+                this.storePayloads = storePayloads;
+                nextTerm = 0;
+                tvf.Seek(tvfFPStart);
+                tvfFP = tvfFPStart;
+                positions = null;
+                startOffsets = null;
+                endOffsets = null;
+                payloadOffsets = null;
+                payloadData = null;
+                lastPayloadLength = -1;
             }
 
             // NOTE: slow!  (linear scan)
             public override SeekStatus SeekCeil(BytesRef text)
             {
-                if (NextTerm != 0)
+                if (nextTerm != 0)
                 {
-                    int cmp = text.CompareTo(Term_Renamed);
+                    int cmp = text.CompareTo(term);
                     if (cmp < 0)
                     {
-                        NextTerm = 0;
-                        Tvf.Seek(TvfFP);
+                        nextTerm = 0;
+                        tvf.Seek(tvfFP);
                     }
                     else if (cmp == 0)
                     {
@@ -512,7 +512,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 while (Next() != null)
                 {
-                    int cmp = text.CompareTo(Term_Renamed);
+                    int cmp = text.CompareTo(term);
                     if (cmp < 0)
                     {
                         return SeekStatus.NOT_FOUND;
@@ -533,75 +533,75 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override BytesRef Next()
             {
-                if (NextTerm >= NumTerms)
+                if (nextTerm >= numTerms)
                 {
                     return null;
                 }
-                Term_Renamed.CopyBytes(LastTerm);
-                int start = Tvf.ReadVInt();
-                int deltaLen = Tvf.ReadVInt();
-                Term_Renamed.Length = start + deltaLen;
-                Term_Renamed.Grow(Term_Renamed.Length);
-                Tvf.ReadBytes(Term_Renamed.Bytes, start, deltaLen);
-                Freq = Tvf.ReadVInt();
+                term.CopyBytes(lastTerm);
+                int start = tvf.ReadVInt();
+                int deltaLen = tvf.ReadVInt();
+                term.Length = start + deltaLen;
+                term.Grow(term.Length);
+                tvf.ReadBytes(term.Bytes, start, deltaLen);
+                freq = tvf.ReadVInt();
 
-                if (StorePayloads)
+                if (storePayloads)
                 {
-                    Positions = new int[Freq];
-                    PayloadOffsets = new int[Freq];
+                    positions = new int[freq];
+                    payloadOffsets = new int[freq];
                     int totalPayloadLength = 0;
                     int pos = 0;
-                    for (int posUpto = 0; posUpto < Freq; posUpto++)
+                    for (int posUpto = 0; posUpto < freq; posUpto++)
                     {
-                        int code = Tvf.ReadVInt();
+                        int code = tvf.ReadVInt();
                         pos += (int)((uint)code >> 1);
-                        Positions[posUpto] = pos;
+                        positions[posUpto] = pos;
                         if ((code & 1) != 0)
                         {
                             // length change
-                            LastPayloadLength = Tvf.ReadVInt();
+                            lastPayloadLength = tvf.ReadVInt();
                         }
-                        PayloadOffsets[posUpto] = totalPayloadLength;
-                        totalPayloadLength += LastPayloadLength;
+                        payloadOffsets[posUpto] = totalPayloadLength;
+                        totalPayloadLength += lastPayloadLength;
                         Debug.Assert(totalPayloadLength >= 0);
                     }
-                    PayloadData = new byte[totalPayloadLength];
-                    Tvf.ReadBytes(PayloadData, 0, PayloadData.Length);
+                    payloadData = new byte[totalPayloadLength];
+                    tvf.ReadBytes(payloadData, 0, payloadData.Length);
                 } // no payloads
-                else if (StorePositions)
+                else if (storePositions)
                 {
                     // TODO: we could maybe reuse last array, if we can
                     // somehow be careful about consumer never using two
                     // D&PEnums at once...
-                    Positions = new int[Freq];
+                    positions = new int[freq];
                     int pos = 0;
-                    for (int posUpto = 0; posUpto < Freq; posUpto++)
+                    for (int posUpto = 0; posUpto < freq; posUpto++)
                     {
-                        pos += Tvf.ReadVInt();
-                        Positions[posUpto] = pos;
+                        pos += tvf.ReadVInt();
+                        positions[posUpto] = pos;
                     }
                 }
 
-                if (StoreOffsets)
+                if (storeOffsets)
                 {
-                    StartOffsets = new int[Freq];
-                    EndOffsets = new int[Freq];
+                    startOffsets = new int[freq];
+                    endOffsets = new int[freq];
                     int offset = 0;
-                    for (int posUpto = 0; posUpto < Freq; posUpto++)
+                    for (int posUpto = 0; posUpto < freq; posUpto++)
                     {
-                        StartOffsets[posUpto] = offset + Tvf.ReadVInt();
-                        offset = EndOffsets[posUpto] = StartOffsets[posUpto] + Tvf.ReadVInt();
+                        startOffsets[posUpto] = offset + tvf.ReadVInt();
+                        offset = endOffsets[posUpto] = startOffsets[posUpto] + tvf.ReadVInt();
                     }
                 }
 
-                LastTerm.CopyBytes(Term_Renamed);
-                NextTerm++;
-                return Term_Renamed;
+                lastTerm.CopyBytes(term);
+                nextTerm++;
+                return term;
             }
 
             public override BytesRef Term
             {
-                get { return Term_Renamed; }
+                get { return term; }
             }
 
             public override long Ord
@@ -616,7 +616,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override long TotalTermFreq
             {
-                get { return Freq; }
+                get { return freq; }
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags) // ignored
@@ -630,13 +630,13 @@ namespace Lucene.Net.Codecs.Lucene40
                 {
                     docsEnum = new TVDocsEnum();
                 }
-                docsEnum.Reset(liveDocs, Freq);
+                docsEnum.Reset(liveDocs, freq);
                 return docsEnum;
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
-                if (!StorePositions && !StoreOffsets)
+                if (!storePositions && !storeOffsets)
                 {
                     return null;
                 }
@@ -650,7 +650,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 {
                     docsAndPositionsEnum = new TVDocsAndPositionsEnum();
                 }
-                docsAndPositionsEnum.Reset(liveDocs, Positions, StartOffsets, EndOffsets, PayloadOffsets, PayloadData);
+                docsAndPositionsEnum.Reset(liveDocs, positions, startOffsets, endOffsets, payloadOffsets, payloadData);
                 return docsAndPositionsEnum;
             }
 
@@ -667,31 +667,31 @@ namespace Lucene.Net.Codecs.Lucene40
         // freq() already by TermsEnum.totalTermFreq
         private class TVDocsEnum : DocsEnum
         {
-            private bool DidNext;
-            private int Doc = -1;
-            private int Freq_Renamed;
-            private IBits LiveDocs;
+            private bool didNext;
+            private int doc = -1;
+            private int freq;
+            private IBits liveDocs;
 
             public override int Freq
             {
-                get { return Freq_Renamed; }
+                get { return freq; }
             }
 
             public override int DocID
             {
-                get { return Doc; }
+                get { return doc; }
             }
 
             public override int NextDoc()
             {
-                if (!DidNext && (LiveDocs == null || LiveDocs.Get(0)))
+                if (!didNext && (liveDocs == null || liveDocs.Get(0)))
                 {
-                    DidNext = true;
-                    return (Doc = 0);
+                    didNext = true;
+                    return (doc = 0);
                 }
                 else
                 {
-                    return (Doc = NO_MORE_DOCS);
+                    return (doc = NO_MORE_DOCS);
                 }
             }
 
@@ -702,10 +702,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public virtual void Reset(IBits liveDocs, int freq)
             {
-                this.LiveDocs = liveDocs;
-                this.Freq_Renamed = freq;
-                this.Doc = -1;
-                DidNext = false;
+                this.liveDocs = liveDocs;
+                this.freq = freq;
+                this.doc = -1;
+                didNext = false;
             }
 
             public override long Cost()
@@ -716,48 +716,48 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private sealed class TVDocsAndPositionsEnum : DocsAndPositionsEnum
         {
-            private bool DidNext;
-            private int Doc = -1;
-            private int NextPos;
-            private IBits LiveDocs;
-            private int[] Positions;
-            private int[] StartOffsets;
-            private int[] EndOffsets;
-            private int[] PayloadOffsets;
-            private readonly BytesRef Payload_Renamed = new BytesRef();
-            private byte[] PayloadBytes;
+            private bool didNext;
+            private int doc = -1;
+            private int nextPos;
+            private IBits liveDocs;
+            private int[] positions;
+            private int[] startOffsets;
+            private int[] endOffsets;
+            private int[] payloadOffsets;
+            private readonly BytesRef payload = new BytesRef();
+            private byte[] payloadBytes;
 
             public override int Freq
             {
                 get
                 {
-                    if (Positions != null)
+                    if (positions != null)
                     {
-                        return Positions.Length;
+                        return positions.Length;
                     }
                     else
                     {
-                        Debug.Assert(StartOffsets != null);
-                        return StartOffsets.Length;
+                        Debug.Assert(startOffsets != null);
+                        return startOffsets.Length;
                     }
                 }
             }
 
             public override int DocID
             {
-                get { return Doc; }
+                get { return doc; }
             }
 
             public override int NextDoc()
             {
-                if (!DidNext && (LiveDocs == null || LiveDocs.Get(0)))
+                if (!didNext && (liveDocs == null || liveDocs.Get(0)))
                 {
-                    DidNext = true;
-                    return (Doc = 0);
+                    didNext = true;
+                    return (doc = 0);
                 }
                 else
                 {
-                    return (Doc = NO_MORE_DOCS);
+                    return (doc = NO_MORE_DOCS);
                 }
             }
 
@@ -768,52 +768,52 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public void Reset(IBits liveDocs, int[] positions, int[] startOffsets, int[] endOffsets, int[] payloadLengths, byte[] payloadBytes)
             {
-                this.LiveDocs = liveDocs;
-                this.Positions = positions;
-                this.StartOffsets = startOffsets;
-                this.EndOffsets = endOffsets;
-                this.PayloadOffsets = payloadLengths;
-                this.PayloadBytes = payloadBytes;
-                this.Doc = -1;
-                DidNext = false;
-                NextPos = 0;
+                this.liveDocs = liveDocs;
+                this.positions = positions;
+                this.startOffsets = startOffsets;
+                this.endOffsets = endOffsets;
+                this.payloadOffsets = payloadLengths;
+                this.payloadBytes = payloadBytes;
+                this.doc = -1;
+                didNext = false;
+                nextPos = 0;
             }
 
             public override BytesRef Payload
             {
                 get
                 {
-                    if (PayloadOffsets == null)
+                    if (payloadOffsets == null)
                     {
                         return null;
                     }
                     else
                     {
-                        int off = PayloadOffsets[NextPos - 1];
-                        int end = NextPos == PayloadOffsets.Length ? PayloadBytes.Length : PayloadOffsets[NextPos];
+                        int off = payloadOffsets[nextPos - 1];
+                        int end = nextPos == payloadOffsets.Length ? payloadBytes.Length : payloadOffsets[nextPos];
                         if (end - off == 0)
                         {
                             return null;
                         }
-                        Payload_Renamed.Bytes = PayloadBytes;
-                        Payload_Renamed.Offset = off;
-                        Payload_Renamed.Length = end - off;
-                        return Payload_Renamed;
+                        payload.Bytes = payloadBytes;
+                        payload.Offset = off;
+                        payload.Length = end - off;
+                        return payload;
                     }
                 }
             }
 
             public override int NextPosition()
             {
-                Debug.Assert((Positions != null && NextPos < Positions.Length) || StartOffsets != null && NextPos < StartOffsets.Length);
+                Debug.Assert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
 
-                if (Positions != null)
+                if (positions != null)
                 {
-                    return Positions[NextPos++];
+                    return positions[nextPos++];
                 }
                 else
                 {
-                    NextPos++;
+                    nextPos++;
                     return -1;
                 }
             }
@@ -822,13 +822,13 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 get
                 {
-                    if (StartOffsets == null)
+                    if (startOffsets == null)
                     {
                         return -1;
                     }
                     else
                     {
-                        return StartOffsets[NextPos - 1];
+                        return startOffsets[nextPos - 1];
                     }
                 }
             }
@@ -837,13 +837,13 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 get
                 {
-                    if (EndOffsets == null)
+                    if (endOffsets == null)
                     {
                         return -1;
                     }
                     else
                     {
-                        return EndOffsets[NextPos - 1];
+                        return endOffsets[nextPos - 1];
                     }
                 }
             }
@@ -856,7 +856,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override Fields Get(int docID)
         {
-            if (Tvx != null)
+            if (tvx != null)
             {
                 Fields fields = new TVFields(this, docID);
                 if (fields.Size == 0)
@@ -885,14 +885,14 @@ namespace Lucene.Net.Codecs.Lucene40
 
             // These are null when a TermVectorsReader was created
             // on a segment that did not have term vectors saved
-            if (Tvx != null && Tvd != null && Tvf != null)
+            if (tvx != null && tvd != null && tvf != null)
             {
-                cloneTvx = (IndexInput)Tvx.Clone();
-                cloneTvd = (IndexInput)Tvd.Clone();
-                cloneTvf = (IndexInput)Tvf.Clone();
+                cloneTvx = (IndexInput)tvx.Clone();
+                cloneTvd = (IndexInput)tvd.Clone();
+                cloneTvf = (IndexInput)tvf.Clone();
             }
 
-            return new Lucene40TermVectorsReader(FieldInfos, cloneTvx, cloneTvd, cloneTvf, Size_Renamed, NumTotalDocs);
+            return new Lucene40TermVectorsReader(fieldInfos, cloneTvx, cloneTvd, cloneTvf, size, numTotalDocs);
         }
 
         public override long RamBytesUsed()
