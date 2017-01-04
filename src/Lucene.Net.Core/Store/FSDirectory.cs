@@ -347,7 +347,7 @@ namespace Lucene.Net.Store
 
         protected virtual void OnIndexOutputClosed(FSIndexOutput io)
         {
-            m_staleFiles.Add(io.Name);
+            m_staleFiles.Add(io.name);
         }
 
         public override void Sync(ICollection<string> names)
@@ -445,18 +445,18 @@ namespace Lucene.Net.Store
             /// </summary>
             private const int CHUNK_SIZE = 8192;
 
-            private readonly FSDirectory Parent;
-            internal readonly string Name;
-            private readonly FileStream File;
-            private volatile bool IsOpen; // remember if the file is open, so that we don't try to close it more than once
+            private readonly FSDirectory parent;
+            internal readonly string name;
+            private readonly FileStream file;
+            private volatile bool isOpen; // remember if the file is open, so that we don't try to close it more than once
 
             public FSIndexOutput(FSDirectory parent, string name)
                 : base(CHUNK_SIZE)
             {
-                this.Parent = parent;
-                this.Name = name;
-                File = new FileStream(Path.Combine(parent.m_directory.FullName, name), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
-                IsOpen = true;
+                this.parent = parent;
+                this.name = name;
+                file = new FileStream(Path.Combine(parent.m_directory.FullName, name), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+                isOpen = true;
             }
 
             protected internal override void FlushBuffer(byte[] b, int offset, int size)
@@ -465,7 +465,7 @@ namespace Lucene.Net.Store
                 while (size > 0)
                 {
                     int toWrite = Math.Min(CHUNK_SIZE, size);
-                    File.Write(b, offset, toWrite);
+                    file.Write(b, offset, toWrite);
                     offset += toWrite;
                     size -= toWrite;
                 }
@@ -474,9 +474,9 @@ namespace Lucene.Net.Store
 
             public override void Dispose()
             {
-                Parent.OnIndexOutputClosed(this);
+                parent.OnIndexOutputClosed(this);
                 // only close the file if it has not been closed yet
-                if (IsOpen)
+                if (isOpen)
                 {
                     System.IO.IOException priorE = null;
                     try
@@ -489,8 +489,8 @@ namespace Lucene.Net.Store
                     }
                     finally
                     {
-                        IsOpen = false;
-                        IOUtils.CloseWhileHandlingException(priorE, File);
+                        isOpen = false;
+                        IOUtils.CloseWhileHandlingException(priorE, file);
                     }
                 }
             }
@@ -500,12 +500,12 @@ namespace Lucene.Net.Store
             public override void Seek(long pos)
             {
                 base.Seek(pos);
-                File.Seek(pos, SeekOrigin.Begin);
+                file.Seek(pos, SeekOrigin.Begin);
             }
 
             public override long Length
             {
-                get { return File.Length; }
+                get { return file.Length; }
             }
 
             // LUCENENET NOTE: FileStream doesn't have a way to set length
