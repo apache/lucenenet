@@ -37,24 +37,24 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
         }
 
-        private readonly PostingsFormat PostingsFormat_Renamed = new Lucene3xPostingsFormat();
+        private readonly PostingsFormat postingsFormat = new Lucene3xPostingsFormat();
 
-        private readonly StoredFieldsFormat FieldsFormat = new Lucene3xStoredFieldsFormat();
+        private readonly StoredFieldsFormat fieldsFormat = new Lucene3xStoredFieldsFormat();
 
-        private readonly TermVectorsFormat VectorsFormat = new Lucene3xTermVectorsFormat();
+        private readonly TermVectorsFormat vectorsFormat = new Lucene3xTermVectorsFormat();
 
-        private readonly FieldInfosFormat FieldInfosFormat_Renamed = new Lucene3xFieldInfosFormat();
+        private readonly FieldInfosFormat fieldInfosFormat = new Lucene3xFieldInfosFormat();
 
-        private readonly SegmentInfoFormat InfosFormat = new Lucene3xSegmentInfoFormat();
+        private readonly SegmentInfoFormat infosFormat = new Lucene3xSegmentInfoFormat();
 
-        private readonly Lucene3xNormsFormat NormsFormat_Renamed = new Lucene3xNormsFormat();
+        private readonly Lucene3xNormsFormat normsFormat = new Lucene3xNormsFormat();
 
         /// <summary>
         /// Extension of compound file for doc store files </summary>
         internal const string COMPOUND_FILE_STORE_EXTENSION = "cfx";
 
         // TODO: this should really be a different impl
-        private readonly LiveDocsFormat LiveDocsFormat_Renamed = new Lucene40LiveDocsFormat();
+        private readonly LiveDocsFormat liveDocsFormat = new Lucene40LiveDocsFormat();
 
         // 3.x doesn't support docvalues
         private readonly DocValuesFormat docValuesFormat = new DocValuesFormatAnonymousInnerClassHelper();
@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override PostingsFormat PostingsFormat
         {
-            get { return PostingsFormat_Renamed; }
+            get { return postingsFormat; }
         }
 
         public override DocValuesFormat DocValuesFormat
@@ -89,32 +89,32 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override StoredFieldsFormat StoredFieldsFormat
         {
-            get { return FieldsFormat; }
+            get { return fieldsFormat; }
         }
 
         public override TermVectorsFormat TermVectorsFormat
         {
-            get { return VectorsFormat; }
+            get { return vectorsFormat; }
         }
 
         public override FieldInfosFormat FieldInfosFormat
         {
-            get { return FieldInfosFormat_Renamed; }
+            get { return fieldInfosFormat; }
         }
 
         public override SegmentInfoFormat SegmentInfoFormat
         {
-            get { return InfosFormat; }
+            get { return infosFormat; }
         }
 
         public override NormsFormat NormsFormat
         {
-            get { return NormsFormat_Renamed; }
+            get { return normsFormat; }
         }
 
         public override LiveDocsFormat LiveDocsFormat
         {
-            get { return LiveDocsFormat_Renamed; }
+            get { return liveDocsFormat; }
         }
 
         /// <summary>
