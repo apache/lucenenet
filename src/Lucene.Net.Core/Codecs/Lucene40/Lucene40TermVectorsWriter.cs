@@ -55,29 +55,29 @@ namespace Lucene.Net.Codecs.Lucene40
     /// <seealso cref= Lucene40TermVectorsFormat </seealso>
     public sealed class Lucene40TermVectorsWriter : TermVectorsWriter
     {
-        private readonly Directory Directory;
-        private readonly string Segment;
-        private IndexOutput Tvx = null, Tvd = null, Tvf = null;
+        private readonly Directory directory;
+        private readonly string segment;
+        private IndexOutput tvx = null, tvd = null, tvf = null;
 
         /// <summary>
         /// Sole constructor. </summary>
         public Lucene40TermVectorsWriter(Directory directory, string segment, IOContext context)
         {
-            this.Directory = directory;
-            this.Segment = segment;
+            this.directory = directory;
+            this.segment = segment;
             bool success = false;
             try
             {
                 // Open files for TermVector storage
-                Tvx = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_INDEX_EXTENSION), context);
-                CodecUtil.WriteHeader(Tvx, Lucene40TermVectorsReader.CODEC_NAME_INDEX, Lucene40TermVectorsReader.VERSION_CURRENT);
-                Tvd = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), context);
-                CodecUtil.WriteHeader(Tvd, Lucene40TermVectorsReader.CODEC_NAME_DOCS, Lucene40TermVectorsReader.VERSION_CURRENT);
-                Tvf = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_FIELDS_EXTENSION), context);
-                CodecUtil.WriteHeader(Tvf, Lucene40TermVectorsReader.CODEC_NAME_FIELDS, Lucene40TermVectorsReader.VERSION_CURRENT);
-                Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_INDEX == Tvx.FilePointer);
-                Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_DOCS == Tvd.FilePointer);
-                Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_FIELDS == Tvf.FilePointer);
+                tvx = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_INDEX_EXTENSION), context);
+                CodecUtil.WriteHeader(tvx, Lucene40TermVectorsReader.CODEC_NAME_INDEX, Lucene40TermVectorsReader.VERSION_CURRENT);
+                tvd = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), context);
+                CodecUtil.WriteHeader(tvd, Lucene40TermVectorsReader.CODEC_NAME_DOCS, Lucene40TermVectorsReader.VERSION_CURRENT);
+                tvf = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_FIELDS_EXTENSION), context);
+                CodecUtil.WriteHeader(tvf, Lucene40TermVectorsReader.CODEC_NAME_FIELDS, Lucene40TermVectorsReader.VERSION_CURRENT);
+                Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_INDEX == tvx.FilePointer);
+                Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_DOCS == tvd.FilePointer);
+                Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_FIELDS == tvf.FilePointer);
                 success = true;
             }
             finally
@@ -91,32 +91,32 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override void StartDocument(int numVectorFields)
         {
-            LastFieldName = null;
-            this.NumVectorFields = numVectorFields;
-            Tvx.WriteLong(Tvd.FilePointer);
-            Tvx.WriteLong(Tvf.FilePointer);
-            Tvd.WriteVInt(numVectorFields);
-            FieldCount = 0;
-            Fps = ArrayUtil.Grow(Fps, numVectorFields);
+            lastFieldName = null;
+            this.numVectorFields = numVectorFields;
+            tvx.WriteLong(tvd.FilePointer);
+            tvx.WriteLong(tvf.FilePointer);
+            tvd.WriteVInt(numVectorFields);
+            fieldCount = 0;
+            fps = ArrayUtil.Grow(fps, numVectorFields);
         }
 
-        private long[] Fps = new long[10]; // pointers to the tvf before writing each field
-        private int FieldCount = 0; // number of fields we have written so far for this document
-        private int NumVectorFields = 0; // total number of fields we will write for this document
-        private string LastFieldName;
+        private long[] fps = new long[10]; // pointers to the tvf before writing each field
+        private int fieldCount = 0; // number of fields we have written so far for this document
+        private int numVectorFields = 0; // total number of fields we will write for this document
+        private string lastFieldName;
 
         public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
         {
-            Debug.Assert(LastFieldName == null || info.Name.CompareTo(LastFieldName) > 0, "fieldName=" + info.Name + " lastFieldName=" + LastFieldName);
-            LastFieldName = info.Name;
-            this.Positions = positions;
-            this.Offsets = offsets;
-            this.Payloads = payloads;
-            LastTerm.Length = 0;
-            LastPayloadLength = -1; // force first payload to write its length
-            Fps[FieldCount++] = Tvf.FilePointer;
-            Tvd.WriteVInt(info.Number);
-            Tvf.WriteVInt(numTerms);
+            Debug.Assert(lastFieldName == null || info.Name.CompareTo(lastFieldName) > 0, "fieldName=" + info.Name + " lastFieldName=" + lastFieldName);
+            lastFieldName = info.Name;
+            this.positions = positions;
+            this.offsets = offsets;
+            this.payloads = payloads;
+            lastTerm.Length = 0;
+            lastPayloadLength = -1; // force first payload to write its length
+            fps[fieldCount++] = tvf.FilePointer;
+            tvd.WriteVInt(info.Number);
+            tvf.WriteVInt(numTerms);
             sbyte bits = 0x0;
             if (positions)
             {
@@ -130,63 +130,63 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 bits |= Lucene40TermVectorsReader.STORE_PAYLOAD_WITH_TERMVECTOR;
             }
-            Tvf.WriteByte((byte)bits);
+            tvf.WriteByte((byte)bits);
         }
 
         public override void FinishDocument()
         {
-            Debug.Assert(FieldCount == NumVectorFields);
-            for (int i = 1; i < FieldCount; i++)
+            Debug.Assert(fieldCount == numVectorFields);
+            for (int i = 1; i < fieldCount; i++)
             {
-                Tvd.WriteVLong(Fps[i] - Fps[i - 1]);
+                tvd.WriteVLong(fps[i] - fps[i - 1]);
             }
         }
 
-        private readonly BytesRef LastTerm = new BytesRef(10);
+        private readonly BytesRef lastTerm = new BytesRef(10);
 
         // NOTE: we override addProx, so we don't need to buffer when indexing.
         // we also don't buffer during bulk merges.
-        private int[] OffsetStartBuffer = new int[10];
+        private int[] offsetStartBuffer = new int[10];
 
-        private int[] OffsetEndBuffer = new int[10];
-        private BytesRef PayloadData = new BytesRef(10);
-        private int BufferedIndex = 0;
-        private int BufferedFreq = 0;
-        private bool Positions = false;
-        private bool Offsets = false;
-        private bool Payloads = false;
+        private int[] offsetEndBuffer = new int[10];
+        private BytesRef payloadData = new BytesRef(10);
+        private int bufferedIndex = 0;
+        private int bufferedFreq = 0;
+        private bool positions = false;
+        private bool offsets = false;
+        private bool payloads = false;
 
         public override void StartTerm(BytesRef term, int freq)
         {
-            int prefix = StringHelper.BytesDifference(LastTerm, term);
+            int prefix = StringHelper.BytesDifference(lastTerm, term);
             int suffix = term.Length - prefix;
-            Tvf.WriteVInt(prefix);
-            Tvf.WriteVInt(suffix);
-            Tvf.WriteBytes(term.Bytes, term.Offset + prefix, suffix);
-            Tvf.WriteVInt(freq);
-            LastTerm.CopyBytes(term);
-            LastPosition = LastOffset = 0;
+            tvf.WriteVInt(prefix);
+            tvf.WriteVInt(suffix);
+            tvf.WriteBytes(term.Bytes, term.Offset + prefix, suffix);
+            tvf.WriteVInt(freq);
+            lastTerm.CopyBytes(term);
+            lastPosition = lastOffset = 0;
 
-            if (Offsets && Positions)
+            if (offsets && positions)
             {
                 // we might need to buffer if its a non-bulk merge
-                OffsetStartBuffer = ArrayUtil.Grow(OffsetStartBuffer, freq);
-                OffsetEndBuffer = ArrayUtil.Grow(OffsetEndBuffer, freq);
+                offsetStartBuffer = ArrayUtil.Grow(offsetStartBuffer, freq);
+                offsetEndBuffer = ArrayUtil.Grow(offsetEndBuffer, freq);
             }
-            BufferedIndex = 0;
-            BufferedFreq = freq;
-            PayloadData.Length = 0;
+            bufferedIndex = 0;
+            bufferedFreq = freq;
+            payloadData.Length = 0;
         }
 
-        internal int LastPosition = 0;
-        internal int LastOffset = 0;
-        internal int LastPayloadLength = -1; // force first payload to write its length
+        internal int lastPosition = 0;
+        internal int lastOffset = 0;
+        internal int lastPayloadLength = -1; // force first payload to write its length
 
-        internal BytesRef Scratch = new BytesRef(); // used only by this optimized flush below
+        internal BytesRef scratch = new BytesRef(); // used only by this optimized flush below
 
         public override void AddProx(int numProx, DataInput positions, DataInput offsets)
         {
-            if (Payloads)
+            if (payloads)
             {
                 // TODO, maybe overkill and just call super.addProx() in this case?
                 // we do avoid buffering the offsets in RAM though.
@@ -196,24 +196,24 @@ namespace Lucene.Net.Codecs.Lucene40
                     if ((code & 1) == 1)
                     {
                         int length = positions.ReadVInt();
-                        Scratch.Grow(length);
-                        Scratch.Length = length;
-                        positions.ReadBytes(Scratch.Bytes, Scratch.Offset, Scratch.Length);
-                        WritePosition((int)((uint)code >> 1), Scratch);
+                        scratch.Grow(length);
+                        scratch.Length = length;
+                        positions.ReadBytes(scratch.Bytes, scratch.Offset, scratch.Length);
+                        WritePosition((int)((uint)code >> 1), scratch);
                     }
                     else
                     {
                         WritePosition((int)((uint)code >> 1), null);
                     }
                 }
-                Tvf.WriteBytes(PayloadData.Bytes, PayloadData.Offset, PayloadData.Length);
+                tvf.WriteBytes(payloadData.Bytes, payloadData.Offset, payloadData.Length);
             }
             else if (positions != null)
             {
                 // pure positions, no payloads
                 for (int i = 0; i < numProx; i++)
                 {
-                    Tvf.WriteVInt((int)((uint)positions.ReadVInt() >> 1));
+                    tvf.WriteVInt((int)((uint)positions.ReadVInt() >> 1));
                 }
             }
 
@@ -221,62 +221,62 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 for (int i = 0; i < numProx; i++)
                 {
-                    Tvf.WriteVInt(offsets.ReadVInt());
-                    Tvf.WriteVInt(offsets.ReadVInt());
+                    tvf.WriteVInt(offsets.ReadVInt());
+                    tvf.WriteVInt(offsets.ReadVInt());
                 }
             }
         }
 
         public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
         {
-            if (Positions && (Offsets || Payloads))
+            if (positions && (offsets || payloads))
             {
                 // write position delta
-                WritePosition(position - LastPosition, payload);
-                LastPosition = position;
+                WritePosition(position - lastPosition, payload);
+                lastPosition = position;
 
                 // buffer offsets
-                if (Offsets)
+                if (offsets)
                 {
-                    OffsetStartBuffer[BufferedIndex] = startOffset;
-                    OffsetEndBuffer[BufferedIndex] = endOffset;
+                    offsetStartBuffer[bufferedIndex] = startOffset;
+                    offsetEndBuffer[bufferedIndex] = endOffset;
                 }
 
-                BufferedIndex++;
+                bufferedIndex++;
             }
-            else if (Positions)
+            else if (positions)
             {
                 // write position delta
-                WritePosition(position - LastPosition, payload);
-                LastPosition = position;
+                WritePosition(position - lastPosition, payload);
+                lastPosition = position;
             }
-            else if (Offsets)
+            else if (offsets)
             {
                 // write offset deltas
-                Tvf.WriteVInt(startOffset - LastOffset);
-                Tvf.WriteVInt(endOffset - startOffset);
-                LastOffset = endOffset;
+                tvf.WriteVInt(startOffset - lastOffset);
+                tvf.WriteVInt(endOffset - startOffset);
+                lastOffset = endOffset;
             }
         }
 
         public override void FinishTerm()
         {
-            if (BufferedIndex > 0)
+            if (bufferedIndex > 0)
             {
                 // dump buffer
-                Debug.Assert(Positions && (Offsets || Payloads));
-                Debug.Assert(BufferedIndex == BufferedFreq);
-                if (Payloads)
+                Debug.Assert(positions && (offsets || payloads));
+                Debug.Assert(bufferedIndex == bufferedFreq);
+                if (payloads)
                 {
-                    Tvf.WriteBytes(PayloadData.Bytes, PayloadData.Offset, PayloadData.Length);
+                    tvf.WriteBytes(payloadData.Bytes, payloadData.Offset, payloadData.Length);
                 }
-                if (Offsets)
+                if (offsets)
                 {
-                    for (int i = 0; i < BufferedIndex; i++)
+                    for (int i = 0; i < bufferedIndex; i++)
                     {
-                        Tvf.WriteVInt(OffsetStartBuffer[i] - LastOffset);
-                        Tvf.WriteVInt(OffsetEndBuffer[i] - OffsetStartBuffer[i]);
-                        LastOffset = OffsetEndBuffer[i];
+                        tvf.WriteVInt(offsetStartBuffer[i] - lastOffset);
+                        tvf.WriteVInt(offsetEndBuffer[i] - offsetStartBuffer[i]);
+                        lastOffset = offsetEndBuffer[i];
                     }
                 }
             }
@@ -284,34 +284,34 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private void WritePosition(int delta, BytesRef payload)
         {
-            if (Payloads)
+            if (payloads)
             {
                 int payloadLength = payload == null ? 0 : payload.Length;
 
-                if (payloadLength != LastPayloadLength)
+                if (payloadLength != lastPayloadLength)
                 {
-                    LastPayloadLength = payloadLength;
-                    Tvf.WriteVInt((delta << 1) | 1);
-                    Tvf.WriteVInt(payloadLength);
+                    lastPayloadLength = payloadLength;
+                    tvf.WriteVInt((delta << 1) | 1);
+                    tvf.WriteVInt(payloadLength);
                 }
                 else
                 {
-                    Tvf.WriteVInt(delta << 1);
+                    tvf.WriteVInt(delta << 1);
                 }
                 if (payloadLength > 0)
                 {
-                    if (payloadLength + PayloadData.Length < 0)
+                    if (payloadLength + payloadData.Length < 0)
                     {
                         // we overflowed the payload buffer, just throw UOE
                         // having > Integer.MAX_VALUE bytes of payload for a single term in a single doc is nuts.
                         throw new System.NotSupportedException("A term cannot have more than Integer.MAX_VALUE bytes of payload data in a single document");
                     }
-                    PayloadData.Append(payload);
+                    payloadData.Append(payload);
                 }
             }
             else
             {
-                Tvf.WriteVInt(delta);
+                tvf.WriteVInt(delta);
             }
         }
 
@@ -324,10 +324,10 @@ namespace Lucene.Net.Codecs.Lucene40
             catch (Exception ignored)
             {
             }
-            IOUtils.DeleteFilesIgnoringExceptions(Directory, 
-                IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_INDEX_EXTENSION), 
-                IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), 
-                IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_FIELDS_EXTENSION));
+            IOUtils.DeleteFilesIgnoringExceptions(directory, 
+                IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_INDEX_EXTENSION), 
+                IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), 
+                IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_FIELDS_EXTENSION));
         }
 
         /// <summary>
@@ -337,21 +337,21 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         private void AddRawDocuments(Lucene40TermVectorsReader reader, int[] tvdLengths, int[] tvfLengths, int numDocs)
         {
-            long tvdPosition = Tvd.FilePointer;
-            long tvfPosition = Tvf.FilePointer;
+            long tvdPosition = tvd.FilePointer;
+            long tvfPosition = tvf.FilePointer;
             long tvdStart = tvdPosition;
             long tvfStart = tvfPosition;
             for (int i = 0; i < numDocs; i++)
             {
-                Tvx.WriteLong(tvdPosition);
+                tvx.WriteLong(tvdPosition);
                 tvdPosition += tvdLengths[i];
-                Tvx.WriteLong(tvfPosition);
+                tvx.WriteLong(tvfPosition);
                 tvfPosition += tvfLengths[i];
             }
-            Tvd.CopyBytes(reader.TvdStream, tvdPosition - tvdStart);
-            Tvf.CopyBytes(reader.TvfStream, tvfPosition - tvfStart);
-            Debug.Assert(Tvd.FilePointer == tvdPosition);
-            Debug.Assert(Tvf.FilePointer == tvfPosition);
+            tvd.CopyBytes(reader.TvdStream, tvdPosition - tvdStart);
+            tvf.CopyBytes(reader.TvfStream, tvfPosition - tvfStart);
+            Debug.Assert(tvd.FilePointer == tvdPosition);
+            Debug.Assert(tvf.FilePointer == tvfPosition);
         }
 
         public override int Merge(MergeState mergeState)
@@ -489,14 +489,14 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override void Finish(FieldInfos fis, int numDocs)
         {
-            if (Lucene40TermVectorsReader.HEADER_LENGTH_INDEX + ((long)numDocs) * 16 != Tvx.FilePointer)
+            if (Lucene40TermVectorsReader.HEADER_LENGTH_INDEX + ((long)numDocs) * 16 != tvx.FilePointer)
             // this is most likely a bug in Sun JRE 1.6.0_04/_05;
             // we detect that the bug has struck, here, and
             // throw an exception to prevent the corruption from
             // entering the index.  See LUCENE-1282 for
             // details.
             {
-                throw new Exception("tvx size mismatch: mergedDocs is " + numDocs + " but tvx size is " + Tvx.FilePointer + " file=" + Tvx.ToString() + "; now aborting this merge to prevent index corruption");
+                throw new Exception("tvx size mismatch: mergedDocs is " + numDocs + " but tvx size is " + tvx.FilePointer + " file=" + tvx.ToString() + "; now aborting this merge to prevent index corruption");
             }
         }
 
@@ -508,8 +508,8 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 // make an effort to close all streams we can but remember and re-throw
                 // the first exception encountered in this process
-                IOUtils.Close(Tvx, Tvd, Tvf);
-                Tvx = Tvd = Tvf = null;
+                IOUtils.Close(tvx, tvd, tvf);
+                tvx = tvd = tvf = null;
             }
         }
 
