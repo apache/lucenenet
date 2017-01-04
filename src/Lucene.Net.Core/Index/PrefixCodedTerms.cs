@@ -36,11 +36,11 @@ namespace Lucene.Net.Index
     /// </summary>
     internal class PrefixCodedTerms : IEnumerable<Term>
     {
-        internal readonly RAMFile Buffer;
+        internal readonly RAMFile buffer;
 
         private PrefixCodedTerms(RAMFile buffer)
         {
-            this.Buffer = buffer;
+            this.buffer = buffer;
         }
 
         /// <returns> size in bytes </returns>
@@ -48,14 +48,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return Buffer.SizeInBytes;
+                return buffer.SizeInBytes;
             }
         }
 
         /// <returns> iterator over the bytes </returns>
         public virtual IEnumerator<Term> GetEnumerator()
         {
-            return new PrefixCodedTermsIterator(Buffer);
+            return new PrefixCodedTermsIterator(buffer);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
