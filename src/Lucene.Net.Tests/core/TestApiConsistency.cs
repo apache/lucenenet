@@ -12,7 +12,7 @@ namespace Lucene.Net
     /// <summary>
     /// LUCENENET specific tests for ensuring API conventions are followed
     /// </summary>
-    public class TestApiConsistency : LuceneTestCase
+    public class TestApiConsistency : ApiScanTestBase
     {
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
@@ -26,6 +26,34 @@ namespace Lucene.Net
         public override void TestPrivateFieldNames(Type typeFromTargetAssembly)
         {
             base.TestPrivateFieldNames(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
+        public override void TestPublicFields(Type typeFromTargetAssembly)
+        {
+            base.TestPublicFields(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
+        public override void TestMethodParameterNames(Type typeFromTargetAssembly)
+        {
+            base.TestMethodParameterNames(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
+        public override void TestForPropertiesWithNoGetter(Type typeFromTargetAssembly)
+        {
+            base.TestForPropertiesWithNoGetter(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
+        public override void TestForPropertiesThatReturnArray(Type typeFromTargetAssembly)
+        {
+            base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
     }
 }

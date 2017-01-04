@@ -433,6 +433,7 @@
     <Compile Include="Support\SystemProperties.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\ApiScanTestBase.cs" />
     <Compile Include="Util\automaton\AutomatonTestUtil.cs">
       <SubType>Code</SubType>
     </Compile>
