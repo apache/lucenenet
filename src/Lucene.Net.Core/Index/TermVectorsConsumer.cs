@@ -184,22 +184,22 @@ namespace Lucene.Net.Index
         // Called only by assert
         internal bool ClearLastVectorFieldName()
         {
-            LastVectorFieldName = null;
+            lastVectorFieldName = null;
             return true;
         }
 
         // Called only by assert
-        internal string LastVectorFieldName;
+        internal string lastVectorFieldName;
 
         internal bool VectorFieldsInOrder(FieldInfo fi)
         {
             try
             {
-                return LastVectorFieldName != null ? LastVectorFieldName.CompareTo(fi.Name) < 0 : true;
+                return lastVectorFieldName != null ? lastVectorFieldName.CompareTo(fi.Name) < 0 : true;
             }
             finally
             {
-                LastVectorFieldName = fi.Name;
+                lastVectorFieldName = fi.Name;
             }
         }
     }
