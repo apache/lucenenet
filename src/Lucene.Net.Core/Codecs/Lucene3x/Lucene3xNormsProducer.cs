@@ -58,16 +58,16 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Extension of separate norms file </summary>
         internal const string SEPARATE_NORMS_EXTENSION = "s";
 
-        private readonly IDictionary<string, NormsDocValues> Norms = new Dictionary<string, NormsDocValues>();
+        private readonly IDictionary<string, NormsDocValues> norms = new Dictionary<string, NormsDocValues>();
 
         // any .nrm or .sNN files we have open at any time.
         // TODO: just a list, and double-close() separate norms files?
-        internal readonly ISet<IndexInput> OpenFiles = new IdentityHashSet<IndexInput>();
+        internal readonly ISet<IndexInput> openFiles = new IdentityHashSet<IndexInput>();
 
         // points to a singleNormFile
-        internal IndexInput SingleNormStream;
+        internal IndexInput singleNormStream;
 
-        internal readonly int Maxdoc;
+        internal readonly int maxdoc;
 
         private readonly AtomicLong ramBytesUsed;
 
@@ -76,7 +76,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public Lucene3xNormsProducer(Directory dir, SegmentInfo info, FieldInfos fields, IOContext context)
         {
             Directory separateNormsDir = info.Dir; // separate norms are never inside CFS
-            Maxdoc = info.DocCount;
+            maxdoc = info.DocCount;
             string segmentName = info.Name;
             bool success = false;
             try
@@ -97,26 +97,26 @@ namespace Lucene.Net.Codecs.Lucene3x
                         if (singleNormFile)
                         {
                             normSeek = nextNormSeek;
-                            if (SingleNormStream == null)
+                            if (singleNormStream == null)
                             {
-                                SingleNormStream = d.OpenInput(fileName, context);
-                                OpenFiles.Add(SingleNormStream);
+                                singleNormStream = d.OpenInput(fileName, context);
+                                openFiles.Add(singleNormStream);
                             }
                             // All norms in the .nrm file can share a single IndexInput since
                             // they are only used in a synchronized context.
                             // If this were to change in the future, a clone could be done here.
-                            normInput = SingleNormStream;
+                            normInput = singleNormStream;
                         }
                         else
                         {
                             normInput = d.OpenInput(fileName, context);
-                            OpenFiles.Add(normInput);
+                            openFiles.Add(normInput);
                             // if the segment was created in 3.2 or after, we wrote the header for sure,
                             // and don't need to do the sketchy file size check. otherwise, we check
                             // if the size is exactly equal to maxDoc to detect a headerless file.
                             // NOTE: remove this check in Lucene 5.0!
                             string version = info.Version;
-                            bool isUnversioned = (version == null || StringHelper.VersionComparator.Compare(version, "3.2") < 0) && normInput.Length == Maxdoc;
+                            bool isUnversioned = (version == null || StringHelper.VersionComparator.Compare(version, "3.2") < 0) && normInput.Length == maxdoc;
                             if (isUnversioned)
                             {
                                 normSeek = 0;
@@ -127,19 +127,19 @@ namespace Lucene.Net.Codecs.Lucene3x
                             }
                         }
                         NormsDocValues norm = new NormsDocValues(this, normInput, normSeek);
-                        Norms[fi.Name] = norm;
-                        nextNormSeek += Maxdoc; // increment also if some norms are separate
+                        norms[fi.Name] = norm;
+                        nextNormSeek += maxdoc; // increment also if some norms are separate
                     }
                 }
                 // TODO: change to a real check? see LUCENE-3619
-                Debug.Assert(SingleNormStream == null || nextNormSeek == SingleNormStream.Length, SingleNormStream != null ? "len: " + SingleNormStream.Length + " expected: " + nextNormSeek : "null");
+                Debug.Assert(singleNormStream == null || nextNormSeek == singleNormStream.Length, singleNormStream != null ? "len: " + singleNormStream.Length + " expected: " + nextNormSeek : "null");
                 success = true;
             }
             finally
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(OpenFiles);
+                    IOUtils.CloseWhileHandlingException(openFiles);
                 }
             }
             ramBytesUsed = new AtomicLong();
@@ -151,12 +151,12 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 try
                 {
-                    IOUtils.Close(OpenFiles.ToArray());
+                    IOUtils.Close(openFiles.ToArray());
                 }
                 finally
                 {
-                    Norms.Clear();
-                    OpenFiles.Clear();
+                    norms.Clear();
+                    openFiles.Clear();
                 }
             }
         }
@@ -193,17 +193,17 @@ namespace Lucene.Net.Codecs.Lucene3x
         // to a singleton NumericDocValues instance
         private sealed class NormsDocValues
         {
-            private readonly Lucene3xNormsProducer OuterInstance;
+            private readonly Lucene3xNormsProducer outerInstance;
 
-            private readonly IndexInput File;
-            private readonly long Offset;
-            private NumericDocValues Instance_Renamed;
+            private readonly IndexInput file;
+            private readonly long offset;
+            private NumericDocValues instance;
 
             public NormsDocValues(Lucene3xNormsProducer outerInstance, IndexInput normInput, long normSeek)
             {
-                this.OuterInstance = outerInstance;
-                this.File = normInput;
-                this.Offset = normSeek;
+                this.outerInstance = outerInstance;
+                this.file = normInput;
+                this.offset = normSeek;
             }
 
             internal NumericDocValues Instance
@@ -212,48 +212,48 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     lock (this)
                     {
-                        if (Instance_Renamed == null)
+                        if (instance == null)
                         {
-                            var bytes = new byte[OuterInstance.Maxdoc];
+                            var bytes = new byte[outerInstance.maxdoc];
                             // some norms share fds
-                            lock (File)
+                            lock (file)
                             {
-                                File.Seek(Offset);
-                                File.ReadBytes(bytes, 0, bytes.Length, false);
+                                file.Seek(offset);
+                                file.ReadBytes(bytes, 0, bytes.Length, false);
                             }
                             // we are done with this file
-                            if (File != OuterInstance.SingleNormStream)
+                            if (file != outerInstance.singleNormStream)
                             {
-                                OuterInstance.OpenFiles.Remove(File);
-                                File.Dispose();
+                                outerInstance.openFiles.Remove(file);
+                                file.Dispose();
                             }
-                            OuterInstance.ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
-                            Instance_Renamed = new NumericDocValuesAnonymousInnerClassHelper(this, bytes);
+                            outerInstance.ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
+                            instance = new NumericDocValuesAnonymousInnerClassHelper(this, bytes);
                         }
-                        return Instance_Renamed;
+                        return instance;
                     }
                 }
             }
 
             private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
             {
-                private readonly byte[] Bytes;
+                private readonly byte[] bytes;
 
                 public NumericDocValuesAnonymousInnerClassHelper(NormsDocValues outerInstance, byte[] bytes)
                 {
-                    this.Bytes = bytes;
+                    this.bytes = bytes;
                 }
 
                 public override long Get(int docID)
                 {
-                    return Bytes[docID];
+                    return bytes[docID];
                 }
             }
         }
 
         public override NumericDocValues GetNumeric(FieldInfo field)
         {
-            var dv = Norms[field.Name];
+            var dv = norms[field.Name];
             Debug.Assert(dv != null);
             return dv.Instance;
         }
