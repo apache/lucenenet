@@ -180,12 +180,12 @@ namespace Lucene.Net.Search.Spans
 
         private class SpanQueue : Util.PriorityQueue<Spans>
         {
-            private readonly SpanOrQuery OuterInstance;
+            private readonly SpanOrQuery outerInstance;
 
             public SpanQueue(SpanOrQuery outerInstance, int size)
                 : base(size)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override bool LessThan(Spans spans1, Spans spans2)
@@ -220,18 +220,18 @@ namespace Lucene.Net.Search.Spans
 
         private class SpansAnonymousInnerClassHelper : Spans
         {
-            private readonly SpanOrQuery OuterInstance;
+            private readonly SpanOrQuery outerInstance;
 
-            private AtomicReaderContext Context;
-            private IBits AcceptDocs;
-            private IDictionary<Term, TermContext> TermContexts;
+            private AtomicReaderContext context;
+            private IBits acceptDocs;
+            private IDictionary<Term, TermContext> termContexts;
 
             public SpansAnonymousInnerClassHelper(SpanOrQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {
-                this.OuterInstance = outerInstance;
-                this.Context = context;
-                this.AcceptDocs = acceptDocs;
-                this.TermContexts = termContexts;
+                this.outerInstance = outerInstance;
+                this.context = context;
+                this.acceptDocs = acceptDocs;
+                this.termContexts = termContexts;
                 queue = null;
             }
 
@@ -240,11 +240,11 @@ namespace Lucene.Net.Search.Spans
 
             private bool InitSpanQueue(int target)
             {
-                queue = new SpanQueue(OuterInstance, OuterInstance.clauses.Count);
-                IEnumerator<SpanQuery> i = OuterInstance.clauses.GetEnumerator();
+                queue = new SpanQueue(outerInstance, outerInstance.clauses.Count);
+                IEnumerator<SpanQuery> i = outerInstance.clauses.GetEnumerator();
                 while (i.MoveNext())
                 {
-                    Spans spans = i.Current.GetSpans(Context, AcceptDocs, TermContexts);
+                    Spans spans = i.Current.GetSpans(context, acceptDocs, termContexts);
                     cost += spans.Cost();
                     if (((target == -1) && spans.Next()) || ((target != -1) && spans.SkipTo(target)))
                     {
@@ -349,7 +349,7 @@ namespace Lucene.Net.Search.Spans
 
             public override string ToString()
             {
-                return "spans(" + OuterInstance + ")@" + ((queue == null) ? "START" : (queue.Size > 0 ? (Doc + ":" + Start + "-" + End) : "END"));
+                return "spans(" + outerInstance + ")@" + ((queue == null) ? "START" : (queue.Size > 0 ? (Doc + ":" + Start + "-" + End) : "END"));
             }
 
             public override long Cost()
