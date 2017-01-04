@@ -47,25 +47,25 @@ namespace Lucene.Net.Codecs.Lucene40
     // but the serialization must be here underneath the codec.
     internal sealed class BitVector : IMutableBits
     {
-        private byte[] Bits;
-        private int Size_Renamed;
-        private int Count_Renamed;
-        private int Version_Renamed;
+        private byte[] bits;
+        private int size;
+        private int count;
+        private int version;
 
         /// <summary>
         /// Constructs a vector capable of holding <code>n</code> bits. </summary>
         public BitVector(int n)
         {
-            Size_Renamed = n;
-            Bits = new byte[GetNumBytes(Size_Renamed)];
-            Count_Renamed = 0;
+            size = n;
+            bits = new byte[GetNumBytes(size)];
+            count = 0;
         }
 
         internal BitVector(byte[] bits, int size)
         {
-            this.Bits = bits;
-            this.Size_Renamed = size;
-            Count_Renamed = -1;
+            this.bits = bits;
+            this.size = size;
+            count = -1;
         }
 
         private int GetNumBytes(int size)
@@ -80,10 +80,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public object Clone()
         {
-            byte[] copyBits = new byte[Bits.Length];
-            Array.Copy(Bits, 0, copyBits, 0, Bits.Length);
-            BitVector clone = new BitVector(copyBits, Size_Renamed);
-            clone.Count_Renamed = Count_Renamed;
+            byte[] copyBits = new byte[bits.Length];
+            Array.Copy(bits, 0, copyBits, 0, bits.Length);
+            BitVector clone = new BitVector(copyBits, size);
+            clone.count = count;
             return clone;
         }
 
@@ -91,12 +91,12 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Sets the value of <code>bit</code> to one. </summary>
         public void Set(int bit)
         {
-            if (bit >= Size_Renamed)
+            if (bit >= size)
             {
-                throw new System.IndexOutOfRangeException("bit=" + bit + " size=" + Size_Renamed);
+                throw new System.IndexOutOfRangeException("bit=" + bit + " size=" + size);
             }
-            Bits[bit >> 3] |= (byte)(1 << (bit & 7));
-            Count_Renamed = -1;
+            bits[bit >> 3] |= (byte)(1 << (bit & 7));
+            count = -1;
         }
 
         /// <summary>
@@ -105,12 +105,12 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public bool GetAndSet(int bit)
         {
-            if (bit >= Size_Renamed)
+            if (bit >= size)
             {
-                throw new System.IndexOutOfRangeException("bit=" + bit + " size=" + Size_Renamed);
+                throw new System.IndexOutOfRangeException("bit=" + bit + " size=" + size);
             }
             int pos = bit >> 3;
-            int v = Bits[pos];
+            int v = bits[pos];
             int flag = 1 << (bit & 7);
             if ((flag & v) != 0)
             {
@@ -118,11 +118,11 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             else
             {
-                Bits[pos] = (byte)(v | flag);
-                if (Count_Renamed != -1)
+                bits[pos] = (byte)(v | flag);
+                if (count != -1)
                 {
-                    Count_Renamed++;
-                    Debug.Assert(Count_Renamed <= Size_Renamed);
+                    count++;
+                    Debug.Assert(count <= size);
                 }
                 return false;
             }
@@ -132,22 +132,22 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Sets the value of <code>bit</code> to zero. </summary>
         public void Clear(int bit)
         {
-            if (bit >= Size_Renamed)
+            if (bit >= size)
             {
                 throw new System.IndexOutOfRangeException(bit.ToString());
             }
-            Bits[bit >> 3] &= (byte)(~(1 << (bit & 7)));
-            Count_Renamed = -1;
+            bits[bit >> 3] &= (byte)(~(1 << (bit & 7)));
+            count = -1;
         }
 
         public bool GetAndClear(int bit)
         {
-            if (bit >= Size_Renamed)
+            if (bit >= size)
             {
                 throw new System.IndexOutOfRangeException(bit.ToString());
             }
             int pos = bit >> 3;
-            int v = Bits[pos];
+            int v = bits[pos];
             int flag = 1 << (bit & 7);
             if ((flag & v) == 0)
             {
@@ -155,11 +155,11 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             else
             {
-                Bits[pos] &= (byte)(~flag);
-                if (Count_Renamed != -1)
+                bits[pos] &= (byte)(~flag);
+                if (count != -1)
                 {
-                    Count_Renamed--;
-                    Debug.Assert(Count_Renamed >= 0);
+                    count--;
+                    Debug.Assert(count >= 0);
                 }
                 return true;
             }
@@ -171,8 +171,8 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public bool Get(int bit)
         {
-            Debug.Assert(bit >= 0 && bit < Size_Renamed, "bit " + bit + " is out of bounds 0.." + (Size_Renamed - 1));
-            return (Bits[bit >> 3] & (1 << (bit & 7))) != 0;
+            Debug.Assert(bit >= 0 && bit < size, "bit " + bit + " is out of bounds 0.." + (size - 1));
+            return (bits[bit >> 3] & (1 << (bit & 7))) != 0;
         }
 
         // LUCENENET specific - removing this because 1) size is not .NETified and 2) it is identical to Length anyway
@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public int Length
         {
-            get { return Size_Renamed; }
+            get { return size; }
         }
 
         /// <summary>
@@ -203,18 +203,18 @@ namespace Lucene.Net.Codecs.Lucene40
         public int Count()
         {
             // if the vector has been modified
-            if (Count_Renamed == -1)
+            if (count == -1)
             {
                 int c = 0;
-                int end = Bits.Length;
+                int end = bits.Length;
                 for (int i = 0; i < end; i++)
                 {
-                    c += BitUtil.BitCount(Bits[i]); // sum bits per byte
+                    c += BitUtil.BitCount(bits[i]); // sum bits per byte
                 }
-                Count_Renamed = c;
+                count = c;
             }
-            Debug.Assert(Count_Renamed <= Size_Renamed, "count=" + Count_Renamed + " size=" + Size_Renamed);
-            return Count_Renamed;
+            Debug.Assert(count <= size, "count=" + count + " size=" + size);
+            return count;
         }
 
         /// <summary>
@@ -222,10 +222,10 @@ namespace Lucene.Net.Codecs.Lucene40
         public int GetRecomputedCount()
         {
             int c = 0;
-            int end = Bits.Length;
+            int end = bits.Length;
             for (int i = 0; i < end; i++)
             {
-                c += BitUtil.BitCount(Bits[i]); // sum bits per byte
+                c += BitUtil.BitCount(bits[i]); // sum bits per byte
             }
             return c;
         }
@@ -252,7 +252,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             get
             {
-                return Version_Renamed;
+                return version;
             }
         }
 
@@ -291,15 +291,15 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Invert all bits </summary>
         public void InvertAll()
         {
-            if (Count_Renamed != -1)
+            if (count != -1)
             {
-                Count_Renamed = Size_Renamed - Count_Renamed;
+                count = size - count;
             }
-            if (Bits.Length > 0)
+            if (bits.Length > 0)
             {
-                for (int idx = 0; idx < Bits.Length; idx++)
+                for (int idx = 0; idx < bits.Length; idx++)
                 {
-                    Bits[idx] = (byte)(~Bits[idx]);
+                    bits[idx] = (byte)(~bits[idx]);
                 }
                 ClearUnusedBits();
             }
@@ -309,13 +309,13 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             // Take care not to invert the "unused" bits in the
             // last byte:
-            if (Bits.Length > 0)
+            if (bits.Length > 0)
             {
-                int lastNBits = Size_Renamed & 7;
+                int lastNBits = size & 7;
                 if (lastNBits != 0)
                 {
                     int mask = (1 << lastNBits) - 1;
-                    Bits[Bits.Length - 1] &= (byte)mask;
+                    bits[bits.Length - 1] &= (byte)mask;
                 }
             }
         }
@@ -324,9 +324,9 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Set all bits </summary>
         public void SetAll()
         {
-            Arrays.Fill(Bits, unchecked((byte)0xff));
+            Arrays.Fill(bits, unchecked((byte)0xff));
             ClearUnusedBits();
-            Count_Renamed = Size_Renamed;
+            count = size;
         }
 
         /// <summary>
@@ -335,7 +335,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             output.WriteInt(Length); // write size
             output.WriteInt(Count()); // write count
-            output.WriteBytes(Bits, Bits.Length);
+            output.WriteBytes(bits, bits.Length);
         }
 
         /// <summary>
@@ -347,15 +347,15 @@ namespace Lucene.Net.Codecs.Lucene40
             output.WriteInt(Count()); // write count
             int last = 0;
             int numCleared = Length - Count();
-            for (int i = 0; i < Bits.Length && numCleared > 0; i++)
+            for (int i = 0; i < bits.Length && numCleared > 0; i++)
             {
-                if (Bits[i] != unchecked((byte)0xff))
+                if (bits[i] != unchecked((byte)0xff))
                 {
                     output.WriteVInt(i - last);
-                    output.WriteByte(Bits[i]);
+                    output.WriteByte(bits[i]);
                     last = i;
-                    numCleared -= (8 - BitUtil.BitCount(Bits[i]));
-                    Debug.Assert(numCleared >= 0 || (i == (Bits.Length - 1) && numCleared == -(8 - (Size_Renamed & 7))));
+                    numCleared -= (8 - BitUtil.BitCount(bits[i]));
+                    Debug.Assert(numCleared >= 0 || (i == (bits.Length - 1) && numCleared == -(8 - (size & 7))));
                 }
             }
         }
@@ -372,7 +372,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     return true;
                 }
 
-                int avgGapLength = Bits.Length / clearedCount;
+                int avgGapLength = bits.Length / clearedCount;
 
                 // expected number of bytes for vInt encoding of each gap
                 int expectedDGapBytes;
@@ -425,17 +425,17 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (firstInt == -2)
                 {
                     // New format, with full header & version:
-                    Version_Renamed = CodecUtil.CheckHeader(input, CODEC, VERSION_START, VERSION_CURRENT);
-                    Size_Renamed = input.ReadInt();
+                    version = CodecUtil.CheckHeader(input, CODEC, VERSION_START, VERSION_CURRENT);
+                    size = input.ReadInt();
                 }
                 else
                 {
-                    Version_Renamed = VERSION_PRE;
-                    Size_Renamed = firstInt;
+                    version = VERSION_PRE;
+                    size = firstInt;
                 }
-                if (Size_Renamed == -1)
+                if (size == -1)
                 {
-                    if (Version_Renamed >= VERSION_DGAPS_CLEARED)
+                    if (version >= VERSION_DGAPS_CLEARED)
                     {
                         ReadClearedDgaps(input);
                     }
@@ -449,12 +449,12 @@ namespace Lucene.Net.Codecs.Lucene40
                     ReadBits(input);
                 }
 
-                if (Version_Renamed < VERSION_DGAPS_CLEARED)
+                if (version < VERSION_DGAPS_CLEARED)
                 {
                     InvertAll();
                 }
 
-                if (Version_Renamed >= VERSION_CHECKSUM)
+                if (version >= VERSION_CHECKSUM)
                 {
                     CodecUtil.CheckFooter(input);
                 }
@@ -473,10 +473,10 @@ namespace Lucene.Net.Codecs.Lucene40
         // asserts only
         private bool VerifyCount()
         {
-            Debug.Assert(Count_Renamed != -1);
-            int countSav = Count_Renamed;
-            Count_Renamed = -1;
-            Debug.Assert(countSav == Count(), "saved count was " + countSav + " but recomputed count is " + Count_Renamed);
+            Debug.Assert(count != -1);
+            int countSav = count;
+            count = -1;
+            Debug.Assert(countSav == Count(), "saved count was " + countSav + " but recomputed count is " + count);
             return true;
         }
 
@@ -484,25 +484,25 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Read as a bit set </summary>
         private void ReadBits(IndexInput input)
         {
-            Count_Renamed = input.ReadInt(); // read count
-            Bits = new byte[GetNumBytes(Size_Renamed)]; // allocate bits
-            input.ReadBytes(Bits, 0, Bits.Length);
+            count = input.ReadInt(); // read count
+            bits = new byte[GetNumBytes(size)]; // allocate bits
+            input.ReadBytes(bits, 0, bits.Length);
         }
 
         /// <summary>
         /// read as a d-gaps list </summary>
         private void ReadSetDgaps(IndexInput input)
         {
-            Size_Renamed = input.ReadInt(); // (re)read size
-            Count_Renamed = input.ReadInt(); // read count
-            Bits = new byte[GetNumBytes(Size_Renamed)]; // allocate bits
+            size = input.ReadInt(); // (re)read size
+            count = input.ReadInt(); // read count
+            bits = new byte[GetNumBytes(size)]; // allocate bits
             int last = 0;
             int n = Count();
             while (n > 0)
             {
                 last += input.ReadVInt();
-                Bits[last] = input.ReadByte();
-                n -= BitUtil.BitCount(Bits[last]);
+                bits[last] = input.ReadByte();
+                n -= BitUtil.BitCount(bits[last]);
                 Debug.Assert(n >= 0);
             }
         }
@@ -511,12 +511,12 @@ namespace Lucene.Net.Codecs.Lucene40
         /// read as a d-gaps cleared bits list </summary>
         private void ReadClearedDgaps(IndexInput input)
         {
-            Size_Renamed = input.ReadInt(); // (re)read size
-            Count_Renamed = input.ReadInt(); // read count
-            Bits = new byte[GetNumBytes(Size_Renamed)]; // allocate bits
-            for (int i = 0; i < Bits.Length; ++i)
+            size = input.ReadInt(); // (re)read size
+            count = input.ReadInt(); // read count
+            bits = new byte[GetNumBytes(size)]; // allocate bits
+            for (int i = 0; i < bits.Length; ++i)
             {
-                Bits[i] = 0xff;
+                bits[i] = 0xff;
             }
             ClearUnusedBits();
             int last = 0;
@@ -524,9 +524,9 @@ namespace Lucene.Net.Codecs.Lucene40
             while (numCleared > 0)
             {
                 last += input.ReadVInt();
-                Bits[last] = input.ReadByte();
-                numCleared -= 8 - BitUtil.BitCount(Bits[last]);
-                Debug.Assert(numCleared >= 0 || (last == (Bits.Length - 1) && numCleared == -(8 - (Size_Renamed & 7))));
+                bits[last] = input.ReadByte();
+                numCleared -= 8 - BitUtil.BitCount(bits[last]);
+                Debug.Assert(numCleared >= 0 || (last == (bits.Length - 1) && numCleared == -(8 - (size & 7))));
             }
         }
     }
