@@ -635,13 +635,13 @@ namespace Lucene.Net.Documents
         {
             internal void InitializeInstanceFields()
             {
-                TermAttribute = AddAttribute<ICharTermAttribute>();
-                OffsetAttribute = AddAttribute<IOffsetAttribute>();
+                termAttribute = AddAttribute<ICharTermAttribute>();
+                offsetAttribute = AddAttribute<IOffsetAttribute>();
             }
 
-            internal ICharTermAttribute TermAttribute;
-            internal IOffsetAttribute OffsetAttribute;
-            internal bool Used = false;
+            internal ICharTermAttribute termAttribute;
+            internal IOffsetAttribute offsetAttribute;
+            internal bool used = false;
             internal string value = null;
 
             /// <summary>
@@ -663,14 +663,14 @@ namespace Lucene.Net.Documents
 
             public override bool IncrementToken()
             {
-                if (Used)
+                if (used)
                 {
                     return false;
                 }
                 ClearAttributes();
-                TermAttribute.Append(value);
-                OffsetAttribute.SetOffset(0, value.Length);
-                Used = true;
+                termAttribute.Append(value);
+                offsetAttribute.SetOffset(0, value.Length);
+                used = true;
                 return true;
             }
 
@@ -678,12 +678,12 @@ namespace Lucene.Net.Documents
             {
                 base.End();
                 int finalOffset = value.Length;
-                OffsetAttribute.SetOffset(finalOffset, finalOffset);
+                offsetAttribute.SetOffset(finalOffset, finalOffset);
             }
 
             public override void Reset()
             {
-                Used = false;
+                used = false;
             }
 
             public void Dispose(bool disposing)
