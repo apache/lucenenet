@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            internal int NrMatchers; // to be increased by score() of match counting scorers.
+            internal int nrMatchers; // to be increased by score() of match counting scorers.
         }
 
         private readonly Coordinator coordinator;
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
                         lastDocScore = scorer.Score();
                         lastScoredDoc = doc;
                     }
-                    outerInstance.coordinator.NrMatchers++;
+                    outerInstance.coordinator.nrMatchers++;
                 }
                 return lastDocScore;
             }
@@ -184,34 +184,34 @@ namespace Lucene.Net.Search
 
         private class MinShouldMatchSumScorerAnonymousInnerClassHelper : MinShouldMatchSumScorer
         {
-            private readonly BooleanScorer2 OuterInstance;
+            private readonly BooleanScorer2 outerInstance;
 
             public MinShouldMatchSumScorerAnonymousInnerClassHelper(BooleanScorer2 outerInstance, Lucene.Net.Search.Weight weight, IList<Scorer> scorers, int minNrShouldMatch)
                 : base(weight, scorers, minNrShouldMatch)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override float Score()
             {
-                OuterInstance.coordinator.NrMatchers += base.m_nrMatchers;
+                outerInstance.coordinator.nrMatchers += base.m_nrMatchers;
                 return base.Score();
             }
         }
 
         private class DisjunctionSumScorerAnonymousInnerClassHelper : DisjunctionSumScorer
         {
-            private readonly BooleanScorer2 OuterInstance;
+            private readonly BooleanScorer2 outerInstance;
 
             public DisjunctionSumScorerAnonymousInnerClassHelper(BooleanScorer2 outerInstance, Weight weight, Scorer[] subScorers, float[] coord)
                 : base(weight, subScorers, coord)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override float Score()
             {
-                OuterInstance.coordinator.NrMatchers += base.m_nrMatchers;
+                outerInstance.coordinator.nrMatchers += base.m_nrMatchers;
                 return (float)base.m_score;
             }
         }
@@ -225,15 +225,15 @@ namespace Lucene.Net.Search
 
         private class ConjunctionScorerAnonymousInnerClassHelper : ConjunctionScorer
         {
-            private readonly BooleanScorer2 OuterInstance;
+            private readonly BooleanScorer2 outerInstance;
 
-            private int RequiredNrMatchers;
+            private int requiredNrMatchers;
 
             public ConjunctionScorerAnonymousInnerClassHelper(BooleanScorer2 outerInstance, Weight weight, Scorer[] scorers, int requiredNrMatchers)
                 : base(weight, scorers)
             {
-                this.OuterInstance = outerInstance;
-                this.RequiredNrMatchers = requiredNrMatchers;
+                this.outerInstance = outerInstance;
+                this.requiredNrMatchers = requiredNrMatchers;
                 lastScoredDoc = -1;
                 lastDocScore = float.NaN;
             }
@@ -246,7 +246,7 @@ namespace Lucene.Net.Search
 
             public override float Score()
             {
-                int doc = OuterInstance.DocID;
+                int doc = outerInstance.DocID;
                 if (doc >= lastScoredDoc)
                 {
                     if (doc > lastScoredDoc)
@@ -254,7 +254,7 @@ namespace Lucene.Net.Search
                         lastDocScore = base.Score();
                         lastScoredDoc = doc;
                     }
-                    OuterInstance.coordinator.NrMatchers += RequiredNrMatchers;
+                    outerInstance.coordinator.nrMatchers += requiredNrMatchers;
                 }
                 // All scorers match, so defaultSimilarity super.score() always has 1 as
                 // the coordination factor.
@@ -349,9 +349,9 @@ namespace Lucene.Net.Search
 
         public override float Score()
         {
-            coordinator.NrMatchers = 0;
+            coordinator.nrMatchers = 0;
             float sum = countingSumScorer.Score();
-            return sum * coordinator.coordFactors[coordinator.NrMatchers];
+            return sum * coordinator.coordFactors[coordinator.nrMatchers];
         }
 
         public override int Freq
