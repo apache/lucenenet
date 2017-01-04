@@ -1184,7 +1184,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override long Cost()
             {
-                return Docs.Df;
+                return Docs.m_df;
             }
         }
 
@@ -1277,7 +1277,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override long Cost()
             {
-                return Pos.Df;
+                return Pos.m_df;
             }
         }
 
