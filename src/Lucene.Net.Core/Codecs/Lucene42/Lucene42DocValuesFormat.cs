@@ -125,7 +125,7 @@ namespace Lucene.Net.Codecs.Lucene42
         /// Maximum length for each binary doc values field. </summary>
         public static readonly int MAX_BINARY_FIELD_LENGTH = (1 << 15) - 2;
 
-        protected internal readonly float AcceptableOverheadRatio;
+        protected readonly float m_acceptableOverheadRatio;
 
         /// <summary>
         /// Calls {@link #Lucene42DocValuesFormat(float)
@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs.Lucene42
         public Lucene42DocValuesFormat(float acceptableOverheadRatio)
             : base("Lucene42")
         {
-            this.AcceptableOverheadRatio = acceptableOverheadRatio;
+            this.m_acceptableOverheadRatio = acceptableOverheadRatio;
         }
 
         public override DocValuesConsumer FieldsConsumer(SegmentWriteState state)

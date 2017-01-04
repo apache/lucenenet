@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.Lucene42
             else
             {
                 // note: we choose DEFAULT here (its reasonably fast, and for small bpv has tiny waste)
-                return new Lucene42DocValuesConsumer(state, DATA_CODEC, DATA_EXTENSION, METADATA_CODEC, METADATA_EXTENSION, AcceptableOverheadRatio);
+                return new Lucene42DocValuesConsumer(state, DATA_CODEC, DATA_EXTENSION, METADATA_CODEC, METADATA_EXTENSION, m_acceptableOverheadRatio);
             }
         }
     }
