@@ -60,54 +60,54 @@ namespace Lucene.Net.Codecs.Lucene41
         internal const int VERSION_CHECKSUM = 2;
         internal const int VERSION_CURRENT = VERSION_CHECKSUM;
 
-        internal IndexOutput DocOut;
-        internal IndexOutput PosOut;
-        internal IndexOutput PayOut;
+        internal IndexOutput docOut;
+        internal IndexOutput posOut;
+        internal IndexOutput payOut;
 
-        internal static readonly IntBlockTermState EmptyState = new IntBlockTermState();
-        internal IntBlockTermState LastState;
+        internal static readonly IntBlockTermState emptyState = new IntBlockTermState();
+        internal IntBlockTermState lastState;
 
         // How current field indexes postings:
-        private bool FieldHasFreqs;
+        private bool fieldHasFreqs;
 
-        private bool FieldHasPositions;
-        private bool FieldHasOffsets;
-        private bool FieldHasPayloads;
+        private bool fieldHasPositions;
+        private bool fieldHasOffsets;
+        private bool fieldHasPayloads;
 
         // Holds starting file pointers for current term:
-        private long DocStartFP;
+        private long docStartFP;
 
-        private long PosStartFP;
-        private long PayStartFP;
+        private long posStartFP;
+        private long payStartFP;
 
-        internal readonly int[] DocDeltaBuffer;
-        internal readonly int[] FreqBuffer;
-        private int DocBufferUpto;
+        internal readonly int[] docDeltaBuffer;
+        internal readonly int[] freqBuffer;
+        private int docBufferUpto;
 
-        internal readonly int[] PosDeltaBuffer;
-        internal readonly int[] PayloadLengthBuffer;
-        internal readonly int[] OffsetStartDeltaBuffer;
-        internal readonly int[] OffsetLengthBuffer;
-        private int PosBufferUpto;
+        internal readonly int[] posDeltaBuffer;
+        internal readonly int[] payloadLengthBuffer;
+        internal readonly int[] offsetStartDeltaBuffer;
+        internal readonly int[] offsetLengthBuffer;
+        private int posBufferUpto;
 
-        private byte[] PayloadBytes;
-        private int PayloadByteUpto;
+        private byte[] payloadBytes;
+        private int payloadByteUpto;
 
-        private int LastBlockDocID;
-        private long LastBlockPosFP;
-        private long LastBlockPayFP;
-        private int LastBlockPosBufferUpto;
-        private int LastBlockPayloadByteUpto;
+        private int lastBlockDocID;
+        private long lastBlockPosFP;
+        private long lastBlockPayFP;
+        private int lastBlockPosBufferUpto;
+        private int lastBlockPayloadByteUpto;
 
-        private int LastDocID;
-        private int LastPosition;
-        private int LastStartOffset;
-        private int DocCount;
+        private int lastDocID;
+        private int lastPosition;
+        private int lastStartOffset;
+        private int docCount;
 
-        internal readonly byte[] Encoded;
+        internal readonly byte[] encoded;
 
-        private readonly ForUtil ForUtil;
-        private readonly Lucene41SkipWriter SkipWriter;
+        private readonly ForUtil forUtil;
+        private readonly Lucene41SkipWriter skipWriter;
 
         /// <summary>
         /// Creates a postings writer with the specified PackedInts overhead ratio </summary>
@@ -115,40 +115,40 @@ namespace Lucene.Net.Codecs.Lucene41
         public Lucene41PostingsWriter(SegmentWriteState state, float acceptableOverheadRatio)
             : base()
         {
-            DocOut = state.Directory.CreateOutput(IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, Lucene41PostingsFormat.DOC_EXTENSION), state.Context);
+            docOut = state.Directory.CreateOutput(IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, Lucene41PostingsFormat.DOC_EXTENSION), state.Context);
             IndexOutput posOut = null;
             IndexOutput payOut = null;
             bool success = false;
             try
             {
-                CodecUtil.WriteHeader(DocOut, DOC_CODEC, VERSION_CURRENT);
-                ForUtil = new ForUtil(acceptableOverheadRatio, DocOut);
+                CodecUtil.WriteHeader(docOut, DOC_CODEC, VERSION_CURRENT);
+                forUtil = new ForUtil(acceptableOverheadRatio, docOut);
                 if (state.FieldInfos.HasProx)
                 {
-                    PosDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
+                    posDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
                     posOut = state.Directory.CreateOutput(IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, Lucene41PostingsFormat.POS_EXTENSION), state.Context);
                     CodecUtil.WriteHeader(posOut, POS_CODEC, VERSION_CURRENT);
 
                     if (state.FieldInfos.HasPayloads)
                     {
-                        PayloadBytes = new byte[128];
-                        PayloadLengthBuffer = new int[ForUtil.MAX_DATA_SIZE];
+                        payloadBytes = new byte[128];
+                        payloadLengthBuffer = new int[ForUtil.MAX_DATA_SIZE];
                     }
                     else
                     {
-                        PayloadBytes = null;
-                        PayloadLengthBuffer = null;
+                        payloadBytes = null;
+                        payloadLengthBuffer = null;
                     }
 
                     if (state.FieldInfos.HasOffsets)
                     {
-                        OffsetStartDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
-                        OffsetLengthBuffer = new int[ForUtil.MAX_DATA_SIZE];
+                        offsetStartDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
+                        offsetLengthBuffer = new int[ForUtil.MAX_DATA_SIZE];
                     }
                     else
                     {
-                        OffsetStartDeltaBuffer = null;
-                        OffsetLengthBuffer = null;
+                        offsetStartDeltaBuffer = null;
+                        offsetLengthBuffer = null;
                     }
 
                     if (state.FieldInfos.HasPayloads || state.FieldInfos.HasOffsets)
@@ -159,31 +159,31 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
                 else
                 {
-                    PosDeltaBuffer = null;
-                    PayloadLengthBuffer = null;
-                    OffsetStartDeltaBuffer = null;
-                    OffsetLengthBuffer = null;
-                    PayloadBytes = null;
+                    posDeltaBuffer = null;
+                    payloadLengthBuffer = null;
+                    offsetStartDeltaBuffer = null;
+                    offsetLengthBuffer = null;
+                    payloadBytes = null;
                 }
-                this.PayOut = payOut;
-                this.PosOut = posOut;
+                this.payOut = payOut;
+                this.posOut = posOut;
                 success = true;
             }
             finally
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(DocOut, posOut, payOut);
+                    IOUtils.CloseWhileHandlingException(docOut, posOut, payOut);
                 }
             }
 
-            DocDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
-            FreqBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            docDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
+            freqBuffer = new int[ForUtil.MAX_DATA_SIZE];
 
             // TODO: should we try skipping every 2/4 blocks...?
-            SkipWriter = new Lucene41SkipWriter(MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, state.SegmentInfo.DocCount, DocOut, posOut, payOut);
+            skipWriter = new Lucene41SkipWriter(MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, state.SegmentInfo.DocCount, docOut, posOut, payOut);
 
-            Encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
+            encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
         }
 
         /// <summary>
@@ -195,15 +195,15 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public sealed class IntBlockTermState : BlockTermState
         {
-            internal long DocStartFP = 0;
-            internal long PosStartFP = 0;
-            internal long PayStartFP = 0;
-            internal long SkipOffset = -1;
-            internal long LastPosBlockOffset = -1;
+            internal long docStartFP = 0;
+            internal long posStartFP = 0;
+            internal long payStartFP = 0;
+            internal long skipOffset = -1;
+            internal long lastPosBlockOffset = -1;
 
             // docid when there is a single pulsed posting, otherwise -1
             // freq is always implicitly totalTermFreq in this case.
-            internal int SingletonDocID = -1;
+            internal int singletonDocID = -1;
 
             public override object Clone()
             {
@@ -216,17 +216,17 @@ namespace Lucene.Net.Codecs.Lucene41
             {
                 base.CopyFrom(_other);
                 IntBlockTermState other = (IntBlockTermState)_other;
-                DocStartFP = other.DocStartFP;
-                PosStartFP = other.PosStartFP;
-                PayStartFP = other.PayStartFP;
-                LastPosBlockOffset = other.LastPosBlockOffset;
-                SkipOffset = other.SkipOffset;
-                SingletonDocID = other.SingletonDocID;
+                docStartFP = other.docStartFP;
+                posStartFP = other.posStartFP;
+                payStartFP = other.payStartFP;
+                lastPosBlockOffset = other.lastPosBlockOffset;
+                skipOffset = other.skipOffset;
+                singletonDocID = other.singletonDocID;
             }
 
             public override string ToString()
             {
-                return base.ToString() + " docStartFP=" + DocStartFP + " posStartFP=" + PosStartFP + " payStartFP=" + PayStartFP + " lastPosBlockOffset=" + LastPosBlockOffset + " singletonDocID=" + SingletonDocID;
+                return base.ToString() + " docStartFP=" + docStartFP + " posStartFP=" + posStartFP + " payStartFP=" + payStartFP + " lastPosBlockOffset=" + lastPosBlockOffset + " singletonDocID=" + singletonDocID;
             }
         }
 
@@ -244,15 +244,15 @@ namespace Lucene.Net.Codecs.Lucene41
         public override int SetField(FieldInfo fieldInfo)
         {
             IndexOptions? indexOptions = fieldInfo.IndexOptions;
-            FieldHasFreqs = indexOptions >= IndexOptions.DOCS_AND_FREQS;
-            FieldHasPositions = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-            FieldHasOffsets = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-            FieldHasPayloads = fieldInfo.HasPayloads;
-            SkipWriter.SetField(FieldHasPositions, FieldHasOffsets, FieldHasPayloads);
-            LastState = EmptyState;
-            if (FieldHasPositions)
+            fieldHasFreqs = indexOptions >= IndexOptions.DOCS_AND_FREQS;
+            fieldHasPositions = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+            fieldHasOffsets = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            fieldHasPayloads = fieldInfo.HasPayloads;
+            skipWriter.SetField(fieldHasPositions, fieldHasOffsets, fieldHasPayloads);
+            lastState = emptyState;
+            if (fieldHasPositions)
             {
-                if (FieldHasPayloads || FieldHasOffsets)
+                if (fieldHasPayloads || fieldHasOffsets)
                 {
                     return 3; // doc + pos + pay FP
                 }
@@ -269,21 +269,21 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public override void StartTerm()
         {
-            DocStartFP = DocOut.FilePointer;
-            if (FieldHasPositions)
+            docStartFP = docOut.FilePointer;
+            if (fieldHasPositions)
             {
-                PosStartFP = PosOut.FilePointer;
-                if (FieldHasPayloads || FieldHasOffsets)
+                posStartFP = posOut.FilePointer;
+                if (fieldHasPayloads || fieldHasOffsets)
                 {
-                    PayStartFP = PayOut.FilePointer;
+                    payStartFP = payOut.FilePointer;
                 }
             }
-            LastDocID = 0;
-            LastBlockDocID = -1;
+            lastDocID = 0;
+            lastBlockDocID = -1;
             // if (DEBUG) {
             //   System.out.println("FPW.startTerm startFP=" + docStartFP);
             // }
-            SkipWriter.ResetSkip();
+            skipWriter.ResetSkip();
         }
 
         public override void StartDoc(int docId, int termDocFreq)
@@ -294,53 +294,53 @@ namespace Lucene.Net.Codecs.Lucene41
             // Have collected a block of docs, and get a new doc.
             // Should write skip data as well as postings list for
             // current block.
-            if (LastBlockDocID != -1 && DocBufferUpto == 0)
+            if (lastBlockDocID != -1 && docBufferUpto == 0)
             {
                 // if (DEBUG) {
                 //   System.out.println("  bufferSkip at writeBlock: lastDocID=" + lastBlockDocID + " docCount=" + (docCount-1));
                 // }
-                SkipWriter.BufferSkip(LastBlockDocID, DocCount, LastBlockPosFP, LastBlockPayFP, LastBlockPosBufferUpto, LastBlockPayloadByteUpto);
+                skipWriter.BufferSkip(lastBlockDocID, docCount, lastBlockPosFP, lastBlockPayFP, lastBlockPosBufferUpto, lastBlockPayloadByteUpto);
             }
 
-            int docDelta = docId - LastDocID;
+            int docDelta = docId - lastDocID;
 
-            if (docId < 0 || (DocCount > 0 && docDelta <= 0))
+            if (docId < 0 || (docCount > 0 && docDelta <= 0))
             {
-                throw new Exception("docs out of order (" + docId + " <= " + LastDocID + " ) (docOut: " + DocOut + ")");
+                throw new Exception("docs out of order (" + docId + " <= " + lastDocID + " ) (docOut: " + docOut + ")");
             }
 
-            DocDeltaBuffer[DocBufferUpto] = docDelta;
+            docDeltaBuffer[docBufferUpto] = docDelta;
             // if (DEBUG) {
             //   System.out.println("  docDeltaBuffer[" + docBufferUpto + "]=" + docDelta);
             // }
-            if (FieldHasFreqs)
+            if (fieldHasFreqs)
             {
-                FreqBuffer[DocBufferUpto] = termDocFreq;
+                freqBuffer[docBufferUpto] = termDocFreq;
             }
-            DocBufferUpto++;
-            DocCount++;
+            docBufferUpto++;
+            docCount++;
 
-            if (DocBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
+            if (docBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
             {
                 // if (DEBUG) {
                 //   System.out.println("  write docDelta block @ fp=" + docOut.getFilePointer());
                 // }
-                ForUtil.WriteBlock(DocDeltaBuffer, Encoded, DocOut);
-                if (FieldHasFreqs)
+                forUtil.WriteBlock(docDeltaBuffer, encoded, docOut);
+                if (fieldHasFreqs)
                 {
                     // if (DEBUG) {
                     //   System.out.println("  write freq block @ fp=" + docOut.getFilePointer());
                     // }
-                    ForUtil.WriteBlock(FreqBuffer, Encoded, DocOut);
+                    forUtil.WriteBlock(freqBuffer, encoded, docOut);
                 }
                 // NOTE: don't set docBufferUpto back to 0 here;
                 // finishDoc will do so (because it needs to see that
                 // the block was filled so it can save skip data)
             }
 
-            LastDocID = docId;
-            LastPosition = 0;
-            LastStartOffset = 0;
+            lastDocID = docId;
+            lastPosition = 0;
+            lastStartOffset = 0;
         }
 
         /// <summary>
@@ -350,57 +350,57 @@ namespace Lucene.Net.Codecs.Lucene41
             // if (DEBUG) {
             //   System.out.println("FPW.addPosition pos=" + position + " posBufferUpto=" + posBufferUpto + (fieldHasPayloads ? " payloadByteUpto=" + payloadByteUpto: ""));
             // }
-            PosDeltaBuffer[PosBufferUpto] = position - LastPosition;
-            if (FieldHasPayloads)
+            posDeltaBuffer[posBufferUpto] = position - lastPosition;
+            if (fieldHasPayloads)
             {
                 if (payload == null || payload.Length == 0)
                 {
                     // no payload
-                    PayloadLengthBuffer[PosBufferUpto] = 0;
+                    payloadLengthBuffer[posBufferUpto] = 0;
                 }
                 else
                 {
-                    PayloadLengthBuffer[PosBufferUpto] = payload.Length;
-                    if (PayloadByteUpto + payload.Length > PayloadBytes.Length)
+                    payloadLengthBuffer[posBufferUpto] = payload.Length;
+                    if (payloadByteUpto + payload.Length > payloadBytes.Length)
                     {
-                        PayloadBytes = ArrayUtil.Grow(PayloadBytes, PayloadByteUpto + payload.Length);
+                        payloadBytes = ArrayUtil.Grow(payloadBytes, payloadByteUpto + payload.Length);
                     }
-                    Array.Copy(payload.Bytes, payload.Offset, PayloadBytes, PayloadByteUpto, payload.Length);
-                    PayloadByteUpto += payload.Length;
+                    Array.Copy(payload.Bytes, payload.Offset, payloadBytes, payloadByteUpto, payload.Length);
+                    payloadByteUpto += payload.Length;
                 }
             }
 
-            if (FieldHasOffsets)
+            if (fieldHasOffsets)
             {
-                Debug.Assert(startOffset >= LastStartOffset);
+                Debug.Assert(startOffset >= lastStartOffset);
                 Debug.Assert(endOffset >= startOffset);
-                OffsetStartDeltaBuffer[PosBufferUpto] = startOffset - LastStartOffset;
-                OffsetLengthBuffer[PosBufferUpto] = endOffset - startOffset;
-                LastStartOffset = startOffset;
+                offsetStartDeltaBuffer[posBufferUpto] = startOffset - lastStartOffset;
+                offsetLengthBuffer[posBufferUpto] = endOffset - startOffset;
+                lastStartOffset = startOffset;
             }
 
-            PosBufferUpto++;
-            LastPosition = position;
-            if (PosBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
+            posBufferUpto++;
+            lastPosition = position;
+            if (posBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
             {
                 // if (DEBUG) {
                 //   System.out.println("  write pos bulk block @ fp=" + posOut.getFilePointer());
                 // }
-                ForUtil.WriteBlock(PosDeltaBuffer, Encoded, PosOut);
+                forUtil.WriteBlock(posDeltaBuffer, encoded, posOut);
 
-                if (FieldHasPayloads)
+                if (fieldHasPayloads)
                 {
-                    ForUtil.WriteBlock(PayloadLengthBuffer, Encoded, PayOut);
-                    PayOut.WriteVInt(PayloadByteUpto);
-                    PayOut.WriteBytes(PayloadBytes, 0, PayloadByteUpto);
-                    PayloadByteUpto = 0;
+                    forUtil.WriteBlock(payloadLengthBuffer, encoded, payOut);
+                    payOut.WriteVInt(payloadByteUpto);
+                    payOut.WriteBytes(payloadBytes, 0, payloadByteUpto);
+                    payloadByteUpto = 0;
                 }
-                if (FieldHasOffsets)
+                if (fieldHasOffsets)
                 {
-                    ForUtil.WriteBlock(OffsetStartDeltaBuffer, Encoded, PayOut);
-                    ForUtil.WriteBlock(OffsetLengthBuffer, Encoded, PayOut);
+                    forUtil.WriteBlock(offsetStartDeltaBuffer, encoded, payOut);
+                    forUtil.WriteBlock(offsetLengthBuffer, encoded, payOut);
                 }
-                PosBufferUpto = 0;
+                posBufferUpto = 0;
             }
         }
 
@@ -409,23 +409,23 @@ namespace Lucene.Net.Codecs.Lucene41
             // Since we don't know df for current term, we had to buffer
             // those skip data for each block, and when a new doc comes,
             // write them to skip file.
-            if (DocBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
+            if (docBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
             {
-                LastBlockDocID = LastDocID;
-                if (PosOut != null)
+                lastBlockDocID = lastDocID;
+                if (posOut != null)
                 {
-                    if (PayOut != null)
+                    if (payOut != null)
                     {
-                        LastBlockPayFP = PayOut.FilePointer;
+                        lastBlockPayFP = payOut.FilePointer;
                     }
-                    LastBlockPosFP = PosOut.FilePointer;
-                    LastBlockPosBufferUpto = PosBufferUpto;
-                    LastBlockPayloadByteUpto = PayloadByteUpto;
+                    lastBlockPosFP = posOut.FilePointer;
+                    lastBlockPosBufferUpto = posBufferUpto;
+                    lastBlockPayloadByteUpto = payloadByteUpto;
                 }
                 // if (DEBUG) {
                 //   System.out.println("  docBufferUpto="+docBufferUpto+" now get lastBlockDocID="+lastBlockDocID+" lastBlockPosFP=" + lastBlockPosFP + " lastBlockPosBufferUpto=" +  lastBlockPosBufferUpto + " lastBlockPayloadByteUpto=" + lastBlockPayloadByteUpto);
                 // }
-                DocBufferUpto = 0;
+                docBufferUpto = 0;
             }
         }
 
@@ -438,7 +438,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             // TODO: wasteful we are counting this (counting # docs
             // for this term) in two places?
-            Debug.Assert(state.DocFreq == DocCount, state.DocFreq + " vs " + DocCount);
+            Debug.Assert(state.DocFreq == docCount, state.DocFreq + " vs " + docCount);
 
             // if (DEBUG) {
             //   System.out.println("FPW.finishTerm docFreq=" + state.docFreq);
@@ -455,35 +455,35 @@ namespace Lucene.Net.Codecs.Lucene41
             if (state.DocFreq == 1)
             {
                 // pulse the singleton docid into the term dictionary, freq is implicitly totalTermFreq
-                singletonDocID = DocDeltaBuffer[0];
+                singletonDocID = docDeltaBuffer[0];
             }
             else
             {
                 singletonDocID = -1;
                 // vInt encode the remaining doc deltas and freqs:
-                for (int i = 0; i < DocBufferUpto; i++)
+                for (int i = 0; i < docBufferUpto; i++)
                 {
-                    int docDelta = DocDeltaBuffer[i];
-                    int freq = FreqBuffer[i];
-                    if (!FieldHasFreqs)
+                    int docDelta = docDeltaBuffer[i];
+                    int freq = freqBuffer[i];
+                    if (!fieldHasFreqs)
                     {
-                        DocOut.WriteVInt(docDelta);
+                        docOut.WriteVInt(docDelta);
                     }
-                    else if (FreqBuffer[i] == 1)
+                    else if (freqBuffer[i] == 1)
                     {
-                        DocOut.WriteVInt((docDelta << 1) | 1);
+                        docOut.WriteVInt((docDelta << 1) | 1);
                     }
                     else
                     {
-                        DocOut.WriteVInt(docDelta << 1);
-                        DocOut.WriteVInt(freq);
+                        docOut.WriteVInt(docDelta << 1);
+                        docOut.WriteVInt(freq);
                     }
                 }
             }
 
             long lastPosBlockOffset;
 
-            if (FieldHasPositions)
+            if (fieldHasPositions)
             {
                 // if (DEBUG) {
                 //   if (posBufferUpto > 0) {
@@ -497,13 +497,13 @@ namespace Lucene.Net.Codecs.Lucene41
                 if (state.TotalTermFreq > Lucene41PostingsFormat.BLOCK_SIZE)
                 {
                     // record file offset for last pos in last block
-                    lastPosBlockOffset = PosOut.FilePointer - PosStartFP;
+                    lastPosBlockOffset = posOut.FilePointer - posStartFP;
                 }
                 else
                 {
                     lastPosBlockOffset = -1;
                 }
-                if (PosBufferUpto > 0)
+                if (posBufferUpto > 0)
                 {
                     // TODO: should we send offsets/payloads to
                     // .pay...?  seems wasteful (have to store extra
@@ -514,21 +514,21 @@ namespace Lucene.Net.Codecs.Lucene41
                     int lastPayloadLength = -1; // force first payload length to be written
                     int lastOffsetLength = -1; // force first offset length to be written
                     int payloadBytesReadUpto = 0;
-                    for (int i = 0; i < PosBufferUpto; i++)
+                    for (int i = 0; i < posBufferUpto; i++)
                     {
-                        int posDelta = PosDeltaBuffer[i];
-                        if (FieldHasPayloads)
+                        int posDelta = posDeltaBuffer[i];
+                        if (fieldHasPayloads)
                         {
-                            int payloadLength = PayloadLengthBuffer[i];
+                            int payloadLength = payloadLengthBuffer[i];
                             if (payloadLength != lastPayloadLength)
                             {
                                 lastPayloadLength = payloadLength;
-                                PosOut.WriteVInt((posDelta << 1) | 1);
-                                PosOut.WriteVInt(payloadLength);
+                                posOut.WriteVInt((posDelta << 1) | 1);
+                                posOut.WriteVInt(payloadLength);
                             }
                             else
                             {
-                                PosOut.WriteVInt(posDelta << 1);
+                                posOut.WriteVInt(posDelta << 1);
                             }
 
                             // if (DEBUG) {
@@ -540,39 +540,39 @@ namespace Lucene.Net.Codecs.Lucene41
                                 // if (DEBUG) {
                                 //   System.out.println("          write payload @ pos.fp=" + posOut.getFilePointer());
                                 // }
-                                PosOut.WriteBytes(PayloadBytes, payloadBytesReadUpto, payloadLength);
+                                posOut.WriteBytes(payloadBytes, payloadBytesReadUpto, payloadLength);
                                 payloadBytesReadUpto += payloadLength;
                             }
                         }
                         else
                         {
-                            PosOut.WriteVInt(posDelta);
+                            posOut.WriteVInt(posDelta);
                         }
 
-                        if (FieldHasOffsets)
+                        if (fieldHasOffsets)
                         {
                             // if (DEBUG) {
                             //   System.out.println("          write offset @ pos.fp=" + posOut.getFilePointer());
                             // }
-                            int delta = OffsetStartDeltaBuffer[i];
-                            int length = OffsetLengthBuffer[i];
+                            int delta = offsetStartDeltaBuffer[i];
+                            int length = offsetLengthBuffer[i];
                             if (length == lastOffsetLength)
                             {
-                                PosOut.WriteVInt(delta << 1);
+                                posOut.WriteVInt(delta << 1);
                             }
                             else
                             {
-                                PosOut.WriteVInt(delta << 1 | 1);
-                                PosOut.WriteVInt(length);
+                                posOut.WriteVInt(delta << 1 | 1);
+                                posOut.WriteVInt(length);
                                 lastOffsetLength = length;
                             }
                         }
                     }
 
-                    if (FieldHasPayloads)
+                    if (fieldHasPayloads)
                     {
-                        Debug.Assert(payloadBytesReadUpto == PayloadByteUpto);
-                        PayloadByteUpto = 0;
+                        Debug.Assert(payloadBytesReadUpto == payloadByteUpto);
+                        payloadByteUpto = 0;
                     }
                 }
                 // if (DEBUG) {
@@ -585,9 +585,9 @@ namespace Lucene.Net.Codecs.Lucene41
             }
 
             long skipOffset;
-            if (DocCount > Lucene41PostingsFormat.BLOCK_SIZE)
+            if (docCount > Lucene41PostingsFormat.BLOCK_SIZE)
             {
-                skipOffset = SkipWriter.WriteSkip(DocOut) - DocStartFP;
+                skipOffset = skipWriter.WriteSkip(docOut) - docStartFP;
 
                 // if (DEBUG) {
                 //   System.out.println("skip packet " + (docOut.getFilePointer() - (docStartFP + skipOffset)) + " bytes");
@@ -603,16 +603,16 @@ namespace Lucene.Net.Codecs.Lucene41
             // if (DEBUG) {
             //   System.out.println("  payStartFP=" + payStartFP);
             // }
-            state.DocStartFP = DocStartFP;
-            state.PosStartFP = PosStartFP;
-            state.PayStartFP = PayStartFP;
-            state.SingletonDocID = singletonDocID;
-            state.SkipOffset = skipOffset;
-            state.LastPosBlockOffset = lastPosBlockOffset;
-            DocBufferUpto = 0;
-            PosBufferUpto = 0;
-            LastDocID = 0;
-            DocCount = 0;
+            state.docStartFP = docStartFP;
+            state.posStartFP = posStartFP;
+            state.payStartFP = payStartFP;
+            state.singletonDocID = singletonDocID;
+            state.skipOffset = skipOffset;
+            state.lastPosBlockOffset = lastPosBlockOffset;
+            docBufferUpto = 0;
+            posBufferUpto = 0;
+            lastDocID = 0;
+            docCount = 0;
         }
 
         public override void EncodeTerm(long[] longs, DataOutput @out, FieldInfo fieldInfo, BlockTermState _state, bool absolute)
@@ -620,33 +620,33 @@ namespace Lucene.Net.Codecs.Lucene41
             IntBlockTermState state = (IntBlockTermState)_state;
             if (absolute)
             {
-                LastState = EmptyState;
+                lastState = emptyState;
             }
-            longs[0] = state.DocStartFP - LastState.DocStartFP;
-            if (FieldHasPositions)
+            longs[0] = state.docStartFP - lastState.docStartFP;
+            if (fieldHasPositions)
             {
-                longs[1] = state.PosStartFP - LastState.PosStartFP;
-                if (FieldHasPayloads || FieldHasOffsets)
+                longs[1] = state.posStartFP - lastState.posStartFP;
+                if (fieldHasPayloads || fieldHasOffsets)
                 {
-                    longs[2] = state.PayStartFP - LastState.PayStartFP;
+                    longs[2] = state.payStartFP - lastState.payStartFP;
                 }
             }
-            if (state.SingletonDocID != -1)
+            if (state.singletonDocID != -1)
             {
-                @out.WriteVInt(state.SingletonDocID);
+                @out.WriteVInt(state.singletonDocID);
             }
-            if (FieldHasPositions)
+            if (fieldHasPositions)
             {
-                if (state.LastPosBlockOffset != -1)
+                if (state.lastPosBlockOffset != -1)
                 {
-                    @out.WriteVLong(state.LastPosBlockOffset);
+                    @out.WriteVLong(state.lastPosBlockOffset);
                 }
             }
-            if (state.SkipOffset != -1)
+            if (state.skipOffset != -1)
             {
-                @out.WriteVLong(state.SkipOffset);
+                @out.WriteVLong(state.skipOffset);
             }
-            LastState = state;
+            lastState = state;
         }
 
         protected override void Dispose(bool disposing)
@@ -657,17 +657,17 @@ namespace Lucene.Net.Codecs.Lucene41
                 bool success = false;
                 try
                 {
-                    if (DocOut != null)
+                    if (docOut != null)
                     {
-                        CodecUtil.WriteFooter(DocOut);
+                        CodecUtil.WriteFooter(docOut);
                     }
-                    if (PosOut != null)
+                    if (posOut != null)
                     {
-                        CodecUtil.WriteFooter(PosOut);
+                        CodecUtil.WriteFooter(posOut);
                     }
-                    if (PayOut != null)
+                    if (payOut != null)
                     {
-                        CodecUtil.WriteFooter(PayOut);
+                        CodecUtil.WriteFooter(payOut);
                     }
                     success = true;
                 }
@@ -675,13 +675,13 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     if (success)
                     {
-                        IOUtils.Close(DocOut, PosOut, PayOut);
+                        IOUtils.Close(docOut, posOut, payOut);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(DocOut, PosOut, PayOut);
+                        IOUtils.CloseWhileHandlingException(docOut, posOut, payOut);
                     }
-                    DocOut = PosOut = PayOut = null;
+                    docOut = posOut = payOut = null;
                 }
             }
         }

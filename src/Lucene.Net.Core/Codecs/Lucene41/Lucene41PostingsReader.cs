@@ -142,50 +142,50 @@ namespace Lucene.Net.Codecs.Lucene41
 
             if (absolute)
             {
-                termState.DocStartFP = 0;
-                termState.PosStartFP = 0;
-                termState.PayStartFP = 0;
+                termState.docStartFP = 0;
+                termState.posStartFP = 0;
+                termState.payStartFP = 0;
             }
             if (version < Lucene41PostingsWriter.VERSION_META_ARRAY) // backward compatibility
             {
                 DecodeTerm(@in, fieldInfo, termState);
                 return;
             }
-            termState.DocStartFP += longs[0];
+            termState.docStartFP += longs[0];
             if (fieldHasPositions)
             {
-                termState.PosStartFP += longs[1];
+                termState.posStartFP += longs[1];
                 if (fieldHasOffsets || fieldHasPayloads)
                 {
-                    termState.PayStartFP += longs[2];
+                    termState.payStartFP += longs[2];
                 }
             }
             if (termState.DocFreq == 1)
             {
-                termState.SingletonDocID = @in.ReadVInt();
+                termState.singletonDocID = @in.ReadVInt();
             }
             else
             {
-                termState.SingletonDocID = -1;
+                termState.singletonDocID = -1;
             }
             if (fieldHasPositions)
             {
                 if (termState.TotalTermFreq > Lucene41PostingsFormat.BLOCK_SIZE)
                 {
-                    termState.LastPosBlockOffset = @in.ReadVLong();
+                    termState.lastPosBlockOffset = @in.ReadVLong();
                 }
                 else
                 {
-                    termState.LastPosBlockOffset = -1;
+                    termState.lastPosBlockOffset = -1;
                 }
             }
             if (termState.DocFreq > Lucene41PostingsFormat.BLOCK_SIZE)
             {
-                termState.SkipOffset = @in.ReadVLong();
+                termState.skipOffset = @in.ReadVLong();
             }
             else
             {
-                termState.SkipOffset = -1;
+                termState.skipOffset = -1;
             }
         }
 
@@ -196,36 +196,36 @@ namespace Lucene.Net.Codecs.Lucene41
             bool fieldHasPayloads = fieldInfo.HasPayloads;
             if (termState.DocFreq == 1)
             {
-                termState.SingletonDocID = @in.ReadVInt();
+                termState.singletonDocID = @in.ReadVInt();
             }
             else
             {
-                termState.SingletonDocID = -1;
-                termState.DocStartFP += @in.ReadVLong();
+                termState.singletonDocID = -1;
+                termState.docStartFP += @in.ReadVLong();
             }
             if (fieldHasPositions)
             {
-                termState.PosStartFP += @in.ReadVLong();
+                termState.posStartFP += @in.ReadVLong();
                 if (termState.TotalTermFreq > Lucene41PostingsFormat.BLOCK_SIZE)
                 {
-                    termState.LastPosBlockOffset = @in.ReadVLong();
+                    termState.lastPosBlockOffset = @in.ReadVLong();
                 }
                 else
                 {
-                    termState.LastPosBlockOffset = -1;
+                    termState.lastPosBlockOffset = -1;
                 }
                 if ((fieldHasPayloads || fieldHasOffsets) && termState.TotalTermFreq >= Lucene41PostingsFormat.BLOCK_SIZE)
                 {
-                    termState.PayStartFP += @in.ReadVLong();
+                    termState.payStartFP += @in.ReadVLong();
                 }
             }
             if (termState.DocFreq > Lucene41PostingsFormat.BLOCK_SIZE)
             {
-                termState.SkipOffset = @in.ReadVLong();
+                termState.skipOffset = @in.ReadVLong();
             }
             else
             {
-                termState.SkipOffset = -1;
+                termState.skipOffset = -1;
             }
         }
 
@@ -361,9 +361,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 // }
                 docFreq = termState.DocFreq;
                 totalTermFreq = indexHasFreq ? termState.TotalTermFreq : docFreq;
-                docTermStartFP = termState.DocStartFP;
-                skipOffset = termState.SkipOffset;
-                singletonDocID = termState.SingletonDocID;
+                docTermStartFP = termState.docStartFP;
+                skipOffset = termState.skipOffset;
+                singletonDocID = termState.singletonDocID;
                 if (docFreq > 1)
                 {
                     if (docIn == null)
@@ -682,12 +682,12 @@ namespace Lucene.Net.Codecs.Lucene41
                 //   System.out.println("  FPR.reset: termState=" + termState);
                 // }
                 docFreq = termState.DocFreq;
-                docTermStartFP = termState.DocStartFP;
-                posTermStartFP = termState.PosStartFP;
-                payTermStartFP = termState.PayStartFP;
-                skipOffset = termState.SkipOffset;
+                docTermStartFP = termState.docStartFP;
+                posTermStartFP = termState.posStartFP;
+                payTermStartFP = termState.payStartFP;
+                skipOffset = termState.skipOffset;
                 totalTermFreq = termState.TotalTermFreq;
-                singletonDocID = termState.SingletonDocID;
+                singletonDocID = termState.singletonDocID;
                 if (docFreq > 1)
                 {
                     if (docIn == null)
@@ -709,7 +709,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
                 else
                 {
-                    lastPosBlockFP = posTermStartFP + termState.LastPosBlockOffset;
+                    lastPosBlockFP = posTermStartFP + termState.lastPosBlockOffset;
                 }
 
                 doc = -1;
@@ -1196,12 +1196,12 @@ namespace Lucene.Net.Codecs.Lucene41
                 //   System.out.println("  FPR.reset: termState=" + termState);
                 // }
                 docFreq = termState.DocFreq;
-                docTermStartFP = termState.DocStartFP;
-                posTermStartFP = termState.PosStartFP;
-                payTermStartFP = termState.PayStartFP;
-                skipOffset = termState.SkipOffset;
+                docTermStartFP = termState.docStartFP;
+                posTermStartFP = termState.posStartFP;
+                payTermStartFP = termState.payStartFP;
+                skipOffset = termState.skipOffset;
                 totalTermFreq = termState.TotalTermFreq;
-                singletonDocID = termState.SingletonDocID;
+                singletonDocID = termState.singletonDocID;
                 if (docFreq > 1)
                 {
                     if (docIn == null)
@@ -1224,7 +1224,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
                 else
                 {
-                    lastPosBlockFP = posTermStartFP + termState.LastPosBlockOffset;
+                    lastPosBlockFP = posTermStartFP + termState.lastPosBlockOffset;
                 }
 
                 this.needsOffsets = (flags & DocsAndPositionsEnum.FLAG_OFFSETS) != 0;
