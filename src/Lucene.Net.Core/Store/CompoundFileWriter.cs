@@ -353,23 +353,23 @@ namespace Lucene.Net.Store
 
         private sealed class DirectCFSIndexOutput : IndexOutput
         {
-            private readonly CompoundFileWriter OuterInstance;
+            private readonly CompoundFileWriter outerInstance;
 
             private readonly IndexOutput @delegate;
-            private readonly long Offset;
-            private bool Closed;
-            private FileEntry Entry;
-            private long WrittenBytes;
-            private readonly bool IsSeparate;
+            private readonly long offset;
+            private bool closed;
+            private FileEntry entry;
+            private long writtenBytes;
+            private readonly bool isSeparate;
 
             internal DirectCFSIndexOutput(CompoundFileWriter outerInstance, IndexOutput @delegate, FileEntry entry, bool isSeparate)
                 : base()
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.@delegate = @delegate;
-                this.Entry = entry;
-                entry.Offset = Offset = @delegate.FilePointer;
-                this.IsSeparate = isSeparate;
+                this.entry = entry;
+                entry.Offset = offset = @delegate.FilePointer;
+                this.isSeparate = isSeparate;
             }
 
             public override void Flush()
@@ -379,23 +379,23 @@ namespace Lucene.Net.Store
 
             public override void Dispose()
             {
-                if (!Closed)
+                if (!closed)
                 {
-                    Closed = true;
-                    Entry.Length = WrittenBytes;
-                    if (IsSeparate)
+                    closed = true;
+                    entry.Length = writtenBytes;
+                    if (isSeparate)
                     {
                         @delegate.Dispose();
                         // we are a separate file - push into the pending entries
-                        OuterInstance.pendingEntries.AddLast(Entry);
+                        outerInstance.pendingEntries.AddLast(entry);
                     }
                     else
                     {
                         // we have been written into the CFS directly - release the lock
-                        OuterInstance.ReleaseOutputLock();
+                        outerInstance.ReleaseOutputLock();
                     }
                     // now prune all pending entries and push them into the CFS
-                    OuterInstance.PrunePendingEntries();
+                    outerInstance.PrunePendingEntries();
                 }
             }
 
@@ -403,36 +403,36 @@ namespace Lucene.Net.Store
             {
                 get
                 {
-                    return @delegate.FilePointer - Offset;
+                    return @delegate.FilePointer - offset;
                 }
             }
 
             public override void Seek(long pos)
             {
-                Debug.Assert(!Closed);
-                @delegate.Seek(Offset + pos);
+                Debug.Assert(!closed);
+                @delegate.Seek(offset + pos);
             }
 
             public override long Length
             {
                 get
                 {
-                    Debug.Assert(!Closed);
-                    return @delegate.Length - Offset;
+                    Debug.Assert(!closed);
+                    return @delegate.Length - offset;
                 }
             }
 
             public override void WriteByte(byte b)
             {
-                Debug.Assert(!Closed);
-                WrittenBytes++;
+                Debug.Assert(!closed);
+                writtenBytes++;
                 @delegate.WriteByte(b);
             }
 
             public override void WriteBytes(byte[] b, int offset, int length)
             {
-                Debug.Assert(!Closed);
-                WrittenBytes += length;
+                Debug.Assert(!closed);
+                writtenBytes += length;
                 @delegate.WriteBytes(b, offset, length);
             }
 
