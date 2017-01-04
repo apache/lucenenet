@@ -88,13 +88,13 @@ namespace Lucene.Net.Codecs
         /// </summary>
         public abstract IComparer<BytesRef> Comparator { get; } // LUCENENET TODO: Rename Comparer
 
-        private MappingMultiDocsEnum DocsEnum;
-        private MappingMultiDocsEnum DocsAndFreqsEnum;
-        private MappingMultiDocsAndPositionsEnum PostingsEnum;
+        private MappingMultiDocsEnum docsEnum;
+        private MappingMultiDocsEnum docsAndFreqsEnum;
+        private MappingMultiDocsAndPositionsEnum postingsEnum;
 
         /// <summary>
         /// Default merge impl </summary>
-        public virtual void Merge(MergeState mergeState, IndexOptions? indexOptions, TermsEnum termsEnum)
+        public virtual void Merge(MergeState mergeState, IndexOptions? indexOptions, TermsEnum termsEnum) // LUCENENET TODO: Eliminate nullable
         {
             BytesRef term;
             Debug.Assert(termsEnum != null);
@@ -105,11 +105,11 @@ namespace Lucene.Net.Codecs
 
             if (indexOptions == IndexOptions.DOCS_ONLY)
             {
-                if (DocsEnum == null)
+                if (docsEnum == null)
                 {
-                    DocsEnum = new MappingMultiDocsEnum();
+                    docsEnum = new MappingMultiDocsEnum();
                 }
-                DocsEnum.MergeState = mergeState;
+                docsEnum.MergeState = mergeState;
 
                 MultiDocsEnum docsEnumIn = null;
 
@@ -120,9 +120,9 @@ namespace Lucene.Net.Codecs
                     docsEnumIn = (MultiDocsEnum)termsEnum.Docs(null, docsEnumIn, Index.DocsEnum.FLAG_NONE);
                     if (docsEnumIn != null)
                     {
-                        DocsEnum.Reset(docsEnumIn);
+                        docsEnum.Reset(docsEnumIn);
                         PostingsConsumer postingsConsumer = StartTerm(term);
-                        TermStats stats = postingsConsumer.Merge(mergeState, indexOptions, DocsEnum, visitedDocs);
+                        TermStats stats = postingsConsumer.Merge(mergeState, indexOptions, docsEnum, visitedDocs);
                         if (stats.DocFreq > 0)
                         {
                             FinishTerm(term, stats);
@@ -140,11 +140,11 @@ namespace Lucene.Net.Codecs
             }
             else if (indexOptions == IndexOptions.DOCS_AND_FREQS)
             {
-                if (DocsAndFreqsEnum == null)
+                if (docsAndFreqsEnum == null)
                 {
-                    DocsAndFreqsEnum = new MappingMultiDocsEnum();
+                    docsAndFreqsEnum = new MappingMultiDocsEnum();
                 }
-                DocsAndFreqsEnum.MergeState = mergeState;
+                docsAndFreqsEnum.MergeState = mergeState;
 
                 MultiDocsEnum docsAndFreqsEnumIn = null;
 
@@ -154,9 +154,9 @@ namespace Lucene.Net.Codecs
                     // mapping enum will skip the non-live docs:
                     docsAndFreqsEnumIn = (MultiDocsEnum)termsEnum.Docs(null, docsAndFreqsEnumIn);
                     Debug.Assert(docsAndFreqsEnumIn != null);
-                    DocsAndFreqsEnum.Reset(docsAndFreqsEnumIn);
+                    docsAndFreqsEnum.Reset(docsAndFreqsEnumIn);
                     PostingsConsumer postingsConsumer = StartTerm(term);
-                    TermStats stats = postingsConsumer.Merge(mergeState, indexOptions, DocsAndFreqsEnum, visitedDocs);
+                    TermStats stats = postingsConsumer.Merge(mergeState, indexOptions, docsAndFreqsEnum, visitedDocs);
                     if (stats.DocFreq > 0)
                     {
                         FinishTerm(term, stats);
@@ -173,11 +173,11 @@ namespace Lucene.Net.Codecs
             }
             else if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
-                if (PostingsEnum == null)
+                if (postingsEnum == null)
                 {
-                    PostingsEnum = new MappingMultiDocsAndPositionsEnum();
+                    postingsEnum = new MappingMultiDocsAndPositionsEnum();
                 }
-                PostingsEnum.MergeState = mergeState;
+                postingsEnum.MergeState = mergeState;
                 MultiDocsAndPositionsEnum postingsEnumIn = null;
                 while ((term = termsEnum.Next()) != null)
                 {
@@ -185,10 +185,10 @@ namespace Lucene.Net.Codecs
                     // mapping enum will skip the non-live docs:
                     postingsEnumIn = (MultiDocsAndPositionsEnum)termsEnum.DocsAndPositions(null, postingsEnumIn, DocsAndPositionsEnum.FLAG_PAYLOADS);
                     Debug.Assert(postingsEnumIn != null);
-                    PostingsEnum.Reset(postingsEnumIn);
+                    postingsEnum.Reset(postingsEnumIn);
 
                     PostingsConsumer postingsConsumer = StartTerm(term);
-                    TermStats stats = postingsConsumer.Merge(mergeState, indexOptions, PostingsEnum, visitedDocs);
+                    TermStats stats = postingsConsumer.Merge(mergeState, indexOptions, postingsEnum, visitedDocs);
                     if (stats.DocFreq > 0)
                     {
                         FinishTerm(term, stats);
@@ -206,11 +206,11 @@ namespace Lucene.Net.Codecs
             else
             {
                 Debug.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
-                if (PostingsEnum == null)
+                if (postingsEnum == null)
                 {
-                    PostingsEnum = new MappingMultiDocsAndPositionsEnum();
+                    postingsEnum = new MappingMultiDocsAndPositionsEnum();
                 }
-                PostingsEnum.MergeState = mergeState;
+                postingsEnum.MergeState = mergeState;
                 MultiDocsAndPositionsEnum postingsEnumIn = null;
                 while ((term = termsEnum.Next()) != null)
                 {
@@ -218,10 +218,10 @@ namespace Lucene.Net.Codecs
                     // mapping enum will skip the non-live docs:
                     postingsEnumIn = (MultiDocsAndPositionsEnum)termsEnum.DocsAndPositions(null, postingsEnumIn);
                     Debug.Assert(postingsEnumIn != null);
-                    PostingsEnum.Reset(postingsEnumIn);
+                    postingsEnum.Reset(postingsEnumIn);
 
                     PostingsConsumer postingsConsumer = StartTerm(term);
-                    TermStats stats = postingsConsumer.Merge(mergeState, indexOptions, PostingsEnum, visitedDocs);
+                    TermStats stats = postingsConsumer.Merge(mergeState, indexOptions, postingsEnum, visitedDocs);
                     if (stats.DocFreq > 0)
                     {
                         FinishTerm(term, stats);
