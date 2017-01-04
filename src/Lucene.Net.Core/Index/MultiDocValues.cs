@@ -632,7 +632,7 @@ namespace Lucene.Net.Index
             /// ordinal map mapping ords from <code>values</code> to global ord space </summary>
             public OrdinalMap Mapping { get; private set; }
 
-            internal int CurrentSubIndex;
+            internal int currentSubIndex;
 
             /// <summary>
             /// Creates a new MultiSortedSetDocValues over <code>values</code> </summary>
@@ -647,21 +647,21 @@ namespace Lucene.Net.Index
 
             public override long NextOrd()
             {
-                long segmentOrd = Values[CurrentSubIndex].NextOrd();
+                long segmentOrd = Values[currentSubIndex].NextOrd();
                 if (segmentOrd == NO_MORE_ORDS)
                 {
                     return segmentOrd;
                 }
                 else
                 {
-                    return Mapping.GetGlobalOrd(CurrentSubIndex, segmentOrd);
+                    return Mapping.GetGlobalOrd(currentSubIndex, segmentOrd);
                 }
             }
 
             public override void SetDocument(int docID)
             {
-                CurrentSubIndex = ReaderUtil.SubIndex(docID, DocStarts);
-                Values[CurrentSubIndex].SetDocument(docID - DocStarts[CurrentSubIndex]);
+                currentSubIndex = ReaderUtil.SubIndex(docID, DocStarts);
+                Values[currentSubIndex].SetDocument(docID - DocStarts[currentSubIndex]);
             }
 
             public override void LookupOrd(long ord, BytesRef result)
