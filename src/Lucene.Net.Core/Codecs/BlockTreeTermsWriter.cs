@@ -263,7 +263,7 @@ namespace Lucene.Net.Codecs
             }
         }
 
-        private readonly IList<FieldMetaData> Fields = new List<FieldMetaData>();
+        private readonly IList<FieldMetaData> fields = new List<FieldMetaData>();
         // private final String segment;
 
         /// <summary>
@@ -1175,7 +1175,7 @@ namespace Lucene.Net.Codecs
                     //   w.Dispose();
                     // }
 
-                    outerInstance.Fields.Add(new FieldMetaData(fieldInfo, ((PendingBlock)pending[0]).Index.EmptyOutput, numTerms, indexStartFP, sumTotalTermFreq, sumDocFreq, docCount, longsSize));
+                    outerInstance.fields.Add(new FieldMetaData(fieldInfo, ((PendingBlock)pending[0]).Index.EmptyOutput, numTerms, indexStartFP, sumTotalTermFreq, sumDocFreq, docCount, longsSize));
                 }
                 else
                 {
@@ -1199,9 +1199,9 @@ namespace Lucene.Net.Codecs
                 long dirStart = @out.FilePointer;
                 long indexDirStart = indexOut.FilePointer;
 
-                @out.WriteVInt(Fields.Count);
+                @out.WriteVInt(fields.Count);
 
-                foreach (FieldMetaData field in Fields)
+                foreach (FieldMetaData field in fields)
                 {
                     //System.out.println("  field " + field.fieldInfo.name + " " + field.numTerms + " terms");
                     @out.WriteVInt(field.fieldInfo.Number);
