@@ -38,13 +38,13 @@ namespace Lucene.Net.Search.Similarities
     {
         /// <summary>
         /// The collection model. </summary>
-        protected internal readonly ICollectionModel collectionModel;
+        protected readonly ICollectionModel m_collectionModel;
 
         /// <summary>
         /// Creates a new instance with the specified collection language model. </summary>
         public LMSimilarity(ICollectionModel collectionModel)
         {
-            this.collectionModel = collectionModel;
+            this.m_collectionModel = collectionModel;
         }
 
         /// <summary>
@@ -67,12 +67,12 @@ namespace Lucene.Net.Search.Similarities
         {
             base.FillBasicStats(stats, collectionStats, termStats);
             LMStats lmStats = (LMStats)stats;
-            lmStats.CollectionProbability = collectionModel.ComputeProbability(stats);
+            lmStats.CollectionProbability = m_collectionModel.ComputeProbability(stats);
         }
 
         protected internal override void Explain(Explanation expl, BasicStats stats, int doc, float freq, float docLen)
         {
-            expl.AddDetail(new Explanation(collectionModel.ComputeProbability(stats), "collection probability"));
+            expl.AddDetail(new Explanation(m_collectionModel.ComputeProbability(stats), "collection probability"));
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Lucene.Net.Search.Similarities
         /// <seealso cref= DefaultCollectionModel  </seealso>
         public override string ToString()
         {
-            string coll = collectionModel.Name;
+            string coll = m_collectionModel.Name;
             if (coll != null)
             {
                 return string.Format(CultureInfo.InvariantCulture, "LM %s - %s", GetName(), coll); // LUCENENET TODO: Formatting
