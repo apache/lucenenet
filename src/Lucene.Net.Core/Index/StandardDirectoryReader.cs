@@ -30,20 +30,20 @@ namespace Lucene.Net.Index
 
     internal sealed class StandardDirectoryReader : DirectoryReader
     {
-        private readonly IndexWriter Writer;
-        private readonly SegmentInfos SegmentInfos;
-        private readonly int TermInfosIndexDivisor;
-        private readonly bool ApplyAllDeletes;
+        private readonly IndexWriter writer;
+        private readonly SegmentInfos segmentInfos;
+        private readonly int termInfosIndexDivisor;
+        private readonly bool applyAllDeletes;
 
         /// <summary>
         /// called only from static open() methods </summary>
         internal StandardDirectoryReader(Directory directory, AtomicReader[] readers, IndexWriter writer, SegmentInfos sis, int termInfosIndexDivisor, bool applyAllDeletes)
             : base(directory, readers)
         {
-            this.Writer = writer;
-            this.SegmentInfos = sis;
-            this.TermInfosIndexDivisor = termInfosIndexDivisor;
-            this.ApplyAllDeletes = applyAllDeletes;
+            this.writer = writer;
+            this.segmentInfos = sis;
+            this.termInfosIndexDivisor = termInfosIndexDivisor;
+            this.applyAllDeletes = applyAllDeletes;
         }
 
         /// <summary>
@@ -298,12 +298,12 @@ namespace Lucene.Net.Index
             StringBuilder buffer = new StringBuilder();
             buffer.Append(this.GetType().Name);
             buffer.Append('(');
-            string segmentsFile = SegmentInfos.GetSegmentsFileName();
+            string segmentsFile = segmentInfos.GetSegmentsFileName();
             if (segmentsFile != null)
             {
-                buffer.Append(segmentsFile).Append(":").Append(SegmentInfos.Version);
+                buffer.Append(segmentsFile).Append(":").Append(segmentInfos.Version);
             }
-            if (Writer != null)
+            if (writer != null)
             {
                 buffer.Append(":nrt");
             }
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
 
             // If we were obtained by writer.getReader(), re-ask the
             // writer to get a new reader.
-            if (Writer != null)
+            if (writer != null)
             {
                 return DoOpenFromWriter(commit);
             }
@@ -340,7 +340,7 @@ namespace Lucene.Net.Index
         protected internal override DirectoryReader DoOpenIfChanged(IndexWriter writer, bool applyAllDeletes)
         {
             EnsureOpen();
-            if (writer == this.Writer && applyAllDeletes == this.ApplyAllDeletes)
+            if (writer == this.writer && applyAllDeletes == this.applyAllDeletes)
             {
                 return DoOpenFromWriter(null);
             }
@@ -357,15 +357,15 @@ namespace Lucene.Net.Index
                 return DoOpenFromCommit(commit);
             }
 
-            if (Writer.NrtIsCurrent(SegmentInfos))
+            if (writer.NrtIsCurrent(segmentInfos))
             {
                 return null;
             }
 
-            DirectoryReader reader = Writer.GetReader(ApplyAllDeletes);
+            DirectoryReader reader = writer.GetReader(applyAllDeletes);
 
             // If in fact no changes took place, return null:
-            if (reader.Version == SegmentInfos.Version)
+            if (reader.Version == segmentInfos.Version)
             {
                 reader.DecRef();
                 return null;
@@ -389,7 +389,7 @@ namespace Lucene.Net.Index
                 {
                     throw new System.IO.IOException("the specified commit does not match the specified Directory");
                 }
-                if (SegmentInfos != null && commit.SegmentsFileName.Equals(SegmentInfos.GetSegmentsFileName()))
+                if (segmentInfos != null && commit.SegmentsFileName.Equals(segmentInfos.GetSegmentsFileName()))
                 {
                     return null;
                 }
@@ -405,25 +405,25 @@ namespace Lucene.Net.Index
 
         private class FindSegmentsFileAnonymousInnerClassHelper2 : SegmentInfos.FindSegmentsFile
         {
-            private readonly StandardDirectoryReader OuterInstance;
+            private readonly StandardDirectoryReader outerInstance;
 
             public FindSegmentsFileAnonymousInnerClassHelper2(StandardDirectoryReader outerInstance, Directory directory)
                 : base(directory)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override object DoBody(string segmentFileName)
             {
                 SegmentInfos infos = new SegmentInfos();
-                infos.Read(OuterInstance.directory, segmentFileName);
-                return OuterInstance.DoOpenIfChanged(infos);
+                infos.Read(outerInstance.directory, segmentFileName);
+                return outerInstance.DoOpenIfChanged(infos);
             }
         }
 
         internal DirectoryReader DoOpenIfChanged(SegmentInfos infos)
         {
-            return StandardDirectoryReader.Open(directory, infos, GetSequentialSubReaders().OfType<AtomicReader>().ToList(), TermInfosIndexDivisor);
+            return StandardDirectoryReader.Open(directory, infos, GetSequentialSubReaders().OfType<AtomicReader>().ToList(), termInfosIndexDivisor);
         }
 
         public override long Version
@@ -431,7 +431,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return SegmentInfos.Version;
+                return segmentInfos.Version;
             }
         }
 
@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                if (Writer == null || Writer.IsClosed)
+                if (writer == null || writer.IsClosed)
                 {
                     // Fully read the segments file: this ensures that it's
                     // completely written so that if
@@ -451,11 +451,11 @@ namespace Lucene.Net.Index
                     sis.Read(directory);
 
                     // we loaded SegmentInfos from the directory
-                    return sis.Version == SegmentInfos.Version;
+                    return sis.Version == segmentInfos.Version;
                 }
                 else
                 {
-                    return Writer.NrtIsCurrent(SegmentInfos);
+                    return writer.NrtIsCurrent(segmentInfos);
                 }
             }
         }
@@ -479,11 +479,11 @@ namespace Lucene.Net.Index
                 }
             }
 
-            if (Writer != null)
+            if (writer != null)
             {
                 try
                 {
-                    Writer.DecRefDeleter(SegmentInfos);
+                    writer.DecRefDeleter(segmentInfos);
                 }
                 catch (AlreadyClosedException ex)
                 {
@@ -504,39 +504,39 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return new ReaderCommit(SegmentInfos, directory);
+                return new ReaderCommit(segmentInfos, directory);
             }
         }
 
         internal sealed class ReaderCommit : IndexCommit
         {
-            internal string SegmentsFileName_Renamed;
-            internal ICollection<string> Files;
-            internal Directory Dir;
-            internal long Generation_Renamed;
-            internal readonly IDictionary<string, string> UserData_Renamed;
-            internal readonly int SegmentCount_Renamed;
+            internal string segmentsFileName;
+            internal ICollection<string> files;
+            internal Directory dir;
+            internal long generation;
+            internal readonly IDictionary<string, string> userData;
+            internal readonly int segmentCount;
 
             internal ReaderCommit(SegmentInfos infos, Directory dir)
             {
-                SegmentsFileName_Renamed = infos.GetSegmentsFileName();
-                this.Dir = dir;
-                UserData_Renamed = infos.UserData;
-                Files = infos.Files(dir, true);
-                Generation_Renamed = infos.Generation;
-                SegmentCount_Renamed = infos.Size;
+                segmentsFileName = infos.GetSegmentsFileName();
+                this.dir = dir;
+                userData = infos.UserData;
+                files = infos.Files(dir, true);
+                generation = infos.Generation;
+                segmentCount = infos.Size;
             }
 
             public override string ToString()
             {
-                return "DirectoryReader.ReaderCommit(" + SegmentsFileName_Renamed + ")";
+                return "DirectoryReader.ReaderCommit(" + segmentsFileName + ")";
             }
 
             public override int SegmentCount
             {
                 get
                 {
-                    return SegmentCount_Renamed;
+                    return segmentCount;
                 }
             }
 
@@ -544,7 +544,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return SegmentsFileName_Renamed;
+                    return segmentsFileName;
                 }
             }
 
@@ -552,7 +552,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return Files;
+                    return files;
                 }
             }
 
@@ -560,7 +560,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return Dir;
+                    return dir;
                 }
             }
 
@@ -568,7 +568,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return Generation_Renamed;
+                    return generation;
                 }
             }
 
@@ -584,7 +584,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return UserData_Renamed;
+                    return userData;
                 }
             }
 
