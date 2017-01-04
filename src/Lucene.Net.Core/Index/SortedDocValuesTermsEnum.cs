@@ -30,42 +30,42 @@ namespace Lucene.Net.Index
 
     internal class SortedDocValuesTermsEnum : TermsEnum
     {
-        private readonly SortedDocValues Values;
-        private int CurrentOrd = -1;
-        private readonly BytesRef Term_Renamed = new BytesRef();
+        private readonly SortedDocValues values;
+        private int currentOrd = -1;
+        private readonly BytesRef term = new BytesRef();
 
         /// <summary>
         /// Creates a new TermsEnum over the provided values </summary>
         public SortedDocValuesTermsEnum(SortedDocValues values)
         {
-            this.Values = values;
+            this.values = values;
         }
 
         public override SeekStatus SeekCeil(BytesRef text)
         {
-            int ord = Values.LookupTerm(text);
+            int ord = values.LookupTerm(text);
             if (ord >= 0)
             {
-                CurrentOrd = ord;
-                Term_Renamed.Offset = 0;
+                currentOrd = ord;
+                term.Offset = 0;
                 // TODO: is there a cleaner way?
                 // term.bytes may be pointing to codec-private byte[]
                 // storage, so we must force new byte[] allocation:
-                Term_Renamed.Bytes = new byte[text.Length];
-                Term_Renamed.CopyBytes(text);
+                term.Bytes = new byte[text.Length];
+                term.CopyBytes(text);
                 return SeekStatus.FOUND;
             }
             else
             {
-                CurrentOrd = -ord - 1;
-                if (CurrentOrd == Values.ValueCount)
+                currentOrd = -ord - 1;
+                if (currentOrd == values.ValueCount)
                 {
                     return SeekStatus.END;
                 }
                 else
                 {
                     // TODO: hmm can we avoid this "extra" lookup?:
-                    Values.LookupOrd(CurrentOrd, Term_Renamed);
+                    values.LookupOrd(currentOrd, term);
                     return SeekStatus.NOT_FOUND;
                 }
             }
@@ -73,16 +73,16 @@ namespace Lucene.Net.Index
 
         public override bool SeekExact(BytesRef text)
         {
-            int ord = Values.LookupTerm(text);
+            int ord = values.LookupTerm(text);
             if (ord >= 0)
             {
-                Term_Renamed.Offset = 0;
+                term.Offset = 0;
                 // TODO: is there a cleaner way?
                 // term.bytes may be pointing to codec-private byte[]
                 // storage, so we must force new byte[] allocation:
-                Term_Renamed.Bytes = new byte[text.Length];
-                Term_Renamed.CopyBytes(text);
-                CurrentOrd = ord;
+                term.Bytes = new byte[text.Length];
+                term.CopyBytes(text);
+                currentOrd = ord;
                 return true;
             }
             else
@@ -93,30 +93,30 @@ namespace Lucene.Net.Index
 
         public override void SeekExact(long ord)
         {
-            Debug.Assert(ord >= 0 && ord < Values.ValueCount);
-            CurrentOrd = (int)ord;
-            Values.LookupOrd(CurrentOrd, Term_Renamed);
+            Debug.Assert(ord >= 0 && ord < values.ValueCount);
+            currentOrd = (int)ord;
+            values.LookupOrd(currentOrd, term);
         }
 
         public override BytesRef Next()
         {
-            CurrentOrd++;
-            if (CurrentOrd >= Values.ValueCount)
+            currentOrd++;
+            if (currentOrd >= values.ValueCount)
             {
                 return null;
             }
-            Values.LookupOrd(CurrentOrd, Term_Renamed);
-            return Term_Renamed;
+            values.LookupOrd(currentOrd, term);
+            return term;
         }
 
         public override BytesRef Term
         {
-            get { return Term_Renamed; }
+            get { return term; }
         }
 
         public override long Ord
         {
-            get { return CurrentOrd; }
+            get { return currentOrd; }
         }
 
         public override int DocFreq
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
         public override TermState GetTermState()
         {
             OrdTermState state = new OrdTermState();
-            state.Ord = CurrentOrd;
+            state.Ord = currentOrd;
             return state;
         }
     }
