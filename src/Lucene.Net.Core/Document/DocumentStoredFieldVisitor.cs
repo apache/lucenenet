@@ -33,25 +33,25 @@ namespace Lucene.Net.Documents
 
     public class DocumentStoredFieldVisitor : StoredFieldVisitor
     {
-        private readonly Documents.Document Doc = new Documents.Document();
-        private readonly ISet<string> FieldsToAdd;
+        private readonly Documents.Document doc = new Documents.Document();
+        private readonly ISet<string> fieldsToAdd;
 
         /// <summary>
         /// Load only fields named in the provided <code>Set&lt;String&gt;</code>. </summary>
         /// <param name="fieldsToAdd"> Set of fields to load, or <code>null</code> (all fields). </param>
         public DocumentStoredFieldVisitor(ISet<string> fieldsToAdd)
         {
-            this.FieldsToAdd = fieldsToAdd;
+            this.fieldsToAdd = fieldsToAdd;
         }
 
         /// <summary>
         /// Load only fields named in the provided fields. </summary>
         public DocumentStoredFieldVisitor(params string[] fields)
         {
-            FieldsToAdd = new HashSet<string>();
+            fieldsToAdd = new HashSet<string>();
             foreach (string field in fields)
             {
-                FieldsToAdd.Add(field);
+                fieldsToAdd.Add(field);
             }
         }
 
@@ -59,12 +59,12 @@ namespace Lucene.Net.Documents
         /// Load all stored fields. </summary>
         public DocumentStoredFieldVisitor()
         {
-            this.FieldsToAdd = null;
+            this.fieldsToAdd = null;
         }
 
         public override void BinaryField(FieldInfo fieldInfo, byte[] value)
         {
-            Doc.Add(new StoredField(fieldInfo.Name, value));
+            doc.Add(new StoredField(fieldInfo.Name, value));
         }
 
         public override void StringField(FieldInfo fieldInfo, string value)
@@ -74,32 +74,32 @@ namespace Lucene.Net.Documents
             ft.IsIndexed = fieldInfo.IsIndexed;
             ft.OmitNorms = fieldInfo.OmitsNorms;
             ft.IndexOptions = fieldInfo.IndexOptions;
-            Doc.Add(new Field(fieldInfo.Name, value, ft));
+            doc.Add(new Field(fieldInfo.Name, value, ft));
         }
 
         public override void Int32Field(FieldInfo fieldInfo, int value) // LUCENENET specific: renamed from IntField to follow .NET conventions
         {
-            Doc.Add(new StoredField(fieldInfo.Name, value));
+            doc.Add(new StoredField(fieldInfo.Name, value));
         }
 
         public override void Int64Field(FieldInfo fieldInfo, long value) // LUCENENET specific: renamed from LongField to follow  .NET conventions
         {
-            Doc.Add(new StoredField(fieldInfo.Name, value));
+            doc.Add(new StoredField(fieldInfo.Name, value));
         }
 
         public override void SingleField(FieldInfo fieldInfo, float value) // LUCENENET specific: renamed from FloatField to follow  .NET conventions
         {
-            Doc.Add(new StoredField(fieldInfo.Name, value));
+            doc.Add(new StoredField(fieldInfo.Name, value));
         }
 
         public override void DoubleField(FieldInfo fieldInfo, double value)
         {
-            Doc.Add(new StoredField(fieldInfo.Name, value));
+            doc.Add(new StoredField(fieldInfo.Name, value));
         }
 
         public override Status NeedsField(FieldInfo fieldInfo)
         {
-            return FieldsToAdd == null || FieldsToAdd.Contains(fieldInfo.Name) ? Status.YES : Status.NO;
+            return fieldsToAdd == null || fieldsToAdd.Contains(fieldInfo.Name) ? Status.YES : Status.NO;
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Lucene.Net.Documents
         {
             get
             {
-                return Doc;
+                return doc;
             }
         }
     }
