@@ -46,11 +46,11 @@ namespace Lucene.Net.Index
         /// Records how many snapshots are held against each
         ///  commit generation
         /// </summary>
-        protected internal IDictionary<long, int> refCounts = new Dictionary<long, int>();
+        protected IDictionary<long, int> m_refCounts = new Dictionary<long, int>();
 
         /// <summary>
         /// Used to map gen to IndexCommit. </summary>
-        protected internal IDictionary<long?, IndexCommit> indexCommits = new Dictionary<long?, IndexCommit>();
+        protected IDictionary<long?, IndexCommit> m_indexCommits = new Dictionary<long?, IndexCommit>();
 
         /// <summary>
         /// Wrapped <seealso cref="IndexDeletionPolicy"/> </summary>
@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Most recently committed <seealso cref="IndexCommit"/>. </summary>
-        protected internal IndexCommit lastCommit;
+        protected IndexCommit m_lastCommit;
 
         /// <summary>
         /// Used to detect misuse </summary>
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 primary.OnCommit(WrapCommits(commits));
-                lastCommit = commits[commits.Count - 1];
+                m_lastCommit = commits[commits.Count - 1];
             }
         }
 
@@ -90,14 +90,14 @@ namespace Lucene.Net.Index
                 primary.OnInit(WrapCommits(commits));
                 foreach (IndexCommit commit in commits)
                 {
-                    if (refCounts.ContainsKey(commit.Generation))
+                    if (m_refCounts.ContainsKey(commit.Generation))
                     {
-                        indexCommits[commit.Generation] = commit;
+                        m_indexCommits[commit.Generation] = commit;
                     }
                 }
                 if (commits.Count > 0)
                 {
-                    lastCommit = commits[commits.Count - 1];
+                    m_lastCommit = commits[commits.Count - 1];
                 }
             }
         }
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
             {
                 throw new InvalidOperationException("this instance is not being used by IndexWriter; be sure to use the instance returned from writer.getConfig().getIndexDeletionPolicy()");
             }
-            int? refCount = refCounts[gen];
+            int? refCount = m_refCounts[gen];
             if (refCount == null)
             {
                 throw new System.ArgumentException("commit gen=" + gen + " is not currently snapshotted");
@@ -134,12 +134,12 @@ namespace Lucene.Net.Index
             refCountInt--;
             if (refCountInt == 0)
             {
-                refCounts.Remove(gen);
-                indexCommits.Remove(gen);
+                m_refCounts.Remove(gen);
+                m_indexCommits.Remove(gen);
             }
             else
             {
-                refCounts[gen] = refCountInt;
+                m_refCounts[gen] = refCountInt;
             }
         }
 
@@ -152,16 +152,16 @@ namespace Lucene.Net.Index
                 long gen = ic.Generation;
                 int refCount;
                 int refCountInt;
-                if (!refCounts.TryGetValue(gen, out refCount))
+                if (!m_refCounts.TryGetValue(gen, out refCount))
                 {
-                    indexCommits[gen] = lastCommit;
+                    m_indexCommits[gen] = m_lastCommit;
                     refCountInt = 0;
                 }
                 else
                 {
                     refCountInt = (int)refCount;
                 }
-                refCounts[gen] = refCountInt + 1;
+                m_refCounts[gen] = refCountInt + 1;
             }
         }
 
@@ -189,15 +189,15 @@ namespace Lucene.Net.Index
                 {
                     throw new InvalidOperationException("this instance is not being used by IndexWriter; be sure to use the instance returned from writer.getConfig().getIndexDeletionPolicy()");
                 }
-                if (lastCommit == null)
+                if (m_lastCommit == null)
                 {
                     // No commit yet, eg this is a new IndexWriter:
                     throw new InvalidOperationException("No index commit to snapshot");
                 }
 
-                IncRef(lastCommit);
+                IncRef(m_lastCommit);
 
-                return lastCommit;
+                return m_lastCommit;
             }
         }
 
@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                return new List<IndexCommit>(indexCommits.Values);
+                return new List<IndexCommit>(m_indexCommits.Values);
             }
         }
 
@@ -220,7 +220,7 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     int total = 0;
-                    foreach (var refCount in refCounts.Values)
+                    foreach (var refCount in m_refCounts.Values)
                     {
                         total += refCount;
                     }
@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                return indexCommits[gen];
+                return m_indexCommits[gen];
             }
         }
 
@@ -249,9 +249,9 @@ namespace Lucene.Net.Index
             {
                 SnapshotDeletionPolicy other = (SnapshotDeletionPolicy)base.Clone();
                 other.primary = (IndexDeletionPolicy)this.primary.Clone();
-                other.lastCommit = null;
-                other.refCounts = new Dictionary<long, int>(refCounts);
-                other.indexCommits = new Dictionary<long?, IndexCommit>(indexCommits);
+                other.m_lastCommit = null;
+                other.m_refCounts = new Dictionary<long, int>(m_refCounts);
+                other.m_indexCommits = new Dictionary<long?, IndexCommit>(m_indexCommits);
                 return other;
             }
         }
@@ -281,7 +281,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// The <seealso cref="IndexCommit"/> we are preventing from deletion. </summary>
-            protected internal IndexCommit cp;
+            protected IndexCommit m_cp;
 
             /// <summary>
             /// Creates a {@code SnapshotCommitPoint} wrapping the provided
@@ -290,12 +290,12 @@ namespace Lucene.Net.Index
             protected internal SnapshotCommitPoint(SnapshotDeletionPolicy outerInstance, IndexCommit cp)
             {
                 this.outerInstance = outerInstance;
-                this.cp = cp;
+                this.m_cp = cp;
             }
 
             public override string ToString()
             {
-                return "SnapshotDeletionPolicy.SnapshotCommitPoint(" + cp + ")";
+                return "SnapshotDeletionPolicy.SnapshotCommitPoint(" + m_cp + ")";
             }
 
             public override void Delete()
@@ -304,9 +304,9 @@ namespace Lucene.Net.Index
                 {
                     // Suppress the delete request if this commit point is
                     // currently snapshotted.
-                    if (!outerInstance.refCounts.ContainsKey(cp.Generation))
+                    if (!outerInstance.m_refCounts.ContainsKey(m_cp.Generation))
                     {
-                        cp.Delete();
+                        m_cp.Delete();
                     }
                 }
             }
@@ -315,7 +315,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return cp.Directory;
+                    return m_cp.Directory;
                 }
             }
 
@@ -323,7 +323,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return cp.FileNames;
+                    return m_cp.FileNames;
                 }
             }
 
@@ -331,7 +331,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return cp.Generation;
+                    return m_cp.Generation;
                 }
             }
 
@@ -339,7 +339,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return cp.SegmentsFileName;
+                    return m_cp.SegmentsFileName;
                 }
             }
 
@@ -347,7 +347,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return cp.UserData;
+                    return m_cp.UserData;
                 }
             }
 
@@ -355,7 +355,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return cp.IsDeleted;
+                    return m_cp.IsDeleted;
                 }
             }
 
@@ -363,7 +363,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return cp.SegmentCount;
+                    return m_cp.SegmentCount;
                 }
             }
         }

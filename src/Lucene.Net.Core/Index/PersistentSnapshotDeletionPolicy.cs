@@ -205,8 +205,8 @@ namespace Lucene.Net.Index
                 try
                 {
                     CodecUtil.WriteHeader(@out, CODEC_NAME, VERSION_CURRENT);
-                    @out.WriteVInt(refCounts.Count);
-                    foreach (KeyValuePair<long, int> ent in refCounts)
+                    @out.WriteVInt(m_refCounts.Count);
+                    foreach (KeyValuePair<long, int> ent in m_refCounts)
                     {
                         @out.WriteVLong(ent.Key);
                         @out.WriteVInt(ent.Value);
@@ -333,8 +333,8 @@ namespace Lucene.Net.Index
                             }
 
                             genLoaded = gen;
-                            refCounts.Clear();
-                            refCounts.PutAll(m);
+                            m_refCounts.Clear();
+                            m_refCounts.PutAll(m);
                         }
                     }
                 }
