@@ -545,20 +545,20 @@ namespace Lucene.Net.Index
         /// </summary>
         protected internal class MergeThread : ThreadClass//System.Threading.Thread
         {
-            private readonly ConcurrentMergeScheduler OuterInstance;
+            private readonly ConcurrentMergeScheduler outerInstance;
 
-            internal IndexWriter TWriter;
-            internal MergePolicy.OneMerge StartMerge;
-            internal MergePolicy.OneMerge RunningMerge_Renamed;
-            private volatile bool Done;
+            internal IndexWriter tWriter;
+            internal MergePolicy.OneMerge startMerge;
+            internal MergePolicy.OneMerge runningMerge;
+            private volatile bool done;
 
             /// <summary>
             /// Sole constructor. </summary>
             public MergeThread(ConcurrentMergeScheduler outerInstance, IndexWriter writer, MergePolicy.OneMerge startMerge)
             {
-                this.OuterInstance = outerInstance;
-                this.TWriter = writer;
-                this.StartMerge = startMerge;
+                this.outerInstance = outerInstance;
+                this.tWriter = writer;
+                this.startMerge = startMerge;
             }
 
             /// <summary>
@@ -569,14 +569,14 @@ namespace Lucene.Net.Index
                 {
                     lock (this)
                     {
-                        RunningMerge_Renamed = value;
+                        runningMerge = value;
                     }
                 }
                 get
                 {
                     lock (this)
                     {
-                        return RunningMerge_Renamed;
+                        return runningMerge;
                     }
                 }
             }
@@ -591,17 +591,17 @@ namespace Lucene.Net.Index
                 {
                     lock (this)
                     {
-                        if (Done)
+                        if (done)
                         {
                             return null;
                         }
-                        else if (RunningMerge_Renamed != null)
+                        else if (runningMerge != null)
                         {
-                            return RunningMerge_Renamed;
+                            return runningMerge;
                         }
                         else
                         {
-                            return StartMerge;
+                            return startMerge;
                         }
                     }
                 }
@@ -631,38 +631,38 @@ namespace Lucene.Net.Index
             {
                 // First time through the while loop we do the merge
                 // that we were started with:
-                MergePolicy.OneMerge merge = this.StartMerge;
+                MergePolicy.OneMerge merge = this.startMerge;
 
                 try
                 {
-                    if (OuterInstance.IsVerbose)
+                    if (outerInstance.IsVerbose)
                     {
-                        OuterInstance.Message("  merge thread: start");
+                        outerInstance.Message("  merge thread: start");
                     }
 
                     while (true)
                     {
                         RunningMerge = merge;
-                        OuterInstance.DoMerge(merge);
+                        outerInstance.DoMerge(merge);
 
                         // Subsequent times through the loop we do any new
                         // merge that writer says is necessary:
-                        merge = TWriter.GetNextMerge();
+                        merge = tWriter.GetNextMerge();
 
                         // Notify here in case any threads were stalled;
                         // they will notice that the pending merge has
                         // been pulled and possibly resume:
-                        lock (OuterInstance)
+                        lock (outerInstance)
                         {
-                            Monitor.PulseAll(OuterInstance);
+                            Monitor.PulseAll(outerInstance);
                         }
 
                         if (merge != null)
                         {
-                            OuterInstance.UpdateMergeThreads();
-                            if (OuterInstance.IsVerbose)
+                            outerInstance.UpdateMergeThreads();
+                            if (outerInstance.IsVerbose)
                             {
-                                OuterInstance.Message("  merge thread: do another merge " + TWriter.SegString(merge.Segments));
+                                outerInstance.Message("  merge thread: do another merge " + tWriter.SegString(merge.Segments));
                             }
                         }
                         else
@@ -671,9 +671,9 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    if (OuterInstance.IsVerbose)
+                    if (outerInstance.IsVerbose)
                     {
-                        OuterInstance.Message("  merge thread: done");
+                        outerInstance.Message("  merge thread: done");
                     }
                 }
                 catch (Exception exc)
@@ -683,21 +683,21 @@ namespace Lucene.Net.Index
                     {
                         //System.out.println(Thread.currentThread().getName() + ": CMS: exc");
                         //exc.printStackTrace(System.out);
-                        if (!OuterInstance.suppressExceptions)
+                        if (!outerInstance.suppressExceptions)
                         {
                             // suppressExceptions is normally only set during
                             // testing.
-                            OuterInstance.HandleMergeException(exc);
+                            outerInstance.HandleMergeException(exc);
                         }
                     }
                 }
                 finally
                 {
-                    Done = true;
-                    lock (OuterInstance)
+                    done = true;
+                    lock (outerInstance)
                     {
-                        OuterInstance.UpdateMergeThreads();
-                        Monitor.PulseAll(OuterInstance);
+                        outerInstance.UpdateMergeThreads();
+                        Monitor.PulseAll(outerInstance);
                     }
                 }
             }
