@@ -29,43 +29,43 @@ namespace Lucene.Net.Index
     /// </summary>
     internal class SortedDocValuesWriter : DocValuesWriter
     {
-        internal readonly BytesRefHash Hash;
-        private AppendingDeltaPackedLongBuffer Pending;
-        private readonly Counter IwBytesUsed;
-        private long BytesUsed; // this currently only tracks differences in 'pending'
-        private readonly FieldInfo FieldInfo;
+        internal readonly BytesRefHash hash;
+        private AppendingDeltaPackedLongBuffer pending;
+        private readonly Counter iwBytesUsed;
+        private long bytesUsed; // this currently only tracks differences in 'pending'
+        private readonly FieldInfo fieldInfo;
 
         private const int EMPTY_ORD = -1;
 
         public SortedDocValuesWriter(FieldInfo fieldInfo, Counter iwBytesUsed)
         {
-            this.FieldInfo = fieldInfo;
-            this.IwBytesUsed = iwBytesUsed;
-            Hash = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectTrackingAllocator(iwBytesUsed)), BytesRefHash.DEFAULT_CAPACITY, new BytesRefHash.DirectBytesStartArray(BytesRefHash.DEFAULT_CAPACITY, iwBytesUsed));
-            Pending = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
-            BytesUsed = Pending.RamBytesUsed();
-            iwBytesUsed.AddAndGet(BytesUsed);
+            this.fieldInfo = fieldInfo;
+            this.iwBytesUsed = iwBytesUsed;
+            hash = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectTrackingAllocator(iwBytesUsed)), BytesRefHash.DEFAULT_CAPACITY, new BytesRefHash.DirectBytesStartArray(BytesRefHash.DEFAULT_CAPACITY, iwBytesUsed));
+            pending = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
+            bytesUsed = pending.RamBytesUsed();
+            iwBytesUsed.AddAndGet(bytesUsed);
         }
 
         public virtual void AddValue(int docID, BytesRef value)
         {
-            if (docID < Pending.Size)
+            if (docID < pending.Size)
             {
-                throw new System.ArgumentException("DocValuesField \"" + FieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
+                throw new System.ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
             }
             if (value == null)
             {
-                throw new System.ArgumentException("field \"" + FieldInfo.Name + "\": null value not allowed");
+                throw new System.ArgumentException("field \"" + fieldInfo.Name + "\": null value not allowed");
             }
             if (value.Length > (ByteBlockPool.BYTE_BLOCK_SIZE - 2))
             {
-                throw new System.ArgumentException("DocValuesField \"" + FieldInfo.Name + "\" is too large, must be <= " + (ByteBlockPool.BYTE_BLOCK_SIZE - 2));
+                throw new System.ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" is too large, must be <= " + (ByteBlockPool.BYTE_BLOCK_SIZE - 2));
             }
 
             // Fill in any holes:
-            while (Pending.Size < docID)
+            while (pending.Size < docID)
             {
-                Pending.Add(EMPTY_ORD);
+                pending.Add(EMPTY_ORD);
             }
 
             AddOneValue(value);
@@ -73,16 +73,16 @@ namespace Lucene.Net.Index
 
         public override void Finish(int maxDoc)
         {
-            while (Pending.Size < maxDoc)
+            while (pending.Size < maxDoc)
             {
-                Pending.Add(EMPTY_ORD);
+                pending.Add(EMPTY_ORD);
             }
             UpdateBytesUsed();
         }
 
         private void AddOneValue(BytesRef value)
         {
-            int termID = Hash.Add(value);
+            int termID = hash.Add(value);
             if (termID < 0)
             {
                 termID = -termID - 1;
@@ -93,28 +93,28 @@ namespace Lucene.Net.Index
                 // 1. when indexing, when hash is 50% full, rehash() suddenly needs 2*size ints.
                 //    TODO: can this same OOM happen in THPF?
                 // 2. when flushing, we need 1 int per value (slot in the ordMap).
-                IwBytesUsed.AddAndGet(2 * RamUsageEstimator.NUM_BYTES_INT);
+                iwBytesUsed.AddAndGet(2 * RamUsageEstimator.NUM_BYTES_INT);
             }
 
-            Pending.Add(termID);
+            pending.Add(termID);
             UpdateBytesUsed();
         }
 
         private void UpdateBytesUsed()
         {
-            long newBytesUsed = Pending.RamBytesUsed();
-            IwBytesUsed.AddAndGet(newBytesUsed - BytesUsed);
-            BytesUsed = newBytesUsed;
+            long newBytesUsed = pending.RamBytesUsed();
+            iwBytesUsed.AddAndGet(newBytesUsed - bytesUsed);
+            bytesUsed = newBytesUsed;
         }
 
         public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
         {
             int maxDoc = state.SegmentInfo.DocCount;
 
-            Debug.Assert(Pending.Size == maxDoc);
-            int valueCount = Hash.Size;
+            Debug.Assert(pending.Size == maxDoc);
+            int valueCount = hash.Size;
 
-            int[] sortedValues = Hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
+            int[] sortedValues = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
             int[] ordMap = new int[valueCount];
 
             for (int ord = 0; ord < valueCount; ord++)
@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
                 ordMap[sortedValues[ord]] = ord;
             }
 
-            dvConsumer.AddSortedField(FieldInfo, GetBytesRefEnumberable(valueCount, sortedValues),
+            dvConsumer.AddSortedField(fieldInfo, GetBytesRefEnumberable(valueCount, sortedValues),
                 // doc -> ord
                                       GetOrdsEnumberable(maxDoc, ordMap));
         }
@@ -136,13 +136,13 @@ namespace Lucene.Net.Index
             for (int i = 0; i < valueCount; ++i)
             {
                 var scratch = new BytesRef();
-                yield return Hash.Get(sortedValues[i], scratch);
+                yield return hash.Get(sortedValues[i], scratch);
             }
         }
 
         private IEnumerable<long?> GetOrdsEnumberable(int maxDoc, int[] ordMap)
         {
-            AppendingDeltaPackedLongBuffer.Iterator iter = Pending.GetIterator();
+            AppendingDeltaPackedLongBuffer.Iterator iter = pending.GetIterator();
 
             for (int i = 0; i < maxDoc; ++i)
             {
