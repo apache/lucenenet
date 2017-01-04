@@ -63,8 +63,8 @@ namespace Lucene.Net.Codecs.Lucene46
     /// @lucene.experimental </seealso>
     public class Lucene46SegmentInfoFormat : SegmentInfoFormat
     {
-        private readonly SegmentInfoReader Reader = new Lucene46SegmentInfoReader();
-        private readonly SegmentInfoWriter Writer = new Lucene46SegmentInfoWriter();
+        private readonly SegmentInfoReader reader = new Lucene46SegmentInfoReader();
+        private readonly SegmentInfoWriter writer = new Lucene46SegmentInfoWriter();
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -76,7 +76,7 @@ namespace Lucene.Net.Codecs.Lucene46
         {
             get
             {
-                return Reader;
+                return reader;
             }
         }
 
@@ -84,7 +84,7 @@ namespace Lucene.Net.Codecs.Lucene46
         {
             get
             {
-                return Writer;
+                return writer;
             }
         }
 
