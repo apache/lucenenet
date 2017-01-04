@@ -324,16 +324,16 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         private class TieBreakByInputComparator<T> : IComparer<FSTPath<T>>
         {
-            internal readonly IComparer<T> Comparator;
+            internal readonly IComparer<T> comparator;
 
             public TieBreakByInputComparator(IComparer<T> comparator)
             {
-                this.Comparator = comparator;
+                this.comparator = comparator;
             }
 
             public virtual int Compare(FSTPath<T> a, FSTPath<T> b)
             {
-                int cmp = Comparator.Compare(a.Cost, b.Cost);
+                int cmp = comparator.Compare(a.Cost, b.Cost);
                 if (cmp == 0)
                 {
                     return a.Input.CompareTo(b.Input);
@@ -358,9 +358,9 @@ namespace Lucene.Net.Util.Fst
 
             private readonly FST.Arc<T> scratchArc = new FST.Arc<T>();
 
-            internal readonly IComparer<T> Comparator;
+            internal readonly IComparer<T> comparator;
 
-            internal SortedSet<FSTPath<T>> Queue = null;
+            internal SortedSet<FSTPath<T>> queue = null;
 
             private object syncLock = new object();
 
@@ -376,23 +376,23 @@ namespace Lucene.Net.Util.Fst
                 this.bytesReader = fst.GetBytesReader();
                 this.topN = topN;
                 this.maxQueueDepth = maxQueueDepth;
-                this.Comparator = comparator;
+                this.comparator = comparator;
 
-                Queue = new SortedSet<FSTPath<T>>(new TieBreakByInputComparator<T>(comparator));
+                queue = new SortedSet<FSTPath<T>>(new TieBreakByInputComparator<T>(comparator));
             }
 
             // If back plus this arc is competitive then add to queue:
             protected virtual void AddIfCompetitive(FSTPath<T> path)
             {
-                Debug.Assert(Queue != null);
+                Debug.Assert(queue != null);
 
                 T cost = fst.Outputs.Add(path.Cost, path.Arc.Output);
                 //System.out.println("  addIfCompetitive queue.size()=" + queue.size() + " path=" + path + " + label=" + path.arc.label);
 
-                if (Queue.Count == maxQueueDepth)
+                if (queue.Count == maxQueueDepth)
                 {
-                    FSTPath<T> bottom = Queue.Max;
-                    int comp = Comparator.Compare(cost, bottom.Cost);
+                    FSTPath<T> bottom = queue.Max;
+                    int comp = comparator.Compare(cost, bottom.Cost);
                     if (comp > 0)
                     {
                         // Doesn't compete
@@ -430,9 +430,9 @@ namespace Lucene.Net.Util.Fst
                 newInput.Length = path.Input.Length + 1;
                 FSTPath<T> newPath = new FSTPath<T>(cost, path.Arc, newInput);
 
-                Queue.Add(newPath);
+                queue.Add(newPath);
 
-                if (Queue.Count == maxQueueDepth + 1)
+                if (queue.Count == maxQueueDepth + 1)
                 {
                     // LUCENENET NOTE: SortedSet doesn't have atomic operations,
                     // so we need to add some thread safety just in case.
@@ -440,7 +440,7 @@ namespace Lucene.Net.Util.Fst
                     // that provides thread safety.
                     lock (syncLock)
                     {
-                        Queue.Remove(Queue.Max);
+                        queue.Remove(queue.Max);
                     }
                 }
             }
@@ -501,7 +501,7 @@ namespace Lucene.Net.Util.Fst
 
                     FSTPath<T> path;
 
-                    if (Queue == null)
+                    if (queue == null)
                     {
                         // Ran out of paths
                         //System.out.println("  break queue=null");
@@ -517,10 +517,10 @@ namespace Lucene.Net.Util.Fst
                     // that provides thread safety.
                     lock (syncLock)
                     {
-                        path = Queue.Min;
+                        path = queue.Min;
                         if (path != null)
                         {
-                            Queue.Remove(path);
+                            queue.Remove(path);
                         }
                     }
 
@@ -543,7 +543,7 @@ namespace Lucene.Net.Util.Fst
                     if (results.Count == topN - 1 && maxQueueDepth == topN)
                     {
                         // Last path -- don't bother w/ queue anymore:
-                        Queue = null;
+                        queue = null;
                     }
 
                     //System.out.println("  path: " + path);
@@ -567,9 +567,9 @@ namespace Lucene.Net.Util.Fst
                             //System.out.println("      arc=" + (char) path.arc.label + " cost=" + path.arc.output);
                             // tricky: instead of comparing output == 0, we must
                             // express it via the comparator compare(output, 0) == 0
-                            if (Comparator.Compare(NO_OUTPUT, path.Arc.Output) == 0)
+                            if (comparator.Compare(NO_OUTPUT, path.Arc.Output) == 0)
                             {
-                                if (Queue == null)
+                                if (queue == null)
                                 {
                                     foundZero = true;
                                     break;
@@ -584,7 +584,7 @@ namespace Lucene.Net.Util.Fst
                                     AddIfCompetitive(path);
                                 }
                             }
-                            else if (Queue != null)
+                            else if (queue != null)
                             {
                                 AddIfCompetitive(path);
                             }
@@ -597,7 +597,7 @@ namespace Lucene.Net.Util.Fst
 
                         Debug.Assert(foundZero);
 
-                        if (Queue != null)
+                        if (queue != null)
                         {
                             // TODO: maybe we can save this copyFrom if we
                             // are more clever above... eg on finding the
