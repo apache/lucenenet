@@ -112,7 +112,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private readonly ISet<ICoreClosedListener> CoreClosedListeners = new ConcurrentHashSet<ICoreClosedListener>(new IdentityComparer<ICoreClosedListener>());
+        private readonly ISet<ICoreClosedListener> coreClosedListeners = new ConcurrentHashSet<ICoreClosedListener>(new IdentityComparer<ICoreClosedListener>());
 
         internal SegmentCoreReaders(SegmentReader owner, Directory dir, SegmentCommitInfo si, IOContext context, int termsIndexDivisor)
         {
@@ -259,9 +259,9 @@ namespace Lucene.Net.Index
 
         private void NotifyCoreClosedListeners(Exception th)
         {
-            lock (CoreClosedListeners)
+            lock (coreClosedListeners)
             {
-                foreach (ICoreClosedListener listener in CoreClosedListeners)
+                foreach (ICoreClosedListener listener in coreClosedListeners)
                 {
                     // SegmentReader uses our instance as its
                     // coreCacheKey:
@@ -279,12 +279,12 @@ namespace Lucene.Net.Index
 
         internal void AddCoreClosedListener(ICoreClosedListener listener)
         {
-            CoreClosedListeners.Add(listener);
+            coreClosedListeners.Add(listener);
         }
 
         internal void RemoveCoreClosedListener(ICoreClosedListener listener)
         {
-            CoreClosedListeners.Remove(listener);
+            coreClosedListeners.Remove(listener);
         }
 
         /// <summary>
