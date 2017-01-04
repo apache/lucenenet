@@ -32,29 +32,29 @@ namespace Lucene.Net.Index
     /// this is a StoredFieldsConsumer that writes stored fields. </summary>
     internal sealed class StoredFieldsProcessor : StoredFieldsConsumer
     {
-        internal StoredFieldsWriter FieldsWriter;
-        internal readonly DocumentsWriterPerThread DocWriter;
-        internal int LastDocID;
+        internal StoredFieldsWriter fieldsWriter;
+        internal readonly DocumentsWriterPerThread docWriter;
+        internal int lastDocID;
 
-        internal readonly DocumentsWriterPerThread.DocState DocState;
-        internal readonly Codec Codec;
+        internal readonly DocumentsWriterPerThread.DocState docState;
+        internal readonly Codec codec;
 
         public StoredFieldsProcessor(DocumentsWriterPerThread docWriter)
         {
-            this.DocWriter = docWriter;
-            this.DocState = docWriter.docState;
-            this.Codec = docWriter.codec;
+            this.docWriter = docWriter;
+            this.docState = docWriter.docState;
+            this.codec = docWriter.codec;
         }
 
-        private int NumStoredFields;
-        private IIndexableField[] StoredFields = new IIndexableField[1];
-        private FieldInfo[] FieldInfos = new FieldInfo[1];
+        private int numStoredFields;
+        private IIndexableField[] storedFields = new IIndexableField[1];
+        private FieldInfo[] fieldInfos = new FieldInfo[1];
 
         public void Reset()
         {
-            NumStoredFields = 0;
-            Arrays.Fill(StoredFields, null);
-            Arrays.Fill(FieldInfos, null);
+            numStoredFields = 0;
+            Arrays.Fill(storedFields, null);
+            Arrays.Fill(fieldInfos, null);
         }
 
         public override void StartDocument()
@@ -73,23 +73,23 @@ namespace Lucene.Net.Index
                 InitFieldsWriter(state.Context);
                 Fill(numDocs);
             }
-            if (FieldsWriter != null)
+            if (fieldsWriter != null)
             {
                 bool success = false;
                 try
                 {
-                    FieldsWriter.Finish(state.FieldInfos, numDocs);
+                    fieldsWriter.Finish(state.FieldInfos, numDocs);
                     success = true;
                 }
                 finally
                 {
                     if (success)
                     {
-                        IOUtils.Close(FieldsWriter);
+                        IOUtils.Close(fieldsWriter);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(FieldsWriter);
+                        IOUtils.CloseWhileHandlingException(fieldsWriter);
                     }
                 }
             }
@@ -99,10 +99,10 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (FieldsWriter == null)
+                if (fieldsWriter == null)
                 {
-                    FieldsWriter = Codec.StoredFieldsFormat.FieldsWriter(DocWriter.directory, DocWriter.SegmentInfo, context);
-                    LastDocID = 0;
+                    fieldsWriter = codec.StoredFieldsFormat.FieldsWriter(docWriter.directory, docWriter.SegmentInfo, context);
+                    lastDocID = 0;
                 }
             }
         }
@@ -111,11 +111,11 @@ namespace Lucene.Net.Index
         {
             Reset();
 
-            if (FieldsWriter != null)
+            if (fieldsWriter != null)
             {
-                FieldsWriter.Abort();
-                FieldsWriter = null;
-                LastDocID = 0;
+                fieldsWriter.Abort();
+                fieldsWriter = null;
+                lastDocID = 0;
             }
         }
 
@@ -125,57 +125,57 @@ namespace Lucene.Net.Index
         {
             // We must "catch up" for all docs before us
             // that had no stored fields:
-            while (LastDocID < docID)
+            while (lastDocID < docID)
             {
-                FieldsWriter.StartDocument(0);
-                LastDocID++;
-                FieldsWriter.FinishDocument();
+                fieldsWriter.StartDocument(0);
+                lastDocID++;
+                fieldsWriter.FinishDocument();
             }
         }
 
         internal override void FinishDocument()
         {
-            Debug.Assert(DocWriter.TestPoint("StoredFieldsWriter.finishDocument start"));
+            Debug.Assert(docWriter.TestPoint("StoredFieldsWriter.finishDocument start"));
 
             InitFieldsWriter(IOContext.DEFAULT);
-            Fill(DocState.docID);
+            Fill(docState.docID);
 
-            if (FieldsWriter != null && NumStoredFields > 0)
+            if (fieldsWriter != null && numStoredFields > 0)
             {
-                FieldsWriter.StartDocument(NumStoredFields);
-                for (int i = 0; i < NumStoredFields; i++)
+                fieldsWriter.StartDocument(numStoredFields);
+                for (int i = 0; i < numStoredFields; i++)
                 {
-                    FieldsWriter.WriteField(FieldInfos[i], StoredFields[i]);
+                    fieldsWriter.WriteField(fieldInfos[i], storedFields[i]);
                 }
-                FieldsWriter.FinishDocument();
-                LastDocID++;
+                fieldsWriter.FinishDocument();
+                lastDocID++;
             }
 
             Reset();
-            Debug.Assert(DocWriter.TestPoint("StoredFieldsWriter.finishDocument end"));
+            Debug.Assert(docWriter.TestPoint("StoredFieldsWriter.finishDocument end"));
         }
 
         public override void AddField(int docID, IIndexableField field, FieldInfo fieldInfo)
         {
             if (field.FieldType.IsStored)
             {
-                if (NumStoredFields == StoredFields.Length)
+                if (numStoredFields == storedFields.Length)
                 {
-                    int newSize = ArrayUtil.Oversize(NumStoredFields + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
+                    int newSize = ArrayUtil.Oversize(numStoredFields + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
                     IIndexableField[] newArray = new IIndexableField[newSize];
-                    Array.Copy(StoredFields, 0, newArray, 0, NumStoredFields);
-                    StoredFields = newArray;
+                    Array.Copy(storedFields, 0, newArray, 0, numStoredFields);
+                    storedFields = newArray;
 
                     FieldInfo[] newInfoArray = new FieldInfo[newSize];
-                    Array.Copy(FieldInfos, 0, newInfoArray, 0, NumStoredFields);
-                    FieldInfos = newInfoArray;
+                    Array.Copy(fieldInfos, 0, newInfoArray, 0, numStoredFields);
+                    fieldInfos = newInfoArray;
                 }
 
-                StoredFields[NumStoredFields] = field;
-                FieldInfos[NumStoredFields] = fieldInfo;
-                NumStoredFields++;
+                storedFields[numStoredFields] = field;
+                fieldInfos[numStoredFields] = fieldInfo;
+                numStoredFields++;
 
-                Debug.Assert(DocState.TestPoint("StoredFieldsWriterPerThread.processFields.writeField"));
+                Debug.Assert(docState.TestPoint("StoredFieldsWriterPerThread.processFields.writeField"));
             }
         }
     }
