@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.Sep
             _docIndex = new IntIndexInputIndex[maxSkipLevels];
 
             if (posIn != null)
-                _posIndex = new IntIndexInputIndex[MaxNumberOfSkipLevels];
+                _posIndex = new IntIndexInputIndex[m_maxNumberOfSkipLevels];
 
             for (var i = 0; i < maxSkipLevels; i++)
             {
@@ -94,7 +94,7 @@ namespace Lucene.Net.Codecs.Sep
 
             _lastPayloadPointer = payloadBasePointer;
 
-            for (var i = 0; i < MaxNumberOfSkipLevels; i++)
+            for (var i = 0; i < m_maxNumberOfSkipLevels; i++)
             {
                 _docIndex[i].CopyFrom(docBaseIndex);
                 if (_freqIndex != null)

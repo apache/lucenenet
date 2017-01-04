@@ -182,7 +182,7 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             get
             {
-                return SkipDoc[0];
+                return m_skipDoc[0];
             }
         }
 

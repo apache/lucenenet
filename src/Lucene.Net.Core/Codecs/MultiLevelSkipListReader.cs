@@ -39,7 +39,7 @@ namespace Lucene.Net.Codecs
     {
         /// <summary>
         /// the maximum number of skip levels possible for this index </summary>
-        protected internal int MaxNumberOfSkipLevels;
+        protected internal int m_maxNumberOfSkipLevels;
 
         // number of levels in this skip list
         private int NumberOfSkipLevels;
@@ -74,7 +74,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Doc id of current skip entry per level. </summary>
-        protected internal int[] SkipDoc;
+        protected internal int[] m_skipDoc;
 
         /// <summary>
         /// Doc id of last read skip entry with docId &lt;= target. </summary>
@@ -101,7 +101,7 @@ namespace Lucene.Net.Codecs
             this.SkipPointer = new long[maxSkipLevels];
             this.ChildPointer = new long[maxSkipLevels];
             this.NumSkipped = new int[maxSkipLevels];
-            this.MaxNumberOfSkipLevels = maxSkipLevels;
+            this.m_maxNumberOfSkipLevels = maxSkipLevels;
             this.SkipInterval = new int[maxSkipLevels];
             this.SkipMultiplier = skipMultiplier;
             this.SkipStream[0] = skipStream;
@@ -112,7 +112,7 @@ namespace Lucene.Net.Codecs
                 // cache skip intervals
                 this.SkipInterval[i] = this.SkipInterval[i - 1] * skipMultiplier;
             }
-            SkipDoc = new int[maxSkipLevels];
+            m_skipDoc = new int[maxSkipLevels];
         }
 
         /// <summary>
@@ -153,14 +153,14 @@ namespace Lucene.Net.Codecs
             // walk up the levels until highest level is found that has a skip
             // for this target
             int level = 0;
-            while (level < NumberOfSkipLevels - 1 && target > SkipDoc[level + 1])
+            while (level < NumberOfSkipLevels - 1 && target > m_skipDoc[level + 1])
             {
                 level++;
             }
 
             while (level >= 0)
             {
-                if (target > SkipDoc[level])
+                if (target > m_skipDoc[level])
                 {
                     if (!LoadNextSkip(level))
                     {
@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs
             if (NumSkipped[level] > DocCount)
             {
                 // this skip list is exhausted
-                SkipDoc[level] = int.MaxValue;
+                m_skipDoc[level] = int.MaxValue;
                 if (NumberOfSkipLevels > level)
                 {
                     NumberOfSkipLevels = level;
@@ -201,7 +201,7 @@ namespace Lucene.Net.Codecs
             }
 
             // read next skip entry
-            SkipDoc[level] += ReadSkipData(level, SkipStream[level]);
+            m_skipDoc[level] += ReadSkipData(level, SkipStream[level]);
 
             if (level != 0)
             {
@@ -218,7 +218,7 @@ namespace Lucene.Net.Codecs
         {
             SkipStream[level].Seek(LastChildPointer);
             NumSkipped[level] = NumSkipped[level + 1] - SkipInterval[level + 1];
-            SkipDoc[level] = LastDoc;
+            m_skipDoc[level] = LastDoc;
             if (level > 0)
             {
                 ChildPointer[level] = SkipStream[level].ReadVLong() + SkipPointer[level - 1];
@@ -243,7 +243,7 @@ namespace Lucene.Net.Codecs
             this.SkipPointer[0] = skipPointer;
             this.DocCount = df;
             Debug.Assert(skipPointer >= 0 && skipPointer <= SkipStream[0].Length, "invalid skip pointer: " + skipPointer + ", length=" + SkipStream[0].Length);
-            Array.Clear(SkipDoc, 0, SkipDoc.Length);
+            Array.Clear(m_skipDoc, 0, m_skipDoc.Length);
             Array.Clear(NumSkipped, 0, NumSkipped.Length);
             Array.Clear(ChildPointer, 0, ChildPointer.Length);
 
@@ -267,9 +267,9 @@ namespace Lucene.Net.Codecs
                 NumberOfSkipLevels = 1 + MathUtil.Log(DocCount / SkipInterval[0], SkipMultiplier);
             }
 
-            if (NumberOfSkipLevels > MaxNumberOfSkipLevels)
+            if (NumberOfSkipLevels > m_maxNumberOfSkipLevels)
             {
-                NumberOfSkipLevels = MaxNumberOfSkipLevels;
+                NumberOfSkipLevels = m_maxNumberOfSkipLevels;
             }
 
             SkipStream[0].Seek(SkipPointer[0]);
@@ -318,7 +318,7 @@ namespace Lucene.Net.Codecs
         /// Copies the values of the last read skip entry on this <paramref name="level"/> </summary>
         protected virtual void SetLastSkipData(int level)
         {
-            LastDoc = SkipDoc[level];
+            LastDoc = m_skipDoc[level];
             LastChildPointer = ChildPointer[level];
         }
 
