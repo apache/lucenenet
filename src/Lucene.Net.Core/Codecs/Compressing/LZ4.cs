@@ -215,17 +215,17 @@ namespace Lucene.Net.Codecs.Compressing
 
         public sealed class HashTable
         {
-            internal int HashLog;
+            internal int hashLog;
             internal PackedInts.Mutable hashTable;
 
             internal void Reset(int len)
             {
                 int bitsPerOffset = PackedInts.BitsRequired(len - LAST_LITERALS);
                 int bitsPerOffsetLog = 32 - Number.NumberOfLeadingZeros(bitsPerOffset - 1);
-                HashLog = MEMORY_USAGE + 3 - bitsPerOffsetLog;
-                if (hashTable == null || hashTable.Size < 1 << HashLog || hashTable.BitsPerValue < bitsPerOffset)
+                hashLog = MEMORY_USAGE + 3 - bitsPerOffsetLog;
+                if (hashTable == null || hashTable.Size < 1 << hashLog || hashTable.BitsPerValue < bitsPerOffset)
                 {
-                    hashTable = PackedInts.GetMutable(1 << HashLog, bitsPerOffset, PackedInts.DEFAULT);
+                    hashTable = PackedInts.GetMutable(1 << hashLog, bitsPerOffset, PackedInts.DEFAULT);
                 }
                 else
                 {
@@ -251,7 +251,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int limit = end - LAST_LITERALS;
                 int matchLimit = limit - MIN_MATCH;
                 ht.Reset(len);
-                int hashLog = ht.HashLog;
+                int hashLog = ht.hashLog;
                 PackedInts.Mutable hashTable = ht.hashTable;
 
                 while (off <= limit)
@@ -295,25 +295,25 @@ namespace Lucene.Net.Codecs.Compressing
 
         public class Match
         {
-            internal int Start, @ref, Len;
+            internal int start, @ref, len;
 
             internal virtual void Fix(int correction)
             {
-                Start += correction;
+                start += correction;
                 @ref += correction;
-                Len -= correction;
+                len -= correction;
             }
 
             internal virtual int End()
             {
-                return Start + Len;
+                return start + len;
             }
         }
 
         private static void CopyTo(Match m1, Match m2)
         {
-            m2.Len = m1.Len;
-            m2.Start = m1.Start;
+            m2.len = m1.len;
+            m2.start = m1.start;
             m2.@ref = m1.@ref;
         }
 
@@ -321,63 +321,63 @@ namespace Lucene.Net.Codecs.Compressing
         {
             internal const int MAX_ATTEMPTS = 256;
             internal static readonly int MASK = MAX_DISTANCE - 1;
-            internal int NextToUpdate;
+            internal int nextToUpdate;
             private int @base;
-            private readonly int[] HashTable;
-            private readonly short[] ChainTable;
+            private readonly int[] hashTable;
+            private readonly short[] chainTable;
 
             internal HCHashTable()
             {
-                HashTable = new int[HASH_TABLE_SIZE_HC];
-                ChainTable = new short[MAX_DISTANCE];
+                hashTable = new int[HASH_TABLE_SIZE_HC];
+                chainTable = new short[MAX_DISTANCE];
             }
 
             internal void Reset(int @base)
             {
                 this.@base = @base;
-                NextToUpdate = @base;
-                CollectionsHelper.Fill(HashTable, -1);
-                CollectionsHelper.Fill(ChainTable, (short)0);
+                nextToUpdate = @base;
+                CollectionsHelper.Fill(hashTable, -1);
+                CollectionsHelper.Fill(chainTable, (short)0);
             }
 
             private int HashPointer(byte[] bytes, int off)
             {
                 int v = ReadInt(bytes, off);
                 int h = HashHC(v);
-                return HashTable[h];
+                return hashTable[h];
             }
 
             private int Next(int off)
             {
-                return off - (ChainTable[off & MASK] & 0xFFFF);
+                return off - (chainTable[off & MASK] & 0xFFFF);
             }
 
             private void AddHash(byte[] bytes, int off)
             {
                 int v = ReadInt(bytes, off);
                 int h = HashHC(v);
-                int delta = off - HashTable[h];
+                int delta = off - hashTable[h];
                 Debug.Assert(delta > 0, delta.ToString());
                 if (delta >= MAX_DISTANCE)
                 {
                     delta = MAX_DISTANCE - 1;
                 }
-                ChainTable[off & MASK] = (short)delta;
-                HashTable[h] = off;
+                chainTable[off & MASK] = (short)delta;
+                hashTable[h] = off;
             }
 
             internal void Insert(int off, byte[] bytes)
             {
-                for (; NextToUpdate < off; ++NextToUpdate)
+                for (; nextToUpdate < off; ++nextToUpdate)
                 {
-                    AddHash(bytes, NextToUpdate);
+                    AddHash(bytes, nextToUpdate);
                 }
             }
 
             internal bool InsertAndFindBestMatch(byte[] buf, int off, int matchLimit, Match match)
             {
-                match.Start = off;
-                match.Len = 0;
+                match.start = off;
+                match.len = 0;
                 int delta = 0;
                 int repl = 0;
 
@@ -390,7 +390,7 @@ namespace Lucene.Net.Codecs.Compressing
                     if (ReadIntEquals(buf, @ref, off)) // confirmed
                     {
                         delta = off - @ref;
-                        repl = match.Len = MIN_MATCH + CommonBytes(buf, @ref + MIN_MATCH, off + MIN_MATCH, matchLimit);
+                        repl = match.len = MIN_MATCH + CommonBytes(buf, @ref + MIN_MATCH, off + MIN_MATCH, matchLimit);
                         match.@ref = @ref;
                     }
                     @ref = Next(@ref);
@@ -402,13 +402,13 @@ namespace Lucene.Net.Codecs.Compressing
                     {
                         break;
                     }
-                    if (buf[@ref + match.Len] == buf[off + match.Len] && ReadIntEquals(buf, @ref, off))
+                    if (buf[@ref + match.len] == buf[off + match.len] && ReadIntEquals(buf, @ref, off))
                     {
                         int matchLen = MIN_MATCH + CommonBytes(buf, @ref + MIN_MATCH, off + MIN_MATCH, matchLimit);
-                        if (matchLen > match.Len)
+                        if (matchLen > match.len)
                         {
                             match.@ref = @ref;
-                            match.Len = matchLen;
+                            match.len = matchLen;
                         }
                     }
                     @ref = Next(@ref);
@@ -420,24 +420,24 @@ namespace Lucene.Net.Codecs.Compressing
                     int end = off + repl - (MIN_MATCH - 1);
                     while (ptr < end - delta)
                     {
-                        ChainTable[ptr & MASK] = (short)delta; // pre load
+                        chainTable[ptr & MASK] = (short)delta; // pre load
                         ++ptr;
                     }
                     do
                     {
-                        ChainTable[ptr & MASK] = (short)delta;
-                        HashTable[HashHC(ReadInt(buf, ptr))] = ptr;
+                        chainTable[ptr & MASK] = (short)delta;
+                        hashTable[HashHC(ReadInt(buf, ptr))] = ptr;
                         ++ptr;
                     } while (ptr < end);
-                    NextToUpdate = end;
+                    nextToUpdate = end;
                 }
 
-                return match.Len != 0;
+                return match.len != 0;
             }
 
             internal bool InsertAndFindWiderMatch(byte[] buf, int off, int startLimit, int matchLimit, int minLen, Match match)
             {
-                match.Len = minLen;
+                match.len = minLen;
 
                 Insert(off, buf);
 
@@ -449,22 +449,22 @@ namespace Lucene.Net.Codecs.Compressing
                     {
                         break;
                     }
-                    if (buf[@ref - delta + match.Len] == buf[startLimit + match.Len] && ReadIntEquals(buf, @ref, off))
+                    if (buf[@ref - delta + match.len] == buf[startLimit + match.len] && ReadIntEquals(buf, @ref, off))
                     {
                         int matchLenForward = MIN_MATCH + CommonBytes(buf, @ref + MIN_MATCH, off + MIN_MATCH, matchLimit);
                         int matchLenBackward = CommonBytesBackward(buf, @ref, off, @base, startLimit);
                         int matchLen = matchLenBackward + matchLenForward;
-                        if (matchLen > match.Len)
+                        if (matchLen > match.len)
                         {
-                            match.Len = matchLen;
+                            match.len = matchLen;
                             match.@ref = @ref - matchLenBackward;
-                            match.Start = off - matchLenBackward;
+                            match.start = off - matchLenBackward;
                         }
                     }
                     @ref = Next(@ref);
                 }
 
-                return match.Len > minLen;
+                return match.len > minLen;
             }
         }
 
@@ -505,25 +505,25 @@ namespace Lucene.Net.Codecs.Compressing
 
                 while (true)
                 {
-                    Debug.Assert(match1.Start >= anchor);
-                    if (match1.End() >= mfLimit || !ht.InsertAndFindWiderMatch(src, match1.End() - 2, match1.Start + 1, matchLimit, match1.Len, match2))
+                    Debug.Assert(match1.start >= anchor);
+                    if (match1.End() >= mfLimit || !ht.InsertAndFindWiderMatch(src, match1.End() - 2, match1.start + 1, matchLimit, match1.len, match2))
                     {
                         // no better match
-                        EncodeSequence(src, anchor, match1.@ref, match1.Start, match1.Len, @out);
+                        EncodeSequence(src, anchor, match1.@ref, match1.start, match1.len, @out);
                         anchor = sOff = match1.End();
                         goto mainContinue;
                     }
 
-                    if (match0.Start < match1.Start)
+                    if (match0.start < match1.start)
                     {
-                        if (match2.Start < match1.Start + match0.Len) // empirical
+                        if (match2.start < match1.start + match0.len) // empirical
                         {
                             CopyTo(match0, match1);
                         }
                     }
-                    Debug.Assert(match2.Start > match1.Start);
+                    Debug.Assert(match2.start > match1.start);
 
-                    if (match2.Start - match1.Start < 3) // First Match too small : removed
+                    if (match2.start - match1.start < 3) // First Match too small : removed
                     {
                         CopyTo(match2, match1);
                         goto search2Continue;
@@ -531,55 +531,55 @@ namespace Lucene.Net.Codecs.Compressing
 
                     while (true)
                     {
-                        if (match2.Start - match1.Start < OPTIMAL_ML)
+                        if (match2.start - match1.start < OPTIMAL_ML)
                         {
-                            int newMatchLen = match1.Len;
+                            int newMatchLen = match1.len;
                             if (newMatchLen > OPTIMAL_ML)
                             {
                                 newMatchLen = OPTIMAL_ML;
                             }
-                            if (match1.Start + newMatchLen > match2.End() - MIN_MATCH)
+                            if (match1.start + newMatchLen > match2.End() - MIN_MATCH)
                             {
-                                newMatchLen = match2.Start - match1.Start + match2.Len - MIN_MATCH;
+                                newMatchLen = match2.start - match1.start + match2.len - MIN_MATCH;
                             }
-                            int correction = newMatchLen - (match2.Start - match1.Start);
+                            int correction = newMatchLen - (match2.start - match1.start);
                             if (correction > 0)
                             {
                                 match2.Fix(correction);
                             }
                         }
 
-                        if (match2.Start + match2.Len >= mfLimit || !ht.InsertAndFindWiderMatch(src, match2.End() - 3, match2.Start, matchLimit, match2.Len, match3))
+                        if (match2.start + match2.len >= mfLimit || !ht.InsertAndFindWiderMatch(src, match2.End() - 3, match2.start, matchLimit, match2.len, match3))
                         {
                             // no better match -> 2 sequences to encode
-                            if (match2.Start < match1.End())
+                            if (match2.start < match1.End())
                             {
-                                match1.Len = match2.Start - match1.Start;
+                                match1.len = match2.start - match1.start;
                             }
                             // encode seq 1
-                            EncodeSequence(src, anchor, match1.@ref, match1.Start, match1.Len, @out);
+                            EncodeSequence(src, anchor, match1.@ref, match1.start, match1.len, @out);
                             anchor = sOff = match1.End();
                             // encode seq 2
-                            EncodeSequence(src, anchor, match2.@ref, match2.Start, match2.Len, @out);
+                            EncodeSequence(src, anchor, match2.@ref, match2.start, match2.len, @out);
                             anchor = sOff = match2.End();
                             goto mainContinue;
                         }
 
-                        if (match3.Start < match1.End() + 3) // Not enough space for match 2 : remove it
+                        if (match3.start < match1.End() + 3) // Not enough space for match 2 : remove it
                         {
-                            if (match3.Start >= match1.End()) // // can write Seq1 immediately ==> Seq2 is removed, so Seq3 becomes Seq1
+                            if (match3.start >= match1.End()) // // can write Seq1 immediately ==> Seq2 is removed, so Seq3 becomes Seq1
                             {
-                                if (match2.Start < match1.End())
+                                if (match2.start < match1.End())
                                 {
-                                    int correction = match1.End() - match2.Start;
+                                    int correction = match1.End() - match2.start;
                                     match2.Fix(correction);
-                                    if (match2.Len < MIN_MATCH)
+                                    if (match2.len < MIN_MATCH)
                                     {
                                         CopyTo(match3, match2);
                                     }
                                 }
 
-                                EncodeSequence(src, anchor, match1.@ref, match1.Start, match1.Len, @out);
+                                EncodeSequence(src, anchor, match1.@ref, match1.start, match1.len, @out);
                                 anchor = sOff = match1.End();
 
                                 CopyTo(match3, match1);
@@ -593,28 +593,28 @@ namespace Lucene.Net.Codecs.Compressing
                         }
 
                         // OK, now we have 3 ascending matches; let's write at least the first one
-                        if (match2.Start < match1.End())
+                        if (match2.start < match1.End())
                         {
-                            if (match2.Start - match1.Start < 0x0F)
+                            if (match2.start - match1.start < 0x0F)
                             {
-                                if (match1.Len > OPTIMAL_ML)
+                                if (match1.len > OPTIMAL_ML)
                                 {
-                                    match1.Len = OPTIMAL_ML;
+                                    match1.len = OPTIMAL_ML;
                                 }
                                 if (match1.End() > match2.End() - MIN_MATCH)
                                 {
-                                    match1.Len = match2.End() - match1.Start - MIN_MATCH;
+                                    match1.len = match2.End() - match1.start - MIN_MATCH;
                                 }
-                                int correction = match1.End() - match2.Start;
+                                int correction = match1.End() - match2.start;
                                 match2.Fix(correction);
                             }
                             else
                             {
-                                match1.Len = match2.Start - match1.Start;
+                                match1.len = match2.start - match1.start;
                             }
                         }
 
-                        EncodeSequence(src, anchor, match1.@ref, match1.Start, match1.Len, @out);
+                        EncodeSequence(src, anchor, match1.@ref, match1.start, match1.len, @out);
                         anchor = sOff = match1.End();
 
                         CopyTo(match2, match1);
