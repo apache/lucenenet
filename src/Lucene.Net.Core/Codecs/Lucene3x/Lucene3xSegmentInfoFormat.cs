@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     [Obsolete("(4.0) this is only used to read indexes created")]
     public class Lucene3xSegmentInfoFormat : SegmentInfoFormat
     {
-        private readonly SegmentInfoReader Reader = new Lucene3xSegmentInfoReader();
+        private readonly SegmentInfoReader reader = new Lucene3xSegmentInfoReader();
 
         /// <summary>
         /// this format adds optional per-segment String
@@ -59,7 +59,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return Reader;
+                return reader;
             }
         }
 
