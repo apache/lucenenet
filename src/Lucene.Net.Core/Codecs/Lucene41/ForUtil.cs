@@ -100,10 +100,10 @@ namespace Lucene.Net.Codecs.Lucene41
             return (int)byteCount;
         }
 
-        private readonly int[] EncodedSizes;
-        private readonly PackedInts.IEncoder[] Encoders;
-        private readonly PackedInts.IDecoder[] Decoders;
-        private readonly int[] Iterations;
+        private readonly int[] encodedSizes;
+        private readonly PackedInts.IEncoder[] encoders;
+        private readonly PackedInts.IDecoder[] decoders;
+        private readonly int[] iterations;
 
         /// <summary>
         /// Create a new <seealso cref="ForUtil"/> instance and save state into <code>out</code>.
@@ -111,20 +111,20 @@ namespace Lucene.Net.Codecs.Lucene41
         internal ForUtil(float acceptableOverheadRatio, DataOutput @out)
         {
             @out.WriteVInt(PackedInts.VERSION_CURRENT);
-            EncodedSizes = new int[33];
-            Encoders = new PackedInts.IEncoder[33];
-            Decoders = new PackedInts.IDecoder[33];
-            Iterations = new int[33];
+            encodedSizes = new int[33];
+            encoders = new PackedInts.IEncoder[33];
+            decoders = new PackedInts.IDecoder[33];
+            iterations = new int[33];
 
             for (int bpv = 1; bpv <= 32; ++bpv)
             {
                 PackedInts.FormatAndBits formatAndBits = PackedInts.FastestFormatAndBits(Lucene41PostingsFormat.BLOCK_SIZE, bpv, acceptableOverheadRatio);
                 Debug.Assert(formatAndBits.Format.IsSupported(formatAndBits.BitsPerValue));
                 Debug.Assert(formatAndBits.BitsPerValue <= 32);
-                EncodedSizes[bpv] = EncodedSize(formatAndBits.Format, PackedInts.VERSION_CURRENT, formatAndBits.BitsPerValue);
-                Encoders[bpv] = PackedInts.GetEncoder(formatAndBits.Format, PackedInts.VERSION_CURRENT, formatAndBits.BitsPerValue);
-                Decoders[bpv] = PackedInts.GetDecoder(formatAndBits.Format, PackedInts.VERSION_CURRENT, formatAndBits.BitsPerValue);
-                Iterations[bpv] = ComputeIterations(Decoders[bpv]);
+                encodedSizes[bpv] = EncodedSize(formatAndBits.Format, PackedInts.VERSION_CURRENT, formatAndBits.BitsPerValue);
+                encoders[bpv] = PackedInts.GetEncoder(formatAndBits.Format, PackedInts.VERSION_CURRENT, formatAndBits.BitsPerValue);
+                decoders[bpv] = PackedInts.GetDecoder(formatAndBits.Format, PackedInts.VERSION_CURRENT, formatAndBits.BitsPerValue);
+                iterations[bpv] = ComputeIterations(decoders[bpv]);
 
                 @out.WriteVInt(formatAndBits.Format.Id << 5 | (formatAndBits.BitsPerValue - 1));
             }
@@ -137,10 +137,10 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             int packedIntsVersion = @in.ReadVInt();
             PackedInts.CheckVersion(packedIntsVersion);
-            EncodedSizes = new int[33];
-            Encoders = new PackedInts.IEncoder[33];
-            Decoders = new PackedInts.IDecoder[33];
-            Iterations = new int[33];
+            encodedSizes = new int[33];
+            encoders = new PackedInts.IEncoder[33];
+            decoders = new PackedInts.IDecoder[33];
+            iterations = new int[33];
 
             for (int bpv = 1; bpv <= 32; ++bpv)
             {
@@ -150,10 +150,10 @@ namespace Lucene.Net.Codecs.Lucene41
 
                 PackedInts.Format format = PackedInts.Format.ById(formatId);
                 Debug.Assert(format.IsSupported(bitsPerValue));
-                EncodedSizes[bpv] = EncodedSize(format, packedIntsVersion, bitsPerValue);
-                Encoders[bpv] = PackedInts.GetEncoder(format, packedIntsVersion, bitsPerValue);
-                Decoders[bpv] = PackedInts.GetDecoder(format, packedIntsVersion, bitsPerValue);
-                Iterations[bpv] = ComputeIterations(Decoders[bpv]);
+                encodedSizes[bpv] = EncodedSize(format, packedIntsVersion, bitsPerValue);
+                encoders[bpv] = PackedInts.GetEncoder(format, packedIntsVersion, bitsPerValue);
+                decoders[bpv] = PackedInts.GetDecoder(format, packedIntsVersion, bitsPerValue);
+                iterations[bpv] = ComputeIterations(decoders[bpv]);
             }
         }
 
@@ -175,10 +175,10 @@ namespace Lucene.Net.Codecs.Lucene41
 
             int numBits = BitsRequired(data);
             Debug.Assert(numBits > 0 && numBits <= 32, numBits.ToString());
-            PackedInts.IEncoder encoder = Encoders[numBits];
-            int iters = Iterations[numBits];
+            PackedInts.IEncoder encoder = encoders[numBits];
+            int iters = iterations[numBits];
             Debug.Assert(iters * encoder.ByteValueCount >= Lucene41PostingsFormat.BLOCK_SIZE);
-            int encodedSize = EncodedSizes[numBits];
+            int encodedSize = encodedSizes[numBits];
             Debug.Assert(iters * encoder.ByteBlockCount >= encodedSize);
 
             @out.WriteByte((byte)numBits);
@@ -206,11 +206,11 @@ namespace Lucene.Net.Codecs.Lucene41
                 return;
             }
 
-            int encodedSize = EncodedSizes[numBits];
+            int encodedSize = encodedSizes[numBits];
             @in.ReadBytes(encoded, 0, encodedSize);
 
-            PackedInts.IDecoder decoder = Decoders[numBits];
-            int iters = Iterations[numBits];
+            PackedInts.IDecoder decoder = decoders[numBits];
+            int iters = iterations[numBits];
             Debug.Assert(iters * decoder.ByteValueCount >= Lucene41PostingsFormat.BLOCK_SIZE);
 
             decoder.Decode(encoded, 0, decoded, 0, iters);
@@ -230,7 +230,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 return;
             }
             Debug.Assert(numBits > 0 && numBits <= 32, numBits.ToString());
-            int encodedSize = EncodedSizes[numBits];
+            int encodedSize = encodedSizes[numBits];
             @in.Seek(@in.FilePointer + encodedSize);
         }
 
