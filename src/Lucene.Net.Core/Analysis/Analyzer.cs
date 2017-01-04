@@ -67,10 +67,10 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public abstract class Analyzer : IDisposable
     {
-        private readonly ReuseStrategy _reuseStrategy;
+        private readonly ReuseStrategy reuseStrategy;
 
         // non final as it gets nulled if closed; pkg private for access by ReuseStrategy's final helper methods:
-        internal DisposableThreadLocal<object> StoredValue = new DisposableThreadLocal<object>();
+        internal DisposableThreadLocal<object> storedValue = new DisposableThreadLocal<object>();
 
         /// <summary>
         /// Create a new Analyzer, reusing the same set of components per-thread
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public Analyzer(ReuseStrategy reuseStrategy)
         {
-            this._reuseStrategy = reuseStrategy;
+            this.reuseStrategy = reuseStrategy;
         }
 
         /// <summary>
@@ -128,39 +128,39 @@ namespace Lucene.Net.Analysis
         /// <seealso cref= #tokenStream(String, Reader) </seealso>
         public TokenStream TokenStream(string fieldName, TextReader reader)
         {
-            TokenStreamComponents components = _reuseStrategy.GetReusableComponents(this, fieldName);
+            TokenStreamComponents components = reuseStrategy.GetReusableComponents(this, fieldName);
             TextReader r = InitReader(fieldName, reader);
             if (components == null)
             {
                 components = CreateComponents(fieldName, r);
-                _reuseStrategy.SetReusableComponents(this, fieldName, components);
+                reuseStrategy.SetReusableComponents(this, fieldName, components);
             }
             else
             {
-                components.SetReader(r);// LUCENENET TODO new TextReaderWrapper(r);
+                components.SetReader(r);// LUCENENET TODO: new TextReaderWrapper(r);
             }
             return components.TokenStream;
         }
 
         public TokenStream TokenStream(string fieldName, string text)
         {
-            TokenStreamComponents components = _reuseStrategy.GetReusableComponents(this, fieldName);
+            TokenStreamComponents components = reuseStrategy.GetReusableComponents(this, fieldName);
             ReusableStringReader strReader =
-                (components == null || components.ReusableStringReader == null)
+                (components == null || components.reusableStringReader == null)
                     ? new ReusableStringReader()
-                    : components.ReusableStringReader;
+                    : components.reusableStringReader;
             strReader.SetValue(text);
             var r = InitReader(fieldName, strReader);
             if (components == null)
             {
                 components = CreateComponents(fieldName, r);
-                _reuseStrategy.SetReusableComponents(this, fieldName, components);
+                reuseStrategy.SetReusableComponents(this, fieldName, components);
             }
             else
             {
                 components.SetReader(r);
             }
-            components.ReusableStringReader = strReader;
+            components.reusableStringReader = strReader;
             return components.TokenStream;
         }
 
@@ -217,7 +217,7 @@ namespace Lucene.Net.Analysis
         {
             get
             {
-                return _reuseStrategy;
+                return reuseStrategy;
             }
         }
 
@@ -225,10 +225,10 @@ namespace Lucene.Net.Analysis
         /// Frees persistent resources used by this Analyzer </summary>
         public virtual void Dispose()
         {
-            if (StoredValue != null)
+            if (storedValue != null)
             {
-                StoredValue.Dispose();
-                StoredValue = null;
+                storedValue.Dispose();
+                storedValue = null;
             }
         }
 
@@ -254,7 +254,7 @@ namespace Lucene.Net.Analysis
 
             /// <summary>
             /// Internal cache only used by <seealso cref="Analyzer#tokenStream(String, String)"/>. </summary>
-            internal ReusableStringReader ReusableStringReader;
+            internal ReusableStringReader reusableStringReader;
 
             /// <summary>
             /// Creates a new <seealso cref="TokenStreamComponents"/> instance.
@@ -351,11 +351,11 @@ namespace Lucene.Net.Analysis
             /// <exception cref="AlreadyClosedException"> if the Analyzer is closed. </exception>
             protected internal object GetStoredValue(Analyzer analyzer)
             {
-                if (analyzer.StoredValue == null)
+                if (analyzer.storedValue == null)
                 {
                     throw new AlreadyClosedException("this Analyzer is closed");
                 }
-                return analyzer.StoredValue.Get();
+                return analyzer.storedValue.Get();
             }
 
             /// <summary>
@@ -365,11 +365,11 @@ namespace Lucene.Net.Analysis
             /// <exception cref="AlreadyClosedException"> if the Analyzer is closed. </exception>
             protected internal void SetStoredValue(Analyzer analyzer, object storedValue)
             {
-                if (analyzer.StoredValue == null)
+                if (analyzer.storedValue == null)
                 {
                     throw new AlreadyClosedException("this Analyzer is closed");
                 }
-                analyzer.StoredValue.Set(storedValue);
+                analyzer.storedValue.Set(storedValue);
             }
         }
 
