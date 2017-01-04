@@ -78,29 +78,29 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Extension of stored fields index file </summary>
         public const string FIELDS_INDEX_EXTENSION = "fdx";
 
-        private readonly Directory Directory;
-        private readonly string Segment;
-        private IndexOutput FieldsStream;
-        private IndexOutput IndexStream;
+        private readonly Directory directory;
+        private readonly string segment;
+        private IndexOutput fieldsStream;
+        private IndexOutput indexStream;
 
         /// <summary>
         /// Sole constructor. </summary>
         public Lucene40StoredFieldsWriter(Directory directory, string segment, IOContext context)
         {
             Debug.Assert(directory != null);
-            this.Directory = directory;
-            this.Segment = segment;
+            this.directory = directory;
+            this.segment = segment;
 
             bool success = false;
             try
             {
-                FieldsStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", FIELDS_EXTENSION), context);
-                IndexStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", FIELDS_INDEX_EXTENSION), context);
+                fieldsStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", FIELDS_EXTENSION), context);
+                indexStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", FIELDS_INDEX_EXTENSION), context);
 
-                CodecUtil.WriteHeader(FieldsStream, CODEC_NAME_DAT, VERSION_CURRENT);
-                CodecUtil.WriteHeader(IndexStream, CODEC_NAME_IDX, VERSION_CURRENT);
-                Debug.Assert(HEADER_LENGTH_DAT == FieldsStream.FilePointer);
-                Debug.Assert(HEADER_LENGTH_IDX == IndexStream.FilePointer);
+                CodecUtil.WriteHeader(fieldsStream, CODEC_NAME_DAT, VERSION_CURRENT);
+                CodecUtil.WriteHeader(indexStream, CODEC_NAME_IDX, VERSION_CURRENT);
+                Debug.Assert(HEADER_LENGTH_DAT == fieldsStream.FilePointer);
+                Debug.Assert(HEADER_LENGTH_IDX == indexStream.FilePointer);
                 success = true;
             }
             finally
@@ -118,8 +118,8 @@ namespace Lucene.Net.Codecs.Lucene40
         // in the correct fields format.
         public override void StartDocument(int numStoredFields)
         {
-            IndexStream.WriteLong(FieldsStream.FilePointer);
-            FieldsStream.WriteVInt(numStoredFields);
+            indexStream.WriteLong(fieldsStream.FilePointer);
+            fieldsStream.WriteVInt(numStoredFields);
         }
 
         protected override void Dispose(bool disposing)
@@ -128,11 +128,11 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 try
                 {
-                    IOUtils.Close(FieldsStream, IndexStream);
+                    IOUtils.Close(fieldsStream, indexStream);
                 }
                 finally
                 {
-                    FieldsStream = IndexStream = null;
+                    fieldsStream = indexStream = null;
                 }
             }
         }
@@ -146,12 +146,12 @@ namespace Lucene.Net.Codecs.Lucene40
             catch (Exception)
             {
             }
-            IOUtils.DeleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, "", FIELDS_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", FIELDS_INDEX_EXTENSION));
+            IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, "", FIELDS_EXTENSION), IndexFileNames.SegmentFileName(segment, "", FIELDS_INDEX_EXTENSION));
         }
 
         public override void WriteField(FieldInfo info, IIndexableField field)
         {
-            FieldsStream.WriteVInt(info.Number);
+            fieldsStream.WriteVInt(info.Number);
             int bits = 0;
             BytesRef bytes;
             string @string;
@@ -204,34 +204,34 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
             }
 
-            FieldsStream.WriteByte((byte)(sbyte)bits);
+            fieldsStream.WriteByte((byte)(sbyte)bits);
 
             if (bytes != null)
             {
-                FieldsStream.WriteVInt(bytes.Length);
-                FieldsStream.WriteBytes(bytes.Bytes, bytes.Offset, bytes.Length);
+                fieldsStream.WriteVInt(bytes.Length);
+                fieldsStream.WriteBytes(bytes.Bytes, bytes.Offset, bytes.Length);
             }
             else if (@string != null)
             {
-                FieldsStream.WriteString(field.GetStringValue());
+                fieldsStream.WriteString(field.GetStringValue());
             }
             else
             {
                 if (number is sbyte || number is short || number is int)
                 {
-                    FieldsStream.WriteInt((int)number);
+                    fieldsStream.WriteInt((int)number);
                 }
                 else if (number is long)
                 {
-                    FieldsStream.WriteLong((long)number);
+                    fieldsStream.WriteLong((long)number);
                 }
                 else if (number is float)
                 {
-                    FieldsStream.WriteInt(Number.FloatToIntBits((float)number));
+                    fieldsStream.WriteInt(Number.FloatToIntBits((float)number));
                 }
                 else if (number is double)
                 {
-                    FieldsStream.WriteLong(BitConverter.DoubleToInt64Bits((double)number));
+                    fieldsStream.WriteLong(BitConverter.DoubleToInt64Bits((double)number));
                 }
                 else
                 {
@@ -249,27 +249,27 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public void AddRawDocuments(IndexInput stream, int[] lengths, int numDocs)
         {
-            long position = FieldsStream.FilePointer;
+            long position = fieldsStream.FilePointer;
             long start = position;
             for (int i = 0; i < numDocs; i++)
             {
-                IndexStream.WriteLong(position);
+                indexStream.WriteLong(position);
                 position += lengths[i];
             }
-            FieldsStream.CopyBytes(stream, position - start);
-            Debug.Assert(FieldsStream.FilePointer == position);
+            fieldsStream.CopyBytes(stream, position - start);
+            Debug.Assert(fieldsStream.FilePointer == position);
         }
 
         public override void Finish(FieldInfos fis, int numDocs)
         {
-            if (HEADER_LENGTH_IDX + ((long)numDocs) * 8 != IndexStream.FilePointer)
+            if (HEADER_LENGTH_IDX + ((long)numDocs) * 8 != indexStream.FilePointer)
             // this is most likely a bug in Sun JRE 1.6.0_04/_05;
             // we detect that the bug has struck, here, and
             // throw an exception to prevent the corruption from
             // entering the index.  See LUCENE-1282 for
             // details.
             {
-                throw new Exception("fdx size mismatch: docCount is " + numDocs + " but fdx file size is " + IndexStream.FilePointer + " file=" + IndexStream.ToString() + "; now aborting this merge to prevent index corruption");
+                throw new Exception("fdx size mismatch: docCount is " + numDocs + " but fdx file size is " + indexStream.FilePointer + " file=" + indexStream.ToString() + "; now aborting this merge to prevent index corruption");
             }
         }
 
