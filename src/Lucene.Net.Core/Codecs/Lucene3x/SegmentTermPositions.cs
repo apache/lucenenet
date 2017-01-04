@@ -32,25 +32,25 @@ namespace Lucene.Net.Codecs.Lucene3x
     [Obsolete("(4.0)")]
     internal sealed class SegmentTermPositions : SegmentTermDocs
     {
-        private IndexInput ProxStream;
-        private IndexInput ProxStreamOrig;
-        private int ProxCount;
-        private int Position;
+        private IndexInput proxStream;
+        private IndexInput proxStreamOrig;
+        private int proxCount;
+        private int position;
 
-        private BytesRef Payload_Renamed;
+        private BytesRef payload;
 
         // the current payload length
-        private int PayloadLength_Renamed;
+        private int payloadLength;
 
         // indicates whether the payload of the current position has
         // been read from the proxStream yet
-        private bool NeedToLoadPayload;
+        private bool needToLoadPayload;
 
         // these variables are being used to remember information
         // for a lazy skip
-        private long LazySkipPointer = -1;
+        private long lazySkipPointer = -1;
 
-        private int LazySkipProxCount = 0;
+        private int lazySkipProxCount = 0;
 
         /*
         SegmentTermPositions(SegmentReader p) {
@@ -62,7 +62,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public SegmentTermPositions(IndexInput freqStream, IndexInput proxStream, TermInfosReader tis, FieldInfos fieldInfos)
             : base(freqStream, tis, fieldInfos)
         {
-            this.ProxStreamOrig = proxStream; // the proxStream will be cloned lazily when nextPosition() is called for the first time
+            this.proxStreamOrig = proxStream; // the proxStream will be cloned lazily when nextPosition() is called for the first time
         }
 
         internal override void Seek(TermInfo ti, Term term)
@@ -70,13 +70,13 @@ namespace Lucene.Net.Codecs.Lucene3x
             base.Seek(ti, term);
             if (ti != null)
             {
-                LazySkipPointer = ti.ProxPointer;
+                lazySkipPointer = ti.ProxPointer;
             }
 
-            LazySkipProxCount = 0;
-            ProxCount = 0;
-            PayloadLength_Renamed = 0;
-            NeedToLoadPayload = false;
+            lazySkipProxCount = 0;
+            proxCount = 0;
+            payloadLength = 0;
+            needToLoadPayload = false;
         }
 
         protected override void Dispose(bool disposing)
@@ -85,9 +85,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             if (disposing)
             {
-                if (ProxStream != null)
+                if (proxStream != null)
                 {
-                    ProxStream.Dispose();
+                    proxStream.Dispose();
                 }
             }
         }
@@ -101,13 +101,13 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             // perform lazy skips if necessary
             LazySkip();
-            ProxCount--;
-            return Position += ReadDeltaPosition();
+            proxCount--;
+            return position += ReadDeltaPosition();
         }
 
         private int ReadDeltaPosition()
         {
-            int delta = ProxStream.ReadVInt();
+            int delta = proxStream.ReadVInt();
             if (m_currentFieldStoresPayloads)
             {
                 // if the current field stores payloads then
@@ -116,10 +116,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // payload length
                 if ((delta & 1) != 0)
                 {
-                    PayloadLength_Renamed = ProxStream.ReadVInt();
+                    payloadLength = proxStream.ReadVInt();
                 }
                 delta = (int)((uint)delta >> 1);
-                NeedToLoadPayload = true;
+                needToLoadPayload = true;
             }
             else if (delta == -1)
             {
@@ -131,19 +131,19 @@ namespace Lucene.Net.Codecs.Lucene3x
         protected internal sealed override void SkippingDoc()
         {
             // we remember to skip a document lazily
-            LazySkipProxCount += freq;
+            lazySkipProxCount += freq;
         }
 
         public sealed override bool Next()
         {
             // we remember to skip the remaining positions of the current
             // document lazily
-            LazySkipProxCount += ProxCount;
+            lazySkipProxCount += proxCount;
 
             if (base.Next()) // run super
             {
-                ProxCount = freq; // note frequency
-                Position = 0; // reset position
+                proxCount = freq; // note frequency
+                position = 0; // reset position
                 return true;
             }
             return false;
@@ -159,11 +159,11 @@ namespace Lucene.Net.Codecs.Lucene3x
         protected internal override void SkipProx(long proxPointer, int payloadLength)
         {
             // we save the pointer, we might have to skip there lazily
-            LazySkipPointer = proxPointer;
-            LazySkipProxCount = 0;
-            ProxCount = 0;
-            this.PayloadLength_Renamed = payloadLength;
-            NeedToLoadPayload = false;
+            lazySkipPointer = proxPointer;
+            lazySkipProxCount = 0;
+            proxCount = 0;
+            this.payloadLength = payloadLength;
+            needToLoadPayload = false;
         }
 
         private void SkipPositions(int n)
@@ -178,11 +178,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private void SkipPayload()
         {
-            if (NeedToLoadPayload && PayloadLength_Renamed > 0)
+            if (needToLoadPayload && payloadLength > 0)
             {
-                ProxStream.Seek(ProxStream.FilePointer + PayloadLength_Renamed);
+                proxStream.Seek(proxStream.FilePointer + payloadLength);
             }
-            NeedToLoadPayload = false;
+            needToLoadPayload = false;
         }
 
         // It is not always necessary to move the prox pointer
@@ -197,26 +197,26 @@ namespace Lucene.Net.Codecs.Lucene3x
         // as soon as positions are requested.
         private void LazySkip()
         {
-            if (ProxStream == null)
+            if (proxStream == null)
             {
                 // clone lazily
-                ProxStream = (IndexInput)ProxStreamOrig.Clone();
+                proxStream = (IndexInput)proxStreamOrig.Clone();
             }
 
             // we might have to skip the current payload
             // if it was not read yet
             SkipPayload();
 
-            if (LazySkipPointer != -1)
+            if (lazySkipPointer != -1)
             {
-                ProxStream.Seek(LazySkipPointer);
-                LazySkipPointer = -1;
+                proxStream.Seek(lazySkipPointer);
+                lazySkipPointer = -1;
             }
 
-            if (LazySkipProxCount != 0)
+            if (lazySkipProxCount != 0)
             {
-                SkipPositions(LazySkipProxCount);
-                LazySkipProxCount = 0;
+                SkipPositions(lazySkipProxCount);
+                lazySkipProxCount = 0;
             }
         }
 
@@ -224,7 +224,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return PayloadLength_Renamed;
+                return payloadLength;
             }
         }
 
@@ -232,28 +232,28 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                if (PayloadLength_Renamed <= 0)
+                if (payloadLength <= 0)
                 {
                     return null; // no payload
                 }
 
-                if (NeedToLoadPayload)
+                if (needToLoadPayload)
                 {
                     // read payloads lazily
-                    if (Payload_Renamed == null)
+                    if (payload == null)
                     {
-                        Payload_Renamed = new BytesRef(PayloadLength_Renamed);
+                        payload = new BytesRef(payloadLength);
                     }
                     else
                     {
-                        Payload_Renamed.Grow(PayloadLength_Renamed);
+                        payload.Grow(payloadLength);
                     }
 
-                    ProxStream.ReadBytes(Payload_Renamed.Bytes, Payload_Renamed.Offset, PayloadLength_Renamed);
-                    Payload_Renamed.Length = PayloadLength_Renamed;
-                    NeedToLoadPayload = false;
+                    proxStream.ReadBytes(payload.Bytes, payload.Offset, payloadLength);
+                    payload.Length = payloadLength;
+                    needToLoadPayload = false;
                 }
-                return Payload_Renamed;
+                return payload;
             }
         }
 
@@ -261,7 +261,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return NeedToLoadPayload && PayloadLength_Renamed > 0;
+                return needToLoadPayload && payloadLength > 0;
             }
         }
     }
