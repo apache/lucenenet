@@ -82,8 +82,8 @@ namespace Lucene.Net.Codecs.Lucene46
     /// </summary>
     public sealed class Lucene46FieldInfosFormat : FieldInfosFormat
     {
-        private readonly FieldInfosReader Reader = new Lucene46FieldInfosReader();
-        private readonly FieldInfosWriter Writer = new Lucene46FieldInfosWriter();
+        private readonly FieldInfosReader reader = new Lucene46FieldInfosReader();
+        private readonly FieldInfosWriter writer = new Lucene46FieldInfosWriter();
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -95,7 +95,7 @@ namespace Lucene.Net.Codecs.Lucene46
         {
             get
             {
-                return Reader;
+                return reader;
             }
         }
 
@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.Lucene46
         {
             get
             {
-                return Writer;
+                return writer;
             }
         }
 
