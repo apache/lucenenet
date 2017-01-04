@@ -360,7 +360,7 @@ namespace Lucene.Net.Index
         protected internal virtual void HandleMergeException(Exception exc)
         {
             // suppressExceptions is normally only set during testing
-            if (SuppressExceptions)
+            if (suppressExceptions)
             {
                 return;
             }
@@ -386,20 +386,20 @@ namespace Lucene.Net.Index
             throw new MergePolicy.MergeException(exc, _directory);
         }
 
-        private bool SuppressExceptions;
+        private bool suppressExceptions;
 
         /// <summary>
         /// Used for testing </summary>
         public virtual void SetSuppressExceptions()
         {
-            SuppressExceptions = true;
+            suppressExceptions = true;
         }
 
         /// <summary>
         /// Used for testing </summary>
         public virtual void ClearSuppressExceptions()
         {
-            SuppressExceptions = false;
+            suppressExceptions = false;
         }
 
         public override string ToString()
