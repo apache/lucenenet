@@ -37,11 +37,11 @@ namespace Lucene.Net.Util.Automaton
             Debug.Assert(absState != -1);
 
             // decode absState -> state, offset
-            int state = absState / (w + 1);
-            int offset = absState % (w + 1);
+            int state = absState / (m_w + 1);
+            int offset = absState % (m_w + 1);
             Debug.Assert(offset >= 0);
 
-            if (position == w)
+            if (position == m_w)
             {
                 if (state < 2)
                 {
@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Automaton
                     state = Unpack(ToStates0, loc, 2) - 1;
                 }
             }
-            else if (position == w - 1)
+            else if (position == m_w - 1)
             {
                 if (state < 3)
                 {
@@ -59,7 +59,7 @@ namespace Lucene.Net.Util.Automaton
                     state = Unpack(ToStates1, loc, 2) - 1;
                 }
             }
-            else if (position == w - 2)
+            else if (position == m_w - 2)
             {
                 if (state < 6)
                 {
@@ -86,7 +86,7 @@ namespace Lucene.Net.Util.Automaton
             else
             {
                 // translate back to abs
-                return state * (w + 1) + offset;
+                return state * (m_w + 1) + offset;
             }
         }
 

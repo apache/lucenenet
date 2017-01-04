@@ -243,14 +243,14 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         internal abstract class ParametricDescription
         {
-            protected internal readonly int w;
-            protected internal readonly int n;
+            protected readonly int m_w;
+            protected readonly int m_n;
             private readonly int[] minErrors;
 
             internal ParametricDescription(int w, int n, int[] minErrors)
             {
-                this.w = w;
-                this.n = n;
+                this.m_w = w;
+                this.m_n = n;
                 this.minErrors = minErrors;
             }
 
@@ -259,7 +259,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal virtual int Size // LUCENENET TODO: rename Count
             {
-                get { return minErrors.Length * (w + 1); }
+                get { return minErrors.Length * (m_w + 1); }
             }
 
             /// <summary>
@@ -268,10 +268,10 @@ namespace Lucene.Net.Util.Automaton
             internal virtual bool IsAccept(int absState)
             {
                 // decode absState -> state, offset
-                int state = absState / (w + 1);
-                int offset = absState % (w + 1);
+                int state = absState / (m_w + 1);
+                int offset = absState % (m_w + 1);
                 Debug.Assert(offset >= 0);
-                return w - offset + minErrors[state] <= n;
+                return m_w - offset + minErrors[state] <= m_n;
             }
 
             /// <summary>
@@ -280,7 +280,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal virtual int GetPosition(int absState)
             {
-                return absState % (w + 1);
+                return absState % (m_w + 1);
             }
 
             /// <summary>
