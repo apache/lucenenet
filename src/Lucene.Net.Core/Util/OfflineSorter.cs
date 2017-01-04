@@ -73,7 +73,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= #megabytes(long) </seealso>
         public sealed class BufferSize
         {
-            internal readonly int Bytes;
+            internal readonly int bytes;
 
             private BufferSize(long bytes)
             {
@@ -87,7 +87,7 @@ namespace Lucene.Net.Util
                     throw new System.ArgumentException(MIN_BUFFER_SIZE_MSG + ": " + bytes);
                 }
 
-                this.Bytes = (int)bytes;
+                this.bytes = (int)bytes;
             }
 
             /// <summary>
@@ -143,10 +143,10 @@ namespace Lucene.Net.Util
         {
             internal virtual void InitializeInstanceFields()
             {
-                BufferSize = OuterInstance.ramBufferSize.Bytes;
+                BufferSize = outerInstance.ramBufferSize.bytes;
             }
 
-            private readonly OfflineSorter OuterInstance;
+            private readonly OfflineSorter outerInstance;
 
             /// <summary>
             /// number of temporary files created when merging partitions </summary>
@@ -177,7 +177,7 @@ namespace Lucene.Net.Util
             /// create a new SortInfo (with empty statistics) for debugging </summary>
             public SortInfo(OfflineSorter outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
 
                 InitializeInstanceFields();
             }
@@ -230,9 +230,9 @@ namespace Lucene.Net.Util
         public OfflineSorter(IComparer<BytesRef> comparator, BufferSize ramBufferSize, DirectoryInfo tempDirectory, int maxTempfiles)
         {
             InitializeInstanceFields();
-            if (ramBufferSize.Bytes < ABSOLUTE_MIN_SORT_BUFFER_SIZE)
+            if (ramBufferSize.bytes < ABSOLUTE_MIN_SORT_BUFFER_SIZE)
             {
-                throw new System.ArgumentException(MIN_BUFFER_SIZE_MSG + ": " + ramBufferSize.Bytes);
+                throw new System.ArgumentException(MIN_BUFFER_SIZE_MSG + ": " + ramBufferSize.bytes);
             }
 
             if (maxTempfiles < 2)
@@ -455,17 +455,17 @@ namespace Lucene.Net.Util
 
         private class PriorityQueueAnonymousInnerClassHelper : PriorityQueue<FileAndTop>
         {
-            private readonly OfflineSorter OuterInstance;
+            private readonly OfflineSorter outerInstance;
 
             public PriorityQueueAnonymousInnerClassHelper(OfflineSorter outerInstance, int size)
                 : base(size)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override bool LessThan(FileAndTop a, FileAndTop b)
             {
-                return OuterInstance.comparator.Compare(a.Current, b.Current) < 0;
+                return outerInstance.comparator.Compare(a.Current, b.Current) < 0;
             }
         }
 
@@ -481,7 +481,7 @@ namespace Lucene.Net.Util
                 buffer.Append(scratch);
                 // Account for the created objects.
                 // (buffer slots do not account to buffer size.)
-                if (ramBufferSize.Bytes < bufferBytesUsed.Get())
+                if (ramBufferSize.bytes < bufferBytesUsed.Get())
                 {
                     break;
                 }
@@ -509,7 +509,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public class ByteSequencesWriter : IDisposable
         {
-            private readonly DataOutput Os;
+            private readonly DataOutput os;
 
             /// <summary>
             /// Constructs a ByteSequencesWriter to the provided File </summary>
@@ -522,7 +522,7 @@ namespace Lucene.Net.Util
             /// Constructs a ByteSequencesWriter to the provided DataOutput </summary>
             public ByteSequencesWriter(DataOutput os)
             {
-                this.Os = os;
+                this.os = os;
             }
 
             /// <summary>
@@ -571,8 +571,8 @@ namespace Lucene.Net.Util
                 Debug.Assert(bytes != null);
                 Debug.Assert(off >= 0 && off + len <= bytes.Length);
                 Debug.Assert(len >= 0);
-                Os.WriteShort((short)len);
-                Os.WriteBytes(bytes, off, len); // LUCENENET NOTE: We call WriteBytes, since there is no Write() on Lucene's version of DataOutput
+                os.WriteShort((short)len);
+                os.WriteBytes(bytes, off, len); // LUCENENET NOTE: We call WriteBytes, since there is no Write() on Lucene's version of DataOutput
             }
 
             /// <summary>
@@ -580,7 +580,7 @@ namespace Lucene.Net.Util
             /// </summary>
             public void Dispose()
             {
-                var os = Os as IDisposable;
+                var os = this.os as IDisposable;
                 if (os != null)
                 {
                     os.Dispose();
