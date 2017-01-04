@@ -32,9 +32,9 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class CachingTokenFilter : TokenFilter
     {
-        private LinkedList<AttributeSource.State> Cache = null;
-        private IEnumerator<AttributeSource.State> Iterator = null;
-        private AttributeSource.State FinalState;
+        private LinkedList<AttributeSource.State> cache = null;
+        private IEnumerator<AttributeSource.State> iterator = null;
+        private AttributeSource.State finalState;
 
         /// <summary>
         /// Create a new CachingTokenFilter around <code>input</code>,
@@ -48,29 +48,29 @@ namespace Lucene.Net.Analysis
 
         public override bool IncrementToken()
         {
-            if (Cache == null)
+            if (cache == null)
             {
                 // fill cache lazily
-                Cache = new LinkedList<AttributeSource.State>();
+                cache = new LinkedList<AttributeSource.State>();
                 FillCache();
-                Iterator = Cache.GetEnumerator();
+                iterator = cache.GetEnumerator();
             }
 
-            if (!Iterator.MoveNext())
+            if (!iterator.MoveNext())
             {
                 // the cache is exhausted, return false
                 return false;
             }
             // Since the TokenFilter can be reset, the tokens need to be preserved as immutable.
-            RestoreState(Iterator.Current);
+            RestoreState(iterator.Current);
             return true;
         }
 
         public override void End()
         {
-            if (FinalState != null)
+            if (finalState != null)
             {
-                RestoreState(FinalState);
+                RestoreState(finalState);
             }
         }
 
@@ -83,9 +83,9 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public override void Reset()
         {
-            if (Cache != null)
+            if (cache != null)
             {
-                Iterator = Cache.GetEnumerator();
+                iterator = cache.GetEnumerator();
             }
         }
 
@@ -93,11 +93,11 @@ namespace Lucene.Net.Analysis
         {
             while (m_input.IncrementToken())
             {
-                Cache.AddLast(CaptureState());
+                cache.AddLast(CaptureState());
             }
             // capture final state
             m_input.End();
-            FinalState = CaptureState();
+            finalState = CaptureState();
         }
     }
 }
