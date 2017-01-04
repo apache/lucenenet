@@ -626,18 +626,18 @@ namespace Lucene.Net.Util.Automaton
         // Simple custom ArrayList<Transition>
         private sealed class TransitionList
         {
-            internal Transition[] Transitions = new Transition[2];
-            internal int Count;
+            internal Transition[] transitions = new Transition[2];
+            internal int count;
 
             public void Add(Transition t)
             {
-                if (Transitions.Length == Count)
+                if (transitions.Length == count)
                 {
-                    Transition[] newArray = new Transition[ArrayUtil.Oversize(1 + Count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                    Array.Copy(Transitions, 0, newArray, 0, Count);
-                    Transitions = newArray;
+                    Transition[] newArray = new Transition[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                    Array.Copy(transitions, 0, newArray, 0, count);
+                    transitions = newArray;
                 }
-                Transitions[Count++] = t;
+                transitions[count++] = t;
             }
         }
 
@@ -645,94 +645,94 @@ namespace Lucene.Net.Util.Automaton
         // end at this point-1
         private sealed class PointTransitions : IComparable<PointTransitions>
         {
-            internal int Point;
-            internal readonly TransitionList Ends = new TransitionList();
-            internal readonly TransitionList Starts = new TransitionList();
+            internal int point;
+            internal readonly TransitionList ends = new TransitionList();
+            internal readonly TransitionList starts = new TransitionList();
 
             public int CompareTo(PointTransitions other)
             {
-                return Point - other.Point;
+                return point - other.point;
             }
 
             public void Reset(int point)
             {
-                this.Point = point;
-                Ends.Count = 0;
-                Starts.Count = 0;
+                this.point = point;
+                ends.count = 0;
+                starts.count = 0;
             }
 
             public override bool Equals(object other)
             {
-                return ((PointTransitions)other).Point == Point;
+                return ((PointTransitions)other).point == point;
             }
 
             public override int GetHashCode()
             {
-                return Point;
+                return point;
             }
         }
 
         private sealed class PointTransitionSet
         {
-            internal int Count;
-            internal PointTransitions[] Points = new PointTransitions[5];
+            internal int count;
+            internal PointTransitions[] points = new PointTransitions[5];
 
             private const int HASHMAP_CUTOVER = 30;
-            private readonly Dictionary<int?, PointTransitions> Map = new Dictionary<int?, PointTransitions>();
-            private bool UseHash = false;
+            private readonly Dictionary<int?, PointTransitions> map = new Dictionary<int?, PointTransitions>();
+            private bool useHash = false;
 
             private PointTransitions Next(int point)
             {
                 // 1st time we are seeing this point
-                if (Count == Points.Length)
+                if (count == points.Length)
                 {
-                    PointTransitions[] newArray = new PointTransitions[ArrayUtil.Oversize(1 + Count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                    Array.Copy(Points, 0, newArray, 0, Count);
-                    Points = newArray;
+                    PointTransitions[] newArray = new PointTransitions[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                    Array.Copy(points, 0, newArray, 0, count);
+                    points = newArray;
                 }
-                PointTransitions points0 = Points[Count];
+                PointTransitions points0 = points[count];
                 if (points0 == null)
                 {
-                    points0 = Points[Count] = new PointTransitions();
+                    points0 = points[count] = new PointTransitions();
                 }
                 points0.Reset(point);
-                Count++;
+                count++;
                 return points0;
             }
 
             private PointTransitions Find(int point)
             {
-                if (UseHash)
+                if (useHash)
                 {
                     int? pi = point;
                     PointTransitions p;
-                    if (!Map.TryGetValue(pi, out p))
+                    if (!map.TryGetValue(pi, out p))
                     {
                         p = Next(point);
-                        Map[pi] = p;
+                        map[pi] = p;
                     }
                     return p;
                 }
                 else
                 {
-                    for (int i = 0; i < Count; i++)
+                    for (int i = 0; i < count; i++)
                     {
-                        if (Points[i].Point == point)
+                        if (points[i].point == point)
                         {
-                            return Points[i];
+                            return points[i];
                         }
                     }
 
                     PointTransitions p = Next(point);
-                    if (Count == HASHMAP_CUTOVER)
+                    if (count == HASHMAP_CUTOVER)
                     {
                         // switch to HashMap on the fly
-                        Debug.Assert(Map.Count == 0);
-                        for (int i = 0; i < Count; i++)
+                        Debug.Assert(map.Count == 0);
+                        for (int i = 0; i < count; i++)
                         {
-                            Map[Points[i].Point] = Points[i];
+                            map[points[i].point] = points[i];
                         }
-                        UseHash = true;
+                        useHash = true;
                     }
                     return p;
                 }
@@ -740,39 +740,39 @@ namespace Lucene.Net.Util.Automaton
 
             public void Reset()
             {
-                if (UseHash)
+                if (useHash)
                 {
-                    Map.Clear();
-                    UseHash = false;
+                    map.Clear();
+                    useHash = false;
                 }
-                Count = 0;
+                count = 0;
             }
 
             public void Sort()
             {
                 // Tim sort performs well on already sorted arrays:
-                if (Count > 1)
+                if (count > 1)
                 {
-                    ArrayUtil.TimSort(Points, 0, Count);
+                    ArrayUtil.TimSort(points, 0, count);
                 }
             }
 
             public void Add(Transition t)
             {
-                Find(t.min).Starts.Add(t);
-                Find(1 + t.max).Ends.Add(t);
+                Find(t.min).starts.Add(t);
+                Find(1 + t.max).ends.Add(t);
             }
 
             public override string ToString()
             {
                 StringBuilder s = new StringBuilder();
-                for (int i = 0; i < Count; i++)
+                for (int i = 0; i < count; i++)
                 {
                     if (i > 0)
                     {
                         s.Append(' ');
                     }
-                    s.Append(Points[i].Point).Append(':').Append(Points[i].Starts.Count).Append(',').Append(Points[i].Ends.Count);
+                    s.Append(points[i].point).Append(':').Append(points[i].starts.count).Append(',').Append(points[i].ends.count);
                 }
                 return s.ToString();
             }
@@ -838,7 +838,7 @@ namespace Lucene.Net.Util.Automaton
                     }
                 }
 
-                if (points.Count == 0)
+                if (points.count == 0)
                 {
                     // No outgoing transitions -- skip it
                     continue;
@@ -850,9 +850,9 @@ namespace Lucene.Net.Util.Automaton
                 int accCount = 0;
 
                 State r = s.state;
-                for (int i = 0; i < points.Count; i++)
+                for (int i = 0; i < points.count; i++)
                 {
-                    int point = points.Points[i].Point;
+                    int point = points.points[i].point;
 
                     if (statesSet.upto > 0)
                     {
@@ -890,8 +890,8 @@ namespace Lucene.Net.Util.Automaton
 
                     // process transitions that end on this point
                     // (closes an overlapping interval)
-                    Transition[] transitions = points.Points[i].Ends.Transitions;
-                    int limit = points.Points[i].Ends.Count;
+                    Transition[] transitions = points.points[i].ends.transitions;
+                    int limit = points.points[i].ends.count;
                     for (int j = 0; j < limit; j++)
                     {
                         Transition t = transitions[j];
@@ -899,12 +899,12 @@ namespace Lucene.Net.Util.Automaton
                         statesSet.Decr(num);
                         accCount -= t.to.accept ? 1 : 0;
                     }
-                    points.Points[i].Ends.Count = 0;
+                    points.points[i].ends.count = 0;
 
                     // process transitions that start on this point
                     // (opens a new interval)
-                    transitions = points.Points[i].Starts.Transitions;
-                    limit = points.Points[i].Starts.Count;
+                    transitions = points.points[i].starts.transitions;
+                    limit = points.points[i].starts.count;
                     for (int j = 0; j < limit; j++)
                     {
                         Transition t = transitions[j];
@@ -913,7 +913,7 @@ namespace Lucene.Net.Util.Automaton
                         accCount += t.to.accept ? 1 : 0;
                     }
                     lastPoint = point;
-                    points.Points[i].Starts.Count = 0;
+                    points.points[i].starts.count = 0;
                 }
                 points.Reset();
                 Debug.Assert(statesSet.upto == 0, "upto=" + statesSet.upto);
