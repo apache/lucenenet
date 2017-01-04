@@ -368,7 +368,7 @@ namespace Lucene.Net.Analysis.Ngram
         public virtual void TestSupplementaryCharacters()
         {
             string s = TestUtil.RandomUnicodeString(Random(), 10);
-            int codePointCount = Character.CodePointCount(s, 0, s.Length);
+            int codePointCount = s.CodePointCount(0, s.Length);
             int minGram = TestUtil.NextInt(Random(), 1, 3);
             int maxGram = TestUtil.NextInt(Random(), minGram, 10);
             TokenStream tk = new KeywordTokenizer(new StringReader(s));

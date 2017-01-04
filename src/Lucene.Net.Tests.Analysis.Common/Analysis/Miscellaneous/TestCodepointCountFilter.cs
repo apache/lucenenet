@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 string text = TestUtil.RandomUnicodeString(Random(), 100);
                 int min = TestUtil.NextInt(Random(), 0, 100);
                 int max = TestUtil.NextInt(Random(), 0, 100);
-                int count = Character.CodePointCount(text, 0, text.Length);// text.codePointCount(0, text.Length);
+                int count = text.CodePointCount(0, text.Length);
                 if (min > max)
                 {
                     int temp = min;

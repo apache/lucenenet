@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Util;
+using System;
 using System.Text;
 
 namespace Lucene.Net.Support
@@ -44,9 +45,29 @@ namespace Lucene.Net.Support
             return Character.CodePointAt(str, index);
         }
 
+        /// <summary>
+        /// Returns the number of Unicode code points in the specified text
+        /// range of this <see cref="string"/>. The text range begins at the
+        /// specified <paramref name="beginIndex"/> and extends to the
+        /// <see cref="char"/> at index <c>endIndex - 1</c>. Thus the
+        /// length (in <see cref="char"/>s) of the text range is
+        /// <c>endIndex-beginIndex</c>. Unpaired surrogates within
+        /// the text range count as one code point each.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="beginIndex">the index to the first <see cref="char"/> of the text range.</param>
+        /// <param name="endIndex">the index after the last <see cref="char"/> of the text range.</param>
+        /// <returns>the number of Unicode code points in the specified text range</returns>
+        /// <exception cref="IndexOutOfRangeException">if the <paramref name="beginIndex"/> is negative, or
+        /// <paramref name="endIndex"/> is larger than the length of this <see cref="string"/>, or
+        /// <paramref name="beginIndex"/> is larger than <paramref name="endIndex"/>.</exception>
         public static int CodePointCount(this string str, int beginIndex, int endIndex)
         {
-            return Character.CodePointCount(str, beginIndex, endIndex);
+            if (beginIndex < 0 || endIndex > str.Length || beginIndex > endIndex)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            return Character.CodePointCountImpl(str.ToCharArray(), beginIndex, endIndex - beginIndex);
         }
 
         public static int OffsetByCodePoints(this string seq, int index,

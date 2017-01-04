@@ -124,11 +124,10 @@ namespace Lucene.Net.Search
 
             // convert the string into a utf32 int[] representation for fast comparisons
             string utf16 = term.Text();
-            //this.TermText = new int[utf16.codePointCount(0, utf16.Length)];
-            this.m_termText = new int[Character.CodePointCount(utf16, 0, utf16.Length)];
+            this.m_termText = new int[utf16.CodePointCount(0, utf16.Length)];
             for (int cp, i = 0, j = 0; i < utf16.Length; i += Character.CharCount(cp))
             {
-                m_termText[j++] = cp = Character.CodePointAt(utf16, i);
+                m_termText[j++] = cp = utf16.CodePointAt(i);
             }
             this.m_termLength = m_termText.Length;
             this.dfaAtt = atts.AddAttribute<ILevenshteinAutomataAttribute>();

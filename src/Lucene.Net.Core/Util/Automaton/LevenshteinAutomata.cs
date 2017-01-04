@@ -120,8 +120,7 @@ namespace Lucene.Net.Util.Automaton
 
         private static int[] CodePoints(string input)
         {
-            //int length = char.codePointCount(input, 0, input.Length);
-            int length = input.Length;
+            int length = Character.CodePointCount(input, 0, input.Length);
             int[] word = new int[length];
             for (int i = 0, j = 0, cp = 0; i < input.Length; i += Character.CharCount(cp))
             {

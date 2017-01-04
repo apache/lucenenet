@@ -272,7 +272,9 @@ namespace Lucene.Net.Search.Spell
                 try { ir.Dispose(); } catch (Exception /*e1*/) { }
             }
         }
-        public void GRandom()
+
+        [Test]
+        public void TestRandom()
         {
             int numDocs = TestUtil.NextInt(Random(), (10 * RANDOM_MULTIPLIER),
                 (100 * RANDOM_MULTIPLIER));

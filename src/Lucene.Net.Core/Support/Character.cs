@@ -129,9 +129,21 @@ namespace Lucene.Net.Support
             return codePoint >= MIN_SUPPLEMENTARY_CODE_POINT ? 2 : 1;
         }
 
-        // LUCENENET TODO: In Java, the last parameter is count on Character.
-        // On String, endIndex is the index AFTER the last character of the range.
-        // This is sure to be a source of bugs.
+        /// <summary>
+        /// Returns the number of Unicode code points in the text range of the specified char sequence. 
+        /// The text range begins at the specified <paramref name="beginIndex"/> and extends to the char at index <c>endIndex - 1</c>. 
+        /// Thus the length (in <see cref="char"/>s) of the text range is <c>endIndex-beginIndex</c>. 
+        /// Unpaired surrogates within the text range count as one code point each.
+        /// </summary>
+        /// <param name="seq">the char sequence</param>
+        /// <param name="beginIndex">the index to the first char of the text range.</param>
+        /// <param name="endIndex">the index after the last char of the text range.</param>
+        /// <returns>the number of Unicode code points in the specified text range</returns>
+        /// <exception cref="IndexOutOfRangeException">
+        /// if the <paramref name="beginIndex"/> is negative, or <paramref name="endIndex"/> 
+        /// is larger than the length of the given sequence, or <paramref name="beginIndex"/> 
+        /// is larger than <paramref name="endIndex"/>.
+        /// </exception>
         public static int CodePointCount(string seq, int beginIndex, int endIndex)
         {
             int length = seq.Length;
@@ -164,16 +176,14 @@ namespace Lucene.Net.Support
         internal static int CodePointCountImpl(char[] a, int offset, int count)
         {
             int endIndex = offset + count;
-            int n = 0;
+            int n = count;
             for (int i = offset; i < endIndex;)
             {
-                n++;
-                if (char.IsHighSurrogate(a[i++]))
+                if (char.IsHighSurrogate(a[i++]) && i < endIndex 
+                    && char.IsLowSurrogate(a[i]))
                 {
-                    if (i < endIndex && char.IsLowSurrogate(a[i]))
-                    {
-                        i++;
-                    }
+                    n--;
+                    i++;
                 }
             }
             return n;

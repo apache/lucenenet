@@ -122,8 +122,9 @@ namespace Lucene.Net.Util
             for (int i = 0; i < num; i++)
             {
                 string s = TestUtil.RandomUnicodeString(Random());
-                UnicodeUtil.UTF16toUTF8(s.ToCharArray(), 0, s.Length, utf8);
-                Assert.AreEqual(UnicodeUtil.CodePointCount(new BytesRef(s)), UnicodeUtil.CodePointCount(utf8));
+                UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8);
+                assertEquals(s.CodePointCount(0, s.Length),
+                   UnicodeUtil.CodePointCount(utf8));
             }
         }
 

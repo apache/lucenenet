@@ -715,7 +715,7 @@ namespace Lucene.Net.Util.Automaton
                 int[] codepoints = new int[length];
                 for (int i = 0, j = 0, cp = 0; i < singleton.Length; i += Character.CharCount(cp))
                 {
-                    codepoints[j++] = cp = singleton[i];
+                    codepoints[j++] = cp = singleton.CodePointAt(i);
                 }
                 foreach (int c in codepoints)
                 {

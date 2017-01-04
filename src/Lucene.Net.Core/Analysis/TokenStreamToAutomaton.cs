@@ -230,7 +230,7 @@ namespace Lucene.Net.Analysis
                 if (unicodeArcs)
                 {
                     string utf16 = termUTF8.Utf8ToString();
-                    termUnicode = new int[Character.CodePointCount(utf16, 0, utf16.Length)];
+                    termUnicode = new int[utf16.CodePointCount(0, utf16.Length)];
                     termLen = termUnicode.Length;
                     for (int cp, i = 0, j = 0; i < utf16.Length; i += Character.CharCount(cp))
                     {
