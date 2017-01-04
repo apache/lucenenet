@@ -90,11 +90,11 @@ namespace Lucene.Net.Search
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<ScoreDoc>
         {
-            private readonly SortRescorer OuterInstance;
+            private readonly SortRescorer outerInstance;
 
             public ComparatorAnonymousInnerClassHelper(SortRescorer outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public virtual int Compare(ScoreDoc a, ScoreDoc b)
