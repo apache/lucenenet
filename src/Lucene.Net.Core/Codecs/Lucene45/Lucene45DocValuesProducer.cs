@@ -51,20 +51,20 @@ namespace Lucene.Net.Codecs.Lucene45
     /// reader for <seealso cref="Lucene45DocValuesFormat"/> </summary>
     public class Lucene45DocValuesProducer : DocValuesProducer, IDisposable
     {
-        private readonly IDictionary<int, NumericEntry> Numerics;
-        private readonly IDictionary<int, BinaryEntry> Binaries;
-        private readonly IDictionary<int, SortedSetEntry> SortedSets;
-        private readonly IDictionary<int, NumericEntry> Ords;
-        private readonly IDictionary<int, NumericEntry> OrdIndexes;
-        private readonly AtomicLong RamBytesUsed_Renamed;
-        private readonly IndexInput Data;
-        private readonly int MaxDoc;
-        private readonly int Version;
+        private readonly IDictionary<int, NumericEntry> numerics;
+        private readonly IDictionary<int, BinaryEntry> binaries;
+        private readonly IDictionary<int, SortedSetEntry> sortedSets;
+        private readonly IDictionary<int, NumericEntry> ords;
+        private readonly IDictionary<int, NumericEntry> ordIndexes;
+        private readonly AtomicLong ramBytesUsed;
+        private readonly IndexInput data;
+        private readonly int maxDoc;
+        private readonly int version;
 
         // memory-resident structures
-        private readonly IDictionary<int, MonotonicBlockPackedReader> AddressInstances = new Dictionary<int, MonotonicBlockPackedReader>();
+        private readonly IDictionary<int, MonotonicBlockPackedReader> addressInstances = new Dictionary<int, MonotonicBlockPackedReader>();
 
-        private readonly IDictionary<int, MonotonicBlockPackedReader> OrdIndexInstances = new Dictionary<int, MonotonicBlockPackedReader>();
+        private readonly IDictionary<int, MonotonicBlockPackedReader> ordIndexInstances = new Dictionary<int, MonotonicBlockPackedReader>();
 
         /// <summary>
         /// expert: instantiates a new reader </summary>
@@ -73,19 +73,19 @@ namespace Lucene.Net.Codecs.Lucene45
             string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, metaExtension);
             // read in the entries from the metadata file.
             ChecksumIndexInput @in = state.Directory.OpenChecksumInput(metaName, state.Context);
-            this.MaxDoc = state.SegmentInfo.DocCount;
+            this.maxDoc = state.SegmentInfo.DocCount;
             bool success = false;
             try
             {
-                Version = CodecUtil.CheckHeader(@in, metaCodec, Lucene45DocValuesFormat.VERSION_START, Lucene45DocValuesFormat.VERSION_CURRENT);
-                Numerics = new Dictionary<int, NumericEntry>();
-                Ords = new Dictionary<int, NumericEntry>();
-                OrdIndexes = new Dictionary<int, NumericEntry>();
-                Binaries = new Dictionary<int, BinaryEntry>();
-                SortedSets = new Dictionary<int, SortedSetEntry>();
+                version = CodecUtil.CheckHeader(@in, metaCodec, Lucene45DocValuesFormat.VERSION_START, Lucene45DocValuesFormat.VERSION_CURRENT);
+                numerics = new Dictionary<int, NumericEntry>();
+                ords = new Dictionary<int, NumericEntry>();
+                ordIndexes = new Dictionary<int, NumericEntry>();
+                binaries = new Dictionary<int, BinaryEntry>();
+                sortedSets = new Dictionary<int, SortedSetEntry>();
                 ReadFields(@in, state.FieldInfos);
 
-                if (Version >= Lucene45DocValuesFormat.VERSION_CHECKSUM)
+                if (version >= Lucene45DocValuesFormat.VERSION_CHECKSUM)
                 {
                     CodecUtil.CheckFooter(@in);
                 }
@@ -112,9 +112,9 @@ namespace Lucene.Net.Codecs.Lucene45
             try
             {
                 string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, dataExtension);
-                Data = state.Directory.OpenInput(dataName, state.Context);
-                int version2 = CodecUtil.CheckHeader(Data, dataCodec, Lucene45DocValuesFormat.VERSION_START, Lucene45DocValuesFormat.VERSION_CURRENT);
-                if (Version != version2)
+                data = state.Directory.OpenInput(dataName, state.Context);
+                int version2 = CodecUtil.CheckHeader(data, dataCodec, Lucene45DocValuesFormat.VERSION_START, Lucene45DocValuesFormat.VERSION_CURRENT);
+                if (version != version2)
                 {
                     throw new Exception("Format versions mismatch");
                 }
@@ -125,11 +125,11 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(this.Data);
+                    IOUtils.CloseWhileHandlingException(this.data);
                 }
             }
 
-            RamBytesUsed_Renamed = new AtomicLong(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
+            ramBytesUsed = new AtomicLong(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
         }
 
         private void ReadSortedField(int fieldNumber, IndexInput meta, FieldInfos infos)
@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 throw new Exception("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             BinaryEntry b = ReadBinaryEntry(meta);
-            Binaries[fieldNumber] = b;
+            binaries[fieldNumber] = b;
 
             if (meta.ReadVInt() != fieldNumber)
             {
@@ -155,7 +155,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 throw new Exception("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             NumericEntry n = ReadNumericEntry(meta);
-            Ords[fieldNumber] = n;
+            ords[fieldNumber] = n;
         }
 
         private void ReadSortedSetFieldWithAddresses(int fieldNumber, IndexInput meta, FieldInfos infos)
@@ -170,7 +170,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             BinaryEntry b = ReadBinaryEntry(meta);
-            Binaries[fieldNumber] = b;
+            binaries[fieldNumber] = b;
 
             if (meta.ReadVInt() != fieldNumber)
             {
@@ -181,7 +181,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             NumericEntry n1 = ReadNumericEntry(meta);
-            Ords[fieldNumber] = n1;
+            ords[fieldNumber] = n1;
 
             if (meta.ReadVInt() != fieldNumber)
             {
@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
             NumericEntry n2 = ReadNumericEntry(meta);
-            OrdIndexes[fieldNumber] = n2;
+            ordIndexes[fieldNumber] = n2;
         }
 
         private void ReadFields(IndexInput meta, FieldInfos infos)
@@ -211,12 +211,12 @@ namespace Lucene.Net.Codecs.Lucene45
                 byte type = meta.ReadByte();
                 if (type == Lucene45DocValuesFormat.NUMERIC)
                 {
-                    Numerics[fieldNumber] = ReadNumericEntry(meta);
+                    numerics[fieldNumber] = ReadNumericEntry(meta);
                 }
                 else if (type == Lucene45DocValuesFormat.BINARY)
                 {
                     BinaryEntry b = ReadBinaryEntry(meta);
-                    Binaries[fieldNumber] = b;
+                    binaries[fieldNumber] = b;
                 }
                 else if (type == Lucene45DocValuesFormat.SORTED)
                 {
@@ -225,7 +225,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 else if (type == Lucene45DocValuesFormat.SORTED_SET)
                 {
                     SortedSetEntry ss = ReadSortedSetEntry(meta);
-                    SortedSets[fieldNumber] = ss;
+                    sortedSets[fieldNumber] = ss;
                     if (ss.Format == Lucene45DocValuesConsumer.SORTED_SET_WITH_ADDRESSES)
                     {
                         ReadSortedSetFieldWithAddresses(fieldNumber, meta, infos);
@@ -258,17 +258,17 @@ namespace Lucene.Net.Codecs.Lucene45
         internal static NumericEntry ReadNumericEntry(IndexInput meta)
         {
             NumericEntry entry = new NumericEntry();
-            entry.Format = meta.ReadVInt();
-            entry.MissingOffset = meta.ReadLong();
+            entry.format = meta.ReadVInt();
+            entry.missingOffset = meta.ReadLong();
             entry.PackedIntsVersion = meta.ReadVInt();
             entry.Offset = meta.ReadLong();
             entry.Count = meta.ReadVLong();
             entry.BlockSize = meta.ReadVInt();
-            switch (entry.Format)
+            switch (entry.format)
             {
                 case Lucene45DocValuesConsumer.GCD_COMPRESSED:
-                    entry.MinValue = meta.ReadLong();
-                    entry.Gcd = meta.ReadLong();
+                    entry.minValue = meta.ReadLong();
+                    entry.gcd = meta.ReadLong();
                     break;
 
                 case Lucene45DocValuesConsumer.TABLE_COMPRESSED:
@@ -281,10 +281,10 @@ namespace Lucene.Net.Codecs.Lucene45
                     {
                         throw new Exception("TABLE_COMPRESSED cannot have more than 256 distinct values, input=" + meta);
                     }
-                    entry.Table = new long[uniqueValues];
+                    entry.table = new long[uniqueValues];
                     for (int i = 0; i < uniqueValues; ++i)
                     {
-                        entry.Table[i] = meta.ReadLong();
+                        entry.table[i] = meta.ReadLong();
                     }
                     break;
 
@@ -292,7 +292,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     break;
 
                 default:
-                    throw new Exception("Unknown format: " + entry.Format + ", input=" + meta);
+                    throw new Exception("Unknown format: " + entry.format + ", input=" + meta);
             }
             return entry;
         }
@@ -300,13 +300,13 @@ namespace Lucene.Net.Codecs.Lucene45
         internal static BinaryEntry ReadBinaryEntry(IndexInput meta)
         {
             BinaryEntry entry = new BinaryEntry();
-            entry.Format = meta.ReadVInt();
-            entry.MissingOffset = meta.ReadLong();
-            entry.MinLength = meta.ReadVInt();
-            entry.MaxLength = meta.ReadVInt();
+            entry.format = meta.ReadVInt();
+            entry.missingOffset = meta.ReadLong();
+            entry.minLength = meta.ReadVInt();
+            entry.maxLength = meta.ReadVInt();
             entry.Count = meta.ReadVLong();
-            entry.Offset = meta.ReadLong();
-            switch (entry.Format)
+            entry.offset = meta.ReadLong();
+            switch (entry.format)
             {
                 case Lucene45DocValuesConsumer.BINARY_FIXED_UNCOMPRESSED:
                     break;
@@ -325,7 +325,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     break;
 
                 default:
-                    throw new Exception("Unknown format: " + entry.Format + ", input=" + meta);
+                    throw new Exception("Unknown format: " + entry.format + ", input=" + meta);
             }
             return entry;
         }
@@ -333,7 +333,7 @@ namespace Lucene.Net.Codecs.Lucene45
         internal virtual SortedSetEntry ReadSortedSetEntry(IndexInput meta)
         {
             SortedSetEntry entry = new SortedSetEntry();
-            if (Version >= Lucene45DocValuesFormat.VERSION_SORTED_SET_SINGLE_VALUE_OPTIMIZED)
+            if (version >= Lucene45DocValuesFormat.VERSION_SORTED_SET_SINGLE_VALUE_OPTIMIZED)
             {
                 entry.Format = meta.ReadVInt();
             }
@@ -350,42 +350,42 @@ namespace Lucene.Net.Codecs.Lucene45
 
         public override NumericDocValues GetNumeric(FieldInfo field)
         {
-            NumericEntry entry = Numerics[field.Number];
+            NumericEntry entry = numerics[field.Number];
             return GetNumeric(entry);
         }
 
         public override long RamBytesUsed()
         {
-            return RamBytesUsed_Renamed.Get();
+            return ramBytesUsed.Get();
         }
 
         public override void CheckIntegrity()
         {
-            if (Version >= Lucene45DocValuesFormat.VERSION_CHECKSUM)
+            if (version >= Lucene45DocValuesFormat.VERSION_CHECKSUM)
             {
-                CodecUtil.ChecksumEntireFile(Data);
+                CodecUtil.ChecksumEntireFile(data);
             }
         }
 
         internal virtual LongValues GetNumeric(NumericEntry entry)
         {
-            IndexInput data = (IndexInput)this.Data.Clone();
+            IndexInput data = (IndexInput)this.data.Clone();
             data.Seek(entry.Offset);
 
-            switch (entry.Format)
+            switch (entry.format)
             {
                 case Lucene45DocValuesConsumer.DELTA_COMPRESSED:
                     BlockPackedReader reader = new BlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, true);
                     return reader;
 
                 case Lucene45DocValuesConsumer.GCD_COMPRESSED:
-                    long min = entry.MinValue;
-                    long mult = entry.Gcd;
+                    long min = entry.minValue;
+                    long mult = entry.gcd;
                     BlockPackedReader quotientReader = new BlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, true);
                     return new LongValuesAnonymousInnerClassHelper(this, min, mult, quotientReader);
 
                 case Lucene45DocValuesConsumer.TABLE_COMPRESSED:
-                    long[] table = entry.Table;
+                    long[] table = entry.table;
                     int bitsRequired = PackedInts.BitsRequired(table.Length - 1);
                     PackedInts.Reader ords = PackedInts.GetDirectReaderNoHeader(data, PackedInts.Format.PACKED, entry.PackedIntsVersion, (int)entry.Count, bitsRequired);
                     return new LongValuesAnonymousInnerClassHelper2(this, table, ords);
@@ -397,50 +397,50 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private class LongValuesAnonymousInnerClassHelper : LongValues
         {
-            private readonly Lucene45DocValuesProducer OuterInstance;
+            private readonly Lucene45DocValuesProducer outerInstance;
 
-            private long Min;
-            private long Mult;
-            private BlockPackedReader QuotientReader;
+            private long min;
+            private long mult;
+            private BlockPackedReader quotientReader;
 
             public LongValuesAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, long min, long mult, BlockPackedReader quotientReader)
             {
-                this.OuterInstance = outerInstance;
-                this.Min = min;
-                this.Mult = mult;
-                this.QuotientReader = quotientReader;
+                this.outerInstance = outerInstance;
+                this.min = min;
+                this.mult = mult;
+                this.quotientReader = quotientReader;
             }
 
             public override long Get(long id)
             {
-                return Min + Mult * QuotientReader.Get(id);
+                return min + mult * quotientReader.Get(id);
             }
         }
 
         private class LongValuesAnonymousInnerClassHelper2 : LongValues
         {
-            private readonly Lucene45DocValuesProducer OuterInstance;
+            private readonly Lucene45DocValuesProducer outerInstance;
 
-            private long[] Table;
-            private PackedInts.Reader Ords;
+            private long[] table;
+            private PackedInts.Reader ords;
 
             public LongValuesAnonymousInnerClassHelper2(Lucene45DocValuesProducer outerInstance, long[] table, PackedInts.Reader ords)
             {
-                this.OuterInstance = outerInstance;
-                this.Table = table;
-                this.Ords = ords;
+                this.outerInstance = outerInstance;
+                this.table = table;
+                this.ords = ords;
             }
 
             public override long Get(long id)
             {
-                return Table[(int)Ords.Get((int)id)];
+                return table[(int)ords.Get((int)id)];
             }
         }
 
         public override BinaryDocValues GetBinary(FieldInfo field)
         {
-            BinaryEntry bytes = Binaries[field.Number];
-            switch (bytes.Format)
+            BinaryEntry bytes = binaries[field.Number];
+            switch (bytes.format)
             {
                 case Lucene45DocValuesConsumer.BINARY_FIXED_UNCOMPRESSED:
                     return GetFixedBinary(field, bytes);
@@ -458,35 +458,35 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private BinaryDocValues GetFixedBinary(FieldInfo field, BinaryEntry bytes)
         {
-            IndexInput data = (IndexInput)this.Data.Clone();
+            IndexInput data = (IndexInput)this.data.Clone();
 
             return new LongBinaryDocValuesAnonymousInnerClassHelper(this, bytes, data);
         }
 
         private class LongBinaryDocValuesAnonymousInnerClassHelper : LongBinaryDocValues
         {
-            private readonly Lucene45DocValuesProducer OuterInstance;
+            private readonly Lucene45DocValuesProducer outerInstance;
 
-            private Lucene45DocValuesProducer.BinaryEntry Bytes;
-            private IndexInput Data;
+            private Lucene45DocValuesProducer.BinaryEntry bytes;
+            private IndexInput data;
 
             public LongBinaryDocValuesAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data)
             {
-                this.OuterInstance = outerInstance;
-                this.Bytes = bytes;
-                this.Data = data;
+                this.outerInstance = outerInstance;
+                this.bytes = bytes;
+                this.data = data;
             }
 
             public override void Get(long id, BytesRef result)
             {
-                long address = Bytes.Offset + id * Bytes.MaxLength;
+                long address = bytes.offset + id * bytes.maxLength;
                 try
                 {
-                    Data.Seek(address);
+                    data.Seek(address);
                     // NOTE: we could have one buffer, but various consumers (e.g. FieldComparatorSource)
                     // assume "they" own the bytes after calling this!
-                    var buffer = new byte[Bytes.MaxLength];
-                    Data.ReadBytes(buffer, 0, buffer.Length);
+                    var buffer = new byte[bytes.maxLength];
+                    data.ReadBytes(buffer, 0, buffer.Length);
                     result.Bytes = buffer;
                     result.Offset = 0;
                     result.Length = buffer.Length;
@@ -505,15 +505,15 @@ namespace Lucene.Net.Codecs.Lucene45
         protected internal virtual MonotonicBlockPackedReader GetAddressInstance(IndexInput data, FieldInfo field, BinaryEntry bytes)
         {
             MonotonicBlockPackedReader addresses;
-            lock (AddressInstances)
+            lock (addressInstances)
             {
                 MonotonicBlockPackedReader addrInstance;
-                if (!AddressInstances.TryGetValue(field.Number, out addrInstance))
+                if (!addressInstances.TryGetValue(field.Number, out addrInstance))
                 {
                     data.Seek(bytes.AddressesOffset);
                     addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedIntsVersion, bytes.BlockSize, bytes.Count, false);
-                    AddressInstances[field.Number] = addrInstance;
-                    RamBytesUsed_Renamed.AddAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
+                    addressInstances[field.Number] = addrInstance;
+                    ramBytesUsed.AddAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
                 }
                 addresses = addrInstance;
             }
@@ -522,7 +522,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private BinaryDocValues GetVariableBinary(FieldInfo field, BinaryEntry bytes)
         {
-            IndexInput data = (IndexInput)this.Data.Clone();
+            IndexInput data = (IndexInput)this.data.Clone();
 
             MonotonicBlockPackedReader addresses = GetAddressInstance(data, field, bytes);
 
@@ -531,32 +531,32 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private class LongBinaryDocValuesAnonymousInnerClassHelper2 : LongBinaryDocValues
         {
-            private readonly Lucene45DocValuesProducer OuterInstance;
+            private readonly Lucene45DocValuesProducer outerInstance;
 
-            private Lucene45DocValuesProducer.BinaryEntry Bytes;
-            private IndexInput Data;
-            private MonotonicBlockPackedReader Addresses;
+            private Lucene45DocValuesProducer.BinaryEntry bytes;
+            private IndexInput data;
+            private MonotonicBlockPackedReader addresses;
 
             public LongBinaryDocValuesAnonymousInnerClassHelper2(Lucene45DocValuesProducer outerInstance, Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data, MonotonicBlockPackedReader addresses)
             {
-                this.OuterInstance = outerInstance;
-                this.Bytes = bytes;
-                this.Data = data;
-                this.Addresses = addresses;
+                this.outerInstance = outerInstance;
+                this.bytes = bytes;
+                this.data = data;
+                this.addresses = addresses;
             }
 
             public override void Get(long id, BytesRef result)
             {
-                long startAddress = Bytes.Offset + (id == 0 ? 0 : Addresses.Get(id - 1));
-                long endAddress = Bytes.Offset + Addresses.Get(id);
+                long startAddress = bytes.offset + (id == 0 ? 0 : addresses.Get(id - 1));
+                long endAddress = bytes.offset + addresses.Get(id);
                 int length = (int)(endAddress - startAddress);
                 try
                 {
-                    Data.Seek(startAddress);
+                    data.Seek(startAddress);
                     // NOTE: we could have one buffer, but various consumers (e.g. FieldComparatorSource)
                     // assume "they" own the bytes after calling this!
                     var buffer = new byte[length];
-                    Data.ReadBytes(buffer, 0, buffer.Length);
+                    data.ReadBytes(buffer, 0, buffer.Length);
                     result.Bytes = buffer;
                     result.Offset = 0;
                     result.Length = length;
@@ -576,10 +576,10 @@ namespace Lucene.Net.Codecs.Lucene45
         {
             MonotonicBlockPackedReader addresses;
             long interval = bytes.AddressInterval;
-            lock (AddressInstances)
+            lock (addressInstances)
             {
                 MonotonicBlockPackedReader addrInstance;
-                if (!AddressInstances.TryGetValue(field.Number, out addrInstance))
+                if (!addressInstances.TryGetValue(field.Number, out addrInstance))
                 {
                     data.Seek(bytes.AddressesOffset);
                     long size;
@@ -592,8 +592,8 @@ namespace Lucene.Net.Codecs.Lucene45
                         size = 1L + bytes.Count / interval;
                     }
                     addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedIntsVersion, bytes.BlockSize, size, false);
-                    AddressInstances[field.Number] = addrInstance;
-                    RamBytesUsed_Renamed.AddAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
+                    addressInstances[field.Number] = addrInstance;
+                    ramBytesUsed.AddAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
                 }
                 addresses = addrInstance;
             }
@@ -602,7 +602,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private BinaryDocValues GetCompressedBinary(FieldInfo field, BinaryEntry bytes)
         {
-            IndexInput data = (IndexInput)this.Data.Clone();
+            IndexInput data = (IndexInput)this.data.Clone();
 
             MonotonicBlockPackedReader addresses = GetIntervalInstance(data, field, bytes);
 
@@ -611,10 +611,10 @@ namespace Lucene.Net.Codecs.Lucene45
 
         public override SortedDocValues GetSorted(FieldInfo field)
         {
-            int valueCount = (int)Binaries[field.Number].Count;
+            int valueCount = (int)binaries[field.Number].Count;
             BinaryDocValues binary = GetBinary(field);
-            NumericEntry entry = Ords[field.Number];
-            IndexInput data = (IndexInput)this.Data.Clone();
+            NumericEntry entry = ords[field.Number];
+            IndexInput data = (IndexInput)this.data.Clone();
             data.Seek(entry.Offset);
             BlockPackedReader ordinals = new BlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, true);
 
@@ -623,28 +623,28 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
         {
-            private readonly Lucene45DocValuesProducer OuterInstance;
+            private readonly Lucene45DocValuesProducer outerInstance;
 
             private int valueCount;
-            private BinaryDocValues Binary;
-            private BlockPackedReader Ordinals;
+            private BinaryDocValues binary;
+            private BlockPackedReader ordinals;
 
             public SortedDocValuesAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, int valueCount, BinaryDocValues binary, BlockPackedReader ordinals)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.valueCount = valueCount;
-                this.Binary = binary;
-                this.Ordinals = ordinals;
+                this.binary = binary;
+                this.ordinals = ordinals;
             }
 
             public override int GetOrd(int docID)
             {
-                return (int)Ordinals.Get(docID);
+                return (int)ordinals.Get(docID);
             }
 
             public override void LookupOrd(int ord, BytesRef result)
             {
-                Binary.Get(ord, result);
+                binary.Get(ord, result);
             }
 
             public override int ValueCount
@@ -657,9 +657,9 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public override int LookupTerm(BytesRef key)
             {
-                if (Binary is CompressedBinaryDocValues)
+                if (binary is CompressedBinaryDocValues)
                 {
-                    return (int)((CompressedBinaryDocValues)Binary).LookupTerm(key);
+                    return (int)((CompressedBinaryDocValues)binary).LookupTerm(key);
                 }
                 else
                 {
@@ -669,9 +669,9 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public override TermsEnum TermsEnum()
             {
-                if (Binary is CompressedBinaryDocValues)
+                if (binary is CompressedBinaryDocValues)
                 {
-                    return ((CompressedBinaryDocValues)Binary).GetTermsEnum();
+                    return ((CompressedBinaryDocValues)binary).GetTermsEnum();
                 }
                 else
                 {
@@ -687,15 +687,15 @@ namespace Lucene.Net.Codecs.Lucene45
         protected internal virtual MonotonicBlockPackedReader GetOrdIndexInstance(IndexInput data, FieldInfo field, NumericEntry entry)
         {
             MonotonicBlockPackedReader ordIndex;
-            lock (OrdIndexInstances)
+            lock (ordIndexInstances)
             {
                 MonotonicBlockPackedReader ordIndexInstance;
-                if (!OrdIndexInstances.TryGetValue(field.Number, out ordIndexInstance))
+                if (!ordIndexInstances.TryGetValue(field.Number, out ordIndexInstance))
                 {
                     data.Seek(entry.Offset);
                     ordIndexInstance = new MonotonicBlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, false);
-                    OrdIndexInstances[field.Number] = ordIndexInstance;
-                    RamBytesUsed_Renamed.AddAndGet(ordIndexInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
+                    ordIndexInstances[field.Number] = ordIndexInstance;
+                    ramBytesUsed.AddAndGet(ordIndexInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
                 }
                 ordIndex = ordIndexInstance;
             }
@@ -704,7 +704,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         public override SortedSetDocValues GetSortedSet(FieldInfo field)
         {
-            SortedSetEntry ss = SortedSets[field.Number];
+            SortedSetEntry ss = sortedSets[field.Number];
             if (ss.Format == Lucene45DocValuesConsumer.SORTED_SET_SINGLE_VALUED_SORTED)
             {
                 SortedDocValues values = GetSorted(field);
@@ -715,33 +715,33 @@ namespace Lucene.Net.Codecs.Lucene45
                 throw new Exception();
             }
 
-            IndexInput data = (IndexInput)this.Data.Clone();
-            long valueCount = Binaries[field.Number].Count;
+            IndexInput data = (IndexInput)this.data.Clone();
+            long valueCount = binaries[field.Number].Count;
             // we keep the byte[]s and list of ords on disk, these could be large
             LongBinaryDocValues binary = (LongBinaryDocValues)GetBinary(field);
-            LongValues ordinals = GetNumeric(Ords[field.Number]);
+            LongValues ordinals = GetNumeric(ords[field.Number]);
             // but the addresses to the ord stream are in RAM
-            MonotonicBlockPackedReader ordIndex = GetOrdIndexInstance(data, field, OrdIndexes[field.Number]);
+            MonotonicBlockPackedReader ordIndex = GetOrdIndexInstance(data, field, ordIndexes[field.Number]);
 
             return new RandomAccessOrdsAnonymousInnerClassHelper(this, valueCount, binary, ordinals, ordIndex);
         }
 
         private class RandomAccessOrdsAnonymousInnerClassHelper : RandomAccessOrds
         {
-            private readonly Lucene45DocValuesProducer OuterInstance;
+            private readonly Lucene45DocValuesProducer outerInstance;
 
             private long valueCount;
-            private Lucene45DocValuesProducer.LongBinaryDocValues Binary;
-            private LongValues Ordinals;
-            private MonotonicBlockPackedReader OrdIndex;
+            private Lucene45DocValuesProducer.LongBinaryDocValues binary;
+            private LongValues ordinals;
+            private MonotonicBlockPackedReader ordIndex;
 
             public RandomAccessOrdsAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, long valueCount, Lucene45DocValuesProducer.LongBinaryDocValues binary, LongValues ordinals, MonotonicBlockPackedReader ordIndex)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.valueCount = valueCount;
-                this.Binary = binary;
-                this.Ordinals = ordinals;
-                this.OrdIndex = ordIndex;
+                this.binary = binary;
+                this.ordinals = ordinals;
+                this.ordIndex = ordIndex;
             }
 
             internal long startOffset;
@@ -756,7 +756,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 else
                 {
-                    long ord = Ordinals.Get(offset);
+                    long ord = ordinals.Get(offset);
                     offset++;
                     return ord;
                 }
@@ -764,13 +764,13 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public override void SetDocument(int docID)
             {
-                startOffset = offset = (docID == 0 ? 0 : OrdIndex.Get(docID - 1));
-                endOffset = OrdIndex.Get(docID);
+                startOffset = offset = (docID == 0 ? 0 : ordIndex.Get(docID - 1));
+                endOffset = ordIndex.Get(docID);
             }
 
             public override void LookupOrd(long ord, BytesRef result)
             {
-                Binary.Get(ord, result);
+                binary.Get(ord, result);
             }
 
             public override long ValueCount
@@ -783,9 +783,9 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public override long LookupTerm(BytesRef key)
             {
-                if (Binary is CompressedBinaryDocValues)
+                if (binary is CompressedBinaryDocValues)
                 {
-                    return ((CompressedBinaryDocValues)Binary).LookupTerm(key);
+                    return ((CompressedBinaryDocValues)binary).LookupTerm(key);
                 }
                 else
                 {
@@ -795,9 +795,9 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public override TermsEnum TermsEnum()
             {
-                if (Binary is CompressedBinaryDocValues)
+                if (binary is CompressedBinaryDocValues)
                 {
-                    return ((CompressedBinaryDocValues)Binary).GetTermsEnum();
+                    return ((CompressedBinaryDocValues)binary).GetTermsEnum();
                 }
                 else
                 {
@@ -807,7 +807,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public override long OrdAt(int index)
             {
-                return Ordinals.Get(startOffset + index);
+                return ordinals.Get(startOffset + index);
             }
 
             public override int Cardinality()
@@ -820,26 +820,26 @@ namespace Lucene.Net.Codecs.Lucene45
         {
             if (offset == -1)
             {
-                return new Bits.MatchAllBits(MaxDoc);
+                return new Bits.MatchAllBits(maxDoc);
             }
             else
             {
-                IndexInput @in = (IndexInput)Data.Clone();
+                IndexInput @in = (IndexInput)data.Clone();
                 return new BitsAnonymousInnerClassHelper(this, offset, @in);
             }
         }
 
         private class BitsAnonymousInnerClassHelper : IBits
         {
-            private readonly Lucene45DocValuesProducer OuterInstance;
+            private readonly Lucene45DocValuesProducer outerInstance;
 
-            private long Offset;
+            private long offset;
             private IndexInput @in;
 
             public BitsAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, long offset, IndexInput @in)
             {
-                this.OuterInstance = outerInstance;
-                this.Offset = offset;
+                this.outerInstance = outerInstance;
+                this.offset = offset;
                 this.@in = @in;
             }
 
@@ -847,7 +847,7 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 try
                 {
-                    @in.Seek(Offset + (index >> 3));
+                    @in.Seek(offset + (index >> 3));
                     return (@in.ReadByte() & (1 << (index & 7))) != 0;
                 }
                 catch (Exception e)
@@ -858,7 +858,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public virtual int Length
             {
-                get { return OuterInstance.MaxDoc; }
+                get { return outerInstance.maxDoc; }
             }
         }
 
@@ -867,18 +867,18 @@ namespace Lucene.Net.Codecs.Lucene45
             switch (field.DocValuesType)
             {
                 case DocValuesType.SORTED_SET:
-                    return DocValues.DocsWithValue(GetSortedSet(field), MaxDoc);
+                    return DocValues.DocsWithValue(GetSortedSet(field), maxDoc);
 
                 case DocValuesType.SORTED:
-                    return DocValues.DocsWithValue(GetSorted(field), MaxDoc);
+                    return DocValues.DocsWithValue(GetSorted(field), maxDoc);
 
                 case DocValuesType.BINARY:
-                    BinaryEntry be = Binaries[field.Number];
-                    return GetMissingBits(be.MissingOffset);
+                    BinaryEntry be = binaries[field.Number];
+                    return GetMissingBits(be.missingOffset);
 
                 case DocValuesType.NUMERIC:
-                    NumericEntry ne = Numerics[field.Number];
-                    return GetMissingBits(ne.MissingOffset);
+                    NumericEntry ne = numerics[field.Number];
+                    return GetMissingBits(ne.missingOffset);
 
                 default:
                     throw new InvalidOperationException();
@@ -888,7 +888,7 @@ namespace Lucene.Net.Codecs.Lucene45
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-                Data.Dispose();
+                data.Dispose();
         }
 
         /// <summary>
@@ -901,13 +901,13 @@ namespace Lucene.Net.Codecs.Lucene45
 
             /// <summary>
             /// offset to the bitset representing docsWithField, or -1 if no documents have missing values </summary>
-            internal long MissingOffset;
+            internal long missingOffset;
 
             /// <summary>
             /// offset to the actual numeric values </summary>
             public long Offset { get; set; }
 
-            internal int Format;
+            internal int format;
 
             /// <summary>
             /// packed ints version used to encode these numerics </summary>
@@ -921,9 +921,9 @@ namespace Lucene.Net.Codecs.Lucene45
             /// packed ints blocksize </summary>
             public int BlockSize { get; set; }
 
-            internal long MinValue;
-            internal long Gcd;
-            internal long[] Table;
+            internal long minValue;
+            internal long gcd;
+            internal long[] table;
         }
 
         /// <summary>
@@ -936,20 +936,20 @@ namespace Lucene.Net.Codecs.Lucene45
 
             /// <summary>
             /// offset to the bitset representing docsWithField, or -1 if no documents have missing values </summary>
-            internal long MissingOffset;
+            internal long missingOffset;
 
             /// <summary>
             /// offset to the actual binary values </summary>
-            internal long Offset;
+            internal long offset;
 
-            internal int Format;
+            internal int format;
 
             /// <summary>
             /// count of values written </summary>
             public long Count { get; set; }
 
-            internal int MinLength;
-            internal int MaxLength;
+            internal int minLength;
+            internal int maxLength;
 
             /// <summary>
             /// offset to the addressing data that maps a value to its slice of the byte[] </summary>
@@ -994,31 +994,31 @@ namespace Lucene.Net.Codecs.Lucene45
         // more efficient reverse lookup and enumeration
         internal class CompressedBinaryDocValues : LongBinaryDocValues
         {
-            internal readonly BinaryEntry Bytes;
-            internal readonly long Interval;
-            internal readonly long NumValues;
-            internal readonly long NumIndexValues;
-            internal readonly MonotonicBlockPackedReader Addresses;
-            internal readonly IndexInput Data;
-            internal readonly TermsEnum TermsEnum_Renamed;
+            internal readonly BinaryEntry bytes;
+            internal readonly long interval;
+            internal readonly long numValues;
+            internal readonly long numIndexValues;
+            internal readonly MonotonicBlockPackedReader addresses;
+            internal readonly IndexInput data;
+            internal readonly TermsEnum termsEnum;
 
             public CompressedBinaryDocValues(BinaryEntry bytes, MonotonicBlockPackedReader addresses, IndexInput data)
             {
-                this.Bytes = bytes;
-                this.Interval = bytes.AddressInterval;
-                this.Addresses = addresses;
-                this.Data = data;
-                this.NumValues = bytes.Count;
-                this.NumIndexValues = addresses.Size;
-                this.TermsEnum_Renamed = GetTermsEnum(data);
+                this.bytes = bytes;
+                this.interval = bytes.AddressInterval;
+                this.addresses = addresses;
+                this.data = data;
+                this.numValues = bytes.Count;
+                this.numIndexValues = addresses.Size;
+                this.termsEnum = GetTermsEnum(data);
             }
 
             public override void Get(long id, BytesRef result)
             {
                 try
                 {
-                    TermsEnum_Renamed.SeekExact(id);
-                    BytesRef term = TermsEnum_Renamed.Term;
+                    termsEnum.SeekExact(id);
+                    BytesRef term = termsEnum.Term;
                     result.Bytes = term.Bytes;
                     result.Offset = term.Offset;
                     result.Length = term.Length;
@@ -1033,18 +1033,18 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 try
                 {
-                    TermsEnum.SeekStatus status = TermsEnum_Renamed.SeekCeil(key);
+                    TermsEnum.SeekStatus status = termsEnum.SeekCeil(key);
                     if (status == TermsEnum.SeekStatus.END)
                     {
-                        return -NumValues - 1;
+                        return -numValues - 1;
                     }
                     else if (status == TermsEnum.SeekStatus.FOUND)
                     {
-                        return TermsEnum_Renamed.Ord;
+                        return termsEnum.Ord;
                     }
                     else
                     {
-                        return -TermsEnum_Renamed.Ord - 1;
+                        return -termsEnum.Ord - 1;
                     }
                 }
                 catch (Exception)
@@ -1057,7 +1057,7 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 try
                 {
-                    return GetTermsEnum((IndexInput)Data.Clone());
+                    return GetTermsEnum((IndexInput)data.Clone());
                 }
                 catch (Exception)
                 {
@@ -1067,23 +1067,23 @@ namespace Lucene.Net.Codecs.Lucene45
 
             internal virtual TermsEnum GetTermsEnum(IndexInput input)
             {
-                input.Seek(Bytes.Offset);
+                input.Seek(bytes.offset);
 
                 return new TermsEnumAnonymousInnerClassHelper(this, input);
             }
 
             private class TermsEnumAnonymousInnerClassHelper : TermsEnum
             {
-                private readonly CompressedBinaryDocValues OuterInstance;
+                private readonly CompressedBinaryDocValues outerInstance;
 
-                private IndexInput Input;
+                private IndexInput input;
 
                 public TermsEnumAnonymousInnerClassHelper(CompressedBinaryDocValues outerInstance, IndexInput input)
                 {
-                    this.OuterInstance = outerInstance;
-                    this.Input = input;
+                    this.outerInstance = outerInstance;
+                    this.input = input;
                     currentOrd = -1;
-                    termBuffer = new BytesRef(outerInstance.Bytes.MaxLength < 0 ? 0 : outerInstance.Bytes.MaxLength);
+                    termBuffer = new BytesRef(outerInstance.bytes.maxLength < 0 ? 0 : outerInstance.bytes.maxLength);
                     term = new BytesRef();
                 }
 
@@ -1109,15 +1109,15 @@ namespace Lucene.Net.Codecs.Lucene45
 
                 private BytesRef DoNext()
                 {
-                    if (++currentOrd >= OuterInstance.NumValues)
+                    if (++currentOrd >= outerInstance.numValues)
                     {
                         return null;
                     }
                     else
                     {
-                        int start = Input.ReadVInt();
-                        int suffix = Input.ReadVInt();
-                        Input.ReadBytes(termBuffer.Bytes, start, suffix);
+                        int start = input.ReadVInt();
+                        int suffix = input.ReadVInt();
+                        input.ReadBytes(termBuffer.Bytes, start, suffix);
                         termBuffer.Length = start + suffix;
                         return termBuffer;
                     }
@@ -1128,12 +1128,12 @@ namespace Lucene.Net.Codecs.Lucene45
                     // binary-search just the index values to find the block,
                     // then scan within the block
                     long low = 0;
-                    long high = OuterInstance.NumIndexValues - 1;
+                    long high = outerInstance.numIndexValues - 1;
 
                     while (low <= high)
                     {
                         long mid = (int)((uint)(low + high) >> 1);
-                        DoSeek(mid * OuterInstance.Interval);
+                        DoSeek(mid * outerInstance.interval);
                         int cmp = termBuffer.CompareTo(text);
 
                         if (cmp < 0)
@@ -1152,14 +1152,14 @@ namespace Lucene.Net.Codecs.Lucene45
                         }
                     }
 
-                    if (OuterInstance.NumIndexValues == 0)
+                    if (outerInstance.numIndexValues == 0)
                     {
                         return TermsEnum.SeekStatus.END;
                     }
 
                     // block before insertion point
                     long block = low - 1;
-                    DoSeek(block < 0 ? -1 : block * OuterInstance.Interval);
+                    DoSeek(block < 0 ? -1 : block * outerInstance.interval);
 
                     while (DoNext() != null)
                     {
@@ -1187,17 +1187,17 @@ namespace Lucene.Net.Codecs.Lucene45
 
                 private void DoSeek(long ord)
                 {
-                    long block = ord / OuterInstance.Interval;
+                    long block = ord / outerInstance.interval;
 
-                    if (ord >= currentOrd && block == currentOrd / OuterInstance.Interval)
+                    if (ord >= currentOrd && block == currentOrd / outerInstance.interval)
                     {
                         // seek within current block
                     }
                     else
                     {
                         // position before start of block
-                        currentOrd = ord - ord % OuterInstance.Interval - 1;
-                        Input.Seek(OuterInstance.Bytes.Offset + OuterInstance.Addresses.Get(block));
+                        currentOrd = ord - ord % outerInstance.interval - 1;
+                        input.Seek(outerInstance.bytes.offset + outerInstance.addresses.Get(block));
                     }
 
                     while (currentOrd < ord)
