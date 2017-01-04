@@ -58,13 +58,13 @@ namespace Lucene.Net.Codecs.Lucene40
         internal static readonly int VERSION_LONG_SKIP = 1;
         internal static readonly int VERSION_CURRENT = VERSION_LONG_SKIP;
 
-        private readonly IndexInput FreqIn;
-        private readonly IndexInput ProxIn;
+        private readonly IndexInput freqIn;
+        private readonly IndexInput proxIn;
         // public static boolean DEBUG = BlockTreeTermsWriter.DEBUG;
 
-        internal int SkipInterval;
-        internal int MaxSkipLevels;
-        internal int SkipMinimum;
+        internal int skipInterval;
+        internal int maxSkipLevels;
+        internal int skipMinimum;
 
         // private String segment;
 
@@ -96,8 +96,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 {
                     proxIn = null;
                 }
-                this.FreqIn = freqIn;
-                this.ProxIn = proxIn;
+                this.freqIn = freqIn;
+                this.proxIn = proxIn;
                 success = true;
             }
             finally
@@ -114,17 +114,17 @@ namespace Lucene.Net.Codecs.Lucene40
             // Make sure we are talking to the matching past writer
             CodecUtil.CheckHeader(termsIn, TERMS_CODEC, VERSION_START, VERSION_CURRENT);
 
-            SkipInterval = termsIn.ReadInt();
-            MaxSkipLevels = termsIn.ReadInt();
-            SkipMinimum = termsIn.ReadInt();
+            skipInterval = termsIn.ReadInt();
+            maxSkipLevels = termsIn.ReadInt();
+            skipMinimum = termsIn.ReadInt();
         }
 
         // Must keep final because we do non-standard clone
         private sealed class StandardTermState : BlockTermState
         {
-            internal long FreqOffset;
-            internal long ProxOffset;
-            internal long SkipOffset;
+            internal long freqOffset;
+            internal long proxOffset;
+            internal long skipOffset;
 
             public override object Clone()
             {
@@ -137,14 +137,14 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 base.CopyFrom(_other);
                 StandardTermState other = (StandardTermState)_other;
-                FreqOffset = other.FreqOffset;
-                ProxOffset = other.ProxOffset;
-                SkipOffset = other.SkipOffset;
+                freqOffset = other.freqOffset;
+                proxOffset = other.proxOffset;
+                skipOffset = other.skipOffset;
             }
 
             public override string ToString()
             {
-                return base.ToString() + " freqFP=" + FreqOffset + " proxFP=" + ProxOffset + " skipOffset=" + SkipOffset;
+                return base.ToString() + " freqFP=" + freqOffset + " proxFP=" + proxOffset + " skipOffset=" + skipOffset;
             }
         }
 
@@ -159,16 +159,16 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 try
                 {
-                    if (FreqIn != null)
+                    if (freqIn != null)
                     {
-                        FreqIn.Dispose();
+                        freqIn.Dispose();
                     }
                 }
                 finally
                 {
-                    if (ProxIn != null)
+                    if (proxIn != null)
                     {
-                        ProxIn.Dispose();
+                        proxIn.Dispose();
                     }
                 }
             }
@@ -181,24 +181,24 @@ namespace Lucene.Net.Codecs.Lucene40
             bool isFirstTerm = termState.TermBlockOrd == 0;
             if (absolute)
             {
-                termState.FreqOffset = 0;
-                termState.ProxOffset = 0;
+                termState.freqOffset = 0;
+                termState.proxOffset = 0;
             }
 
-            termState.FreqOffset += @in.ReadVLong();
+            termState.freqOffset += @in.ReadVLong();
             /*
             if (DEBUG) {
               System.out.println("  dF=" + termState.docFreq);
               System.out.println("  freqFP=" + termState.freqOffset);
             }
             */
-            Debug.Assert(termState.FreqOffset < FreqIn.Length);
+            Debug.Assert(termState.freqOffset < freqIn.Length);
 
-            if (termState.DocFreq >= SkipMinimum)
+            if (termState.DocFreq >= skipMinimum)
             {
-                termState.SkipOffset = @in.ReadVLong();
+                termState.skipOffset = @in.ReadVLong();
                 // if (DEBUG) System.out.println("  skipOffset=" + termState.skipOffset + " vs freqIn.length=" + freqIn.length());
-                Debug.Assert(termState.FreqOffset + termState.SkipOffset < FreqIn.Length);
+                Debug.Assert(termState.freqOffset + termState.skipOffset < freqIn.Length);
             }
             else
             {
@@ -207,7 +207,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             if (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
-                termState.ProxOffset += @in.ReadVLong();
+                termState.proxOffset += @in.ReadVLong();
                 // if (DEBUG) System.out.println("  proxFP=" + termState.proxOffset);
             }
         }
@@ -230,7 +230,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 // If you are using ParellelReader, and pass in a
                 // reused DocsEnum, it could have come from another
                 // reader also using standard codec
-                if (docsEnum.StartFreqIn == FreqIn)
+                if (docsEnum.startFreqIn == freqIn)
                 {
                     // we only reuse if the the actual the incoming enum has the same liveDocs as the given liveDocs
                     return liveDocs == docsEnum.m_liveDocs;
@@ -243,11 +243,11 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             if (liveDocs == null)
             {
-                return (new AllDocsSegmentDocsEnum(this, FreqIn)).Reset(fieldInfo, termState);
+                return (new AllDocsSegmentDocsEnum(this, freqIn)).Reset(fieldInfo, termState);
             }
             else
             {
-                return (new LiveDocsSegmentDocsEnum(this, FreqIn, liveDocs)).Reset(fieldInfo, termState);
+                return (new LiveDocsSegmentDocsEnum(this, freqIn, liveDocs)).Reset(fieldInfo, termState);
             }
         }
 
@@ -264,17 +264,17 @@ namespace Lucene.Net.Codecs.Lucene40
                 SegmentFullPositionsEnum docsEnum;
                 if (reuse == null || !(reuse is SegmentFullPositionsEnum))
                 {
-                    docsEnum = new SegmentFullPositionsEnum(this, FreqIn, ProxIn);
+                    docsEnum = new SegmentFullPositionsEnum(this, freqIn, proxIn);
                 }
                 else
                 {
                     docsEnum = (SegmentFullPositionsEnum)reuse;
-                    if (docsEnum.StartFreqIn != FreqIn)
+                    if (docsEnum.startFreqIn != freqIn)
                     {
                         // If you are using ParellelReader, and pass in a
                         // reused DocsEnum, it could have come from another
                         // reader also using standard codec
-                        docsEnum = new SegmentFullPositionsEnum(this, FreqIn, ProxIn);
+                        docsEnum = new SegmentFullPositionsEnum(this, freqIn, proxIn);
                     }
                 }
                 return docsEnum.Reset(fieldInfo, (StandardTermState)termState, liveDocs);
@@ -284,17 +284,17 @@ namespace Lucene.Net.Codecs.Lucene40
                 SegmentDocsAndPositionsEnum docsEnum;
                 if (reuse == null || !(reuse is SegmentDocsAndPositionsEnum))
                 {
-                    docsEnum = new SegmentDocsAndPositionsEnum(this, FreqIn, ProxIn);
+                    docsEnum = new SegmentDocsAndPositionsEnum(this, freqIn, proxIn);
                 }
                 else
                 {
                     docsEnum = (SegmentDocsAndPositionsEnum)reuse;
-                    if (docsEnum.StartFreqIn != FreqIn)
+                    if (docsEnum.startFreqIn != freqIn)
                     {
                         // If you are using ParellelReader, and pass in a
                         // reused DocsEnum, it could have come from another
                         // reader also using standard codec
-                        docsEnum = new SegmentDocsAndPositionsEnum(this, FreqIn, ProxIn);
+                        docsEnum = new SegmentDocsAndPositionsEnum(this, freqIn, proxIn);
                     }
                 }
                 return docsEnum.Reset(fieldInfo, (StandardTermState)termState, liveDocs);
@@ -305,14 +305,14 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private abstract class SegmentDocsEnumBase : DocsEnum
         {
-            private readonly Lucene40PostingsReader OuterInstance;
+            private readonly Lucene40PostingsReader outerInstance;
 
             protected readonly int[] m_docs = new int[BUFFERSIZE];
             protected readonly int[] m_freqs = new int[BUFFERSIZE];
 
-            internal readonly IndexInput FreqIn; // reuse
-            internal readonly IndexInput StartFreqIn; // reuse
-            internal Lucene40SkipListReader Skipper; // reuse - lazy loaded
+            internal readonly IndexInput freqIn; // reuse
+            internal readonly IndexInput startFreqIn; // reuse
+            internal Lucene40SkipListReader skipper; // reuse - lazy loaded
 
             protected bool m_indexOmitsTF; // does current field omit term freq?
             protected bool m_storePayloads; // does current field store payloads?
@@ -336,9 +336,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
             internal SegmentDocsEnumBase(Lucene40PostingsReader outerInstance, IndexInput startFreqIn, IBits liveDocs)
             {
-                this.OuterInstance = outerInstance;
-                this.StartFreqIn = startFreqIn;
-                this.FreqIn = (IndexInput)startFreqIn.Clone();
+                this.outerInstance = outerInstance;
+                this.startFreqIn = startFreqIn;
+                this.freqIn = (IndexInput)startFreqIn.Clone();
                 this.m_liveDocs = liveDocs;
             }
 
@@ -347,13 +347,13 @@ namespace Lucene.Net.Codecs.Lucene40
                 m_indexOmitsTF = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY;
                 m_storePayloads = fieldInfo.HasPayloads;
                 m_storeOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-                m_freqOffset = termState.FreqOffset;
-                m_skipOffset = termState.SkipOffset;
+                m_freqOffset = termState.freqOffset;
+                m_skipOffset = termState.skipOffset;
 
                 // TODO: for full enum case (eg segment merging) this
                 // seek is unnecessary; maybe we can avoid in such
                 // cases
-                FreqIn.Seek(termState.FreqOffset);
+                freqIn.Seek(termState.freqOffset);
                 m_limit = termState.DocFreq;
                 Debug.Assert(m_limit > 0);
                 m_ord = 0;
@@ -470,7 +470,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             private int FillDocs(int size)
             {
-                IndexInput freqIn = this.FreqIn;
+                IndexInput freqIn = this.freqIn;
                 int[] docs = this.m_docs;
                 int docAc = m_accum;
                 for (int i = 0; i < size; i++)
@@ -484,7 +484,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             private int FillDocsAndFreqs(int size)
             {
-                IndexInput freqIn = this.FreqIn;
+                IndexInput freqIn = this.freqIn;
                 int[] docs = this.m_docs;
                 int[] freqs = this.m_freqs;
                 int docAc = m_accum;
@@ -501,15 +501,15 @@ namespace Lucene.Net.Codecs.Lucene40
 
             private int SkipTo(int target)
             {
-                if ((target - OuterInstance.SkipInterval) >= m_accum && m_limit >= OuterInstance.SkipMinimum)
+                if ((target - outerInstance.skipInterval) >= m_accum && m_limit >= outerInstance.skipMinimum)
                 {
                     // There are enough docs in the posting to have
                     // skip data, and it isn't too close.
 
-                    if (Skipper == null)
+                    if (skipper == null)
                     {
                         // this is the first time this enum has ever been used for skipping -- do lazy init
-                        Skipper = new Lucene40SkipListReader((IndexInput)FreqIn.Clone(), OuterInstance.MaxSkipLevels, OuterInstance.SkipInterval);
+                        skipper = new Lucene40SkipListReader((IndexInput)freqIn.Clone(), outerInstance.maxSkipLevels, outerInstance.skipInterval);
                     }
 
                     if (!m_skipped)
@@ -518,20 +518,20 @@ namespace Lucene.Net.Codecs.Lucene40
                         // skipped since reset() was called, so now we
                         // load the skip data for this posting
 
-                        Skipper.Init(m_freqOffset + m_skipOffset, m_freqOffset, 0, m_limit, m_storePayloads, m_storeOffsets);
+                        skipper.Init(m_freqOffset + m_skipOffset, m_freqOffset, 0, m_limit, m_storePayloads, m_storeOffsets);
 
                         m_skipped = true;
                     }
 
-                    int newOrd = Skipper.SkipTo(target);
+                    int newOrd = skipper.SkipTo(target);
 
                     if (newOrd > m_ord)
                     {
                         // Skipper moved
 
                         m_ord = newOrd;
-                        m_accum = Skipper.Doc;
-                        FreqIn.Seek(Skipper.FreqPointer);
+                        m_accum = skipper.Doc;
+                        freqIn.Seek(skipper.FreqPointer);
                     }
                 }
                 return ScanTo(target);
@@ -545,12 +545,12 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private sealed class AllDocsSegmentDocsEnum : SegmentDocsEnumBase
         {
-            private readonly Lucene40PostingsReader OuterInstance;
+            private readonly Lucene40PostingsReader outerInstance;
 
             internal AllDocsSegmentDocsEnum(Lucene40PostingsReader outerInstance, IndexInput startFreqIn)
                 : base(outerInstance, startFreqIn, null)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 Debug.Assert(m_liveDocs == null);
             }
 
@@ -585,7 +585,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 int docAcc = m_accum;
                 int frq = 1;
-                IndexInput freqIn = this.FreqIn;
+                IndexInput freqIn = this.freqIn;
                 bool omitTF = m_indexOmitsTF;
                 int loopLimit = m_limit;
                 for (int i = m_ord; i < loopLimit; i++)
@@ -617,7 +617,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (m_ord++ < m_limit)
                 {
-                    int code = FreqIn.ReadVInt();
+                    int code = freqIn.ReadVInt();
                     if (m_indexOmitsTF)
                     {
                         m_accum += code;
@@ -625,7 +625,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     else
                     {
                         m_accum += (int)((uint)code >> 1); // shift off low bit
-                        m_freq = ReadFreq(FreqIn, code);
+                        m_freq = ReadFreq(freqIn, code);
                     }
                     return m_accum;
                 }
@@ -638,12 +638,12 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private sealed class LiveDocsSegmentDocsEnum : SegmentDocsEnumBase
         {
-            private readonly Lucene40PostingsReader OuterInstance;
+            private readonly Lucene40PostingsReader outerInstance;
 
             internal LiveDocsSegmentDocsEnum(Lucene40PostingsReader outerInstance, IndexInput startFreqIn, IBits liveDocs)
                 : base(outerInstance, startFreqIn, liveDocs)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 Debug.Assert(liveDocs != null);
             }
 
@@ -686,7 +686,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 int docAcc = m_accum;
                 int frq = 1;
-                IndexInput freqIn = this.FreqIn;
+                IndexInput freqIn = this.freqIn;
                 bool omitTF = m_indexOmitsTF;
                 int loopLimit = m_limit;
                 IBits liveDocs = this.m_liveDocs;
@@ -719,7 +719,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 int docAcc = m_accum;
                 int frq = 1;
-                IndexInput freqIn = this.FreqIn;
+                IndexInput freqIn = this.freqIn;
                 bool omitTF = m_indexOmitsTF;
                 int loopLimit = m_limit;
                 IBits liveDocs = this.m_liveDocs;
@@ -754,36 +754,36 @@ namespace Lucene.Net.Codecs.Lucene40
         // Decodes docs & positions. payloads nor offsets are present.
         private sealed class SegmentDocsAndPositionsEnum : DocsAndPositionsEnum
         {
-            private readonly Lucene40PostingsReader OuterInstance;
+            private readonly Lucene40PostingsReader outerInstance;
 
-            internal readonly IndexInput StartFreqIn;
-            internal readonly IndexInput FreqIn;
-            internal readonly IndexInput ProxIn;
-            internal int Limit; // number of docs in this posting
-            internal int Ord; // how many docs we've read
-            internal int Doc = -1; // doc we last read
-            internal int Accum; // accumulator for doc deltas
-            internal int Freq_Renamed; // freq we last read
-            internal int Position;
+            internal readonly IndexInput startFreqIn;
+            internal readonly IndexInput freqIn;
+            internal readonly IndexInput proxIn;
+            internal int limit; // number of docs in this posting
+            internal int ord; // how many docs we've read
+            internal int doc = -1; // doc we last read
+            internal int accum; // accumulator for doc deltas
+            internal int freq; // freq we last read
+            internal int position;
 
-            internal IBits LiveDocs;
+            internal IBits liveDocs;
 
-            internal long FreqOffset;
-            internal long SkipOffset;
-            internal long ProxOffset;
+            internal long freqOffset;
+            internal long skipOffset;
+            internal long proxOffset;
 
-            internal int PosPendingCount;
+            internal int posPendingCount;
 
-            internal bool Skipped;
-            internal Lucene40SkipListReader Skipper;
-            internal long LazyProxPointer;
+            internal bool skipped;
+            internal Lucene40SkipListReader skipper;
+            internal long lazyProxPointer;
 
             public SegmentDocsAndPositionsEnum(Lucene40PostingsReader outerInstance, IndexInput freqIn, IndexInput proxIn)
             {
-                this.OuterInstance = outerInstance;
-                StartFreqIn = freqIn;
-                this.FreqIn = (IndexInput)freqIn.Clone();
-                this.ProxIn = (IndexInput)proxIn.Clone();
+                this.outerInstance = outerInstance;
+                startFreqIn = freqIn;
+                this.freqIn = (IndexInput)freqIn.Clone();
+                this.proxIn = (IndexInput)proxIn.Clone();
             }
 
             public SegmentDocsAndPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, IBits liveDocs)
@@ -791,28 +791,28 @@ namespace Lucene.Net.Codecs.Lucene40
                 Debug.Assert(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
                 Debug.Assert(!fieldInfo.HasPayloads);
 
-                this.LiveDocs = liveDocs;
+                this.liveDocs = liveDocs;
 
                 // TODO: for full enum case (eg segment merging) this
                 // seek is unnecessary; maybe we can avoid in such
                 // cases
-                FreqIn.Seek(termState.FreqOffset);
-                LazyProxPointer = termState.ProxOffset;
+                freqIn.Seek(termState.freqOffset);
+                lazyProxPointer = termState.proxOffset;
 
-                Limit = termState.DocFreq;
-                Debug.Assert(Limit > 0);
+                limit = termState.DocFreq;
+                Debug.Assert(limit > 0);
 
-                Ord = 0;
-                Doc = -1;
-                Accum = 0;
-                Position = 0;
+                ord = 0;
+                doc = -1;
+                accum = 0;
+                position = 0;
 
-                Skipped = false;
-                PosPendingCount = 0;
+                skipped = false;
+                posPendingCount = 0;
 
-                FreqOffset = termState.FreqOffset;
-                ProxOffset = termState.ProxOffset;
-                SkipOffset = termState.SkipOffset;
+                freqOffset = termState.freqOffset;
+                proxOffset = termState.proxOffset;
+                skipOffset = termState.skipOffset;
                 // if (DEBUG) System.out.println("StandardR.D&PE reset seg=" + segment + " limit=" + limit + " freqFP=" + freqOffset + " proxFP=" + proxOffset);
 
                 return this;
@@ -823,87 +823,87 @@ namespace Lucene.Net.Codecs.Lucene40
                 // if (DEBUG) System.out.println("SPR.nextDoc seg=" + segment + " freqIn.fp=" + freqIn.getFilePointer());
                 while (true)
                 {
-                    if (Ord == Limit)
+                    if (ord == limit)
                     {
                         // if (DEBUG) System.out.println("  return END");
-                        return Doc = NO_MORE_DOCS;
+                        return doc = NO_MORE_DOCS;
                     }
 
-                    Ord++;
+                    ord++;
 
                     // Decode next doc/freq pair
-                    int code = FreqIn.ReadVInt();
+                    int code = freqIn.ReadVInt();
 
-                    Accum += (int)((uint)code >> 1); // shift off low bit
+                    accum += (int)((uint)code >> 1); // shift off low bit
                     if ((code & 1) != 0) // if low bit is set
                     {
-                        Freq_Renamed = 1; // freq is one
+                        freq = 1; // freq is one
                     }
                     else
                     {
-                        Freq_Renamed = FreqIn.ReadVInt(); // else read freq
+                        freq = freqIn.ReadVInt(); // else read freq
                     }
-                    PosPendingCount += Freq_Renamed;
+                    posPendingCount += freq;
 
-                    if (LiveDocs == null || LiveDocs.Get(Accum))
+                    if (liveDocs == null || liveDocs.Get(accum))
                     {
                         break;
                     }
                 }
 
-                Position = 0;
+                position = 0;
 
                 // if (DEBUG) System.out.println("  return doc=" + doc);
-                return (Doc = Accum);
+                return (doc = accum);
             }
 
             public override int DocID
             {
-                get { return Doc; }
+                get { return doc; }
             }
 
             public override int Freq
             {
-                get { return Freq_Renamed; }
+                get { return freq; }
             }
 
             public override int Advance(int target)
             {
                 //System.out.println("StandardR.D&PE advance target=" + target);
 
-                if ((target - OuterInstance.SkipInterval) >= Doc && Limit >= OuterInstance.SkipMinimum)
+                if ((target - outerInstance.skipInterval) >= doc && limit >= outerInstance.skipMinimum)
                 {
                     // There are enough docs in the posting to have
                     // skip data, and it isn't too close
 
-                    if (Skipper == null)
+                    if (skipper == null)
                     {
                         // this is the first time this enum has ever been used for skipping -- do lazy init
-                        Skipper = new Lucene40SkipListReader((IndexInput)FreqIn.Clone(), OuterInstance.MaxSkipLevels, OuterInstance.SkipInterval);
+                        skipper = new Lucene40SkipListReader((IndexInput)freqIn.Clone(), outerInstance.maxSkipLevels, outerInstance.skipInterval);
                     }
 
-                    if (!Skipped)
+                    if (!skipped)
                     {
                         // this is the first time this posting has
                         // skipped, since reset() was called, so now we
                         // load the skip data for this posting
 
-                        Skipper.Init(FreqOffset + SkipOffset, FreqOffset, ProxOffset, Limit, false, false);
+                        skipper.Init(freqOffset + skipOffset, freqOffset, proxOffset, limit, false, false);
 
-                        Skipped = true;
+                        skipped = true;
                     }
 
-                    int newOrd = Skipper.SkipTo(target);
+                    int newOrd = skipper.SkipTo(target);
 
-                    if (newOrd > Ord)
+                    if (newOrd > ord)
                     {
                         // Skipper moved
-                        Ord = newOrd;
-                        Doc = Accum = Skipper.Doc;
-                        FreqIn.Seek(Skipper.FreqPointer);
-                        LazyProxPointer = Skipper.ProxPointer;
-                        PosPendingCount = 0;
-                        Position = 0;
+                        ord = newOrd;
+                        doc = accum = skipper.Doc;
+                        freqIn.Seek(skipper.FreqPointer);
+                        lazyProxPointer = skipper.ProxPointer;
+                        posPendingCount = 0;
+                        position = 0;
                     }
                 }
 
@@ -911,39 +911,39 @@ namespace Lucene.Net.Codecs.Lucene40
                 do
                 {
                     NextDoc();
-                } while (target > Doc);
+                } while (target > doc);
 
-                return Doc;
+                return doc;
             }
 
             public override int NextPosition()
             {
-                if (LazyProxPointer != -1)
+                if (lazyProxPointer != -1)
                 {
-                    ProxIn.Seek(LazyProxPointer);
-                    LazyProxPointer = -1;
+                    proxIn.Seek(lazyProxPointer);
+                    lazyProxPointer = -1;
                 }
 
                 // scan over any docs that were iterated without their positions
-                if (PosPendingCount > Freq_Renamed)
+                if (posPendingCount > freq)
                 {
-                    Position = 0;
-                    while (PosPendingCount != Freq_Renamed)
+                    position = 0;
+                    while (posPendingCount != freq)
                     {
-                        if ((ProxIn.ReadByte() & 0x80) == 0)
+                        if ((proxIn.ReadByte() & 0x80) == 0)
                         {
-                            PosPendingCount--;
+                            posPendingCount--;
                         }
                     }
                 }
 
-                Position += ProxIn.ReadVInt();
+                position += proxIn.ReadVInt();
 
-                PosPendingCount--;
+                posPendingCount--;
 
-                Debug.Assert(PosPendingCount >= 0, "nextPosition() was called too many times (more than freq() times) posPendingCount=" + PosPendingCount);
+                Debug.Assert(posPendingCount >= 0, "nextPosition() was called too many times (more than freq() times) posPendingCount=" + posPendingCount);
 
-                return Position;
+                return position;
             }
 
             public override int StartOffset
@@ -970,89 +970,89 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override long Cost()
             {
-                return Limit;
+                return limit;
             }
         }
 
         // Decodes docs & positions & (payloads and/or offsets)
         private class SegmentFullPositionsEnum : DocsAndPositionsEnum
         {
-            private readonly Lucene40PostingsReader OuterInstance;
+            private readonly Lucene40PostingsReader outerInstance;
 
-            internal readonly IndexInput StartFreqIn;
-            private readonly IndexInput FreqIn;
-            private readonly IndexInput ProxIn;
+            internal readonly IndexInput startFreqIn;
+            private readonly IndexInput freqIn;
+            private readonly IndexInput proxIn;
 
-            internal int Limit; // number of docs in this posting
-            internal int Ord; // how many docs we've read
-            internal int Doc = -1; // doc we last read
-            internal int Accum; // accumulator for doc deltas
-            internal int Freq_Renamed; // freq we last read
-            internal int Position;
+            internal int limit; // number of docs in this posting
+            internal int ord; // how many docs we've read
+            internal int doc = -1; // doc we last read
+            internal int accum; // accumulator for doc deltas
+            internal int freq; // freq we last read
+            internal int position;
 
-            internal IBits LiveDocs;
+            internal IBits liveDocs;
 
-            internal long FreqOffset;
-            internal long SkipOffset;
-            internal long ProxOffset;
+            internal long freqOffset;
+            internal long skipOffset;
+            internal long proxOffset;
 
-            internal int PosPendingCount;
-            internal int PayloadLength;
-            internal bool PayloadPending;
+            internal int posPendingCount;
+            internal int payloadLength;
+            internal bool payloadPending;
 
-            internal bool Skipped;
-            internal Lucene40SkipListReader Skipper;
-            internal BytesRef Payload_Renamed;
-            internal long LazyProxPointer;
+            internal bool skipped;
+            internal Lucene40SkipListReader skipper;
+            internal BytesRef payload;
+            internal long lazyProxPointer;
 
-            internal bool StorePayloads;
-            internal bool StoreOffsets;
+            internal bool storePayloads;
+            internal bool storeOffsets;
 
-            internal int OffsetLength;
-            internal int StartOffset_Renamed;
+            internal int offsetLength;
+            internal int startOffset;
 
             public SegmentFullPositionsEnum(Lucene40PostingsReader outerInstance, IndexInput freqIn, IndexInput proxIn)
             {
-                this.OuterInstance = outerInstance;
-                StartFreqIn = freqIn;
-                this.FreqIn = (IndexInput)freqIn.Clone();
-                this.ProxIn = (IndexInput)proxIn.Clone();
+                this.outerInstance = outerInstance;
+                startFreqIn = freqIn;
+                this.freqIn = (IndexInput)freqIn.Clone();
+                this.proxIn = (IndexInput)proxIn.Clone();
             }
 
             public virtual SegmentFullPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, IBits liveDocs)
             {
-                StoreOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-                StorePayloads = fieldInfo.HasPayloads;
+                storeOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                storePayloads = fieldInfo.HasPayloads;
                 Debug.Assert(fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
-                Debug.Assert(StorePayloads || StoreOffsets);
-                if (Payload_Renamed == null)
+                Debug.Assert(storePayloads || storeOffsets);
+                if (payload == null)
                 {
-                    Payload_Renamed = new BytesRef();
-                    Payload_Renamed.Bytes = new byte[1];
+                    payload = new BytesRef();
+                    payload.Bytes = new byte[1];
                 }
 
-                this.LiveDocs = liveDocs;
+                this.liveDocs = liveDocs;
 
                 // TODO: for full enum case (eg segment merging) this
                 // seek is unnecessary; maybe we can avoid in such
                 // cases
-                FreqIn.Seek(termState.FreqOffset);
-                LazyProxPointer = termState.ProxOffset;
+                freqIn.Seek(termState.freqOffset);
+                lazyProxPointer = termState.proxOffset;
 
-                Limit = termState.DocFreq;
-                Ord = 0;
-                Doc = -1;
-                Accum = 0;
-                Position = 0;
-                StartOffset_Renamed = 0;
+                limit = termState.DocFreq;
+                ord = 0;
+                doc = -1;
+                accum = 0;
+                position = 0;
+                startOffset = 0;
 
-                Skipped = false;
-                PosPendingCount = 0;
-                PayloadPending = false;
+                skipped = false;
+                posPendingCount = 0;
+                payloadPending = false;
 
-                FreqOffset = termState.FreqOffset;
-                ProxOffset = termState.ProxOffset;
-                SkipOffset = termState.SkipOffset;
+                freqOffset = termState.freqOffset;
+                proxOffset = termState.proxOffset;
+                skipOffset = termState.skipOffset;
                 //System.out.println("StandardR.D&PE reset seg=" + segment + " limit=" + limit + " freqFP=" + freqOffset + " proxFP=" + proxOffset + " this=" + this);
 
                 return this;
@@ -1062,92 +1062,92 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 while (true)
                 {
-                    if (Ord == Limit)
+                    if (ord == limit)
                     {
                         //System.out.println("StandardR.D&PE seg=" + segment + " nextDoc return doc=END");
-                        return Doc = NO_MORE_DOCS;
+                        return doc = NO_MORE_DOCS;
                     }
 
-                    Ord++;
+                    ord++;
 
                     // Decode next doc/freq pair
-                    int code = FreqIn.ReadVInt();
+                    int code = freqIn.ReadVInt();
 
-                    Accum += (int)((uint)code >> 1); // shift off low bit
+                    accum += (int)((uint)code >> 1); // shift off low bit
                     if ((code & 1) != 0) // if low bit is set
                     {
-                        Freq_Renamed = 1; // freq is one
+                        freq = 1; // freq is one
                     }
                     else
                     {
-                        Freq_Renamed = FreqIn.ReadVInt(); // else read freq
+                        freq = freqIn.ReadVInt(); // else read freq
                     }
-                    PosPendingCount += Freq_Renamed;
+                    posPendingCount += freq;
 
-                    if (LiveDocs == null || LiveDocs.Get(Accum))
+                    if (liveDocs == null || liveDocs.Get(accum))
                     {
                         break;
                     }
                 }
 
-                Position = 0;
-                StartOffset_Renamed = 0;
+                position = 0;
+                startOffset = 0;
 
                 //System.out.println("StandardR.D&PE nextDoc seg=" + segment + " return doc=" + doc);
-                return (Doc = Accum);
+                return (doc = accum);
             }
 
             public override int DocID
             {
-                get { return Doc; }
+                get { return doc; }
             }
 
             public override int Freq
             {
-                get { return Freq_Renamed; }
+                get { return freq; }
             }
 
             public override int Advance(int target)
             {
                 //System.out.println("StandardR.D&PE advance seg=" + segment + " target=" + target + " this=" + this);
 
-                if ((target - OuterInstance.SkipInterval) >= Doc && Limit >= OuterInstance.SkipMinimum)
+                if ((target - outerInstance.skipInterval) >= doc && limit >= outerInstance.skipMinimum)
                 {
                     // There are enough docs in the posting to have
                     // skip data, and it isn't too close
 
-                    if (Skipper == null)
+                    if (skipper == null)
                     {
                         // this is the first time this enum has ever been used for skipping -- do lazy init
-                        Skipper = new Lucene40SkipListReader((IndexInput)FreqIn.Clone(), OuterInstance.MaxSkipLevels, OuterInstance.SkipInterval);
+                        skipper = new Lucene40SkipListReader((IndexInput)freqIn.Clone(), outerInstance.maxSkipLevels, outerInstance.skipInterval);
                     }
 
-                    if (!Skipped)
+                    if (!skipped)
                     {
                         // this is the first time this posting has
                         // skipped, since reset() was called, so now we
                         // load the skip data for this posting
                         //System.out.println("  init skipper freqOffset=" + freqOffset + " skipOffset=" + skipOffset + " vs len=" + freqIn.length());
-                        Skipper.Init(FreqOffset + SkipOffset, FreqOffset, ProxOffset, Limit, StorePayloads, StoreOffsets);
+                        skipper.Init(freqOffset + skipOffset, freqOffset, proxOffset, limit, storePayloads, storeOffsets);
 
-                        Skipped = true;
+                        skipped = true;
                     }
 
-                    int newOrd = Skipper.SkipTo(target);
+                    int newOrd = skipper.SkipTo(target);
 
-                    if (newOrd > Ord)
+                    if (newOrd > ord)
                     {
                         // Skipper moved
-                        Ord = newOrd;
-                        Doc = Accum = Skipper.Doc;
-                        FreqIn.Seek(Skipper.FreqPointer);
-                        LazyProxPointer = Skipper.ProxPointer;
-                        PosPendingCount = 0;
-                        Position = 0;
-                        StartOffset_Renamed = 0;
-                        PayloadPending = false;
-                        PayloadLength = Skipper.PayloadLength;
-                        OffsetLength = Skipper.OffsetLength;
+                        ord = newOrd;
+                        doc = accum = skipper.Doc;
+                        freqIn.Seek(skipper.FreqPointer);
+                        lazyProxPointer = skipper.ProxPointer;
+                        posPendingCount = 0;
+                        position = 0;
+                        startOffset = 0;
+                        payloadPending = false;
+                        payloadLength = skipper.PayloadLength;
+                        offsetLength = skipper.OffsetLength;
                     }
                 }
 
@@ -1155,113 +1155,113 @@ namespace Lucene.Net.Codecs.Lucene40
                 do
                 {
                     NextDoc();
-                } while (target > Doc);
+                } while (target > doc);
 
-                return Doc;
+                return doc;
             }
 
             public override int NextPosition()
             {
-                if (LazyProxPointer != -1)
+                if (lazyProxPointer != -1)
                 {
-                    ProxIn.Seek(LazyProxPointer);
-                    LazyProxPointer = -1;
+                    proxIn.Seek(lazyProxPointer);
+                    lazyProxPointer = -1;
                 }
 
-                if (PayloadPending && PayloadLength > 0)
+                if (payloadPending && payloadLength > 0)
                 {
                     // payload of last position was never retrieved -- skip it
-                    ProxIn.Seek(ProxIn.FilePointer + PayloadLength);
-                    PayloadPending = false;
+                    proxIn.Seek(proxIn.FilePointer + payloadLength);
+                    payloadPending = false;
                 }
 
                 // scan over any docs that were iterated without their positions
-                while (PosPendingCount > Freq_Renamed)
+                while (posPendingCount > freq)
                 {
-                    int code = ProxIn.ReadVInt();
+                    int code = proxIn.ReadVInt();
 
-                    if (StorePayloads)
+                    if (storePayloads)
                     {
                         if ((code & 1) != 0)
                         {
                             // new payload length
-                            PayloadLength = ProxIn.ReadVInt();
-                            Debug.Assert(PayloadLength >= 0);
+                            payloadLength = proxIn.ReadVInt();
+                            Debug.Assert(payloadLength >= 0);
                         }
-                        Debug.Assert(PayloadLength != -1);
+                        Debug.Assert(payloadLength != -1);
                     }
 
-                    if (StoreOffsets)
+                    if (storeOffsets)
                     {
-                        if ((ProxIn.ReadVInt() & 1) != 0)
+                        if ((proxIn.ReadVInt() & 1) != 0)
                         {
                             // new offset length
-                            OffsetLength = ProxIn.ReadVInt();
+                            offsetLength = proxIn.ReadVInt();
                         }
                     }
 
-                    if (StorePayloads)
+                    if (storePayloads)
                     {
-                        ProxIn.Seek(ProxIn.FilePointer + PayloadLength);
+                        proxIn.Seek(proxIn.FilePointer + payloadLength);
                     }
 
-                    PosPendingCount--;
-                    Position = 0;
-                    StartOffset_Renamed = 0;
-                    PayloadPending = false;
+                    posPendingCount--;
+                    position = 0;
+                    startOffset = 0;
+                    payloadPending = false;
                     //System.out.println("StandardR.D&PE skipPos");
                 }
 
                 // read next position
-                if (PayloadPending && PayloadLength > 0)
+                if (payloadPending && payloadLength > 0)
                 {
                     // payload wasn't retrieved for last position
-                    ProxIn.Seek(ProxIn.FilePointer + PayloadLength);
+                    proxIn.Seek(proxIn.FilePointer + payloadLength);
                 }
 
-                int code_ = ProxIn.ReadVInt();
-                if (StorePayloads)
+                int code_ = proxIn.ReadVInt();
+                if (storePayloads)
                 {
                     if ((code_ & 1) != 0)
                     {
                         // new payload length
-                        PayloadLength = ProxIn.ReadVInt();
-                        Debug.Assert(PayloadLength >= 0);
+                        payloadLength = proxIn.ReadVInt();
+                        Debug.Assert(payloadLength >= 0);
                     }
-                    Debug.Assert(PayloadLength != -1);
+                    Debug.Assert(payloadLength != -1);
 
-                    PayloadPending = true;
+                    payloadPending = true;
                     code_ = (int)((uint)code_ >> 1);
                 }
-                Position += code_;
+                position += code_;
 
-                if (StoreOffsets)
+                if (storeOffsets)
                 {
-                    int offsetCode = ProxIn.ReadVInt();
+                    int offsetCode = proxIn.ReadVInt();
                     if ((offsetCode & 1) != 0)
                     {
                         // new offset length
-                        OffsetLength = ProxIn.ReadVInt();
+                        offsetLength = proxIn.ReadVInt();
                     }
-                    StartOffset_Renamed += (int)((uint)offsetCode >> 1);
+                    startOffset += (int)((uint)offsetCode >> 1);
                 }
 
-                PosPendingCount--;
+                posPendingCount--;
 
-                Debug.Assert(PosPendingCount >= 0, "nextPosition() was called too many times (more than freq() times) posPendingCount=" + PosPendingCount);
+                Debug.Assert(posPendingCount >= 0, "nextPosition() was called too many times (more than freq() times) posPendingCount=" + posPendingCount);
 
                 //System.out.println("StandardR.D&PE nextPos   return pos=" + position);
-                return Position;
+                return position;
             }
 
             public override int StartOffset
             {
-                get { return StoreOffsets ? StartOffset_Renamed : -1; }
+                get { return storeOffsets ? startOffset : -1; }
             }
 
             public override int EndOffset
             {
-                get { return StoreOffsets ? StartOffset_Renamed + OffsetLength : -1; }
+                get { return storeOffsets ? startOffset + offsetLength : -1; }
             }
 
             /// <summary>
@@ -1272,28 +1272,28 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 get
                 {
-                    if (StorePayloads)
+                    if (storePayloads)
                     {
-                        if (PayloadLength <= 0)
+                        if (payloadLength <= 0)
                         {
                             return null;
                         }
-                        Debug.Assert(LazyProxPointer == -1);
-                        Debug.Assert(PosPendingCount < Freq_Renamed);
+                        Debug.Assert(lazyProxPointer == -1);
+                        Debug.Assert(posPendingCount < freq);
 
-                        if (PayloadPending)
+                        if (payloadPending)
                         {
-                            if (PayloadLength > Payload_Renamed.Bytes.Length)
+                            if (payloadLength > payload.Bytes.Length)
                             {
-                                Payload_Renamed.Grow(PayloadLength);
+                                payload.Grow(payloadLength);
                             }
 
-                            ProxIn.ReadBytes(Payload_Renamed.Bytes, 0, PayloadLength);
-                            Payload_Renamed.Length = PayloadLength;
-                            PayloadPending = false;
+                            proxIn.ReadBytes(payload.Bytes, 0, payloadLength);
+                            payload.Length = payloadLength;
+                            payloadPending = false;
                         }
 
-                        return Payload_Renamed;
+                        return payload;
                     }
                     else
                     {
@@ -1304,7 +1304,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override long Cost()
             {
-                return Limit;
+                return limit;
             }
         }
 
