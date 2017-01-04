@@ -82,8 +82,8 @@ namespace Lucene.Net.Codecs.Perfield
 
         internal class ConsumerAndSuffix : IDisposable
         {
-            internal DocValuesConsumer Consumer;
-            internal int Suffix;
+            internal DocValuesConsumer Consumer { get; set; }
+            internal int Suffix { get; set; }
 
             public void Dispose()
             {
@@ -93,17 +93,17 @@ namespace Lucene.Net.Codecs.Perfield
 
         private class FieldsWriter : DocValuesConsumer
         {
-            private readonly PerFieldDocValuesFormat OuterInstance;
+            private readonly PerFieldDocValuesFormat outerInstance;
 
-            internal readonly IDictionary<DocValuesFormat, ConsumerAndSuffix> Formats = new Dictionary<DocValuesFormat, ConsumerAndSuffix>();
-            internal readonly IDictionary<string, int> Suffixes = new Dictionary<string, int>();
+            internal readonly IDictionary<DocValuesFormat, ConsumerAndSuffix> formats = new Dictionary<DocValuesFormat, ConsumerAndSuffix>();
+            internal readonly IDictionary<string, int> suffixes = new Dictionary<string, int>();
 
-            internal readonly SegmentWriteState SegmentWriteState;
+            internal readonly SegmentWriteState segmentWriteState;
 
             public FieldsWriter(PerFieldDocValuesFormat outerInstance, SegmentWriteState state)
             {
-                this.OuterInstance = outerInstance;
-                SegmentWriteState = state;
+                this.outerInstance = outerInstance;
+                segmentWriteState = state;
             }
 
             public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
@@ -140,7 +140,7 @@ namespace Lucene.Net.Codecs.Perfield
                 }
                 if (format == null)
                 {
-                    format = OuterInstance.GetDocValuesFormatForField(field.Name);
+                    format = outerInstance.GetDocValuesFormatForField(field.Name);
                 }
                 if (format == null)
                 {
@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.Perfield
                 int suffix = -1;
 
                 ConsumerAndSuffix consumer;
-                Formats.TryGetValue(format, out consumer);
+                formats.TryGetValue(format, out consumer);
                 if (consumer == null)
                 {
                     // First time we are seeing this format; create a new instance
@@ -174,7 +174,7 @@ namespace Lucene.Net.Codecs.Perfield
                     if (suffix == -1)
                     {
                         // bump the suffix
-                        if (!Suffixes.TryGetValue(formatName_, out suffix))
+                        if (!suffixes.TryGetValue(formatName_, out suffix))
                         {
                             suffix = 0;
                         }
@@ -183,18 +183,18 @@ namespace Lucene.Net.Codecs.Perfield
                             suffix = suffix + 1;
                         }
                     }
-                    Suffixes[formatName_] = suffix;
+                    suffixes[formatName_] = suffix;
 
-                    string segmentSuffix = GetFullSegmentSuffix(SegmentWriteState.SegmentSuffix, GetSuffix(formatName_, Convert.ToString(suffix)));
+                    string segmentSuffix = GetFullSegmentSuffix(segmentWriteState.SegmentSuffix, GetSuffix(formatName_, Convert.ToString(suffix)));
                     consumer = new ConsumerAndSuffix();
-                    consumer.Consumer = format.FieldsConsumer(new SegmentWriteState(SegmentWriteState, segmentSuffix));
+                    consumer.Consumer = format.FieldsConsumer(new SegmentWriteState(segmentWriteState, segmentSuffix));
                     consumer.Suffix = suffix;
-                    Formats[format] = consumer;
+                    formats[format] = consumer;
                 }
                 else
                 {
                     // we've already seen this format, so just grab its suffix
-                    Debug.Assert(Suffixes.ContainsKey(formatName_));
+                    Debug.Assert(suffixes.ContainsKey(formatName_));
                     suffix = consumer.Suffix;
                 }
 
@@ -211,7 +211,7 @@ namespace Lucene.Net.Codecs.Perfield
                 if (disposing)
                 {
                     // Close all subs
-                    IOUtils.Close(Formats.Values.ToArray());
+                    IOUtils.Close(formats.Values.ToArray());
                 }
             }
         }
@@ -235,14 +235,14 @@ namespace Lucene.Net.Codecs.Perfield
 
         private class FieldsReader : DocValuesProducer
         {
-            private readonly PerFieldDocValuesFormat OuterInstance;
+            private readonly PerFieldDocValuesFormat outerInstance;
 
-            internal readonly IDictionary<string, DocValuesProducer> Fields = new SortedDictionary<string, DocValuesProducer>();
-            internal readonly IDictionary<string, DocValuesProducer> Formats = new Dictionary<string, DocValuesProducer>();
+            internal readonly IDictionary<string, DocValuesProducer> fields = new SortedDictionary<string, DocValuesProducer>();
+            internal readonly IDictionary<string, DocValuesProducer> formats = new Dictionary<string, DocValuesProducer>();
 
             public FieldsReader(PerFieldDocValuesFormat outerInstance, SegmentReadState readState)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
 
                 // Read _X.per and init each format:
                 bool success = false;
@@ -262,11 +262,11 @@ namespace Lucene.Net.Codecs.Perfield
                                 Debug.Assert(suffix != null);
                                 DocValuesFormat format = DocValuesFormat.ForName(formatName);
                                 string segmentSuffix = GetFullSegmentSuffix(readState.SegmentSuffix, GetSuffix(formatName, suffix));
-                                if (!Formats.ContainsKey(segmentSuffix))
+                                if (!formats.ContainsKey(segmentSuffix))
                                 {
-                                    Formats[segmentSuffix] = format.FieldsProducer(new SegmentReadState(readState, segmentSuffix));
+                                    formats[segmentSuffix] = format.FieldsProducer(new SegmentReadState(readState, segmentSuffix));
                                 }
-                                Fields[fieldName] = Formats[segmentSuffix];
+                                fields[fieldName] = formats[segmentSuffix];
                             }
                         }
                     }
@@ -276,37 +276,37 @@ namespace Lucene.Net.Codecs.Perfield
                 {
                     if (!success)
                     {
-                        IOUtils.CloseWhileHandlingException(Formats.Values);
+                        IOUtils.CloseWhileHandlingException(formats.Values);
                     }
                 }
             }
 
             internal FieldsReader(PerFieldDocValuesFormat outerInstance, FieldsReader other)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
 
                 IDictionary<DocValuesProducer, DocValuesProducer> oldToNew = new HashMap<DocValuesProducer, DocValuesProducer>();
                 // First clone all formats
-                foreach (KeyValuePair<string, DocValuesProducer> ent in other.Formats)
+                foreach (KeyValuePair<string, DocValuesProducer> ent in other.formats)
                 {
                     DocValuesProducer values = ent.Value;
-                    Formats[ent.Key] = values;
+                    formats[ent.Key] = values;
                     oldToNew[ent.Value] = values;
                 }
 
                 // Then rebuild fields:
-                foreach (KeyValuePair<string, DocValuesProducer> ent in other.Fields)
+                foreach (KeyValuePair<string, DocValuesProducer> ent in other.fields)
                 {
                     DocValuesProducer producer = oldToNew[ent.Value];
                     Debug.Assert(producer != null);
-                    Fields[ent.Key] = producer;
+                    fields[ent.Key] = producer;
                 }
             }
 
             public override NumericDocValues GetNumeric(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (Fields.TryGetValue(field.Name, out producer))
+                if (fields.TryGetValue(field.Name, out producer))
                 {
                     return producer.GetNumeric(field);
                 }
@@ -316,7 +316,7 @@ namespace Lucene.Net.Codecs.Perfield
             public override BinaryDocValues GetBinary(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (Fields.TryGetValue(field.Name, out producer))
+                if (fields.TryGetValue(field.Name, out producer))
                 {
                     return producer.GetBinary(field);
                 }
@@ -326,7 +326,7 @@ namespace Lucene.Net.Codecs.Perfield
             public override SortedDocValues GetSorted(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (Fields.TryGetValue(field.Name, out producer))
+                if (fields.TryGetValue(field.Name, out producer))
                 {
                     return producer.GetSorted(field);
                 }
@@ -336,7 +336,7 @@ namespace Lucene.Net.Codecs.Perfield
             public override SortedSetDocValues GetSortedSet(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (Fields.TryGetValue(field.Name, out producer))
+                if (fields.TryGetValue(field.Name, out producer))
                 {
                     return producer.GetSortedSet(field);
                 }
@@ -346,7 +346,7 @@ namespace Lucene.Net.Codecs.Perfield
             public override IBits GetDocsWithField(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (Fields.TryGetValue(field.Name, out producer))
+                if (fields.TryGetValue(field.Name, out producer))
                 {
                     return producer.GetDocsWithField(field);
                 }
@@ -356,18 +356,18 @@ namespace Lucene.Net.Codecs.Perfield
             protected override void Dispose(bool disposing)
             {
                 if (disposing)
-                    IOUtils.Close(Formats.Values.ToArray());
+                    IOUtils.Close(formats.Values.ToArray());
             }
 
             public object Clone()
             {
-                return new FieldsReader(OuterInstance, this);
+                return new FieldsReader(outerInstance, this);
             }
 
             public override long RamBytesUsed()
             {
                 long size = 0;
-                foreach (KeyValuePair<string, DocValuesProducer> entry in Formats)
+                foreach (KeyValuePair<string, DocValuesProducer> entry in formats)
                 {
                     size += (entry.Key.Length * RamUsageEstimator.NUM_BYTES_CHAR) + entry.Value.RamBytesUsed();
                 }
@@ -376,7 +376,7 @@ namespace Lucene.Net.Codecs.Perfield
 
             public override void CheckIntegrity()
             {
-                foreach (DocValuesProducer format in Formats.Values)
+                foreach (DocValuesProducer format in formats.Values)
                 {
                     format.CheckIntegrity();
                 }
