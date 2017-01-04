@@ -106,21 +106,21 @@ namespace Lucene.Net.Index
             private class DocMapAnonymousInnerClassHelper : DocMap
             {
                 private int maxDoc;
-                private IBits LiveDocs;
+                private IBits liveDocs;
                 private MonotonicAppendingLongBuffer docMap;
                 private int numDeletedDocs;
 
                 public DocMapAnonymousInnerClassHelper(int maxDoc, IBits liveDocs, MonotonicAppendingLongBuffer docMap, int numDeletedDocs)
                 {
                     this.maxDoc = maxDoc;
-                    this.LiveDocs = liveDocs;
+                    this.liveDocs = liveDocs;
                     this.docMap = docMap;
                     this.numDeletedDocs = numDeletedDocs;
                 }
 
                 public override int Get(int docID)
                 {
-                    if (!LiveDocs.Get(docID))
+                    if (!liveDocs.Get(docID))
                     {
                         return -1;
                     }
