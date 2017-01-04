@@ -53,57 +53,57 @@ namespace Lucene.Net.Codecs.Compressing
         internal const int VERSION_CHECKSUM = 2;
         internal const int VERSION_CURRENT = VERSION_CHECKSUM;
 
-        private readonly Directory Directory;
-        private readonly string Segment;
-        private readonly string SegmentSuffix;
-        private CompressingStoredFieldsIndexWriter IndexWriter;
-        private IndexOutput FieldsStream;
+        private readonly Directory directory;
+        private readonly string segment;
+        private readonly string segmentSuffix;
+        private CompressingStoredFieldsIndexWriter indexWriter;
+        private IndexOutput fieldsStream;
 
-        private readonly CompressionMode CompressionMode;
-        private readonly Compressor Compressor;
-        private readonly int ChunkSize;
+        private readonly CompressionMode compressionMode;
+        private readonly Compressor compressor;
+        private readonly int chunkSize;
 
-        private readonly GrowableByteArrayDataOutput BufferedDocs;
-        private int[] NumStoredFields; // number of stored fields
-        private int[] EndOffsets; // end offsets in bufferedDocs
-        private int DocBase; // doc ID at the beginning of the chunk
-        private int NumBufferedDocs; // docBase + numBufferedDocs == current doc ID
+        private readonly GrowableByteArrayDataOutput bufferedDocs;
+        private int[] numStoredFields; // number of stored fields
+        private int[] endOffsets; // end offsets in bufferedDocs
+        private int docBase; // doc ID at the beginning of the chunk
+        private int numBufferedDocs; // docBase + numBufferedDocs == current doc ID
 
         /// <summary>
         /// Sole constructor. </summary>
         public CompressingStoredFieldsWriter(Directory directory, SegmentInfo si, string segmentSuffix, IOContext context, string formatName, CompressionMode compressionMode, int chunkSize)
         {
             Debug.Assert(directory != null);
-            this.Directory = directory;
-            this.Segment = si.Name;
-            this.SegmentSuffix = segmentSuffix;
-            this.CompressionMode = compressionMode;
-            this.Compressor = compressionMode.NewCompressor();
-            this.ChunkSize = chunkSize;
-            this.DocBase = 0;
-            this.BufferedDocs = new GrowableByteArrayDataOutput(chunkSize);
-            this.NumStoredFields = new int[16];
-            this.EndOffsets = new int[16];
-            this.NumBufferedDocs = 0;
+            this.directory = directory;
+            this.segment = si.Name;
+            this.segmentSuffix = segmentSuffix;
+            this.compressionMode = compressionMode;
+            this.compressor = compressionMode.NewCompressor();
+            this.chunkSize = chunkSize;
+            this.docBase = 0;
+            this.bufferedDocs = new GrowableByteArrayDataOutput(chunkSize);
+            this.numStoredFields = new int[16];
+            this.endOffsets = new int[16];
+            this.numBufferedDocs = 0;
 
             bool success = false;
-            IndexOutput indexStream = directory.CreateOutput(IndexFileNames.SegmentFileName(Segment, segmentSuffix, Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION), context);
+            IndexOutput indexStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, segmentSuffix, Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION), context);
             try
             {
-                FieldsStream = directory.CreateOutput(IndexFileNames.SegmentFileName(Segment, segmentSuffix, Lucene40StoredFieldsWriter.FIELDS_EXTENSION), context);
+                fieldsStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, segmentSuffix, Lucene40StoredFieldsWriter.FIELDS_EXTENSION), context);
 
                 string codecNameIdx = formatName + CODEC_SFX_IDX;
                 string codecNameDat = formatName + CODEC_SFX_DAT;
                 CodecUtil.WriteHeader(indexStream, codecNameIdx, VERSION_CURRENT);
-                CodecUtil.WriteHeader(FieldsStream, codecNameDat, VERSION_CURRENT);
-                Debug.Assert(CodecUtil.HeaderLength(codecNameDat) == FieldsStream.FilePointer);
+                CodecUtil.WriteHeader(fieldsStream, codecNameDat, VERSION_CURRENT);
+                Debug.Assert(CodecUtil.HeaderLength(codecNameDat) == fieldsStream.FilePointer);
                 Debug.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.FilePointer);
 
-                IndexWriter = new CompressingStoredFieldsIndexWriter(indexStream);
+                indexWriter = new CompressingStoredFieldsIndexWriter(indexStream);
                 indexStream = null;
 
-                FieldsStream.WriteVInt(chunkSize);
-                FieldsStream.WriteVInt(PackedInts.VERSION_CURRENT);
+                fieldsStream.WriteVInt(chunkSize);
+                fieldsStream.WriteVInt(PackedInts.VERSION_CURRENT);
 
                 success = true;
             }
@@ -123,38 +123,38 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 try
                 {
-                    IOUtils.Close(FieldsStream, IndexWriter);
+                    IOUtils.Close(fieldsStream, indexWriter);
                 }
                 finally
                 {
-                    FieldsStream = null;
-                    IndexWriter = null;
+                    fieldsStream = null;
+                    indexWriter = null;
                 }
             }
         }
 
         public override void StartDocument(int numStoredFields)
         {
-            if (NumBufferedDocs == this.NumStoredFields.Length)
+            if (numBufferedDocs == this.numStoredFields.Length)
             {
-                int newLength = ArrayUtil.Oversize(NumBufferedDocs + 1, 4);
-                this.NumStoredFields = Arrays.CopyOf(this.NumStoredFields, newLength);
-                EndOffsets = Arrays.CopyOf(EndOffsets, newLength);
+                int newLength = ArrayUtil.Oversize(numBufferedDocs + 1, 4);
+                this.numStoredFields = Arrays.CopyOf(this.numStoredFields, newLength);
+                endOffsets = Arrays.CopyOf(endOffsets, newLength);
             }
-            this.NumStoredFields[NumBufferedDocs] = numStoredFields;
-            ++NumBufferedDocs;
+            this.numStoredFields[numBufferedDocs] = numStoredFields;
+            ++numBufferedDocs;
         }
 
         public override void FinishDocument()
         {
-            EndOffsets[NumBufferedDocs - 1] = BufferedDocs.Length;
+            endOffsets[numBufferedDocs - 1] = bufferedDocs.Length;
             if (TriggerFlush())
             {
                 Flush();
             }
         }
 
-        private static void SaveInts(int[] values, int length, DataOutput @out)
+        private static void SaveInts(int[] values, int length, DataOutput @out) // LUCENENET TODO: Rename SaveInt32s ?
         {
             Debug.Assert(length > 0);
             if (length == 1)
@@ -199,52 +199,52 @@ namespace Lucene.Net.Codecs.Compressing
         private void WriteHeader(int docBase, int numBufferedDocs, int[] numStoredFields, int[] lengths)
         {
             // save docBase and numBufferedDocs
-            FieldsStream.WriteVInt(docBase);
-            FieldsStream.WriteVInt(numBufferedDocs);
+            fieldsStream.WriteVInt(docBase);
+            fieldsStream.WriteVInt(numBufferedDocs);
 
             // save numStoredFields
-            SaveInts(numStoredFields, numBufferedDocs, FieldsStream);
+            SaveInts(numStoredFields, numBufferedDocs, fieldsStream);
 
             // save lengths
-            SaveInts(lengths, numBufferedDocs, FieldsStream);
+            SaveInts(lengths, numBufferedDocs, fieldsStream);
         }
 
         private bool TriggerFlush()
         {
-            return BufferedDocs.Length >= ChunkSize || NumBufferedDocs >= MAX_DOCUMENTS_PER_CHUNK; // chunks of at least chunkSize bytes
+            return bufferedDocs.Length >= chunkSize || numBufferedDocs >= MAX_DOCUMENTS_PER_CHUNK; // chunks of at least chunkSize bytes
         }
 
         private void Flush()
         {
-            IndexWriter.WriteIndex(NumBufferedDocs, FieldsStream.FilePointer);
+            indexWriter.WriteIndex(numBufferedDocs, fieldsStream.FilePointer);
 
             // transform end offsets into lengths
-            int[] lengths = EndOffsets;
-            for (int i = NumBufferedDocs - 1; i > 0; --i)
+            int[] lengths = endOffsets;
+            for (int i = numBufferedDocs - 1; i > 0; --i)
             {
-                lengths[i] = EndOffsets[i] - EndOffsets[i - 1];
+                lengths[i] = endOffsets[i] - endOffsets[i - 1];
                 Debug.Assert(lengths[i] >= 0);
             }
-            WriteHeader(DocBase, NumBufferedDocs, NumStoredFields, lengths);
+            WriteHeader(docBase, numBufferedDocs, numStoredFields, lengths);
 
             // compress stored fields to fieldsStream
-            if (BufferedDocs.Length >= 2 * ChunkSize)
+            if (bufferedDocs.Length >= 2 * chunkSize)
             {
                 // big chunk, slice it
-                for (int compressed = 0; compressed < BufferedDocs.Length; compressed += ChunkSize)
+                for (int compressed = 0; compressed < bufferedDocs.Length; compressed += chunkSize)
                 {
-                    Compressor.Compress(BufferedDocs.Bytes, compressed, Math.Min(ChunkSize, BufferedDocs.Length - compressed), FieldsStream);
+                    compressor.Compress(bufferedDocs.Bytes, compressed, Math.Min(chunkSize, bufferedDocs.Length - compressed), fieldsStream);
                 }
             }
             else
             {
-                Compressor.Compress(BufferedDocs.Bytes, 0, BufferedDocs.Length, FieldsStream);
+                compressor.Compress(bufferedDocs.Bytes, 0, bufferedDocs.Length, fieldsStream);
             }
 
             // reset
-            DocBase += NumBufferedDocs;
-            NumBufferedDocs = 0;
-            BufferedDocs.Length = 0;
+            docBase += numBufferedDocs;
+            numBufferedDocs = 0;
+            bufferedDocs.Length = 0;
         }
 
         public override void WriteField(FieldInfo info, IIndexableField field)
@@ -333,16 +333,16 @@ namespace Lucene.Net.Codecs.Compressing
             }
 
             long infoAndBits = (((long)info.Number) << TYPE_BITS) | bits;
-            BufferedDocs.WriteVLong(infoAndBits);
+            bufferedDocs.WriteVLong(infoAndBits);
 
             if (bytes != null)
             {
-                BufferedDocs.WriteVInt(bytes.Length);
-                BufferedDocs.WriteBytes(bytes.Bytes, bytes.Offset, bytes.Length);
+                bufferedDocs.WriteVInt(bytes.Length);
+                bufferedDocs.WriteBytes(bytes.Bytes, bytes.Offset, bytes.Length);
             }
             else if (@string != null)
             {
-                BufferedDocs.WriteString(field.GetStringValue());
+                bufferedDocs.WriteString(field.GetStringValue());
             }
             else
             {
@@ -381,19 +381,19 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     if (number is sbyte || number is short || number is int)
                     {
-                        BufferedDocs.WriteInt((int)number);
+                        bufferedDocs.WriteInt((int)number);
                     }
                     else if (number is long)
                     {
-                        BufferedDocs.WriteLong((long)number);
+                        bufferedDocs.WriteLong((long)number);
                     }
                     else if (number is float)
                     {
-                        BufferedDocs.WriteInt(Number.FloatToIntBits((float)number));
+                        bufferedDocs.WriteInt(Number.FloatToIntBits((float)number));
                     }
                     else if (number is double)
                     {
-                        BufferedDocs.WriteLong(BitConverter.DoubleToInt64Bits((double)number));
+                        bufferedDocs.WriteLong(BitConverter.DoubleToInt64Bits((double)number));
                     }
                     else
                     {
@@ -406,26 +406,26 @@ namespace Lucene.Net.Codecs.Compressing
         public override void Abort()
         {
             IOUtils.CloseWhileHandlingException(this);
-            IOUtils.DeleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, SegmentSuffix, Lucene40StoredFieldsWriter.FIELDS_EXTENSION), IndexFileNames.SegmentFileName(Segment, SegmentSuffix, Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION));
+            IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, segmentSuffix, Lucene40StoredFieldsWriter.FIELDS_EXTENSION), IndexFileNames.SegmentFileName(segment, segmentSuffix, Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION));
         }
 
         public override void Finish(FieldInfos fis, int numDocs)
         {
-            if (NumBufferedDocs > 0)
+            if (numBufferedDocs > 0)
             {
                 Flush();
             }
             else
             {
-                Debug.Assert(BufferedDocs.Length == 0);
+                Debug.Assert(bufferedDocs.Length == 0);
             }
-            if (DocBase != numDocs)
+            if (docBase != numDocs)
             {
-                throw new Exception("Wrote " + DocBase + " docs, finish called with numDocs=" + numDocs);
+                throw new Exception("Wrote " + docBase + " docs, finish called with numDocs=" + numDocs);
             }
-            IndexWriter.Finish(numDocs, FieldsStream.FilePointer);
-            CodecUtil.WriteFooter(FieldsStream);
-            Debug.Assert(BufferedDocs.Length == 0);
+            indexWriter.Finish(numDocs, fieldsStream.FilePointer);
+            CodecUtil.WriteFooter(fieldsStream);
+            Debug.Assert(bufferedDocs.Length == 0);
         }
 
         public override int Merge(MergeState mergeState)
@@ -450,7 +450,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int maxDoc = reader.MaxDoc;
                 IBits liveDocs = reader.LiveDocs;
 
-                if (matchingFieldsReader == null || matchingFieldsReader.Version != VERSION_CURRENT || matchingFieldsReader.CompressionMode != CompressionMode || matchingFieldsReader.ChunkSize != ChunkSize) // the way data is decompressed depends on the chunk size -  means reader version is not the same as the writer version
+                if (matchingFieldsReader == null || matchingFieldsReader.Version != VERSION_CURRENT || matchingFieldsReader.CompressionMode != compressionMode || matchingFieldsReader.ChunkSize != chunkSize) // the way data is decompressed depends on the chunk size -  means reader version is not the same as the writer version
                 {
                     // naive merge...
                     for (int i = NextLiveDoc(0, liveDocs, maxDoc); i < maxDoc; i = NextLiveDoc(i + 1, liveDocs, maxDoc))
@@ -483,15 +483,15 @@ namespace Lucene.Net.Codecs.Compressing
                                 startOffsets[i] = startOffsets[i - 1] + it.lengths[i - 1];
                             }
 
-                            if (NumBufferedDocs == 0 && startOffsets[it.chunkDocs - 1] < ChunkSize && startOffsets[it.chunkDocs - 1] + it.lengths[it.chunkDocs - 1] >= ChunkSize && NextDeletedDoc(it.docBase, liveDocs, it.docBase + it.chunkDocs) == it.docBase + it.chunkDocs) // no deletion in the chunk -  chunk is large enough -  chunk is small enough -  starting a new chunk
+                            if (numBufferedDocs == 0 && startOffsets[it.chunkDocs - 1] < chunkSize && startOffsets[it.chunkDocs - 1] + it.lengths[it.chunkDocs - 1] >= chunkSize && NextDeletedDoc(it.docBase, liveDocs, it.docBase + it.chunkDocs) == it.docBase + it.chunkDocs) // no deletion in the chunk -  chunk is large enough -  chunk is small enough -  starting a new chunk
                             {
                                 Debug.Assert(docID == it.docBase);
 
                                 // no need to decompress, just copy data
-                                IndexWriter.WriteIndex(it.chunkDocs, FieldsStream.FilePointer);
-                                WriteHeader(this.DocBase, it.chunkDocs, it.numStoredFields, it.lengths);
-                                it.CopyCompressedData(FieldsStream);
-                                this.DocBase += it.chunkDocs;
+                                indexWriter.WriteIndex(it.chunkDocs, fieldsStream.FilePointer);
+                                WriteHeader(this.docBase, it.chunkDocs, it.numStoredFields, it.lengths);
+                                it.CopyCompressedData(fieldsStream);
+                                this.docBase += it.chunkDocs;
                                 docID = NextLiveDoc(it.docBase + it.chunkDocs, liveDocs, maxDoc);
                                 docCount += it.chunkDocs;
                                 mergeState.CheckAbort.Work(300 * it.chunkDocs);
@@ -509,7 +509,7 @@ namespace Lucene.Net.Codecs.Compressing
                                 {
                                     int diff = docID - it.docBase;
                                     StartDocument(it.numStoredFields[diff]);
-                                    BufferedDocs.WriteBytes(it.bytes.Bytes, it.bytes.Offset + startOffsets[diff], it.lengths[diff]);
+                                    bufferedDocs.WriteBytes(it.bytes.Bytes, it.bytes.Offset + startOffsets[diff], it.lengths[diff]);
                                     FinishDocument();
                                     ++docCount;
                                     mergeState.CheckAbort.Work(300);
