@@ -74,36 +74,36 @@ namespace Lucene.Net.Codecs.Compressing
             return (n >> 63) ^ (n << 1);
         }
 
-        internal readonly IndexOutput FieldsIndexOut;
-        internal int TotalDocs;
-        internal int BlockDocs;
-        internal int BlockChunks;
-        internal long FirstStartPointer;
-        internal long MaxStartPointer;
-        internal readonly int[] DocBaseDeltas;
-        internal readonly long[] StartPointerDeltas;
+        internal readonly IndexOutput fieldsIndexOut;
+        internal int totalDocs;
+        internal int blockDocs;
+        internal int blockChunks;
+        internal long firstStartPointer;
+        internal long maxStartPointer;
+        internal readonly int[] docBaseDeltas;
+        internal readonly long[] startPointerDeltas;
 
         internal CompressingStoredFieldsIndexWriter(IndexOutput indexOutput)
         {
-            this.FieldsIndexOut = indexOutput;
+            this.fieldsIndexOut = indexOutput;
             Reset();
-            TotalDocs = 0;
-            DocBaseDeltas = new int[BLOCK_SIZE];
-            StartPointerDeltas = new long[BLOCK_SIZE];
-            FieldsIndexOut.WriteVInt(PackedInts.VERSION_CURRENT);
+            totalDocs = 0;
+            docBaseDeltas = new int[BLOCK_SIZE];
+            startPointerDeltas = new long[BLOCK_SIZE];
+            fieldsIndexOut.WriteVInt(PackedInts.VERSION_CURRENT);
         }
 
         private void Reset()
         {
-            BlockChunks = 0;
-            BlockDocs = 0;
-            FirstStartPointer = -1; // means unset
+            blockChunks = 0;
+            blockDocs = 0;
+            firstStartPointer = -1; // means unset
         }
 
         private void WriteBlock()
         {
-            Debug.Assert(BlockChunks > 0);
-            FieldsIndexOut.WriteVInt(BlockChunks);
+            Debug.Assert(blockChunks > 0);
+            fieldsIndexOut.WriteVInt(blockChunks);
 
             // The trick here is that we only store the difference from the average start
             // pointer or doc base, this helps save bits per value.
@@ -114,66 +114,66 @@ namespace Lucene.Net.Codecs.Compressing
 
             // doc bases
             int avgChunkDocs;
-            if (BlockChunks == 1)
+            if (blockChunks == 1)
             {
                 avgChunkDocs = 0;
             }
             else
             {
-                avgChunkDocs = (int)Math.Round((float)(BlockDocs - DocBaseDeltas[BlockChunks - 1]) / (BlockChunks - 1));
+                avgChunkDocs = (int)Math.Round((float)(blockDocs - docBaseDeltas[blockChunks - 1]) / (blockChunks - 1));
             }
-            FieldsIndexOut.WriteVInt(TotalDocs - BlockDocs); // docBase
-            FieldsIndexOut.WriteVInt(avgChunkDocs);
+            fieldsIndexOut.WriteVInt(totalDocs - blockDocs); // docBase
+            fieldsIndexOut.WriteVInt(avgChunkDocs);
             int docBase = 0;
             long maxDelta = 0;
-            for (int i = 0; i < BlockChunks; ++i)
+            for (int i = 0; i < blockChunks; ++i)
             {
                 int delta = docBase - avgChunkDocs * i;
                 maxDelta |= MoveSignToLowOrderBit(delta);
-                docBase += DocBaseDeltas[i];
+                docBase += docBaseDeltas[i];
             }
 
             int bitsPerDocBase = PackedInts.BitsRequired(maxDelta);
-            FieldsIndexOut.WriteVInt(bitsPerDocBase);
-            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(FieldsIndexOut, PackedInts.Format.PACKED, BlockChunks, bitsPerDocBase, 1);
+            fieldsIndexOut.WriteVInt(bitsPerDocBase);
+            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(fieldsIndexOut, PackedInts.Format.PACKED, blockChunks, bitsPerDocBase, 1);
             docBase = 0;
-            for (int i = 0; i < BlockChunks; ++i)
+            for (int i = 0; i < blockChunks; ++i)
             {
                 long delta = docBase - avgChunkDocs * i;
                 Debug.Assert(PackedInts.BitsRequired(MoveSignToLowOrderBit(delta)) <= writer.BitsPerValue);
                 writer.Add(MoveSignToLowOrderBit(delta));
-                docBase += DocBaseDeltas[i];
+                docBase += docBaseDeltas[i];
             }
             writer.Finish();
 
             // start pointers
-            FieldsIndexOut.WriteVLong(FirstStartPointer);
+            fieldsIndexOut.WriteVLong(firstStartPointer);
             long avgChunkSize;
-            if (BlockChunks == 1)
+            if (blockChunks == 1)
             {
                 avgChunkSize = 0;
             }
             else
             {
-                avgChunkSize = (MaxStartPointer - FirstStartPointer) / (BlockChunks - 1);
+                avgChunkSize = (maxStartPointer - firstStartPointer) / (blockChunks - 1);
             }
-            FieldsIndexOut.WriteVLong(avgChunkSize);
+            fieldsIndexOut.WriteVLong(avgChunkSize);
             long startPointer = 0;
             maxDelta = 0;
-            for (int i = 0; i < BlockChunks; ++i)
+            for (int i = 0; i < blockChunks; ++i)
             {
-                startPointer += StartPointerDeltas[i];
+                startPointer += startPointerDeltas[i];
                 long delta = startPointer - avgChunkSize * i;
                 maxDelta |= MoveSignToLowOrderBit(delta);
             }
 
             int bitsPerStartPointer = PackedInts.BitsRequired(maxDelta);
-            FieldsIndexOut.WriteVInt(bitsPerStartPointer);
-            writer = PackedInts.GetWriterNoHeader(FieldsIndexOut, PackedInts.Format.PACKED, BlockChunks, bitsPerStartPointer, 1);
+            fieldsIndexOut.WriteVInt(bitsPerStartPointer);
+            writer = PackedInts.GetWriterNoHeader(fieldsIndexOut, PackedInts.Format.PACKED, blockChunks, bitsPerStartPointer, 1);
             startPointer = 0;
-            for (int i = 0; i < BlockChunks; ++i)
+            for (int i = 0; i < blockChunks; ++i)
             {
-                startPointer += StartPointerDeltas[i];
+                startPointer += startPointerDeltas[i];
                 long delta = startPointer - avgChunkSize * i;
                 Debug.Assert(PackedInts.BitsRequired(MoveSignToLowOrderBit(delta)) <= writer.BitsPerValue);
                 writer.Add(MoveSignToLowOrderBit(delta));
@@ -183,45 +183,45 @@ namespace Lucene.Net.Codecs.Compressing
 
         internal void WriteIndex(int numDocs, long startPointer)
         {
-            if (BlockChunks == BLOCK_SIZE)
+            if (blockChunks == BLOCK_SIZE)
             {
                 WriteBlock();
                 Reset();
             }
 
-            if (FirstStartPointer == -1)
+            if (firstStartPointer == -1)
             {
-                FirstStartPointer = MaxStartPointer = startPointer;
+                firstStartPointer = maxStartPointer = startPointer;
             }
-            Debug.Assert(FirstStartPointer > 0 && startPointer >= FirstStartPointer);
+            Debug.Assert(firstStartPointer > 0 && startPointer >= firstStartPointer);
 
-            DocBaseDeltas[BlockChunks] = numDocs;
-            StartPointerDeltas[BlockChunks] = startPointer - MaxStartPointer;
+            docBaseDeltas[blockChunks] = numDocs;
+            startPointerDeltas[blockChunks] = startPointer - maxStartPointer;
 
-            ++BlockChunks;
-            BlockDocs += numDocs;
-            TotalDocs += numDocs;
-            MaxStartPointer = startPointer;
+            ++blockChunks;
+            blockDocs += numDocs;
+            totalDocs += numDocs;
+            maxStartPointer = startPointer;
         }
 
         internal void Finish(int numDocs, long maxPointer)
         {
-            if (numDocs != TotalDocs)
+            if (numDocs != totalDocs)
             {
-                throw new Exception("Expected " + numDocs + " docs, but got " + TotalDocs);
+                throw new Exception("Expected " + numDocs + " docs, but got " + totalDocs);
             }
-            if (BlockChunks > 0)
+            if (blockChunks > 0)
             {
                 WriteBlock();
             }
-            FieldsIndexOut.WriteVInt(0); // end marker
-            FieldsIndexOut.WriteVLong(maxPointer);
-            CodecUtil.WriteFooter(FieldsIndexOut);
+            fieldsIndexOut.WriteVInt(0); // end marker
+            fieldsIndexOut.WriteVLong(maxPointer);
+            CodecUtil.WriteFooter(fieldsIndexOut);
         }
 
         public void Dispose()
         {
-            FieldsIndexOut.Dispose();
+            fieldsIndexOut.Dispose();
         }
     }
 }
