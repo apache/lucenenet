@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
     /// </summary>
     internal sealed class SegmentDocValues
     {
-        private readonly IDictionary<long?, RefCount<DocValuesProducer>> GenDVProducers = new Dictionary<long?, RefCount<DocValuesProducer>>();
+        private readonly IDictionary<long?, RefCount<DocValuesProducer>> genDVProducers = new Dictionary<long?, RefCount<DocValuesProducer>>();
 
         private RefCount<DocValuesProducer> NewDocValuesProducer(SegmentCommitInfo si, IOContext context, Directory dir, DocValuesFormat dvFormat, long? gen, IList<FieldInfo> infos, int termsIndexDivisor)
         {
@@ -55,22 +55,22 @@ namespace Lucene.Net.Index
 
         private class RefCountHelper : RefCount<DocValuesProducer>
         {
-            private readonly SegmentDocValues OuterInstance;
-            private long? Gen;
+            private readonly SegmentDocValues outerInstance;
+            private long? gen;
 
             public RefCountHelper(SegmentDocValues outerInstance, DocValuesProducer fieldsProducer, long? gen)
                 : base(fieldsProducer)
             {
-                this.OuterInstance = outerInstance;
-                this.Gen = gen;
+                this.outerInstance = outerInstance;
+                this.gen = gen;
             }
 
             protected override void Release()
             {
                 m_object.Dispose();
-                lock (OuterInstance)
+                lock (outerInstance)
                 {
-                    OuterInstance.GenDVProducers.Remove(Gen);
+                    outerInstance.genDVProducers.Remove(gen);
                 }
             }
         }
@@ -82,11 +82,11 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 RefCount<DocValuesProducer> dvp;
-                if (!(GenDVProducers.TryGetValue(gen, out dvp)))
+                if (!(genDVProducers.TryGetValue(gen, out dvp)))
                 {
                     dvp = NewDocValuesProducer(si, context, dir, dvFormat, gen, infos, termsIndexDivisor);
                     Debug.Assert(dvp != null);
-                    GenDVProducers[gen] = dvp;
+                    genDVProducers[gen] = dvp;
                 }
                 else
                 {
@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
                 Exception t = null;
                 foreach (long? gen in dvProducersGens)
                 {
-                    RefCount<DocValuesProducer> dvp = GenDVProducers[gen];
+                    RefCount<DocValuesProducer> dvp = genDVProducers[gen];
                     Debug.Assert(dvp != null, "gen=" + gen);
                     try
                     {
