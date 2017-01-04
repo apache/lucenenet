@@ -216,7 +216,7 @@ namespace Lucene.Net.Analysis.Ngram
                 bool exhausted = false;
                 while (charsRead < limit)
                 {
-                    int inc = input.Read(chars, charsRead, chars.Length - charsRead);
+                    int inc = m_input.Read(chars, charsRead, chars.Length - charsRead);
                     if (inc <= 0)
                     {
                         exhausted = true;
@@ -239,7 +239,7 @@ namespace Lucene.Net.Analysis.Ngram
                     var throwaway = new char[1024];
                     while (true)
                     {
-                        int inc = input.Read(throwaway, 0, throwaway.Length);
+                        int inc = m_input.Read(throwaway, 0, throwaway.Length);
                         if (inc <= 0)
                         {
                             break;

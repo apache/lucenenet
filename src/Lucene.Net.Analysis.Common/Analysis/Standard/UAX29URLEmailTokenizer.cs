@@ -137,23 +137,23 @@ namespace Lucene.Net.Analysis.Standard
 #pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_47))
             {
-                return new UAX29URLEmailTokenizerImpl(input);
+                return new UAX29URLEmailTokenizerImpl(m_input);
             }
             else if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_40))
             {
-                return new UAX29URLEmailTokenizerImpl40(input);
+                return new UAX29URLEmailTokenizerImpl40(m_input);
             }
             else if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
             {
-                return new UAX29URLEmailTokenizerImpl36(input);
+                return new UAX29URLEmailTokenizerImpl36(m_input);
             }
             else if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_34))
             {
-                return new UAX29URLEmailTokenizerImpl34(input);
+                return new UAX29URLEmailTokenizerImpl34(m_input);
             }
             else
             {
-                return new UAX29URLEmailTokenizerImpl31(input);
+                return new UAX29URLEmailTokenizerImpl31(m_input);
             }
 #pragma warning restore 612, 618
         }
@@ -210,13 +210,13 @@ namespace Lucene.Net.Analysis.Standard
         public override void Dispose()
         {
             base.Dispose();
-            scanner.YyReset(input);
+            scanner.YyReset(m_input);
         }
 
         public override void Reset()
         {
             base.Reset();
-            scanner.YyReset(input);
+            scanner.YyReset(m_input);
             skippedPositions = 0;
         }
     }

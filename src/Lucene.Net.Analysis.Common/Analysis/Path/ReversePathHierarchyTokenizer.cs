@@ -144,7 +144,7 @@ namespace Lucene.Net.Analysis.Path
                 delimiterPositions.Add(0);
                 while (true)
                 {
-                    int c = input.Read();
+                    int c = m_input.Read();
                     if (c < 0)
                     {
                         break;

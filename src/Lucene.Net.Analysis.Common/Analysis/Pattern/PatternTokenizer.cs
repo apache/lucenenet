@@ -180,7 +180,7 @@ namespace Lucene.Net.Analysis.Pattern
         public override void Reset()
         {
             base.Reset();
-            FillBuffer(str, input);
+            FillBuffer(str, m_input);
 
             // LUCENENET: Since we need to "reset" the Match
             // object, we also need an "isReset" flag to indicate

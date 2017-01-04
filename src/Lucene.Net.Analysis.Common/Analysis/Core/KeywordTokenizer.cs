@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Core
                 char[] buffer = termAtt.GetBuffer();
                 while (true)
                 {
-                    int length = input.Read(buffer, upto, buffer.Length - upto);
+                    int length = m_input.Read(buffer, upto, buffer.Length - upto);
                     if (length <= 0)
                     {
                         break;

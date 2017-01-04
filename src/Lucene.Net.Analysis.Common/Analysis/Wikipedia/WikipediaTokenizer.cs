@@ -120,7 +120,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         public WikipediaTokenizer(TextReader input, int tokenOutput, IEnumerable<string> untokenizedTypes)
               : base(input)
         {
-            this.scanner = new WikipediaTokenizerImpl(this.input);
+            this.scanner = new WikipediaTokenizerImpl(this.m_input);
             Init(tokenOutput, untokenizedTypes);
         }
 
@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         public WikipediaTokenizer(AttributeFactory factory, TextReader input, int tokenOutput, IEnumerable<string> untokenizedTypes)
               : base(factory, input)
         {
-            this.scanner = new WikipediaTokenizerImpl(this.input);
+            this.scanner = new WikipediaTokenizerImpl(this.m_input);
             Init(tokenOutput, untokenizedTypes);
         }
 
@@ -299,7 +299,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         public override void Dispose()
         {
             base.Dispose();
-            scanner.YyReset(input);
+            scanner.YyReset(m_input);
         }
 
         /*
@@ -310,7 +310,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         public override void Reset()
         {
             base.Reset();
-            scanner.YyReset(input);
+            scanner.YyReset(m_input);
             tokens = null;
             scanner.reset();
             first = true;

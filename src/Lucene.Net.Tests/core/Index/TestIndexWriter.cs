@@ -1932,7 +1932,7 @@ namespace Lucene.Net.Index
                 StringBuilder b = new StringBuilder();
                 char[] buffer = new char[1024];
                 int n;
-                while ((n = input.Read(buffer, 0, buffer.Length)) > 0)
+                while ((n = m_input.Read(buffer, 0, buffer.Length)) > 0)
                 {
                     b.Append(buffer, 0, n);
                 }

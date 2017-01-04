@@ -142,7 +142,7 @@ namespace Lucene.Net.Analysis.Path
 
             while (true)
             {
-                int c = input.Read();
+                int c = m_input.Read();
                 if (c >= 0)
                 {
                     charsRead++;

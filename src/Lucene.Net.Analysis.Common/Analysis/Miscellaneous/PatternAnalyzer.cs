@@ -442,7 +442,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             public override void Reset()
             {
                 base.Reset();
-                this.str = PatternAnalyzer.ToString(input);
+                this.str = PatternAnalyzer.ToString(m_input);
 
                 // LUCENENET: Since we need to "reset" the Match
                 // object, we also need an "isReset" flag to indicate
@@ -576,7 +576,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             public override void Reset()
             {
                 base.Reset();
-                this.str = PatternAnalyzer.ToString(input);
+                this.str = PatternAnalyzer.ToString(m_input);
                 this.pos = 0;
             }
         }

@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis.Standard
 
         private void Init(LuceneVersion matchVersion)
         {
-            this.scanner = new ClassicTokenizerImpl(input);
+            this.scanner = new ClassicTokenizerImpl(m_input);
             this.termAtt = AddAttribute<ICharTermAttribute>();
             this.offsetAtt = AddAttribute<IOffsetAttribute>();
             this.posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
@@ -188,13 +188,13 @@ namespace Lucene.Net.Analysis.Standard
         public override void Dispose()
         {
             base.Dispose();
-            scanner.YyReset(input);
+            scanner.YyReset(m_input);
         }
 
         public override void Reset()
         {
             base.Reset();
-            scanner.YyReset(input);
+            scanner.YyReset(m_input);
             skippedPositions = 0;
         }
     }

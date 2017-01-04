@@ -332,7 +332,7 @@ namespace Lucene.Net.Search.VectorHighlight
             {
                 if (charBufferIndex >= charBufferLen)
                 {
-                    charBufferLen = input.read(charBuffer);
+                    charBufferLen = m_input.read(charBuffer);
                     if (charBufferLen == -1)
                     {
                         return -1;

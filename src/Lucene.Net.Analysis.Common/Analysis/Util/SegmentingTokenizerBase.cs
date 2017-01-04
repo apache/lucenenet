@@ -174,7 +174,7 @@ namespace Lucene.Net.Analysis.Util
             int leftover = length - usableLength;
             Array.Copy(buffer, usableLength, buffer, 0, leftover);
             int requested = buffer.Length - leftover;
-            int returned = Read(input, buffer, leftover, requested);
+            int returned = Read(m_input, buffer, leftover, requested);
             length = returned < 0 ? leftover : returned + leftover;
             if (returned < requested) // reader has been emptied, process the rest
             {

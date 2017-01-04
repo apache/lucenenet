@@ -145,24 +145,24 @@ namespace Lucene.Net.Analysis.Standard
 #pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(Version.LUCENE_47))
             {
-                this.scanner = new StandardTokenizerImpl(input);
+                this.scanner = new StandardTokenizerImpl(m_input);
             }
             else if (matchVersion.OnOrAfter(Version.LUCENE_40))
             {
-                this.scanner = new StandardTokenizerImpl40(input);
+                this.scanner = new StandardTokenizerImpl40(m_input);
             }
             else if (matchVersion.OnOrAfter(Version.LUCENE_34))
             {
-                this.scanner = new StandardTokenizerImpl34(input);
+                this.scanner = new StandardTokenizerImpl34(m_input);
             }
             else if (matchVersion.OnOrAfter(Version.LUCENE_31))
             {
-                this.scanner = new StandardTokenizerImpl31(input);
+                this.scanner = new StandardTokenizerImpl31(m_input);
             }
 #pragma warning restore 612, 618
             else
             {
-                this.scanner = new ClassicTokenizerImpl(input);
+                this.scanner = new ClassicTokenizerImpl(m_input);
             }
 
             termAtt = AddAttribute<ICharTermAttribute>();
@@ -243,13 +243,13 @@ namespace Lucene.Net.Analysis.Standard
         public override void Dispose()
         {
             base.Dispose();
-            scanner.YyReset(input);
+            scanner.YyReset(m_input);
         }
 
         public override void Reset()
         {
             base.Reset();
-            scanner.YyReset(input);
+            scanner.YyReset(m_input);
             skippedPositions = 0;
         }
     }

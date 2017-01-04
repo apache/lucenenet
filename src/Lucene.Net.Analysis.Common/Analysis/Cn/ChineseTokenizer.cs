@@ -125,7 +125,7 @@ namespace Lucene.Net.Analysis.Cn
 
                 if (bufferIndex >= dataLen)
                 {
-                    dataLen = input.Read(ioBuffer, 0, ioBuffer.Length);
+                    dataLen = m_input.Read(ioBuffer, 0, ioBuffer.Length);
                     bufferIndex = 0;
                 }
 

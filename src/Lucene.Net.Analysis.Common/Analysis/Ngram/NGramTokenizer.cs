@@ -178,7 +178,7 @@ namespace Lucene.Net.Analysis.Ngram
                     bufferStart = 0;
 
                     // fill in remaining space
-                    exhausted = !charUtils.Fill(charBuffer, input, buffer.Length - bufferEnd);
+                    exhausted = !charUtils.Fill(charBuffer, m_input, buffer.Length - bufferEnd);
                     // convert to code points
                     bufferEnd += charUtils.toCodePoints(charBuffer.Buffer, 0, charBuffer.Length, buffer, bufferEnd);
                 }

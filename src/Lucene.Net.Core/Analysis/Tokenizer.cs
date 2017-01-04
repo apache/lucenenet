@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis
     {
         /// <summary>
         /// The text source for this Tokenizer. </summary>
-        protected internal TextReader input = ILLEGAL_STATE_READER;
+        protected TextReader m_input = ILLEGAL_STATE_READER;
 
         /// <summary>
         /// Pending reader: not actually assigned to input until reset() </summary>
@@ -72,11 +72,11 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public override void Dispose()
         {
-            input.Dispose();
+            m_input.Dispose();
             // LUCENE-2387: don't hold onto TextReader after close, so
             // GC can reclaim
             inputPending = ILLEGAL_STATE_READER;
-            input = ILLEGAL_STATE_READER;
+            m_input = ILLEGAL_STATE_READER;
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis
         /// <seealso> cref= CharFilter#correctOffset </seealso>
         protected internal int CorrectOffset(int currentOff)
         {
-            return (input is CharFilter) ? ((CharFilter)input).CorrectOffset(currentOff) : currentOff;
+            return (m_input is CharFilter) ? ((CharFilter)m_input).CorrectOffset(currentOff) : currentOff;
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Lucene.Net.Analysis
             {
                 throw new System.ArgumentNullException("value", "input must not be null");
             }
-            else if (this.input != ILLEGAL_STATE_READER)
+            else if (this.m_input != ILLEGAL_STATE_READER)
             {
                 throw new InvalidOperationException("TokenStream contract violation: Close() call missing");
             }
@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis
         public override void Reset()
         {
             base.Reset();
-            input = inputPending;
+            m_input = inputPending;
             inputPending = ILLEGAL_STATE_READER;
         }
 

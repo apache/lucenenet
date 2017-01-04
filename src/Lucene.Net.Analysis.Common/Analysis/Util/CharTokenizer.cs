@@ -144,7 +144,7 @@ namespace Lucene.Net.Analysis.Util
                 if (bufferIndex >= dataLen)
                 {
                     offset += dataLen;
-                    charUtils.Fill(ioBuffer, input); // read supplementary char aware with CharacterUtils
+                    charUtils.Fill(ioBuffer, m_input); // read supplementary char aware with CharacterUtils
                     if (ioBuffer.Length == 0)
                     {
                         dataLen = 0; // so next offset += dataLen won't decrement offset

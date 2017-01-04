@@ -221,7 +221,7 @@ namespace Lucene.Net.Util
 
             public sealed override bool IncrementToken()
             {
-                int ch = input.Read();
+                int ch = m_input.Read();
                 if (ch < 0)
                 {
                     return false;

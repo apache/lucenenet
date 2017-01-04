@@ -120,7 +120,7 @@ namespace Lucene.Net.Analysis
                 char[] buffer = new char[256];
                 while (true)
                 {
-                    int count = input.Read(buffer, 0, buffer.Length);
+                    int count = m_input.Read(buffer, 0, buffer.Length);
 
                     //.NET TextReader.Read(buff, int, int) returns 0, not -1 on no chars
                     // but in some cases, such as MockCharFilter, it overloads read and returns -1

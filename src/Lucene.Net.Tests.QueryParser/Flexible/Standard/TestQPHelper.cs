@@ -355,7 +355,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             public override bool IncrementToken()
             {
-                int ch = input.Read();
+                int ch = m_input.Read();
                 if (ch < 0)
                     return false;
                 ClearAttributes();
