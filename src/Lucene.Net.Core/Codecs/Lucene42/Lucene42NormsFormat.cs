@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs.Lucene42
     /// <seealso cref= Lucene42DocValuesFormat </seealso>
     public class Lucene42NormsFormat : NormsFormat
     {
-        internal readonly float AcceptableOverheadRatio;
+        internal readonly float acceptableOverheadRatio;
 
         /// <summary>
         /// Calls {@link #Lucene42NormsFormat(float)
@@ -58,12 +58,12 @@ namespace Lucene.Net.Codecs.Lucene42
         /// @lucene.experimental </param>
         public Lucene42NormsFormat(float acceptableOverheadRatio)
         {
-            this.AcceptableOverheadRatio = acceptableOverheadRatio;
+            this.acceptableOverheadRatio = acceptableOverheadRatio;
         }
 
         public override DocValuesConsumer NormsConsumer(SegmentWriteState state)
         {
-            return new Lucene42NormsConsumer(state, DATA_CODEC, DATA_EXTENSION, METADATA_CODEC, METADATA_EXTENSION, AcceptableOverheadRatio);
+            return new Lucene42NormsConsumer(state, DATA_CODEC, DATA_EXTENSION, METADATA_CODEC, METADATA_EXTENSION, acceptableOverheadRatio);
         }
 
         public override DocValuesProducer NormsProducer(SegmentReadState state)
