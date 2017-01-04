@@ -2903,7 +2903,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass).ToList();
+            var classes = assembly.GetTypes().Where(t => t.IsClass);
 
             foreach (var c in classes)
             {
@@ -2926,7 +2926,7 @@ namespace Lucene.Net.Util
                         continue;
                     }
 
-                    if (field.IsFamily && !ProtectedFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
+                    if ((field.IsFamily || field.IsFamilyOrAssembly) && !ProtectedFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", field.Name));
                     }
