@@ -2879,7 +2879,7 @@ namespace Lucene.Net.Util
 
                 foreach (var field in fields)
                 {
-                    if (field.Name.EndsWith("k__BackingField")) // Ignore auto-implemented properties
+                    if (field.Name.StartsWith("<")) // Ignore auto-implemented properties
                     {
                         continue;
                     }
@@ -2916,7 +2916,7 @@ namespace Lucene.Net.Util
 
                 foreach (var field in fields)
                 {
-                    if (field.Name.EndsWith("k__BackingField")) // Ignore auto-implemented properties
+                    if (field.Name.StartsWith("<")) // Ignore auto-implemented properties
                     {
                         continue;
                     }
