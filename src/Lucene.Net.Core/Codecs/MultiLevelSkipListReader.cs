@@ -42,7 +42,7 @@ namespace Lucene.Net.Codecs
         protected internal int m_maxNumberOfSkipLevels;
 
         // number of levels in this skip list
-        private int NumberOfSkipLevels;
+        private int numberOfSkipLevels;
 
         // Expert: defines the number of top skip levels to buffer in memory.
         // Reducing this number results in less memory usage, but possibly
@@ -51,26 +51,26 @@ namespace Lucene.Net.Codecs
         // the skipInterval. The top level can not contain more than
         // skipLevel entries, the second top level can not contain more
         // than skipLevel^2 entries and so forth.
-        private int NumberOfLevelsToBuffer = 1;
+        private int numberOfLevelsToBuffer = 1;
 
-        private int DocCount;
-        private bool HaveSkipped;
+        private int docCount;
+        private bool haveSkipped;
 
         /// <summary>
         /// skipStream for each level. </summary>
-        private IndexInput[] SkipStream;
+        private IndexInput[] skipStream;
 
         /// <summary>
         /// The start pointer of each skip level. </summary>
-        private long[] SkipPointer;
+        private long[] skipPointer;
 
         /// <summary>
         ///  skipInterval of each level. </summary>
-        private int[] SkipInterval;
+        private int[] skipInterval;
 
         /// <summary>
         /// Number of docs skipped per level. </summary>
-        private int[] NumSkipped;
+        private int[] numSkipped;
 
         /// <summary>
         /// Doc id of current skip entry per level. </summary>
@@ -78,39 +78,39 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Doc id of last read skip entry with docId &lt;= target. </summary>
-        private int LastDoc;
+        private int lastDoc;
 
         /// <summary>
         /// Child pointer of current skip entry per level. </summary>
-        private long[] ChildPointer;
+        private long[] childPointer;
 
         /// <summary>
         /// childPointer of last read skip entry with docId &lt;=
         ///  target.
         /// </summary>
-        private long LastChildPointer;
+        private long lastChildPointer;
 
-        private bool InputIsBuffered;
-        private readonly int SkipMultiplier;
+        private bool inputIsBuffered;
+        private readonly int skipMultiplier;
 
         /// <summary>
         /// Creates a {@code MultiLevelSkipListReader}. </summary>
-        protected internal MultiLevelSkipListReader(IndexInput skipStream, int maxSkipLevels, int skipInterval, int skipMultiplier)
+        protected MultiLevelSkipListReader(IndexInput skipStream, int maxSkipLevels, int skipInterval, int skipMultiplier)
         {
-            this.SkipStream = new IndexInput[maxSkipLevels];
-            this.SkipPointer = new long[maxSkipLevels];
-            this.ChildPointer = new long[maxSkipLevels];
-            this.NumSkipped = new int[maxSkipLevels];
+            this.skipStream = new IndexInput[maxSkipLevels];
+            this.skipPointer = new long[maxSkipLevels];
+            this.childPointer = new long[maxSkipLevels];
+            this.numSkipped = new int[maxSkipLevels];
             this.m_maxNumberOfSkipLevels = maxSkipLevels;
-            this.SkipInterval = new int[maxSkipLevels];
-            this.SkipMultiplier = skipMultiplier;
-            this.SkipStream[0] = skipStream;
-            this.InputIsBuffered = (skipStream is BufferedIndexInput);
-            this.SkipInterval[0] = skipInterval;
+            this.skipInterval = new int[maxSkipLevels];
+            this.skipMultiplier = skipMultiplier;
+            this.skipStream[0] = skipStream;
+            this.inputIsBuffered = (skipStream is BufferedIndexInput);
+            this.skipInterval[0] = skipInterval;
             for (int i = 1; i < maxSkipLevels; i++)
             {
                 // cache skip intervals
-                this.SkipInterval[i] = this.SkipInterval[i - 1] * skipMultiplier;
+                this.skipInterval[i] = this.skipInterval[i - 1] * skipMultiplier;
             }
             m_skipDoc = new int[maxSkipLevels];
         }
@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs
         {
             get
             {
-                return LastDoc;
+                return lastDoc;
             }
         }
 
@@ -143,17 +143,17 @@ namespace Lucene.Net.Codecs
         /// </summary>
         public virtual int SkipTo(int target)
         {
-            if (!HaveSkipped)
+            if (!haveSkipped)
             {
                 // first time, load skip levels
                 LoadSkipLevels();
-                HaveSkipped = true;
+                haveSkipped = true;
             }
 
             // walk up the levels until highest level is found that has a skip
             // for this target
             int level = 0;
-            while (level < NumberOfSkipLevels - 1 && target > m_skipDoc[level + 1])
+            while (level < numberOfSkipLevels - 1 && target > m_skipDoc[level + 1])
             {
                 level++;
             }
@@ -170,7 +170,7 @@ namespace Lucene.Net.Codecs
                 else
                 {
                     // no more skips on this level, go down one level
-                    if (level > 0 && LastChildPointer > SkipStream[level - 1].FilePointer)
+                    if (level > 0 && lastChildPointer > skipStream[level - 1].FilePointer)
                     {
                         SeekChild(level - 1);
                     }
@@ -178,7 +178,7 @@ namespace Lucene.Net.Codecs
                 }
             }
 
-            return NumSkipped[0] - SkipInterval[0] - 1;
+            return numSkipped[0] - skipInterval[0] - 1;
         }
 
         private bool LoadNextSkip(int level)
@@ -187,26 +187,26 @@ namespace Lucene.Net.Codecs
             // skip list entry
             SetLastSkipData(level);
 
-            NumSkipped[level] += SkipInterval[level];
+            numSkipped[level] += skipInterval[level];
 
-            if (NumSkipped[level] > DocCount)
+            if (numSkipped[level] > docCount)
             {
                 // this skip list is exhausted
                 m_skipDoc[level] = int.MaxValue;
-                if (NumberOfSkipLevels > level)
+                if (numberOfSkipLevels > level)
                 {
-                    NumberOfSkipLevels = level;
+                    numberOfSkipLevels = level;
                 }
                 return false;
             }
 
             // read next skip entry
-            m_skipDoc[level] += ReadSkipData(level, SkipStream[level]);
+            m_skipDoc[level] += ReadSkipData(level, skipStream[level]);
 
             if (level != 0)
             {
                 // read the child pointer if we are not on the leaf level
-                ChildPointer[level] = SkipStream[level].ReadVLong() + SkipPointer[level - 1];
+                childPointer[level] = skipStream[level].ReadVLong() + skipPointer[level - 1];
             }
 
             return true;
@@ -216,22 +216,22 @@ namespace Lucene.Net.Codecs
         /// Seeks the skip entry on the given level </summary>
         protected virtual void SeekChild(int level)
         {
-            SkipStream[level].Seek(LastChildPointer);
-            NumSkipped[level] = NumSkipped[level + 1] - SkipInterval[level + 1];
-            m_skipDoc[level] = LastDoc;
+            skipStream[level].Seek(lastChildPointer);
+            numSkipped[level] = numSkipped[level + 1] - skipInterval[level + 1];
+            m_skipDoc[level] = lastDoc;
             if (level > 0)
             {
-                ChildPointer[level] = SkipStream[level].ReadVLong() + SkipPointer[level - 1];
+                childPointer[level] = skipStream[level].ReadVLong() + skipPointer[level - 1];
             }
         }
 
         public void Dispose()
         {
-            for (int i = 1; i < SkipStream.Length; i++)
+            for (int i = 1; i < skipStream.Length; i++)
             {
-                if (SkipStream[i] != null)
+                if (skipStream[i] != null)
                 {
-                    SkipStream[i].Dispose();
+                    skipStream[i].Dispose();
                 }
             }
         }
@@ -240,17 +240,17 @@ namespace Lucene.Net.Codecs
         /// Initializes the reader, for reuse on a new term. </summary>
         public virtual void Init(long skipPointer, int df)
         {
-            this.SkipPointer[0] = skipPointer;
-            this.DocCount = df;
-            Debug.Assert(skipPointer >= 0 && skipPointer <= SkipStream[0].Length, "invalid skip pointer: " + skipPointer + ", length=" + SkipStream[0].Length);
+            this.skipPointer[0] = skipPointer;
+            this.docCount = df;
+            Debug.Assert(skipPointer >= 0 && skipPointer <= skipStream[0].Length, "invalid skip pointer: " + skipPointer + ", length=" + skipStream[0].Length);
             Array.Clear(m_skipDoc, 0, m_skipDoc.Length);
-            Array.Clear(NumSkipped, 0, NumSkipped.Length);
-            Array.Clear(ChildPointer, 0, ChildPointer.Length);
+            Array.Clear(numSkipped, 0, numSkipped.Length);
+            Array.Clear(childPointer, 0, childPointer.Length);
 
-            HaveSkipped = false;
-            for (int i = 1; i < NumberOfSkipLevels; i++)
+            haveSkipped = false;
+            for (int i = 1; i < numberOfSkipLevels; i++)
             {
-                SkipStream[i] = null;
+                skipStream[i] = null;
             }
         }
 
@@ -258,53 +258,53 @@ namespace Lucene.Net.Codecs
         /// Loads the skip levels </summary>
         private void LoadSkipLevels()
         {
-            if (DocCount <= SkipInterval[0])
+            if (docCount <= skipInterval[0])
             {
-                NumberOfSkipLevels = 1;
+                numberOfSkipLevels = 1;
             }
             else
             {
-                NumberOfSkipLevels = 1 + MathUtil.Log(DocCount / SkipInterval[0], SkipMultiplier);
+                numberOfSkipLevels = 1 + MathUtil.Log(docCount / skipInterval[0], skipMultiplier);
             }
 
-            if (NumberOfSkipLevels > m_maxNumberOfSkipLevels)
+            if (numberOfSkipLevels > m_maxNumberOfSkipLevels)
             {
-                NumberOfSkipLevels = m_maxNumberOfSkipLevels;
+                numberOfSkipLevels = m_maxNumberOfSkipLevels;
             }
 
-            SkipStream[0].Seek(SkipPointer[0]);
+            skipStream[0].Seek(skipPointer[0]);
 
-            int toBuffer = NumberOfLevelsToBuffer;
+            int toBuffer = numberOfLevelsToBuffer;
 
-            for (int i = NumberOfSkipLevels - 1; i > 0; i--)
+            for (int i = numberOfSkipLevels - 1; i > 0; i--)
             {
                 // the length of the current level
-                long length = SkipStream[0].ReadVLong();
+                long length = skipStream[0].ReadVLong();
 
                 // the start pointer of the current level
-                SkipPointer[i] = SkipStream[0].FilePointer;
+                skipPointer[i] = skipStream[0].FilePointer;
                 if (toBuffer > 0)
                 {
                     // buffer this level
-                    SkipStream[i] = new SkipBuffer(SkipStream[0], (int)length);
+                    skipStream[i] = new SkipBuffer(skipStream[0], (int)length);
                     toBuffer--;
                 }
                 else
                 {
                     // clone this stream, it is already at the start of the current level
-                    SkipStream[i] = (IndexInput)SkipStream[0].Clone();
-                    if (InputIsBuffered && length < BufferedIndexInput.BUFFER_SIZE)
+                    skipStream[i] = (IndexInput)skipStream[0].Clone();
+                    if (inputIsBuffered && length < BufferedIndexInput.BUFFER_SIZE)
                     {
-                        ((BufferedIndexInput)SkipStream[i]).SetBufferSize((int)length);
+                        ((BufferedIndexInput)skipStream[i]).SetBufferSize((int)length);
                     }
 
                     // move base stream beyond the current level
-                    SkipStream[0].Seek(SkipStream[0].FilePointer + length);
+                    skipStream[0].Seek(skipStream[0].FilePointer + length);
                 }
             }
 
             // use base stream for the lowest level
-            SkipPointer[0] = SkipStream[0].FilePointer;
+            skipPointer[0] = skipStream[0].FilePointer;
         }
 
         /// <summary>
@@ -318,58 +318,58 @@ namespace Lucene.Net.Codecs
         /// Copies the values of the last read skip entry on this <paramref name="level"/> </summary>
         protected virtual void SetLastSkipData(int level)
         {
-            LastDoc = m_skipDoc[level];
-            LastChildPointer = ChildPointer[level];
+            lastDoc = m_skipDoc[level];
+            lastChildPointer = childPointer[level];
         }
 
         /// <summary>
         /// used to buffer the top skip levels </summary>
         private sealed class SkipBuffer : IndexInput
         {
-            private byte[] Data;
-            private long Pointer;
-            private int Pos;
+            private byte[] data;
+            private long pointer;
+            private int pos;
 
             internal SkipBuffer(IndexInput input, int length)
                 : base("SkipBuffer on " + input)
             {
-                Data = new byte[length];
-                Pointer = input.FilePointer;
-                input.ReadBytes(Data, 0, length);
+                data = new byte[length];
+                pointer = input.FilePointer;
+                input.ReadBytes(data, 0, length);
             }
 
             public override void Dispose()
             {
-                Data = null;
+                data = null;
             }
 
             public override long FilePointer
             {
                 get
                 {
-                    return Pointer + Pos;
+                    return pointer + pos;
                 }
             }
 
             public override long Length
             {
-                get { return Data.Length; }
+                get { return data.Length; }
             }
 
             public override byte ReadByte()
             {
-                return Data[Pos++];
+                return data[pos++];
             }
 
             public override void ReadBytes(byte[] b, int offset, int len)
             {
-                Array.Copy(Data, Pos, b, offset, len);
-                Pos += len;
+                Array.Copy(data, pos, b, offset, len);
+                pos += len;
             }
 
             public override void Seek(long pos)
             {
-                this.Pos = (int)(pos - Pointer);
+                this.pos = (int)(pos - pointer);
             }
         }
     }
