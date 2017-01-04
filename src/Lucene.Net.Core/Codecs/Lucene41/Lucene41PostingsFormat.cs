@@ -364,8 +364,8 @@ namespace Lucene.Net.Codecs.Lucene41
         /// </summary>
         public const string PAY_EXTENSION = "pay";
 
-        private readonly int MinTermBlockSize;
-        private readonly int MaxTermBlockSize;
+        private readonly int minTermBlockSize;
+        private readonly int maxTermBlockSize;
 
         /// <summary>
         /// Fixed packed block size, number of integers encoded in
@@ -391,9 +391,9 @@ namespace Lucene.Net.Codecs.Lucene41
         public Lucene41PostingsFormat(int minTermBlockSize, int maxTermBlockSize)
             : base("Lucene41")
         {
-            this.MinTermBlockSize = minTermBlockSize;
+            this.minTermBlockSize = minTermBlockSize;
             Debug.Assert(minTermBlockSize > 1);
-            this.MaxTermBlockSize = maxTermBlockSize;
+            this.maxTermBlockSize = maxTermBlockSize;
             Debug.Assert(minTermBlockSize <= maxTermBlockSize);
         }
 
@@ -409,7 +409,7 @@ namespace Lucene.Net.Codecs.Lucene41
             bool success = false;
             try
             {
-                FieldsConsumer ret = new BlockTreeTermsWriter(state, postingsWriter, MinTermBlockSize, MaxTermBlockSize);
+                FieldsConsumer ret = new BlockTreeTermsWriter(state, postingsWriter, minTermBlockSize, maxTermBlockSize);
                 success = true;
                 return ret;
             }
