@@ -41,14 +41,14 @@ namespace Lucene.Net.Codecs.Lucene3x
     internal class TermInfosReaderIndex
     {
         private const int MAX_PAGE_BITS = 18; // 256 KB block
-        private Term[] Fields;
-        private int TotalIndexInterval;
-        private IComparer<BytesRef> Comparator = BytesRef.UTF8SortedAsUTF16Comparer;
-        private readonly PagedBytesDataInput DataInput;
-        private readonly PackedInts.Reader IndexToDataOffset;
-        private readonly int IndexSize;
-        private readonly int SkipInterval;
-        private readonly long RamBytesUsed_Renamed;
+        private Term[] fields;
+        private int totalIndexInterval;
+        private IComparer<BytesRef> comparator = BytesRef.UTF8SortedAsUTF16Comparer;
+        private readonly PagedBytesDataInput dataInput;
+        private readonly PackedInts.Reader indexToDataOffset;
+        private readonly int indexSize;
+        private readonly int skipInterval;
+        private readonly long ramBytesUsed;
 
         /// <summary>
         /// Loads the segment information at segment load time.
@@ -64,16 +64,16 @@ namespace Lucene.Net.Codecs.Lucene3x
         ///          the total index interval. </param>
         public TermInfosReaderIndex(SegmentTermEnum indexEnum, int indexDivisor, long tiiFileLength, int totalIndexInterval)
         {
-            this.TotalIndexInterval = totalIndexInterval;
-            IndexSize = 1 + ((int)indexEnum.size - 1) / indexDivisor;
-            SkipInterval = indexEnum.skipInterval;
+            this.totalIndexInterval = totalIndexInterval;
+            indexSize = 1 + ((int)indexEnum.size - 1) / indexDivisor;
+            skipInterval = indexEnum.skipInterval;
             // this is only an inital size, it will be GCed once the build is complete
             long initialSize = (long)(tiiFileLength * 1.5) / indexDivisor;
             PagedBytes dataPagedBytes = new PagedBytes(EstimatePageBits(initialSize));
             PagedBytesDataOutput dataOutput = dataPagedBytes.GetDataOutput();
 
             int bitEstimate = 1 + MathUtil.Log(tiiFileLength, 2);
-            GrowableWriter indexToTerms = new GrowableWriter(bitEstimate, IndexSize, PackedInts.DEFAULT);
+            GrowableWriter indexToTerms = new GrowableWriter(bitEstimate, indexSize, PackedInts.DEFAULT);
 
             string currentField = null;
             IList<string> fieldStrs = new List<string>();
@@ -92,7 +92,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 dataOutput.WriteVInt(fieldCounter);
                 dataOutput.WriteString(term.Text());
                 dataOutput.WriteVInt(termInfo.DocFreq);
-                if (termInfo.DocFreq >= SkipInterval)
+                if (termInfo.DocFreq >= skipInterval)
                 {
                     dataOutput.WriteVInt(termInfo.SkipOffset);
                 }
@@ -108,17 +108,17 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            Fields = new Term[fieldStrs.Count];
-            for (int i = 0; i < Fields.Length; i++)
+            fields = new Term[fieldStrs.Count];
+            for (int i = 0; i < fields.Length; i++)
             {
-                Fields[i] = new Term(fieldStrs[i]);
+                fields[i] = new Term(fieldStrs[i]);
             }
 
             dataPagedBytes.Freeze(true);
-            DataInput = dataPagedBytes.GetDataInput();
-            IndexToDataOffset = indexToTerms.Mutable;
+            dataInput = dataPagedBytes.GetDataInput();
+            indexToDataOffset = indexToTerms.Mutable;
 
-            RamBytesUsed_Renamed = Fields.Length * (RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.ShallowSizeOfInstance(typeof(Term))) + dataPagedBytes.RamBytesUsed() + IndexToDataOffset.RamBytesUsed();
+            ramBytesUsed = fields.Length * (RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.ShallowSizeOfInstance(typeof(Term))) + dataPagedBytes.RamBytesUsed() + indexToDataOffset.RamBytesUsed();
         }
 
         private static int EstimatePageBits(long estSize)
@@ -128,19 +128,19 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal virtual void SeekEnum(SegmentTermEnum enumerator, int indexOffset)
         {
-            PagedBytesDataInput input = (PagedBytesDataInput)DataInput.Clone();
+            PagedBytesDataInput input = (PagedBytesDataInput)dataInput.Clone();
 
-            input.SetPosition(IndexToDataOffset.Get(indexOffset));
+            input.SetPosition(indexToDataOffset.Get(indexOffset));
 
             // read the term
             int fieldId = input.ReadVInt();
-            Term field = Fields[fieldId];
+            Term field = fields[fieldId];
             Term term = new Term(field.Field, input.ReadString());
 
             // read the terminfo
             var termInfo = new TermInfo();
             termInfo.DocFreq = input.ReadVInt();
-            if (termInfo.DocFreq >= SkipInterval)
+            if (termInfo.DocFreq >= skipInterval)
             {
                 termInfo.SkipOffset = input.ReadVInt();
             }
@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             long pointer = input.ReadVLong();
 
             // perform the seek
-            enumerator.Seek(pointer, ((long)indexOffset * TotalIndexInterval) - 1, term, termInfo);
+            enumerator.Seek(pointer, ((long)indexOffset * totalIndexInterval) - 1, term, termInfo);
         }
 
         /// <summary>
@@ -166,8 +166,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         internal virtual int GetIndexOffset(Term term)
         {
             int lo = 0;
-            int hi = IndexSize - 1;
-            PagedBytesDataInput input = (PagedBytesDataInput)DataInput.Clone();
+            int hi = indexSize - 1;
+            PagedBytesDataInput input = (PagedBytesDataInput)dataInput.Clone();
             BytesRef scratch = new BytesRef();
             while (hi >= lo)
             {
@@ -198,12 +198,12 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         internal virtual Term GetTerm(int termIndex)
         {
-            PagedBytesDataInput input = (PagedBytesDataInput)DataInput.Clone();
-            input.SetPosition(IndexToDataOffset.Get(termIndex));
+            PagedBytesDataInput input = (PagedBytesDataInput)dataInput.Clone();
+            input.SetPosition(indexToDataOffset.Get(termIndex));
 
             // read the term
             int fieldId = input.ReadVInt();
-            Term field = Fields[fieldId];
+            Term field = fields[fieldId];
             return new Term(field.Field, input.ReadString());
         }
 
@@ -213,7 +213,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// <returns> int. </returns>
         internal virtual int Length
         {
-            get { return IndexSize; }
+            get { return indexSize; }
         }
 
         /// <summary>
@@ -228,7 +228,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         internal virtual int CompareTo(Term term, int termIndex)
         {
-            return CompareTo(term, termIndex, (PagedBytesDataInput)DataInput.Clone(), new BytesRef());
+            return CompareTo(term, termIndex, (PagedBytesDataInput)dataInput.Clone(), new BytesRef());
         }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 reuse.Length = input.ReadVInt();
                 reuse.Grow(reuse.Length);
                 input.ReadBytes(reuse.Bytes, 0, reuse.Length);
-                return Comparator.Compare(term.Bytes, reuse);
+                return comparator.Compare(term.Bytes, reuse);
             }
             return c;
         }
@@ -271,13 +271,13 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         private int CompareField(Term term, int termIndex, PagedBytesDataInput input)
         {
-            input.SetPosition(IndexToDataOffset.Get(termIndex));
-            return System.String.Compare(term.Field, Fields[input.ReadVInt()].Field, System.StringComparison.Ordinal);
+            input.SetPosition(indexToDataOffset.Get(termIndex));
+            return System.String.Compare(term.Field, fields[input.ReadVInt()].Field, System.StringComparison.Ordinal);
         }
 
         internal virtual long RamBytesUsed()
         {
-            return RamBytesUsed_Renamed;
+            return ramBytesUsed;
         }
     }
 }
