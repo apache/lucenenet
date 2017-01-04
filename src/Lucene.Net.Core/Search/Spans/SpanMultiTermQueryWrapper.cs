@@ -245,12 +245,12 @@ namespace Lucene.Net.Search.Spans
 
             private class TopTermsRewriteAnonymousInnerClassHelper : TopTermsRewrite<SpanOrQuery>
             {
-                private readonly TopTermsSpanBooleanQueryRewrite OuterInstance;
+                private readonly TopTermsSpanBooleanQueryRewrite outerInstance;
 
                 public TopTermsRewriteAnonymousInnerClassHelper(TopTermsSpanBooleanQueryRewrite outerInstance, int size)
                     : base(size)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 protected override int MaxSize
