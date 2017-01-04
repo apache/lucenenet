@@ -63,27 +63,27 @@ namespace Lucene.Net.Util
 
         private sealed class SerialCounter : Counter
         {
-            private long Count = 0;
+            private long count = 0;
 
             public override long AddAndGet(long delta)
             {
-                return Count += delta;
+                return count += delta;
             }
 
             public override long Get()
             {
-                return Count;
+                return count;
             }
         }
 
         private sealed class AtomicCounter : Counter
         {
             //internal readonly AtomicLong Count = new AtomicLong();
-            private long Count;
+            private long count;
 
             public override long AddAndGet(long delta)
             {
-                return Interlocked.Add(ref Count, delta);
+                return Interlocked.Add(ref count, delta);
             }
 
             public override long Get()
@@ -95,7 +95,7 @@ namespace Lucene.Net.Util
                     Interlocked.Exchange(ref Count_, (long)Count);
                     return (int)Interlocked.Read(ref Count_);
                 }*/
-                return Count;
+                return count;
             }
         }
     }
