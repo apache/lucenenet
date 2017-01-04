@@ -118,18 +118,18 @@ namespace Lucene.Net.Util
                 int caseNum = 0;
                 int outputCharNum = outputOffset;
                 CodingCase codingCase;
-                for (; inputByteNum + CODING_CASES[caseNum].NumBytes <= inputLength; ++outputCharNum)
+                for (; inputByteNum + CODING_CASES[caseNum].numBytes <= inputLength; ++outputCharNum)
                 {
                     codingCase = CODING_CASES[caseNum];
-                    if (2 == codingCase.NumBytes)
+                    if (2 == codingCase.numBytes)
                     {
-                        outputArray[outputCharNum] = (char)(((inputArray[inputByteNum] & 0xFF) << codingCase.InitialShift) + (((int)((uint)(inputArray[inputByteNum + 1] & 0xFF) >> codingCase.FinalShift)) & codingCase.FinalMask) & (short)0x7FFF);
+                        outputArray[outputCharNum] = (char)(((inputArray[inputByteNum] & 0xFF) << codingCase.initialShift) + (((int)((uint)(inputArray[inputByteNum + 1] & 0xFF) >> codingCase.finalShift)) & codingCase.finalMask) & (short)0x7FFF);
                     } // numBytes is 3
                     else
                     {
-                        outputArray[outputCharNum] = (char)(((inputArray[inputByteNum] & 0xFF) << codingCase.InitialShift) + ((inputArray[inputByteNum + 1] & 0xFF) << codingCase.MiddleShift) + (((int)((uint)(inputArray[inputByteNum + 2] & 0xFF) >> codingCase.FinalShift)) & codingCase.FinalMask) & (short)0x7FFF);
+                        outputArray[outputCharNum] = (char)(((inputArray[inputByteNum] & 0xFF) << codingCase.initialShift) + ((inputArray[inputByteNum + 1] & 0xFF) << codingCase.middleShift) + (((int)((uint)(inputArray[inputByteNum + 2] & 0xFF) >> codingCase.finalShift)) & codingCase.finalMask) & (short)0x7FFF);
                     }
-                    inputByteNum += codingCase.AdvanceBytes;
+                    inputByteNum += codingCase.advanceBytes;
                     if (++caseNum == CODING_CASES.Length)
                     {
                         caseNum = 0;
@@ -140,13 +140,13 @@ namespace Lucene.Net.Util
 
                 if (inputByteNum + 1 < inputLength) // codingCase.numBytes must be 3
                 {
-                    outputArray[outputCharNum++] = (char)((((inputArray[inputByteNum] & 0xFF) << codingCase.InitialShift) + ((inputArray[inputByteNum + 1] & 0xFF) << codingCase.MiddleShift)) & (short)0x7FFF);
+                    outputArray[outputCharNum++] = (char)((((inputArray[inputByteNum] & 0xFF) << codingCase.initialShift) + ((inputArray[inputByteNum + 1] & 0xFF) << codingCase.middleShift)) & (short)0x7FFF);
                     // Add trailing char containing the number of full bytes in final char
                     outputArray[outputCharNum++] = (char)1;
                 }
                 else if (inputByteNum < inputLength)
                 {
-                    outputArray[outputCharNum++] = (char)(((inputArray[inputByteNum] & 0xFF) << codingCase.InitialShift) & (short)0x7FFF);
+                    outputArray[outputCharNum++] = (char)(((inputArray[inputByteNum] & 0xFF) << codingCase.initialShift) & (short)0x7FFF);
                     // Add trailing char containing the number of full bytes in final char
                     outputArray[outputCharNum++] = caseNum == 0 ? (char)1 : (char)0;
                 } // No left over bits - last char is completely filled.
@@ -187,25 +187,25 @@ namespace Lucene.Net.Util
                 {
                     codingCase = CODING_CASES[caseNum];
                     inputChar = (short)inputArray[inputCharNum];
-                    if (2 == codingCase.NumBytes)
+                    if (2 == codingCase.numBytes)
                     {
                         if (0 == caseNum)
                         {
-                            outputArray[outputByteNum] = (sbyte)((short)((ushort)inputChar >> codingCase.InitialShift));
+                            outputArray[outputByteNum] = (sbyte)((short)((ushort)inputChar >> codingCase.initialShift));
                         }
                         else
                         {
-                            outputArray[outputByteNum] += (sbyte)((short)((ushort)inputChar >> codingCase.InitialShift));
+                            outputArray[outputByteNum] += (sbyte)((short)((ushort)inputChar >> codingCase.initialShift));
                         }
-                        outputArray[outputByteNum + 1] = (sbyte)((inputChar & codingCase.FinalMask) << codingCase.FinalShift);
+                        outputArray[outputByteNum + 1] = (sbyte)((inputChar & codingCase.finalMask) << codingCase.finalShift);
                     } // numBytes is 3
                     else
                     {
-                        outputArray[outputByteNum] += (sbyte)((short)((ushort)inputChar >> codingCase.InitialShift));
-                        outputArray[outputByteNum + 1] = (sbyte)((int)((uint)(inputChar & codingCase.MiddleMask) >> codingCase.MiddleShift));
-                        outputArray[outputByteNum + 2] = (sbyte)((inputChar & codingCase.FinalMask) << codingCase.FinalShift);
+                        outputArray[outputByteNum] += (sbyte)((short)((ushort)inputChar >> codingCase.initialShift));
+                        outputArray[outputByteNum + 1] = (sbyte)((int)((uint)(inputChar & codingCase.middleMask) >> codingCase.middleShift));
+                        outputArray[outputByteNum + 2] = (sbyte)((inputChar & codingCase.finalMask) << codingCase.finalShift);
                     }
-                    outputByteNum += codingCase.AdvanceBytes;
+                    outputByteNum += codingCase.advanceBytes;
                     if (++caseNum == CODING_CASES.Length)
                     {
                         caseNum = 0;
@@ -218,20 +218,20 @@ namespace Lucene.Net.Util
                 {
                     outputArray[outputByteNum] = 0;
                 }
-                outputArray[outputByteNum] += (sbyte)((short)((ushort)inputChar >> codingCase.InitialShift));
+                outputArray[outputByteNum] += (sbyte)((short)((ushort)inputChar >> codingCase.initialShift));
                 int bytesLeft = numOutputBytes - outputByteNum;
                 if (bytesLeft > 1)
                 {
-                    if (2 == codingCase.NumBytes)
+                    if (2 == codingCase.numBytes)
                     {
-                        outputArray[outputByteNum + 1] = (sbyte)((int)((uint)(inputChar & codingCase.FinalMask) >> codingCase.FinalShift));
+                        outputArray[outputByteNum + 1] = (sbyte)((int)((uint)(inputChar & codingCase.finalMask) >> codingCase.finalShift));
                     } // numBytes is 3
                     else
                     {
-                        outputArray[outputByteNum + 1] = (sbyte)((int)((uint)(inputChar & codingCase.MiddleMask) >> codingCase.MiddleShift));
+                        outputArray[outputByteNum + 1] = (sbyte)((int)((uint)(inputChar & codingCase.middleMask) >> codingCase.middleShift));
                         if (bytesLeft > 2)
                         {
-                            outputArray[outputByteNum + 2] = (sbyte)((inputChar & codingCase.FinalMask) << codingCase.FinalShift);
+                            outputArray[outputByteNum + 2] = (sbyte)((inputChar & codingCase.finalMask) << codingCase.finalShift);
                         }
                     }
                 }
@@ -240,28 +240,28 @@ namespace Lucene.Net.Util
 
         internal class CodingCase
         {
-            internal int NumBytes, InitialShift, MiddleShift, FinalShift, AdvanceBytes = 2;
-            internal short MiddleMask, FinalMask;
+            internal int numBytes, initialShift, middleShift, finalShift, advanceBytes = 2;
+            internal short middleMask, finalMask;
 
             internal CodingCase(int initialShift, int middleShift, int finalShift)
             {
-                this.NumBytes = 3;
-                this.InitialShift = initialShift;
-                this.MiddleShift = middleShift;
-                this.FinalShift = finalShift;
-                this.FinalMask = (short)((int)((uint)(short)0xFF >> finalShift));
-                this.MiddleMask = (short)((short)0xFF << middleShift);
+                this.numBytes = 3;
+                this.initialShift = initialShift;
+                this.middleShift = middleShift;
+                this.finalShift = finalShift;
+                this.finalMask = (short)((int)((uint)(short)0xFF >> finalShift));
+                this.middleMask = (short)((short)0xFF << middleShift);
             }
 
             internal CodingCase(int initialShift, int finalShift)
             {
-                this.NumBytes = 2;
-                this.InitialShift = initialShift;
-                this.FinalShift = finalShift;
-                this.FinalMask = (short)((int)((uint)(short)0xFF >> finalShift));
+                this.numBytes = 2;
+                this.initialShift = initialShift;
+                this.finalShift = finalShift;
+                this.finalMask = (short)((int)((uint)(short)0xFF >> finalShift));
                 if (finalShift != 0)
                 {
-                    AdvanceBytes = 1;
+                    advanceBytes = 1;
                 }
             }
         }
