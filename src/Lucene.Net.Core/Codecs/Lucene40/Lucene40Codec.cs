@@ -35,26 +35,26 @@ namespace Lucene.Net.Codecs.Lucene40
     [Obsolete("Only for reading old 4.0 segments")]
     public class Lucene40Codec : Codec
     {
-        private readonly StoredFieldsFormat FieldsFormat = new Lucene40StoredFieldsFormat();
-        private readonly TermVectorsFormat VectorsFormat = new Lucene40TermVectorsFormat();
-        private readonly FieldInfosFormat FieldInfosFormat_Renamed = new Lucene40FieldInfosFormat();
-        private readonly SegmentInfoFormat InfosFormat = new Lucene40SegmentInfoFormat();
-        private readonly LiveDocsFormat LiveDocsFormat_Renamed = new Lucene40LiveDocsFormat();
+        private readonly StoredFieldsFormat fieldsFormat = new Lucene40StoredFieldsFormat();
+        private readonly TermVectorsFormat vectorsFormat = new Lucene40TermVectorsFormat();
+        private readonly FieldInfosFormat fieldInfosFormat = new Lucene40FieldInfosFormat();
+        private readonly SegmentInfoFormat infosFormat = new Lucene40SegmentInfoFormat();
+        private readonly LiveDocsFormat liveDocsFormat = new Lucene40LiveDocsFormat();
 
         private readonly PostingsFormat postingsFormat;
 
         private class PerFieldPostingsFormatAnonymousInnerClassHelper : PerFieldPostingsFormat
         {
-            private readonly Lucene40Codec OuterInstance;
+            private readonly Lucene40Codec outerInstance;
 
             public PerFieldPostingsFormatAnonymousInnerClassHelper(Lucene40Codec outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
-                return OuterInstance.GetPostingsFormatForField(field);
+                return outerInstance.GetPostingsFormatForField(field);
             }
         }
 
@@ -68,12 +68,12 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override sealed StoredFieldsFormat StoredFieldsFormat
         {
-            get { return FieldsFormat; }
+            get { return fieldsFormat; }
         }
 
         public override sealed TermVectorsFormat TermVectorsFormat
         {
-            get { return VectorsFormat; }
+            get { return vectorsFormat; }
         }
 
         public override sealed PostingsFormat PostingsFormat
@@ -83,31 +83,31 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override FieldInfosFormat FieldInfosFormat
         {
-            get { return FieldInfosFormat_Renamed; }
+            get { return fieldInfosFormat; }
         }
 
         public override SegmentInfoFormat SegmentInfoFormat
         {
-            get { return InfosFormat; }
+            get { return infosFormat; }
         }
 
-        private readonly DocValuesFormat DefaultDVFormat = new Lucene40DocValuesFormat();
+        private readonly DocValuesFormat defaultDVFormat = new Lucene40DocValuesFormat();
 
         public override DocValuesFormat DocValuesFormat
         {
-            get { return DefaultDVFormat; }
+            get { return defaultDVFormat; }
         }
 
-        private readonly NormsFormat NormsFormat_Renamed = new Lucene40NormsFormat();
+        private readonly NormsFormat normsFormat = new Lucene40NormsFormat();
 
         public override NormsFormat NormsFormat
         {
-            get { return NormsFormat_Renamed; }
+            get { return normsFormat; }
         }
 
         public override sealed LiveDocsFormat LiveDocsFormat
         {
-            get { return LiveDocsFormat_Renamed; }
+            get { return liveDocsFormat; }
         }
 
         /// <summary>
@@ -118,9 +118,9 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public virtual PostingsFormat GetPostingsFormatForField(string field)
         {
-            return DefaultFormat;
+            return defaultFormat;
         }
 
-        private readonly PostingsFormat DefaultFormat = Codecs.PostingsFormat.ForName("Lucene40");
+        private readonly PostingsFormat defaultFormat = Codecs.PostingsFormat.ForName("Lucene40");
     }
 }
