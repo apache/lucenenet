@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lucene.Net.Support
 {
-    public static class StringSupport
+    public static class StringExtensions
     {
         public static byte[] GetBytes(this string str, Encoding enc)
         {

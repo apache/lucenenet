@@ -658,7 +658,7 @@
     <Compile Include="Support\StringBuilderExtensions.cs" />
     <Compile Include="Support\StringCharacterIterator.cs" />
     <Compile Include="Support\StringCharSequenceWrapper.cs" />
-    <Compile Include="Support\StringSupport.cs" />
+    <Compile Include="Support\StringExtensions.cs" />
     <Compile Include="Support\StringTokenizer.cs" />
     <Compile Include="Support\TaskSchedulerCompletionService.cs" />
     <Compile Include="Support\ThreadFactory.cs" />
