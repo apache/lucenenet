@@ -59,22 +59,22 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// the skip interval in the list with level = 0 </summary>
-        private int SkipInterval;
+        private int skipInterval;
 
         /// <summary>
         /// skipInterval used for level &gt; 0 </summary>
-        private int SkipMultiplier;
+        private int skipMultiplier;
 
         /// <summary>
         /// for every skip level a different buffer is used </summary>
-        private RAMOutputStream[] SkipBuffer;
+        private RAMOutputStream[] skipBuffer;
 
         /// <summary>
         /// Creates a {@code MultiLevelSkipListWriter}. </summary>
         protected MultiLevelSkipListWriter(int skipInterval, int skipMultiplier, int maxSkipLevels, int df)
         {
-            this.SkipInterval = skipInterval;
-            this.SkipMultiplier = skipMultiplier;
+            this.skipInterval = skipInterval;
+            this.skipMultiplier = skipMultiplier;
 
             // calculate the maximum number of skip levels for this document frequency
             if (df <= skipInterval)
@@ -107,10 +107,10 @@ namespace Lucene.Net.Codecs
         /// Allocates internal skip buffers. </summary>
         protected virtual void Init()
         {
-            SkipBuffer = new RAMOutputStream[m_numberOfSkipLevels];
+            skipBuffer = new RAMOutputStream[m_numberOfSkipLevels];
             for (int i = 0; i < m_numberOfSkipLevels; i++)
             {
-                SkipBuffer[i] = new RAMOutputStream();
+                skipBuffer[i] = new RAMOutputStream();
             }
         }
 
@@ -118,15 +118,15 @@ namespace Lucene.Net.Codecs
         /// Creates new buffers or empties the existing ones </summary>
         public virtual void ResetSkip()
         {
-            if (SkipBuffer == null)
+            if (skipBuffer == null)
             {
                 Init();
             }
             else
             {
-                for (int i = 0; i < SkipBuffer.Length; i++)
+                for (int i = 0; i < skipBuffer.Length; i++)
                 {
-                    SkipBuffer[i].Reset();
+                    skipBuffer[i].Reset();
                 }
             }
         }
@@ -146,29 +146,29 @@ namespace Lucene.Net.Codecs
         /// <exception cref="IOException"> If an I/O error occurs </exception>
         public virtual void BufferSkip(int df)
         {
-            Debug.Assert(df % SkipInterval == 0);
+            Debug.Assert(df % skipInterval == 0);
             int numLevels = 1;
-            df /= SkipInterval;
+            df /= skipInterval;
 
             // determine max level
-            while ((df % SkipMultiplier) == 0 && numLevels < m_numberOfSkipLevels)
+            while ((df % skipMultiplier) == 0 && numLevels < m_numberOfSkipLevels)
             {
                 numLevels++;
-                df /= SkipMultiplier;
+                df /= skipMultiplier;
             }
 
             long childPointer = 0;
 
             for (int level = 0; level < numLevels; level++)
             {
-                WriteSkipData(level, SkipBuffer[level]);
+                WriteSkipData(level, skipBuffer[level]);
 
-                long newChildPointer = SkipBuffer[level].FilePointer;
+                long newChildPointer = skipBuffer[level].FilePointer;
 
                 if (level != 0)
                 {
                     // store child pointers for all levels except the lowest
-                    SkipBuffer[level].WriteVLong(childPointer);
+                    skipBuffer[level].WriteVLong(childPointer);
                 }
 
                 //remember the childPointer for the next level
@@ -185,21 +185,21 @@ namespace Lucene.Net.Codecs
         {
             long skipPointer = output.FilePointer;
             //System.out.println("skipper.writeSkip fp=" + skipPointer);
-            if (SkipBuffer == null || SkipBuffer.Length == 0)
+            if (skipBuffer == null || skipBuffer.Length == 0)
             {
                 return skipPointer;
             }
 
             for (int level = m_numberOfSkipLevels - 1; level > 0; level--)
             {
-                long length = SkipBuffer[level].FilePointer;
+                long length = skipBuffer[level].FilePointer;
                 if (length > 0)
                 {
                     output.WriteVLong(length);
-                    SkipBuffer[level].WriteTo(output);
+                    skipBuffer[level].WriteTo(output);
                 }
             }
-            SkipBuffer[0].WriteTo(output);
+            skipBuffer[0].WriteTo(output);
 
             return skipPointer;
         }
