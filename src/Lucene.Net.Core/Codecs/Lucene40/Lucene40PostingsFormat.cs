@@ -215,11 +215,11 @@ namespace Lucene.Net.Codecs.Lucene40
     {
         /// <summary>
         /// minimum items (terms or sub-blocks) per block for BlockTree </summary>
-        protected internal readonly int MinBlockSize;
+        protected readonly int m_minBlockSize;
 
         /// <summary>
         /// maximum items (terms or sub-blocks) per block for BlockTree </summary>
-        protected internal readonly int MaxBlockSize;
+        protected readonly int m_maxBlockSize;
 
         /// <summary>
         /// Creates {@code Lucene40PostingsFormat} with default
@@ -238,9 +238,9 @@ namespace Lucene.Net.Codecs.Lucene40
         private Lucene40PostingsFormat(int minBlockSize, int maxBlockSize)
             : base("Lucene40")
         {
-            this.MinBlockSize = minBlockSize;
+            this.m_minBlockSize = minBlockSize;
             Debug.Assert(minBlockSize > 1);
-            this.MaxBlockSize = maxBlockSize;
+            this.m_maxBlockSize = maxBlockSize;
         }
 
         public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
@@ -278,7 +278,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override string ToString()
         {
-            return Name + "(minBlockSize=" + MinBlockSize + " maxBlockSize=" + MaxBlockSize + ")";
+            return Name + "(minBlockSize=" + m_minBlockSize + " maxBlockSize=" + m_maxBlockSize + ")";
         }
     }
 }
