@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
     /// </summary>
     internal class ThreadAffinityDocumentsWriterThreadPool : DocumentsWriterPerThreadPool
     {
-        private IDictionary<Thread, ThreadState> ThreadBindings = new ConcurrentDictionary<Thread, ThreadState>();
+        private IDictionary<Thread, ThreadState> threadBindings = new ConcurrentDictionary<Thread, ThreadState>();
 
         /// <summary>
         /// Creates a new <seealso cref="ThreadAffinityDocumentsWriterThreadPool"/> with a given maximum of <seealso cref="ThreadState"/>s.
@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
         public override ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
         {
             ThreadState threadState;
-            ThreadBindings.TryGetValue(requestingThread, out threadState);
+            threadBindings.TryGetValue(requestingThread, out threadState);
             if (threadState != null && threadState.TryLock())
             {
                 return threadState;
@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
                 if (newState != null)
                 {
                     //Debug.Assert(newState.HeldByCurrentThread);
-                    ThreadBindings[requestingThread] = newState;
+                    threadBindings[requestingThread] = newState;
                     return newState;
                 }
                 else if (minThreadState == null)
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
         public override object Clone()
         {
             ThreadAffinityDocumentsWriterThreadPool clone = (ThreadAffinityDocumentsWriterThreadPool)base.Clone();
-            clone.ThreadBindings = new ConcurrentDictionary<Thread, ThreadState>();
+            clone.threadBindings = new ConcurrentDictionary<Thread, ThreadState>();
             return clone;
         }
     }
