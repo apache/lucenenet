@@ -39,7 +39,7 @@ namespace Lucene.Net.Util
         {
             internal T pivot;
             internal IList<T> list;
-            internal readonly IComparer<T> Comp;
+            internal readonly IComparer<T> comp;
 
             internal ListIntroSorter(IList<T> list, IComparer<T> comp)
                 : base()
@@ -50,7 +50,7 @@ namespace Lucene.Net.Util
                   throw new System.ArgumentException("CollectionUtil can only sort random access lists in-place.");
                 }*/
                 this.list = list;
-                this.Comp = comp;
+                this.comp = comp;
             }
 
             protected override void SetPivot(int i)
@@ -65,20 +65,20 @@ namespace Lucene.Net.Util
 
             protected override int Compare(int i, int j)
             {
-                return Comp.Compare(list[i], list[j]);
+                return comp.Compare(list[i], list[j]);
             }
 
             protected override int ComparePivot(int j)
             {
-                return Comp.Compare(pivot, list[j]);
+                return comp.Compare(pivot, list[j]);
             }
         }
 
         private sealed class ListTimSorter<T> : TimSorter
         {
-            internal IList<T> List;
-            internal readonly IComparer<T> Comp;
-            internal readonly T[] Tmp;
+            internal IList<T> list;
+            internal readonly IComparer<T> comp;
+            internal readonly T[] tmp;
 
             internal ListTimSorter(IList<T> list, IComparer<T> comp, int maxTempSlots)
                 : base(maxTempSlots)
@@ -88,49 +88,49 @@ namespace Lucene.Net.Util
                 {
                   throw new System.ArgumentException("CollectionUtil can only sort random access lists in-place.");
                 }*/
-                this.List = list;
-                this.Comp = comp;
+                this.list = list;
+                this.comp = comp;
                 if (maxTempSlots > 0)
                 {
-                    this.Tmp = new T[maxTempSlots];
+                    this.tmp = new T[maxTempSlots];
                 }
                 else
                 {
-                    this.Tmp = null;
+                    this.tmp = null;
                 }
             }
 
             protected override void Swap(int i, int j)
             {
-                List = List.Swap(i, j); // LUCENENET TODO: Could be more efficient
+                list = list.Swap(i, j); // LUCENENET TODO: Could be more efficient
             }
 
             protected override void Copy(int src, int dest)
             {
-                List[dest] = List[src];
+                list[dest] = list[src];
             }
 
             protected override void Save(int i, int len)
             {
                 for (int j = 0; j < len; ++j)
                 {
-                    Tmp[j] = List[i + j];
+                    tmp[j] = list[i + j];
                 }
             }
 
             protected override void Restore(int i, int j)
             {
-                List[j] = Tmp[i];
+                list[j] = tmp[i];
             }
 
             protected override int Compare(int i, int j)
             {
-                return Comp.Compare(List[i], List[j]);
+                return comp.Compare(list[i], list[j]);
             }
 
             protected override int CompareSaved(int i, int j)
             {
-                return Comp.Compare(Tmp[i], List[j]);
+                return comp.Compare(tmp[i], list[j]);
             }
         }
 
