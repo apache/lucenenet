@@ -939,18 +939,18 @@ namespace Lucene.Net.Codecs
         // TODO: seek-by-ord to nextSetBit
         internal class BitsFilteredTermsEnum : FilteredTermsEnum
         {
-            internal readonly LongBitSet LiveTerms;
+            internal readonly LongBitSet liveTerms;
 
             internal BitsFilteredTermsEnum(TermsEnum @in, LongBitSet liveTerms)
                 : base(@in, false)
             {
                 Debug.Assert(liveTerms != null);
-                LiveTerms = liveTerms;
+                this.liveTerms = liveTerms;
             }
 
             protected override AcceptStatus Accept(BytesRef term)
             {
-                return LiveTerms.Get(Ord) ? AcceptStatus.YES : AcceptStatus.NO;
+                return liveTerms.Get(Ord) ? AcceptStatus.YES : AcceptStatus.NO;
             }
         }
 
