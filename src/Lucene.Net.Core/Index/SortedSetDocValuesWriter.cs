@@ -39,49 +39,49 @@ namespace Lucene.Net.Index
     /// </summary>
     internal class SortedSetDocValuesWriter : DocValuesWriter
     {
-        internal readonly BytesRefHash Hash;
-        private AppendingPackedLongBuffer Pending; // stream of all termIDs
-        private AppendingDeltaPackedLongBuffer PendingCounts; // termIDs per doc
-        private readonly Counter IwBytesUsed;
-        private long BytesUsed; // this only tracks differences in 'pending' and 'pendingCounts'
-        private readonly FieldInfo FieldInfo;
-        private int CurrentDoc;
-        private int[] CurrentValues = new int[8];
-        private int CurrentUpto = 0;
-        private int MaxCount = 0;
+        internal readonly BytesRefHash hash;
+        private AppendingPackedLongBuffer pending; // stream of all termIDs
+        private AppendingDeltaPackedLongBuffer pendingCounts; // termIDs per doc
+        private readonly Counter iwBytesUsed;
+        private long bytesUsed; // this only tracks differences in 'pending' and 'pendingCounts'
+        private readonly FieldInfo fieldInfo;
+        private int currentDoc;
+        private int[] currentValues = new int[8];
+        private int currentUpto = 0;
+        private int maxCount = 0;
 
         public SortedSetDocValuesWriter(FieldInfo fieldInfo, Counter iwBytesUsed)
         {
-            this.FieldInfo = fieldInfo;
-            this.IwBytesUsed = iwBytesUsed;
-            Hash = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectTrackingAllocator(iwBytesUsed)), BytesRefHash.DEFAULT_CAPACITY, new DirectBytesStartArray(BytesRefHash.DEFAULT_CAPACITY, iwBytesUsed));
-            Pending = new AppendingPackedLongBuffer(PackedInts.COMPACT);
-            PendingCounts = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
-            BytesUsed = Pending.RamBytesUsed() + PendingCounts.RamBytesUsed();
-            iwBytesUsed.AddAndGet(BytesUsed);
+            this.fieldInfo = fieldInfo;
+            this.iwBytesUsed = iwBytesUsed;
+            hash = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectTrackingAllocator(iwBytesUsed)), BytesRefHash.DEFAULT_CAPACITY, new DirectBytesStartArray(BytesRefHash.DEFAULT_CAPACITY, iwBytesUsed));
+            pending = new AppendingPackedLongBuffer(PackedInts.COMPACT);
+            pendingCounts = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
+            bytesUsed = pending.RamBytesUsed() + pendingCounts.RamBytesUsed();
+            iwBytesUsed.AddAndGet(bytesUsed);
         }
 
         public virtual void AddValue(int docID, BytesRef value)
         {
             if (value == null)
             {
-                throw new System.ArgumentException("field \"" + FieldInfo.Name + "\": null value not allowed");
+                throw new System.ArgumentException("field \"" + fieldInfo.Name + "\": null value not allowed");
             }
             if (value.Length > (ByteBlockPool.BYTE_BLOCK_SIZE - 2))
             {
-                throw new System.ArgumentException("DocValuesField \"" + FieldInfo.Name + "\" is too large, must be <= " + (ByteBlockPool.BYTE_BLOCK_SIZE - 2));
+                throw new System.ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" is too large, must be <= " + (ByteBlockPool.BYTE_BLOCK_SIZE - 2));
             }
 
-            if (docID != CurrentDoc)
+            if (docID != currentDoc)
             {
                 FinishCurrentDoc();
             }
 
             // Fill in any holes:
-            while (CurrentDoc < docID)
+            while (currentDoc < docID)
             {
-                PendingCounts.Add(0); // no values
-                CurrentDoc++;
+                pendingCounts.Add(0); // no values
+                currentDoc++;
             }
 
             AddOneValue(value);
@@ -91,25 +91,25 @@ namespace Lucene.Net.Index
         // finalize currentDoc: this deduplicates the current term ids
         private void FinishCurrentDoc()
         {
-            Array.Sort(CurrentValues, 0, CurrentUpto);
+            Array.Sort(currentValues, 0, currentUpto);
             int lastValue = -1;
             int count = 0;
-            for (int i = 0; i < CurrentUpto; i++)
+            for (int i = 0; i < currentUpto; i++)
             {
-                int termID = CurrentValues[i];
+                int termID = currentValues[i];
                 // if its not a duplicate
                 if (termID != lastValue)
                 {
-                    Pending.Add(termID); // record the term id
+                    pending.Add(termID); // record the term id
                     count++;
                 }
                 lastValue = termID;
             }
             // record the number of unique term ids for this doc
-            PendingCounts.Add(count);
-            MaxCount = Math.Max(MaxCount, count);
-            CurrentUpto = 0;
-            CurrentDoc++;
+            pendingCounts.Add(count);
+            maxCount = Math.Max(maxCount, count);
+            currentUpto = 0;
+            currentDoc++;
         }
 
         public override void Finish(int maxDoc)
@@ -117,15 +117,15 @@ namespace Lucene.Net.Index
             FinishCurrentDoc();
 
             // fill in any holes
-            for (int i = CurrentDoc; i < maxDoc; i++)
+            for (int i = currentDoc; i < maxDoc; i++)
             {
-                PendingCounts.Add(0); // no values
+                pendingCounts.Add(0); // no values
             }
         }
 
         private void AddOneValue(BytesRef value)
         {
-            int termID = Hash.Add(value);
+            int termID = hash.Add(value);
             if (termID < 0)
             {
                 termID = -termID - 1;
@@ -136,36 +136,36 @@ namespace Lucene.Net.Index
                 // 1. when indexing, when hash is 50% full, rehash() suddenly needs 2*size ints.
                 //    TODO: can this same OOM happen in THPF?
                 // 2. when flushing, we need 1 int per value (slot in the ordMap).
-                IwBytesUsed.AddAndGet(2 * RamUsageEstimator.NUM_BYTES_INT);
+                iwBytesUsed.AddAndGet(2 * RamUsageEstimator.NUM_BYTES_INT);
             }
 
-            if (CurrentUpto == CurrentValues.Length)
+            if (currentUpto == currentValues.Length)
             {
-                CurrentValues = ArrayUtil.Grow(CurrentValues, CurrentValues.Length + 1);
+                currentValues = ArrayUtil.Grow(currentValues, currentValues.Length + 1);
                 // reserve additional space for max # values per-doc
                 // when flushing, we need an int[] to sort the mapped-ords within the doc
-                IwBytesUsed.AddAndGet((CurrentValues.Length - CurrentUpto) * 2 * RamUsageEstimator.NUM_BYTES_INT);
+                iwBytesUsed.AddAndGet((currentValues.Length - currentUpto) * 2 * RamUsageEstimator.NUM_BYTES_INT);
             }
 
-            CurrentValues[CurrentUpto] = termID;
-            CurrentUpto++;
+            currentValues[currentUpto] = termID;
+            currentUpto++;
         }
 
         private void UpdateBytesUsed()
         {
-            long newBytesUsed = Pending.RamBytesUsed() + PendingCounts.RamBytesUsed();
-            IwBytesUsed.AddAndGet(newBytesUsed - BytesUsed);
-            BytesUsed = newBytesUsed;
+            long newBytesUsed = pending.RamBytesUsed() + pendingCounts.RamBytesUsed();
+            iwBytesUsed.AddAndGet(newBytesUsed - bytesUsed);
+            bytesUsed = newBytesUsed;
         }
 
         public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
         {
             int maxDoc = state.SegmentInfo.DocCount;
-            int maxCountPerDoc = MaxCount;
-            Debug.Assert(PendingCounts.Size == maxDoc);
-            int valueCount = Hash.Size;
+            int maxCountPerDoc = maxCount;
+            Debug.Assert(pendingCounts.Size == maxDoc);
+            int valueCount = hash.Size;
 
-            int[] sortedValues = Hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
+            int[] sortedValues = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
             int[] ordMap = new int[valueCount];
 
             for (int ord = 0; ord < valueCount; ord++)
@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
                 ordMap[sortedValues[ord]] = ord;
             }
 
-            dvConsumer.AddSortedSetField(FieldInfo, GetBytesRefEnumberable(valueCount, sortedValues),
+            dvConsumer.AddSortedSetField(fieldInfo, GetBytesRefEnumberable(valueCount, sortedValues),
 
                                       // doc -> ordCount
                                       GetOrdsEnumberable(maxDoc),
@@ -191,15 +191,15 @@ namespace Lucene.Net.Index
             for (int i = 0; i < valueCount; ++i)
             {
                 var scratch = new BytesRef();
-                yield return Hash.Get(sortedValues[i], scratch);
+                yield return hash.Get(sortedValues[i], scratch);
             }
         }
 
         private IEnumerable<long?> GetOrdsEnumberable(int maxDoc)
         {
-            AppendingDeltaPackedLongBuffer.Iterator iter = PendingCounts.GetIterator();
+            AppendingDeltaPackedLongBuffer.Iterator iter = pendingCounts.GetIterator();
 
-            Debug.Assert(maxDoc == PendingCounts.Size, "MaxDoc: " + maxDoc + ", pending.Size(): " + Pending.Size);
+            Debug.Assert(maxDoc == pendingCounts.Size, "MaxDoc: " + maxDoc + ", pending.Size(): " + pending.Size);
 
             for (int i = 0; i < maxDoc; ++i)
             {
@@ -210,11 +210,11 @@ namespace Lucene.Net.Index
         private IEnumerable<long?> GetOrdCountEnumberable(int maxCountPerDoc, int[] ordMap)
         {
             int currentUpTo = 0, currentLength = 0;
-            AppendingPackedLongBuffer.Iterator iter = Pending.GetIterator();
-            AppendingDeltaPackedLongBuffer.Iterator counts = PendingCounts.GetIterator();
+            AppendingPackedLongBuffer.Iterator iter = pending.GetIterator();
+            AppendingDeltaPackedLongBuffer.Iterator counts = pendingCounts.GetIterator();
             int[] currentDoc = new int[maxCountPerDoc];
 
-            for (long i = 0; i < Pending.Size; ++i)
+            for (long i = 0; i < pending.Size; ++i)
             {
                 while (currentUpTo == currentLength)
                 {
