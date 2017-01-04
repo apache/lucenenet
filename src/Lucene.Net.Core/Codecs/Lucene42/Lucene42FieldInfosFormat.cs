@@ -83,7 +83,7 @@ namespace Lucene.Net.Codecs.Lucene42
     [Obsolete("Only for reading old 4.2-4.5 segments")]
     public class Lucene42FieldInfosFormat : FieldInfosFormat
     {
-        private readonly FieldInfosReader Reader = new Lucene42FieldInfosReader();
+        private readonly FieldInfosReader reader = new Lucene42FieldInfosReader();
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -95,7 +95,7 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             get
             {
-                return Reader;
+                return reader;
             }
         }
 
