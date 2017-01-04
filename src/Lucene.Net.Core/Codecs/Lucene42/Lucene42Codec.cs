@@ -42,26 +42,26 @@ namespace Lucene.Net.Codecs.Lucene42
     [Obsolete("Only for reading old 4.2 segments")]
     public class Lucene42Codec : Codec
     {
-        private readonly StoredFieldsFormat FieldsFormat = new Lucene41StoredFieldsFormat();
-        private readonly TermVectorsFormat VectorsFormat = new Lucene42TermVectorsFormat();
-        private readonly FieldInfosFormat FieldInfosFormat_Renamed = new Lucene42FieldInfosFormat();
-        private readonly SegmentInfoFormat InfosFormat = new Lucene40SegmentInfoFormat();
-        private readonly LiveDocsFormat LiveDocsFormat_Renamed = new Lucene40LiveDocsFormat();
+        private readonly StoredFieldsFormat fieldsFormat = new Lucene41StoredFieldsFormat();
+        private readonly TermVectorsFormat vectorsFormat = new Lucene42TermVectorsFormat();
+        private readonly FieldInfosFormat fieldInfosFormat = new Lucene42FieldInfosFormat();
+        private readonly SegmentInfoFormat infosFormat = new Lucene40SegmentInfoFormat();
+        private readonly LiveDocsFormat liveDocsFormat = new Lucene40LiveDocsFormat();
 
         private readonly PostingsFormat postingsFormat;
 
         private class PerFieldPostingsFormatAnonymousInnerClassHelper : PerFieldPostingsFormat
         {
-            private readonly Lucene42Codec OuterInstance;
+            private readonly Lucene42Codec outerInstance;
 
             public PerFieldPostingsFormatAnonymousInnerClassHelper(Lucene42Codec outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
-                return OuterInstance.GetPostingsFormatForField(field);
+                return outerInstance.GetPostingsFormatForField(field);
             }
         }
 
@@ -69,16 +69,16 @@ namespace Lucene.Net.Codecs.Lucene42
 
         private class PerFieldDocValuesFormatAnonymousInnerClassHelper : PerFieldDocValuesFormat
         {
-            private readonly Lucene42Codec OuterInstance;
+            private readonly Lucene42Codec outerInstance;
 
             public PerFieldDocValuesFormatAnonymousInnerClassHelper(Lucene42Codec outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override DocValuesFormat GetDocValuesFormatForField(string field)
             {
-                return OuterInstance.GetDocValuesFormatForField(field);
+                return outerInstance.GetDocValuesFormatForField(field);
             }
         }
 
@@ -93,12 +93,12 @@ namespace Lucene.Net.Codecs.Lucene42
 
         public override sealed StoredFieldsFormat StoredFieldsFormat
         {
-            get { return FieldsFormat; }
+            get { return fieldsFormat; }
         }
 
         public override sealed TermVectorsFormat TermVectorsFormat
         {
-            get { return VectorsFormat; }
+            get { return vectorsFormat; }
         }
 
         public override sealed PostingsFormat PostingsFormat
@@ -108,17 +108,17 @@ namespace Lucene.Net.Codecs.Lucene42
 
         public override FieldInfosFormat FieldInfosFormat
         {
-            get { return FieldInfosFormat_Renamed; }
+            get { return fieldInfosFormat; }
         }
 
         public override SegmentInfoFormat SegmentInfoFormat
         {
-            get { return InfosFormat; }
+            get { return infosFormat; }
         }
 
         public override sealed LiveDocsFormat LiveDocsFormat
         {
-            get { return LiveDocsFormat_Renamed; }
+            get { return liveDocsFormat; }
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace Lucene.Net.Codecs.Lucene42
         /// </summary>
         public virtual PostingsFormat GetPostingsFormatForField(string field)
         {
-            return DefaultFormat;
+            return defaultFormat;
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Lucene.Net.Codecs.Lucene42
         /// </summary>
         public virtual DocValuesFormat GetDocValuesFormatForField(string field)
         {
-            return DefaultDVFormat;
+            return defaultDVFormat;
         }
 
         public override sealed DocValuesFormat DocValuesFormat
@@ -148,8 +148,8 @@ namespace Lucene.Net.Codecs.Lucene42
             get { return docValuesFormat; }
         }
 
-        private readonly PostingsFormat DefaultFormat = Codecs.PostingsFormat.ForName("Lucene41");
-        private readonly DocValuesFormat DefaultDVFormat = Codecs.DocValuesFormat.ForName("Lucene42");
+        private readonly PostingsFormat defaultFormat = Codecs.PostingsFormat.ForName("Lucene41");
+        private readonly DocValuesFormat defaultDVFormat = Codecs.DocValuesFormat.ForName("Lucene42");
 
         private readonly NormsFormat normsFormat = new Lucene42NormsFormatAnonymousInnerClassHelper();
 
