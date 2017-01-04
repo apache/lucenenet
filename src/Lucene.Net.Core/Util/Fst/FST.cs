@@ -2306,8 +2306,8 @@ namespace Lucene.Net.Util.Fst
 
         internal class ArcAndState<T>
         {
-            internal readonly Arc<T> Arc;
-            internal readonly IntsRef Chain;
+            internal Arc<T> Arc { get; private set; }
+            internal IntsRef Chain { get; private set; }
 
             public ArcAndState(Arc<T> arc, IntsRef chain)
             {
