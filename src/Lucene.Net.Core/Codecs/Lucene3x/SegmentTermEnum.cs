@@ -30,13 +30,13 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// reading old segments
     /// @lucene.experimental
 
-    [Obsolete]
+    [Obsolete("(4.0) No longer used with flex indexing, except for reading old segments")]
     internal sealed class SegmentTermEnum : IDisposable
     {
-        private IndexInput Input;
-        internal FieldInfos FieldInfos;
-        internal long Size;
-        internal long Position = -1;
+        private IndexInput input;
+        internal FieldInfos fieldInfos;
+        internal long size;
+        internal long position = -1;
 
         // Changed strings to true utf8 with length-in-bytes not
         // length-in-chars
@@ -49,61 +49,61 @@ namespace Lucene.Net.Codecs.Lucene3x
         // when removing support for old versions, leave the last supported version here
         public const int FORMAT_MINIMUM = FORMAT_VERSION_UTF8_LENGTH_IN_BYTES;
 
-        private TermBuffer TermBuffer = new TermBuffer();
-        private TermBuffer PrevBuffer = new TermBuffer();
-        private TermBuffer ScanBuffer = new TermBuffer(); // used for scanning
+        private TermBuffer termBuffer = new TermBuffer();
+        private TermBuffer prevBuffer = new TermBuffer();
+        private TermBuffer scanBuffer = new TermBuffer(); // used for scanning
 
-        internal TermInfo TermInfo_Renamed = new TermInfo();
+        internal TermInfo termInfo = new TermInfo();
 
-        private int Format;
-        private bool IsIndex = false;
-        internal long IndexPointer = 0;
-        public int IndexInterval;
-        internal int SkipInterval;
-        internal int NewSuffixStart;
-        internal int MaxSkipLevels;
-        private bool First = true;
+        private int format;
+        private bool isIndex = false;
+        internal long indexPointer = 0;
+        public int indexInterval;
+        internal int skipInterval;
+        internal int newSuffixStart;
+        internal int maxSkipLevels;
+        private bool first = true;
 
         public SegmentTermEnum(IndexInput i, FieldInfos fis, bool isi)
         {
-            Input = i;
-            FieldInfos = fis;
-            IsIndex = isi;
-            MaxSkipLevels = 1; // use single-level skip lists for formats > -3
+            input = i;
+            fieldInfos = fis;
+            isIndex = isi;
+            maxSkipLevels = 1; // use single-level skip lists for formats > -3
 
-            int firstInt = Input.ReadInt();
+            int firstInt = input.ReadInt();
             if (firstInt >= 0)
             {
                 // original-format file, without explicit format version number
-                Format = 0;
-                Size = firstInt;
+                format = 0;
+                size = firstInt;
 
                 // back-compatible settings
-                IndexInterval = 128;
-                SkipInterval = int.MaxValue; // switch off skipTo optimization
+                indexInterval = 128;
+                skipInterval = int.MaxValue; // switch off skipTo optimization
             }
             else
             {
                 // we have a format version number
-                Format = firstInt;
+                format = firstInt;
 
                 // check that it is a format we can understand
-                if (Format > FORMAT_MINIMUM)
+                if (format > FORMAT_MINIMUM)
                 {
-                    throw new IndexFormatTooOldException(Input, Format, FORMAT_MINIMUM, FORMAT_CURRENT);
+                    throw new IndexFormatTooOldException(input, format, FORMAT_MINIMUM, FORMAT_CURRENT);
                 }
-                if (Format < FORMAT_CURRENT)
+                if (format < FORMAT_CURRENT)
                 {
-                    throw new IndexFormatTooNewException(Input, Format, FORMAT_MINIMUM, FORMAT_CURRENT);
+                    throw new IndexFormatTooNewException(input, format, FORMAT_MINIMUM, FORMAT_CURRENT);
                 }
 
-                Size = Input.ReadLong(); // read the size
+                size = input.ReadLong(); // read the size
 
-                IndexInterval = Input.ReadInt();
-                SkipInterval = Input.ReadInt();
-                MaxSkipLevels = Input.ReadInt();
-                Debug.Assert(IndexInterval > 0, "indexInterval=" + IndexInterval + " is negative; must be > 0");
-                Debug.Assert(SkipInterval > 0, "skipInterval=" + SkipInterval + " is negative; must be > 0");
+                indexInterval = input.ReadInt();
+                skipInterval = input.ReadInt();
+                maxSkipLevels = input.ReadInt();
+                Debug.Assert(indexInterval > 0, "indexInterval=" + indexInterval + " is negative; must be > 0");
+                Debug.Assert(skipInterval > 0, "skipInterval=" + skipInterval + " is negative; must be > 0");
             }
         }
 
@@ -118,56 +118,56 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
             }
 
-            clone.Input = (IndexInput)Input.Clone();
-            clone.TermInfo_Renamed = new TermInfo(TermInfo_Renamed);
+            clone.input = (IndexInput)input.Clone();
+            clone.termInfo = new TermInfo(termInfo);
 
-            clone.TermBuffer = (TermBuffer)TermBuffer.Clone();
-            clone.PrevBuffer = (TermBuffer)PrevBuffer.Clone();
-            clone.ScanBuffer = new TermBuffer();
+            clone.termBuffer = (TermBuffer)termBuffer.Clone();
+            clone.prevBuffer = (TermBuffer)prevBuffer.Clone();
+            clone.scanBuffer = new TermBuffer();
 
             return clone;
         }
 
         internal void Seek(long pointer, long p, Term t, TermInfo ti)
         {
-            Input.Seek(pointer);
-            Position = p;
-            TermBuffer.Set(t);
-            PrevBuffer.Reset();
+            input.Seek(pointer);
+            position = p;
+            termBuffer.Set(t);
+            prevBuffer.Reset();
             //System.out.println("  ste doSeek prev=" + prevBuffer.toTerm() + " this=" + this);
-            TermInfo_Renamed.Set(ti);
-            First = p == -1;
+            termInfo.Set(ti);
+            first = p == -1;
         }
 
         /// <summary>
         /// Increments the enumeration to the next element.  True if one exists. </summary>
         public bool Next()
         {
-            PrevBuffer.Set(TermBuffer);
+            prevBuffer.Set(termBuffer);
             //System.out.println("  ste setPrev=" + prev() + " this=" + this);
 
-            if (Position++ >= Size - 1)
+            if (position++ >= size - 1)
             {
-                TermBuffer.Reset();
+                termBuffer.Reset();
                 //System.out.println("    EOF");
                 return false;
             }
 
-            TermBuffer.Read(Input, FieldInfos);
-            NewSuffixStart = TermBuffer.NewSuffixStart;
+            termBuffer.Read(input, fieldInfos);
+            newSuffixStart = termBuffer.NewSuffixStart;
 
-            TermInfo_Renamed.DocFreq = Input.ReadVInt(); // read doc freq
-            TermInfo_Renamed.FreqPointer += Input.ReadVLong(); // read freq pointer
-            TermInfo_Renamed.ProxPointer += Input.ReadVLong(); // read prox pointer
+            termInfo.DocFreq = input.ReadVInt(); // read doc freq
+            termInfo.FreqPointer += input.ReadVLong(); // read freq pointer
+            termInfo.ProxPointer += input.ReadVLong(); // read prox pointer
 
-            if (TermInfo_Renamed.DocFreq >= SkipInterval)
+            if (termInfo.DocFreq >= skipInterval)
             {
-                TermInfo_Renamed.SkipOffset = Input.ReadVInt();
+                termInfo.SkipOffset = input.ReadVInt();
             }
 
-            if (IsIndex)
+            if (isIndex)
             {
-                IndexPointer += Input.ReadVLong(); // read index pointer
+                indexPointer += input.ReadVLong(); // read index pointer
             }
 
             //System.out.println("  ste ret term=" + term());
@@ -183,17 +183,17 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal int ScanTo(Term term)
         {
-            ScanBuffer.Set(term);
+            scanBuffer.Set(term);
             int count = 0;
-            if (First)
+            if (first)
             {
                 // Always force initial next() in case term is
                 // Term("", "")
                 Next();
-                First = false;
+                first = false;
                 count++;
             }
-            while (ScanBuffer.CompareTo(TermBuffer) > 0 && Next())
+            while (scanBuffer.CompareTo(termBuffer) > 0 && Next())
             {
                 count++;
             }
@@ -206,14 +206,14 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// </summary>
         public Term Term()
         {
-            return TermBuffer.ToTerm();
+            return termBuffer.ToTerm();
         }
 
         /// <summary>
         /// Returns the previous Term enumerated. Initially null. </summary>
         internal Term Prev()
         {
-            return PrevBuffer.ToTerm();
+            return prevBuffer.ToTerm();
         }
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// </summary>
         internal TermInfo TermInfo()
         {
-            return new TermInfo(TermInfo_Renamed);
+            return new TermInfo(termInfo);
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// </summary>
         internal void TermInfo(TermInfo ti)
         {
-            ti.Set(TermInfo_Renamed);
+            ti.Set(termInfo);
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// </summary>
         public int DocFreq
         {
-            get { return TermInfo_Renamed.DocFreq; }
+            get { return termInfo.DocFreq; }
         }
 
         /* Returns the freqPointer from the current TermInfo in the enumeration.
@@ -248,7 +248,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal long FreqPointer
         {
-            get { return TermInfo_Renamed.FreqPointer; }
+            get { return termInfo.FreqPointer; }
         }
 
         /* Returns the proxPointer from the current TermInfo in the enumeration.
@@ -256,14 +256,14 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal long ProxPointer
         {
-            get { return TermInfo_Renamed.ProxPointer; }
+            get { return termInfo.ProxPointer; }
         }
 
         /// <summary>
         /// Closes the enumeration to further activity, freeing resources. </summary>
         public void Dispose()
         {
-            Input.Dispose();
+            input.Dispose();
         }
     }
 }

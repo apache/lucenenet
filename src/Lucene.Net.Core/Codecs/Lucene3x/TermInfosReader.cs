@@ -120,12 +120,12 @@ namespace Lucene.Net.Codecs.Lucene3x
                 FieldInfos = fis;
 
                 OrigEnum = new SegmentTermEnum(Directory.OpenInput(IndexFileNames.SegmentFileName(Segment, "", Lucene3xPostingsFormat.TERMS_EXTENSION), context), FieldInfos, false);
-                Size_Renamed = OrigEnum.Size;
+                Size_Renamed = OrigEnum.size;
 
                 if (indexDivisor != -1)
                 {
                     // Load terms index
-                    TotalIndexInterval = OrigEnum.IndexInterval * indexDivisor;
+                    TotalIndexInterval = OrigEnum.indexInterval * indexDivisor;
 
                     string indexFileName = IndexFileNames.SegmentFileName(Segment, "", Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION);
                     SegmentTermEnum indexEnum = new SegmentTermEnum(Directory.OpenInput(indexFileName, context), FieldInfos, true);
@@ -167,7 +167,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return OrigEnum.SkipInterval;
+                return OrigEnum.skipInterval;
             }
         }
 
@@ -175,7 +175,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return OrigEnum.MaxSkipLevels;
+                return OrigEnum.maxSkipLevels;
             }
         }
 
@@ -247,7 +247,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public void CacheCurrentTerm(SegmentTermEnum enumerator)
         {
-            TermsCache.Put(new CloneableTerm(enumerator.Term()), new TermInfoAndOrd(enumerator.TermInfo_Renamed, enumerator.Position));
+            TermsCache.Put(new CloneableTerm(enumerator.Term()), new TermInfoAndOrd(enumerator.termInfo, enumerator.position));
         }
 
         internal static Term DeepCopyOf(Term other)
@@ -277,7 +277,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // optimize sequential access: first try scanning cached enum w/o seeking
             if (enumerator.Term() != null && ((enumerator.Prev() != null && CompareAsUTF16(term, enumerator.Prev()) > 0) || CompareAsUTF16(term, enumerator.Term()) >= 0)) // term is at or past current
             {
-                int enumOffset = (int)(enumerator.Position / TotalIndexInterval) + 1;
+                int enumOffset = (int)(enumerator.position / TotalIndexInterval) + 1;
                 if (IndexLength == enumOffset || Index.CompareTo(term, enumOffset) < 0) // but before end of block
                 {
                     // no need to seek
@@ -286,7 +286,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     int numScans = enumerator.ScanTo(term);
                     if (enumerator.Term() != null && CompareAsUTF16(term, enumerator.Term()) == 0)
                     {
-                        ti = enumerator.TermInfo_Renamed;
+                        ti = enumerator.termInfo;
                         if (numScans > 1)
                         {
                             // we only  want to put this TermInfo into the cache if
@@ -298,13 +298,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                             {
                                 if (useCache)
                                 {
-                                    TermsCache.Put(new CloneableTerm(DeepCopyOf(term)), new TermInfoAndOrd(ti, enumerator.Position));
+                                    TermsCache.Put(new CloneableTerm(DeepCopyOf(term)), new TermInfoAndOrd(ti, enumerator.position));
                                 }
                             }
                             else
                             {
                                 Debug.Assert(SameTermInfo(ti, tiOrd, enumerator));
-                                Debug.Assert(enumerator.Position == tiOrd.TermOrd);
+                                Debug.Assert(enumerator.position == tiOrd.TermOrd);
                             }
                         }
                     }
@@ -335,18 +335,18 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             if (enumerator.Term() != null && CompareAsUTF16(term, enumerator.Term()) == 0)
             {
-                ti_ = enumerator.TermInfo_Renamed;
+                ti_ = enumerator.termInfo;
                 if (tiOrd == null)
                 {
                     if (useCache)
                     {
-                        TermsCache.Put(new CloneableTerm(DeepCopyOf(term)), new TermInfoAndOrd(ti_, enumerator.Position));
+                        TermsCache.Put(new CloneableTerm(DeepCopyOf(term)), new TermInfoAndOrd(ti_, enumerator.position));
                     }
                 }
                 else
                 {
                     Debug.Assert(SameTermInfo(ti_, tiOrd, enumerator));
-                    Debug.Assert(enumerator.Position == tiOrd.TermOrd);
+                    Debug.Assert(enumerator.position == tiOrd.TermOrd);
                 }
             }
             else
@@ -372,7 +372,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return false;
             }
             // skipOffset is only valid when docFreq >= skipInterval:
-            if (ti1.DocFreq >= enumerator.SkipInterval && ti1.SkipOffset != ti2.SkipOffset)
+            if (ti1.DocFreq >= enumerator.skipInterval && ti1.SkipOffset != ti2.SkipOffset)
             {
                 return false;
             }
@@ -408,7 +408,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             if (CompareAsUTF16(term, enumerator.Term()) == 0)
             {
-                return enumerator.Position;
+                return enumerator.position;
             }
             else
             {

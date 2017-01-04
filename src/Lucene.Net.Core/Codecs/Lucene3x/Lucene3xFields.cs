@@ -1016,7 +1016,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 if (termEnum.Next() && termEnum.Term().Field == internedFieldName)
                 {
-                    newSuffixStart = termEnum.NewSuffixStart;
+                    newSuffixStart = termEnum.newSuffixStart;
                     if (DEBUG_SURROGATES)
                     {
                         Console.WriteLine("  newSuffixStart=" + newSuffixStart);

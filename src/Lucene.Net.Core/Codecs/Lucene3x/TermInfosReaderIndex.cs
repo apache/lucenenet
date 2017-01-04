@@ -65,8 +65,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         public TermInfosReaderIndex(SegmentTermEnum indexEnum, int indexDivisor, long tiiFileLength, int totalIndexInterval)
         {
             this.TotalIndexInterval = totalIndexInterval;
-            IndexSize = 1 + ((int)indexEnum.Size - 1) / indexDivisor;
-            SkipInterval = indexEnum.SkipInterval;
+            IndexSize = 1 + ((int)indexEnum.size - 1) / indexDivisor;
+            SkipInterval = indexEnum.skipInterval;
             // this is only an inital size, it will be GCed once the build is complete
             long initialSize = (long)(tiiFileLength * 1.5) / indexDivisor;
             PagedBytes dataPagedBytes = new PagedBytes(EstimatePageBits(initialSize));
@@ -98,7 +98,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 dataOutput.WriteVLong(termInfo.FreqPointer);
                 dataOutput.WriteVLong(termInfo.ProxPointer);
-                dataOutput.WriteVLong(indexEnum.IndexPointer);
+                dataOutput.WriteVLong(indexEnum.indexPointer);
                 for (int j = 1; j < indexDivisor; j++)
                 {
                     if (!indexEnum.Next())

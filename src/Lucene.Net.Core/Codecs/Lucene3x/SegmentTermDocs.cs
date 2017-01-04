@@ -89,7 +89,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             Term term;
 
             // use comparison of fieldinfos to verify that termEnum belongs to the same segment as this SegmentTermDocs
-            if (segmentTermEnum.FieldInfos == fieldInfos) // optimized case
+            if (segmentTermEnum.fieldInfos == fieldInfos) // optimized case
             {
                 term = segmentTermEnum.Term();
                 ti = segmentTermEnum.TermInfo();

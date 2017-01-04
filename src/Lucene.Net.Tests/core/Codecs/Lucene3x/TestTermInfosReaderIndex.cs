@@ -102,7 +102,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             long tiiFileLength = Directory.FileLength(segmentFileName);
             IndexInput input = Directory.OpenInput(segmentFileName, NewIOContext(Random()));
             TermEnum = new SegmentTermEnum(Directory.OpenInput(IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_EXTENSION), NewIOContext(Random())), fieldInfos, false);
-            int totalIndexInterval = TermEnum.IndexInterval * IndexDivisor;
+            int totalIndexInterval = TermEnum.indexInterval * IndexDivisor;
 
             SegmentTermEnum indexEnum = new SegmentTermEnum(input, fieldInfos, true);
             Index = new TermInfosReaderIndex(indexEnum, IndexDivisor, tiiFileLength, totalIndexInterval);
