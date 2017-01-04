@@ -474,42 +474,42 @@ namespace Lucene.Net.Codecs.Compressing
                             // go to the next chunk that contains docID
                             it.Next(docID);
                             // transform lengths into offsets
-                            if (startOffsets.Length < it.ChunkDocs)
+                            if (startOffsets.Length < it.chunkDocs)
                             {
-                                startOffsets = new int[ArrayUtil.Oversize(it.ChunkDocs, 4)];
+                                startOffsets = new int[ArrayUtil.Oversize(it.chunkDocs, 4)];
                             }
-                            for (int i = 1; i < it.ChunkDocs; ++i)
+                            for (int i = 1; i < it.chunkDocs; ++i)
                             {
-                                startOffsets[i] = startOffsets[i - 1] + it.Lengths[i - 1];
+                                startOffsets[i] = startOffsets[i - 1] + it.lengths[i - 1];
                             }
 
-                            if (NumBufferedDocs == 0 && startOffsets[it.ChunkDocs - 1] < ChunkSize && startOffsets[it.ChunkDocs - 1] + it.Lengths[it.ChunkDocs - 1] >= ChunkSize && NextDeletedDoc(it.DocBase, liveDocs, it.DocBase + it.ChunkDocs) == it.DocBase + it.ChunkDocs) // no deletion in the chunk -  chunk is large enough -  chunk is small enough -  starting a new chunk
+                            if (NumBufferedDocs == 0 && startOffsets[it.chunkDocs - 1] < ChunkSize && startOffsets[it.chunkDocs - 1] + it.lengths[it.chunkDocs - 1] >= ChunkSize && NextDeletedDoc(it.docBase, liveDocs, it.docBase + it.chunkDocs) == it.docBase + it.chunkDocs) // no deletion in the chunk -  chunk is large enough -  chunk is small enough -  starting a new chunk
                             {
-                                Debug.Assert(docID == it.DocBase);
+                                Debug.Assert(docID == it.docBase);
 
                                 // no need to decompress, just copy data
-                                IndexWriter.WriteIndex(it.ChunkDocs, FieldsStream.FilePointer);
-                                WriteHeader(this.DocBase, it.ChunkDocs, it.NumStoredFields, it.Lengths);
+                                IndexWriter.WriteIndex(it.chunkDocs, FieldsStream.FilePointer);
+                                WriteHeader(this.DocBase, it.chunkDocs, it.numStoredFields, it.lengths);
                                 it.CopyCompressedData(FieldsStream);
-                                this.DocBase += it.ChunkDocs;
-                                docID = NextLiveDoc(it.DocBase + it.ChunkDocs, liveDocs, maxDoc);
-                                docCount += it.ChunkDocs;
-                                mergeState.CheckAbort.Work(300 * it.ChunkDocs);
+                                this.DocBase += it.chunkDocs;
+                                docID = NextLiveDoc(it.docBase + it.chunkDocs, liveDocs, maxDoc);
+                                docCount += it.chunkDocs;
+                                mergeState.CheckAbort.Work(300 * it.chunkDocs);
                             }
                             else
                             {
                                 // decompress
                                 it.Decompress();
-                                if (startOffsets[it.ChunkDocs - 1] + it.Lengths[it.ChunkDocs - 1] != it.Bytes.Length)
+                                if (startOffsets[it.chunkDocs - 1] + it.lengths[it.chunkDocs - 1] != it.bytes.Length)
                                 {
-                                    throw new CorruptIndexException("Corrupted: expected chunk size=" + startOffsets[it.ChunkDocs - 1] + it.Lengths[it.ChunkDocs - 1] + ", got " + it.Bytes.Length);
+                                    throw new CorruptIndexException("Corrupted: expected chunk size=" + startOffsets[it.chunkDocs - 1] + it.lengths[it.chunkDocs - 1] + ", got " + it.bytes.Length);
                                 }
                                 // copy non-deleted docs
-                                for (; docID < it.DocBase + it.ChunkDocs; docID = NextLiveDoc(docID + 1, liveDocs, maxDoc))
+                                for (; docID < it.docBase + it.chunkDocs; docID = NextLiveDoc(docID + 1, liveDocs, maxDoc))
                                 {
-                                    int diff = docID - it.DocBase;
-                                    StartDocument(it.NumStoredFields[diff]);
-                                    BufferedDocs.WriteBytes(it.Bytes.Bytes, it.Bytes.Offset + startOffsets[diff], it.Lengths[diff]);
+                                    int diff = docID - it.docBase;
+                                    StartDocument(it.numStoredFields[diff]);
+                                    BufferedDocs.WriteBytes(it.bytes.Bytes, it.bytes.Offset + startOffsets[diff], it.lengths[diff]);
                                     FinishDocument();
                                     ++docCount;
                                     mergeState.CheckAbort.Work(300);
