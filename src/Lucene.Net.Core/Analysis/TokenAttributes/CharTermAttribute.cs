@@ -106,18 +106,18 @@ namespace Lucene.Net.Analysis.TokenAttributes
         }
 
         // *** TermToBytesRefAttribute interface ***
-        private BytesRef Bytes = new BytesRef(MIN_BUFFER_SIZE);
+        private BytesRef bytes = new BytesRef(MIN_BUFFER_SIZE);
 
         public virtual void FillBytesRef()
         {
-            UnicodeUtil.UTF16toUTF8(termBuffer, 0, termLength, Bytes);
+            UnicodeUtil.UTF16toUTF8(termBuffer, 0, termLength, bytes);
         }
 
         public virtual BytesRef BytesRef
         {
             get
             {
-                return Bytes;
+                return bytes;
             }
         }
 
@@ -338,7 +338,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             // Do a deep clone
             t.termBuffer = new char[this.termLength];
             Array.Copy(this.termBuffer, 0, t.termBuffer, 0, this.termLength);
-            t.Bytes = BytesRef.DeepCopyOf(Bytes);
+            t.bytes = BytesRef.DeepCopyOf(bytes);
             return t;
         }
 
@@ -387,7 +387,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         {
             reflector.Reflect(typeof(ICharTermAttribute), "term", ToString());
             FillBytesRef();
-            reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(Bytes));
+            reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(bytes));
         }
 
         public override void CopyTo(IAttribute target)
