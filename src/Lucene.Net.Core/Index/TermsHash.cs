@@ -35,47 +35,47 @@ namespace Lucene.Net.Index
     /// </summary>
     internal sealed class TermsHash : InvertedDocConsumer
     {
-        internal readonly TermsHashConsumer Consumer;
-        internal readonly TermsHash NextTermsHash;
+        internal readonly TermsHashConsumer consumer;
+        internal readonly TermsHash nextTermsHash;
 
-        internal readonly IntBlockPool IntPool;
-        internal readonly ByteBlockPool BytePool;
-        internal ByteBlockPool TermBytePool;
-        internal readonly Counter BytesUsed;
+        internal readonly IntBlockPool intPool;
+        internal readonly ByteBlockPool bytePool;
+        internal ByteBlockPool termBytePool;
+        internal readonly Counter bytesUsed;
 
-        internal readonly bool Primary;
-        internal readonly DocumentsWriterPerThread.DocState DocState;
+        internal readonly bool primary;
+        internal readonly DocumentsWriterPerThread.DocState docState;
 
         // Used when comparing postings via termRefComp, in TermsHashPerField
-        internal readonly BytesRef Tr1 = new BytesRef();
+        internal readonly BytesRef tr1 = new BytesRef();
 
-        internal readonly BytesRef Tr2 = new BytesRef();
+        internal readonly BytesRef tr2 = new BytesRef();
 
         // Used by perField to obtain terms from the analysis chain
-        internal readonly BytesRef TermBytesRef = new BytesRef(10);
+        internal readonly BytesRef termBytesRef = new BytesRef(10);
 
-        internal readonly bool TrackAllocations;
+        internal readonly bool trackAllocations;
 
         public TermsHash(DocumentsWriterPerThread docWriter, TermsHashConsumer consumer, bool trackAllocations, TermsHash nextTermsHash)
         {
-            this.DocState = docWriter.docState;
-            this.Consumer = consumer;
-            this.TrackAllocations = trackAllocations;
-            this.NextTermsHash = nextTermsHash;
-            this.BytesUsed = trackAllocations ? docWriter.bytesUsed : Counter.NewCounter();
-            IntPool = new IntBlockPool(docWriter.intBlockAllocator);
-            BytePool = new ByteBlockPool(docWriter.byteBlockAllocator);
+            this.docState = docWriter.docState;
+            this.consumer = consumer;
+            this.trackAllocations = trackAllocations;
+            this.nextTermsHash = nextTermsHash;
+            this.bytesUsed = trackAllocations ? docWriter.bytesUsed : Counter.NewCounter();
+            intPool = new IntBlockPool(docWriter.intBlockAllocator);
+            bytePool = new ByteBlockPool(docWriter.byteBlockAllocator);
 
             if (nextTermsHash != null)
             {
                 // We are primary
-                Primary = true;
-                TermBytePool = BytePool;
-                nextTermsHash.TermBytePool = BytePool;
+                primary = true;
+                termBytePool = bytePool;
+                nextTermsHash.termBytePool = bytePool;
             }
             else
             {
-                Primary = false;
+                primary = false;
             }
         }
 
@@ -84,13 +84,13 @@ namespace Lucene.Net.Index
             Reset();
             try
             {
-                Consumer.Abort();
+                consumer.Abort();
             }
             finally
             {
-                if (NextTermsHash != null)
+                if (nextTermsHash != null)
                 {
-                    NextTermsHash.Abort();
+                    nextTermsHash.Abort();
                 }
             }
         }
@@ -99,8 +99,8 @@ namespace Lucene.Net.Index
         internal void Reset()
         {
             // we don't reuse so we drop everything and don't fill with 0
-            IntPool.Reset(false, false);
-            BytePool.Reset(false, false);
+            intPool.Reset(false, false);
+            bytePool.Reset(false, false);
         }
 
         internal override void Flush(IDictionary<string, InvertedDocConsumerPerField> fieldsToFlush, SegmentWriteState state)
@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
             IDictionary<string, TermsHashConsumerPerField> childFields = new Dictionary<string, TermsHashConsumerPerField>();
             IDictionary<string, InvertedDocConsumerPerField> nextChildFields;
 
-            if (NextTermsHash != null)
+            if (nextTermsHash != null)
             {
                 nextChildFields = new Dictionary<string, InvertedDocConsumerPerField>();
             }
@@ -121,40 +121,40 @@ namespace Lucene.Net.Index
             {
                 TermsHashPerField perField = (TermsHashPerField)entry.Value;
                 childFields[entry.Key] = perField.Consumer;
-                if (NextTermsHash != null)
+                if (nextTermsHash != null)
                 {
                     nextChildFields[entry.Key] = perField.NextPerField;
                 }
             }
 
-            Consumer.Flush(childFields, state);
+            consumer.Flush(childFields, state);
 
-            if (NextTermsHash != null)
+            if (nextTermsHash != null)
             {
-                NextTermsHash.Flush(nextChildFields, state);
+                nextTermsHash.Flush(nextChildFields, state);
             }
         }
 
         internal override InvertedDocConsumerPerField AddField(DocInverterPerField docInverterPerField, FieldInfo fieldInfo)
         {
-            return new TermsHashPerField(docInverterPerField, this, NextTermsHash, fieldInfo);
+            return new TermsHashPerField(docInverterPerField, this, nextTermsHash, fieldInfo);
         }
 
         internal override void FinishDocument()
         {
-            Consumer.FinishDocument(this);
-            if (NextTermsHash != null)
+            consumer.FinishDocument(this);
+            if (nextTermsHash != null)
             {
-                NextTermsHash.Consumer.FinishDocument(NextTermsHash);
+                nextTermsHash.consumer.FinishDocument(nextTermsHash);
             }
         }
 
         internal override void StartDocument()
         {
-            Consumer.StartDocument();
-            if (NextTermsHash != null)
+            consumer.StartDocument();
+            if (nextTermsHash != null)
             {
-                NextTermsHash.Consumer.StartDocument();
+                nextTermsHash.consumer.StartDocument();
             }
         }
     }

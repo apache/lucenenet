@@ -60,14 +60,14 @@ namespace Lucene.Net.Index
 
         public TermsHashPerField(DocInverterPerField docInverterPerField, TermsHash termsHash, TermsHash nextTermsHash, FieldInfo fieldInfo)
         {
-            IntPool = termsHash.IntPool;
-            BytePool = termsHash.BytePool;
-            TermBytePool = termsHash.TermBytePool;
-            DocState = termsHash.DocState;
+            IntPool = termsHash.intPool;
+            BytePool = termsHash.bytePool;
+            TermBytePool = termsHash.termBytePool;
+            DocState = termsHash.docState;
             this.TermsHash = termsHash;
-            BytesUsed = termsHash.BytesUsed;
+            BytesUsed = termsHash.bytesUsed;
             FieldState = docInverterPerField.fieldState;
-            this.Consumer = termsHash.Consumer.AddField(this, fieldInfo);
+            this.Consumer = termsHash.consumer.AddField(this, fieldInfo);
             PostingsBytesStartArray byteStarts = new PostingsBytesStartArray(this, BytesUsed);
             BytesHash = new BytesRefHash(TermBytePool, HASH_INIT_SIZE, byteStarts);
             StreamCount = Consumer.StreamCount;
