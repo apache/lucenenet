@@ -434,15 +434,15 @@ namespace Lucene.Net.Store
 
         private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
         {
-            private readonly CompoundFileDirectory OuterInstance;
+            private readonly CompoundFileDirectory outerInstance;
 
-            private Lucene.Net.Store.CompoundFileDirectory.FileEntry Entry;
+            private Lucene.Net.Store.CompoundFileDirectory.FileEntry entry;
 
             public IndexInputSlicerAnonymousInnerClassHelper(CompoundFileDirectory outerInstance, Lucene.Net.Store.CompoundFileDirectory.FileEntry entry)
                 : base(outerInstance)
             {
-                this.OuterInstance = outerInstance;
-                this.Entry = entry;
+                this.outerInstance = outerInstance;
+                this.entry = entry;
             }
 
             public override void Dispose(bool disposing)
@@ -451,13 +451,13 @@ namespace Lucene.Net.Store
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
-                return OuterInstance.handle.OpenSlice(sliceDescription, Entry.Offset + offset, length);
+                return outerInstance.handle.OpenSlice(sliceDescription, entry.Offset + offset, length);
             }
 
             [Obsolete]
             public override IndexInput OpenFullSlice()
             {
-                return OpenSlice("full-slice", 0, Entry.Length);
+                return OpenSlice("full-slice", 0, entry.Length);
             }
         }
 
