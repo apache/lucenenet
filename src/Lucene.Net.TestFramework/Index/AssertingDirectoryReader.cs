@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return input.CoreCacheKey;
+                return m_input.CoreCacheKey;
             }
         }
 
@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return input.CombinedCoreAndDeletesKey;
+                return m_input.CombinedCoreAndDeletesKey;
             }
         }
     }

@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// The filtered DirectoryReader </summary>
-        protected internal readonly DirectoryReader input;
+        protected readonly DirectoryReader m_input;
 
         /// <summary>
         /// Create a new FilterDirectoryReader that filters a passed in DirectoryReader. </summary>
@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
         public FilterDirectoryReader(DirectoryReader input, SubReaderWrapper wrapper)
             : base(input.Directory, wrapper.Wrap(input.GetSequentialSubReaders().OfType<AtomicReader>().ToList()))
         {
-            this.input = input;
+            this.m_input = input;
         }
 
         /// <summary>
@@ -122,24 +122,24 @@ namespace Lucene.Net.Index
 
         protected internal override sealed DirectoryReader DoOpenIfChanged()
         {
-            return WrapDirectoryReader(input.DoOpenIfChanged());
+            return WrapDirectoryReader(m_input.DoOpenIfChanged());
         }
 
         protected internal override sealed DirectoryReader DoOpenIfChanged(IndexCommit commit)
         {
-            return WrapDirectoryReader(input.DoOpenIfChanged(commit));
+            return WrapDirectoryReader(m_input.DoOpenIfChanged(commit));
         }
 
         protected internal override sealed DirectoryReader DoOpenIfChanged(IndexWriter writer, bool applyAllDeletes)
         {
-            return WrapDirectoryReader(input.DoOpenIfChanged(writer, applyAllDeletes));
+            return WrapDirectoryReader(m_input.DoOpenIfChanged(writer, applyAllDeletes));
         }
 
         public override long Version
         {
             get
             {
-                return input.Version;
+                return m_input.Version;
             }
         }
 
@@ -147,7 +147,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return input.IsCurrent;
+                return m_input.IsCurrent;
             }
         }
 
@@ -155,13 +155,13 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return input.IndexCommit;
+                return m_input.IndexCommit;
             }
         }
 
         protected internal override void DoClose()
         {
-            input.DoClose();
+            m_input.DoClose();
         }
     }
 }
