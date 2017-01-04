@@ -271,11 +271,11 @@ namespace Lucene.Net.Index
 
             public void UndeleteAll()
             {
-                int maxDoc = input.MaxDoc;
-                liveDocs = new FixedBitSet(input.MaxDoc);
-                if (input.HasDeletions)
+                int maxDoc = m_input.MaxDoc;
+                liveDocs = new FixedBitSet(m_input.MaxDoc);
+                if (m_input.HasDeletions)
                 {
-                    IBits oldLiveDocs = input.LiveDocs;
+                    IBits oldLiveDocs = m_input.LiveDocs;
                     Debug.Assert(oldLiveDocs != null);
                     // this loop is a little bit ineffective, as Bits has no nextSetBit():
                     for (int i = 0; i < maxDoc; i++)

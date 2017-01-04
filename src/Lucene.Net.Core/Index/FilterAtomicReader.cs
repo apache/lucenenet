@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
         {
             while (reader is FilterAtomicReader)
             {
-                reader = ((FilterAtomicReader)reader).input;
+                reader = ((FilterAtomicReader)reader).m_input;
             }
             return reader;
         }
@@ -370,7 +370,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// The underlying AtomicReader. </summary>
-        protected internal readonly AtomicReader input;
+        protected readonly AtomicReader m_input;
 
         /// <summary>
         /// <p>Construct a FilterAtomicReader based on the specified base reader.
@@ -379,7 +379,7 @@ namespace Lucene.Net.Index
         public FilterAtomicReader(AtomicReader input)
             : base()
         {
-            this.input = input;
+            this.m_input = input;
             input.RegisterParentReader(this);
         }
 
@@ -388,7 +388,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return input.LiveDocs;
+                return m_input.LiveDocs;
             }
         }
 
@@ -396,14 +396,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return input.FieldInfos;
+                return m_input.FieldInfos;
             }
         }
 
         public override Fields GetTermVectors(int docID)
         {
             EnsureOpen();
-            return input.GetTermVectors(docID);
+            return m_input.GetTermVectors(docID);
         }
 
         public override int NumDocs
@@ -412,7 +412,7 @@ namespace Lucene.Net.Index
             {
                 {
                     // Don't call ensureOpen() here (it could affect performance)
-                    return input.NumDocs;
+                    return m_input.NumDocs;
                 }
             }
         }
@@ -422,19 +422,19 @@ namespace Lucene.Net.Index
             get
             {
                 // Don't call ensureOpen() here (it could affect performance)
-                return input.MaxDoc;
+                return m_input.MaxDoc;
             }
         }
 
         public override void Document(int docID, StoredFieldVisitor visitor)
         {
             EnsureOpen();
-            input.Document(docID, visitor);
+            m_input.Document(docID, visitor);
         }
 
         protected internal override void DoClose()
         {
-            input.Dispose();
+            m_input.Dispose();
         }
 
         public override Fields Fields
@@ -442,14 +442,14 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return input.Fields;
+                return m_input.Fields;
             }
         }
 
         public override string ToString()
         {
             StringBuilder buffer = new StringBuilder("FilterAtomicReader(");
-            buffer.Append(input);
+            buffer.Append(m_input);
             buffer.Append(')');
             return buffer.ToString();
         }
@@ -457,43 +457,43 @@ namespace Lucene.Net.Index
         public override NumericDocValues GetNumericDocValues(string field)
         {
             EnsureOpen();
-            return input.GetNumericDocValues(field);
+            return m_input.GetNumericDocValues(field);
         }
 
         public override BinaryDocValues GetBinaryDocValues(string field)
         {
             EnsureOpen();
-            return input.GetBinaryDocValues(field);
+            return m_input.GetBinaryDocValues(field);
         }
 
         public override SortedDocValues GetSortedDocValues(string field)
         {
             EnsureOpen();
-            return input.GetSortedDocValues(field);
+            return m_input.GetSortedDocValues(field);
         }
 
         public override SortedSetDocValues GetSortedSetDocValues(string field)
         {
             EnsureOpen();
-            return input.GetSortedSetDocValues(field);
+            return m_input.GetSortedSetDocValues(field);
         }
 
         public override NumericDocValues GetNormValues(string field)
         {
             EnsureOpen();
-            return input.GetNormValues(field);
+            return m_input.GetNormValues(field);
         }
 
         public override IBits GetDocsWithField(string field)
         {
             EnsureOpen();
-            return input.GetDocsWithField(field);
+            return m_input.GetDocsWithField(field);
         }
 
         public override void CheckIntegrity()
         {
             EnsureOpen();
-            input.CheckIntegrity();
+            m_input.CheckIntegrity();
         }
     }
 }

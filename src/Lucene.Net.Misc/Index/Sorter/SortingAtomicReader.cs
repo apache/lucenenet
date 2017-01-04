@@ -835,28 +835,28 @@ namespace Lucene.Net.Index.Sorter
 
         public override void Document(int docID, StoredFieldVisitor visitor)
         {
-            input.Document(docMap.NewToOld(docID), visitor);
+            m_input.Document(docMap.NewToOld(docID), visitor);
         }
 
         public override Fields Fields
         {
             get
             {
-                Fields fields = input.Fields;
+                Fields fields = m_input.Fields;
                 if (fields == null)
                 {
                     return null;
                 }
                 else
                 {
-                    return new SortingFields(fields, input.FieldInfos, docMap);
+                    return new SortingFields(fields, m_input.FieldInfos, docMap);
                 }
             }
         }
 
         public override BinaryDocValues GetBinaryDocValues(string field)
         {
-            BinaryDocValues oldDocValues = input.GetBinaryDocValues(field);
+            BinaryDocValues oldDocValues = m_input.GetBinaryDocValues(field);
             if (oldDocValues == null)
             {
                 return null;
@@ -871,7 +871,7 @@ namespace Lucene.Net.Index.Sorter
         {
             get
             {
-                IBits inLiveDocs = input.LiveDocs;
+                IBits inLiveDocs = m_input.LiveDocs;
                 if (inLiveDocs == null)
                 {
                     return null;
@@ -885,7 +885,7 @@ namespace Lucene.Net.Index.Sorter
 
         public override NumericDocValues GetNormValues(string field)
         {
-            NumericDocValues norm = input.GetNormValues(field);
+            NumericDocValues norm = m_input.GetNormValues(field);
             if (norm == null)
             {
                 return null;
@@ -898,7 +898,7 @@ namespace Lucene.Net.Index.Sorter
 
         public override NumericDocValues GetNumericDocValues(string field)
         {
-            NumericDocValues oldDocValues = input.GetNumericDocValues(field);
+            NumericDocValues oldDocValues = m_input.GetNumericDocValues(field);
             if (oldDocValues == null)
             {
                 return null;
@@ -908,7 +908,7 @@ namespace Lucene.Net.Index.Sorter
 
         public override SortedDocValues GetSortedDocValues(string field)
         {
-            SortedDocValues sortedDV = input.GetSortedDocValues(field);
+            SortedDocValues sortedDV = m_input.GetSortedDocValues(field);
             if (sortedDV == null)
             {
                 return null;
@@ -921,7 +921,7 @@ namespace Lucene.Net.Index.Sorter
 
         public override SortedSetDocValues GetSortedSetDocValues(string field)
         {
-            SortedSetDocValues sortedSetDV = input.GetSortedSetDocValues(field);
+            SortedSetDocValues sortedSetDV = m_input.GetSortedSetDocValues(field);
             if (sortedSetDV == null)
             {
                 return null;
@@ -934,7 +934,7 @@ namespace Lucene.Net.Index.Sorter
 
         public override IBits GetDocsWithField(string field)
         {
-            IBits bits = input.GetDocsWithField(field);
+            IBits bits = m_input.GetDocsWithField(field);
             if (bits == null || bits is Bits.MatchAllBits || bits is Bits.MatchNoBits)
             {
                 return bits;
@@ -947,7 +947,7 @@ namespace Lucene.Net.Index.Sorter
 
         public override Fields GetTermVectors(int docID)
         {
-            return input.GetTermVectors(docMap.NewToOld(docID));
+            return m_input.GetTermVectors(docMap.NewToOld(docID));
         }
     }
 }

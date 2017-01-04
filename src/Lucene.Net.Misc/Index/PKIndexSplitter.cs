@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
             public DocumentFilteredAtomicIndexReader(AtomicReaderContext context, Filter preserveFilter, bool negateFilter)
                     : base(context.AtomicReader)
             {
-                int maxDoc = input.MaxDoc;
+                int maxDoc = m_input.MaxDoc;
                 FixedBitSet bits = new FixedBitSet(maxDoc);
                 // ignore livedocs here, as we filter them later:
                 DocIdSet docs = preserveFilter.GetDocIdSet(context, null);
@@ -152,9 +152,9 @@ namespace Lucene.Net.Index
                     bits.Flip(0, maxDoc);
                 }
 
-                if (input.HasDeletions)
+                if (m_input.HasDeletions)
                 {
-                    IBits oldLiveDocs = input.LiveDocs;
+                    IBits oldLiveDocs = m_input.LiveDocs;
                     Debug.Assert(oldLiveDocs != null);
                     DocIdSetIterator it = bits.GetIterator();
                     for (int i = it.NextDoc(); i < maxDoc; i = it.NextDoc())
