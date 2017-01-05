@@ -11,9 +11,9 @@ namespace Lucene.Net.Support
         {
         }
 
-        public AtomicLong(long value_)
+        public AtomicLong(long value)
         {
-            Interlocked.Exchange(ref value, value_);
+            Interlocked.Exchange(ref this.value, value);
         }
 
         public long IncrementAndGet()
@@ -26,14 +26,14 @@ namespace Lucene.Net.Support
             return Interlocked.Decrement(ref value);
         }
 
-        public void Set(int value_)
+        public void Set(int value)
         {
-            Interlocked.Exchange(ref value, value_);
+            Interlocked.Exchange(ref this.value, value);
         }
 
-        public long AddAndGet(long value_)
+        public long AddAndGet(long value)
         {
-            return Interlocked.Add(ref value, value_);
+            return Interlocked.Add(ref this.value, value);
         }
 
         public long Get()
