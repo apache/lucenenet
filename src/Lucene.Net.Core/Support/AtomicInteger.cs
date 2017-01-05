@@ -36,14 +36,14 @@ namespace Lucene.Net.Support
             return Interlocked.Decrement(ref value) + 1;
         }
 
-        public void Set(int value_)
+        public void Set(int value)
         {
-            Interlocked.Exchange(ref value, value_);
+            Interlocked.Exchange(ref this.value, value);
         }
 
-        public int AddAndGet(int value_)
+        public int AddAndGet(int value)
         {
-            return Interlocked.Add(ref value, value_);
+            return Interlocked.Add(ref this.value, value);
         }
 
         public int Get()
