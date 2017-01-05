@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
     ///
     /// @since   lucene 1.4
     /// </summary>
-    internal class FieldCacheImpl : IFieldCache // LUCENENET TODO: Rename FieldCache (.NET convention)
+    internal class FieldCacheImpl : IFieldCache
     {
         private IDictionary<Type, Cache> caches;
 
