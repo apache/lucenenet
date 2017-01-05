@@ -46,7 +46,7 @@ namespace Lucene.Net.Support
         /// Initializes a new instance of the Thread class.
         /// </summary>
         /// <param name="name">The name of the thread</param>
-        public ThreadClass(System.String name)
+        public ThreadClass(string name)
         {
             _threadField = new Thread(Run);
             this.Name = name;
@@ -65,11 +65,11 @@ namespace Lucene.Net.Support
         /// Initializes a new instance of the Thread class.
         /// </summary>
         /// <param name="start">A ThreadStart delegate that references the methods to be invoked when this thread begins executing</param>
-        /// <param name="Name">The name of the thread</param>
-        public ThreadClass(ThreadStart start, String Name)
+        /// <param name="name">The name of the thread</param>
+        public ThreadClass(ThreadStart start, string name)
         {
             _threadField = new Thread(start);
-            this.Name = Name;
+            this.Name = name;
         }
 
         /// <summary>
@@ -198,20 +198,20 @@ namespace Lucene.Net.Support
         /// <summary>
         /// Blocks the calling thread until a thread terminates or the specified time elapses
         /// </summary>
-        /// <param name="MiliSeconds">Time of wait in milliseconds</param>
-        public void Join(long MiliSeconds)
+        /// <param name="milliSeconds">Time of wait in milliseconds</param>
+        public void Join(long milliSeconds)
         {
-            _threadField.Join(Convert.ToInt32(MiliSeconds));
+            _threadField.Join(Convert.ToInt32(milliSeconds));
         }
 
         /// <summary>
         /// Blocks the calling thread until a thread terminates or the specified time elapses
         /// </summary>
-        /// <param name="MiliSeconds">Time of wait in milliseconds</param>
-        /// <param name="NanoSeconds">Time of wait in nanoseconds</param>
-        public void Join(long MiliSeconds, int NanoSeconds)
+        /// <param name="milliSeconds">Time of wait in milliseconds</param>
+        /// <param name="nanoSeconds">Time of wait in nanoseconds</param>
+        public void Join(long milliSeconds, int nanoSeconds)
         {
-            int totalTime = Convert.ToInt32(MiliSeconds + (NanoSeconds*0.000001));
+            int totalTime = Convert.ToInt32(milliSeconds + (nanoSeconds*0.000001));
 
             _threadField.Join(totalTime);
         }
