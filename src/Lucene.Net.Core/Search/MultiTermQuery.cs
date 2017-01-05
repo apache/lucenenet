@@ -264,6 +264,10 @@ namespace Lucene.Net.Search
 
             public override int TermCountCutoff
             {
+                get // LUCENENET specific - adding getter for API consistency check
+                {
+                    return base.TermCountCutoff;
+                }
                 set
                 {
                     throw new System.NotSupportedException("Please create a private instance");
@@ -272,6 +276,10 @@ namespace Lucene.Net.Search
 
             public override double DocCountPercent
             {
+                get // LUCENENET specific - adding getter for API consistency check
+                {
+                    return base.DocCountPercent;
+                }
                 set
                 {
                     throw new System.NotSupportedException("Please create a private instance");
