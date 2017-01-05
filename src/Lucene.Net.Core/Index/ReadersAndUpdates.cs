@@ -638,7 +638,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                Info.GenUpdatesFiles = newGenUpdatesFiles;
+                Info.SetGenUpdatesFiles(newGenUpdatesFiles);
 
                 // wrote new files, should checkpoint()
                 writer.Checkpoint();

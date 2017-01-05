@@ -401,7 +401,7 @@ namespace Lucene.Net.Index
                                     genUpdatesFiles[input.ReadLong()] = input.ReadStringSet();
                                 }
                             }
-                            siPerCommit.GenUpdatesFiles = genUpdatesFiles;
+                            siPerCommit.SetGenUpdatesFiles(genUpdatesFiles);
                         }
                         Add(siPerCommit);
                     }

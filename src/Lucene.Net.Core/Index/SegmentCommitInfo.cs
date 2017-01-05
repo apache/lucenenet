@@ -106,13 +106,10 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sets the updates file names per generation. Does not deep clone the map. </summary>
-        public virtual IDictionary<long, ISet<string>> GenUpdatesFiles
+        public virtual void SetGenUpdatesFiles(IDictionary<long, ISet<string>> genUpdatesFiles)
         {
-            set
-            {
-                this.genUpdatesFiles.Clear();
-                this.genUpdatesFiles.PutAll(value);
-            }
+            this.genUpdatesFiles.Clear();
+            this.genUpdatesFiles.PutAll(genUpdatesFiles);
         }
 
         /// <summary>
