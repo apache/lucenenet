@@ -203,29 +203,29 @@ namespace Lucene.Net.Util.Automaton
             return hashCode;
         }
 
-        public override bool Equals(object _other)
+        public override bool Equals(object other)
         {
             throw new NotImplementedException("ObjectEquals"); // LUCENENET TODO: Remove error message
-            if (_other == null)
+            if (other == null)
             {
                 return false;
             }
-            if (!(_other is FrozenIntSet))
+            if (!(other is FrozenIntSet))
             {
                 return false;
             }
-            FrozenIntSet other = (FrozenIntSet)_other;
-            if (hashCode != other.hashCode)
+            FrozenIntSet other2 = (FrozenIntSet)other;
+            if (hashCode != other2.hashCode)
             {
                 return false;
             }
-            if (other.values.Length != upto)
+            if (other2.values.Length != upto)
             {
                 return false;
             }
             for (int i = 0; i < upto; i++)
             {
-                if (other.values[i] != values[i])
+                if (other2.values[i] != values[i])
                 {
                     return false;
                 }
@@ -306,46 +306,46 @@ namespace Lucene.Net.Util.Automaton
                 return hashCode;
             }
 
-            public override bool Equals(object _other)
+            public override bool Equals(object other)
             {
-                if (_other == null)
+                if (other == null)
                 {
                     return false;
                 }
-                if (_other is FrozenIntSet)
+                if (other is FrozenIntSet)
                 {
-                    FrozenIntSet other = (FrozenIntSet)_other;
-                    if (hashCode != other.hashCode)
+                    FrozenIntSet other2 = (FrozenIntSet)other;
+                    if (hashCode != other2.hashCode)
                     {
                         return false;
                     }
-                    if (other.values.Length != values.Length)
+                    if (other2.values.Length != values.Length)
                     {
                         return false;
                     }
                     for (int i = 0; i < values.Length; i++)
                     {
-                        if (other.values[i] != values[i])
+                        if (other2.values[i] != values[i])
                         {
                             return false;
                         }
                     }
                     return true;
                 }
-                else if (_other is SortedIntSet)
+                else if (other is SortedIntSet)
                 {
-                    SortedIntSet other = (SortedIntSet)_other;
-                    if (hashCode != other.hashCode)
+                    SortedIntSet other3 = (SortedIntSet)other;
+                    if (hashCode != other3.hashCode)
                     {
                         return false;
                     }
-                    if (other.values.Length != values.Length)
+                    if (other3.values.Length != values.Length)
                     {
                         return false;
                     }
                     for (int i = 0; i < values.Length; i++)
                     {
-                        if (other.values[i] != values[i])
+                        if (other3.values[i] != values[i])
                         {
                             return false;
                         }
