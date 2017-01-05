@@ -987,7 +987,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 Get((long)docID, result);
             }
 
-            public abstract void Get(long id, BytesRef Result);
+            public abstract void Get(long id, BytesRef result);
         }
 
         // in the compressed case, we add a few additional operations for
