@@ -212,16 +212,16 @@ namespace Lucene.Net.Codecs.Lucene41
                 return other;
             }
 
-            public override void CopyFrom(TermState _other)
+            public override void CopyFrom(TermState other)
             {
-                base.CopyFrom(_other);
-                IntBlockTermState other = (IntBlockTermState)_other;
-                docStartFP = other.docStartFP;
-                posStartFP = other.posStartFP;
-                payStartFP = other.payStartFP;
-                lastPosBlockOffset = other.lastPosBlockOffset;
-                skipOffset = other.skipOffset;
-                singletonDocID = other.singletonDocID;
+                base.CopyFrom(other);
+                IntBlockTermState other2 = (IntBlockTermState)other;
+                docStartFP = other2.docStartFP;
+                posStartFP = other2.posStartFP;
+                payStartFP = other2.payStartFP;
+                lastPosBlockOffset = other2.lastPosBlockOffset;
+                skipOffset = other2.skipOffset;
+                singletonDocID = other2.singletonDocID;
             }
 
             public override string ToString()
@@ -431,17 +431,17 @@ namespace Lucene.Net.Codecs.Lucene41
 
         /// <summary>
         /// Called when we are done adding docs to this term </summary>
-        public override void FinishTerm(BlockTermState _state)
+        public override void FinishTerm(BlockTermState state)
         {
-            IntBlockTermState state = (IntBlockTermState)_state;
-            Debug.Assert(state.DocFreq > 0);
+            IntBlockTermState state2 = (IntBlockTermState)state;
+            Debug.Assert(state2.DocFreq > 0);
 
             // TODO: wasteful we are counting this (counting # docs
             // for this term) in two places?
-            Debug.Assert(state.DocFreq == docCount, state.DocFreq + " vs " + docCount);
+            Debug.Assert(state2.DocFreq == docCount, state2.DocFreq + " vs " + docCount);
 
             // if (DEBUG) {
-            //   System.out.println("FPW.finishTerm docFreq=" + state.docFreq);
+            //   System.out.println("FPW.finishTerm docFreq=" + state2.docFreq);
             // }
 
             // if (DEBUG) {
@@ -452,7 +452,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             // docFreq == 1, don't write the single docid/freq to a separate file along with a pointer to it.
             int singletonDocID;
-            if (state.DocFreq == 1)
+            if (state2.DocFreq == 1)
             {
                 // pulse the singleton docid into the term dictionary, freq is implicitly totalTermFreq
                 singletonDocID = docDeltaBuffer[0];
@@ -493,8 +493,8 @@ namespace Lucene.Net.Codecs.Lucene41
 
                 // totalTermFreq is just total number of positions(or payloads, or offsets)
                 // associated with current term.
-                Debug.Assert(state.TotalTermFreq != -1);
-                if (state.TotalTermFreq > Lucene41PostingsFormat.BLOCK_SIZE)
+                Debug.Assert(state2.TotalTermFreq != -1);
+                if (state2.TotalTermFreq > Lucene41PostingsFormat.BLOCK_SIZE)
                 {
                     // record file offset for last pos in last block
                     lastPosBlockOffset = posOut.FilePointer - posStartFP;
@@ -603,50 +603,50 @@ namespace Lucene.Net.Codecs.Lucene41
             // if (DEBUG) {
             //   System.out.println("  payStartFP=" + payStartFP);
             // }
-            state.docStartFP = docStartFP;
-            state.posStartFP = posStartFP;
-            state.payStartFP = payStartFP;
-            state.singletonDocID = singletonDocID;
-            state.skipOffset = skipOffset;
-            state.lastPosBlockOffset = lastPosBlockOffset;
+            state2.docStartFP = docStartFP;
+            state2.posStartFP = posStartFP;
+            state2.payStartFP = payStartFP;
+            state2.singletonDocID = singletonDocID;
+            state2.skipOffset = skipOffset;
+            state2.lastPosBlockOffset = lastPosBlockOffset;
             docBufferUpto = 0;
             posBufferUpto = 0;
             lastDocID = 0;
             docCount = 0;
         }
 
-        public override void EncodeTerm(long[] longs, DataOutput @out, FieldInfo fieldInfo, BlockTermState _state, bool absolute)
+        public override void EncodeTerm(long[] longs, DataOutput @out, FieldInfo fieldInfo, BlockTermState state, bool absolute)
         {
-            IntBlockTermState state = (IntBlockTermState)_state;
+            IntBlockTermState state2 = (IntBlockTermState)state;
             if (absolute)
             {
                 lastState = emptyState;
             }
-            longs[0] = state.docStartFP - lastState.docStartFP;
+            longs[0] = state2.docStartFP - lastState.docStartFP;
             if (fieldHasPositions)
             {
-                longs[1] = state.posStartFP - lastState.posStartFP;
+                longs[1] = state2.posStartFP - lastState.posStartFP;
                 if (fieldHasPayloads || fieldHasOffsets)
                 {
-                    longs[2] = state.payStartFP - lastState.payStartFP;
+                    longs[2] = state2.payStartFP - lastState.payStartFP;
                 }
             }
-            if (state.singletonDocID != -1)
+            if (state2.singletonDocID != -1)
             {
-                @out.WriteVInt(state.singletonDocID);
+                @out.WriteVInt(state2.singletonDocID);
             }
             if (fieldHasPositions)
             {
-                if (state.lastPosBlockOffset != -1)
+                if (state2.lastPosBlockOffset != -1)
                 {
-                    @out.WriteVLong(state.lastPosBlockOffset);
+                    @out.WriteVLong(state2.lastPosBlockOffset);
                 }
             }
-            if (state.skipOffset != -1)
+            if (state2.skipOffset != -1)
             {
-                @out.WriteVLong(state.skipOffset);
+                @out.WriteVLong(state2.skipOffset);
             }
-            lastState = state;
+            lastState = state2;
         }
 
         protected override void Dispose(bool disposing)
