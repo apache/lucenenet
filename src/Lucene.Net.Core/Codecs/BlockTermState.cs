@@ -55,15 +55,15 @@ namespace Lucene.Net.Codecs
         {
         }
 
-        public override void CopyFrom(TermState _other)
+        public override void CopyFrom(TermState other)
         {
-            Debug.Assert(_other is BlockTermState, "can not copy from " + _other.GetType().Name);
-            BlockTermState other = (BlockTermState)_other;
-            base.CopyFrom(_other);
-            DocFreq = other.DocFreq;
-            TotalTermFreq = other.TotalTermFreq;
-            TermBlockOrd = other.TermBlockOrd;
-            BlockFilePointer = other.BlockFilePointer;
+            Debug.Assert(other is BlockTermState, "can not copy from " + other.GetType().Name);
+            BlockTermState other2 = (BlockTermState)other;
+            base.CopyFrom(other);
+            DocFreq = other2.DocFreq;
+            TotalTermFreq = other2.TotalTermFreq;
+            TermBlockOrd = other2.TermBlockOrd;
+            BlockFilePointer = other2.BlockFilePointer;
         }
 
         public override string ToString()
