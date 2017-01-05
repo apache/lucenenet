@@ -171,7 +171,7 @@ namespace Lucene.Net.Search.Spans
             this.query = query;
             this.slop = query.Slop;
 
-            SpanQuery[] clauses = query.Clauses;
+            SpanQuery[] clauses = query.GetClauses();
             queue = new CellQueue(this, clauses.Length);
             subSpans = new Spans[clauses.Length];
             for (int i = 0; i < clauses.Length; i++)

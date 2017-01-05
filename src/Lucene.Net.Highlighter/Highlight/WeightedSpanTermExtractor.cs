@@ -563,7 +563,7 @@ namespace Lucene.Net.Search.Highlight
             }
             else if (spanQuery is SpanNearQuery)
             {
-                foreach (SpanQuery clause in ((SpanNearQuery)spanQuery).Clauses)
+                foreach (SpanQuery clause in ((SpanNearQuery)spanQuery).GetClauses())
                 {
                     CollectSpanQueryFields(clause, fieldNames);
                 }
@@ -574,7 +574,7 @@ namespace Lucene.Net.Search.Highlight
             }
             else if (spanQuery is SpanOrQuery)
             {
-                foreach (SpanQuery clause in ((SpanOrQuery)spanQuery).Clauses)
+                foreach (SpanQuery clause in ((SpanOrQuery)spanQuery).GetClauses())
                 {
                     CollectSpanQueryFields(clause, fieldNames);
                 }
@@ -601,7 +601,7 @@ namespace Lucene.Net.Search.Highlight
             }
             else if (spanQuery is SpanNearQuery)
             {
-                foreach (SpanQuery clause in ((SpanNearQuery)spanQuery).Clauses)
+                foreach (SpanQuery clause in ((SpanNearQuery)spanQuery).GetClauses())
                 {
                     if (MustRewriteQuery(clause))
                     {
@@ -617,7 +617,7 @@ namespace Lucene.Net.Search.Highlight
             }
             else if (spanQuery is SpanOrQuery)
             {
-                foreach (SpanQuery clause in ((SpanOrQuery)spanQuery).Clauses)
+                foreach (SpanQuery clause in ((SpanOrQuery)spanQuery).GetClauses())
                 {
                     if (MustRewriteQuery(clause))
                     {

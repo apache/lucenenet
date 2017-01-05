@@ -36,11 +36,11 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanNearQuery : SpanQuery
     {
-        protected internal readonly IList<SpanQuery> m_clauses;
-        protected internal int m_slop;
-        protected internal bool m_inOrder;
+        protected readonly IList<SpanQuery> m_clauses;
+        protected int m_slop;
+        protected bool m_inOrder;
 
-        protected internal string m_field;
+        protected string m_field;
         private bool collectPayloads;
 
         /// <summary>
@@ -81,12 +81,9 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Return the clauses whose spans are matched. </summary>
-        public virtual SpanQuery[] Clauses // LUCENENET TODO: Change to GetClauses() (array, conversion)
+        public virtual SpanQuery[] GetClauses()
         {
-            get
-            {
-                return m_clauses.ToArray();
-            }
+            return m_clauses.ToArray();
         }
 
         /// <summary>
@@ -152,7 +149,7 @@ namespace Lucene.Net.Search.Spans
         {
             if (m_clauses.Count == 0) // optimize 0-clause case
             {
-                return (new SpanOrQuery(Clauses)).GetSpans(context, acceptDocs, termContexts);
+                return (new SpanOrQuery(GetClauses())).GetSpans(context, acceptDocs, termContexts);
             }
 
             if (m_clauses.Count == 1) // optimize 1-clause case

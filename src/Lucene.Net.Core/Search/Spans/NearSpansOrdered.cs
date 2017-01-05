@@ -108,13 +108,13 @@ namespace Lucene.Net.Search.Spans
         public NearSpansOrdered(SpanNearQuery spanNearQuery, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts, bool collectPayloads)
         {
             sorter = new InPlaceMergeSorterAnonymousInnerClassHelper(this);
-            if (spanNearQuery.Clauses.Length < 2)
+            if (spanNearQuery.GetClauses().Length < 2)
             {
                 throw new System.ArgumentException("Less than 2 clauses: " + spanNearQuery);
             }
             this.collectPayloads = collectPayloads;
             allowedSlop = spanNearQuery.Slop;
-            SpanQuery[] clauses = spanNearQuery.Clauses;
+            SpanQuery[] clauses = spanNearQuery.GetClauses();
             subSpans = new Spans[clauses.Length];
             matchPayload = new List<byte[]>();
             subSpansByDoc = new Spans[clauses.Length];

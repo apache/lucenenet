@@ -60,14 +60,14 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
             else if (query is SpanOrQuery)
             {
-                foreach (Query sub in ((SpanOrQuery)query).Clauses)
+                foreach (Query sub in ((SpanOrQuery)query).GetClauses())
                 {
                     list.AddAll(Arrays.AsList(ExtractAutomata(sub, field)));
                 }
             }
             else if (query is SpanNearQuery)
             {
-                foreach (Query sub in ((SpanNearQuery)query).Clauses)
+                foreach (Query sub in ((SpanNearQuery)query).GetClauses())
                 {
                     list.AddAll(Arrays.AsList(ExtractAutomata(sub, field)));
                 }
