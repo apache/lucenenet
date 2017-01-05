@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -333,7 +334,11 @@ namespace Lucene.Net.Util
             AssertLongRangeSplit(long.MinValue, long.MinValue + 0x10L, 4, true, Arrays.AsList(0x0000000000000010L, 0x0000000000000010L, 0x000000000000000L, 0x000000000000000L), Arrays.AsList(0, 4));
         }
 
-        [Test]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(60000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestRandomSplit()
         {
             long num = (long)AtLeast(10);

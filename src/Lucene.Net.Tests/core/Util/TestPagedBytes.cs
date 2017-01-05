@@ -34,10 +34,15 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestPagedBytes : LuceneTestCase
     {
+
         // Writes random byte/s to "normal" file in dir, then
         // copies into PagedBytes and verifies with
         // PagedBytes.Reader:
-        [Test, LongRunningTest]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(90000)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestDataInputOutput()
         {
             Random random = Random();
