@@ -133,13 +133,13 @@ namespace Lucene.Net.Codecs.Lucene40
                 return other;
             }
 
-            public override void CopyFrom(TermState _other)
+            public override void CopyFrom(TermState other)
             {
-                base.CopyFrom(_other);
-                StandardTermState other = (StandardTermState)_other;
-                freqOffset = other.freqOffset;
-                proxOffset = other.proxOffset;
-                skipOffset = other.skipOffset;
+                base.CopyFrom(other);
+                StandardTermState other2 = (StandardTermState)other;
+                freqOffset = other2.freqOffset;
+                proxOffset = other2.proxOffset;
+                skipOffset = other2.skipOffset;
             }
 
             public override string ToString()
@@ -174,31 +174,31 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        public override void DecodeTerm(long[] longs, DataInput @in, FieldInfo fieldInfo, BlockTermState _termState, bool absolute)
+        public override void DecodeTerm(long[] longs, DataInput @in, FieldInfo fieldInfo, BlockTermState termState, bool absolute)
         {
-            StandardTermState termState = (StandardTermState)_termState;
-            // if (DEBUG) System.out.println("SPR: nextTerm seg=" + segment + " tbOrd=" + termState.termBlockOrd + " bytesReader.fp=" + termState.bytesReader.getPosition());
-            bool isFirstTerm = termState.TermBlockOrd == 0;
+            StandardTermState termState2 = (StandardTermState)termState;
+            // if (DEBUG) System.out.println("SPR: nextTerm seg=" + segment + " tbOrd=" + termState2.termBlockOrd + " bytesReader.fp=" + termState.bytesReader.getPosition());
+            bool isFirstTerm = termState2.TermBlockOrd == 0;
             if (absolute)
             {
-                termState.freqOffset = 0;
-                termState.proxOffset = 0;
+                termState2.freqOffset = 0;
+                termState2.proxOffset = 0;
             }
 
-            termState.freqOffset += @in.ReadVLong();
+            termState2.freqOffset += @in.ReadVLong();
             /*
             if (DEBUG) {
-              System.out.println("  dF=" + termState.docFreq);
-              System.out.println("  freqFP=" + termState.freqOffset);
+              System.out.println("  dF=" + termState2.docFreq);
+              System.out.println("  freqFP=" + termState2.freqOffset);
             }
             */
-            Debug.Assert(termState.freqOffset < freqIn.Length);
+            Debug.Assert(termState2.freqOffset < freqIn.Length);
 
-            if (termState.DocFreq >= skipMinimum)
+            if (termState2.DocFreq >= skipMinimum)
             {
-                termState.skipOffset = @in.ReadVLong();
-                // if (DEBUG) System.out.println("  skipOffset=" + termState.skipOffset + " vs freqIn.length=" + freqIn.length());
-                Debug.Assert(termState.freqOffset + termState.skipOffset < freqIn.Length);
+                termState2.skipOffset = @in.ReadVLong();
+                // if (DEBUG) System.out.println("  skipOffset=" + termState2.skipOffset + " vs freqIn.length=" + freqIn.length());
+                Debug.Assert(termState2.freqOffset + termState2.skipOffset < freqIn.Length);
             }
             else
             {
@@ -207,8 +207,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
             if (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
-                termState.proxOffset += @in.ReadVLong();
-                // if (DEBUG) System.out.println("  proxFP=" + termState.proxOffset);
+                termState2.proxOffset += @in.ReadVLong();
+                // if (DEBUG) System.out.println("  proxFP=" + termState2.proxOffset);
             }
         }
 
@@ -216,7 +216,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             if (CanReuse(reuse, liveDocs))
             {
-                // if (DEBUG) System.out.println("SPR.docs ts=" + termState);
+                // if (DEBUG) System.out.println("SPR.docs ts=" + termState2);
                 return ((SegmentDocsEnumBase)reuse).Reset(fieldInfo, (StandardTermState)termState);
             }
             return NewDocsEnum(liveDocs, fieldInfo, (StandardTermState)termState);
