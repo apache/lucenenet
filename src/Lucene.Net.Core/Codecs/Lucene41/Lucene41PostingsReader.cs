@@ -133,59 +133,59 @@ namespace Lucene.Net.Codecs.Lucene41
                 IOUtils.Close(docIn, posIn, payIn);
         }
 
-        public override void DecodeTerm(long[] longs, DataInput @in, FieldInfo fieldInfo, BlockTermState _termState, bool absolute)
+        public override void DecodeTerm(long[] longs, DataInput @in, FieldInfo fieldInfo, BlockTermState termState, bool absolute)
         {
-            Lucene41PostingsWriter.IntBlockTermState termState = (Lucene41PostingsWriter.IntBlockTermState)_termState;
+            Lucene41PostingsWriter.IntBlockTermState termState2 = (Lucene41PostingsWriter.IntBlockTermState)termState;
             bool fieldHasPositions = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             bool fieldHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             bool fieldHasPayloads = fieldInfo.HasPayloads;
 
             if (absolute)
             {
-                termState.docStartFP = 0;
-                termState.posStartFP = 0;
-                termState.payStartFP = 0;
+                termState2.docStartFP = 0;
+                termState2.posStartFP = 0;
+                termState2.payStartFP = 0;
             }
             if (version < Lucene41PostingsWriter.VERSION_META_ARRAY) // backward compatibility
             {
-                DecodeTerm(@in, fieldInfo, termState);
+                DecodeTerm(@in, fieldInfo, termState2);
                 return;
             }
-            termState.docStartFP += longs[0];
+            termState2.docStartFP += longs[0];
             if (fieldHasPositions)
             {
-                termState.posStartFP += longs[1];
+                termState2.posStartFP += longs[1];
                 if (fieldHasOffsets || fieldHasPayloads)
                 {
-                    termState.payStartFP += longs[2];
+                    termState2.payStartFP += longs[2];
                 }
             }
-            if (termState.DocFreq == 1)
+            if (termState2.DocFreq == 1)
             {
-                termState.singletonDocID = @in.ReadVInt();
+                termState2.singletonDocID = @in.ReadVInt();
             }
             else
             {
-                termState.singletonDocID = -1;
+                termState2.singletonDocID = -1;
             }
             if (fieldHasPositions)
             {
-                if (termState.TotalTermFreq > Lucene41PostingsFormat.BLOCK_SIZE)
+                if (termState2.TotalTermFreq > Lucene41PostingsFormat.BLOCK_SIZE)
                 {
-                    termState.lastPosBlockOffset = @in.ReadVLong();
+                    termState2.lastPosBlockOffset = @in.ReadVLong();
                 }
                 else
                 {
-                    termState.lastPosBlockOffset = -1;
+                    termState2.lastPosBlockOffset = -1;
                 }
             }
-            if (termState.DocFreq > Lucene41PostingsFormat.BLOCK_SIZE)
+            if (termState2.DocFreq > Lucene41PostingsFormat.BLOCK_SIZE)
             {
-                termState.skipOffset = @in.ReadVLong();
+                termState2.skipOffset = @in.ReadVLong();
             }
             else
             {
-                termState.skipOffset = -1;
+                termState2.skipOffset = -1;
             }
         }
 
