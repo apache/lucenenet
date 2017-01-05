@@ -144,22 +144,16 @@ namespace Lucene.Net.Search.Spans
             get { return matchEnd; }
         }
 
-        public virtual Spans[] SubSpans // LUCENENET TODO: Make GetSubSpans() (properties shouldn't return array)
+        public virtual Spans[] GetSubSpans()
         {
-            get
-            {
-                return subSpans;
-            }
+            return subSpans;
         }
 
         // TODO: Remove warning after API has been finalized
         // TODO: Would be nice to be able to lazy load payloads
-        public override ICollection<byte[]> Payload
+        public override ICollection<byte[]> GetPayload()
         {
-            get
-            {
-                return matchPayload;
-            }
+            return matchPayload;
         }
 
         // TODO: Remove warning after API has been finalized
@@ -347,7 +341,7 @@ namespace Lucene.Net.Search.Spans
             if (subSpans[subSpans.Length - 1].IsPayloadAvailable)
             {
                 //LUCENE TO-DO UnionWith or AddAll(Set<>, IEnumerable<>)
-                possibleMatchPayloads.UnionWith(subSpans[subSpans.Length - 1].Payload);
+                possibleMatchPayloads.UnionWith(subSpans[subSpans.Length - 1].GetPayload());
             }
 
             IList<byte[]> possiblePayload = null;
@@ -360,7 +354,7 @@ namespace Lucene.Net.Search.Spans
                 Spans prevSpans = subSpans[i];
                 if (collectPayloads && prevSpans.IsPayloadAvailable)
                 {
-                    var payload = prevSpans.Payload;
+                    var payload = prevSpans.GetPayload();
                     possiblePayload = new List<byte[]>(payload.Count);
                     possiblePayload.AddRange(payload);
                 }
@@ -394,7 +388,7 @@ namespace Lucene.Net.Search.Spans
                             prevEnd = ppEnd;
                             if (collectPayloads && prevSpans.IsPayloadAvailable)
                             {
-                                var payload = prevSpans.Payload;
+                                var payload = prevSpans.GetPayload();
                                 possiblePayload = new List<byte[]>(payload.Count);
                                 possiblePayload.AddRange(payload);
                             }

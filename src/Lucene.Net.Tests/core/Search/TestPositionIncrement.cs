@@ -273,7 +273,7 @@ namespace Lucene.Net.Search
                 {
                     Console.WriteLine("doc " + pspans.Doc + ": span " + pspans.Start + " to " + pspans.End);
                 }
-                var payloads = pspans.Payload;
+                var payloads = pspans.GetPayload();
                 sawZero |= pspans.Start == 0;
                 foreach (var bytes in payloads)
                 {

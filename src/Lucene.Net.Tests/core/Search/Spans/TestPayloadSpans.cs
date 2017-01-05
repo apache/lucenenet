@@ -279,7 +279,7 @@ namespace Lucene.Net.Search.Spans
             {
                 while (spans.Next())
                 {
-                    var payloads = spans.Payload;
+                    var payloads = spans.GetPayload();
                     foreach (var payload in payloads)
                     {
                         payloadSet.Add(Encoding.UTF8.GetString(payload));
@@ -318,7 +318,7 @@ namespace Lucene.Net.Search.Spans
             {
                 while (spans.Next())
                 {
-                    var payloads = spans.Payload;
+                    var payloads = spans.GetPayload();
                     foreach (var payload in payloads)
                     {
                         payloadSet.Add(Encoding.UTF8.GetString((byte[])(Array)payload));
@@ -357,7 +357,7 @@ namespace Lucene.Net.Search.Spans
             {
                 while (spans.Next())
                 {
-                    var payloads = spans.Payload;
+                    var payloads = spans.GetPayload();
                     foreach (var payload in payloads)
                     {
                         payloadSet.Add(Encoding.UTF8.GetString(payload));
@@ -427,7 +427,7 @@ namespace Lucene.Net.Search.Spans
                 //See payload helper, for the PayloadHelper.FIELD field, there is a single byte payload at every token
                 if (spans.IsPayloadAvailable)
                 {
-                    var payload = spans.Payload;
+                    var payload = spans.GetPayload();
                     Assert.IsTrue(payload.Count == expectedNumPayloads, "payload Size: " + payload.Count + " is not: " + expectedNumPayloads);
                     foreach (var thePayload in payload)
                     {
@@ -477,7 +477,7 @@ namespace Lucene.Net.Search.Spans
                 }
                 if (spans.IsPayloadAvailable)
                 {
-                    var payload = spans.Payload;
+                    var payload = spans.GetPayload();
                     if (VERBOSE)
                     {
                         Console.WriteLine("payloads for span:" + payload.Count);

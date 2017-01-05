@@ -82,7 +82,7 @@ namespace Lucene.Net.Search.Spans
         /// <returns> a List of byte arrays containing the data of this payload, otherwise null if isPayloadAvailable is false </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         // TODO: Remove warning after API has been finalized
-        public abstract ICollection<byte[]> Payload { get; } // LUCENENET TODO: Change to GetPayload() (and ensure consistency across API)
+        public abstract ICollection<byte[]> GetPayload();
 
         /// <summary>
         /// Checks if a payload can be loaded at this position.

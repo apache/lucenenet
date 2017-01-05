@@ -186,16 +186,13 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public override ICollection<byte[]> Payload
+        public override ICollection<byte[]> GetPayload()
         {
-            get
+            if (Current == null)
             {
-                if (Current == null)
-                {
-                    return new List<byte[]>();
-                }
-                return Current.Payload;
+                return new List<byte[]>();
             }
+            return Current.GetPayload();
         }
 
         public override bool IsPayloadAvailable

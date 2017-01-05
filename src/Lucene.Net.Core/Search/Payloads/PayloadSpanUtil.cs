@@ -197,7 +197,7 @@ namespace Lucene.Net.Search.Payloads
                 {
                     if (spans.IsPayloadAvailable)
                     {
-                        var payload = spans.Payload;
+                        var payload = spans.GetPayload();
                         foreach (var bytes in payload)
                         {
                             payloads.Add(bytes);

@@ -112,26 +112,23 @@ namespace Lucene.Net.Search.Spans
         }
 
         // TODO: Remove warning after API has been finalized
-        public override ICollection<byte[]> Payload
+        public override ICollection<byte[]> GetPayload()
         {
-            get
+            var payload = m_postings.Payload;
+            m_readPayload = true;
+            byte[] bytes;
+            if (payload != null)
             {
-                var payload = m_postings.Payload;
-                m_readPayload = true;
-                byte[] bytes;
-                if (payload != null)
-                {
-                    bytes = new byte[payload.Length];
-                    Array.Copy(payload.Bytes, payload.Offset, bytes, 0, payload.Length);
-                }
-                else
-                {
-                    bytes = null;
-                }
-                //LUCENE TO-DO
-                return new[] { bytes };
-                //return Collections.singletonList(bytes);
+                bytes = new byte[payload.Length];
+                Array.Copy(payload.Bytes, payload.Offset, bytes, 0, payload.Length);
             }
+            else
+            {
+                bytes = null;
+            }
+            //LUCENE TO-DO
+            return new[] { bytes };
+            //return Collections.singletonList(bytes);
         }
 
         // TODO: Remove warning after API has been finalized
@@ -183,12 +180,9 @@ namespace Lucene.Net.Search.Spans
                 get { return -1; }
             }
 
-            public override ICollection<byte[]> Payload
+            public override ICollection<byte[]> GetPayload()
             {
-                get
-                {
-                    return null;
-                }
+                return null;
             }
 
             public override bool IsPayloadAvailable

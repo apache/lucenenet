@@ -138,12 +138,9 @@ namespace Lucene.Net.Search.Spans
                 get { return spans.End; }
             }
 
-            public override ICollection<byte[]> Payload
+            public override ICollection<byte[]> GetPayload()
             {
-                get
-                {
-                    return new List<byte[]>(spans.Payload);
-                }
+                return new List<byte[]>(spans.GetPayload());
             }
 
             // TODO: Remove warning after API has been finalized
@@ -182,12 +179,9 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public virtual Spans[] SubSpans // LUCENENET TODO: Change to GetSubSpans (array)
+        public virtual Spans[] GetSubSpans()
         {
-            get
-            {
-                return subSpans;
-            }
+            return subSpans;
         }
 
         public override bool Next()
@@ -314,20 +308,17 @@ namespace Lucene.Net.Search.Spans
             get { return max.End; }
         }
 
-        public override ICollection<byte[]> Payload
+        public override ICollection<byte[]> GetPayload()
         {
-            get
+            var matchPayload = new HashSet<byte[]>();
+            for (var cell = first; cell != null; cell = cell.next)
             {
-                var matchPayload = new HashSet<byte[]>();
-                for (var cell = first; cell != null; cell = cell.next)
+                if (cell.IsPayloadAvailable)
                 {
-                    if (cell.IsPayloadAvailable)
-                    {
-                        matchPayload.UnionWith(cell.Payload);
-                    }
+                    matchPayload.UnionWith(cell.GetPayload());
                 }
-                return matchPayload;
             }
+            return matchPayload;
         }
 
         // TODO: Remove warning after API has been finalized

@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Spans
             bool result = spans.IsPayloadAvailable;
             if (result == true)
             {
-                var candidate = spans.Payload;
+                var candidate = spans.GetPayload();
                 if (candidate.Count == m_payloadToMatch.Count)
                 {
                     //TODO: check the byte arrays are the same

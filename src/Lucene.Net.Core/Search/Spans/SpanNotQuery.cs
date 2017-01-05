@@ -239,17 +239,14 @@ namespace Lucene.Net.Search.Spans
                 get { return includeSpans.End; }
             }
 
-            public override ICollection<byte[]> Payload
+            public override ICollection<byte[]> GetPayload()
             {
-                get
+                List<byte[]> result = null;
+                if (includeSpans.IsPayloadAvailable)
                 {
-                    List<byte[]> result = null;
-                    if (includeSpans.IsPayloadAvailable)
-                    {
-                        result = new List<byte[]>(includeSpans.Payload);
-                    }
-                    return result;
+                    result = new List<byte[]>(includeSpans.GetPayload());
                 }
+                return result;
             }
 
             // TODO: Remove warning after API has been finalized

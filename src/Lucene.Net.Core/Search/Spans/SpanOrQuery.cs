@@ -321,18 +321,15 @@ namespace Lucene.Net.Search.Spans
                 get { return Top().End; }
             }
 
-            public override ICollection<byte[]> Payload
+            public override ICollection<byte[]> GetPayload()
             {
-                get
+                List<byte[]> result = null;
+                Spans theTop = Top();
+                if (theTop != null && theTop.IsPayloadAvailable)
                 {
-                    List<byte[]> result = null;
-                    Spans theTop = Top();
-                    if (theTop != null && theTop.IsPayloadAvailable)
-                    {
-                        result = new List<byte[]>(theTop.Payload);
-                    }
-                    return result;
+                    result = new List<byte[]>(theTop.GetPayload());
                 }
+                return result;
             }
 
             public override bool IsPayloadAvailable

@@ -229,9 +229,9 @@ namespace Lucene.Net.Search.Payloads
                     {
                         if (span.IsPayloadAvailable)
                         {
-                            ProcessPayloads(span.Payload, subSpans[i].Start, subSpans[i].End);
+                            ProcessPayloads(span.GetPayload(), subSpans[i].Start, subSpans[i].End);
                         }
-                        GetPayloads(span.SubSpans);
+                        GetPayloads(span.GetSubSpans());
                     }
                     else
                     {
@@ -240,9 +240,9 @@ namespace Lucene.Net.Search.Payloads
                         {
                             if (unordered.IsPayloadAvailable)
                             {
-                                ProcessPayloads(unordered.Payload, subSpans[i].Start, subSpans[i].End);
+                                ProcessPayloads(unordered.GetPayload(), subSpans[i].Start, subSpans[i].End);
                             }
-                            GetPayloads(unordered.SubSpans);
+                            GetPayloads(unordered.GetSubSpans());
                         }
                     }
                 }
