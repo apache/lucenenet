@@ -251,20 +251,20 @@ namespace Lucene.Net.Util
 
             foreach (var c in classes)
             {
-                if (!string.IsNullOrEmpty(c.Namespace) && c.Namespace.StartsWith("Lucene.Net.Support"))
-                {
-                    continue;
-                }
-
                 var methods = c.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
                 foreach (var method in methods)
                 {
+                    if (method.Name.StartsWith("<")) // Ignore auto-generated methods
+                    {
+                        continue;
+                    }
+
                     var parameters = method.GetParameters();
 
                     foreach (var parameter in parameters)
                     {
-                        if (!MethodParameterName.IsMatch(parameter.Name))
+                        if (!MethodParameterName.IsMatch(parameter.Name) && method.DeclaringType.Equals(c.UnderlyingSystemType))
                         {
                             result.Add(string.Concat(c.FullName, ".", method.Name, " -parameter- ", parameter.Name));
                         }
