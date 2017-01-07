@@ -71,11 +71,6 @@ namespace Lucene.Net.Util.Packed
         {
         }
 
-        public override Iterator GetIterator() // LUCENENET TODO: This can be handled by the base class
-        {
-            return new Iterator(this);
-        }
-
         internal override long Get(int block, int element)
         {
             if (block == valuesOff)

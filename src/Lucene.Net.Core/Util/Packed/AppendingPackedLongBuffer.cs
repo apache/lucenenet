@@ -102,10 +102,5 @@ namespace Lucene.Net.Util.Packed
             }
             values[valuesOff] = mutable;
         }
-
-        public override Iterator GetIterator() // LUCENENET TODO: This can be done from the base class
-        {
-            return new Iterator(this);
-        }
     }
 }

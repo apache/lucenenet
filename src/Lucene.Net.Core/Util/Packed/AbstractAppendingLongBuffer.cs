@@ -141,7 +141,10 @@ namespace Lucene.Net.Util.Packed
         return new Iterator(this);
       }*/
 
-        public abstract Iterator GetIterator(); // LUCENENET TODO: This was not abstract in the original
+        public virtual Iterator GetIterator()
+        {
+            return new Iterator(this);
+        }
 
         public sealed class Iterator
         {
