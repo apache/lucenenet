@@ -53,8 +53,8 @@ namespace Lucene.Net.Search
                 : base(queue, numHits, fillFields)
             {
                 this.queue = queue;
-                comparator = queue.Comparators[0];
-                reverseMul = queue.ReverseMul[0];
+                comparator = queue.GetComparators()[0];
+                reverseMul = queue.GetReverseMul()[0];
             }
 
             internal void UpdateBottom(int doc)
@@ -418,8 +418,8 @@ namespace Lucene.Net.Search
                 : base(queue, numHits, fillFields)
             {
                 this.queue = queue;
-                comparators = queue.Comparators;
-                reverseMul = queue.ReverseMul;
+                comparators = queue.GetComparators();
+                reverseMul = queue.GetReverseMul();
             }
 
             internal void UpdateBottom(int doc)
@@ -987,8 +987,8 @@ namespace Lucene.Net.Search
                 this.trackDocScores = trackDocScores;
                 this.trackMaxScore = trackMaxScore;
                 this.after = after;
-                comparators = queue.Comparators;
-                reverseMul = queue.ReverseMul;
+                comparators = queue.GetComparators();
+                reverseMul = queue.GetReverseMul();
 
                 // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
                 maxScore = float.NegativeInfinity;
@@ -1280,7 +1280,7 @@ namespace Lucene.Net.Search
 
             if (after == null)
             {
-                if (queue.Comparators.Length == 1)
+                if (queue.GetComparators().Length == 1)
                 {
                     if (docsScoredInOrder)
                     {

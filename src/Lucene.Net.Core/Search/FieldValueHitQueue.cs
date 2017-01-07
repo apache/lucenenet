@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
                 SetComparator(0, field.GetComparator(size, 0));
                 oneReverseMul = field.reverse ? -1 : 1;
 
-                ReverseMul[0] = oneReverseMul;
+                GetReverseMul()[0] = oneReverseMul;
             }
 
             /// <summary> Returns whether <c>a</c> is less relevant than <c>b</c>.</summary>
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
                 {
                     SortField field = fields[i];
 
-                    ReverseMul[i] = field.reverse ? -1 : 1;
+                    m_reverseMul[i] = field.reverse ? -1 : 1;
                     SetComparator(i, field.GetComparator(size, i));
                 }
             }
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search
                 int numComparators = m_comparators.Length;
                 for (int i = 0; i < numComparators; ++i)
                 {
-                    int c = ReverseMul[i] * m_comparators[i].Compare(hitA.Slot, hitB.Slot);
+                    int c = m_reverseMul[i] * m_comparators[i].Compare(hitA.Slot, hitB.Slot);
                     if (c != 0)
                     {
                         // Short circuit
@@ -194,20 +194,14 @@ namespace Lucene.Net.Search
             m_reverseMul = new int[numComparators];
         }
 
-        public virtual FieldComparator[] Comparators // LUCENENET TODO: Make GetComparators() (array) rename GetComparers
+        public virtual FieldComparator[] GetComparators()
         {
-            get
-            {
-                return m_comparators;
-            }
+            return m_comparators;
         }
 
-        public virtual int[] ReverseMul // LUCENENET TODO: Make GetReverseMul() (array)
+        public virtual int[] GetReverseMul()
         {
-            get
-            {
-                return m_reverseMul;
-            }
+            return m_reverseMul;
         }
 
         public virtual void SetComparator(int pos, FieldComparator comparator)
@@ -246,11 +240,11 @@ namespace Lucene.Net.Search
         /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
         internal virtual FieldDoc FillFields(FieldValueHitQueue.Entry entry)
         {
-            int n = Comparators.Length;
+            int n = m_comparators.Length;
             IComparable[] fields = new IComparable[n];
             for (int i = 0; i < n; ++i)
             {
-                fields[i] = Comparators[i].Value(entry.Slot);
+                fields[i] = m_comparators[i].Value(entry.Slot);
             }
             //if (maxscore > 1.0f) doc.score /= maxscore;   // normalize scores
             return new FieldDoc(entry.Doc, entry.Score, fields);

@@ -119,8 +119,8 @@ namespace Lucene.Net.Join
             this.trackScores = trackScores;
             this.numParentHits = numParentHits;
             queue = FieldValueHitQueue.Create<OneGroup>(sort.GetSort(), numParentHits);
-            comparators = queue.Comparators;
-            reverseMul = queue.ReverseMul;
+            comparators = queue.GetComparators();
+            reverseMul = queue.GetReverseMul();
             compEnd = comparators.Length - 1;
         }
 
