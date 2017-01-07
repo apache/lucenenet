@@ -190,7 +190,7 @@ namespace Lucene.Net.Util
             ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
             CheckIndex checker = new CheckIndex(dir);
             checker.CrossCheckTermVectors = crossCheckTermVectors;
-            checker.SetInfoStream(new StreamWriter(bos, Encoding.UTF8));
+            checker.InfoStream = new StreamWriter(bos, Encoding.UTF8);
             CheckIndex.Status indexStatus = checker.DoCheckIndex(null);
             if (indexStatus == null || indexStatus.Clean == false)
             {

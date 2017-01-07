@@ -61,10 +61,10 @@ namespace Lucene.Net.Index
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
             CheckIndex checker = new CheckIndex(dir);
-            checker.SetInfoStream(new StreamWriter(bos, Encoding.UTF8));
+            checker.InfoStream = new StreamWriter(bos, Encoding.UTF8);
             if (VERBOSE)
             {
-                checker.SetInfoStream(Console.Out);
+                checker.InfoStream = Console.Out;
             }
             CheckIndex.Status indexStatus = checker.DoCheckIndex();
             if (indexStatus.Clean == false)

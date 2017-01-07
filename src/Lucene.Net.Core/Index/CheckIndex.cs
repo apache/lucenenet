@@ -440,31 +440,33 @@ namespace Lucene.Net.Index
 
         private bool verbose;
 
-        /// <summary>
-        /// Set infoStream where messages should go.  If null, no
-        ///  messages are printed.  If verbose is true then more
-        ///  details are printed.
-        /// </summary>
-        public virtual void SetInfoStream(TextWriter @out, bool verbose)
-        {
-            infoStream = @out; // LUCENENET TODO: Create a wrapper class for the reader that is passed so it won't throw exceptions if it is disposed (the exceptions are pointless in this case)
-            this.verbose = verbose;
-        }
-
-        /// <summary>
-        /// Set infoStream where messages should go. See <seealso cref="#setInfoStream(PrintStream,boolean)"/>. </summary>
-        public virtual void SetInfoStream(TextWriter @out)
-        {
-            SetInfoStream(@out, false);
-        }
-        
         // LUCENENET specific - added getter so we don't need to keep a reference outside of this class to dispose
+        /// <summary>
+        /// Gets or Sets infoStream where messages should go.  If null, no
+        /// messages are printed.  If <see cref="InfoStreamIsVerbose"/> is true then more
+        /// details are printed.
+        /// </summary>
         public virtual TextWriter InfoStream
         {
             get
             {
-                return infoStream; // LUCENENET TODO: Perhaps this class should implement IDisposable so we can clean this up and set it to null
+                return infoStream;
             }
+            set
+            {
+                infoStream = value == null 
+                    ? null 
+                    : (value is SafeTextWriterWrapper ? value : new SafeTextWriterWrapper(value));
+            }
+        }
+
+        /// <summary>
+        /// If true, prints more details to the <see cref="InfoStream"/>, if set.
+        /// </summary>
+        public virtual bool InfoStreamIsVerbose // LUCENENET specific (replaced overload of SetInfoStream with property)
+        {
+            get { return this.verbose; }
+            set { this.verbose = value; }
         }
 
         public virtual void FlushInfoStream() // LUCENENET specific

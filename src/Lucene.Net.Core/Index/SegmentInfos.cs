@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// If non-null, information about loading segments_N files </summary>
         /// will be printed here.  <seealso cref= #setInfoStream. </seealso>
-        private static StreamWriter infoStream = null;
+        private static TextWriter infoStream = null;
 
         /// <summary>
         /// Sole constructor. Typically you call this and then
@@ -742,11 +742,15 @@ namespace Lucene.Net.Index
         /// If non-null, information about retries when loading
         /// the segments file will be printed to this.
         /// </summary>
-        public static StreamWriter InfoStream // LUCENENET TODO: Make this into TextWriter
+        public static TextWriter InfoStream 
         {
-            set // LUCENENET TODO: Change to SetInfoStream() for consistency
+            set
             {
-                SegmentInfos.infoStream = value;
+                // LUCENENET specific - use a SafeTextWriterWrapper to ensure that if the TextWriter
+                // is disposed by the caller (using block) we don't get any exceptions if we keep using it.
+                infoStream = value == null
+                    ? null
+                    : (value is SafeTextWriterWrapper ? value : new SafeTextWriterWrapper(value));
             }
             get
             {

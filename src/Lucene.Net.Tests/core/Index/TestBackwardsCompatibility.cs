@@ -312,7 +312,7 @@ namespace Lucene.Net.Index
                 CheckIndex.Status indexStatus;
                 using (var infoStream = new StringWriter(sb))
                 {
-                    checker.SetInfoStream(infoStream);
+                    checker.InfoStream = infoStream;
                     indexStatus = checker.DoCheckIndex();
                 }
                 Assert.IsFalse(indexStatus.Clean);

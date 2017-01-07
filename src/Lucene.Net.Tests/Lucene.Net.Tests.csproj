@@ -493,6 +493,7 @@
     <Compile Include="core\Support\TestLurchTableThreading.cs" />
     <Compile Include="core\Support\TestDataInputStream.cs" />
     <Compile Include="core\Support\TestDataOutputStream.cs" />
+    <Compile Include="core\Support\TestSafeTextWriterWrapper.cs" />
     <Compile Include="core\Support\TestStringBuilderExtensions.cs" />
     <Compile Include="core\Support\TestTreeDictionary.cs" />
     <Compile Include="core\Support\TestTreeSet.cs" />

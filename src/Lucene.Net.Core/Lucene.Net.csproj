@@ -653,6 +653,7 @@
     <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\ReaderWriterLockSlimExtensions.cs" />
     <Compile Include="Support\ReentrantLock.cs" />
+    <Compile Include="Support\SafeTextWriterWrapper.cs" />
     <Compile Include="Support\SetExtensions.cs" />
     <Compile Include="Support\StreamUtils.cs" />
     <Compile Include="Support\StringBuilderExtensions.cs" />

@@ -1936,9 +1936,13 @@ namespace Lucene.Net.Search
 
         public virtual TextWriter InfoStream
         {
-            set // LUCENENET TODO: make setter SetInfoStream() for consistency across API
+            set
             {
-                infoStream = value;
+                // LUCENENET specific - use a SafeTextWriterWrapper to ensure that if the TextWriter
+                // is disposed by the caller (using block) we don't get any exceptions if we keep using it.
+                infoStream = value == null
+                    ? null
+                    : (value is SafeTextWriterWrapper ? value : new SafeTextWriterWrapper(value));
             }
             get
             {
