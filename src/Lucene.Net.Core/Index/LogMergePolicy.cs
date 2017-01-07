@@ -117,13 +117,15 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if {@code LMP} is enabled in {@link
-        ///  IndexWriter}'s {@code infoStream}.
+        /// Returns true if <see cref="LogMergePolicy"/> is enabled in <see cref="IndexWriter.infoStream"/>.
         /// </summary>
-        protected virtual bool Verbose() // LUCENENET TODO: Make property
+        protected virtual bool IsVerbose
         {
-            IndexWriter w = m_writer.Get();
-            return w != null && w.infoStream.IsEnabled("LMP");
+            get
+            {
+                IndexWriter w = m_writer.Get();
+                return w != null && w.infoStream.IsEnabled("LMP");
+            }
         }
 
         /// <summary>
@@ -132,7 +134,7 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual void Message(string message)
         {
-            if (Verbose())
+            if (IsVerbose)
             {
                 m_writer.Get().infoStream.Message("LMP", message);
             }
@@ -270,7 +272,7 @@ namespace Lucene.Net.Index
                 SegmentCommitInfo info = infos.Info(start);
                 if (Size(info) > m_maxMergeSizeForForcedMerge || SizeDocs(info) > m_maxMergeDocs)
                 {
-                    if (Verbose())
+                    if (IsVerbose)
                     {
                         Message("findForcedMergesSizeLimit: skip segment=" + info + ": size is > maxMergeSize (" + m_maxMergeSizeForForcedMerge + ") or sizeDocs is > maxMergeDocs (" + m_maxMergeDocs + ")");
                     }
@@ -386,7 +388,7 @@ namespace Lucene.Net.Index
         public override MergeSpecification FindForcedMerges(SegmentInfos infos, int maxNumSegments, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
         {
             Debug.Assert(maxNumSegments > 0);
-            if (Verbose())
+            if (IsVerbose)
             {
                 Message("findForcedMerges: maxNumSegs=" + maxNumSegments + " segsToMerge=" + segmentsToMerge);
             }
@@ -395,7 +397,7 @@ namespace Lucene.Net.Index
             // there are <maxNumSegments:.
             if (IsMerged(infos, maxNumSegments, segmentsToMerge))
             {
-                if (Verbose())
+                if (IsVerbose)
                 {
                     Message("already merged; skip");
                 }
@@ -418,7 +420,7 @@ namespace Lucene.Net.Index
 
             if (last == 0)
             {
-                if (Verbose())
+                if (IsVerbose)
                 {
                     Message("last == 0; skip");
                 }
@@ -428,7 +430,7 @@ namespace Lucene.Net.Index
             // There is only one segment already, and it is merged
             if (maxNumSegments == 1 && last == 1 && IsMerged(infos, infos.Info(0)))
             {
-                if (Verbose())
+                if (IsVerbose)
                 {
                     Message("already 1 seg; skip");
                 }
@@ -467,7 +469,7 @@ namespace Lucene.Net.Index
             var segments = segmentInfos.AsList();
             int numSegments = segments.Count;
 
-            if (Verbose())
+            if (IsVerbose)
             {
                 Message("findForcedDeleteMerges: " + numSegments + " segments");
             }
@@ -482,7 +484,7 @@ namespace Lucene.Net.Index
                 int delCount = w.NumDeletedDocs(info);
                 if (delCount > 0)
                 {
-                    if (Verbose())
+                    if (IsVerbose)
                     {
                         Message("  segment " + info.Info.Name + " has deletions");
                     }
@@ -494,7 +496,7 @@ namespace Lucene.Net.Index
                     {
                         // We've seen mergeFactor segments in a row with
                         // deletions, so force a merge now:
-                        if (Verbose())
+                        if (IsVerbose)
                         {
                             Message("  add merge " + firstSegmentWithDeletions + " to " + (i - 1) + " inclusive");
                         }
@@ -507,7 +509,7 @@ namespace Lucene.Net.Index
                     // End of a sequence of segments with deletions, so,
                     // merge those past segments even if it's fewer than
                     // mergeFactor segments
-                    if (Verbose())
+                    if (IsVerbose)
                     {
                         Message("  add merge " + firstSegmentWithDeletions + " to " + (i - 1) + " inclusive");
                     }
@@ -518,7 +520,7 @@ namespace Lucene.Net.Index
 
             if (firstSegmentWithDeletions != -1)
             {
-                if (Verbose())
+                if (IsVerbose)
                 {
                     Message("  add merge " + firstSegmentWithDeletions + " to " + (numSegments - 1) + " inclusive");
                 }
@@ -560,7 +562,7 @@ namespace Lucene.Net.Index
         public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos infos)
         {
             int numSegments = infos.Count;
-            if (Verbose())
+            if (IsVerbose)
             {
                 Message("findMerges: " + numSegments + " segments");
             }
@@ -586,7 +588,7 @@ namespace Lucene.Net.Index
                 SegmentInfoAndLevel infoLevel = new SegmentInfoAndLevel(info, (float)Math.Log(size) / norm, i);
                 levels.Add(infoLevel);
 
-                if (Verbose())
+                if (IsVerbose)
                 {
                     long segBytes = SizeBytes(info);
                     string extra = mergingSegments.Contains(info) ? " [merging]" : "";
@@ -662,7 +664,7 @@ namespace Lucene.Net.Index
                     }
                     upto--;
                 }
-                if (Verbose())
+                if (IsVerbose)
                 {
                     Message("  level " + levelBottom + " to " + maxLevel + ": " + (1 + upto - start) + " segments");
                 }
@@ -700,13 +702,13 @@ namespace Lucene.Net.Index
                             mergeInfos.Add(levels[i].info);
                             Debug.Assert(infos.Contains(levels[i].info));
                         }
-                        if (Verbose())
+                        if (IsVerbose)
                         {
                             Message("  add merge=" + m_writer.Get().SegString(mergeInfos) + " start=" + start + " end=" + end);
                         }
                         spec.Add(new OneMerge(mergeInfos));
                     }
-                    else if (Verbose())
+                    else if (IsVerbose)
                     {
                         Message("    " + start + " to " + end + ": contains segment over maxMergeSize or maxMergeDocs; skipping");
                     }
