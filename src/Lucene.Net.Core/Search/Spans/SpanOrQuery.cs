@@ -263,7 +263,7 @@ namespace Lucene.Net.Search.Spans
                     return false;
                 }
 
-                if (Top().Next()) // move to next
+                if (Top.Next()) // move to next
                 {
                     queue.UpdateTop();
                     return true;
@@ -273,9 +273,9 @@ namespace Lucene.Net.Search.Spans
                 return queue.Count != 0;
             }
 
-            private Spans Top() // LUCENENET TODO: make property
+            private Spans Top
             {
-                return queue.Top;
+                get { return queue.Top; }
             }
 
             public override bool SkipTo(int target)
@@ -286,9 +286,9 @@ namespace Lucene.Net.Search.Spans
                 }
 
                 bool skipCalled = false;
-                while (queue.Count != 0 && Top().Doc < target)
+                while (queue.Count != 0 && Top.Doc < target)
                 {
-                    if (Top().SkipTo(target))
+                    if (Top.SkipTo(target))
                     {
                         queue.UpdateTop();
                     }
@@ -308,23 +308,23 @@ namespace Lucene.Net.Search.Spans
 
             public override int Doc
             {
-                get { return Top().Doc; }
+                get { return Top.Doc; }
             }
 
             public override int Start
             {
-                get { return Top().Start; }
+                get { return Top.Start; }
             }
 
             public override int End
             {
-                get { return Top().End; }
+                get { return Top.End; }
             }
 
             public override ICollection<byte[]> GetPayload()
             {
                 List<byte[]> result = null;
-                Spans theTop = Top();
+                Spans theTop = Top;
                 if (theTop != null && theTop.IsPayloadAvailable)
                 {
                     result = new List<byte[]>(theTop.GetPayload());
@@ -336,7 +336,7 @@ namespace Lucene.Net.Search.Spans
             {
                 get
                 {
-                    Spans top = Top();
+                    Spans top = Top;
                     return top != null && top.IsPayloadAvailable;
                 }
             }
