@@ -290,7 +290,7 @@ namespace Lucene.Net.Search
 
             int nTerms = termsIndex.ValueCount;
 
-            TermsEnum tenum = termsIndex.TermsEnum();
+            TermsEnum tenum = termsIndex.GetTermsEnum();
             BytesRef val = new BytesRef();
             for (int i = 0; i < nTerms; i++)
             {

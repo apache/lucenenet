@@ -493,7 +493,7 @@ namespace Lucene.Net.Index
             SortedSetDocValues dv = FieldCache.DEFAULT.GetDocTermOrds(ar, "field");
             Assert.AreEqual(3, dv.ValueCount);
 
-            TermsEnum termsEnum = dv.TermsEnum();
+            TermsEnum termsEnum = dv.GetTermsEnum();
 
             // next()
             Assert.AreEqual("beer", termsEnum.Next().Utf8ToString());

@@ -187,7 +187,7 @@ namespace Lucene.Net.Search.Grouping.Terms
 
             protected override AbstractSegmentResult CreateSegmentResult()
             {
-                return new SegmentResult(segmentFacetCounts, segmentTotalCount, facetFieldTermsIndex.TermsEnum(), startFacetOrd, endFacetOrd);
+                return new SegmentResult(segmentFacetCounts, segmentTotalCount, facetFieldTermsIndex.GetTermsEnum(), startFacetOrd, endFacetOrd);
             }
 
             internal class SegmentResult : AbstractGroupFacetCollector.AbstractSegmentResult
@@ -333,7 +333,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                 }
                 else
                 {
-                    facetOrdTermsEnum = facetFieldDocTermOrds.TermsEnum();
+                    facetOrdTermsEnum = facetFieldDocTermOrds.GetTermsEnum();
                 }
                 // [facetFieldNumTerms() + 1] for all possible facet values and docs not containing facet field
                 segmentFacetCounts = new int[facetFieldNumTerms + 1];

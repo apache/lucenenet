@@ -667,7 +667,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
-            public override TermsEnum TermsEnum()
+            public override TermsEnum GetTermsEnum()
             {
                 if (binary is CompressedBinaryDocValues)
                 {
@@ -675,7 +675,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 else
                 {
-                    return base.TermsEnum();
+                    return base.GetTermsEnum();
                 }
             }
         }
@@ -793,7 +793,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
-            public override TermsEnum TermsEnum()
+            public override TermsEnum GetTermsEnum()
             {
                 if (binary is CompressedBinaryDocValues)
                 {
@@ -801,7 +801,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 else
                 {
-                    return base.TermsEnum();
+                    return base.GetTermsEnum();
                 }
             }
 

@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
             return this.starts[readerIndex];
         }
 
-        protected internal override sealed IList<IndexReader> GetSequentialSubReaders() // LUCENENET TODO: Change to IList<R> (and see if it compiles - it should because R has a constraint)
+        protected internal override sealed IList<IndexReader> GetSequentialSubReaders()
         {
             return subReadersList.Cast<IndexReader>().ToList();
         }

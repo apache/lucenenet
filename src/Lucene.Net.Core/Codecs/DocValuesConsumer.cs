@@ -248,7 +248,7 @@ namespace Lucene.Net.Codecs
                 IBits liveDocs = reader.LiveDocs;
                 if (liveDocs == null)
                 {
-                    liveTerms[sub] = dv.TermsEnum();
+                    liveTerms[sub] = dv.GetTermsEnum();
                 }
                 else
                 {
@@ -264,7 +264,7 @@ namespace Lucene.Net.Codecs
                             }
                         }
                     }
-                    liveTerms[sub] = new BitsFilteredTermsEnum(dv.TermsEnum(), bitset);
+                    liveTerms[sub] = new BitsFilteredTermsEnum(dv.GetTermsEnum(), bitset);
                 }
             }
 
@@ -506,7 +506,7 @@ namespace Lucene.Net.Codecs
                 var liveDocs = reader.LiveDocs;
                 if (liveDocs == null)
                 {
-                    liveTerms[sub] = dv.TermsEnum();
+                    liveTerms[sub] = dv.GetTermsEnum();
                 }
                 else
                 {
@@ -523,7 +523,7 @@ namespace Lucene.Net.Codecs
                             }
                         }
                     }
-                    liveTerms[sub] = new BitsFilteredTermsEnum(dv.TermsEnum(), bitset);
+                    liveTerms[sub] = new BitsFilteredTermsEnum(dv.GetTermsEnum(), bitset);
                 }
             }
 

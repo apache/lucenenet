@@ -525,7 +525,7 @@ namespace Lucene.Net.Codecs.Memory
                 get { return (int) entry.numOrds; }
             }
 
-            public override TermsEnum TermsEnum()
+            public override TermsEnum GetTermsEnum()
             {
                 return new FSTTermsEnum(fst);
             }
@@ -662,7 +662,7 @@ namespace Lucene.Net.Codecs.Memory
                 get { return entry.numOrds; }
             }
 
-            public override TermsEnum TermsEnum()
+            public override TermsEnum GetTermsEnum()
             {
                 return new FSTTermsEnum(fst);
             }

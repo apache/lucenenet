@@ -517,7 +517,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 }
             }
 
-            public override TermsEnum TermsEnum()
+            public override TermsEnum GetTermsEnum()
             {
                 return new FSTTermsEnum(fst);
             }
@@ -654,7 +654,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 }
             }
 
-            public override TermsEnum TermsEnum()
+            public override TermsEnum GetTermsEnum()
             {
                 return new FSTTermsEnum(fst);
             }

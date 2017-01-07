@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
 
                 public override TermsEnum Iterator(TermsEnum reuse)
                 {
-                    return fcsi.TermsEnum();
+                    return fcsi.GetTermsEnum();
                 }
 
                 public override long SumTotalTermFreq

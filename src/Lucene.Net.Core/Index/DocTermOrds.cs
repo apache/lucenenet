@@ -960,7 +960,7 @@ namespace Lucene.Net.Index
             {
                 this.outerInstance = outerInstance;
                 this.reader = reader;
-                this.te = TermsEnum();
+                this.te = GetTermsEnum();
             }
 
             public override long NextOrd()
@@ -1110,7 +1110,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override TermsEnum TermsEnum()
+            public override TermsEnum GetTermsEnum()
             {
                 try
                 {

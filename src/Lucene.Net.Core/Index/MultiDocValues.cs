@@ -367,7 +367,7 @@ namespace Lucene.Net.Index
                 TermsEnum[] enums = new TermsEnum[values.Length];
                 for (int i = 0; i < values.Length; i++)
                 {
-                    enums[i] = values[i].TermsEnum();
+                    enums[i] = values[i].GetTermsEnum();
                 }
                 OrdinalMap mapping = new OrdinalMap(r.CoreCacheKey, enums);
                 return new MultiSortedDocValues(values, starts, mapping);
@@ -424,7 +424,7 @@ namespace Lucene.Net.Index
                 TermsEnum[] enums = new TermsEnum[values.Length];
                 for (int i = 0; i < values.Length; i++)
                 {
-                    enums[i] = values[i].TermsEnum();
+                    enums[i] = values[i].GetTermsEnum();
                 }
                 OrdinalMap mapping = new OrdinalMap(r.CoreCacheKey, enums);
                 return new MultiSortedSetDocValues(values, starts, mapping);

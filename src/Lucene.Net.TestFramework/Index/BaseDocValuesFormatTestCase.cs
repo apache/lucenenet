@@ -871,7 +871,7 @@ namespace Lucene.Net.Index
             SortedDocValues dv = GetOnlySegmentReader(ireader).GetSortedDocValues("field");
             Assert.AreEqual(3, dv.ValueCount);
 
-            TermsEnum termsEnum = dv.TermsEnum();
+            TermsEnum termsEnum = dv.GetTermsEnum();
 
             // next()
             Assert.AreEqual("beer", termsEnum.Next().Utf8ToString());
@@ -2257,7 +2257,7 @@ namespace Lucene.Net.Index
             SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
             Assert.AreEqual(3, dv.ValueCount);
 
-            TermsEnum termsEnum = dv.TermsEnum();
+            TermsEnum termsEnum = dv.GetTermsEnum();
 
             // next()
             Assert.AreEqual("beer", termsEnum.Next().Utf8ToString());
@@ -2485,7 +2485,7 @@ namespace Lucene.Net.Index
             }
 
             // compare termsenum
-            AssertEquals(expected.ValueCount, expected.TermsEnum(), actual.TermsEnum());
+            AssertEquals(expected.ValueCount, expected.GetTermsEnum(), actual.GetTermsEnum());
         }
 
         private void AssertEquals(long numOrds, TermsEnum expected, TermsEnum actual)
