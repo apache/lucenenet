@@ -129,28 +129,22 @@ namespace Lucene.Net.Search
         /// Returns a List of the terms in the multiphrase.
         /// Do not modify the List or its contents.
         /// </summary>
-        public virtual IList<Term[]> TermArrays // LUCENENET TODO: Change to GetTermArrays() (conversion)
+        public virtual IList<Term[]> GetTermArrays()
         {
-            get
-            {
-                return termArrays.AsReadOnly();// Collections.unmodifiableList(TermArrays_Renamed);
-            }
+            return termArrays.AsReadOnly();// Collections.unmodifiableList(TermArrays_Renamed);
         }
 
         /// <summary>
         /// Returns the relative positions of terms in this phrase.
         /// </summary>
-        public virtual int[] Positions // LUCENENET TODO: Change to GetPositions() (array)
+        public virtual int[] GetPositions()
         {
-            get
+            var result = new int[positions.Count];
+            for (int i = 0; i < positions.Count; i++)
             {
-                var result = new int[positions.Count];
-                for (int i = 0; i < positions.Count; i++)
-                {
-                    result[i] = (int)positions[i];
-                }
-                return result;
+                result[i] = (int)positions[i];
             }
+            return result;
         }
 
         // inherit javadoc

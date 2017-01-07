@@ -124,8 +124,8 @@ namespace Lucene.Net.Search.Payloads
             else if (query is MultiPhraseQuery)
             {
                 MultiPhraseQuery mpq = (MultiPhraseQuery)query;
-                IList<Term[]> termArrays = mpq.TermArrays;
-                int[] positions = mpq.Positions;
+                IList<Term[]> termArrays = mpq.GetTermArrays();
+                int[] positions = mpq.GetPositions();
                 if (positions.Length > 0)
                 {
                     int maxPosition = positions[positions.Length - 1];

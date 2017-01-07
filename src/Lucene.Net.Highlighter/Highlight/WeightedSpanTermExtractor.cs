@@ -150,8 +150,8 @@ namespace Lucene.Net.Search.Highlight
             else if (query is MultiPhraseQuery)
             {
                 MultiPhraseQuery mpq = (MultiPhraseQuery) query;
-                IList<Term[]> termArrays = mpq.TermArrays;
-                int[] positions = mpq.Positions;
+                IList<Term[]> termArrays = mpq.GetTermArrays();
+                int[] positions = mpq.GetPositions();
                 if (positions.Length > 0)
                 {
 
