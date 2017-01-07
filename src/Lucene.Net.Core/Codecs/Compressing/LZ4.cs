@@ -223,7 +223,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int bitsPerOffset = PackedInts.BitsRequired(len - LAST_LITERALS);
                 int bitsPerOffsetLog = 32 - Number.NumberOfLeadingZeros(bitsPerOffset - 1);
                 hashLog = MEMORY_USAGE + 3 - bitsPerOffsetLog;
-                if (hashTable == null || hashTable.Size < 1 << hashLog || hashTable.BitsPerValue < bitsPerOffset)
+                if (hashTable == null || hashTable.Count < 1 << hashLog || hashTable.BitsPerValue < bitsPerOffset)
                 {
                     hashTable = PackedInts.GetMutable(1 << hashLog, bitsPerOffset, PackedInts.DEFAULT);
                 }

@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Lucene42
             try
             {
                 CodecUtil.WriteHeader(output, Lucene42FieldInfosFormat.CODEC_NAME, Lucene42FieldInfosFormat.FORMAT_CURRENT);
-                output.WriteVInt(infos.Size);
+                output.WriteVInt(infos.Count);
                 foreach (FieldInfo fi in infos)
                 {
                     IndexOptions? indexOptions = fi.IndexOptions;

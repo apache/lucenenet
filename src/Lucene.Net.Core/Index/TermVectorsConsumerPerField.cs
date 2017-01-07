@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
             if (doVectors)
             {
                 termsWriter.hasVectors = true;
-                if (termsHashPerField.bytesHash.Size != 0)
+                if (termsHashPerField.bytesHash.Count != 0)
                 {
                     // Only necessary if previous doc hit a
                     // non-aborting exception while writing vectors in
@@ -157,7 +157,7 @@ namespace Lucene.Net.Index
         ///  the real term vectors files in the Directory. 	  /// </summary>
         internal override void Finish()
         {
-            if (!doVectors || termsHashPerField.bytesHash.Size == 0)
+            if (!doVectors || termsHashPerField.bytesHash.Count == 0)
             {
                 return;
             }
@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
         {
             Debug.Assert(docState.TestPoint("TermVectorsTermsWriterPerField.finish start"));
 
-            int numPostings = termsHashPerField.bytesHash.Size;
+            int numPostings = termsHashPerField.bytesHash.Count;
 
             BytesRef flushTerm = termsWriter.flushTerm;
 

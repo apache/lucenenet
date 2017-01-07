@@ -100,8 +100,9 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Returns number of states in automaton.
+        /// NOTE: This was size() in Lucene.
         /// </summary>
-        public int Size // LUCENENET TODO: Rename Count
+        public int Count
         {
             get
             {

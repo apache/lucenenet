@@ -56,9 +56,9 @@ namespace Lucene.Net.Util.Packed
             return current.Get(index);
         }
 
-        public override int Size
+        public override int Count
         {
-            get { return current.Size; }
+            get { return current.Count; }
         }
 
         public override int BitsPerValue
@@ -95,7 +95,7 @@ namespace Lucene.Net.Util.Packed
             }
             int bitsRequired = value < 0 ? 64 : PackedInts.BitsRequired(value);
             Debug.Assert(bitsRequired > current.BitsPerValue);
-            int valueCount = Size;
+            int valueCount = Count;
             PackedInts.Mutable next = PackedInts.GetMutable(valueCount, bitsRequired, acceptableOverheadRatio);
             PackedInts.Copy(current, 0, next, 0, valueCount, PackedInts.DEFAULT_BUFFER_SIZE);
             current = next;
@@ -116,7 +116,7 @@ namespace Lucene.Net.Util.Packed
         public virtual GrowableWriter Resize(int newSize)
         {
             GrowableWriter next = new GrowableWriter(BitsPerValue, newSize, acceptableOverheadRatio);
-            int limit = Math.Min(Size, newSize);
+            int limit = Math.Min(Count, newSize);
             PackedInts.Copy(current, 0, next, 0, limit, PackedInts.DEFAULT_BUFFER_SIZE);
             return next;
         }

@@ -924,7 +924,7 @@ namespace Lucene.Net.Search
                         values = new GrowableWriter(startBitsPerValue, reader.MaxDoc, PackedInts.FAST);
                         if (minValue != 0)
                         {
-                            values.Fill(0, values.Size, (-minValue) & 0xFFFFFFFFL); // default value must be 0
+                            values.Fill(0, values.Count, (-minValue) & 0xFFFFFFFFL); // default value must be 0
                         }
                         valuesRef.Set(new GrowableWriterAndMinValue(values, minValue));
                     }
@@ -1342,7 +1342,7 @@ namespace Lucene.Net.Search
                         values = new GrowableWriter(startBitsPerValue, reader.MaxDoc, PackedInts.FAST);
                         if (minValue != 0)
                         {
-                            values.Fill(0, values.Size, -minValue); // default value must be 0
+                            values.Fill(0, values.Count, -minValue); // default value must be 0
                         }
                         valuesRef.Set(new GrowableWriterAndMinValue(values, minValue));
                     }
@@ -1627,7 +1627,7 @@ namespace Lucene.Net.Search
                     // Try for coarse estimate for number of bits; this
                     // should be an underestimate most of the time, which
                     // is fine -- GrowableWriter will reallocate as needed
-                    long numUniqueTerms = terms.Size;
+                    long numUniqueTerms = terms.Count;
                     if (numUniqueTerms != -1L)
                     {
                         if (numUniqueTerms > termCountHardLimit)
@@ -1792,7 +1792,7 @@ namespace Lucene.Net.Search
                     // Try for coarse estimate for number of bits; this
                     // should be an underestimate most of the time, which
                     // is fine -- GrowableWriter will reallocate as needed
-                    long numUniqueTerms = terms.Size;
+                    long numUniqueTerms = terms.Count;
                     if (numUniqueTerms != -1L)
                     {
                         if (numUniqueTerms > termCountHardLimit)

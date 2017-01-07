@@ -112,7 +112,7 @@ namespace Lucene.Net.Codecs.ramonly
                 return FieldToTerms[field];
             }
 
-            public override int Size
+            public override int Count
             {
                 get { return FieldToTerms.Count; }
             }
@@ -168,7 +168,7 @@ namespace Lucene.Net.Codecs.ramonly
                 return sizeInBytes;
             }
 
-            public override long Size
+            public override long Count
             {
                 get { return TermToDocs.Count; }
             }

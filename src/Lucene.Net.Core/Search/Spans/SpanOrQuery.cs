@@ -248,7 +248,7 @@ namespace Lucene.Net.Search.Spans
                         queue.Add(spans);
                     }
                 }
-                return queue.Size != 0;
+                return queue.Count != 0;
             }
 
             public override bool Next()
@@ -258,7 +258,7 @@ namespace Lucene.Net.Search.Spans
                     return InitSpanQueue(-1);
                 }
 
-                if (queue.Size == 0) // all done
+                if (queue.Count == 0) // all done
                 {
                     return false;
                 }
@@ -270,7 +270,7 @@ namespace Lucene.Net.Search.Spans
                 }
 
                 queue.Pop(); // exhausted a clause
-                return queue.Size != 0;
+                return queue.Count != 0;
             }
 
             private Spans Top() // LUCENENET TODO: make property
@@ -286,7 +286,7 @@ namespace Lucene.Net.Search.Spans
                 }
 
                 bool skipCalled = false;
-                while (queue.Size != 0 && Top().Doc < target)
+                while (queue.Count != 0 && Top().Doc < target)
                 {
                     if (Top().SkipTo(target))
                     {
@@ -301,7 +301,7 @@ namespace Lucene.Net.Search.Spans
 
                 if (skipCalled)
                 {
-                    return queue.Size != 0;
+                    return queue.Count != 0;
                 }
                 return Next();
             }
@@ -343,7 +343,7 @@ namespace Lucene.Net.Search.Spans
 
             public override string ToString()
             {
-                return "spans(" + outerInstance + ")@" + ((queue == null) ? "START" : (queue.Size > 0 ? (Doc + ":" + Start + "-" + End) : "END"));
+                return "spans(" + outerInstance + ")@" + ((queue == null) ? "START" : (queue.Count > 0 ? (Doc + ":" + Start + "-" + End) : "END"));
             }
 
             public override long Cost()

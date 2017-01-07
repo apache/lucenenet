@@ -255,7 +255,7 @@ namespace Lucene.Net.Index
             return s;
         }
 
-        public virtual bool Any() // LUCENENET TODO: Make property?
+        public virtual bool Any()
         {
             return termCount > 0 || queries.Length > 0 || numericDVUpdates.Length > 0 || binaryDVUpdates.Length > 0;
         }

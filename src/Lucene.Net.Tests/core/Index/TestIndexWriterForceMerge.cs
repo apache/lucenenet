@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
 
                 SegmentInfos sis = new SegmentInfos();
                 sis.Read(dir);
-                int segCount = sis.Size;
+                int segCount = sis.Count;
 
                 ldmp = new LogDocMergePolicy();
                 ldmp.MergeFactor = 5;
@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
 
                 sis = new SegmentInfos();
                 sis.Read(dir);
-                int optSegCount = sis.Size;
+                int optSegCount = sis.Count;
 
                 if (segCount < 3)
                 {
@@ -112,14 +112,14 @@ namespace Lucene.Net.Index
                 SegmentInfos sis = new SegmentInfos();
                 sis.Read(dir);
 
-                int segCount = sis.Size;
+                int segCount = sis.Count;
                 writer.ForceMerge(7);
                 writer.Commit();
                 writer.WaitForMerges();
 
                 sis = new SegmentInfos();
                 sis.Read(dir);
-                int optSegCount = sis.Size;
+                int optSegCount = sis.Count;
 
                 if (segCount < 7)
                 {
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
 
                     SegmentInfos infos = new SegmentInfos();
                     infos.Read(dir);
-                    Assert.AreEqual(2, infos.Size);
+                    Assert.AreEqual(2, infos.Count);
                 }
             }
 

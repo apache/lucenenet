@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
             Directory dir2 = GetDir2(Random());
             ParallelAtomicReader pr = new ParallelAtomicReader(SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1)), SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2)));
             FieldInfos fieldInfos = pr.FieldInfos;
-            Assert.AreEqual(4, fieldInfos.Size);
+            Assert.AreEqual(4, fieldInfos.Count);
             Assert.IsNotNull(fieldInfos.FieldInfo("f1"));
             Assert.IsNotNull(fieldInfos.FieldInfo("f2"));
             Assert.IsNotNull(fieldInfos.FieldInfo("f3"));

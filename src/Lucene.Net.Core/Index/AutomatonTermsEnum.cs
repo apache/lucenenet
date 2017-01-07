@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
             this.allTransitions = compiled.SortedTransitions;
 
             // used for path tracking, where each bit is a numbered state.
-            visited = new long[runAutomaton.Size];
+            visited = new long[runAutomaton.Count];
 
             termComp = Comparator;
         }

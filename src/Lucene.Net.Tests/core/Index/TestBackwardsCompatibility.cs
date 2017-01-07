@@ -917,14 +917,14 @@ namespace Lucene.Net.Index
             {
                 Assert.AreEqual(Constants.LUCENE_MAIN_VERSION, si.Info.Version);
             }
-            return infos.Size;
+            return infos.Count;
         }
 
         private int GetNumberOfSegments(Directory dir)
         {
             SegmentInfos infos = new SegmentInfos();
             infos.Read(dir);
-            return infos.Size;
+            return infos.Count;
         }
 
         [Test]

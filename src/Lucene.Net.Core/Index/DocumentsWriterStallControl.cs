@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal bool AnyStalledThreads() // LUCENENET TODO: Make property
+        internal bool AnyStalledThreads()
         {
             return stalled;
         }

@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(docs.NextDoc());
             }
             MergePolicy mp = w.Config.MergePolicy;
-            int mergeAtOnce = 1 + w.segmentInfos.Size;
+            int mergeAtOnce = 1 + w.segmentInfos.Count;
             if (mp is TieredMergePolicy)
             {
                 ((TieredMergePolicy)mp).MaxMergeAtOnce = mergeAtOnce;

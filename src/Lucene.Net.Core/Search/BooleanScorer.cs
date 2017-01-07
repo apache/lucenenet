@@ -155,7 +155,7 @@ namespace Lucene.Net.Search
                 return new BooleanScorerCollector(mask, this);
             }
 
-            public int Size // LUCENENET TODO: Rename Count (or Length?)
+            public int Count // LUCENENET NOTE: This was size() in Lucene.
             {
                 get { return SIZE; }
             }

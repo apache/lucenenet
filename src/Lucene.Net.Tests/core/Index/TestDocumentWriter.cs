@@ -357,11 +357,11 @@ namespace Lucene.Net.Index
             // f1
             Terms tfv1 = reader.GetTermVectors(0).Terms("f1");
             Assert.IsNotNull(tfv1);
-            Assert.AreEqual(2, tfv1.Size, "the 'with_tv' setting should rule!");
+            Assert.AreEqual(2, tfv1.Count, "the 'with_tv' setting should rule!");
             // f2
             Terms tfv2 = reader.GetTermVectors(0).Terms("f2");
             Assert.IsNotNull(tfv2);
-            Assert.AreEqual(2, tfv2.Size, "the 'with_tv' setting should rule!");
+            Assert.AreEqual(2, tfv2.Count, "the 'with_tv' setting should rule!");
             reader.Dispose();
         }
 

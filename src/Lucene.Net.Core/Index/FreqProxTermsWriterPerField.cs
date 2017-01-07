@@ -441,7 +441,7 @@ namespace Lucene.Net.Index
             }
 
             int[] termIDs = termsHashPerField.SortPostings(termComp);
-            int numTerms = termsHashPerField.bytesHash.Size;
+            int numTerms = termsHashPerField.bytesHash.Count;
             BytesRef text = new BytesRef();
             FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.postingsArray;
             ByteSliceReader freq = new ByteSliceReader();

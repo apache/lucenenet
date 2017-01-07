@@ -687,7 +687,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 get { return BytesRef.UTF8SortedAsUnicodeComparer; }
             }
 
-            public override long Size
+            public override long Count
             {
                 get { return _termCount; }
             }
@@ -758,7 +758,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        public override int Size
+        public override int Count
         {
             get { return -1; }
         }

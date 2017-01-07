@@ -507,7 +507,7 @@ namespace Lucene.Net.Index
             }
             reader.Dispose();
             dir.Dispose();
-            Assert.AreEqual(pool.Size(), numThreads);
+            Assert.AreEqual(pool.Count, numThreads);
         }
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
@@ -622,11 +622,14 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal virtual int Size()
+            internal virtual int Count
             {
-                lock (this)
+                get
                 {
-                    return Pool.Count;
+                    lock (this)
+                    {
+                        return Pool.Count;
+                    }
                 }
             }
         }

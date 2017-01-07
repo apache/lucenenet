@@ -302,7 +302,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return _fields.ContainsKey(field) ? _fields[field] : null;
             }
 
-            public override int Size
+            public override int Count
             {
                 get { return _fields.Count; }
             }
@@ -334,7 +334,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 get { return BytesRef.UTF8SortedAsUnicodeComparer; }
             }
 
-            public override long Size
+            public override long Count
             {
                 get { return TERMS.Count; }
             }

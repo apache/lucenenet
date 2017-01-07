@@ -563,7 +563,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            int numSegments = sis.Size;
+            int numSegments = sis.Count;
             string segmentsFileName = sis.GetSegmentsFileName();
             // note: we only read the format byte (required preamble) here!
             IndexInput input = null;
@@ -832,8 +832,8 @@ namespace Lucene.Net.Index
                         infoStream.Write("    test: fields..............");
                     }
                     FieldInfos fieldInfos = reader.FieldInfos;
-                    Msg(infoStream, "OK [" + fieldInfos.Size + " fields]");
-                    segInfoStat.NumFields = fieldInfos.Size;
+                    Msg(infoStream, "OK [" + fieldInfos.Count + " fields]");
+                    segInfoStat.NumFields = fieldInfos.Count;
 
                     // Test Field Norms
                     segInfoStat.FieldNormStatus = TestFieldNorms(reader, infoStream);
@@ -1510,7 +1510,7 @@ namespace Lucene.Net.Index
 
                     if ((status.DelTermCount + status.TermCount) - termCountStart > 0)
                     {
-                        termCount = fields.Terms(field).Size;
+                        termCount = fields.Terms(field).Count;
 
                         if (termCount != -1 && termCount != status.DelTermCount + status.TermCount - termCountStart)
                         {
@@ -1591,7 +1591,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            int fieldCount = fields.Size;
+            int fieldCount = fields.Count;
 
             if (fieldCount != -1)
             {

@@ -851,7 +851,7 @@ namespace Lucene.Net.Util
                 Array.Clear(Keys, 0, Keys.Length);
             }
 
-            public int Size // LUCENENET TODO: rename Count
+            public int Count // LUCENENET NOTE: This was size() in Lucene.
             {
                 get { return Assigned; }
             }
@@ -860,7 +860,7 @@ namespace Lucene.Net.Util
             //{
             //    get
             //    {
-            //        return Size == 0;
+            //        return Count == 0;
             //    }
             //}
 

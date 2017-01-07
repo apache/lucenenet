@@ -210,9 +210,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        ///
-        /// <returns> The number of documents in the reader </returns>
-        internal virtual int Size // LUCENENET TODO: Rename Count
+        /// <summary>The number of documents in the reader. NOTE: This was size() in Lucene.</summary>
+        internal virtual int Count
         {
             get { return size; }
         }
@@ -335,7 +334,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return new TVTerms(outerInstance, fieldFPs[fieldIndex]);
             }
 
-            public override int Size
+            public override int Count
             {
                 get
                 {
@@ -392,7 +391,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return termsEnum;
             }
 
-            public override long Size
+            public override long Count
             {
                 get { return numTerms; }
             }
@@ -873,7 +872,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             if (tvx != null)
             {
                 Fields fields = new TVFields(this, docID);
-                if (fields.Size == 0)
+                if (fields.Count == 0)
                 {
                     // TODO: we can improve writer here, eg write 0 into
                     // tvx file, so we know on first read from tvx that

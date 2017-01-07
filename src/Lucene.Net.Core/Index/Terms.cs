@@ -112,11 +112,12 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the number of terms for this field, or -1 if this
-        ///  measure isn't stored by the codec. Note that, just like
-        ///  other term measures, this measure does not take deleted
-        ///  documents into account.
+        /// measure isn't stored by the codec. Note that, just like
+        /// other term measures, this measure does not take deleted
+        /// documents into account.
+        /// NOTE: This was size() in Lucene.
         /// </summary>
-        public abstract long Size { get; } // LUCENENET TODO: Rename to Count
+        public abstract long Count { get; }
 
         /// <summary>
         /// Returns the sum of <seealso cref="TermsEnum#totalTermFreq"/> for

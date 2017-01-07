@@ -702,7 +702,7 @@ namespace Lucene.Net.Index
         {
             if (d1 == null)
             {
-                Assert.IsTrue(d2 == null || d2.Size == 0);
+                Assert.IsTrue(d2 == null || d2.Count == 0);
                 return;
             }
             Assert.IsTrue(d2 != null);

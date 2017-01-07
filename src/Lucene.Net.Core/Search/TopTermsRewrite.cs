@@ -42,19 +42,21 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Create a TopTermsBooleanQueryRewrite for
-        /// at most <code>size</code> terms.
+        /// at most <paramref name="count"/> terms.
         /// <p>
         /// NOTE: if <seealso cref="BooleanQuery#getMaxClauseCount"/> is smaller than
-        /// <code>size</code>, then it will be used instead.
+        /// <paramref name="count"/>, then it will be used instead.
         /// </summary>
-        public TopTermsRewrite(int size)
+        public TopTermsRewrite(int count)
         {
-            this.size = size;
+            this.size = count;
         }
 
         /// <summary>
-        /// return the maximum priority queue size </summary>
-        public virtual int Size // LUCENENET TODO: Rename Count
+        /// return the maximum priority queue size.
+        /// NOTE: This was size() in Lucene.
+        /// </summary>
+        public virtual int Count
         {
             get
             {
@@ -156,7 +158,7 @@ namespace Lucene.Net.Search
 
                 //System.out.println("TTR.collect term=" + bytes.utf8ToString() + " boost=" + boost + " ord=" + readerContext.ord);
                 // ignore uncompetitive hits
-                if (stQueue.Size == maxSize)
+                if (stQueue.Count == maxSize)
                 {
                     ScoreTerm t = stQueue.Top;
                     if (boost < t.Boost)
@@ -187,7 +189,7 @@ namespace Lucene.Net.Search
                     st.TermState.Register(state, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                     stQueue.Add(st);
                     // possibly drop entries from queue
-                    if (stQueue.Size > maxSize)
+                    if (stQueue.Count > maxSize)
                     {
                         st = stQueue.Pop();
                         visitedTerms.Remove(st.Bytes);
@@ -197,9 +199,9 @@ namespace Lucene.Net.Search
                     {
                         st = new ScoreTerm(termComp, new TermContext(m_topReaderContext));
                     }
-                    Debug.Assert(stQueue.Size <= maxSize, "the PQ size must be limited to maxSize");
+                    Debug.Assert(stQueue.Count <= maxSize, "the PQ size must be limited to maxSize");
                     // set maxBoostAtt with values to help FuzzyTermsEnum to optimize
-                    if (stQueue.Size == maxSize)
+                    if (stQueue.Count == maxSize)
                     {
                         t2 = stQueue.Top;
                         maxBoostAtt.MaxNonCompetitiveBoost = t2.Boost;

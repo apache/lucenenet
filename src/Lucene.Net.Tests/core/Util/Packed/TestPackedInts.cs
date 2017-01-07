@@ -196,7 +196,7 @@ namespace Lucene.Net.Util.Packed
                             int index = Random().Next(valueCount);
                             Assert.AreEqual(values[index], intsEnum.Get(index), msg);
                         }
-                        intsEnum.Get(intsEnum.Size - 1);
+                        intsEnum.Get(intsEnum.Count - 1);
                         Assert.AreEqual(fp, @in.FilePointer);
                         @in.Dispose();
                     }
@@ -265,7 +265,7 @@ namespace Lucene.Net.Util.Packed
             IList<PackedInts.Mutable> packedInts = CreatePackedInts(VALUE_COUNT, BITS_PER_VALUE);
             foreach (PackedInts.Mutable packedInt in packedInts)
             {
-                for (int i = 0; i < packedInt.Size; i++)
+                for (int i = 0; i < packedInt.Count; i++)
                 {
                     packedInt.Set(i, i + 1);
                 }
@@ -428,7 +428,7 @@ namespace Lucene.Net.Util.Packed
         private static void Fill(PackedInts.Mutable packedInt, long maxValue, long randomSeed)
         {
             Random rnd2 = new Random((int)randomSeed);
-            for (int i = 0; i < packedInt.Size; i++)
+            for (int i = 0; i < packedInt.Count; i++)
             {
                 long value = TestUtil.NextLong(rnd2, 0, maxValue);
                 packedInt.Set(i, value);
@@ -448,10 +448,10 @@ namespace Lucene.Net.Util.Packed
                 return;
             }
             PackedInts.Reader @base = packedInts[0];
-            int valueCount = @base.Size;
+            int valueCount = @base.Count;
             foreach (PackedInts.Reader packedInt in packedInts)
             {
-                Assert.AreEqual(valueCount, packedInt.Size, message + ". The number of values should be the same ");
+                Assert.AreEqual(valueCount, packedInt.Count, message + ". The number of values should be the same ");
             }
             for (int i = 0; i < valueCount; i++)
             {
@@ -479,7 +479,7 @@ namespace Lucene.Net.Util.Packed
                 IndexInput @in = dir.OpenInput("out", NewIOContext(Random()));
                 Reader reader = PackedInts.GetReader(@in);
                 string msg = "Impl=" + w.GetType().Name + ", bitsPerValue=" + bitsPerValue;
-                Assert.AreEqual(1, reader.Size, msg);
+                Assert.AreEqual(1, reader.Count, msg);
                 Assert.AreEqual(value, reader.Get(0), msg);
                 Assert.AreEqual(end, @in.FilePointer, msg);
                 @in.Dispose();
@@ -594,9 +594,9 @@ namespace Lucene.Net.Util.Packed
                 foreach (PackedInts.Mutable ints in packedInts)
                 {
                     string msg = ints.GetType().Name + " bpv=" + bpv + ", from=" + from + ", to=" + to + ", val=" + val;
-                    ints.Fill(0, ints.Size, 1);
+                    ints.Fill(0, ints.Count, 1);
                     ints.Fill(from, to, val);
-                    for (int i = 0; i < ints.Size; ++i)
+                    for (int i = 0; i < ints.Count; ++i)
                     {
                         if (i >= from && i < to)
                         {
@@ -652,7 +652,7 @@ namespace Lucene.Net.Util.Packed
 
                 foreach (PackedInts.Mutable ints in packedInts)
                 {
-                    for (int i = 0; i < ints.Size; ++i)
+                    for (int i = 0; i < ints.Count; ++i)
                     {
                         ints.Set(i, (31L * i - 1099) & mask);
                     }
@@ -662,7 +662,7 @@ namespace Lucene.Net.Util.Packed
                     int gets = ints.Get(index, arr, off, len);
                     Assert.IsTrue(gets > 0, msg);
                     Assert.IsTrue(gets <= len, msg);
-                    Assert.IsTrue(gets <= ints.Size - index, msg);
+                    Assert.IsTrue(gets <= ints.Count - index, msg);
 
                     for (int i = 0; i < arr.Length; ++i)
                     {
@@ -705,7 +705,7 @@ namespace Lucene.Net.Util.Packed
                     Assert.IsTrue(sets > 0, msg);
                     Assert.IsTrue(sets <= len, msg);
 
-                    for (int i = 0; i < ints.Size; ++i)
+                    for (int i = 0; i < ints.Count; ++i)
                     {
                         string m = msg + ", i=" + i;
                         if (i >= index && i < index + sets)
@@ -735,7 +735,7 @@ namespace Lucene.Net.Util.Packed
                 long mask = PackedInts.MaxValue(bpv);
                 foreach (PackedInts.Mutable r1 in CreatePackedInts(valueCount, bpv))
                 {
-                    for (int i = 0; i < r1.Size; ++i)
+                    for (int i = 0; i < r1.Count; ++i)
                     {
                         r1.Set(i, (31L * i - 1023) & mask);
                     }
@@ -743,7 +743,7 @@ namespace Lucene.Net.Util.Packed
                     {
                         string msg = "src=" + r1 + ", dest=" + r2 + ", srcPos=" + off1 + ", destPos=" + off2 + ", len=" + len + ", mem=" + mem;
                         PackedInts.Copy(r1, off1, r2, off2, len, mem);
-                        for (int i = 0; i < r2.Size; ++i)
+                        for (int i = 0; i < r2.Count; ++i)
                         {
                             string m = msg + ", i=" + i;
                             if (i >= off2 && i < off2 + len)
@@ -793,7 +793,7 @@ namespace Lucene.Net.Util.Packed
             int pageSize = 1 << (TestUtil.NextInt(Random(), 6, 30));
             // supports 0 values?
             PagedGrowableWriter writer = new PagedGrowableWriter(0, pageSize, TestUtil.NextInt(Random(), 1, 64), Random().NextFloat());
-            Assert.AreEqual(0, writer.Size);
+            Assert.AreEqual(0, writer.Count);
 
             // compare against AppendingDeltaPackedLongBuffer
             AppendingDeltaPackedLongBuffer buf = new AppendingDeltaPackedLongBuffer();
@@ -808,7 +808,7 @@ namespace Lucene.Net.Util.Packed
                 }
             }
             writer = new PagedGrowableWriter(size, pageSize, TestUtil.NextInt(Random(), 1, 64), Random().NextFloat());
-            Assert.AreEqual(size, writer.Size);
+            Assert.AreEqual(size, writer.Count);
             for (int i = size - 1; i >= 0; --i)
             {
                 writer.Set(i, buf.Get(i));
@@ -822,10 +822,10 @@ namespace Lucene.Net.Util.Packed
             Assert.AreEqual(RamUsageEstimator.SizeOf(writer), writer.RamBytesUsed(), 8);
 
             // test copy
-            PagedGrowableWriter copy = writer.Resize(TestUtil.NextLong(Random(), writer.Size / 2, writer.Size * 3 / 2));
-            for (long i = 0; i < copy.Size; ++i)
+            PagedGrowableWriter copy = writer.Resize(TestUtil.NextLong(Random(), writer.Count / 2, writer.Count * 3 / 2));
+            for (long i = 0; i < copy.Count; ++i)
             {
-                if (i < writer.Size)
+                if (i < writer.Count)
                 {
                     Assert.AreEqual(writer.Get(i), copy.Get(i));
                 }
@@ -836,10 +836,10 @@ namespace Lucene.Net.Util.Packed
             }
 
             // test grow
-            PagedGrowableWriter grow = writer.Grow(TestUtil.NextLong(Random(), writer.Size / 2, writer.Size * 3 / 2));
-            for (long i = 0; i < grow.Size; ++i)
+            PagedGrowableWriter grow = writer.Grow(TestUtil.NextLong(Random(), writer.Count / 2, writer.Count * 3 / 2));
+            for (long i = 0; i < grow.Count; ++i)
             {
-                if (i < writer.Size)
+                if (i < writer.Count)
                 {
                     Assert.AreEqual(writer.Get(i), grow.Get(i));
                 }
@@ -858,7 +858,7 @@ namespace Lucene.Net.Util.Packed
             int pageSize = 1 << (TestUtil.NextInt(Random(), 6, 30));
             // supports 0 values?
             PagedMutable writer = new PagedMutable(0, pageSize, bitsPerValue, Random().NextFloat() / 2);
-            Assert.AreEqual(0, writer.Size);
+            Assert.AreEqual(0, writer.Count);
 
             // compare against AppendingDeltaPackedLongBuffer
             AppendingDeltaPackedLongBuffer buf = new AppendingDeltaPackedLongBuffer();
@@ -869,7 +869,7 @@ namespace Lucene.Net.Util.Packed
                 buf.Add(bitsPerValue == 64 ? Random().NextLong() : TestUtil.NextLong(Random(), 0, max));
             }
             writer = new PagedMutable(size, pageSize, bitsPerValue, Random().NextFloat());
-            Assert.AreEqual(size, writer.Size);
+            Assert.AreEqual(size, writer.Count);
             for (int i = size - 1; i >= 0; --i)
             {
                 writer.Set(i, buf.Get(i));
@@ -883,10 +883,10 @@ namespace Lucene.Net.Util.Packed
             Assert.AreEqual(RamUsageEstimator.SizeOf(writer) - RamUsageEstimator.SizeOf(writer.format), writer.RamBytesUsed());
 
             // test copy
-            PagedMutable copy = writer.Resize(TestUtil.NextLong(Random(), writer.Size / 2, writer.Size * 3 / 2));
-            for (long i = 0; i < copy.Size; ++i)
+            PagedMutable copy = writer.Resize(TestUtil.NextLong(Random(), writer.Count / 2, writer.Count * 3 / 2));
+            for (long i = 0; i < copy.Count; ++i)
             {
-                if (i < writer.Size)
+                if (i < writer.Count)
                 {
                     Assert.AreEqual(writer.Get(i), copy.Get(i));
                 }
@@ -897,10 +897,10 @@ namespace Lucene.Net.Util.Packed
             }
 
             // test grow
-            PagedMutable grow = writer.Grow(TestUtil.NextLong(Random(), writer.Size / 2, writer.Size * 3 / 2));
-            for (long i = 0; i < grow.Size; ++i)
+            PagedMutable grow = writer.Grow(TestUtil.NextLong(Random(), writer.Count / 2, writer.Count * 3 / 2));
+            for (long i = 0; i < grow.Count; ++i)
             {
-                if (i < writer.Size)
+                if (i < writer.Count)
                 {
                     Assert.AreEqual(writer.Get(i), grow.Get(i));
                 }
@@ -946,7 +946,7 @@ namespace Lucene.Net.Util.Packed
                 IList<PackedInts.Mutable> packedInts = CreatePackedInts(valueCount, bpv);
                 foreach (PackedInts.Mutable mutable in packedInts)
                 {
-                    for (int i = 0; i < mutable.Size; ++i)
+                    for (int i = 0; i < mutable.Count; ++i)
                     {
                         mutable.Set(i, Random().Next(maxValue));
                     }
@@ -958,7 +958,7 @@ namespace Lucene.Net.Util.Packed
                     IndexInput @in = directory.OpenInput("packed-ints.bin", IOContext.DEFAULT);
                     PackedInts.Reader reader = PackedInts.GetReader(@in);
                     Assert.AreEqual(mutable.BitsPerValue, reader.BitsPerValue);
-                    Assert.AreEqual(valueCount, reader.Size);
+                    Assert.AreEqual(valueCount, reader.Count);
                     if (mutable is Packed64SingleBlock)
                     {
                         // make sure that we used the right format so that the reader has
@@ -1181,7 +1181,7 @@ namespace Lucene.Net.Util.Packed
                     {
                         buf.Add(arr[i]);
                     }
-                    Assert.AreEqual(arr.Length, buf.Size);
+                    Assert.AreEqual(arr.Length, buf.Count);
                     if (Random().NextBoolean())
                     {
                         buf.Freeze();
@@ -1191,7 +1191,7 @@ namespace Lucene.Net.Util.Packed
                             buf.Freeze();
                         }
                     }
-                    Assert.AreEqual(arr.Length, buf.Size);
+                    Assert.AreEqual(arr.Length, buf.Count);
 
                     for (int i = 0; i < arr.Length; ++i)
                     {

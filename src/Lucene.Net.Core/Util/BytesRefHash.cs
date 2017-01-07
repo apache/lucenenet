@@ -96,9 +96,10 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the number of <seealso cref="BytesRef"/> values in this <seealso cref="BytesRefHash"/>.
+        /// NOTE: This was size() in Lucene.
         /// </summary>
         /// <returns> the number of <seealso cref="BytesRef"/> values in this <seealso cref="BytesRefHash"/>. </returns>
-        public int Size // LUCENENET TODO: rename Count
+        public int Count
         {
             get { return count; }
         }
@@ -108,7 +109,7 @@ namespace Lucene.Net.Util
         /// bytesID.
         /// <p>
         /// Note: the given bytesID must be a positive integer less than the current
-        /// size (<seealso cref="#size()"/>)
+        /// size (<seealso cref="Count"/>)
         /// </summary>
         /// <param name="bytesID">
         ///          the id </param>
@@ -127,7 +128,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the ids array in arbitrary order. Valid ids start at offset of 0
-        /// and end at a limit of <seealso cref="#size()"/> - 1
+        /// and end at a limit of <seealso cref="Count"/> - 1
         /// <p>
         /// Note: this is a destructive operation. <seealso cref="#clear()"/> must be called in
         /// order to reuse this <seealso cref="BytesRefHash"/> instance.

@@ -238,7 +238,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             _postingsReader.CheckIntegrity();
         }
 
-        public override int Size
+        public override int Count
         {
             get
             {
@@ -341,7 +341,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 get { return _fieldInfo.HasPayloads; }
             }
 
-            public override long Size
+            public override long Count
             {
                 get { return _numTerms; }
             }

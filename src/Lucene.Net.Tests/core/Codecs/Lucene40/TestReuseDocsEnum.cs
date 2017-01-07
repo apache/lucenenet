@@ -80,7 +80,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     enums[docs] = true;
                 }
 
-                Assert.AreEqual(terms.Size, enums.Count);
+                Assert.AreEqual(terms.Count, enums.Count);
             }
             IOUtils.Close(writer, open, dir);
         }
@@ -119,7 +119,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     docs = iterator.Docs(new MatchNoBits(open.MaxDoc), docs, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
                     enums[docs] = true;
                 }
-                Assert.AreEqual(terms.Size, enums.Count);
+                Assert.AreEqual(terms.Count, enums.Count);
 
                 enums.Clear();
                 iterator = terms.Iterator(null);
@@ -167,7 +167,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     docs = iterator.Docs(null, RandomDocsEnum("body", term, leaves2, bits), Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
                     enums[docs] = true;
                 }
-                Assert.AreEqual(terms.Size, enums.Count);
+                Assert.AreEqual(terms.Count, enums.Count);
 
                 iterator = terms.Iterator(null);
                 enums.Clear();
@@ -177,7 +177,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     docs = iterator.Docs(bits, RandomDocsEnum("body", term, leaves2, bits), Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
                     enums[docs] = true;
                 }
-                Assert.AreEqual(terms.Size, enums.Count);
+                Assert.AreEqual(terms.Count, enums.Count);
             }
             IOUtils.Close(writer, firstReader, secondReader, dir);
         }

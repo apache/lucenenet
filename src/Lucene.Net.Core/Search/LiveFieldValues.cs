@@ -96,9 +96,10 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the [approximate] number of id/value pairs
-        ///  buffered in RAM.
+        /// buffered in RAM.
+        /// NOTE: This was size() in Lucene.
         /// </summary>
-        public virtual int Size // LUCENENET TODO: rename Count
+        public virtual int Count
         {
             get { return current.Count + old.Count; }
         }

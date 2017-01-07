@@ -763,10 +763,10 @@ namespace Lucene.Net.Util
             internal virtual int ForwardBinarySearch(int targetWordNum)
             {
                 // advance forward and double the window at each step
-                int indexSize = (int)wordNums.Size;
+                int indexSize = (int)wordNums.Count;
                 int lo = sequenceNum / indexInterval, hi = lo + 1;
                 Debug.Assert(sequenceNum == -1 || wordNums.Get(lo) <= wordNum);
-                Debug.Assert(lo + 1 == wordNums.Size || wordNums.Get(lo + 1) > wordNum);
+                Debug.Assert(lo + 1 == wordNums.Count || wordNums.Get(lo + 1) > wordNum);
                 while (true)
                 {
                     if (hi >= indexSize)
@@ -798,7 +798,7 @@ namespace Lucene.Net.Util
                     }
                 }
                 Debug.Assert(wordNums.Get(hi) <= targetWordNum);
-                Debug.Assert(hi + 1 == wordNums.Size || wordNums.Get(hi + 1) > targetWordNum);
+                Debug.Assert(hi + 1 == wordNums.Count || wordNums.Get(hi + 1) > targetWordNum);
                 return hi;
             }
 

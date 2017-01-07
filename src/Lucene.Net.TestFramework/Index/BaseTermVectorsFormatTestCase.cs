@@ -483,7 +483,7 @@ namespace Lucene.Net.Index
         {
             // compare field names
             Assert.AreEqual(doc == null, fields == null);
-            Assert.AreEqual(doc.FieldNames.Length, fields.Size);
+            Assert.AreEqual(doc.FieldNames.Length, fields.Count);
             HashSet<string> fields1 = new HashSet<string>();
             HashSet<string> fields2 = new HashSet<string>();
             for (int i = 0; i < doc.FieldNames.Length; ++i)
@@ -524,7 +524,7 @@ namespace Lucene.Net.Index
         {
             Assert.AreEqual(1, terms.DocCount);
             int termCount = (new HashSet<string>(Arrays.AsList(tk.Terms))).Count;
-            Assert.AreEqual(termCount, terms.Size);
+            Assert.AreEqual(termCount, terms.Count);
             Assert.AreEqual(termCount, terms.SumDocFreq);
             Assert.AreEqual(ft.StoreTermVectorPositions, terms.HasPositions);
             Assert.AreEqual(ft.StoreTermVectorOffsets, terms.HasOffsets);

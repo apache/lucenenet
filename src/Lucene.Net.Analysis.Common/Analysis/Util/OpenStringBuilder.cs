@@ -64,14 +64,14 @@ namespace Lucene.Net.Analysis.Util
                 return buf;
             }
         }
-        public virtual int Size() // LUCENENET TODO: make property, rename Count
+        public virtual int Count // LUCENENET NOTE: This was size() in Lucene.
         {
-            return len;
+            get{ return len; }
         }
 
-        public virtual int Capacity() // LUCENENET TODO: make property
+        public virtual int Capacity
         {
-            return buf.Length;
+            get { return buf.Length; }
         }
 
         public virtual OpenStringBuilder Append(string csq)
@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis.Util
         protected internal virtual void Resize(int len)
         {
             char[] newbuf = new char[Math.Max(buf.Length << 1, len)];
-            System.Array.Copy(buf, 0, newbuf, 0, Size());
+            System.Array.Copy(buf, 0, newbuf, 0, Count);
             buf = newbuf;
         }
 
@@ -196,14 +196,14 @@ namespace Lucene.Net.Analysis.Util
 
         public virtual char[] ToCharArray()
         {
-            char[] newbuf = new char[Size()];
-            System.Array.Copy(buf, 0, newbuf, 0, Size());
+            char[] newbuf = new char[Count];
+            System.Array.Copy(buf, 0, newbuf, 0, Count);
             return newbuf;
         }
 
         public override string ToString()
         {
-            return new string(buf, 0, Size());
+            return new string(buf, 0, Count);
         }
     }
 }

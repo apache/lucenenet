@@ -244,10 +244,13 @@ namespace Lucene.Net.Spatial.Prefix
                 get { return maxInt; }
             }
 
-            /// <summary>Number of docids.</summary>
-            public virtual int Size
+            /// <summary>
+            /// Number of docids.
+            /// NOTE: This was size() in Lucene.
+            /// </summary>
+            public virtual int Count
             {
-                get { return intSet.Size; }
+                get { return intSet.Count; }
             }
 
             /// <summary>NOTE: modifies and returns either "this" or "other"</summary>
@@ -255,7 +258,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 SmallDocSet bigger;
                 SmallDocSet smaller;
-                if (other.intSet.Size > this.intSet.Size)
+                if (other.intSet.Count > this.intSet.Count)
                 {
                     bigger = other;
                     smaller = this;
@@ -283,7 +286,7 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     //if the # of docids is super small, return null since iteration is going
                     // to be faster
-                    return Size > 4 ? this : null;
+                    return Count > 4 ? this : null;
                 }
             }
 
@@ -339,13 +342,13 @@ namespace Lucene.Net.Spatial.Prefix
 
             public override DocIdSetIterator GetIterator()
             {
-                if (Size == 0)
+                if (Count == 0)
                 {
                     return null;
                 }
                 //copy the unsorted values to a new array then sort them
                 int d = 0;
-                int[] docs = new int[intSet.Size];
+                int[] docs = new int[intSet.Count];
                 foreach (int v in intSet.Keys)
                 {
                     if (v == intSet.EmptyVal)
@@ -354,7 +357,7 @@ namespace Lucene.Net.Spatial.Prefix
                     }
                     docs[d++] = v;
                 }
-                Debug.Assert(d == intSet.Size);
+                Debug.Assert(d == intSet.Count);
                 int size = d;
                 //sort them
                 Array.Sort(docs, 0, size);

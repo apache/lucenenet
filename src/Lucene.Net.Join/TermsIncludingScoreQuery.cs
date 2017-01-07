@@ -172,7 +172,7 @@ namespace Lucene.Net.Join
                 }
 
                 // what is the runtime...seems ok?
-                long cost = context.AtomicReader.MaxDoc * terms.Size;
+                long cost = context.AtomicReader.MaxDoc * terms.Count;
 
                 segmentTermsEnum = terms.Iterator(segmentTermsEnum);
                 if (outerInstance._multipleValuesPerDocument)
@@ -196,7 +196,7 @@ namespace Lucene.Net.Join
                     return null;
                 }
                 // what is the runtime...seems ok?
-                long cost = context.AtomicReader.MaxDoc * terms.Size;
+                long cost = context.AtomicReader.MaxDoc * terms.Count;
 
                 segmentTermsEnum = terms.Iterator(segmentTermsEnum);
                 // Optimized impls that take advantage of docs
@@ -271,7 +271,7 @@ namespace Lucene.Net.Join
                         }
                     }
 
-                    if (_upto == outerInstance._terms.Size)
+                    if (_upto == outerInstance._terms.Count)
                     {
                         return _doc = DocIdSetIterator.NO_MORE_DOCS;
                     }
@@ -377,7 +377,7 @@ namespace Lucene.Net.Join
             {
                 BytesRef spare = new BytesRef();
                 DocsEnum docsEnum = null;
-                for (int i = 0; i < outerInstance._terms.Size; i++)
+                for (int i = 0; i < outerInstance._terms.Count; i++)
                 {
                     if (termsEnum.SeekExact(outerInstance._terms.Get(outerInstance._ords[i], spare)))
                     {
@@ -441,7 +441,7 @@ namespace Lucene.Net.Join
             {
                 BytesRef spare = new BytesRef();
                 DocsEnum docsEnum = null;
-                for (int i = 0; i < outerInstance._terms.Size; i++)
+                for (int i = 0; i < outerInstance._terms.Count; i++)
                 {
                     if (termsEnum.SeekExact(outerInstance._terms.Get(outerInstance._ords[i], spare)))
                     {

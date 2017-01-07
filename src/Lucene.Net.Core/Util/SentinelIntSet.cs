@@ -45,7 +45,9 @@ namespace Lucene.Net.Util
         /// A power-of-2 over-sized array holding the integers in the set along with empty values. </summary>
         public int[] Keys; // LUCENENET TODO: make property ?
 
-        public int Count { get; set; } // LUCENENET TODO: make setter private ? This is crappy
+        /// <summary>
+        /// The number of integers in this set. </summary>
+        public int Count { get; private set; } // LUCENENET NOTE: made setter internal to encapsulate, and using to replace size() in Lucene
         public int EmptyVal { get; private set; }
 
         /// <summary>
@@ -88,12 +90,13 @@ namespace Lucene.Net.Util
             return key;
         }
 
-        /// <summary>
-        /// The number of integers in this set. </summary>
-        public virtual int Size  // LUCENENET TODO: rename Count ? already have a public Count property (that isn't encapsulated)
-        {
-            get { return Count; }
-        }
+        // LUCENENET specific - replacing with Count property (above)
+        ///// <summary>
+        ///// The number of integers in this set. </summary>
+        //public virtual int Size
+        //{
+        //    get { return Count; }
+        //}
 
         /// <summary>
         /// (internal) Returns the slot for this key </summary>

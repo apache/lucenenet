@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
 
                 SegmentInfos sis = new SegmentInfos();
                 sis.Read(dir);
-                Assert.AreEqual(2, sis.Size);
+                Assert.AreEqual(2, sis.Count);
 
                 FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
                 FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis.Info(1));
@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
 
                 sis = new SegmentInfos();
                 sis.Read(dir);
-                Assert.AreEqual(1, sis.Size);
+                Assert.AreEqual(1, sis.Count);
 
                 FieldInfos fis3 = SegmentReader.ReadFieldInfos(sis.Info(0));
 
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
 
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir1);
-            Assert.AreEqual(2, sis.Size);
+            Assert.AreEqual(2, sis.Count);
 
             FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
             FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis.Info(1));
@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
                     writer.Dispose();
                     SegmentInfos sis = new SegmentInfos();
                     sis.Read(dir);
-                    Assert.AreEqual(1, sis.Size);
+                    Assert.AreEqual(1, sis.Count);
                     FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
                     Assert.AreEqual("f1", fis1.FieldInfo(0).Name);
                     Assert.AreEqual("f2", fis1.FieldInfo(1).Name);
@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
                     writer.Dispose();
                     SegmentInfos sis = new SegmentInfos();
                     sis.Read(dir);
-                    Assert.AreEqual(2, sis.Size);
+                    Assert.AreEqual(2, sis.Count);
                     FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
                     FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis.Info(1));
                     Assert.AreEqual("f1", fis1.FieldInfo(0).Name);
@@ -204,7 +204,7 @@ namespace Lucene.Net.Index
                     writer.Dispose();
                     SegmentInfos sis = new SegmentInfos();
                     sis.Read(dir);
-                    Assert.AreEqual(3, sis.Size);
+                    Assert.AreEqual(3, sis.Count);
                     FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
                     FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis.Info(1));
                     FieldInfos fis3 = SegmentReader.ReadFieldInfos(sis.Info(2));
@@ -233,7 +233,7 @@ namespace Lucene.Net.Index
 
                 SegmentInfos sis_ = new SegmentInfos();
                 sis_.Read(dir);
-                Assert.AreEqual(1, sis_.Size);
+                Assert.AreEqual(1, sis_.Count);
                 FieldInfos fis1_ = SegmentReader.ReadFieldInfos(sis_.Info(0));
                 Assert.AreEqual("f1", fis1_.FieldInfo(0).Name);
                 Assert.AreEqual("f2", fis1_.FieldInfo(1).Name);

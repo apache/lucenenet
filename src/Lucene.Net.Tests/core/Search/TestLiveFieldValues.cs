@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
                 thread.Join();
             }
             mgr.MaybeRefresh();
-            Assert.AreEqual(0, rt.Size);
+            Assert.AreEqual(0, rt.Count);
 
             rt.Dispose();
             mgr.Dispose();
@@ -199,7 +199,7 @@ namespace Lucene.Net.Search
                             values[randomID] = Missing;
                         }
 
-                        if (ThreadRandom.NextDouble() <= ReopenChance || Rt.Size > 10000)
+                        if (ThreadRandom.NextDouble() <= ReopenChance || Rt.Count > 10000)
                         {
                             //System.out.println("refresh @ " + rt.Size());
                             Mgr.MaybeRefresh();

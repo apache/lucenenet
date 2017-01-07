@@ -501,7 +501,7 @@ namespace Lucene.Net.Index
             if (infoStream.IsEnabled("IFD"))
             {
                 t0 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
-                infoStream.Message("IFD", "now checkpoint \"" + writer.SegString(writer.ToLiveInfos(segmentInfos).Segments) + "\" [" + segmentInfos.Size + " segments " + "; isCommit = " + isCommit + "]");
+                infoStream.Message("IFD", "now checkpoint \"" + writer.SegString(writer.ToLiveInfos(segmentInfos).Segments) + "\" [" + segmentInfos.Count + " segments " + "; isCommit = " + isCommit + "]");
             }
 
             // Try again now to delete any previously un-deletable
@@ -773,7 +773,7 @@ namespace Lucene.Net.Index
                 segmentsFileName = segmentInfos.GetSegmentsFileName();
                 generation = segmentInfos.Generation;
                 files = segmentInfos.Files(directory, true);
-                segmentCount = segmentInfos.Size;
+                segmentCount = segmentInfos.Count;
             }
 
             public override string ToString()

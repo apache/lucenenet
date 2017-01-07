@@ -1931,7 +1931,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    return segmentInfos.Size;
+                    return segmentInfos.Count;
                 }
             }
         }
@@ -1965,7 +1965,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (i >= 0 && i < segmentInfos.Size)
+                if (i >= 0 && i < segmentInfos.Count)
                 {
                     return segmentInfos.Info(i).Info.DocCount;
                 }
@@ -4310,7 +4310,7 @@ namespace Lucene.Net.Index
                         string msg = holder.mergedDeletesAndUpdates.PendingDeleteCount + " new deletes";
                         if (mergedDVUpdates.Any())
                         {
-                            msg += " and " + mergedDVUpdates.Size + " new field updates";
+                            msg += " and " + mergedDVUpdates.Count + " new field updates";
                         }
                         msg += " since merge started";
                         infoStream.Message("IW", msg);
@@ -5283,7 +5283,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                return segmentInfos.Size > 0 ? segmentInfos.Info(segmentInfos.Size - 1) : null;
+                return segmentInfos.Count > 0 ? segmentInfos.Info(segmentInfos.Count - 1) : null;
             }
         }
 

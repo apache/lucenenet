@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
                 return ret;
             }
 
-            public override int Size
+            public override int Count
             {
                 get { return fields.Count; }
             }

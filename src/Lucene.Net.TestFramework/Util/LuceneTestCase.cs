@@ -1896,9 +1896,9 @@ namespace Lucene.Net.Util
         /// </summary>
         public void AssertFieldStatisticsEquals(string info, Fields leftFields, Fields rightFields)
         {
-            if (leftFields.Size != -1 && rightFields.Size != -1)
+            if (leftFields.Count != -1 && rightFields.Count != -1)
             {
-                Assert.AreEqual(leftFields.Size, rightFields.Size, info);
+                Assert.AreEqual(leftFields.Count, rightFields.Count, info);
             }
         }
 
@@ -1960,9 +1960,9 @@ namespace Lucene.Net.Util
             {
                 Assert.AreEqual(leftTerms.SumTotalTermFreq, rightTerms.SumTotalTermFreq, info);
             }
-            if (leftTerms.Size != -1 && rightTerms.Size != -1)
+            if (leftTerms.Count != -1 && rightTerms.Count != -1)
             {
-                Assert.AreEqual(leftTerms.Size, rightTerms.Size, info);
+                Assert.AreEqual(leftTerms.Count, rightTerms.Count, info);
             }
         }
 

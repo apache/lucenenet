@@ -64,14 +64,16 @@ namespace Lucene.Net.Util.Packed
             return sz == 0 ? PageSize : sz;
         }
 
-        internal int PageSize // LUCENENET TODO: change to PageCount ?
+        internal int PageSize
         {
             get { return pageMask + 1; }
         }
 
         /// <summary>
-        /// The number of values. </summary>
-        public long Size // LUCENENET TODO: change to Count
+        /// The number of values.
+        /// NOTE: This was size() in Lucene.
+        /// </summary>
+        public long Count
         {
             get { return size; }
         }
@@ -141,7 +143,7 @@ namespace Lucene.Net.Util.Packed
                 copy.subMutables[i] = NewMutable(valueCount, bpv);
                 if (i < numCommonPages)
                 {
-                    int copyLength = Math.Min(valueCount, subMutables[i].Size);
+                    int copyLength = Math.Min(valueCount, subMutables[i].Count);
                     PackedInts.Copy(subMutables[i], 0, copy.subMutables[i], 0, copyLength, copyBuffer);
                 }
             }
@@ -153,7 +155,7 @@ namespace Lucene.Net.Util.Packed
         public T Grow(long minSize)
         {
             Debug.Assert(minSize >= 0);
-            if (minSize <= Size)
+            if (minSize <= Count)
             {
                 T result = (T)this;
                 return result;
@@ -171,12 +173,12 @@ namespace Lucene.Net.Util.Packed
         /// Similar to <seealso cref="ArrayUtil#grow(long[])"/>. </summary>
         public T Grow()
         {
-            return Grow(Size + 1);
+            return Grow(Count + 1);
         }
 
         public override sealed string ToString()
         {
-            return this.GetType().Name + "(size=" + Size + ",pageSize=" + PageSize + ")";
+            return this.GetType().Name + "(size=" + Count + ",pageSize=" + PageSize + ")";
         }
     }
 }

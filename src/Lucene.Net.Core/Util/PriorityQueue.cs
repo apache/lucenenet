@@ -266,8 +266,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the number of elements currently stored in the PriorityQueue. </summary>
-        public int Size // LUCENENET TODO: rename Count
+        /// Returns the number of elements currently stored in the PriorityQueue.
+        /// NOTE: This was size() in Lucene.
+        /// </summary>
+        public int Count
         {
             get { return size; }
         }

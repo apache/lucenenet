@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.Memory
                 return fields[field];
             }
 
-            public override int Size
+            public override int Count
             {
                 get { return fields.Count; }
             }
@@ -326,7 +326,7 @@ namespace Lucene.Net.Codecs.Memory
                 sumDocFreq = termsIn.SumDocFreq;
                 docCount = termsIn.DocCount;
 
-                int numTerms = (int) termsIn.Size;
+                int numTerms = (int) termsIn.Count;
                 if (numTerms == -1)
                 {
                     throw new System.ArgumentException("codec does not provide Terms.size()");
@@ -764,7 +764,7 @@ namespace Lucene.Net.Codecs.Memory
                 return new DirectIntersectTermsEnum(this, compiled, startTerm);
             }
 
-            public override long Size
+            public override long Count
             {
                 get { return terms.Length; }
             }

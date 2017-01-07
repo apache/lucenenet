@@ -49,21 +49,23 @@ namespace Lucene.Net.Util.Packed
             this.acceptableOverheadRatio = acceptableOverheadRatio;
         }
 
-        public int PageSize // LUCENENET TODO: rename PageCount ?
+        public int PageSize
         {
             get { return pageMask + 1; }
         }
 
         /// <summary>
-        /// Get the number of values that have been added to the buffer. </summary>
-        public long Size // LUCENENET TODO: rename Count
+        /// Get the number of values that have been added to the buffer.
+        /// NOTE: This was size() in Lucene.
+        /// </summary>
+        public long Count
         {
             get
             {
                 long size = pendingOff;
                 if (valuesOff > 0)
                 {
-                    size += values[valuesOff - 1].Size;
+                    size += values[valuesOff - 1].Count;
                 }
                 if (valuesOff > 1)
                 {
@@ -107,7 +109,7 @@ namespace Lucene.Net.Util.Packed
 
         public override sealed long Get(long index)
         {
-            Debug.Assert(index >= 0 && index < Size);
+            Debug.Assert(index >= 0 && index < Count);
             int block = (int)(index >> pageShift);
             int element = (int)(index & pageMask);
             return Get(block, element);
@@ -121,7 +123,7 @@ namespace Lucene.Net.Util.Packed
         public int Get(long index, long[] arr, int off, int len)
         {
             Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-            Debug.Assert(index >= 0 && index < Size);
+            Debug.Assert(index >= 0 && index < Count);
             Debug.Assert(off + len <= arr.Length);
 
             int block = (int)(index >> pageShift);
@@ -160,7 +162,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 else
                 {
-                    currentValues = new long[outerInstance.values[0].Size];
+                    currentValues = new long[outerInstance.values[0].Count];
                     FillValues();
                 }
             }
@@ -174,7 +176,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 else
                 {
-                    currentCount = outerInstance.values[vOff].Size;
+                    currentCount = outerInstance.values[vOff].Count;
                     for (int k = 0; k < currentCount; )
                     {
                         k += outerInstance.Get(vOff, k, currentValues, k, currentCount - k);

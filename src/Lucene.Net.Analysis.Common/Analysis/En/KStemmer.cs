@@ -798,7 +798,7 @@ namespace Lucene.Net.Analysis.En
             /// *****
             /// </summary>
 
-            matchedEntry = dict_ht.Get(word.Array, 0, word.Size());
+            matchedEntry = dict_ht.Get(word.Array, 0, word.Count);
             return matchedEntry != null;
         }
 

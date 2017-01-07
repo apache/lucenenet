@@ -392,7 +392,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal bool AnyChanges() // LUCENENET TODO: Make property ?
+        internal bool AnyChanges()
         {
             if (infoStream.IsEnabled("DW"))
             {
@@ -425,7 +425,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public bool AnyDeletions() // LUCENENET TODO: Make property ?
+        public bool AnyDeletions()
         {
             return deleteQueue.AnyChanges();
         }

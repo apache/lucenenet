@@ -133,7 +133,7 @@ namespace Lucene.Net.Util.Automaton
             // initialize pending
             for (int x = 0; x < sigmaLen; x++)
             {
-                int j = (active[0, x].Size <= active[1, x].Size) ? 0 : 1;
+                int j = (active[0, x].Count <= active[1, x].Count) ? 0 : 1;
                 pending.AddLast(new IntPair(j, x));
                 pending2.SafeSet(x * statesLen + j, true);
             }
@@ -195,7 +195,7 @@ namespace Lucene.Net.Util.Automaton
                         // update pending
                         for (int c = 0; c < sigmaLen; c++)
                         {
-                            int aj = active[j, c].Size, ak = active[k, c].Size, ofs = c * statesLen;
+                            int aj = active[j, c].Count, ak = active[k, c].Count, ofs = c * statesLen;
                             if (!pending2.SafeGet(ofs + j) && 0 < aj && aj <= ak)
                             {
                                 pending2.SafeSet(ofs + j, true);
@@ -262,7 +262,7 @@ namespace Lucene.Net.Util.Automaton
 
         internal sealed class StateList
         {
-            internal int Size { get; set; } // LUCENENET TODO: Rename Count ?
+            internal int Count { get; set; } // LUCENENET NOTE: This was size() in Lucene.
 
             internal StateListNode First { get; set; }
 
@@ -288,7 +288,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 this.Q = q;
                 this.Sl = sl;
-                if (sl.Size++ == 0)
+                if (sl.Count++ == 0)
                 {
                     sl.First = sl.Last = this;
                 }
@@ -302,7 +302,7 @@ namespace Lucene.Net.Util.Automaton
 
             internal void Remove()
             {
-                Sl.Size--;
+                Sl.Count--;
                 if (Sl.First == this)
                 {
                     Sl.First = Next;

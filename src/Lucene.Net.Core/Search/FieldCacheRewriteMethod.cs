@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                public override long Size
+                public override long Count
                 {
                     get { return -1; }
                 }

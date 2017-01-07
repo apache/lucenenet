@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Spans
             MultiTermQuery.RewriteMethod method = this.m_query.MultiTermRewriteMethod;
             if (method is ITopTermsRewrite)
             {
-                int pqsize = ((ITopTermsRewrite)method).Size;
+                int pqsize = ((ITopTermsRewrite)method).Count;
                 MultiTermRewriteMethod = new TopTermsSpanBooleanQueryRewrite(pqsize);
             }
             else
@@ -275,12 +275,14 @@ namespace Lucene.Net.Search.Spans
             }
 
             /// <summary>
-            /// return the maximum priority queue size </summary>
-            public int Size // LUCENENET TODO: Rename Count (or Length?)
+            /// return the maximum priority queue size.
+            /// NOTE: This was size() in Lucene.
+            /// </summary>
+            public int Count
             {
                 get
                 {
-                    return @delegate.Size;
+                    return @delegate.Count;
                 }
             }
 

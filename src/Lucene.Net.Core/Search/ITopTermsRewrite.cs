@@ -19,6 +19,6 @@ namespace Lucene.Net.Search
 
     internal interface ITopTermsRewrite
     {
-        int Size { get; } // LUCENENET TODO: Rename Count
+        int Count { get; } // LUCENENET NOTE: This was size() in Lucene.
     }
 }

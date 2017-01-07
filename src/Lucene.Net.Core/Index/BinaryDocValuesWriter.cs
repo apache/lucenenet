@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
             // Use yield return instead of ucsom IEnumerable
 
             AppendingDeltaPackedLongBuffer.Iterator lengthsIterator = lengths.GetIterator();
-            int size = (int)lengths.Size;
+            int size = (int)lengths.Count;
             DataInput bytesIterator = bytes.GetDataInput();
             int maxDoc = maxDocParam;
             int upto = 0;

@@ -588,8 +588,8 @@ namespace Lucene.Net.Index
             // check field names
             FieldInfos fieldInfos1 = MultiFields.GetMergedFieldInfos(index1);
             FieldInfos fieldInfos2 = MultiFields.GetMergedFieldInfos(index2);
-            Assert.AreEqual(fieldInfos1.Size, fieldInfos2.Size, "IndexReaders have different numbers of fields.");
-            int numFields = fieldInfos1.Size;
+            Assert.AreEqual(fieldInfos1.Count, fieldInfos2.Count, "IndexReaders have different numbers of fields.");
+            int numFields = fieldInfos1.Count;
             for (int fieldID = 0; fieldID < numFields; fieldID++)
             {
                 FieldInfo fieldInfo1 = fieldInfos1.FieldInfo(fieldID);

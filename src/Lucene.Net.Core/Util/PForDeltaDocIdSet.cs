@@ -525,10 +525,10 @@ namespace Lucene.Net.Util
             internal virtual int ForwardBinarySearch(int target)
             {
                 // advance forward and double the window at each step
-                int indexSize = (int)docIDs.Size;
+                int indexSize = (int)docIDs.Count;
                 int lo = Math.Max(blockIdx / indexInterval, 0), hi = lo + 1;
                 Debug.Assert(blockIdx == -1 || docIDs.Get(lo) <= docID);
-                Debug.Assert(lo + 1 == docIDs.Size || docIDs.Get(lo + 1) > docID);
+                Debug.Assert(lo + 1 == docIDs.Count || docIDs.Get(lo + 1) > docID);
                 while (true)
                 {
                     if (hi >= indexSize)
@@ -560,7 +560,7 @@ namespace Lucene.Net.Util
                     }
                 }
                 Debug.Assert(docIDs.Get(hi) <= target);
-                Debug.Assert(hi + 1 == docIDs.Size || docIDs.Get(hi + 1) > target);
+                Debug.Assert(hi + 1 == docIDs.Count || docIDs.Get(hi + 1) > target);
                 return hi;
             }
 

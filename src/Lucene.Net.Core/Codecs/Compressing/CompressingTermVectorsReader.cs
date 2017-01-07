@@ -767,7 +767,7 @@ namespace Lucene.Net.Codecs.Compressing
                 return new TVTerms(outerInstance, numTerms[idx], fieldFlags[idx], prefixLengths[idx], suffixLengths[idx], termFreqs[idx], positionIndex[idx], positions[idx], startOffsets[idx], lengths[idx], payloadIndex[idx], payloadBytes, new BytesRef(suffixBytes.Bytes, suffixBytes.Offset + fieldOff, fieldLen));
             }
 
-            public override int Size
+            public override int Count
             {
                 get { return fieldNumOffs.Length; }
             }
@@ -821,7 +821,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
-            public override long Size
+            public override long Count
             {
                 get { return numTerms; }
             }

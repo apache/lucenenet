@@ -192,12 +192,12 @@ namespace Lucene.Net.Codecs.Bloom
                 return result == null ? null : new BloomFilteredTerms(result, filter);
             }
 
-            public override int Size
+            public override int Count
             {
                 get
                 {
                     {
-                        return _delegateFieldsProducer.Size;
+                        return _delegateFieldsProducer.Count;
                     }
                 }
             }
@@ -268,9 +268,9 @@ namespace Lucene.Net.Codecs.Bloom
                     get { return _delegateTerms.Comparator; }
                 }
 
-                public override long Size
+                public override long Count
                 {
-                    get { return _delegateTerms.Size; }
+                    get { return _delegateTerms.Count; }
                 }
 
                 public override long SumTotalTermFreq

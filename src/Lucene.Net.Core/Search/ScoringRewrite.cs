@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
             ParallelArraysTermCollector col = new ParallelArraysTermCollector(this);
             CollectTerms(reader, query, col);
 
-            int size = col.terms.Size;
+            int size = col.terms.Count;
             if (size > 0)
             {
                 int[] sort = col.terms.Sort(col.termsEnum.Comparator);
@@ -186,7 +186,7 @@ namespace Lucene.Net.Search
                     // new entry: we populate the entry initially
                     array.boost[e] = boostAtt.Boost;
                     array.termState[e] = new TermContext(m_topReaderContext, state, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
-                    outerInstance.CheckMaxClauseCount(terms.Size);
+                    outerInstance.CheckMaxClauseCount(terms.Count);
                 }
                 return true;
             }

@@ -155,7 +155,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             return ret;
         }
 
-        public override int Size
+        public override int Count
         {
             get
             {
@@ -168,7 +168,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return TermsDict.Size;
+                return TermsDict.Count;
             }
         }
 
@@ -231,7 +231,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public override long Size
+            public override long Count
             {
                 get { return -1; }
             }

@@ -609,10 +609,10 @@ namespace Lucene.Net.Util.Packed
             public virtual int Get(int index, long[] arr, int off, int len)
             {
                 Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-                Debug.Assert(index >= 0 && index < Size);
+                Debug.Assert(index >= 0 && index < Count);
                 Debug.Assert(off + len <= arr.Length);
 
-                int gets = Math.Min(Size - index, len);
+                int gets = Math.Min(Count - index, len);
                 for (int i = index, o = off, end = index + gets; i < end; ++i, ++o)
                 {
                     arr[o] = Get(i);
@@ -626,8 +626,11 @@ namespace Lucene.Net.Util.Packed
             ///         use non-space-optimal packing of bits. </returns>
             public abstract int BitsPerValue { get; }
 
-            /// <returns> the number of values. </returns>
-            public abstract int Size { get; } // LUCENENET TODO: rename Count
+            /// <summary>
+            /// the number of values. 
+            /// NOTE: This was size() in Lucene.
+            /// </summary>
+            public abstract int Count { get; }
 
             /// <summary>
             /// Return the in-memory size in bytes.
@@ -680,8 +683,10 @@ namespace Lucene.Net.Util.Packed
             int BitsPerValue { get; }
 
             /// <summary>
-            /// Returns number of values </summary>
-            int Size { get; } // LUCENENET TODO: rename Count
+            /// Returns number of values.
+            /// NOTE: This was size() in Lucene.
+            /// </summary>
+            int Count { get; }
 
             /// <summary>
             /// Returns the current position </summary>
@@ -722,7 +727,7 @@ namespace Lucene.Net.Util.Packed
                 }
             }
 
-            public virtual int Size // LUCENENET TODO: rename Count
+            public virtual int Count
             {
                 get { return m_valueCount; }
             }
@@ -751,8 +756,8 @@ namespace Lucene.Net.Util.Packed
             public virtual int Set(int index, long[] arr, int off, int len)
             {
                 Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-                Debug.Assert(index >= 0 && index < Size);
-                len = Math.Min(len, Size - index);
+                Debug.Assert(index >= 0 && index < Count);
+                len = Math.Min(len, Count - index);
                 Debug.Assert(off + len <= arr.Length);
 
                 for (int i = index, o = off, end = index + len; i < end; ++i, ++o)
@@ -781,7 +786,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual void Clear()
             {
-                Fill(0, Size, 0);
+                Fill(0, Count, 0);
             }
 
             /// <summary>
@@ -791,9 +796,9 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual void Save(DataOutput @out)
             {
-                Writer writer = GetWriterNoHeader(@out, Format, Size, BitsPerValue, DEFAULT_BUFFER_SIZE);
+                Writer writer = GetWriterNoHeader(@out, Format, Count, BitsPerValue, DEFAULT_BUFFER_SIZE);
                 writer.WriteHeader();
-                for (int i = 0; i < Size; ++i)
+                for (int i = 0; i < Count; ++i)
                 {
                     writer.Add(Get(i));
                 }
@@ -837,7 +842,7 @@ namespace Lucene.Net.Util.Packed
                 }
             }
 
-            public override sealed int Size
+            public override sealed int Count
             {
                 get { return m_valueCount; }
             }
@@ -863,7 +868,7 @@ namespace Lucene.Net.Util.Packed
                 }
             }
 
-            public override sealed int Size
+            public override sealed int Count
             {
                 get { return m_valueCount; }
             }
@@ -904,7 +909,7 @@ namespace Lucene.Net.Util.Packed
                 }
             }
 
-            public override int Size
+            public override int Count
             {
                 get { return valueCount; }
             }
@@ -1445,8 +1450,8 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public static void Copy(Reader src, int srcPos, Mutable dest, int destPos, int len, int mem)
         {
-            Debug.Assert(srcPos + len <= src.Size);
-            Debug.Assert(destPos + len <= dest.Size);
+            Debug.Assert(srcPos + len <= src.Count);
+            Debug.Assert(destPos + len <= dest.Count);
             int capacity = (int)((uint)mem >> 3);
             if (capacity == 0)
             {

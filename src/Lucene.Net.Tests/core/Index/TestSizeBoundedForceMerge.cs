@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
             // Should only be 3 segments in the index, because one of them exceeds the size limit
             sis = new SegmentInfos();
             sis.Read(dir);
-            Assert.AreEqual(3, sis.Size);
+            Assert.AreEqual(3, sis.Count);
         }
 
         [Test]
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
             // Should only be 3 segments in the index, because one of them exceeds the size limit
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
-            Assert.AreEqual(3, sis.Size);
+            Assert.AreEqual(3, sis.Count);
         }
 
         [Test]
@@ -157,7 +157,7 @@ namespace Lucene.Net.Index
 
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
-            Assert.AreEqual(2, sis.Size);
+            Assert.AreEqual(2, sis.Count);
         }
 
         [Test]
@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
 
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
-            Assert.AreEqual(2, sis.Size);
+            Assert.AreEqual(2, sis.Count);
         }
 
         [Test]
@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
 
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
-            Assert.AreEqual(1, sis.Size);
+            Assert.AreEqual(1, sis.Count);
         }
 
         [Test]
@@ -243,7 +243,7 @@ namespace Lucene.Net.Index
 
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
-            Assert.AreEqual(3, sis.Size);
+            Assert.AreEqual(3, sis.Count);
         }
 
         [Test]
@@ -272,7 +272,7 @@ namespace Lucene.Net.Index
 
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
-            Assert.AreEqual(4, sis.Size);
+            Assert.AreEqual(4, sis.Count);
         }
 
         [Test]
@@ -307,7 +307,7 @@ namespace Lucene.Net.Index
             // max merge docs settings.
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
-            Assert.AreEqual(4, sis.Size);
+            Assert.AreEqual(4, sis.Count);
         }
 
         [Test]
@@ -338,7 +338,7 @@ namespace Lucene.Net.Index
             // Verify that the last segment does not have deletions.
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
-            Assert.AreEqual(3, sis.Size);
+            Assert.AreEqual(3, sis.Count);
             Assert.IsFalse(sis.Info(2).HasDeletions);
         }
 
@@ -366,7 +366,7 @@ namespace Lucene.Net.Index
             // Verify that the last segment does not have deletions.
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
-            Assert.AreEqual(1, sis.Size);
+            Assert.AreEqual(1, sis.Count);
         }
 
         [Test]
@@ -396,7 +396,7 @@ namespace Lucene.Net.Index
             // Verify that the last segment does not have deletions.
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
-            Assert.AreEqual(1, sis.Size);
+            Assert.AreEqual(1, sis.Count);
             Assert.IsTrue(sis.Info(0).HasDeletions);
         }
     }

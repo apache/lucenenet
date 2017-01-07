@@ -145,7 +145,7 @@ namespace Lucene.Net.Util.Fst
                     count++;
                     table.Set(pos, node);
                     // Rehash at 2/3 occupancy:
-                    if (count > 2 * table.Size / 3)
+                    if (count > 2 * table.Count / 3)
                     {
                         Rehash();
                     }
@@ -184,9 +184,9 @@ namespace Lucene.Net.Util.Fst
         {
             PagedGrowableWriter oldTable = table;
 
-            table = new PagedGrowableWriter(2 * oldTable.Size, 1 << 30, PackedInts.BitsRequired(count), PackedInts.COMPACT);
-            mask = table.Size - 1;
-            for (long idx = 0; idx < oldTable.Size; idx++)
+            table = new PagedGrowableWriter(2 * oldTable.Count, 1 << 30, PackedInts.BitsRequired(count), PackedInts.COMPACT);
+            mask = table.Count - 1;
+            for (long idx = 0; idx < oldTable.Count; idx++)
             {
                 long address = oldTable.Get(idx);
                 if (address != 0)

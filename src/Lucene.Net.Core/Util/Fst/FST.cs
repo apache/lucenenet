@@ -844,10 +844,10 @@ namespace Lucene.Net.Util.Fst
             if (nodeAddress != null)
             {
                 // Nodes are addressed by 1+ord:
-                if ((int)nodeCount == nodeAddress.Size)
+                if ((int)nodeCount == nodeAddress.Count)
                 {
-                    nodeAddress = nodeAddress.Resize(ArrayUtil.Oversize(nodeAddress.Size + 1, nodeAddress.BitsPerValue));
-                    inCounts = inCounts.Resize(ArrayUtil.Oversize(inCounts.Size + 1, inCounts.BitsPerValue));
+                    nodeAddress = nodeAddress.Resize(ArrayUtil.Oversize(nodeAddress.Count + 1, nodeAddress.BitsPerValue));
+                    inCounts = inCounts.Resize(ArrayUtil.Oversize(inCounts.Count + 1, inCounts.BitsPerValue));
                 }
                 nodeAddress.Set((int)nodeCount, thisNodeAddress);
                 // System.out.println("  write nodeAddress[" + nodeCount + "] = " + endAddress);
@@ -1252,7 +1252,7 @@ namespace Lucene.Net.Util.Fst
                         arc.Target = pos + code;
                         //System.out.println("    delta pos=" + pos + " delta=" + code + " target=" + arc.target);
                     }
-                    else if (code < nodeRefToAddress.Size)
+                    else if (code < nodeRefToAddress.Count)
                     {
                         // Deref
                         arc.Target = nodeRefToAddress.Get((int)code);
@@ -1689,21 +1689,21 @@ namespace Lucene.Net.Util.Fst
 
             FST.BytesReader r = GetBytesReader();
 
-            int topN = Math.Min(maxDerefNodes, inCounts.Size);
+            int topN = Math.Min(maxDerefNodes, inCounts.Count);
 
             // Find top nodes with highest number of incoming arcs:
             FST.NodeQueue q = new FST.NodeQueue(topN);
 
             // TODO: we could use more RAM efficient selection algo here...
             FST.NodeAndInCount bottom = null;
-            for (int node = 0; node < inCounts.Size; node++)
+            for (int node = 0; node < inCounts.Count; node++)
             {
                 if (inCounts.Get(node) >= minInCountDeref)
                 {
                     if (bottom == null)
                     {
                         q.Add(new FST.NodeAndInCount(node, (int)inCounts.Get(node)));
-                        if (q.Size == topN)
+                        if (q.Count == topN)
                         {
                             bottom = q.Top;
                         }
@@ -1719,7 +1719,7 @@ namespace Lucene.Net.Util.Fst
             inCounts = null;
 
             IDictionary<int, int> topNodeMap = new Dictionary<int, int>();
-            for (int downTo = q.Size - 1; downTo >= 0; downTo--)
+            for (int downTo = q.Count - 1; downTo >= 0; downTo--)
             {
                 FST.NodeAndInCount n = q.Pop();
                 topNodeMap[n.Node] = downTo;

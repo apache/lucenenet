@@ -127,11 +127,11 @@ namespace Lucene.Net.Index
             }
 
             // grow the structures to have room for more elements
-            if (docs.Size == size)
+            if (docs.Count == size)
             {
                 docs = docs.Grow(size + 1);
                 values = values.Grow(size + 1);
-                docsWithField = FixedBitSet.EnsureCapacity(docsWithField, (int)docs.Size);
+                docsWithField = FixedBitSet.EnsureCapacity(docsWithField, (int)docs.Count);
             }
 
             if (val != NumericDocValuesUpdate.MISSING)
@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
             }
             docs = docs.Grow(size + otherUpdates.size);
             values = values.Grow(size + otherUpdates.size);
-            docsWithField = FixedBitSet.EnsureCapacity(docsWithField, (int)docs.Size);
+            docsWithField = FixedBitSet.EnsureCapacity(docsWithField, (int)docs.Count);
             for (int i = 0; i < otherUpdates.size; i++)
             {
                 int doc = (int)otherUpdates.docs.Get(i);

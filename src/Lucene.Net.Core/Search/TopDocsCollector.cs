@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
                 // In case pq was populated with sentinel values, there might be less
                 // results than pq.size(). Therefore return all results until either
                 // pq.size() or totalHits.
-                return m_totalHits < m_pq.Size ? m_totalHits : m_pq.Size;
+                return m_totalHits < m_pq.Count ? m_totalHits : m_pq.Count;
             }
         }
 
@@ -176,7 +176,7 @@ namespace Lucene.Net.Search
             // Note that this loop will usually not be executed, since the common usage
             // should be that the caller asks for the last howMany results. However it's
             // needed here for completeness.
-            for (int i = m_pq.Size - start - howMany; i > 0; i--)
+            for (int i = m_pq.Count - start - howMany; i > 0; i--)
             {
                 m_pq.Pop();
             }

@@ -51,7 +51,7 @@ namespace Lucene.Net.Codecs.Lucene46
             try
             {
                 CodecUtil.WriteHeader(output, Lucene46FieldInfosFormat.CODEC_NAME, Lucene46FieldInfosFormat.FORMAT_CURRENT);
-                output.WriteVInt(infos.Size);
+                output.WriteVInt(infos.Count);
                 foreach (FieldInfo fi in infos)
                 {
                     IndexOptions? indexOptions = fi.IndexOptions;

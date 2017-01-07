@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
                 return false;
             }
 
-            internal virtual int Size // LUCENENET TODO: Rename Count
+            internal virtual int Count // LUCENENET NOTE: This was size() in Lucene.
             {
                 get { return numericDVUpdates.Count + binaryDVUpdates.Count; }
             }

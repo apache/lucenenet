@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
                 }
                 docMap.Freeze();
                 int numDeletedDocs = del;
-                Debug.Assert(docMap.Size == maxDoc);
+                Debug.Assert(docMap.Count == maxDoc);
                 return new DocMapAnonymousInnerClassHelper(maxDoc, liveDocs, docMap, numDeletedDocs);
             }
 

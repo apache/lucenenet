@@ -785,7 +785,7 @@ namespace Lucene.Net.Codecs.Lucene40
             PackedInts.Reader addressReader = PackedInts.GetReader(index);
             PackedInts.Reader ordsReader = PackedInts.GetReader(index);
 
-            int valueCount = addressReader.Size - 1;
+            int valueCount = addressReader.Count - 1;
             ramBytesUsed.AddAndGet(bytes.RamBytesUsed() + addressReader.RamBytesUsed() + ordsReader.RamBytesUsed());
 
             return CorrectBuggyOrds(new SortedDocValuesAnonymousInnerClassHelper2(bytesReader, addressReader, ordsReader, valueCount));

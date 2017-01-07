@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
             }
             FieldInfos fieldInfos = builder.Finish();
             //Since the complement is stored as well in the fields map
-            Assert.IsTrue(fieldInfos.Size == DocHelper.All.Count); //this is all b/c we are using the no-arg constructor
+            Assert.IsTrue(fieldInfos.Count == DocHelper.All.Count); //this is all b/c we are using the no-arg constructor
 
             IndexOutput output = dir.CreateOutput(filename, NewIOContext(Random()));
             Assert.IsTrue(output != null);
@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
             FieldInfos fieldInfos = CreateAndWriteFieldInfos(dir, name);
 
             FieldInfos readIn = ReadFieldInfos(dir, name);
-            Assert.IsTrue(fieldInfos.Size == readIn.Size);
+            Assert.IsTrue(fieldInfos.Count == readIn.Count);
             FieldInfo info = readIn.FieldInfo("textField1");
             Assert.IsTrue(info != null);
             Assert.IsTrue(info.HasVectors == false);
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
 
         private void AssertReadOnly(FieldInfos readOnly, FieldInfos modifiable)
         {
-            Assert.AreEqual(modifiable.Size, readOnly.Size);
+            Assert.AreEqual(modifiable.Count, readOnly.Count);
             // assert we can iterate
             foreach (FieldInfo fi in readOnly)
             {

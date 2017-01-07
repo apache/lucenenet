@@ -131,7 +131,7 @@ namespace Lucene.Net.Util.Packed
 
         public override string ToString()
         {
-            return this.GetType().Name + "(bitsPerValue=" + m_bitsPerValue + ", size=" + Size + ", elements.length=" + blocks.Length + ")";
+            return this.GetType().Name + "(bitsPerValue=" + m_bitsPerValue + ", size=" + Count + ", elements.length=" + blocks.Length + ")";
         }
     }
 }

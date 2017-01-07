@@ -42,7 +42,7 @@ namespace Lucene.Net.Search.Suggest
         public UnsortedInputIterator(IInputIterator source)
             : base(source)
         {
-            ords = new int[entries.Size];
+            ords = new int[entries.Length];
             Random random = new Random();
             for (int i = 0; i < ords.Length; i++)
             {
@@ -68,7 +68,7 @@ namespace Lucene.Net.Search.Suggest
 
         public override BytesRef Next()
         {
-            if (++curPos < entries.Size)
+            if (++curPos < entries.Length)
             {
                 currentOrd = ords[curPos];
                 return entries.Get(spare, currentOrd);
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Suggest
             get
             {
                 {
-                    if (HasPayloads && curPos < payloads.Size)
+                    if (HasPayloads && curPos < payloads.Length)
                     {
                         Debug.Assert(currentOrd == ords[curPos]);
                         return payloads.Get(payloadSpare, currentOrd);

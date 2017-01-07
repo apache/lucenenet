@@ -86,9 +86,9 @@ namespace Lucene.Net.Index
                 return m_input.Terms(field);
             }
 
-            public override int Size
+            public override int Count
             {
-                get { return m_input.Size; }
+                get { return m_input.Count; }
             }
         }
 
@@ -125,9 +125,9 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override long Size
+            public override long Count
             {
-                get { return m_input.Size; }
+                get { return m_input.Count; }
             }
 
             public override long SumTotalTermFreq

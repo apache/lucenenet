@@ -255,7 +255,7 @@ namespace Lucene.Net.Codecs
                 return;
             }
 
-            int numFields = vectors.Size;
+            int numFields = vectors.Count;
             if (numFields == -1)
             {
                 // count manually! TODO: Maybe enforce that Fields.size() returns something valid?
@@ -294,7 +294,7 @@ namespace Lucene.Net.Codecs
                 bool hasPayloads = terms.HasPayloads;
                 Debug.Assert(!hasPayloads || hasPositions);
 
-                int numTerms = (int)terms.Size;
+                int numTerms = (int)terms.Count;
                 if (numTerms == -1)
                 {
                     // count manually. It is stupid, but needed, as Terms.size() is not a mandatory statistics function

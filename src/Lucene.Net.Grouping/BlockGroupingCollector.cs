@@ -209,7 +209,7 @@ namespace Lucene.Net.Search.Grouping
                     og.comparatorSlot = bottomSlot;
                     OneGroup bottomGroup = groupQueue.Add(og);
                     //System.out.println("      ADD group=" + getGroupString(lastGroupOrd) + " newBottom=" + getGroupString(bottomGroup.groupOrd));
-                    queueFull = groupQueue.Size == topNGroups;
+                    queueFull = groupQueue.Count == topNGroups;
                     if (queueFull)
                     {
                         // Queue just became full; now set the real bottom
@@ -225,7 +225,7 @@ namespace Lucene.Net.Search.Grouping
                     else
                     {
                         // Queue not full yet -- just advance bottomSlot:
-                        bottomSlot = groupQueue.Size;
+                        bottomSlot = groupQueue.Count;
                     }
                 }
                 else
@@ -394,7 +394,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 ProcessGroup();
             }
-            if (groupOffset >= groupQueue.Size)
+            if (groupOffset >= groupQueue.Count)
             {
                 return null;
             }
@@ -404,8 +404,8 @@ namespace Lucene.Net.Search.Grouping
 
             float maxScore = float.MinValue;
 
-            GroupDocs<TGroupValue>[] groups = new GroupDocs<TGroupValue>[groupQueue.Size - groupOffset];
-            for (int downTo = groupQueue.Size - groupOffset - 1; downTo >= 0; downTo--)
+            GroupDocs<TGroupValue>[] groups = new GroupDocs<TGroupValue>[groupQueue.Count - groupOffset];
+            for (int downTo = groupQueue.Count - groupOffset - 1; downTo >= 0; downTo--)
             {
                 OneGroup og = groupQueue.Pop();
 

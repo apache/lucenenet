@@ -400,7 +400,7 @@ namespace Lucene.Net.Search.Spell
                         }
                     }
                     sugQueue.InsertWithOverflow(sugWord);
-                    if (sugQueue.Size == numSug)
+                    if (sugQueue.Count == numSug)
                     {
                         // if queue full, maintain the minScore score
                         accuracy = sugQueue.Top.Score;
@@ -409,8 +409,8 @@ namespace Lucene.Net.Search.Spell
                 }
 
                 // convert to array string
-                string[] list = new string[sugQueue.Size];
-                for (int i = sugQueue.Size - 1; i >= 0; i--)
+                string[] list = new string[sugQueue.Count];
+                for (int i = sugQueue.Count - 1; i >= 0; i--)
                 {
                     list[i] = sugQueue.Pop().String;
                 }

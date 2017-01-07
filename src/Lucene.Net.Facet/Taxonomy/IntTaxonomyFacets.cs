@@ -142,7 +142,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         reuse.Ord = ord;
                         reuse.Value = values[ord];
                         reuse = q.InsertWithOverflow(reuse);
-                        if (q.Size == topN)
+                        if (q.Count == topN)
                         {
                             bottomValue = q.Top.Value;
                         }
@@ -174,7 +174,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 // Our sum'd dim value is accurate, so we keep it
             }
 
-            LabelAndValue[] labelValues = new LabelAndValue[q.Size];
+            LabelAndValue[] labelValues = new LabelAndValue[q.Count];
             for (int i = labelValues.Length - 1; i >= 0; i--)
             {
                 TopOrdAndIntQueue.OrdAndValue ordAndValue = q.Pop();

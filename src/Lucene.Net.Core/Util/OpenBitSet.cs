@@ -144,8 +144,6 @@ namespace Lucene.Net.Util
             }
         }
 
-        // LUCENENET TODO: The following 3 members all return the exact same result. Try to consolidate.
-
         /// <summary>
         /// Returns the current capacity in bits (1 greater than the index of the last bit) </summary>
         public virtual long Capacity
@@ -153,16 +151,22 @@ namespace Lucene.Net.Util
             get { return m_bits.Length << 6; }
         }
 
-        /// <summary>
-        /// Returns the current capacity of this set.  Included for
-        /// compatibility.  this is *not* equal to <seealso cref="#cardinality"/>
-        /// </summary>
-        public virtual long Size // LUCENENET TODO: rename Count
-        {
-            get { return Capacity; }
-        }
+        // LUCENENET specific - eliminating this extra property, since it is identical to
+        // Length anyway, and Length is required by the IBits interface.
+        ///// <summary>
+        ///// Returns the current capacity of this set.  Included for
+        ///// compatibility.  this is *not* equal to <seealso cref="#cardinality"/>.
+        ///// </summary>
+        //public virtual long Size
+        //{
+        //    get { return Capacity; }
+        //}
 
-        public virtual int Length // LUCENENET TODO: consider using this only, since it is required by the IBits interface
+        /// <summary>
+        /// Returns the current capacity of this set. This is *not* equal to <seealso cref="#cardinality"/>.
+        /// NOTE: This is equivalent to size() or length() in Lucene.
+        /// </summary>
+        public virtual int Length
         {
             get { return m_bits.Length << 6; }
         }

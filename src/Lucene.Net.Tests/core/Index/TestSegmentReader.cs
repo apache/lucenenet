@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
         {
             Terms result = Reader.GetTermVectors(0).Terms(DocHelper.TEXT_FIELD_2_KEY);
             Assert.IsNotNull(result);
-            Assert.AreEqual(3, result.Size);
+            Assert.AreEqual(3, result.Count);
             TermsEnum termsEnum = result.Iterator(null);
             while (termsEnum.Next() != null)
             {
@@ -222,7 +222,7 @@ namespace Lucene.Net.Index
 
             Fields results = Reader.GetTermVectors(0);
             Assert.IsTrue(results != null);
-            Assert.AreEqual(3, results.Size, "We do not have 3 term freq vectors");
+            Assert.AreEqual(3, results.Count, "We do not have 3 term freq vectors");
         }
 
         [Test]

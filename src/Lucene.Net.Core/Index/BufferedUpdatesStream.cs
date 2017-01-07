@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual bool Any() // LUCENENET TODO: This should be a property, except for Any() is already a common API in .NET so it might make sense to keep it
+        public virtual bool Any()
         {
             return bytesUsed.Get() != 0;
         }

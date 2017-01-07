@@ -511,7 +511,7 @@ namespace Lucene.Net.Index
                 CodecUtil.WriteHeader(segnOutput, "segments", VERSION_48);
                 segnOutput.WriteLong(Version);
                 segnOutput.WriteInt(Counter); // write counter
-                segnOutput.WriteInt(Size); // write infos
+                segnOutput.WriteInt(Count); // write infos
                 foreach (SegmentCommitInfo siPerCommit in segments)
                 {
                     SegmentInfo si = siPerCommit.Info;
@@ -695,7 +695,7 @@ namespace Lucene.Net.Index
         {
             var sis = (SegmentInfos)base.MemberwiseClone();
             // deep clone, first recreate all collections:
-            sis.segments = new List<SegmentCommitInfo>(Size);
+            sis.segments = new List<SegmentCommitInfo>(Count);
             foreach (SegmentCommitInfo info in segments)
             {
                 Debug.Assert(info.Info.Codec != null);
@@ -1157,7 +1157,7 @@ namespace Lucene.Net.Index
                     files.Add(segmentFileName);
                 }
             }
-            var size = Size;
+            var size = Count;
             for (int i = 0; i < size; i++)
             {
                 var info = Info(i);
@@ -1270,7 +1270,7 @@ namespace Lucene.Net.Index
         {
             var buffer = new StringBuilder();
             buffer.Append(GetSegmentsFileName()).Append(": ");
-            int count = Size;
+            int count = Count;
             for (int i = 0; i < count; i++)
             {
                 if (i > 0)
@@ -1378,7 +1378,7 @@ namespace Lucene.Net.Index
 
         internal IList<SegmentCommitInfo> CreateBackupSegmentInfos()
         {
-            var list = new List<SegmentCommitInfo>(Size);
+            var list = new List<SegmentCommitInfo>(Count);
             foreach (var info in segments)
             {
                 Debug.Assert(info.Info.Codec != null);
@@ -1401,8 +1401,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns number of <seealso cref="SegmentCommitInfo"/>s. </summary>
-        public int Size // LUCENENET TODO: rename Count
+        /// Returns number of <seealso cref="SegmentCommitInfo"/>s. 
+        /// NOTE: This was size() in Lucene.
+        /// </summary>
+        public int Count
         {
             get { return segments.Count; }
         }

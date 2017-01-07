@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-            public override int Size
+            public override int Count
             {
                 get
                 {

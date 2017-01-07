@@ -52,10 +52,10 @@ namespace Lucene.Net.Util
         private volatile bool swapped;
         private readonly int maxSize;
 
-        public DoubleBarrelLRUCache(int maxSize) // LUCENENET TODO: Rename parameter maxCount ?
+        public DoubleBarrelLRUCache(int maxCount)
         {
-            this.maxSize = maxSize;
-            Interlocked.Exchange(ref countdown, maxSize);
+            this.maxSize = maxCount;
+            Interlocked.Exchange(ref countdown, maxCount);
             cache1 = new ConcurrentDictionary<TKey, TValue>();
             cache2 = new ConcurrentDictionary<TKey, TValue>();
         }

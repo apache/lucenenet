@@ -168,7 +168,7 @@ namespace Lucene.Net.Codecs.Memory
             return fields[field];
         }
 
-        public override int Size
+        public override int Count
         {
             get { return fields.Count; }
         }
@@ -237,7 +237,7 @@ namespace Lucene.Net.Codecs.Memory
                 get { return fieldInfo.HasPayloads; }
             }
 
-            public override long Size
+            public override long Count
             {
                 get { return numTerms; }
             }

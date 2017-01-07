@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
 
             Terms vector = mergedReader.GetTermVectors(0).Terms(DocHelper.TEXT_FIELD_2_KEY);
             Assert.IsNotNull(vector);
-            Assert.AreEqual(3, vector.Size);
+            Assert.AreEqual(3, vector.Count);
             TermsEnum termsEnum = vector.Iterator(null);
 
             int i = 0;

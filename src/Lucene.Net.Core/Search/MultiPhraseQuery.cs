@@ -568,7 +568,7 @@ namespace Lucene.Net.Search
                 _lastIndex = 0;
             }
 
-            internal int Size // LUCENENET TODO: rename Count
+            internal int Count // LUCENENET NOTE: This was size() in Lucene.
             {
                 get { return (_lastIndex - _index); }
             }
@@ -617,7 +617,7 @@ namespace Lucene.Net.Search
 
         public override sealed int NextDoc()
         {
-            if (_queue.Size == 0)
+            if (_queue.Count == 0)
             {
                 return NO_MORE_DOCS;
             }
@@ -648,10 +648,10 @@ namespace Lucene.Net.Search
                 {
                     _queue.Pop();
                 }
-            } while (_queue.Size > 0 && _queue.Top.DocID == _doc);
+            } while (_queue.Count > 0 && _queue.Top.DocID == _doc);
 
             _posList.Sort();
-            _freq = _posList.Size;
+            _freq = _posList.Count;
 
             return _doc;
         }

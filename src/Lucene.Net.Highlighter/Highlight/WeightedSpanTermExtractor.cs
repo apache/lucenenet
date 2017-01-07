@@ -429,7 +429,7 @@ namespace Lucene.Net.Search.Highlight
                     return list.GetEnumerator();
                 }
 
-                public override int Size
+                public override int Count
                 {
                     get { return 1; }
                 }

@@ -85,8 +85,10 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Returns the number of values </summary>
-        public long Size // LUCENENET TODO: rename Count
+        /// Returns the number of values.
+        /// NOTE: This was size() in Lucene.
+        /// </summary>
+        public long Count
         {
             get { return valueCount; }
         }

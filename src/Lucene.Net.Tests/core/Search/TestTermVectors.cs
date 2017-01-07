@@ -143,10 +143,10 @@ namespace Lucene.Net.Search
 
             Fields vectors = searcher.IndexReader.GetTermVectors(hits[0].Doc);
             Assert.IsNotNull(vectors);
-            Assert.AreEqual(1, vectors.Size);
+            Assert.AreEqual(1, vectors.Count);
             Terms vector = vectors.Terms("field");
             Assert.IsNotNull(vector);
-            Assert.AreEqual(1, vector.Size);
+            Assert.AreEqual(1, vector.Count);
             TermsEnum termsEnum = vector.Iterator(null);
             Assert.IsNotNull(termsEnum.Next());
             Assert.AreEqual("one", termsEnum.Term.Utf8ToString());

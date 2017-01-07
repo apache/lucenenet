@@ -149,7 +149,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private int RelativeChunk(int block, int relativeDoc)
         {
-            int lo = 0, hi = docBasesDeltas[block].Size - 1;
+            int lo = 0, hi = docBasesDeltas[block].Count - 1;
             while (lo <= hi)
             {
                 int mid = (int)((uint)(lo + hi) >> 1);

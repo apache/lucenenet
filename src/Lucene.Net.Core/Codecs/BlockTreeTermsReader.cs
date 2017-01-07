@@ -287,7 +287,7 @@ namespace Lucene.Net.Codecs
             return ret;
         }
 
-        public override int Size
+        public override int Count
         {
             get { return fields.Count; }
         }
@@ -645,7 +645,7 @@ namespace Lucene.Net.Codecs
                 return new SegmentTermsEnum(this);
             }
 
-            public override long Size
+            public override long Count
             {
                 get { return numTerms; }
             }

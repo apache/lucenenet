@@ -213,7 +213,7 @@ namespace Lucene.Net.Util
         {
             get
             {
-                return Size == 0;
+                return Count == 0;
             }
         }
 
@@ -234,8 +234,9 @@ namespace Lucene.Net.Util
         /// Returns the number of key-value mappings in this map. this result is a snapshot,
         /// and may not reflect unprocessed entries that will be removed before next
         /// attempted access because they are no longer referenced.
+        /// NOTE: This was size() in Lucene.
         /// </summary>
-        public int Size // LUCENENET TODO: rename Count
+        public int Count
         {
             get
             {

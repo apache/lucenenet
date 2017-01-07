@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.SimpleText
             try
             {
                 SimpleTextUtil.Write(output, NUMFIELDS);
-                SimpleTextUtil.Write(output, infos.Size.ToString(CultureInfo.InvariantCulture), scratch);
+                SimpleTextUtil.Write(output, infos.Count.ToString(CultureInfo.InvariantCulture), scratch);
                 SimpleTextUtil.WriteNewline(output);
 
                 foreach (FieldInfo fi in infos)

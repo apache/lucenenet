@@ -56,21 +56,22 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Gets the number of fields or -1 if the number of
         /// distinct field names is unknown. If &gt;= 0,
-        /// <seealso cref="#iterator"/> will return as many field names.
+        /// <see cref="GetEnumerator"/> will return as many field names.
+        /// NOTE: This was size() in Lucene.
         /// </summary>
-        public abstract int Size { get; } // LUCENENET TODO: Rename Count
+        public abstract int Count { get; }
 
         /// <summary>
         /// Returns the number of terms for all fields, or -1 if this
         ///  measure isn't stored by the codec. Note that, just like
         ///  other term measures, this measure does not take deleted
         ///  documents into account. </summary>
-        ///  @deprecated iterate fields and add their size() instead.
+        ///  @deprecated iterate fields and add their Count instead.
         ///   this method is only provided as a transition mechanism
         ///   to access this statistic for 3.x indexes, which do not
         ///   have this statistic per-field.
-        ///  <seealso cref= Terms#size()  </seealso>
-        [Obsolete("iterate fields and add their Size() instead.")]
+        ///  <seealso cref="Index.Terms.Count"></seealso>
+        [Obsolete("iterate fields and add their Count instead.")]
         public virtual long UniqueTermCount
         {
             get
@@ -81,7 +82,7 @@ namespace Lucene.Net.Index
                     Terms terms = Terms(field);
                     if (terms != null)
                     {
-                        long termCount = terms.Size;
+                        long termCount = terms.Count;
                         if (termCount == -1)
                         {
                             return -1;

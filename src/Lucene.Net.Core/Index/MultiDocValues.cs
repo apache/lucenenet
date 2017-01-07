@@ -544,7 +544,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return globalOrdDeltas.Size;
+                    return globalOrdDeltas.Count;
                 }
             }
 

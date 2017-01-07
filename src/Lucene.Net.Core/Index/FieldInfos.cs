@@ -146,8 +146,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the number of fields </summary>
-        public virtual int Size // LUCENENET TODO: rename Count
+        /// Returns the number of fields.
+        /// NOTE: This was size() in Lucene.
+        /// </summary>
+        public virtual int Count
         {
             get
             {

@@ -932,7 +932,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns <code>true</code> iff stalled
         /// </summary>
-        internal bool AnyStalledThreads() // LUCENENET TODO: Make property ?
+        internal bool AnyStalledThreads()
         {
             return stallControl.AnyStalledThreads();
         }
