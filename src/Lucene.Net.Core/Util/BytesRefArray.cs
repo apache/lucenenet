@@ -168,9 +168,9 @@ namespace Lucene.Net.Util
         /// <summary>
         /// sugar for <seealso cref="#iterator(Comparator)"/> with a <code>null</code> comparator
         /// </summary>
-        public IBytesRefIterator Iterator() // LUCENENET TODO: Rename GetIterator() ? check consistency
+        public IBytesRefIterator GetIterator()
         {
-            return Iterator(null);
+            return GetIterator(null);
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Lucene.Net.Util
         /// this is a non-destructive operation.
         /// </p>
         /// </summary>
-        public IBytesRefIterator Iterator(IComparer<BytesRef> comp)// LUCENENET TODO: Rename GetIterator() ? check consistency
+        public IBytesRefIterator GetIterator(IComparer<BytesRef> comp)
         {
             BytesRef spare = new BytesRef();
             int size = Size;

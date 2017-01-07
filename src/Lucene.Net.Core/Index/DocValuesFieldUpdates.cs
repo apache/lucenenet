@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
         /// Returns an <seealso cref="IIterator"/> over the updated documents and their
         /// values.
         /// </summary>
-        public abstract IIterator GetIterator(); // LUCENENET TODO: Rename Iterator()? Check consistency across API
+        public abstract IIterator GetIterator();
 
         /// <summary>
         /// Merge with another <seealso cref="AbstractDocValuesFieldUpdates"/>. this is called for a

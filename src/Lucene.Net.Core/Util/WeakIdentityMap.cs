@@ -339,7 +339,7 @@ namespace Lucene.Net.Util
         /// garbage collected while iterator is consumed,
         /// especially if {@code reapOnRead} is {@code false}.
         /// </summary>
-        public IEnumerator<TValue> ValueIterator()
+        public IEnumerator<TValue> ValueIterator() // LUCENENET TODO: rename GetValueIterator()
         {
             if (reapOnRead)
             {

@@ -133,14 +133,9 @@ namespace Lucene.Net.Util.Packed
 
         internal abstract int Get(int block, int element, long[] arr, int off, int len);
 
-        /* LUCENE TO-DO
-      /// <summary>
-      /// Return an iterator over the values of this buffer. </summary>
-      public virtual Iterator Iterator()
-      {
-        return new Iterator(this);
-      }*/
-
+        /// <summary>
+        /// Return an iterator over the values of this buffer. 
+        /// </summary>
         public virtual Iterator GetIterator()
         {
             return new Iterator(this);

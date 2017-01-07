@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
         /// this implementation can return <code>null</code> if there
         /// are no docs that match.
         /// </summary>
-        public abstract DocIdSetIterator GetIterator(); // LUCENENET TODO: Consistency GetIterator() vs Iterator()
+        public abstract DocIdSetIterator GetIterator();
 
         // TODO: somehow this class should express the cost of
         // iteration vs the cost of random access Bits; for
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
         /// Optionally provides a <seealso cref="GetBits"/> interface for random access
         /// to matching documents. </summary>
         /// <returns> {@code null}, if this {@code DocIdSet} does not support random access.
-        /// In contrast to <seealso cref="#iterator()"/>, a return value of {@code null}
+        /// In contrast to <see cref="GetIterator()"/>, a return value of {@code null}
         /// <b>does not</b> imply that no documents match the filter!
         /// The default implementation does not provide random access, so you
         /// only need to implement this method if your DocIdSet can
