@@ -127,7 +127,7 @@ namespace Lucene.Net.Search
                 afterDoc = after.Doc - docBase;
             }
 
-            protected override int TopDocsSize
+            protected override int TopDocsCount
             {
                 get { return collectedHits < m_pq.Count ? collectedHits : m_pq.Count; }
             }
@@ -233,7 +233,7 @@ namespace Lucene.Net.Search
                 afterDoc = after.Doc - docBase;
             }
 
-            protected override int TopDocsSize
+            protected override int TopDocsCount
             {
                 get { return collectedHits < m_pq.Count ? collectedHits : m_pq.Count; }
             }
