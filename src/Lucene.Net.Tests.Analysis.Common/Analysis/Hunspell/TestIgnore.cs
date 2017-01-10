@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis.Hunspell
     public class TestIgnore : StemmerTestBase
     {
 
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public static void BeforeClass()
         {
             Init("ignore.aff", "ignore.dic");

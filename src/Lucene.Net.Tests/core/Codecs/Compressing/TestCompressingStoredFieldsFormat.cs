@@ -1,5 +1,4 @@
 using Lucene.Net.Documents;
-using System;
 using Field = Lucene.Net.Documents.Field;
 
 namespace Lucene.Net.Codecs.Compressing
@@ -48,6 +47,7 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         [Test]
+        [ExpectedException("System.ArgumentException")]
         public virtual void TestDeletePartiallyWrittenFilesIfAbort()
         {
             Directory dir = NewDirectory();
@@ -70,29 +70,26 @@ namespace Lucene.Net.Codecs.Compressing
             fieldType.Stored = true;
             invalidDoc.Add(new FieldAnonymousInnerClassHelper(this, fieldType));
 
-            Assert.Throws<ArgumentException>(() =>
+            try
             {
-                try
+                iw.AddDocument(invalidDoc);
+                iw.Commit();
+            }
+            finally
+            {
+                int counter = 0;
+                foreach (string fileName in dir.ListAll())
                 {
-                    iw.AddDocument(invalidDoc);
-                    iw.Commit();
-                }
-                finally
-                {
-                    int counter = 0;
-                    foreach (string fileName in dir.ListAll())
+                    if (fileName.EndsWith(".fdt") || fileName.EndsWith(".fdx"))
                     {
-                        if (fileName.EndsWith(".fdt") || fileName.EndsWith(".fdx"))
-                        {
-                            counter++;
-                        }
+                        counter++;
                     }
-                    // Only one .fdt and one .fdx files must have been found
-                    Assert.AreEqual(2, counter);
-                    iw.Dispose();
-                    dir.Dispose();
                 }
-            });
+                // Only one .fdt and one .fdx files must have been found
+                Assert.AreEqual(2, counter);
+                iw.Dispose();
+                dir.Dispose();
+            }
         }
 
         private class FieldAnonymousInnerClassHelper : Field

@@ -208,9 +208,9 @@ namespace Lucene.Net.Util
                 Assert.IsNotNull(b);
                 return (int) (a - b);
             }
-        }
+        } 
 
-        [Ignore("Increase heap size to run this test")] // Increase heap size to run this test
+        [Ignore] // Increase heap size to run this test
         [Test, LuceneNetSpecific]
         public static void TestMaxSizeBounds()
         {

@@ -29,8 +29,8 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Apache Software Foundation")]
 [assembly: AssemblyProduct("Lucene.Net")]
-[assembly: AssemblyCopyright("Copyright 2006 - 2014 The Apache Software Foundation")]
-[assembly: AssemblyTrademark("Copyright 2006 - 2014 The Apache Software Foundation")]
+[assembly: AssemblyCopyright("Copyright 2006 - 2017 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2006 - 2017 The Apache Software Foundation")]
 [assembly: AssemblyDefaultAlias("Lucene.Net")]
 [assembly: AssemblyCulture("")]
 

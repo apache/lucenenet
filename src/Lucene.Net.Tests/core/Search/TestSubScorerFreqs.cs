@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
         private static Directory Dir;
         private static IndexSearcher s;
 
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public void MakeIndex()
         {
             Dir = new RAMDirectory();
@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
             w.Dispose();
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void Finish()
         {
             s.IndexReader.Dispose();

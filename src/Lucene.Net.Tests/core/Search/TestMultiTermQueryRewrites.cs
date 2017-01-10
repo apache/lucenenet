@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
         /// LUCENENET specific
         /// Is non-static because Similarity and TimeZone are not static.
         /// </summary>
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public void BeforeClass()
         {
             Dir = NewDirectory();
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
             MultiSearcherDupls = NewSearcher(MultiReaderDupls);
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void AfterClass()
         {
             Reader.Dispose();

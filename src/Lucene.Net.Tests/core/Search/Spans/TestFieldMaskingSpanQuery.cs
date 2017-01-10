@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Spans
         /// LUCENENET specific
         /// Is non-static because NewIndexWriterConfig is no longer static.
         /// </summary>
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public void BeforeClass()
         {
             Directory = NewDirectory();
@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Spans
             Searcher = NewSearcher(Reader);
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void AfterClass()
         {
             Searcher = null;

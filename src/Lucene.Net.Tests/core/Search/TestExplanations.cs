@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
         // same contents, but no field boost
         public const string ALTFIELD = "alt";
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void AfterClassTestExplanations()
         {
             Searcher = null;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Search
         /// Is non-static because NewIndexWriterConfig, NewTextField and
         /// NewStringField are no longer static.
         /// </summary>
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public void BeforeClassTestExplanations()
         {
             Directory = NewDirectory();

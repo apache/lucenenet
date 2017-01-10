@@ -85,7 +85,7 @@ namespace Lucene.Net.Facet.Taxonomy
         private static Net.Store.Directory indexDir, taxoDir;
         private static IDictionary<string, int?> allExpectedCounts, termExpectedCounts;
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void AfterClassCountingFacetsAggregatorTest()
         {
             IOUtils.Close(indexDir, taxoDir);
@@ -245,7 +245,7 @@ namespace Lucene.Net.Facet.Taxonomy
             return counts;
         }
 
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public void BeforeClassCountingFacetsAggregatorTest()
         {
             indexDir = NewDirectory();

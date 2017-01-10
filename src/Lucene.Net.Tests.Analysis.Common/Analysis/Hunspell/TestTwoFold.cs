@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis.Hunspell
     public class TestTwoFold : StemmerTestBase
     {
 
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public static void BeforeClass()
         {
             Init("twofold.aff", "morph.dic");

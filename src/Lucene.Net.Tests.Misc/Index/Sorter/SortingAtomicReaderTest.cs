@@ -25,7 +25,7 @@ namespace Lucene.Net.Index.Sorter
 
     public class SortingAtomicReaderTest : SorterTestBase
     {
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public static void BeforeClassSortingAtomicReaderTest()
         {
 

@@ -30,7 +30,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// LUCENENET specific
         /// Is non-static because OLD_FORMAT_IMPERSONATION_IS_ACTIVE is no longer static.
         /// </summary>
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public void BeforeClass()
         {
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec

@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
         /// LUCENENET specific
         /// Is non-static because NewIndexWriterConfig is no longer static.
         /// </summary>
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public void BeforeClass()
         {
             string[] data = new string[] { "A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6" };
@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void AfterClass()
         {
             Reader.Dispose();

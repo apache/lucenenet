@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Spans
         /// LUCENENET specific
         /// Is non-static because NewIndexWriterConfig is no longer static.
         /// </summary>
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public void BeforeClass()
         {
             SimplePayloadAnalyzer = new AnalyzerAnonymousInnerClassHelper();
@@ -129,7 +129,7 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void AfterClass()
         {
             Reader.Dispose();

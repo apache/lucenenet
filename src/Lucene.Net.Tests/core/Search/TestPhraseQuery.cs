@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
         private PhraseQuery Query;
         private static Directory Directory;
 
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public void BeforeClass()
         {
             Directory = NewDirectory();
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
             Query = new PhraseQuery();
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void AfterClass()
         {
             Searcher = null;

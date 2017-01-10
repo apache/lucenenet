@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
     public class TestCaseInsensitive : StemmerTestBase
     {
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public static void BeforeClass()
         {
             Init(true, "simple.aff", "mixedcase.dic");

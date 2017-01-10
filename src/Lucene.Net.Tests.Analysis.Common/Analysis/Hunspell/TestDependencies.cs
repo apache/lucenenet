@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
     public class TestDependencies_ : StemmerTestBase
     {
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public static void BeforeClass()
         {
             Init("dependencies.aff", "dependencies.dic");

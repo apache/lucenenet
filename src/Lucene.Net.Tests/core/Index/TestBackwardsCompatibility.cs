@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
             return null; // never get here
         }
 
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public void BeforeClass()
         {
             Assert.IsFalse(OLD_FORMAT_IMPERSONATION_IS_ACTIVE, "test infra is broken!");
@@ -221,7 +221,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public void AfterClass()
         {
             foreach (Directory d in OldIndexDirs.Values)

@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
         internal static long[] LONGS;
         internal static byte[] RANDOM_TEST_BYTES;
 
-        [OneTimeSetUp]
+        [TestFixtureSetUp]
         public static void BeforeClass()
         {
             Random random = Random();
@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [OneTimeTearDown]
+        [TestFixtureTearDown]
         public static void AfterClass()
         {
             INTS = null;
