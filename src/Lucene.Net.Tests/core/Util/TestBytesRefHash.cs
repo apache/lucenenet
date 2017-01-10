@@ -323,7 +323,6 @@ namespace Lucene.Net.Util
         }
 
         [Test]
-        [ExpectedException(typeof(MaxBytesLengthExceededException))]
         public virtual void TestLargeValue()
         {
             int[] sizes = { Random().Next(5), ByteBlockPool.BYTE_BLOCK_SIZE - 33 + Random().Next(31), ByteBlockPool.BYTE_BLOCK_SIZE - 1 + Random().Next(37) };
@@ -342,11 +341,11 @@ namespace Lucene.Net.Util
                 }
                 catch (MaxBytesLengthExceededException e)
                 {
+                    exceptionThrown = true;
                     if (i < sizes.Length - 1)
                     {
                         Assert.Fail("unexpected exception at size: " + sizes[i]);
                     }
-                    throw e;
                 }
             }
 

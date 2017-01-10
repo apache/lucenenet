@@ -210,7 +210,7 @@ namespace Lucene.Net.Util
             }
         } 
 
-        [Ignore] // Increase heap size to run this test
+        [Ignore("Increase heap size to run this test")]
         [Test, LuceneNetSpecific]
         public static void TestMaxSizeBounds()
         {

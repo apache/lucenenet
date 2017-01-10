@@ -209,7 +209,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        [Ignore]
+        [Ignore("Ignored test.")]
         public void TestWiki()
         {
             LineFileDocs lfd = new LineFileDocs(null, "/lucenedata/enwiki/enwiki-20120502-lines-1k.txt", false);

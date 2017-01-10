@@ -47,7 +47,6 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         [Test]
-        [ExpectedException("System.ArgumentException")]
         public virtual void TestDeletePartiallyWrittenFilesIfAbort()
         {
             Directory dir = NewDirectory();
@@ -72,8 +71,10 @@ namespace Lucene.Net.Codecs.Compressing
 
             try
             {
-                iw.AddDocument(invalidDoc);
-                iw.Commit();
+                Assert.Throws<ArgumentException>(() => {
+                    iw.AddDocument(invalidDoc);
+                    iw.Commit();
+                });
             }
             finally
             {

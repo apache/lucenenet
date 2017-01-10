@@ -36,10 +36,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         [Test]
-        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
         public virtual void TestNonPositiveLength()
         {
-            new TruncateTokenFilter(new MockTokenizer(new StringReader("length must be a positive number")), -48);
+            Assert.Throws<ArgumentOutOfRangeException>(() => {
+                new TruncateTokenFilter(new MockTokenizer(new StringReader("length must be a positive number")), -48);
+            });
         }
     }
 }

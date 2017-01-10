@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class Test4GBStoredFields : LuceneTestCase
     {
-        [Ignore] // LUCENENET NOTE: This was marked Nightly in Java
+        [Ignore("//LUCENENET NOTE: This was marked Nightly in Java")]
         [Test]
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {

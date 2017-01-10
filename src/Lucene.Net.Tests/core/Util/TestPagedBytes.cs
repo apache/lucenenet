@@ -178,7 +178,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        [Ignore] // memory hole
+        [Ignore("// memory hole")] 
         [Test]
 #if !NETSTANDARD
         // LUCENENET: There is no Timeout on NUnit for .NET Core.
