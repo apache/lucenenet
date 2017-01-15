@@ -646,8 +646,8 @@ namespace Lucene.Net.Search.Spell
             {
             }
 
-            public SpellCheckerMock(Directory spellIndex, IStringDistance sd, IComparer<SuggestWord> comparator)
-                    : base(spellIndex, sd, comparator)
+            public SpellCheckerMock(Directory spellIndex, IStringDistance sd, IComparer<SuggestWord> comparer)
+                    : base(spellIndex, sd, comparer)
             {
             }
 

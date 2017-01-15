@@ -148,7 +148,7 @@ namespace Lucene.Net.Index.Sorter
             public override void SetTopValue(object value)
             {
                 // we dont have enough information (the docid is needed)
-                throw new System.NotSupportedException("this comparator cannot be used with deep paging");
+                throw new System.NotSupportedException("this comparer cannot be used with deep paging");
             }
 
             public override int CompareBottom(int doc)
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index.Sorter
             public override int CompareTop(int doc)
             {
                 // we dont have enough information (the docid is needed)
-                throw new System.NotSupportedException("this comparator cannot be used with deep paging");
+                throw new System.NotSupportedException("this comparer cannot be used with deep paging");
             }
 
             public override void Copy(int slot, int doc)
@@ -244,15 +244,15 @@ namespace Lucene.Net.Index.Sorter
                 }
             }
 
-            internal virtual int Compare(int docID1, int docID2, FieldComparer[] comparators, int[] reverseMul)
+            internal virtual int Compare(int docID1, int docID2, FieldComparer[] comparers, int[] reverseMul)
             {
-                for (int i = 0; i < comparators.Length; i++)
+                for (int i = 0; i < comparers.Length; i++)
                 {
                     // TODO: would be better if copy() didnt cause a term lookup in TermOrdVal & co,
                     // the segments are always the same here...
-                    comparators[i].Copy(0, docID1);
-                    comparators[i].SetBottom(0);
-                    int comp = reverseMul[i] * comparators[i].CompareBottom(docID2);
+                    comparers[i].Copy(0, docID1);
+                    comparers[i].SetBottom(0);
+                    int comp = reverseMul[i] * comparers[i].CompareBottom(docID2);
                     if (comp != 0)
                     {
                         return comp;

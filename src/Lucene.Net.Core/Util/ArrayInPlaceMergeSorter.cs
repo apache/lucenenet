@@ -26,19 +26,19 @@ namespace Lucene.Net.Util
     internal sealed class ArrayInPlaceMergeSorter<T> : InPlaceMergeSorter
     {
         private readonly T[] arr;
-        private readonly IComparer<T> comparator;
+        private readonly IComparer<T> comparer;
 
         /// <summary>
         /// Create a new <seealso cref="ArrayInPlaceMergeSorter"/>. </summary>
-        public ArrayInPlaceMergeSorter(T[] arr, IComparer<T> comparator)
+        public ArrayInPlaceMergeSorter(T[] arr, IComparer<T> comparer)
         {
             this.arr = arr;
-            this.comparator = comparator;
+            this.comparer = comparer;
         }
 
         protected override int Compare(int i, int j)
         {
-            return comparator.Compare(arr[i], arr[j]);
+            return comparer.Compare(arr[i], arr[j]);
         }
 
         protected override void Swap(int i, int j)

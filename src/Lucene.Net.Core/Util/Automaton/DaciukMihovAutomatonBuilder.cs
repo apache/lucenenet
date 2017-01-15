@@ -212,9 +212,9 @@ namespace Lucene.Net.Util.Automaton
         private CharsRef previous;
 
         /// <summary>
-        /// A comparator used for enforcing sorted UTF8 order, used in assertions only.
+        /// A comparer used for enforcing sorted UTF8 order, used in assertions only.
         /// </summary>
-        private static readonly IComparer<CharsRef> comparator = CharsRef.UTF16SortedAsUTF8Comparer;
+        private static readonly IComparer<CharsRef> comparer = CharsRef.UTF16SortedAsUTF8Comparer;
 
         /// <summary>
         /// Add another character sequence to this automaton. The sequence must be
@@ -224,7 +224,7 @@ namespace Lucene.Net.Util.Automaton
         public void Add(CharsRef current)
         {
             Debug.Assert(stateRegistry != null, "Automaton already built.");
-            Debug.Assert(previous == null || comparator.Compare(previous, current) <= 0, "Input must be in sorted UTF-8 order: " + previous + " >= " + current);
+            Debug.Assert(previous == null || comparer.Compare(previous, current) <= 0, "Input must be in sorted UTF-8 order: " + previous + " >= " + current);
             Debug.Assert(SetPrevious(current));
 
             // Descend in the automaton (find matching prefix).

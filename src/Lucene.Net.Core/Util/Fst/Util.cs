@@ -319,21 +319,21 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Compares first by the provided comparator, and then
+        /// Compares first by the provided comparer, and then
         ///  tie breaks by path.input.
         /// </summary>
         private class TieBreakByInputComparer<T> : IComparer<FSTPath<T>>
         {
-            internal readonly IComparer<T> comparator;
+            internal readonly IComparer<T> comparer;
 
-            public TieBreakByInputComparer(IComparer<T> comparator)
+            public TieBreakByInputComparer(IComparer<T> comparer)
             {
-                this.comparator = comparator;
+                this.comparer = comparer;
             }
 
             public virtual int Compare(FSTPath<T> a, FSTPath<T> b)
             {
-                int cmp = comparator.Compare(a.Cost, b.Cost);
+                int cmp = comparer.Compare(a.Cost, b.Cost);
                 if (cmp == 0)
                 {
                     return a.Input.CompareTo(b.Input);
@@ -358,7 +358,7 @@ namespace Lucene.Net.Util.Fst
 
             private readonly FST.Arc<T> scratchArc = new FST.Arc<T>();
 
-            internal readonly IComparer<T> comparator;
+            internal readonly IComparer<T> comparer;
 
             internal SortedSet<FSTPath<T>> queue = null;
 
@@ -369,16 +369,16 @@ namespace Lucene.Net.Util.Fst
             /// <param name="fst"> the <seealso cref="Lucene.Net.Util.Fst.FST"/> to search on </param>
             /// <param name="topN"> the number of top scoring entries to retrieve </param>
             /// <param name="maxQueueDepth"> the maximum size of the queue of possible top entries </param>
-            /// <param name="comparator"> the comparator to select the top N </param>
-            public TopNSearcher(FST<T> fst, int topN, int maxQueueDepth, IComparer<T> comparator)
+            /// <param name="comparer"> the comparer to select the top N </param>
+            public TopNSearcher(FST<T> fst, int topN, int maxQueueDepth, IComparer<T> comparer)
             {
                 this.fst = fst;
                 this.bytesReader = fst.GetBytesReader();
                 this.topN = topN;
                 this.maxQueueDepth = maxQueueDepth;
-                this.comparator = comparator;
+                this.comparer = comparer;
 
-                queue = new SortedSet<FSTPath<T>>(new TieBreakByInputComparer<T>(comparator));
+                queue = new SortedSet<FSTPath<T>>(new TieBreakByInputComparer<T>(comparer));
             }
 
             // If back plus this arc is competitive then add to queue:
@@ -392,7 +392,7 @@ namespace Lucene.Net.Util.Fst
                 if (queue.Count == maxQueueDepth)
                 {
                     FSTPath<T> bottom = queue.Max;
-                    int comp = comparator.Compare(cost, bottom.Cost);
+                    int comp = comparer.Compare(cost, bottom.Cost);
                     if (comp > 0)
                     {
                         // Doesn't compete
@@ -566,8 +566,8 @@ namespace Lucene.Net.Util.Fst
                         {
                             //System.out.println("      arc=" + (char) path.arc.label + " cost=" + path.arc.output);
                             // tricky: instead of comparing output == 0, we must
-                            // express it via the comparator compare(output, 0) == 0
-                            if (comparator.Compare(NO_OUTPUT, path.Arc.Output) == 0)
+                            // express it via the comparer compare(output, 0) == 0
+                            if (comparer.Compare(NO_OUTPUT, path.Arc.Output) == 0)
                             {
                                 if (queue == null)
                                 {
@@ -694,11 +694,11 @@ namespace Lucene.Net.Util.Fst
         /// Starting from node, find the top N min cost
         ///  completions to a final node.
         /// </summary>
-        public static TopResults<T> ShortestPaths<T>(FST<T> fst, FST.Arc<T> fromNode, T startOutput, IComparer<T> comparator, int topN, bool allowEmptyString)
+        public static TopResults<T> ShortestPaths<T>(FST<T> fst, FST.Arc<T> fromNode, T startOutput, IComparer<T> comparer, int topN, bool allowEmptyString)
         {
             // All paths are kept, so we can pass topN for
             // maxQueueDepth and the pruning is admissible:
-            TopNSearcher<T> searcher = new TopNSearcher<T>(fst, topN, topN, comparator);
+            TopNSearcher<T> searcher = new TopNSearcher<T>(fst, topN, topN, comparer);
 
             // since this search is initialized with a single start node
             // it is okay to start with an empty input path here

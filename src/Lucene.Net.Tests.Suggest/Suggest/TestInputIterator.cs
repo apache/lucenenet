@@ -41,12 +41,12 @@ namespace Lucene.Net.Search.Suggest
             Random random = Random();
             int num = AtLeast(10000);
 #pragma warning disable 612, 618
-            IComparer<BytesRef> comparator = random.nextBoolean() ? BytesRef.UTF8SortedAsUnicodeComparer : BytesRef.UTF8SortedAsUTF16Comparer;
+            IComparer<BytesRef> comparer = random.nextBoolean() ? BytesRef.UTF8SortedAsUnicodeComparer : BytesRef.UTF8SortedAsUTF16Comparer;
 #pragma warning restore 612, 618
-            IDictionary<BytesRef, KeyValuePair<long, BytesRef>> sorted = new SortedDictionary<BytesRef, KeyValuePair<long, BytesRef>>(comparator); //new TreeMap<>(comparator);
-            IDictionary<BytesRef, long> sortedWithoutPayload = new SortedDictionary<BytesRef, long>(comparator); //new TreeMap<>(comparator);
-            IDictionary<BytesRef, KeyValuePair<long, ISet<BytesRef>>> sortedWithContext = new SortedDictionary<BytesRef, KeyValuePair<long, ISet<BytesRef>>>(comparator); //new TreeMap<>(comparator);
-            IDictionary<BytesRef, KeyValuePair<long, KeyValuePair<BytesRef, ISet<BytesRef>>>> sortedWithPayloadAndContext = new SortedDictionary<BytesRef, KeyValuePair<long, KeyValuePair<BytesRef, ISet<BytesRef>>>>(comparator); //new TreeMap<>(comparator);
+            IDictionary<BytesRef, KeyValuePair<long, BytesRef>> sorted = new SortedDictionary<BytesRef, KeyValuePair<long, BytesRef>>(comparer); //new TreeMap<>(comparer);
+            IDictionary<BytesRef, long> sortedWithoutPayload = new SortedDictionary<BytesRef, long>(comparer); //new TreeMap<>(comparer);
+            IDictionary<BytesRef, KeyValuePair<long, ISet<BytesRef>>> sortedWithContext = new SortedDictionary<BytesRef, KeyValuePair<long, ISet<BytesRef>>>(comparer); //new TreeMap<>(comparer);
+            IDictionary<BytesRef, KeyValuePair<long, KeyValuePair<BytesRef, ISet<BytesRef>>>> sortedWithPayloadAndContext = new SortedDictionary<BytesRef, KeyValuePair<long, KeyValuePair<BytesRef, ISet<BytesRef>>>>(comparer); //new TreeMap<>(comparer);
             Input[] unsorted = new Input[num];
             Input[] unsortedWithoutPayload = new Input[num];
             Input[] unsortedWithContexts = new Input[num];
@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Suggest
             }
 
             // test the sorted iterator wrapper with payloads
-            IInputIterator wrapper = new SortedInputIterator(new InputArrayIterator(unsorted), comparator);
+            IInputIterator wrapper = new SortedInputIterator(new InputArrayIterator(unsorted), comparer);
             IEnumerator<KeyValuePair<BytesRef, KeyValuePair<long, BytesRef>>> expected = sorted.GetEnumerator();
             while (expected.MoveNext())
             {
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search.Suggest
             assertNull(wrapper.Next());
 
             // test the sorted iterator wrapper with contexts
-            wrapper = new SortedInputIterator(new InputArrayIterator(unsortedWithContexts), comparator);
+            wrapper = new SortedInputIterator(new InputArrayIterator(unsortedWithContexts), comparer);
             IEnumerator<KeyValuePair<BytesRef, KeyValuePair<long, ISet<BytesRef>>>> actualEntries = sortedWithContext.GetEnumerator();
             while (actualEntries.MoveNext())
             {
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search.Suggest
             assertNull(wrapper.Next());
 
             // test the sorted iterator wrapper with contexts and payload
-            wrapper = new SortedInputIterator(new InputArrayIterator(unsortedWithPayloadAndContext), comparator);
+            wrapper = new SortedInputIterator(new InputArrayIterator(unsortedWithPayloadAndContext), comparer);
             IEnumerator<KeyValuePair<BytesRef, KeyValuePair<long, KeyValuePair<BytesRef, ISet<BytesRef>>>>> expectedPayloadContextEntries = sortedWithPayloadAndContext.GetEnumerator();
             while (expectedPayloadContextEntries.MoveNext())
             {
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Suggest
             assertEquals(sorted, actual);
 
             // test the sorted iterator wrapper without payloads
-            IInputIterator wrapperWithoutPayload = new SortedInputIterator(new InputArrayIterator(unsortedWithoutPayload), comparator);
+            IInputIterator wrapperWithoutPayload = new SortedInputIterator(new InputArrayIterator(unsortedWithoutPayload), comparer);
             IEnumerator<KeyValuePair<BytesRef, long>> expectedWithoutPayload = sortedWithoutPayload.GetEnumerator();
             while (expectedWithoutPayload.MoveNext())
             {

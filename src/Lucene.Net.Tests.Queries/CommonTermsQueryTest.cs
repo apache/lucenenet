@@ -358,7 +358,7 @@ namespace Lucene.Net.Tests.Queries
         }
 
         /*
-         * LUCENENET TODO requires a better comparator implementation for PriorityQueue
+         * LUCENENET TODO requires a better comparer implementation for PriorityQueue
         [Test]
         public void TestRandomIndex()
         {

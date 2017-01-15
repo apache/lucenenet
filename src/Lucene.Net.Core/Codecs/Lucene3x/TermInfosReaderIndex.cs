@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private const int MAX_PAGE_BITS = 18; // 256 KB block
         private Term[] fields;
         private int totalIndexInterval;
-        private IComparer<BytesRef> comparator = BytesRef.UTF8SortedAsUTF16Comparer;
+        private IComparer<BytesRef> comparer = BytesRef.UTF8SortedAsUTF16Comparer;
         private readonly PagedBytesDataInput dataInput;
         private readonly PackedInts.Reader indexToDataOffset;
         private readonly int indexSize;
@@ -253,7 +253,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 reuse.Length = input.ReadVInt();
                 reuse.Grow(reuse.Length);
                 input.ReadBytes(reuse.Bytes, 0, reuse.Length);
-                return comparator.Compare(term.Bytes, reuse);
+                return comparer.Compare(term.Bytes, reuse);
             }
             return c;
         }

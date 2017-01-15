@@ -148,7 +148,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 String s;
                 while (true)
                 {
-                    // TODO: would be nice to fix this slowCompletor/comparator to
+                    // TODO: would be nice to fix this slowCompletor/comparer to
                     // use full range, but we might lose some coverage too...
                     s = TestUtil.RandomSimpleString(Random());
                     if (!slowCompletor.ContainsKey(s))

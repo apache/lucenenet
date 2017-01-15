@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
     /// during searching in case any internal state it's tracking
     /// needs to be recomputed during these transitions.</p>
     ///
-    /// <p>A comparator must define these functions:</p>
+    /// <p>A comparer must define these functions:</p>
     ///
     /// <ul>
     ///
@@ -54,9 +54,9 @@ namespace Lucene.Net.Search
     ///       <seealso cref="FieldValueHitQueue"/> to notify the
     ///       FieldComparer of the current weakest ("bottom")
     ///       slot.  Note that this slot may not hold the weakest
-    ///       value according to your comparator, in cases where
-    ///       your comparator is not the primary one (ie, is only
-    ///       used to break ties from the comparators before it).
+    ///       value according to your comparer, in cases where
+    ///       your comparer is not the primary one (ie, is only
+    ///       used to break ties from the comparers before it).
     ///
     ///  <li> <seealso cref="#compareBottom"/> Compare a new hit (docID)
     ///       against the "weakest" (bottom) entry in the queue.
@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
     ///  <li> <seealso cref="#setNextReader(AtomicReaderContext)"/> Invoked
     ///       when the search is switching to the next segment.
     ///       You may need to update internal state of the
-    ///       comparator, for example retrieving new values from
+    ///       comparer, for example retrieving new values from
     ///       the <seealso cref="IFieldCache"/>.
     ///
     ///  <li> <seealso cref="#value"/> Return the sort value stored in
@@ -169,9 +169,9 @@ namespace Lucene.Net.Search
         /// map it to a top-level docID).
         /// </summary>
         /// <param name="context"> current reader context </param>
-        /// <returns> the comparator to use for this segment; most
-        ///   comparators can just return "this" to reuse the same
-        ///   comparator across segments </returns>
+        /// <returns> the comparer to use for this segment; most
+        ///   comparers can just return "this" to reuse the same
+        ///   comparer across segments </returns>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         public abstract override FieldComparer SetNextReader(AtomicReaderContext context);
 
@@ -291,9 +291,9 @@ namespace Lucene.Net.Search
         /// map it to a top-level docID).
         /// </summary>
         /// <param name="context"> current reader context </param>
-        /// <returns> the comparator to use for this segment; most
-        ///   comparators can just return "this" to reuse the same
-        ///   comparator across segments </returns>
+        /// <returns> the comparer to use for this segment; most
+        ///   comparers can just return "this" to reuse the same
+        ///   comparer across segments </returns>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         public abstract FieldComparer SetNextReader(AtomicReaderContext context);
 
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search
         /// obtain the current hit's score, if necessary.  </param>
         public virtual void SetScorer(Scorer scorer)
         {
-            // Empty implementation since most comparators don't need the score. this
+            // Empty implementation since most comparers don't need the score. this
             // can be overridden by those that need it.
         }
 
@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Search
         ///  to their relative ordinal positions (using the index
         ///  returned by <seealso cref="IFieldCache#getTermsIndex"/>), and
         ///  does most comparisons using the ordinals.  For medium
-        ///  to large results, this comparator will be much faster
+        ///  to large results, this comparer will be much faster
         ///  than <seealso cref="Lucene.Net.Search.FieldComparer.TermValComparer"/>.  For very small
         ///  result sets it may be slower.
         /// </summary>
@@ -1356,7 +1356,7 @@ namespace Lucene.Net.Search
         // TODO: should we remove this?  who really uses it?
         public sealed class TermValComparer : FieldComparer<BytesRef>
         {
-            // sentinels, just used internally in this comparator
+            // sentinels, just used internally in this comparer
             private static readonly byte[] MISSING_BYTES = new byte[0];
 
             private static readonly byte[] NON_MISSING_BYTES = new byte[0];

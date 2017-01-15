@@ -322,12 +322,12 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Sorts transitions array in-place. </summary>
-        public virtual void SortTransitions(IComparer<Transition> comparator)
+        public virtual void SortTransitions(IComparer<Transition> comparer)
         {
             // mergesort seems to perform better on already sorted arrays:
             if (numTransitions > 1)
             {
-                ArrayUtil.TimSort(TransitionsArray, 0, numTransitions, comparator);
+                ArrayUtil.TimSort(TransitionsArray, 0, numTransitions, comparer);
             }
         }
 

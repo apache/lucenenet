@@ -197,9 +197,9 @@ namespace Lucene.Net.Search.Grouping.Terms
 
             foreach (GroupHead groupHead in groups.Values)
             {
-                for (int i = 0; i < groupHead.comparators.Length; i++)
+                for (int i = 0; i < groupHead.comparers.Length; i++)
                 {
-                    groupHead.comparators[i] = groupHead.comparators[i].SetNextReader(context);
+                    groupHead.comparers[i] = groupHead.comparers[i].SetNextReader(context);
                 }
             }
         }
@@ -209,9 +209,9 @@ namespace Lucene.Net.Search.Grouping.Terms
             this.scorer = scorer;
             foreach (GroupHead groupHead in groups.Values)
             {
-                foreach (FieldComparer comparator in groupHead.comparators)
+                foreach (FieldComparer comparer in groupHead.comparers)
                 {
-                    comparator.SetScorer(scorer);
+                    comparer.SetScorer(scorer);
                 }
             }
         }
@@ -223,7 +223,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             // need to reference the generic closing type BytesRef.
             public readonly BytesRef groupValue;
 
-            internal readonly FieldComparer[] comparators;
+            internal readonly FieldComparer[] comparers;
 
             internal GroupHead(GeneralAllGroupHeadsCollector outerInstance, BytesRef groupValue, Sort sort, int doc)
                 : base(doc + outerInstance.readerContext.DocBase)
@@ -232,27 +232,27 @@ namespace Lucene.Net.Search.Grouping.Terms
                 this.groupValue = groupValue;
 
                 SortField[] sortFields = sort.GetSort();
-                comparators = new FieldComparer[sortFields.Length];
+                comparers = new FieldComparer[sortFields.Length];
                 for (int i = 0; i < sortFields.Length; i++)
                 {
-                    comparators[i] = sortFields[i].GetComparer(1, i).SetNextReader(outerInstance.readerContext);
-                    comparators[i].SetScorer(outerInstance.scorer);
-                    comparators[i].Copy(0, doc);
-                    comparators[i].SetBottom(0);
+                    comparers[i] = sortFields[i].GetComparer(1, i).SetNextReader(outerInstance.readerContext);
+                    comparers[i].SetScorer(outerInstance.scorer);
+                    comparers[i].Copy(0, doc);
+                    comparers[i].SetBottom(0);
                 }
             }
 
             public override int Compare(int compIDX, int doc)
             {
-                return comparators[compIDX].CompareBottom(doc);
+                return comparers[compIDX].CompareBottom(doc);
             }
 
             public override void UpdateDocHead(int doc)
             {
-                foreach (FieldComparer comparator in comparators)
+                foreach (FieldComparer comparer in comparers)
                 {
-                    comparator.Copy(0, doc);
-                    comparator.SetBottom(0);
+                    comparer.Copy(0, doc);
+                    comparer.SetBottom(0);
                 }
                 this.Doc = doc + outerInstance.readerContext.DocBase;
             }

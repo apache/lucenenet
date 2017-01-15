@@ -163,7 +163,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             private bool includeLower;
             private bool includeUpper;
 #pragma warning disable 612, 618
-            private IComparer<CharsRef> comparator = CharsRef.UTF16SortedAsUTF8Comparer;
+            private IComparer<CharsRef> comparer = CharsRef.UTF16SortedAsUTF8Comparer;
 #pragma warning restore 612, 618
 
             public SimpleCharacterRunAutomatonAnonymousHelper(Automaton a, TermRangeQuery tq)
@@ -197,7 +197,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
                 if (lowerBound != null)
                 {
-                    int cmp = comparator.Compare(scratch, lowerBound);
+                    int cmp = comparer.Compare(scratch, lowerBound);
                     if (cmp < 0 || (!includeLower && cmp == 0))
                     {
                         return false;
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
                 if (upperBound != null)
                 {
-                    int cmp = comparator.Compare(scratch, upperBound);
+                    int cmp = comparer.Compare(scratch, upperBound);
                     if (cmp > 0 || (!includeUpper && cmp == 0))
                     {
                         return false;

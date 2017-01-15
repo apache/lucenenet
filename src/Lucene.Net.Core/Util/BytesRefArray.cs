@@ -168,7 +168,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// sugar for <seealso cref="#iterator(Comparer)"/> with a <code>null</code> comparator
+        /// sugar for <seealso cref="#iterator(Comparer)"/> with a <code>null</code> comparer
         /// </summary>
         public IBytesRefIterator GetIterator()
         {
@@ -182,7 +182,7 @@ namespace Lucene.Net.Util
         /// </p>
         /// <p>
         /// If a non <code>null</code> <seealso cref="Comparer"/> is provided the iterator will
-        /// iterate the byte values in the order specified by the comparator. Otherwise
+        /// iterate the byte values in the order specified by the comparer. Otherwise
         /// the order is the same as the values were appended.
         /// </p>
         /// <p>

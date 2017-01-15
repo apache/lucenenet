@@ -31,15 +31,15 @@ namespace Lucene.Net.Search.Suggest
     {
         private readonly BytesRefArray buffer = new BytesRefArray(Counter.NewCounter());
         private bool closed = false;
-        private readonly IComparer<BytesRef> comparator;
+        private readonly IComparer<BytesRef> comparer;
 
         /// <summary>
         /// Creates an InMemorySorter, sorting entries by the
-        /// provided comparator.
+        /// provided comparer.
         /// </summary>
-        public InMemorySorter(IComparer<BytesRef> comparator)
+        public InMemorySorter(IComparer<BytesRef> comparer)
         {
-            this.comparator = comparator;
+            this.comparer = comparer;
         }
 
         public void Add(BytesRef utf8)
@@ -54,14 +54,14 @@ namespace Lucene.Net.Search.Suggest
         public IBytesRefIterator GetEnumerator()
         {
             closed = true;
-            return buffer.GetIterator(comparator);
+            return buffer.GetIterator(comparer);
         }
 
         public IComparer<BytesRef> Comparer
         {
             get
             {
-                return comparator;
+                return comparer;
             }
         }
     }

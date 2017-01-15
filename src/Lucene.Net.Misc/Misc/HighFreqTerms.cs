@@ -53,13 +53,13 @@ namespace Lucene.Net.Misc
 
             Store.Directory dir = FSDirectory.Open(new DirectoryInfo(args[0]));
 
-            IComparer<TermStats> comparator = new DocFreqComparer();
+            IComparer<TermStats> comparer = new DocFreqComparer();
 
             for (int i = 1; i < args.Length; i++)
             {
                 if (args[i].Equals("-t"))
                 {
-                    comparator = new TotalTermFreqComparer();
+                    comparer = new TotalTermFreqComparer();
                 }
                 else
                 {
@@ -76,7 +76,7 @@ namespace Lucene.Net.Misc
 
             using (IndexReader reader = DirectoryReader.Open(dir))
             {
-                TermStats[] terms = GetHighFreqTerms(reader, numTerms, field, comparator);
+                TermStats[] terms = GetHighFreqTerms(reader, numTerms, field, comparer);
 
                 for (int i = 0; i < terms.Length; i++)
                 {
@@ -92,9 +92,9 @@ namespace Lucene.Net.Misc
         }
 
         /// <summary>
-        /// Returns <see cref="TermStats[]"/> ordered by the specified comparator
+        /// Returns <see cref="TermStats[]"/> ordered by the specified comparer
         /// </summary>
-        public static TermStats[] GetHighFreqTerms(IndexReader reader, int numTerms, string field, IComparer<TermStats> comparator)
+        public static TermStats[] GetHighFreqTerms(IndexReader reader, int numTerms, string field, IComparer<TermStats> comparer)
         {
             TermStatsQueue tiq = null;
 
@@ -109,7 +109,7 @@ namespace Lucene.Net.Misc
                 if (terms != null)
                 {
                     TermsEnum termsEnum = terms.Iterator(null);
-                    tiq = new TermStatsQueue(numTerms, comparator);
+                    tiq = new TermStatsQueue(numTerms, comparer);
                     tiq.Fill(field, termsEnum);
                 }
             }
@@ -120,7 +120,7 @@ namespace Lucene.Net.Misc
                 {
                     throw new Exception("no fields found for this index");
                 }
-                tiq = new TermStatsQueue(numTerms, comparator);
+                tiq = new TermStatsQueue(numTerms, comparer);
                 foreach (string fieldName in fields)
                 {
                     Terms terms = fields.Terms(fieldName);
@@ -190,17 +190,17 @@ namespace Lucene.Net.Misc
         /// </summary>
         internal sealed class TermStatsQueue : PriorityQueue<TermStats>
         {
-            internal readonly IComparer<TermStats> comparator;
+            internal readonly IComparer<TermStats> comparer;
 
-            internal TermStatsQueue(int size, IComparer<TermStats> comparator) 
+            internal TermStatsQueue(int size, IComparer<TermStats> comparer) 
                 : base(size)
             {
-                this.comparator = comparator;
+                this.comparer = comparer;
             }
 
             protected internal override bool LessThan(TermStats termInfoA, TermStats termInfoB)
             {
-                return comparator.Compare(termInfoA, termInfoB) < 0;
+                return comparer.Compare(termInfoA, termInfoB) < 0;
             }
 
             internal void Fill(string field, TermsEnum termsEnum)

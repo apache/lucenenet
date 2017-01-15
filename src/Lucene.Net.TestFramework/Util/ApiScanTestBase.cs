@@ -152,8 +152,8 @@ namespace Lucene.Net.Util
             }
             //}
 
-            Assert.IsFalse(names.Any(), names.Count() + " member names containing the word 'comparator' detected. " +
-                "In .NET, we need to change the word 'comparator' to 'comparer'.");
+            Assert.IsFalse(names.Any(), names.Count() + " member names containing the word 'comparer' detected. " +
+                "In .NET, we need to change the word 'comparer' to 'comparer'.");
         }
 
 

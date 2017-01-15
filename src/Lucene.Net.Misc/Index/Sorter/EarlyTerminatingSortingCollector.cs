@@ -44,7 +44,7 @@ namespace Lucene.Net.Index.Sorter
     /// whether a segment was sorted with the same <see cref="Sort"/>. This has
     /// two implications:
     /// <ul>
-    /// <li>if a custom comparator is not implemented correctly and returns
+    /// <li>if a custom comparer is not implemented correctly and returns
     /// different identifiers for equivalent instances, this collector will not
     /// detect sorted segments,</li>
     /// <li>if you suddenly change the <see cref="IndexWriter"/>'s

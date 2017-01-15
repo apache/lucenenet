@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Grouping
     public abstract class AbstractFirstPassGroupingCollector<TGroupValue> : IAbstractFirstPassGroupingCollector<TGroupValue>
     {
         private readonly Sort groupSort;
-        private readonly FieldComparer[] comparators;
+        private readonly FieldComparer[] comparers;
         private readonly int[] reversed;
         private readonly int topNGroups;
         private readonly IDictionary<TGroupValue, CollectedSearchGroup<TGroupValue>> groupMap;
@@ -79,15 +79,15 @@ namespace Lucene.Net.Search.Grouping
             this.topNGroups = topNGroups;
 
             SortField[] sortFields = groupSort.GetSort();
-            comparators = new FieldComparer[sortFields.Length];
-            compIDXEnd = comparators.Length - 1;
+            comparers = new FieldComparer[sortFields.Length];
+            compIDXEnd = comparers.Length - 1;
             reversed = new int[sortFields.Length];
             for (int i = 0; i < sortFields.Length; i++)
             {
                 SortField sortField = sortFields[i];
 
                 // use topNGroups + 1 so we have a spare slot to use for comparing (tracked by this.spareSlot):
-                comparators[i] = sortField.GetComparer(topNGroups + 1, i);
+                comparers[i] = sortField.GetComparer(topNGroups + 1, i);
                 reversed[i] = sortField.IsReverse ? -1 : 1;
             }
 
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Grouping
                     searchGroup.SortValues = new object[sortFieldCount];
                     for (int sortFieldIDX = 0; sortFieldIDX < sortFieldCount; sortFieldIDX++)
                     {
-                        searchGroup.SortValues[sortFieldIDX] = comparators[sortFieldIDX].Value(group.ComparerSlot);
+                        searchGroup.SortValues[sortFieldIDX] = comparers[sortFieldIDX].Value(group.ComparerSlot);
                     }
                 }
                 result.Add(searchGroup);
@@ -151,9 +151,9 @@ namespace Lucene.Net.Search.Grouping
 
         public virtual void SetScorer(Scorer scorer)
         {
-            foreach (FieldComparer comparator in comparators)
+            foreach (FieldComparer comparer in comparers)
             {
-                comparator.SetScorer(scorer);
+                comparer.SetScorer(scorer);
             }
         }
 
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 for (int compIDX = 0; ; compIDX++)
                 {
-                    int c = reversed[compIDX] * comparators[compIDX].CompareBottom(doc);
+                    int c = reversed[compIDX] * comparers[compIDX].CompareBottom(doc);
                     if (c < 0)
                     {
                         // Definitely not competitive. So don't even bother to continue
@@ -187,7 +187,7 @@ namespace Lucene.Net.Search.Grouping
                     }
                     else if (compIDX == compIDXEnd)
                     {
-                        // Here c=0. If we're at the last comparator, this doc is not
+                        // Here c=0. If we're at the last comparer, this doc is not
                         // competitive, since docs are visited in doc Id order, which means
                         // this doc cannot compete with any other document in the queue.
                         return;
@@ -220,7 +220,7 @@ namespace Lucene.Net.Search.Grouping
                     sg.GroupValue = CopyDocGroupValue(groupValue, default(TGroupValue));
                     sg.ComparerSlot = groupMap.Count;
                     sg.TopDoc = docBase + doc;
-                    foreach (FieldComparer fc in comparators)
+                    foreach (FieldComparer fc in comparers)
                     {
                         fc.Copy(sg.ComparerSlot, doc);
                     }
@@ -254,7 +254,7 @@ namespace Lucene.Net.Search.Grouping
                 bottomGroup.GroupValue = CopyDocGroupValue(groupValue, bottomGroup.GroupValue);
                 bottomGroup.TopDoc = docBase + doc;
 
-                foreach (FieldComparer fc in comparators)
+                foreach (FieldComparer fc in comparers)
                 {
                     fc.Copy(bottomGroup.ComparerSlot, doc);
                 }
@@ -264,7 +264,7 @@ namespace Lucene.Net.Search.Grouping
                 Debug.Assert(orderedGroups.Count == topNGroups);
 
                 int lastComparerSlot = orderedGroups.Last().ComparerSlot;
-                foreach (FieldComparer fc in comparators)
+                foreach (FieldComparer fc in comparers)
                 {
                     fc.SetBottom(lastComparerSlot);
                 }
@@ -275,7 +275,7 @@ namespace Lucene.Net.Search.Grouping
             // Update existing group:
             for (int compIDX = 0; ; compIDX++)
             {
-                FieldComparer fc = comparators[compIDX];
+                FieldComparer fc = comparers[compIDX];
                 fc.Copy(spareSlot, doc);
 
                 int c = reversed[compIDX] * fc.Compare(group.ComparerSlot, spareSlot);
@@ -286,23 +286,23 @@ namespace Lucene.Net.Search.Grouping
                 }
                 else if (c > 0)
                 {
-                    // Definitely competitive; set remaining comparators:
-                    for (int compIDX2 = compIDX + 1; compIDX2 < comparators.Length; compIDX2++)
+                    // Definitely competitive; set remaining comparers:
+                    for (int compIDX2 = compIDX + 1; compIDX2 < comparers.Length; compIDX2++)
                     {
-                        comparators[compIDX2].Copy(spareSlot, doc);
+                        comparers[compIDX2].Copy(spareSlot, doc);
                     }
                     break;
                 }
                 else if (compIDX == compIDXEnd)
                 {
-                    // Here c=0. If we're at the last comparator, this doc is not
+                    // Here c=0. If we're at the last comparer, this doc is not
                     // competitive, since docs are visited in doc Id order, which means
                     // this doc cannot compete with any other document in the queue.
                     return;
                 }
             }
 
-            // Remove before updating the group since lookup is done via comparators
+            // Remove before updating the group since lookup is done via comparers
             // TODO: optimize this
 
             CollectedSearchGroup<TGroupValue> prevLast;
@@ -336,7 +336,7 @@ namespace Lucene.Net.Search.Grouping
                 // If we changed the value of the last group, or changed which group was last, then update bottom:
                 if (group == newLast || prevLast != newLast)
                 {
-                    foreach (FieldComparer fc in comparators)
+                    foreach (FieldComparer fc in comparers)
                     {
                         fc.SetBottom(newLast.ComparerSlot);
                     }
@@ -355,7 +355,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 for (int compIDX = 0; ; compIDX++)
                 {
-                    FieldComparer fc = outerInstance.comparators[compIDX];
+                    FieldComparer fc = outerInstance.comparers[compIDX];
                     int c = outerInstance.reversed[compIDX] * fc.Compare(o1.ComparerSlot, o2.ComparerSlot);
                     if (c != 0)
                     {
@@ -371,12 +371,12 @@ namespace Lucene.Net.Search.Grouping
 
         private void BuildSortedSet()
         {
-            var comparator = new BuildSortedSetComparer(this);
-            orderedGroups = new SortedSet<CollectedSearchGroup<TGroupValue>>(comparator);
+            var comparer = new BuildSortedSetComparer(this);
+            orderedGroups = new SortedSet<CollectedSearchGroup<TGroupValue>>(comparer);
             orderedGroups.UnionWith(groupMap.Values);
             Debug.Assert(orderedGroups.Count > 0);
 
-            foreach (FieldComparer fc in comparators)
+            foreach (FieldComparer fc in comparers)
             {
                 fc.SetBottom(orderedGroups.Last().ComparerSlot);
             }
@@ -390,9 +390,9 @@ namespace Lucene.Net.Search.Grouping
         public virtual void SetNextReader(AtomicReaderContext context)
         {
             docBase = context.DocBase;
-            for (int i = 0; i < comparators.Length; i++)
+            for (int i = 0; i < comparers.Length; i++)
             {
-                comparators[i] = comparators[i].SetNextReader(context);
+                comparers[i] = comparers[i].SetNextReader(context);
             }
         }
 

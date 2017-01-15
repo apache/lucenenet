@@ -336,10 +336,10 @@ namespace Lucene.Net.Search
         internal class CacheKey
         {
             internal readonly string field; // which Field 
-            internal readonly object custom; // which custom comparator or parser 
+            internal readonly object custom; // which custom comparer or parser 
 
             /// <summary>
-            /// Creates one of these objects for a custom comparator/parser. </summary>
+            /// Creates one of these objects for a custom comparer/parser. </summary>
             internal CacheKey(string field, object custom)
             {
                 this.field = field;

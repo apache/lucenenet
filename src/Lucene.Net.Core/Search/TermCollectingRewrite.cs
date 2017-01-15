@@ -75,11 +75,11 @@ namespace Lucene.Net.Search
                     continue;
                 }
 
-                // Check comparator compatibility:
+                // Check comparer compatibility:
                 IComparer<BytesRef> newTermComp = termsEnum.Comparer;
                 if (lastTermComp != null && newTermComp != null && newTermComp != lastTermComp)
                 {
-                    throw new Exception("term comparator should not change between segments: " + lastTermComp + " != " + newTermComp);
+                    throw new Exception("term comparer should not change between segments: " + lastTermComp + " != " + newTermComp);
                 }
                 lastTermComp = newTermComp;
                 collector.SetReaderContext(topReaderContext, context);

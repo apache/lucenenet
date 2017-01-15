@@ -85,8 +85,8 @@ namespace Lucene.Net.Search.Spell
         /// true if the spellchecker should lowercase terms </summary>
         private bool lowerCaseTerms = true;
         /// <summary>
-        /// the comparator to use </summary>
-        private IComparer<SuggestWord> comparator = SuggestWordQueue.DEFAULT_COMPARATOR;
+        /// the comparer to use </summary>
+        private IComparer<SuggestWord> comparer = SuggestWordQueue.DEFAULT_COMPARATOR;
         /// <summary>
         /// the string distance to use </summary>
         private IStringDistance distance = INTERNAL_LEVENSHTEIN;
@@ -279,18 +279,18 @@ namespace Lucene.Net.Search.Spell
 
 
         /// <summary>
-        /// Gets or sets the comparator for sorting suggestions.
+        /// Gets or sets the comparer for sorting suggestions.
         /// The default is <see cref="SuggestWordQueue.DEFAULT_COMPARATOR"/> 
         /// </summary>
         public virtual IComparer<SuggestWord> Comparer
         {
             get
             {
-                return comparator;
+                return comparer;
             }
             set
             {
-                this.comparator = value;
+                this.comparer = value;
             }
         }
 
@@ -350,7 +350,7 @@ namespace Lucene.Net.Search.Spell
         /// <param name="ir"> IndexReader to find terms from </param>
         /// <param name="suggestMode"> specifies when to return suggested words </param>
         /// <param name="accuracy"> return only suggested words that match with this similarity </param>
-        /// <returns> sorted list of the suggested words according to the comparator </returns>
+        /// <returns> sorted list of the suggested words according to the comparer </returns>
         /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         public virtual SuggestWord[] SuggestSimilar(Term term, int numSug, IndexReader ir, 
             SuggestMode suggestMode, float accuracy)
@@ -430,7 +430,7 @@ namespace Lucene.Net.Search.Spell
                 suggestions[index--] = suggestion;
             }
 
-            ArrayUtil.TimSort(suggestions, Collections.ReverseOrder(comparator));
+            ArrayUtil.TimSort(suggestions, Collections.ReverseOrder(comparer));
             if (numSug < suggestions.Length)
             {
                 SuggestWord[] trimmed = new SuggestWord[numSug];

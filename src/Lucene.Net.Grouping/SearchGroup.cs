@@ -197,18 +197,18 @@ namespace Lucene.Net.Search.Grouping
         private class GroupComparer<T> : IComparer<MergedGroup<T>>
         {
 
-            public readonly FieldComparer[] comparators;
+            public readonly FieldComparer[] comparers;
             public readonly int[] reversed;
 
             public GroupComparer(Sort groupSort)
             {
                 SortField[] sortFields = groupSort.GetSort();
-                comparators = new FieldComparer[sortFields.Length];
+                comparers = new FieldComparer[sortFields.Length];
                 reversed = new int[sortFields.Length];
                 for (int compIDX = 0; compIDX < sortFields.Length; compIDX++)
                 {
                     SortField sortField = sortFields[compIDX];
-                    comparators[compIDX] = sortField.GetComparer(1, compIDX);
+                    comparers[compIDX] = sortField.GetComparer(1, compIDX);
                     reversed[compIDX] = sortField.IsReverse ? -1 : 1;
                 }
             }
@@ -223,9 +223,9 @@ namespace Lucene.Net.Search.Grouping
                 object[] groupValues = group.topValues;
                 object[] otherValues = other.topValues;
                 //System.out.println("  groupValues=" + groupValues + " otherValues=" + otherValues);
-                for (int compIDX = 0; compIDX < comparators.Length; compIDX++)
+                for (int compIDX = 0; compIDX < comparers.Length; compIDX++)
                 {
-                    int c = reversed[compIDX] * comparators[compIDX].CompareValues(groupValues[compIDX],
+                    int c = reversed[compIDX] * comparers[compIDX].CompareValues(groupValues[compIDX],
                                                                                          otherValues[compIDX]);
                     if (c != 0)
                     {
@@ -284,9 +284,9 @@ namespace Lucene.Net.Search.Grouping
                     {
                         //System.out.println("      old");
                         bool competes = false;
-                        for (int compIDX = 0; compIDX < groupComp.comparators.Length; compIDX++)
+                        for (int compIDX = 0; compIDX < groupComp.comparers.Length; compIDX++)
                         {
-                            int cmp = groupComp.reversed[compIDX] * groupComp.comparators[compIDX].CompareValues(group.SortValues[compIDX],
+                            int cmp = groupComp.reversed[compIDX] * groupComp.comparers[compIDX].CompareValues(group.SortValues[compIDX],
                                                                                                                        mergedGroup.topValues[compIDX]);
                             if (cmp < 0)
                             {
@@ -299,7 +299,7 @@ namespace Lucene.Net.Search.Grouping
                                 // Definitely does not compete
                                 break;
                             }
-                            else if (compIDX == groupComp.comparators.Length - 1)
+                            else if (compIDX == groupComp.comparers.Length - 1)
                             {
                                 if (shard.shardIndex < mergedGroup.minShardIndex)
                                 {

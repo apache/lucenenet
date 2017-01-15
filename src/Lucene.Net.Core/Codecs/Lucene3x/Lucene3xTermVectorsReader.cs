@@ -579,10 +579,10 @@ namespace Lucene.Net.Codecs.Lucene3x
             // NOTE: slow!  (linear scan)
             public override SeekStatus SeekCeil(BytesRef text)
             {
-                IComparer<BytesRef> comparator = Comparer;
+                IComparer<BytesRef> comparer = Comparer;
                 for (int i = 0; i < numTerms; i++)
                 {
-                    int cmp = comparator.Compare(text, termAndPostings[i].Term);
+                    int cmp = comparer.Compare(text, termAndPostings[i].Term);
                     if (cmp < 0)
                     {
                         currentTerm = i;

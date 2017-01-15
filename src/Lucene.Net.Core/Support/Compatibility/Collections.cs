@@ -275,7 +275,7 @@ namespace Lucene.Net
 
         {
             /**
-             * The comparator specified in the static factory.  This will never
+             * The comparer specified in the static factory.  This will never
              * be null, as the static factory returns a ReverseComparer
              * instance if its argument is null.
              *

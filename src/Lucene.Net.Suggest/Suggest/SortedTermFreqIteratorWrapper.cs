@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Suggest
      */
 
     /// <summary>
-    /// This wrapper buffers incoming elements and makes sure they are sorted based on given comparator.
+    /// This wrapper buffers incoming elements and makes sure they are sorted based on given comparer.
     /// @lucene.experimental
     /// </summary>
     public class SortedTermFreqIteratorWrapper : ITermFreqIterator
@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Suggest
         private FileInfo tempInput;
         private FileInfo tempSorted;
         private readonly OfflineSorter.ByteSequencesReader reader;
-        private readonly IComparer<BytesRef> comparator;
+        private readonly IComparer<BytesRef> comparer;
         private bool done = false;
 
         private long weight;
@@ -54,10 +54,10 @@ namespace Lucene.Net.Search.Suggest
         /// Creates a new sorted wrapper, sorting by BytesRef
         /// (ascending) then cost (ascending).
         /// </summary>
-        public SortedTermFreqIteratorWrapper(ITermFreqIterator source, IComparer<BytesRef> comparator)
+        public SortedTermFreqIteratorWrapper(ITermFreqIterator source, IComparer<BytesRef> comparer)
         {
             this.source = source;
-            this.comparator = comparator;
+            this.comparer = comparer;
             this.reader = Sort();
             this.tieBreakByCostComparer = new ComparerAnonymousInnerClassHelper(this);
         }
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Suggest
         {
             get
             {
-                return comparator;
+                return comparer;
             }
         }
 
@@ -133,7 +133,7 @@ namespace Lucene.Net.Search.Suggest
                 rightScratch.Length = right.Length;
                 long leftCost = outerInstance.Decode(leftScratch, input);
                 long rightCost = outerInstance.Decode(rightScratch, input);
-                int cmp = outerInstance.comparator.Compare(leftScratch, rightScratch);
+                int cmp = outerInstance.comparer.Compare(leftScratch, rightScratch);
                 if (cmp != 0)
                 {
                     return cmp;

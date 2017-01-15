@@ -792,7 +792,7 @@ namespace Lucene.Net.Index
             ir.Dispose();
             currentDir.Dispose();
 
-            IComparer<string> comparator = StringHelper.VersionComparer;
+            IComparer<string> comparer = StringHelper.VersionComparer;
 
             // now check all the old indexes, their version should be < the current version
             foreach (string name in OldNames)
@@ -805,7 +805,7 @@ namespace Lucene.Net.Index
                     string oldVersion = air.SegmentInfo.Info.Version;
                     // TODO: does preflex codec actually set "3.0" here? this is safe to do I think.
                     // Assert.IsNotNull(oldVersion);
-                    Assert.IsTrue(oldVersion == null || comparator.Compare(oldVersion, currentVersion) < 0, "current Constants.LUCENE_MAIN_VERSION is <= an old index: did you forget to bump it?!");
+                    Assert.IsTrue(oldVersion == null || comparer.Compare(oldVersion, currentVersion) < 0, "current Constants.LUCENE_MAIN_VERSION is <= an old index: did you forget to bump it?!");
                 }
                 r.Dispose();
             }

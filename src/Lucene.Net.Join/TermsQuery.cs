@@ -71,7 +71,7 @@ namespace Lucene.Net.Join
 
             private readonly BytesRef _lastTerm;
             private readonly BytesRef _spare = new BytesRef();
-            private readonly IComparer<BytesRef> _comparator;
+            private readonly IComparer<BytesRef> _comparer;
 
             private BytesRef _seekTerm;
             private int _upto;
@@ -80,7 +80,7 @@ namespace Lucene.Net.Join
             {
                 Terms = terms;
                 Ords = ords;
-                _comparator = BytesRef.UTF8SortedAsUnicodeComparer;
+                _comparer = BytesRef.UTF8SortedAsUnicodeComparer;
                 _lastElement = terms.Count - 1;
                 _lastTerm = terms.Get(ords[_lastElement], new BytesRef());
                 _seekTerm = terms.Get(ords[_upto], _spare);
@@ -97,13 +97,13 @@ namespace Lucene.Net.Join
             
             protected override AcceptStatus Accept(BytesRef term)
             {
-                if (_comparator.Compare(term, _lastTerm) > 0)
+                if (_comparer.Compare(term, _lastTerm) > 0)
                 {
                     return AcceptStatus.END;
                 }
 
                 BytesRef currentTerm = Terms.Get(Ords[_upto], _spare);
-                if (_comparator.Compare(term, currentTerm) == 0)
+                if (_comparer.Compare(term, currentTerm) == 0)
                 {
                     if (_upto == _lastElement)
                     {
@@ -129,7 +129,7 @@ namespace Lucene.Net.Join
                     // typically the terms dict is a superset of query's terms so it's unusual that we have to skip many of
                     // our terms so we don't do a binary search here
                     _seekTerm = Terms.Get(Ords[++_upto], _spare);
-                } while ((cmp = _comparator.Compare(_seekTerm, term)) < 0);
+                } while ((cmp = _comparer.Compare(_seekTerm, term)) < 0);
                 if (cmp == 0)
                 {
                     if (_upto == _lastElement)

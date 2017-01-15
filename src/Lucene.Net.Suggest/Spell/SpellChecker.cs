@@ -93,7 +93,7 @@ namespace Lucene.Net.Search.Spell
         private float accuracy = DEFAULT_ACCURACY;
 
         private IStringDistance sd;
-        private IComparer<SuggestWord> comparator;
+        private IComparer<SuggestWord> comparer;
 
         /// <summary>
         /// Use the given directory as a spell checker index. The directory
@@ -124,13 +124,13 @@ namespace Lucene.Net.Search.Spell
         /// and the given <see cref="System.Collections.Generic.IComparer{T}"/> for sorting the results. </summary>
         /// <param name="spellIndex"> The spelling index </param>
         /// <param name="sd"> The distance </param>
-        /// <param name="comparator"> The comparator </param>
+        /// <param name="comparer"> The comparer </param>
         /// <exception cref="System.IO.IOException"> if there is a problem opening the index </exception>
-        public SpellChecker(Directory spellIndex, IStringDistance sd, IComparer<SuggestWord> comparator)
+        public SpellChecker(Directory spellIndex, IStringDistance sd, IComparer<SuggestWord> comparer)
         {
             SpellIndex = spellIndex;
             StringDistance = sd;
-            this.comparator = comparator;
+            this.comparer = comparer;
         }
 
         /// <summary>
@@ -170,11 +170,11 @@ namespace Lucene.Net.Search.Spell
         {
             set
             {
-                this.comparator = value;
+                this.comparer = value;
             }
             get
             {
-                return comparator;
+                return comparer;
             }
         }
 
@@ -367,7 +367,7 @@ namespace Lucene.Net.Search.Spell
                 //    System.out.println("Q: " + query);
                 ScoreDoc[] hits = indexSearcher.Search(query, null, maxHits).ScoreDocs;
                 //    System.out.println("HITS: " + hits.length());
-                SuggestWordQueue sugQueue = new SuggestWordQueue(numSug, comparator);
+                SuggestWordQueue sugQueue = new SuggestWordQueue(numSug, comparer);
 
                 // go thru more than 'maxr' matches in case the distance filter triggers
                 int stop = Math.Min(hits.Length, maxHits);

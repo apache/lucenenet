@@ -198,10 +198,10 @@ namespace Lucene.Net.Util
         private BytesRefArray buffer;
         private SortInfo sortInfo;
         private readonly int maxTempFiles;
-        private readonly IComparer<BytesRef> comparator;
+        private readonly IComparer<BytesRef> comparer;
 
         /// <summary>
-        /// Default comparator: sorts in binary (codepoint) order </summary>
+        /// Default comparer: sorts in binary (codepoint) order </summary>
         public static readonly IComparer<BytesRef> DEFAULT_COMPARATOR = Utf8SortedAsUnicodeComparer.Instance;
 
         /// <summary>
@@ -215,19 +215,19 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Defaults constructor with a custom comparator.
+        /// Defaults constructor with a custom comparer.
         /// </summary>
         /// <seealso cref= #defaultTempDir() </seealso>
         /// <seealso cref= BufferSize#automatic() </seealso>
-        public OfflineSorter(IComparer<BytesRef> comparator)
-            : this(comparator, BufferSize.Automatic(), DefaultTempDir(), MAX_TEMPFILES)
+        public OfflineSorter(IComparer<BytesRef> comparer)
+            : this(comparer, BufferSize.Automatic(), DefaultTempDir(), MAX_TEMPFILES)
         {
         }
 
         /// <summary>
         /// All-details constructor.
         /// </summary>
-        public OfflineSorter(IComparer<BytesRef> comparator, BufferSize ramBufferSize, DirectoryInfo tempDirectory, int maxTempfiles)
+        public OfflineSorter(IComparer<BytesRef> comparer, BufferSize ramBufferSize, DirectoryInfo tempDirectory, int maxTempfiles)
         {
             InitializeInstanceFields();
             if (ramBufferSize.bytes < ABSOLUTE_MIN_SORT_BUFFER_SIZE)
@@ -242,7 +242,7 @@ namespace Lucene.Net.Util
 
             this.ramBufferSize = ramBufferSize;
             this.maxTempFiles = maxTempfiles;
-            this.comparator = comparator;
+            this.comparer = comparer;
         }
 
         /// <summary>
@@ -380,7 +380,7 @@ namespace Lucene.Net.Util
             {
                 BytesRef spare;
 
-                IBytesRefIterator iter = buffer.GetIterator(comparator);
+                IBytesRefIterator iter = buffer.GetIterator(comparer);
                 while ((spare = iter.Next()) != null)
                 {
                     Debug.Assert(spare.Length <= ushort.MaxValue);
@@ -465,7 +465,7 @@ namespace Lucene.Net.Util
 
             protected internal override bool LessThan(FileAndTop a, FileAndTop b)
             {
-                return outerInstance.comparator.Compare(a.Current, b.Current) < 0;
+                return outerInstance.comparer.Compare(a.Current, b.Current) < 0;
             }
         }
 
@@ -676,12 +676,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the comparator in use to sort entries </summary>
+        /// Returns the comparer in use to sort entries </summary>
         public IComparer<BytesRef> Comparer
         {
             get
             {
-                return comparator;
+                return comparer;
             }
         }
     }

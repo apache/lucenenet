@@ -276,14 +276,14 @@ namespace Lucene.Net.Index.Memory
                     info.SortTerms();
                 }
 
-                internal int BinarySearch(BytesRef b, BytesRef bytesRef, int low, int high, BytesRefHash hash, int[] ords, IComparer<BytesRef> comparator)
+                internal int BinarySearch(BytesRef b, BytesRef bytesRef, int low, int high, BytesRefHash hash, int[] ords, IComparer<BytesRef> comparer)
                 {
                     int mid = 0;
                     while (low <= high)
                     {
                         mid = (int)((uint)(low + high) >> 1);
                         hash.Get(ords[mid], bytesRef);
-                        int cmp = comparator.Compare(bytesRef, b);
+                        int cmp = comparer.Compare(bytesRef, b);
                         if (cmp < 0)
                         {
                             low = mid + 1;
@@ -297,7 +297,7 @@ namespace Lucene.Net.Index.Memory
                             return mid;
                         }
                     }
-                    Debug.Assert(comparator.Compare(bytesRef, b) != 0);
+                    Debug.Assert(comparer.Compare(bytesRef, b) != 0);
                     return -(low + 1);
                 }
 

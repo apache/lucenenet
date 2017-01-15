@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
             // These are really FieldDoc instances:
             internal readonly ScoreDoc[][] shardHits;
 
-            internal readonly FieldComparer[] comparators;
+            internal readonly FieldComparer[] comparers;
             internal readonly int[] reverseMul;
 
             public MergeSortQueue(Sort sort, TopDocs[] shardHits)
@@ -181,12 +181,12 @@ namespace Lucene.Net.Search
                 }
 
                 SortField[] sortFields = sort.GetSort();
-                comparators = new FieldComparer[sortFields.Length];
+                comparers = new FieldComparer[sortFields.Length];
                 reverseMul = new int[sortFields.Length];
                 for (int compIDX = 0; compIDX < sortFields.Length; compIDX++)
                 {
                     SortField sortField = sortFields[compIDX];
-                    comparators[compIDX] = sortField.GetComparer(1, compIDX);
+                    comparers[compIDX] = sortField.GetComparer(1, compIDX);
                     reverseMul[compIDX] = sortField.IsReverse ? -1 : 1;
                 }
             }
@@ -199,9 +199,9 @@ namespace Lucene.Net.Search
                 FieldDoc secondFD = (FieldDoc)shardHits[second.ShardIndex][second.HitIndex];
                 //System.out.println("  lessThan:\n     first=" + first + " doc=" + firstFD.doc + " score=" + firstFD.score + "\n    second=" + second + " doc=" + secondFD.doc + " score=" + secondFD.score);
 
-                for (int compIDX = 0; compIDX < comparators.Length; compIDX++)
+                for (int compIDX = 0; compIDX < comparers.Length; compIDX++)
                 {
-                    FieldComparer comp = comparators[compIDX];
+                    FieldComparer comp = comparers[compIDX];
                     //System.out.println("    cmp idx=" + compIDX + " cmp1=" + firstFD.fields[compIDX] + " cmp2=" + secondFD.fields[compIDX] + " reverse=" + reverseMul[compIDX]);
 
                     int cmp = reverseMul[compIDX] * comp.CompareValues(firstFD.Fields[compIDX], secondFD.Fields[compIDX]);

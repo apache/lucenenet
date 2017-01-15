@@ -26,10 +26,10 @@ namespace Lucene.Net.Search
     public abstract class FieldComparerSource
     {
         /// <summary>
-        /// Creates a comparator for the field in the given index.
+        /// Creates a comparer for the field in the given index.
         /// </summary>
         /// <param name="fieldname">
-        ///          Name of the field to create comparator for. </param>
+        ///          Name of the field to create comparer for. </param>
         /// <returns> FieldComparer. </returns>
         /// <exception cref="IOException">
         ///           If an error occurs reading the index. </exception>

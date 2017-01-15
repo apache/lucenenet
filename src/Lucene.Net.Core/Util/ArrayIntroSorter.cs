@@ -26,21 +26,21 @@ namespace Lucene.Net.Util
     internal sealed class ArrayIntroSorter<T> : IntroSorter
     {
         private readonly T[] arr;
-        private readonly IComparer<T> comparator;
+        private readonly IComparer<T> comparer;
         private T pivot;
 
         /// <summary>
         /// Create a new <seealso cref="ArrayInPlaceMergeSorter"/>. </summary>
-        public ArrayIntroSorter(T[] arr, IComparer<T> comparator)
+        public ArrayIntroSorter(T[] arr, IComparer<T> comparer)
         {
             this.arr = arr;
-            this.comparator = comparator;
+            this.comparer = comparer;
             pivot = default(T);
         }
 
         protected override int Compare(int i, int j)
         {
-            return comparator.Compare(arr[i], arr[j]);
+            return comparer.Compare(arr[i], arr[j]);
         }
 
         protected override void Swap(int i, int j)
@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
 
         protected override int ComparePivot(int i)
         {
-            return comparator.Compare(pivot, arr[i]);
+            return comparer.Compare(pivot, arr[i]);
         }
     }
 }

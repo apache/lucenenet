@@ -83,7 +83,7 @@ namespace Lucene.Net.Join
         private readonly IDictionary<Query, int?> joinQueryID = new Dictionary<Query, int?>();
         private readonly int numParentHits;
         private readonly FieldValueHitQueue<OneGroup> queue;
-        private readonly FieldComparer[] comparators;
+        private readonly FieldComparer[] comparers;
         private readonly int[] reverseMul;
         private readonly int compEnd;
         private readonly bool trackMaxScore;
@@ -119,15 +119,15 @@ namespace Lucene.Net.Join
             this.trackScores = trackScores;
             this.numParentHits = numParentHits;
             queue = FieldValueHitQueue.Create<OneGroup>(sort.GetSort(), numParentHits);
-            comparators = queue.GetComparers();
+            comparers = queue.GetComparers();
             reverseMul = queue.GetReverseMul();
-            compEnd = comparators.Length - 1;
+            compEnd = comparers.Length - 1;
         }
 
         private sealed class OneGroup : FieldValueHitQueue.Entry
         {
-            public OneGroup(int comparatorSlot, int parentDoc, float parentScore, int numJoins, bool doScores) 
-                : base(comparatorSlot, parentDoc, parentScore)
+            public OneGroup(int comparerSlot, int parentDoc, float parentScore, int numJoins, bool doScores) 
+                : base(comparerSlot, parentDoc, parentScore)
             {
                 //System.out.println("make OneGroup parentDoc=" + parentDoc);
                 docs = new int[numJoins][];
@@ -174,7 +174,7 @@ namespace Lucene.Net.Join
                 // Fastmatch: return if this hit is not competitive
                 for (int i = 0; ; i++)
                 {
-                    int c = reverseMul[i] * comparators[i].CompareBottom(parentDoc);
+                    int c = reverseMul[i] * comparers[i].CompareBottom(parentDoc);
                     if (c < 0)
                     {
                         // Definitely not competitive.
@@ -188,7 +188,7 @@ namespace Lucene.Net.Join
                     }
                     if (i == compEnd)
                     {
-                        // Here c=0. If we're at the last comparator, this doc is not
+                        // Here c=0. If we're at the last comparer, this doc is not
                         // competitive, since docs are visited in doc Id order, which means
                         // this doc cannot compete with any other document in the queue.
                         //System.out.println("    skip");
@@ -199,9 +199,9 @@ namespace Lucene.Net.Join
                 //System.out.println("    competes!  doc=" + (docBase + parentDoc));
 
                 // This hit is competitive - replace bottom element in queue & adjustTop
-                for (int i = 0; i < comparators.Length; i++)
+                for (int i = 0; i < comparers.Length; i++)
                 {
-                    comparators[i].Copy(bottom.Slot, parentDoc);
+                    comparers[i].Copy(bottom.Slot, parentDoc);
                 }
                 if (!trackMaxScore && trackScores)
                 {
@@ -213,27 +213,27 @@ namespace Lucene.Net.Join
                 CopyGroups(bottom);
                 bottom = queue.UpdateTop();
 
-                for (int i = 0; i < comparators.Length; i++)
+                for (int i = 0; i < comparers.Length; i++)
                 {
-                    comparators[i].SetBottom(bottom.Slot);
+                    comparers[i].SetBottom(bottom.Slot);
                 }
             }
             else
             {
                 // Startup transient: queue is not yet full:
-                int comparatorSlot = totalHitCount - 1;
+                int comparerSlot = totalHitCount - 1;
 
                 // Copy hit into queue
-                for (int i = 0; i < comparators.Length; i++)
+                for (int i = 0; i < comparers.Length; i++)
                 {
-                    comparators[i].Copy(comparatorSlot, parentDoc);
+                    comparers[i].Copy(comparerSlot, parentDoc);
                 }
                 //System.out.println("  startup: new OG doc=" + (docBase+parentDoc));
                 if (!trackMaxScore && trackScores)
                 {
                     score = scorer.Score();
                 }
-                OneGroup og = new OneGroup(comparatorSlot, docBase + parentDoc, score, joinScorers.Length, trackScores);
+                OneGroup og = new OneGroup(comparerSlot, docBase + parentDoc, score, joinScorers.Length, trackScores);
                 og.readerContext = currentReaderContext;
                 CopyGroups(og);
                 bottom = queue.Add(og);
@@ -241,9 +241,9 @@ namespace Lucene.Net.Join
                 if (queueFull)
                 {
                     // End of startup transient: queue just filled up:
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].SetBottom(bottom.Slot);
+                        comparers[i].SetBottom(bottom.Slot);
                     }
                 }
             }
@@ -307,9 +307,9 @@ namespace Lucene.Net.Join
         {
             currentReaderContext = context;
             docBase = context.DocBase;
-            for (int compIDX = 0; compIDX < comparators.Length; compIDX++)
+            for (int compIDX = 0; compIDX < comparers.Length; compIDX++)
             {
-                queue.SetComparer(compIDX, comparators[compIDX].SetNextReader(context));
+                queue.SetComparer(compIDX, comparers[compIDX].SetNextReader(context));
             }
         }
 
@@ -340,13 +340,13 @@ namespace Lucene.Net.Join
         public virtual void SetScorer(Scorer scorer)
         {
             //System.out.println("C.setScorer scorer=" + value);
-            // Since we invoke .score(), and the comparators likely
+            // Since we invoke .score(), and the comparers likely
             // do as well, cache it so it's only "really" computed
             // once:
             this.scorer = new ScoreCachingWrappingScorer(scorer);
-            for (int compIdx = 0; compIdx < comparators.Length; compIdx++)
+            for (int compIdx = 0; compIdx < comparers.Length; compIdx++)
             {
-                comparators[compIdx].SetScorer(scorer);
+                comparers[compIdx].SetScorer(scorer);
             }
             Arrays.Fill(joinScorers, null);
 
@@ -511,10 +511,10 @@ namespace Lucene.Net.Join
 
                 if (fillSortFields)
                 {
-                    groupSortValues = new object[comparators.Length];
-                    for (int sortFieldIdx = 0; sortFieldIdx < comparators.Length; sortFieldIdx++)
+                    groupSortValues = new object[comparers.Length];
+                    for (int sortFieldIdx = 0; sortFieldIdx < comparers.Length; sortFieldIdx++)
                     {
-                        groupSortValues[sortFieldIdx] = comparators[sortFieldIdx].Value(og.Slot);
+                        groupSortValues[sortFieldIdx] = comparers[sortFieldIdx].Value(og.Slot);
                     }
                 }
                 else

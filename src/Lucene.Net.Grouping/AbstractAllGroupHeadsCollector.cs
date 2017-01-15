@@ -133,7 +133,7 @@ namespace Lucene.Net.Search.Grouping
                 }
                 else if (compIDX == compIDXEnd)
                 {
-                    // Here c=0. If we're at the last comparator, this doc is not
+                    // Here c=0. If we're at the last comparer, this doc is not
                     // competitive, since docs are visited in doc Id order, which means
                     // this doc cannot compete with any other document in the queue.
                     return;
@@ -185,9 +185,9 @@ namespace Lucene.Net.Search.Grouping
         }
 
         /// <summary>
-        /// Compares the specified document for a specified comparator against the current most relevant document.
+        /// Compares the specified document for a specified comparer against the current most relevant document.
         /// </summary>
-        /// <param name="compIDX">The comparator index of the specified comparator.</param>
+        /// <param name="compIDX">The comparer index of the specified comparer.</param>
         /// <param name="doc">The specified document.</param>
         /// <returns>
         /// -1 if the specified document wasn't competitive against the current most relevant document, 1 if the

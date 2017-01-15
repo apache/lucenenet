@@ -23,7 +23,7 @@ namespace Lucene.Net.Join
 	 */
 
     /// <summary>
-    /// A field comparator that allows parent documents to be sorted by fields
+    /// A field comparer that allows parent documents to be sorted by fields
     /// from the nested / child documents.
     /// 
     /// @lucene.experimental
@@ -129,7 +129,7 @@ namespace Lucene.Net.Join
             /// <param name="wrappedComparer">The <see cref="FieldComparer"/> on the child / nested level. </param>
             /// <param name="parentFilter">Filter (must produce FixedBitSet per-segment) that identifies the parent documents. </param>
             /// <param name="childFilter">Filter that defines which child / nested documents participates in sorting. </param>
-            /// <param name="spareSlot">The extra slot inside the wrapped comparator that is used to compare which nested document
+            /// <param name="spareSlot">The extra slot inside the wrapped comparer that is used to compare which nested document
             ///                  inside the parent document scope is most competitive. </param>
             public Lowest(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot) 
                 : base(wrappedComparer, parentFilter, childFilter, spareSlot)
@@ -264,7 +264,7 @@ namespace Lucene.Net.Join
             /// <param name="wrappedComparer">The <see cref="FieldComparer"/> on the child / nested level. </param>
             /// <param name="parentFilter">Filter (must produce FixedBitSet per-segment) that identifies the parent documents. </param>
             /// <param name="childFilter">Filter that defines which child / nested documents participates in sorting. </param>
-            /// <param name="spareSlot">The extra slot inside the wrapped comparator that is used to compare which nested document
+            /// <param name="spareSlot">The extra slot inside the wrapped comparer that is used to compare which nested document
             ///                  inside the parent document scope is most competitive. </param>
             public Highest(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot) 
                 : base(wrappedComparer, parentFilter, childFilter, spareSlot)

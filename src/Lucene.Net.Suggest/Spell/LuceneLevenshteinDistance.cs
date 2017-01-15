@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Spell
     {
 
         /// <summary>
-        /// Creates a new comparator, mimicing the behavior of Lucene's internal
+        /// Creates a new comparer, mimicing the behavior of Lucene's internal
         /// edit distance.
         /// </summary>
         public LuceneLevenshteinDistance()
@@ -59,7 +59,7 @@ namespace Lucene.Net.Search.Spell
 
             // NOTE: if we cared, we could 3*m space instead of m*n space, similar to 
             // what LevenshteinDistance does, except cycling thru a ring of three 
-            // horizontal cost arrays... but this comparator is never actually used by 
+            // horizontal cost arrays... but this comparer is never actually used by 
             // DirectSpellChecker, its only used for merging results from multiple shards 
             // in "distributed spellcheck", and its inefficient in other ways too...
 

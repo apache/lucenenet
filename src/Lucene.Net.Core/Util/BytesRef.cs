@@ -304,12 +304,12 @@ namespace Lucene.Net.Util
 
         // LUCENENET NOTE: De-nested Utf8SortedAsUnicodeComparer class to prevent naming conflict
 
-        /// @deprecated this comparator is only a transition mechanism
-        [Obsolete("this comparator is only a transition mechanism")]
+        /// @deprecated this comparer is only a transition mechanism
+        [Obsolete("this comparer is only a transition mechanism")]
         private static readonly IComparer<BytesRef> Utf8SortedAsUTF16SortOrder = new Utf8SortedAsUtf16Comparer();
 
-        /// @deprecated this comparator is only a transition mechanism
-        [Obsolete("this comparator is only a transition mechanism")]
+        /// @deprecated this comparer is only a transition mechanism
+        [Obsolete("this comparer is only a transition mechanism")]
         public static IComparer<BytesRef> UTF8SortedAsUTF16Comparer
         {
             get
@@ -408,8 +408,8 @@ namespace Lucene.Net.Util
         }
     }
 
-    /// @deprecated this comparator is only a transition mechanism
-    [Obsolete("this comparator is only a transition mechanism")]
+    /// @deprecated this comparer is only a transition mechanism
+    [Obsolete("this comparer is only a transition mechanism")]
     internal class Utf8SortedAsUtf16Comparer : IComparer<BytesRef>
     {
         // Only singleton

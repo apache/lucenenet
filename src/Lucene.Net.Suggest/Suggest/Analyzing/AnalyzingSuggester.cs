@@ -883,10 +883,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 FST<PairOutputs<long?, BytesRef>.Pair> fst,
                 int topN,
                 int maxQueueDepth,
-                IComparer<PairOutputs<long?, BytesRef>.Pair> comparator,
+                IComparer<PairOutputs<long?, BytesRef>.Pair> comparer,
                 BytesRef utf8Key,
                 IList<LookupResult> results)
-                : base(fst, topN, maxQueueDepth, comparator)
+                : base(fst, topN, maxQueueDepth, comparer)
             {
                 this.outerInstance = outerInstance;
                 this.utf8Key = utf8Key;

@@ -77,8 +77,8 @@ namespace Lucene.Net.Support
         /// <summary>
         /// Priority queue represented as a balanced binary heap: the two
         /// children of queue[n] are queue[2*n+1] and queue[2*(n+1)].  The
-        /// priority queue is ordered by comparator, or by the elements'
-        /// natural ordering, if comparator is null: For each node n in the
+        /// priority queue is ordered by comparer, or by the elements'
+        /// natural ordering, if comparer is null: For each node n in the
         /// heap and each descendant d of n, n &lt;= d.  The element with the
         /// lowest value is in queue[0], assuming the queue is nonempty.
         /// </summary>
@@ -140,7 +140,7 @@ namespace Lucene.Net.Support
 
         /// <summary>
         /// Creates a <see cref="PriorityQueue{T}"/> with the specified initial capacity
-        /// that orders its elements according to the specified comparator.
+        /// that orders its elements according to the specified comparer.
         /// </summary>
         /// <param name="initialCapacity">the initial capacity for this priority queue</param>
         /// <param name="comparer">

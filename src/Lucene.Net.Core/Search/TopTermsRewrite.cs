@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
 
                 Debug.Assert(CompareToLastTerm(null));
 
-                // lazy init the initial ScoreTerm because comparator is not known on ctor:
+                // lazy init the initial ScoreTerm because comparer is not known on ctor:
                 if (st == null)
                 {
                     st = new ScoreTerm(this.termComp, new TermContext(m_topReaderContext));
@@ -250,7 +250,7 @@ namespace Lucene.Net.Search
 
             public virtual int Compare(ScoreTerm st1, ScoreTerm st2)
             {
-                Debug.Assert(st1.TermComp == st2.TermComp, "term comparator should not change between segments");
+                Debug.Assert(st1.TermComp == st2.TermComp, "term comparer should not change between segments");
                 return st1.TermComp.Compare(st1.Bytes, st2.Bytes);
             }
         }

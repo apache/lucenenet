@@ -51,7 +51,7 @@ namespace Lucene.Net.Codecs.ramonly
     public sealed class RAMOnlyPostingsFormat : PostingsFormat
     {
         // For fun, test that we can override how terms are
-        // sorted, and basic things still work -- this comparator
+        // sorted, and basic things still work -- this comparer
         // sorts in reversed unicode code point order:
         private static readonly IComparer<BytesRef> reverseUnicodeComparer = new ComparerAnonymousInnerClassHelper();
 

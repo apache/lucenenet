@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
         private FieldCache.IParser parser;
 
         // Used for CUSTOM sort
-        private FieldComparerSource comparatorSource;
+        private FieldComparerSource comparerSource;
 
         // Used for 'sortMissingFirst/Last'
         public object missingValue = null;
@@ -196,23 +196,23 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Creates a sort with a custom comparison function. </summary>
         /// <param name="field"> Name of field to sort by; cannot be <code>null</code>. </param>
-        /// <param name="comparator"> Returns a comparator for sorting hits. </param>
-        public SortField(string field, FieldComparerSource comparator)
+        /// <param name="comparer"> Returns a comparer for sorting hits. </param>
+        public SortField(string field, FieldComparerSource comparer)
         {
             InitFieldType(field, SortFieldType.CUSTOM);
-            this.comparatorSource = comparator;
+            this.comparerSource = comparer;
         }
 
         /// <summary>
         /// Creates a sort, possibly in reverse, with a custom comparison function. </summary>
         /// <param name="field"> Name of field to sort by; cannot be <code>null</code>. </param>
-        /// <param name="comparator"> Returns a comparator for sorting hits. </param>
+        /// <param name="comparer"> Returns a comparer for sorting hits. </param>
         /// <param name="reverse"> True if natural order should be reversed. </param>
-        public SortField(string field, FieldComparerSource comparator, bool reverse)
+        public SortField(string field, FieldComparerSource comparer, bool reverse)
         {
             InitFieldType(field, SortFieldType.CUSTOM);
             this.reverse = reverse;
-            this.comparatorSource = comparator;
+            this.comparerSource = comparer;
         }
 
         // Sets field & type, and ensures field is not NULL unless
@@ -287,7 +287,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return comparatorSource;
+                return comparerSource;
             }
         }
 
@@ -337,7 +337,7 @@ namespace Lucene.Net.Search
                     break;
 
                 case SortFieldType.CUSTOM:
-                    buffer.Append("<custom:\"").Append(field).Append("\": ").Append(comparatorSource).Append('>');
+                    buffer.Append("<custom:\"").Append(field).Append("\": ").Append(comparerSource).Append('>');
                     break;
 
                 case SortFieldType.REWRITEABLE:
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search
                 return false;
             }
             SortField other = (SortField)o;
-            return (StringHelper.Equals(other.field, this.field) && other.type == this.type && other.reverse == this.reverse && (other.comparatorSource == null ? this.comparatorSource == null : other.comparatorSource.Equals(this.comparatorSource)));
+            return (StringHelper.Equals(other.field, this.field) && other.type == this.type && other.reverse == this.reverse && (other.comparerSource == null ? this.comparerSource == null : other.comparerSource.Equals(this.comparerSource)));
         }
 
         /// <summary>
@@ -396,9 +396,9 @@ namespace Lucene.Net.Search
             {
                 hash += (int)(field.GetHashCode() ^ 0xff5685dd);
             }
-            if (comparatorSource != null)
+            if (comparerSource != null)
             {
-                hash += comparatorSource.GetHashCode();
+                hash += comparerSource.GetHashCode();
             }
             return hash;
         }
@@ -425,8 +425,8 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="numHits"> number of top hits the queue will store </param>
         /// <param name="sortPos"> position of this SortField within {@link
-        ///   Sort}.  The comparator is primary if sortPos==0,
-        ///   secondary if sortPos==1, etc.  Some comparators can
+        ///   Sort}.  The comparer is primary if sortPos==0,
+        ///   secondary if sortPos==1, etc.  Some comparers can
         ///   optimize themselves when they are the primary sort. </param>
         /// <returns> <seealso cref="FieldComparer"/> to use when sorting </returns>
         public virtual FieldComparer GetComparer(int numHits, int sortPos)
@@ -458,8 +458,8 @@ namespace Lucene.Net.Search
                     return new FieldComparer.ShortComparer(numHits, field, parser, (short?)missingValue);
 
                 case SortFieldType.CUSTOM:
-                    Debug.Assert(comparatorSource != null);
-                    return comparatorSource.NewComparer(field, numHits, sortPos, reverse);
+                    Debug.Assert(comparerSource != null);
+                    return comparerSource.NewComparer(field, numHits, sortPos, reverse);
 
                 case SortFieldType.STRING:
                     return new FieldComparer.TermOrdValComparer(numHits, field, missingValue == STRING_LAST);

@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
     {
         public const int DEFAULT_CAPACITY = 16;
 
-        // the following fields are needed by comparator,
+        // the following fields are needed by comparer,
         // so package private to prevent access$-methods:
         internal readonly ByteBlockPool pool;
 

@@ -26,17 +26,17 @@ namespace Lucene.Net.Util
     /// </summary>
     internal sealed class ArrayTimSorter<T> : TimSorter
     {
-        private readonly IComparer<T> comparator;
+        private readonly IComparer<T> comparer;
         private readonly T[] arr;
         private readonly T[] tmp;
 
         /// <summary>
         /// Create a new <seealso cref="ArrayTimSorter"/>. </summary>
-        public ArrayTimSorter(T[] arr, IComparer<T> comparator, int maxTempSlots)
+        public ArrayTimSorter(T[] arr, IComparer<T> comparer, int maxTempSlots)
             : base(maxTempSlots)
         {
             this.arr = arr;
-            this.comparator = comparator;
+            this.comparer = comparer;
             if (maxTempSlots > 0)
             {
                 T[] tmp = new T[maxTempSlots];
@@ -50,7 +50,7 @@ namespace Lucene.Net.Util
 
         protected override int Compare(int i, int j)
         {
-            return comparator.Compare(arr[i], arr[j]);
+            return comparer.Compare(arr[i], arr[j]);
         }
 
         protected override void Swap(int i, int j)
@@ -75,7 +75,7 @@ namespace Lucene.Net.Util
 
         protected override int CompareSaved(int i, int j)
         {
-            return comparator.Compare(tmp[i], arr[j]);
+            return comparer.Compare(tmp[i], arr[j]);
         }
     }
 }

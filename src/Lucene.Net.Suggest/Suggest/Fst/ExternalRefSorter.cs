@@ -114,12 +114,12 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             private readonly OfflineSorter.ByteSequencesReader reader;
             private BytesRef scratch = new BytesRef();
-            private readonly IComparer<BytesRef> comparator;
+            private readonly IComparer<BytesRef> comparer;
 
-            public ByteSequenceIterator(OfflineSorter.ByteSequencesReader reader, IComparer<BytesRef> comparator)
+            public ByteSequenceIterator(OfflineSorter.ByteSequencesReader reader, IComparer<BytesRef> comparer)
             {
                 this.reader = reader;
-                this.comparator = comparator;
+                this.comparer = comparer;
             }
 
             public virtual BytesRef Next()
@@ -159,7 +159,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 get
                 {
-                    return comparator;
+                    return comparer;
                 }
             }
         }

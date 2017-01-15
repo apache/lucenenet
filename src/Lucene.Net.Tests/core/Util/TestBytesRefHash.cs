@@ -212,7 +212,7 @@ namespace Lucene.Net.Util
                     Hash.Add(@ref);
                     strings.Add(str);
                 }
-                // We use the UTF-16 comparator here, because we need to be able to
+                // We use the UTF-16 comparer here, because we need to be able to
                 // compare to native String.CompareTo() [UTF-16]:
                 int[] sort = Hash.Sort(BytesRef.UTF8SortedAsUTF16Comparer);
                 Assert.IsTrue(strings.Count < sort.Length);

@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary> An implementation of <see cref="FieldValueHitQueue" /> which is optimized in case
-        /// there is just one comparator.
+        /// there is just one comparer.
         /// </summary>
         internal sealed class OneComparerFieldValueHitQueue<T> : FieldValueHitQueue<T>
             where T : FieldValueHitQueue.Entry
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary> An implementation of <see cref="FieldValueHitQueue" /> which is optimized in case
-        /// there is more than one comparator.
+        /// there is more than one comparer.
         /// </summary>
         internal sealed class MultiComparersFieldValueHitQueue<T> : FieldValueHitQueue<T>
             where T : FieldValueHitQueue.Entry
@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
             public MultiComparersFieldValueHitQueue(SortField[] fields, int size)
                 : base(fields, size)
             {
-                int numComparers = m_comparators.Length;
+                int numComparers = m_comparers.Length;
                 for (int i = 0; i < numComparers; ++i)
                 {
                     SortField field = fields[i];
@@ -114,10 +114,10 @@ namespace Lucene.Net.Search
                 Debug.Assert(hitA != hitB);
                 Debug.Assert(hitA.Slot != hitB.Slot);
 
-                int numComparers = m_comparators.Length;
+                int numComparers = m_comparers.Length;
                 for (int i = 0; i < numComparers; ++i)
                 {
-                    int c = m_reverseMul[i] * m_comparators[i].Compare(hitA.Slot, hitB.Slot);
+                    int c = m_reverseMul[i] * m_comparers[i].Compare(hitA.Slot, hitB.Slot);
                     if (c != 0)
                     {
                         // Short circuit
@@ -186,17 +186,17 @@ namespace Lucene.Net.Search
             // need to check it again.
 
             // All these are required by this class's API - need to return arrays.
-            // Therefore even in the case of a single comparator, create an array
+            // Therefore even in the case of a single comparer, create an array
             // anyway.
             this.m_fields = fields;
             int numComparers = fields.Length;
-            m_comparators = new FieldComparer[numComparers];
+            m_comparers = new FieldComparer[numComparers];
             m_reverseMul = new int[numComparers];
         }
 
         public virtual FieldComparer[] GetComparers()
         {
-            return m_comparators;
+            return m_comparers;
         }
 
         public virtual int[] GetReverseMul()
@@ -204,21 +204,21 @@ namespace Lucene.Net.Search
             return m_reverseMul;
         }
 
-        public virtual void SetComparer(int pos, FieldComparer comparator)
+        public virtual void SetComparer(int pos, FieldComparer comparer)
         {
             if (pos == 0)
             {
-                m_firstComparer = comparator;
+                m_firstComparer = comparer;
             }
-            m_comparators[pos] = comparator;
+            m_comparers[pos] = comparer;
         }
 
         /// <summary>
         /// Stores the sort criteria being used. </summary>
         protected readonly SortField[] m_fields;
 
-        protected readonly FieldComparer[] m_comparators; // use setComparer to change this array // LUCENENET TODO: Rename m_comparers
-        protected FieldComparer m_firstComparer; // this must always be equal to comparators[0]
+        protected readonly FieldComparer[] m_comparers; // use setComparer to change this array
+        protected FieldComparer m_firstComparer; // this must always be equal to comparers[0]
         protected readonly int[] m_reverseMul;
 
         internal FieldComparer FirstComparer
@@ -240,11 +240,11 @@ namespace Lucene.Net.Search
         /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
         internal virtual FieldDoc FillFields(FieldValueHitQueue.Entry entry)
         {
-            int n = m_comparators.Length;
+            int n = m_comparers.Length;
             IComparable[] fields = new IComparable[n];
             for (int i = 0; i < n; ++i)
             {
-                fields[i] = m_comparators[i].Value(entry.Slot);
+                fields[i] = m_comparers[i].Value(entry.Slot);
             }
             //if (maxscore > 1.0f) doc.score /= maxscore;   // normalize scores
             return new FieldDoc(entry.Doc, entry.Score, fields);

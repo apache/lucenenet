@@ -1726,9 +1726,9 @@ namespace Lucene.Net.Util.Fst
         private class TieBreakByInputComparer<T> : IComparer<Util.Result<T>>
         {
             internal readonly IComparer<T> Comparer;
-            public TieBreakByInputComparer(IComparer<T> comparator)
+            public TieBreakByInputComparer(IComparer<T> comparer)
             {
-                this.Comparer = comparator;
+                this.Comparer = comparer;
             }
 
             public virtual int Compare(Util.Result<T> a, Util.Result<T> b)

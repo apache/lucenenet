@@ -28,12 +28,12 @@ namespace Lucene.Net.Search.Spell
     public sealed class SuggestWordQueue : PriorityQueue<SuggestWord>
     {
         /// <summary>
-        /// Default comparator: score then frequency. </summary>
+        /// Default comparer: score then frequency. </summary>
         /// <seealso cref="SuggestWordScoreComparer"/>
         public static readonly IComparer<SuggestWord> DEFAULT_COMPARATOR = new SuggestWordScoreComparer();
 
 
-        private readonly IComparer<SuggestWord> comparator;
+        private readonly IComparer<SuggestWord> comparer;
 
         /// <summary>
         /// Use the <see cref="DEFAULT_COMPARATOR"/> </summary>
@@ -41,22 +41,22 @@ namespace Lucene.Net.Search.Spell
         public SuggestWordQueue(int size)
             : base(size)
         {
-            comparator = DEFAULT_COMPARATOR;
+            comparer = DEFAULT_COMPARATOR;
         }
 
         /// <summary>
-        /// Specify the size of the queue and the comparator to use for sorting. </summary>
+        /// Specify the size of the queue and the comparer to use for sorting. </summary>
         /// <param name="size"> The size </param>
-        /// <param name="comparator"> The comparator. </param>
-        public SuggestWordQueue(int size, IComparer<SuggestWord> comparator)
+        /// <param name="comparer"> The comparer. </param>
+        public SuggestWordQueue(int size, IComparer<SuggestWord> comparer)
             : base(size)
         {
-            this.comparator = comparator;
+            this.comparer = comparer;
         }
 
         protected internal override bool LessThan(SuggestWord wa, SuggestWord wb)
         {
-            int val = comparator.Compare(wa, wb);
+            int val = comparer.Compare(wa, wb);
             return val < 0;
         }
     }

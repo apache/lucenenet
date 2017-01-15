@@ -94,7 +94,7 @@ namespace Lucene.Net.Index.Sorter
         }
 
         /// <summary>
-        /// A comparator of doc IDs.
+        /// A comparer of doc IDs.
         /// </summary>
         internal abstract class DocComparer : IComparer<int>
         {
@@ -111,19 +111,19 @@ namespace Lucene.Net.Index.Sorter
         {
 
             internal readonly int[] docs;
-            internal readonly Sorter.DocComparer comparator;
+            internal readonly Sorter.DocComparer comparer;
             internal readonly int[] tmp;
 
-            internal DocValueSorter(int[] docs, Sorter.DocComparer comparator) : base(docs.Length / 64)
+            internal DocValueSorter(int[] docs, Sorter.DocComparer comparer) : base(docs.Length / 64)
             {
                 this.docs = docs;
-                this.comparator = comparator;
+                this.comparer = comparer;
                 tmp = new int[docs.Length / 64];
             }
 
             protected override int Compare(int i, int j)
             {
-                return comparator.Compare(docs[i], docs[j]);
+                return comparer.Compare(docs[i], docs[j]);
             }
 
             protected override void Swap(int i, int j)
@@ -150,20 +150,20 @@ namespace Lucene.Net.Index.Sorter
 
             protected override int CompareSaved(int i, int j)
             {
-                return comparator.Compare(tmp[i], docs[j]);
+                return comparer.Compare(tmp[i], docs[j]);
             }
         }
 
         /// <summary>
-        /// Computes the old-to-new permutation over the given comparator.
+        /// Computes the old-to-new permutation over the given comparer.
         /// </summary>
-        private static Sorter.DocMap Sort(int maxDoc, DocComparer comparator)
+        private static Sorter.DocMap Sort(int maxDoc, DocComparer comparer)
         {
             // check if the index is sorted
             bool sorted = true;
             for (int i = 1; i < maxDoc; ++i)
             {
-                if (comparator.Compare(i - 1, i) > 0)
+                if (comparer.Compare(i - 1, i) > 0)
                 {
                     sorted = false;
                     break;
@@ -181,7 +181,7 @@ namespace Lucene.Net.Index.Sorter
                 docs[i] = i;
             }
 
-            DocValueSorter sorter = new DocValueSorter(docs, comparator);
+            DocValueSorter sorter = new DocValueSorter(docs, comparer);
             // It can be common to sort a reader, add docs, sort it again, ... and in
             // that case timSort can save a lot of time
             sorter.Sort(0, docs.Length); // docs is now the newToOld mapping
@@ -260,17 +260,17 @@ namespace Lucene.Net.Index.Sorter
             SortField[] fields = sort_Renamed.GetSort();
             int[] reverseMul = new int[fields.Length];
 
-            FieldComparer[] comparators = new FieldComparer[fields.Length];
+            FieldComparer[] comparers = new FieldComparer[fields.Length];
 
             for (int i = 0; i < fields.Length; i++)
             {
                 reverseMul[i] = fields[i].IsReverse ? -1 : 1;
-                comparators[i] = fields[i].GetComparer(1, i);
-                comparators[i].SetNextReader(reader.AtomicContext);
-                comparators[i].SetScorer(FAKESCORER);
+                comparers[i] = fields[i].GetComparer(1, i);
+                comparers[i].SetNextReader(reader.AtomicContext);
+                comparers[i].SetScorer(FAKESCORER);
             }
-            DocComparer comparator = new DocComparerAnonymousInnerClassHelper(this, reverseMul, comparators);
-            return Sort(reader.MaxDoc, comparator);
+            DocComparer comparer = new DocComparerAnonymousInnerClassHelper(this, reverseMul, comparers);
+            return Sort(reader.MaxDoc, comparer);
         }
 
         private class DocComparerAnonymousInnerClassHelper : DocComparer
@@ -278,26 +278,26 @@ namespace Lucene.Net.Index.Sorter
             private readonly Sorter outerInstance;
 
             private int[] reverseMul;
-            private FieldComparer[] comparators;
+            private FieldComparer[] comparers;
 
-            public DocComparerAnonymousInnerClassHelper(Sorter outerInstance, int[] reverseMul, FieldComparer[] comparators)
+            public DocComparerAnonymousInnerClassHelper(Sorter outerInstance, int[] reverseMul, FieldComparer[] comparers)
             {
                 this.outerInstance = outerInstance;
                 this.reverseMul = reverseMul;
-                this.comparators = comparators;
+                this.comparers = comparers;
             }
 
             public override int Compare(int docID1, int docID2)
             {
                 try
                 {
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
                         // TODO: would be better if copy() didnt cause a term lookup in TermOrdVal & co,
                         // the segments are always the same here...
-                        comparators[i].Copy(0, docID1);
-                        comparators[i].SetBottom(0);
-                        int comp = reverseMul[i] * comparators[i].CompareBottom(docID2);
+                        comparers[i].Copy(0, docID1);
+                        comparers[i].SetBottom(0);
+                        int comp = reverseMul[i] * comparers[i].CompareBottom(docID2);
                         if (comp != 0)
                         {
                             return comp;

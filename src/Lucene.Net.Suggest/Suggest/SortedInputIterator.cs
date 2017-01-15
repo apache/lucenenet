@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Suggest
      */
 
     /// <summary>
-    /// This wrapper buffers incoming elements and makes sure they are sorted based on given comparator.
+    /// This wrapper buffers incoming elements and makes sure they are sorted based on given comparer.
     /// @lucene.experimental
     /// </summary>
     public class SortedInputIterator : IInputIterator
@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Suggest
         private FileInfo tempInput;
         private FileInfo tempSorted;
         private readonly OfflineSorter.ByteSequencesReader reader;
-        private readonly IComparer<BytesRef> comparator;
+        private readonly IComparer<BytesRef> comparer;
         private readonly bool hasPayloads;
         private readonly bool hasContexts;
         private bool done = false;
@@ -58,13 +58,13 @@ namespace Lucene.Net.Search.Suggest
         /// Creates a new sorted wrapper, sorting by BytesRef
         /// (ascending) then cost (ascending).
         /// </summary>
-        public SortedInputIterator(IInputIterator source, IComparer<BytesRef> comparator)
+        public SortedInputIterator(IInputIterator source, IComparer<BytesRef> comparer)
         {
             this.tieBreakByCostComparer = new ComparerAnonymousInnerClassHelper(this);
             this.hasPayloads = source.HasPayloads;
             this.hasContexts = source.HasContexts;
             this.source = source;
-            this.comparator = comparator;
+            this.comparer = comparer;
             this.reader = Sort();
         }
 
@@ -184,8 +184,8 @@ namespace Lucene.Net.Search.Suggest
                     outerInstance.DecodeContexts(leftScratch, input);
                     outerInstance.DecodeContexts(rightScratch, input);
                 }
-                // LUCENENET NOTE: outerInstance.Comparer != outerInstance.comparator!!
-                int cmp = outerInstance.comparator.Compare(leftScratch, rightScratch);
+                // LUCENENET NOTE: outerInstance.Comparer != outerInstance.comparer!!
+                int cmp = outerInstance.comparer.Compare(leftScratch, rightScratch);
                 if (cmp != 0)
                 {
                     return cmp;

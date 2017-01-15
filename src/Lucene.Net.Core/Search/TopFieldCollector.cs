@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
 
         private class OneComparerNonScoringCollector : TopFieldCollector
         {
-            internal FieldComparer comparator;
+            internal FieldComparer comparer;
             internal readonly int reverseMul;
             internal readonly FieldValueHitQueue<Entry> queue;
 
@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
                 : base(queue, numHits, fillFields)
             {
                 this.queue = queue;
-                comparator = queue.GetComparers()[0];
+                comparer = queue.GetComparers()[0];
                 reverseMul = queue.GetReverseMul()[0];
             }
 
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
                 ++m_totalHits;
                 if (queueFull)
                 {
-                    if ((reverseMul * comparator.CompareBottom(doc)) <= 0)
+                    if ((reverseMul * comparer.CompareBottom(doc)) <= 0)
                     {
                         // since docs are visited in doc Id order, if compare is 0, it means
                         // this document is larger than anything else in the queue, and
@@ -78,20 +78,20 @@ namespace Lucene.Net.Search
                     }
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(bottom.Slot, doc);
+                    comparer.Copy(bottom.Slot, doc);
                     UpdateBottom(doc);
-                    comparator.SetBottom(bottom.Slot);
+                    comparer.SetBottom(bottom.Slot);
                 }
                 else
                 {
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
                     // Copy hit into queue
-                    comparator.Copy(slot, doc);
+                    comparer.Copy(slot, doc);
                     Add(slot, doc, float.NaN);
                     if (queueFull)
                     {
-                        comparator.SetBottom(bottom.Slot);
+                        comparer.SetBottom(bottom.Slot);
                     }
                 }
             }
@@ -99,13 +99,13 @@ namespace Lucene.Net.Search
             public override void SetNextReader(AtomicReaderContext context)
             {
                 this.docBase = context.DocBase;
-                queue.SetComparer(0, comparator.SetNextReader(context));
-                comparator = queue.FirstComparer;
+                queue.SetComparer(0, comparer.SetNextReader(context));
+                comparer = queue.FirstComparer;
             }
             
             public override void SetScorer(Scorer scorer)
             {
-                comparator.SetScorer(scorer);
+                comparer.SetScorer(scorer);
             }
         }
 
@@ -128,27 +128,27 @@ namespace Lucene.Net.Search
                 if (queueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
-                    int cmp = reverseMul * comparator.CompareBottom(doc);
+                    int cmp = reverseMul * comparer.CompareBottom(doc);
                     if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.Doc))
                     {
                         return;
                     }
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(bottom.Slot, doc);
+                    comparer.Copy(bottom.Slot, doc);
                     UpdateBottom(doc);
-                    comparator.SetBottom(bottom.Slot);
+                    comparer.SetBottom(bottom.Slot);
                 }
                 else
                 {
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
                     // Copy hit into queue
-                    comparator.Copy(slot, doc);
+                    comparer.Copy(slot, doc);
                     Add(slot, doc, float.NaN);
                     if (queueFull)
                     {
-                        comparator.SetBottom(bottom.Slot);
+                        comparer.SetBottom(bottom.Slot);
                     }
                 }
             }
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
                 ++m_totalHits;
                 if (queueFull)
                 {
-                    if ((reverseMul * comparator.CompareBottom(doc)) <= 0)
+                    if ((reverseMul * comparer.CompareBottom(doc)) <= 0)
                     {
                         // since docs are visited in doc Id order, if compare is 0, it means
                         // this document is largest than anything else in the queue, and
@@ -197,9 +197,9 @@ namespace Lucene.Net.Search
                     float score = scorer.Score();
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(bottom.Slot, doc);
+                    comparer.Copy(bottom.Slot, doc);
                     UpdateBottom(doc, score);
-                    comparator.SetBottom(bottom.Slot);
+                    comparer.SetBottom(bottom.Slot);
                 }
                 else
                 {
@@ -209,11 +209,11 @@ namespace Lucene.Net.Search
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
                     // Copy hit into queue
-                    comparator.Copy(slot, doc);
+                    comparer.Copy(slot, doc);
                     Add(slot, doc, score);
                     if (queueFull)
                     {
-                        comparator.SetBottom(bottom.Slot);
+                        comparer.SetBottom(bottom.Slot);
                     }
                 }
             }
@@ -221,7 +221,7 @@ namespace Lucene.Net.Search
             public override void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
-                comparator.SetScorer(scorer);
+                comparer.SetScorer(scorer);
             }
         }
 
@@ -244,7 +244,7 @@ namespace Lucene.Net.Search
                 if (queueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
-                    int cmp = reverseMul * comparator.CompareBottom(doc);
+                    int cmp = reverseMul * comparer.CompareBottom(doc);
                     if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.Doc))
                     {
                         return;
@@ -254,9 +254,9 @@ namespace Lucene.Net.Search
                     float score = scorer.Score();
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(bottom.Slot, doc);
+                    comparer.Copy(bottom.Slot, doc);
                     UpdateBottom(doc, score);
-                    comparator.SetBottom(bottom.Slot);
+                    comparer.SetBottom(bottom.Slot);
                 }
                 else
                 {
@@ -266,11 +266,11 @@ namespace Lucene.Net.Search
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
                     // Copy hit into queue
-                    comparator.Copy(slot, doc);
+                    comparer.Copy(slot, doc);
                     Add(slot, doc, score);
                     if (queueFull)
                     {
-                        comparator.SetBottom(bottom.Slot);
+                        comparer.SetBottom(bottom.Slot);
                     }
                 }
             }
@@ -314,7 +314,7 @@ namespace Lucene.Net.Search
                 ++m_totalHits;
                 if (queueFull)
                 {
-                    if ((reverseMul * comparator.CompareBottom(doc)) <= 0)
+                    if ((reverseMul * comparer.CompareBottom(doc)) <= 0)
                     {
                         // since docs are visited in doc Id order, if compare is 0, it means
                         // this document is largest than anything else in the queue, and
@@ -323,20 +323,20 @@ namespace Lucene.Net.Search
                     }
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(bottom.Slot, doc);
+                    comparer.Copy(bottom.Slot, doc);
                     UpdateBottom(doc, score);
-                    comparator.SetBottom(bottom.Slot);
+                    comparer.SetBottom(bottom.Slot);
                 }
                 else
                 {
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
                     // Copy hit into queue
-                    comparator.Copy(slot, doc);
+                    comparer.Copy(slot, doc);
                     Add(slot, doc, score);
                     if (queueFull)
                     {
-                        comparator.SetBottom(bottom.Slot);
+                        comparer.SetBottom(bottom.Slot);
                     }
                 }
             }
@@ -372,27 +372,27 @@ namespace Lucene.Net.Search
                 if (queueFull)
                 {
                     // Fastmatch: return if this hit is not competitive
-                    int cmp = reverseMul * comparator.CompareBottom(doc);
+                    int cmp = reverseMul * comparer.CompareBottom(doc);
                     if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.Doc))
                     {
                         return;
                     }
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(bottom.Slot, doc);
+                    comparer.Copy(bottom.Slot, doc);
                     UpdateBottom(doc, score);
-                    comparator.SetBottom(bottom.Slot);
+                    comparer.SetBottom(bottom.Slot);
                 }
                 else
                 {
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
                     // Copy hit into queue
-                    comparator.Copy(slot, doc);
+                    comparer.Copy(slot, doc);
                     Add(slot, doc, score);
                     if (queueFull)
                     {
-                        comparator.SetBottom(bottom.Slot);
+                        comparer.SetBottom(bottom.Slot);
                     }
                 }
             }
@@ -410,7 +410,7 @@ namespace Lucene.Net.Search
 
         private class MultiComparerNonScoringCollector : TopFieldCollector
         {
-            internal readonly FieldComparer[] comparators;
+            internal readonly FieldComparer[] comparers;
             internal readonly int[] reverseMul;
             internal readonly FieldValueHitQueue<Entry> queue;
 
@@ -418,7 +418,7 @@ namespace Lucene.Net.Search
                 : base(queue, numHits, fillFields)
             {
                 this.queue = queue;
-                comparators = queue.GetComparers();
+                comparers = queue.GetComparers();
                 reverseMul = queue.GetReverseMul();
             }
 
@@ -437,7 +437,7 @@ namespace Lucene.Net.Search
                     // Fastmatch: return if this hit is not competitive
                     for (int i = 0; ; i++)
                     {
-                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
+                        int c = reverseMul[i] * comparers[i].CompareBottom(doc);
                         if (c < 0)
                         {
                             // Definitely not competitive.
@@ -448,9 +448,9 @@ namespace Lucene.Net.Search
                             // Definitely competitive.
                             break;
                         }
-                        else if (i == comparators.Length - 1)
+                        else if (i == comparers.Length - 1)
                         {
-                            // Here c=0. If we're at the last comparator, this doc is not
+                            // Here c=0. If we're at the last comparer, this doc is not
                             // competitive, since docs are visited in doc Id order, which means
                             // this doc cannot compete with any other document in the queue.
                             return;
@@ -458,16 +458,16 @@ namespace Lucene.Net.Search
                     }
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].Copy(bottom.Slot, doc);
+                        comparers[i].Copy(bottom.Slot, doc);
                     }
 
                     UpdateBottom(doc);
 
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].SetBottom(bottom.Slot);
+                        comparers[i].SetBottom(bottom.Slot);
                     }
                 }
                 else
@@ -475,16 +475,16 @@ namespace Lucene.Net.Search
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
                     // Copy hit into queue
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].Copy(slot, doc);
+                        comparers[i].Copy(slot, doc);
                     }
                     Add(slot, doc, float.NaN);
                     if (queueFull)
                     {
-                        for (int i = 0; i < comparators.Length; i++)
+                        for (int i = 0; i < comparers.Length; i++)
                         {
-                            comparators[i].SetBottom(bottom.Slot);
+                            comparers[i].SetBottom(bottom.Slot);
                         }
                     }
                 }
@@ -493,18 +493,18 @@ namespace Lucene.Net.Search
             public override void SetNextReader(AtomicReaderContext context)
             {
                 docBase = context.DocBase;
-                for (int i = 0; i < comparators.Length; i++)
+                for (int i = 0; i < comparers.Length; i++)
                 {
-                    queue.SetComparer(i, comparators[i].SetNextReader(context));
+                    queue.SetComparer(i, comparers[i].SetNextReader(context));
                 }
             }
 
             public override void SetScorer(Scorer scorer)
             {
-                // set the value on all comparators
-                for (int i = 0; i < comparators.Length; i++)
+                // set the value on all comparers
+                for (int i = 0; i < comparers.Length; i++)
                 {
-                    comparators[i].SetScorer(scorer);
+                    comparers[i].SetScorer(scorer);
                 }
             }
         }
@@ -530,7 +530,7 @@ namespace Lucene.Net.Search
                     // Fastmatch: return if this hit is not competitive
                     for (int i = 0; ; i++)
                     {
-                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
+                        int c = reverseMul[i] * comparers[i].CompareBottom(doc);
                         if (c < 0)
                         {
                             // Definitely not competitive.
@@ -541,7 +541,7 @@ namespace Lucene.Net.Search
                             // Definitely competitive.
                             break;
                         }
-                        else if (i == comparators.Length - 1)
+                        else if (i == comparers.Length - 1)
                         {
                             // this is the equals case.
                             if (doc + docBase > bottom.Doc)
@@ -554,16 +554,16 @@ namespace Lucene.Net.Search
                     }
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].Copy(bottom.Slot, doc);
+                        comparers[i].Copy(bottom.Slot, doc);
                     }
 
                     UpdateBottom(doc);
 
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].SetBottom(bottom.Slot);
+                        comparers[i].SetBottom(bottom.Slot);
                     }
                 }
                 else
@@ -571,16 +571,16 @@ namespace Lucene.Net.Search
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
                     // Copy hit into queue
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].Copy(slot, doc);
+                        comparers[i].Copy(slot, doc);
                     }
                     Add(slot, doc, float.NaN);
                     if (queueFull)
                     {
-                        for (int i = 0; i < comparators.Length; i++)
+                        for (int i = 0; i < comparers.Length; i++)
                         {
-                            comparators[i].SetBottom(bottom.Slot);
+                            comparers[i].SetBottom(bottom.Slot);
                         }
                     }
                 }
@@ -628,7 +628,7 @@ namespace Lucene.Net.Search
                     // Fastmatch: return if this hit is not competitive
                     for (int i = 0; ; i++)
                     {
-                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
+                        int c = reverseMul[i] * comparers[i].CompareBottom(doc);
                         if (c < 0)
                         {
                             // Definitely not competitive.
@@ -639,9 +639,9 @@ namespace Lucene.Net.Search
                             // Definitely competitive.
                             break;
                         }
-                        else if (i == comparators.Length - 1)
+                        else if (i == comparers.Length - 1)
                         {
-                            // Here c=0. If we're at the last comparator, this doc is not
+                            // Here c=0. If we're at the last comparer, this doc is not
                             // competitive, since docs are visited in doc Id order, which means
                             // this doc cannot compete with any other document in the queue.
                             return;
@@ -649,16 +649,16 @@ namespace Lucene.Net.Search
                     }
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].Copy(bottom.Slot, doc);
+                        comparers[i].Copy(bottom.Slot, doc);
                     }
 
                     UpdateBottom(doc, score);
 
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].SetBottom(bottom.Slot);
+                        comparers[i].SetBottom(bottom.Slot);
                     }
                 }
                 else
@@ -666,16 +666,16 @@ namespace Lucene.Net.Search
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
                     // Copy hit into queue
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].Copy(slot, doc);
+                        comparers[i].Copy(slot, doc);
                     }
                     Add(slot, doc, score);
                     if (queueFull)
                     {
-                        for (int i = 0; i < comparators.Length; i++)
+                        for (int i = 0; i < comparers.Length; i++)
                         {
-                            comparators[i].SetBottom(bottom.Slot);
+                            comparers[i].SetBottom(bottom.Slot);
                         }
                     }
                 }
@@ -714,7 +714,7 @@ namespace Lucene.Net.Search
                     // Fastmatch: return if this hit is not competitive
                     for (int i = 0; ; i++)
                     {
-                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
+                        int c = reverseMul[i] * comparers[i].CompareBottom(doc);
                         if (c < 0)
                         {
                             // Definitely not competitive.
@@ -725,7 +725,7 @@ namespace Lucene.Net.Search
                             // Definitely competitive.
                             break;
                         }
-                        else if (i == comparators.Length - 1)
+                        else if (i == comparers.Length - 1)
                         {
                             // this is the equals case.
                             if (doc + docBase > bottom.Doc)
@@ -738,16 +738,16 @@ namespace Lucene.Net.Search
                     }
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].Copy(bottom.Slot, doc);
+                        comparers[i].Copy(bottom.Slot, doc);
                     }
 
                     UpdateBottom(doc, score);
 
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].SetBottom(bottom.Slot);
+                        comparers[i].SetBottom(bottom.Slot);
                     }
                 }
                 else
@@ -755,16 +755,16 @@ namespace Lucene.Net.Search
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
                     // Copy hit into queue
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].Copy(slot, doc);
+                        comparers[i].Copy(slot, doc);
                     }
                     Add(slot, doc, score);
                     if (queueFull)
                     {
-                        for (int i = 0; i < comparators.Length; i++)
+                        for (int i = 0; i < comparers.Length; i++)
                         {
-                            comparators[i].SetBottom(bottom.Slot);
+                            comparers[i].SetBottom(bottom.Slot);
                         }
                     }
                 }
@@ -805,7 +805,7 @@ namespace Lucene.Net.Search
                     // Fastmatch: return if this hit is not competitive
                     for (int i = 0; ; i++)
                     {
-                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
+                        int c = reverseMul[i] * comparers[i].CompareBottom(doc);
                         if (c < 0)
                         {
                             // Definitely not competitive.
@@ -816,9 +816,9 @@ namespace Lucene.Net.Search
                             // Definitely competitive.
                             break;
                         }
-                        else if (i == comparators.Length - 1)
+                        else if (i == comparers.Length - 1)
                         {
-                            // Here c=0. If we're at the last comparator, this doc is not
+                            // Here c=0. If we're at the last comparer, this doc is not
                             // competitive, since docs are visited in doc Id order, which means
                             // this doc cannot compete with any other document in the queue.
                             return;
@@ -826,18 +826,18 @@ namespace Lucene.Net.Search
                     }
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].Copy(bottom.Slot, doc);
+                        comparers[i].Copy(bottom.Slot, doc);
                     }
 
                     // Compute score only if it is competitive.
                     float score = scorer.Score();
                     UpdateBottom(doc, score);
 
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].SetBottom(bottom.Slot);
+                        comparers[i].SetBottom(bottom.Slot);
                     }
                 }
                 else
@@ -845,9 +845,9 @@ namespace Lucene.Net.Search
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
                     // Copy hit into queue
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].Copy(slot, doc);
+                        comparers[i].Copy(slot, doc);
                     }
 
                     // Compute score only if it is competitive.
@@ -855,9 +855,9 @@ namespace Lucene.Net.Search
                     Add(slot, doc, score);
                     if (queueFull)
                     {
-                        for (int i = 0; i < comparators.Length; i++)
+                        for (int i = 0; i < comparers.Length; i++)
                         {
-                            comparators[i].SetBottom(bottom.Slot);
+                            comparers[i].SetBottom(bottom.Slot);
                         }
                     }
                 }
@@ -891,7 +891,7 @@ namespace Lucene.Net.Search
                     // Fastmatch: return if this hit is not competitive
                     for (int i = 0; ; i++)
                     {
-                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
+                        int c = reverseMul[i] * comparers[i].CompareBottom(doc);
                         if (c < 0)
                         {
                             // Definitely not competitive.
@@ -902,7 +902,7 @@ namespace Lucene.Net.Search
                             // Definitely competitive.
                             break;
                         }
-                        else if (i == comparators.Length - 1)
+                        else if (i == comparers.Length - 1)
                         {
                             // this is the equals case.
                             if (doc + docBase > bottom.Doc)
@@ -915,18 +915,18 @@ namespace Lucene.Net.Search
                     }
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].Copy(bottom.Slot, doc);
+                        comparers[i].Copy(bottom.Slot, doc);
                     }
 
                     // Compute score only if it is competitive.
                     float score = scorer.Score();
                     UpdateBottom(doc, score);
 
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].SetBottom(bottom.Slot);
+                        comparers[i].SetBottom(bottom.Slot);
                     }
                 }
                 else
@@ -934,9 +934,9 @@ namespace Lucene.Net.Search
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
                     // Copy hit into queue
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].Copy(slot, doc);
+                        comparers[i].Copy(slot, doc);
                     }
 
                     // Compute score only if it is competitive.
@@ -944,9 +944,9 @@ namespace Lucene.Net.Search
                     Add(slot, doc, score);
                     if (queueFull)
                     {
-                        for (int i = 0; i < comparators.Length; i++)
+                        for (int i = 0; i < comparers.Length; i++)
                         {
-                            comparators[i].SetBottom(bottom.Slot);
+                            comparers[i].SetBottom(bottom.Slot);
                         }
                     }
                 }
@@ -972,7 +972,7 @@ namespace Lucene.Net.Search
         {
             internal Scorer scorer;
             internal int collectedHits;
-            internal readonly FieldComparer[] comparators;
+            internal readonly FieldComparer[] comparers;
             internal readonly int[] reverseMul;
             internal readonly FieldValueHitQueue<Entry> queue;
             internal readonly bool trackDocScores;
@@ -987,17 +987,17 @@ namespace Lucene.Net.Search
                 this.trackDocScores = trackDocScores;
                 this.trackMaxScore = trackMaxScore;
                 this.after = after;
-                comparators = queue.GetComparers();
+                comparers = queue.GetComparers();
                 reverseMul = queue.GetReverseMul();
 
                 // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
                 maxScore = float.NegativeInfinity;
 
-                // Tell all comparators their top value:
-                for (int i = 0; i < comparators.Length; i++)
+                // Tell all comparers their top value:
+                for (int i = 0; i < comparers.Length; i++)
                 {
-                    FieldComparer comparator = comparators[i];
-                    comparator.SetTopValue(after.Fields[i]);
+                    FieldComparer comparer = comparers[i];
+                    comparer.SetTopValue(after.Fields[i]);
                 }
             }
 
@@ -1030,7 +1030,7 @@ namespace Lucene.Net.Search
                     // the worst hit currently in the queue:
                     for (int i = 0; ; i++)
                     {
-                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
+                        int c = reverseMul[i] * comparers[i].CompareBottom(doc);
                         if (c < 0)
                         {
                             // Definitely not competitive.
@@ -1041,7 +1041,7 @@ namespace Lucene.Net.Search
                             // Definitely competitive.
                             break;
                         }
-                        else if (i == comparators.Length - 1)
+                        else if (i == comparers.Length - 1)
                         {
                             // this is the equals case.
                             if (doc + docBase > bottom.Doc)
@@ -1057,9 +1057,9 @@ namespace Lucene.Net.Search
                 // Check if this hit was already collected on a
                 // previous page:
                 bool sameValues = true;
-                for (int compIDX = 0; compIDX < comparators.Length; compIDX++)
+                for (int compIDX = 0; compIDX < comparers.Length; compIDX++)
                 {
-                    FieldComparer comp = comparators[compIDX];
+                    FieldComparer comp = comparers[compIDX];
 
                     int cmp = reverseMul[compIDX] * comp.CompareTop(doc);
                     if (cmp > 0)
@@ -1088,9 +1088,9 @@ namespace Lucene.Net.Search
                 if (queueFull)
                 {
                     // this hit is competitive - replace bottom element in queue & adjustTop
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].Copy(bottom.Slot, doc);
+                        comparers[i].Copy(bottom.Slot, doc);
                     }
 
                     // Compute score only if it is competitive.
@@ -1100,9 +1100,9 @@ namespace Lucene.Net.Search
                     }
                     UpdateBottom(doc, score);
 
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].SetBottom(bottom.Slot);
+                        comparers[i].SetBottom(bottom.Slot);
                     }
                 }
                 else
@@ -1113,9 +1113,9 @@ namespace Lucene.Net.Search
                     int slot = collectedHits - 1;
                     //System.out.println("    slot=" + slot);
                     // Copy hit into queue
-                    for (int i = 0; i < comparators.Length; i++)
+                    for (int i = 0; i < comparers.Length; i++)
                     {
-                        comparators[i].Copy(slot, doc);
+                        comparers[i].Copy(slot, doc);
                     }
 
                     // Compute score only if it is competitive.
@@ -1127,9 +1127,9 @@ namespace Lucene.Net.Search
                     queueFull = collectedHits == numHits;
                     if (queueFull)
                     {
-                        for (int i = 0; i < comparators.Length; i++)
+                        for (int i = 0; i < comparers.Length; i++)
                         {
-                            comparators[i].SetBottom(bottom.Slot);
+                            comparers[i].SetBottom(bottom.Slot);
                         }
                     }
                 }
@@ -1138,9 +1138,9 @@ namespace Lucene.Net.Search
             public override void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
-                for (int i = 0; i < comparators.Length; i++)
+                for (int i = 0; i < comparers.Length; i++)
                 {
-                    comparators[i].SetScorer(scorer);
+                    comparers[i].SetScorer(scorer);
                 }
             }
 
@@ -1153,9 +1153,9 @@ namespace Lucene.Net.Search
             {
                 docBase = context.DocBase;
                 afterDoc = after.Doc - docBase;
-                for (int i = 0; i < comparators.Length; i++)
+                for (int i = 0; i < comparers.Length; i++)
                 {
-                    queue.SetComparer(i, comparators[i].SetNextReader(context));
+                    queue.SetComparer(i, comparers[i].SetNextReader(context));
                 }
             }
         }
@@ -1314,7 +1314,7 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                // multiple comparators.
+                // multiple comparers.
                 if (docsScoredInOrder)
                 {
                     if (trackMaxScore)

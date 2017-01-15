@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
     ///
     /// The returned per-document ords do not retain their
     /// original order in the document.  Instead they are returned
-    /// in sorted (by ord, ie term's BytesRef comparator) order.  They
+    /// in sorted (by ord, ie term's BytesRef comparer) order.  They
     /// are also de-dup'd (ie if doc has same term more than once
     /// in this field, you'll only get that ord back once).
     ///
