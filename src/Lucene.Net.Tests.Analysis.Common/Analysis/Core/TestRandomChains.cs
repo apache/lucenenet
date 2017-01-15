@@ -231,7 +231,7 @@ namespace Lucene.Net.Analysis.Core
                 }
             }
 
-            IComparer<ConstructorInfo> ctorComp = new ComparatorAnonymousInnerClassHelper();
+            IComparer<ConstructorInfo> ctorComp = new ComparerAnonymousInnerClassHelper();
             tokenizers.Sort(ctorComp);
             tokenfilters.Sort(ctorComp);
             charfilters.Sort(ctorComp);
@@ -243,9 +243,9 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<ConstructorInfo>
+        private class ComparerAnonymousInnerClassHelper : IComparer<ConstructorInfo>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparerAnonymousInnerClassHelper()
             {
             }
 

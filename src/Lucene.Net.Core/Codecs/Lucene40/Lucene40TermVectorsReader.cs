@@ -408,7 +408,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {
@@ -656,7 +656,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return docsAndPositionsEnum;
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {

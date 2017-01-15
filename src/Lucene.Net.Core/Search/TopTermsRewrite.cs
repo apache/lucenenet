@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
             public override void SetNextEnum(TermsEnum termsEnum)
             {
                 this.termsEnum = termsEnum;
-                this.termComp = termsEnum.Comparator;
+                this.termComp = termsEnum.Comparer;
 
                 Debug.Assert(CompareToLastTerm(null));
 
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    Debug.Assert(termsEnum.Comparator.Compare(lastTerm, t) < 0, "lastTerm=" + lastTerm + " t=" + t);
+                    Debug.Assert(termsEnum.Comparer.Compare(lastTerm, t) < 0, "lastTerm=" + lastTerm + " t=" + t);
                     lastTerm.CopyBytes(t);
                 }
                 return true;
@@ -240,11 +240,11 @@ namespace Lucene.Net.Search
             return true;
         }
 
-        private static readonly IComparer<ScoreTerm> scoreTermSortByTermComp = new ComparatorAnonymousInnerClassHelper();
+        private static readonly IComparer<ScoreTerm> scoreTermSortByTermComp = new ComparerAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<ScoreTerm>
+        private class ComparerAnonymousInnerClassHelper : IComparer<ScoreTerm>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparerAnonymousInnerClassHelper()
             {
             }
 

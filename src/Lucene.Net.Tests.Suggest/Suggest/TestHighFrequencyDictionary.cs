@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Suggest
             IndexReader ir = DirectoryReader.Open(dir);
             IDictionary dictionary = new HighFrequencyDictionary(ir, "bogus", 0.1f);
             IBytesRefIterator tf = dictionary.EntryIterator;
-            assertNull(tf.Comparator);
+            assertNull(tf.Comparer);
             assertNull(tf.Next());
             dir.Dispose();
         }

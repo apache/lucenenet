@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
                     this.docTermOrds = docTermOrds;
                 }
 
-                public override IComparer<BytesRef> Comparator
+                public override IComparer<BytesRef> Comparer
                 {
                     get
                     {

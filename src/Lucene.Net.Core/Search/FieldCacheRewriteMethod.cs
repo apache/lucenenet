@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
                     this.fcsi = fcsi;
                 }
 
-                public override IComparer<BytesRef> Comparator
+                public override IComparer<BytesRef> Comparer
                 {
                     get
                     {

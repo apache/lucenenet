@@ -31,7 +31,7 @@ namespace Lucene.Net.Sandbox.Queries
     /// fuzzy terms enum method by calling <see cref="FuzzyTermsEnum.GetAutomatonEnum(int, BytesRef)"/>.
     /// <para/>
     /// Term enumerations are always ordered by
-    /// <see cref="FuzzyTermsEnum.Comparator"/>. Each term in the enumeration is
+    /// <see cref="FuzzyTermsEnum.Comparer"/>. Each term in the enumeration is
     /// greater than all that precede it.
     /// </summary>
     [Obsolete("Use FuzzyTermsEnum instead.")]

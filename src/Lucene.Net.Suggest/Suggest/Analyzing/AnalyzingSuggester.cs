@@ -237,7 +237,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Returns byte size of the underlying FST. </summary>
         public override long GetSizeInBytes()
         {
-            return fst == null ? 0 : fst.SizeInBytes(); // LUCENENET TODO: Rename FST.SizeInBytes() to FST.GetSizeInBytes() because this can be intensive and it should be a method (with a verb)
+            return fst == null ? 0 : fst.SizeInBytes();
         }
 
         private void CopyDestTransitions(State from, State to, IList<Transition> transitions)
@@ -320,11 +320,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private sealed class AnalyzingComparator : IComparer<BytesRef>
+        private sealed class AnalyzingComparer : IComparer<BytesRef>
         {
             private readonly bool hasPayloads;
 
-            public AnalyzingComparator(bool hasPayloads)
+            public AnalyzingComparer(bool hasPayloads)
             {
                 this.hasPayloads = hasPayloads;
             }
@@ -496,7 +496,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 writer.Dispose();
 
                 // Sort all input/output pairs (required by FST.Builder):
-                (new OfflineSorter(new AnalyzingComparator(hasPayloads))).Sort(tempInput, tempSorted);
+                (new OfflineSorter(new AnalyzingComparer(hasPayloads))).Sort(tempInput, tempSorted);
 
                 // Free disk space:
                 tempInput.Delete();
@@ -780,7 +780,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // match, if present:
                     Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair> searcher_Renamed;
                     searcher_Renamed = new Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair>(fst, count * maxSurfaceFormsPerAnalyzedForm,
-                        count * maxSurfaceFormsPerAnalyzedForm, weightComparator);
+                        count * maxSurfaceFormsPerAnalyzedForm, weightComparer);
 
                     // NOTE: we could almost get away with only using
                     // the first start node.  The only catch is if
@@ -832,7 +832,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair> searcher;
                 searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, num - results.Count,
-                    num * maxAnalyzedPathsForOneInput, weightComparator, utf8Key, results);
+                    num * maxAnalyzedPathsForOneInput, weightComparer, utf8Key, results);
 
                 prefixPaths = GetFullPrefixPaths(prefixPaths, lookupAutomaton, fst);
 
@@ -1035,10 +1035,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return int.MaxValue - (int)value;
         }
 
-        internal static readonly IComparer<PairOutputs<long?, BytesRef>.Pair> weightComparator =
-            new ComparatorAnonymousInnerClassHelper();
+        internal static readonly IComparer<PairOutputs<long?, BytesRef>.Pair> weightComparer =
+            new ComparerAnonymousInnerClassHelper();
 
-        private sealed class ComparatorAnonymousInnerClassHelper : IComparer<PairOutputs<long?, BytesRef>.Pair>
+        private sealed class ComparerAnonymousInnerClassHelper : IComparer<PairOutputs<long?, BytesRef>.Pair>
         {
             public int Compare(PairOutputs<long?, BytesRef>.Pair left, PairOutputs<long?, BytesRef>.Pair right)
             {

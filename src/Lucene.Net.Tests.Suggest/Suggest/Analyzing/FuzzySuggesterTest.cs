@@ -695,7 +695,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        internal class TestRandomComparator : IComparer<Lookup.LookupResult>
+        internal class TestRandomComparer : IComparer<Lookup.LookupResult>
         {
             public int Compare(Lookup.LookupResult left, Lookup.LookupResult right)
             {
@@ -905,7 +905,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // suggester.toLevA ...) ... but testRandom2() fixes
                 // this:
                 Automaton automaton = suggester.ConvertAutomaton(suggester.ToLevenshteinAutomata(suggester.ToLookupAutomaton(analyzedKey)));
-                assertTrue(automaton.IsDeterministic); // LUCENENET TODO: Rename back to IsDeterministic
+                assertTrue(automaton.IsDeterministic);
                                                      // TODO: could be faster... but its slowCompletor for a reason
                 BytesRef spare = new BytesRef();
                 foreach (TermFreqPayload2 e in slowCompletor)
@@ -943,7 +943,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 if (matches.size() > 1)
                 {
-                    matches.Sort(new TestRandomComparator());
+                    matches.Sort(new TestRandomComparer());
                 }
 
                 if (matches.size() > topN)
@@ -1100,7 +1100,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return new string(chars);
         }
 
-        internal class TestRandom2Comparator : IComparer<Input>
+        internal class TestRandom2Comparer : IComparer<Input>
         {
             public int Compare(Input a, Input b)
             {
@@ -1124,7 +1124,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
 
-            answers.Sort(new TestRandom2Comparator());
+            answers.Sort(new TestRandom2Comparer());
 
             if (VERBOSE)
             {
@@ -1268,7 +1268,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return results;
         }
 
-        internal class CharSequenceComparator : IComparer<string>
+        internal class CharSequenceComparer : IComparer<string>
         {
 
             public int Compare(string o1, string o2)
@@ -1290,7 +1290,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private static readonly IComparer<string> CHARSEQUENCE_COMPARATOR = new CharSequenceComparator();
+        private static readonly IComparer<string> CHARSEQUENCE_COMPARATOR = new CharSequenceComparer();
 
         public class CompareByCostThenAlpha : IComparer<Lookup.LookupResult>
         {

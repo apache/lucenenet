@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
     /// Subclass of FilteredTermEnum for enumerating all terms that match the
     /// specified range parameters.
     /// <p>Term enumerations are always ordered by
-    /// <seealso cref="#getComparator"/>.  Each term in the enumeration is
+    /// <seealso cref="#getComparer"/>.  Each term in the enumeration is
     /// greater than all that precede it.</p>
     /// </summary>
     public class TermRangeTermsEnum : FilteredTermsEnum
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
             }
 
             SetInitialSeekTerm(lowerBytesRef);
-            termComp = Comparator;
+            termComp = Comparer;
         }
 
         protected override AcceptStatus Accept(BytesRef term)

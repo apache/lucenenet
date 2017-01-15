@@ -187,7 +187,7 @@ namespace Lucene.Net.Index.Memory
                         return new MemoryTermsEnum(outerInstance.outerInstance, info);
                     }
 
-                    public override IComparer<BytesRef> Comparator
+                    public override IComparer<BytesRef> Comparer
                     {
                         get
                         {
@@ -389,7 +389,7 @@ namespace Lucene.Net.Index.Memory
                     return ((MemoryDocsAndPositionsEnum)reuse).Reset(liveDocs, info.sliceArray.start[ord], info.sliceArray.end[ord], info.sliceArray.freq[ord]);
                 }
 
-                public override IComparer<BytesRef> Comparator
+                public override IComparer<BytesRef> Comparer
                 {
                     get
                     {

@@ -612,7 +612,7 @@ namespace Lucene.Net.Codecs
                 return (new SegmentTermsEnum(this)).ComputeBlockStats();
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {
@@ -1489,7 +1489,7 @@ namespace Lucene.Net.Codecs
                     term.Length = len;
                 }
 
-                public override IComparer<BytesRef> Comparator
+                public override IComparer<BytesRef> Comparer
                 {
                     get
                     {
@@ -1745,7 +1745,7 @@ namespace Lucene.Net.Codecs
                     return arcs[ord];
                 }
 
-                public override IComparer<BytesRef> Comparator
+                public override IComparer<BytesRef> Comparer
                 {
                     get
                     {

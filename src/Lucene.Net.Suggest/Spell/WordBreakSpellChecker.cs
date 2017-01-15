@@ -93,10 +93,10 @@ namespace Lucene.Net.Search.Spell
             }
 
             int queueInitialCapacity = maxSuggestions > 10 ? 10 : maxSuggestions;
-            IComparer<SuggestWordArrayWrapper> queueComparator = sortMethod == BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY 
-                ? (IComparer<SuggestWordArrayWrapper>)new LengthThenMaxFreqComparator(this) 
-                : new LengthThenSumFreqComparator(this);
-            PriorityQueue<SuggestWordArrayWrapper> suggestions = new PriorityQueue<SuggestWordArrayWrapper>(queueInitialCapacity, queueComparator);
+            IComparer<SuggestWordArrayWrapper> queueComparer = sortMethod == BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY 
+                ? (IComparer<SuggestWordArrayWrapper>)new LengthThenMaxFreqComparer(this) 
+                : new LengthThenSumFreqComparer(this);
+            PriorityQueue<SuggestWordArrayWrapper> suggestions = new PriorityQueue<SuggestWordArrayWrapper>(queueInitialCapacity, queueComparer);
 
             int origFreq = ir.DocFreq(term);
             if (origFreq > 0 && suggestMode == SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX)
@@ -167,8 +167,8 @@ namespace Lucene.Net.Search.Spell
             }
 
             int queueInitialCapacity = maxSuggestions > 10 ? 10 : maxSuggestions;
-            IComparer<CombineSuggestionWrapper> queueComparator = new CombinationsThenFreqComparator(this);
-            PriorityQueue<CombineSuggestionWrapper> suggestions = new PriorityQueue<CombineSuggestionWrapper>(queueInitialCapacity, queueComparator);
+            IComparer<CombineSuggestionWrapper> queueComparer = new CombinationsThenFreqComparer(this);
+            PriorityQueue<CombineSuggestionWrapper> suggestions = new PriorityQueue<CombineSuggestionWrapper>(queueInitialCapacity, queueComparer);
 
             int thisTimeEvaluations = 0;
             for (int i = 0; i < terms.Length - 1; i++)
@@ -432,11 +432,11 @@ namespace Lucene.Net.Search.Spell
             }
         }
 
-        private sealed class LengthThenMaxFreqComparator : IComparer<SuggestWordArrayWrapper>
+        private sealed class LengthThenMaxFreqComparer : IComparer<SuggestWordArrayWrapper>
         {
             private readonly WordBreakSpellChecker outerInstance;
 
-            public LengthThenMaxFreqComparator(WordBreakSpellChecker outerInstance)
+            public LengthThenMaxFreqComparer(WordBreakSpellChecker outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -455,11 +455,11 @@ namespace Lucene.Net.Search.Spell
             }
         }
 
-        private sealed class LengthThenSumFreqComparator : IComparer<SuggestWordArrayWrapper>
+        private sealed class LengthThenSumFreqComparer : IComparer<SuggestWordArrayWrapper>
         {
             private readonly WordBreakSpellChecker outerInstance;
 
-            public LengthThenSumFreqComparator(WordBreakSpellChecker outerInstance)
+            public LengthThenSumFreqComparer(WordBreakSpellChecker outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -478,11 +478,11 @@ namespace Lucene.Net.Search.Spell
             }
         }
 
-        private sealed class CombinationsThenFreqComparator : IComparer<CombineSuggestionWrapper>
+        private sealed class CombinationsThenFreqComparer : IComparer<CombineSuggestionWrapper>
         {
             private readonly WordBreakSpellChecker outerInstance;
 
-            public CombinationsThenFreqComparator(WordBreakSpellChecker outerInstance)
+            public CombinationsThenFreqComparer(WordBreakSpellChecker outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

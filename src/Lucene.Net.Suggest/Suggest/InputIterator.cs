@@ -100,11 +100,11 @@ namespace Lucene.Net.Search.Suggest
             get { return false; }
         }
 
-        public virtual IComparer<BytesRef> Comparator
+        public virtual IComparer<BytesRef> Comparer
         {
             get
             {
-                return wrapped.Comparator;
+                return wrapped.Comparer;
             }
         }
 

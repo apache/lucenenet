@@ -67,7 +67,7 @@ namespace Lucene.Net.Search.Grouping
         // TODO: specialize into 2 classes, static "create" method:
         private readonly bool needsScores;
 
-        private readonly FieldComparator[] comparators;
+        private readonly FieldComparer[] comparators;
         private readonly int[] reversed;
         private readonly int compIDXEnd;
         private int bottomSlot;
@@ -167,8 +167,8 @@ namespace Lucene.Net.Search.Grouping
                 Debug.Assert(group1 != group2);
                 Debug.Assert(group1.comparatorSlot != group2.comparatorSlot);
 
-                int numComparators = outerInstance.comparators.Length;
-                for (int compIDX = 0; compIDX < numComparators; compIDX++)
+                int numComparers = outerInstance.comparators.Length;
+                for (int compIDX = 0; compIDX < numComparers; compIDX++)
                 {
                     int c = outerInstance.reversed[compIDX] * outerInstance.comparators[compIDX].Compare(group1.comparatorSlot, group2.comparatorSlot);
                     if (c != 0)
@@ -306,13 +306,13 @@ namespace Lucene.Net.Search.Grouping
             this.topNGroups = topNGroups;
 
             SortField[] sortFields = groupSort.GetSort();
-            comparators = new FieldComparator[sortFields.Length];
+            comparators = new FieldComparer[sortFields.Length];
             compIDXEnd = comparators.Length - 1;
             reversed = new int[sortFields.Length];
             for (int i = 0; i < sortFields.Length; i++)
             {
                 SortField sortField = sortFields[i];
-                comparators[i] = sortField.GetComparator(topNGroups, i);
+                comparators[i] = sortField.GetComparer(topNGroups, i);
                 reversed[i] = sortField.IsReverse ? -1 : 1;
             }
         }
@@ -486,7 +486,7 @@ namespace Lucene.Net.Search.Grouping
         public virtual void SetScorer(Scorer scorer)
         {
             this.scorer = scorer;
-            foreach (FieldComparator comparator in comparators)
+            foreach (FieldComparer comparator in comparators)
             {
                 comparator.SetScorer(scorer);
             }
@@ -535,7 +535,7 @@ namespace Lucene.Net.Search.Grouping
                     Debug.Assert(!queueFull);
 
                     //System.out.println("    init copy to bottomSlot=" + bottomSlot);
-                    foreach (FieldComparator fc in comparators)
+                    foreach (FieldComparer fc in comparators)
                     {
                         fc.Copy(bottomSlot, doc);
                         fc.SetBottom(bottomSlot);
@@ -569,7 +569,7 @@ namespace Lucene.Net.Search.Grouping
 
                     //System.out.println("       best w/in group!");
 
-                    foreach (FieldComparator fc in comparators)
+                    foreach (FieldComparer fc in comparators)
                     {
                         fc.Copy(bottomSlot, doc);
                         // Necessary because some comparators cache
@@ -608,7 +608,7 @@ namespace Lucene.Net.Search.Grouping
                     }
                 }
                 groupCompetes = true;
-                foreach (FieldComparator fc in comparators)
+                foreach (FieldComparer fc in comparators)
                 {
                     fc.Copy(bottomSlot, doc);
                     // Necessary because some comparators cache

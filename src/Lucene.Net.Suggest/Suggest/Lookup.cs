@@ -127,9 +127,9 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// A simple char-by-char comparator for <see cref="string"/>
         /// </summary>
-        public static readonly IComparer<string> CHARSEQUENCE_COMPARATOR = new CharSequenceComparator();
+        public static readonly IComparer<string> CHARSEQUENCE_COMPARATOR = new CharSequenceComparer();
 
-        private class CharSequenceComparator : IComparer<string>
+        private class CharSequenceComparer : IComparer<string>
         {
 
             public virtual int Compare(string o1, string o2)

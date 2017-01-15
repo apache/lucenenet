@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
             // These are really FieldDoc instances:
             internal readonly ScoreDoc[][] shardHits;
 
-            internal readonly FieldComparator[] comparators;
+            internal readonly FieldComparer[] comparators;
             internal readonly int[] reverseMul;
 
             public MergeSortQueue(Sort sort, TopDocs[] shardHits)
@@ -181,12 +181,12 @@ namespace Lucene.Net.Search
                 }
 
                 SortField[] sortFields = sort.GetSort();
-                comparators = new FieldComparator[sortFields.Length];
+                comparators = new FieldComparer[sortFields.Length];
                 reverseMul = new int[sortFields.Length];
                 for (int compIDX = 0; compIDX < sortFields.Length; compIDX++)
                 {
                     SortField sortField = sortFields[compIDX];
-                    comparators[compIDX] = sortField.GetComparator(1, compIDX);
+                    comparators[compIDX] = sortField.GetComparer(1, compIDX);
                     reverseMul[compIDX] = sortField.IsReverse ? -1 : 1;
                 }
             }
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search
 
                 for (int compIDX = 0; compIDX < comparators.Length; compIDX++)
                 {
-                    FieldComparator comp = comparators[compIDX];
+                    FieldComparer comp = comparators[compIDX];
                     //System.out.println("    cmp idx=" + compIDX + " cmp1=" + firstFD.fields[compIDX] + " cmp2=" + secondFD.fields[compIDX] + " reverse=" + reverseMul[compIDX]);
 
                     int cmp = reverseMul[compIDX] * comp.CompareValues(firstFD.Fields[compIDX], secondFD.Fields[compIDX]);

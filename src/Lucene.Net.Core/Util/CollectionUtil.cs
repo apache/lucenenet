@@ -135,7 +135,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Sorts the given random access <seealso cref="List"/> using the <seealso cref="Comparator"/>.
+        /// Sorts the given random access <seealso cref="List"/> using the <seealso cref="Comparer"/>.
         /// The list must implement <seealso cref="RandomAccess"/>. this method uses the intro sort
         /// algorithm, but falls back to insertion sort for small lists. </summary>
         /// <exception cref="IllegalArgumentException"> if list is e.g. a linked list without random access. </exception>
@@ -162,13 +162,13 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-            IntroSort(list, ArrayUtil.naturalComparator<T>());
+            IntroSort(list, ArrayUtil.naturalComparer<T>());
         }
 
         // Tim sorts:
 
         /// <summary>
-        /// Sorts the given random access <seealso cref="List"/> using the <seealso cref="Comparator"/>.
+        /// Sorts the given random access <seealso cref="List"/> using the <seealso cref="Comparer"/>.
         /// The list must implement <seealso cref="RandomAccess"/>. this method uses the Tim sort
         /// algorithm, but falls back to binary sort for small lists. </summary>
         /// <exception cref="IllegalArgumentException"> if list is e.g. a linked list without random access. </exception>
@@ -195,7 +195,7 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-            TimSort(list, ArrayUtil.naturalComparator<T>());
+            TimSort(list, ArrayUtil.naturalComparer<T>());
         }
     }
 }

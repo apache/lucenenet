@@ -74,7 +74,7 @@ namespace Lucene.Net.Index.Sorter
             Sort parentSort = new Sort(new SortField("parent_val", SortFieldType.LONG));
             Sort childSort = new Sort(new SortField("child_val", SortFieldType.LONG));
 
-            Sort sort = new Sort(new SortField("custom", new BlockJoinComparatorSource(parentsFilter, parentSort, childSort)));
+            Sort sort = new Sort(new SortField("custom", new BlockJoinComparerSource(parentsFilter, parentSort, childSort)));
             Sorter sorter = new Sorter(sort);
             Sorter.DocMap docMap = sorter.Sort(reader);
             assertEquals(reader.MaxDoc, docMap.Count);

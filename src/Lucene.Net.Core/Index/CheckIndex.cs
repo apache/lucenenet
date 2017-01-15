@@ -540,7 +540,7 @@ namespace Lucene.Net.Index
             string oldest = Convert.ToString(int.MaxValue), newest = Convert.ToString(int.MinValue);
             string oldSegs = null;
             bool foundNonNullVersion = false;
-            IComparer<string> versionComparator = StringHelper.VersionComparator;
+            IComparer<string> versionComparer = StringHelper.VersionComparer;
             foreach (SegmentCommitInfo si in sis.Segments)
             {
                 string version = si.Info.Version;
@@ -552,11 +552,11 @@ namespace Lucene.Net.Index
                 else
                 {
                     foundNonNullVersion = true;
-                    if (versionComparator.Compare(version, oldest) < 0)
+                    if (versionComparer.Compare(version, oldest) < 0)
                     {
                         oldest = version;
                     }
-                    if (versionComparator.Compare(version, newest) > 0)
+                    if (versionComparer.Compare(version, newest) > 0)
                     {
                         newest = version;
                     }
@@ -699,7 +699,7 @@ namespace Lucene.Net.Index
                 segInfoStat.DocCount = info.Info.DocCount;
 
                 string version = info.Info.Version;
-                if (info.Info.DocCount <= 0 && version != null && versionComparator.Compare(version, "4.5") >= 0)
+                if (info.Info.DocCount <= 0 && version != null && versionComparer.Compare(version, "4.5") >= 0)
                 {
                     throw new Exception("illegal number of documents: maxDoc=" + info.Info.DocCount);
                 }
@@ -1085,7 +1085,7 @@ namespace Lucene.Net.Index
 
                 BytesRef lastTerm = null;
 
-                IComparer<BytesRef> termComp = terms.Comparator;
+                IComparer<BytesRef> termComp = terms.Comparer;
 
                 long sumTotalTermFreq = 0;
                 long sumDocFreq = 0;

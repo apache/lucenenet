@@ -20,9 +20,9 @@ namespace Lucene.Net.Expressions
 		}
 
 		
-		public override FieldComparator GetComparator(int numHits, int sortPos)
+		public override FieldComparer GetComparer(int numHits, int sortPos)
 		{
-			return new ExpressionComparator(source, numHits);
+			return new ExpressionComparer(source, numHits);
 		}
 
 		public override int GetHashCode()

@@ -187,7 +187,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             Util.Fst.Util.TopResults<long?> completions = null;
             try
             {
-                completions = Lucene.Net.Util.Fst.Util.ShortestPaths(fst, arc, prefixOutput, weightComparator, num, !exactFirst);
+                completions = Lucene.Net.Util.Fst.Util.ShortestPaths(fst, arc, prefixOutput, weightComparer, num, !exactFirst);
                 Debug.Assert(completions.IsComplete);
             }
             catch (IOException bogus)
@@ -316,11 +316,11 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
         }
 
-        internal static readonly IComparer<long?> weightComparator = new ComparatorAnonymousInnerClassHelper();
+        internal static readonly IComparer<long?> weightComparer = new ComparerAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<long?>
+        private class ComparerAnonymousInnerClassHelper : IComparer<long?>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparerAnonymousInnerClassHelper()
             {
             }
 

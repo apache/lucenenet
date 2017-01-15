@@ -83,10 +83,10 @@ namespace Lucene.Net.Codecs
         public abstract void Finish(long sumTotalTermFreq, long sumDocFreq, int docCount);
 
         /// <summary>
-        /// Return the BytesRef Comparator used to sort terms
+        /// Return the BytesRef Comparer used to sort terms
         ///  before feeding to this API.
         /// </summary>
-        public abstract IComparer<BytesRef> Comparator { get; } // LUCENENET TODO: Rename Comparer
+        public abstract IComparer<BytesRef> Comparer { get; }
 
         private MappingMultiDocsEnum docsEnum;
         private MappingMultiDocsEnum docsAndFreqsEnum;

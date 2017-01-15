@@ -42,8 +42,8 @@ namespace Lucene.Net.Search.Suggest.Fst
         IBytesRefIterator GetEnumerator();
 
         /// <summary>
-        /// Comparator used to determine the sort order of entries.
+        /// Comparer used to determine the sort order of entries.
         /// </summary>
-        IComparer<BytesRef> Comparator { get; }
+        IComparer<BytesRef> Comparer { get; }
     }
 }

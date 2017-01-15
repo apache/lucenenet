@@ -34,7 +34,7 @@ namespace Lucene.Net.Search
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 
     [TestFixture]
-    public class TestElevationComparator : LuceneTestCase
+    public class TestElevationComparer : LuceneTestCase
     {
         private readonly IDictionary<BytesRef, int?> Priority = new Dictionary<BytesRef, int?>();
 
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
             newq.Add(query, Occur.SHOULD);
             newq.Add(GetElevatedQuery(new string[] { "id", "a", "id", "x" }), Occur.SHOULD);
 
-            Sort sort = new Sort(new SortField("id", new ElevationComparatorSource(Priority), false), new SortField(null, SortFieldType.SCORE, reversed)
+            Sort sort = new Sort(new SortField("id", new ElevationComparerSource(Priority), false), new SortField(null, SortFieldType.SCORE, reversed)
              );
 
             TopDocsCollector<Entry> topCollector = TopFieldCollector.Create(sort, 50, false, true, true, true);
@@ -135,28 +135,28 @@ namespace Lucene.Net.Search
         }
     }
 
-    internal class ElevationComparatorSource : FieldComparatorSource
+    internal class ElevationComparerSource : FieldComparerSource
     {
         private readonly IDictionary<BytesRef, int?> Priority;
 
-        public ElevationComparatorSource(IDictionary<BytesRef, int?> boosts)
+        public ElevationComparerSource(IDictionary<BytesRef, int?> boosts)
         {
             this.Priority = boosts;
         }
 
-        public override FieldComparator NewComparator(string fieldname, int numHits, int sortPos, bool reversed)
+        public override FieldComparer NewComparer(string fieldname, int numHits, int sortPos, bool reversed)
         {
-            return new FieldComparatorAnonymousInnerClassHelper(this, fieldname, numHits);
+            return new FieldComparerAnonymousInnerClassHelper(this, fieldname, numHits);
         }
 
-        private class FieldComparatorAnonymousInnerClassHelper : FieldComparator
+        private class FieldComparerAnonymousInnerClassHelper : FieldComparer
         {
-            private readonly ElevationComparatorSource OuterInstance;
+            private readonly ElevationComparerSource OuterInstance;
 
             private string Fieldname;
             private int NumHits;
 
-            public FieldComparatorAnonymousInnerClassHelper(ElevationComparatorSource outerInstance, string fieldname, int numHits)
+            public FieldComparerAnonymousInnerClassHelper(ElevationComparerSource outerInstance, string fieldname, int numHits)
             {
                 this.OuterInstance = outerInstance;
                 this.Fieldname = fieldname;
@@ -219,7 +219,7 @@ namespace Lucene.Net.Search
                 values[slot] = DocVal(doc);
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
                 idIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, Fieldname);
                 return this;

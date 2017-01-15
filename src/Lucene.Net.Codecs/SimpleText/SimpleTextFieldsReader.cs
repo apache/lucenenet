@@ -232,7 +232,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return docsAndPositionsEnum.Reset(_docsStart, liveDocs, _indexOptions, _docFreq);
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get { return BytesRef.UTF8SortedAsUnicodeComparer; }
             }
@@ -682,7 +682,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return (_fst != null && _fieldInfo.IndexOptions.HasValue) ? new SimpleTextTermsEnum(_outerInstance, _fst, _fieldInfo.IndexOptions.Value) : TermsEnum.EMPTY;
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get { return BytesRef.UTF8SortedAsUnicodeComparer; }
             }

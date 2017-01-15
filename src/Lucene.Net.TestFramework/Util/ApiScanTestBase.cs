@@ -32,9 +32,9 @@ namespace Lucene.Net.Util
         private static Regex MethodParameterName = new Regex("^[a-z](?:[a-zA-Z0-9_]*[a-zA-Z0-9])?$");
 
         /// <summary>
-        /// Public members should not contain the word "Comparator". In .NET, these should be named "Comparer".
+        /// Public members should not contain the word "Comparer". In .NET, these should be named "Comparer".
         /// </summary>
-        private static Regex ContainsComparator = new Regex("[Cc]omparator");
+        private static Regex ContainsComparer = new Regex("[Cc]omparator");
 
         //[Test, LuceneNetSpecific]
         public virtual void TestProtectedFieldNames(Type typeFromTargetAssembly)
@@ -137,12 +137,12 @@ namespace Lucene.Net.Util
         }
 
         //[Test, LuceneNetSpecific]
-        public virtual void TestForPublicMembersContainingComparator(Type typeFromTargetAssembly)
+        public virtual void TestForPublicMembersContainingComparer(Type typeFromTargetAssembly)
         {
             var names = new List<string>();
 
-            names.AddRange(GetProtectedFieldsContainingComparator(typeFromTargetAssembly.Assembly));
-            names.AddRange(GetMembersContainingComparator(typeFromTargetAssembly.Assembly));
+            names.AddRange(GetProtectedFieldsContainingComparer(typeFromTargetAssembly.Assembly));
+            names.AddRange(GetMembersContainingComparer(typeFromTargetAssembly.Assembly));
 
             //if (VERBOSE)
             //{
@@ -347,7 +347,7 @@ namespace Lucene.Net.Util
         }
 
 
-        private static IEnumerable<string> GetProtectedFieldsContainingComparator(Assembly assembly)
+        private static IEnumerable<string> GetProtectedFieldsContainingComparer(Assembly assembly)
         {
             var result = new List<string>();
 
@@ -369,7 +369,7 @@ namespace Lucene.Net.Util
                         continue;
                     }
 
-                    if ((field.IsFamily || field.IsFamilyOrAssembly) && ContainsComparator.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
+                    if ((field.IsFamily || field.IsFamilyOrAssembly) && ContainsComparer.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", field.Name));
                     }
@@ -379,7 +379,7 @@ namespace Lucene.Net.Util
             return result.ToArray();
         }
 
-        private static IEnumerable<string> GetMembersContainingComparator(Assembly assembly)
+        private static IEnumerable<string> GetMembersContainingComparer(Assembly assembly)
         {
             var result = new List<string>();
 
@@ -387,7 +387,7 @@ namespace Lucene.Net.Util
 
             foreach (var t in types)
             {
-                if (ContainsComparator.IsMatch(t.Name) && t.IsVisible)
+                if (ContainsComparer.IsMatch(t.Name) && t.IsVisible)
                 {
                     result.Add(t.FullName);
                 }
@@ -396,7 +396,7 @@ namespace Lucene.Net.Util
 
                 foreach (var member in members)
                 {
-                    if (ContainsComparator.IsMatch(member.Name) && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                    if (ContainsComparer.IsMatch(member.Name) && member.DeclaringType.Equals(t.UnderlyingSystemType))
                     {
                         if (member.MemberType == MemberTypes.Method && !member.Name.StartsWith("get_"))
                         {

@@ -753,7 +753,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         private static char SEP = '\u001F';
 
-        internal class TestRandomComparator : IComparer<TermFreq2>
+        internal class TestRandomComparer : IComparer<TermFreq2>
         {
             public int Compare(TermFreq2 left, TermFreq2 right)
             {
@@ -998,7 +998,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 if (matches.size() > 1)
                 {
-                    matches.Sort(new TestRandomComparator());
+                    matches.Sort(new TestRandomComparer());
                 }
 
                 if (matches.size() > topN)

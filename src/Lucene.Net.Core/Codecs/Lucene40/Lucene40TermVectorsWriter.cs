@@ -513,7 +513,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        public override IComparer<BytesRef> Comparator
+        public override IComparer<BytesRef> Comparer
         {
             get
             {

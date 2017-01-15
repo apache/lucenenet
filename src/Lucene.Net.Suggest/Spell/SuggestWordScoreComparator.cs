@@ -23,14 +23,14 @@ namespace Lucene.Net.Search.Spell
     /// <summary>
     /// Score first, then frequency
     /// </summary>
-    public class SuggestWordScoreComparator : IComparer<SuggestWord> // LUCENENET TODO: Rename for .NET (Comparer)
+    public class SuggestWordScoreComparer : IComparer<SuggestWord>
     {
 
         /// <summary>
         /// Creates a new comparator that will compare by <see cref="SuggestWord.Score"/>,
         /// then by <see cref="SuggestWord.Freq"/>, then by <see cref="SuggestWord.String"/>.
         /// </summary>
-        public SuggestWordScoreComparator()
+        public SuggestWordScoreComparer()
         {
         }
 

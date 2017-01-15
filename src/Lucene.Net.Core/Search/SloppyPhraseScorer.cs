@@ -424,7 +424,7 @@ namespace Lucene.Net.Search
         private void SortRptGroups(List<List<PhrasePositions>> rgs)
         {
             rptGroups = new PhrasePositions[rgs.Count][];
-            IComparer<PhrasePositions> cmprtr = new ComparatorAnonymousInnerClassHelper(this);
+            IComparer<PhrasePositions> cmprtr = new ComparerAnonymousInnerClassHelper(this);
             for (int i = 0; i < rptGroups.Length; i++)
             {
                 PhrasePositions[] rg = rgs[i].ToArray();
@@ -437,11 +437,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<PhrasePositions>
+        private class ComparerAnonymousInnerClassHelper : IComparer<PhrasePositions>
         {
             private readonly SloppyPhraseScorer outerInstance;
 
-            public ComparatorAnonymousInnerClassHelper(SloppyPhraseScorer outerInstance)
+            public ComparerAnonymousInnerClassHelper(SloppyPhraseScorer outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

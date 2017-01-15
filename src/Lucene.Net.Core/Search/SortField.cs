@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
         private FieldCache.IParser parser;
 
         // Used for CUSTOM sort
-        private FieldComparatorSource comparatorSource;
+        private FieldComparerSource comparatorSource;
 
         // Used for 'sortMissingFirst/Last'
         public object missingValue = null;
@@ -197,7 +197,7 @@ namespace Lucene.Net.Search
         /// Creates a sort with a custom comparison function. </summary>
         /// <param name="field"> Name of field to sort by; cannot be <code>null</code>. </param>
         /// <param name="comparator"> Returns a comparator for sorting hits. </param>
-        public SortField(string field, FieldComparatorSource comparator)
+        public SortField(string field, FieldComparerSource comparator)
         {
             InitFieldType(field, SortFieldType.CUSTOM);
             this.comparatorSource = comparator;
@@ -208,7 +208,7 @@ namespace Lucene.Net.Search
         /// <param name="field"> Name of field to sort by; cannot be <code>null</code>. </param>
         /// <param name="comparator"> Returns a comparator for sorting hits. </param>
         /// <param name="reverse"> True if natural order should be reversed. </param>
-        public SortField(string field, FieldComparatorSource comparator, bool reverse)
+        public SortField(string field, FieldComparerSource comparator, bool reverse)
         {
             InitFieldType(field, SortFieldType.CUSTOM);
             this.reverse = reverse;
@@ -280,10 +280,10 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns the <seealso cref="FieldComparatorSource"/> used for
+        /// Returns the <seealso cref="FieldComparerSource"/> used for
         /// custom sorting
         /// </summary>
-        public virtual FieldComparatorSource ComparatorSource // LUCENENET TODO: Rename ComparerSource ?
+        public virtual FieldComparerSource ComparerSource
         {
             get
             {
@@ -364,7 +364,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns true if <code>o</code> is equal to this.  If a
-        ///  <seealso cref="FieldComparatorSource"/> or {@link
+        ///  <seealso cref="FieldComparerSource"/> or {@link
         ///  FieldCache.Parser} was provided, it must properly
         ///  implement equals (unless a singleton is always used).
         /// </summary>
@@ -384,7 +384,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns true if <code>o</code> is equal to this.  If a
-        ///  <seealso cref="FieldComparatorSource"/> or {@link
+        ///  <seealso cref="FieldComparerSource"/> or {@link
         ///  FieldCache.Parser} was provided, it must properly
         ///  implement hashCode (unless a singleton is always
         ///  used).
@@ -403,23 +403,22 @@ namespace Lucene.Net.Search
             return hash;
         }
 
-        private IComparer<BytesRef> bytesComparator = BytesRef.UTF8SortedAsUnicodeComparer;
+        private IComparer<BytesRef> bytesComparer = BytesRef.UTF8SortedAsUnicodeComparer;
 
-        // LUCENENET TODO: Rename BytesComparer ?
-        public virtual IComparer<BytesRef> BytesComparator
+        public virtual IComparer<BytesRef> BytesComparer
         {
             set
             {
-                bytesComparator = value;
+                bytesComparer = value;
             }
             get
             {
-                return bytesComparator;
+                return bytesComparer;
             }
         }
 
         /// <summary>
-        /// Returns the <seealso cref="FieldComparator"/> to use for
+        /// Returns the <seealso cref="FieldComparer"/> to use for
         /// sorting.
         ///
         /// @lucene.experimental
@@ -429,46 +428,45 @@ namespace Lucene.Net.Search
         ///   Sort}.  The comparator is primary if sortPos==0,
         ///   secondary if sortPos==1, etc.  Some comparators can
         ///   optimize themselves when they are the primary sort. </param>
-        /// <returns> <seealso cref="FieldComparator"/> to use when sorting </returns>
-         // LUCENENET TODO: Rename GetComparer ?
-        public virtual FieldComparator GetComparator(int numHits, int sortPos)
+        /// <returns> <seealso cref="FieldComparer"/> to use when sorting </returns>
+        public virtual FieldComparer GetComparer(int numHits, int sortPos)
         {
             switch (type)
             {
                 case SortFieldType.SCORE:
-                    return new FieldComparator.RelevanceComparator(numHits);
+                    return new FieldComparer.RelevanceComparer(numHits);
 
                 case SortFieldType.DOC:
-                    return new FieldComparator.DocComparator(numHits);
+                    return new FieldComparer.DocComparer(numHits);
 
                 case SortFieldType.INT:
-                    return new FieldComparator.IntComparator(numHits, field, parser, (int?)missingValue);
+                    return new FieldComparer.IntComparer(numHits, field, parser, (int?)missingValue);
 
                 case SortFieldType.FLOAT:
-                    return new FieldComparator.FloatComparator(numHits, field, parser, (float?)missingValue);
+                    return new FieldComparer.FloatComparer(numHits, field, parser, (float?)missingValue);
 
                 case SortFieldType.LONG:
-                    return new FieldComparator.LongComparator(numHits, field, parser, (long?)missingValue);
+                    return new FieldComparer.LongComparer(numHits, field, parser, (long?)missingValue);
 
                 case SortFieldType.DOUBLE:
-                    return new FieldComparator.DoubleComparator(numHits, field, parser, (double?)missingValue);
+                    return new FieldComparer.DoubleComparer(numHits, field, parser, (double?)missingValue);
 
                 case SortFieldType.BYTE:
-                    return new FieldComparator.ByteComparator(numHits, field, parser, (sbyte?)missingValue);
+                    return new FieldComparer.ByteComparer(numHits, field, parser, (sbyte?)missingValue);
 
                 case SortFieldType.SHORT:
-                    return new FieldComparator.ShortComparator(numHits, field, parser, (short?)missingValue);
+                    return new FieldComparer.ShortComparer(numHits, field, parser, (short?)missingValue);
 
                 case SortFieldType.CUSTOM:
                     Debug.Assert(comparatorSource != null);
-                    return comparatorSource.NewComparator(field, numHits, sortPos, reverse);
+                    return comparatorSource.NewComparer(field, numHits, sortPos, reverse);
 
                 case SortFieldType.STRING:
-                    return new FieldComparator.TermOrdValComparator(numHits, field, missingValue == STRING_LAST);
+                    return new FieldComparer.TermOrdValComparer(numHits, field, missingValue == STRING_LAST);
 
                 case SortFieldType.STRING_VAL:
                     // TODO: should we remove this?  who really uses it?
-                    return new FieldComparator.TermValComparator(numHits, field);
+                    return new FieldComparer.TermValComparer(numHits, field);
 
                 case SortFieldType.REWRITEABLE:
                     throw new InvalidOperationException("SortField needs to be rewritten through Sort.rewrite(..) and SortField.rewrite(..)");
@@ -555,7 +553,7 @@ namespace Lucene.Net.Search
         SHORT, // LUCENENET TODO: Rename to INT16 ?
 
         /// <summary>
-        /// Sort using a custom Comparator.  Sort values are any Comparable and
+        /// Sort using a custom Comparer.  Sort values are any Comparable and
         /// sorting is done according to natural order.
         /// </summary>
         CUSTOM,

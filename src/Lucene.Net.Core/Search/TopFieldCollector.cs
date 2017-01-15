@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// A <seealso cref="ICollector"/> that sorts by <seealso cref="SortField"/> using
-    /// <seealso cref="FieldComparator"/>s.
+    /// <seealso cref="FieldComparer"/>s.
     /// <p/>
     /// See the <seealso cref="#create(Lucene.Net.Search.Sort, int, boolean, boolean, boolean, boolean)"/> method
     /// for instantiating a TopFieldCollector.
@@ -43,17 +43,17 @@ namespace Lucene.Net.Search
          * tracking document scores and maxScore.
          */
 
-        private class OneComparatorNonScoringCollector : TopFieldCollector
+        private class OneComparerNonScoringCollector : TopFieldCollector
         {
-            internal FieldComparator comparator;
+            internal FieldComparer comparator;
             internal readonly int reverseMul;
             internal readonly FieldValueHitQueue<Entry> queue;
 
-            public OneComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
+            public OneComparerNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
                 this.queue = queue;
-                comparator = queue.GetComparators()[0];
+                comparator = queue.GetComparers()[0];
                 reverseMul = queue.GetReverseMul()[0];
             }
 
@@ -99,8 +99,8 @@ namespace Lucene.Net.Search
             public override void SetNextReader(AtomicReaderContext context)
             {
                 this.docBase = context.DocBase;
-                queue.SetComparator(0, comparator.SetNextReader(context));
-                comparator = queue.FirstComparator;
+                queue.SetComparer(0, comparator.SetNextReader(context));
+                comparator = queue.FirstComparer;
             }
             
             public override void SetScorer(Scorer scorer)
@@ -115,9 +115,9 @@ namespace Lucene.Net.Search
          * Ids collection.
          */
 
-        private class OutOfOrderOneComparatorNonScoringCollector : OneComparatorNonScoringCollector
+        private class OutOfOrderOneComparerNonScoringCollector : OneComparerNonScoringCollector
         {
-            public OutOfOrderOneComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
+            public OutOfOrderOneComparerNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
             }
@@ -164,11 +164,11 @@ namespace Lucene.Net.Search
          * document scores but no maxScore.
          */
 
-        private class OneComparatorScoringNoMaxScoreCollector : OneComparatorNonScoringCollector
+        private class OneComparerScoringNoMaxScoreCollector : OneComparerNonScoringCollector
         {
             internal Scorer scorer;
 
-            public OneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
+            public OneComparerScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
             }
@@ -231,9 +231,9 @@ namespace Lucene.Net.Search
          * collection.
          */
 
-        private class OutOfOrderOneComparatorScoringNoMaxScoreCollector : OneComparatorScoringNoMaxScoreCollector
+        private class OutOfOrderOneComparerScoringNoMaxScoreCollector : OneComparerScoringNoMaxScoreCollector
         {
-            public OutOfOrderOneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
+            public OutOfOrderOneComparerScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
             }
@@ -286,11 +286,11 @@ namespace Lucene.Net.Search
          * document scores and maxScore.
          */
 
-        private class OneComparatorScoringMaxScoreCollector : OneComparatorNonScoringCollector
+        private class OneComparerScoringMaxScoreCollector : OneComparerNonScoringCollector
         {
             internal Scorer scorer;
 
-            public OneComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
+            public OneComparerScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
                 // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
@@ -354,9 +354,9 @@ namespace Lucene.Net.Search
          * collection.
          */
 
-        private class OutOfOrderOneComparatorScoringMaxScoreCollector : OneComparatorScoringMaxScoreCollector
+        private class OutOfOrderOneComparerScoringMaxScoreCollector : OneComparerScoringMaxScoreCollector
         {
-            public OutOfOrderOneComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
+            public OutOfOrderOneComparerScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
             }
@@ -408,17 +408,17 @@ namespace Lucene.Net.Search
          * tracking document scores and maxScore.
          */
 
-        private class MultiComparatorNonScoringCollector : TopFieldCollector
+        private class MultiComparerNonScoringCollector : TopFieldCollector
         {
-            internal readonly FieldComparator[] comparators;
+            internal readonly FieldComparer[] comparators;
             internal readonly int[] reverseMul;
             internal readonly FieldValueHitQueue<Entry> queue;
 
-            public MultiComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
+            public MultiComparerNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
                 this.queue = queue;
-                comparators = queue.GetComparators();
+                comparators = queue.GetComparers();
                 reverseMul = queue.GetReverseMul();
             }
 
@@ -495,7 +495,7 @@ namespace Lucene.Net.Search
                 docBase = context.DocBase;
                 for (int i = 0; i < comparators.Length; i++)
                 {
-                    queue.SetComparator(i, comparators[i].SetNextReader(context));
+                    queue.SetComparer(i, comparators[i].SetNextReader(context));
                 }
             }
 
@@ -515,9 +515,9 @@ namespace Lucene.Net.Search
          * Ids collection.
          */
 
-        private class OutOfOrderMultiComparatorNonScoringCollector : MultiComparatorNonScoringCollector
+        private class OutOfOrderMultiComparerNonScoringCollector : MultiComparerNonScoringCollector
         {
-            public OutOfOrderMultiComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
+            public OutOfOrderMultiComparerNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
             }
@@ -597,11 +597,11 @@ namespace Lucene.Net.Search
          * tracking document scores and maxScore.
          */
 
-        private class MultiComparatorScoringMaxScoreCollector : MultiComparatorNonScoringCollector
+        private class MultiComparerScoringMaxScoreCollector : MultiComparerNonScoringCollector
         {
             internal Scorer scorer;
 
-            public MultiComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
+            public MultiComparerScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
                 // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
@@ -694,9 +694,9 @@ namespace Lucene.Net.Search
          * Ids collection.
          */
 
-        private sealed class OutOfOrderMultiComparatorScoringMaxScoreCollector : MultiComparatorScoringMaxScoreCollector
+        private sealed class OutOfOrderMultiComparerScoringMaxScoreCollector : MultiComparerScoringMaxScoreCollector
         {
-            public OutOfOrderMultiComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
+            public OutOfOrderMultiComparerScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
             }
@@ -781,11 +781,11 @@ namespace Lucene.Net.Search
          * tracking document scores and maxScore.
          */
 
-        private class MultiComparatorScoringNoMaxScoreCollector : MultiComparatorNonScoringCollector
+        private class MultiComparerScoringNoMaxScoreCollector : MultiComparerNonScoringCollector
         {
             internal Scorer scorer;
 
-            public MultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
+            public MultiComparerScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
             }
@@ -876,9 +876,9 @@ namespace Lucene.Net.Search
          * Ids collection.
          */
 
-        private sealed class OutOfOrderMultiComparatorScoringNoMaxScoreCollector : MultiComparatorScoringNoMaxScoreCollector
+        private sealed class OutOfOrderMultiComparerScoringNoMaxScoreCollector : MultiComparerScoringNoMaxScoreCollector
         {
-            public OutOfOrderMultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
+            public OutOfOrderMultiComparerScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
             }
@@ -972,7 +972,7 @@ namespace Lucene.Net.Search
         {
             internal Scorer scorer;
             internal int collectedHits;
-            internal readonly FieldComparator[] comparators;
+            internal readonly FieldComparer[] comparators;
             internal readonly int[] reverseMul;
             internal readonly FieldValueHitQueue<Entry> queue;
             internal readonly bool trackDocScores;
@@ -987,7 +987,7 @@ namespace Lucene.Net.Search
                 this.trackDocScores = trackDocScores;
                 this.trackMaxScore = trackMaxScore;
                 this.after = after;
-                comparators = queue.GetComparators();
+                comparators = queue.GetComparers();
                 reverseMul = queue.GetReverseMul();
 
                 // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
@@ -996,7 +996,7 @@ namespace Lucene.Net.Search
                 // Tell all comparators their top value:
                 for (int i = 0; i < comparators.Length; i++)
                 {
-                    FieldComparator comparator = comparators[i];
+                    FieldComparer comparator = comparators[i];
                     comparator.SetTopValue(after.Fields[i]);
                 }
             }
@@ -1059,7 +1059,7 @@ namespace Lucene.Net.Search
                 bool sameValues = true;
                 for (int compIDX = 0; compIDX < comparators.Length; compIDX++)
                 {
-                    FieldComparator comp = comparators[compIDX];
+                    FieldComparer comp = comparators[compIDX];
 
                     int cmp = reverseMul[compIDX] * comp.CompareTop(doc);
                     if (cmp > 0)
@@ -1155,7 +1155,7 @@ namespace Lucene.Net.Search
                 afterDoc = after.Doc - docBase;
                 for (int i = 0; i < comparators.Length; i++)
                 {
-                    queue.SetComparator(i, comparators[i].SetNextReader(context));
+                    queue.SetComparer(i, comparators[i].SetNextReader(context));
                 }
             }
         }
@@ -1280,36 +1280,36 @@ namespace Lucene.Net.Search
 
             if (after == null)
             {
-                if (queue.GetComparators().Length == 1)
+                if (queue.GetComparers().Length == 1)
                 {
                     if (docsScoredInOrder)
                     {
                         if (trackMaxScore)
                         {
-                            return new OneComparatorScoringMaxScoreCollector(queue, numHits, fillFields);
+                            return new OneComparerScoringMaxScoreCollector(queue, numHits, fillFields);
                         }
                         else if (trackDocScores)
                         {
-                            return new OneComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields);
+                            return new OneComparerScoringNoMaxScoreCollector(queue, numHits, fillFields);
                         }
                         else
                         {
-                            return new OneComparatorNonScoringCollector(queue, numHits, fillFields);
+                            return new OneComparerNonScoringCollector(queue, numHits, fillFields);
                         }
                     }
                     else
                     {
                         if (trackMaxScore)
                         {
-                            return new OutOfOrderOneComparatorScoringMaxScoreCollector(queue, numHits, fillFields);
+                            return new OutOfOrderOneComparerScoringMaxScoreCollector(queue, numHits, fillFields);
                         }
                         else if (trackDocScores)
                         {
-                            return new OutOfOrderOneComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields);
+                            return new OutOfOrderOneComparerScoringNoMaxScoreCollector(queue, numHits, fillFields);
                         }
                         else
                         {
-                            return new OutOfOrderOneComparatorNonScoringCollector(queue, numHits, fillFields);
+                            return new OutOfOrderOneComparerNonScoringCollector(queue, numHits, fillFields);
                         }
                     }
                 }
@@ -1319,30 +1319,30 @@ namespace Lucene.Net.Search
                 {
                     if (trackMaxScore)
                     {
-                        return new MultiComparatorScoringMaxScoreCollector(queue, numHits, fillFields);
+                        return new MultiComparerScoringMaxScoreCollector(queue, numHits, fillFields);
                     }
                     else if (trackDocScores)
                     {
-                        return new MultiComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields);
+                        return new MultiComparerScoringNoMaxScoreCollector(queue, numHits, fillFields);
                     }
                     else
                     {
-                        return new MultiComparatorNonScoringCollector(queue, numHits, fillFields);
+                        return new MultiComparerNonScoringCollector(queue, numHits, fillFields);
                     }
                 }
                 else
                 {
                     if (trackMaxScore)
                     {
-                        return new OutOfOrderMultiComparatorScoringMaxScoreCollector(queue, numHits, fillFields);
+                        return new OutOfOrderMultiComparerScoringMaxScoreCollector(queue, numHits, fillFields);
                     }
                     else if (trackDocScores)
                     {
-                        return new OutOfOrderMultiComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields);
+                        return new OutOfOrderMultiComparerScoringNoMaxScoreCollector(queue, numHits, fillFields);
                     }
                     else
                     {
-                        return new OutOfOrderMultiComparatorNonScoringCollector(queue, numHits, fillFields);
+                        return new OutOfOrderMultiComparerNonScoringCollector(queue, numHits, fillFields);
                     }
                 }
             }

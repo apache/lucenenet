@@ -310,7 +310,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {
@@ -923,7 +923,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {
@@ -1011,7 +1011,7 @@ namespace Lucene.Net.Codecs.Memory
                 return new FSTTermsEnum(field, fst);
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {

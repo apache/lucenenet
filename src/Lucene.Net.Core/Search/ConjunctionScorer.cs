@@ -46,16 +46,16 @@ namespace Lucene.Net.Search
             }
             // Sort the array the first time to allow the least frequent DocsEnum to
             // lead the matching.
-            ArrayUtil.TimSort(m_docsAndFreqs, new ComparatorAnonymousInnerClassHelper(this));
+            ArrayUtil.TimSort(m_docsAndFreqs, new ComparerAnonymousInnerClassHelper(this));
 
             lead = m_docsAndFreqs[0]; // least frequent DocsEnum leads the intersection
         }
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<DocsAndFreqs>
+        private class ComparerAnonymousInnerClassHelper : IComparer<DocsAndFreqs>
         {
             private readonly ConjunctionScorer outerInstance;
 
-            public ComparatorAnonymousInnerClassHelper(ConjunctionScorer outerInstance)
+            public ComparerAnonymousInnerClassHelper(ConjunctionScorer outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

@@ -96,7 +96,7 @@ namespace Lucene.Net.Index.Sorter
         /// <summary>
         /// A comparator of doc IDs.
         /// </summary>
-        internal abstract class DocComparator : IComparer<int>
+        internal abstract class DocComparer : IComparer<int>
         {
 
             /// <summary>
@@ -111,10 +111,10 @@ namespace Lucene.Net.Index.Sorter
         {
 
             internal readonly int[] docs;
-            internal readonly Sorter.DocComparator comparator;
+            internal readonly Sorter.DocComparer comparator;
             internal readonly int[] tmp;
 
-            internal DocValueSorter(int[] docs, Sorter.DocComparator comparator) : base(docs.Length / 64)
+            internal DocValueSorter(int[] docs, Sorter.DocComparer comparator) : base(docs.Length / 64)
             {
                 this.docs = docs;
                 this.comparator = comparator;
@@ -157,7 +157,7 @@ namespace Lucene.Net.Index.Sorter
         /// <summary>
         /// Computes the old-to-new permutation over the given comparator.
         /// </summary>
-        private static Sorter.DocMap Sort(int maxDoc, DocComparator comparator)
+        private static Sorter.DocMap Sort(int maxDoc, DocComparer comparator)
         {
             // check if the index is sorted
             bool sorted = true;
@@ -244,7 +244,7 @@ namespace Lucene.Net.Index.Sorter
         /// <summary>
         /// Returns a mapping from the old document ID to its new location in the
         /// sorted index. Implementations can use the auxiliary
-        /// <see cref="Sort(int, DocComparator)"/> to compute the old-to-new permutation
+        /// <see cref="Sort(int, DocComparer)"/> to compute the old-to-new permutation
         /// given a list of documents and their corresponding values.
         /// <para>
         /// A return value of <c>null</c> is allowed and means that
@@ -260,27 +260,27 @@ namespace Lucene.Net.Index.Sorter
             SortField[] fields = sort_Renamed.GetSort();
             int[] reverseMul = new int[fields.Length];
 
-            FieldComparator[] comparators = new FieldComparator[fields.Length];
+            FieldComparer[] comparators = new FieldComparer[fields.Length];
 
             for (int i = 0; i < fields.Length; i++)
             {
                 reverseMul[i] = fields[i].IsReverse ? -1 : 1;
-                comparators[i] = fields[i].GetComparator(1, i);
+                comparators[i] = fields[i].GetComparer(1, i);
                 comparators[i].SetNextReader(reader.AtomicContext);
                 comparators[i].SetScorer(FAKESCORER);
             }
-            DocComparator comparator = new DocComparatorAnonymousInnerClassHelper(this, reverseMul, comparators);
+            DocComparer comparator = new DocComparerAnonymousInnerClassHelper(this, reverseMul, comparators);
             return Sort(reader.MaxDoc, comparator);
         }
 
-        private class DocComparatorAnonymousInnerClassHelper : DocComparator
+        private class DocComparerAnonymousInnerClassHelper : DocComparer
         {
             private readonly Sorter outerInstance;
 
             private int[] reverseMul;
-            private FieldComparator[] comparators;
+            private FieldComparer[] comparators;
 
-            public DocComparatorAnonymousInnerClassHelper(Sorter outerInstance, int[] reverseMul, FieldComparator[] comparators)
+            public DocComparerAnonymousInnerClassHelper(Sorter outerInstance, int[] reverseMul, FieldComparer[] comparators)
             {
                 this.outerInstance = outerInstance;
                 this.reverseMul = reverseMul;

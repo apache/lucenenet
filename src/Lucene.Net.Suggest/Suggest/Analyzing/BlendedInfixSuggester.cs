@@ -310,9 +310,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return coefficient;
         }
 
-        private static IComparer<Lookup.LookupResult> LOOKUP_COMP = new LookUpComparator();
+        private static IComparer<Lookup.LookupResult> LOOKUP_COMP = new LookUpComparer();
 
-        private class LookUpComparator : IComparer<Lookup.LookupResult>
+        private class LookUpComparer : IComparer<Lookup.LookupResult>
         {
 
             public virtual int Compare(Lookup.LookupResult o1, Lookup.LookupResult o2)

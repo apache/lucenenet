@@ -349,10 +349,10 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Return the BytesRef Comparator used to sort terms
+        /// Return the BytesRef Comparer used to sort terms
         ///  before feeding to this API.
         /// </summary>
-        public abstract IComparer<BytesRef> Comparator { get; } // LUCENENET TODO: Rename Comparer
+        public abstract IComparer<BytesRef> Comparer { get; }
 
         public void Dispose()
         {

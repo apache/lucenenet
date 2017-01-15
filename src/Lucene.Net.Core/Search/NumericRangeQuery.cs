@@ -417,7 +417,7 @@ namespace Lucene.Net.Search
                         throw new System.ArgumentException("Invalid NumericType");
                 }
 
-                termComp = Comparator;
+                termComp = Comparer;
             }
 
             private class LongRangeBuilderAnonymousInnerClassHelper : NumericUtils.LongRangeBuilder

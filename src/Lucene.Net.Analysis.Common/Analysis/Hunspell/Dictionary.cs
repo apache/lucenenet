@@ -784,7 +784,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
             FileInfo sorted = FileSupport.CreateTempFile("sorted", "dat", tempDir);
 
-            OfflineSorter sorter = new OfflineSorter(new ComparatorAnonymousInnerClassHelper(this));
+            OfflineSorter sorter = new OfflineSorter(new ComparerAnonymousInnerClassHelper(this));
             sorter.Sort(unsorted, sorted);
             try
             {
@@ -891,11 +891,11 @@ namespace Lucene.Net.Analysis.Hunspell
             }
         }
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<BytesRef>
+        private class ComparerAnonymousInnerClassHelper : IComparer<BytesRef>
         {
             private readonly Dictionary outerInstance;
 
-            public ComparatorAnonymousInnerClassHelper(Dictionary outerInstance)
+            public ComparerAnonymousInnerClassHelper(Dictionary outerInstance)
             {
                 this.outerInstance = outerInstance;
                 scratch1 = new BytesRef();

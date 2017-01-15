@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
             TermVectorsPostingsArray postings = (TermVectorsPostingsArray)termsHashPerField.postingsArray;
             TermVectorsWriter tv = termsWriter.writer;
 
-            int[] termIDs = termsHashPerField.SortPostings(tv.Comparator);
+            int[] termIDs = termsHashPerField.SortPostings(tv.Comparer);
 
             tv.StartField(fieldInfo, numPostings, doVectorPositions, doVectorOffsets, hasPayloads);
 

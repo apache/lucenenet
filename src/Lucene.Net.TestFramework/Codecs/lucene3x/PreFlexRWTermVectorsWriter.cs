@@ -228,7 +228,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             Tvx = Tvd = Tvf = null;
         }
 
-        public override IComparer<BytesRef> Comparator
+        public override IComparer<BytesRef> Comparer
         {
             get
             {

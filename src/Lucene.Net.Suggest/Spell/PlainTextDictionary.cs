@@ -120,7 +120,7 @@ namespace Lucene.Net.Search.Spell
                 return result;
             }
 
-            public IComparer<BytesRef> Comparator
+            public IComparer<BytesRef> Comparer
             {
                 get
                 {

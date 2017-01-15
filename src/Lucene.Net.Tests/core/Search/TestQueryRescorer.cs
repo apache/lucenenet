@@ -375,7 +375,7 @@ namespace Lucene.Net.Search
 
             int reverseInt = reverse ? -1 : 1;
 
-            Array.Sort(expected, new ComparatorAnonymousInnerClassHelper(this, idToNum, r, reverseInt));
+            Array.Sort(expected, new ComparerAnonymousInnerClassHelper(this, idToNum, r, reverseInt));
 
             bool fail = false;
             for (int i = 0; i < numHits; i++)
@@ -409,7 +409,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<int>
+        private class ComparerAnonymousInnerClassHelper : IComparer<int>
         {
             private readonly TestQueryRescorer OuterInstance;
 
@@ -417,7 +417,7 @@ namespace Lucene.Net.Search
             private IndexReader r;
             private int ReverseInt;
 
-            public ComparatorAnonymousInnerClassHelper(TestQueryRescorer outerInstance, int[] idToNum, IndexReader r, int reverseInt)
+            public ComparerAnonymousInnerClassHelper(TestQueryRescorer outerInstance, int[] idToNum, IndexReader r, int reverseInt)
             {
                 this.OuterInstance = outerInstance;
                 this.IdToNum = idToNum;

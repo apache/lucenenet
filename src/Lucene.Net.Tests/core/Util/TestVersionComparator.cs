@@ -22,15 +22,15 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Tests for StringHelper.getVersionComparator
+    /// Tests for StringHelper.getVersionComparer
     /// </summary>
     [TestFixture]
-    public class TestVersionComparator : LuceneTestCase
+    public class TestVersionComparer : LuceneTestCase
     {
         [Test]
         public virtual void TestVersions()
         {
-            IComparer<string> comp = StringHelper.VersionComparator;
+            IComparer<string> comp = StringHelper.VersionComparer;
             Assert.IsTrue(comp.Compare("1", "2") < 0);
             Assert.IsTrue(comp.Compare("1", "1") == 0);
             Assert.IsTrue(comp.Compare("2", "1") > 0);

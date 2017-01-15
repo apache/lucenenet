@@ -102,13 +102,13 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return the BytesRef Comparator used to sort terms
+        /// Return the BytesRef Comparer used to sort terms
         ///  provided by the iterator.  this method may return null
         ///  if there are no terms.  this method may be invoked
         ///  many times; it's best to cache a single instance &
         ///  reuse it.
         /// </summary>
-        public abstract IComparer<BytesRef> Comparator { get; } // LUCENENET TODO: Rename to Comparer
+        public abstract IComparer<BytesRef> Comparer { get; }
 
         /// <summary>
         /// Returns the number of terms for this field, or -1 if this

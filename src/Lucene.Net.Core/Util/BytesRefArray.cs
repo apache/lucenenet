@@ -168,7 +168,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// sugar for <seealso cref="#iterator(Comparator)"/> with a <code>null</code> comparator
+        /// sugar for <seealso cref="#iterator(Comparer)"/> with a <code>null</code> comparator
         /// </summary>
         public IBytesRefIterator GetIterator()
         {
@@ -181,7 +181,7 @@ namespace Lucene.Net.Util
         /// iterator provides access to all so far appended <seealso cref="BytesRef"/> instances.
         /// </p>
         /// <p>
-        /// If a non <code>null</code> <seealso cref="Comparator"/> is provided the iterator will
+        /// If a non <code>null</code> <seealso cref="Comparer"/> is provided the iterator will
         /// iterate the byte values in the order specified by the comparator. Otherwise
         /// the order is the same as the values were appended.
         /// </p>
@@ -227,7 +227,7 @@ namespace Lucene.Net.Util
                 return null;
             }
 
-            public virtual IComparer<BytesRef> Comparator
+            public virtual IComparer<BytesRef> Comparer
             {
                 get
                 {

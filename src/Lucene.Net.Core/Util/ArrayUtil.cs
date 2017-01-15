@@ -765,9 +765,9 @@ namespace Lucene.Net.Util
             return result;
         }
 
-        private class NaturalComparator<T> : IComparer<T> where T : IComparable<T>
+        private class NaturalComparer<T> : IComparer<T> where T : IComparable<T>
         {
-            internal NaturalComparator()
+            internal NaturalComparer()
             {
             }
 
@@ -778,12 +778,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Get the natural <seealso cref="Comparator"/> for the provided object class. </summary>
-        public static IComparer<T> naturalComparator<T>() // LUCENENET TODO: pascal case
+        /// Get the natural <seealso cref="Comparer"/> for the provided object class. </summary>
+        public static IComparer<T> naturalComparer<T>() // LUCENENET TODO: pascal case
             where T : IComparable<T>
         {
             // return Comparer<T>.Default; // LUCENENET TODO: Shouldn't we just return the default comparer already included in .NET?
-            return (IComparer<T>)new NaturalComparator<T>();
+            return (IComparer<T>)new NaturalComparer<T>();
         }
 
         /// <summary>
@@ -798,7 +798,7 @@ namespace Lucene.Net.Util
         // intro-sorts
 
         /// <summary>
-        /// Sorts the given array slice using the <seealso cref="Comparator"/>. this method uses the intro sort
+        /// Sorts the given array slice using the <seealso cref="Comparer"/>. this method uses the intro sort
         /// algorithm, but falls back to insertion sort for small arrays. </summary>
         /// <param name="fromIndex"> start index (inclusive) </param>
         /// <param name="toIndex"> end index (exclusive) </param>
@@ -812,7 +812,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Sorts the given array using the <seealso cref="Comparator"/>. this method uses the intro sort
+        /// Sorts the given array using the <seealso cref="Comparer"/>. this method uses the intro sort
         /// algorithm, but falls back to insertion sort for small arrays.
         /// </summary>
         public static void IntroSort<T>(T[] a, IComparer<T> comp)
@@ -831,7 +831,7 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-            IntroSort(a, fromIndex, toIndex, ArrayUtil.naturalComparator<T>());
+            IntroSort(a, fromIndex, toIndex, ArrayUtil.naturalComparer<T>());
         }
 
         /// <summary>
@@ -846,7 +846,7 @@ namespace Lucene.Net.Util
         // tim sorts:
 
         /// <summary>
-        /// Sorts the given array slice using the <seealso cref="Comparator"/>. this method uses the Tim sort
+        /// Sorts the given array slice using the <seealso cref="Comparer"/>. this method uses the Tim sort
         /// algorithm, but falls back to binary sort for small arrays. </summary>
         /// <param name="fromIndex"> start index (inclusive) </param>
         /// <param name="toIndex"> end index (exclusive) </param>
@@ -860,7 +860,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Sorts the given array using the <seealso cref="Comparator"/>. this method uses the Tim sort
+        /// Sorts the given array using the <seealso cref="Comparer"/>. this method uses the Tim sort
         /// algorithm, but falls back to binary sort for small arrays.
         /// </summary>
         public static void TimSort<T>(T[] a, IComparer<T> comp)
@@ -879,7 +879,7 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-            TimSort(a, fromIndex, toIndex, ArrayUtil.naturalComparator<T>());
+            TimSort(a, fromIndex, toIndex, ArrayUtil.naturalComparer<T>());
         }
 
         /// <summary>

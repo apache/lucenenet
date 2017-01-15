@@ -329,7 +329,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return new SimpleTVTermsEnum(TERMS);
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get { return BytesRef.UTF8SortedAsUnicodeComparer; }
             }
@@ -474,7 +474,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return e;
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get { return BytesRef.UTF8SortedAsUnicodeComparer; }
             }

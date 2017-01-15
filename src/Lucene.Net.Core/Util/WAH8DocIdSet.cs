@@ -95,11 +95,11 @@ namespace Lucene.Net.Util
             SINGLE_ZERO_BUFFER.Freeze();
         }
 
-        private static readonly IComparer<Iterator> SERIALIZED_LENGTH_COMPARATOR = new ComparatorAnonymousInnerClassHelper();
+        private static readonly IComparer<Iterator> SERIALIZED_LENGTH_COMPARATOR = new ComparerAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<Iterator>
+        private class ComparerAnonymousInnerClassHelper : IComparer<Iterator>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparerAnonymousInnerClassHelper()
             {
             }
 

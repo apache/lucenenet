@@ -142,12 +142,12 @@ namespace Lucene.Net.Sandbox.Queries
             this.missingValue = value;
         }
 
-        internal class TermOrdValComparatorAnonymousHelper : FieldComparator.TermOrdValComparator
+        internal class TermOrdValComparerAnonymousHelper : FieldComparer.TermOrdValComparer
         {
             private readonly SortedSetSortField outerInstance;
             private readonly int numHits;
 
-            public TermOrdValComparatorAnonymousHelper(SortedSetSortField outerInstance, int numHits)
+            public TermOrdValComparerAnonymousHelper(SortedSetSortField outerInstance, int numHits)
                 : base(numHits, outerInstance.Field, outerInstance.missingValue == STRING_LAST)
             {
                 this.outerInstance = outerInstance;
@@ -196,9 +196,9 @@ namespace Lucene.Net.Sandbox.Queries
             }
         }
 
-        public override FieldComparator GetComparator(int numHits, int sortPos)
+        public override FieldComparer GetComparer(int numHits, int sortPos)
         {
-            return new TermOrdValComparatorAnonymousHelper(this, numHits);
+            return new TermOrdValComparerAnonymousHelper(this, numHits);
         }
 
         /// <summary>Wraps a <see cref="SortedSetDocValues"/> and returns the first ordinal (min)</summary>

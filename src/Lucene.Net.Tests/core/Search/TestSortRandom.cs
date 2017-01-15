@@ -216,7 +216,7 @@ namespace Lucene.Net.Search
 
                 // Compute expected results:
                 var expected = f.MatchValues.ToList();
-                expected.Sort(new ComparatorAnonymousInnerClassHelper(this, sortMissingLast));
+                expected.Sort(new ComparerAnonymousInnerClassHelper(this, sortMissingLast));
                 if (reverse)
                 {
                     expected.Reverse();
@@ -280,13 +280,13 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<BytesRef>
+        private class ComparerAnonymousInnerClassHelper : IComparer<BytesRef>
         {
             private readonly TestSortRandom OuterInstance;
 
             private bool SortMissingLast;
 
-            public ComparatorAnonymousInnerClassHelper(TestSortRandom outerInstance, bool sortMissingLast)
+            public ComparerAnonymousInnerClassHelper(TestSortRandom outerInstance, bool sortMissingLast)
             {
                 this.OuterInstance = outerInstance;
                 this.SortMissingLast = sortMissingLast;

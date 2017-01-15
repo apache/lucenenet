@@ -783,7 +783,7 @@ namespace Lucene.Net.Codecs.Compressing
             CodecUtil.WriteFooter(vectorsStream);
         }
 
-        public override IComparer<BytesRef> Comparator
+        public override IComparer<BytesRef> Comparer
         {
             get
             {

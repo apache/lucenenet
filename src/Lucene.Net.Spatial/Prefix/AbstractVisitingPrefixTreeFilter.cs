@@ -200,7 +200,7 @@ namespace Lucene.Net.Spatial.Prefix
                     //Seek to curVNode's cell (or skip if termsEnum has moved beyond)
                     curVNodeTerm.Bytes = curVNode.cell.GetTokenBytes();
                     curVNodeTerm.Length = curVNodeTerm.Bytes.Length;
-                    int compare = termsEnum.Comparator.Compare(thisTerm, curVNodeTerm);
+                    int compare = termsEnum.Comparer.Compare(thisTerm, curVNodeTerm);
                     if (compare > 0)
                     {
                         // leap frog (termsEnum is beyond where we would otherwise seek)

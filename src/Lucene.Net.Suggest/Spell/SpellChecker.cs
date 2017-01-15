@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// Gets or sets the <see cref="IComparer{T}"/> for the <see cref="SuggestWordQueue"/>.
         /// </summary>
-        public virtual IComparer<SuggestWord> Comparator
+        public virtual IComparer<SuggestWord> Comparer
         {
             set
             {

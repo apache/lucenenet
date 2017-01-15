@@ -28,19 +28,19 @@ namespace Lucene.Net.Join
     /// 
     /// @lucene.experimental
     /// </summary>
-    public abstract class ToParentBlockJoinFieldComparator : FieldComparator<object>
+    public abstract class ToParentBlockJoinFieldComparer : FieldComparer<object>
     {
         private readonly Filter _parentFilter;
         private readonly Filter _childFilter;
         private readonly int _spareSlot;
 
-        private FieldComparator _wrappedComparator;
+        private FieldComparer _wrappedComparer;
         private FixedBitSet _parentDocuments;
         private FixedBitSet _childDocuments;
 
-        private ToParentBlockJoinFieldComparator(FieldComparator wrappedComparator, Filter parentFilter, Filter childFilter, int spareSlot)
+        private ToParentBlockJoinFieldComparer(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot)
         {
-            _wrappedComparator = wrappedComparator;
+            _wrappedComparer = wrappedComparer;
             _parentFilter = parentFilter;
             _childFilter = childFilter;
             _spareSlot = spareSlot;
@@ -48,20 +48,20 @@ namespace Lucene.Net.Join
 
         public override int Compare(int slot1, int slot2)
         {
-            return _wrappedComparator.Compare(slot1, slot2);
+            return _wrappedComparer.Compare(slot1, slot2);
         }
 
         public override void SetBottom(int slot)
         {
-            _wrappedComparator.SetBottom(slot);
+            _wrappedComparer.SetBottom(slot);
         }
 
         public override void SetTopValue(object value)
         {
-            _wrappedComparator.SetTopValue(value);
+            _wrappedComparer.SetTopValue(value);
         }
         
-        public override FieldComparator SetNextReader(AtomicReaderContext context)
+        public override FieldComparer SetNextReader(AtomicReaderContext context)
         {
             DocIdSet innerDocuments = _childFilter.GetDocIdSet(context, null);
             if (IsEmpty(innerDocuments))
@@ -92,7 +92,7 @@ namespace Lucene.Net.Join
                 _parentDocuments = iterator != null ? ToFixedBitSet(iterator, context.AtomicReader.MaxDoc) : null;
             }
 
-            _wrappedComparator = _wrappedComparator.SetNextReader(context);
+            _wrappedComparer = _wrappedComparer.SetNextReader(context);
             return this;
         }
 
@@ -114,25 +114,25 @@ namespace Lucene.Net.Join
 
         public override IComparable Value(int slot)
         {
-            return _wrappedComparator.Value(slot);
+            return _wrappedComparer.Value(slot);
         }
 
         /// <summary>
         /// Concrete implementation of <see cref="ToParentBlockJoinSortField"/> to sorts the parent docs with the lowest values
         /// in the child / nested docs first.
         /// </summary>
-        public sealed class Lowest : ToParentBlockJoinFieldComparator
+        public sealed class Lowest : ToParentBlockJoinFieldComparer
         {
             /// <summary>
-            /// Create ToParentBlockJoinFieldComparator.Lowest
+            /// Create ToParentBlockJoinFieldComparer.Lowest
             /// </summary>
-            /// <param name="wrappedComparator">The <see cref="FieldComparator"/> on the child / nested level. </param>
+            /// <param name="wrappedComparer">The <see cref="FieldComparer"/> on the child / nested level. </param>
             /// <param name="parentFilter">Filter (must produce FixedBitSet per-segment) that identifies the parent documents. </param>
             /// <param name="childFilter">Filter that defines which child / nested documents participates in sorting. </param>
             /// <param name="spareSlot">The extra slot inside the wrapped comparator that is used to compare which nested document
             ///                  inside the parent document scope is most competitive. </param>
-            public Lowest(FieldComparator wrappedComparator, Filter parentFilter, Filter childFilter, int spareSlot) 
-                : base(wrappedComparator, parentFilter, childFilter, spareSlot)
+            public Lowest(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot) 
+                : base(wrappedComparer, parentFilter, childFilter, spareSlot)
             {
             }
             
@@ -152,7 +152,7 @@ namespace Lucene.Net.Join
                 }
 
                 // We only need to emit a single cmp value for any matching child doc
-                int cmp = _wrappedComparator.CompareBottom(childDoc);
+                int cmp = _wrappedComparer.CompareBottom(childDoc);
                 if (cmp > 0)
                 {
                     return cmp;
@@ -165,7 +165,7 @@ namespace Lucene.Net.Join
                     {
                         return cmp;
                     }
-                    int cmp1 = _wrappedComparator.CompareBottom(childDoc);
+                    int cmp1 = _wrappedComparer.CompareBottom(childDoc);
                     if (cmp1 > 0)
                     {
                         return cmp1;
@@ -191,8 +191,8 @@ namespace Lucene.Net.Join
                 {
                     return;
                 }
-                _wrappedComparator.Copy(_spareSlot, childDoc);
-                _wrappedComparator.Copy(slot, childDoc);
+                _wrappedComparer.Copy(_spareSlot, childDoc);
+                _wrappedComparer.Copy(slot, childDoc);
 
                 while (true)
                 {
@@ -201,10 +201,10 @@ namespace Lucene.Net.Join
                     {
                         return;
                     }
-                    _wrappedComparator.Copy(_spareSlot, childDoc);
-                    if (_wrappedComparator.Compare(_spareSlot, slot) < 0)
+                    _wrappedComparer.Copy(_spareSlot, childDoc);
+                    if (_wrappedComparer.Compare(_spareSlot, slot) < 0)
                     {
-                        _wrappedComparator.Copy(slot, childDoc);
+                        _wrappedComparer.Copy(slot, childDoc);
                     }
                 }
             }
@@ -225,7 +225,7 @@ namespace Lucene.Net.Join
                 }
 
                 // We only need to emit a single cmp value for any matching child doc
-                int cmp = _wrappedComparator.CompareBottom(childDoc);
+                int cmp = _wrappedComparer.CompareBottom(childDoc);
                 if (cmp > 0)
                 {
                     return cmp;
@@ -238,7 +238,7 @@ namespace Lucene.Net.Join
                     {
                         return cmp;
                     }
-                    int cmp1 = _wrappedComparator.CompareTop(childDoc);
+                    int cmp1 = _wrappedComparer.CompareTop(childDoc);
                     if (cmp1 > 0)
                     {
                         return cmp1;
@@ -256,18 +256,18 @@ namespace Lucene.Net.Join
         /// Concrete implementation of <see cref="ToParentBlockJoinSortField"/> to sorts the parent docs with the highest values
         /// in the child / nested docs first.
         /// </summary>
-        public sealed class Highest : ToParentBlockJoinFieldComparator
+        public sealed class Highest : ToParentBlockJoinFieldComparer
         {
             /// <summary>
-            /// Create ToParentBlockJoinFieldComparator.Highest
+            /// Create ToParentBlockJoinFieldComparer.Highest
             /// </summary>
-            /// <param name="wrappedComparator">The <see cref="FieldComparator"/> on the child / nested level. </param>
+            /// <param name="wrappedComparer">The <see cref="FieldComparer"/> on the child / nested level. </param>
             /// <param name="parentFilter">Filter (must produce FixedBitSet per-segment) that identifies the parent documents. </param>
             /// <param name="childFilter">Filter that defines which child / nested documents participates in sorting. </param>
             /// <param name="spareSlot">The extra slot inside the wrapped comparator that is used to compare which nested document
             ///                  inside the parent document scope is most competitive. </param>
-            public Highest(FieldComparator wrappedComparator, Filter parentFilter, Filter childFilter, int spareSlot) 
-                : base(wrappedComparator, parentFilter, childFilter, spareSlot)
+            public Highest(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot) 
+                : base(wrappedComparer, parentFilter, childFilter, spareSlot)
             {
             }
             
@@ -285,7 +285,7 @@ namespace Lucene.Net.Join
                     return 0;
                 }
 
-                int cmp = _wrappedComparator.CompareBottom(childDoc);
+                int cmp = _wrappedComparer.CompareBottom(childDoc);
                 if (cmp < 0)
                 {
                     return cmp;
@@ -298,7 +298,7 @@ namespace Lucene.Net.Join
                     {
                         return cmp;
                     }
-                    int cmp1 = _wrappedComparator.CompareBottom(childDoc);
+                    int cmp1 = _wrappedComparer.CompareBottom(childDoc);
                     if (cmp1 < 0)
                     {
                         return cmp1;
@@ -326,8 +326,8 @@ namespace Lucene.Net.Join
                 {
                     return;
                 }
-                _wrappedComparator.Copy(_spareSlot, childDoc);
-                _wrappedComparator.Copy(slot, childDoc);
+                _wrappedComparer.Copy(_spareSlot, childDoc);
+                _wrappedComparer.Copy(slot, childDoc);
 
                 while (true)
                 {
@@ -336,10 +336,10 @@ namespace Lucene.Net.Join
                     {
                         return;
                     }
-                    _wrappedComparator.Copy(_spareSlot, childDoc);
-                    if (_wrappedComparator.Compare(_spareSlot, slot) > 0)
+                    _wrappedComparer.Copy(_spareSlot, childDoc);
+                    if (_wrappedComparer.Compare(_spareSlot, slot) > 0)
                     {
-                        _wrappedComparator.Copy(slot, childDoc);
+                        _wrappedComparer.Copy(slot, childDoc);
                     }
                 }
             }
@@ -358,7 +358,7 @@ namespace Lucene.Net.Join
                     return 0;
                 }
 
-                int cmp = _wrappedComparator.CompareBottom(childDoc);
+                int cmp = _wrappedComparer.CompareBottom(childDoc);
                 if (cmp < 0)
                 {
                     return cmp;
@@ -371,7 +371,7 @@ namespace Lucene.Net.Join
                     {
                         return cmp;
                     }
-                    int cmp1 = _wrappedComparator.CompareTop(childDoc);
+                    int cmp1 = _wrappedComparer.CompareTop(childDoc);
                     if (cmp1 < 0)
                     {
                         return cmp1;

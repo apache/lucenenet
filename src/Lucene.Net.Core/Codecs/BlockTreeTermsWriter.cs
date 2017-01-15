@@ -1105,7 +1105,7 @@ namespace Lucene.Net.Codecs
                 this.longsSize = outerInstance.postingsWriter.SetField(fieldInfo);
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {

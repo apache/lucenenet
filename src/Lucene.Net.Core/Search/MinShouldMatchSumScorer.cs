@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
             this.sortedSubScorers = subScorers.ToArray();
             // sorting by decreasing subscorer cost should be inversely correlated with
             // next docid (assuming costs are due to generating many postings)
-            ArrayUtil.TimSort(sortedSubScorers, new ComparatorAnonymousInnerClassHelper(this));
+            ArrayUtil.TimSort(sortedSubScorers, new ComparerAnonymousInnerClassHelper(this));
             // take mm-1 most costly subscorers aside
             this.mmStack = new Scorer[mm - 1];
             for (int i = 0; i < mm - 1; i++)
@@ -120,11 +120,11 @@ namespace Lucene.Net.Search
             Debug.Assert(MinheapCheck());
         }
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<Scorer>
+        private class ComparerAnonymousInnerClassHelper : IComparer<Scorer>
         {
             private readonly MinShouldMatchSumScorer outerInstance;
 
-            public ComparatorAnonymousInnerClassHelper(MinShouldMatchSumScorer outerInstance)
+            public ComparerAnonymousInnerClassHelper(MinShouldMatchSumScorer outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

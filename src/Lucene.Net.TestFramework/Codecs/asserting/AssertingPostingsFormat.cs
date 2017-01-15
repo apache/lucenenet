@@ -166,7 +166,7 @@ namespace Lucene.Net.Codecs.asserting
             {
                 Debug.Assert(State == TermsConsumerState.INITIAL || State == TermsConsumerState.START && LastPostingsConsumer.DocFreq == 0);
                 State = TermsConsumerState.START;
-                Debug.Assert(LastTerm == null || @in.Comparator.Compare(text, LastTerm) > 0);
+                Debug.Assert(LastTerm == null || @in.Comparer.Compare(text, LastTerm) > 0);
                 LastTerm = BytesRef.DeepCopyOf(text);
                 return LastPostingsConsumer = new AssertingPostingsConsumer(@in.StartTerm(text), fieldInfo, VisitedDocs);
             }
@@ -211,11 +211,11 @@ namespace Lucene.Net.Codecs.asserting
                 @in.Finish(sumTotalTermFreq, sumDocFreq, docCount);
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {
-                    return @in.Comparator;
+                    return @in.Comparer;
                 }
             }
         }

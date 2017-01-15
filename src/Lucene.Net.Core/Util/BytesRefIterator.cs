@@ -37,12 +37,12 @@ namespace Lucene.Net.Util
         BytesRef Next();
 
         /// <summary>
-        /// Return the <seealso cref="BytesRef"/> Comparator used to sort terms provided by the
+        /// Return the <seealso cref="BytesRef"/> Comparer used to sort terms provided by the
         /// iterator. this may return null if there are no items or the iterator is not
         /// sorted. Callers may invoke this method many times, so it's best to cache a
         /// single instance & reuse it.
         /// </summary>
-        IComparer<BytesRef> Comparator { get; } // LUCENENET TODO: Rename Comparer ?
+        IComparer<BytesRef> Comparer { get; }
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ namespace Lucene.Net.Util
                 return null;
             }
 
-            public IComparer<BytesRef> Comparator
+            public IComparer<BytesRef> Comparer
             {
                 get { return null; }
             }

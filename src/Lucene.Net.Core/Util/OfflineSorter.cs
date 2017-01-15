@@ -202,7 +202,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Default comparator: sorts in binary (codepoint) order </summary>
-        public static readonly IComparer<BytesRef> DEFAULT_COMPARATOR = BytesRef.UTF8SortedAsUnicodeComparator.Instance;
+        public static readonly IComparer<BytesRef> DEFAULT_COMPARATOR = Utf8SortedAsUnicodeComparer.Instance;
 
         /// <summary>
         /// Defaults constructor.
@@ -677,7 +677,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the comparator in use to sort entries </summary>
-        public IComparer<BytesRef> Comparator // LUCENENET TODO: Rename Comparer ?
+        public IComparer<BytesRef> Comparer
         {
             get
             {

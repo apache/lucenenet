@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
     /// #docs}.
     ///
     /// <p>Term enumerations are always ordered by
-    /// <seealso cref="#getComparator"/>.  Each term in the enumeration is
+    /// <seealso cref="#getComparer"/>.  Each term in the enumeration is
     /// greater than the one before it.</p>
     ///
     /// <p>The TermsEnum is unpositioned when you first obtain it
@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class TermsEnum : IBytesRefIterator
     {
-        public abstract IComparer<BytesRef> Comparator { get; } // LUCENENET specific - must supply implementation for the interface
+        public abstract IComparer<BytesRef> Comparer { get; } // LUCENENET specific - must supply implementation for the interface
 
         public abstract BytesRef Next(); // LUCENENET specific - must supply implementation for the interface
 
@@ -297,7 +297,7 @@ namespace Lucene.Net.Index
                 get { throw new InvalidOperationException("this method should never be called"); }
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {

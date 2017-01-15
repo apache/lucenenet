@@ -42,7 +42,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         // fieldNumber into index for first indexed term:
         private int currentFieldNumber = -2;
 
-        private static readonly IComparer<BytesRef> utf8AsUTF16Comparator = BytesRef.UTF8SortedAsUTF16Comparer;
+        private static readonly IComparer<BytesRef> utf8AsUTF16Comparer = BytesRef.UTF8SortedAsUTF16Comparer;
 
         internal int newSuffixStart; // only valid right after .read is called
 
@@ -51,7 +51,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             if (field == other.field) // fields are interned
             // (only by PreFlex codec)
             {
-                return utf8AsUTF16Comparator.Compare(bytes, other.bytes);
+                return utf8AsUTF16Comparer.Compare(bytes, other.bytes);
             }
             else
             {

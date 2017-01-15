@@ -74,7 +74,7 @@ namespace Lucene.Net.Search.Suggest
                 }
                 freqs[freqIndex++] = source.Weight;
             }
-            comp = source.Comparator;
+            comp = source.Comparer;
         }
 
         public virtual long Weight
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search.Suggest
             get { return hasPayloads; }
         }
 
-        public virtual IComparer<BytesRef> Comparator
+        public virtual IComparer<BytesRef> Comparer
         {
             get
             {

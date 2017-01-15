@@ -94,7 +94,7 @@ namespace Lucene.Net.Search.Highlight
                 }
             }
 
-            CollectionUtil.TimSort(this.positionedTokens, tokenComparator);
+            CollectionUtil.TimSort(this.positionedTokens, tokenComparer);
 
             int lastPosition = -1;
             foreach (Token token in this.positionedTokens)
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Highlight
             this.tokensAtCurrentPosition = this.positionedTokens.GetEnumerator();
         }
 
-        private static readonly IComparer<Token> tokenComparator = new TokenComparator();
+        private static readonly IComparer<Token> tokenComparer = new TokenComparer();
 
         public override bool IncrementToken()
         {
@@ -128,7 +128,7 @@ namespace Lucene.Net.Search.Highlight
             this.tokensAtCurrentPosition = this.positionedTokens.GetEnumerator();
         }
 
-        private class TokenComparator : IComparer<Token>
+        private class TokenComparer : IComparer<Token>
         {
             public int Compare(Token o1, Token o2)
             {

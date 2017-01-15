@@ -483,7 +483,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 try
                 {
                     data.Seek(address);
-                    // NOTE: we could have one buffer, but various consumers (e.g. FieldComparatorSource)
+                    // NOTE: we could have one buffer, but various consumers (e.g. FieldComparerSource)
                     // assume "they" own the bytes after calling this!
                     var buffer = new byte[bytes.maxLength];
                     data.ReadBytes(buffer, 0, buffer.Length);
@@ -553,7 +553,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 try
                 {
                     data.Seek(startAddress);
-                    // NOTE: we could have one buffer, but various consumers (e.g. FieldComparatorSource)
+                    // NOTE: we could have one buffer, but various consumers (e.g. FieldComparerSource)
                     // assume "they" own the bytes after calling this!
                     var buffer = new byte[length];
                     data.ReadBytes(buffer, 0, buffer.Length);
@@ -1224,7 +1224,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     get { return currentOrd; }
                 }
 
-                public override IComparer<BytesRef> Comparator
+                public override IComparer<BytesRef> Comparer
                 {
                     get
                     {

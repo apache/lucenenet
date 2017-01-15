@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
             if (longestOnly && buffer.Count > 1)
             {
-                buffer.Sort(lengthComparator);
+                buffer.Sort(lengthComparer);
             }
 
             CharsRef stem = buffer[0];
@@ -144,11 +144,11 @@ namespace Lucene.Net.Analysis.Hunspell
             buffer = null;
         }
 
-        internal static readonly IComparer<CharsRef> lengthComparator = new ComparatorAnonymousInnerClassHelper();
+        internal static readonly IComparer<CharsRef> lengthComparer = new ComparerAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<CharsRef>
+        private class ComparerAnonymousInnerClassHelper : IComparer<CharsRef>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparerAnonymousInnerClassHelper()
             {
             }
 

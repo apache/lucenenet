@@ -45,12 +45,12 @@ namespace Lucene.Net.Search
         /// <summary> An implementation of <see cref="FieldValueHitQueue" /> which is optimized in case
         /// there is just one comparator.
         /// </summary>
-        internal sealed class OneComparatorFieldValueHitQueue<T> : FieldValueHitQueue<T>
+        internal sealed class OneComparerFieldValueHitQueue<T> : FieldValueHitQueue<T>
             where T : FieldValueHitQueue.Entry
         {
             private int oneReverseMul;
 
-            public OneComparatorFieldValueHitQueue(SortField[] fields, int size)
+            public OneComparerFieldValueHitQueue(SortField[] fields, int size)
                 : base(fields, size)
             {
                 if (fields.Length == 0)
@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
                 }
 
                 SortField field = fields[0];
-                SetComparator(0, field.GetComparator(size, 0));
+                SetComparer(0, field.GetComparer(size, 0));
                 oneReverseMul = field.reverse ? -1 : 1;
 
                 GetReverseMul()[0] = oneReverseMul;
@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
                 Debug.Assert(hitA != hitB);
                 Debug.Assert(hitA.Slot != hitB.Slot);
 
-                int c = oneReverseMul * m_firstComparator.Compare(hitA.Slot, hitB.Slot);
+                int c = oneReverseMul * m_firstComparer.Compare(hitA.Slot, hitB.Slot);
                 if (c != 0)
                 {
                     return c > 0;
@@ -93,19 +93,19 @@ namespace Lucene.Net.Search
         /// <summary> An implementation of <see cref="FieldValueHitQueue" /> which is optimized in case
         /// there is more than one comparator.
         /// </summary>
-        internal sealed class MultiComparatorsFieldValueHitQueue<T> : FieldValueHitQueue<T>
+        internal sealed class MultiComparersFieldValueHitQueue<T> : FieldValueHitQueue<T>
             where T : FieldValueHitQueue.Entry
         {
-            public MultiComparatorsFieldValueHitQueue(SortField[] fields, int size)
+            public MultiComparersFieldValueHitQueue(SortField[] fields, int size)
                 : base(fields, size)
             {
-                int numComparators = m_comparators.Length;
-                for (int i = 0; i < numComparators; ++i)
+                int numComparers = m_comparators.Length;
+                for (int i = 0; i < numComparers; ++i)
                 {
                     SortField field = fields[i];
 
                     m_reverseMul[i] = field.reverse ? -1 : 1;
-                    SetComparator(i, field.GetComparator(size, i));
+                    SetComparer(i, field.GetComparer(size, i));
                 }
             }
 
@@ -114,8 +114,8 @@ namespace Lucene.Net.Search
                 Debug.Assert(hitA != hitB);
                 Debug.Assert(hitA.Slot != hitB.Slot);
 
-                int numComparators = m_comparators.Length;
-                for (int i = 0; i < numComparators; ++i)
+                int numComparers = m_comparators.Length;
+                for (int i = 0; i < numComparers; ++i)
                 {
                     int c = m_reverseMul[i] * m_comparators[i].Compare(hitA.Slot, hitB.Slot);
                     if (c != 0)
@@ -157,11 +157,11 @@ namespace Lucene.Net.Search
 
             if (fields.Length == 1)
             {
-                return new FieldValueHitQueue.OneComparatorFieldValueHitQueue<T>(fields, size);
+                return new FieldValueHitQueue.OneComparerFieldValueHitQueue<T>(fields, size);
             }
             else
             {
-                return new FieldValueHitQueue.MultiComparatorsFieldValueHitQueue<T>(fields, size);
+                return new FieldValueHitQueue.MultiComparersFieldValueHitQueue<T>(fields, size);
             }
         }
     }
@@ -189,12 +189,12 @@ namespace Lucene.Net.Search
             // Therefore even in the case of a single comparator, create an array
             // anyway.
             this.m_fields = fields;
-            int numComparators = fields.Length;
-            m_comparators = new FieldComparator[numComparators];
-            m_reverseMul = new int[numComparators];
+            int numComparers = fields.Length;
+            m_comparators = new FieldComparer[numComparers];
+            m_reverseMul = new int[numComparers];
         }
 
-        public virtual FieldComparator[] GetComparators()
+        public virtual FieldComparer[] GetComparers()
         {
             return m_comparators;
         }
@@ -204,11 +204,11 @@ namespace Lucene.Net.Search
             return m_reverseMul;
         }
 
-        public virtual void SetComparator(int pos, FieldComparator comparator)
+        public virtual void SetComparer(int pos, FieldComparer comparator)
         {
             if (pos == 0)
             {
-                m_firstComparator = comparator;
+                m_firstComparer = comparator;
             }
             m_comparators[pos] = comparator;
         }
@@ -217,13 +217,13 @@ namespace Lucene.Net.Search
         /// Stores the sort criteria being used. </summary>
         protected readonly SortField[] m_fields;
 
-        protected readonly FieldComparator[] m_comparators; // use setComparator to change this array // LUCENENET TODO: Rename m_comparers
-        protected FieldComparator m_firstComparator; // this must always be equal to comparators[0] // LUCENENET TODO: Rename m_firstComparer
+        protected readonly FieldComparer[] m_comparators; // use setComparer to change this array // LUCENENET TODO: Rename m_comparers
+        protected FieldComparer m_firstComparer; // this must always be equal to comparators[0]
         protected readonly int[] m_reverseMul;
 
-        internal FieldComparator FirstComparator
+        internal FieldComparer FirstComparer
         {
-            get { return this.m_firstComparator; }
+            get { return this.m_firstComparer; }
         }
 
         public abstract bool LessThan(FieldValueHitQueue.Entry a, FieldValueHitQueue.Entry b);

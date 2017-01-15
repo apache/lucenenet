@@ -143,11 +143,11 @@ namespace Lucene.Net.Index
         }
 
         // Sorts SegmentInfos from smallest to biggest bufferedDelGen:
-        private static readonly IComparer<SegmentCommitInfo> sortSegInfoByDelGen = new ComparatorAnonymousInnerClassHelper();
+        private static readonly IComparer<SegmentCommitInfo> sortSegInfoByDelGen = new ComparerAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<SegmentCommitInfo>
+        private class ComparerAnonymousInnerClassHelper : IComparer<SegmentCommitInfo>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparerAnonymousInnerClassHelper()
             {
             }
 

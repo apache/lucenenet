@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
     /// Subclass of FilteredTermEnum for enumerating all terms that match the
     /// specified prefix filter term.
     /// <p>Term enumerations are always ordered by
-    /// <seealso cref="#getComparator"/>.  Each term in the enumeration is
+    /// <seealso cref="#getComparer"/>.  Each term in the enumeration is
     /// greater than all that precede it.</p>
     /// </summary>
     public class PrefixTermsEnum : FilteredTermsEnum

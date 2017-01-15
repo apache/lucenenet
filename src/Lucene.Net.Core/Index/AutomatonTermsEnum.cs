@@ -96,7 +96,7 @@ namespace Lucene.Net.Index
             // used for path tracking, where each bit is a numbered state.
             visited = new long[runAutomaton.Count];
 
-            termComp = Comparator;
+            termComp = Comparer;
         }
 
         /// <summary>

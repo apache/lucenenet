@@ -813,7 +813,7 @@ namespace Lucene.Net.Codecs.Compressing
                 return termsEnum;
             }
 
-            public override IComparer<BytesRef> Comparator 
+            public override IComparer<BytesRef> Comparer 
             {
                 get
                 {
@@ -932,7 +932,7 @@ namespace Lucene.Net.Codecs.Compressing
                 return term;
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {

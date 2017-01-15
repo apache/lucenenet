@@ -255,7 +255,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {

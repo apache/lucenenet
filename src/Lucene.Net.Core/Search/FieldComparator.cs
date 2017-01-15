@@ -29,9 +29,9 @@ namespace Lucene.Net.Search
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
 
     /// <summary>
-    /// Expert: a FieldComparator compares hits so as to determine their
+    /// Expert: a FieldComparer compares hits so as to determine their
     /// sort order when collecting the top results with {@link
-    /// TopFieldCollector}.  The concrete public FieldComparator
+    /// TopFieldCollector}.  The concrete public FieldComparer
     /// classes here correspond to the SortField types.
     ///
     /// <p>this API is designed to achieve high performance
@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
     /// FieldValueHitQueue} as it visits hits.  Whenever a hit is
     /// competitive, it's enrolled into a virtual slot, which is
     /// an int ranging from 0 to numHits-1.  The {@link
-    /// FieldComparator} is made aware of segment transitions
+    /// FieldComparer} is made aware of segment transitions
     /// during searching in case any internal state it's tracking
     /// needs to be recomputed during these transitions.</p>
     ///
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
     ///
     ///  <li> <seealso cref="#setBottom"/> this method is called by
     ///       <seealso cref="FieldValueHitQueue"/> to notify the
-    ///       FieldComparator of the current weakest ("bottom")
+    ///       FieldComparer of the current weakest ("bottom")
     ///       slot.  Note that this slot may not hold the weakest
     ///       value according to your comparator, in cases where
     ///       your comparator is not the primary one (ie, is only
@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
     ///
     ///  <li> <seealso cref="#setTopValue"/> this method is called by
     ///       <seealso cref="TopFieldCollector"/> to notify the
-    ///       FieldComparator of the top most value, which is
+    ///       FieldComparer of the top most value, which is
     ///       used by future calls to <seealso cref="#compareTop"/>.
     ///
     ///  <li> <seealso cref="#compareBottom"/> Compare a new hit (docID)
@@ -91,8 +91,7 @@ namespace Lucene.Net.Search
     ///
     /// @lucene.experimental
     /// </summary>
-     // LUCENENET TODO: Rename FieldComparer ?
-    public abstract class FieldComparator<T> : FieldComparator
+    public abstract class FieldComparer<T> : FieldComparer
     {
         /// <summary>
         /// Compare hit at slot1 with hit at slot2.
@@ -174,13 +173,13 @@ namespace Lucene.Net.Search
         ///   comparators can just return "this" to reuse the same
         ///   comparator across segments </returns>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public abstract override FieldComparator SetNextReader(AtomicReaderContext context);
+        public abstract override FieldComparer SetNextReader(AtomicReaderContext context);
 
         /// <summary>
         /// Returns -1 if first is less than second.  Default
         ///  impl to assume the type implements Comparable and
         ///  invoke .compareTo; be sure to override this method if
-        ///  your FieldComparator's type isn't a Comparable or
+        ///  your FieldComparer's type isn't a Comparable or
         ///  if your values may sometimes be null
         /// </summary>
         public virtual int CompareValues(T first, T second)
@@ -211,8 +210,7 @@ namespace Lucene.Net.Search
 
     // .NET Port: Using a non-generic class here so that we avoid having to use the
     // type parameter to access these nested types. Also moving non-generic methods here for casting without generics.
-    // LUCENENET TODO: Rename FieldComparer ?
-    public abstract class FieldComparator
+    public abstract class FieldComparer
     {
         public abstract int CompareValues(object first, object second);
 
@@ -297,7 +295,7 @@ namespace Lucene.Net.Search
         ///   comparators can just return "this" to reuse the same
         ///   comparator across segments </returns>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public abstract FieldComparator SetNextReader(AtomicReaderContext context);
+        public abstract FieldComparer SetNextReader(AtomicReaderContext context);
 
         /// <summary>
         /// Sets the Scorer to use in case a document's score is
@@ -319,23 +317,22 @@ namespace Lucene.Net.Search
         public abstract IComparable Value(int slot); // LUCENENET TODO: Change to this[int slot] ? or GetValue(int slot) ?
 
         /// <summary>
-        /// Base FieldComparator class for numeric types
+        /// Base FieldComparer class for numeric types
         /// </summary>
-         // LUCENENET TODO: Rename NumericComparer ?
-        public abstract class NumericComparator<T> : FieldComparator<T>
+        public abstract class NumericComparer<T> : FieldComparer<T>
             where T : struct
         {
             protected readonly T? m_missingValue;
             protected readonly string m_field;
             protected IBits m_docsWithField;
 
-            public NumericComparator(string field, T? missingValue)
+            public NumericComparer(string field, T? missingValue)
             {
                 this.m_field = field;
                 this.m_missingValue = missingValue;
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
                 if (m_missingValue != null)
                 {
@@ -358,9 +355,8 @@ namespace Lucene.Net.Search
         /// Parses field's values as byte (using {@link
         ///  FieldCache#getBytes} and sorts by ascending value
         /// </summary>
-         // LUCENENET TODO: Rename ByteComparer ?
         [Obsolete, CLSCompliant(false)] // LUCENENET NOTE: marking non-CLS compliant because of sbyte - it is obsolete, anyway
-        public sealed class ByteComparator : NumericComparator<sbyte>
+        public sealed class ByteComparer : NumericComparer<sbyte>
         {
             private readonly sbyte[] values;
             private readonly FieldCache.IByteParser parser; 
@@ -368,7 +364,7 @@ namespace Lucene.Net.Search
             private sbyte bottom;
             private sbyte topValue;
 
-            internal ByteComparator(int numHits, string field, FieldCache.IParser parser, sbyte? missingValue)
+            internal ByteComparer(int numHits, string field, FieldCache.IParser parser, sbyte? missingValue)
                 : base(field, missingValue)
             {
                 values = new sbyte[numHits];
@@ -406,7 +402,7 @@ namespace Lucene.Net.Search
                 values[slot] = v2;
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
@@ -447,8 +443,7 @@ namespace Lucene.Net.Search
         /// Parses field's values as double (using {@link
         ///  FieldCache#getDoubles} and sorts by ascending value
         /// </summary>
-         // LUCENENET TODO: Rename DoubleComparer ?
-        public sealed class DoubleComparator : NumericComparator<double>
+        public sealed class DoubleComparer : NumericComparer<double>
         {
             private readonly double[] values;
             private readonly FieldCache.IDoubleParser parser;
@@ -456,7 +451,7 @@ namespace Lucene.Net.Search
             private double bottom;
             private double topValue;
 
-            internal DoubleComparator(int numHits, string field, FieldCache.IParser parser, double? missingValue)
+            internal DoubleComparer(int numHits, string field, FieldCache.IParser parser, double? missingValue)
                 : base(field, missingValue)
             {
                 values = new double[numHits];
@@ -494,7 +489,7 @@ namespace Lucene.Net.Search
                 values[slot] = v2;
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
@@ -534,8 +529,8 @@ namespace Lucene.Net.Search
         /// Parses field's values as float (using {@link
         ///  FieldCache#getFloats} and sorts by ascending value
         /// </summary>
-         // LUCENENET TODO: Rename SingleComparator ? or SingleComparer ?
-        public sealed class FloatComparator : NumericComparator<float>
+         // LUCENENET TODO: Rename SingleComparer ?
+        public sealed class FloatComparer : NumericComparer<float>
         {
             private readonly float[] values;
             private readonly FieldCache.IFloatParser parser;
@@ -543,7 +538,7 @@ namespace Lucene.Net.Search
             private float bottom;
             private float topValue;
 
-            internal FloatComparator(int numHits, string field, FieldCache.IParser parser, float? missingValue)
+            internal FloatComparer(int numHits, string field, FieldCache.IParser parser, float? missingValue)
                 : base(field, missingValue)
             {
                 values = new float[numHits];
@@ -582,7 +577,7 @@ namespace Lucene.Net.Search
                 values[slot] = v2;
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
@@ -622,9 +617,9 @@ namespace Lucene.Net.Search
         /// Parses field's values as short (using {@link
         ///  FieldCache#getShorts} and sorts by ascending value
         /// </summary>
-         // LUCENENET TODO: Rename Int16Comparator ? or Int16Comparer ?
+         // LUCENENET TODO: Rename Int16Comparer ?
         [Obsolete]
-        public sealed class ShortComparator : NumericComparator<short>
+        public sealed class ShortComparer : NumericComparer<short>
         {
             private readonly short[] values;
             private readonly FieldCache.IShortParser parser;
@@ -632,7 +627,7 @@ namespace Lucene.Net.Search
             private short bottom;
             private short topValue;
 
-            internal ShortComparator(int numHits, string field, FieldCache.IParser parser, short? missingValue)
+            internal ShortComparer(int numHits, string field, FieldCache.IParser parser, short? missingValue)
                 : base(field, missingValue)
             {
                 values = new short[numHits];
@@ -672,7 +667,7 @@ namespace Lucene.Net.Search
                 values[slot] = v2;
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
@@ -712,8 +707,8 @@ namespace Lucene.Net.Search
         /// Parses field's values as int (using {@link
         ///  FieldCache#getInts} and sorts by ascending value
         /// </summary>
-         // LUCENENET TODO: Rename Int32Comparator ? or Int32Comparer ?
-        public sealed class IntComparator : NumericComparator<int>
+         // LUCENENET TODO: Rename Int32Comparer ?
+        public sealed class IntComparer : NumericComparer<int>
         {
             private readonly int[] values;
             private readonly FieldCache.IIntParser parser;
@@ -721,7 +716,7 @@ namespace Lucene.Net.Search
             private int bottom; // Value of bottom of queue
             private int topValue;
 
-            internal IntComparator(int numHits, string field, FieldCache.IParser parser, int? missingValue)
+            internal IntComparer(int numHits, string field, FieldCache.IParser parser, int? missingValue)
                 : base(field, missingValue)
             {
                 values = new int[numHits];
@@ -758,7 +753,7 @@ namespace Lucene.Net.Search
                 values[slot] = v2;
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
@@ -798,8 +793,8 @@ namespace Lucene.Net.Search
         /// Parses field's values as long (using {@link
         ///  FieldCache#getLongs} and sorts by ascending value
         /// </summary>
-         // LUCENENET TODO: Rename Int64Comparator ? Or Int64Comparer ?
-        public sealed class LongComparator : NumericComparator<long>
+         // LUCENENET TODO: Rename Int64Comparer ?
+        public sealed class LongComparer : NumericComparer<long>
         {
             private readonly long[] values;
             private readonly FieldCache.ILongParser parser;
@@ -807,7 +802,7 @@ namespace Lucene.Net.Search
             private long bottom;
             private long topValue;
 
-            internal LongComparator(int numHits, string field, FieldCache.IParser parser, long? missingValue)
+            internal LongComparer(int numHits, string field, FieldCache.IParser parser, long? missingValue)
                 : base(field, missingValue)
             {
                 values = new long[numHits];
@@ -847,7 +842,7 @@ namespace Lucene.Net.Search
                 values[slot] = v2;
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
@@ -891,15 +886,14 @@ namespace Lucene.Net.Search
         ///  IndexSearcher#search} uses when no <seealso cref="Sort"/> is
         ///  specified).
         /// </summary>
-         // LUCENENET TODO: Rename RelevanceComparer ?
-        public sealed class RelevanceComparator : FieldComparator<float>
+        public sealed class RelevanceComparer : FieldComparer<float>
         {
             private readonly float[] scores;
             private float bottom;
             private Scorer scorer;
             private float topValue;
 
-            internal RelevanceComparator(int numHits)
+            internal RelevanceComparer(int numHits)
             {
                 scores = new float[numHits];
             }
@@ -922,7 +916,7 @@ namespace Lucene.Net.Search
                 Debug.Assert(!float.IsNaN(scores[slot]));
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
                 return this;
             }
@@ -975,15 +969,14 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Sorts by ascending docID </summary>
-         // LUCENENET TODO: Rename DocComparer ?
-        public sealed class DocComparator : FieldComparator<int?>
+        public sealed class DocComparer : FieldComparer<int?>
         {
             private readonly int[] docIDs;
             private int docBase;
             private int bottom;
             private int topValue;
 
-            internal DocComparator(int numHits)
+            internal DocComparer(int numHits)
             {
                 docIDs = new int[numHits];
             }
@@ -1005,7 +998,7 @@ namespace Lucene.Net.Search
                 docIDs[slot] = docBase + doc;
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
                 // TODO: can we "map" our docIDs to the current
                 // reader? saves having to then subtract on every
@@ -1039,16 +1032,15 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Sorts by field's natural Term sort order, using
         ///  ordinals.  this is functionally equivalent to {@link
-        ///  Lucene.Net.Search.FieldComparator.TermValComparator}, but it first resolves the string
+        ///  Lucene.Net.Search.FieldComparer.TermValComparer}, but it first resolves the string
         ///  to their relative ordinal positions (using the index
         ///  returned by <seealso cref="IFieldCache#getTermsIndex"/>), and
         ///  does most comparisons using the ordinals.  For medium
         ///  to large results, this comparator will be much faster
-        ///  than <seealso cref="Lucene.Net.Search.FieldComparator.TermValComparator"/>.  For very small
+        ///  than <seealso cref="Lucene.Net.Search.FieldComparer.TermValComparer"/>.  For very small
         ///  result sets it may be slower.
         /// </summary>
-         // LUCENENET TODO: Rename TermOrdValComparer ?
-        public class TermOrdValComparator : FieldComparator<BytesRef>
+        public class TermOrdValComparer : FieldComparer<BytesRef>
         {
             /* Ords for each slot.
 	            @lucene.internal */
@@ -1115,7 +1107,7 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Creates this, sorting missing values first. </summary>
-            public TermOrdValComparator(int numHits, string field)
+            public TermOrdValComparer(int numHits, string field)
                 : this(numHits, field, false)
             {
             }
@@ -1125,7 +1117,7 @@ namespace Lucene.Net.Search
             ///  are sorted.  Pass sortMissingLast=true to put
             ///  missing values at the end.
             /// </summary>
-            public TermOrdValComparator(int numHits, string field, bool sortMissingLast)
+            public TermOrdValComparer(int numHits, string field, bool sortMissingLast)
             {
                 ords = new int[numHits];
                 values = new BytesRef[numHits];
@@ -1221,7 +1213,7 @@ namespace Lucene.Net.Search
                 return FieldCache.DEFAULT.GetTermsIndex((context.AtomicReader), field);
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
                 termsIndex = GetSortedDocValues(context, field);
                 currentReaderGen++;
@@ -1362,8 +1354,7 @@ namespace Lucene.Net.Search
         ///  very fast for very small results sets.
         /// </summary>
         // TODO: should we remove this?  who really uses it?
-        // LUCENENET TODO: Rename TermValComparer ?
-        public sealed class TermValComparator : FieldComparator<BytesRef>
+        public sealed class TermValComparer : FieldComparer<BytesRef>
         {
             // sentinels, just used internally in this comparator
             private static readonly byte[] MISSING_BYTES = new byte[0];
@@ -1382,7 +1373,7 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Sole constructor. </summary>
-            internal TermValComparator(int numHits, string field)
+            internal TermValComparer(int numHits, string field)
             {
                 values = new BytesRef[numHits];
                 this.field = field;
@@ -1425,7 +1416,7 @@ namespace Lucene.Net.Search
                 SetMissingBytes(doc, values[slot]);
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
                 docTerms = FieldCache.DEFAULT.GetTerms((context.AtomicReader), field, true);
                 docsWithField = FieldCache.DEFAULT.GetDocsWithField((context.AtomicReader), field);

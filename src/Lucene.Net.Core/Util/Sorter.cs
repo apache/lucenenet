@@ -36,7 +36,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Compare entries found in slots <code>i</code> and <code>j</code>.
         ///  The contract for the returned value is the same as
-        ///  <seealso cref="Comparator#compare(Object, Object)"/>.
+        ///  <seealso cref="Comparer#compare(Object, Object)"/>.
         /// </summary>
         protected abstract int Compare(int i, int j);
 

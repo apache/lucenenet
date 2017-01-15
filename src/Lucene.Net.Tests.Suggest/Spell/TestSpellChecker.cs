@@ -139,11 +139,11 @@ namespace Lucene.Net.Search.Spell
         }
 
         [Test]
-        public void TestComparator()
+        public void TestComparer()
         {
             using (Directory compIdx = NewDirectory())
             {
-                SpellChecker compareSP = new SpellCheckerMock(compIdx, new LevensteinDistance(), new SuggestWordFrequencyComparator());
+                SpellChecker compareSP = new SpellCheckerMock(compIdx, new LevensteinDistance(), new SuggestWordFrequencyComparer());
                 try
                 {
                     using (IndexReader r = DirectoryReader.Open(userindex))
@@ -172,7 +172,7 @@ namespace Lucene.Net.Search.Spell
         {
             using (Directory compIdx = NewDirectory())
             {
-                SpellChecker compareSP = new SpellCheckerMock(compIdx, new LevensteinDistance(), new SuggestWordFrequencyComparator());
+                SpellChecker compareSP = new SpellCheckerMock(compIdx, new LevensteinDistance(), new SuggestWordFrequencyComparer());
                 try
                 {
                     using (IndexReader r = DirectoryReader.Open(userindex))

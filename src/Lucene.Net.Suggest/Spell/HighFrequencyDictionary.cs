@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Spell
                 return null;
             }
 
-            public IComparer<BytesRef> Comparator
+            public IComparer<BytesRef> Comparer
             {
                 get
                 {
@@ -123,7 +123,7 @@ namespace Lucene.Net.Search.Spell
                     }
                     else
                     {
-                        return termsEnum.Comparator;
+                        return termsEnum.Comparer;
                     }
                 }
             }

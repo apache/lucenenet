@@ -69,21 +69,21 @@ namespace Lucene.Net.Util
         {
         }
 
-        /// <returns> a Comparator over versioned strings such as X.YY.Z
+        /// <returns> a Comparer over versioned strings such as X.YY.Z
         /// @lucene.internal </returns>
-        public static IComparer<string> VersionComparator // LUCENENET TODO: rename VersionComparer ?
+        public static IComparer<string> VersionComparer
         {
             get
             {
-                return versionComparator;
+                return versionComparer;
             }
         }
 
-        private static readonly IComparer<string> versionComparator = new ComparatorAnonymousInnerClassHelper();
+        private static readonly IComparer<string> versionComparer = new ComparerAnonymousInnerClassHelper();
 
-        private sealed class ComparatorAnonymousInnerClassHelper : IComparer<string>
+        private sealed class ComparerAnonymousInnerClassHelper : IComparer<string>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparerAnonymousInnerClassHelper()
             {
             }
 

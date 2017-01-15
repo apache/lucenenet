@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
         public override TopDocs Rescore(IndexSearcher searcher, TopDocs firstPassTopDocs, int topN)
         {
             ScoreDoc[] hits = (ScoreDoc[])firstPassTopDocs.ScoreDocs.Clone();
-            Array.Sort(hits, new ComparatorAnonymousInnerClassHelper(this));
+            Array.Sort(hits, new ComparerAnonymousInnerClassHelper(this));
 
             IList<AtomicReaderContext> leaves = searcher.IndexReader.Leaves;
 
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
             // TODO: we should do a partial sort (of only topN)
             // instead, but typically the number of hits is
             // smallish:
-            Array.Sort(hits, new ComparatorAnonymousInnerClassHelper2(this));
+            Array.Sort(hits, new ComparerAnonymousInnerClassHelper2(this));
 
             if (topN < hits.Length)
             {
@@ -123,11 +123,11 @@ namespace Lucene.Net.Search
             return new TopDocs(firstPassTopDocs.TotalHits, hits, hits[0].Score);
         }
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<ScoreDoc>
+        private class ComparerAnonymousInnerClassHelper : IComparer<ScoreDoc>
         {
             private readonly QueryRescorer outerInstance;
 
-            public ComparatorAnonymousInnerClassHelper(QueryRescorer outerInstance)
+            public ComparerAnonymousInnerClassHelper(QueryRescorer outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -138,11 +138,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class ComparatorAnonymousInnerClassHelper2 : IComparer<ScoreDoc>
+        private class ComparerAnonymousInnerClassHelper2 : IComparer<ScoreDoc>
         {
             private readonly QueryRescorer outerInstance;
 
-            public ComparatorAnonymousInnerClassHelper2(QueryRescorer outerInstance)
+            public ComparerAnonymousInnerClassHelper2(QueryRescorer outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

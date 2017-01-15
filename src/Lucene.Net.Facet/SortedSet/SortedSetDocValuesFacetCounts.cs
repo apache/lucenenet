@@ -305,15 +305,15 @@ namespace Lucene.Net.Facet.SortedSet
 
             var resultArray = results.ToList();
             // Sort by highest count:
-            resultArray.Sort(new ComparatorAnonymousInnerClassHelper(this));
+            resultArray.Sort(new ComparerAnonymousInnerClassHelper(this));
             return resultArray;
         }
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<FacetResult>
+        private class ComparerAnonymousInnerClassHelper : IComparer<FacetResult>
         {
             private readonly SortedSetDocValuesFacetCounts outerInstance;
 
-            public ComparatorAnonymousInnerClassHelper(SortedSetDocValuesFacetCounts outerInstance)
+            public ComparerAnonymousInnerClassHelper(SortedSetDocValuesFacetCounts outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

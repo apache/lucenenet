@@ -83,7 +83,7 @@ namespace Lucene.Net.Join
         private readonly IDictionary<Query, int?> joinQueryID = new Dictionary<Query, int?>();
         private readonly int numParentHits;
         private readonly FieldValueHitQueue<OneGroup> queue;
-        private readonly FieldComparator[] comparators;
+        private readonly FieldComparer[] comparators;
         private readonly int[] reverseMul;
         private readonly int compEnd;
         private readonly bool trackMaxScore;
@@ -119,7 +119,7 @@ namespace Lucene.Net.Join
             this.trackScores = trackScores;
             this.numParentHits = numParentHits;
             queue = FieldValueHitQueue.Create<OneGroup>(sort.GetSort(), numParentHits);
-            comparators = queue.GetComparators();
+            comparators = queue.GetComparers();
             reverseMul = queue.GetReverseMul();
             compEnd = comparators.Length - 1;
         }
@@ -309,7 +309,7 @@ namespace Lucene.Net.Join
             docBase = context.DocBase;
             for (int compIDX = 0; compIDX < comparators.Length; compIDX++)
             {
-                queue.SetComparator(compIDX, comparators[compIDX].SetNextReader(context));
+                queue.SetComparer(compIDX, comparators[compIDX].SetNextReader(context));
             }
         }
 

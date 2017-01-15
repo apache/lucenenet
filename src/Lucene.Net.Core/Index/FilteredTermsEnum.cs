@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
     /// Abstract class for enumerating a subset of all terms.
     ///
     /// <p>Term enumerations are always ordered by
-    /// <seealso cref="#getComparator"/>.  Each term in the enumeration is
+    /// <seealso cref="#getComparer"/>.  Each term in the enumeration is
     /// greater than all that precede it.</p>
     /// <p><em>Please note:</em> Consumers of this enum cannot
     /// call {@code seek()}, it is forward only; it throws
@@ -150,11 +150,11 @@ namespace Lucene.Net.Index
             get { return tenum.Term; }
         }
 
-        public override IComparer<BytesRef> Comparator
+        public override IComparer<BytesRef> Comparer
         {
             get
             {
-                return tenum.Comparator;
+                return tenum.Comparer;
             }
         }
 
@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
                     BytesRef t = NextSeekTerm(actualTerm);
                     //System.out.println("  seek to t=" + (t == null ? "null" : t.utf8ToString()) + " tenum=" + tenum);
                     // Make sure we always seek forward:
-                    Debug.Assert(actualTerm == null || t == null || Comparator.Compare(t, actualTerm) > 0, "curTerm=" + actualTerm + " seekTerm=" + t);
+                    Debug.Assert(actualTerm == null || t == null || Comparer.Compare(t, actualTerm) > 0, "curTerm=" + actualTerm + " seekTerm=" + t);
                     if (t == null || tenum.SeekCeil(t) == SeekStatus.END)
                     {
                         // no more terms to seek to or enum exhausted

@@ -59,9 +59,9 @@ namespace Lucene.Net.Search.Spell
             return wrapped.Next();
         }
 
-        public virtual IComparer<BytesRef> Comparator
+        public virtual IComparer<BytesRef> Comparer
         {
-            get { return wrapped.Comparator; }
+            get { return wrapped.Comparer; }
         }
     }
 }

@@ -53,11 +53,11 @@ namespace Lucene.Net.Codecs.ramonly
         // For fun, test that we can override how terms are
         // sorted, and basic things still work -- this comparator
         // sorts in reversed unicode code point order:
-        private static readonly IComparer<BytesRef> reverseUnicodeComparator = new ComparatorAnonymousInnerClassHelper();
+        private static readonly IComparer<BytesRef> reverseUnicodeComparer = new ComparerAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<BytesRef>
+        private class ComparerAnonymousInnerClassHelper : IComparer<BytesRef>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparerAnonymousInnerClassHelper()
             {
             }
 
@@ -202,11 +202,11 @@ namespace Lucene.Net.Codecs.ramonly
                 return new RAMTermsEnum(this);
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {
-                    return reverseUnicodeComparator;
+                    return reverseUnicodeComparer;
                 }
             }
 
@@ -333,7 +333,7 @@ namespace Lucene.Net.Codecs.ramonly
                 return PostingsWriter;
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {
@@ -409,7 +409,7 @@ namespace Lucene.Net.Codecs.ramonly
                 this.RamField = field;
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {

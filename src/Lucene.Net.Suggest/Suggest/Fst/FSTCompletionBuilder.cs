@@ -151,7 +151,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <summary>
         /// Creates an <see cref="FSTCompletion"/> with default options: 10 buckets, exact match
         /// promoted to first position and <see cref="InMemorySorter"/> with a comparator obtained from
-        /// <see cref="BytesRef.UTF8SortedAsUnicodeComparator"/>.
+        /// <see cref="BytesRef.UTF8SortedAsUnicodeComparer"/>.
         /// </summary>
         public FSTCompletionBuilder()
             : this(DEFAULT_BUCKETS, new InMemorySorter(BytesRef.UTF8SortedAsUnicodeComparer), int.MaxValue)

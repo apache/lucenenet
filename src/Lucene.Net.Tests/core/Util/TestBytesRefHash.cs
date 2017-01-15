@@ -191,7 +191,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Test method for
-        /// <seealso cref="Lucene.Net.Util.BytesRefHash#sort(java.util.Comparator)"/>.
+        /// <seealso cref="Lucene.Net.Util.BytesRefHash#sort(java.util.Comparer)"/>.
         /// </summary>
         [Test]
         public virtual void TestSort()

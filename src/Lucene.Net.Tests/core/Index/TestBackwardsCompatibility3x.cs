@@ -792,7 +792,7 @@ namespace Lucene.Net.Index
             ir.Dispose();
             currentDir.Dispose();
 
-            IComparer<string> comparator = StringHelper.VersionComparator;
+            IComparer<string> comparator = StringHelper.VersionComparer;
 
             // now check all the old indexes, their version should be < the current version
             foreach (string name in OldNames)

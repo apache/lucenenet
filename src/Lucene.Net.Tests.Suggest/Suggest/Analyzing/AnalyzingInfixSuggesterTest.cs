@@ -593,7 +593,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return error.StackTrace;
         }
 
-        internal class TestRandomNRTComparator : IComparer<Input>
+        internal class TestRandomNRTComparer : IComparer<Input>
         {
             public int Compare(Input a, Input b)
             {
@@ -818,7 +818,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         }
                     }
 
-                    expected.Sort(new TestRandomNRTComparator());
+                    expected.Sort(new TestRandomNRTComparer());
 
                     if (expected.Any())
                     {

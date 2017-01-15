@@ -194,21 +194,21 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private class GroupComparator<T> : IComparer<MergedGroup<T>>
+        private class GroupComparer<T> : IComparer<MergedGroup<T>>
         {
 
-            public readonly FieldComparator[] comparators;
+            public readonly FieldComparer[] comparators;
             public readonly int[] reversed;
 
-            public GroupComparator(Sort groupSort)
+            public GroupComparer(Sort groupSort)
             {
                 SortField[] sortFields = groupSort.GetSort();
-                comparators = new FieldComparator[sortFields.Length];
+                comparators = new FieldComparer[sortFields.Length];
                 reversed = new int[sortFields.Length];
                 for (int compIDX = 0; compIDX < sortFields.Length; compIDX++)
                 {
                     SortField sortField = sortFields[compIDX];
-                    comparators[compIDX] = sortField.GetComparator(1, compIDX);
+                    comparators[compIDX] = sortField.GetComparer(1, compIDX);
                     reversed[compIDX] = sortField.IsReverse ? -1 : 1;
                 }
             }
@@ -242,13 +242,13 @@ namespace Lucene.Net.Search.Grouping
         private class GroupMerger<T>
         {
 
-            private readonly GroupComparator<T> groupComp;
+            private readonly GroupComparer<T> groupComp;
             private readonly TreeSet<MergedGroup<T>> queue;
             private readonly IDictionary<T, MergedGroup<T>> groupsSeen;
 
             public GroupMerger(Sort groupSort)
             {
-                groupComp = new GroupComparator<T>(groupSort);
+                groupComp = new GroupComparer<T>(groupSort);
                 queue = new TreeSet<MergedGroup<T>>(groupComp);
                 groupsSeen = new HashMap<T, MergedGroup<T>>();
             }

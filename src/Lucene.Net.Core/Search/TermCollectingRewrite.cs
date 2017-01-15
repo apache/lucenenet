@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
                 }
 
                 // Check comparator compatibility:
-                IComparer<BytesRef> newTermComp = termsEnum.Comparator;
+                IComparer<BytesRef> newTermComp = termsEnum.Comparer;
                 if (lastTermComp != null && newTermComp != null && newTermComp != lastTermComp)
                 {
                     throw new Exception("term comparator should not change between segments: " + lastTermComp + " != " + newTermComp);

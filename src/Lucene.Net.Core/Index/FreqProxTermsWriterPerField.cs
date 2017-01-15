@@ -400,7 +400,7 @@ namespace Lucene.Net.Index
             }
 
             TermsConsumer termsConsumer = consumer.AddField(fieldInfo);
-            IComparer<BytesRef> termComp = termsConsumer.Comparator;
+            IComparer<BytesRef> termComp = termsConsumer.Comparer;
 
             // CONFUSING: this.indexOptions holds the index options
             // that were current when we first saw this field.  But

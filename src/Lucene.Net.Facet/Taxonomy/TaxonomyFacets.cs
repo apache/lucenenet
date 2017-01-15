@@ -29,11 +29,11 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public abstract class TaxonomyFacets : Facets
     {
-        private static readonly IComparer<FacetResult> BY_VALUE_THEN_DIM = new ComparatorAnonymousInnerClassHelper();
+        private static readonly IComparer<FacetResult> BY_VALUE_THEN_DIM = new ComparerAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<FacetResult>
+        private class ComparerAnonymousInnerClassHelper : IComparer<FacetResult>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparerAnonymousInnerClassHelper()
             {
             }
 

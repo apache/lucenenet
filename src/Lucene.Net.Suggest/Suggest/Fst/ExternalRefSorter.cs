@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 input = null;
             }
 
-            return new ByteSequenceIterator(new OfflineSorter.ByteSequencesReader(sorted), sort.Comparator);
+            return new ByteSequenceIterator(new OfflineSorter.ByteSequencesReader(sorted), sort.Comparer);
         }
 
         private void CloseWriter()
@@ -77,11 +77,11 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
         }
 
-        public IComparer<BytesRef> Comparator
+        public IComparer<BytesRef> Comparer
         {
             get
             {
-                return sort.Comparator;
+                return sort.Comparer;
             }
         }
 
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 }
             }
 
-            public virtual IComparer<BytesRef> Comparator
+            public virtual IComparer<BytesRef> Comparer
             {
                 get
                 {

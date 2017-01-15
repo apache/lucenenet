@@ -60,7 +60,7 @@ namespace Lucene.Net.Search.Suggest
         /// </summary>
         public SortedInputIterator(IInputIterator source, IComparer<BytesRef> comparator)
         {
-            this.tieBreakByCostComparator = new ComparatorAnonymousInnerClassHelper(this);
+            this.tieBreakByCostComparer = new ComparerAnonymousInnerClassHelper(this);
             this.hasPayloads = source.HasPayloads;
             this.hasContexts = source.HasContexts;
             this.source = source;
@@ -133,11 +133,11 @@ namespace Lucene.Net.Search.Suggest
             get { return contexts; }
         }
 
-        public virtual IComparer<BytesRef> Comparator
+        public virtual IComparer<BytesRef> Comparer
         {
             get
             {
-                return tieBreakByCostComparator;
+                return tieBreakByCostComparer;
             }
         }
 
@@ -148,12 +148,12 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Sortes by BytesRef (ascending) then cost (ascending). </summary>
-        private readonly IComparer<BytesRef> tieBreakByCostComparator;
+        private readonly IComparer<BytesRef> tieBreakByCostComparer;
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<BytesRef>
+        private class ComparerAnonymousInnerClassHelper : IComparer<BytesRef>
         {
             private readonly SortedInputIterator outerInstance;
-            public ComparatorAnonymousInnerClassHelper(SortedInputIterator outerInstance)
+            public ComparerAnonymousInnerClassHelper(SortedInputIterator outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search.Suggest
                     outerInstance.DecodeContexts(leftScratch, input);
                     outerInstance.DecodeContexts(rightScratch, input);
                 }
-                // LUCENENET NOTE: outerInstance.Comparator != outerInstance.comparator!!
+                // LUCENENET NOTE: outerInstance.Comparer != outerInstance.comparator!!
                 int cmp = outerInstance.comparator.Compare(leftScratch, rightScratch);
                 if (cmp != 0)
                 {
@@ -226,7 +226,7 @@ namespace Lucene.Net.Search.Suggest
                     Encode(writer, output, buffer, spare, source.Payload, source.Contexts, source.Weight);
                 }
                 writer.Dispose();
-                (new OfflineSorter(tieBreakByCostComparator)).Sort(tempInput, tempSorted);
+                (new OfflineSorter(tieBreakByCostComparer)).Sort(tempInput, tempSorted);
                 var reader = new OfflineSorter.ByteSequencesReader(tempSorted);
                 success = true;
                 return reader;

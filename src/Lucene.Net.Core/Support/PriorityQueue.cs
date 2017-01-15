@@ -617,7 +617,7 @@ namespace Lucene.Net.Support
         private void SiftUp(int k, T key)
         {
             if (comparer != null)
-                SiftUpUsingComparator(k, key);
+                SiftUpUsingComparer(k, key);
             else
                 SiftUpComparable(k, key);
         }
@@ -636,7 +636,7 @@ namespace Lucene.Net.Support
             queue[k] = key;
         }
 
-        private void SiftUpUsingComparator(int k, T x)
+        private void SiftUpUsingComparer(int k, T x)
         {
             while (k > 0)
             {
@@ -660,7 +660,7 @@ namespace Lucene.Net.Support
         private void SiftDown(int k, T x)
         {
             if (comparer != null)
-                SiftDownUsingComparator(k, x);
+                SiftDownUsingComparer(k, x);
             else
                 SiftDownComparable(k, x);
         }
@@ -684,7 +684,7 @@ namespace Lucene.Net.Support
             queue[k] = key;
         }
 
-        private void SiftDownUsingComparator(int k, T x)
+        private void SiftDownUsingComparer(int k, T x)
         {
             int half = (int)((uint)Count >> 1);
             while (k < half)

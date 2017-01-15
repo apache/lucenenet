@@ -1947,7 +1947,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public void AssertTermsStatisticsEquals(string info, Terms leftTerms, Terms rightTerms)
         {
-            Debug.Assert(leftTerms.Comparator == rightTerms.Comparator);
+            Debug.Assert(leftTerms.Comparer == rightTerms.Comparer);
             if (leftTerms.DocCount != -1 && rightTerms.DocCount != -1)
             {
                 Assert.AreEqual(leftTerms.DocCount, rightTerms.DocCount, info);
@@ -2846,11 +2846,11 @@ namespace Lucene.Net.Util
         }
     }*/
 
-    internal class ComparatorAnonymousInnerClassHelper : System.Collections.IComparer
+    internal class ComparerAnonymousInnerClassHelper : System.Collections.IComparer
     {
         private readonly LuceneTestCase outerInstance;
 
-        public ComparatorAnonymousInnerClassHelper(LuceneTestCase outerInstance)
+        public ComparerAnonymousInnerClassHelper(LuceneTestCase outerInstance)
         {
             this.outerInstance = outerInstance;
         }

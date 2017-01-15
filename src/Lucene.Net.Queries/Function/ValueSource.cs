@@ -108,34 +108,34 @@ namespace Lucene.Net.Queries.Function
             {
                 var context = NewContext(searcher);
                 outerInstance.CreateWeight(context, searcher);
-                return new SortField(Field, new ValueSourceComparatorSource(outerInstance, context), IsReverse);
+                return new SortField(Field, new ValueSourceComparerSource(outerInstance, context), IsReverse);
             }
         }
 
-        internal class ValueSourceComparatorSource : FieldComparatorSource
+        internal class ValueSourceComparerSource : FieldComparerSource
         {
             private readonly ValueSource outerInstance;
 
             internal readonly IDictionary context;
 
-            public ValueSourceComparatorSource(ValueSource outerInstance, IDictionary context)
+            public ValueSourceComparerSource(ValueSource outerInstance, IDictionary context)
             {
                 this.outerInstance = outerInstance;
                 this.context = context;
             }
 
-            public override FieldComparator NewComparator(string fieldname, int numHits, int sortPos, bool reversed)
+            public override FieldComparer NewComparer(string fieldname, int numHits, int sortPos, bool reversed)
             {
-                return new ValueSourceComparator(outerInstance, context, numHits);
+                return new ValueSourceComparer(outerInstance, context, numHits);
             }
         }
 
         /// <summary>
-        /// Implement a <seealso cref="org.apache.lucene.search.FieldComparator"/> that works
+        /// Implement a <seealso cref="org.apache.lucene.search.FieldComparer"/> that works
         /// off of the <seealso cref="FunctionValues"/> for a ValueSource
-        /// instead of the normal Lucene FieldComparator that works off of a FieldCache.
+        /// instead of the normal Lucene FieldComparer that works off of a FieldCache.
         /// </summary>
-        internal class ValueSourceComparator : FieldComparator<double?>
+        internal class ValueSourceComparer : FieldComparer<double?>
         {
             private readonly ValueSource outerInstance;
 
@@ -145,7 +145,7 @@ namespace Lucene.Net.Queries.Function
             internal readonly IDictionary fcontext;
             internal double topValue;
 
-            internal ValueSourceComparator(ValueSource outerInstance, IDictionary fcontext, int numHits)
+            internal ValueSourceComparer(ValueSource outerInstance, IDictionary fcontext, int numHits)
             {
                 this.outerInstance = outerInstance;
                 this.fcontext = fcontext;
@@ -167,7 +167,7 @@ namespace Lucene.Net.Queries.Function
                 values[slot] = docVals.DoubleVal(doc);
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
                 docVals = outerInstance.GetValues(fcontext, context);
                 return this;

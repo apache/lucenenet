@@ -322,11 +322,11 @@ namespace Lucene.Net.Util.Fst
         /// Compares first by the provided comparator, and then
         ///  tie breaks by path.input.
         /// </summary>
-        private class TieBreakByInputComparator<T> : IComparer<FSTPath<T>>
+        private class TieBreakByInputComparer<T> : IComparer<FSTPath<T>>
         {
             internal readonly IComparer<T> comparator;
 
-            public TieBreakByInputComparator(IComparer<T> comparator)
+            public TieBreakByInputComparer(IComparer<T> comparator)
             {
                 this.comparator = comparator;
             }
@@ -378,7 +378,7 @@ namespace Lucene.Net.Util.Fst
                 this.maxQueueDepth = maxQueueDepth;
                 this.comparator = comparator;
 
-                queue = new SortedSet<FSTPath<T>>(new TieBreakByInputComparator<T>(comparator));
+                queue = new SortedSet<FSTPath<T>>(new TieBreakByInputComparer<T>(comparator));
             }
 
             // If back plus this arc is competitive then add to queue:

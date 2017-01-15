@@ -311,7 +311,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 _longsSize = longsSize;
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get { return BytesRef.UTF8SortedAsUnicodeComparer; }
             }
@@ -433,7 +433,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _longs = new long[_fieldReader._longsSize];
                 }
 
-                public override IComparer<BytesRef> Comparator
+                public override IComparer<BytesRef> Comparer
                 {
                     get { return BytesRef.UTF8SortedAsUnicodeComparer; }
                 }

@@ -280,7 +280,7 @@ namespace Lucene.Net.Util
 
         /// @deprecated this comparator is only a transition mechanism
         [Obsolete("this comparator is only a transition mechanism")]
-        private static readonly IComparer<CharsRef> Utf16SortedAsUTF8SortOrder = new UTF16SortedAsUTF8Comparator();
+        private static readonly IComparer<CharsRef> Utf16SortedAsUTF8SortOrder = new Utf16SortedAsUTF8Comparer();
 
         /// @deprecated this comparator is only a transition mechanism
         [Obsolete("this comparator is only a transition mechanism")]
@@ -294,10 +294,10 @@ namespace Lucene.Net.Util
 
         /// @deprecated this comparator is only a transition mechanism
         [Obsolete("this comparator is only a transition mechanism")]
-        private class UTF16SortedAsUTF8Comparator : IComparer<CharsRef>
+        private class Utf16SortedAsUTF8Comparer : IComparer<CharsRef>
         {
             // Only singleton
-            internal UTF16SortedAsUTF8Comparator()
+            internal Utf16SortedAsUTF8Comparer()
             {
             }
 

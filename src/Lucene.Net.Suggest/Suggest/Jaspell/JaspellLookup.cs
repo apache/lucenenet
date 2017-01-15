@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             {
                 throw new ArgumentException("this suggester doesn't support payloads");
             }
-            if (tfit.Comparator != null)
+            if (tfit.Comparer != null)
             {
                 // make sure it's unsorted
                 // WTF - this could result in yet another sorted iteration....

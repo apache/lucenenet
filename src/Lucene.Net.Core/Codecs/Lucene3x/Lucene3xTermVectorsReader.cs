@@ -421,7 +421,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {
@@ -504,15 +504,15 @@ namespace Lucene.Net.Codecs.Lucene3x
                 ReadVectors();
                 if (unicodeSortOrder)
                 {
-                    Array.Sort(termAndPostings, new ComparatorAnonymousInnerClassHelper(this));
+                    Array.Sort(termAndPostings, new ComparerAnonymousInnerClassHelper(this));
                 }
             }
 
-            private class ComparatorAnonymousInnerClassHelper : IComparer<TermAndPostings>
+            private class ComparerAnonymousInnerClassHelper : IComparer<TermAndPostings>
             {
                 private readonly TVTermsEnum outerInstance;
 
-                public ComparatorAnonymousInnerClassHelper(TVTermsEnum outerInstance)
+                public ComparerAnonymousInnerClassHelper(TVTermsEnum outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }
@@ -579,7 +579,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // NOTE: slow!  (linear scan)
             public override SeekStatus SeekCeil(BytesRef text)
             {
-                IComparer<BytesRef> comparator = Comparator;
+                IComparer<BytesRef> comparator = Comparer;
                 for (int i = 0; i < numTerms; i++)
                 {
                     int cmp = comparator.Compare(text, termAndPostings[i].Term);
@@ -667,7 +667,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return docsAndPositionsEnum;
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {

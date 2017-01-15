@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
             throw new System.NotSupportedException();
         }
 
-        public override IComparer<BytesRef> Comparator
+        public override IComparer<BytesRef> Comparer
         {
             get
             {

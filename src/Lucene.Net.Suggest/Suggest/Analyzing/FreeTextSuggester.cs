@@ -200,7 +200,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return fst.SizeInBytes();
         }
 
-        private class AnalyzingComparator : IComparer<BytesRef>
+        private class AnalyzingComparer : IComparer<BytesRef>
         {
             private readonly ByteArrayDataInput readerA = new ByteArrayDataInput();
             private readonly ByteArrayDataInput readerB = new ByteArrayDataInput();
@@ -714,7 +714,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                         // Must do num+seen.size() for queue depth because we may
                         // reject up to seen.size() paths in acceptResult():
-                        Util.Fst.Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, num, num + seen.Count, weightComparator, seen, finalLastToken);
+                        Util.Fst.Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, num, num + seen.Count, weightComparer, seen, finalLastToken);
 
                         // since this search is initialized with a single start node 
                         // it is okay to start with an empty input path here
@@ -774,7 +774,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     backoff *= ALPHA;
                 }
 
-                results.Sort(new ComparatorAnonymousInnerClassHelper(this));
+                results.Sort(new ComparerAnonymousInnerClassHelper(this));
 
                 if (results.Count > num)
                 {
@@ -801,10 +801,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 FST<long?> fst,
                 int num,
                 int size,
-                IComparer<long?> weightComparator,
+                IComparer<long?> weightComparer,
                 IEnumerable<BytesRef> seen,
                 BytesRef finalLastToken)
-                : base(fst, num, size, weightComparator)
+                : base(fst, num, size, weightComparer)
             {
                 this.outerInstance = outerInstance;
                 this.seen = seen;
@@ -842,11 +842,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private sealed class ComparatorAnonymousInnerClassHelper : IComparer<Lookup.LookupResult>
+        private sealed class ComparerAnonymousInnerClassHelper : IComparer<Lookup.LookupResult>
         {
             private readonly FreeTextSuggester outerInstance;
 
-            public ComparatorAnonymousInnerClassHelper(FreeTextSuggester outerInstance)
+            public ComparerAnonymousInnerClassHelper(FreeTextSuggester outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -911,11 +911,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return output;
         }
 
-        internal static readonly IComparer<long?> weightComparator = new ComparatorAnonymousInnerClassHelper2();
+        internal static readonly IComparer<long?> weightComparer = new ComparerAnonymousInnerClassHelper2();
 
-        private sealed class ComparatorAnonymousInnerClassHelper2 : IComparer<long?>
+        private sealed class ComparerAnonymousInnerClassHelper2 : IComparer<long?>
         {
-            public ComparatorAnonymousInnerClassHelper2()
+            public ComparerAnonymousInnerClassHelper2()
             {
             }
 

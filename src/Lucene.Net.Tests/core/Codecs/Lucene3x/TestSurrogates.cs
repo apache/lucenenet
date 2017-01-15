@@ -103,15 +103,15 @@ namespace Lucene.Net.Codecs.Lucene3x
             return s;
         }
 
-        private sealed class SortTermAsUTF16Comparator : IComparer<Term>
+        private sealed class SortTermAsUTF16Comparer : IComparer<Term>
         {
-            private static readonly IComparer<BytesRef> LegacyComparator = BytesRef.UTF8SortedAsUTF16Comparer;
+            private static readonly IComparer<BytesRef> LegacyComparer = BytesRef.UTF8SortedAsUTF16Comparer;
 
             public int Compare(Term term1, Term term2)
             {
                 if (term1.Field.Equals(term2.Field))
                 {
-                    return LegacyComparator.Compare(term1.Bytes, term2.Bytes);
+                    return LegacyComparer.Compare(term1.Bytes, term2.Bytes);
                 }
                 else
                 {
@@ -120,7 +120,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        private static readonly SortTermAsUTF16Comparator TermAsUTF16Comparator = new SortTermAsUTF16Comparator();
+        private static readonly SortTermAsUTF16Comparer TermAsUTF16Comparer = new SortTermAsUTF16Comparer();
 
         // single straight enum
         private void DoTestStraightEnum(IList<Term> fieldTerms, IndexReader reader, int uniqueTermCount)
@@ -382,7 +382,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             if (VERBOSE)
             {
-                fieldTerms.Sort(TermAsUTF16Comparator);
+                fieldTerms.Sort(TermAsUTF16Comparer);
 
                 Console.WriteLine("\nTEST: UTF16 order");
                 foreach (Term t in fieldTerms)

@@ -292,7 +292,7 @@ namespace Lucene.Net.Util
             return Utf8SortedAsUnicodeSortOrder.Compare(this, br);
         }
 
-        private static readonly IComparer<BytesRef> Utf8SortedAsUnicodeSortOrder = UTF8SortedAsUnicodeComparator.Instance;
+        private static readonly IComparer<BytesRef> Utf8SortedAsUnicodeSortOrder = Utf8SortedAsUnicodeComparer.Instance;
 
         public static IComparer<BytesRef> UTF8SortedAsUnicodeComparer
         {
@@ -302,43 +302,11 @@ namespace Lucene.Net.Util
             }
         }
 
-        internal class UTF8SortedAsUnicodeComparator : IComparer<BytesRef>
-        {
-            internal static UTF8SortedAsUnicodeComparator Instance = new UTF8SortedAsUnicodeComparator();
-
-            // Only singleton
-            private UTF8SortedAsUnicodeComparator()
-            {
-            }
-
-            public virtual int Compare(BytesRef a, BytesRef b)
-            {
-                var aBytes = a.Bytes;
-                int aUpto = a.Offset;
-                var bBytes = b.Bytes;
-                int bUpto = b.Offset;
-
-                int aStop = aUpto + Math.Min(a.Length, b.Length);
-                while (aUpto < aStop)
-                {
-                    int aByte = aBytes[aUpto++] & 0xff;
-                    int bByte = bBytes[bUpto++] & 0xff;
-
-                    int diff = aByte - bByte;
-                    if (diff != 0)
-                    {
-                        return diff;
-                    }
-                }
-
-                // One is a prefix of the other, or, they are equal:
-                return a.Length - b.Length;
-            }
-        }
+        // LUCENENET NOTE: De-nested Utf8SortedAsUnicodeComparer class to prevent naming conflict
 
         /// @deprecated this comparator is only a transition mechanism
         [Obsolete("this comparator is only a transition mechanism")]
-        private static readonly IComparer<BytesRef> Utf8SortedAsUTF16SortOrder = new UTF8SortedAsUTF16Comparator();
+        private static readonly IComparer<BytesRef> Utf8SortedAsUTF16SortOrder = new Utf8SortedAsUtf16Comparer();
 
         /// @deprecated this comparator is only a transition mechanism
         [Obsolete("this comparator is only a transition mechanism")]
@@ -350,68 +318,9 @@ namespace Lucene.Net.Util
             }
         }
 
-        /// @deprecated this comparator is only a transition mechanism
-        [Obsolete("this comparator is only a transition mechanism")]
-        private class UTF8SortedAsUTF16Comparator : IComparer<BytesRef>
-        {
-            // Only singleton
-            internal UTF8SortedAsUTF16Comparator()
-            {
-            }
+        // LUCENENET NOTE: De-nested Utf8SortedAsUtf16Comparer class to prevent naming conflict
 
-            public virtual int Compare(BytesRef a, BytesRef b)
-            {
-                var aBytes = a.Bytes;
-                int aUpto = a.Offset;
-                var bBytes = b.Bytes;
-                int bUpto = b.Offset;
-
-                int aStop;
-                if (a.Length < b.Length)
-                {
-                    aStop = aUpto + a.Length;
-                }
-                else
-                {
-                    aStop = aUpto + b.Length;
-                }
-
-                while (aUpto < aStop)
-                {
-                    int aByte = aBytes[aUpto++] & 0xff;
-                    int bByte = bBytes[bUpto++] & 0xff;
-
-                    if (aByte != bByte)
-                    {
-                        // See http://icu-project.org/docs/papers/utf16_code_point_order.html#utf-8-in-utf-16-order
-
-                        // We know the terms are not equal, but, we may
-                        // have to carefully fixup the bytes at the
-                        // difference to match UTF16's sort order:
-
-                        // NOTE: instead of moving supplementary code points (0xee and 0xef) to the unused 0xfe and 0xff,
-                        // we move them to the unused 0xfc and 0xfd [reserved for future 6-byte character sequences]
-                        // this reserves 0xff for preflex's term reordering (surrogate dance), and if unicode grows such
-                        // that 6-byte sequences are needed we have much bigger problems anyway.
-                        if (aByte >= 0xee && bByte >= 0xee)
-                        {
-                            if ((aByte & 0xfe) == 0xee)
-                            {
-                                aByte += 0xe;
-                            }
-                            if ((bByte & 0xfe) == 0xee)
-                            {
-                                bByte += 0xe;
-                            }
-                        }
-                        return aByte - bByte;
-                    }
-                }
-
-                // One is a prefix of the other, or, they are equal:
-                return a.Length - b.Length;
-            }
-        }
+        
 
         /// <summary>
         /// Creates a new BytesRef that points to a copy of the bytes from
@@ -462,6 +371,103 @@ namespace Lucene.Net.Util
                 throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",bytes.length=" + Bytes.Length);
             }
             return true;
+        }
+    }
+
+    internal class Utf8SortedAsUnicodeComparer : IComparer<BytesRef>
+    {
+        public static Utf8SortedAsUnicodeComparer Instance = new Utf8SortedAsUnicodeComparer();
+
+        // Only singleton
+        private Utf8SortedAsUnicodeComparer()
+        {
+        }
+
+        public virtual int Compare(BytesRef a, BytesRef b)
+        {
+            var aBytes = a.Bytes;
+            int aUpto = a.Offset;
+            var bBytes = b.Bytes;
+            int bUpto = b.Offset;
+
+            int aStop = aUpto + Math.Min(a.Length, b.Length);
+            while (aUpto < aStop)
+            {
+                int aByte = aBytes[aUpto++] & 0xff;
+                int bByte = bBytes[bUpto++] & 0xff;
+
+                int diff = aByte - bByte;
+                if (diff != 0)
+                {
+                    return diff;
+                }
+            }
+
+            // One is a prefix of the other, or, they are equal:
+            return a.Length - b.Length;
+        }
+    }
+
+    /// @deprecated this comparator is only a transition mechanism
+    [Obsolete("this comparator is only a transition mechanism")]
+    internal class Utf8SortedAsUtf16Comparer : IComparer<BytesRef>
+    {
+        // Only singleton
+        internal Utf8SortedAsUtf16Comparer()
+        {
+        }
+
+        public virtual int Compare(BytesRef a, BytesRef b)
+        {
+            var aBytes = a.Bytes;
+            int aUpto = a.Offset;
+            var bBytes = b.Bytes;
+            int bUpto = b.Offset;
+
+            int aStop;
+            if (a.Length < b.Length)
+            {
+                aStop = aUpto + a.Length;
+            }
+            else
+            {
+                aStop = aUpto + b.Length;
+            }
+
+            while (aUpto < aStop)
+            {
+                int aByte = aBytes[aUpto++] & 0xff;
+                int bByte = bBytes[bUpto++] & 0xff;
+
+                if (aByte != bByte)
+                {
+                    // See http://icu-project.org/docs/papers/utf16_code_point_order.html#utf-8-in-utf-16-order
+
+                    // We know the terms are not equal, but, we may
+                    // have to carefully fixup the bytes at the
+                    // difference to match UTF16's sort order:
+
+                    // NOTE: instead of moving supplementary code points (0xee and 0xef) to the unused 0xfe and 0xff,
+                    // we move them to the unused 0xfc and 0xfd [reserved for future 6-byte character sequences]
+                    // this reserves 0xff for preflex's term reordering (surrogate dance), and if unicode grows such
+                    // that 6-byte sequences are needed we have much bigger problems anyway.
+                    if (aByte >= 0xee && bByte >= 0xee)
+                    {
+                        if ((aByte & 0xfe) == 0xee)
+                        {
+                            aByte += 0xe;
+                        }
+                        if ((bByte & 0xfe) == 0xee)
+                        {
+                            bByte += 0xe;
+                        }
+                    }
+                    return aByte - bByte;
+                }
+            }
+
+            // One is a prefix of the other, or, they are equal:
+            return a.Length - b.Length;
         }
     }
 }

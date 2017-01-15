@@ -14,7 +14,7 @@ namespace Lucene.Net.Expressions
 	/// <see cref="Lucene.Net.Search.Scorer">Lucene.Net.Search.Scorer</see>
 	/// passed through
 	/// the context map by
-	/// <see cref="ExpressionComparator">ExpressionComparator</see>
+	/// <see cref="ExpressionComparer">ExpressionComparer</see>
 	/// .
 	/// </summary>
 	internal class ScoreValueSource : ValueSource

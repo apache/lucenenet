@@ -63,16 +63,16 @@ namespace Lucene.Net.Index
             {
                 if (_termComp == null)
                 {
-                    _termComp = subs[i].Comparator;
+                    _termComp = subs[i].Comparer;
                 }
                 else
                 {
                     // We cannot merge sub-readers that have
                     // different TermComps
-                    IComparer<BytesRef> subTermComp = subs[i].Comparator;
+                    IComparer<BytesRef> subTermComp = subs[i].Comparer;
                     if (subTermComp != null && !subTermComp.Equals(_termComp))
                     {
-                        throw new InvalidOperationException("sub-readers have different BytesRef.Comparators; cannot merge");
+                        throw new InvalidOperationException("sub-readers have different BytesRef.Comparers; cannot merge");
                     }
                 }
                 _hasFreqs &= subs[i].HasFreqs;
@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override IComparer<BytesRef> Comparator
+        public override IComparer<BytesRef> Comparer
         {
             get
             {

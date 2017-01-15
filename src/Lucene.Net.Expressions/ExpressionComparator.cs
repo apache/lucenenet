@@ -10,7 +10,7 @@ using Lucene.Net.Support;
 namespace Lucene.Net.Expressions
 {
     /// <summary>A custom comparator for sorting documents by an expression</summary>
-    internal class ExpressionComparator : FieldComparator<double> // LUCENENET TODO: Rename ExpressionComparer ?
+    internal class ExpressionComparer : FieldComparer<double>
     {
         private readonly double[] values;
 
@@ -24,13 +24,13 @@ namespace Lucene.Net.Expressions
 
         private AtomicReaderContext readerContext;
 
-        public ExpressionComparator(ValueSource source, int numHits)
+        public ExpressionComparer(ValueSource source, int numHits)
         {
             values = new double[numHits];
             this.source = source;
         }
 
-        // TODO: change FieldComparator.setScorer to throw IOException and remove this try-catch
+        // TODO: change FieldComparer.setScorer to throw IOException and remove this try-catch
         public override void SetScorer(Scorer scorer)
         {
             base.SetScorer(scorer);
@@ -71,7 +71,7 @@ namespace Lucene.Net.Expressions
         }
 
 
-        public override FieldComparator SetNextReader(AtomicReaderContext context)
+        public override FieldComparer SetNextReader(AtomicReaderContext context)
         {
             this.readerContext = context;
             return this;

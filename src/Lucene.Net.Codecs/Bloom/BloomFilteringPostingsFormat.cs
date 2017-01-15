@@ -263,9 +263,9 @@ namespace Lucene.Net.Codecs.Bloom
                     
                 }
 
-                public override IComparer<BytesRef> Comparator
+                public override IComparer<BytesRef> Comparer
                 {
-                    get { return _delegateTerms.Comparator; }
+                    get { return _delegateTerms.Comparer; }
                 }
 
                 public override long Count
@@ -344,9 +344,9 @@ namespace Lucene.Net.Codecs.Bloom
                     return Delegate().Next();
                 }
 
-                public override IComparer<BytesRef> Comparator
+                public override IComparer<BytesRef> Comparer
                 {
-                    get { return _delegateTerms.Comparator; }
+                    get { return _delegateTerms.Comparer; }
                 }
 
                 public override bool SeekExact(BytesRef text)
@@ -518,9 +518,9 @@ namespace Lucene.Net.Codecs.Bloom
                 _delegateTermsConsumer.Finish(sumTotalTermFreq, sumDocFreq, docCount);
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
-                get { return _delegateTermsConsumer.Comparator; }
+                get { return _delegateTermsConsumer.Comparer; }
             }
 
         }

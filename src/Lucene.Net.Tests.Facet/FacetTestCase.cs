@@ -154,7 +154,7 @@ namespace Lucene.Net.Facet
                 {
                     if (numInRow > 1)
                     {
-                        Array.Sort(labelValues, i - numInRow, i - (i - numInRow), new ComparatorAnonymousInnerClassHelper(this));
+                        Array.Sort(labelValues, i - numInRow, i - (i - numInRow), new ComparerAnonymousInnerClassHelper(this));
                     }
                     numInRow = 1;
                     if (i < labelValues.Length)
@@ -166,11 +166,11 @@ namespace Lucene.Net.Facet
             }
         }
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<LabelAndValue>
+        private class ComparerAnonymousInnerClassHelper : IComparer<LabelAndValue>
         {
             private readonly FacetTestCase outerInstance;
 
-            public ComparatorAnonymousInnerClassHelper(FacetTestCase outerInstance)
+            public ComparerAnonymousInnerClassHelper(FacetTestCase outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -184,14 +184,14 @@ namespace Lucene.Net.Facet
 
         protected internal virtual void SortLabelValues(List<LabelAndValue> labelValues)
         {
-            labelValues.Sort(new ComparatorAnonymousInnerClassHelper2(this));
+            labelValues.Sort(new ComparerAnonymousInnerClassHelper2(this));
         }
 
-        private class ComparatorAnonymousInnerClassHelper2 : IComparer<LabelAndValue>
+        private class ComparerAnonymousInnerClassHelper2 : IComparer<LabelAndValue>
         {
             private readonly FacetTestCase outerInstance;
 
-            public ComparatorAnonymousInnerClassHelper2(FacetTestCase outerInstance)
+            public ComparerAnonymousInnerClassHelper2(FacetTestCase outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -215,14 +215,14 @@ namespace Lucene.Net.Facet
 
         protected internal virtual void SortFacetResults(List<FacetResult> results)
         {
-            results.Sort(new ComparatorAnonymousInnerClassHelper3(this));
+            results.Sort(new ComparerAnonymousInnerClassHelper3(this));
         }
 
-        private class ComparatorAnonymousInnerClassHelper3 : IComparer<FacetResult>
+        private class ComparerAnonymousInnerClassHelper3 : IComparer<FacetResult>
         {
             private readonly FacetTestCase outerInstance;
 
-            public ComparatorAnonymousInnerClassHelper3(FacetTestCase outerInstance)
+            public ComparerAnonymousInnerClassHelper3(FacetTestCase outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

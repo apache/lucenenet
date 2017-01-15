@@ -240,7 +240,7 @@ namespace Lucene.Net.Codecs.Memory
                 blockIn.ReadBytes(metaBytesBlock, 0, metaBytesBlock.Length);
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {
@@ -361,7 +361,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override IComparer<BytesRef> Comparator
+                public override IComparer<BytesRef> Comparer
                 {
                     get
                     {

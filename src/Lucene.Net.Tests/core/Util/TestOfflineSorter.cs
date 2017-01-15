@@ -124,11 +124,11 @@ namespace Lucene.Net.Util
             return bytes;
         }
 
-        internal static readonly IComparer<byte[]> unsignedByteOrderComparator = new ComparatorAnonymousInnerClassHelper();
+        internal static readonly IComparer<byte[]> unsignedByteOrderComparer = new ComparerAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<byte[]>
+        private class ComparerAnonymousInnerClassHelper : IComparer<byte[]>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparerAnonymousInnerClassHelper()
             {
             }
 
@@ -153,7 +153,7 @@ namespace Lucene.Net.Util
         {
             FileInfo unsorted = WriteAll("unsorted", data);
 
-            Array.Sort(data, unsignedByteOrderComparator);
+            Array.Sort(data, unsignedByteOrderComparer);
             FileInfo golden = WriteAll("golden", data);
 
             FileInfo sorted = new FileInfo(Path.Combine(TempDir.FullName, "sorted"));

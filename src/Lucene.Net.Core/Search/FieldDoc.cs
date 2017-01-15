@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
         /// The order of these will match the original sort criteria given by a
         /// Sort object.  Each Object will have been returned from
         /// the <code>value</code> method corresponding
-        /// FieldComparator used to sort this field. </summary>
+        /// FieldComparer used to sort this field. </summary>
         /// <seealso cref= Sort </seealso>
         /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
         public object[] Fields; // LUCENENET TODO: Make private, rename, and see instructions below for making properties to access

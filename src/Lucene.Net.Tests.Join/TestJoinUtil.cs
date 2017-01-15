@@ -994,7 +994,7 @@ namespace Lucene.Net.Tests.Join
                 : context.ToHitsToJoinScore[queryValue];
 
             var hits = new List<KeyValuePair<int, JoinScore>>(hitsToJoinScores.EntrySet());
-            hits.Sort(new ComparatorAnonymousInnerClassHelper(this, scoreMode));
+            hits.Sort(new ComparerAnonymousInnerClassHelper(this, scoreMode));
             ScoreDoc[] scoreDocs = new ScoreDoc[Math.Min(10, hits.Count)];
             for (int i = 0; i < scoreDocs.Length; i++)
             {
@@ -1004,13 +1004,13 @@ namespace Lucene.Net.Tests.Join
             return new TopDocs(hits.Count, scoreDocs, hits.Count == 0 ? float.NaN : hits[0].Value.Score(scoreMode));
         }
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<KeyValuePair<int, JoinScore>>
+        private class ComparerAnonymousInnerClassHelper : IComparer<KeyValuePair<int, JoinScore>>
         {
             private readonly TestJoinUtil OuterInstance;
 
             private ScoreMode ScoreMode;
 
-            public ComparatorAnonymousInnerClassHelper(TestJoinUtil outerInstance, ScoreMode scoreMode)
+            public ComparerAnonymousInnerClassHelper(TestJoinUtil outerInstance, ScoreMode scoreMode)
             {
                 OuterInstance = outerInstance;
                 ScoreMode = scoreMode;

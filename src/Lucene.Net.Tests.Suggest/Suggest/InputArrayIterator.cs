@@ -96,7 +96,7 @@ namespace Lucene.Net.Search.Suggest
             get { return hasPayloads; }
         }
 
-        public IComparer<BytesRef> Comparator
+        public IComparer<BytesRef> Comparer
         {
             get { return null; }
         }

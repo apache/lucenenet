@@ -190,11 +190,11 @@ namespace Lucene.Net.Codecs.asserting
                 @in.Finish(fis, numDocs);
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {
-                    return @in.Comparator;
+                    return @in.Comparer;
                 }
             }
 

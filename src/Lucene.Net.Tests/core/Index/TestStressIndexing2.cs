@@ -148,11 +148,11 @@ namespace Lucene.Net.Index
 
         internal static Term IdTerm = new Term("id", "");
         internal IndexingThread[] Threads;
-        internal static IComparer<IIndexableField> fieldNameComparator = new ComparatorAnonymousInnerClassHelper();
+        internal static IComparer<IIndexableField> fieldNameComparer = new ComparerAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<IIndexableField>
+        private class ComparerAnonymousInnerClassHelper : IComparer<IIndexableField>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparerAnonymousInnerClassHelper()
             {
             }
 
@@ -288,7 +288,7 @@ namespace Lucene.Net.Index
                 List<IIndexableField> fields = new List<IIndexableField>();
                 fields.AddRange(d.Fields);
                 // put fields in same order each time
-                fields.Sort(fieldNameComparator);
+                fields.Sort(fieldNameComparer);
 
                 Document d1 = new Document();
                 for (int i = 0; i < fields.Count; i++)
@@ -676,8 +676,8 @@ namespace Lucene.Net.Index
             List<IIndexableField> ff1 = d1.Fields;
             List<IIndexableField> ff2 = d2.Fields;
 
-            ff1.Sort(fieldNameComparator);
-            ff2.Sort(fieldNameComparator);
+            ff1.Sort(fieldNameComparer);
+            ff2.Sort(fieldNameComparer);
 
             Assert.AreEqual(ff1.Count, ff2.Count, ff1 + " : " + ff2);
 
@@ -982,7 +982,7 @@ namespace Lucene.Net.Index
 
                 if (SameFieldOrder)
                 {
-                    fields.Sort(fieldNameComparator);
+                    fields.Sort(fieldNameComparer);
                 }
                 else
                 {

@@ -59,10 +59,10 @@ namespace Lucene.Net.Search.Suggest
             this.source = source;
             this.comparator = comparator;
             this.reader = Sort();
-            this.tieBreakByCostComparator = new ComparatorAnonymousInnerClassHelper(this);
+            this.tieBreakByCostComparer = new ComparerAnonymousInnerClassHelper(this);
         }
 
-        public virtual IComparer<BytesRef> Comparator
+        public virtual IComparer<BytesRef> Comparer
         {
             get
             {
@@ -108,11 +108,11 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// Sortes by BytesRef (ascending) then cost (ascending).
         /// </summary>
-        private readonly IComparer<BytesRef> tieBreakByCostComparator;
+        private readonly IComparer<BytesRef> tieBreakByCostComparer;
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<BytesRef>
+        private class ComparerAnonymousInnerClassHelper : IComparer<BytesRef>
         {
-            public ComparatorAnonymousInnerClassHelper(SortedTermFreqIteratorWrapper outerInstance)
+            public ComparerAnonymousInnerClassHelper(SortedTermFreqIteratorWrapper outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -162,7 +162,7 @@ namespace Lucene.Net.Search.Suggest
                     Encode(writer, output, buffer, spare, source.Weight);
                 }
                 writer.Dispose();
-                (new OfflineSorter(tieBreakByCostComparator)).Sort(tempInput, tempSorted);
+                (new OfflineSorter(tieBreakByCostComparer)).Sort(tempInput, tempSorted);
                 OfflineSorter.ByteSequencesReader reader = new OfflineSorter.ByteSequencesReader(tempSorted);
                 success = true;
                 return reader;

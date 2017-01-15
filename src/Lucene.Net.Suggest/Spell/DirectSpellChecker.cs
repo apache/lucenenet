@@ -282,7 +282,7 @@ namespace Lucene.Net.Search.Spell
         /// Gets or sets the comparator for sorting suggestions.
         /// The default is <see cref="SuggestWordQueue.DEFAULT_COMPARATOR"/> 
         /// </summary>
-        public virtual IComparer<SuggestWord> Comparator
+        public virtual IComparer<SuggestWord> Comparer
         {
             get
             {

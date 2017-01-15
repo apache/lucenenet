@@ -178,7 +178,7 @@ namespace Lucene.Net.Tests.Join
             w.AddDocuments(docs);
             w.Commit();
 
-            // Some garbage docs, just to check if the NestedFieldComparator can deal with this.
+            // Some garbage docs, just to check if the NestedFieldComparer can deal with this.
             document = new Document();
             document.Add(new StringField("fieldXXX", "x", Field.Store.NO));
             w.AddDocument(document);

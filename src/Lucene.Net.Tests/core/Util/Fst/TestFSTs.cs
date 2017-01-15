@@ -1448,11 +1448,11 @@ namespace Lucene.Net.Util.Fst
             Assert.AreEqual(42, arc.Output);
         }
 
-        internal static readonly IComparer<long?> minLongComparator = new ComparatorAnonymousInnerClassHelper();
+        internal static readonly IComparer<long?> minLongComparer = new ComparerAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<long?>
+        private class ComparerAnonymousInnerClassHelper : IComparer<long?>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparerAnonymousInnerClassHelper()
             {
             }
 
@@ -1477,7 +1477,7 @@ namespace Lucene.Net.Util.Fst
             //Util.toDot(fst, w, false, false);
             //w.Dispose();
 
-            Util.TopResults<long?> res = Util.ShortestPaths(fst, fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, minLongComparator, 3, true);
+            Util.TopResults<long?> res = Util.ShortestPaths(fst, fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, minLongComparer, 3, true);
             Assert.IsTrue(res.IsComplete);
             Assert.AreEqual(3, res.TopN.Count);
             Assert.AreEqual(Util.ToIntsRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
@@ -1505,7 +1505,7 @@ namespace Lucene.Net.Util.Fst
             builder.Add(Util.ToIntsRef(new BytesRef("ax"), scratch), 17L);
             FST<long?> fst = builder.Finish();
             AtomicInteger rejectCount = new AtomicInteger();
-            Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, minLongComparator, rejectCount);
+            Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, minLongComparer, rejectCount);
 
             searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, true, new IntsRef());
             Util.TopResults<long?> res = searcher.Search();
@@ -1516,7 +1516,7 @@ namespace Lucene.Net.Util.Fst
             Assert.AreEqual(Util.ToIntsRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
             Assert.AreEqual(7L, res.TopN[0].Output);
             rejectCount.Set(0);
-            searcher = new TopNSearcherAnonymousInnerClassHelper2(this, fst, minLongComparator, rejectCount);
+            searcher = new TopNSearcherAnonymousInnerClassHelper2(this, fst, minLongComparer, rejectCount);
 
             searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, true, new IntsRef());
             res = searcher.Search();
@@ -1530,8 +1530,8 @@ namespace Lucene.Net.Util.Fst
 
             private AtomicInteger RejectCount;
 
-            public TopNSearcherAnonymousInnerClassHelper(TestFSTs outerInstance, FST<long?> fst, IComparer<long?> minLongComparator, AtomicInteger rejectCount)
-                : base(fst, 2, 6, minLongComparator)
+            public TopNSearcherAnonymousInnerClassHelper(TestFSTs outerInstance, FST<long?> fst, IComparer<long?> minLongComparer, AtomicInteger rejectCount)
+                : base(fst, 2, 6, minLongComparer)
             {
                 this.OuterInstance = outerInstance;
                 this.RejectCount = rejectCount;
@@ -1554,8 +1554,8 @@ namespace Lucene.Net.Util.Fst
 
             private AtomicInteger RejectCount;
 
-            public TopNSearcherAnonymousInnerClassHelper2(TestFSTs outerInstance, FST<long?> fst, IComparer<long?> minLongComparator, AtomicInteger rejectCount)
-                : base(fst, 2, 5, minLongComparator)
+            public TopNSearcherAnonymousInnerClassHelper2(TestFSTs outerInstance, FST<long?> fst, IComparer<long?> minLongComparer, AtomicInteger rejectCount)
+                : base(fst, 2, 5, minLongComparer)
             {
                 this.OuterInstance = outerInstance;
                 this.RejectCount = rejectCount;
@@ -1573,11 +1573,11 @@ namespace Lucene.Net.Util.Fst
         }
 
         // compares just the weight side of the pair
-        internal static readonly IComparer<Pair> minPairWeightComparator = new ComparatorAnonymousInnerClassHelper2();
+        internal static readonly IComparer<Pair> minPairWeightComparer = new ComparerAnonymousInnerClassHelper2();
 
-        private class ComparatorAnonymousInnerClassHelper2 : IComparer<Pair>
+        private class ComparerAnonymousInnerClassHelper2 : IComparer<Pair>
         {
-            public ComparatorAnonymousInnerClassHelper2()
+            public ComparerAnonymousInnerClassHelper2()
             {
             }
 
@@ -1606,7 +1606,7 @@ namespace Lucene.Net.Util.Fst
             //Util.toDot(fst, w, false, false);
             //w.Dispose();
 
-            Util.TopResults<Pair> res = Util.ShortestPaths(fst, fst.GetFirstArc(new FST.Arc<Pair>()), outputs.NoOutput, minPairWeightComparator, 3, true);
+            Util.TopResults<Pair> res = Util.ShortestPaths(fst, fst.GetFirstArc(new FST.Arc<Pair>()), outputs.NoOutput, minPairWeightComparer, 3, true);
             Assert.IsTrue(res.IsComplete);
             Assert.AreEqual(3, res.TopN.Count);
 
@@ -1689,7 +1689,7 @@ namespace Lucene.Net.Util.Fst
 
                 int topN = TestUtil.NextInt(random, 1, 10);
 
-                Util.TopResults<long?> r = Util.ShortestPaths(fst, arc, fst.Outputs.NoOutput, minLongComparator, topN, true);
+                Util.TopResults<long?> r = Util.ShortestPaths(fst, arc, fst.Outputs.NoOutput, minLongComparer, topN, true);
                 Assert.IsTrue(r.IsComplete);
 
                 // 2. go thru whole treemap (slowCompletor) and check its actually the best suggestion
@@ -1706,7 +1706,7 @@ namespace Lucene.Net.Util.Fst
                 }
 
                 Assert.IsTrue(matches.Count > 0);
-                matches.Sort(new TieBreakByInputComparator<long?>(minLongComparator));
+                matches.Sort(new TieBreakByInputComparer<long?>(minLongComparer));
                 if (matches.Count > topN)
                 {
                     matches.SubList(topN, matches.Count).Clear();
@@ -1723,17 +1723,17 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private class TieBreakByInputComparator<T> : IComparer<Util.Result<T>>
+        private class TieBreakByInputComparer<T> : IComparer<Util.Result<T>>
         {
-            internal readonly IComparer<T> Comparator;
-            public TieBreakByInputComparator(IComparer<T> comparator)
+            internal readonly IComparer<T> Comparer;
+            public TieBreakByInputComparer(IComparer<T> comparator)
             {
-                this.Comparator = comparator;
+                this.Comparer = comparator;
             }
 
             public virtual int Compare(Util.Result<T> a, Util.Result<T> b)
             {
-                int cmp = Comparator.Compare(a.Output, b.Output);
+                int cmp = Comparer.Compare(a.Output, b.Output);
                 if (cmp == 0)
                 {
                     return a.Input.CompareTo(b.Input);
@@ -1832,7 +1832,7 @@ namespace Lucene.Net.Util.Fst
 
                 int topN = TestUtil.NextInt(random, 1, 10);
 
-                Util.TopResults<Pair> r = Util.ShortestPaths(fst, arc, fst.Outputs.NoOutput, minPairWeightComparator, topN, true);
+                Util.TopResults<Pair> r = Util.ShortestPaths(fst, arc, fst.Outputs.NoOutput, minPairWeightComparer, topN, true);
                 Assert.IsTrue(r.IsComplete);
                 // 2. go thru whole treemap (slowCompletor) and check its actually the best suggestion
                 List<Util.Result<Pair>> matches = new List<Util.Result<Pair>>();
@@ -1849,7 +1849,7 @@ namespace Lucene.Net.Util.Fst
                 }
 
                 Assert.IsTrue(matches.Count > 0);
-                matches.Sort(new TieBreakByInputComparator<Pair>(minPairWeightComparator));
+                matches.Sort(new TieBreakByInputComparer<Pair>(minPairWeightComparer));
                 if (matches.Count > topN)
                 {
                     matches.SubList(topN, matches.Count).Clear();

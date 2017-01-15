@@ -189,11 +189,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sorts <seealso cref="MergeThread"/>s; larger merges come first. </summary>
-        protected internal static readonly IComparer<MergeThread> compareByMergeDocCount = new ComparatorAnonymousInnerClassHelper();
+        protected internal static readonly IComparer<MergeThread> compareByMergeDocCount = new ComparerAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<MergeThread>
+        private class ComparerAnonymousInnerClassHelper : IComparer<MergeThread>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparerAnonymousInnerClassHelper()
             {
             }
 

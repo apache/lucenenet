@@ -90,7 +90,7 @@ namespace Lucene.Net.Search.Grouping.Function
             this.scorer = scorer;
             foreach (GroupHead groupHead in groups.Values)
             {
-                foreach (FieldComparator comparator in groupHead.comparators)
+                foreach (FieldComparer comparator in groupHead.comparators)
                 {
                     comparator.SetScorer(scorer);
                 }
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search.Grouping.Function
             // LUCENENET: Moved this here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
             // need to reference the generic closing type MutableValue.
             public readonly MutableValue groupValue;
-            internal readonly FieldComparator[] comparators;
+            internal readonly FieldComparer[] comparators;
 
             internal GroupHead(FunctionAllGroupHeadsCollector outerInstance, MutableValue groupValue, Sort sort, int doc)
                         : base(doc + outerInstance.readerContext.DocBase)
@@ -134,10 +134,10 @@ namespace Lucene.Net.Search.Grouping.Function
                 this.groupValue = groupValue;
 
                 SortField[] sortFields = sort.GetSort();
-                comparators = new FieldComparator[sortFields.Length];
+                comparators = new FieldComparer[sortFields.Length];
                 for (int i = 0; i < sortFields.Length; i++)
                 {
-                    comparators[i] = sortFields[i].GetComparator(1, i).SetNextReader(outerInstance.readerContext);
+                    comparators[i] = sortFields[i].GetComparer(1, i).SetNextReader(outerInstance.readerContext);
                     comparators[i].SetScorer(outerInstance.scorer);
                     comparators[i].Copy(0, doc);
                     comparators[i].SetBottom(0);
@@ -151,7 +151,7 @@ namespace Lucene.Net.Search.Grouping.Function
 
             public override void UpdateDocHead(int doc)
             {
-                foreach (FieldComparator comparator in comparators)
+                foreach (FieldComparer comparator in comparators)
                 {
                     comparator.Copy(0, doc);
                     comparator.SetBottom(0);

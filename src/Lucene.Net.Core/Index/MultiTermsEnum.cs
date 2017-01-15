@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
             get { return current; }
         }
 
-        public override IComparer<BytesRef> Comparator
+        public override IComparer<BytesRef> Comparer
         {
             get
             {
@@ -134,16 +134,16 @@ namespace Lucene.Net.Index
                 // init our term comp
                 if (termComp == null)
                 {
-                    queue.termComp = termComp = termsEnumIndex.TermsEnum.Comparator;
+                    queue.termComp = termComp = termsEnumIndex.TermsEnum.Comparer;
                 }
                 else
                 {
                     // We cannot merge sub-readers that have
                     // different TermComps
-                    IComparer<BytesRef> subTermComp = termsEnumIndex.TermsEnum.Comparator;
+                    IComparer<BytesRef> subTermComp = termsEnumIndex.TermsEnum.Comparer;
                     if (subTermComp != null && !subTermComp.Equals(termComp))
                     {
-                        throw new InvalidOperationException("sub-readers have different BytesRef.Comparators: " + subTermComp + " vs " + termComp + "; cannot merge");
+                        throw new InvalidOperationException("sub-readers have different BytesRef.Comparers: " + subTermComp + " vs " + termComp + "; cannot merge");
                     }
                 }
 

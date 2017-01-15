@@ -53,7 +53,7 @@ namespace Lucene.Net.Util
     /// for the same data types.
     ///
     /// <p>this class can also be used, to generate lexicographically sortable (according to
-    /// <seealso cref="BytesRef#getUTF8SortedAsUTF16Comparator()"/>) representations of numeric data
+    /// <seealso cref="BytesRef#getUTF8SortedAsUTF16Comparer()"/>) representations of numeric data
     /// types for other usages (e.g. sorting).
     ///
     /// @lucene.internal

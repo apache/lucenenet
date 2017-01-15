@@ -64,15 +64,15 @@ namespace Lucene.Net.Join
             ChildFilter = childFilter;
         }
         
-        public override FieldComparator GetComparator(int numHits, int sortPos)
+        public override FieldComparer GetComparer(int numHits, int sortPos)
         {
-            var wrappedFieldComparator = base.GetComparator(numHits + 1, sortPos);
+            var wrappedFieldComparer = base.GetComparer(numHits + 1, sortPos);
             if (Order)
             {
-                return new ToParentBlockJoinFieldComparator.Highest(wrappedFieldComparator, ParentFilter, ChildFilter, numHits);
+                return new ToParentBlockJoinFieldComparer.Highest(wrappedFieldComparer, ParentFilter, ChildFilter, numHits);
             }
 
-            return new ToParentBlockJoinFieldComparator.Lowest(wrappedFieldComparator, ParentFilter, ChildFilter, numHits);
+            return new ToParentBlockJoinFieldComparer.Lowest(wrappedFieldComparer, ParentFilter, ChildFilter, numHits);
         }
     }
 }

@@ -537,7 +537,7 @@ namespace Lucene.Net.Index
                     // If this segment is pre-4.x, perform a one-time
                     // "ugprade" to write the .si file for it:
                     string version = si.Version;
-                    if (version == null || StringHelper.VersionComparator.Compare(version, "4.0") < 0)
+                    if (version == null || StringHelper.VersionComparer.Compare(version, "4.0") < 0)
                     {
                         if (!SegmentWasUpgraded(directory, si))
                         {

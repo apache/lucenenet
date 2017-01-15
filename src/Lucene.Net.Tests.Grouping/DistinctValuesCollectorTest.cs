@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Grouping
 
     public class DistinctValuesCollectorTest : AbstractGroupingTestCase
     {
-        private readonly static NullComparator nullComparator = new NullComparator();
+        private readonly static NullComparer nullComparer = new NullComparer();
 
         private readonly string groupField = "author";
         private readonly string dvGroupField = "author_dv";
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search.Grouping
 
             Compare("1", gcs[1].GroupValue);
             countValues = new List<IComparable>(gcs[1].UniqueValues);
-            countValues.Sort(nullComparator);
+            countValues.Sort(nullComparer);
             assertEquals(2, countValues.size());
             Compare("1", countValues[0]);
             Compare("2", countValues[1]);
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search.Grouping
             Compare("1", gcs[0].GroupValue);
             countValues = new List<IComparable>(gcs[0].UniqueValues);
             assertEquals(2, countValues.size());
-            countValues.Sort(nullComparator);
+            countValues.Sort(nullComparer);
             Compare("1", countValues[0]);
             Compare("2", countValues[1]);
 
@@ -294,9 +294,9 @@ namespace Lucene.Net.Search.Grouping
                         AssertValues(expected.GroupValue, actual.GroupValue);
                         assertEquals(expected.UniqueValues.Count(), actual.UniqueValues.Count());
                         List<IComparable> expectedUniqueValues = new List<IComparable>(expected.UniqueValues);
-                        expectedUniqueValues.Sort(nullComparator);
+                        expectedUniqueValues.Sort(nullComparer);
                         List<IComparable> actualUniqueValues = new List<IComparable>(actual.UniqueValues);
-                        actualUniqueValues.Sort(nullComparator);
+                        actualUniqueValues.Sort(nullComparer);
                         for (int j = 0; j < expectedUniqueValues.size(); j++)
                         {
                             AssertValues(expectedUniqueValues[j], actualUniqueValues[j]);
@@ -609,7 +609,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        internal class NullComparator : IComparer<IComparable>
+        internal class NullComparer : IComparer<IComparable>
         {
 
             public int Compare(IComparable a, IComparable b)

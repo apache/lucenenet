@@ -784,7 +784,7 @@ namespace Lucene.Net.Codecs.Memory
                 get { return docCount; }
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get { return BytesRef.UTF8SortedAsUnicodeComparer; }
             }
@@ -839,7 +839,7 @@ namespace Lucene.Net.Codecs.Memory
                     termOrd = -1;
                 }
 
-                public override IComparer<BytesRef> Comparator
+                public override IComparer<BytesRef> Comparer
                 {
                     get { return BytesRef.UTF8SortedAsUnicodeComparer; }
                 }
@@ -1349,7 +1349,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override IComparer<BytesRef> Comparator
+                public override IComparer<BytesRef> Comparer
                 {
                     get { return BytesRef.UTF8SortedAsUnicodeComparer; }
                 }

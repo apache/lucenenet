@@ -508,8 +508,8 @@ namespace Lucene.Net.Search.Grouping
                 // NOTE: List.Sort(comparer) won't work in this case because it calls the comparer when the
                 // values are the same, which results in this test failing. TimSort only calls the comparer
                 // when the values differ.
-                //Collections.Sort(docs, GetComparator(docSort, sortByScoreOnly, fieldIdToDocID));
-                CollectionUtil.TimSort(docs, GetComparator(docSort, sortByScoreOnly, fieldIdToDocID));
+                //Collections.Sort(docs, GetComparer(docSort, sortByScoreOnly, fieldIdToDocID));
+                CollectionUtil.TimSort(docs, GetComparer(docSort, sortByScoreOnly, fieldIdToDocID));
                 allGroupHeads[i++] = docs[0].id;
             }
 
@@ -554,14 +554,14 @@ namespace Lucene.Net.Search.Grouping
             return new Sort(sortFields.ToArray(/*new SortField[sortFields.size()]*/));
         }
 
-        internal class ComparatorAnonymousHelper : IComparer<GroupDoc>
+        internal class ComparerAnonymousHelper : IComparer<GroupDoc>
         {
             private readonly AllGroupHeadsCollectorTest outerInstance;
             private readonly SortField[] sortFields;
             private readonly bool sortByScoreOnly;
             private readonly int[] fieldIdToDocID;
 
-            public ComparatorAnonymousHelper(AllGroupHeadsCollectorTest outerInstance, SortField[] sortFields, bool sortByScoreOnly, int[] fieldIdToDocID)
+            public ComparerAnonymousHelper(AllGroupHeadsCollectorTest outerInstance, SortField[] sortFields, bool sortByScoreOnly, int[] fieldIdToDocID)
             {
                 this.outerInstance = outerInstance;
                 this.sortFields = sortFields;
@@ -617,10 +617,10 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private IComparer<GroupDoc> GetComparator(Sort sort, bool sortByScoreOnly, int[] fieldIdToDocID)
+        private IComparer<GroupDoc> GetComparer(Sort sort, bool sortByScoreOnly, int[] fieldIdToDocID)
         {
             SortField[] sortFields = sort.GetSort();
-            return new ComparatorAnonymousHelper(this, sortFields, sortByScoreOnly, fieldIdToDocID);
+            return new ComparerAnonymousHelper(this, sortFields, sortByScoreOnly, fieldIdToDocID);
         }
 
         private AbstractAllGroupHeadsCollector CreateRandomCollector(string groupField, Sort sortWithinGroup, bool canUseIDV, DocValuesType valueType)

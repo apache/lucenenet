@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal sealed class JustCompileFieldComparator : FieldComparator<object>
+        internal sealed class JustCompileFieldComparer : FieldComparer<object>
         {
             public override int Compare(int slot1, int slot2)
             {
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
@@ -163,9 +163,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal sealed class JustCompileFieldComparatorSource : FieldComparatorSource
+        internal sealed class JustCompileFieldComparerSource : FieldComparerSource
         {
-            public override FieldComparator NewComparator(string fieldname, int numHits, int sortPos, bool reversed)
+            public override FieldComparer NewComparer(string fieldname, int numHits, int sortPos, bool reversed)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }

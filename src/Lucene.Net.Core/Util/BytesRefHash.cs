@@ -164,7 +164,7 @@ namespace Lucene.Net.Util
         /// </p>
         /// </summary>
         /// <param name="comp">
-        ///          the <seealso cref="Comparator"/> used for sorting </param>
+        ///          the <seealso cref="Comparer"/> used for sorting </param>
         public int[] Sort(IComparer<BytesRef> comp)
         {
             int[] compact = Compact();

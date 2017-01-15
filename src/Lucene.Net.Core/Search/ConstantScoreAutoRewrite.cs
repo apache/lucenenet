@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
                 if (size > 0)
                 {
                     BytesRefHash pendingTerms = col.pendingTerms;
-                    int[] sort = pendingTerms.Sort(col.termsEnum.Comparator);
+                    int[] sort = pendingTerms.Sort(col.termsEnum.Comparer);
                     for (int i = 0; i < size; i++)
                     {
                         int pos = sort[i];

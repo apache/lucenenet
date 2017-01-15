@@ -211,7 +211,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 _longsSize = postingsWriter.SetField(fieldInfo);
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get { return BytesRef.UTF8SortedAsUnicodeComparer; }
             }   

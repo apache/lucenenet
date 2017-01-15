@@ -745,11 +745,11 @@ namespace Lucene.Net.Index
                 termsEnum = reader.Fields.Terms(outerInstance.m_field).Iterator(null);
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {
-                    return termsEnum.Comparator;
+                    return termsEnum.Comparer;
                 }
             }
 

@@ -127,7 +127,7 @@ namespace Lucene.Net.Search
             int size = col.terms.Count;
             if (size > 0)
             {
-                int[] sort = col.terms.Sort(col.termsEnum.Comparator);
+                int[] sort = col.terms.Sort(col.termsEnum.Comparer);
                 float[] boost = col.array.boost;
                 TermContext[] termStates = col.array.termState;
                 for (int i = 0; i < size; i++)

@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Suggest
         /// </summary>
         public BufferingTermFreqIteratorWrapper(ITermFreqIterator source)
         {
-            this.comp = source.Comparator;
+            this.comp = source.Comparer;
             BytesRef spare;
             int freqIndex = 0;
             while ((spare = source.Next()) != null)
@@ -75,7 +75,7 @@ namespace Lucene.Net.Search.Suggest
             return null;
         }
 
-        public virtual IComparer<BytesRef> Comparator
+        public virtual IComparer<BytesRef> Comparer
         {
             get
             {

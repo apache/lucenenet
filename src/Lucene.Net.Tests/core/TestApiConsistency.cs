@@ -58,9 +58,9 @@ namespace Lucene.Net
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
-        public override void TestForPublicMembersContainingComparator(Type typeFromTargetAssembly)
+        public override void TestForPublicMembersContainingComparer(Type typeFromTargetAssembly)
         {
-            base.TestForPublicMembersContainingComparator(typeFromTargetAssembly);
+            base.TestForPublicMembersContainingComparer(typeFromTargetAssembly);
         }
     }
 }

@@ -37,38 +37,38 @@ namespace Lucene.Net.Index.Sorter
     /// </summary>
     // TODO: can/should we clean this thing up (e.g. return a proper sort value)
     // and move to the join/ module?
-    public class BlockJoinComparatorSource : FieldComparatorSource
+    public class BlockJoinComparerSource : FieldComparerSource
     {
         internal readonly Filter parentsFilter;
         internal readonly Sort parentSort;
         internal readonly Sort childSort;
 
         /// <summary>
-        /// Create a new BlockJoinComparatorSource, sorting only blocks of documents
+        /// Create a new BlockJoinComparerSource, sorting only blocks of documents
         /// with <paramref name="parentSort"/> and not reordering children with a block.
         /// </summary>
         /// <param name="parentsFilter"> Filter identifying parent documents </param>
         /// <param name="parentSort"> Sort for parent documents </param>
-        public BlockJoinComparatorSource(Filter parentsFilter, Sort parentSort)
+        public BlockJoinComparerSource(Filter parentsFilter, Sort parentSort)
               : this(parentsFilter, parentSort, new Sort(SortField.FIELD_DOC))
         {
         }
 
         /// <summary>
-        /// Create a new BlockJoinComparatorSource, specifying the sort order for both
+        /// Create a new BlockJoinComparerSource, specifying the sort order for both
         /// blocks of documents and children within a block.
         /// </summary>
         /// <param name="parentsFilter"> Filter identifying parent documents </param>
         /// <param name="parentSort"> Sort for parent documents </param>
         /// <param name="childSort"> Sort for child documents in the same block </param>
-        public BlockJoinComparatorSource(Filter parentsFilter, Sort parentSort, Sort childSort)
+        public BlockJoinComparerSource(Filter parentsFilter, Sort parentSort, Sort childSort)
         {
             this.parentsFilter = parentsFilter;
             this.parentSort = parentSort;
             this.childSort = childSort;
         }
 
-        public override FieldComparator NewComparator(string fieldname, int numHits, int sortPos, bool reversed)
+        public override FieldComparer NewComparer(string fieldname, int numHits, int sortPos, bool reversed)
         {
 
             // we keep parallel slots: the parent ids and the child ids
@@ -77,50 +77,50 @@ namespace Lucene.Net.Index.Sorter
 
             SortField[] parentFields = parentSort.GetSort();
             int[] parentReverseMul = new int[parentFields.Length];
-            FieldComparator[] parentComparators = new FieldComparator[parentFields.Length];
+            FieldComparer[] parentComparers = new FieldComparer[parentFields.Length];
             for (int i = 0; i < parentFields.Length; i++)
             {
                 parentReverseMul[i] = parentFields[i].IsReverse ? -1 : 1;
-                parentComparators[i] = parentFields[i].GetComparator(1, i);
+                parentComparers[i] = parentFields[i].GetComparer(1, i);
             }
 
             SortField[] childFields = childSort.GetSort();
             int[] childReverseMul = new int[childFields.Length];
-            FieldComparator[] childComparators = new FieldComparator[childFields.Length];
+            FieldComparer[] childComparers = new FieldComparer[childFields.Length];
             for (int i = 0; i < childFields.Length; i++)
             {
                 childReverseMul[i] = childFields[i].IsReverse ? -1 : 1;
-                childComparators[i] = childFields[i].GetComparator(1, i);
+                childComparers[i] = childFields[i].GetComparer(1, i);
             }
 
             // NOTE: we could return parent ID as value but really our sort "value" is more complex...
             // So we throw UOE for now. At the moment you really should only use this at indexing time.
-            return new FieldComparatorAnonymousInnerClassHelper(this, parentSlots,
-                childSlots, parentReverseMul, parentComparators, childReverseMul, childComparators);
+            return new FieldComparerAnonymousInnerClassHelper(this, parentSlots,
+                childSlots, parentReverseMul, parentComparers, childReverseMul, childComparers);
         }
 
-        private class FieldComparatorAnonymousInnerClassHelper : FieldComparator<int?>
+        private class FieldComparerAnonymousInnerClassHelper : FieldComparer<int?>
         {
-            private readonly BlockJoinComparatorSource outerInstance;
+            private readonly BlockJoinComparerSource outerInstance;
 
             private int[] parentSlots;
             private int[] childSlots;
             private int[] parentReverseMul;
-            private FieldComparator[] parentComparators;
+            private FieldComparer[] parentComparers;
             private int[] childReverseMul;
-            private FieldComparator[] childComparators;
+            private FieldComparer[] childComparers;
 
-            public FieldComparatorAnonymousInnerClassHelper(BlockJoinComparatorSource outerInstance,
-                int[] parentSlots, int[] childSlots, int[] parentReverseMul, FieldComparator[] parentComparators,
-                int[] childReverseMul, FieldComparator[] childComparators)
+            public FieldComparerAnonymousInnerClassHelper(BlockJoinComparerSource outerInstance,
+                int[] parentSlots, int[] childSlots, int[] parentReverseMul, FieldComparer[] parentComparers,
+                int[] childReverseMul, FieldComparer[] childComparers)
             {
                 this.outerInstance = outerInstance;
                 this.parentSlots = parentSlots;
                 this.childSlots = childSlots;
                 this.parentReverseMul = parentReverseMul;
-                this.parentComparators = parentComparators;
+                this.parentComparers = parentComparers;
                 this.childReverseMul = childReverseMul;
-                this.childComparators = childComparators;
+                this.childComparers = childComparers;
             }
 
             internal int bottomParent;
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index.Sorter
                 parentSlots[slot] = Parent(doc);
             }
 
-            public override FieldComparator SetNextReader(AtomicReaderContext context)
+            public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
 
                 DocIdSet parents = outerInstance.parentsFilter.GetDocIdSet(context, null);
@@ -181,13 +181,13 @@ namespace Lucene.Net.Index.Sorter
                     throw new InvalidOperationException("parentFilter must return FixedBitSet; got " + parents);
                 }
                 parentBits = (FixedBitSet)parents;
-                for (int i = 0; i < parentComparators.Length; i++)
+                for (int i = 0; i < parentComparers.Length; i++)
                 {
-                    parentComparators[i] = parentComparators[i].SetNextReader(context);
+                    parentComparers[i] = parentComparers[i].SetNextReader(context);
                 }
-                for (int i = 0; i < childComparators.Length; i++)
+                for (int i = 0; i < childComparers.Length; i++)
                 {
-                    childComparators[i] = childComparators[i].SetNextReader(context);
+                    childComparers[i] = childComparers[i].SetNextReader(context);
                 }
                 return this;
             }
@@ -201,11 +201,11 @@ namespace Lucene.Net.Index.Sorter
             public override void SetScorer(Scorer scorer)
             {
                 base.SetScorer(scorer);
-                foreach (FieldComparator comp in parentComparators)
+                foreach (FieldComparer comp in parentComparers)
                 {
                     comp.SetScorer(scorer);
                 }
-                foreach (FieldComparator comp in childComparators)
+                foreach (FieldComparer comp in childComparers)
                 {
                     comp.SetScorer(scorer);
                 }
@@ -227,12 +227,12 @@ namespace Lucene.Net.Index.Sorter
                     }
                     else
                     {
-                        return Compare(docID1, docID2, childComparators, childReverseMul);
+                        return Compare(docID1, docID2, childComparers, childReverseMul);
                     }
                 }
                 else
                 {
-                    int cmp = Compare(parent1, parent2, parentComparators, parentReverseMul);
+                    int cmp = Compare(parent1, parent2, parentComparers, parentReverseMul);
                     if (cmp == 0)
                     {
                         return parent1 - parent2;
@@ -244,7 +244,7 @@ namespace Lucene.Net.Index.Sorter
                 }
             }
 
-            internal virtual int Compare(int docID1, int docID2, FieldComparator[] comparators, int[] reverseMul)
+            internal virtual int Compare(int docID1, int docID2, FieldComparer[] comparators, int[] reverseMul)
             {
                 for (int i = 0; i < comparators.Length; i++)
                 {

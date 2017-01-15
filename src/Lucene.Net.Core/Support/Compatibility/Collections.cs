@@ -246,12 +246,12 @@ namespace Lucene.Net
 
         public static IComparer<T> ReverseOrder<T>()
         {
-            return (IComparer<T>)ReverseComparator.REVERSE_ORDER;
+            return (IComparer<T>)ReverseComparer.REVERSE_ORDER;
         }
 
-        private class ReverseComparator : IComparer<IComparable>
+        private class ReverseComparer : IComparer<IComparable>
         {
-            internal static readonly ReverseComparator REVERSE_ORDER = new ReverseComparator();
+            internal static readonly ReverseComparer REVERSE_ORDER = new ReverseComparer();
 
 
             public int Compare(IComparable c1, IComparable c2)
@@ -265,25 +265,25 @@ namespace Lucene.Net
             if (cmp == null)
                 return ReverseOrder<T>();
 
-            if (cmp is ReverseComparator2<T>)
-                return ((ReverseComparator2<T>)cmp).cmp;
+            if (cmp is ReverseComparer2<T>)
+                return ((ReverseComparer2<T>)cmp).cmp;
 
-            return new ReverseComparator2<T>(cmp);
+            return new ReverseComparer2<T>(cmp);
         }
 
-        private class ReverseComparator2<T> : IComparer<T>
+        private class ReverseComparer2<T> : IComparer<T>
 
         {
             /**
              * The comparator specified in the static factory.  This will never
-             * be null, as the static factory returns a ReverseComparator
+             * be null, as the static factory returns a ReverseComparer
              * instance if its argument is null.
              *
              * @serial
              */
             internal readonly IComparer<T> cmp;
 
-            public ReverseComparator2(IComparer<T> cmp)
+            public ReverseComparer2(IComparer<T> cmp)
             {
                 Debug.Assert(cmp != null);
                 this.cmp = cmp;
@@ -297,8 +297,8 @@ namespace Lucene.Net
             public override bool Equals(object o)
             {
                 return (o == this) ||
-                    (o is ReverseComparator2<T> &&
-                     cmp.Equals(((ReverseComparator2<T>)o).cmp));
+                    (o is ReverseComparer2<T> &&
+                     cmp.Equals(((ReverseComparer2<T>)o).cmp));
             }
 
             public override int GetHashCode()

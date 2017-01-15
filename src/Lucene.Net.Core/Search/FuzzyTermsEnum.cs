@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
     /// to the specified filter term.
     ///
     /// <p>Term enumerations are always ordered by
-    /// <seealso cref="#getComparator"/>.  Each term in the enumeration is
+    /// <seealso cref="#getComparer"/>.  Each term in the enumeration is
     /// greater than all that precede it.</p>
     /// </summary>
     public class FuzzyTermsEnum : TermsEnum
@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
         private BytesRef bottomTerm;
 
         // TODO: chicken-and-egg
-        private readonly IComparer<BytesRef> termComparator = BytesRef.UTF8SortedAsUnicodeComparer;
+        private readonly IComparer<BytesRef> termComparer = BytesRef.UTF8SortedAsUnicodeComparer;
 
         protected readonly float m_minSimilarity;
         protected readonly float m_scaleFactor;
@@ -224,7 +224,7 @@ namespace Lucene.Net.Search
             int oldMaxEdits = m_maxEdits;
 
             // true if the last term encountered is lexicographically equal or after the bottom term in the PQ
-            bool termAfter = bottomTerm == null || (lastTerm != null && termComparator.Compare(lastTerm, bottomTerm) >= 0);
+            bool termAfter = bottomTerm == null || (lastTerm != null && termComparer.Compare(lastTerm, bottomTerm) >= 0);
 
             // as long as the max non-competitive boost is >= the max boost
             // for some edit distance, keep dropping the max edit distance.
@@ -323,11 +323,11 @@ namespace Lucene.Net.Search
             return actualEnum.GetTermState();
         }
 
-        public override IComparer<BytesRef> Comparator
+        public override IComparer<BytesRef> Comparer
         {
             get
             {
-                return actualEnum.Comparator;
+                return actualEnum.Comparer;
             }
         }
 

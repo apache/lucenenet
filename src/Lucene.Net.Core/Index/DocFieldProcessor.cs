@@ -279,11 +279,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static readonly IComparer<DocFieldProcessorPerField> fieldsComp = new ComparatorAnonymousInnerClassHelper();
+        private static readonly IComparer<DocFieldProcessorPerField> fieldsComp = new ComparerAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<DocFieldProcessorPerField>
+        private class ComparerAnonymousInnerClassHelper : IComparer<DocFieldProcessorPerField>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            public ComparerAnonymousInnerClassHelper()
             {
             }
 

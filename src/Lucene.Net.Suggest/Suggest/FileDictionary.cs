@@ -233,7 +233,7 @@ namespace Lucene.Net.Search.Suggest
                 }
             }
 
-            public IComparer<BytesRef> Comparator
+            public IComparer<BytesRef> Comparer
             {
                 get
                 {

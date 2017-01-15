@@ -205,13 +205,13 @@ namespace Lucene.Net.Codecs.Lucene3x
             return resources;
         }
 
-        private static readonly IComparer<BytesRef> legacyComparator = BytesRef.UTF8SortedAsUTF16Comparer;
+        private static readonly IComparer<BytesRef> legacyComparer = BytesRef.UTF8SortedAsUTF16Comparer;
 
         private int CompareAsUTF16(Term term1, Term term2)
         {
             if (term1.Field.Equals(term2.Field))
             {
-                return legacyComparator.Compare(term1.Bytes, term2.Bytes);
+                return legacyComparer.Compare(term1.Bytes, term2.Bytes);
             }
             else
             {

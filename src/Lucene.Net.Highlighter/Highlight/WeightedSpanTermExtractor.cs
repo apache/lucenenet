@@ -313,7 +313,7 @@ namespace Lucene.Net.Search.Highlight
 
             foreach (Term queryTerm in nonWeightedTerms)
             {
-                if (FieldNameComparator(queryTerm.Field))
+                if (FieldNameComparer(queryTerm.Field))
                 {
                     WeightedSpanTerm weightedSpanTerm;
                     if (!terms.TryGetValue(queryTerm.Text(), out weightedSpanTerm) || weightedSpanTerm == null)
@@ -349,7 +349,7 @@ namespace Lucene.Net.Search.Highlight
             foreach (Term queryTerm in nonWeightedTerms)
             {
 
-                if (FieldNameComparator(queryTerm.Field))
+                if (FieldNameComparer(queryTerm.Field))
                 {
                     WeightedSpanTerm weightedSpanTerm = new WeightedSpanTerm(query.Boost, queryTerm.Text());
                     terms[queryTerm.Text()] = weightedSpanTerm;
@@ -360,7 +360,7 @@ namespace Lucene.Net.Search.Highlight
         /// <summary>
         /// Necessary to implement matches for queries against <see cref="defaultField"/>
         /// </summary>
-        protected virtual bool FieldNameComparator(string fieldNameToCheck)
+        protected virtual bool FieldNameComparer(string fieldNameToCheck)
         {
             bool rv = fieldName == null || fieldName.Equals(fieldNameToCheck)
                       || fieldNameToCheck.Equals(defaultField);

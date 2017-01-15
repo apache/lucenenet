@@ -117,11 +117,11 @@ namespace Lucene.Net.Index
                 return m_input.Iterator(reuse);
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {
-                    return m_input.Comparator;
+                    return m_input.Comparer;
                 }
             }
 
@@ -241,11 +241,11 @@ namespace Lucene.Net.Index
                 return m_input.DocsAndPositions(liveDocs, reuse, flags);
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {
-                    return m_input.Comparator;
+                    return m_input.Comparer;
                 }
             }
         }

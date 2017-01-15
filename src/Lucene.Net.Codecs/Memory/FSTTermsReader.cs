@@ -209,7 +209,7 @@ namespace Lucene.Net.Codecs.Memory
                 this.dict = new FST<FSTTermOutputs.TermData>(@in, new FSTTermOutputs(fieldInfo, longsSize));
             }
 
-            public override IComparer<BytesRef> Comparator
+            public override IComparer<BytesRef> Comparer
             {
                 get
                 {
@@ -375,7 +375,7 @@ namespace Lucene.Net.Codecs.Memory
                     this.meta = null;
                 }
 
-                public override IComparer<BytesRef> Comparator
+                public override IComparer<BytesRef> Comparer
                 {
                     get
                     {
@@ -547,7 +547,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override IComparer<BytesRef> Comparator
+                public override IComparer<BytesRef> Comparer
                 {
                     get
                     {

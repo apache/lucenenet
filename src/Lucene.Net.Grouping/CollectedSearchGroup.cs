@@ -19,14 +19,14 @@
 
     /// <summary>
     /// Expert: representation of a group in <see cref="AbstractFirstPassGroupingCollector{TGroupValue}"/>,
-    /// tracking the top doc and <see cref="FieldComparator"/> slot.
+    /// tracking the top doc and <see cref="FieldComparer"/> slot.
     /// @lucene.internal
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
     public class CollectedSearchGroup<TGroupValue> : SearchGroup<TGroupValue>, ICollectedSearchGroup
     {
         public int TopDoc { get; internal set; }
-        public int ComparatorSlot { get; internal set; }
+        public int ComparerSlot { get; internal set; }
     }
 
 
@@ -37,6 +37,6 @@
     public interface ICollectedSearchGroup
     {
         int TopDoc { get; }
-        int ComparatorSlot { get; }
+        int ComparerSlot { get; }
     }
 }

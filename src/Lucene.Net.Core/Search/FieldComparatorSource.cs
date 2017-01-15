@@ -18,21 +18,21 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Provides a <seealso cref="FieldComparator"/> for custom field sorting.
+    /// Provides a <seealso cref="FieldComparer"/> for custom field sorting.
     ///
     /// @lucene.experimental
     ///
     /// </summary>
-    public abstract class FieldComparatorSource // LUCENENET TODO: Rename FieldComparerSource ?
+    public abstract class FieldComparerSource
     {
         /// <summary>
         /// Creates a comparator for the field in the given index.
         /// </summary>
         /// <param name="fieldname">
         ///          Name of the field to create comparator for. </param>
-        /// <returns> FieldComparator. </returns>
+        /// <returns> FieldComparer. </returns>
         /// <exception cref="IOException">
         ///           If an error occurs reading the index. </exception>
-        public abstract FieldComparator NewComparator(string fieldname, int numHits, int sortPos, bool reversed); // LUCENENET TODO: Rename NewComparer ?
+        public abstract FieldComparer NewComparer(string fieldname, int numHits, int sortPos, bool reversed);
     }
 }

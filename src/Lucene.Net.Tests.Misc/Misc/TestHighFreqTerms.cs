@@ -45,7 +45,7 @@ namespace Lucene.Net.Misc
             int numTerms = 12;
             string field = null;
             TermStats[]
-            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.DocFreqComparator());
+            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.DocFreqComparer());
             assertEquals("Term with highest docfreq is first", 20, terms[0].DocFreq);
         }
 
@@ -55,7 +55,7 @@ namespace Lucene.Net.Misc
             int numTerms = 12;
             string field = "FIELD_1";
             TermStats[]
-            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.DocFreqComparator());
+            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.DocFreqComparer());
             assertEquals("Term with highest docfreq is first", 10, terms[0].DocFreq);
         }
 
@@ -65,7 +65,7 @@ namespace Lucene.Net.Misc
             int numTerms = 12;
             string field = "FIELD_1";
             TermStats[]
-            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.DocFreqComparator());
+            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.DocFreqComparer());
             for (int i = 0; i < terms.Length; i++)
             {
                 if (i > 0)
@@ -81,7 +81,7 @@ namespace Lucene.Net.Misc
             int numTerms = 12;
             string field = null;
             TermStats[]
-            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.DocFreqComparator());
+            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.DocFreqComparer());
             assertEquals("length of terms array equals numTerms :" + numTerms, numTerms, terms.Length);
         }
 
@@ -91,7 +91,7 @@ namespace Lucene.Net.Misc
             int numTerms = 12;
             string field = "FIELD_1";
             TermStats[]
-            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.DocFreqComparator());
+            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.DocFreqComparer());
 
             for (int i = 0; i < terms.Length; i++)
             {
@@ -125,7 +125,7 @@ namespace Lucene.Net.Misc
             int numTerms = 20;
             string field = null;
             TermStats[]
-            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.TotalTermFreqComparator());
+            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.TotalTermFreqComparer());
             assertEquals("Term with highest totalTermFreq is first", 200, terms[0].TotalTermFreq);
         }
 
@@ -135,7 +135,7 @@ namespace Lucene.Net.Misc
             int numTerms = 20;
             string field = "different_field";
             TermStats[]
-            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.TotalTermFreqComparator());
+            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.TotalTermFreqComparer());
             assertEquals("Term with highest totalTermFreq is first" + terms[0].TermText, 150, terms[0].TotalTermFreq);
         }
 
@@ -145,7 +145,7 @@ namespace Lucene.Net.Misc
             int numTerms = 12;
             string field = "FIELD_1";
             TermStats[]
-            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.TotalTermFreqComparator());
+            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.TotalTermFreqComparer());
 
             for (int i = 0; i < terms.Length; i++)
             {
@@ -164,7 +164,7 @@ namespace Lucene.Net.Misc
             int numTerms = 12;
             string field = "FIELD_1";
             TermStats[]
-            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.TotalTermFreqComparator());
+            terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.TotalTermFreqComparer());
 
             for (int i = 0; i < terms.Length; i++)
             {

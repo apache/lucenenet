@@ -464,7 +464,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private IComparer<GroupDoc> GetComparator(Sort sort)
+        private IComparer<GroupDoc> GetComparer(Sort sort)
         {
             SortField[] sortFields = sort.GetSort();
             return new ComparerAnonymousHelper(this, sortFields);
@@ -526,7 +526,7 @@ namespace Lucene.Net.Search.Grouping
                                                  int docOffset)
         {
 
-            IComparer<GroupDoc> groupSortComp = GetComparator(groupSort);
+            IComparer<GroupDoc> groupSortComp = GetComparer(groupSort);
 
             // LUCENENET TODO: The original Java API Arrays.Sort does not currently exist.
             // This call ultimately results in calling TimSort, which is why this line was replaced
@@ -588,7 +588,7 @@ namespace Lucene.Net.Search.Grouping
 
             int limit = Math.Min(groupOffset + topNGroups, groups.size());
 
-            IComparer<GroupDoc> docSortComp = GetComparator(docSort);
+            IComparer<GroupDoc> docSortComp = GetComparer(docSort);
 
             GroupDocs<BytesRef>[] result = new GroupDocs<BytesRef>[limit - groupOffset];
             int totalGroupedHitCount = 0;

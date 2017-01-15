@@ -146,7 +146,7 @@ namespace Lucene.Net.Search.Suggest
                 get { return currentWeight; }
             }
 
-            public virtual IComparer<BytesRef> Comparator
+            public virtual IComparer<BytesRef> Comparer
             {
                 get
                 {
