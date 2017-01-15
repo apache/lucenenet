@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
         /// FieldComparer used to sort this field. </summary>
         /// <seealso cref= Sort </seealso>
         /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
-        public object[] Fields; // LUCENENET TODO: Make private, rename, and see instructions below for making properties to access
+        public object[] Fields; // LUCENENET TODO: work out what to do about public array fields
 
         /// <summary>
         /// Expert: Creates one of these objects with empty sort information. </summary>
@@ -84,15 +84,5 @@ namespace Lucene.Net.Search
             sb.Append(Arrays.ToString(Fields));
             return sb.ToString();
         }
-
-        // LUCENENET TODO: Make this[int index] to get a field value
-
-        // LUCENENET TODO: Make Count property to get number of fields
-
-        // LUCENENET TODO: Make HasFields property to determine if fields is null
-
-        // LUCENENET TODO: Make SetFields() method to set the value to a new array
-
-        // Goal: encapsulation of Fields[] array (.NET conventions)
     }
 }
