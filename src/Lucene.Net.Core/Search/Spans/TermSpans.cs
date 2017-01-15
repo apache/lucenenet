@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Spans
             get { return m_position + 1; }
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
             return m_postings.GetCost();
         }
@@ -193,7 +193,7 @@ namespace Lucene.Net.Search.Spans
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return 0;
             }

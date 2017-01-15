@@ -100,6 +100,6 @@ namespace Lucene.Net.Search.Spans
         /// might match, but may be a rough heuristic, hardcoded value, or otherwise
         /// completely inaccurate.
         /// </summary>
-        public abstract long Cost(); // LUCENENET TODO: Change to GetCost() ?
+        public abstract long GetCost();
     }
 }

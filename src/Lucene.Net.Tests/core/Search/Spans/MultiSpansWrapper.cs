@@ -207,7 +207,7 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
             return int.MaxValue; // just for tests
         }

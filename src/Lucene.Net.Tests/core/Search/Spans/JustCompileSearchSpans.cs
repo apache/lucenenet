@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Spans
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
@@ -143,7 +143,7 @@ namespace Lucene.Net.Search.Spans
                 get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }

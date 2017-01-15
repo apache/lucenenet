@@ -242,7 +242,7 @@ namespace Lucene.Net.Search.Spans
                 while (i.MoveNext())
                 {
                     Spans spans = i.Current.GetSpans(context, acceptDocs, termContexts);
-                    cost += spans.Cost();
+                    cost += spans.GetCost();
                     if (((target == -1) && spans.Next()) || ((target != -1) && spans.SkipTo(target)))
                     {
                         queue.Add(spans);
@@ -346,7 +346,7 @@ namespace Lucene.Net.Search.Spans
                 return "spans(" + outerInstance + ")@" + ((queue == null) ? "START" : (queue.Count > 0 ? (Doc + ":" + Start + "-" + End) : "END"));
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return cost;
             }

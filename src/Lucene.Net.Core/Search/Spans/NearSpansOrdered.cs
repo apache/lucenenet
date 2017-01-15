@@ -165,12 +165,12 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
             long minCost = long.MaxValue;
             for (int i = 0; i < subSpans.Length; i++)
             {
-                minCost = Math.Min(minCost, subSpans[i].Cost());
+                minCost = Math.Min(minCost, subSpans[i].GetCost());
             }
             return minCost;
         }

@@ -258,9 +258,9 @@ namespace Lucene.Net.Search.Spans
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
-                return includeSpans.Cost();
+                return includeSpans.GetCost();
             }
 
             public override string ToString()
