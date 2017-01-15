@@ -55,5 +55,12 @@ namespace Lucene.Net
         {
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
+        public override void TestForPublicMembersContainingComparator(Type typeFromTargetAssembly)
+        {
+            base.TestForPublicMembersContainingComparator(typeFromTargetAssembly);
+        }
     }
 }

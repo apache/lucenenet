@@ -31,6 +31,11 @@ namespace Lucene.Net.Util
         /// </summary>
         private static Regex MethodParameterName = new Regex("^[a-z](?:[a-zA-Z0-9_]*[a-zA-Z0-9])?$");
 
+        /// <summary>
+        /// Public members should not contain the word "Comparator". In .NET, these should be named "Comparer".
+        /// </summary>
+        private static Regex ContainsComparator = new Regex("[Cc]omparator");
+
         //[Test, LuceneNetSpecific]
         public virtual void TestProtectedFieldNames(Type typeFromTargetAssembly)
         {
@@ -129,6 +134,26 @@ namespace Lucene.Net.Util
 
             Assert.IsFalse(names.Any(), names.Count() + " properties that return Array detected. " +
                 "Properties should not return Array. Change to a method (prefixed with Get).");
+        }
+
+        //[Test, LuceneNetSpecific]
+        public virtual void TestForPublicMembersContainingComparator(Type typeFromTargetAssembly)
+        {
+            var names = new List<string>();
+
+            names.AddRange(GetProtectedFieldsContainingComparator(typeFromTargetAssembly.Assembly));
+            names.AddRange(GetMembersContainingComparator(typeFromTargetAssembly.Assembly));
+
+            //if (VERBOSE)
+            //{
+            foreach (var name in names)
+            {
+                Console.WriteLine(name);
+            }
+            //}
+
+            Assert.IsFalse(names.Any(), names.Count() + " member names containing the word 'comparator' detected. " +
+                "In .NET, we need to change the word 'comparator' to 'comparer'.");
         }
 
 
@@ -321,7 +346,75 @@ namespace Lucene.Net.Util
             return result.ToArray();
         }
 
-        // LUCENENET TODO: Make methods for finding types, fields, properties, methods, and method parameters containing
-        // the word "comparator" (case insensitive), which should be changed to "comparer" in .NET.
+
+        private static IEnumerable<string> GetProtectedFieldsContainingComparator(Assembly assembly)
+        {
+            var result = new List<string>();
+
+            var classes = assembly.GetTypes().Where(t => t.IsClass);
+
+            foreach (var c in classes)
+            {
+                var fields = c.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+
+                foreach (var field in fields)
+                {
+                    if (field.Name.StartsWith("<")) // Ignore auto-implemented properties
+                    {
+                        continue;
+                    }
+
+                    if (field.DeclaringType.GetEvent(field.Name) != null) // Ignore events
+                    {
+                        continue;
+                    }
+
+                    if ((field.IsFamily || field.IsFamilyOrAssembly) && ContainsComparator.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
+                    {
+                        result.Add(string.Concat(c.FullName, ".", field.Name));
+                    }
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        private static IEnumerable<string> GetMembersContainingComparator(Assembly assembly)
+        {
+            var result = new List<string>();
+
+            var types = assembly.GetTypes();
+
+            foreach (var t in types)
+            {
+                if (ContainsComparator.IsMatch(t.Name) && t.IsVisible)
+                {
+                    result.Add(t.FullName);
+                }
+                
+                var members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+                foreach (var member in members)
+                {
+                    if (ContainsComparator.IsMatch(member.Name) && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                    {
+                        if (member.MemberType == MemberTypes.Method && !member.Name.StartsWith("get_"))
+                        {
+                            result.Add(string.Concat(t.FullName, ".", member.Name, "()"));
+                        }
+                        else if (member.MemberType == MemberTypes.Property)
+                        {
+                            result.Add(string.Concat(t.FullName, ".", member.Name));
+                        }
+                        else if (member.MemberType == MemberTypes.Event)
+                        {
+                            result.Add(string.Concat(t.FullName, ".", member.Name, " (event)"));
+                        }
+                    }
+                }
+            }
+
+            return result.ToArray();
+        }
     }
 }
