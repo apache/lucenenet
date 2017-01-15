@@ -83,7 +83,7 @@ namespace Lucene.Net.Util
         public virtual void TestIntermediateMerges()
         {
             // Sort 20 mb worth of data with 1mb buffer, binary merging.
-            OfflineSorter.SortInfo info = CheckSort(new OfflineSorter(OfflineSorter.DEFAULT_COMPARATOR, OfflineSorter.BufferSize.Megabytes(1), OfflineSorter.DefaultTempDir(), 2), GenerateRandom((int)OfflineSorter.MB * 20));
+            OfflineSorter.SortInfo info = CheckSort(new OfflineSorter(OfflineSorter.DEFAULT_COMPARER, OfflineSorter.BufferSize.Megabytes(1), OfflineSorter.DefaultTempDir(), 2), GenerateRandom((int)OfflineSorter.MB * 20));
             Assert.IsTrue(info.MergeRounds > 10);
         }
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Util
         public virtual void TestSmallRandom()
         {
             // Sort 20 mb worth of data with 1mb buffer.
-            OfflineSorter.SortInfo sortInfo = CheckSort(new OfflineSorter(OfflineSorter.DEFAULT_COMPARATOR, OfflineSorter.BufferSize.Megabytes(1), OfflineSorter.DefaultTempDir(), OfflineSorter.MAX_TEMPFILES), GenerateRandom((int)OfflineSorter.MB * 20));
+            OfflineSorter.SortInfo sortInfo = CheckSort(new OfflineSorter(OfflineSorter.DEFAULT_COMPARER, OfflineSorter.BufferSize.Megabytes(1), OfflineSorter.DefaultTempDir(), OfflineSorter.MAX_TEMPFILES), GenerateRandom((int)OfflineSorter.MB * 20));
             Assert.AreEqual(1, sortInfo.MergeRounds);
         }
 
@@ -107,7 +107,7 @@ namespace Lucene.Net.Util
         public virtual void TestLargerRandom()
         {
             // Sort 100MB worth of data with 15mb buffer.
-            CheckSort(new OfflineSorter(OfflineSorter.DEFAULT_COMPARATOR, OfflineSorter.BufferSize.Megabytes(16), OfflineSorter.DefaultTempDir(), OfflineSorter.MAX_TEMPFILES), GenerateRandom((int)OfflineSorter.MB * 100));
+            CheckSort(new OfflineSorter(OfflineSorter.DEFAULT_COMPARER, OfflineSorter.BufferSize.Megabytes(16), OfflineSorter.DefaultTempDir(), OfflineSorter.MAX_TEMPFILES), GenerateRandom((int)OfflineSorter.MB * 100));
         }
 
         private byte[][] GenerateRandom(int howMuchData)

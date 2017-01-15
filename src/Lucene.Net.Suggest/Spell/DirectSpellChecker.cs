@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Spell
         private bool lowerCaseTerms = true;
         /// <summary>
         /// the comparer to use </summary>
-        private IComparer<SuggestWord> comparer = SuggestWordQueue.DEFAULT_COMPARATOR;
+        private IComparer<SuggestWord> comparer = SuggestWordQueue.DEFAULT_COMPARER;
         /// <summary>
         /// the string distance to use </summary>
         private IStringDistance distance = INTERNAL_LEVENSHTEIN;
@@ -280,7 +280,7 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Gets or sets the comparer for sorting suggestions.
-        /// The default is <see cref="SuggestWordQueue.DEFAULT_COMPARATOR"/> 
+        /// The default is <see cref="SuggestWordQueue.DEFAULT_COMPARER"/> 
         /// </summary>
         public virtual IComparer<SuggestWord> Comparer
         {

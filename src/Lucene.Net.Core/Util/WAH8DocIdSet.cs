@@ -95,7 +95,7 @@ namespace Lucene.Net.Util
             SINGLE_ZERO_BUFFER.Freeze();
         }
 
-        private static readonly IComparer<Iterator> SERIALIZED_LENGTH_COMPARATOR = new ComparerAnonymousInnerClassHelper();
+        private static readonly IComparer<Iterator> SERIALIZED_LENGTH_COMPARER = new ComparerAnonymousInnerClassHelper();
 
         private class ComparerAnonymousInnerClassHelper : IComparer<Iterator>
         {
@@ -140,7 +140,7 @@ namespace Lucene.Net.Util
                 var it = (Iterator)set.GetIterator();
                 iterators[i++] = it;
             }
-            Array.Sort(iterators, SERIALIZED_LENGTH_COMPARATOR);
+            Array.Sort(iterators, SERIALIZED_LENGTH_COMPARER);
             WordBuilder builder = (WordBuilder)(new WordBuilder()).SetIndexInterval(indexInterval);
             int wordNum = 0;
             while (true)

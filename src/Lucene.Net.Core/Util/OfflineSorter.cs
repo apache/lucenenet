@@ -202,7 +202,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Default comparer: sorts in binary (codepoint) order </summary>
-        public static readonly IComparer<BytesRef> DEFAULT_COMPARATOR = Utf8SortedAsUnicodeComparer.Instance;
+        public static readonly IComparer<BytesRef> DEFAULT_COMPARER = Utf8SortedAsUnicodeComparer.Instance;
 
         /// <summary>
         /// Defaults constructor.
@@ -210,7 +210,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= #defaultTempDir() </seealso>
         /// <seealso cref= BufferSize#automatic() </seealso>
         public OfflineSorter()
-            : this(DEFAULT_COMPARATOR, BufferSize.Automatic(), DefaultTempDir(), MAX_TEMPFILES)
+            : this(DEFAULT_COMPARER, BufferSize.Automatic(), DefaultTempDir(), MAX_TEMPFILES)
         {
         }
 

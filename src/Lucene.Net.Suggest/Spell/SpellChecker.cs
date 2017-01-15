@@ -102,7 +102,7 @@ namespace Lucene.Net.Search.Spell
         /// <param name="sd"> the <see cref="StringDistance"/> measurement to use </param>
         /// <exception cref="System.IO.IOException"> if Spellchecker can not open the directory </exception>
         public SpellChecker(Directory spellIndex, IStringDistance sd)
-            : this(spellIndex, sd, SuggestWordQueue.DEFAULT_COMPARATOR)
+            : this(spellIndex, sd, SuggestWordQueue.DEFAULT_COMPARER)
         {
         }
         /// <summary>

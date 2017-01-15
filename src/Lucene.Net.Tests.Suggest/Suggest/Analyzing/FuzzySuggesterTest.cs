@@ -1188,7 +1188,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     assertEquals("expected " + c0.key +
                                  " but got " + c1.key,
                                  0,
-                                 CHARSEQUENCE_COMPARATOR.Compare(c0.key, c1.key));
+                                 CHARSEQUENCE_COMPARER.Compare(c0.key, c1.key));
                     assertEquals(c0.value, c1.value);
                 }
                 assertEquals(expected.size(), actual.size());
@@ -1290,7 +1290,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private static readonly IComparer<string> CHARSEQUENCE_COMPARATOR = new CharSequenceComparer();
+        private static readonly IComparer<string> CHARSEQUENCE_COMPARER = new CharSequenceComparer();
 
         public class CompareByCostThenAlpha : IComparer<Lookup.LookupResult>
         {
@@ -1307,7 +1307,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
                 else
                 {
-                    int c = CHARSEQUENCE_COMPARATOR.Compare(a.key, b.key);
+                    int c = CHARSEQUENCE_COMPARER.Compare(a.key, b.key);
                     Debug.Assert(c != 0, "term=" + a.key);
                     return c;
                 }

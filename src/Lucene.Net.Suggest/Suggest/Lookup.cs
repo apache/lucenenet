@@ -120,14 +120,14 @@ namespace Lucene.Net.Search.Suggest
             /// Compare alphabetically. </summary>
             public int CompareTo(LookupResult o)
             {
-                return CHARSEQUENCE_COMPARATOR.Compare(key, o.key);
+                return CHARSEQUENCE_COMPARER.Compare(key, o.key);
             }
         }
 
         /// <summary>
         /// A simple char-by-char comparer for <see cref="string"/>
         /// </summary>
-        public static readonly IComparer<string> CHARSEQUENCE_COMPARATOR = new CharSequenceComparer();
+        public static readonly IComparer<string> CHARSEQUENCE_COMPARER = new CharSequenceComparer();
 
         private class CharSequenceComparer : IComparer<string>
         {

@@ -30,18 +30,18 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// Default comparer: score then frequency. </summary>
         /// <seealso cref="SuggestWordScoreComparer"/>
-        public static readonly IComparer<SuggestWord> DEFAULT_COMPARATOR = new SuggestWordScoreComparer();
+        public static readonly IComparer<SuggestWord> DEFAULT_COMPARER = new SuggestWordScoreComparer();
 
 
         private readonly IComparer<SuggestWord> comparer;
 
         /// <summary>
-        /// Use the <see cref="DEFAULT_COMPARATOR"/> </summary>
+        /// Use the <see cref="DEFAULT_COMPARER"/> </summary>
         /// <param name="size"> The size of the queue </param>
         public SuggestWordQueue(int size)
             : base(size)
         {
-            comparer = DEFAULT_COMPARATOR;
+            comparer = DEFAULT_COMPARER;
         }
 
         /// <summary>

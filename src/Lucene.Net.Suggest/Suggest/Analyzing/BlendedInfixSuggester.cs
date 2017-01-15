@@ -328,7 +328,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
 
                 // otherwise on alphabetic order
-                return CHARSEQUENCE_COMPARATOR.Compare(o1.key, o2.key);
+                return CHARSEQUENCE_COMPARER.Compare(o1.key, o2.key);
             }
         }
     }
