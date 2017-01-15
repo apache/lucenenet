@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
             {
                 c.Collect(0);
             }
-            TopDocs td = tdc.TopDocs();
+            TopDocs td = tdc.GetTopDocs();
             ScoreDoc[] sd = td.ScoreDocs;
             Assert.AreEqual(numPositiveScores, td.TotalHits);
             for (int i = 0; i < sd.Length; i++)

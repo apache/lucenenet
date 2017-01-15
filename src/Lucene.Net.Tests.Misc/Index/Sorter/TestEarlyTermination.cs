@@ -113,7 +113,7 @@ namespace Lucene.Net.Index.Sorter
                 searcher.Search(query, new EarlyTerminatingSortingCollector(collector2, sort, numHits));
             }
             assertTrue(collector1.TotalHits >= collector2.TotalHits);
-            AssertTopDocsEquals(collector1.TopDocs().ScoreDocs, collector2.TopDocs().ScoreDocs);
+            AssertTopDocsEquals(collector1.GetTopDocs().ScoreDocs, collector2.GetTopDocs().ScoreDocs);
         }
 
         [Test]
@@ -142,7 +142,7 @@ namespace Lucene.Net.Index.Sorter
 
 
                 assertTrue(collector1.TotalHits >= collector2.TotalHits);
-                AssertTopDocsEquals(collector1.TopDocs().ScoreDocs, collector2.TopDocs().ScoreDocs);
+                AssertTopDocsEquals(collector1.GetTopDocs().ScoreDocs, collector2.GetTopDocs().ScoreDocs);
             }
         }
 

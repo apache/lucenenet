@@ -520,7 +520,7 @@ namespace Lucene.Net.Search
             nDocs = Math.Min(nDocs, limit);
             TopScoreDocCollector collector = TopScoreDocCollector.Create(nDocs, after, !weight.ScoresDocsOutOfOrder);
             Search(leaves, weight, collector);
-            return collector.TopDocs();
+            return collector.GetTopDocs();
         }
 
         /// <summary>
@@ -585,7 +585,7 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                TopFieldDocs topDocs = (TopFieldDocs)topCollector.TopDocs();
+                TopFieldDocs topDocs = (TopFieldDocs)topCollector.GetTopDocs();
 
                 return new TopFieldDocs(totalHits, topDocs.ScoreDocs, topDocs.Fields, topDocs.MaxScore);
             }
@@ -608,7 +608,7 @@ namespace Lucene.Net.Search
 
             TopFieldCollector collector = TopFieldCollector.Create(sort, nDocs, after, fillFields, doDocScores, doMaxScore, !weight.ScoresDocsOutOfOrder);
             Search(leaves, weight, collector);
-            return (TopFieldDocs)collector.TopDocs();
+            return (TopFieldDocs)collector.GetTopDocs();
         }
 
         /// <summary>

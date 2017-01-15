@@ -352,7 +352,7 @@ namespace Lucene.Net.Facet
                 const bool fillFields = true;
                 var hitsCollector = TopFieldCollector.Create(sort, n, (FieldDoc)after, fillFields, doDocScores, doMaxScore, false);
                 searcher.Search(q, MultiCollector.Wrap(hitsCollector, fc));
-                return hitsCollector.TopDocs();
+                return hitsCollector.GetTopDocs();
             }
             else
             {
@@ -362,7 +362,7 @@ namespace Lucene.Net.Facet
                 // taking Weight... could use reflection...
                 var hitsCollector = TopScoreDocCollector.Create(n, after, false);
                 searcher.Search(q, MultiCollector.Wrap(hitsCollector, fc));
-                return hitsCollector.TopDocs();
+                return hitsCollector.GetTopDocs();
             }
         }
     }

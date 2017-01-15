@@ -526,12 +526,12 @@ namespace Lucene.Net.Join
                 if (withinGroupSort == null)
                 {
                     var tempCollector = (TopScoreDocCollector) collector;
-                    topDocs = tempCollector.TopDocs(withinGroupOffset, numDocsInGroup);
+                    topDocs = tempCollector.GetTopDocs(withinGroupOffset, numDocsInGroup);
                 }
                 else
                 {
                     var tempCollector = (TopFieldCollector) collector;
-                    topDocs = tempCollector.TopDocs(withinGroupOffset, numDocsInGroup);
+                    topDocs = tempCollector.GetTopDocs(withinGroupOffset, numDocsInGroup);
                 }
                 
                 groups[groupIdx - offset] = new GroupDocs<int>(og.Score, topDocs.MaxScore, numChildDocs, topDocs.ScoreDocs, og.Doc, groupSortValues);

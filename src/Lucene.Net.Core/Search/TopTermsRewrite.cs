@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// return the maximum size of the priority queue (for boolean rewrites this is BooleanQuery#getMaxClauseCount). </summary>
-        protected abstract int MaxSize { get; } // LUCENENET TODO: Rename MaxCount ?
+        protected abstract int MaxSize { get; }
 
         public override Query Rewrite(IndexReader reader, MultiTermQuery query)
         {

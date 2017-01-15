@@ -304,17 +304,17 @@ namespace Lucene.Net.Search
                 get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
 
-            public override TopDocs TopDocs()
+            public override TopDocs GetTopDocs()
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override TopDocs TopDocs(int start)
+            public override TopDocs GetTopDocs(int start)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override TopDocs TopDocs(int start, int end)
+            public override TopDocs GetTopDocs(int start, int end)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }

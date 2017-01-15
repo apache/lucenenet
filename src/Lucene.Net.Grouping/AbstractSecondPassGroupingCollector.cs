@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Grouping
             foreach (var group in groups)
             {
                 AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> groupDocs = groupMap.ContainsKey(group.GroupValue) ? groupMap[group.GroupValue] : null;
-                TopDocs topDocs = groupDocs.collector.TopDocs(withinGroupOffset, maxDocsPerGroup);
+                TopDocs topDocs = groupDocs.collector.GetTopDocs(withinGroupOffset, maxDocsPerGroup);
                 groupDocsResult[groupIDX++] = new GroupDocs<TGroupValue>(float.NaN,
                                                                               topDocs.MaxScore,
                                                                               topDocs.TotalHits,

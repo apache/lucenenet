@@ -496,7 +496,7 @@ namespace Lucene.Net.Tests.Join
 
                     // Asserting TopDocs...
                     TopDocs expectedTopDocs = CreateExpectedTopDocs(randomValue, from, scoreMode, context);
-                    TopDocs actualTopDocs = topScoreDocCollector.TopDocs();
+                    TopDocs actualTopDocs = topScoreDocCollector.GetTopDocs();
                     assertEquals(expectedTopDocs.TotalHits, actualTopDocs.TotalHits);
                     assertEquals(expectedTopDocs.ScoreDocs.Length, actualTopDocs.ScoreDocs.Length);
                     if (scoreMode == ScoreMode.None)

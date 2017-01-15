@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
                 hitUpto++;
             }
 
-            return collector.TopDocs();
+            return collector.GetTopDocs();
         }
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<ScoreDoc>

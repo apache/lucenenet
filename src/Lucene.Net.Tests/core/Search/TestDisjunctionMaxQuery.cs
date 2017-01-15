@@ -524,8 +524,8 @@ namespace Lucene.Net.Search
             query.Add(sq2);
             TopScoreDocCollector collector = TopScoreDocCollector.Create(1000, true);
             searcher.Search(query, collector);
-            hits = collector.TopDocs().ScoreDocs.Length;
-            foreach (ScoreDoc scoreDoc in collector.TopDocs().ScoreDocs)
+            hits = collector.GetTopDocs().ScoreDocs.Length;
+            foreach (ScoreDoc scoreDoc in collector.GetTopDocs().ScoreDocs)
             {
                 Console.WriteLine(scoreDoc.Doc);
             }

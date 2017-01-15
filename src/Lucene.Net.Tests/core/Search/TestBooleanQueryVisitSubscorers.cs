@@ -192,9 +192,9 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public virtual TopDocs TopDocs()
+            public virtual TopDocs GetTopDocs()
             {
-                return Collector.TopDocs();
+                return Collector.GetTopDocs();
             }
 
             public virtual int Freq(int doc)

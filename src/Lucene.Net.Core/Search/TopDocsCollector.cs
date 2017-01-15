@@ -110,12 +110,12 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the top docs that were collected by this collector. </summary>
-        public virtual TopDocs TopDocs() // LUCENENET TODO: Rename GetTopDocs() ?
+        public virtual TopDocs GetTopDocs()
         {
             // In case pq was populated with sentinel values, there might be less
             // results than pq.size(). Therefore return all results until either
             // pq.size() or totalHits.
-            return TopDocs(0, TopDocsCount);
+            return GetTopDocs(0, TopDocsCount);
         }
 
         /// <summary>
@@ -130,12 +130,12 @@ namespace Lucene.Net.Search
         /// with the returned <seealso cref="TopDocs"/> object, which will contain all the
         /// results this search execution collected.
         /// </summary>
-        public virtual TopDocs TopDocs(int start) // LUCENENET TODO: Rename GetTopDocs() ?
+        public virtual TopDocs GetTopDocs(int start)
         {
             // In case pq was populated with sentinel values, there might be less
             // results than pq.size(). Therefore return all results until either
             // pq.size() or totalHits.
-            return TopDocs(start, TopDocsCount);
+            return GetTopDocs(start, TopDocsCount);
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Lucene.Net.Search
         /// returned <seealso cref="TopDocs"/> object, which will contain all the results this
         /// search execution collected.
         /// </summary>
-        public virtual TopDocs TopDocs(int start, int howMany) // LUCENENET TODO: Rename GetTopDocs() ?
+        public virtual TopDocs GetTopDocs(int start, int howMany)
         {
             // In case pq was populated with sentinel values, there might be less
             // results than pq.size(). Therefore return all results until either
@@ -207,8 +207,8 @@ namespace Lucene.Net.Search
     {
         // From TopDocsCollector<T>
         int TotalHits { get; }
-        TopDocs TopDocs();
-        TopDocs TopDocs(int start);
-        TopDocs TopDocs(int start, int howMany);
+        TopDocs GetTopDocs();
+        TopDocs GetTopDocs(int start);
+        TopDocs GetTopDocs(int start, int howMany);
     }
 }

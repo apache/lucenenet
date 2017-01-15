@@ -232,7 +232,7 @@ namespace Lucene.Net.Search
                         searcher.Search(query, c);
                         from = TestUtil.NextInt(Random(), 0, numHits - 1);
                         size = numHits - from;
-                        TopDocs tempTopHits = c.TopDocs();
+                        TopDocs tempTopHits = c.GetTopDocs();
                         if (from < tempTopHits.ScoreDocs.Length)
                         {
                             // Can't use TopDocs#topDocs(start, howMany), since it has different behaviour when start >= hitCount
@@ -260,7 +260,7 @@ namespace Lucene.Net.Search
                     {
                         from = TestUtil.NextInt(Random(), 0, numHits - 1);
                         size = numHits - from;
-                        TopDocs tempTopHits = c.TopDocs();
+                        TopDocs tempTopHits = c.GetTopDocs();
                         if (from < tempTopHits.ScoreDocs.Length)
                         {
                             // Can't use TopDocs#topDocs(start, howMany), since it has different behaviour when start >= hitCount
@@ -277,7 +277,7 @@ namespace Lucene.Net.Search
                     }
                     else
                     {
-                        topHits = c.TopDocs(0, numHits);
+                        topHits = c.GetTopDocs(0, numHits);
                     }
                 }
 
@@ -314,7 +314,7 @@ namespace Lucene.Net.Search
                     {
                         TopFieldCollector c = TopFieldCollector.Create(sort, numHits, true, true, true, Random().NextBoolean());
                         subSearcher.Search(w, c);
-                        subHits = c.TopDocs(0, numHits);
+                        subHits = c.GetTopDocs(0, numHits);
                     }
 
                     shardHits[shardIDX] = subHits;

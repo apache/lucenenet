@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
             // bs2
             TopScoreDocCollector collector = TopScoreDocCollector.Create(1000, true);
             s.Search(q, collector);
-            ScoreDoc[] h2 = collector.TopDocs().ScoreDocs;
+            ScoreDoc[] h2 = collector.GetTopDocs().ScoreDocs;
             if (expected != h2.Length)
             {
                 PrintHits(TestName, h2, s);

@@ -524,7 +524,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 //System.out.println("got searcher=" + searcher);
                 searcher.Search(finalQuery, c2);
 
-                TopFieldDocs hits = (TopFieldDocs)c.TopDocs();
+                TopFieldDocs hits = (TopFieldDocs)c.GetTopDocs();
 
                 // Slower way if postings are not pre-sorted by weight:
                 // hits = searcher.search(query, null, num, SORT);

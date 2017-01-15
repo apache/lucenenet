@@ -216,7 +216,7 @@ namespace Lucene.Net.Facet
                 topN = Math.Min(topN, limit);
                 TopFieldCollector hitCollector = TopFieldCollector.Create(sort, topN, after, true, doDocScores, doMaxScore, true);
                 DrillSidewaysResult r = Search(query, hitCollector);
-                return new DrillSidewaysResult(r.Facets, hitCollector.TopDocs());
+                return new DrillSidewaysResult(r.Facets, hitCollector.GetTopDocs());
             }
             else
             {
@@ -247,7 +247,7 @@ namespace Lucene.Net.Facet
             topN = Math.Min(topN, limit);
             TopScoreDocCollector hitCollector = TopScoreDocCollector.Create(topN, after, true);
             DrillSidewaysResult r = Search(query, hitCollector);
-            return new DrillSidewaysResult(r.Facets, hitCollector.TopDocs());
+            return new DrillSidewaysResult(r.Facets, hitCollector.GetTopDocs());
         }
 
         /// <summary>

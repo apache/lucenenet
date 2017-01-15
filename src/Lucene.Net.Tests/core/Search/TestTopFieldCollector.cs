@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
 
                 @is.Search(q, tdc);
 
-                ScoreDoc[] sd = tdc.TopDocs().ScoreDocs;
+                ScoreDoc[] sd = tdc.GetTopDocs().ScoreDocs;
                 for (int j = 1; j < sd.Length; j++)
                 {
                     Assert.IsTrue(sd[j].Doc != sd[j - 1].Doc);
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
 
                 @is.Search(q, tdc);
 
-                TopDocs td = tdc.TopDocs();
+                TopDocs td = tdc.GetTopDocs();
                 ScoreDoc[] sd = td.ScoreDocs;
                 for (int j = 0; j < sd.Length; j++)
                 {
@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
 
                 @is.Search(q, tdc);
 
-                TopDocs td = tdc.TopDocs();
+                TopDocs td = tdc.GetTopDocs();
                 ScoreDoc[] sd = td.ScoreDocs;
                 for (int j = 0; j < sd.Length; j++)
                 {
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
 
                 @is.Search(q, tdc);
 
-                TopDocs td = tdc.TopDocs();
+                TopDocs td = tdc.GetTopDocs();
                 ScoreDoc[] sd = td.ScoreDocs;
                 for (int j = 0; j < sd.Length; j++)
                 {
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search
 
                 @is.Search(q, tdc);
 
-                TopDocs td = tdc.TopDocs();
+                TopDocs td = tdc.GetTopDocs();
                 ScoreDoc[] sd = td.ScoreDocs;
                 for (int j = 0; j < sd.Length; j++)
                 {
@@ -196,7 +196,7 @@ namespace Lucene.Net.Search
 
                     @is.Search(bq, tdc);
 
-                    TopDocs td = tdc.TopDocs();
+                    TopDocs td = tdc.GetTopDocs();
                     ScoreDoc[] sd = td.ScoreDocs;
                     Assert.AreEqual(10, sd.Length);
                 }
@@ -229,7 +229,7 @@ namespace Lucene.Net.Search
 
                     @is.Search(bq, tdc);
 
-                    TopDocs td = tdc.TopDocs();
+                    TopDocs td = tdc.GetTopDocs();
                     ScoreDoc[] sd = td.ScoreDocs;
                     Assert.AreEqual(10, sd.Length);
                 }
@@ -244,7 +244,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < sort.Length; i++)
             {
                 TopDocsCollector<Entry> tdc = TopFieldCollector.Create(sort[i], 10, true, true, true, true);
-                TopDocs td = tdc.TopDocs();
+                TopDocs td = tdc.GetTopDocs();
                 Assert.AreEqual(0, td.TotalHits);
                 Assert.IsTrue(float.IsNaN(td.MaxScore));
             }

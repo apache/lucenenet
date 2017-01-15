@@ -141,11 +141,11 @@ namespace Lucene.Net.Search
         {
             TopScoreDocCollector collector = TopScoreDocCollector.Create(1000, false);
             Searcher.Search(query, null, collector);
-            ScoreDoc[] hits1 = collector.TopDocs().ScoreDocs;
+            ScoreDoc[] hits1 = collector.GetTopDocs().ScoreDocs;
 
             collector = TopScoreDocCollector.Create(1000, true);
             Searcher.Search(query, null, collector);
-            ScoreDoc[] hits2 = collector.TopDocs().ScoreDocs;
+            ScoreDoc[] hits2 = collector.GetTopDocs().ScoreDocs;
 
             Assert.AreEqual(MulFactor * collector.TotalHits, BigSearcher.Search(query, 1).TotalHits);
 
@@ -320,12 +320,12 @@ namespace Lucene.Net.Search
                     TopFieldCollector collector = TopFieldCollector.Create(sort, 1000, false, true, true, true);
 
                     Searcher.Search(q1, null, collector);
-                    ScoreDoc[] hits1 = collector.TopDocs().ScoreDocs;
+                    ScoreDoc[] hits1 = collector.GetTopDocs().ScoreDocs;
 
                     collector = TopFieldCollector.Create(sort, 1000, false, true, true, false);
 
                     Searcher.Search(q1, null, collector);
-                    ScoreDoc[] hits2 = collector.TopDocs().ScoreDocs;
+                    ScoreDoc[] hits2 = collector.GetTopDocs().ScoreDocs;
                     tot += hits2.Length;
                     CheckHits.CheckEqual(q1, hits1, hits2);
 

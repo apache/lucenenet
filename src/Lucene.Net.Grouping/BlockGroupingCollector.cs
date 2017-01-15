@@ -456,7 +456,7 @@ namespace Lucene.Net.Search.Grouping
                     groupSortValues = null;
                 }
 
-                TopDocs topDocs = collector.TopDocs(withinGroupOffset, maxDocsPerGroup);
+                TopDocs topDocs = collector.GetTopDocs(withinGroupOffset, maxDocsPerGroup);
 
                 // TODO: we could aggregate scores across children
                 // by Sum/Avg instead of passing NaN:

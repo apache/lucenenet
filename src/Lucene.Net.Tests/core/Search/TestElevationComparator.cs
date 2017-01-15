@@ -77,7 +77,7 @@ namespace Lucene.Net.Search
             TopDocsCollector<Entry> topCollector = TopFieldCollector.Create(sort, 50, false, true, true, true);
             searcher.Search(newq, null, topCollector);
 
-            TopDocs topDocs = topCollector.TopDocs(0, 10);
+            TopDocs topDocs = topCollector.GetTopDocs(0, 10);
             int nDocsReturned = topDocs.ScoreDocs.Length;
 
             Assert.AreEqual(4, nDocsReturned);
