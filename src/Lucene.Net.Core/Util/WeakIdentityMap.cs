@@ -339,8 +339,10 @@ namespace Lucene.Net.Util
         /// this iterator may return values whose key is already
         /// garbage collected while iterator is consumed,
         /// especially if {@code reapOnRead} is {@code false}.
+        /// <para/>
+        /// NOTE: This was valueIterator() in Lucene.
         /// </summary>
-        public IEnumerator<TValue> ValueIterator() // LUCENENET TODO: rename GetValueIterator()
+        public IEnumerator<TValue> GetValueEnumerator()
         {
             if (reapOnRead)
             {
