@@ -706,8 +706,6 @@ namespace Lucene.Net.Search.Highlight
             assertExpectedHighlightCount(maxNumFragmentsRequired, expectedHighlights);
         }
 
-        // LUCENENET TODO: Finish implementation
-
         [Test]
         public void TestNearSpanSimpleQuery()
         {
@@ -812,9 +810,6 @@ namespace Lucene.Net.Search.Highlight
         {
             TestHighlightRunner helper = new TestHighlightRunner((instance) =>
             {
-                //instance.mode = TestHighlightRunner.QUERY;
-                //instance.DoStandardHighlights(analyzer, searcher, hits, query, this);
-
                 numHighlights = 0;
                 if (Random().nextBoolean())
                 {
