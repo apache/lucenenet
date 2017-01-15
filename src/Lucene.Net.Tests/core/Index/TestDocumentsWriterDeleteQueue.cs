@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
             assertEquals(uniqueValues, new HashSet<Term>(bd1.terms.Keys));
             assertEquals(uniqueValues, new HashSet<Term>(bd2.terms.Keys));
             var frozenSet = new HashSet<Term>();
-            foreach (Term t in queue.FreezeGlobalBuffer(null).TermsIterable())
+            foreach (Term t in queue.FreezeGlobalBuffer(null).GetTermsEnumerable())
             {
                 BytesRef bytesRef = new BytesRef();
                 bytesRef.CopyBytes(t.Bytes);
@@ -243,7 +243,7 @@ namespace Lucene.Net.Index
             }
             queue.TryApplyGlobalSlice();
             HashSet<Term> frozenSet = new HashSet<Term>();
-            foreach (Term t in queue.FreezeGlobalBuffer(null).TermsIterable())
+            foreach (Term t in queue.FreezeGlobalBuffer(null).GetTermsEnumerable())
             {
                 BytesRef bytesRef = new BytesRef();
                 bytesRef.CopyBytes(t.Bytes);

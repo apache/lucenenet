@@ -139,7 +139,8 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual IEnumerable<Term> TermsIterable() // LUCENENET TODO: Rename to TermsEnumerable() ?
+        // LUCENENET NOTE: This was termsIterable() in Lucene
+        public virtual IEnumerable<Term> GetTermsEnumerable()
         {
             return new IterableAnonymousInnerClassHelper(this);
         }
@@ -164,7 +165,8 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual IEnumerable<QueryAndLimit> QueriesIterable() // LUCENENET TODO: Rename to QueriesEnumerable() ?
+        // LUCENENET NOTE: This was queriesIterable() in Lucene
+        public virtual IEnumerable<QueryAndLimit> GetQueriesEnumerable()
         {
             return new IterableAnonymousInnerClassHelper2(this);
         }

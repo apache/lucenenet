@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 
         internal virtual void Update(FrozenBufferedUpdates @in)
         {
-            iterables.Add(@in.TermsIterable());
+            iterables.Add(@in.GetTermsEnumerable());
 
             for (int queryIdx = 0; queryIdx < @in.queries.Length; queryIdx++)
             {

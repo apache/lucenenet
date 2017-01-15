@@ -269,7 +269,7 @@ namespace Lucene.Net.Index
                             //System.out.println("    del exact");
                             // Don't delete by Term here; DocumentsWriterPerThread
                             // already did that on flush:
-                            delCount += (int)ApplyQueryDeletes(packet.QueriesIterable(), rld, reader);
+                            delCount += (int)ApplyQueryDeletes(packet.GetQueriesEnumerable(), rld, reader);
                             ApplyDocValuesUpdates(Arrays.AsList(packet.numericDVUpdates), rld, reader, dvUpdates);
                             ApplyDocValuesUpdates(Arrays.AsList(packet.binaryDVUpdates), rld, reader, dvUpdates);
                             if (dvUpdates.Any())
