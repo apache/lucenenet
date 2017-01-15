@@ -905,14 +905,14 @@ namespace Lucene.Net.Search
 
             public override int CompareBottom(int doc)
             {
-                float score = scorer.Score();
+                float score = scorer.GetScore();
                 Debug.Assert(!float.IsNaN(score));
                 return score.CompareTo(bottom);
             }
 
             public override void Copy(int slot, int doc)
             {
-                scores[slot] = scorer.Score();
+                scores[slot] = scorer.GetScore();
                 Debug.Assert(!float.IsNaN(scores[slot]));
             }
 
@@ -961,7 +961,7 @@ namespace Lucene.Net.Search
 
             public override int CompareTop(int doc)
             {
-                float docValue = scorer.Score();
+                float docValue = scorer.GetScore();
                 Debug.Assert(!float.IsNaN(docValue));
                 return docValue.CompareTo(topValue);
             }

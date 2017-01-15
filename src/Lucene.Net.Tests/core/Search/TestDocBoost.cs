@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                Scores[doc + @base] = scorer.Score();
+                Scores[doc + @base] = scorer.GetScore();
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)

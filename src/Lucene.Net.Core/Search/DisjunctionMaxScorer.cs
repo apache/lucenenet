@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Determine the current document score.  Initially invalid, until <seealso cref="#nextDoc()"/> is called the first time. </summary>
         /// <returns> the score of the current generated document </returns>
-        public override float Score()
+        public override float GetScore()
         {
             return scoreMax + (scoreSum - scoreMax) * tieBreakerMultiplier;
         }
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
             m_doc = m_subScorers[0].DocID;
             if (m_doc != NO_MORE_DOCS)
             {
-                scoreSum = scoreMax = m_subScorers[0].Score();
+                scoreSum = scoreMax = m_subScorers[0].GetScore();
                 freq = 1;
                 ScoreAll(1);
                 ScoreAll(2);
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
         {
             if (root < m_numScorers && m_subScorers[root].DocID == m_doc)
             {
-                float sub = m_subScorers[root].Score();
+                float sub = m_subScorers[root].GetScore();
                 freq++;
                 scoreSum += sub;
                 scoreMax = Math.Max(scoreMax, sub);

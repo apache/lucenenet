@@ -76,7 +76,7 @@ namespace Lucene.Net.Expressions
                 throw new NotSupportedException("FakeScorer doesn't support nextDoc()");
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 return score;
             }

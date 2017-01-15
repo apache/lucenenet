@@ -86,7 +86,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
             public virtual void Collect(int docNr)
             {
-                float score = scorer.Score();
+                float score = scorer.GetScore();
                 docNr += docBase;
                 /* System.out.println(docNr + " '" + dBase.getDocs()[docNr] + "': " + score); */
                 Assert.True(score > 0.0, parent.QueryText + ": positive score");

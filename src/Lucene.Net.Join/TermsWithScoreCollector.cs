@@ -127,7 +127,7 @@ namespace Lucene.Net.Join
                     }
                 }
 
-                float current = _scorer.Score();
+                float current = _scorer.GetScore();
                 float existing = _scoreSums[ord];
                 if (existing.CompareTo(0.0f) == 0)
                 {
@@ -185,7 +185,7 @@ namespace Lucene.Net.Join
                         }
                     }
 
-                    float current = _scorer.Score();
+                    float current = _scorer.GetScore();
                     float existing = _scoreSums[ord];
                     if (existing.CompareTo(0.0f) == 0)
                     {
@@ -251,10 +251,10 @@ namespace Lucene.Net.Join
                     switch (_scoreMode)
                     {
                         case ScoreMode.Total:
-                            _scoreSums[termId] += _scorer.Score();
+                            _scoreSums[termId] += _scorer.GetScore();
                             break;
                         case ScoreMode.Max:
-                            _scoreSums[termId] = Math.Max(_scoreSums[termId], _scorer.Score());
+                            _scoreSums[termId] = Math.Max(_scoreSums[termId], _scorer.GetScore());
                             break;
                     }
                 }
@@ -295,7 +295,7 @@ namespace Lucene.Net.Join
                             }
                         }
 
-                        _scoreSums[termId] += _scorer.Score();
+                        _scoreSums[termId] += _scorer.GetScore();
                         _scoreCounts[termId]++;
                     }
                 }

@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 // advance idx on purpose, so that consecutive calls to score will get
                 // different results. this is to emulate computation of a score. If
@@ -95,9 +95,9 @@ namespace Lucene.Net.Search
                 }
 
                 // just call score() a couple of times and record the score.
-                Mscores[Idx] = Scorer_Renamed.Score();
-                Mscores[Idx] = Scorer_Renamed.Score();
-                Mscores[Idx] = Scorer_Renamed.Score();
+                Mscores[Idx] = Scorer_Renamed.GetScore();
+                Mscores[Idx] = Scorer_Renamed.GetScore();
+                Mscores[Idx] = Scorer_Renamed.GetScore();
                 ++Idx;
             }
 

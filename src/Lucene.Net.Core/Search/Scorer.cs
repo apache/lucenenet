@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
         /// is called the first time, or when called from within
         /// <seealso cref="ICollector#collect"/>.
         /// </summary>
-        public abstract float Score(); // LUCENENET TODO: Often makes a calculation, so not a good candidate for a property, change to GetScore() to make this more clear
+        public abstract float GetScore();
 
         /// <summary>
         /// returns parent Weight

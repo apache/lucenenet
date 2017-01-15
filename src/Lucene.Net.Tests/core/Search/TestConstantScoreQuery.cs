@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                Assert.AreEqual(ExpectedScore, this.scorer.Score(), 0, "Score differs from expected");
+                Assert.AreEqual(ExpectedScore, this.scorer.GetScore(), 0, "Score differs from expected");
                 Count[0]++;
             }
 

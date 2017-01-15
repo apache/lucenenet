@@ -573,7 +573,7 @@ namespace Lucene.Net.Index.Memory
 
             public virtual void Collect(int doc)
             {
-                scores[0] = scorer.Score();
+                scores[0] = scorer.GetScore();
             }
 
             public virtual void SetScorer(Scorer scorer)

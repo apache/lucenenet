@@ -796,7 +796,7 @@ namespace Lucene.Net.Tests.Join
                     {
                         JoinValueToJoinScores[BytesRef.DeepCopyOf(joinValue)] = joinScore = new JoinScore();
                     }
-                    joinScore.AddScore(scorer.Score());
+                    joinScore.AddScore(scorer.GetScore());
                 }
             }
             
@@ -855,7 +855,7 @@ namespace Lucene.Net.Tests.Join
                 {
                     JoinValueToJoinScores[BytesRef.DeepCopyOf(joinValue)] = joinScore = new JoinScore();
                 }
-                joinScore.AddScore(scorer.Score());
+                joinScore.AddScore(scorer.GetScore());
             }
             
             public virtual void SetNextReader(AtomicReaderContext context)

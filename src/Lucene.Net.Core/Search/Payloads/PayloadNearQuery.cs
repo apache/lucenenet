@@ -295,9 +295,9 @@ namespace Lucene.Net.Search.Payloads
                 return true;
             }
 
-            public override float Score()
+            public override float GetScore()
             {
-                return base.Score() * outerInstance.m_function.DocScore(m_doc, outerInstance.m_fieldName, payloadsSeen, m_payloadScore);
+                return base.GetScore() * outerInstance.m_function.DocScore(m_doc, outerInstance.m_fieldName, payloadsSeen, m_payloadScore);
             }
         }
     }

@@ -220,7 +220,7 @@ namespace Lucene.Net.Search
             get { return docID; }
         }
 
-        public override float Score()
+        public override float GetScore()
         {
             return docScorer.Score(docID, freq);
         }

@@ -354,7 +354,7 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                float score = sc.Score();
+                float score = sc.GetScore();
                 LastDoc[0] = doc;
                 try
                 {
@@ -370,8 +370,8 @@ namespace Lucene.Net.Search
                     // "skip("+(sdoc[0]+1)+")":"next()");
                     bool more = op == Skip_op ? scorer.Advance(scorer.DocID + 1) != DocIdSetIterator.NO_MORE_DOCS : scorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS;
                     int scorerDoc = scorer.DocID;
-                    float scorerScore = scorer.Score();
-                    float scorerScore2 = scorer.Score();
+                    float scorerScore = scorer.GetScore();
+                    float scorerScore2 = scorer.GetScore();
                     float scoreDiff = Math.Abs(score - scorerScore);
                     float scorerDiff = Math.Abs(scorerScore2 - scorerScore);
                     if (!more || doc != scorerDoc || scoreDiff > MaxDiff || scorerDiff > MaxDiff)
@@ -485,7 +485,7 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                float score = scorer.Score();
+                float score = scorer.GetScore();
                 try
                 {
                     long startMS = Environment.TickCount;
@@ -495,8 +495,8 @@ namespace Lucene.Net.Search
                         Scorer scorer_ = w.GetScorer(Context[leafPtr], liveDocs);
                         Assert.IsTrue(scorer_.Advance(i) != DocIdSetIterator.NO_MORE_DOCS, "query collected " + doc + " but skipTo(" + i + ") says no more docs!");
                         Assert.AreEqual(doc, scorer_.DocID, "query collected " + doc + " but skipTo(" + i + ") got to " + scorer_.DocID);
-                        float skipToScore = scorer_.Score();
-                        Assert.AreEqual(skipToScore, scorer_.Score(), MaxDiff, "unstable skipTo(" + i + ") score!");
+                        float skipToScore = scorer_.GetScore();
+                        Assert.AreEqual(skipToScore, scorer_.GetScore(), MaxDiff, "unstable skipTo(" + i + ") score!");
                         Assert.AreEqual(score, skipToScore, MaxDiff, "query assigned doc " + doc + " a score of <" + score + "> but skipTo(" + i + ") has <" + skipToScore + ">!");
 
                         // Hurry things along if they are going slow (eg

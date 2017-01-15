@@ -160,7 +160,7 @@ namespace Lucene.Net.Join
 
             if (trackMaxScore)
             {
-                score = scorer.Score();
+                score = scorer.GetScore();
                 maxScore = Math.Max(maxScore, score);
             }
 
@@ -205,7 +205,7 @@ namespace Lucene.Net.Join
                 }
                 if (!trackMaxScore && trackScores)
                 {
-                    score = scorer.Score();
+                    score = scorer.GetScore();
                 }
                 bottom.Doc = docBase + parentDoc;
                 bottom.readerContext = currentReaderContext;
@@ -231,7 +231,7 @@ namespace Lucene.Net.Join
                 //System.out.println("  startup: new OG doc=" + (docBase+parentDoc));
                 if (!trackMaxScore && trackScores)
                 {
-                    score = scorer.Score();
+                    score = scorer.GetScore();
                 }
                 OneGroup og = new OneGroup(comparerSlot, docBase + parentDoc, score, joinScorers.Length, trackScores);
                 og.readerContext = currentReaderContext;

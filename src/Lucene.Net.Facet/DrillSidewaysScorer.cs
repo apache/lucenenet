@@ -242,7 +242,7 @@ namespace Lucene.Net.Facet
 
                 // TODO: we could score on demand instead since we are
                 // daat here:
-                collectScore = baseScorer.Score();
+                collectScore = baseScorer.GetScore();
 
                 if (failedCollector == null)
                 {
@@ -394,7 +394,7 @@ namespace Lucene.Net.Facet
                         //if (DEBUG) {
                         //  System.out.println("    keep docID=" + ddDocID + " id=" + context.reader().document(ddDocID).get("id"));
                         //}
-                        scores[slot0] = baseScorer.Score();
+                        scores[slot0] = baseScorer.GetScore();
                         filledSlots[filledCount++] = slot0;
                         counts[slot0]++;
                     }
@@ -539,7 +539,7 @@ namespace Lucene.Net.Facet
                     // Mark slot as valid:
                     Debug.Assert(docIDs[slot] != docID, "slot=" + slot + " docID=" + docID);
                     docIDs[slot] = docID;
-                    scores[slot] = baseScorer.Score();
+                    scores[slot] = baseScorer.GetScore();
                     filledSlots[filledCount++] = slot;
                     missingDims[slot] = 0;
                     counts[slot] = 1;
@@ -752,7 +752,7 @@ namespace Lucene.Net.Facet
                 throw new System.NotSupportedException("FakeScorer doesn't support nextDoc()");
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 return outerInstance.collectScore;
             }

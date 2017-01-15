@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 return score;
             }
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
                 if (m_curDocs == null)
                 {
                     // Cache was too large
-                    cachedScorer.score = scorer.Score();
+                    cachedScorer.score = scorer.GetScore();
                     cachedScorer.doc = doc;
                     m_other.Collect(doc);
                     return;
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
                             m_cachedSegs.Clear();
                             m_cachedDocs.Clear();
                             cachedScores.Clear();
-                            cachedScorer.score = scorer.Score();
+                            cachedScorer.score = scorer.GetScore();
                             cachedScorer.doc = doc;
                             m_other.Collect(doc);
                             return;
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search
                 }
 
                 m_curDocs[m_upto] = doc;
-                cachedScorer.score = curScores[m_upto] = scorer.Score();
+                cachedScorer.score = curScores[m_upto] = scorer.GetScore();
                 m_upto++;
                 cachedScorer.doc = doc;
                 m_other.Collect(doc);

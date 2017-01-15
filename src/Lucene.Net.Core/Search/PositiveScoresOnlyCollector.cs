@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
 
         public virtual void Collect(int doc)
         {
-            if (scorer.Score() > 0)
+            if (scorer.GetScore() > 0)
             {
                 c.Collect(doc);
             }

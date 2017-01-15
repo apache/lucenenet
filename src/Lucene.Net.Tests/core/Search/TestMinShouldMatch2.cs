@@ -167,8 +167,8 @@ namespace Lucene.Net.Search
             {
                 Assert.AreEqual(doc, actual.NextDoc());
                 Assert.AreEqual(expected.Freq, actual.Freq);
-                float expectedScore = expected.Score();
-                float actualScore = actual.Score();
+                float expectedScore = expected.GetScore();
+                float actualScore = actual.GetScore();
                 Assert.AreEqual(expectedScore, actualScore, CheckHits.ExplainToleranceDelta(expectedScore, actualScore));
             }
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, actual.NextDoc());
@@ -187,8 +187,8 @@ namespace Lucene.Net.Search
             {
                 Assert.AreEqual(doc, actual.Advance(prevDoc + amount));
                 Assert.AreEqual(expected.Freq, actual.Freq);
-                float expectedScore = expected.Score();
-                float actualScore = actual.Score();
+                float expectedScore = expected.GetScore();
+                float actualScore = actual.GetScore();
                 Assert.AreEqual(expectedScore, actualScore, CheckHits.ExplainToleranceDelta(expectedScore, actualScore));
                 prevDoc = doc;
             }
@@ -372,7 +372,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 Debug.Assert(Score_Renamed != 0, CurrentMatched.ToString());
                 return (float)Score_Renamed * ((BooleanWeight)m_weight).Coord(CurrentMatched, ((BooleanWeight)m_weight).MaxCoord);

@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
                     }
 
                     // Compute the score only if the hit is competitive.
-                    float score = scorer.Score();
+                    float score = scorer.GetScore();
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     comparer.Copy(bottom.Slot, doc);
@@ -204,7 +204,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     // Compute the score only if the hit is competitive.
-                    float score = scorer.Score();
+                    float score = scorer.GetScore();
 
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
@@ -251,7 +251,7 @@ namespace Lucene.Net.Search
                     }
 
                     // Compute the score only if the hit is competitive.
-                    float score = scorer.Score();
+                    float score = scorer.GetScore();
 
                     // this hit is competitive - replace bottom element in queue & adjustTop
                     comparer.Copy(bottom.Slot, doc);
@@ -261,7 +261,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     // Compute the score only if the hit is competitive.
-                    float score = scorer.Score();
+                    float score = scorer.GetScore();
 
                     // Startup transient: queue hasn't gathered numHits yet
                     int slot = m_totalHits - 1;
@@ -306,7 +306,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                float score = scorer.Score();
+                float score = scorer.GetScore();
                 if (score > maxScore)
                 {
                     maxScore = score;
@@ -363,7 +363,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                float score = scorer.Score();
+                float score = scorer.GetScore();
                 if (score > maxScore)
                 {
                     maxScore = score;
@@ -617,7 +617,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                float score = scorer.Score();
+                float score = scorer.GetScore();
                 if (score > maxScore)
                 {
                     maxScore = score;
@@ -703,7 +703,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                float score = scorer.Score();
+                float score = scorer.GetScore();
                 if (score > maxScore)
                 {
                     maxScore = score;
@@ -832,7 +832,7 @@ namespace Lucene.Net.Search
                     }
 
                     // Compute score only if it is competitive.
-                    float score = scorer.Score();
+                    float score = scorer.GetScore();
                     UpdateBottom(doc, score);
 
                     for (int i = 0; i < comparers.Length; i++)
@@ -851,7 +851,7 @@ namespace Lucene.Net.Search
                     }
 
                     // Compute score only if it is competitive.
-                    float score = scorer.Score();
+                    float score = scorer.GetScore();
                     Add(slot, doc, score);
                     if (queueFull)
                     {
@@ -921,7 +921,7 @@ namespace Lucene.Net.Search
                     }
 
                     // Compute score only if it is competitive.
-                    float score = scorer.Score();
+                    float score = scorer.GetScore();
                     UpdateBottom(doc, score);
 
                     for (int i = 0; i < comparers.Length; i++)
@@ -940,7 +940,7 @@ namespace Lucene.Net.Search
                     }
 
                     // Compute score only if it is competitive.
-                    float score = scorer.Score();
+                    float score = scorer.GetScore();
                     Add(slot, doc, score);
                     if (queueFull)
                     {
@@ -1017,7 +1017,7 @@ namespace Lucene.Net.Search
                 float score = float.NaN;
                 if (trackMaxScore)
                 {
-                    score = scorer.Score();
+                    score = scorer.GetScore();
                     if (score > maxScore)
                     {
                         maxScore = score;
@@ -1096,7 +1096,7 @@ namespace Lucene.Net.Search
                     // Compute score only if it is competitive.
                     if (trackDocScores && !trackMaxScore)
                     {
-                        score = scorer.Score();
+                        score = scorer.GetScore();
                     }
                     UpdateBottom(doc, score);
 
@@ -1121,7 +1121,7 @@ namespace Lucene.Net.Search
                     // Compute score only if it is competitive.
                     if (trackDocScores && !trackMaxScore)
                     {
-                        score = scorer.Score();
+                        score = scorer.GetScore();
                     }
                     bottom = m_pq.Add(new Entry(slot, docBase + doc, score));
                     queueFull = collectedHits == numHits;

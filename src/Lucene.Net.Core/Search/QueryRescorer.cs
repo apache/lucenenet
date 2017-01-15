@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
                 if (actualDoc == targetDoc)
                 {
                     // Query did match this doc:
-                    hit.Score = Combine(hit.Score, true, scorer.Score());
+                    hit.Score = Combine(hit.Score, true, scorer.GetScore());
                 }
                 else
                 {

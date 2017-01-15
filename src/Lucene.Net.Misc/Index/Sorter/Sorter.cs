@@ -341,7 +341,7 @@ namespace Lucene.Net.Index.Sorter
             {
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 throw new System.NotSupportedException();
             }

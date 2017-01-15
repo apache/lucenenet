@@ -44,12 +44,12 @@ namespace Lucene.Net.Search
             this.scorer = scorer;
         }
 
-        public override float Score()
+        public override float GetScore()
         {
             int doc = scorer.DocID;
             if (doc != curDoc)
             {
-                curScore = scorer.Score();
+                curScore = scorer.GetScore();
                 curDoc = doc;
             }
 

@@ -224,9 +224,9 @@ namespace Lucene.Net.Search
                 get { return scorerDoc; }
             }
 
-            public override float Score()
+            public override float GetScore()
             {
-                return scorer.Score();
+                return scorer.GetScore();
             }
 
             public override int Freq
@@ -352,9 +352,9 @@ namespace Lucene.Net.Search
                 get { return m_secondaryDoc; }
             }
 
-            public override sealed float Score()
+            public override sealed float GetScore()
             {
-                return scorer.Score();
+                return scorer.GetScore();
             }
 
             public override sealed int Freq

@@ -98,7 +98,7 @@ namespace Lucene.Net.Queries.Function
             return NextDoc();
         }
 
-        public override float Score()
+        public override float GetScore()
         {
             return values.FloatVal(doc);
         }

@@ -397,7 +397,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 {
                     try
                     {
-                        return scorer.Score();
+                        return scorer.GetScore();
                     }
                     catch (IOException exception)
                     {

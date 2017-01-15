@@ -396,7 +396,7 @@ namespace Lucene.Net.Join
                 }
             }
             
-            public override float Score()
+            public override float GetScore()
             {
                 return scores[currentDoc];
             }

@@ -688,7 +688,7 @@ namespace Lucene.Net.Search
             return Advance(max.doc + 1); // advance to the next doc after #docID()
         }
 
-        public override float Score()
+        public override float GetScore()
         {
             return docScorer.Score(max.doc, sloppyFreq);
         }

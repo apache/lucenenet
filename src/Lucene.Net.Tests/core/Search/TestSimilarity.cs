@@ -143,7 +143,7 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                Assert.AreEqual(1.0f, scorer.Score(), 0);
+                Assert.AreEqual(1.0f, scorer.GetScore(), 0);
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)
@@ -177,7 +177,7 @@ namespace Lucene.Net.Search
             public virtual void Collect(int doc)
             {
                 //System.out.println("Doc=" + doc + " score=" + score);
-                Assert.AreEqual((float)doc + @base + 1, scorer.Score(), 0);
+                Assert.AreEqual((float)doc + @base + 1, scorer.GetScore(), 0);
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)
@@ -210,7 +210,7 @@ namespace Lucene.Net.Search
             public virtual void Collect(int doc)
             {
                 //System.out.println("Doc=" + doc + " score=" + score);
-                Assert.AreEqual(1.0f, scorer.Score(), 0);
+                Assert.AreEqual(1.0f, scorer.GetScore(), 0);
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)
@@ -242,7 +242,7 @@ namespace Lucene.Net.Search
             public virtual void Collect(int doc)
             {
                 //System.out.println("Doc=" + doc + " score=" + score);
-                Assert.AreEqual(2.0f, scorer.Score(), 0);
+                Assert.AreEqual(2.0f, scorer.GetScore(), 0);
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)

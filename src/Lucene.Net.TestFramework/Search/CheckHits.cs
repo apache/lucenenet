@@ -537,7 +537,7 @@ namespace Lucene.Net.Search
                 }
 
                 Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
-                VerifyExplanation(d, doc, Scorer_Renamed.Score(), Deep, exp);
+                VerifyExplanation(d, doc, Scorer_Renamed.GetScore(), Deep, exp);
                 Assert.IsTrue(exp.IsMatch, "Explanation of [[" + d + "]] for #" + doc + " does not indicate match: " + exp.ToString());
             }
 

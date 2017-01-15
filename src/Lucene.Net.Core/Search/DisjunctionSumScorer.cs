@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
             m_doc = sub.DocID;
             if (m_doc != NO_MORE_DOCS)
             {
-                m_score = sub.Score();
+                m_score = sub.GetScore();
                 m_nrMatchers = 1;
                 CountMatches(1);
                 CountMatches(2);
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
             if (root < m_numScorers && m_subScorers[root].DocID == m_doc)
             {
                 m_nrMatchers++;
-                m_score += m_subScorers[root].Score();
+                m_score += m_subScorers[root].GetScore();
                 CountMatches((root << 1) + 1);
                 CountMatches((root << 1) + 2);
             }
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search
         /// Returns the score of the current document matching the query.
         /// Initially invalid, until <seealso cref="#nextDoc()"/> is called the first time.
         /// </summary>
-        public override float Score()
+        public override float GetScore()
         {
             return (float)m_score * coord[m_nrMatchers];
         }

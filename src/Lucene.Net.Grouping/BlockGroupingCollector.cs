@@ -94,7 +94,7 @@ namespace Lucene.Net.Search.Grouping
             {
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 return score;
             }
@@ -524,7 +524,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     pendingSubScores = ArrayUtil.Grow(pendingSubScores);
                 }
-                pendingSubScores[subDocUpto] = scorer.Score();
+                pendingSubScores[subDocUpto] = scorer.GetScore();
             }
             subDocUpto++;
 

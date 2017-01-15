@@ -127,14 +127,14 @@ namespace Lucene.Net.Search
                 this.scorer = scorer;
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 int doc = DocID;
                 if (doc >= lastScoredDoc)
                 {
                     if (doc > lastScoredDoc)
                     {
-                        lastDocScore = scorer.Score();
+                        lastDocScore = scorer.GetScore();
                         lastScoredDoc = doc;
                     }
                     outerInstance.coordinator.nrMatchers++;
@@ -192,10 +192,10 @@ namespace Lucene.Net.Search
                 this.outerInstance = outerInstance;
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 outerInstance.coordinator.nrMatchers += base.m_nrMatchers;
-                return base.Score();
+                return base.GetScore();
             }
         }
 
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search
                 this.outerInstance = outerInstance;
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 outerInstance.coordinator.nrMatchers += base.m_nrMatchers;
                 return (float)base.m_score;
@@ -244,14 +244,14 @@ namespace Lucene.Net.Search
             // once in score().
             private float lastDocScore;
 
-            public override float Score()
+            public override float GetScore()
             {
                 int doc = outerInstance.DocID;
                 if (doc >= lastScoredDoc)
                 {
                     if (doc > lastScoredDoc)
                     {
-                        lastDocScore = base.Score();
+                        lastDocScore = base.GetScore();
                         lastScoredDoc = doc;
                     }
                     outerInstance.coordinator.nrMatchers += requiredNrMatchers;
@@ -347,10 +347,10 @@ namespace Lucene.Net.Search
             return doc = countingSumScorer.NextDoc();
         }
 
-        public override float Score()
+        public override float GetScore()
         {
             coordinator.nrMatchers = 0;
-            float sum = countingSumScorer.Score();
+            float sum = countingSumScorer.GetScore();
             return sum * coordinator.coordFactors[coordinator.nrMatchers];
         }
 

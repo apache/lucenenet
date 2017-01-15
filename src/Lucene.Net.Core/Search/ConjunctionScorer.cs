@@ -131,13 +131,13 @@ namespace Lucene.Net.Search
             return m_lastDoc = DoNext(lead.Doc);
         }
 
-        public override float Score()
+        public override float GetScore()
         {
             // TODO: sum into a double and cast to float if we ever send required clauses to BS1
             float sum = 0.0f;
             foreach (DocsAndFreqs docs in m_docsAndFreqs)
             {
-                sum += docs.Scorer.Score();
+                sum += docs.Scorer.GetScore();
             }
             return sum * coord;
         }

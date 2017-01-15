@@ -179,9 +179,9 @@ namespace Lucene.Net.Queries.Function
                 return scorer.NextDoc();
             }
 
-            public override float Score()
+            public override float GetScore()
             {
-                float score = qWeight * scorer.Score() * vals.FloatVal(scorer.DocID);
+                float score = qWeight * scorer.GetScore() * vals.FloatVal(scorer.DocID);
 
                 // Current Lucene priority queues can't handle NaN and -Infinity, so
                 // map to -Float.MAX_VALUE. This conditional handles both -infinity

@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
         public void Collect(int doc)
         {
             DocIDs[Buffered] = doc;
-            Scores[Buffered] = Scorer_Renamed.Score();
+            Scores[Buffered] = Scorer_Renamed.GetScore();
             try
             {
                 Freqs[Buffered] = Scorer_Renamed.Freq;

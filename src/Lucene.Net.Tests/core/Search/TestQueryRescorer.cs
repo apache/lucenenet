@@ -548,7 +548,7 @@ namespace Lucene.Net.Search
                         return docID;
                     }
 
-                    public override float Score()
+                    public override float GetScore()
                     {
                         int num = OuterInstance.OuterInstance.IdToNum[Convert.ToInt32(Context.Reader.Document(docID).Get("id"))];
                         if (OuterInstance.OuterInstance.Reverse)

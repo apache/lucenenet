@@ -69,11 +69,11 @@ namespace Lucene.Net.Search
         /// Initially invalid, until <seealso cref="#nextDoc()"/> is called the first time. </summary>
         /// <returns> The score of the required scorer, eventually increased by the score
         /// of the optional scorer when it also matches the current document. </returns>
-        public override float Score()
+        public override float GetScore()
         {
             // TODO: sum into a double and cast to float if we ever send required clauses to BS1
             int curDoc = reqScorer.DocID;
-            float reqScore = reqScorer.Score();
+            float reqScore = reqScorer.GetScore();
             if (optScorer == null)
             {
                 return reqScore;
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
                 return reqScore;
             }
 
-            return optScorerDoc == curDoc ? reqScore + optScorer.Score() : reqScore;
+            return optScorerDoc == curDoc ? reqScore + optScorer.GetScore() : reqScore;
         }
 
         public override int Freq
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
             get
             {
                 // we might have deferred advance()
-                Score();
+                GetScore();
                 return (optScorer != null && optScorer.DocID == reqScorer.DocID) ? 2 : 1;
             }
         }

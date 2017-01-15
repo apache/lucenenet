@@ -415,7 +415,7 @@ namespace Lucene.Net.Index
             public override sealed void Collect(int doc)
             {
                 //System.out.println("Q1: Doc=" + doc + " score=" + score);
-                float score = scorer.Score();
+                float score = scorer.GetScore();
                 Assert.IsTrue(score == 1.0f, "got score=" + score);
                 base.Collect(doc);
             }
@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
             public override sealed void Collect(int doc)
             {
                 //System.out.println("Q2: Doc=" + doc + " score=" + score);
-                float score = scorer.Score();
+                float score = scorer.GetScore();
                 Assert.AreEqual(1.0f + doc, score, 0.00001f);
                 base.Collect(doc);
             }
@@ -465,7 +465,7 @@ namespace Lucene.Net.Index
             public override sealed void Collect(int doc)
             {
                 //System.out.println("Q1: Doc=" + doc + " score=" + score);
-                float score = scorer.Score();
+                float score = scorer.GetScore();
                 Assert.IsTrue(score == 1.0f);
                 Assert.IsFalse(doc % 2 == 0);
                 base.Collect(doc);
@@ -490,7 +490,7 @@ namespace Lucene.Net.Index
 
             public override sealed void Collect(int doc)
             {
-                float score = scorer.Score();
+                float score = scorer.GetScore();
                 //System.out.println("Q1: Doc=" + doc + " score=" + score);
                 Assert.IsTrue(score == 1.0f);
                 Assert.IsTrue(doc % 2 == 0);

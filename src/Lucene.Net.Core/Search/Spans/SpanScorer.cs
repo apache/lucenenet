@@ -93,7 +93,7 @@ namespace Lucene.Net.Search.Spans
             get { return m_doc; }
         }
 
-        public override float Score()
+        public override float GetScore()
         {
             return m_docScorer.Score(m_doc, m_freq);
         }

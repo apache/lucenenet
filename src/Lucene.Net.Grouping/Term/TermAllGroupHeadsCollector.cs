@@ -409,7 +409,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                 {
                     if (outerInstance.fields[i].Type == SortFieldType.SCORE)
                     {
-                        scores[i] = outerInstance.scorer.Score();
+                        scores[i] = outerInstance.scorer.GetScore();
                     }
                     else
                     {
@@ -427,7 +427,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             {
                 if (outerInstance.fields[compIDX].Type == SortFieldType.SCORE)
                 {
-                    float score = outerInstance.scorer.Score();
+                    float score = outerInstance.scorer.GetScore();
                     if (scores[compIDX] < score)
                     {
                         return 1;
@@ -466,7 +466,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                 {
                     if (outerInstance.fields[i].Type == SortFieldType.SCORE)
                     {
-                        scores[i] = outerInstance.scorer.Score();
+                        scores[i] = outerInstance.scorer.GetScore();
                     }
                     else
                     {
@@ -779,7 +779,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                 this.groupValue = groupValue;
 
                 scores = new float[outerInstance.fields.Length];
-                float score = outerInstance.scorer.Score();
+                float score = outerInstance.scorer.GetScore();
                 for (int i = 0; i < scores.Length; i++)
                 {
                     scores[i] = score;
@@ -788,7 +788,7 @@ namespace Lucene.Net.Search.Grouping.Terms
 
             public override int Compare(int compIDX, int doc)
             {
-                float score = outerInstance.scorer.Score();
+                float score = outerInstance.scorer.GetScore();
                 if (scores[compIDX] < score)
                 {
                     return 1;
@@ -802,7 +802,7 @@ namespace Lucene.Net.Search.Grouping.Terms
 
             public override void UpdateDocHead(int doc)
             {
-                float score = outerInstance.scorer.Score();
+                float score = outerInstance.scorer.GetScore();
                 for (int i = 0; i < scores.Length; i++)
                 {
                     scores[i] = score;

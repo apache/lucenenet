@@ -110,9 +110,9 @@ namespace Lucene.Net.Search
         /// Returns the score of the current document matching the query.
         /// Initially invalid, until <seealso cref="#nextDoc()"/> is called the first time. </summary>
         /// <returns> The score of the required scorer. </returns>
-        public override float Score()
+        public override float GetScore()
         {
-            return reqScorer.Score(); // reqScorer may be null when next() or skipTo() already return false
+            return reqScorer.GetScore(); // reqScorer may be null when next() or skipTo() already return false
         }
 
         public override int Freq

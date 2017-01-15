@@ -234,7 +234,7 @@ namespace Lucene.Net.Join
                             {
                                 if (_doScores)
                                 {
-                                    _parentScore = _parentScorer.Score();
+                                    _parentScore = _parentScorer.GetScore();
                                     _parentFreq = _parentScorer.Freq;
                                 }
                                 //System.out.println("  " + childDoc);
@@ -275,7 +275,7 @@ namespace Lucene.Net.Join
                 get { return _childDoc; }
             }
             
-            public override float Score()
+            public override float GetScore()
             {
                 return _parentScore;
             }
@@ -311,7 +311,7 @@ namespace Lucene.Net.Join
                     }
                     if (_doScores)
                     {
-                        _parentScore = _parentScorer.Score();
+                        _parentScore = _parentScorer.GetScore();
                         _parentFreq = _parentScorer.Freq;
                     }
                     int firstChild = _parentBits.PrevSetBit(_parentDoc - 1);

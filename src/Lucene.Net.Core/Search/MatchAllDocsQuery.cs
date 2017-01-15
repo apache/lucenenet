@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
                 return doc;
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 return score;
             }

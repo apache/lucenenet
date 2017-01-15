@@ -145,7 +145,7 @@ namespace Lucene.Net.Search.Payloads
                 ///
                 /// <returns> <seealso cref="#getSpanScore()"/> * <seealso cref="#getPayloadScore()"/> </returns>
                 /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-                public override float Score()
+                public override float GetScore()
                 {
                     return outerInstance.outerInstance.includeSpanScore ? GetSpanScore() * GetPayloadScore() : GetPayloadScore();
                 }
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search.Payloads
                 /// <seealso cref= #score() </seealso>
                 protected internal virtual float GetSpanScore()
                 {
-                    return base.Score();
+                    return base.GetScore();
                 }
 
                 /// <summary>

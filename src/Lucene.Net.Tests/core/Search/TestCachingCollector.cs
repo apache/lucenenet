@@ -35,7 +35,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 return 0;
             }

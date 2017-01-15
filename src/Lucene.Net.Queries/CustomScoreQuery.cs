@@ -358,13 +358,13 @@ namespace Lucene.Net.Queries
 
             /*(non-Javadoc) @see org.apache.lucene.search.Scorer#score() */
 
-            public override float Score()
+            public override float GetScore()
             {
                 for (int i = 0; i < valSrcScorers.Length; i++)
                 {
-                    vScores[i] = valSrcScorers[i].Score();
+                    vScores[i] = valSrcScorers[i].GetScore();
                 }
-                return qWeight * provider.CustomScore(subQueryScorer.DocID, subQueryScorer.Score(), vScores);
+                return qWeight * provider.CustomScore(subQueryScorer.DocID, subQueryScorer.GetScore(), vScores);
             }
 
             public override int Freq

@@ -341,7 +341,7 @@ namespace Lucene.Net.Search
                 get { return docIdSetIterator.DocID; }
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 Debug.Assert(docIdSetIterator.DocID != NO_MORE_DOCS);
                 return theScore;

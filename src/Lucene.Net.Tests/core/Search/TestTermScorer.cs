@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                float score = scorer.Score();
+                float score = scorer.GetScore();
                 doc = doc + @base;
                 Docs.Add(new TestHit(OuterInstance, doc, score));
                 Assert.IsTrue(score > 0, "score " + score + " is not greater than 0");
@@ -159,9 +159,9 @@ namespace Lucene.Net.Search
             AtomicReaderContext context = (AtomicReaderContext)IndexSearcher.TopReaderContext;
             Scorer ts = weight.GetScorer(context, (context.AtomicReader).LiveDocs);
             Assert.IsTrue(ts.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "next did not return a doc");
-            Assert.IsTrue(ts.Score() == 1.6931472f, "score is not correct");
+            Assert.IsTrue(ts.GetScore() == 1.6931472f, "score is not correct");
             Assert.IsTrue(ts.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "next did not return a doc");
-            Assert.IsTrue(ts.Score() == 1.6931472f, "score is not correct");
+            Assert.IsTrue(ts.GetScore() == 1.6931472f, "score is not correct");
             Assert.IsTrue(ts.NextDoc() == DocIdSetIterator.NO_MORE_DOCS, "next returned a doc and it should not have");
         }
 

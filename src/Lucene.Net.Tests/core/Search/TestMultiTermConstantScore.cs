@@ -304,7 +304,7 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                Assert.AreEqual(1.0f, scorer.Score(), SCORE_COMP_THRESH, "score for doc " + (doc + @base) + " was not correct");
+                Assert.AreEqual(1.0f, scorer.GetScore(), SCORE_COMP_THRESH, "score for doc " + (doc + @base) + " was not correct");
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)

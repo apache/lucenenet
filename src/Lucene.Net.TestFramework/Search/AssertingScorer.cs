@@ -99,10 +99,10 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override float Score()
+        public override float GetScore()
         {
             Debug.Assert(Iterating());
-            float score = @in.Score();
+            float score = @in.GetScore();
             Debug.Assert(!float.IsNaN(score));
             Debug.Assert(!float.IsNaN(score));
             return score;

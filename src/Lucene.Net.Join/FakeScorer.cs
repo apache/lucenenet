@@ -58,7 +58,7 @@ namespace Lucene.Net.Join
             get { throw new NotSupportedException("FakeScorer doesn't support Freq()"); }
         }
 
-        public override float Score()
+        public override float GetScore()
         {
             return _score;
         }

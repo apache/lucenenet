@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
                 return;
             }
             // 1. score and count number of matching subScorers within heap
-            score = subScorers[0].Score();
+            score = subScorers[0].GetScore();
             m_nrMatchers = 1;
             CountMatches(1);
             CountMatches(2);
@@ -212,7 +212,7 @@ namespace Lucene.Net.Search
                     if (mmStack[i].DocID == doc) // either it was already on doc, or got there via advance()
                     {
                         m_nrMatchers++;
-                        score += mmStack[i].Score();
+                        score += mmStack[i].GetScore();
                     } // scorer advanced to next after doc, check if enough scorers left for current doc
                     else
                     {
@@ -262,7 +262,7 @@ namespace Lucene.Net.Search
             if (root < nrInHeap && subScorers[root].DocID == doc)
             {
                 m_nrMatchers++;
-                score += subScorers[root].Score();
+                score += subScorers[root].GetScore();
                 CountMatches((root << 1) + 1);
                 CountMatches((root << 1) + 2);
             }
@@ -272,7 +272,7 @@ namespace Lucene.Net.Search
         /// Returns the score of the current document matching the query. Initially
         /// invalid, until <seealso cref="#nextDoc()"/> is called the first time.
         /// </summary>
-        public override float Score()
+        public override float GetScore()
         {
             return (float)score;
         }

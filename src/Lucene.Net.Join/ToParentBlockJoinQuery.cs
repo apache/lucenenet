@@ -337,7 +337,7 @@ namespace Lucene.Net.Join
                         if (_scoreMode != ScoreMode.None)
                         {
                             // TODO: specialize this into dedicated classes per-scoreMode
-                            float childScore = _childScorer.Score();
+                            float childScore = _childScorer.GetScore();
                             int childFreq = _childScorer.Freq;
                             if (_pendingChildScores != null)
                             {
@@ -383,7 +383,7 @@ namespace Lucene.Net.Join
                 get { return _parentDocRenamed; }
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 return _parentScore;
             }
@@ -440,7 +440,7 @@ namespace Lucene.Net.Join
             {
                 int start = docBase + _prevParentDoc + 1; // +1 b/c prevParentDoc is previous parent doc
                 int end = docBase + _parentDocRenamed - 1; // -1 b/c parentDoc is parent doc
-                return new ComplexExplanation(true, Score(), string.Format("Score based on child doc range from {0} to {1}", start, end));
+                return new ComplexExplanation(true, GetScore(), string.Format("Score based on child doc range from {0} to {1}", start, end));
             }
 
             public override long Cost()

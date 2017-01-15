@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
             throw new System.NotSupportedException("FakeScorer doesn't support nextDoc()");
         }
 
-        public override float Score()
+        public override float GetScore()
         {
             return score;
         }

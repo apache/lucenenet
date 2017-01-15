@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
             return docsEnum.NextDoc();
         }
 
-        public override float Score()
+        public override float GetScore()
         {
             Debug.Assert(DocID != NO_MORE_DOCS);
             return docScorer.Score(docsEnum.DocID, docsEnum.Freq);

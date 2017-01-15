@@ -77,7 +77,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 : base(null)
             {
             }
-            public override float Score()
+            public override float GetScore()
             {
                 return score_Renamed;
             }
@@ -196,7 +196,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 {
                     try
                     {
-                        return scorer.Score();
+                        return scorer.GetScore();
                     }
                     catch (Exception /*exception*/)
                     {

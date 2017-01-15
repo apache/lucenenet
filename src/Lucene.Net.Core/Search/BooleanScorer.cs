@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
                 if (bucket.Doc != doc) // invalid bucket
                 {
                     bucket.Doc = doc; // set doc
-                    bucket.Score = scorer.Score(); // initialize score
+                    bucket.Score = scorer.GetScore(); // initialize score
                     bucket.Bits = mask; // initialize mask
                     bucket.Coord = 1; // initialize coord
 
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
                 } // valid bucket
                 else
                 {
-                    bucket.Score += scorer.Score(); // increment score
+                    bucket.Score += scorer.GetScore(); // increment score
                     bucket.Bits |= mask; // add bits in mask
                     bucket.Coord++; // increment coord
                 }

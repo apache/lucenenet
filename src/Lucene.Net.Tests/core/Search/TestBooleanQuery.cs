@@ -269,7 +269,7 @@ namespace Lucene.Net.Search
                 IList<ScoreDoc> hits = new List<ScoreDoc>();
                 while (scorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    hits.Add(new ScoreDoc(scorer.DocID, scorer.Score()));
+                    hits.Add(new ScoreDoc(scorer.DocID, scorer.GetScore()));
                 }
 
                 if (VERBOSE)
@@ -318,7 +318,7 @@ namespace Lucene.Net.Search
                             ScoreDoc hit = hits[nextUpto];
                             Assert.AreEqual(hit.Doc, nextDoc);
                             // Test for precise float equality:
-                            Assert.IsTrue(hit.Score == scorer.Score(), "doc " + hit.Doc + " has wrong score: expected=" + hit.Score + " actual=" + scorer.Score());
+                            Assert.IsTrue(hit.Score == scorer.GetScore(), "doc " + hit.Doc + " has wrong score: expected=" + hit.Score + " actual=" + scorer.GetScore());
                         }
                         upto = nextUpto;
                     }

@@ -207,7 +207,7 @@ namespace Lucene.Net.Facet
                     Array.Copy(scores, 0, newScores, 0, totalHits);
                     scores = newScores;
                 }
-                scores[totalHits] = scorer.Score();
+                scores[totalHits] = scorer.GetScore();
             }
             totalHits++;
         }

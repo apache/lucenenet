@@ -259,7 +259,7 @@ namespace Lucene.Net.Search
             public virtual void Collect(int doc)
             {
                 Assert.IsFalse(float.IsInfinity(scorer.Freq));
-                Assert.IsFalse(float.IsInfinity(scorer.Score()));
+                Assert.IsFalse(float.IsInfinity(scorer.GetScore()));
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)

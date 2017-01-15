@@ -171,7 +171,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 }
 
                 // a match!
-                return scorer.Score();
+                return scorer.GetScore();
             }
             catch (IOException e)
             {
@@ -224,7 +224,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             try
             {
-                return Exists(doc) ? scorer.Score() : (float?)null;
+                return Exists(doc) ? scorer.GetScore() : (float?)null;
             }
             catch (IOException e)
             {
@@ -301,7 +301,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     }
 
                     // a match!
-                    mval.Value = outerInstance.scorer.Score();
+                    mval.Value = outerInstance.scorer.GetScore();
                     mval.Exists = true;
                 }
                 catch (IOException e)

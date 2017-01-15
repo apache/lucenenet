@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                float score = scorer.Score();
+                float score = scorer.GetScore();
 
                 // this collector cannot handle these scores:
                 Debug.Assert(score != float.NegativeInfinity);
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                float score = scorer.Score();
+                float score = scorer.GetScore();
 
                 // this collector cannot handle these scores:
                 Debug.Assert(score != float.NegativeInfinity);
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                float score = scorer.Score();
+                float score = scorer.GetScore();
 
                 // this collector cannot handle NaN
                 Debug.Assert(!float.IsNaN(score));
@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                float score = scorer.Score();
+                float score = scorer.GetScore();
 
                 // this collector cannot handle NaN
                 Debug.Assert(!float.IsNaN(score));

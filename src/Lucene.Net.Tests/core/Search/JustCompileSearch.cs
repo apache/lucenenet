@@ -228,7 +228,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override float Score()
+            public override float GetScore()
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
