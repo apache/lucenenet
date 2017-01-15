@@ -131,7 +131,7 @@ namespace Lucene.Net.Search
 
             public virtual int Compare(Scorer o1, Scorer o2)
             {
-                return Number.Signum(o2.Cost() - o1.Cost());
+                return Number.Signum(o2.GetCost() - o1.GetCost());
             }
         }
 
@@ -332,13 +332,13 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
             // cost for merging of lists analog to DisjunctionSumScorer
             long costCandidateGeneration = 0;
             for (int i = 0; i < nrInHeap; i++)
             {
-                costCandidateGeneration += subScorers[i].Cost();
+                costCandidateGeneration += subScorers[i].GetCost();
             }
             // TODO is cost for advance() different to cost for iteration + heap merge
             //      and how do they compare overall to pure disjunctions?

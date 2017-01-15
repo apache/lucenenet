@@ -171,12 +171,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
             long cost = 0;
             for (int i = 0; i < numSubs; i++)
             {
-                cost += subs[i].DocsEnum.Cost();
+                cost += subs[i].DocsEnum.GetCost();
             }
             return cost;
         }

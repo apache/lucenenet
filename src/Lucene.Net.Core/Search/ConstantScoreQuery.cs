@@ -357,9 +357,9 @@ namespace Lucene.Net.Search
                 return docIdSetIterator.Advance(target);
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
-                return docIdSetIterator.Cost();
+                return docIdSetIterator.GetCost();
             }
 
             public override ICollection<ChildScorer> GetChildren()

@@ -107,9 +107,9 @@ namespace Lucene.Net.Search
             return children;
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
-            return reqScorer.Cost();
+            return reqScorer.GetCost();
         }
     }
 }

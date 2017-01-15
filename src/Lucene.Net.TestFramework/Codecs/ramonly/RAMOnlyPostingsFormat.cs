@@ -554,7 +554,7 @@ namespace Lucene.Net.Codecs.ramonly
                 get { return Current.DocID; }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return RamTerm.Docs.Count;
             }
@@ -641,7 +641,7 @@ namespace Lucene.Net.Codecs.ramonly
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return RamTerm.Docs.Count;
             }

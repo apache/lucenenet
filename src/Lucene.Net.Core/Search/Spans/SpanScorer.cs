@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Spans
             get { return m_freq; }
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
             return m_spans.Cost();
         }

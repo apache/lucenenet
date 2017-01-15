@@ -162,9 +162,9 @@ namespace Lucene.Net.Search
                 return scorer.Advance(target);
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
-                return scorer.Cost();
+                return scorer.GetCost();
             }
         }
 
@@ -364,9 +364,9 @@ namespace Lucene.Net.Search
             return doc = countingSumScorer.Advance(target);
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
-            return countingSumScorer.Cost();
+            return countingSumScorer.GetCost();
         }
 
         public override ICollection<ChildScorer> GetChildren()

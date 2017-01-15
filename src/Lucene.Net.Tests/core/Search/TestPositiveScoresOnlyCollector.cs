@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
                 return Idx < Scores.Length ? Idx : NO_MORE_DOCS;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return Scores.Length;
             }

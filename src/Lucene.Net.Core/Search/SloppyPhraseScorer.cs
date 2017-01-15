@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
             this.numPostings = postings == null ? 0 : postings.Length;
             pq = new PhraseQueue(postings.Length);
             // min(cost)
-            cost = postings[0].postings.Cost();
+            cost = postings[0].postings.GetCost();
             // convert tps to a list of phrase positions.
             // note: phrase-position differs from term-position in that its position
             // reflects the phrase offset: pp.pos = tp.pos - offset.
@@ -718,7 +718,7 @@ namespace Lucene.Net.Search
             return max.doc;
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
             return cost;
         }

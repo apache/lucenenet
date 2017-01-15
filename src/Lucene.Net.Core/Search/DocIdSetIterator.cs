@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
                 return NO_MORE_DOCS;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return 0;
             }
@@ -156,6 +156,6 @@ namespace Lucene.Net.Search
         /// might match, but may be a rough heuristic, hardcoded value, or otherwise
         /// completely inaccurate.
         /// </summary>
-        public abstract long Cost(); // LUCENENET TODO: Change to GetCost() ? Should be consistent with Scorer.GetScore()
+        public abstract long GetCost();
     }
 }

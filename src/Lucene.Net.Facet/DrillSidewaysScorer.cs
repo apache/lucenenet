@@ -125,7 +125,7 @@ namespace Lucene.Net.Facet
                     disiUpto++;
                     if (disi != null)
                     {
-                        drillDownCost += disi.Cost();
+                        drillDownCost += disi.GetCost();
                     }
                 }
                 else
@@ -136,7 +136,7 @@ namespace Lucene.Net.Facet
                 }
             }
 
-            long baseQueryCost = baseScorer.Cost();
+            long baseQueryCost = baseScorer.GetCost();
 
             /*
             System.out.println("\nbaseDocID=" + baseScorer.docID() + " est=" + estBaseHitCount);
@@ -153,7 +153,7 @@ namespace Lucene.Net.Facet
                 //System.out.println("queryFirst: baseScorer=" + baseScorer + " disis.length=" + disis.length + " bits.length=" + bits.length);
                 DoQueryFirstScoring(collector, disis, sidewaysCollectors, bits, bitsSidewaysCollectors);
             }
-            else if (numDims > 1 && (dims[1].disi == null || dims[1].disi.Cost() < baseQueryCost / 10))
+            else if (numDims > 1 && (dims[1].disi == null || dims[1].disi.GetCost() < baseQueryCost / 10))
             {
                 //System.out.println("drillDownAdvance");
                 DoDrillDownAdvanceScoring(collector, disis, sidewaysCollectors);
@@ -757,9 +757,9 @@ namespace Lucene.Net.Facet
                 return outerInstance.collectScore;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
-                return outerInstance.baseScorer.Cost();
+                return outerInstance.baseScorer.GetCost();
             }
 
             public override ICollection<ChildScorer> GetChildren()
@@ -802,11 +802,11 @@ namespace Lucene.Net.Facet
                 {
                     return -1;
                 }
-                else if (disi.Cost() < other.disi.Cost())
+                else if (disi.GetCost() < other.disi.GetCost())
                 {
                     return -1;
                 }
-                else if (disi.Cost() > other.disi.Cost())
+                else if (disi.GetCost() > other.disi.GetCost())
                 {
                     return 1;
                 }

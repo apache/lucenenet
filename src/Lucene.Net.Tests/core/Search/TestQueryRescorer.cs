@@ -527,7 +527,7 @@ namespace Lucene.Net.Search
                         get { return 1; }
                     }
 
-                    public override long Cost()
+                    public override long GetCost()
                     {
                         return 1;
                     }

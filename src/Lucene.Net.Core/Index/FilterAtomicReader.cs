@@ -292,9 +292,9 @@ namespace Lucene.Net.Index
                 return m_input.Advance(target);
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
-                return m_input.Cost();
+                return m_input.GetCost();
             }
         }
 
@@ -362,9 +362,9 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
-                return m_input.Cost();
+                return m_input.GetCost();
             }
         }
 

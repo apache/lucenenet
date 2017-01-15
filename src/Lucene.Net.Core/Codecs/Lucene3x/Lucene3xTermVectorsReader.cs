@@ -735,7 +735,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 didNext = false;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return 1;
             }
@@ -861,7 +861,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return 1;
             }

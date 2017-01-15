@@ -145,7 +145,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     return DocIdSetIterator.NO_MORE_DOCS;
                 }
 
-                public override long Cost()
+                public override long GetCost()
                 {
                     return 0;
                 }

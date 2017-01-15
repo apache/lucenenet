@@ -537,7 +537,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return ScanTo(target);
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return m_limit;
             }
@@ -968,7 +968,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return limit;
             }
@@ -1302,7 +1302,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return limit;
             }

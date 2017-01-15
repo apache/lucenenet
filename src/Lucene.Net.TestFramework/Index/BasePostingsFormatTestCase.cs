@@ -312,7 +312,7 @@ namespace Lucene.Net.Index
                 return SlowAdvance(target);
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return DocFreq;
             }

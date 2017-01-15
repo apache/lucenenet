@@ -177,7 +177,7 @@ namespace Lucene.Net.Queries.Function
                 return score > float.NegativeInfinity ? score : -float.MaxValue;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return maxDoc;
             }

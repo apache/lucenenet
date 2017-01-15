@@ -588,7 +588,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return docFreq;
             }
@@ -1054,7 +1054,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return docFreq;
             }
@@ -1715,7 +1715,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return docFreq;
             }

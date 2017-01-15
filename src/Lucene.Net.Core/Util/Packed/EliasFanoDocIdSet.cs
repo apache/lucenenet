@@ -112,7 +112,7 @@ namespace Lucene.Net.Util.Packed
                 return SetCurDocID(efDecoder.AdvanceToValue(target));
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return efDecoder.NumEncoded;
             }

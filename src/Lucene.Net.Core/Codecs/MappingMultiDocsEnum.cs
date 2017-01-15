@@ -143,12 +143,12 @@ namespace Lucene.Net.Codecs
             }
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
             long cost = 0;
             foreach (MultiDocsEnum.EnumWithSlice enumWithSlice in subs)
             {
-                cost += enumWithSlice.DocsEnum.Cost();
+                cost += enumWithSlice.DocsEnum.GetCost();
             }
             return cost;
         }

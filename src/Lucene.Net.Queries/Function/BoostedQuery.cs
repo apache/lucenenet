@@ -213,9 +213,9 @@ namespace Lucene.Net.Queries.Function
                 return res;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
-                return scorer.Cost();
+                return scorer.GetCost();
             }
         }
 

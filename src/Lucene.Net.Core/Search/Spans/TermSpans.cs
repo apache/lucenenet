@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Spans
 
         public override long Cost()
         {
-            return m_postings.Cost();
+            return m_postings.GetCost();
         }
 
         // TODO: Remove warning after API has been finalized

@@ -358,7 +358,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return SlowAdvance(target);
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return _cost;
             }
@@ -556,7 +556,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 get { return _payload; }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return _cost;
             }

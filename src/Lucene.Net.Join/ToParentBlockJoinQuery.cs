@@ -443,9 +443,9 @@ namespace Lucene.Net.Join
                 return new ComplexExplanation(true, GetScore(), string.Format("Score based on child doc range from {0} to {1}", start, end));
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
-                return _childScorer.Cost();
+                return _childScorer.GetCost();
             }
 
             /// <summary>

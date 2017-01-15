@@ -422,7 +422,7 @@ namespace Lucene.Net.Search
                 return doc;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return MaxDoc;
             }

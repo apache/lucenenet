@@ -331,9 +331,9 @@ namespace Lucene.Net.Join
                 return _childDoc;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
-                return _parentScorer.Cost();
+                return _parentScorer.GetCost();
             }
         }
 

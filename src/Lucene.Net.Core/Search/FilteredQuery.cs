@@ -239,9 +239,9 @@ namespace Lucene.Net.Search
                 return new[] { new ChildScorer(scorer, "FILTERED") };
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
-                return scorer.Cost();
+                return scorer.GetCost();
             }
         }
 
@@ -367,9 +367,9 @@ namespace Lucene.Net.Search
                 return new[] { new ChildScorer(scorer, "FILTERED") };
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
-                return Math.Min(primary.Cost(), secondary.Cost());
+                return Math.Min(primary.GetCost(), secondary.GetCost());
             }
         }
 

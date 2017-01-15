@@ -390,9 +390,9 @@ namespace Lucene.Net.Queries
                 return doc;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
-                return subQueryScorer.Cost();
+                return subQueryScorer.GetCost();
             }
         }
 

@@ -462,7 +462,7 @@ namespace Lucene.Net.Index.Memory
                     get { return freq_Renamed; }
                 }
 
-                public override long Cost()
+                public override long GetCost()
                 {
                     return 1;
                 }
@@ -562,7 +562,7 @@ namespace Lucene.Net.Index.Memory
                     }
                 }
 
-                public override long Cost()
+                public override long GetCost()
                 {
                     return 1;
                 }

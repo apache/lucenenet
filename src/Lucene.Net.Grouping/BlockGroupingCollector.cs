@@ -119,7 +119,7 @@ namespace Lucene.Net.Search.Grouping
                 throw new InvalidOperationException();
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return 1;
             }

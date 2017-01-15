@@ -83,9 +83,9 @@ namespace Lucene.Net.Search
             //return Collections.singleton(new ChildScorer(Scorer, "CACHED"));
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
-            return scorer.Cost();
+            return scorer.GetCost();
         }
     }
 }

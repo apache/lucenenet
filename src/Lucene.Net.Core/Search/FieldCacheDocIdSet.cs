@@ -165,7 +165,7 @@ namespace Lucene.Net.Search
                 return doc = NO_MORE_DOCS;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return outerInstance.m_maxDoc;
             }
@@ -229,7 +229,7 @@ namespace Lucene.Net.Search
                 return doc = NO_MORE_DOCS;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return outerInstance.m_maxDoc;
             }

@@ -601,7 +601,7 @@ namespace Lucene.Net.Search
                     // term does exist, but has no positions
                     throw new InvalidOperationException("field \"" + term.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
                 }
-                _cost += postings.Cost();
+                _cost += postings.GetCost();
                 docsEnums.Add(postings);
             }
 
@@ -696,7 +696,7 @@ namespace Lucene.Net.Search
             get { return _doc; }
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
             return _cost;
         }

@@ -85,9 +85,9 @@ namespace Lucene.Net.Search
             return docsEnum.Advance(target);
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
-            return docsEnum.Cost();
+            return docsEnum.GetCost();
         }
 
         /// <summary>

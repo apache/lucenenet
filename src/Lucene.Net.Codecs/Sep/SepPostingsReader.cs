@@ -483,7 +483,7 @@ namespace Lucene.Net.Codecs.Sep
                 return _doc;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return _docFreq;
             }
@@ -767,7 +767,7 @@ namespace Lucene.Net.Codecs.Sep
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return _docFreq;
             }

@@ -702,9 +702,9 @@ namespace Lucene.Net.Search
                         return TermDocsEnum.Advance(target);
                     }
 
-                    public override long Cost()
+                    public override long GetCost()
                     {
-                        return TermDocsEnum.Cost();
+                        return TermDocsEnum.GetCost();
                     }
                 }
             }

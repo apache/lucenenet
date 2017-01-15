@@ -89,9 +89,9 @@ namespace Lucene.Net.Search
             return doc;
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
-            return m_innerIter.Cost();
+            return m_innerIter.GetCost();
         }
     }
 }

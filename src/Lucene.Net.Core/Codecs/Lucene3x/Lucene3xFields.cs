@@ -1182,7 +1182,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 get { return docID; }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return docs.m_df;
             }
@@ -1275,7 +1275,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return pos.m_df;
             }

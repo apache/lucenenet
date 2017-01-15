@@ -97,7 +97,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 throw new System.NotSupportedException();
             }
-            public override long Cost()
+            public override long GetCost()
             {
                 return 0;
             }

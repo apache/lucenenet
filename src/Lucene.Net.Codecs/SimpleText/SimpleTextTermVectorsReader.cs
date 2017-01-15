@@ -522,7 +522,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 _didNext = false;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return 1;
             }
@@ -635,7 +635,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return 1;
             }

@@ -169,7 +169,7 @@ namespace Lucene.Net.Util
             get { return curDocId; }
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
             return words / 64;
         }

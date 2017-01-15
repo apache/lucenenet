@@ -421,7 +421,7 @@ namespace Lucene.Net.Join
                 return currentDoc = matchingDocsIterator.Advance(target);
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return cost_Renamed;
             }

@@ -488,7 +488,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 return _docId = SlowAdvance(target);
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return _cost;
             }
@@ -691,7 +691,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 }
             }
             
-            public override long Cost()
+            public override long GetCost()
             {
                 return _cost;
             }

@@ -141,9 +141,9 @@ namespace Lucene.Net.Search
             return DocsEnumIn.Advance(target);
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
-            return @in.Cost();
+            return @in.GetCost();
         }
 
         public override string ToString()

@@ -131,12 +131,12 @@ namespace Lucene.Net.Search
             return children;
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
             long sum = 0;
             for (int i = 0; i < m_numScorers; i++)
             {
-                sum += m_subScorers[i].Cost();
+                sum += m_subScorers[i].GetCost();
             }
             return sum;
         }

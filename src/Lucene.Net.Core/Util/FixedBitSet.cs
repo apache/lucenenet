@@ -92,7 +92,7 @@ namespace Lucene.Net.Util
                 get { return doc; }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return numBits;
             }

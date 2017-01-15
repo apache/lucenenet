@@ -66,7 +66,7 @@ namespace Lucene.Net.Util.Packed
                 get { return doc; }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return Bs.Cardinality();
             }

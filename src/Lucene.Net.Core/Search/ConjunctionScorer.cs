@@ -147,9 +147,9 @@ namespace Lucene.Net.Search
             get { return m_docsAndFreqs.Length; }
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
-            return lead.Scorer.Cost();
+            return lead.Scorer.GetCost();
         }
 
         public override ICollection<ChildScorer> GetChildren()
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search
             internal DocsAndFreqs(Scorer scorer)
             {
                 this.Scorer = scorer;
-                this.Cost = scorer.Cost();
+                this.Cost = scorer.GetCost();
                 this.Doc = -1;
             }
         }

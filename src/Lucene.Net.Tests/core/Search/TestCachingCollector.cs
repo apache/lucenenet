@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
                 return 0;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return 1;
             }

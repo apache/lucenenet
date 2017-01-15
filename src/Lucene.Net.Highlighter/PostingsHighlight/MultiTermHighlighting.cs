@@ -340,7 +340,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 return currentDoc = target;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return 0;
             }

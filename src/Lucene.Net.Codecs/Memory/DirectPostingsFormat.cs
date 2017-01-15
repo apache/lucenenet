@@ -1872,7 +1872,7 @@ namespace Lucene.Net.Codecs.Memory
                 return SlowAdvance(target);
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return postings.Length;
             }
@@ -1958,7 +1958,7 @@ namespace Lucene.Net.Codecs.Memory
                 return SlowAdvance(target);
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return postings.Length/2;
             }
@@ -2060,7 +2060,7 @@ namespace Lucene.Net.Codecs.Memory
                 return SlowAdvance(target);
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 // TODO: could do a better estimate
                 return postings.Length/2;
@@ -2250,7 +2250,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 // TODO: could do a better estimate
                 return postings.Length/2;
@@ -2441,7 +2441,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return docIDs.Length;
             }
@@ -2685,7 +2685,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return docIDs.Length;
             }

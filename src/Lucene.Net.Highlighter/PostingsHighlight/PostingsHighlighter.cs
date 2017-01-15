@@ -865,7 +865,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 return NO_MORE_DOCS;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return 0;
             }

@@ -531,7 +531,7 @@ namespace Lucene.Net.Codecs.Memory
                 get { return freq_Renamed; }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return numDocs;
             }
@@ -755,7 +755,7 @@ namespace Lucene.Net.Codecs.Memory
                 get { return freq_Renamed; }
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return numDocs;
             }

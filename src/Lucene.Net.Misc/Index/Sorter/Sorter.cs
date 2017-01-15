@@ -364,7 +364,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 throw new System.NotSupportedException();
             }
-            public override long Cost()
+            public override long GetCost()
             {
                 throw new System.NotSupportedException();
             }

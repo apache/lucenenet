@@ -1194,7 +1194,7 @@ namespace Lucene.Net.Codecs.Compressing
                 return SlowAdvance(target);
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return 1;
             }

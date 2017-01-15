@@ -48,7 +48,7 @@ namespace Lucene.Net.Join
             throw new NotSupportedException("FakeScorer doesn't support Advance(int)");
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
             return 1;
         }

@@ -334,7 +334,7 @@ namespace Lucene.Net.Spatial.Prefix
                     return SlowAdvance(target);
                 }
 
-                public override long Cost()
+                public override long GetCost()
                 {
                     return size;
                 }

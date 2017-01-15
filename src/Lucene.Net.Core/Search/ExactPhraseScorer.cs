@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
             endMinus1 = postings.Length - 1;
 
             // min(cost)
-            cost = postings[0].postings.Cost();
+            cost = postings[0].postings.GetCost();
 
             for (int i = 0; i < postings.Length; i++)
             {
@@ -359,7 +359,7 @@ namespace Lucene.Net.Search
             return freq;
         }
 
-        public override long Cost()
+        public override long GetCost()
         {
             return cost;
         }

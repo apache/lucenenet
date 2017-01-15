@@ -106,7 +106,7 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException();
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return 1;
             }

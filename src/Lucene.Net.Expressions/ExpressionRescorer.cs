@@ -81,7 +81,7 @@ namespace Lucene.Net.Expressions
                 return score;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 return 1;
             }

@@ -113,7 +113,7 @@ namespace Lucene.Net.Util
                 return docId;
             }
 
-            public override long Cost()
+            public override long GetCost()
             {
                 // upper bound
                 return bitSet.Length;

@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
                     return SlowAdvance(target);
                 }
 
-                public override long Cost()
+                public override long GetCost()
                 {
                     return 1;
                 }
