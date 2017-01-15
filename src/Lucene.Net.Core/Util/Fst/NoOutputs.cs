@@ -57,7 +57,7 @@ namespace Lucene.Net.Util.Fst
         {
         }
 
-        public static NoOutputs Singleton // LUCENENET TODO: Change to GetSingleton() ? check consistency
+        public static NoOutputs Singleton
         {
             get
             {

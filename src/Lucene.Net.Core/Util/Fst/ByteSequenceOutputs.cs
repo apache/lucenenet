@@ -38,7 +38,7 @@ namespace Lucene.Net.Util.Fst
         {
         }
 
-        public static ByteSequenceOutputs Singleton // LUCENENET TODO: Change to GetSingleton() ? check consistency across API
+        public static ByteSequenceOutputs Singleton
         {
             get
             {

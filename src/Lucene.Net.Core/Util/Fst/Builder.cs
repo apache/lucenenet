@@ -141,7 +141,7 @@ namespace Lucene.Net.Util.Fst
         ///    CPU and more RAM during building.
         /// </param>
         /// <param name="outputs"> The output type for each input sequence. Applies only if building an FST. For
-        ///    FSA, use <seealso cref="NoOutputs#getSingleton()"/> and <seealso cref="NoOutputs#getNoOutput()"/> as the
+        ///    FSA, use <seealso cref="NoOutputs.Singleton"/> and <seealso cref="NoOutputs.NoOutput"/> as the
         ///    singleton output object.
         /// </param>
         /// <param name="doPackFST"> Pass true to create a packed FST.

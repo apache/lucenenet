@@ -38,7 +38,7 @@ namespace Lucene.Net.Util.Fst
         {
         }
 
-        public static CharSequenceOutputs Singleton // LUCENENET TODO: Change to GetSingleton() ? check consistency
+        public static CharSequenceOutputs Singleton
         {
             get
             {

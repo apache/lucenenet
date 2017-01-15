@@ -44,7 +44,7 @@ namespace Lucene.Net.Util.Automaton
     /// <ul>
     /// <li>An automaton is either represented explicitly (with <seealso cref="State"/> and
     /// <seealso cref="Transition"/> objects) or with a singleton string (see
-    /// <seealso cref="#getSingleton()"/> and <seealso cref="#expandSingleton()"/>) in case the automaton
+    /// <seealso cref="Singleton"/> and <seealso cref="ExpandSingleton()"/>) in case the automaton
     /// is known to accept exactly one string. (Implicitly, all states and
     /// transitions of an automaton are reachable from its initial state.)
     /// <li>Automata are always reduced (see <seealso cref="#reduce()"/>) and have no
@@ -209,7 +209,7 @@ namespace Lucene.Net.Util.Automaton
         /// case, this method may be used to obtain the string.
         /// </summary>
         /// <returns> string, null if this automaton is not in singleton mode. </returns>
-        public virtual string Singleton // LUCENENET TODO: Rename GetSingleton() ? check consistency across API
+        public virtual string Singleton
         {
             get
             {
