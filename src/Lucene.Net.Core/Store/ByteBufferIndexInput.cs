@@ -76,14 +76,12 @@ namespace Lucene.Net.Store
             //Seek(0L); // LUCENENET TODO: why isn't this in place?
         }
 
-        internal ByteBuffer[] Buffers // LUCENENET TODO: this shouldn't be a property - perhaps make a SetBuffers() internal method
+        // LUCENENET specific for encapsulating buffers field.
+        internal void SetBuffers(ByteBuffer[] buffers) // necessary for MMapIndexInput
         {
-            get { return buffers; }
-            set
-            {
-                buffers = value; // necessary for MMapIndexInput
-            }
+            this.buffers = buffers;
         }
+
 
         public override sealed byte ReadByte()
         {

@@ -257,7 +257,7 @@ namespace Lucene.Net.Store
             {
                 this.outerInstance = outerInstance;
                 this.useUnmapHack = outerInstance.UseUnmap;
-                this.Buffers = outerInstance.Map(this, fc, 0, fc.Length);
+                this.SetBuffers(outerInstance.Map(this, fc, 0, fc.Length));
 
                 //Called here to let buffers get set up
                 base.Seek(0L);
