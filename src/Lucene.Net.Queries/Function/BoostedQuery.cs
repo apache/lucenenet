@@ -117,9 +117,9 @@ namespace Lucene.Net.Queries.Function
                 qWeight.Normalize(norm, topLevelBoost);
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                Scorer subQueryScorer = qWeight.Scorer(context, acceptDocs);
+                Scorer subQueryScorer = qWeight.GetScorer(context, acceptDocs);
                 if (subQueryScorer == null)
                 {
                     return null;

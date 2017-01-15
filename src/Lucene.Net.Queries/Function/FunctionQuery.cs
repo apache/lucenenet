@@ -97,14 +97,14 @@ namespace Lucene.Net.Queries.Function
                 queryWeight *= this.queryNorm;
             }
 
-            public override Scorer Scorer(AtomicReaderContext ctx, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext ctx, IBits acceptDocs)
             {
                 return new AllScorer(outerInstance, ctx, acceptDocs, this, queryWeight);
             }
 
             public override Explanation Explain(AtomicReaderContext ctx, int doc)
             {
-                return ((AllScorer)Scorer(ctx, ctx.AtomicReader.LiveDocs)).Explain(doc);
+                return ((AllScorer)GetScorer(ctx, ctx.AtomicReader.LiveDocs)).Explain(doc);
             }
         }
 

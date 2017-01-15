@@ -173,18 +173,18 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
+            public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
                 //DocIdSetIterator disi;
                 if (outerInstance.m_filter != null)
                 {
                     Debug.Assert(outerInstance.m_query == null);
-                    return base.BulkScorer(context, scoreDocsInOrder, acceptDocs);
+                    return base.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
                 }
                 else
                 {
                     Debug.Assert(outerInstance.m_query != null && innerWeight != null);
-                    BulkScorer bulkScorer = innerWeight.BulkScorer(context, scoreDocsInOrder, acceptDocs);
+                    BulkScorer bulkScorer = innerWeight.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
                     if (bulkScorer == null)
                     {
                         return null;
@@ -193,7 +193,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 DocIdSetIterator disi;
                 if (outerInstance.m_filter != null)
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     Debug.Assert(outerInstance.m_query != null && innerWeight != null);
-                    disi = innerWeight.Scorer(context, acceptDocs);
+                    disi = innerWeight.GetScorer(context, acceptDocs);
                 }
 
                 if (disi == null)
@@ -226,7 +226,7 @@ namespace Lucene.Net.Search
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                Scorer cs = Scorer(context, (context.AtomicReader).LiveDocs);
+                Scorer cs = GetScorer(context, (context.AtomicReader).LiveDocs);
                 bool exists = (cs != null && cs.Advance(doc) == doc);
 
                 ComplexExplanation result = new ComplexExplanation();

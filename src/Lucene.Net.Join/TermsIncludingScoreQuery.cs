@@ -130,7 +130,7 @@ namespace Lucene.Net.Join
             
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                SVInnerScorer scorer = (SVInnerScorer) BulkScorer(context, false, null);
+                SVInnerScorer scorer = (SVInnerScorer) GetBulkScorer(context, false, null);
                 if (scorer != null)
                 {
                     return scorer.Explain(doc);
@@ -163,7 +163,7 @@ namespace Lucene.Net.Join
                 originalWeight.Normalize(norm, topLevelBoost*outerInstance.Boost);
             }
             
-            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 Terms terms = context.AtomicReader.Terms(outerInstance._field);
                 if (terms == null)
@@ -183,11 +183,11 @@ namespace Lucene.Net.Join
                 return new SVInOrderScorer(outerInstance, this, acceptDocs, segmentTermsEnum, context.AtomicReader.MaxDoc, cost);
             }
             
-            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
+            public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
                 if (scoreDocsInOrder)
                 {
-                    return base.BulkScorer(context, scoreDocsInOrder, acceptDocs);
+                    return base.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
                 }
 
                 Terms terms = context.AtomicReader.Terms(outerInstance._field);

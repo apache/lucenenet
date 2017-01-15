@@ -151,7 +151,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                return weight.Scorer((AtomicReaderContext)atomicReader.Context, null);
+                return weight.GetScorer((AtomicReaderContext)atomicReader.Context, null);
             }
         }
 

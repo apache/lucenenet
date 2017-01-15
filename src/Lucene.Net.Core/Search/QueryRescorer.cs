@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
                 {
                     // We advanced to another segment:
                     docBase = readerContext.DocBase;
-                    scorer = weight.Scorer(readerContext, null);
+                    scorer = weight.GetScorer(readerContext, null);
                 }
 
                 int targetDoc = docID - docBase;

@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
             }
 
             // return a filtering scorer
-            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 Debug.Assert(outerInstance.filter != null);
 
@@ -159,7 +159,7 @@ namespace Lucene.Net.Search
             }
 
             // return a filtering top scorer
-            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
+            public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
                 Debug.Assert(outerInstance.filter != null);
 
@@ -622,14 +622,14 @@ namespace Lucene.Net.Search
                 if (useRandomAccess)
                 {
                     // if we are using random access, we return the inner scorer, just with other acceptDocs
-                    return weight.Scorer(context, filterAcceptDocs);
+                    return weight.GetScorer(context, filterAcceptDocs);
                 }
                 else
                 {
                     Debug.Assert(firstFilterDoc > -1);
                     // we are gonna advance() this scorer, so we set inorder=true/toplevel=false
                     // we pass null as acceptDocs, as our filter has already respected acceptDocs, no need to do twice
-                    Scorer scorer = weight.Scorer(context, null);
+                    Scorer scorer = weight.GetScorer(context, null);
                     // TODO once we have way to figure out if we use RA or LeapFrog we can remove this scorer
                     return (scorer == null) ? null : new PrimaryAdvancedLeapFrogScorer(weight, firstFilterDoc, filterIter, scorer);
                 }
@@ -672,7 +672,7 @@ namespace Lucene.Net.Search
                     return null;
                 }
                 // we pass null as acceptDocs, as our filter has already respected acceptDocs, no need to do twice
-                Scorer scorer = weight.Scorer(context, null);
+                Scorer scorer = weight.GetScorer(context, null);
                 if (scorer == null)
                 {
                     return null;
@@ -713,7 +713,7 @@ namespace Lucene.Net.Search
                     // must fallback to leapfrog:
                     return LEAP_FROG_QUERY_FIRST_STRATEGY.FilteredScorer(context, weight, docIdSet);
                 }
-                Scorer scorer = weight.Scorer(context, null);
+                Scorer scorer = weight.GetScorer(context, null);
                 return scorer == null ? null : new QueryFirstScorer(weight, filterAcceptDocs, scorer);
             }
 
@@ -726,7 +726,7 @@ namespace Lucene.Net.Search
                     // must fallback to leapfrog:
                     return LEAP_FROG_QUERY_FIRST_STRATEGY.FilteredBulkScorer(context, weight, scoreDocsInOrder, docIdSet);
                 }
-                Scorer scorer = weight.Scorer(context, null);
+                Scorer scorer = weight.GetScorer(context, null);
                 return scorer == null ? null : new QueryFirstBulkScorer(scorer, filterAcceptDocs);
             }
         }

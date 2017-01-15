@@ -196,7 +196,7 @@ namespace Lucene.Net.Search
             Weight w = s.CreateNormalizedWeight(bq);
 
             Assert.AreEqual(1, s.IndexReader.Leaves.Count);
-            BulkScorer scorer = w.BulkScorer(s.IndexReader.Leaves[0], false, null);
+            BulkScorer scorer = w.GetBulkScorer(s.IndexReader.Leaves[0], false, null);
 
             FixedBitSet hits = new FixedBitSet(docCount);
             AtomicInteger end = new AtomicInteger();

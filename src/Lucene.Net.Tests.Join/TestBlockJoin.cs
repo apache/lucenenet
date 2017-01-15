@@ -1226,7 +1226,7 @@ namespace Lucene.Net.Tests.Join
 
             ToParentBlockJoinQuery q = new ToParentBlockJoinQuery(tq, parentFilter, ScoreMode.Avg);
             Weight weight = s.CreateNormalizedWeight(q);
-            DocIdSetIterator disi = weight.Scorer(s.IndexReader.Leaves.First(), null);
+            DocIdSetIterator disi = weight.GetScorer(s.IndexReader.Leaves.First(), null);
             assertEquals(1, disi.Advance(1));
             r.Dispose();
             dir.Dispose();
@@ -1260,7 +1260,7 @@ namespace Lucene.Net.Tests.Join
 
             ToParentBlockJoinQuery q = new ToParentBlockJoinQuery(tq, parentFilter, ScoreMode.Avg);
             Weight weight = s.CreateNormalizedWeight(q);
-            DocIdSetIterator disi = weight.Scorer(s.IndexReader.Leaves.First(), null);
+            DocIdSetIterator disi = weight.GetScorer(s.IndexReader.Leaves.First(), null);
             assertEquals(2, disi.Advance(0));
             r.Dispose();
             dir.Dispose();

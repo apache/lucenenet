@@ -65,19 +65,19 @@ namespace Lucene.Net.Search
             @in.Normalize(norm, topLevelBoost);
         }
 
-        public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+        public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
         {
             // if the caller asks for in-order scoring or if the weight does not support
             // out-of order scoring then collection will have to happen in-order.
-            Scorer inScorer = @in.Scorer(context, acceptDocs);
+            Scorer inScorer = @in.GetScorer(context, acceptDocs);
             return AssertingScorer.Wrap(new Random(Random.Next()), inScorer);
         }
 
-        public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
+        public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
         {
             // if the caller asks for in-order scoring or if the weight does not support
             // out-of order scoring then collection will have to happen in-order.
-            BulkScorer inScorer = @in.BulkScorer(context, scoreDocsInOrder, acceptDocs);
+            BulkScorer inScorer = @in.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
             if (inScorer == null)
             {
                 return null;
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
             {
                 // Let super wrap this.scorer instead, so we use
                 // AssertingScorer:
-                inScorer = base.BulkScorer(context, scoreDocsInOrder, acceptDocs);
+                inScorer = base.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
             }
 
             if (scoreDocsInOrder == false && Random.NextBoolean())

@@ -182,13 +182,13 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Create the scorer used to score our associated DisjunctionMaxQuery </summary>
-            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 IList<Scorer> scorers = new List<Scorer>();
                 foreach (Weight w in m_weights)
                 {
                     // we will advance() subscorers
-                    Scorer subScorer = w.Scorer(context, acceptDocs);
+                    Scorer subScorer = w.GetScorer(context, acceptDocs);
                     if (subScorer != null)
                     {
                         scorers.Add(subScorer);

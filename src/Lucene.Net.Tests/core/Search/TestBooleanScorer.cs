@@ -269,12 +269,12 @@ namespace Lucene.Net.Search
                 {
                 }
 
-                public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+                public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
                 {
                     throw new System.NotSupportedException();
                 }
 
-                public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
+                public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
                 {
                     return new BulkScorerAnonymousInnerClassHelper(this);
                 }

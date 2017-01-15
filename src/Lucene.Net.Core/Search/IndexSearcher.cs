@@ -646,7 +646,7 @@ namespace Lucene.Net.Search
                     // continue with the following leaf
                     continue;
                 }
-                BulkScorer scorer = weight.BulkScorer(ctx, !collector.AcceptsDocsOutOfOrder, ctx.AtomicReader.LiveDocs);
+                BulkScorer scorer = weight.GetBulkScorer(ctx, !collector.AcceptsDocsOutOfOrder, ctx.AtomicReader.LiveDocs);
                 if (scorer != null)
                 {
                     try

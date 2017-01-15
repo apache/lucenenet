@@ -148,7 +148,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     {
                         return defVal;
                     }
-                    scorer = weight.Scorer(readerContext, acceptDocs);
+                    scorer = weight.GetScorer(readerContext, acceptDocs);
                     if (scorer == null)
                     {
                         noMatches = true;
@@ -189,7 +189,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     {
                         return false;
                     }
-                    scorer = weight.Scorer(readerContext, acceptDocs);
+                    scorer = weight.GetScorer(readerContext, acceptDocs);
                     scorerDoc = -1;
                     if (scorer == null)
                     {
@@ -275,7 +275,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                         mval.Exists = false;
                         return;
                     }
-                    outerInstance.scorer = outerInstance.weight.Scorer(outerInstance.readerContext, outerInstance.acceptDocs);
+                    outerInstance.scorer = outerInstance.weight.GetScorer(outerInstance.readerContext, outerInstance.acceptDocs);
                     outerInstance.scorerDoc = -1;
                     if (outerInstance.scorer == null)
                     {

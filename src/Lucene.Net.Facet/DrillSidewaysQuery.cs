@@ -153,17 +153,17 @@ namespace Lucene.Net.Facet
                 }
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 // We can only run as a top scorer:
                 throw new System.NotSupportedException();
             }
 
-            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
+            public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
                 // TODO: it could be better if we take acceptDocs
                 // into account instead of baseScorer?
-                Scorer baseScorer = baseWeight.Scorer(context, acceptDocs);
+                Scorer baseScorer = baseWeight.GetScorer(context, acceptDocs);
 
                 DrillSidewaysScorer.DocsAndCost[] dims = new DrillSidewaysScorer.DocsAndCost[drillDowns.Length];
                 int nullCount = 0;
@@ -217,7 +217,7 @@ namespace Lucene.Net.Facet
                     }
                     else
                     {
-                        DocIdSetIterator disi = ((Weight)drillDowns[dim]).Scorer(context, null);
+                        DocIdSetIterator disi = ((Weight)drillDowns[dim]).GetScorer(context, null);
                         if (disi == null)
                         {
                             nullCount++;

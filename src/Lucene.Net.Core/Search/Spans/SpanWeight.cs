@@ -82,7 +82,7 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+        public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
         {
             if (m_stats == null)
             {
@@ -96,7 +96,7 @@ namespace Lucene.Net.Search.Spans
 
         public override Explanation Explain(AtomicReaderContext context, int doc)
         {
-            SpanScorer scorer = (SpanScorer)Scorer(context, context.AtomicReader.LiveDocs);
+            SpanScorer scorer = (SpanScorer)GetScorer(context, context.AtomicReader.LiveDocs);
             if (scorer != null)
             {
                 int newDoc = scorer.Advance(doc);

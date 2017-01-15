@@ -263,7 +263,7 @@ namespace Lucene.Net.Search
 
                 Weight weight = s.CreateNormalizedWeight(q);
 
-                Scorer scorer = weight.Scorer(s.m_leafContexts[0], null);
+                Scorer scorer = weight.GetScorer(s.m_leafContexts[0], null);
 
                 // First pass: just use .NextDoc() to gather all hits
                 IList<ScoreDoc> hits = new List<ScoreDoc>();
@@ -282,7 +282,7 @@ namespace Lucene.Net.Search
                 for (int iter2 = 0; iter2 < 10; iter2++)
                 {
                     weight = s.CreateNormalizedWeight(q);
-                    scorer = weight.Scorer(s.m_leafContexts[0], null);
+                    scorer = weight.GetScorer(s.m_leafContexts[0], null);
 
                     if (VERBOSE)
                     {

@@ -306,7 +306,7 @@ namespace Lucene.Net.Search
                     Weight w = wIter.Current;
                     cIter.MoveNext();
                     BooleanClause c = cIter.Current;
-                    if (w.Scorer(context, context.AtomicReader.LiveDocs) == null)
+                    if (w.GetScorer(context, context.AtomicReader.LiveDocs) == null)
                     {
                         if (c.IsRequired)
                         {
@@ -377,13 +377,13 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
+            public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
                 if (scoreDocsInOrder || outerInstance.m_minNrShouldMatch > 1)
                 {
                     // TODO: (LUCENE-4872) in some cases BooleanScorer may be faster for minNrShouldMatch
                     // but the same is even true of pure conjunctions...
-                    return base.BulkScorer(context, scoreDocsInOrder, acceptDocs);
+                    return base.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
                 }
 
                 IList<BulkScorer> prohibited = new List<BulkScorer>();
@@ -393,7 +393,7 @@ namespace Lucene.Net.Search
                 {
                     cIter.MoveNext();
                     BooleanClause c = cIter.Current;
-                    BulkScorer subScorer = w.BulkScorer(context, false, acceptDocs);
+                    BulkScorer subScorer = w.GetBulkScorer(context, false, acceptDocs);
                     if (subScorer == null)
                     {
                         if (c.IsRequired)
@@ -406,7 +406,7 @@ namespace Lucene.Net.Search
                         // TODO: there are some cases where BooleanScorer
                         // would handle conjunctions faster than
                         // BooleanScorer2...
-                        return base.BulkScorer(context, scoreDocsInOrder, acceptDocs);
+                        return base.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
                     }
                     else if (c.IsProhibited)
                     {
@@ -422,7 +422,7 @@ namespace Lucene.Net.Search
                 return new BooleanScorer(this, disableCoord, outerInstance.m_minNrShouldMatch, optional, prohibited, m_maxCoord);
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 IList<Scorer> required = new List<Scorer>();
                 IList<Scorer> prohibited = new List<Scorer>();
@@ -432,7 +432,7 @@ namespace Lucene.Net.Search
                 {
                     cIter.MoveNext();
                     BooleanClause c = cIter.Current;
-                    Scorer subScorer = w.Scorer(context, acceptDocs);
+                    Scorer subScorer = w.GetScorer(context, acceptDocs);
                     if (subScorer == null)
                     {
                         if (c.IsRequired)

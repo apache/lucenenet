@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
             Weight weight = IndexSearcher.CreateNormalizedWeight(termQuery);
             Assert.IsTrue(IndexSearcher.TopReaderContext is AtomicReaderContext);
             AtomicReaderContext context = (AtomicReaderContext)IndexSearcher.TopReaderContext;
-            BulkScorer ts = weight.BulkScorer(context, true, (context.AtomicReader).LiveDocs);
+            BulkScorer ts = weight.GetBulkScorer(context, true, (context.AtomicReader).LiveDocs);
             // we have 2 documents with the term all in them, one document for all the
             // other values
             IList<TestHit> docs = new List<TestHit>();
@@ -157,7 +157,7 @@ namespace Lucene.Net.Search
             Weight weight = IndexSearcher.CreateNormalizedWeight(termQuery);
             Assert.IsTrue(IndexSearcher.TopReaderContext is AtomicReaderContext);
             AtomicReaderContext context = (AtomicReaderContext)IndexSearcher.TopReaderContext;
-            Scorer ts = weight.Scorer(context, (context.AtomicReader).LiveDocs);
+            Scorer ts = weight.GetScorer(context, (context.AtomicReader).LiveDocs);
             Assert.IsTrue(ts.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "next did not return a doc");
             Assert.IsTrue(ts.Score() == 1.6931472f, "score is not correct");
             Assert.IsTrue(ts.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "next did not return a doc");
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
             Weight weight = IndexSearcher.CreateNormalizedWeight(termQuery);
             Assert.IsTrue(IndexSearcher.TopReaderContext is AtomicReaderContext);
             AtomicReaderContext context = (AtomicReaderContext)IndexSearcher.TopReaderContext;
-            Scorer ts = weight.Scorer(context, (context.AtomicReader).LiveDocs);
+            Scorer ts = weight.GetScorer(context, (context.AtomicReader).LiveDocs);
             Assert.IsTrue(ts.Advance(3) != DocIdSetIterator.NO_MORE_DOCS, "Didn't skip");
             // The next doc should be doc 5
             Assert.IsTrue(ts.DocID == 5, "doc should be number 5");

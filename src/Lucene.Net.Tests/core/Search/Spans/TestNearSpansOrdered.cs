@@ -184,7 +184,7 @@ namespace Lucene.Net.Search.Spans
             Weight w = Searcher.CreateNormalizedWeight(q);
             IndexReaderContext topReaderContext = Searcher.TopReaderContext;
             AtomicReaderContext leave = topReaderContext.Leaves[0];
-            Scorer s = w.Scorer(leave, ((AtomicReader)leave.Reader).LiveDocs);
+            Scorer s = w.GetScorer(leave, ((AtomicReader)leave.Reader).LiveDocs);
             Assert.AreEqual(1, s.Advance(1));
         }
 

@@ -345,7 +345,7 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }

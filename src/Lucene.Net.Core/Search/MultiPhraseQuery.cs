@@ -210,7 +210,7 @@ namespace Lucene.Net.Search
                 stats.Normalize(queryNorm, topLevelBoost);
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 Debug.Assert(outerInstance.termArrays.Count > 0);
                 AtomicReader reader = (context.AtomicReader);
@@ -311,7 +311,7 @@ namespace Lucene.Net.Search
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                Scorer scorer = Scorer(context, (context.AtomicReader).LiveDocs);
+                Scorer scorer = GetScorer(context, (context.AtomicReader).LiveDocs);
                 if (scorer != null)
                 {
                     int newDoc = scorer.Advance(doc);

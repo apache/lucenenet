@@ -496,7 +496,7 @@ namespace Lucene.Net.Search
                 {
                 }
 
-                public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+                public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
                 {
                     return new ScorerAnonymousInnerClassHelper(this, context);
                 }

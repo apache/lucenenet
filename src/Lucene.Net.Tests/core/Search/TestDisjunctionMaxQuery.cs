@@ -189,7 +189,7 @@ namespace Lucene.Net.Search
             Assert.IsTrue(s.TopReaderContext is AtomicReaderContext);
             Weight dw = s.CreateNormalizedWeight(dq);
             AtomicReaderContext context = (AtomicReaderContext)s.TopReaderContext;
-            Scorer ds = dw.Scorer(context, (context.AtomicReader).LiveDocs);
+            Scorer ds = dw.GetScorer(context, (context.AtomicReader).LiveDocs);
             bool skipOk = ds.Advance(3) != DocIdSetIterator.NO_MORE_DOCS;
             if (skipOk)
             {
@@ -207,7 +207,7 @@ namespace Lucene.Net.Search
             QueryUtils.Check(Random(), dq, s, Similarity);
             Weight dw = s.CreateNormalizedWeight(dq);
             AtomicReaderContext context = (AtomicReaderContext)s.TopReaderContext;
-            Scorer ds = dw.Scorer(context, (context.AtomicReader).LiveDocs);
+            Scorer ds = dw.GetScorer(context, (context.AtomicReader).LiveDocs);
             Assert.IsTrue(ds.Advance(3) != DocIdSetIterator.NO_MORE_DOCS, "firsttime skipTo found no match");
             Assert.AreEqual("d4", r.Document(ds.DocID).Get("id"), "found wrong docid");
         }

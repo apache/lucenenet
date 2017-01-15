@@ -74,7 +74,7 @@ namespace Lucene.Net.Search.Payloads
                 this.outerInstance = outerInstance;
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 return new PayloadTermSpanScorer(this, (TermSpans)m_query.GetSpans(context, acceptDocs, m_termContexts), this, m_similarity.GetSimScorer(m_stats, context));
             }
@@ -177,7 +177,7 @@ namespace Lucene.Net.Search.Payloads
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                PayloadTermSpanScorer scorer = (PayloadTermSpanScorer)Scorer(context, (context.AtomicReader).LiveDocs);
+                PayloadTermSpanScorer scorer = (PayloadTermSpanScorer)GetScorer(context, (context.AtomicReader).LiveDocs);
                 if (scorer != null)
                 {
                     int newDoc = scorer.Advance(doc);

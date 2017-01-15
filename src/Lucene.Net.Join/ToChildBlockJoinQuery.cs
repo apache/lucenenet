@@ -110,9 +110,9 @@ namespace Lucene.Net.Join
             }
 
             // NOTE: acceptDocs applies (and is checked) only in the child document space
-            public override Scorer Scorer(AtomicReaderContext readerContext, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext readerContext, IBits acceptDocs)
             {
-                Scorer parentScorer = _parentWeight.Scorer(readerContext, null);
+                Scorer parentScorer = _parentWeight.GetScorer(readerContext, null);
 
                 if (parentScorer == null)
                 {

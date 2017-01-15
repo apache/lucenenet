@@ -258,9 +258,9 @@ namespace Lucene.Net.Queries
                 queryWeight = topLevelBoost * outerInstance.Boost;
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                Scorer subQueryScorer = subQueryWeight.Scorer(context, acceptDocs);
+                Scorer subQueryScorer = subQueryWeight.GetScorer(context, acceptDocs);
                 if (subQueryScorer == null)
                 {
                     return null;
@@ -268,7 +268,7 @@ namespace Lucene.Net.Queries
                 var valSrcScorers = new Scorer[valSrcWeights.Length];
                 for (int i = 0; i < valSrcScorers.Length; i++)
                 {
-                    valSrcScorers[i] = valSrcWeights[i].Scorer(context, acceptDocs);
+                    valSrcScorers[i] = valSrcWeights[i].GetScorer(context, acceptDocs);
                 }
                 return new CustomScorer(outerInstance, outerInstance.GetCustomScoreProvider(context), this, queryWeight,
                     subQueryScorer, valSrcScorers);

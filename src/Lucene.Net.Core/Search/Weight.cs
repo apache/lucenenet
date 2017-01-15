@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
         /// </param>
         /// <returns> a <seealso cref="Scorer"/> which scores documents in/out-of order. </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public abstract Scorer Scorer(AtomicReaderContext context, IBits acceptDocs); // LUCENENET TODO: Rename GetScorer() ?
+        public abstract Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs);
 
         /// <summary>
         /// Optional method, to return a <seealso cref="BulkScorer"/> to
@@ -121,9 +121,9 @@ namespace Lucene.Net.Search
         /// <returns> a <seealso cref="BulkScorer"/> which scores documents and
         /// passes them to a collector. </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public virtual BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs) // LUCENENET TODO: Rename GetBulkScorer ?
+        public virtual BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
         {
-            Scorer scorer = Scorer(context, acceptDocs);
+            Scorer scorer = GetScorer(context, acceptDocs);
             if (scorer == null)
             {
                 // No docs match

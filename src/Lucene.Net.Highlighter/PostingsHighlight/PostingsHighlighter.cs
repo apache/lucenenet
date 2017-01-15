@@ -94,8 +94,9 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// </summary>
         private PassageFormatter defaultFormatter;
 
-        /** Set the first time {@link #getScorer} is called,
-         *  and then reused. */
+        /// <summary>
+        /// Set the first time <see cref="GetScorer(string)"/> is called, and then reused.
+        /// </summary>
         private PassageScorer defaultScorer;
 
         /// <summary>

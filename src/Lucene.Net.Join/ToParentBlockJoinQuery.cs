@@ -142,10 +142,10 @@ namespace Lucene.Net.Join
             }
 
             // NOTE: acceptDocs applies (and is checked) only in the parent document space
-            public override Scorer Scorer(AtomicReaderContext readerContext, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext readerContext, IBits acceptDocs)
             {
 
-                Scorer childScorer = ChildWeight.Scorer(readerContext, readerContext.AtomicReader.LiveDocs);
+                Scorer childScorer = ChildWeight.GetScorer(readerContext, readerContext.AtomicReader.LiveDocs);
                 if (childScorer == null)
                 {
                     // No matches
@@ -181,7 +181,7 @@ namespace Lucene.Net.Join
             
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                BlockJoinScorer scorer = (BlockJoinScorer)Scorer(context, context.AtomicReader.LiveDocs);
+                BlockJoinScorer scorer = (BlockJoinScorer)GetScorer(context, context.AtomicReader.LiveDocs);
                 if (scorer != null && scorer.Advance(doc) == doc)
                 {
                     return scorer.Explain(context.DocBase);

@@ -421,7 +421,7 @@ namespace Lucene.Net.Search.Spans
                     Searcher.Similarity = sim;
                     SpanNearQuery snq = new SpanNearQuery(new SpanQuery[] { MakeSpanTermQuery("t1"), MakeSpanTermQuery("t2") }, slop, ordered);
 
-                    spanScorer = Searcher.CreateNormalizedWeight(snq).Scorer(ctx, ((AtomicReader)ctx.Reader).LiveDocs);
+                    spanScorer = Searcher.CreateNormalizedWeight(snq).GetScorer(ctx, ((AtomicReader)ctx.Reader).LiveDocs);
                 }
                 finally
                 {

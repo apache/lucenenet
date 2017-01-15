@@ -129,7 +129,7 @@ namespace Lucene.Net.Search
                 queryWeight *= this.queryNorm;
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, IBits acceptDocs)
+            public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 return new MatchAllScorer(outerInstance, context.Reader, acceptDocs, this, queryWeight);
             }

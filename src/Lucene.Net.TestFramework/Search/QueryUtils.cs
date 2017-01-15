@@ -304,7 +304,7 @@ namespace Lucene.Net.Search
                     indexSearcher.Similarity = s.Similarity;
                     Weight w = indexSearcher.CreateNormalizedWeight(q);
                     AtomicReaderContext ctx = (AtomicReaderContext)previousReader.Context;
-                    Scorer scorer = w.Scorer(ctx, ((AtomicReader)ctx.Reader).LiveDocs);
+                    Scorer scorer = w.GetScorer(ctx, ((AtomicReader)ctx.Reader).LiveDocs);
                     if (scorer != null)
                     {
                         bool more = scorer.Advance(lastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
@@ -362,7 +362,7 @@ namespace Lucene.Net.Search
                     {
                         Weight w = s.CreateNormalizedWeight(q);
                         AtomicReaderContext context = ReaderContextArray[leafPtr];
-                        scorer = w.Scorer(context, (context.AtomicReader).LiveDocs);
+                        scorer = w.GetScorer(context, (context.AtomicReader).LiveDocs);
                     }
 
                     int op = Order[(Opidx[0]++) % Order.Length];
@@ -401,7 +401,7 @@ namespace Lucene.Net.Search
                     indexSearcher.Similarity = s.Similarity;
                     Weight w = indexSearcher.CreateNormalizedWeight(q);
                     AtomicReaderContext ctx = (AtomicReaderContext)indexSearcher.TopReaderContext;
-                    Scorer scorer = w.Scorer(ctx, ((AtomicReader)ctx.Reader).LiveDocs);
+                    Scorer scorer = w.GetScorer(ctx, ((AtomicReader)ctx.Reader).LiveDocs);
                     if (scorer != null)
                     {
                         bool more = scorer.Advance(LastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
@@ -444,7 +444,7 @@ namespace Lucene.Net.Search
                 IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader, similarity);
                 indexSearcher.Similarity = s.Similarity;
                 Weight w = indexSearcher.CreateNormalizedWeight(q);
-                Scorer scorer = w.Scorer((AtomicReaderContext)indexSearcher.TopReaderContext, previousReader.LiveDocs);
+                Scorer scorer = w.GetScorer((AtomicReaderContext)indexSearcher.TopReaderContext, previousReader.LiveDocs);
                 if (scorer != null)
                 {
                     bool more = scorer.Advance(lastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
@@ -492,7 +492,7 @@ namespace Lucene.Net.Search
                     for (int i = LastDoc[0] + 1; i <= doc; i++)
                     {
                         Weight w = s.CreateNormalizedWeight(q);
-                        Scorer scorer_ = w.Scorer(Context[leafPtr], liveDocs);
+                        Scorer scorer_ = w.GetScorer(Context[leafPtr], liveDocs);
                         Assert.IsTrue(scorer_.Advance(i) != DocIdSetIterator.NO_MORE_DOCS, "query collected " + doc + " but skipTo(" + i + ") says no more docs!");
                         Assert.AreEqual(doc, scorer_.DocID, "query collected " + doc + " but skipTo(" + i + ") got to " + scorer_.DocID);
                         float skipToScore = scorer_.Score();
@@ -524,7 +524,7 @@ namespace Lucene.Net.Search
                     IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader, Similarity);
                     indexSearcher.Similarity = s.Similarity;
                     Weight w = indexSearcher.CreateNormalizedWeight(q);
-                    Scorer scorer = w.Scorer((AtomicReaderContext)indexSearcher.TopReaderContext, previousReader.LiveDocs);
+                    Scorer scorer = w.GetScorer((AtomicReaderContext)indexSearcher.TopReaderContext, previousReader.LiveDocs);
                     if (scorer != null)
                     {
                         bool more = scorer.Advance(LastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;

@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSetIterator GetIterator()
             {
-                return weight.Scorer(privateContext, acceptDocs);
+                return weight.GetScorer(privateContext, acceptDocs);
             }
 
             public override bool IsCacheable
