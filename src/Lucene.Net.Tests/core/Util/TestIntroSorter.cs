@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
 
         public override Sorter NewSorter(Entry[] arr)
         {
-            return new ArrayIntroSorter<Entry>(arr, ArrayUtil.naturalComparer<Entry>());
+            return new ArrayIntroSorter<Entry>(arr, ArrayUtil.NaturalComparer<Entry>());
         }
 
 

@@ -32,7 +32,7 @@ namespace Lucene.Net.Util
 
         public override Sorter NewSorter(Entry[] arr)
         {
-            return new ArrayInPlaceMergeSorter<Entry>(arr, ArrayUtil.naturalComparer<Entry>());
+            return new ArrayInPlaceMergeSorter<Entry>(arr, ArrayUtil.NaturalComparer<Entry>());
         }
 
 

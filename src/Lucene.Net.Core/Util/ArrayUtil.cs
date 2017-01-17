@@ -765,25 +765,26 @@ namespace Lucene.Net.Util
             return result;
         }
 
-        private class NaturalComparer<T> : IComparer<T> where T : IComparable<T>
-        {
-            internal NaturalComparer()
-            {
-            }
+        // LUCENENET specific - replaced NaturalComparer<T> with Comparer<T>.Default
+        //private class NaturalComparerImpl<T> : IComparer<T> where T : IComparable<T>
+        //{
+        //    internal NaturalComparerImpl()
+        //    {
+        //    }
 
-            public virtual int Compare(T o1, T o2)
-            {
-                return o1.CompareTo(o2);
-            }
-        }
+        //    public virtual int Compare(T o1, T o2)
+        //    {
+        //        return o1.CompareTo(o2);
+        //    }
+        //}
 
         /// <summary>
         /// Get the natural <seealso cref="Comparer"/> for the provided object class. </summary>
-        public static IComparer<T> naturalComparer<T>() // LUCENENET TODO: pascal case
+        public static IComparer<T> NaturalComparer<T>()
             where T : IComparable<T>
         {
-            // return Comparer<T>.Default; // LUCENENET TODO: Shouldn't we just return the default comparer already included in .NET?
-            return (IComparer<T>)new NaturalComparer<T>();
+            return Comparer<T>.Default;
+            //return (IComparer<T>)new NaturalComparerImpl<T>();
         }
 
         /// <summary>
@@ -831,7 +832,7 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-            IntroSort(a, fromIndex, toIndex, ArrayUtil.naturalComparer<T>());
+            IntroSort(a, fromIndex, toIndex, ArrayUtil.NaturalComparer<T>());
         }
 
         /// <summary>
@@ -879,7 +880,7 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-            TimSort(a, fromIndex, toIndex, ArrayUtil.naturalComparer<T>());
+            TimSort(a, fromIndex, toIndex, ArrayUtil.NaturalComparer<T>());
         }
 
         /// <summary>
