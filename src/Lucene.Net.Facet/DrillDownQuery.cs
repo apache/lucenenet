@@ -285,17 +285,17 @@ namespace Lucene.Net.Facet
 
         public override Query Rewrite(IndexReader r)
         {
-            if (!query.GetClauses().Any())
+            if (!query.Clauses.Any())
             {
                 return new MatchAllDocsQuery();
             }
 
             IList<Filter> filters = new List<Filter>();
             IList<Query> queries = new List<Query>();
-            IList<BooleanClause> clauses = query.GetClauses();
+            IList<BooleanClause> clauses = query.Clauses;
             Query baseQuery;
             int startIndex;
-            if (drillDownDims.Count == query.GetClauses().Count())
+            if (drillDownDims.Count == query.Clauses.Count)
             {
                 baseQuery = new MatchAllDocsQuery();
                 startIndex = 0;

@@ -67,7 +67,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
             mlt.BoostFactor = boostFactor;
 
             BooleanQuery query = (BooleanQuery)mlt.Like(new StringReader("lucene release"), "text");
-            IList<BooleanClause> clauses = query.GetClauses();
+            IList<BooleanClause> clauses = query.Clauses;
 
             assertEquals("Expected " + originalValues.Count + " clauses.", originalValues.Count, clauses.Count);
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
                 mlt.FieldNames = new[] { "text" };
                 mlt.Boost = true;
                 BooleanQuery query = (BooleanQuery)mlt.Like(new StringReader("lucene release"), "text");
-                IList<BooleanClause> clauses = query.GetClauses();
+                IList<BooleanClause> clauses = query.Clauses;
 
                 foreach (BooleanClause clause in clauses)
                 {

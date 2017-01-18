@@ -1099,7 +1099,7 @@ namespace Lucene.Net.QueryParsers.Util
             Query result = GetQuery("field:the OR field:foo", qp);
             assertNotNull("result is null and it shouldn't be", result);
             assertTrue("result is not a BooleanQuery", result is BooleanQuery);
-            assertTrue(((BooleanQuery)result).GetClauses().Length + " does not equal: " + 0, ((BooleanQuery)result).GetClauses().Length == 0);
+            assertTrue(((BooleanQuery)result).Clauses.Count + " does not equal: " + 0, ((BooleanQuery)result).Clauses.Count == 0);
             result = GetQuery("field:woo OR field:the", qp);
             assertNotNull("result is null and it shouldn't be", result);
             assertTrue("result is not a TermQuery", result is TermQuery);
@@ -1107,7 +1107,7 @@ namespace Lucene.Net.QueryParsers.Util
             assertNotNull("result is null and it shouldn't be", result);
             assertTrue("result is not a BooleanQuery", result is BooleanQuery);
             if (VERBOSE) Console.WriteLine("Result: " + result);
-            assertTrue(((BooleanQuery)result).GetClauses().Length + " does not equal: " + 2, ((BooleanQuery)result).GetClauses().Length == 2);
+            assertTrue(((BooleanQuery)result).Clauses.Count + " does not equal: " + 2, ((BooleanQuery)result).Clauses.Count == 2);
         }
 
         [Test]

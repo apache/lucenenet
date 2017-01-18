@@ -163,8 +163,8 @@ namespace Lucene.Net.Search
             query.MultiTermRewriteMethod = new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(50);
             BooleanQuery bq = (BooleanQuery)searcher.Rewrite(query);
             var allowedTerms = AsSet(terms);
-            Assert.AreEqual(allowedTerms.Count, bq.GetClauses().Length);
-            foreach (BooleanClause c in bq.GetClauses())
+            Assert.AreEqual(allowedTerms.Count, bq.Clauses.Count);
+            foreach (BooleanClause c in bq.Clauses)
             {
                 Assert.IsTrue(c.Query is TermQuery);
                 TermQuery tq = (TermQuery)c.Query;

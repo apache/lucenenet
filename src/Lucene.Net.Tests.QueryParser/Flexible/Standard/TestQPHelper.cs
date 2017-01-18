@@ -1296,8 +1296,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             Query result = qp.Parse("a:the OR a:foo", "a");
             assertNotNull("result is null and it shouldn't be", result);
             assertTrue("result is not a BooleanQuery", result is BooleanQuery);
-            assertTrue(((BooleanQuery)result).GetClauses().size() + " does not equal: "
-                + 0, ((BooleanQuery)result).GetClauses().size() == 0);
+            assertTrue(((BooleanQuery)result).Clauses.size() + " does not equal: "
+                + 0, ((BooleanQuery)result).Clauses.size() == 0);
             result = qp.Parse("a:woo OR a:the", "a");
             assertNotNull("result is null and it shouldn't be", result);
             assertTrue("result is not a TermQuery", result is TermQuery);
@@ -1308,8 +1308,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             assertTrue("result is not a BooleanQuery", result is BooleanQuery);
             if (VERBOSE)
                 Console.WriteLine("Result: " + result);
-            assertTrue(((BooleanQuery)result).GetClauses().size() + " does not equal: "
-                + 2, ((BooleanQuery)result).GetClauses().size() == 2);
+            assertTrue(((BooleanQuery)result).Clauses.size() + " does not equal: "
+                + 2, ((BooleanQuery)result).Clauses.size() == 2);
         }
         [Test]
         public void TestPositionIncrement()
