@@ -25,11 +25,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
     /// should be set in every <see cref="Core.Nodes.IFieldableNode"/>.
     /// </summary>
     /// <seealso cref="UniqueFieldQueryNodeProcessor"/>
-    public class UniqueFieldAttributeImpl : Attribute, IUniqueFieldAttribute // LUCENENET TODO: Rename UniqueFieldAttribute
+    public class UniqueFieldAttribute : Attribute, IUniqueFieldAttribute
     {
         private string uniqueField;
 
-        public UniqueFieldAttributeImpl()
+        public UniqueFieldAttribute()
         {
             Clear();
         }
@@ -48,23 +48,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
         public override void CopyTo(IAttribute target)
         {
 
-            if (!(target is UniqueFieldAttributeImpl))
+            if (!(target is UniqueFieldAttribute))
             {
                 throw new System.ArgumentException(
                     "cannot copy the values from attribute UniqueFieldAttribute to an instance of "
                         + target.GetType().Name);
             }
 
-            UniqueFieldAttributeImpl uniqueFieldAttr = (UniqueFieldAttributeImpl)target;
+            UniqueFieldAttribute uniqueFieldAttr = (UniqueFieldAttribute)target;
             uniqueFieldAttr.uniqueField = uniqueField.toString();
         }
 
         public override bool Equals(object other)
         {
-            if (other is UniqueFieldAttributeImpl)
+            if (other is UniqueFieldAttribute)
             {
 
-                return ((UniqueFieldAttributeImpl)other).uniqueField
+                return ((UniqueFieldAttribute)other).uniqueField
                     .equals(this.uniqueField);
             }
 
