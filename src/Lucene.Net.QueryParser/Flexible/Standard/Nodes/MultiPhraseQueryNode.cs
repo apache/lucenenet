@@ -26,7 +26,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     /// A <see cref="MultiPhraseQueryNode"/> indicates that its children should be used to
     /// build a <see cref="Search.MultiPhraseQuery"/> instead of <see cref="Search.PhraseQuery"/>.
     /// </summary>
-    public class MultiPhraseQueryNode : QueryNodeImpl, IFieldableNode
+    public class MultiPhraseQueryNode : QueryNode, IFieldableNode
     {
         public MultiPhraseQueryNode()
         {

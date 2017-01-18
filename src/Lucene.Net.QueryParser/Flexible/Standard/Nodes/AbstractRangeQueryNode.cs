@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     /// This class should be extended by nodes intending to represent range queries.
     /// </summary>
     /// <typeparam name="T">the type of the range query bounds (lower and upper)</typeparam>
-    public class AbstractRangeQueryNode<T> : QueryNodeImpl, IAbstractRangeQueryNode where T : IFieldableNode /*IFieldValuePairQueryNode<?>*/
+    public class AbstractRangeQueryNode<T> : QueryNode, IAbstractRangeQueryNode where T : IFieldableNode /*IFieldValuePairQueryNode<?>*/
     { /*IRangeQueryNode<IFieldValuePairQueryNode<?>>*/
 
         private bool lowerInclusive, upperInclusive;

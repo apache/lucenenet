@@ -46,7 +46,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
         }
 
-        private abstract class AbstractDummyQueryNode : QueryNodeImpl, DummyQueryNodeInterface
+        private abstract class AbstractDummyQueryNode : QueryNode, DummyQueryNodeInterface
         {
 
         }

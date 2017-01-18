@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// &lt;/ModifierQueryNode&gt; &lt;t3/&gt; &lt;/BooleanQueryNode&gt;
     /// </blockquote>
     /// </summary>
-    public class ModifierQueryNode : QueryNodeImpl
+    public class ModifierQueryNode : QueryNode
     {
         // LUCENENET NOTE: Modifier enum moved outside of this class
 

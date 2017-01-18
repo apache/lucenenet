@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     /// <summary>
     /// A <see cref="RegexpQueryNode"/> represents <see cref="Search.RegexpQuery"/> query Examples: /[a-z]|[0-9]/
     /// </summary>
-    public class RegexpQueryNode : QueryNodeImpl, ITextableQueryNode, IFieldableNode
+    public class RegexpQueryNode : QueryNode, ITextableQueryNode, IFieldableNode
     {
         private ICharSequence text;
         private string field;

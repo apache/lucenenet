@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// <summary>
     /// A <see cref="FieldQueryNode"/> represents a element that contains field/text tuple
     /// </summary>
-    public class FieldQueryNode : QueryNodeImpl, IFieldValuePairQueryNode<string>, ITextableQueryNode
+    public class FieldQueryNode : QueryNode, IFieldValuePairQueryNode<string>, ITextableQueryNode
     {
         /// <summary>
         /// The term's field

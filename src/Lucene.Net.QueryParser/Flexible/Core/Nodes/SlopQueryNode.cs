@@ -31,7 +31,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// specify the slop: "doug cutting"~2 will find documents that contain
     /// "doug cutting" as well as ones that contain "cutting doug".
     /// </summary>
-    public class SlopQueryNode : QueryNodeImpl, IFieldableNode
+    public class SlopQueryNode : QueryNode, IFieldableNode
     {
         private int value = 0;
 

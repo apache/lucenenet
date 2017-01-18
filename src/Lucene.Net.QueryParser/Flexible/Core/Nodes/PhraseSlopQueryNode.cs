@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// <summary>
     /// Query node for <see cref="Search.PhraseQuery"/>'s slop factor.
     /// </summary>
-    public class PhraseSlopQueryNode : QueryNodeImpl, IFieldableNode
+    public class PhraseSlopQueryNode : QueryNode, IFieldableNode
     {
         private int value = 0;
 

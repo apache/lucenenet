@@ -23,7 +23,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// A <see cref="MatchAllDocsQueryNode"/> indicates that a query node tree or subtree
     /// will match all documents if executed in the index.
     /// </summary>
-    public class MatchAllDocsQueryNode : QueryNodeImpl
+    public class MatchAllDocsQueryNode : QueryNode
     {
         public MatchAllDocsQueryNode()
         {

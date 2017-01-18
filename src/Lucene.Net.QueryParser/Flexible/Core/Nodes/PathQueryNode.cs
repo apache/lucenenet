@@ -39,7 +39,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// QueryNode q = new PathQueryNode(values);
     /// </code>
     /// </summary>
-    public class PathQueryNode : QueryNodeImpl
+    public class PathQueryNode : QueryNode
     {
         /// <summary>
         /// Term text with a beginning and end position

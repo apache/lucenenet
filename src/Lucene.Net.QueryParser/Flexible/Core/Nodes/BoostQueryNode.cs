@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// 
     /// The boost value may vary from 0.0 to 1.0.
     /// </summary>
-    public class BoostQueryNode : QueryNodeImpl
+    public class BoostQueryNode : QueryNode
     {
         private float value = 0;
 

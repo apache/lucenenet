@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// be parsed by the parser. For example: and XPATH query in the middle of a
     /// query string a b @xpath:'/bookstore/book[1]/title' c d
     /// </summary>
-    public class OpaqueQueryNode : QueryNodeImpl
+    public class OpaqueQueryNode : QueryNode
     {
         private string schema = null;
 

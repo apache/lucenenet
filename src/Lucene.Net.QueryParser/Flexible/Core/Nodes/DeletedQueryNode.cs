@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// node tree. It can be removed from the tree using the
     /// <see cref="Processors.RemoveDeletedQueryNodesProcessor"/> processor.
     /// </summary>
-    public class DeletedQueryNode : QueryNodeImpl
+    public class DeletedQueryNode : QueryNode
     {
         public DeletedQueryNode()
         {

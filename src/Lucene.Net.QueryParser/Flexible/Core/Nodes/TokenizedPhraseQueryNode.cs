@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// A <see cref="TokenizedPhraseQueryNode"/> represents a node created by a code that
     /// tokenizes/lemmatizes/analyzes.
     /// </summary>
-    public class TokenizedPhraseQueryNode : QueryNodeImpl, IFieldableNode
+    public class TokenizedPhraseQueryNode : QueryNode, IFieldableNode
     {
         public TokenizedPhraseQueryNode()
         {

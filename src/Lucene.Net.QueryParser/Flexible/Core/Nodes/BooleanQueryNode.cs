@@ -26,7 +26,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// explicit boolean operator defined between them. It can be used to express a
     /// boolean query that intends to use the default boolean operator.
     /// </summary>
-    public class BooleanQueryNode : QueryNodeImpl
+    public class BooleanQueryNode : QueryNode
     {
         /// <summary>
         /// 

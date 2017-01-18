@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     /// <see cref="object"/> representing a .NET numeric type.
     /// </summary>
     /// <seealso cref="NumericConfig"/>
-    public class NumericQueryNode : QueryNodeImpl, IFieldValuePairQueryNode<object> // LUCENENET TODO: Can we use Decimal??
+    public class NumericQueryNode : QueryNode, IFieldValuePairQueryNode<object> // LUCENENET TODO: Can we use Decimal??
     {
         private NumberFormat numberFormat;
 

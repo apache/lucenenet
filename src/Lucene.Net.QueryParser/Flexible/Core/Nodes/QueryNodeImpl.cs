@@ -27,10 +27,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
      */
 
     /// <summary>
-    /// A <see cref="QueryNodeImpl"/> is the default implementation of the interface
+    /// A <see cref="QueryNode"/> is the default implementation of the interface
     /// <see cref="IQueryNode"/>
     /// </summary>
-    public abstract class QueryNodeImpl : IQueryNode
+    public abstract class QueryNode : IQueryNode
 #if FEATURE_CLONEABLE
         , ICloneable
 #endif
@@ -68,7 +68,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
 
             this.clauses.Add(child);
-            ((QueryNodeImpl)child).SetParent(this);
+            ((QueryNode)child).SetParent(this);
         }
 
         public void Add(IList<IQueryNode> children)
@@ -133,7 +133,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public virtual IQueryNode CloneTree()
         {
-            QueryNodeImpl clone = (QueryNodeImpl)this.MemberwiseClone();
+            QueryNode clone = (QueryNode)this.MemberwiseClone();
             clone.isLeaf = this.isLeaf;
 
             // Reset all tags
@@ -236,7 +236,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 return true;
             if (fld == null)
                 return true;
-            if (QueryNodeImpl.PLAINTEXT_FIELD_NAME.Equals(StringUtils.ToString(fld)))
+            if (QueryNode.PLAINTEXT_FIELD_NAME.Equals(StringUtils.ToString(fld)))
                 return true;
             return false;
         }

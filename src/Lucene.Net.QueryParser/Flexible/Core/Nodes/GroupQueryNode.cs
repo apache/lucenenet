@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// 
     /// Parenthesis might be used to define the boolean operation precedence.
     /// </summary>
-    public class GroupQueryNode : QueryNodeImpl
+    public class GroupQueryNode : QueryNode
     {
         /// <summary>
         /// This IQueryNode is used to identify parenthesis on the original query string
