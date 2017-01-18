@@ -871,56 +871,128 @@ namespace Lucene.Net.Documents
             return ft;
         }
 
-        // LUCENENET TODO: Documentation
+        /// <summary>
+        /// Create a field by specifying its name, value and how it will
+        /// be saved in the index. Term vectors will not be stored in the index.
+        /// </summary>
+        /// <param name="name">The name of the field</param>
+        /// <param name="value">The string to process</param>
+        /// <param name="store">Whether <paramref name="value"/> should be stored in the index</param>
+        /// <param name="index">Whether the field should be indexed, and if so, if it should
+        /// be tokenized before indexing</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="name"/> or <paramref name="value"/> is <c>null</c></exception>
+        /// <exception cref="ArgumentException">if the field is neither stored nor indexed</exception>
         [Obsolete("Use StringField, TextField instead.")]
         public Field(string name, string value, Store store, Index index)
             : this(name, value, TranslateFieldType(store, index, TermVector.NO))
         {
         }
 
-        // LUCENENET TODO: Documentation
+        /// <summary>
+        /// Create a field by specifying its name, value and how it will
+        /// be saved in the index.
+        /// </summary>
+        /// <param name="name">The name of the field</param>
+        /// <param name="value">The string to process</param>
+        /// <param name="store">Whether <paramref name="value"/> should be stored in the index</param>
+        /// <param name="index">Whether the field should be indexed, and if so, if it should
+        /// be tokenized before indexing</param>
+        /// <param name="termVector">Whether term vector should be stored</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="name"/> or <paramref name="value"/> is <c>null</c></exception>
+        /// <exception cref="ArgumentException">in any of the following situations:
+        /// <list type="bullet">
+        ///     <item>the field is neither stored nor indexed</item>
+        ///     <item>the field is not indexed but termVector is <see cref="TermVector.YES"/></item>
+        /// </list>
+        /// </exception>
         [Obsolete("Use StringField, TextField instead.")]
         public Field(string name, string value, Store store, Index index, TermVector termVector)
             : this(name, value, TranslateFieldType(store, index, termVector))
         {
         }
 
-        // LUCENENET TODO: Documentation
+        /// <summary>
+        /// Create a tokenized and indexed field that is not stored. Term vectors will
+        /// not be stored.  The <see cref="TextReader"/> is read only when the <see cref="Document"/> is added to the index,
+        /// i.e. you may not close the <see cref="TextReader"/> until <see cref="IndexWriter.AddDocument(System.Collections.Generic.IEnumerable{IIndexableField})"/>
+        /// has been called.
+        /// </summary>
+        /// <param name="name">The name of the field</param>
+        /// <param name="reader">The reader with the content</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="name"/> or <paramref name="reader"/> is <c>null</c></exception>
         [Obsolete("Use TextField instead.")]
         public Field(string name, TextReader reader)
             : this(name, reader, TermVector.NO)
         {
         }
 
-        // LUCENENET TODO: Documentation
+        /// <summary>
+        /// Create a tokenized and indexed field that is not stored, optionally with 
+        /// storing term vectors.  The <see cref="TextReader"/> is read only when the <see cref="Document"/> is added to the index,
+        /// i.e. you may not close the <see cref="TextReader"/> until <see cref="IndexWriter.AddDocument(System.Collections.Generic.IEnumerable{IIndexableField})"/>
+        /// has been called.
+        /// </summary>
+        /// <param name="name">The name of the field</param>
+        /// <param name="reader">The reader with the content</param>
+        /// <param name="termVector">Whether term vector should be stored</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="name"/> or <paramref name="reader"/> is <c>null</c></exception>
         [Obsolete("Use TextField instead.")]
         public Field(string name, TextReader reader, TermVector termVector)
             : this(name, reader, TranslateFieldType(Store.NO, Index.ANALYZED, termVector))
         {
         }
 
-        // LUCENENET TODO: Documentation
+        /// <summary>
+        /// Create a tokenized and indexed field that is not stored. Term vectors will
+        /// not be stored. This is useful for pre-analyzed fields.
+        /// The <see cref="TokenStream"/> is read only when the <see cref="Document"/> is added to the index,
+        /// i.e. you may not close the <see cref="TokenStream"/> until <see cref="IndexWriter.AddDocument(System.Collections.Generic.IEnumerable{IIndexableField})"/>
+        /// has been called.
+        /// </summary>
+        /// <param name="name">The name of the field</param>
+        /// <param name="tokenStream">The <see cref="TokenStream"/> with the content</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="name"/> or <paramref name="tokenStream"/> is <c>null</c></exception>
         [Obsolete("Use TextField instead.")]
         public Field(string name, TokenStream tokenStream)
             : this(name, tokenStream, TermVector.NO)
         {
         }
 
-        // LUCENENET TODO: Documentation
+        /// <summary>
+        /// Create a tokenized and indexed field that is not stored, optionally with 
+        /// storing term vectors.  This is useful for pre-analyzed fields.
+        /// The <see cref="TokenStream"/> is read only when the <see cref="Document"/> is added to the index,
+        /// i.e. you may not close the <see cref="TokenStream"/> until <see cref="IndexWriter.AddDocument(System.Collections.Generic.IEnumerable{IIndexableField})"/>
+        /// has been called.
+        /// </summary>
+        /// <param name="name">The name of the field</param>
+        /// <param name="tokenStream">The <see cref="TokenStream"/> with the content</param>
+        /// <param name="termVector">Whether term vector should be stored</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="name"/> or <paramref name="tokenStream"/> is <c>null</c></exception>
         [Obsolete("Use TextField instead.")]
         public Field(string name, TokenStream tokenStream, TermVector termVector)
             : this(name, tokenStream, TranslateFieldType(Store.NO, Index.ANALYZED, termVector))
         {
         }
 
-        // LUCENENET TODO: Documentation
+        /// <summary>
+        /// Create a stored field with binary value. Optionally the value may be compressed.
+        /// </summary>
+        /// <param name="name">The name of the field</param>
+        /// <param name="value">The binary value</param>
         [Obsolete("Use StoredField instead.")]
         public Field(string name, byte[] value)
             : this(name, value, TranslateFieldType(Store.YES, Index.NO, TermVector.NO))
         {
         }
 
-        // LUCENENET TODO: Documentation
+        /// <summary>
+        /// Create a stored field with binary value. Optionally the value may be compressed.
+        /// </summary>
+        /// <param name="name">The name of the field</param>
+        /// <param name="value">The binary value</param>
+        /// <param name="offset">Starting offset in value where this <see cref="Field"/>'s bytes are</param>
+        /// <param name="length">Number of bytes to use for this <see cref="Field"/>, starting at offset</param>
         [Obsolete("Use StoredField instead.")]
         public Field(string name, byte[] value, int offset, int length)
             : this(name, value, offset, length, TranslateFieldType(Store.YES, Index.NO, TermVector.NO))
