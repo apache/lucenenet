@@ -314,13 +314,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
             if (codePointMultiplier > 0)
             {
-                throw new ParseException(new MessageImpl(
+                throw new ParseException(new Message(
                     QueryParserMessages.INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION));
             }
 
             if (lastCharWasEscapeChar)
             {
-                throw new ParseException(new MessageImpl(
+                throw new ParseException(new Message(
                     QueryParserMessages.INVALID_SYNTAX_ESCAPE_CHARACTER));
             }
 
@@ -346,7 +346,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             else
             {
-                throw new ParseException(new MessageImpl(
+                throw new ParseException(new Message(
                     QueryParserMessages.INVALID_SYNTAX_ESCAPE_NONE_HEX_UNICODE, c));
             }
         }

@@ -74,7 +74,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                     {
                         case '*':
                         case '?':
-                            throw new QueryNodeException(new MessageImpl(
+                            throw new QueryNodeException(new Message(
                                 QueryParserMessages.LEADING_WILDCARD_NOT_ALLOWED, node
                                     .ToQueryString(new EscapeQuerySyntaxImpl())));
                     }

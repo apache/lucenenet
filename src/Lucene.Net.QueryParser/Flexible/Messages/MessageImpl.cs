@@ -24,19 +24,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
     /// Default implementation of Message interface.
     /// For Native Language Support (NLS), system of software internationalization.
     /// </summary>
-    public class MessageImpl : IMessage
+    public class Message : IMessage
     {
         private string key;
 
         private object[] arguments = new object[0];
 
-        public MessageImpl(string key)
+        public Message(string key)
         {
             this.key = key;
 
         }
 
-        public MessageImpl(string key, params object[] args)
+        public Message(string key, params object[] args)
             : this(key)
         {
             this.arguments = args;

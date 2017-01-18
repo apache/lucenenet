@@ -83,7 +83,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                         maxInclusive);
 
                 default:
-                    throw new QueryNodeException(new MessageImpl(
+                    throw new QueryNodeException(new Message(
                       QueryParserMessages.UNSUPPORTED_NUMERIC_DATA_TYPE, numberType));
             }
         }

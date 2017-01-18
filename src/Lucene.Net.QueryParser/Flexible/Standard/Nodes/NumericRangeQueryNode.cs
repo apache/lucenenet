@@ -72,7 +72,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             else
             {
                 throw new QueryNodeException(
-                    new MessageImpl(
+                    new Message(
                         QueryParserMessages.NUMBER_CLASS_NOT_SUPPORTED_BY_NUMERIC_RANGE_QUERY,
                         number.GetType()));
             }

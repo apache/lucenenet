@@ -40,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             // validates node
             if (!(queryNode is MatchAllDocsQueryNode))
             {
-                throw new QueryNodeException(new MessageImpl(
+                throw new QueryNodeException(new Message(
                     QueryParserMessages.LUCENE_QUERY_CONVERSION_ERROR, queryNode
                         .ToQueryString(new EscapeQuerySyntaxImpl()), queryNode.GetType()
                         .Name));

@@ -27,7 +27,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         [Test]
         public void TestMessageLoading()
         {
-            IMessage invalidSyntax = new MessageImpl(
+            IMessage invalidSyntax = new Message(
                 MessagesTestBundle.Q0001E_INVALID_SYNTAX, "XXX");
             /* 
              * if the default locale is ja, you get ja as a fallback:
@@ -40,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         [Test]
         public void TestMessageLoading_ja()
         {
-            IMessage invalidSyntax = new MessageImpl(
+            IMessage invalidSyntax = new Message(
                 MessagesTestBundle.Q0001E_INVALID_SYNTAX, "XXX");
             assertEquals("構文エラー: XXX", invalidSyntax
                 .GetLocalizedMessage(new CultureInfo("ja")));

@@ -66,7 +66,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                         }
                         catch (BooleanQuery.TooManyClauses ex)
                         {
-                            throw new QueryNodeException(new MessageImpl(
+                            throw new QueryNodeException(new Message(
                                 QueryParserMessages.TOO_MANY_BOOLEAN_CLAUSES, BooleanQuery
                                     .MaxClauseCount, queryNode
                                     .ToQueryString(new EscapeQuerySyntaxImpl())), ex);

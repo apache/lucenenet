@@ -38,7 +38,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
 #endif
     public class QueryNodeException : Exception, INLSException
     {
-        protected IMessage message = new MessageImpl(QueryParserMessages.EMPTY_MESSAGE);
+        protected IMessage message = new Message(QueryParserMessages.EMPTY_MESSAGE);
 
         public QueryNodeException(IMessage message)
             : base(message.Key)

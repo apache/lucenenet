@@ -47,7 +47,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
             if (query == null)
             {
-                throw new QueryNodeError(new MessageImpl(
+                throw new QueryNodeError(new Message(
                     QueryParserMessages.PARAMETER_VALUE_NOT_SUPPORTED, "query", "null"));
             }
 

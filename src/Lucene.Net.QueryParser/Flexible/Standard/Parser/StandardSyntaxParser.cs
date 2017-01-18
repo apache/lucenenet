@@ -67,7 +67,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             catch (Exception tme)
             {
-                IMessage message = new MessageImpl(QueryParserMessages.INVALID_SYNTAX_CANNOT_PARSE, query, tme.Message);
+                IMessage message = new Message(QueryParserMessages.INVALID_SYNTAX_CANNOT_PARSE, query, tme.Message);
                 QueryNodeParseException e = new QueryNodeParseException(tme);
                 e.SetQuery(query);
                 e.SetNonLocalizedMessage(message);
@@ -637,11 +637,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 #pragma warning restore 168
                         if (fms < 0.0f)
                         {
-                            { if (true) throw new ParseException(new MessageImpl(QueryParserMessages.INVALID_SYNTAX_FUZZY_LIMITS)); }
+                            { if (true) throw new ParseException(new Message(QueryParserMessages.INVALID_SYNTAX_FUZZY_LIMITS)); }
                         }
                         else if (fms >= 1.0f && fms != (int)fms)
                         {
-                            { if (true) throw new ParseException(new MessageImpl(QueryParserMessages.INVALID_SYNTAX_FUZZY_EDITS)); }
+                            { if (true) throw new ParseException(new Message(QueryParserMessages.INVALID_SYNTAX_FUZZY_EDITS)); }
                         }
                         q = new FuzzyQueryNode(field, EscapeQuerySyntaxImpl.DiscardEscapeChar(term.image), fms, term.beginColumn, term.endColumn);
                     }

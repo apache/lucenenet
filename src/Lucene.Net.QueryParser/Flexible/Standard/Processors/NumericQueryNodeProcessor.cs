@@ -92,7 +92,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 }
                                 catch (FormatException e)
                                 {
-                                    throw new QueryNodeParseException(new MessageImpl(
+                                    throw new QueryNodeParseException(new Message(
                                         QueryParserMessages.COULD_NOT_PARSE_NUMBER, fieldNode
                                             .GetTextAsString(), numberFormat.GetType()
                                             .AssemblyQualifiedName), e);
@@ -117,7 +117,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             }
                             else
                             {
-                                throw new QueryNodeParseException(new MessageImpl(
+                                throw new QueryNodeParseException(new Message(
                                     QueryParserMessages.NUMERIC_CANNOT_BE_EMPTY, fieldNode.GetFieldAsString()));
                             }
 

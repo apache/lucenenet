@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
             if (!((node is BooleanQueryNode && !(node is AndQueryNode)) || node
                 .GetType() == typeof(FieldQueryNode)))
             {
-                throw new QueryNodeException(new MessageImpl(
+                throw new QueryNodeException(new Message(
                     QueryParserMessages.NODE_ACTION_NOT_SUPPORTED));
             }
 
