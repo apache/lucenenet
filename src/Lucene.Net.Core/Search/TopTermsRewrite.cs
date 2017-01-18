@@ -1,26 +1,27 @@
-using Lucene.Net.Util;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
+    using System.Linq;
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements.  See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License.  You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -71,7 +72,7 @@ namespace Lucene.Net.Search
         public override Query Rewrite(IndexReader reader, MultiTermQuery query)
         {
             int maxSize = Math.Min(size, MaxSize);
-            PriorityQueue<ScoreTerm> stQueue = new ScoreTermPQ(); // LUCENENET TODO: Change to Support.PriorityQueue<T> (like the original)
+            PriorityQueue<ScoreTerm> stQueue = new PriorityQueue<ScoreTerm>();
             CollectTerms(reader, query, new TermCollectorAnonymousInnerClassHelper(this, maxSize, stQueue));
 
             var q = GetTopLevelQuery();
@@ -160,7 +161,7 @@ namespace Lucene.Net.Search
                 // ignore uncompetitive hits
                 if (stQueue.Count == maxSize)
                 {
-                    ScoreTerm t = stQueue.Top;
+                    ScoreTerm t = stQueue.Peek();
                     if (boost < t.Boost)
                     {
                         return true;
@@ -191,7 +192,7 @@ namespace Lucene.Net.Search
                     // possibly drop entries from queue
                     if (stQueue.Count > maxSize)
                     {
-                        st = stQueue.Pop();
+                        st = stQueue.Poll();
                         visitedTerms.Remove(st.Bytes);
                         st.TermState.Clear(); // reset the termstate!
                     }
@@ -203,7 +204,7 @@ namespace Lucene.Net.Search
                     // set maxBoostAtt with values to help FuzzyTermsEnum to optimize
                     if (stQueue.Count == maxSize)
                     {
-                        t2 = stQueue.Top;
+                        t2 = stQueue.Peek();
                         maxBoostAtt.MaxNonCompetitiveBoost = t2.Boost;
                         maxBoostAtt.CompetitiveTerm = t2.Bytes;
                     }
@@ -281,15 +282,5 @@ namespace Lucene.Net.Search
                 }
             }
         }
-
-        // LUCENENET TODO: eliminate this unnecessary class
-        private class ScoreTermPQ : PriorityQueue<ScoreTerm>
-        {
-            protected internal override bool LessThan(ScoreTerm a, ScoreTerm b)
-            {
-                return (a.CompareTo(b) < 0) ? true : false;
-            }
-        }
-
     }
 }

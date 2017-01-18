@@ -37,56 +37,42 @@ namespace Lucene.Net.Util
         private int size = 0;
         private int maxSize;
         private T[] heap;
-        private bool resizable; // LUCENENET TODO: Remove
 
-        public PriorityQueue() // LUCENENET TODO: Remove this constructor (and revert the rest of the implementation back to its original state)
-            : this(8, false)
-        {
-            resizable = true;
-        } 
-
-        public PriorityQueue(int maxSize = 128)
+        public PriorityQueue(int maxSize)
             : this(maxSize, true)
         {
         }
- 
+
         public PriorityQueue(int maxSize, bool prepopulate)
         {
-            resizable = false;
-
-            if (maxSize < 0)
+            int heapSize;
+            if (0 == maxSize)
             {
-                throw new System.ArgumentException("maxSize must be >= 0; got: " + maxSize);
+                // We allocate 1 extra to avoid if statement in top()
+                heapSize = 2;
             }
             else
             {
-                if (0 == maxSize)
+                if (maxSize > ArrayUtil.MAX_ARRAY_LENGTH)
                 {
-                    // We allocate 1 extra to avoid if statement in top()
-                    maxSize++;
+                    // Don't wrap heapSize to -1, in this case, which
+                    // causes a confusing NegativeArraySizeException.
+                    // Note that very likely this will simply then hit
+                    // an OOME, but at least that's more indicative to
+                    // caller that this values is too big.  We don't +1
+                    // in this case, but it's very unlikely in practice
+                    // one will actually insert this many objects into
+                    // the PQ:
+                    // Throw exception to prevent confusing OOME:
+                    throw new ArgumentException("maxSize must be <= " + ArrayUtil.MAX_ARRAY_LENGTH + "; got: " + maxSize);
                 }
                 else
                 {
-                    if (maxSize >= ArrayUtil.MAX_ARRAY_LENGTH)
-                    {
-                        // Don't wrap heapSize to -1, in this case, which
-                        // causes a confusing NegativeArraySizeException.
-                        // Note that very likely this will simply then hit
-                        // an OOME, but at least that's more indicative to
-                        // caller that this values is too big.  We don't +1
-                        // in this case, but it's very unlikely in practice
-                        // one will actually insert this many objects into
-                        // the PQ:
-                        // Throw exception to prevent confusing OOME:
-                        throw new System.ArgumentException("maxSize must be < " + ArrayUtil.MAX_ARRAY_LENGTH + "; got: " + maxSize);
-                    }
+                    // NOTE: we add +1 because all access to heap is
+                    // 1-based not 0-based.  heap[0] is unused.
+                    heapSize = maxSize + 1;
                 }
             }
-
-            // NOTE: we add +1 because all access to heap is
-            // 1-based not 0-based.  heap[0] is unused.
-            int heapSize = maxSize + 1;
-            
             // T is unbounded type, so this unchecked cast works always:
             T[] h = new T[heapSize];
             this.heap = h;
@@ -167,10 +153,6 @@ namespace Lucene.Net.Util
         public T Add(T element)
         {
             size++;
-            if (resizable && size > maxSize)
-            {
-                Resize();
-            }
             heap[size] = element;
             UpHeap();
             return heap[1];
@@ -197,7 +179,7 @@ namespace Lucene.Net.Util
             {
                 T ret = heap[1];
                 heap[1] = element;
-                DownHeap();
+                UpdateTop();
                 return ret;
             }
             else
@@ -283,22 +265,6 @@ namespace Lucene.Net.Util
                 heap[i] = default(T);
             }
             size = 0;
-        }
-
-        public T[] ToArray() // LUCENENET TODO: Remove this method (after TopTermsRewrite is fixed)
-        {
-            T[] copy = new T[size];
-            Array.Copy(heap, 1, copy, 0, size);
-            return copy;
-        }
-
-        private void Resize() // LUCENENET TODO: Remove this method
-        {
-            int newSize = Math.Min(ArrayUtil.MAX_ARRAY_LENGTH - 1, 2*maxSize);
-            T[] newHeap = new T[newSize + 1];
-            Array.Copy(heap, newHeap, maxSize + 1);
-            maxSize = newSize;
-            heap = newHeap;
         }
 
         private void UpHeap()
