@@ -89,7 +89,7 @@ namespace Lucene.Net.Queries.Mlt
 
         public string[] MoreLikeFields { get; set; }
 
-        public HashSet<string> StopWords { get; set; } // LUCENENET TODO: Change to ISet
+        public ISet<string> StopWords { get; set; }
 
         public int MinDocFreq { get; set; }
 
