@@ -245,12 +245,55 @@ namespace Lucene.Net.Search.Grouping
 
         // LUCENENET specific - we need to implement these here, since our abstract base class
         // is now an interface.
-        public abstract void SetScorer(Scorer scorer); // LUCENENET TODO: Copy documentation from ICollector
+        /// <summary>
+        /// Called before successive calls to <see cref="Collect(int)"/>. Implementations
+        /// that need the score of the current document (passed-in to
+        /// <also cref="Collect(int)"/>), should save the passed-in <see cref="Scorer"/> and call
+        /// scorer.Score() when needed.
+        /// </summary>
+        public abstract void SetScorer(Scorer scorer);
 
-        public abstract void Collect(int doc); // LUCENENET TODO: Copy documentation from ICollector
+        /// <summary>
+        /// Called once for every document matching a query, with the unbased document
+        /// number.
+        /// <para/>Note: The collection of the current segment can be terminated by throwing
+        /// a <see cref="CollectionTerminatedException"/>. In this case, the last docs of the
+        /// current <see cref="AtomicReaderContext"/> will be skipped and <see cref="IndexSearcher"/>
+        /// will swallow the exception and continue collection with the next leaf.
+        /// <para/>
+        /// Note: this is called in an inner search loop. For good search performance,
+        /// implementations of this method should not call <see cref="IndexSearcher.Doc(int)"/> or
+        /// <see cref="Lucene.Net.Index.IndexReader.Document(int)"/> on every hit.
+        /// Doing so can slow searches by an order of magnitude or more.
+        /// </summary>
+        public abstract void Collect(int doc);
 
-        public abstract void SetNextReader(AtomicReaderContext context); // LUCENENET TODO: Copy documentation from ICollector
+        /// <summary>
+        /// Called before collecting from each <see cref="AtomicReaderContext"/>. All doc ids in
+        /// <see cref="Collect(int)"/> will correspond to <see cref="Index.IndexReaderContext.Reader"/>.
+        ///
+        /// Add <see cref="AtomicReaderContext#docBase"/> to the current <see cref="Index.IndexReaderContext.Reader"/>'s
+        /// internal document id to re-base ids in <see cref="Collect(int)"/>.
+        /// </summary>
+        /// <param name="context">next atomic reader context </param>
+        public abstract void SetNextReader(AtomicReaderContext context);
 
-        public abstract bool AcceptsDocsOutOfOrder { get; } // LUCENENET TODO: Copy documentation from ICollector
+        /// <summary>
+        /// Return <c>true</c> if this collector does not
+        /// require the matching docIDs to be delivered in int sort
+        /// order (smallest to largest) to <see cref="Collect"/>.
+        ///
+        /// <para> Most Lucene Query implementations will visit
+        /// matching docIDs in order.  However, some queries
+        /// (currently limited to certain cases of <see cref="BooleanQuery"/>) 
+        /// can achieve faster searching if the
+        /// <see cref="ICollector"/> allows them to deliver the
+        /// docIDs out of order.</para>
+        ///
+        /// <para> Many collectors don't mind getting docIDs out of
+        /// order, so it's important to return <c>true</c>
+        /// here.</para>
+        /// </summary>
+        public abstract bool AcceptsDocsOutOfOrder { get; }
     }
 }

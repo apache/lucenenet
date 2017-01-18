@@ -121,54 +121,53 @@ namespace Lucene.Net.Search
     public interface ICollector // LUCENENET NOTE: This was an abstract class in Lucene, but made into an interface since we need one for Grouping's covariance
     {
         /// <summary>
-        /// Called before successive calls to <seealso cref="#collect(int)"/>. Implementations
+        /// Called before successive calls to <see cref="Collect(int)"/>. Implementations
         /// that need the score of the current document (passed-in to
-        /// <seealso cref="#collect(int)"/>), should save the passed-in Scorer and call
-        /// scorer.score() when needed.
+        /// <also cref="Collect(int)"/>), should save the passed-in <see cref="Scorer"/> and call
+        /// scorer.Score() when needed.
         /// </summary>
         void SetScorer(Scorer scorer);
 
         /// <summary>
         /// Called once for every document matching a query, with the unbased document
         /// number.
-        /// <p>Note: The collection of the current segment can be terminated by throwing
-        /// a <seealso cref="CollectionTerminatedException"/>. In this case, the last docs of the
-        /// current <seealso cref="AtomicReaderContext"/> will be skipped and <seealso cref="IndexSearcher"/>
+        /// <para/>Note: The collection of the current segment can be terminated by throwing
+        /// a <see cref="CollectionTerminatedException"/>. In this case, the last docs of the
+        /// current <see cref="AtomicReaderContext"/> will be skipped and <see cref="IndexSearcher"/>
         /// will swallow the exception and continue collection with the next leaf.
-        /// <p>
+        /// <para/>
         /// Note: this is called in an inner search loop. For good search performance,
-        /// implementations of this method should not call <seealso cref="IndexSearcher#doc(int)"/> or
-        /// <seealso cref="Lucene.Net.Index.IndexReader#document(int)"/> on every hit.
+        /// implementations of this method should not call <see cref="IndexSearcher.Doc(int)"/> or
+        /// <see cref="Lucene.Net.Index.IndexReader.Document(int)"/> on every hit.
         /// Doing so can slow searches by an order of magnitude or more.
         /// </summary>
         void Collect(int doc);
 
         /// <summary>
-        /// Called before collecting from each <seealso cref="AtomicReaderContext"/>. All doc ids in
-        /// <seealso cref="#collect(int)"/> will correspond to <seealso cref="IndexReaderContext#reader"/>.
+        /// Called before collecting from each <see cref="AtomicReaderContext"/>. All doc ids in
+        /// <see cref="Collect(int)"/> will correspond to <see cref="Index.IndexReaderContext.Reader"/>.
         ///
-        /// Add <seealso cref="AtomicReaderContext#docBase"/> to the current  <seealso cref="IndexReaderContext#reader"/>'s
-        /// internal document id to re-base ids in <seealso cref="#collect(int)"/>.
+        /// Add <see cref="AtomicReaderContext#docBase"/> to the current <see cref="Index.IndexReaderContext.Reader"/>'s
+        /// internal document id to re-base ids in <see cref="Collect(int)"/>.
         /// </summary>
-        /// <param name="context">
-        ///          next atomic reader context </param>
+        /// <param name="context">next atomic reader context </param>
         void SetNextReader(AtomicReaderContext context);
 
         /// <summary>
-        /// Return <code>true</code> if this collector does not
+        /// Return <c>true</c> if this collector does not
         /// require the matching docIDs to be delivered in int sort
-        /// order (smallest to largest) to <seealso cref="#collect"/>.
+        /// order (smallest to largest) to <see cref="Collect"/>.
         ///
-        /// <p> Most Lucene Query implementations will visit
+        /// <para> Most Lucene Query implementations will visit
         /// matching docIDs in order.  However, some queries
-        /// (currently limited to certain cases of {@link
-        /// BooleanQuery}) can achieve faster searching if the
-        /// <code>Collector</code> allows them to deliver the
-        /// docIDs out of order.</p>
+        /// (currently limited to certain cases of <see cref="BooleanQuery"/>) 
+        /// can achieve faster searching if the
+        /// <see cref="ICollector"/> allows them to deliver the
+        /// docIDs out of order.</para>
         ///
-        /// <p> Many collectors don't mind getting docIDs out of
-        /// order, so it's important to return <code>true</code>
-        /// here.
+        /// <para> Many collectors don't mind getting docIDs out of
+        /// order, so it's important to return <c>true</c>
+        /// here.</para>
         /// </summary>
         bool AcceptsDocsOutOfOrder { get; }
     }
