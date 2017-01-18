@@ -1329,12 +1329,15 @@ namespace Lucene.Net.Index
         ///  are not counted.  If you really need these to be
         ///  counted you should call <seealso cref="#commit()"/> first. </summary>
         ///  <seealso> cref= #numDocs  </seealso>
-        public virtual int NumDocs() // LUCENENET TODO: Make property ?
+        public virtual int NumDocs // LUCENENET NOTE: This is not a great candidate for a property, but changing because IndexReader has a property with the same name
         {
-            lock (this)
+            get
             {
-                EnsureOpen();
-                return docWriter.NumDocs + segmentInfos.Segments.Sum(info => info.Info.DocCount - NumDeletedDocs(info));
+                lock (this)
+                {
+                    EnsureOpen();
+                    return docWriter.NumDocs + segmentInfos.Segments.Sum(info => info.Info.DocCount - NumDeletedDocs(info));
+                }
             }
         }
 

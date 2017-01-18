@@ -831,7 +831,7 @@ namespace Lucene.Net.Index
             c.JoinThreads();
 
             int expectedNumDocs = 100 + NUM_COPY * (4 * NUM_ITER / 5) * RunAddIndexesThreads.NUM_THREADS * RunAddIndexesThreads.NUM_INIT_DOCS;
-            Assert.AreEqual(expectedNumDocs, c.Writer2.NumDocs(), "expected num docs don't match - failures: " + Environment.NewLine
+            Assert.AreEqual(expectedNumDocs, c.Writer2.NumDocs, "expected num docs don't match - failures: " + Environment.NewLine
                 + string.Join(Environment.NewLine, c.Failures.Select(x => x.ToString())));
 
             c.Close(true);
@@ -1060,7 +1060,7 @@ namespace Lucene.Net.Index
                 r.Dispose();
             }
             writer_.Commit();
-            Assert.AreEqual(1, writer_.NumDocs(), "Documents from the incoming index should not have been deleted");
+            Assert.AreEqual(1, writer_.NumDocs, "Documents from the incoming index should not have been deleted");
             writer_.Dispose();
 
             foreach (Directory dir in dirs)

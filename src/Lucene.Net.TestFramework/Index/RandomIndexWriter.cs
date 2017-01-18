@@ -387,14 +387,14 @@ namespace Lucene.Net.Index
             w.Commit();
         }
 
-        public virtual int NumDocs()
+        public virtual int NumDocs
         {
-            return w.NumDocs();
+            get { return w.NumDocs; }
         }
 
-        public virtual int MaxDoc()
+        public virtual int MaxDoc
         {
-            return w.MaxDoc;
+            get { return w.MaxDoc; }
         }
 
         public virtual void DeleteAll()

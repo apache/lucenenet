@@ -558,7 +558,7 @@ namespace Lucene.Net.Index
             {
                 expected = 45;
             }
-            Assert.AreEqual(expected, writer.NumDocs(), "wrong doc count");
+            Assert.AreEqual(expected, writer.NumDocs, "wrong doc count");
             writer.Dispose();
 
             // make sure searching sees right # hits

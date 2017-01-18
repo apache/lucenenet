@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             // this should not fail because we have no TermToBytesRefAttribute
             writer.AddDocument(doc);
 
-            assertEquals(1, writer.NumDocs());
+            assertEquals(1, writer.NumDocs);
 
             writer.Dispose();
             directory.Dispose();

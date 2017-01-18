@@ -749,7 +749,7 @@ namespace Lucene.Net.Index
 
             Writer.Commit();
 
-            Assert.AreEqual(AddCount.Get() - DelCount.Get(), Writer.NumDocs(), "index=" + Writer.SegString() + " addCount=" + AddCount + " delCount=" + DelCount);
+            Assert.AreEqual(AddCount.Get() - DelCount.Get(), Writer.NumDocs, "index=" + Writer.SegString() + " addCount=" + AddCount + " delCount=" + DelCount);
 
             DoClose();
             Writer.Dispose(false);

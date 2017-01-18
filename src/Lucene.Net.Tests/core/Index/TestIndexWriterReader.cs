@@ -438,7 +438,7 @@ namespace Lucene.Net.Index
 
             //Assert.AreEqual(100 + numDirs * (3 * numIter / 4) * addDirThreads.numThreads
             //    * addDirThreads.NUM_INIT_DOCS, addDirThreads.mainWriter.NumDocs);
-            Assert.AreEqual(addDirThreads.Count.Get(), addDirThreads.MainWriter.NumDocs());
+            Assert.AreEqual(addDirThreads.Count.Get(), addDirThreads.MainWriter.NumDocs);
 
             addDirThreads.Close(true);
 

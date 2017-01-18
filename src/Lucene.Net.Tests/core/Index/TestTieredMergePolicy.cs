@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
             }
 
             Assert.AreEqual(numDocs, w.MaxDoc);
-            Assert.AreEqual(numDocs, w.NumDocs());
+            Assert.AreEqual(numDocs, w.NumDocs);
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
             Assert.AreEqual(80, w.MaxDoc);
-            Assert.AreEqual(80, w.NumDocs());
+            Assert.AreEqual(80, w.NumDocs);
 
             if (VERBOSE)
             {
@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
             w.ForceMergeDeletes();
 
             Assert.AreEqual(80, w.MaxDoc);
-            Assert.AreEqual(60, w.NumDocs());
+            Assert.AreEqual(60, w.NumDocs);
 
             if (VERBOSE)
             {
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
             }
             ((TieredMergePolicy)w.Config.MergePolicy).ForceMergeDeletesPctAllowed = 10.0;
             w.ForceMergeDeletes();
-            Assert.AreEqual(60, w.NumDocs());
+            Assert.AreEqual(60, w.NumDocs);
             Assert.AreEqual(60, w.MaxDoc);
             w.Dispose();
             dir.Dispose();

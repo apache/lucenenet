@@ -477,7 +477,7 @@ namespace Lucene.Net.Index
             // Now add 1 doc and merge
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(policy));
             AddDoc(writer);
-            Assert.AreEqual(11, writer.NumDocs());
+            Assert.AreEqual(11, writer.NumDocs);
             writer.ForceMerge(1);
             writer.Dispose();
 
@@ -485,7 +485,7 @@ namespace Lucene.Net.Index
 
             // Now open writer on the commit just before merge:
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(policy).SetIndexCommit(lastCommit));
-            Assert.AreEqual(10, writer.NumDocs());
+            Assert.AreEqual(10, writer.NumDocs);
 
             // Should undo our rollback:
             writer.Rollback();
@@ -497,7 +497,7 @@ namespace Lucene.Net.Index
             r.Dispose();
 
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(policy).SetIndexCommit(lastCommit));
-            Assert.AreEqual(10, writer.NumDocs());
+            Assert.AreEqual(10, writer.NumDocs);
             // Commits the rollback:
             writer.Dispose();
 
@@ -524,7 +524,7 @@ namespace Lucene.Net.Index
             // Now open writer on the commit just before merging,
             // but this time keeping only the last commit:
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexCommit(lastCommit));
-            Assert.AreEqual(10, writer.NumDocs());
+            Assert.AreEqual(10, writer.NumDocs);
 
             // Reader still sees fully merged index, because writer
             // opened on the prior commit has not yet committed:

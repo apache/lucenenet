@@ -161,10 +161,10 @@ namespace Lucene.Net.Index
             ir.Dispose();
 
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
-            Assert.AreEqual(8, writer.NumDocs());
+            Assert.AreEqual(8, writer.NumDocs);
             Assert.AreEqual(10, writer.MaxDoc);
             writer.ForceMergeDeletes();
-            Assert.AreEqual(8, writer.NumDocs());
+            Assert.AreEqual(8, writer.NumDocs);
             writer.Dispose();
             ir = DirectoryReader.Open(dir);
             Assert.AreEqual(8, ir.MaxDoc);
@@ -222,7 +222,7 @@ namespace Lucene.Net.Index
             ir.Dispose();
 
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy(3)));
-            Assert.AreEqual(49, writer.NumDocs());
+            Assert.AreEqual(49, writer.NumDocs);
             writer.ForceMergeDeletes();
             writer.Dispose();
             ir = DirectoryReader.Open(dir);

@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
         private class DocumentFilteredAtomicIndexReader : FilterAtomicReader
         {
             internal readonly IBits liveDocs;
-            internal readonly int numDocs_Renamed;
+            internal readonly int numDocs;
 
             public DocumentFilteredAtomicIndexReader(AtomicReaderContext context, Filter preserveFilter, bool negateFilter)
                     : base(context.AtomicReader)
@@ -168,12 +168,12 @@ namespace Lucene.Net.Index
                 }
 
                 this.liveDocs = bits;
-                this.numDocs_Renamed = bits.Cardinality();
+                this.numDocs = bits.Cardinality();
             }
 
             public override int NumDocs
             {
-                get { return numDocs_Renamed; }
+                get { return numDocs; }
             }
 
             public override IBits LiveDocs

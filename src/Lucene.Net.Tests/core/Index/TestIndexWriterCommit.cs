@@ -523,7 +523,7 @@ namespace Lucene.Net.Index
 
             w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE).SetIndexCommit(commit));
 
-            Assert.AreEqual(1, w.NumDocs());
+            Assert.AreEqual(1, w.NumDocs);
 
             // commit IndexWriter to "third"
             w.AddDocument(doc);

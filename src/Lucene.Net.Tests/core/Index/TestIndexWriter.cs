@@ -123,10 +123,10 @@ namespace Lucene.Net.Index
 
             // merge the index down and check that the new doc count is correct
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-            Assert.AreEqual(60, writer.NumDocs());
+            Assert.AreEqual(60, writer.NumDocs);
             writer.ForceMerge(1);
             Assert.AreEqual(60, writer.MaxDoc);
-            Assert.AreEqual(60, writer.NumDocs());
+            Assert.AreEqual(60, writer.NumDocs);
             writer.Dispose();
 
             // check that the index reader gives the same numbers.
@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
             // this existing one works correctly:
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
             Assert.AreEqual(0, writer.MaxDoc);
-            Assert.AreEqual(0, writer.NumDocs());
+            Assert.AreEqual(0, writer.NumDocs);
             writer.Dispose();
             dir.Dispose();
         }

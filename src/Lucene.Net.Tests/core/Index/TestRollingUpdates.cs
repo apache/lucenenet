@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
             }
 
             w.Commit();
-            Assert.AreEqual(SIZE, w.NumDocs());
+            Assert.AreEqual(SIZE, w.NumDocs);
 
             w.Dispose();
 

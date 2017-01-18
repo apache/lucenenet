@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
                         break;
                     }
                 }
-                Assert.AreEqual(20 * (i + 1) + extraCount, writer.NumDocs());
+                Assert.AreEqual(20 * (i + 1) + extraCount, writer.NumDocs);
             }
 
             writer.Dispose();

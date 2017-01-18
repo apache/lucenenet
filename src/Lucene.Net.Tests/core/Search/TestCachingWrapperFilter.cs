@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
             // delete 20 of them
             for (int i = 0; i < 20; i++)
             {
-                Iw.DeleteDocuments(new Term("id", Convert.ToString(Random().Next(Iw.MaxDoc()))));
+                Iw.DeleteDocuments(new Term("id", Convert.ToString(Random().Next(Iw.MaxDoc))));
             }
             Ir = Iw.Reader;
             @is = NewSearcher(Ir);

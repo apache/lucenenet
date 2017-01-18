@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
             }
             long maxRAMBytes = (long)(iwc.RAMBufferSizeMB * 1024.0 * 1024.0);
             Assert.AreEqual(0, flushControl.FlushBytes, " all flushes must be due numThreads=" + numThreads);
-            Assert.AreEqual(numDocumentsToIndex, writer.NumDocs());
+            Assert.AreEqual(numDocumentsToIndex, writer.NumDocs);
             Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
             Assert.IsTrue(flushPolicy.PeakBytesWithoutFlush <= maxRAMBytes, "peak bytes without flush exceeded watermark");
             AssertActiveBytesAfter(flushControl);
@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
                 }
 
                 Assert.AreEqual(0, flushControl.FlushBytes, " all flushes must be due numThreads=" + numThreads[i]);
-                Assert.AreEqual(numDocumentsToIndex, writer.NumDocs());
+                Assert.AreEqual(numDocumentsToIndex, writer.NumDocs);
                 Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
                 Assert.IsTrue(flushPolicy.PeakDocCountWithoutFlush <= iwc.MaxBufferedDocs, "peak bytes without flush exceeded watermark");
                 AssertActiveBytesAfter(flushControl);
@@ -209,7 +209,7 @@ namespace Lucene.Net.Index
                 threads[x].Join();
             }
             Assert.AreEqual(0, flushControl.FlushBytes, " all flushes must be due");
-            Assert.AreEqual(numDocumentsToIndex, writer.NumDocs());
+            Assert.AreEqual(numDocumentsToIndex, writer.NumDocs);
             Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
             if (flushPolicy.FlushOnRAM && !flushPolicy.FlushOnDocCount && !flushPolicy.FlushOnDeleteTerms)
             {
@@ -274,7 +274,7 @@ namespace Lucene.Net.Index
                 Assert.IsNotNull(docsWriter);
                 DocumentsWriterFlushControl flushControl = docsWriter.flushControl;
                 Assert.AreEqual(0, flushControl.FlushBytes, " all flushes must be due");
-                Assert.AreEqual(numDocumentsToIndex, writer.NumDocs());
+                Assert.AreEqual(numDocumentsToIndex, writer.NumDocs);
                 Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc);
                 if (numThreads[i] == 1)
                 {

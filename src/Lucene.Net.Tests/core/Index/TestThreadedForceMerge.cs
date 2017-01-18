@@ -105,8 +105,8 @@ namespace Lucene.Net.Index
 
                 int expectedDocCount = (int)((1 + iter) * (200 + 8 * NUM_ITER2 * (NUM_THREADS / 2.0) * (1 + NUM_THREADS)));
 
-                Assert.AreEqual(expectedDocCount, writer.NumDocs(), "index=" + writer.SegString() + " numDocs=" + writer.NumDocs() + " maxDoc=" + writer.MaxDoc + " config=" + writer.Config);
-                Assert.AreEqual(expectedDocCount, writer.MaxDoc, "index=" + writer.SegString() + " numDocs=" + writer.NumDocs() + " maxDoc=" + writer.MaxDoc + " config=" + writer.Config);
+                Assert.AreEqual(expectedDocCount, writer.NumDocs, "index=" + writer.SegString() + " numDocs=" + writer.NumDocs + " maxDoc=" + writer.MaxDoc + " config=" + writer.Config);
+                Assert.AreEqual(expectedDocCount, writer.MaxDoc, "index=" + writer.SegString() + " numDocs=" + writer.NumDocs + " maxDoc=" + writer.MaxDoc + " config=" + writer.Config);
 
                 writer.Dispose();
                 writer = new IndexWriter(directory, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, ANALYZER).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(2));

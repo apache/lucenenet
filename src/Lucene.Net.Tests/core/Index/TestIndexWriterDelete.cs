@@ -1082,7 +1082,7 @@ namespace Lucene.Net.Index
 
             modifier.DeleteDocuments(new TermQuery(new Term("nada", "nada")));
             modifier.Commit();
-            Assert.AreEqual(5, modifier.NumDocs());
+            Assert.AreEqual(5, modifier.NumDocs);
             modifier.Dispose();
             dir.Dispose();
         }

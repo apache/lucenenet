@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
                 Directory copy = new MockDirectoryWrapper(Random(), new RAMDirectory(Dir2, IOContext.DEFAULT));
                 RandomIndexWriter w = new RandomIndexWriter(Random(), Dir2, Similarity, TimeZone);
                 w.AddIndexes(copy);
-                docCount = w.MaxDoc();
+                docCount = w.MaxDoc;
                 w.Dispose();
                 MulFactor *= 2;
             } while (docCount < 3000);
