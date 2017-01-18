@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis
             }
             else
             {
-                components.SetReader(r);// LUCENENET TODO: new TextReaderWrapper(r);
+                components.SetReader(r);
             }
             return components.TokenStream;
         }
