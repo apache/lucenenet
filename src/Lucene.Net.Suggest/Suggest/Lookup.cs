@@ -174,18 +174,15 @@ namespace Lucene.Net.Search.Suggest
             /// <summary>
             /// Returns the top N results in descending order. </summary>
             /// <returns> the top N results in descending order. </returns>
-            public LookupResult[] Results // LUCENENET TODO: Change to GetResults() (array)
+            public LookupResult[] GetResults()
             {
-                get
+                int size = Count;
+                var res = new LookupResult[size];
+                for (int i = size - 1; i >= 0; i--)
                 {
-                    int size = Count;
-                    var res = new LookupResult[size];
-                    for (int i = size - 1; i >= 0; i--)
-                    {
-                        res[i] = Pop();
-                    }
-                    return res;
+                    res[i] = Pop();
                 }
+                return res;
             }
         }
 

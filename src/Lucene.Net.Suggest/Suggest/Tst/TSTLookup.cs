@@ -152,7 +152,7 @@ namespace Lucene.Net.Search.Suggest.Tst
                 {
                     queue.InsertWithOverflow(new LookupResult(ttn.token, (long)ttn.val));
                 }
-                foreach (LookupResult lr in queue.Results)
+                foreach (LookupResult lr in queue.GetResults())
                 {
                     res.Add(lr);
                 }

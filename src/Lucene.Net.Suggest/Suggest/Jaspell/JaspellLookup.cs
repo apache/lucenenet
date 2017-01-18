@@ -138,7 +138,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                     long freq = (long)(trie.Get(s));
                     queue.InsertWithOverflow(new LookupResult(s, freq));
                 }
-                foreach (LookupResult lr in queue.Results)
+                foreach (LookupResult lr in queue.GetResults())
                 {
                     res.Add(lr);
                 }
