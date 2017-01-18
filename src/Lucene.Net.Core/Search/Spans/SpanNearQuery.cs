@@ -127,15 +127,17 @@ namespace Lucene.Net.Search.Spans
             StringBuilder buffer = new StringBuilder();
             buffer.Append("spanNear([");
             IEnumerator<SpanQuery> i = m_clauses.GetEnumerator();
+            bool isFirst = true;
             while (i.MoveNext())
             {
                 SpanQuery clause = i.Current;
                 buffer.Append(clause.ToString(field));
-                buffer.Append(", ");
+                if (!isFirst)
+                {
+                    buffer.Append(", ");
+                }
+                isFirst = false;
             }
-            //LUCENENET TODO: Change logic above to skip this instead of removing it
-            if (m_clauses.Count > 0)
-                buffer.Remove(buffer.Length - 2, 2);
             buffer.Append("], ");
             buffer.Append(m_slop);
             buffer.Append(", ");
