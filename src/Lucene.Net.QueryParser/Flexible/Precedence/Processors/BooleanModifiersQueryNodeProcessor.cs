@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
     /// </para>
     /// </summary>
     /// <seealso cref="ConfigurationKeys.DEFAULT_OPERATOR"/>
-    public class BooleanModifiersQueryNodeProcessor : QueryNodeProcessorImpl
+    public class BooleanModifiersQueryNodeProcessor : QueryNodeProcessor
     {
         private List<IQueryNode> childrenBuffer = new List<IQueryNode>();
 

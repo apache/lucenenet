@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <seealso cref="TermRangeQueryNode"/>
     /// <seealso cref="NumericConfig"/>
     /// <seealso cref="NumericRangeQueryNode"/>
-    public class NumericRangeQueryNodeProcessor : QueryNodeProcessorImpl
+    public class NumericRangeQueryNodeProcessor : QueryNodeProcessor
     {
         /// <summary>
         /// Constructs an empty <see cref="NumericRangeQueryNode"/> object.

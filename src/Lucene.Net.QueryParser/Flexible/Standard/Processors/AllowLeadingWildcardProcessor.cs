@@ -36,7 +36,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// and throws an exception if any of them has a leading wildcard ('*' or '?').
     /// </summary>
     /// <seealso cref="ConfigurationKeys.ALLOW_LEADING_WILDCARD"/>
-    public class AllowLeadingWildcardProcessor : QueryNodeProcessorImpl
+    public class AllowLeadingWildcardProcessor : QueryNodeProcessor
     {
         public AllowLeadingWildcardProcessor()
         {

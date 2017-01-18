@@ -31,7 +31,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/>, for multi-term
     /// query nodes.
     /// </summary>
-    public class MultiTermRewriteMethodProcessor : QueryNodeProcessorImpl
+    public class MultiTermRewriteMethodProcessor : QueryNodeProcessor
     {
         public static readonly string TAG_ID = "MultiTermRewriteMethodConfiguration";
 

@@ -27,7 +27,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// </summary>
     /// <seealso cref="MatchAllDocsQueryNode"/>
     /// <seealso cref="Search.MatchAllDocsQuery"/>
-    public class MatchAllDocsQueryNodeProcessor : QueryNodeProcessorImpl
+    public class MatchAllDocsQueryNodeProcessor : QueryNodeProcessor
     {
         public MatchAllDocsQueryNodeProcessor()
         {

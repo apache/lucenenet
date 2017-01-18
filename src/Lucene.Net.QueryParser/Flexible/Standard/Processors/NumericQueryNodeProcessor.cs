@@ -49,7 +49,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <seealso cref="FieldQueryNode"/>
     /// <seealso cref="NumericConfig"/>
     /// <seealso cref="NumericQueryNode"/>
-    public class NumericQueryNodeProcessor : QueryNodeProcessorImpl
+    public class NumericQueryNodeProcessor : QueryNodeProcessor
     {
         /// <summary>
         /// Constructs a <see cref="NumericQueryNodeProcessor"/> object.

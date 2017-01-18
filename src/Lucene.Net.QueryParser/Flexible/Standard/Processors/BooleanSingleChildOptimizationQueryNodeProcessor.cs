@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <see cref="BooleanModifierNode"/>
     /// </summary>
     /// <seealso cref="ModifierQueryNode"/>
-    public class BooleanSingleChildOptimizationQueryNodeProcessor : QueryNodeProcessorImpl
+    public class BooleanSingleChildOptimizationQueryNodeProcessor : QueryNodeProcessor
     {
         public BooleanSingleChildOptimizationQueryNodeProcessor()
         {

@@ -52,7 +52,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <seealso cref="ConfigurationKeys.ANALYZER"/>
     /// <seealso cref="Analyzer"/>
     /// <seealso cref="TokenStream"/>
-    public class AnalyzerQueryNodeProcessor : QueryNodeProcessorImpl
+    public class AnalyzerQueryNodeProcessor : QueryNodeProcessor
     {
         private Analyzer analyzer;
 

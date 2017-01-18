@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <see cref="TokenizedPhraseQueryNode"/> nor a <see cref="MultiPhraseQueryNode"/>.
     /// </summary>
     /// <seealso cref="SlopQueryNode"/>
-    public class PhraseSlopQueryNodeProcessor : QueryNodeProcessorImpl
+    public class PhraseSlopQueryNodeProcessor : QueryNodeProcessor
     {
         public PhraseSlopQueryNodeProcessor()
         {

@@ -33,7 +33,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
     /// If they are <see cref="AndQueryNode"/> or an instance of anything else that
     /// implements <see cref="FieldQueryNode"/> the exception will also be thrown.
     /// </summary>
-    public class SpansValidatorQueryNodeProcessor : QueryNodeProcessorImpl
+    public class SpansValidatorQueryNodeProcessor : QueryNodeProcessor
     {
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {

@@ -31,7 +31,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
     /// otherwise it throws an exception.
     /// </summary>
     /// <seealso cref="IUniqueFieldAttribute"/>
-    public class UniqueFieldQueryNodeProcessor : QueryNodeProcessorImpl
+    public class UniqueFieldQueryNodeProcessor : QueryNodeProcessor
     {
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {

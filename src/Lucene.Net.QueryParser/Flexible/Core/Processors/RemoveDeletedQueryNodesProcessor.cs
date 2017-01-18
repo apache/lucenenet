@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
     /// <see cref=""/> from a query node tree. If the resulting root node
     /// is a <see cref="DeletedQueryNode"/>, <see cref="MatchNoDocsQueryNode"/> is returned.
     /// </summary>
-    public class RemoveDeletedQueryNodesProcessor : QueryNodeProcessorImpl
+    public class RemoveDeletedQueryNodesProcessor : QueryNodeProcessor
     {
         public RemoveDeletedQueryNodesProcessor()
         {

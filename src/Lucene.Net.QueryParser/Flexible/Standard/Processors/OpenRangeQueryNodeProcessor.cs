@@ -27,7 +27,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <summary>
     /// Processes <see cref="Search.TermRangeQuery"/>s with open ranges.
     /// </summary>
-    public class OpenRangeQueryNodeProcessor : QueryNodeProcessorImpl
+    public class OpenRangeQueryNodeProcessor : QueryNodeProcessor
     {
         public readonly static string OPEN_RANGE_TOKEN = "*";
 

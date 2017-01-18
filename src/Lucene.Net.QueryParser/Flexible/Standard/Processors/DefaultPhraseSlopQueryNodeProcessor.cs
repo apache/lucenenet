@@ -34,7 +34,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// </summary>
     /// <seealso cref="SlopQueryNode"/>
     /// <seealso cref="ConfigurationKeys.PHRASE_SLOP"/>
-    public class DefaultPhraseSlopQueryNodeProcessor : QueryNodeProcessorImpl
+    public class DefaultPhraseSlopQueryNodeProcessor : QueryNodeProcessor
     {
         private bool processChildren = true;
 

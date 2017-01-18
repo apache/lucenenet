@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <seealso cref="ConfigurationKeys.BOOST"/>
     /// <seealso cref="QueryConfigHandler"/>
     /// <seealso cref="IFieldableNode"/>
-    public class BoostQueryNodeProcessor : QueryNodeProcessorImpl
+    public class BoostQueryNodeProcessor : QueryNodeProcessor
     {
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {

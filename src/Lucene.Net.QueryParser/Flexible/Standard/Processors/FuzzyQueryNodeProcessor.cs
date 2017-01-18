@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <seealso cref="ConfigurationKeys.FUZZY_CONFIG"/>
     /// <seealso cref="Search.FuzzyQuery"/>
     /// <seealso cref="FuzzyQueryNode"/>
-    public class FuzzyQueryNodeProcessor : QueryNodeProcessorImpl
+    public class FuzzyQueryNodeProcessor : QueryNodeProcessor
     {
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {

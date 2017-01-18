@@ -65,18 +65,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
     /// </code>
     /// </summary>
     /// <seealso cref="IQueryNodeProcessor"/>
-    public abstract class QueryNodeProcessorImpl : IQueryNodeProcessor
+    public abstract class QueryNodeProcessor : IQueryNodeProcessor
     {
         private List<ChildrenList> childrenListPool = new List<ChildrenList>();
 
         private QueryConfigHandler queryConfig;
 
-        public QueryNodeProcessorImpl()
+        public QueryNodeProcessor()
         {
             // empty constructor
         }
 
-        public QueryNodeProcessorImpl(QueryConfigHandler queryConfigHandler)
+        public QueryNodeProcessor(QueryConfigHandler queryConfigHandler)
         {
             this.queryConfig = queryConfigHandler;
         }

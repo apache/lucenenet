@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
     /// nodes may become invalid.
     /// </para>
     /// </summary>
-    public class NoChildOptimizationQueryNodeProcessor : QueryNodeProcessorImpl
+    public class NoChildOptimizationQueryNodeProcessor : QueryNodeProcessor
     {
         public NoChildOptimizationQueryNodeProcessor()
         {

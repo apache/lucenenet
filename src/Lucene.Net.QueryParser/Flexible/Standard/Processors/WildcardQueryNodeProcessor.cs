@@ -33,7 +33,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// </summary>
     /// <seealso cref="Search.PrefixQuery"/>
     /// <seealso cref="PrefixWildcardQueryNode"/>
-    public class WildcardQueryNodeProcessor : QueryNodeProcessorImpl
+    public class WildcardQueryNodeProcessor : QueryNodeProcessor
     {
         public WildcardQueryNodeProcessor()
         {

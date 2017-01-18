@@ -36,7 +36,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <see cref="BooleanQueryNode"/> is returned.
     /// </summary>
     /// <seealso cref="ConfigurationKeys.MULTI_FIELDS"/>
-    public class MultiFieldQueryNodeProcessor : QueryNodeProcessorImpl
+    public class MultiFieldQueryNodeProcessor : QueryNodeProcessor
     {
         private bool processChildren = true;
 

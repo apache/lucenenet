@@ -143,7 +143,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
 
             private class QPTestParserQueryNodeProcessor :
-                QueryNodeProcessorImpl
+                QueryNodeProcessor
             {
 
 

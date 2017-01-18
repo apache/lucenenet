@@ -46,7 +46,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <seealso cref="ConfigurationKeys.DATE_RESOLUTION"/>
     /// <seealso cref="ConfigurationKeys.LOCALE"/>
     /// <seealso cref="TermRangeQueryNode"/>
-    public class TermRangeQueryNodeProcessor : QueryNodeProcessorImpl
+    public class TermRangeQueryNodeProcessor : QueryNodeProcessor
     {
         public TermRangeQueryNodeProcessor()
         {

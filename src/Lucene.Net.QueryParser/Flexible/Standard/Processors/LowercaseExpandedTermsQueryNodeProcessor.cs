@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// term.
     /// </summary>
     /// <seealso cref="ConfigurationKeys.LOWERCASE_EXPANDED_TERMS"/>.
-    public class LowercaseExpandedTermsQueryNodeProcessor : QueryNodeProcessorImpl
+    public class LowercaseExpandedTermsQueryNodeProcessor : QueryNodeProcessor
     {
         public LowercaseExpandedTermsQueryNodeProcessor()
         {

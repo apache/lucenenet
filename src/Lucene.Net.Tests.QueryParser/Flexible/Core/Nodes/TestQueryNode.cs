@@ -49,7 +49,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         }
 
-        /* LUCENE-5099 - QueryNodeProcessorImpl should set parent to null before returning on processing */
+        /* LUCENE-5099 - QueryNodeProcessor should set parent to null before returning on processing */
         [Test]
         public void TestRemoveFromParent()
         {
