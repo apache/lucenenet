@@ -304,7 +304,7 @@ namespace Lucene.Net.Codecs.Pulsing
         /// </summary>
         public interface IPulsingEnumAttribute : IAttribute
         {
-            Dictionary<PulsingPostingsReader, DocsEnum> Enums();
+            Dictionary<PulsingPostingsReader, DocsEnum> Enums(); // LUCENENET TODO: Make property, change to IDictionary
         }
 
         internal class PulsingTermState : BlockTermState
