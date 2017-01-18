@@ -90,7 +90,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override string ToString(int doc)
             {
-                return outerInstance.Description + '=' + StrVal(doc);
+                return outerInstance.GetDescription() + '=' + StrVal(doc);
             }
         }
 
@@ -117,7 +117,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override string ToString(int doc)
             {
-                return outerInstance.Description + '=' + StrVal(doc);
+                return outerInstance.GetDescription() + '=' + StrVal(doc);
             }
         }
     }

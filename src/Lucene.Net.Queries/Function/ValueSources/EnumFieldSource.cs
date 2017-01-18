@@ -106,9 +106,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return DEFAULT_VALUE;
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "enum(" + field + ')'; }
+            return "enum(" + field + ')';
         }
 
 
@@ -176,7 +176,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override string ToString(int doc)
             {
-                return outerInstance.Description + '=' + StrVal(doc);
+                return outerInstance.GetDescription() + '=' + StrVal(doc);
             }
 
 

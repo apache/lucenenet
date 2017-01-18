@@ -43,9 +43,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.parser = parser;
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "double(" + field + ')'; }
+            return "double(" + field + ')';
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)

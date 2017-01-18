@@ -51,9 +51,9 @@ namespace Lucene.Net.Expressions
 		    return 777;
 		}
 
-		public override string Description
-		{
-		    get { return "score()"; }
+		public override string GetDescription()
+        {
+		    return "score()";
 		}
 	}
 }

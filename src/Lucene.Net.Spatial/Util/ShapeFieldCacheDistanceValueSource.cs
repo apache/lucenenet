@@ -49,9 +49,9 @@ namespace Lucene.Net.Spatial.Util
             this.multiplier = multiplier;
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return GetType().Name + "(" + provider + ", " + from + ")"; }
+            return GetType().Name + "(" + provider + ", " + from + ")";
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
@@ -99,7 +99,7 @@ namespace Lucene.Net.Spatial.Util
 
             public override string ToString(int doc)
             {
-                return enclosingInstance.Description + "=" + FloatVal(doc);
+                return enclosingInstance.GetDescription() + "=" + FloatVal(doc);
             }
         }
 

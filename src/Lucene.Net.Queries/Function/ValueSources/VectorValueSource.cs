@@ -230,28 +230,25 @@ namespace Lucene.Net.Queries.Function.ValueSources
         }
 
 
-        public override string Description
+        public override string GetDescription()
         {
-            get
+            var sb = new StringBuilder();
+            sb.Append(Name).Append('(');
+            bool firstTime = true;
+            foreach (ValueSource source in sources)
             {
-                var sb = new StringBuilder();
-                sb.Append(Name).Append('(');
-                bool firstTime = true;
-                foreach (ValueSource source in sources)
+                if (firstTime)
                 {
-                    if (firstTime)
-                    {
-                        firstTime = false;
-                    }
-                    else
-                    {
-                        sb.Append(',');
-                    }
-                    sb.Append(source);
+                    firstTime = false;
                 }
-                sb.Append(")");
-                return sb.ToString();
+                else
+                {
+                    sb.Append(',');
+                }
+                sb.Append(source);
             }
+            sb.Append(")");
+            return sb.ToString();
         }
 
         public override bool Equals(object o)

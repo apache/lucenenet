@@ -43,9 +43,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.parser = parser;
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "int(" + field + ')'; }
+            return "int(" + field + ')';
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
@@ -111,7 +111,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override string ToString(int doc)
             {
-                return outerInstance.Description + '=' + IntVal(doc);
+                return outerInstance.GetDescription() + '=' + IntVal(doc);
             }
 
             public override AbstractValueFiller ValueFiller

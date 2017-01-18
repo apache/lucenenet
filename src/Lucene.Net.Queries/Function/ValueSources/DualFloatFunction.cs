@@ -42,9 +42,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         protected abstract string Name { get; }
         protected abstract float Func(int doc, FunctionValues aVals, FunctionValues bVals);
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return Name + "(" + a.Description + "," + b.Description + ")"; }
+            return Name + "(" + a.GetDescription() + "," + b.GetDescription() + ")";
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)

@@ -44,9 +44,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.parser = parser;
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "short(" + field + ')'; }
+            return "short(" + field + ')';
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
@@ -103,7 +103,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override string ToString(int doc)
             {
-                return outerInstance.Description + '=' + ShortVal(doc);
+                return outerInstance.GetDescription() + '=' + ShortVal(doc);
             }
 
         }

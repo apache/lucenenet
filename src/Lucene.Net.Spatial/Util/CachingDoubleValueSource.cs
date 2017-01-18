@@ -39,9 +39,9 @@ namespace Lucene.Net.Spatial.Util
             cache = new HashMap<int, double>();
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "Cached[" + source.Description + "]"; }
+            return "Cached[" + source.GetDescription() + "]";
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)

@@ -105,9 +105,9 @@ namespace Lucene.Net.Expressions
 			return new ExpressionSortField(expression.sourceText, this, reverse);
 		}
 
-		public override string Description
-		{
-		    get { return "expr(" + expression.sourceText + ")"; }
+		public override string GetDescription()
+        {
+		    return "expr(" + expression.sourceText + ")";
 		}
 
 		public override int GetHashCode()

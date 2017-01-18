@@ -54,9 +54,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "query(" + q + ",def=" + defVal + ")"; }
+            return "query(" + q + ",def=" + defVal + ")";
         }
 
         public override FunctionValues GetValues(IDictionary fcontext, AtomicReaderContext readerContext)

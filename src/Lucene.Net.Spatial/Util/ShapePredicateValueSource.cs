@@ -54,9 +54,9 @@ namespace Lucene.Net.Spatial.Util
         }
 
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return shapeValuesource + " " + op + " " + queryShape; }
+            return shapeValuesource + " " + op + " " + queryShape;
         }
 
 

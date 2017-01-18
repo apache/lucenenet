@@ -32,9 +32,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             get { return "maxdoc"; }
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return Name + "()"; }
+            return Name + "()";
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)

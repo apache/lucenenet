@@ -65,7 +65,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         }
         public override string ToString(int doc)
         {
-            return parent.Description + '=' + sval;
+            return parent.GetDescription() + '=' + sval;
         }
     }
 
@@ -111,7 +111,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         }
         public override string ToString(int doc)
         {
-            return parent.Description + '=' + sval;
+            return parent.GetDescription() + '=' + sval;
         }
     }
 
@@ -140,9 +140,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             get { return "docfreq"; }
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return Name + '(' + field + ',' + val + ')'; }
+            return Name + '(' + field + ',' + val + ')';
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)

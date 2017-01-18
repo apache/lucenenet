@@ -78,7 +78,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override string ToString(int doc)
         {
-            return vs.Description + '=' + StrVal(doc);
+            return vs.GetDescription() + '=' + StrVal(doc);
         }
 
         protected virtual long ExternalToLong(string extVal)

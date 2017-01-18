@@ -1111,9 +1111,9 @@ namespace Lucene.Net.Facet.Range
                 throw new System.NotSupportedException();
             }
 
-            public override string Description
+            public override string GetDescription()
             {
-                get { throw new NotSupportedException(); }
+                throw new NotSupportedException();
             }
 
         }

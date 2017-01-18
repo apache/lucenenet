@@ -95,9 +95,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             source.CreateWeight(context, searcher);
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return Convert.ToString(a) + "/(" + m + "*float(" + source.Description + ")" + "+" + b + ')'; }
+            return Convert.ToString(a) + "/(" + m + "*float(" + source.GetDescription() + ")" + "+" + b + ')';
         }
 
         public override int GetHashCode()

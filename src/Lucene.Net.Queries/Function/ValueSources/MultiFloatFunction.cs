@@ -41,28 +41,25 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         protected abstract float Func(int doc, FunctionValues[] valsArr);
 
-        public override string Description
+        public override string GetDescription()
         {
-            get
+            var sb = new StringBuilder();
+            sb.Append(Name).Append('(');
+            bool firstTime = true;
+            foreach (var source in sources)
             {
-                var sb = new StringBuilder();
-                sb.Append(Name).Append('(');
-                bool firstTime = true;
-                foreach (var source in sources)
+                if (firstTime)
                 {
-                    if (firstTime)
-                    {
-                        firstTime = false;
-                    }
-                    else
-                    {
-                        sb.Append(',');
-                    }
-                    sb.Append(source);
+                    firstTime = false;
                 }
-                sb.Append(')');
-                return sb.ToString();
+                else
+                {
+                    sb.Append(',');
+                }
+                sb.Append(source);
             }
+            sb.Append(')');
+            return sb.ToString();
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)

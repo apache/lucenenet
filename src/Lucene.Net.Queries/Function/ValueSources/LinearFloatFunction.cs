@@ -43,9 +43,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.intercept = intercept;
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return slope + "*float(" + source.Description + ")+" + intercept; }
+            return slope + "*float(" + source.GetDescription() + ")+" + intercept;
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)

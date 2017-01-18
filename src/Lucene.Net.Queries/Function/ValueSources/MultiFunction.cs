@@ -37,9 +37,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         protected abstract string Name { get; }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return GetDescription(Name, sources); }
+            return GetDescription(Name, sources);
         }
 
         public static string GetDescription(string name, IList<ValueSource> sources)

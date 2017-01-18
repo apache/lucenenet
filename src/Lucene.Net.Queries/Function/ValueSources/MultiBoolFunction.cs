@@ -92,27 +92,24 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get
+            var sb = new StringBuilder(Name);
+            sb.Append('(');
+            bool first = true;
+            foreach (ValueSource source in sources)
             {
-                var sb = new StringBuilder(Name);
-                sb.Append('(');
-                bool first = true;
-                foreach (ValueSource source in sources)
+                if (first)
                 {
-                    if (first)
-                    {
-                        first = false;
-                    }
-                    else
-                    {
-                        sb.Append(',');
-                    }
-                    sb.Append(source.Description);
+                    first = false;
                 }
-                return sb.ToString();
+                else
+                {
+                    sb.Append(',');
+                }
+                sb.Append(source.GetDescription());
             }
+            return sb.ToString();
         }
 
         public override int GetHashCode()

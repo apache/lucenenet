@@ -179,7 +179,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 }
                 catch (IOException e)
                 {
-                    throw new Exception("caught exception in function " + outerInstance.Description + " : doc=" + doc, e);
+                    throw new Exception("caught exception in function " + outerInstance.GetDescription() + " : doc=" + doc, e);
                 }
             }
         }

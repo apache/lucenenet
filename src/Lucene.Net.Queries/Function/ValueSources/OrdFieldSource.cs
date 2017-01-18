@@ -50,9 +50,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.field = field;
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "ord(" + field + ')'; }
+            return "ord(" + field + ')';
         }
 
 

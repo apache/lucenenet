@@ -223,12 +223,9 @@ namespace Lucene.Net.Facet.Taxonomy
                 return RuntimeHelpers.GetHashCode(this);
             }
 
-            public override string Description
+            public override string GetDescription()
             {
-                get
-                {
-                    return "score()";
-                }
+                return "score()";
             }
         }
     }

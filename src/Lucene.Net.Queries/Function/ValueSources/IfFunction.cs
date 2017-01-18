@@ -132,9 +132,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "if(" + ifSource.Description + ',' + trueSource.Description + ',' + falseSource + ')'; }
+            return "if(" + ifSource.GetDescription() + ',' + trueSource.GetDescription() + ',' + falseSource + ')';
         }
 
         public override int GetHashCode()

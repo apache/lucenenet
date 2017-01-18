@@ -45,9 +45,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             get { return "norm"; }
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return Name + '(' + field + ')'; }
+            return Name + '(' + field + ')';
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)

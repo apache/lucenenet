@@ -80,9 +80,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "literal(" + str + ")"; }
+            return "literal(" + str + ")";
         }
 
         public override bool Equals(object o)

@@ -52,9 +52,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.field = field;
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "rord(" + field + ')'; }
+            return "rord(" + field + ')';
         }
 
         // TODO: this is trappy? perhaps this query instead should make you pass a slow reader yourself?

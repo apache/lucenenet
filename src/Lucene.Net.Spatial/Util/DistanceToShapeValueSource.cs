@@ -55,9 +55,9 @@ namespace Lucene.Net.Spatial.Util
                 (ctx.IsGeo ? 180 * multiplier : double.MaxValue);
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "distance(" + queryPoint + " to " + shapeValueSource.Description + ")*" + multiplier + ")"; }
+            return "distance(" + queryPoint + " to " + shapeValueSource.GetDescription() + ")*" + multiplier + ")";
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)

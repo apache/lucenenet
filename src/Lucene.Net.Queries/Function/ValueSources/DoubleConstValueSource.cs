@@ -37,9 +37,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.lv = (long)constant;
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "const(" + constant + ")"; }
+            return "const(" + constant + ")";
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
@@ -89,7 +89,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override string ToString(int doc)
             {
-                return outerInstance.Description;
+                return outerInstance.GetDescription();
             }
         }
 

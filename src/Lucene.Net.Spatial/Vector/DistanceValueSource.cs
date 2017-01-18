@@ -51,9 +51,9 @@ namespace Lucene.Net.Spatial.Vector
         /// <summary>
         /// Returns the <see cref="ValueSource"/> description.
         /// </summary>
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "DistanceValueSource(" + strategy + ", " + from + ")"; }
+            return "DistanceValueSource(" + strategy + ", " + from + ")";
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Lucene.Net.Spatial.Vector
 
             public override string ToString(int doc)
             {
-                return outerInstance.Description + "=" + FloatVal(doc);
+                return outerInstance.GetDescription() + "=" + FloatVal(doc);
             }
         }
 

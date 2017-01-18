@@ -33,9 +33,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         protected internal abstract string Name { get; }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return Name + '(' + source.Description + ')'; }
+            return Name + '(' + source.GetDescription() + ')';
         }
 
         public override int GetHashCode()

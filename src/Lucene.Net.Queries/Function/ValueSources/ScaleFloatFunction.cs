@@ -49,9 +49,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.max = max;
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "scale(" + source.Description + "," + min + "," + max + ")"; }
+            return "scale(" + source.GetDescription() + "," + min + "," + max + ")";
         }
 
         private class ScaleInfo

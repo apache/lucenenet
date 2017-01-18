@@ -47,11 +47,11 @@ namespace Lucene.Net.Queries.Function
         /// <summary>
         /// description of field, used in explain()
         /// </summary>
-        public abstract string Description { get; } // LUCENENET TODO: Make GetDescription() (makes a conversion)
+        public abstract string GetDescription();
 
         public override string ToString()
         {
-            return Description;
+            return GetDescription();
         }
 
 
@@ -99,7 +99,7 @@ namespace Lucene.Net.Queries.Function
             private readonly ValueSource outerInstance;
 
             public ValueSourceSortField(ValueSource outerInstance, bool reverse)
-                : base(outerInstance.Description, SortFieldType.REWRITEABLE, reverse)
+                : base(outerInstance.GetDescription(), SortFieldType.REWRITEABLE, reverse)
             {
                 this.outerInstance = outerInstance;
             }

@@ -31,9 +31,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             get { return "numdocs"; }
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return Name + "()"; }
+            return Name + "()";
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)

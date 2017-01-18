@@ -314,7 +314,7 @@ namespace Lucene.Net.Spatial.Serialized
 
                 public override string ToString(int doc)
                 {
-                    return outerInstance.Description + "=" + ObjectVal(doc);//TODO truncate?
+                    return outerInstance.GetDescription() + "=" + ObjectVal(doc);//TODO truncate?
                 }
             }
 
@@ -336,12 +336,9 @@ namespace Lucene.Net.Spatial.Serialized
                 return result;
             }
 
-            public override string Description
+            public override string GetDescription()
             {
-                get
-                {
-                    return "shapeDocVal(" + fieldName + ")";
-                }
+                return "shapeDocVal(" + fieldName + ")";
             }
 
         }//ShapeDocValueSource

@@ -44,9 +44,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.parser = parser;
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "long(" + field + ')'; }
+            return "long(" + field + ')';
         }
 
         public virtual long ExternalToLong(string extVal)

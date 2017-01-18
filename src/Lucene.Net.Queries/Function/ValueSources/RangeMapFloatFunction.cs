@@ -52,9 +52,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.defaultVal = def;
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return "map(" + source.Description + "," + min + "," + max + "," + target.Description + ")"; }
+            return "map(" + source.GetDescription() + "," + min + "," + max + "," + target.GetDescription() + ")";
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)

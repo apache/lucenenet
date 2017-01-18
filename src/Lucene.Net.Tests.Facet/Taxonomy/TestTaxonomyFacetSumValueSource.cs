@@ -415,13 +415,9 @@ namespace Lucene.Net.Facet.Taxonomy
                 throw new NotImplementedException();
             }
 
-            public override string Description
+            public override string GetDescription()
             {
-                get
-                {
-                    return "score()";
-                }
-
+                return "score()";
             }
         }
 

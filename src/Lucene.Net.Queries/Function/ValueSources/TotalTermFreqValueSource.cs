@@ -49,9 +49,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             get { return "totaltermfreq"; }
         }
 
-        public override string Description
+        public override string GetDescription()
         {
-            get { return Name + '(' + field + ',' + val + ')'; }
+            return Name + '(' + field + ',' + val + ')';
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
