@@ -48,7 +48,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private static CultureInfo LOCALE;
         private static TimeZoneInfo TIMEZONE;
         private static IDictionary<String, /*Number*/ object> RANDOM_NUMBER_MAP;
-        private readonly static IEscapeQuerySyntax ESCAPER = new EscapeQuerySyntaxImpl();
+        private readonly static IEscapeQuerySyntax ESCAPER = new Standard.Parser.EscapeQuerySyntax();
         private readonly static String DATE_FIELD_NAME = "date";
         private static DateFormat DATE_STYLE;
         private static DateFormat TIME_STYLE;
@@ -451,7 +451,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 lowerDateStr = ESCAPER.Escape(
                             DATE_FORMAT.Format(Convert.ToInt64(lowerDateNumber)),
                             LOCALE,
-                            EscapeQuerySyntax.Type.STRING).toString();
+                            EscapeQuerySyntaxType.STRING).toString();
             }
             else
             {
@@ -467,7 +467,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 upperDateStr = ESCAPER.Escape(
                                 DATE_FORMAT.Format(Convert.ToInt64(upperDateNumber)),
                                 LOCALE,
-                                EscapeQuerySyntax.Type.STRING).toString();
+                                EscapeQuerySyntaxType.STRING).toString();
             }
             else
             {
@@ -503,7 +503,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             string boundDateStr = ESCAPER.Escape(
                                 DATE_FORMAT.Format(Convert.ToInt64(GetNumberType(boundType, DATE_FIELD_NAME))),
                                 LOCALE,
-                                EscapeQuerySyntax.Type.STRING).toString();
+                                EscapeQuerySyntaxType.STRING).toString();
 
             sb.append("+").append(DATE_FIELD_NAME).append(@operator).append('"').append(boundDateStr).append('"');
 
@@ -529,7 +529,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             string dateStr = ESCAPER.Escape(
                                 DATE_FORMAT.Format(Convert.ToInt64(GetNumberType(numberType, DATE_FIELD_NAME))),
                                 LOCALE,
-                                EscapeQuerySyntax.Type.STRING).toString();
+                                EscapeQuerySyntaxType.STRING).toString();
 
             sb.append('+').append(DATE_FIELD_NAME).append(":\"").append(dateStr)
                     .append('"');
@@ -559,7 +559,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private static String NumberToString(/*Number*/ object number)
         {
             return number == null ? "*" : ESCAPER.Escape(NUMBER_FORMAT.Format(number),
-                LOCALE, EscapeQuerySyntax.Type.STRING).toString();
+                LOCALE, EscapeQuerySyntaxType.STRING).toString();
         }
 
         private static /*Number*/ object NormalizeNumber(/*Number*/ object number)

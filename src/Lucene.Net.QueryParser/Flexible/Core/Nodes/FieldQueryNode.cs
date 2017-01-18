@@ -85,12 +85,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         protected virtual string GetTermEscaped(IEscapeQuerySyntax escaper)
         {
-            return escaper.Escape(this.text, CultureInfo.InvariantCulture /*Locale.getDefault()*/, EscapeQuerySyntax.Type.NORMAL).ToString();
+            return escaper.Escape(this.text, CultureInfo.InvariantCulture /*Locale.getDefault()*/, EscapeQuerySyntaxType.NORMAL).ToString();
         }
 
         protected virtual string GetTermEscapeQuoted(IEscapeQuerySyntax escaper)
         {
-            return escaper.Escape(this.text, CultureInfo.InvariantCulture /*Locale.getDefault()*/, EscapeQuerySyntax.Type.STRING).ToString();
+            return escaper.Escape(this.text, CultureInfo.InvariantCulture /*Locale.getDefault()*/, EscapeQuerySyntaxType.STRING).ToString();
         }
 
 

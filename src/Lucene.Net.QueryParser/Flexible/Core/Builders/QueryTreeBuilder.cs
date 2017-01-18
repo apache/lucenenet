@@ -166,7 +166,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
             {
                 throw new QueryNodeException(new Message(
                     QueryParserMessages.LUCENE_QUERY_CONVERSION_ERROR, node
-                        .ToQueryString(new EscapeQuerySyntaxImpl()), node.GetType()
+                        .ToQueryString(new EscapeQuerySyntax()), node.GetType()
                         .Name));
             }
 

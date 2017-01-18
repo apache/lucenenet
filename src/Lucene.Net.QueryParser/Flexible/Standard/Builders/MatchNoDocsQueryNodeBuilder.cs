@@ -42,7 +42,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             {
                 throw new QueryNodeException(new Message(
                     QueryParserMessages.LUCENE_QUERY_CONVERSION_ERROR, queryNode
-                        .ToQueryString(new EscapeQuerySyntaxImpl()), queryNode.GetType()
+                        .ToQueryString(new EscapeQuerySyntax()), queryNode.GetType()
                         .Name));
             }
 

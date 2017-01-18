@@ -366,7 +366,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                 Jj_consume_token(-1);
                                 throw new ParseException();
                         }
-                        field = EscapeQuerySyntaxImpl.DiscardEscapeChar(fieldToken.image).ToString();
+                        field = EscapeQuerySyntax.DiscardEscapeChar(fieldToken.image).ToString();
                         q = Term(field);
                         break;
                     case RegexpToken.OP_LESSTHAN:
@@ -392,7 +392,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                 Jj_consume_token(-1);
                                 throw new ParseException();
                         }
-                        field = EscapeQuerySyntaxImpl.DiscardEscapeChar(fieldToken.image).ToString();
+                        field = EscapeQuerySyntax.DiscardEscapeChar(fieldToken.image).ToString();
                         switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                         {
                             case RegexpToken.TERM:
@@ -422,7 +422,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                 qLower = new FieldQueryNode(field,
                                                            "*", term.beginColumn, term.endColumn);
                                 qUpper = new FieldQueryNode(field,
-                                                     EscapeQuerySyntaxImpl.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
+                                                     EscapeQuerySyntax.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
 
                                 break;
                             case RegexpToken.OP_LESSTHANEQ:
@@ -432,14 +432,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                 qLower = new FieldQueryNode(field,
                                                          "*", term.beginColumn, term.endColumn);
                                 qUpper = new FieldQueryNode(field,
-                                                         EscapeQuerySyntaxImpl.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
+                                                         EscapeQuerySyntax.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
                                 break;
                             case RegexpToken.OP_MORETHAN:
                                 lowerInclusive = false;
                                 upperInclusive = true;
 
                                 qLower = new FieldQueryNode(field,
-                                                         EscapeQuerySyntaxImpl.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
+                                                         EscapeQuerySyntax.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
                                 qUpper = new FieldQueryNode(field,
                                                          "*", term.beginColumn, term.endColumn);
                                 break;
@@ -448,7 +448,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                 upperInclusive = true;
 
                                 qLower = new FieldQueryNode(field,
-                                                         EscapeQuerySyntaxImpl.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
+                                                         EscapeQuerySyntax.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
                                 qUpper = new FieldQueryNode(field,
                                                          "*", term.beginColumn, term.endColumn);
                                 break;
@@ -490,7 +490,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                     Jj_consume_token(-1);
                                     throw new ParseException();
                             }
-                            field = EscapeQuerySyntaxImpl.DiscardEscapeChar(fieldToken.image).ToString();
+                            field = EscapeQuerySyntax.DiscardEscapeChar(fieldToken.image).ToString();
                         }
                         else
                         {
@@ -581,7 +581,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     {
                         case RegexpToken.TERM:
                             term = Jj_consume_token(RegexpToken.TERM);
-                            q = new FieldQueryNode(field, EscapeQuerySyntaxImpl.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
+                            q = new FieldQueryNode(field, EscapeQuerySyntax.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
                             break;
                         case RegexpToken.REGEXPTERM:
                             term = Jj_consume_token(RegexpToken.REGEXPTERM);
@@ -643,7 +643,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         {
                             { if (true) throw new ParseException(new Message(QueryParserMessages.INVALID_SYNTAX_FUZZY_EDITS)); }
                         }
-                        q = new FuzzyQueryNode(field, EscapeQuerySyntaxImpl.DiscardEscapeChar(term.image), fms, term.beginColumn, term.endColumn);
+                        q = new FuzzyQueryNode(field, EscapeQuerySyntax.DiscardEscapeChar(term.image), fms, term.beginColumn, term.endColumn);
                     }
                     else if (regexp)
                     {
@@ -736,14 +736,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     }
 
                     qLower = new FieldQueryNode(field,
-                                             EscapeQuerySyntaxImpl.DiscardEscapeChar(goop1.image), goop1.beginColumn, goop1.endColumn);
+                                             EscapeQuerySyntax.DiscardEscapeChar(goop1.image), goop1.beginColumn, goop1.endColumn);
                     qUpper = new FieldQueryNode(field,
-                                                 EscapeQuerySyntaxImpl.DiscardEscapeChar(goop2.image), goop2.beginColumn, goop2.endColumn);
+                                                 EscapeQuerySyntax.DiscardEscapeChar(goop2.image), goop2.beginColumn, goop2.endColumn);
                     q = new TermRangeQueryNode(qLower, qUpper, startInc ? true : false, endInc ? true : false);
                     break;
                 case RegexpToken.QUOTED:
                     term = Jj_consume_token(RegexpToken.QUOTED);
-                    q = new QuotedFieldQueryNode(field, EscapeQuerySyntaxImpl.DiscardEscapeChar(term.image.Substring(1, (term.image.Length - 1) - 1)), term.beginColumn + 1, term.endColumn - 1);
+                    q = new QuotedFieldQueryNode(field, EscapeQuerySyntax.DiscardEscapeChar(term.image.Substring(1, (term.image.Length - 1) - 1)), term.beginColumn + 1, term.endColumn - 1);
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.FUZZY_SLOP:

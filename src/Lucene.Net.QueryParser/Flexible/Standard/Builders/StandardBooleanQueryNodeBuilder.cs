@@ -68,7 +68,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                             throw new QueryNodeException(new Message(
                                 QueryParserMessages.TOO_MANY_BOOLEAN_CLAUSES, BooleanQuery
                                     .MaxClauseCount, queryNode
-                                    .ToQueryString(new EscapeQuerySyntaxImpl())), ex);
+                                    .ToQueryString(new EscapeQuerySyntax())), ex);
                         }
                     }
                 }

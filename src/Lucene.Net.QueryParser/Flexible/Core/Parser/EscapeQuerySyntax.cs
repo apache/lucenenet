@@ -34,7 +34,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Parser
         /// <param name="type">select the type of escape operation to use</param>
         /// <returns>escaped text</returns>
         // LUCENENET specific overload for text as string
-        string Escape(string text, CultureInfo locale, EscapeQuerySyntax.Type type);
+        string Escape(string text, CultureInfo locale, EscapeQuerySyntaxType type);
 
         /// <summary>
         /// 
@@ -43,23 +43,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Parser
         /// <param name="locale">locale for the current query</param>
         /// <param name="type">select the type of escape operation to use</param>
         /// <returns>escaped text</returns>
-        ICharSequence Escape(ICharSequence text, CultureInfo locale, EscapeQuerySyntax.Type type);
+        ICharSequence Escape(ICharSequence text, CultureInfo locale, EscapeQuerySyntaxType type);
     }
 
     /// <summary>
-    /// LUCENENET specific static class for mimicking the syntax used for EscapeQuerySyntax.Type
-    /// in Java, since interfaces cannot contain nested enums in .NET anyway.
+    /// Type of escaping: String for escaping syntax,
+    /// NORMAL for escaping reserved words (like AND) in terms
     /// </summary>
-    public static class EscapeQuerySyntax
+    /// <remarks>Renamed from Type in Lucene to prevent collisions with System.Type.</remarks>
+    public enum EscapeQuerySyntaxType
     {
-        /// <summary>
-        /// Type of escaping: String for escaping syntax,
-        /// NORMAL for escaping reserved words (like AND) in terms
-        /// </summary>
-        public enum Type
-        {
-            STRING,
-            NORMAL
-        }
+        STRING,
+        NORMAL
     }
 }

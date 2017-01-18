@@ -30,7 +30,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     /// Implementation of <see cref="IEscapeQuerySyntax"/> for the standard lucene
     /// syntax.
     /// </summary>
-    public class EscapeQuerySyntaxImpl : IEscapeQuerySyntax
+    public class EscapeQuerySyntax : IEscapeQuerySyntax
     {
         private static readonly char[] wildcardChars = { '*', '?' };
 
@@ -203,7 +203,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         }
 
         // LUCENENET specific overload for text as string
-        public virtual string Escape(string text, CultureInfo locale, EscapeQuerySyntax.Type type)
+        public virtual string Escape(string text, CultureInfo locale, EscapeQuerySyntaxType type)
         {
             if (text == null || text.Length == 0)
                 return text;
@@ -211,7 +211,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return Escape(text.ToCharSequence(), locale, type).ToString();
         }
 
-        public virtual ICharSequence Escape(ICharSequence text, CultureInfo locale, EscapeQuerySyntax.Type type)  
+        public virtual ICharSequence Escape(ICharSequence text, CultureInfo locale, EscapeQuerySyntaxType type)  
         {
             if (text == null || text.Length == 0)
                 return text;
@@ -229,7 +229,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 text = new UnescapedCharSequence(text).ToStringEscaped(wildcardChars);
             }
 
-            if (type == EscapeQuerySyntax.Type.STRING)
+            if (type == EscapeQuerySyntaxType.STRING)
             {
                 return EscapeQuoted(text, locale);
             }

@@ -72,7 +72,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         protected string GetTermEscaped(IEscapeQuerySyntax escaper)
         {
             return escaper.Escape(numberFormat.Format(this.value),
-                CultureInfo.CurrentCulture, EscapeQuerySyntax.Type.NORMAL);
+                CultureInfo.CurrentCulture, EscapeQuerySyntaxType.NORMAL);
         }
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
