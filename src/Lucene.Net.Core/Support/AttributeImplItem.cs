@@ -28,9 +28,9 @@ namespace Lucene.Net.Support
     /// wrapper is required as there can be several keys for an object depending
     /// on how many interfaces it implements.
     /// </summary>
-    internal sealed class AttributeImplItem
+    internal sealed class AttributeItem
     {
-        internal AttributeImplItem(Type key, Util.Attribute value)
+        internal AttributeItem(Type key, Util.Attribute value)
         {
             this.Key = key;
             this.Value = value;

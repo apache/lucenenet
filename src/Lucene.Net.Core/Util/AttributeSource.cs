@@ -124,9 +124,9 @@ namespace Lucene.Net.Util
 
         // These two maps must always be in sync!!!
         // So they are private, final and read-only from the outside (read-only iterators)
-        private readonly GeneralKeyedCollection<Type, AttributeImplItem> attributes;
+        private readonly GeneralKeyedCollection<Type, AttributeItem> attributes;
 
-        private readonly GeneralKeyedCollection<Type, AttributeImplItem> attributeImpls;
+        private readonly GeneralKeyedCollection<Type, AttributeItem> attributeImpls;
         private readonly State[] currentState;
 
         private readonly AttributeFactory factory;
@@ -159,8 +159,8 @@ namespace Lucene.Net.Util
         /// </summary>
         public AttributeSource(AttributeFactory factory)
         {
-            this.attributes = new GeneralKeyedCollection<Type, AttributeImplItem>(att => att.Key);
-            this.attributeImpls = new GeneralKeyedCollection<Type, AttributeImplItem>(att => att.Key);
+            this.attributes = new GeneralKeyedCollection<Type, AttributeItem>(att => att.Key);
+            this.attributeImpls = new GeneralKeyedCollection<Type, AttributeItem>(att => att.Key);
             this.currentState = new State[1];
             this.factory = factory;
         }
@@ -318,10 +318,10 @@ namespace Lucene.Net.Util
                 {
                     // invalidate state to force recomputation in captureState()
                     this.currentState[0] = null;
-                    attributes.Add(new AttributeImplItem(curInterface, att));
+                    attributes.Add(new AttributeItem(curInterface, att));
                     if (!attributeImpls.ContainsKey(clazz))
                     {
-                        attributeImpls.Add(new AttributeImplItem(clazz, att));
+                        attributeImpls.Add(new AttributeItem(clazz, att));
                     }
                 }
             }
@@ -611,14 +611,14 @@ namespace Lucene.Net.Util
 
                     if (!clone.attributeImpls.ContainsKey(impl.GetType()))
                     {
-                        clone.attributeImpls.Add(new AttributeImplItem(impl.GetType(), impl));
+                        clone.attributeImpls.Add(new AttributeItem(impl.GetType(), impl));
                     }
                 }
 
                 // now the interfaces
                 foreach (var entry in this.attributes)
                 {
-                    clone.attributes.Add(new AttributeImplItem(entry.Key, clone.attributeImpls[entry.Value.GetType()].Value));
+                    clone.attributes.Add(new AttributeItem(entry.Key, clone.attributeImpls[entry.Value.GetType()].Value));
                 }
             }
 
