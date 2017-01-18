@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Globalization;
 
@@ -80,7 +81,7 @@ namespace Lucene.Net.Search.Similarities
 
         public override string GetName()
         {
-            return string.Format(CultureInfo.InvariantCulture, "Jelinek-Mercer(%f)", Lambda); // LUCENENET TODO: Formatting problem
+            return "Jelinek-Mercer(" + Number.ToString(Lambda) + ")";
         }
     }
 }

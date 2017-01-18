@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Globalization;
 
@@ -104,7 +105,7 @@ namespace Lucene.Net.Search.Similarities
 
         public override string GetName()
         {
-            return string.Format(CultureInfo.InvariantCulture, "Dirichlet(%f)", Mu);// LUCENENET TODO: Formatting issue
+            return "Dirichlet(" + Number.ToString(Mu) + ")";
         }
     }
 }

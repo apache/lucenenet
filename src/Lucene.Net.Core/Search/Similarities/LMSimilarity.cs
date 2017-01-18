@@ -93,11 +93,11 @@ namespace Lucene.Net.Search.Similarities
             string coll = m_collectionModel.Name;
             if (coll != null)
             {
-                return string.Format(CultureInfo.InvariantCulture, "LM %s - %s", GetName(), coll); // LUCENENET TODO: Formatting
+                return string.Format("LM {0} - {1}", GetName(), coll);
             }
             else
             {
-                return string.Format(CultureInfo.InvariantCulture, "LM %s", GetName()); // LUCENENET TODO: Formatting
+                return string.Format("LM {0}", GetName());
             }
         }
 
