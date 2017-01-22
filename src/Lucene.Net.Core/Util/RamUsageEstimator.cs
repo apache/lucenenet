@@ -235,7 +235,9 @@ namespace Lucene.Net.Util
         private sealed class ClassCache
         {
             public long AlignedShallowInstanceSize { get; private set; }
-            public readonly FieldInfo[] ReferenceFields; // LUCENENET TODO: make property ?
+
+            [WritableArray]
+            public FieldInfo[] ReferenceFields { get; private set; }
 
             public ClassCache(long alignedShallowInstanceSize, FieldInfo[] referenceFields)
             {
