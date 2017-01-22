@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System.Diagnostics;
 
 namespace Lucene.Net.Codecs
@@ -49,7 +50,7 @@ namespace Lucene.Net.Codecs
         internal MappingMultiDocsEnum Reset(MultiDocsEnum docsEnum)
         {
             this.numSubs = docsEnum.NumSubs;
-            this.subs = docsEnum.GetSubs();
+            this.subs = docsEnum.Subs;
             upto = -1;
             current = null;
             return this;
@@ -84,9 +85,10 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Returns sub-readers we are merging. </summary>
-        public MultiDocsEnum.EnumWithSlice[] GetSubs()
+        [WritableArray]
+        public MultiDocsEnum.EnumWithSlice[] Subs
         {
-            return subs;
+            get { return subs; }
         }
 
         public override int Freq
