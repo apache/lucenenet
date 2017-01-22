@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -178,11 +179,13 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Maps docIDs around deletions. </summary>
-        public DocMap[] DocMaps; // LUCENENET TODO: Make property ? arrays shouldn't be properties - perhaps leave a field?
+        [WritableArray]
+        public DocMap[] DocMaps { get; set; }
 
         /// <summary>
         /// New docID base per reader. </summary>
-        public int[] DocBase; // LUCENENET TODO: Make property ?
+        [WritableArray]
+        public int[] DocBase { get; set; }
 
         /// <summary>
         /// Holds the CheckAbort instance, which is invoked
@@ -202,7 +205,8 @@ namespace Lucene.Net.Index
         /// name/number mapping, so their stored fields and term
         /// vectors may be bulk merged.
         /// </summary>
-        public SegmentReader[] MatchingSegmentReaders; // LUCENENET TODO: Make property ?
+        [WritableArray]
+        public SegmentReader[] MatchingSegmentReaders { get; set; }
 
         /// <summary>
         /// How many <seealso cref="#matchingSegmentReaders"/> are set. </summary>
