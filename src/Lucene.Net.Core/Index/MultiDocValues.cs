@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -622,11 +623,21 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// docbase for each leaf: parallel with <seealso cref="#values"/> </summary>
-            public readonly int[] DocStarts; // LUCENENET TODO: Make getter method ? (properties should not return array)
+            [WritableArray]
+            public int[] DocStarts
+            {
+                get { return docStarts; }
+            }
+            private readonly int[] docStarts;
 
             /// <summary>
             /// leaf values </summary>
-            public readonly SortedSetDocValues[] Values; // LUCENENET TODO: Make getter method ?
+            [WritableArray]
+            public SortedSetDocValues[] Values
+            {
+                get { return values; }
+            }
+            private readonly SortedSetDocValues[] values;
 
             /// <summary>
             /// ordinal map mapping ords from <code>values</code> to global ord space </summary>
@@ -640,14 +651,14 @@ namespace Lucene.Net.Index
             {
                 Debug.Assert(values.Length == mapping.ordDeltas.Length);
                 Debug.Assert(docStarts.Length == values.Length + 1);
-                this.Values = values;
-                this.DocStarts = docStarts;
+                this.values = values;
+                this.docStarts = docStarts;
                 this.Mapping = mapping;
             }
 
             public override long NextOrd()
             {
-                long segmentOrd = Values[currentSubIndex].NextOrd();
+                long segmentOrd = values[currentSubIndex].NextOrd();
                 if (segmentOrd == NO_MORE_ORDS)
                 {
                     return segmentOrd;
@@ -660,15 +671,15 @@ namespace Lucene.Net.Index
 
             public override void SetDocument(int docID)
             {
-                currentSubIndex = ReaderUtil.SubIndex(docID, DocStarts);
-                Values[currentSubIndex].SetDocument(docID - DocStarts[currentSubIndex]);
+                currentSubIndex = ReaderUtil.SubIndex(docID, docStarts);
+                values[currentSubIndex].SetDocument(docID - docStarts[currentSubIndex]);
             }
 
             public override void LookupOrd(long ord, BytesRef result)
             {
                 int subIndex = Mapping.GetFirstSegmentNumber(ord);
                 long segmentOrd = Mapping.GetFirstSegmentOrd(ord);
-                Values[subIndex].LookupOrd(segmentOrd, result);
+                values[subIndex].LookupOrd(segmentOrd, result);
             }
 
             public override long ValueCount
