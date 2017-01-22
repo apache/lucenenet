@@ -30,14 +30,17 @@ namespace Lucene.Net.Codecs.Lucene3x
     {
         /// <summary>
         /// The number of documents which contain the term. </summary>
-        public int DocFreq = 0;
+        public int DocFreq { get; set; }
 
-        public long FreqPointer = 0;
-        public long ProxPointer = 0;
-        public int SkipOffset;
+        public long FreqPointer { get; set; }
+        public long ProxPointer { get; set; }
+        public int SkipOffset { get; set; }
 
         public TermInfo()
         {
+            DocFreq = 0;
+            FreqPointer = 0;
+            ProxPointer = 0;
         }
 
         public TermInfo(int df, long fp, long pp)
