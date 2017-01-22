@@ -144,9 +144,10 @@ namespace Lucene.Net.Search.Spans
             get { return matchEnd; }
         }
 
-        public virtual Spans[] GetSubSpans()
+        [WritableArray]
+        public virtual Spans[] SubSpans
         {
-            return subSpans;
+            get { return subSpans; }
         }
 
         // TODO: Remove warning after API has been finalized

@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 
@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Spans
         private bool more = true; // true iff not done
         private bool firstTime = true; // true before first next()
 
-        private class CellQueue : PriorityQueue<SpansCell>
+        private class CellQueue : Util.PriorityQueue<SpansCell>
         {
             private readonly NearSpansUnordered outerInstance;
 
@@ -179,9 +179,10 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public virtual Spans[] GetSubSpans()
+        [WritableArray]
+        public virtual Spans[] SubSpans
         {
-            return subSpans;
+            get { return subSpans; }
         }
 
         public override bool Next()

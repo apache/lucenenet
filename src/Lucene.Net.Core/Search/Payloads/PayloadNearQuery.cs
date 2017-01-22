@@ -231,7 +231,7 @@ namespace Lucene.Net.Search.Payloads
                         {
                             ProcessPayloads(span.GetPayload(), subSpans[i].Start, subSpans[i].End);
                         }
-                        GetPayloads(span.GetSubSpans());
+                        GetPayloads(span.SubSpans);
                     }
                     else
                     {
@@ -242,7 +242,7 @@ namespace Lucene.Net.Search.Payloads
                             {
                                 ProcessPayloads(unordered.GetPayload(), subSpans[i].Start, subSpans[i].End);
                             }
-                            GetPayloads(unordered.GetSubSpans());
+                            GetPayloads(unordered.SubSpans);
                         }
                     }
                 }
