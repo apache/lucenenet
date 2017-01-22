@@ -82,7 +82,8 @@ namespace Lucene.Net.Util
             }
             //}
 
-            Assert.IsFalse(names.Any(), names.Count() + " public fields detected. Consider using public properties instead.");
+            Assert.IsFalse(names.Any(), names.Count() + " public fields detected. Consider using public properties instead." +
+                "Public properties that return arrays should be decorated with the WritableArray attribute.");
         }
 
         //[Test, LuceneNetSpecific]
@@ -134,7 +135,10 @@ namespace Lucene.Net.Util
             //}
 
             Assert.IsFalse(names.Any(), names.Count() + " properties that return Array detected. " +
-                "Properties should not return Array. Change to a method (prefixed with Get).");
+                "Properties should generally not return Array. Change to a method (prefixed with Get) " + 
+                "or if returning an array that can be written to was intended, decorate with the WritableArray attribute. " +
+                "Note that returning an array field from either a property or method means the array can be written to by " + 
+                "the consumer if the array is not cloned.");
         }
 
         //[Test, LuceneNetSpecific]
@@ -240,6 +244,11 @@ namespace Lucene.Net.Util
 
             foreach (var c in classes)
             {
+                if (c.Name.StartsWith("<")) // Ignore classes produced by anonymous methods 
+                {
+                    continue;
+                }
+
                 if (!string.IsNullOrEmpty(c.Namespace) && c.Namespace.StartsWith("Lucene.Net.Support"))
                 {
                     continue;
