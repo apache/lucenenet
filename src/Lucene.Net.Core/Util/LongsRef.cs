@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Text;
@@ -36,7 +37,20 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// The contents of the LongsRef. Should never be {@code null}. </summary>
-        public long[] Longs; // LUCENENET TODO: Make property ?
+        [WritableArray]
+        public long[] Longs
+        {
+            get { return longs; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+                longs = value;
+            }
+        }
+        private long[] longs;
 
         /// <summary>
         /// Offset of first valid long. </summary>
@@ -50,7 +64,7 @@ namespace Lucene.Net.Util
         /// Create a LongsRef with <seealso cref="#EMPTY_LONGS"/> </summary>
         public LongsRef()
         {
-            Longs = EMPTY_LONGS;
+            longs = EMPTY_LONGS;
         }
 
         /// <summary>
@@ -59,7 +73,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public LongsRef(int capacity)
         {
-            Longs = new long[capacity];
+            longs = new long[capacity];
         }
 
         /// <summary>
@@ -68,7 +82,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public LongsRef(long[] longs, int offset, int length)
         {
-            this.Longs = longs;
+            this.longs = longs;
             this.Offset = offset;
             this.Length = length;
             Debug.Assert(IsValid());
@@ -82,7 +96,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= #deepCopyOf </seealso>
         public object Clone()
         {
-            return new LongsRef(Longs, Offset, Length);
+            return new LongsRef(longs, Offset, Length);
         }
 
         public override int GetHashCode()
@@ -92,7 +106,7 @@ namespace Lucene.Net.Util
             long end = Offset + Length;
             for (int i = Offset; i < end; i++)
             {
-                result = prime * result + (int)(Longs[i] ^ ((long)((ulong)Longs[i] >> 32)));
+                result = prime * result + (int)(longs[i] ^ ((long)((ulong)longs[i] >> 32)));
             }
             return result;
         }
@@ -115,11 +129,11 @@ namespace Lucene.Net.Util
             if (Length == other.Length)
             {
                 int otherUpto = other.Offset;
-                long[] otherInts = other.Longs;
+                long[] otherInts = other.longs;
                 long end = Offset + Length;
                 for (int upto = Offset; upto < end; upto++, otherUpto++)
                 {
-                    if (Longs[upto] != otherInts[otherUpto])
+                    if (longs[upto] != otherInts[otherUpto])
                     {
                         return false;
                     }
@@ -141,9 +155,9 @@ namespace Lucene.Net.Util
                 return 0;
             }
 
-            long[] aInts = this.Longs;
+            long[] aInts = this.longs;
             int aUpto = this.Offset;
-            long[] bInts = other.Longs;
+            long[] bInts = other.longs;
             int bUpto = other.Offset;
 
             long aStop = aUpto + Math.Min(this.Length, other.Length);
@@ -168,12 +182,12 @@ namespace Lucene.Net.Util
 
         public void CopyLongs(LongsRef other)
         {
-            if (Longs.Length - Offset < other.Length)
+            if (longs.Length - Offset < other.Length)
             {
-                Longs = new long[other.Length];
+                longs = new long[other.Length];
                 Offset = 0;
             }
-            Array.Copy(other.Longs, other.Offset, Longs, Offset, other.Length);
+            Array.Copy(other.longs, other.Offset, longs, Offset, other.Length);
             Length = other.Length;
         }
 
@@ -186,9 +200,9 @@ namespace Lucene.Net.Util
         public void Grow(int newLength)
         {
             Debug.Assert(Offset == 0);
-            if (Longs.Length < newLength)
+            if (longs.Length < newLength)
             {
-                Longs = ArrayUtil.Grow(Longs, newLength);
+                longs = ArrayUtil.Grow(longs, newLength);
             }
         }
 
@@ -203,7 +217,7 @@ namespace Lucene.Net.Util
                 {
                     sb.Append(' ');
                 }
-                sb.Append(Longs[i].ToString("x"));
+                sb.Append(longs[i].ToString("x"));
             }
             sb.Append(']');
             return sb.ToString();
@@ -229,7 +243,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public bool IsValid()
         {
-            if (Longs == null)
+            if (longs == null)
             {
                 throw new InvalidOperationException("longs is null");
             }
@@ -237,25 +251,25 @@ namespace Lucene.Net.Util
             {
                 throw new InvalidOperationException("length is negative: " + Length);
             }
-            if (Length > Longs.Length)
+            if (Length > longs.Length)
             {
-                throw new InvalidOperationException("length is out of bounds: " + Length + ",longs.length=" + Longs.Length);
+                throw new InvalidOperationException("length is out of bounds: " + Length + ",longs.length=" + longs.Length);
             }
             if (Offset < 0)
             {
                 throw new InvalidOperationException("offset is negative: " + Offset);
             }
-            if (Offset > Longs.Length)
+            if (Offset > longs.Length)
             {
-                throw new InvalidOperationException("offset out of bounds: " + Offset + ",longs.length=" + Longs.Length);
+                throw new InvalidOperationException("offset out of bounds: " + Offset + ",longs.length=" + longs.Length);
             }
             if (Offset + Length < 0)
             {
                 throw new InvalidOperationException("offset+length is negative: offset=" + Offset + ",length=" + Length);
             }
-            if (Offset + Length > Longs.Length)
+            if (Offset + Length > longs.Length)
             {
-                throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",longs.length=" + Longs.Length);
+                throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",longs.length=" + longs.Length);
             }
             return true;
         }
