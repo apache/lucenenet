@@ -313,23 +313,26 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Expert. The low bits. </summary>
-        public virtual long[] GetLowerBits()
+        [WritableArray]
+        public virtual long[] LowerBits
         {
-            return lowerLongs;
+            get { return lowerLongs; }
         }
 
         /// <summary>
         /// Expert. The high bits. </summary>
-        public virtual long[] GetUpperBits()
+        [WritableArray]
+        public virtual long[] UpperBits
         {
-            return upperLongs;
+            get { return upperLongs; }
         }
 
         /// <summary>
         /// Expert. The index bits. </summary>
-        public virtual long[] GetIndexBits()
+        [WritableArray]
+        public virtual long[] IndexBits
         {
-            return upperZeroBitPositionIndex;
+            get { return upperZeroBitPositionIndex; }
         }
 
         public override string ToString()

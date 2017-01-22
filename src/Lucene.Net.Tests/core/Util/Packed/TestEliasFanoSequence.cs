@@ -175,8 +175,8 @@ namespace Lucene.Net.Util.Packed
         private static void TstEFS(long[] values, long[] expHighLongs, long[] expLowLongs)
         {
             EliasFanoEncoder efEncoder = MakeEncoder(values, EliasFanoEncoder.DEFAULT_INDEX_INTERVAL);
-            TstEqual("upperBits", expHighLongs, efEncoder.GetUpperBits());
-            TstEqual("lowerBits", expLowLongs, efEncoder.GetLowerBits());
+            TstEqual("upperBits", expHighLongs, efEncoder.UpperBits);
+            TstEqual("lowerBits", expLowLongs, efEncoder.LowerBits);
             TstDecodeAll(efEncoder, values);
         }
 
@@ -199,7 +199,7 @@ namespace Lucene.Net.Util.Packed
         private EliasFanoEncoder TstEFVI(long[] values, long indexInterval, long[] expIndexBits)
         {
             EliasFanoEncoder efEncVI = MakeEncoder(values, indexInterval);
-            TstEqual("upperZeroBitPositionIndex", expIndexBits, efEncVI.GetIndexBits());
+            TstEqual("upperZeroBitPositionIndex", expIndexBits, efEncVI.IndexBits);
             return efEncVI;
         }
 
