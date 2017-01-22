@@ -505,7 +505,7 @@ namespace Lucene.Net.Util
 
                             if (MethodBodyReturnValueOnly.IsMatch(il))
                             {
-                                result.Add(string.Concat(c.FullName, ".", method.Name, " ---- ", il));
+                                result.Add(string.Concat(c.FullName, ".", method.Name));
                             }
                         }
                     }
