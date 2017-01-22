@@ -49,7 +49,13 @@ namespace Lucene.Net.Search
         /// FieldComparer used to sort this field. </summary>
         /// <seealso cref= Sort </seealso>
         /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
-        public object[] Fields; // LUCENENET TODO: work out what to do about public array fields
+        [WritableArray]
+        public object[] Fields
+        {
+            get { return fields; }
+            set { fields = value; }
+        }
+        private object[] fields;
 
         /// <summary>
         /// Expert: Creates one of these objects with empty sort information. </summary>
@@ -63,7 +69,7 @@ namespace Lucene.Net.Search
         public FieldDoc(int doc, float score, object[] fields)
             : base(doc, score)
         {
-            this.Fields = fields;
+            this.fields = fields;
         }
 
         /// <summary>
@@ -71,7 +77,7 @@ namespace Lucene.Net.Search
         public FieldDoc(int doc, float score, object[] fields, int shardIndex)
             : base(doc, score, shardIndex)
         {
-            this.Fields = fields;
+            this.fields = fields;
         }
 
         // A convenience method for debugging.
@@ -81,7 +87,7 @@ namespace Lucene.Net.Search
             // fields information
             StringBuilder sb = new StringBuilder(base.ToString());
             sb.Append(" fields=");
-            sb.Append(Arrays.ToString(Fields));
+            sb.Append(Arrays.ToString(fields));
             return sb.ToString();
         }
     }
