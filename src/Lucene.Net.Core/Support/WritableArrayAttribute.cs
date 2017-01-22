@@ -11,7 +11,7 @@ namespace Lucene.Net.Support
     /// cases we are making an exception to this rule and marking them with
     /// [WritableArray] to signify that this is intentional.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = false)]
     public class WritableArrayAttribute : Attribute
     {
     }
