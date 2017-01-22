@@ -655,7 +655,13 @@ namespace Lucene.Net.Util
             /// <summary>
             /// All of set entries. Always of power of two length.
             /// </summary>
-            public object[] Keys; // LUCENENET TODO: make property ?
+            [WritableArray]
+            public object[] Keys
+            {
+                get { return keys; }
+                set { keys = value; }
+            }
+            private object[] keys;
 
             /// <summary>
             /// Cached number of assigned slots.
@@ -716,10 +722,10 @@ namespace Lucene.Net.Util
                     ExpandAndRehash();
                 }
 
-                int mask = Keys.Length - 1;
+                int mask = keys.Length - 1;
                 int slot = Rehash(e) & mask;
                 object existing;
-                while ((existing = Keys[slot]) != null)
+                while ((existing = keys[slot]) != null)
                 {
                     if (object.ReferenceEquals(e, existing))
                     {
@@ -728,7 +734,7 @@ namespace Lucene.Net.Util
                     slot = (slot + 1) & mask;
                 }
                 Assigned++;
-                Keys[slot] = e;
+                keys[slot] = e;
                 return true;
             }
 
@@ -737,10 +743,10 @@ namespace Lucene.Net.Util
             /// </summary>
             public bool Contains(KType e)
             {
-                int mask = Keys.Length - 1;
+                int mask = keys.Length - 1;
                 int slot = Rehash(e) & mask;
                 object existing;
-                while ((existing = Keys[slot]) != null)
+                while ((existing = keys[slot]) != null)
                 {
                     if (object.ReferenceEquals(e, existing))
                     {
@@ -776,26 +782,26 @@ namespace Lucene.Net.Util
             /// </summary>
             private void ExpandAndRehash()
             {
-                object[] oldKeys = this.Keys;
+                object[] oldKeys = this.keys;
 
                 Debug.Assert(Assigned >= resizeThreshold);
-                AllocateBuffers(NextCapacity(Keys.Length));
+                AllocateBuffers(NextCapacity(keys.Length));
 
                 /*
                  * Rehash all assigned slots from the old hash table.
                  */
-                int mask = Keys.Length - 1;
+                int mask = keys.Length - 1;
                 for (int i = 0; i < oldKeys.Length; i++)
                 {
                     object key = oldKeys[i];
                     if (key != null)
                     {
                         int slot = Rehash(key) & mask;
-                        while (Keys[slot] != null)
+                        while (keys[slot] != null)
                         {
                             slot = (slot + 1) & mask;
                         }
-                        Keys[slot] = key;
+                        keys[slot] = key;
                     }
                 }
                 Array.Clear(oldKeys, 0, oldKeys.Length);
@@ -808,7 +814,7 @@ namespace Lucene.Net.Util
             ///          New capacity (must be a power of two). </param>
             private void AllocateBuffers(int capacity)
             {
-                this.Keys = new object[capacity];
+                this.keys = new object[capacity];
                 this.resizeThreshold = (int)(capacity * DEFAULT_LOAD_FACTOR);
             }
 
@@ -850,7 +856,7 @@ namespace Lucene.Net.Util
             public void Clear()
             {
                 Assigned = 0;
-                Array.Clear(Keys, 0, Keys.Length);
+                Array.Clear(keys, 0, keys.Length);
             }
 
             public int Count // LUCENENET NOTE: This was size() in Lucene.
@@ -917,12 +923,12 @@ namespace Lucene.Net.Util
                 private object FetchNext()
                 {
                     pos++;
-                    while (pos < outerInstance.Keys.Length && outerInstance.Keys[pos] == null)
+                    while (pos < outerInstance.keys.Length && outerInstance.keys[pos] == null)
                     {
                         pos++;
                     }
 
-                    return (pos >= outerInstance.Keys.Length ? null : outerInstance.Keys[pos]);
+                    return (pos >= outerInstance.keys.Length ? null : outerInstance.keys[pos]);
                 }
 
                 public void Reset()
