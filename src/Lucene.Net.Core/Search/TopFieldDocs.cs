@@ -1,3 +1,5 @@
+using Lucene.Net.Support;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -25,7 +27,8 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// The fields which were used to sort results by. </summary>
-        public SortField[] Fields; // LUCENENET TODO: work out what to do about public array fields
+        [WritableArray]
+        public SortField[] Fields { get; set; }
 
         /// <summary>
         /// Creates one of these objects. </summary>
