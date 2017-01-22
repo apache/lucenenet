@@ -466,7 +466,7 @@ namespace Lucene.Net.Util
                     {
                         int off = bytesStart[e0];
                         int start = off & ByteBlockPool.BYTE_BLOCK_MASK;
-                        var bytes = pool.buffers[off >> ByteBlockPool.BYTE_BLOCK_SHIFT];
+                        var bytes = pool.Buffers[off >> ByteBlockPool.BYTE_BLOCK_SHIFT];
                         int len;
                         int pos;
                         if ((bytes[start] & 0x80) == 0)

@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
             level = 0;
             bufferUpto = startIndex / ByteBlockPool.BYTE_BLOCK_SIZE;
             BufferOffset = bufferUpto * ByteBlockPool.BYTE_BLOCK_SIZE;
-            buffer = pool.buffers[bufferUpto];
+            buffer = pool.Buffers[bufferUpto];
             upto = startIndex & ByteBlockPool.BYTE_BLOCK_MASK;
 
             int firstSize = ByteBlockPool.LEVEL_SIZE_ARRAY[0];
@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
             bufferUpto = nextIndex / ByteBlockPool.BYTE_BLOCK_SIZE;
             BufferOffset = bufferUpto * ByteBlockPool.BYTE_BLOCK_SIZE;
 
-            buffer = pool.buffers[bufferUpto];
+            buffer = pool.Buffers[bufferUpto];
             upto = nextIndex & ByteBlockPool.BYTE_BLOCK_MASK;
 
             if (nextIndex + newSize >= EndIndex)

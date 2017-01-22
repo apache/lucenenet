@@ -133,7 +133,13 @@ namespace Lucene.Net.Util
         /// array of buffers currently used in the pool. Buffers are allocated if
         /// needed don't modify this outside of this class.
         /// </summary>
-        public byte[][] buffers = new byte[10][]; // LUCENENET TODO: make property ? public array
+        [WritableArray]
+        public byte[][] Buffers
+        {
+            get { return buffers; }
+            set { buffers = value; }
+        }
+        private byte[][] buffers = new byte[10][];
 
         /// <summary>
         /// index into the buffers array pointing to the current buffer used as the head </summary>
@@ -146,7 +152,13 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Current head buffer
         /// </summary>
-        public byte[] Buffer; // LUCENENET TODO: make property ? public array
+        [WritableArray]
+        public byte[] Buffer
+        {
+            get { return buffer; }
+            set { buffer = value; }
+        }
+        private byte[] buffer;
 
         /// <summary>
         /// Current head offset </summary>
@@ -215,14 +227,14 @@ namespace Lucene.Net.Util
                     bufferUpto = 0;
                     ByteUpto = 0;
                     ByteOffset = 0;
-                    Buffer = buffers[0];
+                    buffer = buffers[0];
                 }
                 else
                 {
                     bufferUpto = -1;
                     ByteUpto = BYTE_BLOCK_SIZE;
                     ByteOffset = -BYTE_BLOCK_SIZE;
-                    Buffer = null;
+                    buffer = null;
                 }
             }
         }
@@ -241,7 +253,7 @@ namespace Lucene.Net.Util
                 Array.Copy(buffers, 0, newBuffers, 0, buffers.Length);
                 buffers = newBuffers;
             }
-            Buffer = buffers[1 + bufferUpto] = allocator.GetByteBlock();
+            buffer = buffers[1 + bufferUpto] = allocator.GetByteBlock();
             bufferUpto++;
 
             ByteUpto = 0;
@@ -259,7 +271,7 @@ namespace Lucene.Net.Util
             }
             int upto = ByteUpto;
             ByteUpto += size;
-            Buffer[ByteUpto - 1] = 16;
+            buffer[ByteUpto - 1] = 16;
             return upto;
         }
 
@@ -307,9 +319,9 @@ namespace Lucene.Net.Util
 
             // Copy forward the past 3 bytes (which we are about
             // to overwrite with the forwarding address):
-            Buffer[newUpto] = slice[upto - 3];
-            Buffer[newUpto + 1] = slice[upto - 2];
-            Buffer[newUpto + 2] = slice[upto - 1];
+            buffer[newUpto] = slice[upto - 3];
+            buffer[newUpto + 1] = slice[upto - 2];
+            buffer[newUpto + 2] = slice[upto - 1];
 
             // Write forwarding address at end of last slice:
             slice[upto - 3] = (byte)Number.URShift(offset, 24);
@@ -318,7 +330,7 @@ namespace Lucene.Net.Util
             slice[upto] = (byte)offset;
 
             // Write new level:
-            Buffer[ByteUpto - 1] = (byte)(16 | newLevel);
+            buffer[ByteUpto - 1] = (byte)(16 | newLevel);
 
             return newUpto + 3;
         }
@@ -361,7 +373,7 @@ namespace Lucene.Net.Util
             {
                 if (overflow <= 0)
                 {
-                    Array.Copy(bytes.Bytes, offset, Buffer, ByteUpto, length);
+                    Array.Copy(bytes.Bytes, offset, buffer, ByteUpto, length);
                     ByteUpto += length;
                     break;
                 }
@@ -370,7 +382,7 @@ namespace Lucene.Net.Util
                     int bytesToCopy = length - overflow;
                     if (bytesToCopy > 0)
                     {
-                        Array.Copy(bytes.Bytes, offset, Buffer, ByteUpto, bytesToCopy);
+                        Array.Copy(bytes.Bytes, offset, buffer, ByteUpto, bytesToCopy);
                         offset += bytesToCopy;
                         length -= bytesToCopy;
                     }
