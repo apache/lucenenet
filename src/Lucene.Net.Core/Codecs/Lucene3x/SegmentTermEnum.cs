@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private int format;
         private bool isIndex = false;
         internal long indexPointer = 0;
-        public int indexInterval;
+        internal int indexInterval; // LUCENENET NOTE: Changed from public field to internal (class is internal anyway)
         internal int skipInterval;
         internal int newSuffixStart;
         internal int maxSkipLevels;
