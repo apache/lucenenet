@@ -44,7 +44,20 @@ namespace Lucene.Net.Util
         /// <summary>
         /// The contents of the BytesRef. Should never be {@code null}.
         /// </summary>
-        public byte[] Bytes { get; set; }
+        [WritableArray]
+        public byte[] Bytes
+        {
+            get { return bytes; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("bytes may never be set to null");
+                }
+                bytes = value;
+            }
+        }
+        private byte[] bytes;
 
         /// <summary>
         /// Offset of first valid byte.
@@ -69,7 +82,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public BytesRef(byte[] bytes, int offset, int length)
         {
-            this.Bytes = bytes;
+            this.bytes = bytes;
             this.Offset = offset;
             this.Length = length;
             Debug.Assert(IsValid());
@@ -90,7 +103,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public BytesRef(int capacity)
         {
-            this.Bytes = new byte[capacity];
+            this.bytes = new byte[capacity];
         }
 
         /// <summary>
@@ -151,11 +164,11 @@ namespace Lucene.Net.Util
             if (Length == other.Length)
             {
                 var otherUpto = other.Offset;
-                var otherBytes = other.Bytes;
+                var otherBytes = other.bytes;
                 var end = Offset + Length;
                 for (int upto = Offset; upto < end; upto++, otherUpto++)
                 {
-                    if (Bytes[upto] != otherBytes[otherUpto])
+                    if (bytes[upto] != otherBytes[otherUpto])
                     {
                         return false;
                     }
@@ -176,7 +189,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= #deepCopyOf </seealso>
         public object Clone()
         {
-            return new BytesRef(Bytes, Offset, Length);
+            return new BytesRef(bytes, Offset, Length);
         }
 
         /// <summary>
@@ -211,7 +224,7 @@ namespace Lucene.Net.Util
         public string Utf8ToString()
         {
             CharsRef @ref = new CharsRef(Length);
-            UnicodeUtil.UTF8toUTF16(Bytes, Offset, Length, @ref);
+            UnicodeUtil.UTF8toUTF16(bytes, Offset, Length, @ref);
             return @ref.ToString();
         }
 
@@ -228,7 +241,7 @@ namespace Lucene.Net.Util
                 {
                     sb.Append(' ');
                 }
-                sb.Append((Bytes[i] & 0xff).ToString("x"));
+                sb.Append((bytes[i] & 0xff).ToString("x"));
             }
             sb.Append(']');
             return sb.ToString();
@@ -244,10 +257,10 @@ namespace Lucene.Net.Util
         {
             if (Bytes.Length - Offset < other.Length)
             {
-                Bytes = new byte[other.Length];
+                bytes = new byte[other.Length];
                 Offset = 0;
             }
-            Array.Copy(other.Bytes, other.Offset, Bytes, Offset, other.Length);
+            Array.Copy(other.bytes, other.Offset, bytes, Offset, other.Length);
             Length = other.Length;
         }
 
@@ -260,14 +273,14 @@ namespace Lucene.Net.Util
         public void Append(BytesRef other)
         {
             int newLen = Length + other.Length;
-            if (Bytes.Length - Offset < newLen)
+            if (bytes.Length - Offset < newLen)
             {
                 var newBytes = new byte[newLen];
-                Array.Copy(Bytes, Offset, newBytes, 0, Length);
+                Array.Copy(bytes, Offset, newBytes, 0, Length);
                 Offset = 0;
-                Bytes = newBytes;
+                bytes = newBytes;
             }
-            Array.Copy(other.Bytes, other.Offset, Bytes, Length + Offset, other.Length);
+            Array.Copy(other.bytes, other.Offset, bytes, Length + Offset, other.Length);
             Length = newLen;
         }
 
@@ -280,7 +293,7 @@ namespace Lucene.Net.Util
         public void Grow(int newLength)
         {
             Debug.Assert(Offset == 0); // NOTE: senseless if offset != 0
-            Bytes = ArrayUtil.Grow(Bytes, newLength);
+            bytes = ArrayUtil.Grow(bytes, newLength);
         }
 
         /// <summary>
