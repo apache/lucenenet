@@ -43,7 +43,13 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// A power-of-2 over-sized array holding the integers in the set along with empty values. </summary>
-        public int[] Keys; // LUCENENET TODO: make property ?
+        [WritableArray]
+        public int[] Keys
+        {
+            get { return keys; }
+            set { keys = value; }
+        }
+        private int[] keys;
 
         /// <summary>
         /// The number of integers in this set. </summary>
@@ -68,7 +74,7 @@ namespace Lucene.Net.Util
                 tsize <<= 1;
                 RehashCount = tsize - (tsize >> 2);
             }
-            Keys = new int[tsize];
+            keys = new int[tsize];
             if (emptyVal != 0)
             {
                 Clear();
@@ -77,7 +83,7 @@ namespace Lucene.Net.Util
 
         public virtual void Clear()
         {
-            Arrays.Fill(Keys, EmptyVal);
+            Arrays.Fill(keys, EmptyVal);
             Count = 0;
         }
 
@@ -104,8 +110,8 @@ namespace Lucene.Net.Util
         {
             Debug.Assert(key != EmptyVal);
             int h = Hash(key);
-            int s = h & (Keys.Length - 1);
-            if (Keys[s] == key || Keys[s] == EmptyVal)
+            int s = h & (keys.Length - 1);
+            if (keys[s] == key || keys[s] == EmptyVal)
             {
                 return s;
             }
@@ -113,8 +119,8 @@ namespace Lucene.Net.Util
             int increment = (h >> 7) | 1;
             do
             {
-                s = (s + increment) & (Keys.Length - 1);
-            } while (Keys[s] != key && Keys[s] != EmptyVal);
+                s = (s + increment) & (keys.Length - 1);
+            } while (keys[s] != key && keys[s] != EmptyVal);
             return s;
         }
 
@@ -124,12 +130,12 @@ namespace Lucene.Net.Util
         {
             Debug.Assert(key != EmptyVal);
             int h = Hash(key);
-            int s = h & (Keys.Length - 1);
-            if (Keys[s] == key)
+            int s = h & (keys.Length - 1);
+            if (keys[s] == key)
             {
                 return s;
             }
-            if (Keys[s] == EmptyVal)
+            if (keys[s] == EmptyVal)
             {
                 return -s - 1;
             }
@@ -137,12 +143,12 @@ namespace Lucene.Net.Util
             int increment = (h >> 7) | 1;
             for (; ; )
             {
-                s = (s + increment) & (Keys.Length - 1);
-                if (Keys[s] == key)
+                s = (s + increment) & (keys.Length - 1);
+                if (keys[s] == key)
                 {
                     return s;
                 }
-                if (Keys[s] == EmptyVal)
+                if (keys[s] == EmptyVal)
                 {
                     return -s - 1;
                 }
@@ -175,7 +181,7 @@ namespace Lucene.Net.Util
                 {
                     s = -s - 1;
                 }
-                Keys[s] = key;
+                keys[s] = key;
             }
             return s;
         }
@@ -184,12 +190,12 @@ namespace Lucene.Net.Util
         /// (internal) Rehashes by doubling {@code int[] key} and filling with the old values. </summary>
         public virtual void Rehash()
         {
-            int newSize = Keys.Length << 1;
-            int[] oldKeys = Keys;
-            Keys = new int[newSize];
+            int newSize = keys.Length << 1;
+            int[] oldKeys = keys;
+            keys = new int[newSize];
             if (EmptyVal != 0)
             {
-                Arrays.Fill(Keys, EmptyVal);
+                Arrays.Fill(keys, EmptyVal);
             }
 
             foreach (int key in oldKeys)
@@ -199,7 +205,7 @@ namespace Lucene.Net.Util
                     continue;
                 }
                 int newSlot = GetSlot(key);
-                Keys[newSlot] = key;
+                keys[newSlot] = key;
             }
             RehashCount = newSize - (newSize >> 2);
         }
