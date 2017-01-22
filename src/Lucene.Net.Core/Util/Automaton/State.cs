@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -43,7 +44,13 @@ namespace Lucene.Net.Util.Automaton
     public class State : IComparable<State>
     {
         internal bool accept;
-        public Transition[] TransitionsArray; // LUCENENET TODO: make property ?
+        [WritableArray]
+        public Transition[] TransitionsArray
+        {
+            get { return transitionsArray; }
+            // LUCENENET NOTE: Setter removed because it is apparently not in use outside of this class
+        }
+        private Transition[] transitionsArray;
         internal int numTransitions; // LUCENENET NOTE: Made internal because we already have a public property for access
 
         internal int number;
@@ -65,7 +72,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         internal void ResetTransitions()
         {
-            TransitionsArray = new Transition[0];
+            transitionsArray = new Transition[0];
             numTransitions = 0;
         }
 
@@ -105,7 +112,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     if (i < upTo)
                     {
-                        current = outerInstance.outerInstance.TransitionsArray[i++];
+                        current = outerInstance.outerInstance.transitionsArray[i++];
                         return true;
                     }
                     return false;
@@ -156,7 +163,7 @@ namespace Lucene.Net.Util.Automaton
         public virtual void SetTransitions(Transition[] transitions)
         {
             this.numTransitions = transitions.Length;
-            this.TransitionsArray = transitions;
+            this.transitionsArray = transitions;
         }
 
         /// <summary>
@@ -165,13 +172,13 @@ namespace Lucene.Net.Util.Automaton
         /// <param name="t"> transition </param>
         public virtual void AddTransition(Transition t)
         {
-            if (numTransitions == TransitionsArray.Length)
+            if (numTransitions == transitionsArray.Length)
             {
                 Transition[] newArray = new Transition[ArrayUtil.Oversize(1 + numTransitions, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                Array.Copy(TransitionsArray, 0, newArray, 0, numTransitions);
-                TransitionsArray = newArray;
+                Array.Copy(transitionsArray, 0, newArray, 0, numTransitions);
+                transitionsArray = newArray;
             }
-            TransitionsArray[numTransitions++] = t;
+            transitionsArray[numTransitions++] = t;
         }
 
         /// <summary>
@@ -201,7 +208,7 @@ namespace Lucene.Net.Util.Automaton
             Debug.Assert(c >= 0);
             for (int i = 0; i < numTransitions; i++)
             {
-                Transition t = TransitionsArray[i];
+                Transition t = transitionsArray[i];
                 if (t.min <= c && c <= t.max)
                 {
                     return t.to;
@@ -220,7 +227,7 @@ namespace Lucene.Net.Util.Automaton
         {
             for (int i = 0; i < numTransitions; i++)
             {
-                Transition t = TransitionsArray[i];
+                Transition t = transitionsArray[i];
                 if (t.min <= c && c <= t.max)
                 {
                     dest.Add(t.to);
@@ -250,11 +257,11 @@ namespace Lucene.Net.Util.Automaton
         /// Downsizes transitionArray to numTransitions </summary>
         public virtual void TrimTransitionsArray()
         {
-            if (numTransitions < TransitionsArray.Length)
+            if (numTransitions < transitionsArray.Length)
             {
                 Transition[] newArray = new Transition[numTransitions];
-                Array.Copy(TransitionsArray, 0, newArray, 0, numTransitions);
-                TransitionsArray = newArray;
+                Array.Copy(transitionsArray, 0, newArray, 0, numTransitions);
+                transitionsArray = newArray;
             }
         }
 
@@ -274,7 +281,7 @@ namespace Lucene.Net.Util.Automaton
             int upto = 0;
             for (int i = 0; i < numTransitions; i++)
             {
-                Transition t = TransitionsArray[i];
+                Transition t = transitionsArray[i];
                 if (p == t.to)
                 {
                     if (t.min <= max + 1)
@@ -288,7 +295,7 @@ namespace Lucene.Net.Util.Automaton
                     {
                         if (p != null)
                         {
-                            TransitionsArray[upto++] = new Transition(min, max, p);
+                            transitionsArray[upto++] = new Transition(min, max, p);
                         }
                         min = t.min;
                         max = t.max;
@@ -298,7 +305,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     if (p != null)
                     {
-                        TransitionsArray[upto++] = new Transition(min, max, p);
+                        transitionsArray[upto++] = new Transition(min, max, p);
                     }
                     p = t.to;
                     min = t.min;
@@ -308,7 +315,7 @@ namespace Lucene.Net.Util.Automaton
 
             if (p != null)
             {
-                TransitionsArray[upto++] = new Transition(min, max, p);
+                transitionsArray[upto++] = new Transition(min, max, p);
             }
             numTransitions = upto;
         }
@@ -327,7 +334,7 @@ namespace Lucene.Net.Util.Automaton
             // mergesort seems to perform better on already sorted arrays:
             if (numTransitions > 1)
             {
-                ArrayUtil.TimSort(TransitionsArray, 0, numTransitions, comparer);
+                ArrayUtil.TimSort(transitionsArray, 0, numTransitions, comparer);
             }
         }
 
