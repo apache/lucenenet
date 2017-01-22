@@ -1,4 +1,5 @@
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -402,9 +403,10 @@ namespace Lucene.Net.Util
             /// <summary>
             /// CacheEntry objects which suggest a problem
             /// </summary>
-            public FieldCache.CacheEntry[] GetCacheEntries()
+            [WritableArray] // LUCENENET NOTE: In Lucene, this method allows writing to the array, although it probably doesn't make sense to do this.
+            public FieldCache.CacheEntry[] CacheEntries
             {
-                return entries;
+                get { return entries; }
             }
 
             /// <summary>
@@ -425,7 +427,7 @@ namespace Lucene.Net.Util
 
                 buf.Append('\n');
 
-                FieldCache.CacheEntry[] ce = GetCacheEntries();
+                FieldCache.CacheEntry[] ce = CacheEntries;
                 for (int i = 0; i < ce.Length; i++)
                 {
                     buf.Append('\t').Append(ce[i].ToString()).Append('\n');

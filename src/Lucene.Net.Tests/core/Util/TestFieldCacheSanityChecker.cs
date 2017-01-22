@@ -157,7 +157,7 @@ namespace Lucene.Net.Util
 
             Assert.AreEqual(1, insanity.Length, "wrong number of cache errors");
             Assert.AreEqual(InsanityType.VALUEMISMATCH, insanity[0].Type, "wrong type of cache error");
-            Assert.AreEqual(2, insanity[0].GetCacheEntries().Length, "wrong number of entries in cache error");
+            Assert.AreEqual(2, insanity[0].CacheEntries.Length, "wrong number of entries in cache error");
 
             // we expect bad things, don't let tearDown complain about them
             cache.PurgeAllCaches();
@@ -181,7 +181,7 @@ namespace Lucene.Net.Util
 
             Assert.AreEqual(1, insanity.Length, "wrong number of cache errors");
             Assert.AreEqual(InsanityType.SUBREADER, insanity[0].Type, "wrong type of cache error");
-            Assert.AreEqual(3, insanity[0].GetCacheEntries().Length, "wrong number of entries in cache error");
+            Assert.AreEqual(3, insanity[0].CacheEntries.Length, "wrong number of entries in cache error");
 
             // we expect bad things, don't let tearDown complain about them
             cache.PurgeAllCaches();
