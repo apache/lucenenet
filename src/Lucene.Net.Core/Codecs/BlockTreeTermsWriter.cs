@@ -239,27 +239,27 @@ namespace Lucene.Net.Codecs
 
         private class FieldMetaData
         {
-            public readonly FieldInfo fieldInfo;
-            public readonly BytesRef rootCode;
-            public readonly long numTerms;
-            public readonly long indexStartFP;
-            public readonly long sumTotalTermFreq;
-            public readonly long sumDocFreq;
-            public readonly int docCount;
-            internal readonly int longsSize;
+            public FieldInfo FieldInfo { get; private set; }
+            public BytesRef RootCode { get; private set; }
+            public long NumTerms { get; private set; }
+            public long IndexStartFP { get; private set; }
+            public long SumTotalTermFreq { get; private set; }
+            public long SumDocFreq { get; private set; }
+            public int DocCount { get; private set; }
+            internal int LongsSize { get; private set; }
 
             public FieldMetaData(FieldInfo fieldInfo, BytesRef rootCode, long numTerms, long indexStartFP, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize)
             {
                 Debug.Assert(numTerms > 0);
-                this.fieldInfo = fieldInfo;
+                this.FieldInfo = fieldInfo;
                 Debug.Assert(rootCode != null, "field=" + fieldInfo.Name + " numTerms=" + numTerms);
-                this.rootCode = rootCode;
-                this.indexStartFP = indexStartFP;
-                this.numTerms = numTerms;
-                this.sumTotalTermFreq = sumTotalTermFreq;
-                this.sumDocFreq = sumDocFreq;
-                this.docCount = docCount;
-                this.longsSize = longsSize;
+                this.RootCode = rootCode;
+                this.IndexStartFP = indexStartFP;
+                this.NumTerms = numTerms;
+                this.SumTotalTermFreq = sumTotalTermFreq;
+                this.SumDocFreq = sumDocFreq;
+                this.DocCount = docCount;
+                this.LongsSize = longsSize;
             }
         }
 
@@ -1204,18 +1204,18 @@ namespace Lucene.Net.Codecs
                 foreach (FieldMetaData field in fields)
                 {
                     //System.out.println("  field " + field.fieldInfo.name + " " + field.numTerms + " terms");
-                    @out.WriteVInt(field.fieldInfo.Number);
-                    @out.WriteVLong(field.numTerms);
-                    @out.WriteVInt(field.rootCode.Length);
-                    @out.WriteBytes(field.rootCode.Bytes, field.rootCode.Offset, field.rootCode.Length);
-                    if (field.fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
+                    @out.WriteVInt(field.FieldInfo.Number);
+                    @out.WriteVLong(field.NumTerms);
+                    @out.WriteVInt(field.RootCode.Length);
+                    @out.WriteBytes(field.RootCode.Bytes, field.RootCode.Offset, field.RootCode.Length);
+                    if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
-                        @out.WriteVLong(field.sumTotalTermFreq);
+                        @out.WriteVLong(field.SumTotalTermFreq);
                     }
-                    @out.WriteVLong(field.sumDocFreq);
-                    @out.WriteVInt(field.docCount);
-                    @out.WriteVInt(field.longsSize);
-                    indexOut.WriteVLong(field.indexStartFP);
+                    @out.WriteVLong(field.SumDocFreq);
+                    @out.WriteVInt(field.DocCount);
+                    @out.WriteVInt(field.LongsSize);
+                    indexOut.WriteVLong(field.IndexStartFP);
                 }
                 WriteTrailer(@out, dirStart);
                 CodecUtil.WriteFooter(@out);
