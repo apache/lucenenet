@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Util
@@ -19,23 +20,30 @@ namespace Lucene.Net.Util
         /// must be camelCase (optionally may be prefixed with underscore, 
         /// but it is preferred not to use the underscore to match Lucene).
         /// </summary>
-        private static Regex PrivateFieldName = new Regex("^_?[a-z][a-zA-Z0-9_]*$|^[A-Z0-9_]+$");
+        private static Regex PrivateFieldName = new Regex("^_?[a-z][a-zA-Z0-9_]*$|^[A-Z0-9_]+$", RegexOptions.Compiled);
 
         /// <summary>
         /// Protected fields must either be upper case separated with underscores or
         /// must be prefixed with m_ (to avoid naming conflicts with properties).
         /// </summary>
-        private static Regex ProtectedFieldName = new Regex("^m_[a-z][a-zA-Z0-9_]*$|^[A-Z0-9_]+$");
+        private static Regex ProtectedFieldName = new Regex("^m_[a-z][a-zA-Z0-9_]*$|^[A-Z0-9_]+$", RegexOptions.Compiled);
 
         /// <summary>
         /// Method parameters must be camelCase and not begin or end with underscore.
         /// </summary>
-        private static Regex MethodParameterName = new Regex("^[a-z](?:[a-zA-Z0-9_]*[a-zA-Z0-9])?$");
+        private static Regex MethodParameterName = new Regex("^[a-z](?:[a-zA-Z0-9_]*[a-zA-Z0-9])?$", RegexOptions.Compiled);
 
         /// <summary>
         /// Public members should not contain the word "Comparer". In .NET, these should be named "Comparer".
         /// </summary>
-        private static Regex ContainsComparer = new Regex("[Cc]omparator");
+        private static Regex ContainsComparer = new Regex("[Cc]omparator", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Matches IL code pattern for a method body with only a return statement for a local variable.
+        /// In this case, the array is writable by the consumer.
+        /// </summary>
+        private static Regex MethodBodyReturnValueOnly = new Regex("\\0\\u0002\\{(?:.|\\\\u\\d\\d\\d\\d|\\0|\\[a-z]){3}\\u0004\\n\\+\\0\\u0006\\*", RegexOptions.Compiled);
+
 
         //[Test, LuceneNetSpecific]
         public virtual void TestProtectedFieldNames(Type typeFromTargetAssembly)
@@ -138,7 +146,25 @@ namespace Lucene.Net.Util
                 "Properties should generally not return Array. Change to a method (prefixed with Get) " + 
                 "or if returning an array that can be written to was intended, decorate with the WritableArray attribute. " +
                 "Note that returning an array field from either a property or method means the array can be written to by " + 
-                "the consumer if the array is not cloned.");
+                "the consumer if the array is not cloned using arr.ToArray().");
+        }
+
+        //[Test, LuceneNetSpecific]
+        public virtual void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
+        {
+            var names = GetMethodsThatReturnWritableArray(typeFromTargetAssembly.Assembly);
+
+            //if (VERBOSE)
+            //{
+            foreach (var name in names)
+            {
+                Console.WriteLine(name);
+            }
+            //}
+
+            Assert.IsFalse(names.Any(), names.Count() + " methods that return a writable Array detected. " +
+                "An array should be cloned before returning using arr.ToArray() or if it is intended to be writable, " +
+                "decorate with the WritableArray attribute and consider making it a property for clarity.");
         }
 
         //[Test, LuceneNetSpecific]
@@ -428,6 +454,59 @@ namespace Lucene.Net.Util
                         else if (member.MemberType == MemberTypes.Event)
                         {
                             result.Add(string.Concat(t.FullName, ".", member.Name, " (event)"));
+                        }
+                    }
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        private static IEnumerable<string> GetMethodsThatReturnWritableArray(Assembly assembly)
+        {
+            var result = new List<string>();
+
+            var classes = assembly.GetTypes().Where(t => t.IsClass);
+
+            foreach (var c in classes)
+            {
+                if (c.Name.StartsWith("<")) // Ignore classes produced by anonymous methods 
+                {
+                    continue;
+                }
+
+                var methods = c.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+                foreach (var method in methods)
+                {
+                    // Skip attributes with WritableArrayAttribute defined. These are
+                    // properties that were intended to expose arrays, as per MSDN this
+                    // is not a .NET best practice. However, Lucene's design requires that
+                    // this be done.
+                    if (System.Attribute.IsDefined(method, typeof(WritableArrayAttribute)))
+                    {
+                        continue;
+                    }
+
+                    // Ignore property method definitions
+                    if (method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))
+                    {
+                        continue;
+                    }
+
+                    if (method != null && method.ReturnParameter != null 
+                        && method.ReturnParameter.ParameterType.IsArray 
+                        && method.DeclaringType.Equals(c.UnderlyingSystemType))
+                    {
+                        var methodBody = method.GetMethodBody();
+                        if (methodBody != null)
+                        {
+                            var il = Encoding.UTF8.GetString(methodBody.GetILAsByteArray());
+
+                            if (MethodBodyReturnValueOnly.IsMatch(il))
+                            {
+                                result.Add(string.Concat(c.FullName, ".", method.Name, " ---- ", il));
+                            }
                         }
                     }
                 }

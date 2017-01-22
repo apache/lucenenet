@@ -58,6 +58,13 @@ namespace Lucene.Net
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
+        public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
+        {
+            base.TestForMethodsThatReturnWritableArray(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
         public override void TestForPublicMembersContainingComparer(Type typeFromTargetAssembly)
         {
             base.TestForPublicMembersContainingComparer(typeFromTargetAssembly);
