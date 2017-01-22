@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 
@@ -20,8 +21,6 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    using Lucene.Net.Util;
-
     /// <summary>
     /// Represents hits returned by {@link
     /// IndexSearcher#search(Query,Filter,int)} and {@link
@@ -35,7 +34,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// The top hits for the query. </summary>
-        public ScoreDoc[] ScoreDocs; // LUCENENET TODO: Work out what to do about public array fields
+        [WritableArray]
+        public ScoreDoc[] ScoreDocs { get; set; }
 
         /// <summary>
         /// Stores the maximum score value encountered, needed for normalizing. </summary>
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
 
         // Specialized MergeSortQueue that just merges by
         // relevance score, descending:
-        private class ScoreMergeSortQueue : PriorityQueue<ShardRef>
+        private class ScoreMergeSortQueue : Util.PriorityQueue<ShardRef>
         {
             internal readonly ScoreDoc[][] shardHits;
 
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class MergeSortQueue : PriorityQueue<ShardRef>
+        private class MergeSortQueue : Util.PriorityQueue<ShardRef>
         {
             // These are really FieldDoc instances:
             internal readonly ScoreDoc[][] shardHits;
@@ -259,7 +259,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static TopDocs Merge(Sort sort, int start, int size, TopDocs[] shardHits)
         {
-            PriorityQueue<ShardRef> queue;
+            Util.PriorityQueue<ShardRef> queue;
             if (sort == null)
             {
                 queue = new ScoreMergeSortQueue(shardHits);
