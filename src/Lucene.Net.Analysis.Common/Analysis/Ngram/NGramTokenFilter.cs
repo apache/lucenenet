@@ -178,7 +178,7 @@ namespace Lucene.Net.Analysis.Ngram
                     }
                     else
                     {
-                        curTermBuffer = (char[])termAtt.GetBuffer().Clone();
+                        curTermBuffer = (char[])termAtt.Buffer.Clone();
                         curTermLength = termAtt.Length;
                         curCodePointCount = charUtils.CodePointCount(termAtt.ToString());
                         curGramSize = minGram;

@@ -171,7 +171,7 @@ namespace Lucene.Net.Analysis.Pattern
                 return false;
             }
 
-            char[] buffer = charTermAttr.GetBuffer();
+            char[] buffer = charTermAttr.Buffer;
             int length = charTermAttr.Length;
             spare.CopyChars(buffer, 0, length);
             state = CaptureState();

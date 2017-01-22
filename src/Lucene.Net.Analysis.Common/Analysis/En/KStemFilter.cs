@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.En
                 return false;
             }
 
-            char[] term = termAttribute.GetBuffer();
+            char[] term = termAttribute.Buffer;
             int len = termAttribute.Length;
             if ((!keywordAtt.IsKeyword) && stemmer.Stem(term, len))
             {

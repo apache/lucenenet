@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis.Core
         /// </summary>
         protected internal override bool Accept()
         {
-            return !stopWords.Contains(termAtt.GetBuffer(), 0, termAtt.Length);
+            return !stopWords.Contains(termAtt.Buffer, 0, termAtt.Length);
         }
     }
 }

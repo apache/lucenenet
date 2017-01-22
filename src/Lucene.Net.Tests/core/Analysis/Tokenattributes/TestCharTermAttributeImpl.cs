@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             for (int i = 0; i < 2000; i++)
             {
                 t.ResizeBuffer(i);
-                Assert.IsTrue(i <= t.GetBuffer().Length);
+                Assert.IsTrue(i <= t.Buffer.Length);
                 Assert.AreEqual("hello", t.ToString());
             }
         }
@@ -102,10 +102,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
             CharTermAttribute t = new CharTermAttribute();
             char[] content = "hello".ToCharArray();
             t.CopyBuffer(content, 0, 5);
-            char[] buf = t.GetBuffer();
+            char[] buf = t.Buffer;
             CharTermAttribute copy = TestToken.AssertCloneIsEqual(t);
             Assert.AreEqual(t.ToString(), copy.ToString());
-            Assert.AreNotSame(buf, copy.GetBuffer());
+            Assert.AreNotSame(buf, copy.Buffer);
         }
 
         [Test]
@@ -136,10 +136,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
             t = new CharTermAttribute();
             char[] content = "hello".ToCharArray();
             t.CopyBuffer(content, 0, 5);
-            char[] buf = t.GetBuffer();
+            char[] buf = t.Buffer;
             copy = TestToken.AssertCopyIsEqual(t);
             Assert.AreEqual(t.ToString(), copy.ToString());
-            Assert.AreNotSame(buf, copy.GetBuffer());
+            Assert.AreNotSame(buf, copy.Buffer);
         }
 
         [Test]

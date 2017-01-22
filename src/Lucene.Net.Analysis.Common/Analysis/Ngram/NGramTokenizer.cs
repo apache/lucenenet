@@ -207,7 +207,7 @@ namespace Lucene.Net.Analysis.Ngram
                     continue;
                 }
 
-                int length = charUtils.toChars(buffer, bufferStart, gramSize, termAtt.GetBuffer(), 0);
+                int length = charUtils.toChars(buffer, bufferStart, gramSize, termAtt.Buffer, 0);
                 termAtt.Length = length;
                 posIncAtt.PositionIncrement = 1;
                 posLenAtt.PositionLength = 1;

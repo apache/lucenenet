@@ -55,9 +55,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
             termLength = length;
         }
 
-        public char[] GetBuffer()
+        [WritableArray]
+        public char[] Buffer
         {
-            return termBuffer;
+            get { return termBuffer; }
         }
 
         public char[] ResizeBuffer(int newSize)
@@ -257,7 +258,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 return AppendNull();
             }
             int len = ta.Length;
-            Array.Copy(ta.GetBuffer(), 0, ResizeBuffer(termLength + len), termLength, len);
+            Array.Copy(ta.Buffer, 0, ResizeBuffer(termLength + len), termLength, len);
             termLength += len;
             return this;
         }

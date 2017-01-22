@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             else
             {
                 // we must count to be sure
-                int len = Character.CodePointCount(termAtt.GetBuffer(), 0, termAtt.Length);
+                int len = Character.CodePointCount(termAtt.Buffer, 0, termAtt.Length);
                 return (len >= min && len <= max);
             }
         }

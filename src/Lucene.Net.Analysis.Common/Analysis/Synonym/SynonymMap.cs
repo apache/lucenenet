@@ -372,7 +372,7 @@ namespace Lucene.Net.Analysis.Synonym
                             reuse.Chars[end++] = SynonymMap.WORD_SEPARATOR;
                             reuse.Length++;
                         }
-                        Array.Copy(termAtt.GetBuffer(), 0, reuse.Chars, end, length);
+                        Array.Copy(termAtt.Buffer, 0, reuse.Chars, end, length);
                         reuse.Length += length;
                     }
                     ts.End();

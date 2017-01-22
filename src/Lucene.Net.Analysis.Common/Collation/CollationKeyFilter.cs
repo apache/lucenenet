@@ -92,7 +92,7 @@ namespace Lucene.Net.Collation
 				this.termAtt.ResizeBuffer(encodedLength);
 				this.termAtt.Length = encodedLength;
 
-				IndexableBinaryStringTools.Encode(collationKey, 0, collationKey.Length, this.termAtt.GetBuffer(), 0, encodedLength);
+				IndexableBinaryStringTools.Encode(collationKey, 0, collationKey.Length, this.termAtt.Buffer, 0, encodedLength);
 				return true;
 			}
 			else

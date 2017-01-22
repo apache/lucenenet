@@ -695,7 +695,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 int skippedPositions = 0;
                 while (m_input.IncrementToken())
                 {
-                    if (termAtt.Length != 1 || !IsStopChar(termAtt.GetBuffer()[0], numStopChars))
+                    if (termAtt.Length != 1 || !IsStopChar(termAtt.Buffer[0], numStopChars))
                     {
                         int posInc = posIncrAtt.PositionIncrement + skippedPositions;
                         if (first)

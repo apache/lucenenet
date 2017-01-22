@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
                 if (Index < n)
                 {
                     ClearAttributes();
-                    TermAtt.GetBuffer()[0] = 'a';
+                    TermAtt.Buffer[0] = 'a';
                     TermAtt.Length = 1;
                     Index++;
                     return true;

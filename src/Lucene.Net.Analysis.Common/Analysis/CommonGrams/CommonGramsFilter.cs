@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         {
             get
             {
-                return commonWords != null && commonWords.Contains(termAttribute.GetBuffer(), 0, termAttribute.Length);
+                return commonWords != null && commonWords.Contains(termAttribute.Buffer, 0, termAttribute.Length);
             }
         }
 
@@ -161,7 +161,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         private void SaveTermBuffer()
         {
             buffer.Length = 0;
-            buffer.Append(termAttribute.GetBuffer(), 0, termAttribute.Length);
+            buffer.Append(termAttribute.Buffer, 0, termAttribute.Length);
             buffer.Append(SEPARATOR);
             lastStartOffset = offsetAttribute.StartOffset;
             lastWasCommon = Common;
@@ -172,13 +172,13 @@ namespace Lucene.Net.Analysis.CommonGrams
         /// </summary>
         private void GramToken()
         {
-            buffer.Append(termAttribute.GetBuffer(), 0, termAttribute.Length);
+            buffer.Append(termAttribute.Buffer, 0, termAttribute.Length);
             int endOffset = offsetAttribute.EndOffset;
 
             ClearAttributes();
 
             var length = buffer.Length;
-            var termText = termAttribute.GetBuffer();
+            var termText = termAttribute.Buffer;
             if (length > termText.Length)
             {
                 termText = termAttribute.ResizeBuffer(length);

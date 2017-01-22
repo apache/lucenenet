@@ -274,7 +274,7 @@ namespace Lucene.Net.Index.Memory
             {
                 if (m_input.IncrementToken())
                 {
-                    if (termAtt.Length > 0 && termAtt.GetBuffer()[0] == 't')
+                    if (termAtt.Length > 0 && termAtt.Buffer[0] == 't')
                     {
                         termAtt.SetLength(0);
                     }

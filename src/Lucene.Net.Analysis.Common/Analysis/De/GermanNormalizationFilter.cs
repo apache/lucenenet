@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.De
             if (m_input.IncrementToken())
             {
                 int state = N;
-                char[] buffer = termAtt.GetBuffer();
+                char[] buffer = termAtt.Buffer;
                 int length = termAtt.Length;
                 for (int i = 0; i < length; i++)
                 {

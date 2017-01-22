@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Tr
                 return false;
             }
 
-            char[] buffer = termAtt.GetBuffer();
+            char[] buffer = termAtt.Buffer;
             int length = termAtt.Length;
 
             for (int i = 0; i < length; i++)

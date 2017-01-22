@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.El
         {
             if (m_input.IncrementToken())
             {
-                char[] chArray = termAtt.GetBuffer();
+                char[] chArray = termAtt.Buffer;
                 int chLen = termAtt.Length;
                 for (int i = 0; i < chLen;)
                 {

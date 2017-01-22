@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Hi
             {
                 if (!keywordAtt.IsKeyword)
                 {
-                    termAtt.Length = stemmer.Stem(termAtt.GetBuffer(), termAtt.Length);
+                    termAtt.Length = stemmer.Stem(termAtt.Buffer, termAtt.Length);
                 }
                 return true;
             }

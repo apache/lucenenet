@@ -100,7 +100,7 @@ namespace Lucene.Net.Analysis.Snowball
             {
                 if (!keywordAttr.IsKeyword)
                 {
-                    char[] termBuffer = termAtt.GetBuffer();
+                    char[] termBuffer = termAtt.Buffer;
                     int length = termAtt.Length;
                     stemmer.SetCurrent(termBuffer, length);
                     stemmer.Stem();

@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Cn
 
             while (m_input.IncrementToken())
             {
-                char[] text = termAtt.GetBuffer();
+                char[] text = termAtt.Buffer;
                 int termLength = termAtt.Length;
 
                 // why not key off token type here assuming ChineseTokenizer comes first?

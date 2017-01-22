@@ -235,9 +235,9 @@ namespace Lucene.Net.Index
                     {
                         return false;
                     }
-                    if (char.IsDigit(termAtt.GetBuffer()[0]))
+                    if (char.IsDigit(termAtt.Buffer[0]))
                     {
-                        posIncrAtt.PositionIncrement = termAtt.GetBuffer()[0] - '0';
+                        posIncrAtt.PositionIncrement = termAtt.Buffer[0] - '0';
                     }
                     if (first)
                     {

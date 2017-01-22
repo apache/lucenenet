@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 return false;
             }
 
-            char[] termBuffer = termAtt.GetBuffer();
+            char[] termBuffer = termAtt.Buffer;
             int termBufferLength = termAtt.Length;
             char[] backup = null;
 

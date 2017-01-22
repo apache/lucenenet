@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis
             {
                 if (PeekToken())
                 {
-                    string term = new string(TermAtt.GetBuffer(), 0, TermAtt.Length);
+                    string term = new string(TermAtt.Buffer, 0, TermAtt.Length);
                     facts.Add(term + "-huh?");
                     if (".".Equals(term))
                     {

@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis
             Token t = new Token();
             char[] content = "hello".ToCharArray();
             t.CopyBuffer(content, 0, content.Length);
-            Assert.AreNotSame(t.GetBuffer(), content);
+            Assert.AreNotSame(t.Buffer, content);
             Assert.AreEqual(0, t.StartOffset);
             Assert.AreEqual(0, t.EndOffset);
             Assert.AreEqual("hello", t.ToString());
@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis
             for (int i = 0; i < 2000; i++)
             {
                 t.ResizeBuffer(i);
-                Assert.IsTrue(i <= t.GetBuffer().Length);
+                Assert.IsTrue(i <= t.Buffer.Length);
                 Assert.AreEqual("hello", t.ToString());
             }
         }
@@ -182,7 +182,7 @@ namespace Lucene.Net.Analysis
             t.CopyBuffer("hello3".ToCharArray(), 0, 6);
             Assert.AreEqual(t.ToString(), "hello3");
 
-            char[] buffer = t.GetBuffer();
+            char[] buffer = t.Buffer;
             buffer[1] = 'o';
             Assert.AreEqual(t.ToString(), "hollo3");
         }
@@ -193,10 +193,10 @@ namespace Lucene.Net.Analysis
             Token t = new Token(0, 5);
             char[] content = "hello".ToCharArray();
             t.CopyBuffer(content, 0, 5);
-            char[] buf = t.GetBuffer();
+            char[] buf = t.Buffer;
             Token copy = AssertCloneIsEqual(t);
             Assert.AreEqual(t.ToString(), copy.ToString());
-            Assert.AreNotSame(buf, copy.GetBuffer());
+            Assert.AreNotSame(buf, copy.Buffer);
 
             BytesRef pl = new BytesRef(new byte[] { 1, 2, 3, 4 });
             t.Payload = pl;
@@ -216,10 +216,10 @@ namespace Lucene.Net.Analysis
             t = new Token(0, 5);
             char[] content = "hello".ToCharArray();
             t.CopyBuffer(content, 0, 5);
-            char[] buf = t.GetBuffer();
+            char[] buf = t.Buffer;
             copy = AssertCopyIsEqual(t);
             Assert.AreEqual(t.ToString(), copy.ToString());
-            Assert.AreNotSame(buf, copy.GetBuffer());
+            Assert.AreNotSame(buf, copy.Buffer);
 
             BytesRef pl = new BytesRef(new byte[] { 1, 2, 3, 4 });
             t.Payload = pl;

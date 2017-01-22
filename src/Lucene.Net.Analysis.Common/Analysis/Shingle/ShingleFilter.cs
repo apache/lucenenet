@@ -359,7 +359,7 @@ namespace Lucene.Net.Analysis.Shingle
                         {
                             gramBuilder.Append(tokenSeparator);
                         }
-                        gramBuilder.Append(nextToken.termAtt.GetBuffer(), 0, nextToken.termAtt.Length);
+                        gramBuilder.Append(nextToken.termAtt.Buffer, 0, nextToken.termAtt.Length);
                         ++builtGramSize;
                     }
                     if (isAllFiller && nextToken.isFiller)

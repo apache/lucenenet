@@ -103,7 +103,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
             if (m_input.IncrementToken())
             {
-                char[] buffer = termAtt.GetBuffer();
+                char[] buffer = termAtt.Buffer;
                 int length = termAtt.Length;
 
                 // If no characters actually Require rewriting then we

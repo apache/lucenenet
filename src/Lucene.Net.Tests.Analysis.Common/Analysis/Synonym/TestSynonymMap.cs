@@ -321,7 +321,7 @@ namespace Lucene.Net.Analysis.Synonym
             bool inc = false;
             foreach (Token token in tokens)
             {
-                if (exp.Equals(new string(token.GetBuffer(), 0, token.Length)))
+                if (exp.Equals(new string(token.Buffer, 0, token.Length)))
                 {
                     inc = true;
                 }

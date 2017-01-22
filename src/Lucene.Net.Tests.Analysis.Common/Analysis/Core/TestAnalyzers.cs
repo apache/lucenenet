@@ -190,7 +190,7 @@ namespace Lucene.Net.Analysis.Core
             tokenizer.SetReader(new StringReader(highSurEndingUpper));
             AssertTokenStreamContents(filter, new string[] { highSurEndingLower });
             assertTrue(filter.HasAttribute<ICharTermAttribute>());
-            char[] termBuffer = filter.GetAttribute<ICharTermAttribute>().GetBuffer();
+            char[] termBuffer = filter.GetAttribute<ICharTermAttribute>().Buffer;
             int length = highSurEndingLower.Length;
             assertEquals('\ud801', termBuffer[length - 1]);
         }
