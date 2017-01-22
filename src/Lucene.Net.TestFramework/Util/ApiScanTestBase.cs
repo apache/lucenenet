@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -334,6 +335,15 @@ namespace Lucene.Net.Util
 
                 foreach (var property in properties)
                 {
+                    // Skip attributes with WritableArrayAttribute defined. These are
+                    // properties that were intended to expose arrays, as per MSDN this
+                    // is not a .NET best practice. However, Lucene's design requires that
+                    // this be done.
+                    if (System.Attribute.IsDefined(property, typeof(WritableArrayAttribute)))
+                    {
+                        continue;
+                    }
+
                     var getMethod = property.GetGetMethod();
                     
                     if (getMethod != null && getMethod.ReturnParameter != null && getMethod.ReturnParameter.ParameterType.IsArray && property.DeclaringType.Equals(c.UnderlyingSystemType))
