@@ -82,7 +82,7 @@ namespace Lucene.Net.Analysis.Pattern
         {
             StringBuilder buffered = new StringBuilder();
             char[] temp = new char[1024];
-            for (int cnt = input.Read(temp, 0, temp.Length); cnt > 0; cnt = input.Read(temp, 0, temp.Length))
+            for (int cnt = m_input.Read(temp, 0, temp.Length); cnt > 0; cnt = m_input.Read(temp, 0, temp.Length))
             {
                 buffered.Append(temp, 0, cnt);
             }

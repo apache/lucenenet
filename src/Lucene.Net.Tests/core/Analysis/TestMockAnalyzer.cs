@@ -282,7 +282,7 @@ namespace Lucene.Net.Analysis
                 MockCharFilter charfilter = new MockCharFilter(reader, 2);
                 MockAnalyzer analyzer = new MockAnalyzer(Random());
                 Exception priorException = null;
-                TokenStream ts = analyzer.TokenStream("bogus", charfilter.input);
+                TokenStream ts = analyzer.TokenStream("bogus", charfilter.m_input);
                 try
                 {
                     ts.Reset();

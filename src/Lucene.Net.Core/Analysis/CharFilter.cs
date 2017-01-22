@@ -43,14 +43,14 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// The underlying character-input stream.
         /// </summary>
-        public readonly TextReader input;
+        protected internal readonly TextReader m_input;
 
         /// <summary>
         /// Create a new CharFilter wrapping the provided reader. </summary>
         /// <param name="input"> a TextReader, can also be a CharFilter for chaining. </param>
         public CharFilter(TextReader input)
         {
-            this.input = input;
+            this.m_input = input;
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            input.Dispose();
+            m_input.Dispose();
             base.Dispose(disposing);
         }
 
@@ -80,7 +80,7 @@ namespace Lucene.Net.Analysis
         public int CorrectOffset(int currentOff)
         {
             int corrected = Correct(currentOff);
-            return (input is CharFilter) ? ((CharFilter)input).CorrectOffset(corrected) : corrected;
+            return (m_input is CharFilter) ? ((CharFilter)m_input).CorrectOffset(corrected) : corrected;
         }
 
 

@@ -1025,7 +1025,7 @@ namespace Lucene.Net.Analysis.Core
 
             private CharFilter Input
             {
-                get { return (CharFilter)this.input; }
+                get { return (CharFilter)this.m_input; }
             }
 
             protected override int Correct(int currentOff)
@@ -1036,13 +1036,13 @@ namespace Lucene.Net.Analysis.Core
             public override int Read(char[] cbuf, int off, int len)
             {
                 readSomething = true;
-                return input.Read(cbuf, off, len);
+                return m_input.Read(cbuf, off, len);
             }
 
             public override int Read()
             {
                 readSomething = true;
-                return input.Read();
+                return m_input.Read();
             }
 
             // LUCENENET: TextReader dosn't support this overload 

@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Fa
 
         public override int Read(char[] cbuf, int off, int len)
         {
-            int charsRead = input.Read(cbuf, off, len);
+            int charsRead = m_input.Read(cbuf, off, len);
             if (charsRead > 0)
             {
                 int end = off + charsRead;
@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Fa
         // optimized impl: some other charfilters consume with read()
         public override int Read()
         {
-            int ch = input.Read();
+            int ch = m_input.Read();
             if (ch == '\u200C')
             {
                 return ' ';

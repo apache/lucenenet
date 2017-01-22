@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis
 
             public override int Read(char[] cbuf, int off, int len)
             {
-                int numRead = input.Read(cbuf, off, len);
+                int numRead = m_input.Read(cbuf, off, len);
                 return numRead == 0 ? -1 : numRead;
             }
 
@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis
 
             public override int Read(char[] cbuf, int off, int len)
             {
-                int numRead = input.Read(cbuf, off, len);
+                int numRead = m_input.Read(cbuf, off, len);
                 return numRead == 0 ? -1 : numRead;
             }
 
