@@ -108,7 +108,8 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// attributes used for communication with the enum </summary>
-            public readonly AttributeSource Attributes = new AttributeSource();
+            public AttributeSource Attributes { get { return attributes; } }
+            private readonly AttributeSource attributes = new AttributeSource();
 
             /// <summary>
             /// return false to stop collecting </summary>
