@@ -111,7 +111,13 @@ namespace Lucene.Net.Index
             internal bool registerDone; // used by IndexWriter
             internal long mergeGen; // used by IndexWriter
             internal bool isExternal; // used by IndexWriter
-            public int maxNumSegments = -1; // used by IndexWriter
+
+            public int MaxNumSegments // used by IndexWriter
+            {
+                get { return maxNumSegments; }
+                set { maxNumSegments = value; }
+            }
+            private int maxNumSegments = -1;
 
             /// <summary>
             /// Estimated size in bytes of the merged segment. </summary>

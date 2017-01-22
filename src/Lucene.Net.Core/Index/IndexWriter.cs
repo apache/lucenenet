@@ -2130,13 +2130,13 @@ namespace Lucene.Net.Index
                 // merge:
                 foreach (MergePolicy.OneMerge merge in pendingMerges)
                 {
-                    merge.maxNumSegments = maxNumSegments;
+                    merge.MaxNumSegments = maxNumSegments;
                     if (merge.Info != null) segmentsToMerge[merge.Info] = true;
                 }
 
                 foreach (MergePolicy.OneMerge merge in runningMerges)
                 {
-                    merge.maxNumSegments = maxNumSegments;
+                    merge.MaxNumSegments = maxNumSegments;
                     if (merge.Info != null) segmentsToMerge[merge.Info] = true;
                 }
             }
@@ -2162,7 +2162,7 @@ namespace Lucene.Net.Index
                             for (int i = 0; i < size; i++)
                             {
                                 MergePolicy.OneMerge merge = mergeExceptions[i];
-                                if (merge.maxNumSegments != -1)
+                                if (merge.MaxNumSegments != -1)
                                 {
                                     throw new System.IO.IOException("background merge hit exception: " + merge.SegString(directory), merge.Exception ?? new Exception());
                                     /*Exception t = merge.Exception;
@@ -2207,7 +2207,7 @@ namespace Lucene.Net.Index
             {
                 foreach (MergePolicy.OneMerge merge in pendingMerges)
                 {
-                    if (merge.maxNumSegments != -1)
+                    if (merge.MaxNumSegments != -1)
                     {
                         return true;
                     }
@@ -2215,7 +2215,7 @@ namespace Lucene.Net.Index
 
                 foreach (MergePolicy.OneMerge merge in runningMerges)
                 {
-                    if (merge.maxNumSegments != -1)
+                    if (merge.MaxNumSegments != -1)
                     {
                         return true;
                     }
@@ -2401,7 +2401,7 @@ namespace Lucene.Net.Index
                         for (int i = 0; i < numMerges; i++)
                         {
                             MergePolicy.OneMerge merge = spec.Merges[i];
-                            merge.maxNumSegments = maxNumSegments;
+                            merge.MaxNumSegments = maxNumSegments;
                         }
                     }
                 }
@@ -4475,7 +4475,7 @@ namespace Lucene.Net.Index
                     infoStream.Message("IW", "after commitMerge: " + SegString());
                 }
 
-                if (merge.maxNumSegments != -1 && !dropSegment)
+                if (merge.MaxNumSegments != -1 && !dropSegment)
                 {
                     // cascade the forceMerge:
                     if (!segmentsToMerge.ContainsKey(merge.info))
@@ -4578,9 +4578,9 @@ namespace Lucene.Net.Index
                         // this merge (and, generally, any change to the
                         // segments) may now enable new merges, so we call
                         // merge policy & update pending merges.
-                        if (success && !merge.IsAborted && (merge.maxNumSegments != -1 || (!closed && !closing)))
+                        if (success && !merge.IsAborted && (merge.MaxNumSegments != -1 || (!closed && !closing)))
                         {
-                            UpdatePendingMerges(MergeTrigger.MERGE_FINISHED, merge.maxNumSegments);
+                            UpdatePendingMerges(MergeTrigger.MERGE_FINISHED, merge.MaxNumSegments);
                         }
                     }
                 }
@@ -4653,7 +4653,7 @@ namespace Lucene.Net.Index
                     }
                     if (segmentsToMerge.ContainsKey(info))
                     {
-                        merge.maxNumSegments = mergeMaxNumSegments;
+                        merge.MaxNumSegments = mergeMaxNumSegments;
                     }
                 }
 
@@ -4754,7 +4754,7 @@ namespace Lucene.Net.Index
                 Debug.Assert(testPointResult);
 
                 Debug.Assert(merge.registerDone);
-                Debug.Assert(merge.maxNumSegments == -1 || merge.maxNumSegments > 0);
+                Debug.Assert(merge.MaxNumSegments == -1 || merge.MaxNumSegments > 0);
 
                 if (hitOOM)
                 {
@@ -4810,7 +4810,7 @@ namespace Lucene.Net.Index
                 string mergeSegmentName = NewSegmentName();
                 SegmentInfo si = new SegmentInfo(directory, Constants.LUCENE_MAIN_VERSION, mergeSegmentName, -1, false, codec, null);
                 IDictionary<string, string> details = new Dictionary<string, string>();
-                details["mergeMaxNumSegments"] = "" + merge.maxNumSegments;
+                details["mergeMaxNumSegments"] = "" + merge.MaxNumSegments;
                 details["mergeFactor"] = Convert.ToString(merge.Segments.Count);
                 SetDiagnostics(si, SOURCE_MERGE, details);
                 merge.Info = new SegmentCommitInfo(si, 0, -1L, -1L);

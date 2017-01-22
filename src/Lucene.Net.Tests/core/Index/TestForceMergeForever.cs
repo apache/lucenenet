@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
 
             public override void Merge(MergePolicy.OneMerge merge)
             {
-                if (merge.maxNumSegments != -1 && (First || merge.Segments.Count == 1))
+                if (merge.MaxNumSegments != -1 && (First || merge.Segments.Count == 1))
                 {
                     First = false;
                     if (VERBOSE)
