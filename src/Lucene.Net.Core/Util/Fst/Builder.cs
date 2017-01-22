@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 
@@ -645,6 +646,8 @@ namespace Lucene.Net.Util.Fst
         {
             internal Builder<S> Owner { get; private set; }
             public int NumArcs { get; set; }
+
+            [WritableArray]
             public Arc<S>[] Arcs { get; set; }
 
             // TODO: instead of recording isFinal/output on the
