@@ -482,7 +482,7 @@ namespace Lucene.Net.Index
                 long globalOrd = 0;
                 while (mte.Next() != null)
                 {
-                    TermsEnumWithSlice[] matches = mte.GetMatchArray();
+                    TermsEnumWithSlice[] matches = mte.MatchArray;
                     for (int i = 0; i < mte.MatchCount; i++)
                     {
                         int segmentIndex = matches[i].Index;

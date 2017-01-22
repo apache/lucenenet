@@ -75,9 +75,10 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns sub-reader slices positioned to the current term. </summary>
-        public TermsEnumWithSlice[] GetMatchArray() // LUCENENET NOTE: per MSDN properties shouldn't return array
+        [WritableArray]
+        public TermsEnumWithSlice[] MatchArray
         {
-            return top;
+            get { return top; }
         }
 
         /// <summary>
