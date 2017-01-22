@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Text;
@@ -36,7 +37,20 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// The contents of the IntsRef. Should never be {@code null}. </summary>
-        public int[] Ints; // LUCENENET TODO: make property ?
+        [WritableArray]
+        public int[] Ints
+        {
+            get { return ints; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("Ints should never be null");
+                }
+                ints = value;
+            }
+        }
+        private int[] ints;
 
         /// <summary>
         /// Offset of first valid integer. </summary>
@@ -50,7 +64,7 @@ namespace Lucene.Net.Util
         /// Create a IntsRef with <seealso cref="#EMPTY_INTS"/> </summary>
         public IntsRef()
         {
-            Ints = EMPTY_INTS;
+            ints = EMPTY_INTS;
         }
 
         /// <summary>
@@ -59,7 +73,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public IntsRef(int capacity)
         {
-            Ints = new int[capacity];
+            ints = new int[capacity];
         }
 
         /// <summary>
@@ -68,7 +82,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public IntsRef(int[] ints, int offset, int length)
         {
-            this.Ints = ints;
+            this.ints = ints;
             this.Offset = offset;
             this.Length = length;
             Debug.Assert(IsValid());
@@ -82,7 +96,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= #deepCopyOf </seealso>
         public object Clone()
         {
-            return new IntsRef(Ints, Offset, Length);
+            return new IntsRef(ints, Offset, Length);
         }
 
         public override int GetHashCode()
@@ -92,7 +106,7 @@ namespace Lucene.Net.Util
             int end = Offset + Length;
             for (int i = Offset; i < end; i++)
             {
-                result = prime * result + Ints[i];
+                result = prime * result + ints[i];
             }
             return result;
         }
@@ -115,11 +129,11 @@ namespace Lucene.Net.Util
             if (Length == other.Length)
             {
                 int otherUpto = other.Offset;
-                int[] otherInts = other.Ints;
+                int[] otherInts = other.ints;
                 int end = Offset + Length;
                 for (int upto = Offset; upto < end; upto++, otherUpto++)
                 {
-                    if (Ints[upto] != otherInts[otherUpto])
+                    if (ints[upto] != otherInts[otherUpto])
                     {
                         return false;
                     }
@@ -141,9 +155,9 @@ namespace Lucene.Net.Util
                 return 0;
             }
 
-            int[] aInts = this.Ints;
+            int[] aInts = this.ints;
             int aUpto = this.Offset;
-            int[] bInts = other.Ints;
+            int[] bInts = other.ints;
             int bUpto = other.Offset;
 
             int aStop = aUpto + Math.Min(this.Length, other.Length);
@@ -168,12 +182,12 @@ namespace Lucene.Net.Util
 
         public void CopyInts(IntsRef other)
         {
-            if (Ints.Length - Offset < other.Length)
+            if (ints.Length - Offset < other.Length)
             {
-                Ints = new int[other.Length];
+                ints = new int[other.Length];
                 Offset = 0;
             }
-            Array.Copy(other.Ints, other.Offset, Ints, Offset, other.Length);
+            Array.Copy(other.ints, other.Offset, ints, Offset, other.Length);
             Length = other.Length;
         }
 
@@ -186,9 +200,9 @@ namespace Lucene.Net.Util
         public void Grow(int newLength)
         {
             Debug.Assert(Offset == 0);
-            if (Ints.Length < newLength)
+            if (ints.Length < newLength)
             {
-                Ints = ArrayUtil.Grow(Ints, newLength);
+                ints = ArrayUtil.Grow(ints, newLength);
             }
         }
 
@@ -203,7 +217,7 @@ namespace Lucene.Net.Util
                 {
                     sb.Append(' ');
                 }
-                sb.Append(Ints[i].ToString("x"));
+                sb.Append(ints[i].ToString("x"));
             }
             sb.Append(']');
             return sb.ToString();
@@ -229,7 +243,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public bool IsValid()
         {
-            if (Ints == null)
+            if (ints == null)
             {
                 throw new InvalidOperationException("ints is null");
             }
@@ -237,7 +251,7 @@ namespace Lucene.Net.Util
             {
                 throw new InvalidOperationException("length is negative: " + Length);
             }
-            if (Length > Ints.Length)
+            if (Length > ints.Length)
             {
                 throw new InvalidOperationException("length is out of bounds: " + Length + ",ints.length=" + Ints.Length);
             }
@@ -245,7 +259,7 @@ namespace Lucene.Net.Util
             {
                 throw new InvalidOperationException("offset is negative: " + Offset);
             }
-            if (Offset > Ints.Length)
+            if (Offset > ints.Length)
             {
                 throw new InvalidOperationException("offset out of bounds: " + Offset + ",ints.length=" + Ints.Length);
             }
