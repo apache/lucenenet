@@ -381,7 +381,7 @@ namespace Lucene.Net.Search
 
         private abstract class Uninvert
         {
-            public IBits docsWithField;
+            internal IBits docsWithField; // LUCENENET NOTE: Changed from public to internal, since FieldCacheImpl is internal anyway
 
             public virtual void DoUninvert(AtomicReader reader, string field, bool setDocsWithField)
             {
