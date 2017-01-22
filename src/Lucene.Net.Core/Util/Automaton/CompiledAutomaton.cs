@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -85,7 +86,12 @@ namespace Lucene.Net.Util.Automaton
         /// <seealso cref="#runAutomaton"/>.
         /// Only valid for <seealso cref="AUTOMATON_TYPE#NORMAL"/>.
         /// </summary>
-        public readonly Transition[][] SortedTransitions; // LUCENENET TODO: make property ?
+        [WritableArray]
+        public Transition[][] SortedTransitions
+        {
+            get { return sortedTransitions; }
+        }
+        private readonly Transition[][] sortedTransitions;
 
         /// <summary>
         /// Shared common suffix accepted by the automaton. Only valid
@@ -120,7 +126,7 @@ namespace Lucene.Net.Util.Automaton
                     Term = null;
                     CommonSuffixRef = null;
                     RunAutomaton = null;
-                    SortedTransitions = null;
+                    sortedTransitions = null;
                     this.Finite = null;
                     return;
                 }
@@ -131,7 +137,7 @@ namespace Lucene.Net.Util.Automaton
                     Term = null;
                     CommonSuffixRef = null;
                     RunAutomaton = null;
-                    SortedTransitions = null;
+                    sortedTransitions = null;
                     this.Finite = null;
                     return;
                 }
@@ -165,7 +171,7 @@ namespace Lucene.Net.Util.Automaton
                         Term = new BytesRef(singleton);
                         CommonSuffixRef = null;
                         RunAutomaton = null;
-                        SortedTransitions = null;
+                        sortedTransitions = null;
                         this.Finite = null;
                         return;
                     }
@@ -176,7 +182,7 @@ namespace Lucene.Net.Util.Automaton
                         Term = new BytesRef(commonPrefix);
                         CommonSuffixRef = null;
                         RunAutomaton = null;
-                        SortedTransitions = null;
+                        sortedTransitions = null;
                         this.Finite = null;
                         return;
                     }
@@ -203,7 +209,7 @@ namespace Lucene.Net.Util.Automaton
                 CommonSuffixRef = SpecialOperations.GetCommonSuffixBytesRef(utf8);
             }
             RunAutomaton = new ByteRunAutomaton(utf8, true);
-            SortedTransitions = utf8.GetSortedTransitions();
+            sortedTransitions = utf8.GetSortedTransitions();
         }
 
         //private static final boolean DEBUG = BlockTreeTermsWriter.DEBUG;
@@ -213,7 +219,7 @@ namespace Lucene.Net.Util.Automaton
             // Find biggest transition that's < label
             // TODO: use binary search here
             Transition maxTransition = null;
-            foreach (Transition transition in SortedTransitions[state])
+            foreach (Transition transition in sortedTransitions[state])
             {
                 if (transition.min < leadLabel)
                 {
@@ -246,7 +252,7 @@ namespace Lucene.Net.Util.Automaton
             // Push down to last accept state
             while (true)
             {
-                Transition[] transitions = SortedTransitions[state];
+                Transition[] transitions = sortedTransitions[state];
                 if (transitions.Length == 0)
                 {
                     Debug.Assert(RunAutomaton.IsAccept(state));
@@ -367,7 +373,7 @@ namespace Lucene.Net.Util.Automaton
                     // <= our label:
                     while (true)
                     {
-                        Transition[] transitions = SortedTransitions[state];
+                        Transition[] transitions = sortedTransitions[state];
                         if (transitions.Length == 0)
                         {
                             Debug.Assert(RunAutomaton.IsAccept(state));
@@ -428,7 +434,7 @@ namespace Lucene.Net.Util.Automaton
             StringBuilder b = new StringBuilder("digraph CompiledAutomaton {\n");
             b.Append("  rankdir = LR;\n");
             int initial = RunAutomaton.InitialState;
-            for (int i = 0; i < SortedTransitions.Length; i++)
+            for (int i = 0; i < sortedTransitions.Length; i++)
             {
                 b.Append("  ").Append(i);
                 if (RunAutomaton.IsAccept(i))
@@ -444,10 +450,10 @@ namespace Lucene.Net.Util.Automaton
                     b.Append("  initial [shape=plaintext,label=\"\"];\n");
                     b.Append("  initial -> ").Append(i).Append("\n");
                 }
-                for (int j = 0; j < SortedTransitions[i].Length; j++)
+                for (int j = 0; j < sortedTransitions[i].Length; j++)
                 {
                     b.Append("  ").Append(i);
-                    SortedTransitions[i][j].AppendDot(b);
+                    sortedTransitions[i][j].AppendDot(b);
                 }
             }
             return b.Append("}\n").ToString();
