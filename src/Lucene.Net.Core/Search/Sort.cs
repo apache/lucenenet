@@ -152,6 +152,7 @@ namespace Lucene.Net.Search
         /// <summary> Representation of the sort criteria.</summary>
         /// <returns> Array of SortField objects used in this sort criteria
         /// </returns>
+        [WritableArray]
         public virtual SortField[] GetSort()
         {
             return fields;
