@@ -1,3 +1,5 @@
+using Lucene.Net.Support;
+
 namespace Lucene.Net.Util
 {
     /*
@@ -27,7 +29,13 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// The bytes </summary>
-        public byte[] Bytes;  // LUCENENET TODO: make property ?
+        [WritableArray]
+        public byte[] Bytes
+        {
+            get { return bytes; }
+            set { bytes = value; }
+        }
+        private byte[] bytes;
 
         /// <summary>
         /// The length </summary>
@@ -37,24 +45,24 @@ namespace Lucene.Net.Util
         /// Create a <seealso cref="GrowableByteArrayDataOutput"/> with the given initial capacity. </summary>
         public GrowableByteArrayDataOutput(int cp)
         {
-            this.Bytes = new byte[ArrayUtil.Oversize(cp, 1)];
+            this.bytes = new byte[ArrayUtil.Oversize(cp, 1)];
             this.Length = 0;
         }
 
         public override void WriteByte(byte b)
         {
-            if (Length >= Bytes.Length)
+            if (Length >= bytes.Length)
             {
-                Bytes = ArrayUtil.Grow(Bytes);
+                bytes = ArrayUtil.Grow(bytes);
             }
-            Bytes[Length++] = b;
+            bytes[Length++] = b;
         }
 
         public override void WriteBytes(byte[] b, int off, int len)
         {
             int newLength = Length + len;
-            Bytes = ArrayUtil.Grow(Bytes, newLength);
-            System.Buffer.BlockCopy(b, off, Bytes, Length, len);
+            bytes = ArrayUtil.Grow(bytes, newLength);
+            System.Buffer.BlockCopy(b, off, bytes, Length, len);
             Length = newLength;
         }
     }
