@@ -769,10 +769,22 @@ namespace Lucene.Net.Codecs
                     internal readonly BlockTermState termState;
 
                     // metadata buffer, holding monotonic values
-                    public long[] longs; 
+                    [WritableArray]
+                    public long[] Longs
+                    {
+                        get { return longs; }
+                        set { longs = value; }
+                    }
+                    private long[] longs;
 
                     // metadata buffer, holding general values
-                    public byte[] bytes;
+                    [WritableArray]
+                    public byte[] Bytes
+                    {
+                        get { return bytes; }
+                        set { bytes = value; }
+                    }
+                    private byte[] bytes;
 
                     internal ByteArrayDataInput bytesReader;
 
