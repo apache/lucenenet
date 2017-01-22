@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
@@ -379,7 +379,13 @@ namespace Lucene.Net.Codecs
 
             /// <summary>
             /// Number of blocks at each prefix depth. </summary>
-            public int[] BlockCountByPrefixLen = new int[10]; // LUCENENET TODO: Make property ?
+            [WritableArray]
+            public int[] BlockCountByPrefixLen
+            {
+                get { return blockCountByPrefixLen; }
+                set { blockCountByPrefixLen = value; }
+            }
+            private int[] blockCountByPrefixLen = new int[10];
 
             internal int startBlockCount;
             internal int endBlockCount;
@@ -431,11 +437,11 @@ namespace Lucene.Net.Codecs
                     NonFloorBlockCount++;
                 }
 
-                if (BlockCountByPrefixLen.Length <= frame.prefix)
+                if (blockCountByPrefixLen.Length <= frame.prefix)
                 {
-                    BlockCountByPrefixLen = ArrayUtil.Grow(BlockCountByPrefixLen, 1 + frame.prefix);
+                    blockCountByPrefixLen = ArrayUtil.Grow(blockCountByPrefixLen, 1 + frame.prefix);
                 }
-                BlockCountByPrefixLen[frame.prefix]++;
+                blockCountByPrefixLen[frame.prefix]++;
                 startBlockCount++;
                 TotalBlockSuffixBytes += frame.suffixesReader.Length;
                 TotalBlockStatsBytes += frame.statsReader.Length;
@@ -516,9 +522,9 @@ namespace Lucene.Net.Codecs
                 {
                     @out.AppendLine("    by prefix length:");
                     int total = 0;
-                    for (int prefix = 0; prefix < BlockCountByPrefixLen.Length; prefix++)
+                    for (int prefix = 0; prefix < blockCountByPrefixLen.Length; prefix++)
                     {
-                        int blockCount = BlockCountByPrefixLen[prefix];
+                        int blockCount = blockCountByPrefixLen[prefix];
                         total += blockCount;
                         if (blockCount != 0)
                         {
