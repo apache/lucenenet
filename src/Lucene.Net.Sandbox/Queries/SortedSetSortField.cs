@@ -116,10 +116,10 @@ namespace Lucene.Net.Sandbox.Queries
             StringBuilder buffer = new StringBuilder();
             buffer.Append("<sortedset" + ": \"").Append(Field).Append("\">");
             if (IsReverse) buffer.Append('!');
-            if (missingValue != null)
+            if (MissingValue != null)
             {
                 buffer.Append(" missingValue=");
-                buffer.Append(missingValue);
+                buffer.Append(MissingValue);
             }
             buffer.Append(" selector=");
             buffer.Append(selector);
@@ -133,13 +133,20 @@ namespace Lucene.Net.Sandbox.Queries
         /// Note that this must be <see cref="SortField.STRING_FIRST"/> or 
         /// <see cref="SortField.STRING_LAST"/>.
         /// </summary>
-        public override void SetMissingValue(object value)
+        public override object MissingValue
         {
-            if (value != STRING_FIRST && value != STRING_LAST)
+            get
             {
-                throw new ArgumentException("For SORTED_SET type, missing value must be either STRING_FIRST or STRING_LAST");
+                return base.m_missingValue;
             }
-            this.missingValue = value;
+            set
+            {
+                if (value != STRING_FIRST && value != STRING_LAST)
+                {
+                    throw new ArgumentException("For SORTED_SET type, missing value must be either STRING_FIRST or STRING_LAST");
+                }
+                base.m_missingValue = value;
+            }
         }
 
         internal class TermOrdValComparerAnonymousHelper : FieldComparer.TermOrdValComparer
@@ -148,7 +155,7 @@ namespace Lucene.Net.Sandbox.Queries
             private readonly int numHits;
 
             public TermOrdValComparerAnonymousHelper(SortedSetSortField outerInstance, int numHits)
-                : base(numHits, outerInstance.Field, outerInstance.missingValue == STRING_LAST)
+                : base(numHits, outerInstance.Field, outerInstance.m_missingValue == STRING_LAST)
             {
                 this.outerInstance = outerInstance;
                 this.numHits = numHits;

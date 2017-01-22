@@ -527,7 +527,7 @@ namespace Lucene.Net.Search
 
             IndexSearcher searcher = NewSearcher(ir);
             SortField sortField = new SortField("value", SortFieldType.INT);
-            sortField.SetMissingValue(int.MaxValue);
+            sortField.MissingValue = int.MaxValue;
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -671,7 +671,7 @@ namespace Lucene.Net.Search
 
             IndexSearcher searcher = NewSearcher(ir);
             SortField sortField = new SortField("value", SortFieldType.LONG);
-            sortField.SetMissingValue(long.MaxValue);
+            sortField.MissingValue = long.MaxValue;
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -815,7 +815,7 @@ namespace Lucene.Net.Search
 
             IndexSearcher searcher = NewSearcher(ir);
             SortField sortField = new SortField("value", SortFieldType.FLOAT);
-            sortField.SetMissingValue(float.MaxValue);
+            sortField.MissingValue = float.MaxValue;
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -1010,7 +1010,7 @@ namespace Lucene.Net.Search
 
             IndexSearcher searcher = NewSearcher(ir);
             SortField sortField = new SortField("value", SortFieldType.DOUBLE);
-            sortField.SetMissingValue(double.MaxValue);
+            sortField.MissingValue = double.MaxValue;
             Sort sort = new Sort(sortField);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);

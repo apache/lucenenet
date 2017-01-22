@@ -54,7 +54,26 @@ namespace Lucene.Net.Search
         private FieldComparerSource comparerSource;
 
         // Used for 'sortMissingFirst/Last'
-        public object missingValue = null;
+        public virtual object MissingValue
+        {
+            get { return m_missingValue; }
+            set
+            {
+                if (type == SortFieldType.STRING)
+                {
+                    if (value != STRING_FIRST && value != STRING_LAST)
+                    {
+                        throw new System.ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
+                    }
+                }
+                else if (type != SortFieldType.BYTE && type != SortFieldType.SHORT && type != SortFieldType.INT && type != SortFieldType.FLOAT && type != SortFieldType.LONG && type != SortFieldType.DOUBLE)
+                {
+                    throw new System.ArgumentException("Missing value only works for numeric or STRING types");
+                }
+                this.m_missingValue = value;
+            }
+        }
+        protected object m_missingValue = null; // LUCENENET NOTE: added protected backing field
 
         /// <summary>
         /// Creates a sort by terms in the given field with the type of term
@@ -177,21 +196,22 @@ namespace Lucene.Net.Search
             }
         }
 
-        public virtual void SetMissingValue(object value)
-        {
-            if (type == SortFieldType.STRING)
-            {
-                if (value != STRING_FIRST && value != STRING_LAST)
-                {
-                    throw new System.ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
-                }
-            }
-            else if (type != SortFieldType.BYTE && type != SortFieldType.SHORT && type != SortFieldType.INT && type != SortFieldType.FLOAT && type != SortFieldType.LONG && type != SortFieldType.DOUBLE)
-            {
-                throw new System.ArgumentException("Missing value only works for numeric or STRING types");
-            }
-            this.missingValue = value;
-        }
+        // LUCENENET NOTE: Made this into a property setter above
+        //public virtual void SetMissingValue(object value)
+        //{
+        //    if (type == SortFieldType.STRING)
+        //    {
+        //        if (value != STRING_FIRST && value != STRING_LAST)
+        //        {
+        //            throw new System.ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
+        //        }
+        //    }
+        //    else if (type != SortFieldType.BYTE && type != SortFieldType.SHORT && type != SortFieldType.INT && type != SortFieldType.FLOAT && type != SortFieldType.LONG && type != SortFieldType.DOUBLE)
+        //    {
+        //        throw new System.ArgumentException("Missing value only works for numeric or STRING types");
+        //    }
+        //    this.missingValue = value;
+        //}
 
         /// <summary>
         /// Creates a sort with a custom comparison function. </summary>
@@ -353,10 +373,10 @@ namespace Lucene.Net.Search
             {
                 buffer.Append('!');
             }
-            if (missingValue != null)
+            if (m_missingValue != null)
             {
                 buffer.Append(" missingValue=");
-                buffer.Append(missingValue);
+                buffer.Append(m_missingValue);
             }
 
             return buffer.ToString();
@@ -440,29 +460,29 @@ namespace Lucene.Net.Search
                     return new FieldComparer.DocComparer(numHits);
 
                 case SortFieldType.INT:
-                    return new FieldComparer.IntComparer(numHits, field, parser, (int?)missingValue);
+                    return new FieldComparer.IntComparer(numHits, field, parser, (int?)m_missingValue);
 
                 case SortFieldType.FLOAT:
-                    return new FieldComparer.FloatComparer(numHits, field, parser, (float?)missingValue);
+                    return new FieldComparer.FloatComparer(numHits, field, parser, (float?)m_missingValue);
 
                 case SortFieldType.LONG:
-                    return new FieldComparer.LongComparer(numHits, field, parser, (long?)missingValue);
+                    return new FieldComparer.LongComparer(numHits, field, parser, (long?)m_missingValue);
 
                 case SortFieldType.DOUBLE:
-                    return new FieldComparer.DoubleComparer(numHits, field, parser, (double?)missingValue);
+                    return new FieldComparer.DoubleComparer(numHits, field, parser, (double?)m_missingValue);
 
                 case SortFieldType.BYTE:
-                    return new FieldComparer.ByteComparer(numHits, field, parser, (sbyte?)missingValue);
+                    return new FieldComparer.ByteComparer(numHits, field, parser, (sbyte?)m_missingValue);
 
                 case SortFieldType.SHORT:
-                    return new FieldComparer.ShortComparer(numHits, field, parser, (short?)missingValue);
+                    return new FieldComparer.ShortComparer(numHits, field, parser, (short?)m_missingValue);
 
                 case SortFieldType.CUSTOM:
                     Debug.Assert(comparerSource != null);
                     return comparerSource.NewComparer(field, numHits, sortPos, reverse);
 
                 case SortFieldType.STRING:
-                    return new FieldComparer.TermOrdValComparer(numHits, field, missingValue == STRING_LAST);
+                    return new FieldComparer.TermOrdValComparer(numHits, field, m_missingValue == STRING_LAST);
 
                 case SortFieldType.STRING_VAL:
                     // TODO: should we remove this?  who really uses it?

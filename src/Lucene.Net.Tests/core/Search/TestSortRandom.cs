@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
                 }
                 if (sortMissingLast)
                 {
-                    sf.SetMissingValue(SortField.STRING_LAST);
+                    sf.MissingValue = SortField.STRING_LAST;
                 }
 
                 Sort sort;
