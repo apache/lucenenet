@@ -183,6 +183,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Expert: returns the long[] storing the bits </summary>
+        [WritableArray]
         public virtual long[] GetBits()
         {
             return m_bits;

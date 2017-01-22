@@ -101,6 +101,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Expert. </summary>
+        [WritableArray]
         public long[] GetBits()
         {
             return bits;
