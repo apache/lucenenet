@@ -571,15 +571,29 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// docbase for each leaf: parallel with <seealso cref="#values"/> </summary>
-            public readonly int[] DocStarts; // LUCENENET TODO: Make getter method ? (properties shouldn't return array)
+            [WritableArray]
+            public int[] DocStarts
+            {
+                get { return docStarts; }
+            }
+            private readonly int[] docStarts;
 
             /// <summary>
             /// leaf values </summary>
-            public readonly SortedDocValues[] Values; // LUCENENET TODO: Make getter method ?
+            [WritableArray]
+            public SortedDocValues[] Values
+            {
+                get { return values; }
+            }
+            private readonly SortedDocValues[] values;
 
             /// <summary>
             /// ordinal map mapping ords from <code>values</code> to global ord space </summary>
-            public OrdinalMap Mapping { get; private set; }
+            public OrdinalMap Mapping
+            {
+                get { return mapping; }
+            }
+            private readonly OrdinalMap mapping;
 
             /// <summary>
             /// Creates a new MultiSortedDocValues over <code>values</code> </summary>
@@ -587,30 +601,30 @@ namespace Lucene.Net.Index
             {
                 Debug.Assert(values.Length == mapping.ordDeltas.Length);
                 Debug.Assert(docStarts.Length == values.Length + 1);
-                this.Values = values;
-                this.DocStarts = docStarts;
-                this.Mapping = mapping;
+                this.values = values;
+                this.docStarts = docStarts;
+                this.mapping = mapping;
             }
 
             public override int GetOrd(int docID)
             {
-                int subIndex = ReaderUtil.SubIndex(docID, DocStarts);
-                int segmentOrd = Values[subIndex].GetOrd(docID - DocStarts[subIndex]);
-                return segmentOrd == -1 ? segmentOrd : (int)Mapping.GetGlobalOrd(subIndex, segmentOrd);
+                int subIndex = ReaderUtil.SubIndex(docID, docStarts);
+                int segmentOrd = values[subIndex].GetOrd(docID - docStarts[subIndex]);
+                return segmentOrd == -1 ? segmentOrd : (int)mapping.GetGlobalOrd(subIndex, segmentOrd);
             }
 
             public override void LookupOrd(int ord, BytesRef result)
             {
-                int subIndex = Mapping.GetFirstSegmentNumber(ord);
-                int segmentOrd = (int)Mapping.GetFirstSegmentOrd(ord);
-                Values[subIndex].LookupOrd(segmentOrd, result);
+                int subIndex = mapping.GetFirstSegmentNumber(ord);
+                int segmentOrd = (int)mapping.GetFirstSegmentOrd(ord);
+                values[subIndex].LookupOrd(segmentOrd, result);
             }
 
             public override int ValueCount
             {
                 get
                 {
-                    return (int)Mapping.ValueCount;
+                    return (int)mapping.ValueCount;
                 }
             }
         }
@@ -641,7 +655,11 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// ordinal map mapping ords from <code>values</code> to global ord space </summary>
-            public OrdinalMap Mapping { get; private set; }
+            public OrdinalMap Mapping
+            {
+                get { return mapping; } 
+            }
+            private readonly OrdinalMap mapping;
 
             internal int currentSubIndex;
 
@@ -653,7 +671,7 @@ namespace Lucene.Net.Index
                 Debug.Assert(docStarts.Length == values.Length + 1);
                 this.values = values;
                 this.docStarts = docStarts;
-                this.Mapping = mapping;
+                this.mapping = mapping;
             }
 
             public override long NextOrd()
@@ -665,7 +683,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    return Mapping.GetGlobalOrd(currentSubIndex, segmentOrd);
+                    return mapping.GetGlobalOrd(currentSubIndex, segmentOrd);
                 }
             }
 
@@ -677,8 +695,8 @@ namespace Lucene.Net.Index
 
             public override void LookupOrd(long ord, BytesRef result)
             {
-                int subIndex = Mapping.GetFirstSegmentNumber(ord);
-                long segmentOrd = Mapping.GetFirstSegmentOrd(ord);
+                int subIndex = mapping.GetFirstSegmentNumber(ord);
+                long segmentOrd = mapping.GetFirstSegmentOrd(ord);
                 values[subIndex].LookupOrd(segmentOrd, result);
             }
 
@@ -686,7 +704,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return Mapping.ValueCount;
+                    return mapping.ValueCount;
                 }
             }
         }
