@@ -79,5 +79,12 @@ namespace Lucene.Net
         {
             base.TestForPublicMembersContainingNonNetNumeric(typeFromTargetAssembly);
         }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
+        public override void TestForPublicMembersWithNullableEnum(Type typeFromTargetAssembly)
+        {
+            base.TestForPublicMembersWithNullableEnum(typeFromTargetAssembly);
+        }
     }
 }

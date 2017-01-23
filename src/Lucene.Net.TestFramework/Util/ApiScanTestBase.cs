@@ -232,6 +232,24 @@ namespace Lucene.Net.Util
                 "In .NET, we need to change to 'Short' to 'Int16', 'Int' to 'Int32', 'Long' to 'Int64', and 'Float' to 'Short'.");
         }
 
+        //[Test, LuceneNetSpecific]
+        public virtual void TestForPublicMembersWithNullableEnum(Type typeFromTargetAssembly)
+        {
+            var names = GetPublicNullableEnumMembers(typeFromTargetAssembly.Assembly);
+
+            //if (VERBOSE)
+            //{
+            foreach (var name in names)
+            {
+                Console.WriteLine(name);
+            }
+            //}
+
+            Assert.IsFalse(names.Any(), names.Count() + " members that are type nullable enum detected. " +
+                "Nullable enum parameters, fields, methods, and properties should be eliminated, either by " +
+                "eliminating the logic that depends on 'null' or by adding a NOT_SET=0 state to the enum.");
+        }
+
         private static IEnumerable<string> GetInvalidPrivateFields(Assembly assembly)
         {
             var result = new List<string>();
@@ -481,7 +499,7 @@ namespace Lucene.Net.Util
                     result.Add(t.FullName);
                 }
                 
-                var members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                var members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
                 foreach (var member in members)
                 {
@@ -514,7 +532,7 @@ namespace Lucene.Net.Util
 
             foreach (var t in types)
             {
-                var members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                var members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
                 foreach (var member in members)
                 {
@@ -554,7 +572,7 @@ namespace Lucene.Net.Util
                 //    result.Add(t.FullName);
                 //}
 
-                var members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                var members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
                 foreach (var member in members)
                 {
@@ -636,6 +654,99 @@ namespace Lucene.Net.Util
             }
 
             return result.ToArray();
+        }
+
+        private static IEnumerable<string> GetPublicNullableEnumMembers(Assembly assembly)
+        {
+            var result = new List<string>();
+
+            var types = assembly.GetTypes();
+
+            foreach (var t in types)
+            {
+                var members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+
+                foreach (var member in members)
+                {
+                    if (member.Name.StartsWith("<")) // Ignore auto-generated methods
+                    {
+                        continue;
+                    }
+
+                    if (member.DeclaringType.Equals(t.UnderlyingSystemType))
+                    {
+                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_") || member.Name.StartsWith("set_")))
+                        {
+                            var method = (MethodInfo)member;
+
+                            if (!method.IsPrivate)
+                            {
+                                if (method.ReturnParameter != null
+                                    && Nullable.GetUnderlyingType(method.ReturnParameter.ParameterType) != null
+                                    && method.ReturnParameter.ParameterType.GetGenericArguments()[0].IsEnum)
+                                {
+                                    result.Add(string.Concat(t.FullName, ".", member.Name, "()"));
+                                }
+
+                                var parameters = method.GetParameters();
+
+                                foreach (var parameter in parameters)
+                                {
+                                    if (Nullable.GetUnderlyingType(parameter.ParameterType) != null
+                                        && parameter.ParameterType.GetGenericArguments()[0].IsEnum
+                                        && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                                    {
+                                        result.Add(string.Concat(t.FullName, ".", member.Name, "()", " -parameter- ", parameter.Name));
+                                    }
+                                }
+                            }
+                        }
+                        else if (member.MemberType == MemberTypes.Constructor)
+                        {
+                            var constructor = (ConstructorInfo)member;
+
+                            if (!constructor.IsPrivate)
+                            {
+                                var parameters = constructor.GetParameters();
+
+                                foreach (var parameter in parameters)
+                                {
+                                    if (Nullable.GetUnderlyingType(parameter.ParameterType) != null
+                                        && parameter.ParameterType.GetGenericArguments()[0].IsEnum
+                                        && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                                    {
+                                        result.Add(string.Concat(t.FullName, ".", member.Name, "()", " -parameter- ", parameter.Name));
+                                    }
+                                }
+                            }
+                        }
+                        else if (member.MemberType == MemberTypes.Property 
+                            && Nullable.GetUnderlyingType(((PropertyInfo)member).PropertyType) != null 
+                            && ((PropertyInfo)member).PropertyType.GetGenericArguments()[0].IsEnum 
+                            && IsNonPrivateProperty((PropertyInfo)member))
+                        {
+                            result.Add(string.Concat(t.FullName, ".", member.Name));
+                        }
+                        else if (member.MemberType == MemberTypes.Field 
+                            && Nullable.GetUnderlyingType(((FieldInfo)member).FieldType) != null 
+                            && ((FieldInfo)member).FieldType.GetGenericArguments()[0].IsEnum 
+                            && (((FieldInfo)member).IsFamily || ((FieldInfo)member).IsFamilyOrAssembly))
+                        {
+                            result.Add(string.Concat(t.FullName, ".", member.Name, " (field)"));
+                        }
+                    }
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        private static bool IsNonPrivateProperty(PropertyInfo property)
+        {
+            var getMethod = property.GetGetMethod();
+            var setMethod = property.GetSetMethod();
+            return ((getMethod != null && !getMethod.IsPrivate) ||
+                (setMethod != null && !setMethod.IsPrivate));
         }
     }
 }
