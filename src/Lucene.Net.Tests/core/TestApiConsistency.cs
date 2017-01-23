@@ -2,10 +2,6 @@
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net
 {
@@ -68,6 +64,13 @@ namespace Lucene.Net
         public override void TestForPublicMembersContainingComparer(Type typeFromTargetAssembly)
         {
             base.TestForPublicMembersContainingComparer(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
+        public override void TestForPublicMembersContainingNonNetNumeric(Type typeFromTargetAssembly)
+        {
+            base.TestForPublicMembersContainingNonNetNumeric(typeFromTargetAssembly);
         }
     }
 }

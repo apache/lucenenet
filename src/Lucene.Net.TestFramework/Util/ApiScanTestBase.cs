@@ -39,6 +39,13 @@ namespace Lucene.Net.Util
         private static Regex ContainsComparer = new Regex("[Cc]omparator", RegexOptions.Compiled);
 
         /// <summary>
+        /// Public methods and properties should not contain the word "Int" that is not followed by 16, 32, or 64,
+        /// "Long", "Short", or "Float". These should be converted to their .NET names "Int32", "Int64", "Int16", and "Short".
+        /// Note we need to ignore common words such as "point", "intern", and "intersect".
+        /// </summary>
+        private static Regex ContainsNonNetNumeric = new Regex("(?<![Pp]o|[Pp]r)[Ii]nt(?!16|32|64|er|eg)|[Ll]ong(?!est|er)|[Ss]hort(?!est|er)|[Ff]loat", RegexOptions.Compiled);
+
+        /// <summary>
         /// Matches IL code pattern for a method body with only a return statement for a local variable.
         /// In this case, the array is writable by the consumer.
         /// </summary>
@@ -187,6 +194,23 @@ namespace Lucene.Net.Util
                 "In .NET, we need to change the word 'comparer' to 'comparer'.");
         }
 
+        //[Test, LuceneNetSpecific]
+        public virtual void TestForPublicMembersContainingNonNetNumeric(Type typeFromTargetAssembly)
+        {
+            var names = GetMembersContainingNonNetNumeric(typeFromTargetAssembly.Assembly);
+
+            //if (VERBOSE)
+            //{
+            foreach (var name in names)
+            {
+                Console.WriteLine(name);
+            }
+            //}
+
+            Assert.IsFalse(names.Any(), names.Count() + " member names containing the word 'Int' not followed " + 
+                "by 16, 32, or 64, 'Long', 'Short', or 'Float' detected. " +
+                "In .NET, we need to change to 'Short' to 'Int16', 'Int' to 'Int32', 'Long' to 'Int64', and 'Float' to 'Short'.");
+        }
 
         private static IEnumerable<string> GetInvalidPrivateFields(Assembly assembly)
         {
@@ -443,7 +467,51 @@ namespace Lucene.Net.Util
                 {
                     if (ContainsComparer.IsMatch(member.Name) && member.DeclaringType.Equals(t.UnderlyingSystemType))
                     {
-                        if (member.MemberType == MemberTypes.Method && !member.Name.StartsWith("get_"))
+                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_") || member.Name.StartsWith("set_")))
+                        {
+                            result.Add(string.Concat(t.FullName, ".", member.Name, "()"));
+                        }
+                        else if (member.MemberType == MemberTypes.Property)
+                        {
+                            result.Add(string.Concat(t.FullName, ".", member.Name));
+                        }
+                        else if (member.MemberType == MemberTypes.Event)
+                        {
+                            result.Add(string.Concat(t.FullName, ".", member.Name, " (event)"));
+                        }
+                    }
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        private static IEnumerable<string> GetMembersContainingNonNetNumeric(Assembly assembly)
+        {
+            var result = new List<string>();
+
+            var types = assembly.GetTypes();
+
+            foreach (var t in types)
+            {
+                //if (ContainsComparer.IsMatch(t.Name) && t.IsVisible)
+                //{
+                //    result.Add(t.FullName);
+                //}
+
+                var members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+                foreach (var member in members)
+                {
+                    // Ignore properties, methods, and events with IgnoreNetNumericConventionAttribute
+                    if (System.Attribute.IsDefined(member, typeof(IgnoreNetNumericConventionAttribute)))
+                    {
+                        continue;
+                    }
+
+                    if (ContainsNonNetNumeric.IsMatch(member.Name) && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                    {
+                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_") || member.Name.StartsWith("set_")))
                         {
                             result.Add(string.Concat(t.FullName, ".", member.Name, "()"));
                         }
