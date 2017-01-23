@@ -1,7 +1,8 @@
-﻿using System;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Join
 {
@@ -48,7 +49,8 @@ namespace Lucene.Net.Join
             }
         }
 
-        public virtual float[] ScoresPerTerm // LUCENENET TODO: Make GetScoresPerTerm() (array)
+        [WritableArray]
+        public virtual float[] ScoresPerTerm
         {
             get
             {
