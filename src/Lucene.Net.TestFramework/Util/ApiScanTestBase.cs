@@ -195,6 +195,26 @@ namespace Lucene.Net.Util
         }
 
         //[Test, LuceneNetSpecific]
+        public virtual void TestForPublicMembersNamedSize(Type typeFromTargetAssembly)
+        {
+            var names = GetMembersNamedSize(typeFromTargetAssembly.Assembly);
+
+            //if (VERBOSE)
+            //{
+            foreach (var name in names)
+            {
+                Console.WriteLine(name);
+            }
+            //}
+
+            Assert.IsFalse(names.Any(), names.Count() + " member names named 'Size'. " +
+                "In .NET, we need to change the name 'Size' to either 'Count' or 'Length', " + 
+                "and it should generally be made a property.");
+        }
+
+        
+
+        //[Test, LuceneNetSpecific]
         public virtual void TestForPublicMembersContainingNonNetNumeric(Type typeFromTargetAssembly)
         {
             var names = GetMembersContainingNonNetNumeric(typeFromTargetAssembly.Assembly);
@@ -479,6 +499,41 @@ namespace Lucene.Net.Util
                         {
                             result.Add(string.Concat(t.FullName, ".", member.Name, " (event)"));
                         }
+                    }
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        private static IEnumerable<string> GetMembersNamedSize(Assembly assembly)
+        {
+            var result = new List<string>();
+
+            var types = assembly.GetTypes();
+
+            foreach (var t in types)
+            {
+                var members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+                foreach (var member in members)
+                {
+                    if ("Size".Equals(member.Name, StringComparison.OrdinalIgnoreCase) && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                    {
+                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_") || member.Name.StartsWith("set_")))
+                        {
+                            var method = (MethodInfo)member;
+                            // Ignore methods with parameters
+                            if (!method.GetParameters().Any())
+                            {
+                                result.Add(string.Concat(t.FullName, ".", member.Name, "()"));
+                            }
+                        }
+                        else if (member.MemberType == MemberTypes.Property)
+                        {
+                            result.Add(string.Concat(t.FullName, ".", member.Name));
+                        }
+                        
                     }
                 }
             }
