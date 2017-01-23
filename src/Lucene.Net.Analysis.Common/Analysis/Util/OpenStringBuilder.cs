@@ -57,7 +57,8 @@ namespace Lucene.Net.Analysis.Util
             this.len = end;
         }
 
-        public virtual char[] Array // LUCENENET TODO: change to GetArray()
+        [WritableArray]
+        public virtual char[] Array
         {
             get
             {
