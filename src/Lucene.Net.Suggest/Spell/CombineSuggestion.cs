@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Search.Spell
+﻿using Lucene.Net.Support;
+
+namespace Lucene.Net.Search.Spell
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -39,7 +41,8 @@
         /// <summary>
         /// The indexes from the passed-in array of terms used to make this word combination
         /// </summary>
-        public int[] OriginalTermIndexes // LUCENENET TODO: change to GetOriginalTermIndexes() ? (array)
+        [WritableArray]
+        public int[] OriginalTermIndexes
         {
             get { return originalTermIndexes; }
         }
