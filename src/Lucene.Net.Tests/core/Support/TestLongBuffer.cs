@@ -344,7 +344,7 @@ namespace Lucene.Net.Support
                         fail("Incorrect results for LongBuffer.compareTo",
                              xb, yb, x, y);
                     }
-                    if (xb.equals(yb) != ((x == y) || (x != x) && (y != y)))
+                    if (xb.equals(yb) != ((x == y) /*|| (x != x) && (y != y)*/))
                     {
                         fail("Incorrect results for LongBuffer.equals",
                              xb, yb, x, y);
