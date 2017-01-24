@@ -23,7 +23,7 @@ namespace Lucene.Net.Support
         private static void relGet(ByteBuffer b)
         {
             int n = b.Capacity;
-            byte v;
+            //byte v; // LUCENENET: Not used
             for (int i = 0; i < n; i++)
                 ck(b, (long)b.Get(), (long)((byte)Ic(i)));
             b.Rewind();
@@ -32,7 +32,7 @@ namespace Lucene.Net.Support
         private static void relGet(ByteBuffer b, int start)
         {
             int n = b.Remaining;
-            byte v;
+            //byte v; // LUCENENET: Not used
             for (int i = start; i < n; i++)
                 ck(b, (long)b.Get(), (long)((byte)Ic(i)));
             b.Rewind();
@@ -41,7 +41,7 @@ namespace Lucene.Net.Support
         private static void absGet(ByteBuffer b)
         {
             int n = b.Capacity;
-            byte v;
+            //byte v; // LUCENENET: Not used
             for (int i = 0; i < n; i++)
                 ck(b, (long)b.Get(), (long)((byte)Ic(i)));
             b.Rewind();
@@ -126,7 +126,7 @@ namespace Lucene.Net.Support
         {
             int n = bs.Length;
             int p = b.Position;
-            byte v;
+            //byte v; // LUCENENET: Not used
             if (b.Order == ByteOrder.BIG_ENDIAN)
             {
                 for (int i = 0; i < n; i++)
@@ -382,7 +382,7 @@ namespace Lucene.Net.Support
             b.Put(unchecked((byte)sbyte.MaxValue));
             b.Put(unchecked((byte)sbyte.MinValue));
 
-            byte v;
+            //byte v; // LUCENENET: Not used
             b.Flip();
             ck(b, b.Get(), 0);
             ck(b, b.Get(), unchecked((byte)-1));

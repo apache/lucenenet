@@ -22,7 +22,7 @@ namespace Lucene.Net.Support
         private static void relGet(LongBuffer b)
         {
             int n = b.Capacity;
-            long v;
+            //long v; // LUCENENET: Not used
             for (int i = 0; i < n; i++)
                 ck(b, (long)b.Get(), (long)((long)Ic(i)));
             b.Rewind();
@@ -31,7 +31,7 @@ namespace Lucene.Net.Support
         private static void relGet(LongBuffer b, int start)
         {
             int n = b.Remaining;
-            long v;
+            //long v; // LUCENENET: Not used
             for (int i = start; i < n; i++)
                 ck(b, (long)b.Get(), (long)((long)Ic(i)));
             b.Rewind();
@@ -40,7 +40,7 @@ namespace Lucene.Net.Support
         private static void absGet(LongBuffer b)
         {
             int n = b.Capacity;
-            long v;
+            //long v; // LUCENENET: Not used
             for (int i = 0; i < n; i++)
                 ck(b, (long)b.Get(), (long)((long)Ic(i)));
             b.Rewind();
@@ -265,7 +265,7 @@ namespace Lucene.Net.Support
             b.Put(long.MaxValue);
             b.Put(long.MinValue);
 
-            long v;
+            //long v; // LUCENENET: Not used
             b.Flip();
             ck(b, b.Get(), 0);
             ck(b, b.Get(), (long)-1);
