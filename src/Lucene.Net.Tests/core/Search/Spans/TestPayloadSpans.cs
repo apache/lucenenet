@@ -48,7 +48,7 @@ namespace Lucene.Net.Search.Spans
     public class TestPayloadSpans : LuceneTestCase
     {
         private IndexSearcher Searcher_Renamed;
-        private Similarity Similarity = new DefaultSimilarity();
+        private Similarity similarity = new DefaultSimilarity();
         protected internal IndexReader IndexReader;
         private IndexReader CloseIndexReader;
         private Directory Directory;
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Spans
         {
             base.SetUp();
             PayloadHelper helper = new PayloadHelper();
-            Searcher_Renamed = helper.SetUp(Random(), Similarity, 1000);
+            Searcher_Renamed = helper.SetUp(Random(), similarity, 1000);
             IndexReader = Searcher_Renamed.IndexReader;
         }
 
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.Spans
             SpanNotQuery snq = new SpanNotQuery(spq, new SpanTermQuery(new Term(PayloadHelper.FIELD, "two")));
 
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(Similarity));
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(similarity));
 
             Document doc = new Document();
             doc.Add(NewTextField(PayloadHelper.FIELD, "one two three one four three", Field.Store.YES));
@@ -382,7 +382,7 @@ namespace Lucene.Net.Search.Spans
         public virtual void TestPayloadSpanUtil()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(Similarity));
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(similarity));
 
             Document doc = new Document();
             doc.Add(NewTextField(PayloadHelper.FIELD, "xx rr yy mm  pp", Field.Store.YES));
@@ -446,7 +446,7 @@ namespace Lucene.Net.Search.Spans
             {
                 Directory = NewDirectory();
                 string[] docs = new string[] { "xx rr yy mm  pp", "xx yy mm rr pp", "nopayload qq ss pp np", "one two three four five six seven eight nine ten eleven", "nine one two three four five six seven eight eleven ten" };
-                RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(Similarity));
+                RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(similarity));
 
                 Document doc = null;
                 for (int i = 0; i < docs.Length; i++)
