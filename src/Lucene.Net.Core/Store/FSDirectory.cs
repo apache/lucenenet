@@ -263,6 +263,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns true iff a file with the given name exists. </summary>
+        [Obsolete("this method will be removed in 5.0")]
         public override bool FileExists(string name)
         {
             EnsureOpen();
