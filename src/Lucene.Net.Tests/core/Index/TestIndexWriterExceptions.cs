@@ -702,7 +702,7 @@ namespace Lucene.Net.Index
 
         private class FailOnlyOnFlush : MockDirectoryWrapper.Failure
         {
-            internal bool DoFail = false;
+            new internal bool DoFail = false;
             internal int Count;
 
             public override void SetDoFail()
