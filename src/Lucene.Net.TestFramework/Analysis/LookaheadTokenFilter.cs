@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis
     public abstract class LookaheadTokenFilter<T> : TokenFilter
         where T : LookaheadTokenFilter.Position
     {
-        protected const bool DEBUG = 
+        protected readonly static bool DEBUG = 
 #if VERBOSE_TEST_LOGGING
             true
 #else
