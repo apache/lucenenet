@@ -305,7 +305,9 @@ namespace Lucene.Net.Index
                 writer.AddIndexes(aux, dir);
                 Assert.IsTrue(false);
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 Assert.AreEqual(100, writer.MaxDoc);
             }
@@ -1232,7 +1234,9 @@ namespace Lucene.Net.Index
                         w.AddIndexes(toAdd);
                         Assert.Fail("no such codec");
                     }
+#pragma warning disable 168
                     catch (System.ArgumentException ex)
+#pragma warning restore 168
                     {
                         // expected
                     }
@@ -1252,7 +1256,9 @@ namespace Lucene.Net.Index
                 DirectoryReader.Open(toAdd);
                 Assert.Fail("no such codec");
             }
+#pragma warning disable 168
             catch (System.ArgumentException ex)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1375,7 +1381,9 @@ namespace Lucene.Net.Index
                 w2.AddIndexes(src);
                 Assert.Fail("did not hit expected exception");
             }
+#pragma warning disable 168
             catch (LockObtainFailedException lofe)
+#pragma warning restore 168
             {
                 // expected
             }

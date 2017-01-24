@@ -191,11 +191,15 @@ namespace Lucene.Net.Support
                     fail("DataInputStream.skipBytes does not return expected value");
                 }
             }
+#pragma warning disable 168
             catch (EndOfStreamException e)
+#pragma warning restore 168
             {
                 fail("DataInputStream.skipBytes throws unexpected EOFException");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 Console.WriteLine("IOException is thrown - possible result");
             }

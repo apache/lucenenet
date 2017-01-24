@@ -393,7 +393,9 @@ namespace Lucene.Net.Util.Fst
                         {
                             var _ = termsEnum.Ord;
                         }
+#pragma warning disable 168
                         catch (System.NotSupportedException uoe)
+#pragma warning restore 168
                         {
                             if (VERBOSE)
                             {

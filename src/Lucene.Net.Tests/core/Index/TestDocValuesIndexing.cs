@@ -110,7 +110,9 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("didn't hit expected exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -142,7 +144,9 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("didn't hit expected exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -174,7 +178,9 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("didn't hit expected exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -269,7 +275,9 @@ namespace Lucene.Net.Index
             {
                 w.AddDocument(doc);
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -293,7 +301,9 @@ namespace Lucene.Net.Index
             {
                 w.AddDocument(doc);
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -319,7 +329,9 @@ namespace Lucene.Net.Index
                 iwriter.AddDocument(doc);
                 Assert.Fail("didn't hit expected exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -346,7 +358,9 @@ namespace Lucene.Net.Index
                 iwriter.AddDocument(doc);
                 Assert.Fail("didn't hit expected exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -373,7 +387,9 @@ namespace Lucene.Net.Index
                 iwriter.AddDocument(doc);
                 Assert.Fail("didn't hit expected exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -402,7 +418,9 @@ namespace Lucene.Net.Index
                 iwriter.AddDocument(doc);
                 Assert.Fail("did not get expected exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -431,7 +449,9 @@ namespace Lucene.Net.Index
                 iwriter.AddDocument(doc);
                 Assert.Fail("did not get expected exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -456,7 +476,9 @@ namespace Lucene.Net.Index
             {
                 w.AddDocument(doc);
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -572,7 +594,9 @@ namespace Lucene.Net.Index
                     StartingGun.Wait();
                     w.AddDocument(Doc);
                 }
+#pragma warning disable 168
                 catch (System.ArgumentException iae)
+#pragma warning restore 168
                 {
                     // expected
                     HitExc.Set(true);
@@ -606,7 +630,9 @@ namespace Lucene.Net.Index
             {
                 w.AddIndexes(dir2);
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -616,7 +642,9 @@ namespace Lucene.Net.Index
             {
                 w.AddIndexes(new IndexReader[] { r });
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -643,7 +671,9 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 Assert.Fail("did not hit exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -670,7 +700,9 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 Assert.Fail("did not hit exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -773,7 +805,9 @@ namespace Lucene.Net.Index
                 writer.AddIndexes(dir);
                 Assert.Fail("did not hit exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -805,7 +839,9 @@ namespace Lucene.Net.Index
                 writer.AddIndexes(readers);
                 Assert.Fail("did not hit exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -837,7 +873,9 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 Assert.Fail("did not hit exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -869,7 +907,9 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 Assert.Fail("did not hit exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -929,7 +969,9 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 Assert.Fail("should not have succeeded to add a field with different DV type than what already exists");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 writer.Rollback();
             }

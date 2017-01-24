@@ -81,7 +81,9 @@ namespace Lucene.Net.Util
                 test = ArrayUtil.ParseInt("".ToCharArray());
                 Assert.IsTrue(false);
             }
+#pragma warning disable 168
             catch (FormatException e)
+#pragma warning restore 168
             {
                 //expected
             }
@@ -90,7 +92,9 @@ namespace Lucene.Net.Util
                 test = ArrayUtil.ParseInt("foo".ToCharArray());
                 Assert.IsTrue(false);
             }
+#pragma warning disable 168
             catch (FormatException e)
+#pragma warning restore 168
             {
                 //expected
             }
@@ -99,7 +103,9 @@ namespace Lucene.Net.Util
                 test = ArrayUtil.ParseInt(Convert.ToString(long.MaxValue).ToCharArray());
                 Assert.IsTrue(false);
             }
+#pragma warning disable 168
             catch (FormatException e)
+#pragma warning restore 168
             {
                 //expected
             }
@@ -108,7 +114,9 @@ namespace Lucene.Net.Util
                 test = ArrayUtil.ParseInt("0.34".ToCharArray());
                 Assert.IsTrue(false);
             }
+#pragma warning disable 168
             catch (FormatException e)
+#pragma warning restore 168
             {
                 //expected
             }

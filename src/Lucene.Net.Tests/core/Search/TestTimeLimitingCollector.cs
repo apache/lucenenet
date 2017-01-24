@@ -413,7 +413,9 @@ namespace Lucene.Net.Search
                         throw;
                     }
 #else
+#pragma warning disable 168
                     catch (ThreadInterruptedException ie)
+#pragma warning restore 168
                     {
                         throw;
                     }

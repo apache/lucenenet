@@ -84,7 +84,9 @@ namespace Lucene.Net.Index
                 indexWriter.Commit();
                 Assert.Fail("should have hit CrashingException");
             }
+#pragma warning disable 168
             catch (CrashingException e)
+#pragma warning restore 168
             {
                 // expected
             }

@@ -612,7 +612,9 @@ namespace Lucene.Net.Index
                 w.Commit();
                 Assert.Fail("fake disk full IOExceptions not hit");
             }
+#pragma warning disable 168
             catch (IOException ioe)
+#pragma warning restore 168
             {
                 // expected
                 Assert.IsTrue(ftdm.DidFail1 || ftdm.DidFail2);

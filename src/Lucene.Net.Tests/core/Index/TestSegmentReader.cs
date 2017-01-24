@@ -234,7 +234,9 @@ namespace Lucene.Net.Index
                 Reader.Document(-1);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException expected)
+#pragma warning restore 168
             {
             }
 
@@ -243,7 +245,9 @@ namespace Lucene.Net.Index
                 Reader.GetTermVectors(-1);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException expected)
+#pragma warning restore 168
             {
             }
 
@@ -252,7 +256,9 @@ namespace Lucene.Net.Index
                 Reader.Document(numDocs);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException expected)
+#pragma warning restore 168
             {
             }
 
@@ -261,7 +267,9 @@ namespace Lucene.Net.Index
                 Reader.GetTermVectors(numDocs);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException expected)
+#pragma warning restore 168
             {
             }
         }

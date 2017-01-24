@@ -45,7 +45,9 @@ namespace Lucene.Net.Documents
                 d = DateTools.StringToDate("97"); // no date
                 Assert.Fail();
             } // expected exception
+#pragma warning disable 168
             catch (Exception e)
+#pragma warning restore 168
             {
             }
             try
@@ -53,7 +55,9 @@ namespace Lucene.Net.Documents
                 d = DateTools.StringToDate("200401011235009999"); // no date
                 Assert.Fail();
             } // expected exception
+#pragma warning disable 168
             catch (Exception e)
+#pragma warning restore 168
             {
             }
             try
@@ -61,7 +65,9 @@ namespace Lucene.Net.Documents
                 d = DateTools.StringToDate("aaaa"); // no date
                 Assert.Fail();
             } // expected exception
+#pragma warning disable 168
             catch (Exception e)
+#pragma warning restore 168
             {
             }
         }

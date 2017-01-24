@@ -43,7 +43,9 @@ namespace Lucene.Net.Util
                 Codec.ForName("dskfdskfsdfksdfdsf");
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
             }
         }

@@ -91,7 +91,9 @@ namespace Lucene.Net.Util
                     NumericUtils.PrefixCodedToInt(prefixVals[i]);
                     Assert.Fail("decoding a prefix coded long value as int should fail");
                 }
+#pragma warning disable 168
                 catch (FormatException e)
+#pragma warning restore 168
                 {
                     // worked
                 }
@@ -137,7 +139,9 @@ namespace Lucene.Net.Util
                     NumericUtils.PrefixCodedToLong(prefixVals[i]);
                     Assert.Fail("decoding a prefix coded int value as long should fail");
                 }
+#pragma warning disable 168
                 catch (FormatException e)
+#pragma warning restore 168
                 {
                     // worked
                 }

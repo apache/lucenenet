@@ -131,7 +131,9 @@ namespace Lucene.Net.Index
             {
                 writer.AddDocument(doc);
             }
+#pragma warning disable 168
             catch (BadNews badNews)
+#pragma warning restore 168
             {
                 Assert.Fail("Unwanted exception");
             }

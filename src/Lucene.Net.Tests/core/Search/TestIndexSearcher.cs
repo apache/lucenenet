@@ -130,7 +130,9 @@ namespace Lucene.Net.Search
                 s.SearchAfter(new ScoreDoc(r.MaxDoc, 0.54f), new MatchAllDocsQuery(), 10);
                 Assert.Fail("should have hit IllegalArgumentException when searchAfter exceeds maxDoc");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // ok
             }

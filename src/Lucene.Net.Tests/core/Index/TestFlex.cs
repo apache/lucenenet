@@ -86,7 +86,9 @@ namespace Lucene.Net.Index
             {
                 Assert.AreEqual(0, terms.Ord);
             }
+#pragma warning disable 168
             catch (System.NotSupportedException uoe)
+#pragma warning restore 168
             {
                 // ok -- codec is not required to support this op
             }

@@ -250,7 +250,9 @@ namespace Lucene.Net.Index
                 AddDoc(writer);
                 Assert.Fail("did not hit AlreadyClosedException");
             }
+#pragma warning disable 168
             catch (AlreadyClosedException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1012,7 +1014,9 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("did not hit expected exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iea)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1963,7 +1967,9 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("should have hit exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2111,7 +2117,9 @@ namespace Lucene.Net.Index
                 new RandomIndexWriter(Random(), d, NewIndexWriterConfig(TEST_VERSION_CURRENT, null).SetWriteLockTimeout(100));
                 Assert.Fail("should not be able to create another writer");
             }
+#pragma warning disable 168
             catch (LockObtainFailedException lofe)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2169,7 +2177,9 @@ namespace Lucene.Net.Index
                 w.Dispose();
                 Assert.Fail("should have hit exception");
             }
+#pragma warning disable 168
             catch (InvalidOperationException ise)
+#pragma warning restore 168
             {
                 // expected
             }

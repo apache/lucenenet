@@ -41,13 +41,17 @@ namespace Lucene.Net.Index
             {
                 new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
             }
+#pragma warning disable 168
             catch (FileNotFoundException /*| NoSuchFileException*/ e)
+#pragma warning restore 168
             {
                 try
                 {
                     new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
                 }
+#pragma warning disable 168
                 catch (FileNotFoundException /*| NoSuchFileException*/ e1)
+#pragma warning restore 168
                 {
                 }
             }

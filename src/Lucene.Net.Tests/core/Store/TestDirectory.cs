@@ -47,7 +47,9 @@ namespace Lucene.Net.Store
                     dir.CreateOutput("test", NewIOContext(Random()));
                     Assert.Fail("did not hit expected exception");
                 }
+#pragma warning disable 168
                 catch (AlreadyClosedException ace)
+#pragma warning restore 168
                 {
                 }
             }
@@ -139,7 +141,9 @@ namespace Lucene.Net.Store
                             {
                                 using (IndexInput input = outerBDWrapper.OpenInput(file, NewIOContext(Random()))) { }
                             }
+#pragma warning disable 168
                             catch (FileNotFoundException fne)
+#pragma warning restore 168
                             {
                             }
                             catch (IOException e)
@@ -240,7 +244,9 @@ namespace Lucene.Net.Store
                     {
                         Assert.IsFalse(lock2.Obtain(1));
                     }
+#pragma warning disable 168
                     catch (LockObtainFailedException e)
+#pragma warning restore 168
                     {
                         // OK
                     }
@@ -348,7 +354,9 @@ namespace Lucene.Net.Store
                     var d = new SimpleFSDirectory(new DirectoryInfo(Path.Combine(path.FullName, "afile")), null);
                     Assert.Fail("did not hit expected exception");
                 }
+#pragma warning disable 168
                 catch (NoSuchDirectoryException nsde)
+#pragma warning restore 168
                 {
                     // Expected
                 }

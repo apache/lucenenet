@@ -458,12 +458,16 @@ namespace Lucene.Net.Index
                         {
                             FinalWriter.AddDocument(Doc);
                         }
+#pragma warning disable 168
                         catch (AlreadyClosedException e)
+#pragma warning restore 168
                         {
                             done = true;
                             break;
                         }
+#pragma warning disable 168
                         catch (System.NullReferenceException e)
+#pragma warning restore 168
                         {
                             done = true;
                             break;

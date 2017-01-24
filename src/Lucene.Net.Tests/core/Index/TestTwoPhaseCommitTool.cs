@@ -127,7 +127,9 @@ namespace Lucene.Net.Index
             {
                 TwoPhaseCommitTool.Execute(objects);
             }
+#pragma warning disable 168
             catch (Exception t)
+#pragma warning restore 168
             {
                 anyFailure = true;
             }

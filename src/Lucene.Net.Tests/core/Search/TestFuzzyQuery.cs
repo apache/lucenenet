@@ -368,7 +368,9 @@ namespace Lucene.Net.Search
                 q = new FuzzyQuery(new Term("field", "t"), 3);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }

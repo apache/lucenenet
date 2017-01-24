@@ -516,7 +516,9 @@ namespace Lucene.Net.Util.Packed
             {
                 p64 = new Packed64(INDEX, BITS);
             }
+#pragma warning disable 168
             catch (System.OutOfMemoryException oome)
+#pragma warning restore 168
             {
                 // this can easily happen: we're allocating a
                 // long[] that needs 256-273 MB.  Heap is 512 MB,
@@ -536,7 +538,9 @@ namespace Lucene.Net.Util.Packed
             {
                 p64sb = Packed64SingleBlock.Create(INDEX, BITS);
             }
+#pragma warning disable 168
             catch (System.OutOfMemoryException oome)
+#pragma warning restore 168
             {
                 // Ignore: see comment above
             }
@@ -552,7 +556,9 @@ namespace Lucene.Net.Util.Packed
             {
                 p8 = new Packed8ThreeBlocks(index);
             }
+#pragma warning disable 168
             catch (System.OutOfMemoryException oome)
+#pragma warning restore 168
             {
                 // Ignore: see comment above
             }
@@ -569,7 +575,9 @@ namespace Lucene.Net.Util.Packed
             {
                 p16 = new Packed16ThreeBlocks(index);
             }
+#pragma warning disable 168
             catch (System.OutOfMemoryException oome)
+#pragma warning restore 168
             {
                 // Ignore: see comment above
             }
@@ -1369,7 +1377,9 @@ namespace Lucene.Net.Util.Packed
                     it.Next();
                     Assert.IsTrue(false);
                 }
+#pragma warning disable 168
                 catch (IOException e)
+#pragma warning restore 168
                 {
                     // OK
                 }
@@ -1406,7 +1416,9 @@ namespace Lucene.Net.Util.Packed
                     it2.Skip(1);
                     Assert.IsTrue(false);
                 }
+#pragma warning disable 168
                 catch (IOException e)
+#pragma warning restore 168
                 {
                     // OK
                 }

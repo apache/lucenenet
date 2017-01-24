@@ -441,7 +441,9 @@ namespace Lucene.Net.Documents
                 f.SetByteValue((byte)10);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -454,7 +456,9 @@ namespace Lucene.Net.Documents
                 f.SetBytesValue(new byte[] { 5, 5 });
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -467,7 +471,9 @@ namespace Lucene.Net.Documents
                 f.SetBytesValue(new BytesRef("bogus"));
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -480,7 +486,9 @@ namespace Lucene.Net.Documents
                 f.SetDoubleValue(double.MaxValue);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -493,7 +501,9 @@ namespace Lucene.Net.Documents
                 f.SetInt32Value(int.MaxValue);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -506,7 +516,9 @@ namespace Lucene.Net.Documents
                 f.SetInt64Value(long.MaxValue);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -519,7 +531,9 @@ namespace Lucene.Net.Documents
                 f.SetSingleValue(float.MaxValue);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -532,7 +546,9 @@ namespace Lucene.Net.Documents
                 f.SetReaderValue(new StringReader("BOO!"));
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -545,7 +561,9 @@ namespace Lucene.Net.Documents
                 f.SetInt16Value(short.MaxValue);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -558,7 +576,9 @@ namespace Lucene.Net.Documents
                 f.SetStringValue("BOO!");
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -571,7 +591,9 @@ namespace Lucene.Net.Documents
                 f.SetTokenStream(new CannedTokenStream(new Token("foo", 0, 3)));
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -584,7 +606,9 @@ namespace Lucene.Net.Documents
                 f.Boost = 5.0f;
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }

@@ -145,7 +145,9 @@ namespace Lucene.Net.Util
             {
                 UnicodeUtil.CodePointCount(new BytesRef(bytes));
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 threwAssertion = true;
             }
@@ -216,11 +218,15 @@ namespace Lucene.Net.Util
                     Assert.AreEqual(cpString.Substring(rs, rc), str);
                     continue;
                 }
+#pragma warning disable 168
                 catch (System.IndexOutOfRangeException e1)
+#pragma warning restore 168
                 {
                     // Ignored.
                 }
+#pragma warning disable 168
                 catch (System.ArgumentException e2)
+#pragma warning restore 168
                 {
                     // Ignored.
                 }

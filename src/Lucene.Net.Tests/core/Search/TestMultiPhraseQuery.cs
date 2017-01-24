@@ -142,7 +142,9 @@ namespace Lucene.Net.Search
                 query4.Add(new Term("field2", "foobar"));
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // okay, all terms must belong to the same field
             }
@@ -616,7 +618,9 @@ namespace Lucene.Net.Search
                 query.Slop = -2;
                 Assert.Fail("didn't get expected exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected exception
             }

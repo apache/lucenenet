@@ -55,7 +55,9 @@ namespace Lucene.Net
                 {
                     Thread.Sleep(10000);
                 }
+#pragma warning disable 168
                 catch (ThreadInterruptedException e)
+#pragma warning restore 168
                 {
                     // Ignore.
                 }
@@ -137,7 +139,9 @@ namespace Lucene.Net
                 {
                     Thread.Sleep(1000);
                 }
+#pragma warning disable 168
                 catch (ThreadInterruptedException e)
+#pragma warning restore 168
                 {
                 }
             }

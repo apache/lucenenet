@@ -632,7 +632,9 @@ namespace Lucene.Net.Index
                 writer.UpdateBinaryDocValue(new Term("key", "doc"), "bdv", ToBytes(17L));
                 Assert.Fail("should not have allowed creating new fields through update");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // ok
             }
@@ -642,7 +644,9 @@ namespace Lucene.Net.Index
                 writer.UpdateBinaryDocValue(new Term("key", "doc"), "foo", ToBytes(17L));
                 Assert.Fail("should not have allowed updating an existing field to binary-dv");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // ok
             }
@@ -1169,7 +1173,9 @@ namespace Lucene.Net.Index
                 writer.Dispose();
                 Assert.Fail("should not have succeeded to update a segment written with an old Codec");
             }
+#pragma warning disable 168
             catch (System.NotSupportedException e)
+#pragma warning restore 168
             {
                 writer.Rollback();
             }

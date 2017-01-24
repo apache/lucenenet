@@ -80,7 +80,9 @@ namespace Lucene.Net.Util
                 src3.RestoreState(state);
                 Assert.Fail("The third instance is missing the TypeAttribute, so restoreState() should throw IllegalArgumentException");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // pass
             }
@@ -145,7 +147,9 @@ namespace Lucene.Net.Util
                 src.AddAttribute<Token>();
                 Assert.Fail("Should throw IllegalArgumentException");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
             }
 
@@ -155,9 +159,13 @@ namespace Lucene.Net.Util
                 src.AddAttribute<Token>();
                 Assert.Fail("Should throw IllegalArgumentException");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
             }
+
+            // LUCENENET TODO: Finish implementation
 
             /*try
             {

@@ -75,7 +75,9 @@ namespace Lucene.Net.Store
                 one.ReadVInt();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
+#pragma warning disable 168
             catch (AlreadyClosedException ignore)
+#pragma warning restore 168
             {
                 // pass
             }
@@ -84,7 +86,9 @@ namespace Lucene.Net.Store
                 two.ReadVInt();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
+#pragma warning disable 168
             catch (AlreadyClosedException ignore)
+#pragma warning restore 168
             {
                 // pass
             }
@@ -93,7 +97,9 @@ namespace Lucene.Net.Store
                 three.ReadVInt();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
+#pragma warning disable 168
             catch (AlreadyClosedException ignore)
+#pragma warning restore 168
             {
                 // pass
             }
@@ -121,7 +127,9 @@ namespace Lucene.Net.Store
                 two.ReadVInt();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
+#pragma warning disable 168
             catch (AlreadyClosedException ignore)
+#pragma warning restore 168
             {
                 // pass
             }
@@ -150,7 +158,9 @@ namespace Lucene.Net.Store
                 one.ReadInt();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
+#pragma warning disable 168
             catch (AlreadyClosedException ignore)
+#pragma warning restore 168
             {
                 // pass
             }
@@ -159,7 +169,9 @@ namespace Lucene.Net.Store
                 two.ReadInt();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
+#pragma warning disable 168
             catch (AlreadyClosedException ignore)
+#pragma warning restore 168
             {
                 // pass
             }
@@ -168,7 +180,9 @@ namespace Lucene.Net.Store
                 three.ReadInt();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
+#pragma warning disable 168
             catch (AlreadyClosedException ignore)
+#pragma warning restore 168
             {
                 // pass
             }
@@ -177,7 +191,9 @@ namespace Lucene.Net.Store
                 four.ReadInt();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
+#pragma warning disable 168
             catch (AlreadyClosedException ignore)
+#pragma warning restore 168
             {
                 // pass
             }
@@ -207,7 +223,9 @@ namespace Lucene.Net.Store
                 one.ReadInt();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
+#pragma warning disable 168
             catch (AlreadyClosedException ignore)
+#pragma warning restore 168
             {
                 // pass
             }

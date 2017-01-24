@@ -67,7 +67,9 @@ namespace Lucene.Net.Codecs.Compressing
                 var _ = termsEnum.Ord;
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.NotSupportedException expected)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -77,7 +79,9 @@ namespace Lucene.Net.Codecs.Compressing
                 termsEnum.SeekExact(0);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.NotSupportedException expected)
+#pragma warning restore 168
             {
                 // expected exception
             }

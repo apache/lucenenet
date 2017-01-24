@@ -313,7 +313,9 @@ namespace Lucene.Net.Search
                 searcherManager.Acquire();
                 Assert.Fail("already closed");
             }
+#pragma warning disable 168
             catch (AlreadyClosedException ex)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -360,7 +362,9 @@ namespace Lucene.Net.Search
                     }
 #if !NETSTANDARD
                 }
+#pragma warning disable 168
                 catch (ThreadInterruptedException e)
+#pragma warning restore 168
                 {
                     //
                 }
@@ -474,7 +478,9 @@ namespace Lucene.Net.Search
                 // this should fail
                 sm.Acquire();
             }
+#pragma warning disable 168
             catch (AlreadyClosedException e)
+#pragma warning restore 168
             {
                 // ok
             }
@@ -484,7 +490,9 @@ namespace Lucene.Net.Search
                 // this should fail
                 sm.MaybeRefresh();
             }
+#pragma warning disable 168
             catch (AlreadyClosedException e)
+#pragma warning restore 168
             {
                 // ok
             }
@@ -550,7 +558,9 @@ namespace Lucene.Net.Search
             {
                 new SearcherManager(dir, theEvilOne);
             }
+#pragma warning disable 168
             catch (InvalidOperationException ise)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -558,7 +568,9 @@ namespace Lucene.Net.Search
             {
                 new SearcherManager(w.w, random.NextBoolean(), theEvilOne);
             }
+#pragma warning disable 168
             catch (InvalidOperationException ise)
+#pragma warning restore 168
             {
                 // expected
             }

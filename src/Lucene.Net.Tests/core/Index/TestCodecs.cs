@@ -673,7 +673,9 @@ namespace Lucene.Net.Index
                         termsEnum.SeekExact(idx);
                         success = true;
                     }
+#pragma warning disable 168
                     catch (System.NotSupportedException uoe)
+#pragma warning restore 168
                     {
                         // ok -- skip it
                     }
@@ -724,7 +726,9 @@ namespace Lucene.Net.Index
                             Assert.AreEqual(field.Terms[i].Docs.Length, termsEnum.DocFreq);
                             Assert.IsTrue(termsEnum.Term.BytesEquals(new BytesRef(field.Terms[i].Text2)));
                         }
+#pragma warning disable 168
                         catch (System.NotSupportedException uoe)
+#pragma warning restore 168
                         {
                         }
                     }
@@ -908,7 +912,9 @@ namespace Lucene.Net.Index
                 writer.Dispose();
                 Assert.Fail("should not have succeeded to impersonate an old format!");
             }
+#pragma warning disable 168
             catch (System.NotSupportedException e)
+#pragma warning restore 168
             {
                 writer.Rollback();
             }

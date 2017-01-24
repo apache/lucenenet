@@ -146,7 +146,9 @@ namespace Lucene.Net.Index
                 pr.Document(0);
                 Assert.Fail("ParallelAtomicReader should be already closed because inner reader was closed!");
             }
+#pragma warning disable 168
             catch (AlreadyClosedException e)
+#pragma warning restore 168
             {
                 // pass
             }
@@ -179,7 +181,9 @@ namespace Lucene.Net.Index
                 new ParallelAtomicReader(ir1, ir2);
                 Assert.Fail("didn't get exptected exception: indexes don't have same number of documents");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -189,7 +193,9 @@ namespace Lucene.Net.Index
                 new ParallelAtomicReader(Random().NextBoolean(), new AtomicReader[] { ir1, ir2 }, new AtomicReader[] { ir1, ir2 });
                 Assert.Fail("didn't get expected exception: indexes don't have same number of documents");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -255,7 +261,9 @@ namespace Lucene.Net.Index
                 new ParallelAtomicReader(true, new AtomicReader[0], new AtomicReader[] { ir1 });
                 Assert.Fail("didn't get expected exception: need a non-empty main-reader array");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // pass
             }

@@ -228,7 +228,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.Append((ICharSequence)t2, 1, 5);
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException iobe)
+#pragma warning restore 168
             {
             }
 
@@ -237,7 +239,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.Append((ICharSequence)t2, 1, 0);
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException iobe)
+#pragma warning restore 168
             {
             }
 
@@ -251,7 +255,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.Append((string)t2.ToString(), 1, 5);
                 Assert.Fail("Should throw IndexOutOfBoundsException");
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException iobe)
+#pragma warning restore 168
             {
             }
 
@@ -260,7 +266,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.Append((string)t2.ToString(), 1, 0);
                 Assert.Fail("Should throw IndexOutOfBoundsException");
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException iobe)
+#pragma warning restore 168
             {
             }
 
@@ -274,7 +282,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.Append((char[])t2.ToString().ToCharArray(), 1, 5);
                 Assert.Fail("Should throw IndexOutOfBoundsException");
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException iobe)
+#pragma warning restore 168
             {
             }
 
@@ -283,7 +293,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.Append((char[])t2.ToString().ToCharArray(), 1, 0);
                 Assert.Fail("Should throw IndexOutOfBoundsException");
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException iobe)
+#pragma warning restore 168
             {
             }
 

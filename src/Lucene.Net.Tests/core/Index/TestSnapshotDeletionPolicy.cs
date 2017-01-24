@@ -140,7 +140,9 @@ namespace Lucene.Net.Index
                 dp.Snapshot();
                 Assert.Fail("did not hit exception");
             }
+#pragma warning disable 168
             catch (InvalidOperationException ise)
+#pragma warning restore 168
             {
                 // expected
             }

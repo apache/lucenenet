@@ -52,7 +52,9 @@ namespace Lucene.Net.Util
                     RamUsageEstimator.SizeOf(first); // cause SOE or pass.
                     lower = mid;
                 }
+#pragma warning disable 168
                 catch (System.StackOverflowException e)
+#pragma warning restore 168
                 {
                     upper = mid;
                 }

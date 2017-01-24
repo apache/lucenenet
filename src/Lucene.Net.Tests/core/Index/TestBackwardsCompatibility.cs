@@ -264,7 +264,9 @@ namespace Lucene.Net.Index
                     reader = DirectoryReader.Open(dir);
                     Assert.Fail("DirectoryReader.open should not pass for " + UnsupportedNames[i]);
                 }
+#pragma warning disable 168
                 catch (IndexFormatTooOldException e)
+#pragma warning restore 168
                 {
                     // pass
                 }

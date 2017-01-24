@@ -73,7 +73,9 @@ namespace Lucene.Net.Index
             {
                 searcher.Search(query, 5);
             }
+#pragma warning disable 168
             catch (AlreadyClosedException ace)
+#pragma warning restore 168
             {
                 // expected
             }

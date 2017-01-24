@@ -844,7 +844,9 @@ namespace Lucene.Net.Index
                 DirectoryReader.OpenIfChanged(r);
                 Assert.Fail("failed to hit AlreadyClosedException");
             }
+#pragma warning disable 168
             catch (AlreadyClosedException ace)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1267,7 +1269,9 @@ namespace Lucene.Net.Index
                 TestUtil.Docs(Random(), r, "f", new BytesRef("val"), null, null, DocsEnum.FLAG_NONE);
                 Assert.Fail("should have failed to seek since terms index was not loaded.");
             }
+#pragma warning disable 168
             catch (InvalidOperationException e)
+#pragma warning restore 168
             {
                 // expected - we didn't load the term index
             }
@@ -1345,7 +1349,9 @@ namespace Lucene.Net.Index
                 {
                     writer.Reader.Dispose();
                 }
+#pragma warning disable 168
                 catch (FakeIOException e)
+#pragma warning restore 168
                 {
                     // expected
                     if (VERBOSE)

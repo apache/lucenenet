@@ -63,7 +63,9 @@ namespace Lucene.Net.Util
                 Assert.IsTrue(e1.Data.Contains("SuppressedExceptions"));
                 Assert.IsTrue(((List<Exception>) e1.Data["SuppressedExceptions"]).Count == 2);
             }
+#pragma warning disable 168
             catch (Exception e2)
+#pragma warning restore 168
             {
                 Assert.Fail("Exception should not be thrown here");
             }
@@ -78,7 +80,9 @@ namespace Lucene.Net.Util
                 Assert.IsTrue(e1.Data.Contains("SuppressedExceptions"));
                 Assert.IsTrue(((List<Exception>)e1.Data["SuppressedExceptions"]).Count == 1);
             }
+#pragma warning disable 168
             catch (Exception e2)
+#pragma warning restore 168
             {
                 Assert.Fail("Exception should not be thrown here");
             }

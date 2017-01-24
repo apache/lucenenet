@@ -296,7 +296,9 @@ namespace Lucene.Net.Index
             {
                 Demo_FSIndexInputBug(Dir, "test");
             }
+#pragma warning disable 168
             catch (ObjectDisposedException ode)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -334,7 +336,9 @@ namespace Lucene.Net.Index
                 @in.ReadByte();
                 Assert.Fail("expected readByte() to throw exception");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -564,7 +568,9 @@ namespace Lucene.Net.Index
                 cr.OpenInput("bogus", NewIOContext(Random()));
                 Assert.Fail("File not found");
             }
+#pragma warning disable 168
             catch (Exception e)
+#pragma warning restore 168
             {
                 /* success */
                 //System.out.println("SUCCESS: File Not Found: " + e);
@@ -588,7 +594,9 @@ namespace Lucene.Net.Index
                 @is.ReadByte();
                 Assert.Fail("Single byte read past end of file");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 /* success */
                 //System.out.println("SUCCESS: single byte read past end of file: " + e);
@@ -600,7 +608,9 @@ namespace Lucene.Net.Index
                 @is.ReadBytes(b, 0, 50);
                 Assert.Fail("Block read past end of file");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 /* success */
                 //System.out.println("SUCCESS: block read past end of file: " + e);

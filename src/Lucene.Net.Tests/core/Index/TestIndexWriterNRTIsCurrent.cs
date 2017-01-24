@@ -170,7 +170,9 @@ namespace Lucene.Net.Index
                         {
                             currentReader.DecRef();
                         }
+#pragma warning disable 168
                         catch (IOException e)
+#pragma warning restore 168
                         {
                         }
                     }

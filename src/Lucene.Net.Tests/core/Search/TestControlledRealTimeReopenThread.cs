@@ -525,7 +525,9 @@ namespace Lucene.Net.Search
                         Latch.Wait();
                     }
                 }
+#pragma warning disable 168
                 catch (ThreadInterruptedException e)
+#pragma warning restore 168
                 {
                     throw;
                 }
@@ -548,7 +550,9 @@ namespace Lucene.Net.Search
                 new SearcherManager(w.w, false, theEvilOne);
                 Assert.Fail("didn't hit expected exception");
             }
+#pragma warning disable 168
             catch (InvalidOperationException ise)
+#pragma warning restore 168
             {
                 // expected
             }

@@ -908,7 +908,9 @@ namespace Lucene.Net.Index
                 }
                 modifier.Commit();
             }
+#pragma warning disable 168
             catch (IOException ioe)
+#pragma warning restore 168
             {
                 // expected
                 failed = true;

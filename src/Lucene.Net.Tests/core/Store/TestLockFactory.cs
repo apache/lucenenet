@@ -129,7 +129,9 @@ namespace Lucene.Net.Store
                 writer2 = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
                 Assert.Fail("Should have hit an IOException with two IndexWriters on default SingleInstanceLockFactory");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
             }
 

@@ -36,7 +36,9 @@ namespace Lucene.Net.Store
                 @lock.Obtain(Lock.LOCK_POLL_INTERVAL);
                 Assert.Fail("Should have failed to obtain lock");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 Assert.AreEqual(@lock.LockAttempts, 2, "should attempt to lock more than once");
             }

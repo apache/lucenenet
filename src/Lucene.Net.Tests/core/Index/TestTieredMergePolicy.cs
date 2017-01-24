@@ -228,7 +228,9 @@ namespace Lucene.Net.Index
                 tmp.MaxMergedSegmentMB = -2.0;
                 Assert.Fail("Didn't throw IllegalArgumentException");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // pass
             }
@@ -247,7 +249,9 @@ namespace Lucene.Net.Index
                 tmp.FloorSegmentMB = -2.0;
                 Assert.Fail("Didn't throw IllegalArgumentException");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // pass
             }
@@ -266,7 +270,9 @@ namespace Lucene.Net.Index
                 tmp.MaxCFSSegmentSizeMB = -2.0;
                 Assert.Fail("Didn't throw IllegalArgumentException");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // pass
             }

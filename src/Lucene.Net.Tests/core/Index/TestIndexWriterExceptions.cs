@@ -493,7 +493,9 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("did not hit exception");
             }
+#pragma warning disable 168
             catch (Exception re)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -520,7 +522,9 @@ namespace Lucene.Net.Index
                 w.AddDocument(crashDoc, analyzer);
                 Assert.Fail("did not hit expected exception");
             }
+#pragma warning disable 168
             catch (IOException ioe)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -613,7 +617,9 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 Assert.Fail("did not hit expected exception");
             }
+#pragma warning disable 168
             catch (Exception e)
+#pragma warning restore 168
             {
             }
 
@@ -746,7 +752,9 @@ namespace Lucene.Net.Index
                 {
                     writer.AddDocument(doc);
                 }
+#pragma warning disable 168
                 catch (IOException ioe)
+#pragma warning restore 168
                 {
                     // only one flush should fail:
                     Assert.IsFalse(hitError);
@@ -1018,7 +1026,9 @@ namespace Lucene.Net.Index
                             Writer.AddDocument(doc);
                             Assert.Fail("did not hit expected exception");
                         }
+#pragma warning disable 168
                         catch (IOException ioe)
+#pragma warning restore 168
                         {
                         }
 
@@ -1103,7 +1113,9 @@ namespace Lucene.Net.Index
                     {
                         writer.Commit();
                     }
+#pragma warning disable 168
                     catch (IOException ioe)
+#pragma warning restore 168
                     {
                         // expected
                     }
@@ -1179,11 +1191,15 @@ namespace Lucene.Net.Index
                     w.Dispose();
                     Assert.Fail();
                 }
+#pragma warning disable 168
                 catch (IOException ioe)
+#pragma warning restore 168
                 {
                     Assert.Fail("expected only RuntimeException");
                 }
+#pragma warning disable 168
                 catch (Exception re)
+#pragma warning restore 168
                 {
                     // Expected
                 }
@@ -1251,7 +1267,9 @@ namespace Lucene.Net.Index
                 writer.Dispose();
                 Assert.Fail("OutOfMemoryError expected");
             }
+#pragma warning disable 168
             catch (System.OutOfMemoryException expected)
+#pragma warning restore 168
             {
             }
 
@@ -1319,7 +1337,9 @@ namespace Lucene.Net.Index
                 w.Rollback();
                 Assert.Fail("did not hit intentional RuntimeException");
             }
+#pragma warning disable 168
             catch (Exception re)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1421,7 +1441,9 @@ namespace Lucene.Net.Index
                 reader = DirectoryReader.Open(dir);
                 Assert.Fail("reader did not hit IOException on opening a corrupt index");
             }
+#pragma warning disable 168
             catch (Exception e)
+#pragma warning restore 168
             {
             }
             if (reader != null)
@@ -1478,7 +1500,9 @@ namespace Lucene.Net.Index
                 reader = DirectoryReader.Open(dir);
                 Assert.Fail("reader did not hit IOException on opening a corrupt index");
             }
+#pragma warning disable 168
             catch (Exception e)
+#pragma warning restore 168
             {
             }
             if (reader != null)
@@ -1537,7 +1561,9 @@ namespace Lucene.Net.Index
             {
                 reader = DirectoryReader.Open(dir);
             }
+#pragma warning disable 168
             catch (Exception e)
+#pragma warning restore 168
             {
                 Assert.Fail("reader failed to open on a crashed index");
             }
@@ -1851,7 +1877,9 @@ namespace Lucene.Net.Index
                 new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, null));
                 Assert.Fail("should have gotten a UOE");
             }
+#pragma warning disable 168
             catch (System.NotSupportedException expected)
+#pragma warning restore 168
             {
             }
 
@@ -1877,7 +1905,9 @@ namespace Lucene.Net.Index
                 iw.AddDocument(doc);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -1926,7 +1956,9 @@ namespace Lucene.Net.Index
                 iw.AddDocument(list);
                 Assert.Fail("didn't get any exception, boost silently discarded");
             }
+#pragma warning disable 168
             catch (System.NotSupportedException expected)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2022,12 +2054,16 @@ namespace Lucene.Net.Index
                 {
                     iw = new IndexWriter(dir, iwc);
                 }
+#pragma warning disable 168
                 catch (CorruptIndexException ex)
+#pragma warning restore 168
                 {
                     // Exceptions are fine - we are running out of file handlers here
                     continue;
                 }
+#pragma warning disable 168
                 catch (FileNotFoundException/* | NoSuchFileException*/ ex)
+#pragma warning restore 168
                 {
                     continue;
                 }
@@ -2496,7 +2532,9 @@ namespace Lucene.Net.Index
                 {
                     iw.Rollback();
                 }
+#pragma warning disable 168
                 catch (MockDirectoryWrapper.FakeIOException expected)
+#pragma warning restore 168
                 {
                 }
 

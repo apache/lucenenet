@@ -149,7 +149,9 @@ namespace Lucene.Net.Documents
                 new Field("name", "value", new FieldType());
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -162,7 +164,9 @@ namespace Lucene.Net.Documents
                 new Field("name", "value", ft2);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // expected exception
             }

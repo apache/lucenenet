@@ -54,7 +54,9 @@ namespace Lucene.Net.Index
                 {
                     d.DeleteFile(fileName);
                 }
+#pragma warning disable 168
                 catch (IOException ioe)
+#pragma warning restore 168
                 {
                     // ignore: this means codec (correctly) is holding
                     // the file open
@@ -93,7 +95,9 @@ namespace Lucene.Net.Index
                 {
                     d.DeleteFile(fileName);
                 }
+#pragma warning disable 168
                 catch (IOException ioe)
+#pragma warning restore 168
                 {
                     // ignore: this means codec (correctly) is holding
                     // the file open

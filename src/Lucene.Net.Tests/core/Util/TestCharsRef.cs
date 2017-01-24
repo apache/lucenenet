@@ -159,7 +159,9 @@ namespace Lucene.Net.Util
                 var _ = c[-1];
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException expected)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -169,7 +171,9 @@ namespace Lucene.Net.Util
                 var _ = c[3];
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException expected)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -204,7 +208,9 @@ namespace Lucene.Net.Util
                 c.SubSequence(-1, 1);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException expected)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -214,7 +220,9 @@ namespace Lucene.Net.Util
                 c.SubSequence(0, -1);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException expected)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -224,7 +232,9 @@ namespace Lucene.Net.Util
                 c.SubSequence(0, 4);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException expected)
+#pragma warning restore 168
             {
                 // expected exception
             }
@@ -234,7 +244,9 @@ namespace Lucene.Net.Util
                 c.SubSequence(2, 1);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.IndexOutOfRangeException expected)
+#pragma warning restore 168
             {
                 // expected exception
             }

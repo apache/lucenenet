@@ -480,7 +480,9 @@ namespace Lucene.Net.Index
                 DirectoryReader.Open(dir);
                 Assert.Fail("expected FileNotFoundException/NoSuchFileException");
             }
+#pragma warning disable 168
             catch (System.IO.FileNotFoundException /*| NoSuchFileException*/ e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -493,7 +495,9 @@ namespace Lucene.Net.Index
                 DirectoryReader.Open(dir);
                 Assert.Fail("expected FileNotFoundException/NoSuchFileException");
             }
+#pragma warning disable 168
             catch (System.IO.FileNotFoundException /*| NoSuchFileException*/ e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -766,7 +770,9 @@ namespace Lucene.Net.Index
                 DirectoryReader.Open(dir);
                 Assert.Fail("did not hit expected exception");
             }
+#pragma warning disable 168
             catch (NoSuchDirectoryException nsde)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -886,7 +892,9 @@ namespace Lucene.Net.Index
                 r.DocFreq(new Term("field", "f"));
                 Assert.Fail("did not hit expected exception");
             }
+#pragma warning disable 168
             catch (InvalidOperationException ise)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -910,7 +918,9 @@ namespace Lucene.Net.Index
                     ctx.Reader.DocFreq(new Term("field", "f"));
                     Assert.Fail("did not hit expected exception");
                 }
+#pragma warning disable 168
                 catch (InvalidOperationException ise)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -1139,7 +1149,9 @@ namespace Lucene.Net.Index
                 r.Document(1);
                 Assert.Fail("did not hit exception");
             }
+#pragma warning disable 168
             catch (System.ArgumentException iae)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1284,7 +1296,9 @@ namespace Lucene.Net.Index
                 r.DocFreq(new Term("field", "f"));
                 Assert.Fail("did not hit expected exception");
             }
+#pragma warning disable 168
             catch (InvalidOperationException ise)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1298,7 +1312,9 @@ namespace Lucene.Net.Index
                 r.DocFreq(new Term("field", "f"));
                 Assert.Fail("did not hit expected exception");
             }
+#pragma warning disable 168
             catch (InvalidOperationException ise)
+#pragma warning restore 168
             {
                 // expected
             }

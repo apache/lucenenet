@@ -331,7 +331,9 @@ namespace Lucene.Net.Index
 
                     Assert.IsTrue(lastDeleteTime - modTime <= leeway, "commit point was older than " + SECONDS + " seconds (" + (lastDeleteTime - modTime) + " msec) but did not get deleted ");
                 }
+#pragma warning disable 168
                 catch (IOException e)
+#pragma warning restore 168
                 {
                     // OK
                     break;

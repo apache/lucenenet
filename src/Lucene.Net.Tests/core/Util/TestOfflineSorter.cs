@@ -223,7 +223,9 @@ namespace Lucene.Net.Util
                 OfflineSorter.BufferSize.Megabytes(2048);
                 Assert.Fail("max mb is 2047");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
             }
 
@@ -232,7 +234,9 @@ namespace Lucene.Net.Util
                 OfflineSorter.BufferSize.Megabytes(0);
                 Assert.Fail("min mb is 0.5");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
             }
 
@@ -241,7 +245,9 @@ namespace Lucene.Net.Util
                 OfflineSorter.BufferSize.Megabytes(-1);
                 Assert.Fail("min mb is 0.5");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
             }
         }

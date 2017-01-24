@@ -66,7 +66,9 @@ namespace Lucene.Net.Search
                 MultiCollector.Wrap(null, null);
                 Assert.Fail("only null collectors should not be supported");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // expected
             }

@@ -79,7 +79,9 @@ namespace Lucene.Net.Search
                 BooleanQuery.MaxClauseCount = 0;
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // okay
             }

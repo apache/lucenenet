@@ -69,7 +69,9 @@ namespace Lucene.Net.Index
                 new MultiReader(subReaders);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException expected)
+#pragma warning restore 168
             {
                 // expected
             }

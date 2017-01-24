@@ -168,7 +168,9 @@ namespace Lucene.Net.Index
                 Assert.IsNotNull(new RandomIndexWriter(Random(), dir, conf));
                 Assert.Fail("should have hit AlreadySetException");
             }
+#pragma warning disable 168
             catch (SetOnce<IndexWriter>.AlreadySetException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -179,7 +181,9 @@ namespace Lucene.Net.Index
                 Assert.IsNotNull(new RandomIndexWriter(Random(), dir, (IndexWriterConfig)conf.Clone()));
                 Assert.Fail("should have hit AlreadySetException");
             }
+#pragma warning disable 168
             catch (SetOnce<IndexWriter>.AlreadySetException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -311,7 +315,9 @@ namespace Lucene.Net.Index
                 conf.SetIndexDeletionPolicy(null);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // ok
             }
@@ -329,7 +335,9 @@ namespace Lucene.Net.Index
                 conf.SetMergeScheduler(null);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // ok
             }
@@ -344,7 +352,9 @@ namespace Lucene.Net.Index
                 conf.SetSimilarity(null);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // ok
             }
@@ -358,7 +368,9 @@ namespace Lucene.Net.Index
                 conf.SetIndexingChain(null);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // ok
             }
@@ -368,7 +380,9 @@ namespace Lucene.Net.Index
                 conf.SetMaxBufferedDeleteTerms(0);
                 Assert.Fail("should not have succeeded to set maxBufferedDeleteTerms to 0");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // this is expected
             }
@@ -378,7 +392,9 @@ namespace Lucene.Net.Index
                 conf.SetMaxBufferedDocs(1);
                 Assert.Fail("should not have succeeded to set maxBufferedDocs to 1");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // this is expected
             }
@@ -391,7 +407,9 @@ namespace Lucene.Net.Index
                 conf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
                 Assert.Fail("should not have succeeded to disable maxBufferedDocs when ramBufferSizeMB is disabled as well");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // this is expected
             }
@@ -403,7 +421,9 @@ namespace Lucene.Net.Index
                 conf.SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH);
                 Assert.Fail("should not have succeeded to disable ramBufferSizeMB when maxBufferedDocs is disabled as well");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // this is expected
             }
@@ -414,7 +434,9 @@ namespace Lucene.Net.Index
                 conf.SetReaderTermsIndexDivisor(0);
                 Assert.Fail("should not have succeeded to set termsIndexDivisor to 0");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // this is expected
             }
@@ -426,7 +448,9 @@ namespace Lucene.Net.Index
                 conf.SetReaderTermsIndexDivisor(-2);
                 Assert.Fail("should not have succeeded to set termsIndexDivisor to < -1");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // this is expected
             }
@@ -436,7 +460,9 @@ namespace Lucene.Net.Index
                 conf.SetRAMPerThreadHardLimitMB(2048);
                 Assert.Fail("should not have succeeded to set RAMPerThreadHardLimitMB to >= 2048");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // this is expected
             }
@@ -446,7 +472,9 @@ namespace Lucene.Net.Index
                 conf.SetRAMPerThreadHardLimitMB(0);
                 Assert.Fail("should not have succeeded to set RAMPerThreadHardLimitMB to 0");
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // this is expected
             }
@@ -460,7 +488,9 @@ namespace Lucene.Net.Index
                 conf.SetMergePolicy(null);
                 Assert.Fail();
             }
+#pragma warning disable 168
             catch (System.ArgumentException e)
+#pragma warning restore 168
             {
                 // ok
             }

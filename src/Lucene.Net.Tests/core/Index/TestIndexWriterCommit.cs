@@ -560,7 +560,9 @@ namespace Lucene.Net.Index
                 DirectoryReader.ListCommits(dir);
                 Assert.Fail("listCommits should have thrown an exception over empty index");
             }
+#pragma warning disable 168
             catch (IndexNotFoundException e)
+#pragma warning restore 168
             {
                 // that's expected !
             }
