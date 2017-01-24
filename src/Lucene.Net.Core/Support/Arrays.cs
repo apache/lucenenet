@@ -11,8 +11,6 @@ namespace Lucene.Net.Support
             if (a == null)
                 return 0;
 
-            const int prime = 31;
-
             int hash = 17;
 
             foreach (var item in a)
