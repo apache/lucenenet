@@ -667,7 +667,7 @@ namespace Lucene.Net.Util
                 foreach (var member in members)
                 {
                     // Ignore properties, methods, and events with IgnoreNetNumericConventionAttribute
-                    if (System.Attribute.IsDefined(member, typeof(IgnoreNetNumericConventionAttribute)))
+                    if (System.Attribute.IsDefined(member, typeof(ExceptionToNetNumericConventionAttribute)))
                     {
                         continue;
                     }

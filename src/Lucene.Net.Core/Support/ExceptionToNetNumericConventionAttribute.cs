@@ -8,7 +8,7 @@ namespace Lucene.Net.Support
     /// that are commonly used in .NET method and property names.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Event, AllowMultiple = false)]
-    public class IgnoreNetNumericConventionAttribute : Attribute
+    public class ExceptionToNetNumericConventionAttribute : Attribute
     {
     }
 }

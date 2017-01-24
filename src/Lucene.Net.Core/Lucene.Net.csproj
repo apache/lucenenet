@@ -641,7 +641,7 @@
     <Compile Include="Support\IdentityHashSet.cs" />
     <Compile Include="Support\IdentityWeakReference.cs" />
     <Compile Include="Support\DictionaryExtensions.cs" />
-    <Compile Include="Support\IgnoreNetNumericConventionAttribute.cs" />
+    <Compile Include="Support\ExceptionToNetNumericConventionAttribute.cs" />
     <Compile Include="Support\IResourceManagerFactory.cs" />
     <Compile Include="Support\LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="Support\LinkedHashMap.cs" />
