@@ -509,7 +509,9 @@ namespace Lucene.Net.Codecs.ramonly
             private readonly IBits LiveDocs;
             private RAMDoc Current;
             private int Upto = -1;
-            private int PosUpto = 0;
+#pragma warning disable 414
+            private int PosUpto = 0; // LUCENENET NOTE: Not used
+#pragma warning restore 414
 
             public RAMDocsEnum(RAMTerm ramTerm, IBits liveDocs)
             {

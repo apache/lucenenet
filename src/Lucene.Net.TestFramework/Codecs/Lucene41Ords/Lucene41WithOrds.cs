@@ -113,14 +113,16 @@ namespace Lucene.Net.Codecs.Lucene41Ords
             }
         }
 
+#pragma warning disable 414
         /// <summary>
         /// Extension of freq postings file
         /// </summary>
-        static readonly string FREQ_EXTENSION = "frq";
+        static readonly string FREQ_EXTENSION = "frq"; // LUCENENET NOTE: Not used
 
         /// <summary>
         /// Extension of prox postings file
         /// </summary>
-        static readonly string PROX_EXTENSION = "prx";
+        static readonly string PROX_EXTENSION = "prx"; // LUCENENET NOTE: Not used
+#pragma warning restore 414
     }
 }

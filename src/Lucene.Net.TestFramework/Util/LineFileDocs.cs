@@ -42,7 +42,7 @@ namespace Lucene.Net.Util
     public class LineFileDocs : IDisposable
     {
         private TextReader Reader;
-        private static readonly int BUFFER_SIZE = 1 << 16; // 64K
+        //private static readonly int BUFFER_SIZE = 1 << 16; // 64K // LUCENENET NOTE: Not used because we don't have a BufferedReader in .NET
         private readonly AtomicInteger Id = new AtomicInteger();
         private readonly string Path;
         private readonly bool UseDocValues;
