@@ -34,6 +34,17 @@ namespace Lucene.Net.Util
         private static Regex MethodParameterName = new Regex("^[a-z](?:[a-zA-Z0-9_]*[a-zA-Z0-9])?$", RegexOptions.Compiled);
 
         /// <summary>
+        /// Interfaces must begin with "I" followed by another captial letter. Note this includes a
+        /// fix for generic interface names, that end with `{number}.
+        /// </summary>
+        private static Regex InterfaceName = new Regex("^I[A-Z][a-zA-Z0-9_]*(?:`\\d+)?$", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Class names must be pascal case and not use the interface naming convention.
+        /// </summary>
+        private static Regex ClassName = new Regex("^[A-Z][a-zA-Z0-9_]*(?:`\\d+)?$", RegexOptions.Compiled);
+
+        /// <summary>
         /// Public members should not contain the word "Comparer". In .NET, these should be named "Comparer".
         /// </summary>
         private static Regex ContainsComparer = new Regex("[Cc]omparator", RegexOptions.Compiled);
@@ -116,6 +127,41 @@ namespace Lucene.Net.Util
 
             Assert.IsFalse(names.Any(), names.Count() + " invalid method parameter names detected. " +
                 "Parameter names must be camelCase and may not start or end with '_'.");
+        }
+
+        //[Test, LuceneNetSpecific]
+        public virtual void TestInterfaceNames(Type typeFromTargetAssembly)
+        {
+            var names = GetInvalidInterfaceNames(typeFromTargetAssembly.Assembly);
+
+            //if (VERBOSE)
+            //{
+            foreach (var name in names)
+            {
+                Console.WriteLine(name);
+            }
+            //}
+
+            Assert.IsFalse(names.Any(), names.Count() + " invalid interface names detected. " +
+                "Interface names must begin with a capital 'I' followed by another capital letter.");
+        }
+
+        //[Test, LuceneNetSpecific]
+        public virtual void TestClassNames(Type typeFromTargetAssembly)
+        {
+            var names = GetInvalidClassNames(typeFromTargetAssembly.Assembly);
+
+            //if (VERBOSE)
+            //{
+            foreach (var name in names)
+            {
+                Console.WriteLine(name);
+            }
+            //}
+
+            Assert.IsFalse(names.Any(), names.Count() + " invalid class names detected. " +
+                "Class names must be Pascal case, but may not follow the interface naming " + 
+                "convention of captial 'I' followed by another capital letter.");
         }
 
         //[Test, LuceneNetSpecific]
@@ -392,6 +438,50 @@ namespace Lucene.Net.Util
                             result.Add(string.Concat(c.FullName, ".", method.Name, " -parameter- ", parameter.Name));
                         }
                     }
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        private static IEnumerable<string> GetInvalidInterfaceNames(Assembly assembly)
+        {
+            var result = new List<string>();
+
+            var interfaces = assembly.GetTypes().Where(t => t.IsInterface);
+
+            foreach (var i in interfaces)
+            {
+                if (!InterfaceName.IsMatch(i.Name))
+                {
+                    result.Add(i.FullName);
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        private static IEnumerable<string> GetInvalidClassNames(Assembly assembly)
+        {
+            var result = new List<string>();
+
+            var classes = assembly.GetTypes().Where(t => t.IsClass);
+
+            foreach (var c in classes)
+            {
+                if (c.Name.StartsWith("<")) // Ignore classes produced by anonymous methods 
+                {
+                    continue;
+                }
+
+                if (System.Attribute.IsDefined(c, typeof(ExceptionToClassNameConventionAttribute)))
+                {
+                    continue;
+                }
+
+                if (!ClassName.IsMatch(c.Name) || InterfaceName.IsMatch(c.Name))
+                {
+                    result.Add(c.FullName);
                 }
             }
 

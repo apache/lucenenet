@@ -628,6 +628,7 @@
     <Compile Include="Support\DataInputStream.cs" />
     <Compile Include="Support\DataOutputStream.cs" />
     <Compile Include="Support\ErrorHandling.cs" />
+    <Compile Include="Support\ExceptionToClassNameConventionAttribute.cs" />
     <Compile Include="Support\FileStreamExtensions.cs" />
     <Compile Include="Support\HashCodeMerge.cs" />
     <Compile Include="Support\ICallable.cs" />

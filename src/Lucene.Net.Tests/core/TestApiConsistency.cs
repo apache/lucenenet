@@ -40,6 +40,20 @@ namespace Lucene.Net
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
+        public override void TestInterfaceNames(Type typeFromTargetAssembly)
+        {
+            base.TestInterfaceNames(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
+        public override void TestClassNames(Type typeFromTargetAssembly)
+        {
+            base.TestClassNames(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
         public override void TestForPropertiesWithNoGetter(Type typeFromTargetAssembly)
         {
             base.TestForPropertiesWithNoGetter(typeFromTargetAssembly);
