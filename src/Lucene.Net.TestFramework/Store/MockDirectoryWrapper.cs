@@ -1362,6 +1362,7 @@ namespace Lucene.Net.Store
                 return ii;
             }
 
+            [Obsolete("Only for reading CFS files from 3.x indexes.")]
             public override IndexInput OpenFullSlice()
             {
                 OuterInstance.MaybeYield();
