@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
             AssertSameStreams(msg + ", seek(0)", expected, actual, point);
 
             // seek to middle
-            point = expected.Length / 2l;
+            point = expected.Length / 2L;
             AssertSameStreams(msg + ", seek(mid)", expected, actual, point);
 
             // seek to end - 2
