@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-            internal bool DoFail;
+            new internal bool DoFail;
             internal bool HitExc;
 
             public override void SetDoFail()
