@@ -55,11 +55,11 @@ namespace Lucene.Net.Index
         private readonly SegmentDocValues segDocValues; // LUCENENET specific - made private
 
         // LUCENENET specific - made private
-        private readonly DisposableThreadLocal<IDictionary<string, object>> docValuesLocal = new IDisposableThreadLocalAnonymousInnerClassHelper();
+        private readonly DisposableThreadLocal<IDictionary<string, object>> docValuesLocal = new DisposableThreadLocalAnonymousInnerClassHelper();
 
-        private class IDisposableThreadLocalAnonymousInnerClassHelper : DisposableThreadLocal<IDictionary<string, object>>
+        private class DisposableThreadLocalAnonymousInnerClassHelper : DisposableThreadLocal<IDictionary<string, object>>
         {
-            public IDisposableThreadLocalAnonymousInnerClassHelper()
+            public DisposableThreadLocalAnonymousInnerClassHelper()
             {
             }
 
@@ -69,11 +69,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal readonly DisposableThreadLocal<IDictionary<string, IBits>> docsWithFieldLocal = new IDisposableThreadLocalAnonymousInnerClassHelper2();
+        internal readonly DisposableThreadLocal<IDictionary<string, IBits>> docsWithFieldLocal = new DisposableThreadLocalAnonymousInnerClassHelper2();
 
-        private class IDisposableThreadLocalAnonymousInnerClassHelper2 : DisposableThreadLocal<IDictionary<string, IBits>>
+        private class DisposableThreadLocalAnonymousInnerClassHelper2 : DisposableThreadLocal<IDictionary<string, IBits>>
         {
-            public IDisposableThreadLocalAnonymousInnerClassHelper2()
+            public DisposableThreadLocalAnonymousInnerClassHelper2()
             {
             }
 
