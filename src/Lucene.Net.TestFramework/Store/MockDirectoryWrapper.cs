@@ -989,7 +989,9 @@ namespace Lucene.Net.Store
                                     {
                                         sis.Read(m_input, file);
                                     }
+#pragma warning disable 168
                                     catch (System.IO.IOException ioe)
+#pragma warning restore 168
                                     {
                                         // OK: likely some of the .si files were deleted
                                     }

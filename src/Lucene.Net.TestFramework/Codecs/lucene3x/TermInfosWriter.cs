@@ -113,7 +113,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         directory.DeleteFile(IndexFileNames.SegmentFileName(segment, "", (IsIndex ? Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION : Lucene3xPostingsFormat.TERMS_EXTENSION)));
                     }
+#pragma warning disable 168
                     catch (IOException ignored)
+#pragma warning restore 168
                     {
                     }
                 }
@@ -152,7 +154,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         directory.DeleteFile(IndexFileNames.SegmentFileName(segment, "", (IsIndex ? Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION : Lucene3xPostingsFormat.TERMS_EXTENSION)));
                     }
+#pragma warning disable 168
                     catch (IOException ignored)
+#pragma warning restore 168
                     {
                     }
                 }

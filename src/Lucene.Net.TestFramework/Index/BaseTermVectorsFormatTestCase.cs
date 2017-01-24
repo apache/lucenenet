@@ -635,7 +635,9 @@ namespace Lucene.Net.Index
                             docsAndPositionsEnum.NextPosition();
                             Assert.Fail();
                         }
+#pragma warning disable 168
                         catch (Exception e)
+#pragma warning restore 168
                         {
                             // ok
                         }

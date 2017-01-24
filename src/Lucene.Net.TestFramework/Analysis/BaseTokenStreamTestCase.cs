@@ -486,7 +486,9 @@ namespace Lucene.Net.Analysis
                     Assert.Fail("didn't get expected exception when reset() not called");
                 }
             }
+#pragma warning disable 168
             catch (InvalidOperationException expected)
+#pragma warning restore 168
             {
                 //ok
             }
@@ -689,7 +691,9 @@ namespace Lucene.Net.Analysis
                         t.Join();
 #if !NETSTANDARD
                     }
+#pragma warning disable 168
                     catch (ThreadInterruptedException e)
+#pragma warning restore 168
                     {
                         Fail("Thread interrupted");
                     }
@@ -829,7 +833,9 @@ namespace Lucene.Net.Analysis
                             }
                         }
                     }
+#pragma warning disable 168
                     catch (Exception t)
+#pragma warning restore 168
                     {
                         // TODO: really we should pass a random seed to
                         // checkAnalysisConsistency then print it here too:

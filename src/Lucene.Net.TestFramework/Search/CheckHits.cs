@@ -399,7 +399,9 @@ namespace Lucene.Net.Search
                                     maxTimesOthers = true;
                                 }
                             }
+#pragma warning disable 168
                             catch (FormatException e)
+#pragma warning restore 168
                             {
                             }
                         }

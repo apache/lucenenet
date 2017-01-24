@@ -1230,7 +1230,9 @@ namespace Lucene.Net.Util
             {
                 clazz = CommandLineUtil.LoadFSDirectoryClass(fsdirClass);
             }
+#pragma warning disable 168
             catch (System.InvalidCastException e)
+#pragma warning restore 168
             {
                 // TEST_DIRECTORY is not a sub-class of FSDirectory, so draw one at random
                 fsdirClass = RandomInts.RandomFrom(Random(), FS_DIRECTORIES);
@@ -1775,7 +1777,9 @@ namespace Lucene.Net.Util
                 var resourceLoader = new ClasspathResourceLoader(this.GetType(), "Lucene.Net");
                 return resourceLoader.OpenResource(name);
             }
+#pragma warning disable 168
             catch (Exception e)
+#pragma warning restore 168
             {
                 throw new IOException("Cannot find resource: " + name);
             }
@@ -2700,7 +2704,9 @@ namespace Lucene.Net.Util
                         iterate = false;
                     }
                 }
+#pragma warning disable 168
                 catch (IOException exc)
+#pragma warning restore 168
                 {
                     iterate = true;
                 }
