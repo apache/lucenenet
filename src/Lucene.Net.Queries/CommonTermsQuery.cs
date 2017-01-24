@@ -389,9 +389,9 @@ namespace Lucene.Net.Queries
             int result = base.GetHashCode();
             result = prime * result + (disableCoord ? 1231 : 1237);
             result = prime * result + Number.FloatToIntBits(highFreqBoost);
-            result = prime * result + ((highFreqOccur == null) ? 0 : highFreqOccur.GetHashCode());
+            result = prime * result + /*((highFreqOccur == null) ? 0 :*/ highFreqOccur.GetHashCode()/*)*/;
             result = prime * result + Number.FloatToIntBits(lowFreqBoost);
-            result = prime * result + ((lowFreqOccur == null) ? 0 : lowFreqOccur.GetHashCode());
+            result = prime * result + /*((lowFreqOccur == null) ? 0 :*/ lowFreqOccur.GetHashCode()/*)*/;
             result = prime * result + Number.FloatToIntBits(maxTermFrequency);
             result = prime * result + Number.FloatToIntBits(LowFreqMinimumNumberShouldMatch);
             result = prime * result + Number.FloatToIntBits(HighFreqMinimumNumberShouldMatch);
