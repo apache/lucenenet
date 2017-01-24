@@ -136,9 +136,9 @@ namespace Lucene.Net.Util
             }
         }
 
-        internal static bool IsInvokableSubclassOf<S>(Type type)
+        internal static bool IsInvokableSubclassOf<T>(Type type)
         {
-            return typeof(S).IsAssignableFrom(type) && !type.GetTypeInfo().IsAbstract && !type.GetTypeInfo().IsInterface;
+            return typeof(T).IsAssignableFrom(type) && !type.GetTypeInfo().IsAbstract && !type.GetTypeInfo().IsInterface;
         }
 
         public static SPIClassIterator<S> Get()
