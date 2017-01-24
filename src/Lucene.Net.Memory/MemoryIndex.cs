@@ -253,7 +253,7 @@ namespace Lucene.Net.Index.Memory
             }
             catch (IOException ex)
             {
-                throw;
+                throw new Exception(ex.Message, ex);
             }
 
             AddField(fieldName, stream, 1.0f, analyzer.GetPositionIncrementGap(fieldName), analyzer.GetOffsetGap(fieldName));
