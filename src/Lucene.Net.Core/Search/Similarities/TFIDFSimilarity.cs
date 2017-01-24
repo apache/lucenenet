@@ -1,3 +1,5 @@
+using Lucene.Net.Support;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -729,6 +731,7 @@ namespace Lucene.Net.Search.Similarities
         /// Collection statistics for the TF-IDF model. The only statistic of interest
         /// to this model is idf.
         /// </summary>
+        [ExceptionToClassNameConvention]
         private class IDFStats : SimWeight
         {
             internal string Field { get; private set; }

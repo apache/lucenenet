@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System.Diagnostics;
 
 namespace Lucene.Net.Store
@@ -25,6 +26,7 @@ namespace Lucene.Net.Store
     /// <seealso cref="Lucene.Net.Store.Directory#openInput(String, IOContext)"/> or
     /// <seealso cref="Lucene.Net.Store.Directory#createOutput(String, IOContext)"/>
     /// </summary>
+    [ExceptionToClassNameConvention]
     public class IOContext
     {
         /// <summary>

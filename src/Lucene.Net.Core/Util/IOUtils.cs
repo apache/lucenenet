@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,6 +32,7 @@ namespace Lucene.Net.Util
     /// Remove once Lucene is on Java 7.
     /// @lucene.internal
     /// </summary>
+    [ExceptionToClassNameConvention]
     public sealed class IOUtils
     {
         /// <summary>
