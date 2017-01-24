@@ -48,23 +48,23 @@ namespace Lucene.Net.Util
                 result.Append("minus ");
                 i = -i;
             }
-            if (i >= 1000000000000000000l) // quadrillion
+            if (i >= 1000000000000000000L) // quadrillion
             {
-                LongToEnglish(i / 1000000000000000000l, result);
+                LongToEnglish(i / 1000000000000000000L, result);
                 result.Append("quintillion, ");
-                i = i % 1000000000000000000l;
+                i = i % 1000000000000000000L;
             }
-            if (i >= 1000000000000000l) // quadrillion
+            if (i >= 1000000000000000L) // quadrillion
             {
-                LongToEnglish(i / 1000000000000000l, result);
+                LongToEnglish(i / 1000000000000000L, result);
                 result.Append("quadrillion, ");
-                i = i % 1000000000000000l;
+                i = i % 1000000000000000L;
             }
-            if (i >= 1000000000000l) // trillions
+            if (i >= 1000000000000L) // trillions
             {
-                LongToEnglish(i / 1000000000000l, result);
+                LongToEnglish(i / 1000000000000L, result);
                 result.Append("trillion, ");
-                i = i % 1000000000000l;
+                i = i % 1000000000000L;
             }
             if (i >= 1000000000) // billions
             {
