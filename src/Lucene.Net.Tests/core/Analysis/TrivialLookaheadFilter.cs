@@ -26,8 +26,8 @@ namespace Lucene.Net.Analysis
     public sealed class TrivialLookaheadFilter : LookaheadTokenFilter<TestPosition>
     {
         private readonly ICharTermAttribute TermAtt;
-        private readonly IPositionIncrementAttribute PosIncAtt;
-        private readonly IOffsetAttribute OffsetAtt;
+        new private readonly IPositionIncrementAttribute PosIncAtt;
+        new private readonly IOffsetAttribute OffsetAtt;
 
         private int InsertUpto;
 
