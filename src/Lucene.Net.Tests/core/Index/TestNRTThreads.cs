@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
         private bool UseNonNrtReaders = true;
 
         [SetUp]
-        public virtual void SetUp()
+        public override void SetUp()
         {
             base.SetUp();
             UseNonNrtReaders = Random().NextBoolean();
