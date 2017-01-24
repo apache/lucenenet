@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Payloads
         private static IndexSearcher Searcher;
         private static IndexReader Reader;
         private static Directory Directory;
-        private static BoostingSimilarity Similarity = new BoostingSimilarity();
+        private static BoostingSimilarity similarity = new BoostingSimilarity();
         private static byte[] Payload2 = { 2 };
         private static byte[] Payload4 = { 4 };
         private static readonly Regex _whiteSpaceRegex = new Regex("[\\s]+", RegexOptions.Compiled);
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Payloads
         public void BeforeClass()
         {
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(Similarity));
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(similarity));
             //writer.infoStream = System.out;
             for (int i = 0; i < 1000; i++)
             {
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Payloads
             writer.Dispose();
 
             Searcher = NewSearcher(Reader);
-            Searcher.Similarity = Similarity;
+            Searcher.Similarity = similarity;
         }
 
         [TestFixtureTearDown]
