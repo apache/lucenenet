@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 
 namespace Lucene.Net.Store
@@ -171,6 +172,7 @@ namespace Lucene.Net.Store
             }
         }
 
+        [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
         public override void Seek(long pos)
         {
             @delegate.Seek(pos);
