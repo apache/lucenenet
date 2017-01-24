@@ -541,7 +541,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
-        private class RandomBits : IBits
+        new private class RandomBits : IBits
         {
             internal FixedBitSet Bits;
 
