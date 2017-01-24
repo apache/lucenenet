@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis
         {
             /// <summary>
             /// Set the current binary value. </summary>
-            BytesRef BytesRef { set; }
+            new BytesRef BytesRef { get; set; }
         }
 
         /// <summary>
