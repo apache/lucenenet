@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (DoFail && Random().Next() % 10 <= 3)
+                if (TestTransactions.DoFail && Random().Next() % 10 <= 3)
                 {
                     throw new IOException("now failing randomly but on purpose");
                 }
