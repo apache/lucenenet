@@ -465,7 +465,7 @@ namespace Lucene.Net.Util.Automaton
             int result = 1;
             result = prime * result + ((RunAutomaton == null) ? 0 : RunAutomaton.GetHashCode());
             result = prime * result + ((Term == null) ? 0 : Term.GetHashCode());
-            result = prime * result + ((Type == null) ? 0 : Type.GetHashCode());
+            result = prime * result + Type.GetHashCode(); //((Type == null) ? 0 : Type.GetHashCode()); // LUCENENET NOTE: Enum cannot be null in .NET
             return result;
         }
 
