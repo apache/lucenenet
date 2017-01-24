@@ -376,6 +376,7 @@ namespace Lucene.Net.Store
                 Dir.DeleteFile(name);
             }
 
+            [Obsolete("this method will be removed in 5.0")]
             public override bool FileExists(string name)
             {
                 return Dir.FileExists(name);

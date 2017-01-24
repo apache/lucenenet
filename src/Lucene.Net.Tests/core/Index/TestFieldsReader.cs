@@ -133,6 +133,7 @@ namespace Lucene.Net.Index
                 return FsDir.ListAll();
             }
 
+            [Obsolete("this method will be removed in 5.0")]
             public override bool FileExists(string name)
             {
                 return FsDir.FileExists(name);
