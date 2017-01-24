@@ -275,7 +275,7 @@ namespace Lucene.Net.Index
         ///
         /// <p>Only takes effect when IndexWriter is first created.
         /// </summary>
-        public IndexWriterConfig SetSimilarity(Similarity similarity)
+        public IndexWriterConfig SetSimilarity(Similarity similarity) // LUCENENET TODO: Make this (and other setters on this class) a property setter? It would make it consistent with IndexSearcher and make it more .NET like
         {
             if (similarity == null)
             {
