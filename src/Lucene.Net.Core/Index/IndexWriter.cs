@@ -2379,7 +2379,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 Debug.Assert(maxNumSegments == -1 || maxNumSegments > 0);
-                Debug.Assert(trigger != null);
+                //Debug.Assert(trigger != null); // LUCENENET NOTE: Enum cannot be null in .NET
                 if (stopMerges)
                 {
                     return false;
