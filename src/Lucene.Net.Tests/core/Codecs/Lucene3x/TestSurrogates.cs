@@ -105,7 +105,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private sealed class SortTermAsUTF16Comparer : IComparer<Term>
         {
+#pragma warning disable 612, 618
             private static readonly IComparer<BytesRef> LegacyComparer = BytesRef.UTF8SortedAsUTF16Comparer;
+#pragma warning restore 612, 618
 
             public int Compare(Term term1, Term term2)
             {

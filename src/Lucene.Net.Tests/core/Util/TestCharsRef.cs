@@ -41,7 +41,9 @@ namespace Lucene.Net.Util
             }
 
             Array.Sort(utf8);
+#pragma warning disable 612, 618
             Array.Sort(utf16, CharsRef.UTF16SortedAsUTF8Comparer);
+#pragma warning restore 612, 618
 
             for (int i = 0; i < numStrings; i++)
             {

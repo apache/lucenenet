@@ -552,7 +552,9 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
+#pragma warning disable 612, 618
             Sort sort = new Sort(new SortField("value", SortFieldType.BYTE));
+#pragma warning restore 612, 618
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);
@@ -584,7 +586,9 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
+#pragma warning disable 612, 618
             Sort sort = new Sort(new SortField("value", SortFieldType.BYTE));
+#pragma warning restore 612, 618
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);
@@ -616,7 +620,9 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
+#pragma warning disable 612, 618
             SortField sortField = new SortField("value", SortFieldType.BYTE);
+#pragma warning restore 612, 618
             sortField.MissingValue = sbyte.MaxValue;
             Sort sort = new Sort(sortField);
 
@@ -651,7 +657,9 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
+#pragma warning disable 612, 618
             Sort sort = new Sort(new SortField("value", SortFieldType.BYTE, true));
+#pragma warning restore 612, 618
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);
@@ -684,7 +692,9 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
+#pragma warning disable 612, 618
             Sort sort = new Sort(new SortField("value", SortFieldType.SHORT));
+#pragma warning restore 612, 618
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);
@@ -716,7 +726,9 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
+#pragma warning disable 612, 618
             Sort sort = new Sort(new SortField("value", SortFieldType.SHORT));
+#pragma warning restore 612, 618
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);
@@ -748,7 +760,9 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
+#pragma warning disable 612, 618
             SortField sortField = new SortField("value", SortFieldType.SHORT);
+#pragma warning restore 612, 618
             sortField.MissingValue = short.MaxValue;
             Sort sort = new Sort(sortField);
 
@@ -783,7 +797,9 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
+#pragma warning disable 612, 618
             Sort sort = new Sort(new SortField("value", SortFieldType.SHORT, true));
+#pragma warning restore 612, 618
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);

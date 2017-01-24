@@ -108,7 +108,9 @@ namespace Lucene.Net.Index
                 {
                     get
                     {
+#pragma warning disable 612, 618
                         if (Codec.Default is Lucene3xCodec)
+#pragma warning restore 612, 618
                         {
                             return false; // 3.x doesnt support
                         }

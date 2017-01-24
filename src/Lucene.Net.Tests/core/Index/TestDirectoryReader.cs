@@ -857,7 +857,9 @@ namespace Lucene.Net.Index
 
             DirectoryReader r = DirectoryReader.Open(dir);
             AtomicReader r1 = GetOnlySegmentReader(r);
+#pragma warning disable 612, 618
             Assert.AreEqual(36, r1.Fields.UniqueTermCount);
+#pragma warning restore 612, 618
             writer.AddDocument(doc);
             writer.Commit();
             DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
@@ -866,7 +868,9 @@ namespace Lucene.Net.Index
 
             foreach (AtomicReaderContext s in r2.Leaves)
             {
+#pragma warning disable 612, 618
                 Assert.AreEqual(36, ((AtomicReader)s.Reader).Fields.UniqueTermCount);
+#pragma warning restore 612, 618
             }
             r2.Dispose();
             writer.Dispose();

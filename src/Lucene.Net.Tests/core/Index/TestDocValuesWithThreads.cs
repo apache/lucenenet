@@ -139,6 +139,7 @@ namespace Lucene.Net.Index
                         int docID = ThreadRandom.Next(NumDocs);
                         switch (ThreadRandom.Next(6))
                         {
+#pragma warning disable 612, 618
                             case 0:
                                 Assert.AreEqual((long)(sbyte)Numbers[docID], FieldCache.DEFAULT.GetBytes(Ar, "number", false).Get(docID));
                                 break;
@@ -146,6 +147,7 @@ namespace Lucene.Net.Index
                             case 1:
                                 Assert.AreEqual((long)(short)Numbers[docID], FieldCache.DEFAULT.GetShorts(Ar, "number", false).Get(docID));
                                 break;
+#pragma warning restore 612, 618
 
                             case 2:
                                 Assert.AreEqual((long)(int)Numbers[docID], FieldCache.DEFAULT.GetInts(Ar, "number", false).Get(docID));

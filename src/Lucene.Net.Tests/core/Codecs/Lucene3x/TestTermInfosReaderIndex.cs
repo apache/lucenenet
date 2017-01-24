@@ -50,6 +50,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TopDocs = Lucene.Net.Search.TopDocs;
 
+#pragma warning disable 612, 618
     [TestFixture]
     public class TestTermInfosReaderIndex : LuceneTestCase
     {
@@ -230,4 +231,5 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
     }
+#pragma warning restore 612, 618
 }

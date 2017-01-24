@@ -110,8 +110,10 @@ namespace Lucene.Net.Index
             AtomicReader air = (AtomicReader)ir.Leaves[0].Reader;
             Terms terms = air.Terms("field");
             // numTerms-1 because there cannot be a term 0 with 0 postings:
+#pragma warning disable 612, 618
             Assert.AreEqual(numTerms - 1, air.Fields.UniqueTermCount);
             if (iwc.Codec is Lucene3xCodec == false)
+#pragma warning restore 612, 618
             {
                 Assert.AreEqual(numTerms - 1, terms.Count);
             }

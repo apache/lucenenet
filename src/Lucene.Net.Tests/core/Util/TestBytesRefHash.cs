@@ -214,7 +214,9 @@ namespace Lucene.Net.Util
                 }
                 // We use the UTF-16 comparer here, because we need to be able to
                 // compare to native String.CompareTo() [UTF-16]:
+#pragma warning disable 612, 618
                 int[] sort = Hash.Sort(BytesRef.UTF8SortedAsUTF16Comparer);
+#pragma warning restore 612, 618
                 Assert.IsTrue(strings.Count < sort.Length);
                 int i = 0;
                 BytesRef scratch = new BytesRef();

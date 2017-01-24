@@ -642,7 +642,11 @@ namespace Lucene.Net.Search
 
             SnapshotDeletionPolicy sdp = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
             Directory dir = new NRTCachingDirectory(NewFSDirectory(CreateTempDir("nrt")), 5, 128);
-            IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_46, new MockAnalyzer(Random()));
+            IndexWriterConfig config = new IndexWriterConfig(
+#pragma warning disable 612, 618
+                Version.LUCENE_46,
+#pragma warning restore 612, 618
+                new MockAnalyzer(Random()));
             config.SetIndexDeletionPolicy(sdp);
             config.SetOpenMode(OpenMode.CREATE_OR_APPEND);
             IndexWriter iw = new IndexWriter(dir, config);

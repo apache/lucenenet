@@ -98,7 +98,9 @@ namespace Lucene.Net.Util
                 }
 
                 stringList.Sort();
+#pragma warning disable 612, 618
                 IBytesRefIterator iter = list.GetIterator(BytesRef.UTF8SortedAsUTF16Comparer);
+#pragma warning restore 612, 618
                 int a = 0;
                 while ((spare = iter.Next()) != null)
                 {

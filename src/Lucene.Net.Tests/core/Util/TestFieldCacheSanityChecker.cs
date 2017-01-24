@@ -149,7 +149,9 @@ namespace Lucene.Net.Util
 
             cache.GetInts(ReaderX, "theInt", FieldCache.DEFAULT_INT_PARSER, false);
             cache.GetTerms(ReaderX, "theInt", false);
+#pragma warning disable 612, 618
             cache.GetBytes(ReaderX, "theByte", false);
+#pragma warning restore 612, 618
 
             // // //
 
@@ -172,8 +174,9 @@ namespace Lucene.Net.Util
             cache.GetTerms(ReaderA, "theInt", false);
             cache.GetTerms(ReaderB, "theInt", false);
             cache.GetTerms(ReaderX, "theInt", false);
-
+#pragma warning disable 612, 618
             cache.GetBytes(ReaderX, "theByte", false);
+#pragma warning restore 612, 618
 
             // // //
 

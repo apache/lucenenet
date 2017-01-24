@@ -42,7 +42,9 @@ namespace Lucene.Net.Index
 
         protected override IEnumerable<Options> ValidOptions()
         {
+#pragma warning disable 612, 618
             if (Codec is Lucene3xCodec)
+#pragma warning restore 612, 618
             {
                 // payloads are not supported on vectors in 3.x indexes
                 return ValidOptions(Options.NONE, Options.POSITIONS_AND_OFFSETS);

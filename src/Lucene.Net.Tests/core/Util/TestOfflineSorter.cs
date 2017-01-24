@@ -72,7 +72,9 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestSingleLine()
         {
+#pragma warning disable 612, 618
             CheckSort(new OfflineSorter(), new byte[][] { "Single line only.".GetBytes(IOUtils.CHARSET_UTF_8) });
+#pragma warning restore 612, 618
         }
 
 #if !NETSTANDARD

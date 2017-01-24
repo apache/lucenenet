@@ -630,7 +630,9 @@ namespace Lucene.Net.Index
                 {
                     FieldData field = Fields[Random().Next(Fields.Length)];
                     TermsEnum termsEnum = TermsDict.Terms(field.FieldInfo.Name).Iterator(null);
+#pragma warning disable 612, 618
                     if (Si.Codec is Lucene3xCodec)
+#pragma warning restore 612, 618
                     {
                         // code below expects unicode sort order
                         continue;
@@ -849,7 +851,9 @@ namespace Lucene.Net.Index
             Array.Sort(fields);
             foreach (FieldData field in fields)
             {
+#pragma warning disable 612, 618
                 if (!allowPreFlex && codec is Lucene3xCodec)
+#pragma warning restore 612, 618
                 {
                     // code below expects unicode sort order
                     continue;

@@ -110,7 +110,9 @@ namespace Lucene.Net.Index
                 if (VERBOSE)
                 {
                     List<BytesRef> termsList = new List<BytesRef>(uniqueTerms);
+#pragma warning disable 612, 618
                     termsList.Sort(BytesRef.UTF8SortedAsUTF16Comparer);
+#pragma warning restore 612, 618
                     Console.WriteLine("TEST: terms in UTF16 order:");
                     foreach (BytesRef b in termsList)
                     {

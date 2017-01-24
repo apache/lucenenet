@@ -363,6 +363,7 @@ namespace Lucene.Net.Documents
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Documents.Document doc = new Documents.Document();
+#pragma warning disable 612, 618
             doc.Add(new Field("stored", "abc", Field.Store.YES, Field.Index.NO));
             doc.Add(new Field("stored_indexed", "abc xyz", Field.Store.YES, Field.Index.NOT_ANALYZED));
             doc.Add(new Field("stored_tokenized", "abc xyz", Field.Store.YES, Field.Index.ANALYZED));
@@ -375,6 +376,7 @@ namespace Lucene.Net.Documents
             doc.Add(new Field("tv_pos", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS));
             doc.Add(new Field("tv_off", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_OFFSETS));
             doc.Add(new Field("tv_pos_off", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+#pragma warning restore 612, 618
             w.AddDocument(doc);
             IndexReader r = w.Reader;
             w.Dispose();

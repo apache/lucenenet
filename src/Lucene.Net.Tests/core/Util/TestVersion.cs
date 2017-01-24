@@ -22,6 +22,7 @@ using System.Reflection;
 
 namespace Lucene.Net.Util
 {
+#pragma warning disable 612, 618
     [TestFixture]
     public class TestVersion : LuceneTestCase
     {
@@ -78,4 +79,5 @@ namespace Lucene.Net.Util
             Assert.AreEqual(mainVersionParsed, values[values.Length - 2], "Constant one before last must be the same as the parsed LUCENE_MAIN_VERSION (without alpha/beta) constant: " + mainVersionWithoutAlphaBeta);
         }
     }
+#pragma warning restore 612, 618
 }

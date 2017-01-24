@@ -217,6 +217,7 @@ namespace Lucene.Net.Search
                 Assert.IsTrue(longs.Get(i) == (long.MaxValue - i), longs.Get(i) + " does not equal: " + (long.MaxValue - i) + " i=" + i);
             }
 
+#pragma warning disable 612, 618
             FieldCache.Bytes bytes = cache.GetBytes(Reader, "theByte", Random().NextBoolean());
             Assert.AreSame(bytes, cache.GetBytes(Reader, "theByte", Random().NextBoolean()), "Second request to cache return same array");
             Assert.AreSame(bytes, cache.GetBytes(Reader, "theByte", FieldCache.DEFAULT_BYTE_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
@@ -232,6 +233,7 @@ namespace Lucene.Net.Search
             {
                 Assert.IsTrue(shorts.Get(i) == (short)(short.MaxValue - i), shorts.Get(i) + " does not equal: " + (short.MaxValue - i));
             }
+#pragma warning restore 612, 618
 
             FieldCache.Ints ints = cache.GetInts(Reader, "theInt", Random().NextBoolean());
             Assert.AreSame(ints, cache.GetInts(Reader, "theInt", Random().NextBoolean()), "Second request to cache return same array");
@@ -831,11 +833,13 @@ namespace Lucene.Net.Search
             cache.PurgeAllCaches();
             Assert.AreEqual(0, cache.GetCacheEntries().Length);
 
+#pragma warning disable 612, 618
             Bytes bytes = cache.GetBytes(ar, "bogusbytes", true);
             Assert.AreEqual(0, bytes.Get(0));
 
             Shorts shorts = cache.GetShorts(ar, "bogusshorts", true);
             Assert.AreEqual(0, shorts.Get(0));
+#pragma warning restore 612, 618
 
             Ints ints = cache.GetInts(ar, "bogusints", true);
             Assert.AreEqual(0, ints.Get(0));
@@ -898,11 +902,13 @@ namespace Lucene.Net.Search
             cache.PurgeAllCaches();
             Assert.AreEqual(0, cache.GetCacheEntries().Length);
 
+#pragma warning disable 612, 618
             Bytes bytes = cache.GetBytes(ar, "bogusbytes", true);
             Assert.AreEqual(0, bytes.Get(0));
 
             Shorts shorts = cache.GetShorts(ar, "bogusshorts", true);
             Assert.AreEqual(0, shorts.Get(0));
+#pragma warning restore 612, 618
 
             Ints ints = cache.GetInts(ar, "bogusints", true);
             Assert.AreEqual(0, ints.Get(0));

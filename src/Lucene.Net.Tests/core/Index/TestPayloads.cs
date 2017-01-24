@@ -78,7 +78,9 @@ namespace Lucene.Net.Index
             // enabled in only some documents
             d.Add(NewTextField("f3", "this field has payloads in some docs", Field.Store.NO));
             // only add payload data for field f2
+#pragma warning disable 612, 618
             analyzer.SetPayloadData("f2", "somedata".GetBytes(IOUtils.CHARSET_UTF_8), 0, 1);
+#pragma warning restore 612, 618
             writer.AddDocument(d);
             // flush
             writer.Dispose();
@@ -100,8 +102,10 @@ namespace Lucene.Net.Index
             d.Add(NewTextField("f2", "this field has payloads in all docs", Field.Store.NO));
             d.Add(NewTextField("f3", "this field has payloads in some docs", Field.Store.NO));
             // add payload data for field f2 and f3
+#pragma warning disable 612, 618
             analyzer.SetPayloadData("f2", "somedata".GetBytes(IOUtils.CHARSET_UTF_8), 0, 1);
             analyzer.SetPayloadData("f3", "somedata".GetBytes(IOUtils.CHARSET_UTF_8), 0, 3);
+#pragma warning restore 612, 618
             writer.AddDocument(d);
 
             // force merge
@@ -293,7 +297,9 @@ namespace Lucene.Net.Index
             reader.Dispose();
         }
 
+#pragma warning disable 612, 618
         internal static readonly Encoding Utf8 = IOUtils.CHARSET_UTF_8;
+#pragma warning restore 612, 618
 
         private void GenerateRandomData(byte[] data)
         {

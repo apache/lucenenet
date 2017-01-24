@@ -67,7 +67,30 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
 
-            AllSortFields = new List<SortField>(Arrays.AsList(new SortField[] { new SortField("byte", SortFieldType.BYTE, false), new SortField("short", SortFieldType.SHORT, false), new SortField("int", SortFieldType.INT, false), new SortField("long", SortFieldType.LONG, false), new SortField("float", SortFieldType.FLOAT, false), new SortField("double", SortFieldType.DOUBLE, false), new SortField("bytes", SortFieldType.STRING, false), new SortField("bytesval", SortFieldType.STRING_VAL, false), new SortField("byte", SortFieldType.BYTE, true), new SortField("short", SortFieldType.SHORT, true), new SortField("int", SortFieldType.INT, true), new SortField("long", SortFieldType.LONG, true), new SortField("float", SortFieldType.FLOAT, true), new SortField("double", SortFieldType.DOUBLE, true), new SortField("bytes", SortFieldType.STRING, true), new SortField("bytesval", SortFieldType.STRING_VAL, true), SortField.FIELD_SCORE, SortField.FIELD_DOC }));
+            AllSortFields = new List<SortField>(Arrays.AsList(new SortField[] {
+#pragma warning disable 612,618
+                new SortField("byte", SortFieldType.BYTE, false),
+                new SortField("short", SortFieldType.SHORT, false),
+#pragma warning restore 612,618
+                new SortField("int", SortFieldType.INT, false),
+                new SortField("long", SortFieldType.LONG, false),
+                new SortField("float", SortFieldType.FLOAT, false),
+                new SortField("double", SortFieldType.DOUBLE, false),
+                new SortField("bytes", SortFieldType.STRING, false),
+                new SortField("bytesval", SortFieldType.STRING_VAL, false),
+#pragma warning disable 612,618
+                new SortField("byte", SortFieldType.BYTE, true),
+                new SortField("short", SortFieldType.SHORT, true),
+#pragma warning restore 612,618
+                new SortField("int", SortFieldType.INT, true),
+                new SortField("long", SortFieldType.LONG, true),
+                new SortField("float", SortFieldType.FLOAT, true),
+                new SortField("double", SortFieldType.DOUBLE, true),
+                new SortField("bytes", SortFieldType.STRING, true),
+                new SortField("bytesval", SortFieldType.STRING_VAL, true),
+                SortField.FIELD_SCORE,
+                SortField.FIELD_DOC
+            }));
 
             if (SupportsDocValues)
             {

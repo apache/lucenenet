@@ -232,6 +232,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] result;
             Query q = new TermQuery(new Term("body", "body"));
 
+#pragma warning disable 612, 618
             // test id, bounded on both ends
             result = search.Search(q, FieldCacheRangeFilter.NewShortRange("id", minIdO, maxIdO, T, T), numDocs).ScoreDocs;
             Assert.AreEqual(numDocs, result.Length, "find all");
@@ -303,6 +304,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(0, result.Length, "overflow special case");
             result = search.Search(q, FieldCacheRangeFilter.NewShortRange("id", maxIdO, minIdO, T, T), numDocs).ScoreDocs;
             Assert.AreEqual(0, result.Length, "inverse range");
+#pragma warning restore 612, 618
         }
 
         [Test]
@@ -573,6 +575,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] result;
             Query q = new TermQuery(new Term("body", "body"));
 
+#pragma warning disable 612, 618
             result = search.Search(q, FieldCacheRangeFilter.NewByteRange("id", (sbyte?)-20, (sbyte?)20, T, T), 100).ScoreDocs;
             Assert.AreEqual(40, result.Length, "find all");
 
@@ -587,6 +590,8 @@ namespace Lucene.Net.Search
 
             result = search.Search(q, FieldCacheRangeFilter.NewByteRange("id", (sbyte?)-20, (sbyte?)-10, T, T), 100).ScoreDocs;
             Assert.AreEqual(11, result.Length, "find all");
+#pragma warning restore 612, 618
+
             reader.Dispose();
             dir.Dispose();
         }
