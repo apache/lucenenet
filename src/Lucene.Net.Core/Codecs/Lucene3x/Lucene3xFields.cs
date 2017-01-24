@@ -164,6 +164,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
+        [Obsolete("iterate fields and add their Count instead.")]
         public override long UniqueTermCount
         {
             get
