@@ -11,10 +11,10 @@ namespace Lucene.Net.Support
     {
         protected readonly CultureInfo locale;
 
-        private int maximumIntegerDigits;
-        private int minimumIntegerDigits;
-        private int maximumFractionDigits;
-        private int minimumFractionDigits;
+        //private int maximumIntegerDigits;
+        //private int minimumIntegerDigits;
+        //private int maximumFractionDigits;
+        //private int minimumFractionDigits;
 
         public NumberFormat(CultureInfo locale)
         {
