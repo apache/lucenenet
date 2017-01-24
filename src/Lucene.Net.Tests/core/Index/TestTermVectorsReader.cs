@@ -299,7 +299,7 @@ namespace Lucene.Net.Index
         public virtual void TestPositionReader()
         {
             TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
-            BytesRef[] terms;
+            //BytesRef[] terms; // LUCENENET NOTE: Not used in Lucene
             Terms vector = reader.Get(0).Terms(TestFields[0]);
             Assert.IsNotNull(vector);
             Assert.AreEqual(TestTerms.Length, vector.Count);
