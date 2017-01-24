@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
     /// </summary>
     internal class NumericDocValuesFieldUpdates : AbstractDocValuesFieldUpdates
     {
-        new internal sealed class Iterator : AbstractDocValuesFieldUpdates.IIterator
+        internal sealed class Iterator : AbstractDocValuesFieldUpdates.IIterator
         {
             private readonly int size;
             private readonly PagedGrowableWriter values;
