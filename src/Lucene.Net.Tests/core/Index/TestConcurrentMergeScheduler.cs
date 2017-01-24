@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
         {
             private readonly TestConcurrentMergeScheduler OuterInstance;
 
-            private int MaxMergeCount;
+            private int maxMergeCount;
             private CountdownEvent EnoughMergesWaiting;
             private AtomicInteger RunningMergeCount;
             private AtomicBoolean Failed;
@@ -335,7 +335,7 @@ namespace Lucene.Net.Index
             public ConcurrentMergeSchedulerAnonymousInnerClassHelper(TestConcurrentMergeScheduler outerInstance, int maxMergeCount, CountdownEvent enoughMergesWaiting, AtomicInteger runningMergeCount, AtomicBoolean failed)
             {
                 this.OuterInstance = outerInstance;
-                this.MaxMergeCount = maxMergeCount;
+                this.maxMergeCount = maxMergeCount;
                 this.EnoughMergesWaiting = enoughMergesWaiting;
                 this.RunningMergeCount = runningMergeCount;
                 this.Failed = failed;
@@ -350,7 +350,7 @@ namespace Lucene.Net.Index
                     int count = RunningMergeCount.IncrementAndGet();
                     try
                     {
-                        Assert.IsTrue(count <= MaxMergeCount, "count=" + count + " vs maxMergeCount=" + MaxMergeCount);
+                        Assert.IsTrue(count <= maxMergeCount, "count=" + count + " vs maxMergeCount=" + maxMergeCount);
                         EnoughMergesWaiting.Signal();
 
                         // Stall this merge until we see exactly
