@@ -104,7 +104,7 @@ namespace Lucene.Net.Analysis
         protected internal int OutputPos;
 
         // True if we hit end from our input:
-        protected internal bool End;
+        protected internal bool end;
 
         private bool TokenPending;
         private bool InsertPending;
@@ -173,7 +173,7 @@ namespace Lucene.Net.Analysis
             {
                 Console.WriteLine("LTF.peekToken inputPos=" + InputPos + " outputPos=" + OutputPos + " tokenPending=" + TokenPending);
             }
-            Debug.Assert(!End);
+            Debug.Assert(!end);
             Debug.Assert(InputPos == -1 || OutputPos <= InputPos);
             if (TokenPending)
             {
@@ -223,7 +223,7 @@ namespace Lucene.Net.Analysis
             }
             else
             {
-                End = true;
+                end = true;
             }
 
             return gotToken;
@@ -288,7 +288,7 @@ namespace Lucene.Net.Analysis
                         TokenPending = false;
                         return true;
                     }
-                    else if (End || !PeekToken())
+                    else if (end || !PeekToken())
                     {
                         if (DEBUG)
                         {
@@ -368,7 +368,7 @@ namespace Lucene.Net.Analysis
             InputPos = -1;
             OutputPos = 0;
             TokenPending = false;
-            End = false;
+            end = false;
         }
     }
 }

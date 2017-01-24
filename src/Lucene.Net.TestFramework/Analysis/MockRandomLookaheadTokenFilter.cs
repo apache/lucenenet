@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis
 
         protected internal override void AfterPosition()
         {
-            if (!End && random.Next(4) == 2)
+            if (!end && random.Next(4) == 2)
             {
                 PeekToken();
             }
@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis
                 Console.WriteLine("\n" + Thread.CurrentThread.Name + ": MRLTF.incrToken");
             }
 
-            if (!End)
+            if (!end)
             {
                 while (true)
                 {

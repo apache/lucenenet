@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis
 
                 // Look ahead as needed until we figure out the right
                 // endOffset:
-                while (!End && posEndData.EndOffset == -1 && InputPos <= (OutputPos + posLength))
+                while (!end && posEndData.EndOffset == -1 && InputPos <= (OutputPos + posLength))
                 {
                     if (!PeekToken())
                     {
