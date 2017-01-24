@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis
         // TODO: "register" with LuceneTestCase to ensure all streams are closed() ?
         // currently, we can only check that the lifecycle is correct if someone is reusing,
         // but not for "one-offs".
-        private enum State
+        new private enum State
         {
             SETREADER, // consumer set a reader input either via ctor or via reset(Reader)
             RESET, // consumer has called reset()
@@ -314,7 +314,7 @@ namespace Lucene.Net.Analysis
             StreamState = State.CLOSE;
         }
 
-        internal bool SetReaderTestPoint()
+        internal override bool SetReaderTestPoint()
         {
             Assert.True(!EnableChecks_Renamed || StreamState == State.CLOSE, "setReader() called in wrong state: " + StreamState);
             StreamState = State.SETREADER;
