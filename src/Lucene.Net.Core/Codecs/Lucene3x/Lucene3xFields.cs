@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         internal readonly IDictionary<string, Terms> preTerms = new Dictionary<string, Terms>();
         private readonly Directory dir;
         private readonly IOContext context;
-        private Directory cfsReader;
+        //private Directory cfsReader; // LUCENENET NOTE: cfsReader not used
 
         public Lucene3xFields(Directory dir, FieldInfos fieldInfos, SegmentInfo info, IOContext context, int indexDivisor)
         {
@@ -193,7 +193,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void Dispose()
         {
-            IOUtils.Close(Tis, TisNoIndex, cfsReader, FreqStream, ProxStream);
+            IOUtils.Close(Tis, TisNoIndex, /*cfsReader,*/ FreqStream, ProxStream); // LUCENENET NOTE: cfsReader not used
         }
 
         private class PreTerms : Terms
