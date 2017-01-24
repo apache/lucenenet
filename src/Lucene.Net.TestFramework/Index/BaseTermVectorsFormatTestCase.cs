@@ -502,7 +502,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal static bool Equals(object o1, object o2)
+        new protected internal static bool Equals(object o1, object o2)
         {
             if (o1 == null)
             {
