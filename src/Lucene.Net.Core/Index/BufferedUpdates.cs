@@ -147,7 +147,7 @@ namespace Lucene.Net.Index
 
         internal readonly AtomicLong bytesUsed;
 
-        private const bool VERBOSE_DELETES = false;
+        private static bool VERBOSE_DELETES = false;
 
         internal long gen;
 
