@@ -112,7 +112,9 @@ namespace Lucene.Net.Store
 
         protected internal readonly DirectoryInfo m_directory; // The underlying filesystem directory
         protected internal readonly ISet<string> m_staleFiles = new HashSet<string>(); // Files written, but not yet sync'ed
+#pragma warning disable 612, 618
         private int chunkSize = DEFAULT_READ_CHUNK_SIZE;
+#pragma warning restore 612, 618
 
         protected FSDirectory(DirectoryInfo dir)
             : this(dir, null)

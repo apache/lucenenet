@@ -188,7 +188,9 @@ namespace Lucene.Net.Store
                 {
                     Console.WriteLine("nrtdir.deleteFile name=" + name);
                 }
+#pragma warning disable 612, 618
                 if (cache.FileExists(name))
+#pragma warning restore 612, 618
                 {
                     cache.DeleteFile(name);
                 }
@@ -203,7 +205,9 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
+#pragma warning disable 612, 618
                 if (cache.FileExists(name))
+#pragma warning restore 612, 618
                 {
                     return cache.FileLength(name);
                 }
@@ -280,7 +284,9 @@ namespace Lucene.Net.Store
                 {
                     Console.WriteLine("nrtdir.openInput name=" + name);
                 }
+#pragma warning disable 612, 618
                 if (cache.FileExists(name))
+#pragma warning restore 612, 618
                 {
                     if (VERBOSE)
                     {
@@ -304,7 +310,9 @@ namespace Lucene.Net.Store
                 {
                     Console.WriteLine("nrtdir.openInput name=" + name);
                 }
+#pragma warning disable 612, 618
                 if (cache.FileExists(name))
+#pragma warning restore 612, 618
                 {
                     if (VERBOSE)
                     {
@@ -371,7 +379,9 @@ namespace Lucene.Net.Store
                 {
                     Console.WriteLine("nrtdir.unCache name=" + fileName);
                 }
+#pragma warning disable 612, 618
                 if (!cache.FileExists(fileName))
+#pragma warning restore 612, 618
                 {
                     // Another thread beat us...
                     return;

@@ -228,7 +228,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 else
                 {
+#pragma warning disable 612, 618
                     visitor.StringField(info, IOUtils.CHARSET_UTF_8.GetString((byte[])(Array)bytes));
+#pragma warning restore 612, 618
                 }
             }
         }

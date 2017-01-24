@@ -144,7 +144,9 @@ namespace Lucene.Net.Store
             try
             {
                 IDictionary<string, FileEntry> mapping;
+#pragma warning disable 612, 618
                 stream = handle.OpenFullSlice();
+#pragma warning restore 612, 618
                 int firstInt = stream.ReadVInt();
                 // impossible for 3.0 to have 63 files in a .cfs, CFS writer was not visible
                 // and separate norms/etc are outside of cfs.
@@ -186,7 +188,9 @@ namespace Lucene.Net.Store
                     }
                     else
                     {
+#pragma warning disable 612, 618
                         CodecUtil.CheckEOF(entriesStream);
+#pragma warning restore 612, 618
                     }
                 }
                 else

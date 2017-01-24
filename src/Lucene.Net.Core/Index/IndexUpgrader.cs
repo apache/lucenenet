@@ -126,7 +126,9 @@ namespace Lucene.Net.Index
             {
                 dir = CommandLineUtil.NewFSDirectory(dirImpl, new DirectoryInfo(path));
             }
+#pragma warning disable 612, 618
             return new IndexUpgrader(dir, LuceneVersion.LUCENE_CURRENT, @out, deletePriorCommits);
+#pragma warning restore 612, 618
         }
 
         private readonly Directory dir;

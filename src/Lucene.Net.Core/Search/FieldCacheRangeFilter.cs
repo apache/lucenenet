@@ -300,7 +300,9 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
+#pragma warning disable 612, 618
                 var values = FieldCache.DEFAULT.GetBytes(context.AtomicReader, field, (FieldCache.IByteParser)parser, false);
+#pragma warning restore 612, 618
 
                 // we only request the usage of termDocs, if the range contains 0
                 return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.AtomicReader.MaxDoc, acceptDocs);
@@ -368,7 +370,9 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
+#pragma warning disable 612, 618
                 FieldCache.Shorts values = FieldCache.DEFAULT.GetShorts(context.AtomicReader, field, (FieldCache.IShortParser)parser, false);
+#pragma warning restore 612, 618
 
                 // we only request the usage of termDocs, if the range contains 0
                 return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);

@@ -110,7 +110,9 @@ namespace Lucene.Net.Codecs.Compressing
                 }
                 else
                 {
+#pragma warning disable 612, 618
                     CodecUtil.CheckEOF(indexStream);
+#pragma warning restore 612, 618
                 }
                 indexStream.Dispose();
                 indexStream = null;
@@ -196,7 +198,9 @@ namespace Lucene.Net.Codecs.Compressing
                     length = @in.ReadVInt();
                     data = new byte[length];
                     @in.ReadBytes(data, 0, length);
+#pragma warning disable 612, 618
                     visitor.StringField(info, IOUtils.CHARSET_UTF_8.GetString((byte[])(Array)data));
+#pragma warning restore 612, 618
                     break;
 
                 case CompressingStoredFieldsWriter.NUMERIC_INT:

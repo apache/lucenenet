@@ -1017,6 +1017,7 @@ namespace Lucene.Net.Documents
             }
         }
 
+#pragma warning disable 612, 618
         public static bool IsIndexed(this Field.Index index)
         {
             switch (index)
@@ -1182,5 +1183,6 @@ namespace Lucene.Net.Documents
             }
             return Field.TermVector.YES;
         }
+#pragma warning restore 612, 618
     }
 }

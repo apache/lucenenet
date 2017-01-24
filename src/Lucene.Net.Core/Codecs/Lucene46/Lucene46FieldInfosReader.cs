@@ -105,7 +105,9 @@ namespace Lucene.Net.Codecs.Lucene46
                 }
                 else
                 {
+#pragma warning disable 612, 618
                     CodecUtil.CheckEOF(input);
+#pragma warning restore 612, 618
                 }
                 FieldInfos fieldInfos = new FieldInfos(infos);
                 success = true;

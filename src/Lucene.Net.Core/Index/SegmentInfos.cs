@@ -430,7 +430,9 @@ namespace Lucene.Net.Index
                     {
                         throw new CorruptIndexException("checksum mismatch in segments file (resource: " + input + ")");
                     }
+#pragma warning disable 612, 618
                     CodecUtil.CheckEOF(input);
+#pragma warning restore 612, 618
                 }
 
                 success = true;
@@ -544,7 +546,9 @@ namespace Lucene.Net.Index
                             string markerFileName = IndexFileNames.SegmentFileName(si.Name, "upgraded", Lucene3xSegmentInfoFormat.UPGRADED_SI_EXTENSION);
                             si.AddFile(markerFileName);
 
+#pragma warning disable 612, 618
                             string segmentFileName = Write3xInfo(directory, si, IOContext.DEFAULT);
+#pragma warning restore 612, 618
                             upgradedSIFiles.Add(segmentFileName);
                             directory.Sync(/*Collections.singletonList(*/new[] { segmentFileName }/*)*/);
 
@@ -926,7 +930,9 @@ namespace Lucene.Net.Index
                                     }
                                     else
                                     {
+#pragma warning disable 612, 618
                                         CodecUtil.CheckEOF(genInput);
+#pragma warning restore 612, 618
                                     }
                                     if (gen0 == gen1)
                                     {

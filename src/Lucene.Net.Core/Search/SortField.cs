@@ -66,7 +66,10 @@ namespace Lucene.Net.Search
                         throw new System.ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
                     }
                 }
-                else if (type != SortFieldType.BYTE && type != SortFieldType.SHORT && type != SortFieldType.INT && type != SortFieldType.FLOAT && type != SortFieldType.LONG && type != SortFieldType.DOUBLE)
+#pragma warning disable 612, 618
+                else if (type != SortFieldType.BYTE && type != SortFieldType.SHORT
+#pragma warning restore 612, 618
+                    && type != SortFieldType.INT && type != SortFieldType.FLOAT && type != SortFieldType.LONG && type != SortFieldType.DOUBLE)
                 {
                     throw new System.ArgumentException("Missing value only works for numeric or STRING types");
                 }
@@ -137,11 +140,13 @@ namespace Lucene.Net.Search
             }
             else if (parser is FieldCache.IShortParser)
             {
+#pragma warning disable 612, 618
                 InitFieldType(field, SortFieldType.SHORT);
             }
             else if (parser is FieldCache.IByteParser)
             {
                 InitFieldType(field, SortFieldType.BYTE);
+#pragma warning restore 612, 618
             }
             else if (parser is FieldCache.ILongParser)
             {
@@ -332,11 +337,13 @@ namespace Lucene.Net.Search
                     buffer.Append("<string_val" + ": \"").Append(field).Append("\">");
                     break;
 
+#pragma warning disable 612, 618
                 case SortFieldType.BYTE:
                     buffer.Append("<byte: \"").Append(field).Append("\">");
                     break;
 
                 case SortFieldType.SHORT:
+#pragma warning restore 612, 618
                     buffer.Append("<short: \"").Append(field).Append("\">");
                     break;
 
@@ -471,11 +478,13 @@ namespace Lucene.Net.Search
                 case SortFieldType.DOUBLE:
                     return new FieldComparer.DoubleComparer(numHits, field, parser, (double?)m_missingValue);
 
+#pragma warning disable 612, 618
                 case SortFieldType.BYTE:
                     return new FieldComparer.ByteComparer(numHits, field, parser, (sbyte?)m_missingValue);
 
                 case SortFieldType.SHORT:
                     return new FieldComparer.ShortComparer(numHits, field, parser, (short?)m_missingValue);
+#pragma warning restore 612, 618
 
                 case SortFieldType.CUSTOM:
                     Debug.Assert(comparerSource != null);

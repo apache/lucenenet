@@ -113,7 +113,9 @@ namespace Lucene.Net.Index
             this.isCompoundFile = isCompoundFile;
             this.codec = codec;
             this.diagnostics = diagnostics;
+#pragma warning disable 612, 618
             this.attributes = attributes;
+#pragma warning restore 612, 618
         }
 
         /// @deprecated separate norms are not supported in >= 4.0

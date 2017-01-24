@@ -214,7 +214,10 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// A comparer used for enforcing sorted UTF8 order, used in assertions only.
         /// </summary>
-        private static readonly IComparer<CharsRef> comparer = CharsRef.UTF16SortedAsUTF8Comparer;
+        private static readonly IComparer<CharsRef> comparer =
+#pragma warning disable 612, 618
+            CharsRef.UTF16SortedAsUTF8Comparer;
+#pragma warning restore 612, 618
 
         /// <summary>
         /// Add another character sequence to this automaton. The sequence must be

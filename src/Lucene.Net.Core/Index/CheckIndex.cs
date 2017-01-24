@@ -718,7 +718,9 @@ namespace Lucene.Net.Index
                     Msg(infoStream, "    numFiles=" + info.Files().Count);
                     segInfoStat.NumFiles = info.Files().Count;
                     segInfoStat.SizeMB = info.SizeInBytes() / (1024.0 * 1024.0);
+#pragma warning disable 612, 618
                     if (info.Info.GetAttribute(Lucene3xSegmentInfoFormat.DS_OFFSET_KEY) == null)
+#pragma warning restore 612, 618
                     {
                         // don't print size in bytes if its a 3.0 segment with shared docstores
                         Msg(infoStream, "    size (MB)=" + segInfoStat.SizeMB.ToString(nf));
@@ -948,13 +950,17 @@ namespace Lucene.Net.Index
                 {
                     if (info.HasNorms)
                     {
+#pragma warning disable 612, 618
                         Debug.Assert(reader.HasNorms(info.Name)); // deprecated path
+#pragma warning restore 612, 618
                         CheckNorms(info, reader, infoStream);
                         ++status.TotFields;
                     }
                     else
                     {
+#pragma warning disable 612, 618
                         Debug.Assert(!reader.HasNorms(info.Name)); // deprecated path
+#pragma warning restore 612, 618
                         if (reader.GetNormValues(info.Name) != null)
                         {
                             throw new Exception("field: " + info.Name + " should omit norms but has them!");
@@ -1610,7 +1616,9 @@ namespace Lucene.Net.Index
             // for most implementations, this is boring (just the sum across all fields)
             // but codecs that don't work per-field like preflex actually implement this,
             // but don't implement it on Terms, so the check isn't redundant.
+#pragma warning disable 612, 618
             long uniqueTermCountAllFields = fields.UniqueTermCount;
+#pragma warning restore 612, 618
 
             if (uniqueTermCountAllFields != -1 && status.TermCount + status.DelTermCount != uniqueTermCountAllFields)
             {

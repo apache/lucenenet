@@ -88,7 +88,9 @@ namespace Lucene.Net.Codecs.Compressing
                 }
                 else
                 {
+#pragma warning disable 612, 618
                     CodecUtil.CheckEOF(indexStream);
+#pragma warning restore 612, 618
                 }
                 indexStream.Dispose();
                 indexStream = null;

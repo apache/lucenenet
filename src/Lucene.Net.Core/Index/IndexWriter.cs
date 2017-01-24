@@ -3365,6 +3365,7 @@ namespace Lucene.Net.Index
             IDictionary<string, string> attributes;
             // copy the attributes map, we might modify it below.
             // also we need to ensure its read-write, since we will invoke the SIwriter (which might want to set something).
+#pragma warning disable 612, 618
             if (info.Info.Attributes == null)
             {
                 attributes = new Dictionary<string, string>();
@@ -3373,6 +3374,7 @@ namespace Lucene.Net.Index
             {
                 attributes = new Dictionary<string, string>(info.Info.Attributes);
             }
+#pragma warning restore 612, 618
             if (docStoreFiles3xOnly != null)
             {
                 // only violate the codec this way if it's preflex &
@@ -3416,7 +3418,9 @@ namespace Lucene.Net.Index
             }
             catch (System.NotSupportedException uoe)
             {
+#pragma warning disable 612, 618
                 if (currentCodec is Lucene3xCodec)
+#pragma warning restore 612, 618
                 {
                     // OK: 3x codec cannot write a new SI file;
                     // SegmentInfos will write this on commit

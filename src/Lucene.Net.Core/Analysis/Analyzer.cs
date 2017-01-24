@@ -377,7 +377,10 @@ namespace Lucene.Net.Analysis
         /// A predefined <seealso cref="ReuseStrategy"/>  that reuses the same components for
         /// every field.
         /// </summary>
-        public static readonly ReuseStrategy GLOBAL_REUSE_STRATEGY = new GlobalReuseStrategy();
+        public static readonly ReuseStrategy GLOBAL_REUSE_STRATEGY =
+#pragma warning disable 612, 618
+            new GlobalReuseStrategy();
+#pragma warning restore 612, 618
 
         /// <summary>
         /// Implementation of <seealso cref="ReuseStrategy"/> that reuses the same components for
@@ -405,7 +408,10 @@ namespace Lucene.Net.Analysis
         /// A predefined <seealso cref="ReuseStrategy"/> that reuses components per-field by
         /// maintaining a Map of TokenStreamComponent per field name.
         /// </summary>
-        public static readonly ReuseStrategy PER_FIELD_REUSE_STRATEGY = new PerFieldReuseStrategy();
+        public static readonly ReuseStrategy PER_FIELD_REUSE_STRATEGY =
+#pragma warning disable 612, 618
+            new PerFieldReuseStrategy();
+#pragma warning restore 612, 618
 
         /// <summary>
         /// Implementation of <seealso cref="ReuseStrategy"/> that reuses components per-field by

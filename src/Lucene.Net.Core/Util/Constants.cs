@@ -76,8 +76,8 @@ namespace Lucene.Net.Util
         [Obsolete("We are not running on Java for heavens sake")]
         public static readonly bool JRE_IS_MINIMUM_JAVA8;
 
-        [Obsolete("We are not running on Java for heavens sake")]
-        public static readonly bool JRE_IS_64BIT;
+        //[Obsolete("We are not running on Java for heavens sake")]
+        public static readonly bool JRE_IS_64BIT; // LUCENENET NOTE: We still need this constant to indicate 64 bit runtime.
 
         static Constants()
         {
