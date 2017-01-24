@@ -1047,7 +1047,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class TestThread : ThreadClass
+        new private class TestThread : ThreadClass
         {
             internal Fields FieldsSource;
             internal ISet<Option> Options;
