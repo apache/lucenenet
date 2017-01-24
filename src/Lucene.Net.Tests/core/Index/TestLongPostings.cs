@@ -403,7 +403,9 @@ namespace Lucene.Net.Index
             }
             else
             {
+#pragma warning disable 162
                 r = DirectoryReader.Open(dir);
+#pragma warning restore 162
             }
 
             /*

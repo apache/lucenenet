@@ -436,8 +436,10 @@ namespace Lucene.Net.Search
             }
             else
             {
+#pragma warning disable 162
                 mpq.Add(new Term[] { new Term("field", "a") }, 0);
                 mpq.Add(new Term[] { new Term("field", "b"), new Term("field", "c") }, 0);
+#pragma warning restore 162
             }
             TopDocs hits = s.Search(mpq, 2);
             Assert.AreEqual(2, hits.TotalHits);
