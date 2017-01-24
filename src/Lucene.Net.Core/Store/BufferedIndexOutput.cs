@@ -158,6 +158,7 @@ namespace Lucene.Net.Store
             }
         }
 
+        [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
         public override void Seek(long pos)
         {
             Flush();
