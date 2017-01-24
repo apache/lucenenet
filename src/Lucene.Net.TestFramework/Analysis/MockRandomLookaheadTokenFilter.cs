@@ -1,3 +1,4 @@
+using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Threading;
 
@@ -29,13 +30,14 @@ namespace Lucene.Net.Analysis
     public sealed class MockRandomLookaheadTokenFilter
         : LookaheadTokenFilter<LookaheadTokenFilter.Position>
     {
-        private readonly CharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
+        private readonly ICharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
         private Random random; //not readonly to reset seed later
         private readonly long Seed;
 
         public MockRandomLookaheadTokenFilter(Random random, TokenStream @in)
             : base(@in)
         {
+            this.TermAtt = AddAttribute<ICharTermAttribute>();
             this.Seed = random.Next();
             this.random = new Random((int)Seed);
         }
