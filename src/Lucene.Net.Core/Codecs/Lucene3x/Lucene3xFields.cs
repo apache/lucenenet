@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     [Obsolete("(4.0)")]
     internal class Lucene3xFields : FieldsProducer
     {
-        private const bool DEBUG_SURROGATES = false;
+        private static bool DEBUG_SURROGATES = false;
 
         public TermInfosReader Tis { get; set; }
         public TermInfosReader TisNoIndex { get; private set; }
