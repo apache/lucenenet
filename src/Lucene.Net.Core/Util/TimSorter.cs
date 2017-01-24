@@ -320,7 +320,7 @@ namespace Lucene.Net.Util
                     Copy(j++, dest);
                 }
                 Restore(i++, dest++);
-            outerContinue: ;
+            //outerContinue: ; // LUCENENET NOTE: Not referenced
             }
         outerBreak:
             for (; i < len1; ++dest)

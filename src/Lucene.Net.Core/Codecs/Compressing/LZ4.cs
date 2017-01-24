@@ -282,7 +282,7 @@ namespace Lucene.Net.Codecs.Compressing
                     EncodeSequence(bytes, anchor, @ref, off, matchLen, @out);
                     off += matchLen;
                     anchor = off;
-                mainContinue: ;
+                //mainContinue: ; // LUCENENET NOTE: Not Referenced
                 }
             mainBreak: ;
             }
@@ -623,15 +623,15 @@ namespace Lucene.Net.Codecs.Compressing
                         goto search3Continue;
                     search3Continue: ;
                     }
-                search3Break: ;
+                //search3Break: ; // LUCENENET NOTE: Unreachable
 
                 search2Continue: ;
                 }
-            search2Break: ;
+            //search2Break: ; // LUCENENET NOTE: Not referenced
 
             mainContinue: ;
             }
-        mainBreak:
+        //mainBreak: // LUCENENET NOTE: Not referenced
 
             EncodeLastLiterals(src, anchor, srcEnd - anchor, @out);
         }
