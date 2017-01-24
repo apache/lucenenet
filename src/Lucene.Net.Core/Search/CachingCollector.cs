@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
         // A CachingCollector which caches scores
         private sealed class ScoreCachingCollector : CachingCollector
         {
-            private new readonly CachedScorer cachedScorer;
+            private readonly CachedScorer cachedScorer;
             private readonly IList<float[]> cachedScores;
 
             private Scorer scorer;
