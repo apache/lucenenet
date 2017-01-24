@@ -52,7 +52,9 @@ namespace Lucene.Net.Spatial.Queries
                 parser.Parse(SpatialOperation.IsDisjointTo + "[ ]", ctx);
                 fail("spatial operations need args");
             }
+#pragma warning disable 168
             catch (Exception ex)
+#pragma warning restore 168
             {//expected
             }
 
@@ -61,7 +63,9 @@ namespace Lucene.Net.Spatial.Queries
                 parser.Parse("XXXX(Envelope(-10, 10, 20, -20))", ctx);
                 fail("unknown operation!");
             }
+#pragma warning disable 168
             catch (Exception ex)
+#pragma warning restore 168
             {//expected
             }
         }
