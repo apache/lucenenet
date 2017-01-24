@@ -144,7 +144,9 @@ namespace Lucene.Net.Tests.Queries
                 new TermFilter(null);
                 Fail(@"must fail - no term!");
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
             }
 
@@ -153,7 +155,9 @@ namespace Lucene.Net.Tests.Queries
                 new TermFilter(new Term(null));
                 Fail(@"must fail - no field!");
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
             }
         }

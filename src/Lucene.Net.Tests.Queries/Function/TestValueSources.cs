@@ -94,7 +94,9 @@ namespace Lucene.Net.Tests.Queries.Function
         [Test]
         public void TestByte()
         {
+#pragma warning disable 612, 618
             AssertHits(new FunctionQuery(new ByteFieldSource("byte")), new[] { 5f, 12f });
+#pragma warning restore 612, 618
         }
 
         [Test]
@@ -262,7 +264,9 @@ namespace Lucene.Net.Tests.Queries.Function
         [Test]
         public void TestShort()
         {
+#pragma warning disable 612, 618
             AssertHits(new FunctionQuery(new ShortFieldSource("short")), new[] { 945f, 123f });
+#pragma warning restore 612, 618
         }
 
         [Test]

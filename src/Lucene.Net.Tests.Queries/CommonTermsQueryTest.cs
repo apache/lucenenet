@@ -142,7 +142,9 @@ namespace Lucene.Net.Tests.Queries
                 query.Add(null);
                 Fail(@"null values are not supported");
             }
+#pragma warning disable 168
             catch (ArgumentException ex)
+#pragma warning restore 168
             {
             }
         }
@@ -285,7 +287,9 @@ namespace Lucene.Net.Tests.Queries
                 new CommonTermsQuery(Occur.MUST_NOT, RandomOccur(random), Random().NextFloat());
                 Fail(@"MUST_NOT is not supproted");
             }
+#pragma warning disable 168
             catch (ArgumentException ex)
+#pragma warning restore 168
             {
             }
 
@@ -294,7 +298,9 @@ namespace Lucene.Net.Tests.Queries
                 new CommonTermsQuery(RandomOccur(random), Occur.MUST_NOT, Random().NextFloat());
                 Fail(@"MUST_NOT is not supproted");
             }
+#pragma warning disable 168
             catch (ArgumentException ex)
+#pragma warning restore 168
             {
             }
         }

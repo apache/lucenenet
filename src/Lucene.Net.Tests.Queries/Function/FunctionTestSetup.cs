@@ -29,8 +29,10 @@ namespace Lucene.Net.Tests.Queries.Function
         protected internal const string INT_FIELD = "iii";
         protected internal const string FLOAT_FIELD = "fff";
 
+#pragma warning disable 612, 618
         protected internal ValueSource BYTE_VALUESOURCE = new ByteFieldSource(INT_FIELD);
         protected internal ValueSource SHORT_VALUESOURCE = new ShortFieldSource(INT_FIELD);
+#pragma warning restore 612, 618
         protected internal ValueSource INT_VALUESOURCE = new IntFieldSource(INT_FIELD);
         protected internal ValueSource INT_AS_FLOAT_VALUESOURCE = new FloatFieldSource(INT_FIELD);
         protected internal ValueSource FLOAT_VALUESOURCE = new FloatFieldSource(FLOAT_FIELD);
