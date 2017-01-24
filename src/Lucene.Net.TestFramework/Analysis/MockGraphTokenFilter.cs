@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis
 
     public sealed class MockGraphTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
     {
-        private static bool DEBUG = false;
+        new private static bool DEBUG = false;
 
         private readonly ICharTermAttribute TermAtt;
 
