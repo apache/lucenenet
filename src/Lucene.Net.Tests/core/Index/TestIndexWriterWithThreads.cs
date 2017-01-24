@@ -1,29 +1,28 @@
-using System;
-using System.Diagnostics;
-using System.Threading;
 using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
+using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
     //using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System.IO;
-    using Util;
+    
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
+    using IBits = Lucene.Net.Util.IBits;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -46,7 +45,6 @@ namespace Lucene.Net.Index
     using NumericDocValuesField = NumericDocValuesField;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
-    using Util;
 
     /// <summary>
     /// MultiThreaded IndexWriter tests
