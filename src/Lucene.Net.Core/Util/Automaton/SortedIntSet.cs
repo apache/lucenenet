@@ -205,7 +205,6 @@ namespace Lucene.Net.Util.Automaton
 
         public override bool Equals(object other)
         {
-            throw new NotImplementedException("ObjectEquals"); // LUCENENET TODO: Remove error message
             if (other == null)
             {
                 return false;
