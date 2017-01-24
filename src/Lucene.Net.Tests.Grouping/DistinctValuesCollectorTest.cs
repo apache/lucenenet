@@ -40,9 +40,9 @@ namespace Lucene.Net.Search.Grouping
         private readonly static NullComparer nullComparer = new NullComparer();
 
         private readonly string groupField = "author";
-        private readonly string dvGroupField = "author_dv";
+        //private readonly string dvGroupField = "author_dv"; // LUCENENET NOTE: Not used in Lucene
         private readonly string countField = "publisher";
-        private readonly string dvCountField = "publisher_dv";
+        //private readonly string dvCountField = "publisher_dv"; // LUCENENET NOTE: Not used in Lucene
 
         internal class ComparerAnonymousHelper1 : IComparer<AbstractDistinctValuesCollector.IGroupCount<IComparable>>
         {
