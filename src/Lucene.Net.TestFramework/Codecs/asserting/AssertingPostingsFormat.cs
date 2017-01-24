@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -91,6 +92,7 @@ namespace Lucene.Net.Codecs.asserting
                 get { return @in.Count; }
             }
 
+            [Obsolete("iterate fields and add their Count instead.")]
             public override long UniqueTermCount
             {
                 get
