@@ -64,10 +64,10 @@ namespace Lucene.Net.Util
         /// </summary>
         private Dictionary<string, string> RestoreProperties = new Dictionary<string, string>();
 
-        private Codec SavedCodec;
-        private CultureInfo SavedLocale;
-        private InfoStream SavedInfoStream;
-        private TimeZoneInfo SavedTimeZone;
+        //private Codec SavedCodec;
+        //private CultureInfo SavedLocale;
+        //private InfoStream SavedInfoStream;
+        //private TimeZoneInfo SavedTimeZone;
 
         internal CultureInfo Locale;
         internal TimeZoneInfo TimeZone;
