@@ -192,13 +192,11 @@ namespace Lucene.Net.Tests.Queries
             {
                 private readonly CustomExternalQuery outerInstance;
 
-                private AtomicReaderContext context;
                 private FieldCache.Ints values;
 
                 public CustomScoreProviderAnonymousInnerClassHelper(CustomExternalQuery outerInstance, AtomicReaderContext context, FieldCache.Ints values) : base(context)
                 {
                     this.outerInstance = outerInstance;
-                    this.context = context;
                     this.values = values;
                 }
 
