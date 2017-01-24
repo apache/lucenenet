@@ -748,7 +748,7 @@ namespace Lucene.Net.Tests.Join
                 else
                 {
                     toSearcher.Search(new MatchAllDocsQuery(),
-                        new CollectorAnonymousInnerClassHelper6(this, context, toField, joinValueToJoinScores,
+                        new CollectorAnonymousInnerClassHelper6(this, toField, joinValueToJoinScores,
                             docToJoinScore));
                 }
                 queryVals[uniqueRandomValue] = docToJoinScore;
@@ -939,7 +939,6 @@ namespace Lucene.Net.Tests.Join
         {
             private readonly TestJoinUtil OuterInstance;
 
-            private IndexIterationContext Context;
             private string ToField;
             private IDictionary<BytesRef, JoinScore> JoinValueToJoinScores;
             private IDictionary<int, JoinScore> DocToJoinScore;
@@ -949,7 +948,7 @@ namespace Lucene.Net.Tests.Join
             private readonly BytesRef spare = new BytesRef();
 
             public CollectorAnonymousInnerClassHelper6(TestJoinUtil testJoinUtil, 
-                IndexIterationContext context, string toField, 
+                string toField, 
                 IDictionary<BytesRef, JoinScore> joinValueToJoinScores, 
                 IDictionary<int, JoinScore> docToJoinScore)
             {
