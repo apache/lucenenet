@@ -57,6 +57,7 @@ namespace Lucene.Net.Store
             return m_input.ListAll();
         }
 
+        [Obsolete("this method will be removed in 5.0")]
         public override bool FileExists(string name)
         {
             return m_input.FileExists(name);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -161,6 +162,7 @@ namespace Lucene.Net.Store
             }
         }
 
+        [Obsolete("this method will be removed in 5.0")]
         public override bool FileExists(string name)
         {
             return GetDirectory(name).FileExists(name);

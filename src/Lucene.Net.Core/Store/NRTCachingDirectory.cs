@@ -171,6 +171,7 @@ namespace Lucene.Net.Store
             return cache.SizeInBytes();
         }
 
+        [Obsolete("this method will be removed in 5.0")]
         public override bool FileExists(string name)
         {
             lock (this)

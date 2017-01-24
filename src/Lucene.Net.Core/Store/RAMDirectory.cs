@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using Lucene.Net.Support.Compatibility;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -131,7 +132,8 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns true iff the named file exists in this directory. </summary>
-        public override sealed bool FileExists(string name) // LUCENENET TODO: Find out what happens when you inherit a deprecated member in Java
+        [Obsolete("this method will be removed in 5.0")]
+        public override sealed bool FileExists(string name)
         {
             EnsureOpen();
             return m_fileMap.ContainsKey(name);
