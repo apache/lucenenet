@@ -26,7 +26,7 @@ namespace Lucene.Net.Support
     /// <summary>
     /// For Debuging purposes.
     /// </summary>
-    public class IDisposableThreadLocalProfiler
+    public class DisposableThreadLocalProfiler
     {
         private static bool _enableIDisposableThreadLocalProfiler = false;
         public static System.Collections.Generic.List<WeakReference> Instances = new System.Collections.Generic.List<WeakReference>();

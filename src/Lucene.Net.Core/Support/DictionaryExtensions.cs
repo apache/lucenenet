@@ -2,7 +2,7 @@
 
 namespace Lucene.Net.Support
 {
-    public static class IDictionaryExtensions
+    public static class DictionaryExtensions
     {
         public static void PutAll<TKey, TValue>(this IDictionary<TKey, TValue> dict, IEnumerable<KeyValuePair<TKey, TValue>> kvps)
         {

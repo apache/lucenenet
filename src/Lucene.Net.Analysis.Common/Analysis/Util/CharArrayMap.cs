@@ -1414,7 +1414,7 @@ namespace Lucene.Net.Analysis.Util
         {
             var sb = new StringBuilder("{");
 
-            IEnumerator<KeyValuePair<string, TValue>> iter1 = IDictionaryExtensions.EntrySet(this).GetEnumerator();
+            IEnumerator<KeyValuePair<string, TValue>> iter1 = DictionaryExtensions.EntrySet(this).GetEnumerator();
             while (iter1.MoveNext())
             {
                 KeyValuePair<string, TValue> entry = iter1.Current;

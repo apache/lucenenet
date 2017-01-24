@@ -640,7 +640,7 @@
     <Compile Include="Support\IdentityHashMap.cs" />
     <Compile Include="Support\IdentityHashSet.cs" />
     <Compile Include="Support\IdentityWeakReference.cs" />
-    <Compile Include="Support\IDictionaryExtensions.cs" />
+    <Compile Include="Support\DictionaryExtensions.cs" />
     <Compile Include="Support\IgnoreNetNumericConventionAttribute.cs" />
     <Compile Include="Support\IResourceManagerFactory.cs" />
     <Compile Include="Support\LimitedConcurrencyLevelTaskScheduler.cs" />
