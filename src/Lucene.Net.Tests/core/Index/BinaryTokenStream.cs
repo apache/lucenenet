@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 
         public interface IByteTermAttribute : ITermToBytesRefAttribute
         {
-            BytesRef BytesRef { set; }
+            new BytesRef BytesRef { get; set; }
         }
 
         public class ByteTermAttribute : Attribute, IByteTermAttribute
