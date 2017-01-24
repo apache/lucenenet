@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Store
@@ -121,6 +122,7 @@ namespace Lucene.Net.Store
             Flush();
         }
 
+        [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
         public override void Seek(long pos)
         {
             // set the file length in case we seek back
