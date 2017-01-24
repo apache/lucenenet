@@ -597,15 +597,6 @@ namespace Lucene.Net.Search.VectorHighlight
 
             Analyzer analyzer = new AnalyzerWrapperAnonymousHelper();
 
-            // LUCENENET TODO: anonymous
-            //    Analyzer analyzer = new AnalyzerWrapper()
-            //    {
-            //      public Analyzer getWrappedAnalyzer(String fieldName)
-            //{
-            //    return fieldAnalyzers.Get(fieldName);
-            //}
-            //    };
-
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             writer.AddDocument(doc);
@@ -654,6 +645,7 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             IDictionary<String, Analyzer> fieldAnalyzers = new SortedDictionary<String, Analyzer>();
 
+#pragma warning disable 612, 618 // LUCENENET NOTE: Class calls obsolete (default) constructor
             public AnalyzerWrapperAnonymousHelper()
             {
                 fieldAnalyzers.Put("field", new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET));
@@ -664,6 +656,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 fieldAnalyzers.Put("field_sliced", fieldAnalyzers["field"]);
                 fieldAnalyzers.Put("field_der_red", fieldAnalyzers["field"]);  // This is required even though we provide a token stream
             }
+#pragma warning restore 612, 618
             protected override Analyzer GetWrappedAnalyzer(string fieldName)
             {
                 return fieldAnalyzers[fieldName];
