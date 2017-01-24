@@ -267,6 +267,7 @@ namespace Lucene.Net.Store
                 @base.Dispose();
             }
 
+            [Obsolete("Only for reading CFS files from 3.x indexes.")]
             public override IndexInput OpenFullSlice()
             {
                 return (IndexInput)@base.Clone();
