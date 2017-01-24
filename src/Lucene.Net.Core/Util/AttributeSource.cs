@@ -346,7 +346,9 @@ namespace Lucene.Net.Util
             {
                 returnAttr = (T)(IAttribute)attributes[attClass].Value;
             }
+#pragma warning disable 168
             catch (KeyNotFoundException knf)
+#pragma warning restore 168
             {
                 return default(T);
             }

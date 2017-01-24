@@ -409,7 +409,9 @@ namespace Lucene.Net.Index
                         m_ordBase = (int)te.Ord;
                         //System.out.println("got ordBase=" + ordBase);
                     }
+#pragma warning disable 168
                     catch (System.NotSupportedException uoe)
+#pragma warning restore 168
                     {
                         // Reader cannot provide ord support, so we wrap
                         // our own support by creating our own terms index:
@@ -1116,7 +1118,9 @@ namespace Lucene.Net.Index
                 {
                     return outerInstance.GetOrdTermsEnum(reader);
                 }
+#pragma warning disable 168
                 catch (System.IO.IOException e)
+#pragma warning restore 168
                 {
                     throw new Exception();
                 }

@@ -50,7 +50,9 @@ namespace Lucene.Net.Support
             {
                 return new HeapLongBuffer(array, offset, length);
             }
+#pragma warning disable 168
             catch (ArgumentException x)
+#pragma warning restore 168
             {
                 throw new ArgumentOutOfRangeException();
             }

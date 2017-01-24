@@ -137,7 +137,9 @@ namespace Lucene.Net.Index
                         {
                             base.Release(ic);
                         }
+#pragma warning disable 168
                         catch (Exception e)
+#pragma warning restore 168
                         {
                             // Suppress so we keep throwing original exception
                         }
@@ -171,7 +173,9 @@ namespace Lucene.Net.Index
                         {
                             IncRef(commit);
                         }
+#pragma warning disable 168
                         catch (Exception e)
+#pragma warning restore 168
                         {
                             // Suppress so we keep throwing original exception
                         }
@@ -222,7 +226,9 @@ namespace Lucene.Net.Index
                         {
                             dir.DeleteFile(fileName);
                         }
+#pragma warning disable 168
                         catch (Exception e)
+#pragma warning restore 168
                         {
                             // Suppress so we keep throwing original exception
                         }
@@ -242,7 +248,9 @@ namespace Lucene.Net.Index
                     {
                         dir.DeleteFile(lastSaveFile);
                     }
+#pragma warning disable 168
                     catch (IOException ioe)
+#pragma warning restore 168
                     {
                         // OK: likely it didn't exist
                     }

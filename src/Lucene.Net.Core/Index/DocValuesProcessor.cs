@@ -226,7 +226,9 @@ namespace Lucene.Net.Index
                 {
                     writer.Abort();
                 }
+#pragma warning disable 168
                 catch (Exception t)
+#pragma warning restore 168
                 {
                 }
             }

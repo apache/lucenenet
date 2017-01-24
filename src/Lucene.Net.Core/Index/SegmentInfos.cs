@@ -1051,7 +1051,9 @@ namespace Lucene.Net.Index
                                 directory.OpenInput(prevSegmentFileName, IOContext.DEFAULT).Dispose();
                                 prevExists = true;
                             }
+#pragma warning disable 168
                             catch (IOException ioe)
+#pragma warning restore 168
                             {
                                 prevExists = false;
                             }

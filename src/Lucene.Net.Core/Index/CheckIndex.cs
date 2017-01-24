@@ -1140,7 +1140,9 @@ namespace Lucene.Net.Index
                         {
                             ord = termsEnum.Ord;
                         }
+#pragma warning disable 168
                         catch (System.NotSupportedException uoe)
+#pragma warning restore 168
                         {
                             hasOrd = false;
                         }

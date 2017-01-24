@@ -83,7 +83,9 @@ namespace Lucene.Net.Index
                     {
                         tpc.Rollback();
                     }
+#pragma warning disable 168
                     catch (Exception t)
+#pragma warning restore 168
                     {
                     }
                 }

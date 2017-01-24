@@ -623,7 +623,9 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
+#pragma warning disable 168
                     catch (Exception disruption)
+#pragma warning restore 168
                     {
                     }
                     finally

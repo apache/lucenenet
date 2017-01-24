@@ -128,7 +128,9 @@ namespace Lucene.Net.Store
                         {
                             obtained = l.Obtain(rnd.Next(100) + 10);
                         }
+#pragma warning disable 168
                         catch (LockObtainFailedException e)
+#pragma warning restore 168
                         {
                         }
 

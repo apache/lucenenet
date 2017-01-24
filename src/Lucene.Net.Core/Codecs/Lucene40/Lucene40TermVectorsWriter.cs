@@ -321,7 +321,9 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 Dispose();
             }
+#pragma warning disable 168
             catch (Exception ignored)
+#pragma warning restore 168
             {
             }
             IOUtils.DeleteFilesIgnoringExceptions(directory, 

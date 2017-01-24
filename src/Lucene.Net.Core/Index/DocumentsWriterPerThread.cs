@@ -175,7 +175,9 @@ namespace Lucene.Net.Index
                 {
                     consumer.Abort();
                 }
+#pragma warning disable 168
                 catch (Exception t)
+#pragma warning restore 168
                 {
                 }
 

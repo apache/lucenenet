@@ -147,7 +147,9 @@ namespace Lucene.Net.Index
             {
                 files = directory.ListAll();
             }
+#pragma warning disable 168
             catch (NoSuchDirectoryException e)
+#pragma warning restore 168
             {
                 // it means the directory is empty, so ignore it.
                 files = new string[0];
@@ -178,7 +180,9 @@ namespace Lucene.Net.Index
                             {
                                 sis.Read(directory, fileName);
                             }
+#pragma warning disable 168
                             catch (FileNotFoundException e)
+#pragma warning restore 168
                             {
                                 // LUCENE-948: on NFS (and maybe others), if
                                 // you have writers switching back and forth
@@ -241,7 +245,9 @@ namespace Lucene.Net.Index
                 {
                     sis.Read(directory, currentSegmentsFile);
                 }
+#pragma warning disable 168
                 catch (IOException e)
+#pragma warning restore 168
                 {
                     throw new CorruptIndexException("failed to locate current segments_N file \"" + currentSegmentsFile + "\"");
                 }

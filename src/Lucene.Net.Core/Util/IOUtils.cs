@@ -468,7 +468,9 @@ namespace Lucene.Net.Util
                     file.Flush(true);
                     success = true;
                 }
+#pragma warning disable 168
                 catch (IOException e)
+#pragma warning restore 168
                 {
                     if (retryCount == 5)
                     {

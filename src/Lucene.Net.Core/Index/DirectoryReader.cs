@@ -349,7 +349,9 @@ namespace Lucene.Net.Index
             {
                 files = directory.ListAll();
             }
+#pragma warning disable 168
             catch (NoSuchDirectoryException nsde)
+#pragma warning restore 168
             {
                 // Directory does not exist --> no index exists
                 return false;

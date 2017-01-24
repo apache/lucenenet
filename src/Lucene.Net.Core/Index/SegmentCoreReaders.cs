@@ -172,7 +172,9 @@ namespace Lucene.Net.Index
                     fieldsReaderOrig = sff.FieldsReader(cfsDir, si.Info, fieldInfos, context);
 #if !NETSTANDARD
                 }
+#pragma warning disable 168
                 catch (System.AccessViolationException ave)
+#pragma warning restore 168
                 {
                 }
 #endif

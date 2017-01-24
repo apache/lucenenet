@@ -145,7 +145,9 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         Dispose();
                     } // ensure we throw our original exception
+#pragma warning disable 168
                     catch (Exception t)
+#pragma warning restore 168
                     {
                     }
                 }

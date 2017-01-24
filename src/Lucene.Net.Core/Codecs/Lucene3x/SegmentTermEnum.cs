@@ -114,7 +114,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 clone = (SegmentTermEnum)base.MemberwiseClone();
             }
+#pragma warning disable 168
             catch (InvalidOperationException e)
+#pragma warning restore 168
             {
             }
 

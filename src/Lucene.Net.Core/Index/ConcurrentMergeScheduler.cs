@@ -362,7 +362,9 @@ namespace Lucene.Net.Index
                         {
                             toSync.Join();
                         }
+#pragma warning disable 168
                         catch (ThreadInterruptedException ie)
+#pragma warning restore 168
                         {
                             // ignore this Exception, we will retry until all threads are dead
                             interrupted = true;
@@ -615,12 +617,14 @@ namespace Lucene.Net.Index
                 {
                     Priority = priority;
                 }
+#pragma warning disable 168
                 catch (System.NullReferenceException npe)
                 {
                     // Strangely, Sun's JDK 1.5 on Linux sometimes
                     // throws NPE out of here...
                 }
                 catch (System.Security.SecurityException se)
+#pragma warning restore 168
                 {
                     // Ignore this because we will still run fine with
                     // normal thread priority

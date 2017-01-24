@@ -280,7 +280,9 @@ namespace Lucene.Net.Search
 
                     }
 #if !NETSTANDARD
+#pragma warning disable 168
                     catch (ThreadInterruptedException ie)
+#pragma warning restore 168
                     {
                         Thread.CurrentThread.Interrupt();
                         return;

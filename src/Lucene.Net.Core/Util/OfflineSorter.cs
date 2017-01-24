@@ -651,7 +651,9 @@ namespace Lucene.Net.Util
                 {
                     length = (ushort)inputStream.ReadShort();
                 }
+#pragma warning disable 168
                 catch (Exception e)
+#pragma warning restore 168
                 {
                     return null;
                 }

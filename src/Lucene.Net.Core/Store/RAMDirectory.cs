@@ -58,7 +58,9 @@ namespace Lucene.Net.Store
             {
                 SetLockFactory(new SingleInstanceLockFactory());
             }
+#pragma warning disable 168
             catch (System.IO.IOException e)
+#pragma warning restore 168
             {
                 // Cannot happen
             }

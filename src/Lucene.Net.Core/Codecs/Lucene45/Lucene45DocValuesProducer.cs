@@ -850,7 +850,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     @in.Seek(offset + (index >> 3));
                     return (@in.ReadByte() & (1 << (index & 7))) != 0;
                 }
+#pragma warning disable 168
                 catch (Exception e)
+#pragma warning restore 168
                 {
                     throw;
                 }
@@ -1023,7 +1025,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     result.Offset = term.Offset;
                     result.Length = term.Length;
                 }
+#pragma warning disable 168
                 catch (Exception e)
+#pragma warning restore 168
                 {
                     throw;
                 }

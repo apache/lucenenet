@@ -234,7 +234,9 @@ namespace Lucene.Net.Store
                 {
                     @delegate.DeleteFile(name);
                 }
+#pragma warning disable 168
                 catch (System.IO.IOException ioe)
+#pragma warning restore 168
                 {
                     // this is fine: file may not exist
                 }
@@ -246,7 +248,9 @@ namespace Lucene.Net.Store
                 {
                     cache.DeleteFile(name);
                 }
+#pragma warning disable 168
                 catch (System.IO.IOException ioe)
+#pragma warning restore 168
                 {
                     // this is fine: file may not exist
                 }
