@@ -219,7 +219,9 @@ namespace Lucene.Net.Spatial.Prefix
             IDictionary<String, IShape> indexedShapes = new LinkedHashMap<String, IShape>();
             IDictionary<String, IShape> indexedShapesGS = new LinkedHashMap<String, IShape>();//grid snapped
             int numIndexedShapes = randomIntBetween(1, 6);
+#pragma warning disable 219
             bool indexedAtLeastOneShapePair = false;
+#pragma warning restore 219
             for (int i = 0; i < numIndexedShapes; i++)
             {
                 String id = "" + i;
