@@ -55,7 +55,9 @@ namespace Lucene.Net.Codecs.ramonly
         // sorts in reversed unicode code point order:
         private static readonly IComparer<BytesRef> reverseUnicodeComparer = new ComparerAnonymousInnerClassHelper();
 
+#pragma warning disable 659 // LUCENENET: Overrides Equals but not GetHashCode
         private class ComparerAnonymousInnerClassHelper : IComparer<BytesRef>
+#pragma warning restore 659
         {
             public ComparerAnonymousInnerClassHelper()
             {
