@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
                 throw new Exception("Couldn't find commit point " + id);
             }
 
-            IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new RollbackDeletionPolicy<IndexCommit>(this, id)).SetIndexCommit(last));
+            IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new RollbackDeletionPolicy(this, id)).SetIndexCommit(last));
             IDictionary<string, string> data = new Dictionary<string, string>();
             data["index"] = "Rolled back to 1-" + id;
             w.CommitData = data;
@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
             Dir = NewDirectory();
 
             //Build index, of records 1 to 100, committing after each batch of 10
-            IndexDeletionPolicy sdp = new KeepAllDeletionPolicy<IndexCommit>(this);
+            IndexDeletionPolicy sdp = new KeepAllDeletionPolicy(this);
             IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(sdp));
 
             for (int currentRecordId = 1; currentRecordId <= 100; currentRecordId++)
@@ -168,8 +168,7 @@ namespace Lucene.Net.Index
         }
 
         // Rolls back to previous commit point
-        internal class RollbackDeletionPolicy<T> : IndexDeletionPolicy
-            where T : IndexCommit
+        internal class RollbackDeletionPolicy : IndexDeletionPolicy
         {
             private readonly TestTransactionRollback OuterInstance;
 
@@ -217,8 +216,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal class DeleteLastCommitPolicy<T> : IndexDeletionPolicy
-            where T : IndexCommit
+        internal class DeleteLastCommitPolicy : IndexDeletionPolicy
         {
             private readonly TestTransactionRollback OuterInstance;
 
@@ -244,7 +242,7 @@ namespace Lucene.Net.Index
             {
                 // Unless you specify a prior commit point, rollback
                 // should not work:
-                (new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new DeleteLastCommitPolicy<IndexCommit>(this)))).Dispose();
+                (new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new DeleteLastCommitPolicy(this)))).Dispose();
                 IndexReader r = DirectoryReader.Open(Dir);
                 Assert.AreEqual(100, r.NumDocs);
                 r.Dispose();
@@ -252,8 +250,7 @@ namespace Lucene.Net.Index
         }
 
         // Keeps all commit points (used to build index)
-        internal class KeepAllDeletionPolicy<T> : IndexDeletionPolicy
-            where T : IndexCommit
+        internal class KeepAllDeletionPolicy : IndexDeletionPolicy
         {
             private readonly TestTransactionRollback OuterInstance;
 
