@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -374,7 +375,7 @@ namespace Lucene.Net.Util.Fst
 
             if (LuceneTestCase.VERBOSE && Pairs.Count <= 20 && fst != null)
             {
-                using (TextWriter w = new StreamWriter(new FileStream("out.dot", FileMode.OpenOrCreate), IOUtils.CHARSET_UTF_8))
+                using (TextWriter w = new StreamWriter(new FileStream("out.dot", FileMode.OpenOrCreate), Encoding.UTF8))
                 {
                     Util.ToDot(fst, w, false, false);
                 }

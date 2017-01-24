@@ -34,6 +34,7 @@ namespace Lucene.Net.Codecs.Lucene40
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
+#pragma warning disable 612, 618
     internal class Lucene40DocValuesWriter : DocValuesConsumer
     {
         private readonly Directory Dir;
@@ -619,4 +620,5 @@ namespace Lucene.Net.Codecs.Lucene40
             Dir.Dispose();
         }
     }
+#pragma warning restore 612, 618
 }

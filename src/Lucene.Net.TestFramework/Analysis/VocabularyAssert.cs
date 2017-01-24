@@ -31,8 +31,8 @@ namespace Lucene.Net.Analysis
         /// Run a vocabulary test against two data files. </summary>
         public static void AssertVocabulary(Analyzer a, Stream voc, Stream @out)
         {
-            TextReader vocReader = (TextReader)(new StreamReader(voc, IOUtils.CHARSET_UTF_8));
-            TextReader outputReader = (TextReader)(new StreamReader(@out, IOUtils.CHARSET_UTF_8));
+            TextReader vocReader = (TextReader)(new StreamReader(voc, Encoding.UTF8));
+            TextReader outputReader = (TextReader)(new StreamReader(@out, Encoding.UTF8));
             string inputWord = null;
             while ((inputWord = vocReader.ReadLine()) != null)
             {
@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis
         /// Run a vocabulary test against one file: tab separated. </summary>
         public static void AssertVocabulary(Analyzer a, Stream vocOut)
         {
-            TextReader vocReader = (TextReader)(new StreamReader(vocOut, IOUtils.CHARSET_UTF_8));
+            TextReader vocReader = (TextReader)(new StreamReader(vocOut, Encoding.UTF8));
             string inputLine = null;
             while ((inputLine = vocReader.ReadLine()) != null)
             {

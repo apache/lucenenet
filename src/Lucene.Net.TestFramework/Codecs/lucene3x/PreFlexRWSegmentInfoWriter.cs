@@ -28,6 +28,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// PreFlex implementation of <seealso cref="SegmentInfoWriter"/>.
     /// @lucene.experimental
     /// </summary>
+#pragma warning disable 612, 618
     internal class PreFlexRWSegmentInfoWriter : SegmentInfoWriter
     {
         // NOTE: this is not "really" 3.x format, because we are
@@ -42,4 +43,5 @@ namespace Lucene.Net.Codecs.Lucene3x
             SegmentInfos.Write3xInfo(dir, si, ioContext);
         }
     }
+#pragma warning restore 612, 618
 }

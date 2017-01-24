@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                LAZY_FIELD_BINARY_BYTES = "These are some binary field bytes".GetBytes(IOUtils.CHARSET_UTF_8);
+                LAZY_FIELD_BINARY_BYTES = "These are some binary field bytes".GetBytes(Encoding.UTF8);
             }
 #pragma warning disable 168
             catch (EncoderFallbackException e)

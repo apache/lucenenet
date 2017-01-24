@@ -22,6 +22,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
+#pragma warning disable 612, 618
     internal class PreFlexRWStoredFieldsFormat : Lucene3xStoredFieldsFormat
     {
         public override StoredFieldsWriter FieldsWriter(Directory directory, SegmentInfo segmentInfo, IOContext context)
@@ -29,4 +30,5 @@ namespace Lucene.Net.Codecs.Lucene3x
             return new PreFlexRWStoredFieldsWriter(directory, segmentInfo.Name, context);
         }
     }
+#pragma warning restore 612, 618
 }

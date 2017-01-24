@@ -39,7 +39,7 @@ namespace Lucene.Net.Util
         /// UTF-8 <seealso cref="Charset"/> instance to prevent repeated
         /// <seealso cref="Charset#forName(String)"/> lookups </summary>
         /// @deprecated Use <seealso cref="StandardCharsets#UTF_8"/> instead.
-        [Obsolete("Use <seealso cref=StandardCharsets_UTF_8/> instead.")]
+        [Obsolete("Use Encoding.UTF8 instead.")]
         public static readonly Encoding CHARSET_UTF_8 = Encoding.UTF8;
 
         /// <summary>

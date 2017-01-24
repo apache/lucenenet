@@ -30,6 +30,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     using IOUtils = Lucene.Net.Util.IOUtils;
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
+#pragma warning disable 612, 618
     internal class PreFlexRWFieldsWriter : FieldsConsumer
     {
         private readonly TermInfosWriter TermsOut;
@@ -264,4 +265,5 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
     }
+#pragma warning restore 612, 618
 }

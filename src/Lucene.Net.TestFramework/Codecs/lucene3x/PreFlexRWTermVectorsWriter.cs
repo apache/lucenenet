@@ -33,6 +33,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     using IOUtils = Lucene.Net.Util.IOUtils;
     using StringHelper = Lucene.Net.Util.StringHelper;
 
+#pragma warning disable 612, 618
     internal sealed class PreFlexRWTermVectorsWriter : TermVectorsWriter
     {
         private readonly Directory Directory;
@@ -238,4 +239,5 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
     }
+#pragma warning restore 612, 618
 }

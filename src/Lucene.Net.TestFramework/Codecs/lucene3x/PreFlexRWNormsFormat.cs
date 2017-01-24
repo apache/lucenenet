@@ -23,6 +23,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// @lucene.internal
     /// @lucene.experimental
     /// </summary>
+#pragma warning disable 612, 618
     internal class PreFlexRWNormsFormat : Lucene3xNormsFormat
     {
         public override DocValuesConsumer NormsConsumer(SegmentWriteState state)
@@ -30,4 +31,5 @@ namespace Lucene.Net.Codecs.Lucene3x
             return new PreFlexRWNormsConsumer(state.Directory, state.SegmentInfo.Name, state.Context);
         }
     }
+#pragma warning restore 612, 618
 }

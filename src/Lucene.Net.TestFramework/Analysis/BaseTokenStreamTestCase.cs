@@ -1158,7 +1158,7 @@ namespace Lucene.Net.Analysis
 
         protected internal virtual void ToDotFile(Analyzer a, string inputText, string localFileName)
         {
-            using (StreamWriter w = new StreamWriter(new FileStream(localFileName, FileMode.Open), IOUtils.CHARSET_UTF_8))
+            using (StreamWriter w = new StreamWriter(new FileStream(localFileName, FileMode.Open), Encoding.UTF8))
             {
                 TokenStream ts = a.TokenStream("field", new StringReader(inputText));
                 ts.Reset();

@@ -26,6 +26,7 @@ namespace Lucene.Net.Codecs.Lucene41
     /// <summary>
     /// Read-write version of <seealso cref="Lucene41Codec"/> for testing.
     /// </summary>
+#pragma warning disable 612, 618
     public class Lucene41RWCodec : Lucene41Codec
     {
         private readonly StoredFieldsFormat FieldsFormat = new Lucene41StoredFieldsFormat();
@@ -108,4 +109,5 @@ namespace Lucene.Net.Codecs.Lucene41
             get { return Norms; }
         }
     }
+#pragma warning restore 612, 618
 }

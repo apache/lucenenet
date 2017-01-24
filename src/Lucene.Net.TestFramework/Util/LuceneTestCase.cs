@@ -2593,7 +2593,9 @@ namespace Lucene.Net.Util
         /// </summary>
         public static bool SlowFileExists(Directory dir, string fileName)
         {
+#pragma warning disable 612, 618
             return dir.FileExists(fileName);
+#pragma warning restore 612, 618
             /*try
             {
                 dir.OpenInput(fileName, IOContext.DEFAULT).Dispose();

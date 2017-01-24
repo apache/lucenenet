@@ -40,6 +40,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// </summary>
     /// <seealso> cref= Lucene40PostingsFormat
     /// @lucene.experimental  </seealso>
+#pragma warning disable 612, 618
     public sealed class Lucene40PostingsWriter : PostingsWriterBase
     {
         internal readonly IndexOutput FreqOut;
@@ -376,4 +377,5 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
     }
+#pragma warning restore 612, 618
 }

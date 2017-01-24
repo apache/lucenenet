@@ -23,6 +23,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
     /// <summary>
     /// Read-write version of <seealso cref="Lucene40NormsFormat"/> for testing </summary>
+#pragma warning disable 612, 618
     public class Lucene40RWNormsFormat : Lucene40NormsFormat
     {
         private readonly bool _oldFormatImpersonationIsActive;
@@ -61,4 +62,5 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
     }
+#pragma warning restore 612, 618
 }

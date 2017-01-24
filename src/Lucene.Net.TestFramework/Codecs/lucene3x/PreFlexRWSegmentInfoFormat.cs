@@ -20,6 +20,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// <summary>
     /// @lucene.experimental
     /// </summary>
+#pragma warning disable 612, 618
     internal class PreFlexRWSegmentInfoFormat : Lucene3xSegmentInfoFormat
     {
         private readonly SegmentInfoWriter Writer = new PreFlexRWSegmentInfoWriter();
@@ -32,4 +33,5 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
     }
+#pragma warning restore 612, 618
 }

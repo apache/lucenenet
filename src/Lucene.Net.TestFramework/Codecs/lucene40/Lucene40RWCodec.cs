@@ -21,6 +21,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
     /// <summary>
     /// Read-write version of Lucene40Codec for testing </summary>
+#pragma warning disable 612, 618
     public sealed class Lucene40RWCodec : Lucene40Codec
     {
         private readonly FieldInfosFormat fieldInfos;
@@ -95,4 +96,5 @@ namespace Lucene.Net.Codecs.Lucene40
             get { return Norms; }
         }
     }
+#pragma warning restore 612, 618
 }

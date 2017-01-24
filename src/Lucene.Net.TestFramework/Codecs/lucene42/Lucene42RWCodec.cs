@@ -22,6 +22,7 @@ namespace Lucene.Net.Codecs.Lucene42
     /// <summary>
     /// Read-write version of <seealso cref="Lucene42Codec"/> for testing.
     /// </summary>
+#pragma warning disable 612, 618
     public class Lucene42RWCodec : Lucene42Codec
     {
         private readonly DocValuesFormat Dv;
@@ -94,4 +95,5 @@ namespace Lucene.Net.Codecs.Lucene42
             get { return fieldInfosFormat; }
         }
     }
+#pragma warning restore 612, 618
 }

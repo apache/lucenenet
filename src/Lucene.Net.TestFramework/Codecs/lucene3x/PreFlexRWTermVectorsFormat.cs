@@ -27,6 +27,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
+#pragma warning disable 612, 618
     internal class PreFlexRWTermVectorsFormat : Lucene3xTermVectorsFormat
     {
         public override TermVectorsWriter VectorsWriter(Directory directory, SegmentInfo segmentInfo, IOContext context)
@@ -69,4 +70,5 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
     }
+#pragma warning restore 612, 618
 }

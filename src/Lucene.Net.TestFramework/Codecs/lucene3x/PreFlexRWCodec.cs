@@ -23,6 +23,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// Writes 3.x-like indexes (not perfect emulation yet) for testing only!
     /// @lucene.experimental
     /// </summary>
+#pragma warning disable 612, 618
     public class PreFlexRWCodec : Lucene3xCodec
     {
         private readonly PostingsFormat Postings = new PreFlexRWPostingsFormat();
@@ -146,4 +147,5 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
     }
+#pragma warning restore 612, 618
 }

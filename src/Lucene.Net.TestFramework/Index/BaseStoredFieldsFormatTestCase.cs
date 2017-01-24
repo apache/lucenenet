@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 
 namespace Lucene.Net.Index
@@ -378,7 +379,7 @@ namespace Lucene.Net.Index
             ft.Freeze();
 
             string @string = TestUtil.RandomSimpleString(Random(), 50);
-            var bytes = @string.GetBytes(IOUtils.CHARSET_UTF_8);
+            var bytes = @string.GetBytes(Encoding.UTF8);
             long l = Random().NextBoolean() ? Random().Next(42) : Random().NextLong();
             int i = Random().NextBoolean() ? Random().Next(42) : Random().Next();
             float f = Random().NextFloat();

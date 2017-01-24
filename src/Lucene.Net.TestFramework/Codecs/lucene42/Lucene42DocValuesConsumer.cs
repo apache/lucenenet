@@ -48,6 +48,7 @@ namespace Lucene.Net.Codecs.Lucene42
     /// <summary>
     /// Writer for <seealso cref="Lucene42DocValuesFormat"/>
     /// </summary>
+#pragma warning disable 612, 618
     internal class Lucene42DocValuesConsumer : DocValuesConsumer
     {
         internal readonly IndexOutput Data, Meta;
@@ -464,4 +465,5 @@ namespace Lucene.Net.Codecs.Lucene42
             }
         }
     }
+#pragma warning restore 612, 618
 }
