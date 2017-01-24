@@ -299,7 +299,7 @@ namespace Lucene.Net.Support.C5
         /// <param name="items">The items to remove.</param>
         public virtual void RemoveAll(SCG.IEnumerable<T> items)
         {
-#warning Improve if items is a counting bag
+//#warning Improve if items is a counting bag
             updatecheck();
             bool mustRaise = (ActiveEvents & (EventTypeEnum.Changed | EventTypeEnum.Removed)) != 0;
             RaiseForRemoveAllHandler raiseHandler = mustRaise ? new RaiseForRemoveAllHandler(this) : null;
@@ -388,7 +388,7 @@ namespace Lucene.Net.Support.C5
                 {
                     int removed = p.Value - res.ContainsCount(p.Key);
                     if (removed > 0)
-#warning We could send bag events here easily using a CircularQueue of (should?)
+//#warning We could send bag events here easily using a CircularQueue of (should?)
                         for (int i = 0; i < removed; i++)
                             wasRemoved.Enqueue(p.Key);
                 }
@@ -574,7 +574,7 @@ namespace Lucene.Net.Support.C5
         public virtual void AddAll(SCG.IEnumerable<T> items)
         {
             updatecheck();
-#warning We could easily raise bag events
+//#warning We could easily raise bag events
             bool mustRaiseAdded = (ActiveEvents & EventTypeEnum.Added) != 0;
             CircularQueue<T> wasAdded = mustRaiseAdded ? new CircularQueue<T>() : null;
             bool wasChanged = false;
