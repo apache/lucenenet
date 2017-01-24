@@ -363,7 +363,7 @@ namespace Lucene.Net.Util
                     Copy(i--, dest--);
                 }
                 Restore(j--, dest--);
-            outerContinue: ;
+            //outerContinue: ; // LUCENENET NOTE: Not referenced
             }
         outerBreak:
             for (; j >= 0; --dest)
