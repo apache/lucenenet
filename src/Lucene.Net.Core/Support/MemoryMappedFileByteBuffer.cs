@@ -6,13 +6,19 @@ namespace Lucene.Net.Support
     internal sealed class MemoryMappedFileByteBuffer : ByteBuffer, IDisposable
     {
         private MemoryMappedViewAccessor _accessor;
-        private readonly int offset; // always 0 (add constructors to fix this)
+        private readonly int offset;
         new private bool bigEndian = true;
 
         public MemoryMappedFileByteBuffer(MemoryMappedViewAccessor accessor, int mark, int pos, int lim, int cap)
             : base(mark, pos, lim, cap)
         {
             _accessor = accessor;
+        }
+
+        public MemoryMappedFileByteBuffer(MemoryMappedViewAccessor accessor, int mark, int pos, int lim, int cap, int offset)
+            : this(accessor, mark, pos, lim, cap)
+        {
+            this.offset = offset;
         }
 
         public override ByteBuffer Slice()
