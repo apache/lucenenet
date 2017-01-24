@@ -684,8 +684,7 @@ namespace Lucene.Net.Index
             protected internal abstract void ModifyIndex(int i);
         }
 
-        internal class KeepAllCommits<T> : IndexDeletionPolicy
-            where T : IndexCommit
+        internal class KeepAllCommits : IndexDeletionPolicy
         {
             public override void OnInit<T>(IList<T> commits)
             {
@@ -700,7 +699,7 @@ namespace Lucene.Net.Index
         public virtual void TestReopenOnCommit()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new KeepAllCommits<IndexCommit>()).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new KeepAllCommits()).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
             for (int i = 0; i < 4; i++)
             {
                 Document doc = new Document();
