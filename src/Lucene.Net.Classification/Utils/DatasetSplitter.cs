@@ -59,10 +59,12 @@ namespace Lucene.Net.Classification.Utils
          */
         public void Split(AtomicReader originalIndex, Directory trainingIndex, Directory testIndex, Directory crossValidationIndex, Analyzer analyzer, params string[] fieldNames)
         {
+#pragma warning disable 612, 618
             // create IWs for train / test / cv IDXs
             IndexWriter testWriter = new IndexWriter(testIndex, new IndexWriterConfig(Util.LuceneVersion.LUCENE_CURRENT, analyzer));
             IndexWriter cvWriter = new IndexWriter(crossValidationIndex, new IndexWriterConfig(Util.LuceneVersion.LUCENE_CURRENT, analyzer));
             IndexWriter trainingWriter = new IndexWriter(trainingIndex, new IndexWriterConfig(Util.LuceneVersion.LUCENE_CURRENT, analyzer));
+#pragma warning restore 612, 618
 
             try
             {
