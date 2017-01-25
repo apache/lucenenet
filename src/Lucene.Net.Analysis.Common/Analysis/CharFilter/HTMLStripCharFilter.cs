@@ -30893,7 +30893,7 @@ namespace Lucene.Net.Analysis.CharFilters
             return i > 0 ? i : (len == 0 ? 0 : -1);
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
