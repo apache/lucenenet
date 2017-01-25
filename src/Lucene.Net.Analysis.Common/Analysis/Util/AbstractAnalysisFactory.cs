@@ -81,10 +81,13 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         protected internal void AssureMatchVersion()
         {
-            if (luceneMatchVersion == null)
-            {
-                throw new System.ArgumentException("Configuration Error: Factory '" + this.GetType().FullName + "' needs a 'luceneMatchVersion' parameter");
-            }
+            // LUCENENET NOTE: since luceneMatchVersion can never be null in .NET,
+            // this method effectively does nothing. However, leaving it in place because
+            // it is used throughout Lucene.
+            //if (luceneMatchVersion == null)
+            //{
+            //    throw new System.ArgumentException("Configuration Error: Factory '" + this.GetType().FullName + "' needs a 'luceneMatchVersion' parameter");
+            //}
         }
 
         public LuceneVersion LuceneMatchVersion
