@@ -1327,11 +1327,9 @@ namespace Lucene.Net.Codecs.Memory
                                 //   System.out.println("  beyond end; no terms will match");
                                 // }
                                 return;
-                                nextLabelContinue:
-                                ;
+                                nextLabelContinue: ;
                             }
-                            nextLabelBreak:
-                            ;
+                            //nextLabelBreak: ; // LUCENENET NOTE: Not used
                         }
 
                         int termOffset = outerInstance.termOffsets[termOrd];
@@ -1650,12 +1648,10 @@ namespace Lucene.Net.Codecs.Memory
                                 // }
                             }
                         }
-                        nextTermContinue:
-                        ;
+                        nextTermContinue: ;
                     }
 
-                    nextTermBreak:
-                    ;
+                    //nextTermBreak: ; // LUCENENET NOTE: Not used
                 }
 
                 public override TermState GetTermState()
