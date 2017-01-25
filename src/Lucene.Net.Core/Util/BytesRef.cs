@@ -48,14 +48,7 @@ namespace Lucene.Net.Util
         public byte[] Bytes
         {
             get { return bytes; }
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("bytes may never be set to null");
-                }
-                bytes = value;
-            }
+            set { bytes = value; } // LUCENENET NOTE: Although the comments state this cannot be null, some of the tests depend on setting it to null!
         }
         private byte[] bytes;
 
