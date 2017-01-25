@@ -363,7 +363,7 @@ namespace Lucene.Net.Expressions.JS
             CommonTree root = null;
             IToken EOF2 = null;
             AstParserRuleReturnScope<ITree, IToken> conditional1;
-            CommonTree EOF2_tree = null;
+            //CommonTree EOF2_tree = null; // LUCENENET NOTE: Not used
             try
             {
                 {
@@ -404,7 +404,7 @@ namespace Lucene.Net.Expressions.JS
             AstParserRuleReturnScope<ITree, IToken> conditional5;
             AstParserRuleReturnScope<ITree, IToken> conditional7;
             CommonTree AT_COND_QUE4_tree;
-            CommonTree AT_COLON6_tree = null;
+            //CommonTree AT_COLON6_tree = null; // LUCENENET NOTE: Not used
             try
             {
                 {
@@ -798,7 +798,7 @@ namespace Lucene.Net.Expressions.JS
         public AstParserRuleReturnScope<ITree, IToken> Equality()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
-            CommonTree set24_tree = null;
+            //CommonTree set24_tree = null; // LUCENENET NOTE: Not used
             try
             {
                 CommonTree root = null;
@@ -876,7 +876,7 @@ namespace Lucene.Net.Expressions.JS
         public AstParserRuleReturnScope<ITree, IToken> Relational()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
-            CommonTree set27_tree = null;
+            //CommonTree set27_tree = null; // LUCENENET NOTE: Not used
             try
             {
                 CommonTree root = null;
@@ -954,7 +954,7 @@ namespace Lucene.Net.Expressions.JS
         public AstParserRuleReturnScope<ITree, IToken> Shift()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
-            CommonTree set30_tree = null;
+            //CommonTree set30_tree = null; // LUCENENET NOTE: Not used
             try
             {
                 CommonTree root = null;
@@ -1032,7 +1032,7 @@ namespace Lucene.Net.Expressions.JS
         public AstParserRuleReturnScope<ITree, IToken> Additive()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
-            CommonTree set33_tree = null;
+            //CommonTree set33_tree = null; // LUCENENET NOTE: Not used
             try
             {
                 CommonTree root = null;
@@ -1109,7 +1109,7 @@ namespace Lucene.Net.Expressions.JS
         public AstParserRuleReturnScope<ITree, IToken> Multiplicative()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
-            CommonTree set36_tree = null;
+            //CommonTree set36_tree = null; // LUCENENET NOTE: Not used
             try
             {
                 CommonTree root = null;
@@ -1189,7 +1189,7 @@ namespace Lucene.Net.Expressions.JS
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
             CommonTree root = null;
-            CommonTree AT_ADD39_tree = null;
+            //CommonTree AT_ADD39_tree = null; // LUCENENET NOTE: Not used
             try
             {
                 // src/java/org/apache/lucene/expressions/js/Javascript.g:299:5: ( postfix | AT_ADD ! unary | unary_operator ^ unary )
@@ -1289,7 +1289,7 @@ namespace Lucene.Net.Expressions.JS
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
             CommonTree root = null;
-            CommonTree AT_SUBTRACT43_tree = null;
+            //CommonTree AT_SUBTRACT43_tree = null; // LUCENENET NOTE: Not used
             RewriteRuleTokenStream stream_AT_SUBTRACT = new RewriteRuleTokenStream(adaptor, "token AT_SUBTRACT"
                 );
             try
@@ -1393,7 +1393,7 @@ namespace Lucene.Net.Expressions.JS
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
             CommonTree root = null;
-            CommonTree NAMESPACE_ID47_tree = null;
+            //CommonTree NAMESPACE_ID47_tree = null; // LUCENENET NOTE: Not used
             var streamNamespaceId = new RewriteRuleTokenStream(adaptor, "token NAMESPACE_ID");
             var streamArguments = new RewriteRuleSubtreeStream(adaptor, "rule arguments");
             try
@@ -1527,8 +1527,8 @@ namespace Lucene.Net.Expressions.JS
             IToken AT_LPAREN51 = null;
             IToken AT_RPAREN53 = null;
             CommonTree NAMESPACE_ID49_tree = null;
-            CommonTree AT_LPAREN51_tree = null;
-            CommonTree AT_RPAREN53_tree = null;
+            //CommonTree AT_LPAREN51_tree = null; // LUCENENET NOTE: Not used
+            //CommonTree AT_RPAREN53_tree = null; // LUCENENET NOTE: Not used
             try
             {
                 // src/java/org/apache/lucene/expressions/js/Javascript.g:316:5: ( NAMESPACE_ID | numeric | AT_LPAREN ! conditional AT_RPAREN !)
@@ -1623,9 +1623,9 @@ namespace Lucene.Net.Expressions.JS
             IToken AT_LPAREN54 = null;
             IToken AT_COMMA56 = null;
             IToken AT_RPAREN58 = null;
-            CommonTree AT_LPAREN54_tree = null;
-            CommonTree AT_COMMA56_tree = null;
-            CommonTree AT_RPAREN58_tree = null;
+            //CommonTree AT_LPAREN54_tree = null; // LUCENENET NOTE: Not used
+            //CommonTree AT_COMMA56_tree = null; // LUCENENET NOTE: Not used
+            //CommonTree AT_RPAREN58_tree = null; // LUCENENET NOTE: Not used
             try
             {
                 {
@@ -1708,7 +1708,8 @@ namespace Lucene.Net.Expressions.JS
         public AstParserRuleReturnScope<ITree, IToken> Numeric()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
-            CommonTree set59_tree = null;
+
+            //CommonTree set59_tree = null; // LUCENENET NOTE: Not used
             try
             {
                 CommonTree root = null;
