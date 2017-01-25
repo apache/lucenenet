@@ -162,9 +162,11 @@ namespace Lucene.Net.Codecs.Bloom
                     }
                     else
                     {
+#pragma warning disable 612, 618
                         CodecUtil.CheckEOF(bloomIn);
+#pragma warning restore 612, 618
                     }
-                    
+
                     IOUtils.Close(bloomIn);
                     success = true;
                 }

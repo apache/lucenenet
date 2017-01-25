@@ -97,7 +97,9 @@ namespace Lucene.Net.Codecs.Memory
                 }
                 else
                 {
+#pragma warning disable 612, 618
                     CodecUtil.CheckEOF(indexIn);
+#pragma warning restore 612, 618
                 }
                 success = true;
             }

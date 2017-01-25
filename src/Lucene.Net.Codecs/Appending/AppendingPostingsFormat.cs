@@ -38,6 +38,7 @@ namespace Lucene.Net.Codecs.Appending
 
         public override FieldsProducer FieldsProducer(SegmentReadState state)
         {
+#pragma warning disable 612, 618
             using (var postings = new Lucene40PostingsReader(state.Directory, state.FieldInfos,
                 state.SegmentInfo,
                 state.Context, state.SegmentSuffix))
@@ -53,6 +54,7 @@ namespace Lucene.Net.Codecs.Appending
 
                 return ret;
             }
+#pragma warning restore 612, 618
         }
     }
 }

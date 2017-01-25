@@ -91,7 +91,9 @@ namespace Lucene.Net.Codecs.Memory
                 }
                 else
                 {
+#pragma warning disable 612, 618
                     CodecUtil.CheckEOF(@in);
+#pragma warning restore 612, 618
                 }
                 ramBytesUsed = new AtomicLong(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
                 success = true;
