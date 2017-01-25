@@ -774,10 +774,9 @@ namespace Lucene.Net.Expressions.JS
 							default:
 							{
 								goto loop1_break;
-								break;
 							}
 						}
-loop1_continue: ;
+//loop1_continue: ; // LUCENENET NOTE: Not used
 					}
 loop1_break: ;
 				}
@@ -843,10 +842,9 @@ loop1_break: ;
 							default:
 							{
 								goto loop2_break;
-								break;
 							}
 						}
-loop2_continue: ;
+//loop2_continue: ; // LUCENENET NOTE: Not used
 					}
 loop2_break: ;
 				}
@@ -909,9 +907,9 @@ loop2_break: ;
 							}
 						}
 						cnt3++;
-loop3_continue: ;
-					}
-loop3_break: ;
+                        //loop3_continue: ; // LUCENENET NOTE: Not used
+                    }
+                    loop3_break: ;
 					Skip();
 				}
 				state.type = _type;
@@ -972,14 +970,11 @@ loop3_break: ;
 		                        default:
 		                        {
 		                            goto loop4_break;
-		                            break;
 		                        }
 		                    }
-		                    loop4_continue:
-		                    ;
-		                }
-		                loop4_break:
-		                ;
+                                //loop4_continue: ; // LUCENENET NOTE: Not used
+                        }
+                        loop4_break: ;
 		                // src/java/org/apache/lucene/expressions/js/Javascript.g:347:43: ( EXPONENT )?
 		                int alt5 = 2;
 		                int LA5_0 = input.LA(1);
@@ -1042,11 +1037,9 @@ loop3_break: ;
 		                        }
 		                    }
 		                    cnt6++;
-		                    loop6_continue:
-		                    ;
-		                }
-		                loop6_break:
-		                ;
+                                //loop6_continue: ; // LUCENENET NOTE: Not used
+                            }
+                            loop6_break: ;
 		                // src/java/org/apache/lucene/expressions/js/Javascript.g:348:28: ( EXPONENT )?
 		                int alt7 = 2;
 		                int LA7_0 = input.LA(1);
@@ -1150,9 +1143,9 @@ loop3_break: ;
 							}
 						}
 						cnt10++;
-loop10_continue: ;
-					}
-loop10_break: ;
+                        //loop10_continue: ; // LUCENENET NOTE: Not used
+                    }
+                    loop10_break: ;
 				}
 				state.type = _type;
 				state.channel = _channel;
@@ -1269,9 +1262,9 @@ loop10_break: ;
 							}
 						}
 						cnt12++;
-loop12_continue: ;
-					}
-loop12_break: ;
+                        //loop12_continue: ; // LUCENENET NOTE: Not used
+                    }
+                    loop12_break: ;
 				}
 				state.type = _type;
 				state.channel = _channel;
@@ -1351,12 +1344,11 @@ loop12_break: ;
 								default:
 								{
 									goto loop13_break;
-									break;
 								}
 							}
-loop13_continue: ;
-						}
-loop13_break: ;
+                                //loop13_continue: ; // LUCENENET NOTE: Not used
+                            }
+                            loop13_break: ;
 						break;
 					}
 				}
@@ -1451,9 +1443,9 @@ loop13_break: ;
 							}
 						}
 						cnt16++;
-loop16_continue: ;
-					}
-loop16_break: ;
+                        //loop16_continue: ; // LUCENENET NOTE: Not used
+                    }
+                    loop16_break: ;
 				}
 			}
 			finally

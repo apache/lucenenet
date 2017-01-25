@@ -345,7 +345,6 @@ namespace Lucene.Net.Expressions.JS
                 default:
                     {
                         return "'" + token.Text + "'";
-                        break;
                     }
             }
         }
@@ -506,10 +505,9 @@ namespace Lucene.Net.Expressions.JS
                             default:
                                 {
                                     goto loop2_break;
-                                    break;
                                 }
                         }
-                    loop2_continue: ;
+                    //loop2_continue: ; // LUCENENET NOTE: Not used
                     }
                 loop2_break: ;
                 }
@@ -577,10 +575,9 @@ namespace Lucene.Net.Expressions.JS
                             default:
                                 {
                                     goto loop3_break;
-                                    break;
                                 }
                         }
-                    loop3_continue: ;
+                    //loop3_continue: ; // LUCENENET NOTE: Not used
                     }
                 loop3_break: ;
                 }
@@ -643,12 +640,11 @@ namespace Lucene.Net.Expressions.JS
                             default:
                                 {
                                     goto loop4_break;
-                                    break;
                                 }
                         }
-                    loop4_continue: ;
+                        //loop4_continue: ; // LUCENENET NOTE: Not used
                     }
-                loop4_break: ;
+                    loop4_break: ;
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
@@ -709,12 +705,11 @@ namespace Lucene.Net.Expressions.JS
                             default:
                                 {
                                     goto loop5_break;
-                                    break;
                                 }
                         }
-                    loop5_continue: ;
+                        //loop5_continue: ; // LUCENENET NOTE: Not used
                     }
-                loop5_break: ;
+                    loop5_break: ;
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
@@ -777,12 +772,11 @@ namespace Lucene.Net.Expressions.JS
                             default:
                                 {
                                     goto loop6_break;
-                                    break;
                                 }
                         }
-                    loop6_continue: ;
+                        //loop6_continue: ; // LUCENENET NOTE: Not used
                     }
-                loop6_break: ;
+                    loop6_break: ;
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
@@ -854,12 +848,11 @@ namespace Lucene.Net.Expressions.JS
                             default:
                                 {
                                     goto loop7_break;
-                                    break;
                                 }
                         }
-                    loop7_continue: ;
+                        //loop7_continue: ; // LUCENENET NOTE: Not used
                     }
-                loop7_break: ;
+                    loop7_break: ;
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
@@ -933,12 +926,11 @@ namespace Lucene.Net.Expressions.JS
                             default:
                                 {
                                     goto loop8_break;
-                                    break;
                                 }
                         }
-                    loop8_continue: ;
+                        //loop8_continue: ; // LUCENENET NOTE: Not used
                     }
-                loop8_break: ;
+                    loop8_break: ;
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
@@ -1012,12 +1004,11 @@ namespace Lucene.Net.Expressions.JS
                             default:
                                 {
                                     goto loop9_break;
-                                    break;
                                 }
                         }
-                    loop9_continue: ;
+                        //loop9_continue: ; // LUCENENET NOTE: Not used
                     }
-                loop9_break: ;
+                    loop9_break: ;
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
@@ -1091,12 +1082,11 @@ namespace Lucene.Net.Expressions.JS
                             default:
                                 {
                                     goto loop10_break;
-                                    break;
                                 }
                         }
-                    loop10_continue: ;
+                        //loop10_continue: ; // LUCENENET NOTE: Not used
                     }
-                loop10_break: ;
+                    loop10_break: ;
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
@@ -1170,12 +1160,11 @@ namespace Lucene.Net.Expressions.JS
                             default:
                                 {
                                     goto loop11_break;
-                                    break;
                                 }
                         }
-                    loop11_continue: ;
+                        //loop11_continue: ; // LUCENENET NOTE: Not used
                     }
-                loop11_break: ;
+                    loop11_break: ;
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
@@ -1687,12 +1676,11 @@ namespace Lucene.Net.Expressions.JS
                                         default:
                                             {
                                                 goto loop16_break;
-                                                break;
                                             }
                                     }
-                                loop16_continue: ;
+                                    //loop16_continue: ; // LUCENENET NOTE: Not used
                                 }
-                            loop16_break: ;
+                                loop16_break: ;
                                 break;
                             }
                     }
