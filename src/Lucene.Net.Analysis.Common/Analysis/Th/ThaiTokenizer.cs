@@ -139,7 +139,6 @@ namespace Lucene.Net.Analysis.Th
     {
         private readonly Locale locale;
         private IEnumerator<Boundary> wordBreaker;
-        private Boundary[] WordBoundaries;
         private int currentIndex;
         private string text;
         private readonly IList<int> transitions = new List<int>();
