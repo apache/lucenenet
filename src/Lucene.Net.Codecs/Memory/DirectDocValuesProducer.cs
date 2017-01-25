@@ -621,7 +621,9 @@ namespace Lucene.Net.Codecs.Memory
             internal long missingOffset;
             internal long missingBytes;
             internal byte byteWidth;
+#pragma warning disable 649 // LUCENENET NOTE: Never assigned
             internal int packedIntsVersion;
+#pragma warning restore 649
         }
 
         internal class BinaryEntry
@@ -631,10 +633,12 @@ namespace Lucene.Net.Codecs.Memory
             internal long missingBytes;
             internal int count;
             internal int numBytes;
+#pragma warning disable 649 // LUCENENET NOTE: Never assigned
             internal int minLength;
             internal int maxLength;
             internal int packedIntsVersion;
             internal int blockSize;
+#pragma warning restore 649
         }
 
         internal class SortedEntry
@@ -652,8 +656,10 @@ namespace Lucene.Net.Codecs.Memory
 
         internal class FSTEntry
         {
+#pragma warning disable 649 // LUCENENET NOTE: Never assigned
             internal long offset;
             internal long numOrds;
+#pragma warning restore 649
         }
     }
 }
