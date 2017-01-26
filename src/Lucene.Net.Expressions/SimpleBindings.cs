@@ -25,27 +25,23 @@ namespace Lucene.Net.Expressions
 
     /// <summary>
     /// Simple class that binds expression variable names to
-    /// <see cref="Lucene.Net.Search.SortField">Lucene.Net.Search.SortField
-    /// 	</see>
-    /// s
-    /// or other
-    /// <see cref="Expression">Expression</see>
-    /// s.
-    /// <p>
+    /// <see cref="Lucene.Net.Search.SortField"/>s or other
+    /// <see cref="Expression"/>s.
+    /// <para/>
     /// Example usage:
-    /// <pre class="prettyprint">
+    /// <code>
     /// SimpleBindings bindings = new SimpleBindings();
     /// // document's text relevance score
-    /// bindings.add(new SortField("_score", SortField.Type.SCORE));
+    /// bindings.Add(new SortField("_score", SortFieldType.SCORE));
     /// // integer NumericDocValues field (or from FieldCache)
-    /// bindings.add(new SortField("popularity", SortField.Type.INT));
+    /// bindings.Add(new SortField("popularity", SortFieldType.INT));
     /// // another expression
-    /// bindings.add("recency", myRecencyExpression);
+    /// bindings.Add("recency", myRecencyExpression);
     /// // create a sort field in reverse order
-    /// Sort sort = new Sort(expr.getSortField(bindings, true));
-    /// </pre>
+    /// Sort sort = new Sort(expr.GetSortField(bindings, true));
+    /// </code>
+    /// @lucene.experimental
     /// </summary>
-    /// <lucene.experimental></lucene.experimental>
     public sealed class SimpleBindings : Bindings
     {
         internal readonly IDictionary<string, object> map = new Dictionary<string, object>();
@@ -55,10 +51,10 @@ namespace Lucene.Net.Expressions
         /// </summary>
         public SimpleBindings() { }
 
-        /// <summary>Adds a SortField to the bindings.</summary>
+        /// <summary>Adds a <see cref="SortField"/> to the bindings.</summary>
         /// <remarks>
-        /// Adds a SortField to the bindings.
-        /// <p>
+        /// Adds a <see cref="SortField"/> to the bindings.
+        /// <para/>
         /// This can be used to reference a DocValuesField, a field from
         /// FieldCache, the document's score, etc.
         /// </remarks>
@@ -67,10 +63,10 @@ namespace Lucene.Net.Expressions
             map[sortField.Field] = sortField;
         }
 
-        /// <summary>Adds an Expression to the bindings.</summary>
+        /// <summary>Adds an <see cref="Expression"/> to the bindings.</summary>
         /// <remarks>
-        /// Adds an Expression to the bindings.
-        /// <p>
+        /// Adds an <see cref="Expression"/> to the bindings.
+        /// <para/>
         /// This can be used to reference expressions from other expressions.
         /// </remarks>
         public void Add(string name, Expression expression)
@@ -126,8 +122,7 @@ namespace Lucene.Net.Expressions
             }
         }
 
-        /// <summary>Traverses the graph of bindings, checking there are no cycles or missing references
-        /// 	</summary>
+        /// <summary>Traverses the graph of bindings, checking there are no cycles or missing references</summary>
         /// <exception cref="System.ArgumentException">if the bindings is inconsistent</exception>
         public void Validate()
         {

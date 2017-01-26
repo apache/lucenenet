@@ -22,11 +22,11 @@ namespace Lucene.Net.Expressions
     /// <summary>Binds variable names in expressions to actual data.</summary>
     /// <remarks>
     /// Binds variable names in expressions to actual data.
-    /// <p>
+    /// <para/>
     /// These are typically DocValues fields/FieldCache, the document's
-    /// relevance score, or other ValueSources.
+    /// relevance score, or other <see cref="ValueSource"/>s.
+    /// @lucene.experimental
     /// </remarks>
-    /// <lucene.experimental></lucene.experimental>
     public abstract class Bindings
 	{
 		/// <summary>Sole constructor.</summary>
@@ -38,16 +38,15 @@ namespace Lucene.Net.Expressions
 		{
 		}
 
-		/// <summary>Returns a ValueSource bound to the variable name.</summary>
-		
+		/// <summary>
+        /// Returns a <see cref="ValueSource"/> bound to the variable name.
+        /// </summary>
 		public abstract ValueSource GetValueSource(string name);
 
-		/// <summary>
-		/// Returns a
-		/// <code>ValueSource</code>
-		/// over relevance scores
-		/// </summary>
-		protected ValueSource GetScoreValueSource()
+        /// <summary>
+        /// Returns a <see cref="ValueSource"/> over relevance scores
+        /// </summary>
+        protected ValueSource GetScoreValueSource()
 		{
 			return new ScoreValueSource();
 		}

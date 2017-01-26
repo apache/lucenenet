@@ -26,14 +26,8 @@ namespace Lucene.Net.Expressions
      */
 
     /// <summary>
-    /// A
-    /// <see cref="Lucene.Net.Queries.Function.ValueSource">Lucene.Net.Queries.Function.ValueSource
-    /// 	</see>
-    /// which evaluates a
-    /// <see cref="Expression">Expression</see>
-    /// given the context of an
-    /// <see cref="Bindings">Bindings</see>
-    /// .
+    /// A <see cref="Lucene.Net.Queries.Function.ValueSource"/> which evaluates a
+    /// <see cref="Expression"/> given the context of an <see cref="Bindings"/>.
     /// </summary>
     internal sealed class ExpressionValueSource : ValueSource
 	{

@@ -38,38 +38,29 @@ namespace Lucene.Net.Expressions.JS
     /// <summary>An expression compiler for javascript expressions.</summary>
     /// <remarks>
     /// An expression compiler for javascript expressions.
-    /// <p/>
+    /// <para/>
     /// Example:
-    /// <pre class="prettyprint">
-    /// Expression foo = JavascriptCompiler.compile("((0.3*popularity)/10.0)+(0.7*score)");
-    /// </pre>
-    /// <p/>
-    /// See the
-    /// <see cref="Lucene.Net.Expressions.JS">package documentation</see>
-    /// for
+    /// <code>
+    /// Expression foo = JavascriptCompiler.Compile("((0.3*popularity)/10.0)+(0.7*score)");
+    /// </code>
+    /// <para/>
+    /// See the <see cref="Lucene.Net.Expressions.JS">package documentation</see> for
     /// the supported syntax and default functions.
-    /// <p>
-    /// You can compile with an alternate set of functions via
-    /// <see Compile(string, System.Collections.Generic.IDictionary&lt;K, V&gt>
-    ///     <cref xml:space="preserve">Compile(string, System.Collections.Generic.IDictionary{K, V})
-    /// 	</cref>
-    ///    
-    /// 	</see>
-    /// .
+    /// <para>
+    /// You can compile with an alternate set of functions via <see cref="Compile(string, IDictionary{string, MethodInfo})"/>.
     /// For example:
-    /// <pre class="prettyprint">
-    /// Map&lt;String,Method&gt; functions = new HashMap&lt;String,Method&gt;();
+    /// <code>
+    /// IDictionary&lt;string, MethodInfo&gt; functions = new Dictionary&lt;string, MethodInfo&gt;();
     /// // add all the default functions
-    /// functions.putAll(JavascriptCompiler.DEFAULT_FUNCTIONS);
-    /// // add cbrt()
-    /// functions.put("cbrt", Math.class.getMethod("cbrt", double.class));
+    /// functions.PutAll(JavascriptCompiler.DEFAULT_FUNCTIONS);
+    /// // add sqrt()
+    /// functions.Put("sqrt", (typeof(Math)).GetMethod("Sqrt", new Type[] { typeof(double) }));
     /// // call compile with customized function map
-    /// Expression foo = JavascriptCompiler.compile("cbrt(score)+ln(popularity)",
-    /// functions,
-    /// getClass().getClassLoader());
-    /// </pre></p>
+    /// Expression foo = JavascriptCompiler.Compile("sqrt(score)+ln(popularity)", functions);
+    /// </code>
+    /// </para>
+    /// @lucene.experimental
     /// </remarks>
-    /// <lucene.experimental></lucene.experimental>
     public class JavascriptCompiler
     {
 
@@ -110,10 +101,8 @@ namespace Lucene.Net.Expressions.JS
         /// <summary>The default set of functions available to expressions.</summary>
         /// <remarks>
         /// The default set of functions available to expressions.
-        /// <p>
-        /// See the
-        /// <see cref="Lucene.Net.Expressions.JS">package documentation</see>
-        /// for a list.
+        /// <para/>
+        /// See the <see cref="Lucene.Net.Expressions.JS">package documentation</see> for a list.
         /// </remarks>
         public static readonly IDictionary<string, MethodInfo> DEFAULT_FUNCTIONS;
 
@@ -126,10 +115,9 @@ namespace Lucene.Net.Expressions.JS
         // This maximum length is theoretically 65535 bytes, but as its CESU-8 encoded we dont know how large it is in bytes, so be safe
         // rcmuir: "If your ranking function is that large you need to check yourself into a mental institution!"
         /// <summary>Compiles the given expression.</summary>
-        /// <remarks>Compiles the given expression.</remarks>
         /// <param name="sourceText">The expression to compile</param>
         /// <returns>A new compiled expression</returns>
-
+        /// <exception cref="ParseException">on failure to compile</exception>
         public static Expression Compile(string sourceText)
         {
             return new JavascriptCompiler(sourceText).CompileExpression();
@@ -138,28 +126,14 @@ namespace Lucene.Net.Expressions.JS
         /// <summary>Compiles the given expression with the supplied custom functions.</summary>
         /// <remarks>
         /// Compiles the given expression with the supplied custom functions.
-        /// <p>
-        /// Functions must be
-        /// <code>public static</code>
-        /// , return
-        /// <code>double</code>
-        /// and
-        /// can take from zero to 256
-        /// <code>double</code>
-        /// parameters.
+        /// <para/>
+        /// Functions must be <c>public static</c>, return <see cref="double"/> and
+        /// can take from zero to 256 <see cref="double"/> parameters.
         /// </remarks>
         /// <param name="sourceText">The expression to compile</param>
-        /// <param name="functions">map of String names to functions</param>
-        /// <param name="parent">
-        /// a
-        /// <code>ClassLoader</code>
-        /// that should be used as the parent of the loaded class.
-        /// It must contain all classes referred to by the given
-        /// <code>functions</code>
-        /// .
-        /// </param>
+        /// <param name="functions">map of <see cref="string"/> names to functions</param>
         /// <returns>A new compiled expression</returns>
-
+        /// <exception cref="ParseException">on failure to compile</exception>
         public static Expression Compile(string sourceText, IDictionary<string, MethodInfo> functions)
         {
             foreach (MethodInfo m in functions.Values)
@@ -169,12 +143,11 @@ namespace Lucene.Net.Expressions.JS
             return new JavascriptCompiler(sourceText, functions).CompileExpression();
         }
 
-        /// <summary>This method is unused, it is just here to make sure that the function signatures don't change.
-        /// 	</summary>
+        /// <summary>This method is unused, it is just here to make sure that the function signatures don't change.</summary>
         /// <remarks>
         /// This method is unused, it is just here to make sure that the function signatures don't change.
         /// If this method fails to compile, you also have to change the byte code generator to correctly
-        /// use the FunctionValues class.
+        /// use the <see cref="FunctionValues"/> class.
         /// </remarks>
         private static void UnusedTestCompile()
         {
@@ -183,7 +156,6 @@ namespace Lucene.Net.Expressions.JS
         }
 
         /// <summary>Constructs a compiler for expressions.</summary>
-
         /// <param name="sourceText">The expression to compile</param>
         private JavascriptCompiler(string sourceText)
             : this(sourceText, DEFAULT_FUNCTIONS)
@@ -204,7 +176,7 @@ namespace Lucene.Net.Expressions.JS
 
         /// <summary>Compiles the given expression with the specified parent classloader</summary>
         /// <returns>A new compiled expression</returns>
-
+        /// <exception cref="ParseException">on failure to compile</exception>
         private Expression CompileExpression()
         {
             try

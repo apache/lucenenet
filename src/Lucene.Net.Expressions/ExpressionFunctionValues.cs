@@ -22,10 +22,7 @@ namespace Lucene.Net.Expressions
      */
 
     /// <summary>
-    /// A
-    /// <see cref="Lucene.Net.Queries.Function.FunctionValues">Lucene.Net.Queries.Function.FunctionValues
-    /// 	</see>
-    /// which evaluates an expression
+    /// A <see cref="Lucene.Net.Queries.Function.FunctionValues"/> which evaluates an expression
     /// </summary>
     internal class ExpressionFunctionValues : DoubleDocValues
 	{

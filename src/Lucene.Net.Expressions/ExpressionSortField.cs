@@ -21,10 +21,7 @@ namespace Lucene.Net.Expressions
      */
 
     /// <summary>
-    /// A
-    /// <see cref="Lucene.Net.Search.SortField">Lucene.Net.Search.SortField
-    /// 	</see>
-    /// which sorts documents by the evaluated value of an expression for each document
+    /// A <see cref="Lucene.Net.Search.SortField"/> which sorts documents by the evaluated value of an expression for each document
     /// </summary>
     internal class ExpressionSortField : SortField
 	{

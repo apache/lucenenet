@@ -23,32 +23,22 @@ namespace Lucene.Net.Expressions
      */
 
     /// <summary>
-    /// A
-    /// <see cref="Lucene.Net.Search.Rescorer">Lucene.Net.Search.Rescorer</see>
-    /// that uses an expression to re-score
+    /// A <see cref="Lucene.Net.Search.Rescorer"/> that uses an expression to re-score
     /// first pass hits.  Functionally this is the same as
-    /// <see cref="Lucene.Net.Search.SortRescorer">Lucene.Net.Search.SortRescorer
-    /// 	</see>
-    /// (if you build the
-    /// <see cref="Lucene.Net.Search.Sort">Lucene.Net.Search.Sort</see>
-    /// using
-    /// <see cref="Expression.GetSortField(Bindings, bool)">Expression.GetSortField(Bindings, bool)
-    /// 	</see>
-    /// ), except for the explain method
+    /// <see cref="Lucene.Net.Search.SortRescorer"/> (if you build the
+    /// <see cref="Lucene.Net.Search.Sort"/> using
+    /// <see cref="Expression.GetSortField(Bindings, bool)"/>), except for the <see cref="Explain"/> method
     /// which gives more detail by showing the value of each
     /// variable.
+    /// @lucene.experimental
     /// </summary>
-    /// <lucene.experimental></lucene.experimental>
     internal class ExpressionRescorer : SortRescorer
     {
         private readonly Expression expression;
         private readonly Bindings bindings;
 
         /// <summary>
-        /// Uses the provided
-        /// <see cref="Lucene.Net.Queries.Function.ValueSource">Lucene.Net.Queries.Function.ValueSource
-        /// 	</see>
-        /// to assign second
+        /// Uses the provided <see cref="Lucene.Net.Queries.Function.ValueSource"/> to assign second
         /// pass scores.
         /// </summary>
         public ExpressionRescorer(Expression expression, Bindings bindings)

@@ -23,23 +23,23 @@ namespace Lucene.Net.Expressions
     /// <summary>Base class that computes the value of an expression for a document.</summary>
     /// <remarks>
     /// Base class that computes the value of an expression for a document.
-    /// <p>
+    /// <para/>
     /// Example usage:
-    /// <pre class="prettyprint">
+    /// <code>
     /// // compile an expression:
-    /// Expression expr = JavascriptCompiler.compile("sqrt(_score) + ln(popularity)");
+    /// Expression expr = JavascriptCompiler.Compile("sqrt(_score) + ln(popularity)");
     /// // SimpleBindings just maps variables to SortField instances
     /// SimpleBindings bindings = new SimpleBindings();
-    /// bindings.add(new SortField("_score", SortField.Type.SCORE));
-    /// bindings.add(new SortField("popularity", SortField.Type.INT));
+    /// bindings.Add(new SortField("_score", SortFieldType.SCORE));
+    /// bindings.Add(new SortField("popularity", SortFieldType.INT));
     /// // create a sort field and sort by it (reverse order)
-    /// Sort sort = new Sort(expr.getSortField(bindings, true));
+    /// Sort sort = new Sort(expr.GetSortField(bindings, true));
     /// Query query = new TermQuery(new Term("body", "contents"));
-    /// searcher.search(query, null, 10, sort);
-    /// </pre>
+    /// searcher.Search(query, null, 10, sort);
+    /// </code>
+    /// @lucene.experimental
     /// </remarks>
-    /// <seealso cref="Lucene.Net.Expressions.JS.JavascriptCompiler.Compile(string)">Lucene.Net.Expressions.JS.JavascriptCompiler.Compile(string)</seealso>
-    /// <lucene.experimental></lucene.experimental>
+    /// <seealso cref="Lucene.Net.Expressions.JS.JavascriptCompiler.Compile(string)"/>
     public abstract class Expression
 	{
 		/// <summary>The original source text</summary>
@@ -49,13 +49,11 @@ namespace Lucene.Net.Expressions
         public readonly string[] variables; // LUCENENET TODO: Make property
 
         /// <summary>
-        /// Creates a new
-        /// <code>Expression</code>
-        /// .
+        /// Creates a new <see cref="Expression"/>.
         /// </summary>
         /// <param name="sourceText">
         /// Source text for the expression: e.g.
-        /// <code>ln(popularity)</code>
+        /// <c>ln(popularity)</c>
         /// </param>
         /// <param name="variables">
         /// Names of external variables referred to by the expression
@@ -69,22 +67,16 @@ namespace Lucene.Net.Expressions
 
 		/// <summary>Evaluates the expression for the given document.</summary>
 		/// <remarks>Evaluates the expression for the given document.</remarks>
-		/// <param name="document"><code>docId</code> of the document to compute a value for</param>
+		/// <param name="document"><c>docId</c> of the document to compute a value for</param>
 		/// <param name="functionValues">
-		/// 
-		/// <see cref="Lucene.Net.Queries.Function.FunctionValues">Lucene.Net.Queries.Function.FunctionValues
-		/// 	</see>
-		/// for each element of
-		/// <see cref="variables">variables</see>
-		/// .
+        /// <see cref="Lucene.Net.Queries.Function.FunctionValues"/>
+		/// for each element of <see cref="variables">variables</see>.
 		/// </param>
 		/// <returns>The computed value of the expression for the given document.</returns>
 		public abstract double Evaluate(int document, FunctionValues[] functionValues);
 
-		/// <summary>Get a value source which can compute the value of this expression in the context of the given bindings.
-		/// 	</summary>
-		/// <remarks>Get a value source which can compute the value of this expression in the context of the given bindings.
-		/// 	</remarks>
+		/// <summary>Get a value source which can compute the value of this expression in the context of the given bindings.</summary>
+		/// <remarks>Get a value source which can compute the value of this expression in the context of the given bindings.</remarks>
 		/// <param name="bindings">Bindings to use for external values in this expression</param>
 		/// <returns>A value source which will evaluate this expression when used</returns>
 		public virtual ValueSource GetValueSource(Bindings bindings)
@@ -92,19 +84,15 @@ namespace Lucene.Net.Expressions
 			return new ExpressionValueSource(bindings, this);
 		}
 
-		/// <summary>Get a sort field which can be used to rank documents by this expression.
-		/// 	</summary>
-		/// <remarks>Get a sort field which can be used to rank documents by this expression.
-		/// 	</remarks>
+		/// <summary>Get a sort field which can be used to rank documents by this expression.</summary>
+		/// <remarks>Get a sort field which can be used to rank documents by this expression.</remarks>
 		public virtual SortField GetSortField(Bindings bindings, bool reverse)
 		{
 			return GetValueSource(bindings).GetSortField(reverse);
 		}
 
 		/// <summary>
-		/// Get a
-		/// <see cref="Lucene.Net.Search.Rescorer">Lucene.Net.Search.Rescorer</see>
-		/// , to rescore first-pass hits
+		/// Get a <see cref="Lucene.Net.Search.Rescorer"/>, to rescore first-pass hits
 		/// using this expression.
 		/// </summary>
 		public virtual Rescorer GetRescorer(Bindings bindings)

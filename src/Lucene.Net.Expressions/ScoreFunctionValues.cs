@@ -25,9 +25,7 @@ namespace Lucene.Net.Expressions
 
     /// <summary>
     /// A utility class to allow expressions to access the score as a
-    /// <see cref="Lucene.Net.Queries.Function.FunctionValues">Lucene.Net.Queries.Function.FunctionValues
-    /// 	</see>
-    /// .
+    /// <see cref="Lucene.Net.Queries.Function.FunctionValues"/>.
     /// </summary>
     internal class ScoreFunctionValues : DoubleDocValues
     {

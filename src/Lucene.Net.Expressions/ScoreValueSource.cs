@@ -24,22 +24,15 @@ namespace Lucene.Net.Expressions
      */
 
     /// <summary>
-    /// A
-    /// <see cref="Lucene.Net.Queries.Function.ValueSource">Lucene.Net.Queries.Function.ValueSource
-    /// 	</see>
-    /// which uses the
-    /// <see cref="Lucene.Net.Search.Scorer">Lucene.Net.Search.Scorer</see>
-    /// passed through
-    /// the context map by
-    /// <see cref="ExpressionComparer">ExpressionComparer</see>
-    /// .
+    /// A <see cref="Lucene.Net.Queries.Function.ValueSource"/> which uses the
+    /// <see cref="Lucene.Net.Search.Scorer"/> passed through
+    /// the context map by <see cref="ExpressionComparer"/>.
     /// </summary>
     internal class ScoreValueSource : ValueSource
 	{
 	    /// <summary>
-		/// <code>context</code> must contain a key "scorer" which is a
-		/// <see cref="Lucene.Net.Search.Scorer">Lucene.Net.Search.Scorer</see>
-		/// .
+		/// <paramref name="context"/> must contain a key "scorer" which is a
+		/// <see cref="Lucene.Net.Search.Scorer"/>.
 		/// </summary>
 		/// <exception cref="System.IO.IOException"></exception>
 		public override FunctionValues GetValues(IDictionary context, AtomicReaderContext
