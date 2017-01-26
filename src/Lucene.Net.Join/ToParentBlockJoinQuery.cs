@@ -91,6 +91,7 @@ namespace Lucene.Net.Join
         /// into a single parent score.
         ///  </param>
         public ToParentBlockJoinQuery(Query childQuery, Filter parentsFilter, ScoreMode scoreMode)
+            : base()
         {
             _origChildQuery = childQuery;
             _childQuery = childQuery;
@@ -98,7 +99,8 @@ namespace Lucene.Net.Join
             _scoreMode = scoreMode;
         }
 
-        private ToParentBlockJoinQuery(Query origChildQuery, Query childQuery, Filter parentsFilter, ScoreMode scoreMode) : base()
+        private ToParentBlockJoinQuery(Query origChildQuery, Query childQuery, Filter parentsFilter, ScoreMode scoreMode) 
+            : base()
         {
             _origChildQuery = origChildQuery;
             _childQuery = childQuery;
@@ -113,17 +115,18 @@ namespace Lucene.Net.Join
 
         private class BlockJoinWeight : Weight
         {
-            internal readonly Query JoinQuery;
-            internal readonly Weight ChildWeight;
-            internal readonly Filter ParentsFilter;
-            internal readonly ScoreMode ScoreMode;
+            private readonly Query JoinQuery;
+            private readonly Weight ChildWeight;
+            private readonly Filter ParentsFilter;
+            private readonly ScoreMode ScoreMode;
 
-            public BlockJoinWeight(Query joinQuery, Weight childWeight, Filter parentsFilter, ScoreMode scoreMode) : base()
+            public BlockJoinWeight(Query joinQuery, Weight childWeight, Filter parentsFilter, ScoreMode scoreMode) 
+                : base()
             {
-                JoinQuery = joinQuery;
-                ChildWeight = childWeight;
-                ParentsFilter = parentsFilter;
-                ScoreMode = scoreMode;
+                this.JoinQuery = joinQuery;
+                this.ChildWeight = childWeight;
+                this.ParentsFilter = parentsFilter;
+                this.ScoreMode = scoreMode;
             }
 
             public override Query Query
@@ -483,6 +486,7 @@ namespace Lucene.Net.Join
             return "ToParentBlockJoinQuery (" + _childQuery + ")";
         }
 
+        // LUCENENET TODO: Possible BUG - this implemenation probably doesn't match Lucene
         protected bool Equals(ToParentBlockJoinQuery other)
         {
             return base.Equals(other) && 

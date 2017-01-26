@@ -23,6 +23,9 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("e8a339c7-fcf6-4a72-8586-56d8961d7b99")]
 
+// for testing
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Join")]
+
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version

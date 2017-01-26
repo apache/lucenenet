@@ -40,11 +40,12 @@ namespace Lucene.Net.Join
         /// <param name="reverse"> Whether natural order should be reversed on the nested / child level. </param>
         /// <param name="parentFilter"> Filter that identifies the parent documents. </param>
         /// <param name="childFilter"> Filter that defines which child documents participates in sorting. </param>
-        public ToParentBlockJoinSortField(string field, SortFieldType type, bool reverse, Filter parentFilter, Filter childFilter) : base(field, type, reverse)
+        public ToParentBlockJoinSortField(string field, SortFieldType type, bool reverse, Filter parentFilter, Filter childFilter) 
+            : base(field, type, reverse)
         {
-            Order = reverse;
-            ParentFilter = parentFilter;
-            ChildFilter = childFilter;
+            this.Order = reverse;
+            this.ParentFilter = parentFilter;
+            this.ChildFilter = childFilter;
         }
 
         /// <summary>

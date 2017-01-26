@@ -26,7 +26,7 @@ namespace Lucene.Net.Join
 
     internal abstract class TermsWithScoreCollector : ICollector
     {
-        private const int InitialArraySize = 256;
+        private const int InitialArraySize = 256; // LUCENENET TODO: Rename back to INITIAL_ARRAY_SIZE
 
         private readonly string _field;
         private readonly BytesRefHash _collectedTerms = new BytesRefHash();
@@ -125,12 +125,13 @@ namespace Lucene.Net.Join
         }
 
         // impl that works with single value per document
-        internal class Sv : TermsWithScoreCollector
+        internal class Sv : TermsWithScoreCollector // LUCENENET TODO: Rename back to SV
         {
             private readonly BytesRef _spare = new BytesRef();
             private BinaryDocValues _fromDocTerms;
 
-            internal Sv(string field, ScoreMode scoreMode) : base(field, scoreMode)
+            internal Sv(string field, ScoreMode scoreMode) 
+                : base(field, scoreMode)
             {
             }
             
@@ -178,16 +179,12 @@ namespace Lucene.Net.Join
                 _fromDocTerms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, _field, false);
             }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return base.AcceptsDocsOutOfOrder; }
-            }
-
             internal class Avg : Sv
             {
                 private int[] _scoreCounts = new int[InitialArraySize];
 
-                internal Avg(string field) : base(field, ScoreMode.Avg)
+                internal Avg(string field) 
+                    : base(field, ScoreMode.Avg)
                 {
                 }
                 
@@ -241,12 +238,13 @@ namespace Lucene.Net.Join
         }
 
         // impl that works with multiple values per document
-        internal class Mv : TermsWithScoreCollector
+        internal class Mv : TermsWithScoreCollector // LUCENENET TODO: Rename MV
         {
             private SortedSetDocValues _fromDocTermOrds;
             private readonly BytesRef _scratch = new BytesRef();
 
-            internal Mv(string field, ScoreMode scoreMode) : base(field, scoreMode)
+            internal Mv(string field, ScoreMode scoreMode) 
+                : base(field, scoreMode)
             {
             }
             
@@ -292,7 +290,8 @@ namespace Lucene.Net.Join
             {
                 private int[] _scoreCounts = new int[InitialArraySize];
 
-                internal Avg(string field) : base(field, ScoreMode.Avg)
+                internal Avg(string field) 
+                    : base(field, ScoreMode.Avg)
                 {
                 }
                 
@@ -340,6 +339,5 @@ namespace Lucene.Net.Join
                 }
             }
         }
-
     }
 }

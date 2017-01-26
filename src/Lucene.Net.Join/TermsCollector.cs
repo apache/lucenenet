@@ -36,7 +36,7 @@ namespace Lucene.Net.Join
             _field = field;
         }
 
-        public BytesRefHash CollectorTerms
+        public virtual BytesRefHash CollectorTerms
         {
             get
             {
@@ -99,7 +99,8 @@ namespace Lucene.Net.Join
             private readonly BytesRef _scratch = new BytesRef();
             private SortedSetDocValues _docTermOrds;
 
-            internal MV(string field) : base(field)
+            internal MV(string field) 
+                : base(field)
             {
             }
             
@@ -118,11 +119,6 @@ namespace Lucene.Net.Join
             {
                 _docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, _field);
             }
-
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
         }
 
         // impl that works with single value per document
@@ -131,7 +127,8 @@ namespace Lucene.Net.Join
             private readonly BytesRef _spare = new BytesRef();
             private BinaryDocValues _fromDocTerms;
 
-            internal SV(string field) : base(field)
+            internal SV(string field) 
+                : base(field)
             {
             }
             
@@ -144,11 +141,6 @@ namespace Lucene.Net.Join
             public override void SetNextReader(AtomicReaderContext context)
             {
                 _fromDocTerms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, _field, false);
-            }
-
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return base.AcceptsDocsOutOfOrder; }
             }
         }
     }

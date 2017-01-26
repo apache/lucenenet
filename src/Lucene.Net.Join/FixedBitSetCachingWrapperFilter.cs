@@ -30,7 +30,8 @@ namespace Lucene.Net.Join
         /// <summary>
         /// Sole constructor, see <see cref="CachingWrapperFilter"/>.
         /// </summary>
-        public FixedBitSetCachingWrapperFilter(Filter filter) : base(filter)
+        public FixedBitSetCachingWrapperFilter(Filter filter) 
+            : base(filter)
         {
         }
 

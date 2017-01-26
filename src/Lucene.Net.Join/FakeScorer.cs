@@ -29,18 +29,9 @@ namespace Lucene.Net.Join
         internal float _score;
         internal int doc = -1;
 
-        public FakeScorer() : base(null)
+        public FakeScorer() 
+            : base(null)
         {
-        }
-
-        public override int DocID
-        {
-            get { return doc; }
-        }
-
-        public override int NextDoc()
-        {
-            throw new NotSupportedException("FakeScorer doesn't support NextDoc()");
         }
 
         public override int Advance(int target)
@@ -48,19 +39,29 @@ namespace Lucene.Net.Join
             throw new NotSupportedException("FakeScorer doesn't support Advance(int)");
         }
 
-        public override long GetCost()
+        public override int DocID
         {
-            return 1;
+            get { return doc; }
         }
 
         public override int Freq
         {
-            get { throw new NotSupportedException("FakeScorer doesn't support Freq()"); }
+            get { throw new NotSupportedException("FakeScorer doesn't support Freq"); }
+        }
+
+        public override int NextDoc()
+        {
+            throw new NotSupportedException("FakeScorer doesn't support NextDoc()");
         }
 
         public override float GetScore()
         {
             return _score;
+        }
+
+        public override long GetCost()
+        {
+            return 1;
         }
 
         public override Weight Weight

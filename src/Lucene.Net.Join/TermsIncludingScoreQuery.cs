@@ -81,6 +81,7 @@ namespace Lucene.Net.Join
             return this;
         }
 
+        // LUCENENET TODO: Possible BUG - this Equals implementation probably doesn't match Java
         protected bool Equals(TermsIncludingScoreQuery other)
         {
             return base.Equals(other) && string.Equals(_field, other._field) &&
@@ -289,7 +290,7 @@ namespace Lucene.Net.Join
                 return DocsEnum.NextDoc();
             }
             
-            internal Explanation Explain(int target)
+            internal Explanation Explain(int target) // LUCENENET NOTE: changed accessibility from private to internal
             {
                 int docId;
                 do
@@ -327,7 +328,8 @@ namespace Lucene.Net.Join
             internal readonly FixedBitSet alreadyEmittedDocs;
 
             internal MVInnerScorer(TermsIncludingScoreQuery outerInstance, Weight weight, IBits acceptDocs,
-                TermsEnum termsEnum, int maxDoc, long cost) : base(outerInstance, weight, acceptDocs, termsEnum, cost)
+                TermsEnum termsEnum, int maxDoc, long cost) 
+                : base(outerInstance, weight, acceptDocs, termsEnum, cost)
             {
                 this.outerInstance = outerInstance;
                 alreadyEmittedDocs = new FixedBitSet(maxDoc);
@@ -362,7 +364,8 @@ namespace Lucene.Net.Join
             internal int currentDoc = -1;
             
             internal SVInOrderScorer(TermsIncludingScoreQuery outerInstance, Weight weight, IBits acceptDocs,
-                TermsEnum termsEnum, int maxDoc, long cost) : base(weight)
+                TermsEnum termsEnum, int maxDoc, long cost) 
+                : base(weight)
             {
                 this.outerInstance = outerInstance;
                 FixedBitSet matchingDocs = new FixedBitSet(maxDoc);

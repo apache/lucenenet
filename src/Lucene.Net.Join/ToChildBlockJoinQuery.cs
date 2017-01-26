@@ -38,7 +38,7 @@ namespace Lucene.Net.Join
         /// Message thrown from <see cref="ToChildBlockJoinScorer.ValidateParentDoc"/>
         /// on mis-use, when the parent query incorrectly returns child docs. 
         /// </summary>
-        public const string InvalidQueryMessage = "Parent query yields document which is not matched by parents filter, docID=";
+        internal const string InvalidQueryMessage = "Parent query yields document which is not matched by parents filter, docID="; // LUCENENET TODO: Rename INVALID_QUERY_MESSAGE
 
         private readonly Filter _parentsFilter;
         private readonly Query _parentQuery;
@@ -59,6 +59,7 @@ namespace Lucene.Net.Join
         /// identifying the parent documents.</param>
         /// <param name="doScores">True if parent scores should be calculated.</param>
         public ToChildBlockJoinQuery(Query parentQuery, Filter parentsFilter, bool doScores)
+            : base()
         {
             _origParentQuery = parentQuery;
             _parentQuery = parentQuery;
@@ -66,7 +67,8 @@ namespace Lucene.Net.Join
             _doScores = doScores;
         }
 
-        private ToChildBlockJoinQuery(Query origParentQuery, Query parentQuery, Filter parentsFilter, bool doScores) : base()
+        private ToChildBlockJoinQuery(Query origParentQuery, Query parentQuery, Filter parentsFilter, bool doScores) 
+            : base()
         {
             _origParentQuery = origParentQuery;
             _parentQuery = parentQuery;
@@ -86,7 +88,8 @@ namespace Lucene.Net.Join
             private readonly Filter _parentsFilter;
             private readonly bool _doScores;
 
-            public ToChildBlockJoinWeight(Query joinQuery, Weight parentWeight, Filter parentsFilter, bool doScores) : base()
+            public ToChildBlockJoinWeight(Query joinQuery, Weight parentWeight, Filter parentsFilter, bool doScores) 
+                : base()
             {
                 _joinQuery = joinQuery;
                 _parentWeight = parentWeight;
@@ -165,7 +168,8 @@ namespace Lucene.Net.Join
             private int _childDoc = -1;
             private int _parentDoc;
 
-            public ToChildBlockJoinScorer(Weight weight, Scorer parentScorer, FixedBitSet parentBits, bool doScores, IBits acceptDocs) : base(weight)
+            public ToChildBlockJoinScorer(Weight weight, Scorer parentScorer, FixedBitSet parentBits, bool doScores, IBits acceptDocs) 
+                : base(weight)
             {
                 _doScores = doScores;
                 _parentBits = parentBits;
@@ -360,6 +364,7 @@ namespace Lucene.Net.Join
             return "ToChildBlockJoinQuery (" + _parentQuery + ")";
         }
 
+        // LUCENENET TODO: Possible BUG - This equals implementation probably doesn't match Lucene
         protected bool Equals(ToChildBlockJoinQuery other)
         {
             return base.Equals(other) && 

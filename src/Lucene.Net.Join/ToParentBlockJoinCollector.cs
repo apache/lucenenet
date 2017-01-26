@@ -353,20 +353,6 @@ namespace Lucene.Net.Join
             var queue2 = new ConcurrentQueue<Scorer>();
             //System.out.println("\nqueue: add top scorer=" + value);
             queue2.Enqueue(scorer);
-//                while ((queue.Count > 0 && (queue.Dequeue()) != null))
-//                {
-//                    //System.out.println("  poll: " + value + "; " + value.getWeight().getQuery());
-//                    if (value is ToParentBlockJoinQuery.BlockJoinScorer)
-//                    {
-//                        Enroll((ToParentBlockJoinQuery)value.Weight.Query, (ToParentBlockJoinQuery.BlockJoinScorer)value);
-//                    }
-//
-//                    foreach (Scorer.ChildScorer sub in value.Children)
-//                    {
-//                        //System.out.println("  add sub: " + sub.child + "; " + sub.child.getWeight().getQuery());
-//                        queue.Enqueue(sub.Child);
-//                    }
-//                }
 
             while (queue2.TryDequeue(out scorer))
             {

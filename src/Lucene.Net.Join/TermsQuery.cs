@@ -40,7 +40,8 @@ namespace Lucene.Net.Join
         /// <param name="field">The field that should contain terms that are specified in the previous parameter.</param>
         /// <param name="fromQuery"></param>
         /// <param name="terms">The terms that matching documents should have. The terms must be sorted by natural order.</param>
-        internal TermsQuery(string field, Query fromQuery, BytesRefHash terms) : base(field)
+        internal TermsQuery(string field, Query fromQuery, BytesRefHash terms) 
+            : base(field)
         {
             _fromQuery = fromQuery;
             _terms = terms;
@@ -63,6 +64,8 @@ namespace Lucene.Net.Join
             return string.Format("TermsQuery{{field={0}}}", field);
         }
 
+        // LUCENENET TODO: Add GetHashCode() from Lucene
+
         private class SeekingTermSetTermsEnum : FilteredTermsEnum
         {
             private readonly BytesRefHash Terms;
@@ -76,18 +79,17 @@ namespace Lucene.Net.Join
             private BytesRef _seekTerm;
             private int _upto;
 
-            internal SeekingTermSetTermsEnum(TermsEnum tenum, BytesRefHash terms, int[] ords) : base(tenum)
+            internal SeekingTermSetTermsEnum(TermsEnum tenum, BytesRefHash terms, int[] ords) 
+                : base(tenum)
             {
-                Terms = terms;
-                Ords = ords;
+                this.Terms = terms;
+                this.Ords = ords;
                 _comparer = BytesRef.UTF8SortedAsUnicodeComparer;
                 _lastElement = terms.Count - 1;
                 _lastTerm = terms.Get(ords[_lastElement], new BytesRef());
                 _seekTerm = terms.Get(ords[_upto], _spare);
             }
 
-
-            
             protected override BytesRef NextSeekTerm(BytesRef currentTerm)
             {
                 BytesRef temp = _seekTerm;
