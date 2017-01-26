@@ -26,24 +26,24 @@ namespace Lucene.Net.Expressions
 	public abstract class Expression
 	{
 		/// <summary>The original source text</summary>
-		public readonly string sourceText;
+		public readonly string sourceText; // LUCENENET TODO: Make property
 
-		/// <summary>Named variables referred to by this expression</summary>
-		public readonly string[] variables;
+        /// <summary>Named variables referred to by this expression</summary>
+        public readonly string[] variables; // LUCENENET TODO: Make property
 
-		/// <summary>
-		/// Creates a new
-		/// <code>Expression</code>
-		/// .
-		/// </summary>
-		/// <param name="sourceText">
-		/// Source text for the expression: e.g.
-		/// <code>ln(popularity)</code>
-		/// </param>
-		/// <param name="variables">
-		/// Names of external variables referred to by the expression
-		/// </param>
-		public Expression(string sourceText, string[] variables)
+        /// <summary>
+        /// Creates a new
+        /// <code>Expression</code>
+        /// .
+        /// </summary>
+        /// <param name="sourceText">
+        /// Source text for the expression: e.g.
+        /// <code>ln(popularity)</code>
+        /// </param>
+        /// <param name="variables">
+        /// Names of external variables referred to by the expression
+        /// </param>
+        protected Expression(string sourceText, string[] variables)
 		{
 			// javadocs
 			this.sourceText = sourceText;

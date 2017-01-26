@@ -2087,7 +2087,7 @@ loop2_break: ;
 			}
 		}
 
-		protected internal JavascriptLexer.DFA9 dfa9;
+		protected JavascriptLexer.DFA9 dfa9;
 
 		internal static readonly string DFA9_eotS = "\x1\uffff\x2\x4\x3\uffff\x1\x4";
 
@@ -2132,7 +2132,7 @@ loop2_break: ;
 			}
 		}
 
-		protected internal class DFA9 : DFA
+		protected class DFA9 : DFA
 		{
 			public DFA9(JavascriptLexer _enclosing, BaseRecognizer recognizer)
 			{
@@ -2161,11 +2161,14 @@ loop2_break: ;
 		}
 	}
 
-    public class ParseException:Exception
+    // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
+    public class ParseException : Exception
     {
         public ParseException(string message, int charPositionInLine)
         {
-            
         }
     }
 }

@@ -19,8 +19,6 @@ namespace Lucene.Net.Expressions
 	/// </summary>
 	internal class ScoreValueSource : ValueSource
 	{
-	    private Scorer hashCodeObj;
-
 	    /// <summary>
 		/// <code>context</code> must contain a key "scorer" which is a
 		/// <see cref="Lucene.Net.Search.Scorer">Lucene.Net.Search.Scorer</see>
@@ -31,11 +29,9 @@ namespace Lucene.Net.Expressions
 			 readerContext)
 		{
 			Scorer v = (Scorer)context["scorer"];
-		    hashCodeObj = v;
 			if (v == null)
 			{
-				throw new InvalidOperationException("Expressions referencing the score can only be used for sorting"
-					);
+				throw new InvalidOperationException("Expressions referencing the score can only be used for sorting");
 			}
 			return new ScoreFunctionValues(this, v);
 		}
@@ -47,8 +43,7 @@ namespace Lucene.Net.Expressions
 
 		public override int GetHashCode()
 		{
-            //TODO: revist this and return something meaningful
-		    return 777;
+		    return 777; // LUCENENET TODO: return RuntimeHelpers.GetHashCode(this);
 		}
 
 		public override string GetDescription()

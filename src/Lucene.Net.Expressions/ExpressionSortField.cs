@@ -13,13 +13,12 @@ namespace Lucene.Net.Expressions
 	{
 		private readonly ExpressionValueSource source;
 
-		internal ExpressionSortField(string name, ExpressionValueSource source, bool reverse
-			) : base(name, SortFieldType.CUSTOM, reverse)
+		internal ExpressionSortField(string name, ExpressionValueSource source, bool reverse) 
+            : base(name, SortFieldType.CUSTOM, reverse)
 		{
 			this.source = source;
 		}
 
-		
 		public override FieldComparer GetComparer(int numHits, int sortPos)
 		{
 			return new ExpressionComparer(source, numHits);

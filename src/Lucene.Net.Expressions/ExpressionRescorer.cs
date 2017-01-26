@@ -25,7 +25,6 @@ namespace Lucene.Net.Expressions
     internal class ExpressionRescorer : SortRescorer
     {
         private readonly Expression expression;
-
         private readonly Bindings bindings;
 
         /// <summary>
@@ -36,8 +35,7 @@ namespace Lucene.Net.Expressions
         /// pass scores.
         /// </summary>
         public ExpressionRescorer(Expression expression, Bindings bindings)
-            : base(new Sort
-                (expression.GetSortField(bindings, true)))
+            : base(new Sort(expression.GetSortField(bindings, true)))
         {
             this.expression = expression;
             this.bindings = bindings;
@@ -46,9 +44,7 @@ namespace Lucene.Net.Expressions
         private class FakeScorer : Scorer
         {
             internal float score;
-
             internal int doc = -1;
-
             internal int freq = 1;
 
             public FakeScorer()
@@ -58,7 +54,7 @@ namespace Lucene.Net.Expressions
 
             public override int Advance(int target)
             {
-                throw new NotSupportedException("FakeScorer doesn't support advance(int)");
+                throw new NotSupportedException("FakeScorer doesn't support Advance(int)");
             }
 
             public override int DocID
@@ -73,7 +69,7 @@ namespace Lucene.Net.Expressions
 
             public override int NextDoc()
             {
-                throw new NotSupportedException("FakeScorer doesn't support nextDoc()");
+                throw new NotSupportedException("FakeScorer doesn't support NextDoc()");
             }
 
             public override float GetScore()

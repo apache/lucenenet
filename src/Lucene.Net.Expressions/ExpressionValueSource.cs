@@ -21,9 +21,7 @@ namespace Lucene.Net.Expressions
 	internal sealed class ExpressionValueSource : ValueSource
 	{
 		internal readonly ValueSource[] variables;
-
 		internal readonly Expression expression;
-
 		internal readonly bool needsScores;
 
 		internal ExpressionValueSource(Bindings bindings, Expression expression)
@@ -70,9 +68,7 @@ namespace Lucene.Net.Expressions
 			this.needsScores = needsScores;
 		}
 
-		
-		public override FunctionValues GetValues(IDictionary context, AtomicReaderContext
-			 readerContext)
+		public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 		{
 			IDictionary<string, FunctionValues> valuesCache = (IDictionary<string, FunctionValues>)context["valuesCache"];
 			if (valuesCache == null)
@@ -134,8 +130,7 @@ namespace Lucene.Net.Expressions
 			{
 				return false;
 			}
-			Lucene.Net.Expressions.ExpressionValueSource other = (Lucene.Net.Expressions.ExpressionValueSource
-				)obj;
+            ExpressionValueSource other = (ExpressionValueSource)obj;
 			if (expression == null)
 			{
 				if (other.expression != null)

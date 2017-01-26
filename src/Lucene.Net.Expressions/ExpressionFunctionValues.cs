@@ -13,15 +13,13 @@ namespace Lucene.Net.Expressions
 	internal class ExpressionFunctionValues : DoubleDocValues
 	{
 		internal readonly Expression expression;
-
 		internal readonly FunctionValues[] functionValues;
 
 		internal int currentDocument = -1;
-
 		internal double currentValue;
 
-		internal ExpressionFunctionValues(ValueSource parent, Expression expression, FunctionValues
-			[] functionValues) : base(parent)
+		internal ExpressionFunctionValues(ValueSource parent, Expression expression, FunctionValues[] functionValues) 
+            : base(parent)
 		{
 			if (expression == null)
 			{

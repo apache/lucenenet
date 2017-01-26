@@ -31,8 +31,12 @@ namespace Lucene.Net.Expressions
     /// <lucene.experimental></lucene.experimental>
     public sealed class SimpleBindings : Bindings
     {
-        internal readonly IDictionary<string, object> map = new Dictionary<string, object
-            >();
+        internal readonly IDictionary<string, object> map = new Dictionary<string, object>();
+
+        /// <summary>
+        /// Creates a new empty <see cref="Bindings"/>
+        /// </summary>
+        public SimpleBindings() { }
 
         /// <summary>Adds a SortField to the bindings.</summary>
         /// <remarks>
@@ -59,9 +63,8 @@ namespace Lucene.Net.Expressions
 
         public override ValueSource GetValueSource(string name)
         {
-
             object o;
-            //.NET Port. Directly looking up a missing key will throw a KeyNotFoundException
+            // LUCENENET NOTE: Directly looking up a missing key will throw a KeyNotFoundException
             if (!map.TryGetValue(name, out o))
             {
                 throw new ArgumentException("Invalid reference '" + name + "'");
@@ -104,7 +107,6 @@ namespace Lucene.Net.Expressions
                         throw new NotSupportedException();
                     }
             }
-
         }
 
         /// <summary>Traverses the graph of bindings, checking there are no cycles or missing references

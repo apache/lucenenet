@@ -13,15 +13,11 @@ namespace Lucene.Net.Expressions
     internal class ExpressionComparer : FieldComparer<double>
     {
         private readonly double[] values;
-
         private double bottom;
-
         private double topValue;
 
         private ValueSource source;
-
         private FunctionValues scores;
-
         private AtomicReaderContext readerContext;
 
         public ExpressionComparer(ValueSource source, int numHits)
@@ -58,18 +54,15 @@ namespace Lucene.Net.Expressions
             topValue = (double)value;
         }
 
-
         public override int CompareBottom(int doc)
         {
             return bottom.CompareTo(scores.DoubleVal(doc));
         }
 
-
         public override void Copy(int slot, int doc)
         {
             values[slot] = scores.DoubleVal(doc);
         }
-
 
         public override FieldComparer SetNextReader(AtomicReaderContext context)
         {
@@ -82,7 +75,6 @@ namespace Lucene.Net.Expressions
         {
             get { return values[slot]; }
         }
-
 
         public override int CompareTop(int doc)
         {

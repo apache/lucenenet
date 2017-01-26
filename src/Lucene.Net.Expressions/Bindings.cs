@@ -17,7 +17,7 @@ namespace Lucene.Net.Expressions
 		/// Sole constructor. (For invocation by subclass
 		/// constructors, typically implicit.)
 		/// </remarks>
-		public Bindings()
+		protected Bindings()
 		{
 		}
 
@@ -30,7 +30,7 @@ namespace Lucene.Net.Expressions
 		/// <code>ValueSource</code>
 		/// over relevance scores
 		/// </summary>
-		protected internal ValueSource GetScoreValueSource()
+		protected ValueSource GetScoreValueSource()
 		{
 			return new ScoreValueSource();
 		}

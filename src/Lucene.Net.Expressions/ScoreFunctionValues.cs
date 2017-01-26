@@ -25,6 +25,7 @@ namespace Lucene.Net.Expressions
 
         public override double DoubleVal(int document)
         {
+            // LUCENENET TODO: Possible Bug: Put in try-catch and rethrow "RuntimeException"
             Debug.Assert(document == scorer.DocID);
             var score = scorer.GetScore();
             Console.WriteLine("Score = {0}",score);

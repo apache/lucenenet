@@ -82,7 +82,7 @@ namespace Lucene.Net.Expressions.JS
         private static readonly Type FUNCTION_VALUES_TYPE = typeof(FunctionValues);
 
         private static readonly ConstructorInfo EXPRESSION_CTOR = typeof(Expression).
-            GetConstructor(new Type[] { typeof(String), typeof(String[]) });
+            GetConstructor(new Type[] { typeof(string), typeof(string[]) });
 
         private static readonly MethodInfo EVALUATE_METHOD = GetMethod(EXPRESSION_TYPE, "Evaluate",
             new[] { typeof(int), typeof(FunctionValues[]) });
@@ -162,7 +162,6 @@ namespace Lucene.Net.Expressions.JS
 
         public static Expression Compile(string sourceText, IDictionary<string, MethodInfo> functions)
         {
-
             foreach (MethodInfo m in functions.Values)
             {
                 CheckFunction(m);
@@ -187,15 +186,13 @@ namespace Lucene.Net.Expressions.JS
 
         /// <param name="sourceText">The expression to compile</param>
         private JavascriptCompiler(string sourceText)
-            : this(sourceText, DEFAULT_FUNCTIONS
-                )
+            : this(sourceText, DEFAULT_FUNCTIONS)
         {
         }
 
         /// <summary>Constructs a compiler for expressions with specific set of functions</summary>
         /// <param name="sourceText">The expression to compile</param>
-        private JavascriptCompiler(string sourceText, IDictionary<string, MethodInfo> functions
-            )
+        private JavascriptCompiler(string sourceText, IDictionary<string, MethodInfo> functions)
         {
             if (sourceText == null)
             {
@@ -572,7 +569,6 @@ namespace Lucene.Net.Expressions.JS
             RecursiveCompile(current.GetChild(1), arg2);
             gen.Emit(op);
             gen.Emit(OpCodes.Conv_R8);
-
         }
 
         private void PushBitwise(OpCode op, ITree current)
@@ -587,20 +583,16 @@ namespace Lucene.Net.Expressions.JS
             RecursiveCompile(current.GetChild(1), arg2);
             gen.Emit(op);
             gen.Emit(OpCodes.Conv_R8);
-            
         }
 
         private void PushCond(OpCode opCode, ITree current, Type expected)
         {
-
             RecursiveCompile(current.GetChild(0), expected);
             RecursiveCompile(current.GetChild(1), expected);
             gen.Emit(opCode);
             gen.Emit(OpCodes.Conv_R8);
-            
         }
 
-        
         private void PushLong(long i)
         {
             gen.Emit(OpCodes.Ldc_I8,i);
@@ -608,7 +600,6 @@ namespace Lucene.Net.Expressions.JS
             {
                 gen.Emit(OpCodes.Conv_R8);
             }
-            
         }
 
         private void EndCompile()
@@ -616,8 +607,6 @@ namespace Lucene.Net.Expressions.JS
             gen.Emit(OpCodes.Ret);
             dynamicType.DefineMethodOverride(evalMethod, EVALUATE_METHOD);
         }
-
-
 
         private ITree GetAntlrComputedExpressionTree()
         {
@@ -634,8 +623,6 @@ namespace Lucene.Net.Expressions.JS
                 throw new ArgumentException(re.Message, re);
             }
         }
-
-
 
         static JavascriptCompiler()
         {
@@ -728,7 +715,6 @@ namespace Lucene.Net.Expressions.JS
 
         private static void CheckFunction(MethodInfo method)
         {
-
             // do some checks if the signature is "compatible":
             if (!(method.IsStatic))
             {
@@ -756,6 +742,4 @@ namespace Lucene.Net.Expressions.JS
             }
         }
     }
-
-    
 }
