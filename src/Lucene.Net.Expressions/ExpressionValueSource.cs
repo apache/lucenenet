@@ -46,11 +46,11 @@ namespace Lucene.Net.Expressions
 				throw new ArgumentNullException();
 			}
 			this.expression = expression;
-			variables = new ValueSource[expression.variables.Length];
+			variables = new ValueSource[expression.Variables.Length];
 			bool needsScores = false;
 			for (int i = 0; i < variables.Length; i++)
 			{
-				ValueSource source = bindings.GetValueSource(expression.variables[i]);
+				ValueSource source = bindings.GetValueSource(expression.Variables[i]);
 				if (source is ScoreValueSource)
 				{
 					needsScores = true;
@@ -69,7 +69,7 @@ namespace Lucene.Net.Expressions
 					{
 						if (source == null)
 						{
-							throw new InvalidOperationException("Internal error. Variable (" + expression.variables[i]
+							throw new InvalidOperationException("Internal error. Variable (" + expression.Variables[i]
 								 + ") does not exist.");
 						}
 					}
@@ -88,10 +88,10 @@ namespace Lucene.Net.Expressions
 				context = new Hashtable(context);
 				context["valuesCache"] = valuesCache;
 			}
-			FunctionValues[] externalValues = new FunctionValues[expression.variables.Length];
+			FunctionValues[] externalValues = new FunctionValues[expression.Variables.Length];
 			for (int i = 0; i < variables.Length; ++i)
 			{
-				string externalName = expression.variables[i];
+				string externalName = expression.Variables[i];
 				FunctionValues values;
 				if (!valuesCache.TryGetValue(externalName,out values))
 				{
@@ -109,12 +109,12 @@ namespace Lucene.Net.Expressions
 
 		public override SortField GetSortField(bool reverse)
 		{
-			return new ExpressionSortField(expression.sourceText, this, reverse);
+			return new ExpressionSortField(expression.SourceText, this, reverse);
 		}
 
 		public override string GetDescription()
         {
-		    return "expr(" + expression.sourceText + ")";
+		    return "expr(" + expression.SourceText + ")";
 		}
 
 		public override int GetHashCode()

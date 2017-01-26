@@ -1,5 +1,6 @@
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Expressions
 {
@@ -43,10 +44,11 @@ namespace Lucene.Net.Expressions
     public abstract class Expression
 	{
 		/// <summary>The original source text</summary>
-		public readonly string sourceText; // LUCENENET TODO: Make property
+		public string SourceText { get; private set; }
 
         /// <summary>Named variables referred to by this expression</summary>
-        public readonly string[] variables; // LUCENENET TODO: Make property
+        [WritableArray]
+        public string[] Variables { get; private set; }
 
         /// <summary>
         /// Creates a new <see cref="Expression"/>.
@@ -61,8 +63,8 @@ namespace Lucene.Net.Expressions
         protected Expression(string sourceText, string[] variables)
 		{
 			// javadocs
-			this.sourceText = sourceText;
-			this.variables = variables;
+			this.SourceText = sourceText;
+			this.Variables = variables;
 		}
 
 		/// <summary>Evaluates the expression for the given document.</summary>
@@ -70,7 +72,7 @@ namespace Lucene.Net.Expressions
 		/// <param name="document"><c>docId</c> of the document to compute a value for</param>
 		/// <param name="functionValues">
         /// <see cref="Lucene.Net.Queries.Function.FunctionValues"/>
-		/// for each element of <see cref="variables">variables</see>.
+		/// for each element of <see cref="Variables">variables</see>.
 		/// </param>
 		/// <returns>The computed value of the expression for the given document.</returns>
 		public abstract double Evaluate(int document, FunctionValues[] functionValues);

@@ -111,7 +111,7 @@ namespace Lucene.Net.Expressions
             var context = new Dictionary<string, object>();
             var fakeScorer = new FakeScorer { score = firstPassExplanation.Value, doc = docIDInSegment };
             context["scorer"] = fakeScorer;
-            foreach (string variable in expression.variables)
+            foreach (string variable in expression.Variables)
             {
                 result.AddDetail(new Explanation((float)bindings.GetValueSource(variable).GetValues
                     (context, readerContext).DoubleVal(docIDInSegment), "variable \"" + variable + "\""
