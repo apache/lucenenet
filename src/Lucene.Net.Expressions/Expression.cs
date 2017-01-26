@@ -60,7 +60,7 @@ namespace Lucene.Net.Expressions
         /// <param name="variables">
         /// Names of external variables referred to by the expression
         /// </param>
-        protected Expression(string sourceText, string[] variables)
+        public Expression(string sourceText, string[] variables) // LUCENENET NOTE: This must be public for the Reflection code to work right.
 		{
 			// javadocs
 			this.SourceText = sourceText;

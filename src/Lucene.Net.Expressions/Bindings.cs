@@ -34,8 +34,8 @@ namespace Lucene.Net.Expressions
 		/// Sole constructor. (For invocation by subclass
 		/// constructors, typically implicit.)
 		/// </remarks>
-		protected Bindings()
-		{
+		public Bindings() // LUCENENET NOTE: This must be public for the Reflection code to work right.
+        {
 		}
 
 		/// <summary>
