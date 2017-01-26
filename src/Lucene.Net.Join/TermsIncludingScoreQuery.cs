@@ -81,19 +81,23 @@ namespace Lucene.Net.Join
             return this;
         }
 
-        // LUCENENET TODO: Possible BUG - this Equals implementation probably doesn't match Java
-        protected bool Equals(TermsIncludingScoreQuery other)
-        {
-            return base.Equals(other) && string.Equals(_field, other._field) &&
-                   Equals(_unwrittenOriginalQuery, other._unwrittenOriginalQuery);
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
+            if (!base.Equals(obj)) return false;
             if (obj.GetType() != GetType()) return false;
-            return Equals((TermsIncludingScoreQuery) obj);
+
+            var other = (TermsIncludingScoreQuery)obj;
+            if (!_field.Equals(other._field))
+            {
+                return false;
+            }
+            if (!_unwrittenOriginalQuery.Equals(other._unwrittenOriginalQuery))
+            {
+                return false;
+            }
+            return true;
         }
 
         public override int GetHashCode()

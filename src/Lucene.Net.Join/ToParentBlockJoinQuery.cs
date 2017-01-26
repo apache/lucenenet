@@ -486,21 +486,20 @@ namespace Lucene.Net.Join
             return "ToParentBlockJoinQuery (" + _childQuery + ")";
         }
 
-        // LUCENENET TODO: Possible BUG - this implemenation probably doesn't match Lucene
-        protected bool Equals(ToParentBlockJoinQuery other)
-        {
-            return base.Equals(other) && 
-                Equals(_parentsFilter, other._parentsFilter) && 
-                _scoreMode == other._scoreMode && 
-                Equals(_origChildQuery, other._origChildQuery);
-        }
-
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((ToParentBlockJoinQuery) obj);
+            if (obj is ToParentBlockJoinQuery)
+            {
+                ToParentBlockJoinQuery other = (ToParentBlockJoinQuery)obj;
+                return _origChildQuery.Equals(other._origChildQuery) &&
+                    _parentsFilter.Equals(other._parentsFilter) &&
+                    _scoreMode == other._scoreMode &&
+                    base.Equals(other);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public override int GetHashCode()
