@@ -354,7 +354,7 @@ namespace Lucene.Net.Join
 
         internal class SVInOrderScorer : Scorer
         {
-            protected readonly TermsIncludingScoreQuery outerInstance;
+            protected readonly TermsIncludingScoreQuery m_outerInstance;
 
 
             internal readonly DocIdSetIterator matchingDocsIterator;
@@ -367,7 +367,7 @@ namespace Lucene.Net.Join
                 TermsEnum termsEnum, int maxDoc, long cost) 
                 : base(weight)
             {
-                this.outerInstance = outerInstance;
+                this.m_outerInstance = outerInstance;
                 FixedBitSet matchingDocs = new FixedBitSet(maxDoc);
                 scores = new float[maxDoc];
                 FillDocsAndScores(matchingDocs, acceptDocs, termsEnum);
@@ -380,12 +380,12 @@ namespace Lucene.Net.Join
             {
                 BytesRef spare = new BytesRef();
                 DocsEnum docsEnum = null;
-                for (int i = 0; i < outerInstance._terms.Count; i++)
+                for (int i = 0; i < m_outerInstance._terms.Count; i++)
                 {
-                    if (termsEnum.SeekExact(outerInstance._terms.Get(outerInstance._ords[i], spare)))
+                    if (termsEnum.SeekExact(m_outerInstance._terms.Get(m_outerInstance._ords[i], spare)))
                     {
                         docsEnum = termsEnum.Docs(acceptDocs, docsEnum, FLAG_NONE);
-                        float score = outerInstance._scores[outerInstance._ords[i]];
+                        float score = m_outerInstance._scores[m_outerInstance._ords[i]];
                         for (int doc = docsEnum.NextDoc();
                             doc != NO_MORE_DOCS;
                             doc = docsEnum.NextDoc())
@@ -444,12 +444,12 @@ namespace Lucene.Net.Join
             {
                 BytesRef spare = new BytesRef();
                 DocsEnum docsEnum = null;
-                for (int i = 0; i < outerInstance._terms.Count; i++)
+                for (int i = 0; i < m_outerInstance._terms.Count; i++)
                 {
-                    if (termsEnum.SeekExact(outerInstance._terms.Get(outerInstance._ords[i], spare)))
+                    if (termsEnum.SeekExact(m_outerInstance._terms.Get(m_outerInstance._ords[i], spare)))
                     {
                         docsEnum = termsEnum.Docs(acceptDocs, docsEnum, FLAG_NONE);
-                        float score = outerInstance._scores[outerInstance._ords[i]];
+                        float score = m_outerInstance._scores[m_outerInstance._ords[i]];
                         for (int doc = docsEnum.NextDoc();
                             doc != NO_MORE_DOCS;
                             doc = docsEnum.NextDoc())
