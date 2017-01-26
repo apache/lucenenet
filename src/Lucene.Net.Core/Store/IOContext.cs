@@ -35,10 +35,10 @@ namespace Lucene.Net.Store
         /// </summary>
         public enum UsageContext
         {
+            DEFAULT = 0, // LUCENENET NOTE: 0 is the default for any value type, so when not initialized, this is the value we get
             MERGE,
             READ,
-            FLUSH,
-            DEFAULT = 0 // LUCENENET NOTE: 0 is the default for any value type, so when not initialized, this is the value we get
+            FLUSH
         }
 
         /// <summary>
