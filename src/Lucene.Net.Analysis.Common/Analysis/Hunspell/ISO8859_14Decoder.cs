@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Hunspell
@@ -23,6 +24,7 @@ namespace Lucene.Net.Analysis.Hunspell
     // LUCENENET NOTE: This class was refactored from its Java counterpart.
 
     // many hunspell dictionaries use this encoding, yet java/.NET does not have it?!?!
+    [ExceptionToClassNameConvention]
     internal sealed class ISO8859_14Encoding : Encoding
     {
         private static readonly Decoder decoder = new ISO8859_14Decoder();
@@ -82,6 +84,7 @@ namespace Lucene.Net.Analysis.Hunspell
         #endregion
     }
 
+    [ExceptionToClassNameConvention]
     internal sealed class ISO8859_14Decoder : Decoder
     {
         internal static readonly char[] TABLE = new char[]
