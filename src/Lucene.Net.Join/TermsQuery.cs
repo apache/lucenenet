@@ -64,7 +64,36 @@ namespace Lucene.Net.Join
             return string.Format("TermsQuery{{field={0}}}", field);
         }
 
-        // LUCENENET TODO: Add GetHashCode() from Lucene
+        public override bool Equals(object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if (!base.Equals(obj))
+            {
+                return false;
+            }
+            if (GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            TermsQuery other = (TermsQuery)obj;
+            if (!_fromQuery.Equals(other._fromQuery))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            int prime = 31;
+            int result = base.GetHashCode();
+            result += prime * _fromQuery.GetHashCode();
+            return result;
+        }
 
         private class SeekingTermSetTermsEnum : FilteredTermsEnum
         {
