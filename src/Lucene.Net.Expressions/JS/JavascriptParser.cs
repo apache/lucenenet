@@ -414,7 +414,7 @@ namespace Lucene.Net.Expressions.JS
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:255:7: logical_or ( AT_COND_QUE ^ conditional AT_COLON ! conditional )?
                     root_0 = (CommonTree)adaptor.Nil();
                     PushFollow(FOLLOW_logical_or_in_conditional757);
-                    logical_or3 = Logical_or();
+                    logical_or3 = Logical_Or();
                     state._fsp--;
                     adaptor.AddChild(root_0, logical_or3.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:255:18: ( AT_COND_QUE ^ conditional AT_COLON ! conditional )?
@@ -462,7 +462,7 @@ namespace Lucene.Net.Expressions.JS
         // $ANTLR start "logical_or"
         // src/java/org/apache/lucene/expressions/js/Javascript.g:258:1: logical_or : logical_and ( AT_BOOL_OR ^ logical_and )* ;
 
-        public AstParserRuleReturnScope<ITree, IToken> Logical_or() // LUCENENET TODO: Rename Logical_Or()
+        public AstParserRuleReturnScope<ITree, IToken> Logical_Or()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
             CommonTree root_0;
@@ -477,7 +477,7 @@ namespace Lucene.Net.Expressions.JS
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:259:7: logical_and ( AT_BOOL_OR ^ logical_and )*
                     root_0 = (CommonTree)adaptor.Nil();
                     PushFollow(FOLLOW_logical_and_in_logical_or787);
-                    logical_and8 = Logical_and();
+                    logical_and8 = Logical_And();
                     state._fsp--;
                     adaptor.AddChild(root_0, logical_and8.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:259:19: ( AT_BOOL_OR ^ logical_and )*
@@ -498,7 +498,7 @@ namespace Lucene.Net.Expressions.JS
                                     AT_BOOL_OR9_tree = (CommonTree)adaptor.Create(AT_BOOL_OR9);
                                     root_0 = (CommonTree)adaptor.BecomeRoot(AT_BOOL_OR9_tree, root_0);
                                     PushFollow(FOLLOW_logical_and_in_logical_or793);
-                                    logical_and10 = Logical_and();
+                                    logical_and10 = Logical_And();
                                     state._fsp--;
                                     adaptor.AddChild(root_0, logical_and10.Tree);
                                     break;
@@ -532,7 +532,7 @@ namespace Lucene.Net.Expressions.JS
         // $ANTLR start "logical_and"
         // src/java/org/apache/lucene/expressions/js/Javascript.g:262:1: logical_and : bitwise_or ( AT_BOOL_AND ^ bitwise_or )* ;
 
-        public AstParserRuleReturnScope<ITree, IToken> Logical_and() // LUCENENET TODO: Rename Logical_And()
+        public AstParserRuleReturnScope<ITree, IToken> Logical_And()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
             CommonTree root;
@@ -547,7 +547,7 @@ namespace Lucene.Net.Expressions.JS
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:263:7: bitwise_or ( AT_BOOL_AND ^ bitwise_or )*
                     root = (CommonTree)adaptor.Nil();
                     PushFollow(FOLLOW_bitwise_or_in_logical_and812);
-                    bitwise_or11 = Bitwise_or();
+                    bitwise_or11 = Bitwise_Or();
                     state._fsp--;
                     adaptor.AddChild(root, bitwise_or11.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:263:18: ( AT_BOOL_AND ^ bitwise_or )*
@@ -568,7 +568,7 @@ namespace Lucene.Net.Expressions.JS
                                     AT_BOOL_AND12_tree = (CommonTree)adaptor.Create(AT_BOOL_AND12);
                                     root = (CommonTree)adaptor.BecomeRoot(AT_BOOL_AND12_tree, root);
                                     PushFollow(FOLLOW_bitwise_or_in_logical_and818);
-                                    bitwise_or13 = Bitwise_or();
+                                    bitwise_or13 = Bitwise_Or();
                                     state._fsp--;
                                     adaptor.AddChild(root, bitwise_or13.Tree);
                                     break;
@@ -601,7 +601,7 @@ namespace Lucene.Net.Expressions.JS
         // $ANTLR start "bitwise_or"
         // src/java/org/apache/lucene/expressions/js/Javascript.g:266:1: bitwise_or : bitwise_xor ( AT_BIT_OR ^ bitwise_xor )* ;
 
-        public AstParserRuleReturnScope<ITree, IToken> Bitwise_or() // LUCENENET TODO: Rename Bitwise_Or()
+        public AstParserRuleReturnScope<ITree, IToken> Bitwise_Or()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
             try
@@ -612,7 +612,7 @@ namespace Lucene.Net.Expressions.JS
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:267:7: bitwise_xor ( AT_BIT_OR ^ bitwise_xor )*
                     root = (CommonTree)adaptor.Nil();
                     PushFollow(FOLLOW_bitwise_xor_in_bitwise_or837);
-                    AstParserRuleReturnScope<ITree, IToken> bitwise_xor14 = Bitwise_xor();
+                    AstParserRuleReturnScope<ITree, IToken> bitwise_xor14 = Bitwise_XOr();
                     state._fsp--;
                     adaptor.AddChild(root, bitwise_xor14.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:267:19: ( AT_BIT_OR ^ bitwise_xor )*
@@ -633,7 +633,7 @@ namespace Lucene.Net.Expressions.JS
                                     CommonTree AT_BIT_OR15_tree = (CommonTree)adaptor.Create(AT_BIT_OR15);
                                     root = (CommonTree)adaptor.BecomeRoot(AT_BIT_OR15_tree, root);
                                     PushFollow(FOLLOW_bitwise_xor_in_bitwise_or843);
-                                    AstParserRuleReturnScope<ITree, IToken> bitwise_xor16 = Bitwise_xor();
+                                    AstParserRuleReturnScope<ITree, IToken> bitwise_xor16 = Bitwise_XOr();
                                     state._fsp--;
                                     adaptor.AddChild(root, bitwise_xor16.Tree);
                                     break;
@@ -665,7 +665,7 @@ namespace Lucene.Net.Expressions.JS
         // $ANTLR start "bitwise_xor"
         // src/java/org/apache/lucene/expressions/js/Javascript.g:270:1: bitwise_xor : bitwise_and ( AT_BIT_XOR ^ bitwise_and )* ;
 
-        public AstParserRuleReturnScope<ITree, IToken> Bitwise_xor() // LUCENENET TODO: Rename Bitwise_XOr()
+        public AstParserRuleReturnScope<ITree, IToken> Bitwise_XOr()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
             try
@@ -676,7 +676,7 @@ namespace Lucene.Net.Expressions.JS
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:271:7: bitwise_and ( AT_BIT_XOR ^ bitwise_and )*
                     root = (CommonTree)adaptor.Nil();
                     PushFollow(FOLLOW_bitwise_and_in_bitwise_xor862);
-                    AstParserRuleReturnScope<ITree, IToken> bitwise_and17 = Bitwise_and();
+                    AstParserRuleReturnScope<ITree, IToken> bitwise_and17 = Bitwise_And();
                     state._fsp--;
                     adaptor.AddChild(root, bitwise_and17.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:271:19: ( AT_BIT_XOR ^ bitwise_and )*
@@ -698,7 +698,7 @@ namespace Lucene.Net.Expressions.JS
                                     CommonTree AT_BIT_XOR18_tree = (CommonTree)adaptor.Create(AT_BIT_XOR18);
                                     root = (CommonTree)adaptor.BecomeRoot(AT_BIT_XOR18_tree, root);
                                     PushFollow(FOLLOW_bitwise_and_in_bitwise_xor868);
-                                    AstParserRuleReturnScope<ITree, IToken> bitwise_and19 = Bitwise_and();
+                                    AstParserRuleReturnScope<ITree, IToken> bitwise_and19 = Bitwise_And();
                                     state._fsp--;
                                     adaptor.AddChild(root, bitwise_and19.Tree);
                                     break;
@@ -732,7 +732,7 @@ namespace Lucene.Net.Expressions.JS
         // $ANTLR start "bitwise_and"
         // src/java/org/apache/lucene/expressions/js/Javascript.g:274:1: bitwise_and : equality ( AT_BIT_AND ^ equality )* ;
 
-        public AstParserRuleReturnScope<ITree, IToken> Bitwise_and() // LUCENENET TODO: Rename Bitwise_And()
+        public AstParserRuleReturnScope<ITree, IToken> Bitwise_And()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
             try
@@ -1258,7 +1258,7 @@ namespace Lucene.Net.Expressions.JS
                             // src/java/org/apache/lucene/expressions/js/Javascript.g:301:7: unary_operator ^ unary
                             root = (CommonTree)adaptor.Nil();
                             PushFollow(FOLLOW_unary_operator_in_unary1103);
-                            AstParserRuleReturnScope<ITree, IToken> unary_operator41 = Unary_operator();
+                            AstParserRuleReturnScope<ITree, IToken> unary_operator41 = Unary_Operator();
                             state._fsp--;
                             root = (CommonTree)adaptor.BecomeRoot(unary_operator41.Tree, root);
                             PushFollow(FOLLOW_unary_in_unary1106);
@@ -1287,7 +1287,7 @@ namespace Lucene.Net.Expressions.JS
         // $ANTLR start "unary_operator"
         // src/java/org/apache/lucene/expressions/js/Javascript.g:304:1: unary_operator : ( AT_SUBTRACT -> AT_NEGATE | AT_BIT_NOT | AT_BOOL_NOT );
 
-        public AstParserRuleReturnScope<ITree, IToken> Unary_operator() // LUCENENET TODO: Rename Unary_Operator()
+        public AstParserRuleReturnScope<ITree, IToken> Unary_Operator()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
             CommonTree root = null;
