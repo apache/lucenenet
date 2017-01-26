@@ -397,7 +397,7 @@ namespace Lucene.Net.Join
         /// <param name="fillSortFields"> Specifies whether to add sort fields or not </param>
         /// <returns> TopGroups for specified query </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public virtual TopGroups<int> GetTopGroups(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int maxDocsPerGroup, int withinGroupOffset, bool fillSortFields)
+        public virtual ITopGroups<int> GetTopGroups(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int maxDocsPerGroup, int withinGroupOffset, bool fillSortFields)
         {
             int? slot;
             if (!joinQueryID.TryGetValue(query, out slot))
@@ -435,7 +435,7 @@ namespace Lucene.Net.Join
         /// <param name="fillSortFields"> Specifies whether to add sort fields or not </param>
         /// <returns> TopGroups for the query specified by slot </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        private TopGroups<int> AccumulateGroups(int slot, int offset, int maxDocsPerGroup, int withinGroupOffset, Sort withinGroupSort, bool fillSortFields)
+        private ITopGroups<int> AccumulateGroups(int slot, int offset, int maxDocsPerGroup, int withinGroupOffset, Sort withinGroupSort, bool fillSortFields)
         {
             var groups = new GroupDocs<int>[sortedGroups.Length - offset];
             var fakeScorer = new FakeScorer();
@@ -539,7 +539,7 @@ namespace Lucene.Net.Join
         /// <param name="fillSortFields">Specifies whether to add sort fields or not</param>
         /// <returns>TopGroups for specified query</returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public virtual TopGroups<int> GetTopGroupsWithAllChildDocs(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int withinGroupOffset, bool fillSortFields)
+        public virtual ITopGroups<int> GetTopGroupsWithAllChildDocs(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int withinGroupOffset, bool fillSortFields)
         {
             return GetTopGroups(query, withinGroupSort, offset, int.MaxValue, withinGroupOffset, fillSortFields);
         }
