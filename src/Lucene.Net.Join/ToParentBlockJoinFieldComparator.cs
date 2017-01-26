@@ -112,9 +112,10 @@ namespace Lucene.Net.Join
             return set;
         }
 
-        public override IComparable Value(int slot)
+        // LUCENENET NOTE: This was value(int) in Lucene.
+        public override IComparable this[int slot]
         {
-            return _wrappedComparer.Value(slot);
+            get { return _wrappedComparer[slot]; }
         }
 
         /// <summary>

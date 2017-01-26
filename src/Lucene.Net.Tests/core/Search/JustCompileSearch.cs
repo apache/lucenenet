@@ -152,9 +152,10 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override IComparable Value(int slot)
+            // LUCENENET NOTE: This was value(int) in Lucene.
+            public override IComparable this[int slot]
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
             }
 
             public override int CompareTop(int doc)

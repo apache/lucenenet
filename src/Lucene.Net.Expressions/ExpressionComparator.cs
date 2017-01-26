@@ -77,9 +77,10 @@ namespace Lucene.Net.Expressions
             return this;
         }
 
-        public override IComparable Value(int slot)
+        // LUCENENET NOTE: This was value(int) in Lucene.
+        public override IComparable this[int slot]
         {
-            return (values[slot]);
+            get { return values[slot]; }
         }
 
 

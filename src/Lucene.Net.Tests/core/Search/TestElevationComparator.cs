@@ -225,9 +225,10 @@ namespace Lucene.Net.Search
                 return this;
             }
 
-            public override IComparable Value(int slot)
+            // LUCENENET NOTE: This was value(int) in Lucene.
+            public override IComparable this[int slot]
             {
-                return Convert.ToInt32(values[slot]);
+                get { return values[slot]; }
             }
 
             public override int CompareTop(int doc)

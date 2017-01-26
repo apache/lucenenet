@@ -244,7 +244,7 @@ namespace Lucene.Net.Search
             IComparable[] fields = new IComparable[n];
             for (int i = 0; i < n; ++i)
             {
-                fields[i] = m_comparers[i].Value(entry.Slot);
+                fields[i] = m_comparers[i][entry.Slot];
             }
             //if (maxscore > 1.0f) doc.score /= maxscore;   // normalize scores
             return new FieldDoc(entry.Doc, entry.Score, fields);

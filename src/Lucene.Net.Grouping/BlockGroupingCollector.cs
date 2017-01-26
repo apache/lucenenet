@@ -448,7 +448,7 @@ namespace Lucene.Net.Search.Grouping
                     groupSortValues = new IComparable[comparers.Length];
                     for (int sortFieldIDX = 0; sortFieldIDX < comparers.Length; sortFieldIDX++)
                     {
-                        groupSortValues[sortFieldIDX] = comparers[sortFieldIDX].Value(og.comparerSlot);
+                        groupSortValues[sortFieldIDX] = comparers[sortFieldIDX][og.comparerSlot];
                     }
                 }
                 else
