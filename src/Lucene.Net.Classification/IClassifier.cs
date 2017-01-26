@@ -34,7 +34,7 @@ namespace Lucene.Net.Classification
         /// </summary>
         /// <param name="text">a String containing text to be classified</param>
         /// <returns>a {ClassificationResult} holding assigned class of type <code>T</code> and score</returns>
-        ClassificationResult<T> AssignClass(String text);
+        ClassificationResult<T> AssignClass(string text);
 
         /// <summary>
         /// * Train the classifier using the underlying Lucene index
@@ -43,7 +43,7 @@ namespace Lucene.Net.Classification
         /// <param name="atomicReader">the reader to use to access the Lucene index</param>
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="textFieldName">the name of the field used to compare documents</param>
-        void Train(AtomicReader atomicReader, String textFieldName, String classFieldName, Analyzer analyzer);
+        void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer);
 
         /// <summary>Train the classifier using the underlying Lucene index</summary>
         /// <param name="analyzer">the analyzer used to tokenize / filter the unseen text</param>
@@ -51,7 +51,7 @@ namespace Lucene.Net.Classification
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="query">the query to filter which documents use for training</param>
         /// <param name="textFieldName">the name of the field used to compare documents</param>
-        void Train(AtomicReader atomicReader, String textFieldName, String classFieldName, Analyzer analyzer, Query query);
+        void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer, Query query);
 
         /// <summary>Train the classifier using the underlying Lucene index</summary>
         /// <param name="analyzer">the analyzer used to tokenize / filter the unseen text</param>
@@ -59,7 +59,7 @@ namespace Lucene.Net.Classification
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="query">the query to filter which documents use for training</param>
         /// <param name="textFieldNames">the names of the fields to be used to compare documents</param>
-        void Train(AtomicReader atomicReader, String[] textFieldNames, String classFieldName, Analyzer analyzer,
+        void Train(AtomicReader atomicReader, string[] textFieldNames, string classFieldName, Analyzer analyzer,
                    Query query);
     }
 }

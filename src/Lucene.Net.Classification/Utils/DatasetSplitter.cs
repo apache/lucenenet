@@ -57,7 +57,7 @@ namespace Lucene.Net.Classification.Utils
          * @param fieldNames           names of fields that need to be put in the new indexes or <code>null</code> if all should be used
          * @throws IOException if any writing operation fails on any of the indexes
          */
-        public void Split(AtomicReader originalIndex, Directory trainingIndex, Directory testIndex, Directory crossValidationIndex, Analyzer analyzer, params string[] fieldNames)
+        public virtual void Split(AtomicReader originalIndex, Directory trainingIndex, Directory testIndex, Directory crossValidationIndex, Analyzer analyzer, params string[] fieldNames)
         {
 #pragma warning disable 612, 618
             // create IWs for train / test / cv IDXs

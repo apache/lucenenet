@@ -36,8 +36,8 @@ namespace Lucene.Net.Classification
     {
 
         private MoreLikeThis _mlt;
-        private String[] _textFieldNames;
-        private String _classFieldName;
+        private string[] _textFieldNames;
+        private string _classFieldName;
         private IndexSearcher _indexSearcher;
         private readonly int _k;
         private Query _query;
@@ -63,7 +63,7 @@ namespace Lucene.Net.Classification
             _minTermFreq = minTermFreq;
         }
 
-        public ClassificationResult<BytesRef> AssignClass(String text)
+        public virtual ClassificationResult<BytesRef> AssignClass(string text)
         {
             if (_mlt == null)
             {
@@ -71,7 +71,7 @@ namespace Lucene.Net.Classification
             }
 
             BooleanQuery mltQuery = new BooleanQuery();
-            foreach (String textFieldName in _textFieldNames)
+            foreach (string textFieldName in _textFieldNames)
             {
                 mltQuery.Add(new BooleanClause(_mlt.Like(new StringReader(text), textFieldName), Occur.SHOULD));
             }
@@ -117,18 +117,18 @@ namespace Lucene.Net.Classification
             return new ClassificationResult<BytesRef>(assignedClass, score);
         }
 
-        public void Train(AtomicReader atomicReader, String textFieldName, String classFieldName, Analyzer analyzer)
+        public virtual void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer)
         {
             Train(atomicReader, textFieldName, classFieldName, analyzer, null);
         }
 
 
-        public void Train(AtomicReader atomicReader, String textFieldName, String classFieldName, Analyzer analyzer, Query query)
+        public virtual void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer, Query query)
         {
-            Train(atomicReader, new String[]{textFieldName}, classFieldName, analyzer, query);
+            Train(atomicReader, new string[]{textFieldName}, classFieldName, analyzer, query);
         }
 
-        public void Train(AtomicReader atomicReader, String[] textFieldNames, String classFieldName, Analyzer analyzer, Query query)
+        public virtual void Train(AtomicReader atomicReader, string[] textFieldNames, string classFieldName, Analyzer analyzer, Query query)
         {
             _textFieldNames = textFieldNames;
             _classFieldName = classFieldName;

@@ -42,7 +42,7 @@ namespace Lucene.Net.Classification
         /// retrieve the result class
         /// @return a <code>T</code> representing an assigned class
         /// </summary>
-        public T AssignedClass 
+        public virtual T AssignedClass 
         {
             get
             {
@@ -54,7 +54,7 @@ namespace Lucene.Net.Classification
         /// retrieve the result score
         /// @return a <code>double</code> representing a result score
         /// </summary>
-        public double Score
+        public virtual double Score
         {
             get
             {
