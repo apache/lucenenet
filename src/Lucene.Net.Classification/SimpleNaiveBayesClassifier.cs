@@ -41,20 +41,44 @@ namespace Lucene.Net.Classification
         private IndexSearcher _indexSearcher;
         private Query _query;
 
+        /// <summary>
+        /// Creates a new NaiveBayes classifier.
+        /// Note that you must call <see cref="Train(AtomicReader, string, string, Analyzer)"/> before you can
+        /// classify any documents.
+        /// </summary>
         public SimpleNaiveBayesClassifier()
         {      
         }
 
+        /// <summary>
+        /// Train the classifier using the underlying Lucene index
+        /// </summary>
+        /// <param name="analyzer"> the analyzer used to tokenize / filter the unseen text</param>
+        /// <param name="atomicReader">the reader to use to access the Lucene index</param>
+        /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
+        /// <param name="textFieldName">the name of the field used to compare documents</param>
         public virtual void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer) 
         {
             Train(atomicReader, textFieldName, classFieldName, analyzer, null);
         }
 
+        /// <summary>Train the classifier using the underlying Lucene index</summary>
+        /// <param name="analyzer">the analyzer used to tokenize / filter the unseen text</param>
+        /// <param name="atomicReader">the reader to use to access the Lucene index</param>
+        /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
+        /// <param name="query">the query to filter which documents use for training</param>
+        /// <param name="textFieldName">the name of the field used to compare documents</param>
         public virtual void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer, Query query)
         {
             Train(atomicReader, new string[]{textFieldName}, classFieldName, analyzer, query);
         }
 
+        /// <summary>Train the classifier using the underlying Lucene index</summary>
+        /// <param name="analyzer">the analyzer used to tokenize / filter the unseen text</param>
+        /// <param name="atomicReader">the reader to use to access the Lucene index</param>
+        /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
+        /// <param name="query">the query to filter which documents use for training</param>
+        /// <param name="textFieldNames">the names of the fields to be used to compare documents</param>
         public virtual void Train(AtomicReader atomicReader, string[] textFieldNames, string classFieldName, Analyzer analyzer, Query query)
         {
             _atomicReader = atomicReader;
@@ -109,6 +133,11 @@ namespace Lucene.Net.Classification
             return ret;
         }
 
+        /// <summary>
+        /// Assign a class (with score) to the given text string
+        /// </summary>
+        /// <param name="inputDocument">a string containing text to be classified</param>
+        /// <returns>a <see cref="ClassificationResult{BytesRef}"/> holding assigned class of type <see cref="BytesRef"/> and score</returns>
         public virtual ClassificationResult<BytesRef> AssignClass(string inputDocument) 
         {
             if (_atomicReader == null) 

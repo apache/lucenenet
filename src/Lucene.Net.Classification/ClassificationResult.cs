@@ -18,7 +18,7 @@ namespace Lucene.Net.Classification
      */
 
     /// <summary>
-    /// The result of a call to {@link Classifier#assignClass(String)} holding an assigned class of type <code>T</code> and a score.
+    /// The result of a call to <see cref="IClassifier{T}.AssignClass(string)"/> holding an assigned class of type <typeparam name="T"/> and a score.
     /// @lucene.experimental
     /// </summary>
     public class ClassificationResult<T>
@@ -29,8 +29,8 @@ namespace Lucene.Net.Classification
 
         /// <summary>
         /// Constructor
-        /// <param name="assignedClass">assignedClass the class <code>T</code> assigned by a {@link Classifier}</param>
-        /// <param name="score">score the score for the assignedClass as a <code>double</code></param>
+        /// <param name="assignedClass">the class <typeparamref name="T"/> assigned by a <see cref="IClassifier{T}"/></param>
+        /// <param name="score">score the score for the <paramref name="assignedClass"/> as a <see cref="double"/></param>
         /// </summary>
         public ClassificationResult(T assignedClass, double score) 
         {
@@ -40,7 +40,7 @@ namespace Lucene.Net.Classification
 
         /// <summary>
         /// retrieve the result class
-        /// @return a <code>T</code> representing an assigned class
+        /// @return a <typeparamref name="T"/> representing an assigned class
         /// </summary>
         public virtual T AssignedClass 
         {
@@ -51,8 +51,7 @@ namespace Lucene.Net.Classification
         }
 
         /// <summary>
-        /// retrieve the result score
-        /// @return a <code>double</code> representing a result score
+        /// Gets a <see cref="double"/> representing a result score.
         /// </summary>
         public virtual double Score
         {

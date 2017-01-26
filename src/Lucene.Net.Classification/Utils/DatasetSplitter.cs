@@ -25,38 +25,36 @@ namespace Lucene.Net.Classification.Utils
      * limitations under the License.
      */
 
-    /**
-     * Utility class for creating training / test / cross validation indexes from the original index.
-     */
+    /// <summary>
+    /// Utility class for creating training / test / cross validation indexes from the original index.
+    /// </summary>
     public class DatasetSplitter
     {
 
         private readonly double _crossValidationRatio;
         private readonly double _testRatio;
 
-        /**
-         * Create a {@link DatasetSplitter} by giving test and cross validation IDXs sizes
-         *
-         * @param testRatio            the ratio of the original index to be used for the test IDX as a <code>double</code> between 0.0 and 1.0
-         * @param crossValidationRatio the ratio of the original index to be used for the c.v. IDX as a <code>double</code> between 0.0 and 1.0
-         */
+        /// <summary>
+        /// Create a <see cref="DatasetSplitter"/> by giving test and cross validation IDXs sizes
+        /// </summary>
+        /// <param name="testRatio">the ratio of the original index to be used for the test IDX as a <see cref="double"/> between 0.0 and 1.0</param>
+        /// <param name="crossValidationRatio">the ratio of the original index to be used for the c.v. IDX as a <see cref="double"/> between 0.0 and 1.0</param>
         public DatasetSplitter(double testRatio, double crossValidationRatio)
         {
             this._crossValidationRatio = crossValidationRatio;
             this._testRatio = testRatio;
         }
 
-        /**
-         * Split a given index into 3 indexes for training, test and cross validation tasks respectively
-         *
-         * @param originalIndex        an {@link AtomicReader} on the source index
-         * @param trainingIndex        a {@link Directory} used to write the training index
-         * @param testIndex            a {@link Directory} used to write the test index
-         * @param crossValidationIndex a {@link Directory} used to write the cross validation index
-         * @param analyzer             {@link Analyzer} used to create the new docs
-         * @param fieldNames           names of fields that need to be put in the new indexes or <code>null</code> if all should be used
-         * @throws IOException if any writing operation fails on any of the indexes
-         */
+        /// <summary>
+        /// Split a given index into 3 indexes for training, test and cross validation tasks respectively
+        /// </summary>
+        /// <param name="originalIndex">an <see cref="AtomicReader"/> on the source index</param>
+        /// <param name="trainingIndex">a <see cref="Directory"/> used to write the training index</param>
+        /// <param name="testIndex">a <see cref="Directory"/> used to write the test index</param>
+        /// <param name="crossValidationIndex">a <see cref="Directory"/> used to write the cross validation index</param>
+        /// <param name="analyzer"><see cref="Analyzer"/> used to create the new docs</param>
+        /// <param name="fieldNames">names of fields that need to be put in the new indexes or <c>null</c> if all should be used</param>
+        /// <exception cref="IOException">if any writing operation fails on any of the indexes</exception>
         public virtual void Split(AtomicReader originalIndex, Directory trainingIndex, Directory testIndex, Directory crossValidationIndex, Analyzer analyzer, params string[] fieldNames)
         {
 #pragma warning disable 612, 618
@@ -88,7 +86,7 @@ namespace Lucene.Net.Classification.Utils
                     Document doc = new Document();
                     if (fieldNames != null && fieldNames.Length > 0)
                     {
-                        foreach (String fieldName in fieldNames)
+                        foreach (string fieldName in fieldNames)
                         {
                             doc.Add(new Field(fieldName, originalIndex.Document(scoreDoc.Doc).GetField(fieldName).ToString(), ft));
                         }

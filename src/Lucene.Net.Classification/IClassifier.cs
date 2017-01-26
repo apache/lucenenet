@@ -23,20 +23,20 @@ namespace Lucene.Net.Classification
 
     /// <summary>
     /// A classifier, see <code>http://en.wikipedia.org/wiki/Classifier_(mathematics)</code>, which assign classes of type
-    /// <code>T</code>
+    /// <typeparam name="T"/>
     /// @lucene.experimental
     /// </summary>
     public interface IClassifier<T>
     {
         /// <summary>
-        /// Assign a class (with score) to the given text String
+        /// Assign a class (with score) to the given text string
         /// </summary>
-        /// <param name="text">a String containing text to be classified</param>
-        /// <returns>a {ClassificationResult} holding assigned class of type <code>T</code> and score</returns>
+        /// <param name="text">a string containing text to be classified</param>
+        /// <returns>a <see cref="ClassificationResult{T}"/> holding assigned class of type <typeparamref name="T"/> and score</returns>
         ClassificationResult<T> AssignClass(string text);
 
         /// <summary>
-        /// * Train the classifier using the underlying Lucene index
+        /// Train the classifier using the underlying Lucene index
         /// </summary>
         /// <param name="analyzer"> the analyzer used to tokenize / filter the unseen text</param>
         /// <param name="atomicReader">the reader to use to access the Lucene index</param>

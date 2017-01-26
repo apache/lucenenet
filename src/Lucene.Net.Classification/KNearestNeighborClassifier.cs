@@ -27,7 +27,7 @@ namespace Lucene.Net.Classification
 
     /// <summary>
     /// A k-Nearest Neighbor classifier (see <code>http://en.wikipedia.org/wiki/K-nearest_neighbors</code>) based
-    /// on {@link MoreLikeThis}
+    /// on <see cref="MoreLikeThis"/>
     ///
     /// @lucene.experimental
     /// </summary>
@@ -44,17 +44,17 @@ namespace Lucene.Net.Classification
         private int _minDocsFreq;
         private int _minTermFreq;
 
-        /// <summary>Create a {@link Classifier} using kNN algorithm</summary>
-        /// <param name="k">the number of neighbors to analyze as an <code>int</code></param>
+        /// <summary>Create a <see cref="IClassifier{T}"/> using kNN algorithm</summary>
+        /// <param name="k">the number of neighbors to analyze as an <see cref="int"/></param>
         public KNearestNeighborClassifier(int k)
         {
             _k = k;
         }
 
-        /// <summary>Create a {@link Classifier} using kNN algorithm</summary>
-        /// <param name="k">the number of neighbors to analyze as an <code>int</code></param>
-        /// <param name="minDocsFreq">the minimum number of docs frequency for MLT to be set with {@link MoreLikeThis#setMinDocFreq(int)}</param>
-        /// <param name="minTermFreq">the minimum number of term frequency for MLT to be set with {@link MoreLikeThis#setMinTermFreq(int)}</param>
+        /// <summary>Create a <see cref="IClassifier{T}"/> using kNN algorithm</summary>
+        /// <param name="k">the number of neighbors to analyze as an <see cref="int"/></param>
+        /// <param name="minDocsFreq">the minimum number of docs frequency for MLT to be set with <see cref="MoreLikeThis.MinDocFreq"/></param>
+        /// <param name="minTermFreq">the minimum number of term frequency for MLT to be set with <see cref="MoreLikeThis.MinTermFreq"/></param>
         public KNearestNeighborClassifier(int k, int minDocsFreq, int minTermFreq)
         {
             _k = k;
@@ -62,6 +62,11 @@ namespace Lucene.Net.Classification
             _minTermFreq = minTermFreq;
         }
 
+        /// <summary>
+        /// Assign a class (with score) to the given text string
+        /// </summary>
+        /// <param name="text">a string containing text to be classified</param>
+        /// <returns>a <see cref="ClassificationResult{BytesRef}"/> holding assigned class of type <see cref="BytesRef"/> and score</returns>
         public virtual ClassificationResult<BytesRef> AssignClass(string text)
         {
             if (_mlt == null)
@@ -116,17 +121,35 @@ namespace Lucene.Net.Classification
             return new ClassificationResult<BytesRef>(assignedClass, score);
         }
 
+        /// <summary>
+        /// Train the classifier using the underlying Lucene index
+        /// </summary>
+        /// <param name="analyzer"> the analyzer used to tokenize / filter the unseen text</param>
+        /// <param name="atomicReader">the reader to use to access the Lucene index</param>
+        /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
+        /// <param name="textFieldName">the name of the field used to compare documents</param>
         public virtual void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer)
         {
             Train(atomicReader, textFieldName, classFieldName, analyzer, null);
         }
 
-
+        /// <summary>Train the classifier using the underlying Lucene index</summary>
+        /// <param name="analyzer">the analyzer used to tokenize / filter the unseen text</param>
+        /// <param name="atomicReader">the reader to use to access the Lucene index</param>
+        /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
+        /// <param name="query">the query to filter which documents use for training</param>
+        /// <param name="textFieldName">the name of the field used to compare documents</param>
         public virtual void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer, Query query)
         {
             Train(atomicReader, new string[]{textFieldName}, classFieldName, analyzer, query);
         }
 
+        /// <summary>Train the classifier using the underlying Lucene index</summary>
+        /// <param name="analyzer">the analyzer used to tokenize / filter the unseen text</param>
+        /// <param name="atomicReader">the reader to use to access the Lucene index</param>
+        /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
+        /// <param name="query">the query to filter which documents use for training</param>
+        /// <param name="textFieldNames">the names of the fields to be used to compare documents</param>
         public virtual void Train(AtomicReader atomicReader, string[] textFieldNames, string classFieldName, Analyzer analyzer, Query query)
         {
             _textFieldNames = textFieldNames;
