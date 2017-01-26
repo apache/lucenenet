@@ -119,7 +119,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
 
                         if (child2 == null)
                         {
-                            throw new NullReferenceException();
+                            throw new NullReferenceException(); // LUCENENET TODO: Change to ArgumentException ?
 
                         }
 
