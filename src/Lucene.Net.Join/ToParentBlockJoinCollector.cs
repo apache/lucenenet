@@ -29,48 +29,47 @@ namespace Lucene.Net.Join
 	 */
 
     /// <summary>
-    /// Collects parent document hits for a Query containing one more more
-    ///  BlockJoinQuery clauses, sorted by the
-    ///  specified parent Sort.  Note that this cannot perform
-    ///  arbitrary joins; rather, it requires that all joined
-    ///  documents are indexed as a doc block (using {@link
-    ///  IndexWriter#addDocuments} or {@link
-    ///  IndexWriter#updateDocuments}).  Ie, the join is computed
-    ///  at index time.
+    /// Collects parent document hits for a <see cref="Query"/> containing one more more
+    /// BlockJoinQuery clauses, sorted by the
+    /// specified parent <see cref="Sort"/>.  Note that this cannot perform
+    /// arbitrary joins; rather, it requires that all joined
+    /// documents are indexed as a doc block (using <see cref="IndexWriter.AddDocuments"/>
+    /// or <see cref="IndexWriter.UpdateDocuments"/>. Ie, the join is computed
+    /// at index time.
     /// 
-    ///  <p>The parent Sort must only use
-    ///  fields from the parent documents; sorting by field in
-    ///  the child documents is not supported.</p>
+    /// <para>The parent <see cref="Sort"/> must only use
+    /// fields from the parent documents; sorting by field in
+    /// the child documents is not supported.</para>
     /// 
-    ///  <p>You should only use this
-    ///  collector if one or more of the clauses in the query is
-    ///  a <seealso cref="ToParentBlockJoinQuery"/>.  This collector will find those query
-    ///  clauses and record the matching child documents for the
-    ///  top scoring parent documents.</p>
+    /// <para>You should only use this
+    /// collector if one or more of the clauses in the query is
+    /// a <see cref="ToParentBlockJoinQuery"/>.  This collector will find those query
+    /// clauses and record the matching child documents for the
+    /// top scoring parent documents.</para>
     /// 
-    ///  <p>Multiple joins (star join) and nested joins and a mix
-    ///  of the two are allowed, as long as in all cases the
-    ///  documents corresponding to a single row of each joined
-    ///  parent table were indexed as a doc block.</p>
+    /// <para>Multiple joins (star join) and nested joins and a mix
+    /// of the two are allowed, as long as in all cases the
+    /// documents corresponding to a single row of each joined
+    /// parent table were indexed as a doc block.</para>
     /// 
-    ///  <p>For the simple star join you can retrieve the
-    ///  <seealso cref="TopGroups"/> instance containing each <seealso cref="ToParentBlockJoinQuery"/>'s
-    ///  matching child documents for the top parent groups,
-    ///  using <seealso cref="#getTopGroups"/>.  Ie,
-    ///  a single query, which will contain two or more
-    ///  <seealso cref="ToParentBlockJoinQuery"/>'s as clauses representing the star join,
-    ///  can then retrieve two or more <seealso cref="TopGroups"/> instances.</p>
+    /// <para>For the simple star join you can retrieve the
+    /// <see cref="ITopGroups{T}"/> instance containing each <see cref="ToParentBlockJoinQuery"/>'s
+    /// matching child documents for the top parent groups,
+    /// using <see cref="GetTopGroups"/>.  Ie,
+    /// a single query, which will contain two or more
+    /// <see cref="ToParentBlockJoinQuery"/>'s as clauses representing the star join,
+    /// can then retrieve two or more <see cref="ITopGroups{T}"/> instances.</para>
     /// 
-    ///  <p>For nested joins, the query will run correctly (ie,
-    ///  match the right parent and child documents), however,
-    ///  because TopGroups is currently unable to support nesting
-    ///  (each group is not able to hold another TopGroups), you
-    ///  are only able to retrieve the TopGroups of the first
-    ///  join.  The TopGroups of the nested joins will not be
-    ///  correct.
+    /// <para>For nested joins, the query will run correctly (ie,
+    /// match the right parent and child documents), however,
+    /// because <see cref="TopGroups{T}"/> is currently unable to support nesting
+    /// (each group is not able to hold another <see cref="TopGroups{T}"/>), you
+    /// are only able to retrieve the <see cref="TopGroups{T}"/> of the first
+    /// join.  The <see cref="TopGroups{T}"/> of the nested joins will not be
+    /// correct.</para>
     /// 
-    ///  See <seealso cref="org.apache.lucene.search.join"/> for a code
-    ///  sample.
+    /// See <see cref="org.apache.lucene.search.join"/> for a code
+    /// sample.
     /// 
     /// @lucene.experimental
     /// </summary>
@@ -100,10 +99,10 @@ namespace Lucene.Net.Join
         private float maxScore = float.NaN;
 
         /// <summary>
-        ///  Creates a ToParentBlockJoinCollector.  The provided sort must
-        ///  not be null.  If you pass true trackScores, all
-        ///  ToParentBlockQuery instances must not use
-        ///  ScoreMode.None. 
+        /// Creates a <see cref="ToParentBlockJoinCollector"/>.  The provided <paramref name="sort"/> must
+        /// not be null.  If you pass true <paramref name="trackScores"/>, all
+        /// ToParentBlockQuery instances must not use
+        /// <see cref="ScoreMode.None"/>. 
         /// </summary>
         public ToParentBlockJoinCollector(Sort sort, int numParentHits, bool trackScores, bool trackMaxScore)
         {
@@ -382,12 +381,12 @@ namespace Lucene.Net.Join
         }
 
         /// <summary>
-        /// Returns the TopGroups for the specified
-        ///  BlockJoinQuery. The groupValue of each GroupDocs will
-        ///  be the parent docID for that group.
-        ///  The number of documents within each group is calculated as minimum of <code>maxDocsPerGroup</code>
-        ///  and number of matched child documents for that group.
-        ///  Returns null if no groups matched.
+        /// Returns the <see cref="ITopGroups{T}"/> for the specified
+        /// BlockJoinQuery. The groupValue of each GroupDocs will
+        /// be the parent docID for that group.
+        /// The number of documents within each group is calculated as minimum of <paramref name="maxDocsPerGroup"/>
+        /// and number of matched child documents for that group.
+        /// Returns <c>null</c> if no groups matched.
         /// </summary>
         /// <param name="query"> Search query </param>
         /// <param name="withinGroupSort"> Sort criteria within groups </param>
@@ -395,7 +394,7 @@ namespace Lucene.Net.Join
         /// <param name="maxDocsPerGroup"> Upper bound of documents per group number </param>
         /// <param name="withinGroupOffset"> Offset within each group of child docs </param>
         /// <param name="fillSortFields"> Specifies whether to add sort fields or not </param>
-        /// <returns> TopGroups for specified query </returns>
+        /// <returns> <see cref="ITopGroups{T}"/> for specified query </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public virtual ITopGroups<int> GetTopGroups(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int maxDocsPerGroup, int withinGroupOffset, bool fillSortFields)
         {
@@ -425,7 +424,7 @@ namespace Lucene.Net.Join
         }
 
         /// <summary>
-        ///  Accumulates groups for the BlockJoinQuery specified by its slot.
+        /// Accumulates groups for the BlockJoinQuery specified by its slot.
         /// </summary>
         /// <param name="slot"> Search query's slot </param>
         /// <param name="offset"> Parent docs offset </param>
@@ -433,7 +432,7 @@ namespace Lucene.Net.Join
         /// <param name="withinGroupOffset"> Offset within each group of child docs </param>
         /// <param name="withinGroupSort"> Sort criteria within groups </param>
         /// <param name="fillSortFields"> Specifies whether to add sort fields or not </param>
-        /// <returns> TopGroups for the query specified by slot </returns>
+        /// <returns> <see cref="ITopGroups{T}"/> for the query specified by slot </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         private ITopGroups<int> AccumulateGroups(int slot, int offset, int maxDocsPerGroup, int withinGroupOffset, Sort withinGroupSort, bool fillSortFields)
         {
@@ -527,17 +526,17 @@ namespace Lucene.Net.Join
         }
 
         /// <summary>
-        /// Returns the TopGroups for the specified BlockJoinQuery. The groupValue of each 
+        /// Returns the <see cref="TopGroups{T}"/> for the specified BlockJoinQuery. The groupValue of each 
         /// GroupDocs will be the parent docID for that group. The number of documents within 
         /// each group equals to the total number of matched child documents for that group.
-        /// Returns null if no groups matched.
+        /// Returns <c>null</c> if no groups matched.
         /// </summary>
         /// <param name="query">Search query</param>
         /// <param name="withinGroupSort">Sort criteria within groups</param>
         /// <param name="offset">Parent docs offset</param>
         /// <param name="withinGroupOffset">Offset within each group of child docs</param>
         /// <param name="fillSortFields">Specifies whether to add sort fields or not</param>
-        /// <returns>TopGroups for specified query</returns>
+        /// <returns><see cref="ITopGroups{T}"/> for specified query</returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public virtual ITopGroups<int> GetTopGroupsWithAllChildDocs(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int withinGroupOffset, bool fillSortFields)
         {
@@ -546,9 +545,9 @@ namespace Lucene.Net.Join
 
         /// <summary>
         /// Returns the highest score across all collected parent hits, as long as
-        /// <code>trackMaxScores=true</code> was passed
-        /// {@link #ToParentBlockJoinCollector(Sort, int, boolean, boolean) on
-        /// construction}. Else, this returns <code>Float.NaN</code>
+        /// <c>trackMaxScores=true</c> was passed
+        /// <see cref="ToParentBlockJoinCollector(Sort, int, bool, bool)"/> on
+        /// construction. Else, this returns <see cref="float.NaN"/>.
         /// </summary>
         public virtual float MaxScore
         {

@@ -26,7 +26,7 @@ namespace Lucene.Net.Join
 
     /// <summary>
     /// Just like <see cref="ToParentBlockJoinQuery"/>, except this
-    /// query joins in reverse: you provide a Query matching
+    /// query joins in reverse: you provide a <see cref="Query"/> matching
     /// parent documents and it joins down to child
     /// documents.
     /// 
@@ -52,10 +52,10 @@ namespace Lucene.Net.Join
         private readonly bool _doScores;
 
         /// <summary>
-        /// Create a ToChildBlockJoinQuery.
+        /// Create a <see cref="ToChildBlockJoinQuery"/>.
         /// </summary>
-        /// <param name="parentQuery">Query that matches parent documents</param>
-        /// <param name="parentsFilter">Filter (must produce FixedBitSet per-segment, like <see cref="FixedBitSetCachingWrapperFilter"/>) 
+        /// <param name="parentQuery"><see cref="Query"/> that matches parent documents</param>
+        /// <param name="parentsFilter"><see cref="Filter"/> (must produce FixedBitSet per-segment, like <see cref="FixedBitSetCachingWrapperFilter"/>) 
         /// identifying the parent documents.</param>
         /// <param name="doScores">True if parent scores should be calculated.</param>
         public ToChildBlockJoinQuery(Query parentQuery, Filter parentsFilter, bool doScores)

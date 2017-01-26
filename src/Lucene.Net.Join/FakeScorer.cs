@@ -22,7 +22,7 @@ namespace Lucene.Net.Join
 	 */
 
     /// <summary>
-	/// Passed to <see cref="ICollector.Scorer"/> during join collection.
+	/// Passed to <see cref="ICollector.SetScorer(Scorer)"/> during join collection.
 	/// </summary>
     internal sealed class FakeScorer : Scorer
     {

@@ -28,7 +28,7 @@ namespace Lucene.Net.Join
     public sealed class FixedBitSetCachingWrapperFilter : CachingWrapperFilter
     {
         /// <summary>
-        /// Sole constructor, see <see cref="CachingWrapperFilter"/>.
+        /// Sole constructor, see <see cref="CachingWrapperFilter.CachingWrapperFilter(Filter)"/>.
         /// </summary>
         public FixedBitSetCachingWrapperFilter(Filter filter) 
             : base(filter)

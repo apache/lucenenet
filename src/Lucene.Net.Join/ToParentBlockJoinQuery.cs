@@ -27,42 +27,42 @@ namespace Lucene.Net.Join
     /// <summary>
     /// This query requires that you index
     /// children and parent docs as a single block, using the
-    /// <see cref="IndexWriter#addDocuments IndexWriter.addDocuments()"/> or {@link
-    /// IndexWriter#updateDocuments IndexWriter.updateDocuments()} API.  In each block, the
+    /// <see cref="IndexWriter.AddDocuments"/> or <see cref="IndexWriter.UpdateDocuments"/>
+    /// API.  In each block, the
     /// child documents must appear first, ending with the parent
-    /// document.  At search time you provide a Filter
-    /// identifying the parents, however this Filter must provide
+    /// document.  At search time you provide a <see cref="Filter"/>
+    /// identifying the parents, however this <see cref="Filter"/> must provide
     /// an <see cref="FixedBitSet"/> per sub-reader.
     /// 
-    /// <p>Once the block index is built, use this query to wrap
+    /// <para>Once the block index is built, use this query to wrap
     /// any sub-query matching only child docs and join matches in that
     /// child document space up to the parent document space.
-    /// You can then use this Query as a clause with
-    /// other queries in the parent document space.</p>
+    /// You can then use this <see cref="Query"/> as a clause with
+    /// other queries in the parent document space.</para>
     /// 
-    /// <p>See <see cref="ToChildBlockJoinQuery"/> if you need to join
-    /// in the reverse order.
+    /// <para>See <see cref="ToChildBlockJoinQuery"/> if you need to join
+    /// in the reverse order.</para>
     /// 
-    /// <p>The child documents must be orthogonal to the parent
+    /// <para>The child documents must be orthogonal to the parent
     /// documents: the wrapped child query must never
-    /// return a parent document.</p>
+    /// return a parent document.</para>
     /// 
-    /// If you'd like to retrieve <see cref="TopGroups"/> for the
+    /// <para>If you'd like to retrieve <see cref="Lucene.Net.Search.Grouping.ITopGroups{T}"/> for the
     /// resulting query, use the <see cref="ToParentBlockJoinCollector"/>.
     /// Note that this is not necessary, ie, if you simply want
     /// to collect the parent documents and don't need to see
     /// which child documents matched under that parent, then
-    /// you can use any collector.
+    /// you can use any collector.</para>
     /// 
-    /// <p><b>NOTE</b>: If the overall query contains parent-only
+    /// <para><b>NOTE</b>: If the overall query contains parent-only
     /// matches, for example you OR a parent-only query with a
     /// joined child-only query, then the resulting collected documents
-    /// will be correct, however the <see cref="TopGroups"/> you get
+    /// will be correct, however the <see cref="Lucene.Net.Search.Grouping.ITopGroups{T}"/> you get
     /// from <see cref="ToParentBlockJoinCollector"/> will not contain every
-    /// child for parents that had matched.
+    /// child for parents that had matched.</para>
     /// 
-    /// <p>See <see cref="org.apache.lucene.search.join"/> for an
-    /// overview. </p>
+    /// <para>See <see cref="org.apache.lucene.search.join"/> for an
+    /// overview. </para>
     /// 
     /// @lucene.experimental
     /// </summary>
@@ -81,10 +81,10 @@ namespace Lucene.Net.Join
         private readonly ScoreMode _scoreMode;
 
         /// <summary>
-        /// Create a ToParentBlockJoinQuery.
+        /// Create a <see cref="ToParentBlockJoinQuery"/>.
         /// </summary>
-        /// <param name="childQuery"> Query matching child documents. </param>
-        /// <param name="parentsFilter"> Filter (must produce FixedBitSet
+        /// <param name="childQuery"> <see cref="Query"/> matching child documents. </param>
+        /// <param name="parentsFilter"> <see cref="Filter"/> (must produce <see cref="FixedBitSet"/>
         /// per-segment, like <see cref="FixedBitSetCachingWrapperFilter"/>)
         /// identifying the parent documents. </param>
         /// <param name="scoreMode"> How to aggregate multiple child scores

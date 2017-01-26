@@ -96,7 +96,7 @@ namespace Lucene.Net.Join
         }
 
         /// <summary>
-        /// Chooses the right <seealso cref="TermsWithScoreCollector"/> implementation.
+        /// Chooses the right <see cref="TermsWithScoreCollector"/> implementation.
         /// </summary>
         /// <param name="field">The field to collect terms for.</param>
         /// <param name="multipleValuesPerDocument">Whether the field to collect terms for has multiple values per document.</param>

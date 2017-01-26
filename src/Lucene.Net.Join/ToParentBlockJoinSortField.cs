@@ -32,13 +32,13 @@ namespace Lucene.Net.Join
         private readonly Filter childFilter;
 
         /// <summary>
-        /// Create ToParentBlockJoinSortField. The parent document ordering is based on child document ordering (reverse).
+        /// Create <see cref="ToParentBlockJoinSortField"/>. The parent document ordering is based on child document ordering (reverse).
         /// </summary>
         /// <param name="field"> The sort field on the nested / child level. </param>
         /// <param name="type"> The sort type on the nested / child level. </param>
         /// <param name="reverse"> Whether natural order should be reversed on the nested / child level. </param>
-        /// <param name="parentFilter"> Filter that identifies the parent documents. </param>
-        /// <param name="childFilter"> Filter that defines which child documents participates in sorting. </param>
+        /// <param name="parentFilter"> <see cref="Filter"/> that identifies the parent documents. </param>
+        /// <param name="childFilter"> <see cref="Filter"/> that defines which child documents participates in sorting. </param>
         public ToParentBlockJoinSortField(string field, SortFieldType type, bool reverse, Filter parentFilter, Filter childFilter) 
             : base(field, type, reverse)
         {
@@ -48,14 +48,14 @@ namespace Lucene.Net.Join
         }
 
         /// <summary>
-        /// Create ToParentBlockJoinSortField.
+        /// Create <see cref="ToParentBlockJoinSortField"/>.
         /// </summary>
         /// <param name="field"> The sort field on the nested / child level. </param>
         /// <param name="type"> The sort type on the nested / child level. </param>
         /// <param name="reverse"> Whether natural order should be reversed on the nested / child document level. </param>
         /// <param name="order"> Whether natural order should be reversed on the parent level. </param>
-        /// <param name="parentFilter"> Filter that identifies the parent documents. </param>
-        /// <param name="childFilter"> Filter that defines which child documents participates in sorting. </param>
+        /// <param name="parentFilter"> <see cref="Filter"/> that identifies the parent documents. </param>
+        /// <param name="childFilter"> <see cref="Filter"/> that defines which child documents participates in sorting. </param>
         public ToParentBlockJoinSortField(string field, SortFieldType type, bool reverse, bool order, Filter parentFilter, Filter childFilter) 
             : base(field, type, reverse)
         {

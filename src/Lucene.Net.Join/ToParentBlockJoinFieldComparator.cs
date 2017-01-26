@@ -125,11 +125,11 @@ namespace Lucene.Net.Join
         public sealed class Lowest : ToParentBlockJoinFieldComparer
         {
             /// <summary>
-            /// Create ToParentBlockJoinFieldComparer.Lowest
+            /// Create <see cref="ToParentBlockJoinFieldComparer.Lowest"/>
             /// </summary>
             /// <param name="wrappedComparer">The <see cref="FieldComparer"/> on the child / nested level. </param>
-            /// <param name="parentFilter">Filter (must produce FixedBitSet per-segment) that identifies the parent documents. </param>
-            /// <param name="childFilter">Filter that defines which child / nested documents participates in sorting. </param>
+            /// <param name="parentFilter"><see cref="Filter"/> (must produce <see cref="FixedBitSet"/> per-segment) that identifies the parent documents. </param>
+            /// <param name="childFilter"><see cref="Filter"/> that defines which child / nested documents participates in sorting. </param>
             /// <param name="spareSlot">The extra slot inside the wrapped comparer that is used to compare which nested document
             ///                  inside the parent document scope is most competitive. </param>
             public Lowest(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot) 
@@ -260,11 +260,11 @@ namespace Lucene.Net.Join
         public sealed class Highest : ToParentBlockJoinFieldComparer
         {
             /// <summary>
-            /// Create ToParentBlockJoinFieldComparer.Highest
+            /// Create <see cref="ToParentBlockJoinFieldComparer.Highest"/>
             /// </summary>
             /// <param name="wrappedComparer">The <see cref="FieldComparer"/> on the child / nested level. </param>
-            /// <param name="parentFilter">Filter (must produce FixedBitSet per-segment) that identifies the parent documents. </param>
-            /// <param name="childFilter">Filter that defines which child / nested documents participates in sorting. </param>
+            /// <param name="parentFilter"><see cref="Filter"/> (must produce <see cref="FixedBitSet"/> per-segment) that identifies the parent documents. </param>
+            /// <param name="childFilter"><see cref="Filter"/> that defines which child / nested documents participates in sorting. </param>
             /// <param name="spareSlot">The extra slot inside the wrapped comparer that is used to compare which nested document
             ///                  inside the parent document scope is most competitive. </param>
             public Highest(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot) 
