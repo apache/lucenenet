@@ -222,7 +222,7 @@ namespace Lucene.Net.Join
             private readonly long _cost;
 
             private int _upto;
-            internal DocsEnum DocsEnum;
+            internal DocsEnum docsEnum;
             private DocsEnum _reuse;
             private int _scoreUpto;
             private int _doc;
@@ -259,12 +259,12 @@ namespace Lucene.Net.Join
             {
                 while (true)
                 {
-                    if (DocsEnum != null)
+                    if (docsEnum != null)
                     {
                         int docId = DocsEnumNextDoc();
                         if (docId == DocIdSetIterator.NO_MORE_DOCS)
                         {
-                            DocsEnum = null;
+                            docsEnum = null;
                         }
                         else
                         {
@@ -280,14 +280,14 @@ namespace Lucene.Net.Join
                     _scoreUpto = _upto;
                     if (_termsEnum.SeekExact(outerInstance._terms.Get(outerInstance._ords[_upto++], _spare)))
                     {
-                        DocsEnum = _reuse = _termsEnum.Docs(_acceptDocs, _reuse, DocsEnum.FLAG_NONE);
+                        docsEnum = _reuse = _termsEnum.Docs(_acceptDocs, _reuse, DocsEnum.FLAG_NONE);
                     }
                 }
             }
             
             protected virtual int DocsEnumNextDoc()
             {
-                return DocsEnum.NextDoc();
+                return docsEnum.NextDoc();
             }
             
             internal Explanation Explain(int target) // LUCENENET NOTE: changed accessibility from private to internal
@@ -298,7 +298,7 @@ namespace Lucene.Net.Join
                     docId = NextDocOutOfOrder();
                     if (docId < target)
                     {
-                        int tempDocId = DocsEnum.Advance(target);
+                        int tempDocId = docsEnum.Advance(target);
                         if (tempDocId == target)
                         {
                             docId = tempDocId;
@@ -309,7 +309,7 @@ namespace Lucene.Net.Join
                     {
                         break;
                     }
-                    DocsEnum = null; // goto the next ord.
+                    docsEnum = null; // goto the next ord.
                 } while (docId != DocIdSetIterator.NO_MORE_DOCS);
 
                 return new ComplexExplanation(true, outerInstance._scores[outerInstance._ords[_scoreUpto]],
@@ -339,7 +339,7 @@ namespace Lucene.Net.Join
             {
                 while (true)
                 {
-                    int docId = DocsEnum.NextDoc();
+                    int docId = docsEnum.NextDoc();
                     if (docId == DocIdSetIterator.NO_MORE_DOCS)
                     {
                         return docId;

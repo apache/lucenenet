@@ -68,8 +68,8 @@ namespace Lucene.Net.Join
 
         private class SeekingTermSetTermsEnum : FilteredTermsEnum
         {
-            private readonly BytesRefHash Terms;
-            private readonly int[] Ords;
+            private readonly BytesRefHash terms;
+            private readonly int[] ords;
             private readonly int _lastElement;
 
             private readonly BytesRef _lastTerm;
@@ -82,8 +82,8 @@ namespace Lucene.Net.Join
             internal SeekingTermSetTermsEnum(TermsEnum tenum, BytesRefHash terms, int[] ords) 
                 : base(tenum)
             {
-                this.Terms = terms;
-                this.Ords = ords;
+                this.terms = terms;
+                this.ords = ords;
                 _comparer = BytesRef.UTF8SortedAsUnicodeComparer;
                 _lastElement = terms.Count - 1;
                 _lastTerm = terms.Get(ords[_lastElement], new BytesRef());
@@ -104,7 +104,7 @@ namespace Lucene.Net.Join
                     return AcceptStatus.END;
                 }
 
-                BytesRef currentTerm = Terms.Get(Ords[_upto], _spare);
+                BytesRef currentTerm = terms.Get(ords[_upto], _spare);
                 if (_comparer.Compare(term, currentTerm) == 0)
                 {
                     if (_upto == _lastElement)
@@ -112,7 +112,7 @@ namespace Lucene.Net.Join
                         return AcceptStatus.YES;
                     }
 
-                    _seekTerm = Terms.Get(Ords[++_upto], _spare);
+                    _seekTerm = terms.Get(ords[++_upto], _spare);
                     return AcceptStatus.YES_AND_SEEK;
                 }
 
@@ -130,7 +130,7 @@ namespace Lucene.Net.Join
                     }
                     // typically the terms dict is a superset of query's terms so it's unusual that we have to skip many of
                     // our terms so we don't do a binary search here
-                    _seekTerm = Terms.Get(Ords[++_upto], _spare);
+                    _seekTerm = terms.Get(ords[++_upto], _spare);
                 } while ((cmp = _comparer.Compare(_seekTerm, term)) < 0);
                 if (cmp == 0)
                 {
@@ -138,7 +138,7 @@ namespace Lucene.Net.Join
                     {
                         return AcceptStatus.YES;
                     }
-                    _seekTerm = Terms.Get(Ords[++_upto], _spare);
+                    _seekTerm = terms.Get(ords[++_upto], _spare);
                     return AcceptStatus.YES_AND_SEEK;
                 }
 

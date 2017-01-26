@@ -115,40 +115,40 @@ namespace Lucene.Net.Join
 
         private class BlockJoinWeight : Weight
         {
-            private readonly Query JoinQuery;
-            private readonly Weight ChildWeight;
-            private readonly Filter ParentsFilter;
-            private readonly ScoreMode ScoreMode;
+            private readonly Query joinQuery;
+            private readonly Weight childWeight;
+            private readonly Filter parentsFilter;
+            private readonly ScoreMode scoreMode;
 
             public BlockJoinWeight(Query joinQuery, Weight childWeight, Filter parentsFilter, ScoreMode scoreMode) 
                 : base()
             {
-                this.JoinQuery = joinQuery;
-                this.ChildWeight = childWeight;
-                this.ParentsFilter = parentsFilter;
-                this.ScoreMode = scoreMode;
+                this.joinQuery = joinQuery;
+                this.childWeight = childWeight;
+                this.parentsFilter = parentsFilter;
+                this.scoreMode = scoreMode;
             }
 
             public override Query Query
             {
-                get { return JoinQuery; }
+                get { return joinQuery; }
             }
             
             public override float GetValueForNormalization()
             {
-                return ChildWeight.GetValueForNormalization() * JoinQuery.Boost*JoinQuery.Boost;
+                return childWeight.GetValueForNormalization() * joinQuery.Boost*joinQuery.Boost;
             }
 
             public override void Normalize(float norm, float topLevelBoost)
             {
-                ChildWeight.Normalize(norm, topLevelBoost * JoinQuery.Boost);
+                childWeight.Normalize(norm, topLevelBoost * joinQuery.Boost);
             }
 
             // NOTE: acceptDocs applies (and is checked) only in the parent document space
             public override Scorer GetScorer(AtomicReaderContext readerContext, IBits acceptDocs)
             {
 
-                Scorer childScorer = ChildWeight.GetScorer(readerContext, readerContext.AtomicReader.LiveDocs);
+                Scorer childScorer = childWeight.GetScorer(readerContext, readerContext.AtomicReader.LiveDocs);
                 if (childScorer == null)
                 {
                     // No matches
@@ -167,7 +167,7 @@ namespace Lucene.Net.Join
                 // not return a FixedBitSet but rather a
                 // BitsFilteredDocIdSet.  Instead, we filter by
                 // acceptDocs when we score:
-                DocIdSet parents = ParentsFilter.GetDocIdSet(readerContext, null);
+                DocIdSet parents = parentsFilter.GetDocIdSet(readerContext, null);
 
                 if (parents == null)
                 {
@@ -179,7 +179,7 @@ namespace Lucene.Net.Join
                     throw new InvalidOperationException("parentFilter must return FixedBitSet; got " + parents);
                 }
 
-                return new BlockJoinScorer(this, childScorer, (FixedBitSet)parents, firstChildDoc, ScoreMode, acceptDocs);
+                return new BlockJoinScorer(this, childScorer, (FixedBitSet)parents, firstChildDoc, scoreMode, acceptDocs);
             }
             
             public override Explanation Explain(AtomicReaderContext context, int doc)

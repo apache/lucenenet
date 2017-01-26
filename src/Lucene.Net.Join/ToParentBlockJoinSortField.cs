@@ -27,9 +27,9 @@ namespace Lucene.Net.Join
 	/// </summary>
 	public class ToParentBlockJoinSortField : SortField
     {
-        private readonly bool Order;
-        private readonly Filter ParentFilter;
-        private readonly Filter ChildFilter;
+        private readonly bool order;
+        private readonly Filter parentFilter;
+        private readonly Filter childFilter;
 
         /// <summary>
         /// Create ToParentBlockJoinSortField. The parent document ordering is based on child document ordering (reverse).
@@ -42,9 +42,9 @@ namespace Lucene.Net.Join
         public ToParentBlockJoinSortField(string field, SortFieldType type, bool reverse, Filter parentFilter, Filter childFilter) 
             : base(field, type, reverse)
         {
-            this.Order = reverse;
-            this.ParentFilter = parentFilter;
-            this.ChildFilter = childFilter;
+            this.order = reverse;
+            this.parentFilter = parentFilter;
+            this.childFilter = childFilter;
         }
 
         /// <summary>
@@ -59,20 +59,20 @@ namespace Lucene.Net.Join
         public ToParentBlockJoinSortField(string field, SortFieldType type, bool reverse, bool order, Filter parentFilter, Filter childFilter) 
             : base(field, type, reverse)
         {
-            Order = order;
-            ParentFilter = parentFilter;
-            ChildFilter = childFilter;
+            this.order = order;
+            this.parentFilter = parentFilter;
+            this.childFilter = childFilter;
         }
         
         public override FieldComparer GetComparer(int numHits, int sortPos)
         {
             var wrappedFieldComparer = base.GetComparer(numHits + 1, sortPos);
-            if (Order)
+            if (order)
             {
-                return new ToParentBlockJoinFieldComparer.Highest(wrappedFieldComparer, ParentFilter, ChildFilter, numHits);
+                return new ToParentBlockJoinFieldComparer.Highest(wrappedFieldComparer, parentFilter, childFilter, numHits);
             }
 
-            return new ToParentBlockJoinFieldComparer.Lowest(wrappedFieldComparer, ParentFilter, ChildFilter, numHits);
+            return new ToParentBlockJoinFieldComparer.Lowest(wrappedFieldComparer, parentFilter, childFilter, numHits);
         }
     }
 }
