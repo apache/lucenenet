@@ -23,7 +23,6 @@ namespace Lucene.Net.Join
 	 * limitations under the License.
 	 */
 
-
     internal abstract class TermsWithScoreCollector : ICollector
     {
         private const int InitialArraySize = 256; // LUCENENET TODO: Rename back to INITIAL_ARRAY_SIZE

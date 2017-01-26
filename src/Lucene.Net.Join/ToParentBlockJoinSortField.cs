@@ -1,5 +1,4 @@
-﻿using System;
-using Lucene.Net.Search;
+﻿using Lucene.Net.Search;
 
 namespace Lucene.Net.Join
 {

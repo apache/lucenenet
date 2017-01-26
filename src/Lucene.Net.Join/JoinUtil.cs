@@ -1,5 +1,5 @@
-﻿using System.IO;
-using Lucene.Net.Search;
+﻿using Lucene.Net.Search;
+using System.IO;
 
 namespace Lucene.Net.Join
 {

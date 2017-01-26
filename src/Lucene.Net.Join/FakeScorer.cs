@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Search;
+using System;
 using System.Collections.Generic;
-using Lucene.Net.Search;
 
 namespace Lucene.Net.Join
 {

@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Grouping;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Join
 {
