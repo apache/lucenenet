@@ -38,13 +38,13 @@ namespace Lucene.Net.Store
             MERGE,
             READ,
             FLUSH,
-            DEFAULT // LUCENENET TODO: Eliminate nullables and make this value 0
+            DEFAULT = 0 // LUCENENET NOTE: 0 is the default for any value type, so when not initialized, this is the value we get
         }
 
         /// <summary>
         /// An object of a enumerator Context type
         /// </summary>
-        public UsageContext? Context { get; private set; } // LUCENENET TODO: eliminate the nullable ?
+        public UsageContext Context { get; private set; }
 
         public MergeInfo MergeInfo { get; private set; }
 
@@ -72,7 +72,7 @@ namespace Lucene.Net.Store
             this.FlushInfo = flushInfo;
         }
 
-        public IOContext(UsageContext? context)
+        public IOContext(UsageContext context)
             : this(context, null)
         {
         }
@@ -90,7 +90,7 @@ namespace Lucene.Net.Store
         {
         }
 
-        private IOContext(UsageContext? context, MergeInfo mergeInfo)
+        private IOContext(UsageContext context, MergeInfo mergeInfo)
         {
             Debug.Assert(context != UsageContext.MERGE || mergeInfo != null, "MergeInfo must not be null if context is MERGE");
             Debug.Assert(context != UsageContext.FLUSH, "Use IOContext(FlushInfo) to create a FLUSH IOContext");
@@ -116,7 +116,7 @@ namespace Lucene.Net.Store
         {
             const int prime = 31;
             int result = 1;
-            result = prime * result + ((Context == null) ? 0 : Context.GetHashCode());
+            result = prime * result + /*((Context == null) ? 0 :*/ Context.GetHashCode()/*)*/; // LUCENENET NOTE: Enum can never be null in .NET
             result = prime * result + ((FlushInfo == null) ? 0 : FlushInfo.GetHashCode());
             result = prime * result + ((MergeInfo == null) ? 0 : MergeInfo.GetHashCode());
             result = prime * result + (ReadOnce ? 1231 : 1237);

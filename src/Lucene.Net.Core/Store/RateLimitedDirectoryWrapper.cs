@@ -33,7 +33,7 @@ namespace Lucene.Net.Store
         // we need to be volatile here to make sure we see all the values that are set
         // / modified concurrently
         //private volatile RateLimiter[] ContextRateLimiters = new RateLimiter[Enum.GetValues(typeof(IOContext.Context_e)).Length];
-        private readonly IDictionary<IOContext.UsageContext?, RateLimiter> _contextRateLimiters = new ConcurrentDictionary<IOContext.UsageContext?, RateLimiter>();
+        private readonly IDictionary<IOContext.UsageContext, RateLimiter> _contextRateLimiters = new ConcurrentDictionary<IOContext.UsageContext, RateLimiter>();
 
         public RateLimitedDirectoryWrapper(Directory wrapped)
             : base(wrapped)
@@ -64,9 +64,9 @@ namespace Lucene.Net.Store
             m_input.Copy(to, src, dest, context);
         }
 
-        private RateLimiter GetRateLimiter(IOContext.UsageContext? context) // LUCENENET TODO: Can we get rid of the nullable?
+        private RateLimiter GetRateLimiter(IOContext.UsageContext context)
         {
-            Debug.Assert(context != null);
+            //Debug.Assert(context != null); // LUCENENET NOTE: In .NET, enum can never be null
             RateLimiter ret;
             return _contextRateLimiters.TryGetValue(context, out ret) ? ret : null;
         }
@@ -89,7 +89,7 @@ namespace Lucene.Net.Store
         ///           if context is <code>null</code> </exception>
         /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
         /// @lucene.experimental </exception>
-        public void SetMaxWriteMBPerSec(double? mbPerSec, IOContext.UsageContext? context) // LUCENENET TODO: Can we get rid of the nullables?
+        public void SetMaxWriteMBPerSec(double? mbPerSec, IOContext.UsageContext context) // LUCENENET TODO: Can we get rid of the nullables?
         {
             EnsureOpen();
             if (context == null)
