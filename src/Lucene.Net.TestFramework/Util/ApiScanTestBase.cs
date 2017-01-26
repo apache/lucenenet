@@ -76,7 +76,8 @@ namespace Lucene.Net.Util
             }
             //}
 
-            Assert.IsFalse(names.Any(), names.Count() + " invalid protected field names detected.");
+            Assert.IsFalse(names.Any(), names.Count() + " invalid protected field names detected. " +
+                "Protected fields must be camelCase and prefixed with 'm_' to prevent naming conflicts with properties.");
         }
 
         //[Test, LuceneNetSpecific]
@@ -92,7 +93,8 @@ namespace Lucene.Net.Util
             }
             //}
 
-            Assert.IsFalse(names.Any(), names.Count() + " invalid private field names detected.");
+            Assert.IsFalse(names.Any(), names.Count() + " invalid private field names detected. " +
+                "Private field names should be camelCase.");
         }
 
         //[Test, LuceneNetSpecific]
