@@ -1,3 +1,5 @@
+// ANTLR GENERATED CODE: DO NOT EDIT (LUCENENET: Not really auto generated in the port)
+
 using System;
 using Antlr.Runtime;
 
@@ -87,7 +89,6 @@ namespace Lucene.Net.Expressions.JS
 
 		public const int WS = 43;
 
-		// ANTLR GENERATED CODE: DO NOT EDIT
 		public override void DisplayRecognitionError(string[] tokenNames, RecognitionException re)
 		{
 			string message = " unexpected character '" + (char)re.Character + "' at position (" + re.CharPositionInLine + ").";

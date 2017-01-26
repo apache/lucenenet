@@ -3,27 +3,44 @@ using Lucene.Net.Search;
 
 namespace Lucene.Net.Expressions
 {
-	/// <summary>Base class that computes the value of an expression for a document.</summary>
-	/// <remarks>
-	/// Base class that computes the value of an expression for a document.
-	/// <p>
-	/// Example usage:
-	/// <pre class="prettyprint">
-	/// // compile an expression:
-	/// Expression expr = JavascriptCompiler.compile("sqrt(_score) + ln(popularity)");
-	/// // SimpleBindings just maps variables to SortField instances
-	/// SimpleBindings bindings = new SimpleBindings();
-	/// bindings.add(new SortField("_score", SortField.Type.SCORE));
-	/// bindings.add(new SortField("popularity", SortField.Type.INT));
-	/// // create a sort field and sort by it (reverse order)
-	/// Sort sort = new Sort(expr.getSortField(bindings, true));
-	/// Query query = new TermQuery(new Term("body", "contents"));
-	/// searcher.search(query, null, 10, sort);
-	/// </pre>
-	/// </remarks>
-	/// <seealso cref="Lucene.Net.Expressions.JS.JavascriptCompiler.Compile(string)">Lucene.Net.Expressions.JS.JavascriptCompiler.Compile(string)</seealso>
-	/// <lucene.experimental></lucene.experimental>
-	public abstract class Expression
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
+    /// <summary>Base class that computes the value of an expression for a document.</summary>
+    /// <remarks>
+    /// Base class that computes the value of an expression for a document.
+    /// <p>
+    /// Example usage:
+    /// <pre class="prettyprint">
+    /// // compile an expression:
+    /// Expression expr = JavascriptCompiler.compile("sqrt(_score) + ln(popularity)");
+    /// // SimpleBindings just maps variables to SortField instances
+    /// SimpleBindings bindings = new SimpleBindings();
+    /// bindings.add(new SortField("_score", SortField.Type.SCORE));
+    /// bindings.add(new SortField("popularity", SortField.Type.INT));
+    /// // create a sort field and sort by it (reverse order)
+    /// Sort sort = new Sort(expr.getSortField(bindings, true));
+    /// Query query = new TermQuery(new Term("body", "contents"));
+    /// searcher.search(query, null, 10, sort);
+    /// </pre>
+    /// </remarks>
+    /// <seealso cref="Lucene.Net.Expressions.JS.JavascriptCompiler.Compile(string)">Lucene.Net.Expressions.JS.JavascriptCompiler.Compile(string)</seealso>
+    /// <lucene.experimental></lucene.experimental>
+    public abstract class Expression
 	{
 		/// <summary>The original source text</summary>
 		public readonly string sourceText; // LUCENENET TODO: Make property

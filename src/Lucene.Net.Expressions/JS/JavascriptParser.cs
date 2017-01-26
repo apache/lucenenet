@@ -1,21 +1,24 @@
+// ANTLR GENERATED CODE: DO NOT EDIT (LUCENENET: Not really auto generated in the port)
+
 using System;
 using Antlr.Runtime;
 using Antlr.Runtime.Tree;
-
 
 namespace Lucene.Net.Expressions.JS
 {
     internal class JavascriptParser : Parser
     {
         public static readonly string[] tokenNames =
-		{ "<invalid>", "<EOR>", 
-		    "<DOWN>", "<UP>", "AT_ADD", "AT_BIT_AND", "AT_BIT_NOT", "AT_BIT_OR", "AT_BIT_SHL"
-		    , "AT_BIT_SHR", "AT_BIT_SHU", "AT_BIT_XOR", "AT_BOOL_AND", "AT_BOOL_NOT", "AT_BOOL_OR"
-		    , "AT_CALL", "AT_COLON", "AT_COMMA", "AT_COMP_EQ", "AT_COMP_GT", "AT_COMP_GTE", 
-		    "AT_COMP_LT", "AT_COMP_LTE", "AT_COMP_NEQ", "AT_COND_QUE", "AT_DIVIDE", "AT_DOT"
-		    , "AT_LPAREN", "AT_MODULO", "AT_MULTIPLY", "AT_NEGATE", "AT_RPAREN", "AT_SUBTRACT"
-		    , "DECIMAL", "DECIMALDIGIT", "DECIMALINTEGER", "EXPONENT", "HEX", "HEXDIGIT", "ID"
-		    , "NAMESPACE_ID", "OCTAL", "OCTALDIGIT", "WS" };
+		{
+            "<invalid>", "<EOR>", "<DOWN>", "<UP>", "AT_ADD", "AT_BIT_AND", "AT_BIT_NOT",
+            "AT_BIT_OR", "AT_BIT_SHL", "AT_BIT_SHR", "AT_BIT_SHU", "AT_BIT_XOR", "AT_BOOL_AND",
+            "AT_BOOL_NOT", "AT_BOOL_OR", "AT_CALL", "AT_COLON", "AT_COMMA", "AT_COMP_EQ",
+            "AT_COMP_GT", "AT_COMP_GTE", "AT_COMP_LT", "AT_COMP_LTE", "AT_COMP_NEQ",
+            "AT_COND_QUE", "AT_DIVIDE", "AT_DOT", "AT_LPAREN", "AT_MODULO", "AT_MULTIPLY",
+            "AT_NEGATE", "AT_RPAREN", "AT_SUBTRACT", "DECIMAL", "DECIMALDIGIT", "DECIMALINTEGER",
+            "EXPONENT", "HEX", "HEXDIGIT", "ID", "NAMESPACE_ID", "OCTAL", "OCTALDIGIT",
+            "WS"
+        };
 
         public const int EOF = -1;
 
@@ -99,7 +102,6 @@ namespace Lucene.Net.Expressions.JS
 
         public const int WS = 43;
 
-        // ANTLR GENERATED CODE: DO NOT EDIT
         // delegates
         public virtual Parser[] GetDelegates()
         {
