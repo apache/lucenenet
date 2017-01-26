@@ -38,7 +38,7 @@ namespace Lucene.Net.Join
         /// Message thrown from <see cref="ToChildBlockJoinScorer.ValidateParentDoc"/>
         /// on mis-use, when the parent query incorrectly returns child docs. 
         /// </summary>
-        internal const string InvalidQueryMessage = "Parent query yields document which is not matched by parents filter, docID="; // LUCENENET TODO: Rename INVALID_QUERY_MESSAGE
+        internal const string INVALID_QUERY_MESSAGE = "Parent query yields document which is not matched by parents filter, docID=";
 
         private readonly Filter _parentsFilter;
         private readonly Query _parentQuery;
@@ -270,7 +270,7 @@ namespace Lucene.Net.Join
             {
                 if (_parentDoc != NO_MORE_DOCS && !_parentBits.Get(_parentDoc))
                 {
-                    throw new InvalidOperationException(InvalidQueryMessage + _parentDoc);
+                    throw new InvalidOperationException(INVALID_QUERY_MESSAGE + _parentDoc);
                 }
             }
 
