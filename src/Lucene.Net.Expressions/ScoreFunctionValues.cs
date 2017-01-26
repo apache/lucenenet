@@ -3,6 +3,7 @@ using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Expressions
 {
@@ -39,11 +40,15 @@ namespace Lucene.Net.Expressions
 
         public override double DoubleVal(int document)
         {
-            // LUCENENET TODO: Possible Bug: Put in try-catch and rethrow "RuntimeException"
-            Debug.Assert(document == scorer.DocID);
-            var score = scorer.GetScore();
-            Console.WriteLine("Score = {0}",score);
-            return score;
+            try
+            {
+                Debug.Assert(document == scorer.DocID);
+                return scorer.GetScore();
+            }
+            catch (IOException exception)
+            {
+                throw new Exception(exception.Message, exception);
+            }
         }
     }
 }
