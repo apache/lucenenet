@@ -717,7 +717,7 @@ namespace Lucene.Net.Tests.Join
                             joinValues.AddAll(joinValueToJoinScores.Keys);
                             foreach (BytesRef joinValue in joinValues)
                             {
-                                termsEnum = terms.Iterator(termsEnum);
+                                termsEnum = terms.GetIterator(termsEnum);
                                 if (termsEnum.SeekExact(joinValue))
                                 {
                                     docsEnum = termsEnum.Docs(slowCompositeReader.LiveDocs, docsEnum, DocsEnum.FLAG_NONE);

@@ -204,7 +204,7 @@ namespace Lucene.Net.Spatial.Prefix
                     if (compare > 0)
                     {
                         // leap frog (termsEnum is beyond where we would otherwise seek)
-                        Debug.Assert(!context.AtomicReader.Terms(outerInstance.fieldName).Iterator(null).SeekExact(curVNodeTerm), "should be absent");
+                        Debug.Assert(!context.AtomicReader.Terms(outerInstance.fieldName).GetIterator(null).SeekExact(curVNodeTerm), "should be absent");
                     }
                     else
                     {

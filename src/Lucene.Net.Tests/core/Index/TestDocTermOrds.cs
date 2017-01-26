@@ -353,7 +353,7 @@ namespace Lucene.Net.Index
             {
                 Console.WriteLine("TEST: verify prefix=" + (prefixRef == null ? "null" : prefixRef.Utf8ToString()));
                 Console.WriteLine("TEST: all TERMS:");
-                TermsEnum allTE = MultiFields.GetTerms(r, "field").Iterator(null);
+                TermsEnum allTE = MultiFields.GetTerms(r, "field").GetIterator(null);
                 int ord = 0;
                 while (allTE.Next() != null)
                 {
@@ -374,7 +374,7 @@ namespace Lucene.Net.Index
                     Terms terms = MultiFields.GetTerms(r, "field");
                     if (terms != null)
                     {
-                        TermsEnum termsEnum = terms.Iterator(null);
+                        TermsEnum termsEnum = terms.GetIterator(null);
                         TermsEnum.SeekStatus result = termsEnum.SeekCeil(prefixRef);
                         if (result != TermsEnum.SeekStatus.END)
                         {

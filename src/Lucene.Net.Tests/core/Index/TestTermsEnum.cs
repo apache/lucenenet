@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             List<BytesRef> terms = new List<BytesRef>();
-            TermsEnum termsEnum = MultiFields.GetTerms(r, "body").Iterator(null);
+            TermsEnum termsEnum = MultiFields.GetTerms(r, "body").GetIterator(null);
             BytesRef term;
             while ((term = termsEnum.Next()) != null)
             {
@@ -568,7 +568,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(1, DocFreq(r, "xx"));
                 Assert.AreEqual(1, DocFreq(r, "aa4"));
 
-                TermsEnum te = MultiFields.GetTerms(r, FIELD).Iterator(null);
+                TermsEnum te = MultiFields.GetTerms(r, FIELD).GetIterator(null);
                 while (te.Next() != null)
                 {
                     //System.out.println("TEST: next term=" + te.Term().Utf8ToString());
@@ -604,7 +604,7 @@ namespace Lucene.Net.Index
             Terms terms = MultiFields.GetTerms(r, "field");
             if (terms != null)
             {
-                Assert.IsNull(terms.Iterator(null).Next());
+                Assert.IsNull(terms.GetIterator(null).Next());
             }
             r.Dispose();
             d.Dispose();
@@ -737,7 +737,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("  " + t.Utf8ToString() + " " + t);
                 }
             }
-            TermsEnum te = MultiFields.GetTerms(r, FIELD).Iterator(null);
+            TermsEnum te = MultiFields.GetTerms(r, FIELD).GetIterator(null);
 
             int END_LOC = -validTerms.Length - 1;
 

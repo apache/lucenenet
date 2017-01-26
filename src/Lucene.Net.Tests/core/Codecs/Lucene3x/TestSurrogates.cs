@@ -139,7 +139,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     Terms terms = fields.Terms(field);
                     Assert.IsNotNull(terms);
-                    TermsEnum termsEnum = terms.Iterator(null);
+                    TermsEnum termsEnum = terms.GetIterator(null);
                     BytesRef text;
                     BytesRef lastText = null;
                     while ((text = termsEnum.Next()) != null)
@@ -202,7 +202,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 TermsEnum te;
                 if (!tes.TryGetValue(field, out te))
                 {
-                    te = MultiFields.GetTerms(reader, field).Iterator(null);
+                    te = MultiFields.GetTerms(reader, field).GetIterator(null);
                     tes[field] = te;
                 }
 
@@ -278,7 +278,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         TermsEnum te;
                         if (!tes.TryGetValue(field, out te))
                         {
-                            te = MultiFields.GetTerms(reader, field).Iterator(null);
+                            te = MultiFields.GetTerms(reader, field).GetIterator(null);
                             tes[field] = te;
                         }
 

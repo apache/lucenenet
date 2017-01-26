@@ -800,7 +800,7 @@ namespace Lucene.Net.Codecs.Compressing
                 this.termBytes = termBytes;
             }
 
-            public override TermsEnum Iterator(TermsEnum reuse)
+            public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 TVTermsEnum termsEnum;
                 if (reuse != null && reuse is TVTermsEnum)

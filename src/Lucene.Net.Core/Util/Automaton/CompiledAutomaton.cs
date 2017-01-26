@@ -289,15 +289,15 @@ namespace Lucene.Net.Util.Automaton
                     return TermsEnum.EMPTY;
 
                 case Lucene.Net.Util.Automaton.CompiledAutomaton.AUTOMATON_TYPE.ALL:
-                    return terms.Iterator(null);
+                    return terms.GetIterator(null);
 
                 case Lucene.Net.Util.Automaton.CompiledAutomaton.AUTOMATON_TYPE.SINGLE:
-                    return new SingleTermsEnum(terms.Iterator(null), Term);
+                    return new SingleTermsEnum(terms.GetIterator(null), Term);
 
                 case Lucene.Net.Util.Automaton.CompiledAutomaton.AUTOMATON_TYPE.PREFIX:
                     // TODO: this is very likely faster than .intersect,
                     // but we should test and maybe cutover
-                    return new PrefixTermsEnum(terms.Iterator(null), Term);
+                    return new PrefixTermsEnum(terms.GetIterator(null), Term);
 
                 case Lucene.Net.Util.Automaton.CompiledAutomaton.AUTOMATON_TYPE.NORMAL:
                     return terms.Intersect(this, null);

@@ -52,7 +52,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             BinaryDocValues terms = cache.GetTerms(readerContext.AtomicReader, field, false, PackedInts.FAST);
             IndexReader top = ReaderUtil.GetTopLevelContext(readerContext).Reader;
             Terms t = MultiFields.GetTerms(top, qfield);
-            TermsEnum termsEnum = t == null ? TermsEnum.EMPTY : t.Iterator(null);
+            TermsEnum termsEnum = t == null ? TermsEnum.EMPTY : t.GetIterator(null);
 
             return new IntDocValuesAnonymousInnerClassHelper(this, this, terms, termsEnum);
         }

@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
                     assertTrue(ir.NumDocs - NUM_DOCS / 3 <= 1); // rounding error
                     doc = ir.Document(0);
                     assertEquals("0", doc.Get("id"));
-                    te = MultiFields.GetTerms(ir, "id").Iterator(null);
+                    te = MultiFields.GetTerms(ir, "id").GetIterator(null);
                     assertEquals(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(new BytesRef("1")));
                     assertNotSame("1", te.Term.Utf8ToString());
                 }
@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
                     assertTrue(ir.NumDocs - NUM_DOCS / 3 <= 1);
                     doc = ir.Document(0);
                     assertEquals("1", doc.Get("id"));
-                    te = MultiFields.GetTerms(ir, "id").Iterator(null);
+                    te = MultiFields.GetTerms(ir, "id").GetIterator(null);
                     assertEquals(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(new BytesRef("0")));
 
                     assertNotSame("0", te.Term.Utf8ToString());
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
                     doc = ir.Document(0);
                     assertEquals("2", doc.Get("id"));
 
-                    te = MultiFields.GetTerms(ir, "id").Iterator(null);
+                    te = MultiFields.GetTerms(ir, "id").GetIterator(null);
                     assertEquals(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(new BytesRef("1")));
                     assertNotSame("1", te.Term);
 
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
                     doc = ir.Document(0);
                     assertEquals(start + "", doc.Get("id"));
                     // make sure the deleted doc is not here
-                    TermsEnum te = MultiFields.GetTerms(ir, "id").Iterator(null);
+                    TermsEnum te = MultiFields.GetTerms(ir, "id").GetIterator(null);
                     Term t = new Term("id", (NUM_DOCS - 1) + "");
                     assertEquals(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(new BytesRef(t.Text())));
                     assertNotSame(t.Text(), te.Term.Utf8ToString());

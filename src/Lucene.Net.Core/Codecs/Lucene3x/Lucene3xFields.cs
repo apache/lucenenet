@@ -208,7 +208,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 this.fieldInfo = fieldInfo;
             }
 
-            public override TermsEnum Iterator(TermsEnum reuse)
+            public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 var termsEnum = new PreTermsEnum(outerInstance);
                 termsEnum.Reset(fieldInfo);

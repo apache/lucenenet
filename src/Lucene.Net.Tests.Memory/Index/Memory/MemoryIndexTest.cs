@@ -152,8 +152,8 @@ namespace Lucene.Net.Index.Memory
                     assertEquals(iwTerms.DocCount, memTerms.DocCount);
                     assertEquals(iwTerms.SumDocFreq, memTerms.SumDocFreq);
                     assertEquals(iwTerms.SumTotalTermFreq, memTerms.SumTotalTermFreq);
-                    TermsEnum iwTermsIter = iwTerms.Iterator(null);
-                    TermsEnum memTermsIter = memTerms.Iterator(null);
+                    TermsEnum iwTermsIter = iwTerms.GetIterator(null);
+                    TermsEnum memTermsIter = memTerms.GetIterator(null);
                     if (iwTerms.HasPositions)
                     {
                         bool offsets = iwTerms.HasOffsets && memTerms.HasOffsets;
@@ -328,7 +328,7 @@ namespace Lucene.Net.Index.Memory
             assertTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
             // now reuse and check again
-            TermsEnum te = reader.Terms("foo").Iterator(null);
+            TermsEnum te = reader.Terms("foo").GetIterator(null);
             assertTrue(te.SeekExact(new BytesRef("bar")));
             disi = te.Docs(null, disi, DocsEnum.FLAG_NONE);
             docid = disi.DocID;
@@ -369,7 +369,7 @@ namespace Lucene.Net.Index.Memory
                 assertEquals(3, disi.EndOffset);
 
                 // now reuse and check again
-                TermsEnum te = reader.Terms("foo").Iterator(null);
+                TermsEnum te = reader.Terms("foo").GetIterator(null);
                 assertTrue(te.SeekExact(new BytesRef("bar")));
                 disi = te.DocsAndPositions(null, disi);
                 docid = disi.DocID;
@@ -546,8 +546,8 @@ namespace Lucene.Net.Index.Memory
         protected void CompareTermVectors(Terms terms, Terms memTerms, string field_name)
         {
 
-            TermsEnum termEnum = terms.Iterator(null);
-            TermsEnum memTermEnum = memTerms.Iterator(null);
+            TermsEnum termEnum = terms.GetIterator(null);
+            TermsEnum memTermEnum = memTerms.GetIterator(null);
 
             while (termEnum.Next() != null)
             {

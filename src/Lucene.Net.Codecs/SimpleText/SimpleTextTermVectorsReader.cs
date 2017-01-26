@@ -323,7 +323,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 TERMS = new SortedDictionary<BytesRef, SimpleTVPostings>();
             }
 
-            public override TermsEnum Iterator(TermsEnum reuse)
+            public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 // TODO: reuse
                 return new SimpleTVTermsEnum(TERMS);

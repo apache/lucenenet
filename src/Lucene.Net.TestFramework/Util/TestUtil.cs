@@ -1098,7 +1098,7 @@ namespace Lucene.Net.Util
             {
                 return null;
             }
-            TermsEnum termsEnum = terms.Iterator(null);
+            TermsEnum termsEnum = terms.GetIterator(null);
             if (!termsEnum.SeekExact(term))
             {
                 return null;

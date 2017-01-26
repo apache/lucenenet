@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    return terms.Iterator(null);
+                    return terms.GetIterator(null);
                 }
             }
             else
@@ -352,7 +352,7 @@ namespace Lucene.Net.Index
                 return;
             }
 
-            TermsEnum te = terms.Iterator(null);
+            TermsEnum te = terms.GetIterator(null);
             BytesRef seekStart = termPrefix != null ? termPrefix : new BytesRef();
             //System.out.println("seekStart=" + seekStart.utf8ToString());
             if (te.SeekCeil(seekStart) == TermsEnum.SeekStatus.END)
@@ -744,7 +744,7 @@ namespace Lucene.Net.Index
 
                 InitializeInstanceFields();
                 Debug.Assert(outerInstance.m_indexedTermsArray != null);
-                termsEnum = reader.Fields.Terms(outerInstance.m_field).Iterator(null);
+                termsEnum = reader.Fields.Terms(outerInstance.m_field).GetIterator(null);
             }
 
             public override IComparer<BytesRef> Comparer

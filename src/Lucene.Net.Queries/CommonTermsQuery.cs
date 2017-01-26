@@ -268,7 +268,7 @@ namespace Lucene.Net.Queries
                         // field does not exist
                         continue;
                     }
-                    termsEnum = terms.Iterator(termsEnum);
+                    termsEnum = terms.GetIterator(termsEnum);
                     Debug.Assert(termsEnum != null);
 
                     if (termsEnum == TermsEnum.EMPTY)

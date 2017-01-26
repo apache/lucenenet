@@ -61,9 +61,9 @@ namespace Lucene.Net.Index
                 {
                 }
 
-                public override TermsEnum Iterator(TermsEnum reuse)
+                public override TermsEnum GetIterator(TermsEnum reuse)
                 {
-                    return new TestTermsEnum(base.Iterator(reuse));
+                    return new TestTermsEnum(base.GetIterator(reuse));
                 }
             }
 
@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
             reader.Dispose();
             reader = DirectoryReader.Open(target);
 
-            TermsEnum terms = MultiFields.GetTerms(reader, "default").Iterator(null);
+            TermsEnum terms = MultiFields.GetTerms(reader, "default").GetIterator(null);
             while (terms.Next() != null)
             {
                 Assert.IsTrue(terms.Term.Utf8ToString().IndexOf('e') != -1);

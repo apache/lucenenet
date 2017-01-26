@@ -119,7 +119,7 @@ namespace Lucene.Net.Classification
             BytesRef foundClass = new BytesRef();
 
             Terms terms = MultiFields.GetTerms(_atomicReader, _classFieldName);
-            TermsEnum termsEnum = terms.Iterator(null);
+            TermsEnum termsEnum = terms.GetIterator(null);
             BytesRef next;
             String[] tokenizedDoc = TokenizeDoc(inputDocument);
             while ((next = termsEnum.Next()) != null) 

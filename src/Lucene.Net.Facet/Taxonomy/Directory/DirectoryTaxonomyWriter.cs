@@ -438,7 +438,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         Terms terms = ctx.AtomicReader.Terms(Consts.FULL);
                         if (terms != null)
                         {
-                            termsEnum = terms.Iterator(termsEnum);
+                            termsEnum = terms.GetIterator(termsEnum);
                             if (termsEnum.SeekExact(catTerm))
                             {
                                 // liveDocs=null because the taxonomy has no deletes
@@ -796,7 +796,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         Terms terms = ctx.AtomicReader.Terms(Consts.FULL);
                         if (terms != null) // cannot really happen, but be on the safe side
                         {
-                            termsEnum = terms.Iterator(termsEnum);
+                            termsEnum = terms.GetIterator(termsEnum);
                             while (termsEnum.Next() != null)
                             {
                                 if (!cache.IsFull)
@@ -916,7 +916,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 {
                     AtomicReader ar = ctx.AtomicReader;
                     Terms terms = ar.Terms(Consts.FULL);
-                    te = terms.Iterator(te);
+                    te = terms.GetIterator(te);
                     while (te.Next() != null)
                     {
                         FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(te.Term.Utf8ToString()));

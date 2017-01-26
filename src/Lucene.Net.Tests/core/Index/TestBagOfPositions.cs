@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
             Terms terms = air.Terms("field");
             // numTerms-1 because there cannot be a term 0 with 0 postings:
             Assert.AreEqual(numTerms - 1, terms.Count);
-            TermsEnum termsEnum = terms.Iterator(null);
+            TermsEnum termsEnum = terms.GetIterator(null);
             BytesRef termBR;
             while ((termBR = termsEnum.Next()) != null)
             {

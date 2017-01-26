@@ -257,7 +257,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private double CreateCoefficient(IndexSearcher searcher, int doc, IEnumerable<string> matchedTokens, string prefixToken)
         {
             Terms tv = searcher.IndexReader.GetTermVector(doc, TEXT_FIELD_NAME);
-            TermsEnum it = tv.Iterator(TermsEnum.EMPTY);
+            TermsEnum it = tv.GetIterator(TermsEnum.EMPTY);
 
             int? position = int.MaxValue;
             BytesRef term;

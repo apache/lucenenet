@@ -199,7 +199,7 @@ namespace Lucene.Net.Codecs.ramonly
                 }
             }
 
-            public override TermsEnum Iterator(TermsEnum reuse)
+            public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 return new RAMTermsEnum(this);
             }

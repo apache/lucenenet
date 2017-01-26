@@ -206,7 +206,7 @@ namespace Lucene.Net.Search.Highlight
             bool hasPayloads = tpv.HasPayloads;
 
             // code to reconstruct the original sequence of Tokens
-            TermsEnum termsEnum = tpv.Iterator(null);
+            TermsEnum termsEnum = tpv.GetIterator(null);
             int totalTokens = 0;
             while (termsEnum.Next() != null)
             {
@@ -214,7 +214,7 @@ namespace Lucene.Net.Search.Highlight
             }
             Token[] tokensInOriginalOrder = new Token[totalTokens];
             List<Token> unsortedTokens = null;
-            termsEnum = tpv.Iterator(null);
+            termsEnum = tpv.GetIterator(null);
             BytesRef text;
             DocsAndPositionsEnum dpEnum = null;
             while ((text = termsEnum.Next()) != null)

@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
             Terms terms = reader.Terms(FieldName);
             if (terms != null)
             {
-                TermsEnum te = terms.Iterator(null);
+                TermsEnum te = terms.GetIterator(null);
                 if (te.SeekExact(bytes))
                 {
                     return te.DocsAndPositions(liveDocs, null);
@@ -389,7 +389,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
             // now reuse and check again
-            TermsEnum te = r.Terms("foo").Iterator(null);
+            TermsEnum te = r.Terms("foo").GetIterator(null);
             Assert.IsTrue(te.SeekExact(new BytesRef("bar")));
             disi = TestUtil.Docs(Random(), te, null, disi, DocsEnum.FLAG_NONE);
             docid = disi.DocID;
@@ -416,7 +416,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
             // now reuse and check again
-            TermsEnum te = r.Terms("foo").Iterator(null);
+            TermsEnum te = r.Terms("foo").GetIterator(null);
             Assert.IsTrue(te.SeekExact(new BytesRef("bar")));
             disi = te.DocsAndPositions(null, disi);
             docid = disi.DocID;

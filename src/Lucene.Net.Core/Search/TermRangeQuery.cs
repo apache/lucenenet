@@ -128,7 +128,7 @@ namespace Lucene.Net.Search
                 return TermsEnum.EMPTY;
             }
 
-            TermsEnum tenum = terms.Iterator(null);
+            TermsEnum tenum = terms.GetIterator(null);
 
             if ((lowerTerm == null || (includeLower && lowerTerm.Length == 0)) && upperTerm == null)
             {

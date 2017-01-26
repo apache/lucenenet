@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
 
             IndexReader reader = DirectoryReader.Open(dir);
 
-            TermsEnum tenum = MultiFields.GetTerms(reader, "foo").Iterator(null);
+            TermsEnum tenum = MultiFields.GetTerms(reader, "foo").GetIterator(null);
 
             start = Environment.TickCount;
 

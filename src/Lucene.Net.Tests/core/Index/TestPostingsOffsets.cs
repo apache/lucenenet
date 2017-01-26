@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
                 // TODO: improve this
                 AtomicReader sub = (AtomicReader)ctx.Reader;
                 //System.out.println("\nsub=" + sub);
-                TermsEnum termsEnum = sub.Fields.Terms("content").Iterator(null);
+                TermsEnum termsEnum = sub.Fields.Terms("content").GetIterator(null);
                 DocsEnum docs = null;
                 DocsAndPositionsEnum docsAndPositions = null;
                 DocsAndPositionsEnum docsAndPositionsAndOffsets = null;

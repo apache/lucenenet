@@ -110,12 +110,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override TermsEnum Iterator(TermsEnum reuse)
+        public override TermsEnum GetIterator(TermsEnum reuse)
         {
             IList<MultiTermsEnum.TermsEnumIndex> termsEnums = new List<MultiTermsEnum.TermsEnumIndex>();
             for (int i = 0; i < subs.Length; i++)
             {
-                TermsEnum termsEnum = subs[i].Iterator(null);
+                TermsEnum termsEnum = subs[i].GetIterator(null);
                 if (termsEnum != null)
                 {
                     termsEnums.Add(new MultiTermsEnum.TermsEnumIndex(termsEnum, i));

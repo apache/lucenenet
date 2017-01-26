@@ -522,7 +522,7 @@ namespace Lucene.Net.Search.Spell
                             Terms terms = ctx.AtomicReader.Terms(F_WORD);
                             if (terms != null)
                             {
-                                termsEnums.Add(terms.Iterator(null));
+                                termsEnums.Add(terms.GetIterator(null));
                             }
                         }
                     }

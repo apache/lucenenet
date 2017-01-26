@@ -346,7 +346,7 @@ namespace Lucene.Net.Codecs.Memory
                 BytesRef term;
                 DocsEnum docsEnum = null;
                 DocsAndPositionsEnum docsAndPositionsEnum = null;
-                TermsEnum termsEnum = termsIn.Iterator(null);
+                TermsEnum termsEnum = termsIn.GetIterator(null);
                 int termOffset = 0;
 
                 IntArrayWriter scratch = new IntArrayWriter();
@@ -740,7 +740,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override TermsEnum Iterator(TermsEnum reuse)
+            public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 DirectTermsEnum termsEnum;
                 if (reuse != null && reuse is DirectTermsEnum)

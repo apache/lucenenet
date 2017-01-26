@@ -372,7 +372,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 unicodeSortOrder = outerInstance.SortTermsByUnicode();
             }
 
-            public override TermsEnum Iterator(TermsEnum reuse)
+            public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 TVTermsEnum termsEnum;
                 if (reuse is TVTermsEnum)

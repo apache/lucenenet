@@ -212,7 +212,7 @@ namespace Lucene.Net.Search
 
             protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
             {
-                return new TermRangeTermsEnumAnonymousInnerClassHelper(this, terms.Iterator(null), new BytesRef("2"), new BytesRef("7"));
+                return new TermRangeTermsEnumAnonymousInnerClassHelper(this, terms.GetIterator(null), new BytesRef("2"), new BytesRef("7"));
             }
 
             private class TermRangeTermsEnumAnonymousInnerClassHelper : TermRangeTermsEnum

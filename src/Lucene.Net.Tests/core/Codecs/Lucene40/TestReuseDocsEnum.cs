@@ -71,7 +71,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 AtomicReader indexReader = (AtomicReader)ctx.Reader;
                 Terms terms = indexReader.Terms("body");
-                TermsEnum iterator = terms.Iterator(null);
+                TermsEnum iterator = terms.GetIterator(null);
                 IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
                 MatchNoBits bits = new MatchNoBits(indexReader.MaxDoc);
                 while ((iterator.Next()) != null)
@@ -100,7 +100,7 @@ namespace Lucene.Net.Codecs.Lucene40
             foreach (AtomicReaderContext ctx in open.Leaves)
             {
                 Terms terms = ((AtomicReader)ctx.Reader).Terms("body");
-                TermsEnum iterator = terms.Iterator(null);
+                TermsEnum iterator = terms.GetIterator(null);
                 IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
                 MatchNoBits bits = new MatchNoBits(open.MaxDoc);
                 DocsEnum docs = null;
@@ -112,7 +112,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 Assert.AreEqual(1, enums.Count);
                 enums.Clear();
-                iterator = terms.Iterator(null);
+                iterator = terms.GetIterator(null);
                 docs = null;
                 while ((iterator.Next()) != null)
                 {
@@ -122,7 +122,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 Assert.AreEqual(terms.Count, enums.Count);
 
                 enums.Clear();
-                iterator = terms.Iterator(null);
+                iterator = terms.GetIterator(null);
                 docs = null;
                 while ((iterator.Next()) != null)
                 {
@@ -156,10 +156,10 @@ namespace Lucene.Net.Codecs.Lucene40
             foreach (AtomicReaderContext ctx in leaves)
             {
                 Terms terms = ((AtomicReader)ctx.Reader).Terms("body");
-                TermsEnum iterator = terms.Iterator(null);
+                TermsEnum iterator = terms.GetIterator(null);
                 IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
                 MatchNoBits bits = new MatchNoBits(firstReader.MaxDoc);
-                iterator = terms.Iterator(null);
+                iterator = terms.GetIterator(null);
                 DocsEnum docs = null;
                 BytesRef term = null;
                 while ((term = iterator.Next()) != null)
@@ -169,7 +169,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 Assert.AreEqual(terms.Count, enums.Count);
 
-                iterator = terms.Iterator(null);
+                iterator = terms.GetIterator(null);
                 enums.Clear();
                 docs = null;
                 while ((term = iterator.Next()) != null)
@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 return null;
             }
-            TermsEnum iterator = terms.Iterator(null);
+            TermsEnum iterator = terms.GetIterator(null);
             if (iterator.SeekExact(term))
             {
                 return iterator.Docs(bits, null, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);

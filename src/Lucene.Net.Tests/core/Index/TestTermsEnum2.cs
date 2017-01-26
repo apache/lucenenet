@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
             {
                 string reg = AutomatonTestUtil.RandomRegexp(Random());
                 Automaton automaton = (new RegExp(reg, RegExp.NONE)).ToAutomaton();
-                TermsEnum te = MultiFields.GetTerms(Reader, "field").Iterator(null);
+                TermsEnum te = MultiFields.GetTerms(Reader, "field").GetIterator(null);
                 IList<BytesRef> unsortedTerms = new List<BytesRef>(Terms);
                 unsortedTerms = CollectionsHelper.Shuffle(unsortedTerms);
 
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
         {
             for (int i = 0; i < NumIterations; i++)
             {
-                TermsEnum te = MultiFields.GetTerms(Reader, "field").Iterator(null);
+                TermsEnum te = MultiFields.GetTerms(Reader, "field").GetIterator(null);
 
                 foreach (BytesRef term in Terms)
                 {

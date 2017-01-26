@@ -79,7 +79,7 @@ namespace Lucene.Net.Sandbox.Queries
                 return bits;
             }
 
-            TermsEnum termsEnum = terms.Iterator(null);
+            TermsEnum termsEnum = terms.GetIterator(null);
             DocsEnum docs = null;
             while (true)
             {
@@ -129,7 +129,7 @@ namespace Lucene.Net.Sandbox.Queries
                 return bits;
             }
 
-            TermsEnum termsEnum = terms.Iterator(null);
+            TermsEnum termsEnum = terms.GetIterator(null);
             DocsEnum docs = null;
             while (true)
             {

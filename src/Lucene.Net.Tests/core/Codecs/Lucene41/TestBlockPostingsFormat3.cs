@@ -205,8 +205,8 @@ namespace Lucene.Net.Codecs.Lucene41
 
             // NOTE: we don't assert hasOffsets/hasPositions/hasPayloads because they are allowed to be different
 
-            TermsEnum leftTermsEnum = leftTerms.Iterator(null);
-            TermsEnum rightTermsEnum = rightTerms.Iterator(null);
+            TermsEnum leftTermsEnum = leftTerms.GetIterator(null);
+            TermsEnum rightTermsEnum = rightTerms.GetIterator(null);
             AssertTermsEnum(leftTermsEnum, rightTermsEnum, true);
 
             AssertTermsSeeking(leftTerms, rightTerms);
@@ -243,7 +243,7 @@ namespace Lucene.Net.Codecs.Lucene41
             int numPasses = 0;
             while (numPasses < 10 && tests.Count < numTests)
             {
-                leftEnum = leftTerms.Iterator(leftEnum);
+                leftEnum = leftTerms.GetIterator(leftEnum);
                 BytesRef term = null;
                 while ((term = leftEnum.Next()) != null)
                 {
@@ -279,8 +279,8 @@ namespace Lucene.Net.Codecs.Lucene41
 
             foreach (BytesRef b in shuffledTests)
             {
-                leftEnum = leftTerms.Iterator(leftEnum);
-                rightEnum = rightTerms.Iterator(rightEnum);
+                leftEnum = leftTerms.GetIterator(leftEnum);
+                rightEnum = rightTerms.GetIterator(rightEnum);
 
                 Assert.AreEqual(leftEnum.SeekExact(b), rightEnum.SeekExact(b));
                 Assert.AreEqual(leftEnum.SeekExact(b), rightEnum.SeekExact(b));

@@ -225,7 +225,7 @@ namespace Lucene.Net.Search
                 }
 
                 // Reuse single TermsEnum below:
-                TermsEnum termsEnum = fieldTerms.Iterator(null);
+                TermsEnum termsEnum = fieldTerms.GetIterator(null);
 
                 for (int pos = 0; pos < postingsFreqs.Length; pos++)
                 {

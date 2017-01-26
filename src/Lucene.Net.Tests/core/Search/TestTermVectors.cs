@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
             Terms vector = vectors.Terms("field");
             Assert.IsNotNull(vector);
             Assert.AreEqual(1, vector.Count);
-            TermsEnum termsEnum = vector.Iterator(null);
+            TermsEnum termsEnum = vector.GetIterator(null);
             Assert.IsNotNull(termsEnum.Next());
             Assert.AreEqual("one", termsEnum.Term.Utf8ToString());
             Assert.AreEqual(5, termsEnum.TotalTermFreq);

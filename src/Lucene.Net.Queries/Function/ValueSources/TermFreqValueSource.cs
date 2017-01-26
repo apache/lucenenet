@@ -77,7 +77,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
                 if (terms != null)
                 {
-                    TermsEnum termsEnum = terms.Iterator(null);
+                    TermsEnum termsEnum = terms.GetIterator(null);
                     if (termsEnum.SeekExact(outerInstance.indexedBytes))
                     {
                         docs = termsEnum.Docs(null, null);

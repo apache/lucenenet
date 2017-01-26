@@ -89,7 +89,7 @@ namespace Lucene.Net.Search.VectorHighlight
             }
 
             CharsRef spare = new CharsRef();
-            TermsEnum termsEnum = vector.Iterator(null);
+            TermsEnum termsEnum = vector.GetIterator(null);
             DocsAndPositionsEnum dpEnum = null;
             BytesRef text;
 

@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.Highlight
 
             bool hasOffsets = vector.HasOffsets;
             bool hasPayloads = vector.HasPayloads;
-            TermsEnum termsEnum = vector.Iterator(null);
+            TermsEnum termsEnum = vector.GetIterator(null);
             BytesRef text;
             DocsAndPositionsEnum dpEnum = null;
 

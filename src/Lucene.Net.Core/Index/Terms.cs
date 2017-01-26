@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
         ///  field, you can pass it for possible reuse if the
         ///  implementation can do so.
         /// </summary>
-        public abstract TermsEnum Iterator(TermsEnum reuse); // TODO: Rename GetIterator for consistency? Or possibly GetEnumerator(TermsEnum) ?
+        public abstract TermsEnum GetIterator(TermsEnum reuse);
 
         /// <summary>
         /// Returns a TermsEnum that iterates over all terms that
@@ -70,11 +70,11 @@ namespace Lucene.Net.Index
             }
             if (startTerm == null)
             {
-                return new AutomatonTermsEnum(Iterator(null), compiled);
+                return new AutomatonTermsEnum(GetIterator(null), compiled);
             }
             else
             {
-                return new AutomatonTermsEnumAnonymousInnerClassHelper(this, Iterator(null), compiled, startTerm);
+                return new AutomatonTermsEnumAnonymousInnerClassHelper(this, GetIterator(null), compiled, startTerm);
             }
         }
 

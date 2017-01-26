@@ -566,7 +566,7 @@ namespace Lucene.Net.Queries.Mlt
         /// <param name="vector"> List of terms and their frequencies for a doc/field </param>
         private void AddTermFrequencies(IDictionary<string, Int> termFreqMap, Terms vector)
         {
-            var termsEnum = vector.Iterator(null);
+            var termsEnum = vector.GetIterator(null);
             var spare = new CharsRef();
             BytesRef text;
             while ((text = termsEnum.Next()) != null)

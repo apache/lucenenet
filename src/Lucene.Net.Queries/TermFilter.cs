@@ -60,7 +60,7 @@ namespace Lucene.Net.Queries
                 return null;
             }
 
-            TermsEnum termsEnum = terms.Iterator(null);
+            TermsEnum termsEnum = terms.GetIterator(null);
             if (!termsEnum.SeekExact(term.Bytes))
             {
                 return null;

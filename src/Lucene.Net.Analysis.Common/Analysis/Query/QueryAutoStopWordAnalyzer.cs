@@ -130,7 +130,7 @@ namespace Lucene.Net.Analysis.Query
                 CharsRef spare = new CharsRef();
                 if (terms != null)
                 {
-                    TermsEnum te = terms.Iterator(null);
+                    TermsEnum te = terms.GetIterator(null);
                     BytesRef text;
                     while ((text = te.Next()) != null)
                     {

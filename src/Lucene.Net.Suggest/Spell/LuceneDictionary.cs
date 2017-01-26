@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Spell
                 Terms terms = MultiFields.GetTerms(reader, field);
                 if (terms != null)
                 {
-                    return new InputIteratorWrapper(terms.Iterator(null));
+                    return new InputIteratorWrapper(terms.GetIterator(null));
                 }
                 else
                 {

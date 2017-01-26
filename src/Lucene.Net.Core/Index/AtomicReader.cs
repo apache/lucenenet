@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
             {
                 return 0;
             }
-            TermsEnum termsEnum = terms.Iterator(null);
+            TermsEnum termsEnum = terms.GetIterator(null);
             if (termsEnum.SeekExact(term.Bytes))
             {
                 return termsEnum.DocFreq;
@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
             {
                 return 0;
             }
-            TermsEnum termsEnum = terms.Iterator(null);
+            TermsEnum termsEnum = terms.GetIterator(null);
             if (termsEnum.SeekExact(term.Bytes))
             {
                 return termsEnum.TotalTermFreq;
@@ -213,7 +213,7 @@ namespace Lucene.Net.Index
                 Terms terms = fields.Terms(term.Field);
                 if (terms != null)
                 {
-                    TermsEnum termsEnum = terms.Iterator(null);
+                    TermsEnum termsEnum = terms.GetIterator(null);
                     if (termsEnum.SeekExact(term.Bytes))
                     {
                         return termsEnum.Docs(LiveDocs, null);
@@ -238,7 +238,7 @@ namespace Lucene.Net.Index
                 Terms terms = fields.Terms(term.Field);
                 if (terms != null)
                 {
-                    TermsEnum termsEnum = terms.Iterator(null);
+                    TermsEnum termsEnum = terms.GetIterator(null);
                     if (termsEnum.SeekExact(term.Bytes))
                     {
                         return termsEnum.DocsAndPositions(LiveDocs, null);

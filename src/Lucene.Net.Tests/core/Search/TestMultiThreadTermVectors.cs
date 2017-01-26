@@ -214,7 +214,7 @@ namespace Lucene.Net.Search
                 Terms vector = Reader.GetTermVectors(docId).Terms("field");
                 TimeElapsed += Environment.TickCount - start;
 
-                VerifyVector(vector.Iterator(null), docId);
+                VerifyVector(vector.GetIterator(null), docId);
             }
         }
 
@@ -224,7 +224,7 @@ namespace Lucene.Net.Search
             {
                 Terms terms = vectors.Terms(field);
                 Debug.Assert(terms != null);
-                VerifyVector(terms.Iterator(null), num);
+                VerifyVector(terms.GetIterator(null), num);
             }
         }
 

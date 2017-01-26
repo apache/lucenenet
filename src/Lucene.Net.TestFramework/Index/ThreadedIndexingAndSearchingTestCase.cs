@@ -477,7 +477,7 @@ namespace Lucene.Net.Index
                                 {
                                     continue;
                                 }
-                                TermsEnum termsEnum = terms.Iterator(null);
+                                TermsEnum termsEnum = terms.GetIterator(null);
                                 int seenTermCount = 0;
                                 int shift;
                                 int trigger;

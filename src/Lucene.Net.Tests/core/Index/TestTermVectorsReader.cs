@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
                 Terms vector = reader.Get(j).Terms(TestFields[0]);
                 Assert.IsNotNull(vector);
                 Assert.AreEqual(TestTerms.Length, vector.Count);
-                TermsEnum termsEnum = vector.Iterator(null);
+                TermsEnum termsEnum = vector.GetIterator(null);
                 for (int i = 0; i < TestTerms.Length; i++)
                 {
                     BytesRef text = termsEnum.Next();
@@ -273,7 +273,7 @@ namespace Lucene.Net.Index
                 Terms vector = reader.Get(j).Terms(TestFields[0]);
                 Assert.IsNotNull(vector);
                 Assert.AreEqual(TestTerms.Length, vector.Count);
-                TermsEnum termsEnum = vector.Iterator(null);
+                TermsEnum termsEnum = vector.GetIterator(null);
                 DocsEnum docsEnum = null;
                 for (int i = 0; i < TestTerms.Length; i++)
                 {
@@ -303,7 +303,7 @@ namespace Lucene.Net.Index
             Terms vector = reader.Get(0).Terms(TestFields[0]);
             Assert.IsNotNull(vector);
             Assert.AreEqual(TestTerms.Length, vector.Count);
-            TermsEnum termsEnum = vector.Iterator(null);
+            TermsEnum termsEnum = vector.GetIterator(null);
             DocsAndPositionsEnum dpEnum = null;
             for (int i = 0; i < TestTerms.Length; i++)
             {
@@ -343,7 +343,7 @@ namespace Lucene.Net.Index
             Terms freqVector = reader.Get(0).Terms(TestFields[1]); //no pos, no offset
             Assert.IsNotNull(freqVector);
             Assert.AreEqual(TestTerms.Length, freqVector.Count);
-            termsEnum = freqVector.Iterator(null);
+            termsEnum = freqVector.GetIterator(null);
             Assert.IsNotNull(termsEnum);
             for (int i = 0; i < TestTerms.Length; i++)
             {
@@ -364,7 +364,7 @@ namespace Lucene.Net.Index
             TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
             Terms vector = reader.Get(0).Terms(TestFields[0]);
             Assert.IsNotNull(vector);
-            TermsEnum termsEnum = vector.Iterator(null);
+            TermsEnum termsEnum = vector.GetIterator(null);
             Assert.IsNotNull(termsEnum);
             Assert.AreEqual(TestTerms.Length, vector.Count);
             DocsAndPositionsEnum dpEnum = null;

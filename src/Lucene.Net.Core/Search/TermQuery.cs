@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
                     return null;
                 }
                 //System.out.println("LD=" + reader.getLiveDocs() + " set?=" + (reader.getLiveDocs() != null ? reader.getLiveDocs().get(0) : "null"));
-                TermsEnum termsEnum = context.AtomicReader.Terms(outerInstance.term.Field).Iterator(null);
+                TermsEnum termsEnum = context.AtomicReader.Terms(outerInstance.term.Field).GetIterator(null);
                 termsEnum.SeekExact(outerInstance.term.Bytes, state);
                 return termsEnum;
             }

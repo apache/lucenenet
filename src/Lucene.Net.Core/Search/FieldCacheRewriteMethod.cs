@@ -146,7 +146,7 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                public override TermsEnum Iterator(TermsEnum reuse)
+                public override TermsEnum GetIterator(TermsEnum reuse)
                 {
                     return fcsi.GetTermsEnum();
                 }

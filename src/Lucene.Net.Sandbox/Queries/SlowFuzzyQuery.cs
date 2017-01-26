@@ -150,7 +150,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             if (!termLongEnough)
             {  // can only match if it's exact
-                return new SingleTermsEnum(terms.Iterator(null), term.Bytes);
+                return new SingleTermsEnum(terms.GetIterator(null), term.Bytes);
             }
             return new SlowFuzzyTermsEnum(terms, atts, Term, minimumSimilarity, prefixLength);
         }

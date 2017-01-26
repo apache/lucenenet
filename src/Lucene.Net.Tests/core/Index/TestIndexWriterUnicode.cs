@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
 
         private void CheckTermsOrder(IndexReader r, ISet<string> allTerms, bool isTop)
         {
-            TermsEnum terms = MultiFields.GetFields(r).Terms("f").Iterator(null);
+            TermsEnum terms = MultiFields.GetFields(r).Terms("f").GetIterator(null);
 
             BytesRef last = new BytesRef();
 

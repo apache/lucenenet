@@ -248,7 +248,7 @@ namespace Lucene.Net.Codecs.Bloom
                     return _delegateTerms.Intersect(compiled, startTerm);
                 }
 
-                public override TermsEnum Iterator(TermsEnum reuse)
+                public override TermsEnum GetIterator(TermsEnum reuse)
                 {
                     if (!(reuse is BloomFilteredTermsEnum))
                         return new BloomFilteredTermsEnum(_delegateTerms, reuse, _filter);
@@ -338,7 +338,7 @@ namespace Lucene.Net.Codecs.Bloom
                     // this can be a relativly heavy operation depending on the 
                     // delegate postings format and they underlying directory
                     // (clone IndexInput)
-                    return DELEGATE_TERMS_ENUM ?? (DELEGATE_TERMS_ENUM = _delegateTerms.Iterator(_reuseDelegate));
+                    return DELEGATE_TERMS_ENUM ?? (DELEGATE_TERMS_ENUM = _delegateTerms.GetIterator(_reuseDelegate));
                 }
 
                 public override BytesRef Next()

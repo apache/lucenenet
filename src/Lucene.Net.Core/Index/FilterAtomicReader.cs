@@ -112,9 +112,9 @@ namespace Lucene.Net.Index
                 this.m_input = input;
             }
 
-            public override TermsEnum Iterator(TermsEnum reuse)
+            public override TermsEnum GetIterator(TermsEnum reuse)
             {
-                return m_input.Iterator(reuse);
+                return m_input.GetIterator(reuse);
             }
 
             public override IComparer<BytesRef> Comparer

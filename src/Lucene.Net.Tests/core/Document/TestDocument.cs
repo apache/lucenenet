@@ -409,7 +409,7 @@ namespace Lucene.Net.Documents
                 Terms tvs = tvFields.Terms(field);
                 Assert.IsNotNull(tvs);
                 Assert.AreEqual(2, tvs.Count);
-                TermsEnum tvsEnum = tvs.Iterator(null);
+                TermsEnum tvsEnum = tvs.GetIterator(null);
                 Assert.AreEqual(new BytesRef("abc"), tvsEnum.Next());
                 DocsAndPositionsEnum dpEnum = tvsEnum.DocsAndPositions(null, null);
                 if (field.Equals("tv"))

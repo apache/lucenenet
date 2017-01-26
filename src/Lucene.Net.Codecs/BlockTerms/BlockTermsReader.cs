@@ -316,7 +316,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 get { return BytesRef.UTF8SortedAsUnicodeComparer; }
             }
 
-            public override TermsEnum Iterator(TermsEnum reuse)
+            public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 return new SegmentTermsEnum(this, _blockTermsReader);
             }

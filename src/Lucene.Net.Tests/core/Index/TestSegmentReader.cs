@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
             {
                 Terms terms = fields.Terms(field);
                 Assert.IsNotNull(terms);
-                TermsEnum termsEnum = terms.Iterator(null);
+                TermsEnum termsEnum = terms.GetIterator(null);
                 while (termsEnum.Next() != null)
                 {
                     BytesRef term = termsEnum.Term;
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
             Terms result = Reader.GetTermVectors(0).Terms(DocHelper.TEXT_FIELD_2_KEY);
             Assert.IsNotNull(result);
             Assert.AreEqual(3, result.Count);
-            TermsEnum termsEnum = result.Iterator(null);
+            TermsEnum termsEnum = result.GetIterator(null);
             while (termsEnum.Next() != null)
             {
                 string term = termsEnum.Term.Utf8ToString();

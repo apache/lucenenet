@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
             {
                 Assert.AreEqual(numTerms - 1, terms.Count);
             }
-            TermsEnum termsEnum = terms.Iterator(null);
+            TermsEnum termsEnum = terms.GetIterator(null);
             BytesRef term_;
             while ((term_ = termsEnum.Next()) != null)
             {

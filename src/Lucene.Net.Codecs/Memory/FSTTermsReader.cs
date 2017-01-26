@@ -266,7 +266,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override TermsEnum Iterator(TermsEnum reuse)
+            public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 return new SegmentTermsEnum(this);
             }

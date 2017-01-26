@@ -917,7 +917,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
             DirectoryReader reader = DirectoryReader.Open(dir);
             AtomicReader subreader = GetOnlySegmentReader(reader);
-            TermsEnum te = subreader.Fields.Terms("").Iterator(null);
+            TermsEnum te = subreader.Fields.Terms("").GetIterator(null);
             Assert.AreEqual(new BytesRef("a"), te.Next());
             Assert.AreEqual(new BytesRef("b"), te.Next());
             Assert.AreEqual(new BytesRef("c"), te.Next());
@@ -940,7 +940,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
             DirectoryReader reader = DirectoryReader.Open(dir);
             AtomicReader subreader = GetOnlySegmentReader(reader);
-            TermsEnum te = subreader.Fields.Terms("").Iterator(null);
+            TermsEnum te = subreader.Fields.Terms("").GetIterator(null);
             Assert.AreEqual(new BytesRef(""), te.Next());
             Assert.AreEqual(new BytesRef("a"), te.Next());
             Assert.AreEqual(new BytesRef("b"), te.Next());
@@ -1078,7 +1078,7 @@ namespace Lucene.Net.Index
 
             IndexReader r = DirectoryReader.Open(dir);
             Terms tpv = r.GetTermVectors(0).Terms("field");
-            TermsEnum termsEnum = tpv.Iterator(null);
+            TermsEnum termsEnum = tpv.GetIterator(null);
             Assert.IsNotNull(termsEnum.Next());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
             Assert.IsNotNull(dpEnum);
@@ -1582,7 +1582,7 @@ namespace Lucene.Net.Index
             w.AddDocument(d);
 
             AtomicReader r = GetOnlySegmentReader(w.Reader);
-            TermsEnum t = r.Fields.Terms("field").Iterator(null);
+            TermsEnum t = r.Fields.Terms("field").GetIterator(null);
             int count = 0;
             while (t.Next() != null)
             {

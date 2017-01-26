@@ -484,7 +484,7 @@ namespace Lucene.Net.Index
                         Terms terms = fields.Terms(currentField);
                         if (terms != null)
                         {
-                            termsEnum = terms.Iterator(termsEnum);
+                            termsEnum = terms.GetIterator(termsEnum);
                         }
                         else
                         {
@@ -589,7 +589,7 @@ namespace Lucene.Net.Index
                         Terms terms = fields.Terms(currentField);
                         if (terms != null)
                         {
-                            termsEnum = terms.Iterator(termsEnum);
+                            termsEnum = terms.GetIterator(termsEnum);
                         }
                         else
                         {

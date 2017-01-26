@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
                 return new AssertingTermsEnum(termsEnum);
             }
 
-            public override TermsEnum Iterator(TermsEnum reuse)
+            public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 // TODO: should we give this thing a random to be super-evil,
                 // and randomly *not* unwrap?
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
                 {
                     reuse = ((AssertingTermsEnum)reuse).m_input;
                 }
-                TermsEnum termsEnum = base.Iterator(reuse);
+                TermsEnum termsEnum = base.GetIterator(reuse);
                 Debug.Assert(termsEnum != null);
                 return new AssertingTermsEnum(termsEnum);
             }

@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
             {
                 Terms terms = fields.Terms(field);
                 Assert.IsNotNull(terms);
-                TermsEnum tis = terms.Iterator(null);
+                TermsEnum tis = terms.GetIterator(null);
                 while (tis.Next() != null)
                 {
                     @out.Write("  term=" + field + ":" + tis.Term);

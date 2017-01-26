@@ -74,7 +74,7 @@ namespace Lucene.Net.Spatial.Util
                 TermsEnum te = null;
                 if (terms != null)
                 {
-                    te = terms.Iterator(te);
+                    te = terms.GetIterator(te);
                     BytesRef term = te.Next();
                     while (term != null)
                     {

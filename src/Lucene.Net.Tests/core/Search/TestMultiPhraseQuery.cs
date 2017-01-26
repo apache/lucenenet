@@ -78,7 +78,7 @@ namespace Lucene.Net.Search
 
             // this TermEnum gives "piccadilly", "pie" and "pizza".
             string prefix = "pi";
-            TermsEnum te = MultiFields.GetFields(reader).Terms("body").Iterator(null);
+            TermsEnum te = MultiFields.GetFields(reader).Terms("body").GetIterator(null);
             te.SeekCeil(new BytesRef(prefix));
             do
             {

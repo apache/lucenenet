@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
 
         protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
-            TermsEnum tenum = terms.Iterator(null);
+            TermsEnum tenum = terms.GetIterator(null);
 
             if (_prefix.Bytes.Length == 0)
             {

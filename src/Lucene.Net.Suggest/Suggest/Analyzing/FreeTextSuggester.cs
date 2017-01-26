@@ -368,7 +368,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
 
                     // Move all ngrams into an FST:
-                    TermsEnum termsEnum = terms.Iterator(null);
+                    TermsEnum termsEnum = terms.GetIterator(null);
 
                     Outputs<long?> outputs = PositiveIntOutputs.Singleton;
                     Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);

@@ -985,7 +985,7 @@ namespace Lucene.Net.Search
                         // Fast case: all docs have this field:
                         return new Lucene.Net.Util.Bits.MatchAllBits(maxDoc);
                     }
-                    TermsEnum termsEnum = terms.Iterator(null);
+                    TermsEnum termsEnum = terms.GetIterator(null);
                     DocsEnum docs = null;
                     while (true)
                     {
@@ -1659,7 +1659,7 @@ namespace Lucene.Net.Search
 
                 if (terms != null)
                 {
-                    TermsEnum termsEnum = terms.Iterator(null);
+                    TermsEnum termsEnum = terms.GetIterator(null);
                     DocsEnum docs = null;
 
                     while (true)
@@ -1819,7 +1819,7 @@ namespace Lucene.Net.Search
                 if (terms != null)
                 {
                     int termCount = 0;
-                    TermsEnum termsEnum = terms.Iterator(null);
+                    TermsEnum termsEnum = terms.GetIterator(null);
                     DocsEnum docs = null;
                     while (true)
                     {

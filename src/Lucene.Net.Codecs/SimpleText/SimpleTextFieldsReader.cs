@@ -677,7 +677,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return (_fst != null) ? _fst.SizeInBytes() : 0;
             }
 
-            public override TermsEnum Iterator(TermsEnum reuse)
+            public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 return (_fst != null && _fieldInfo.IndexOptions.HasValue) ? new SimpleTextTermsEnum(_outerInstance, _fst, _fieldInfo.IndexOptions.Value) : TermsEnum.EMPTY;
             }

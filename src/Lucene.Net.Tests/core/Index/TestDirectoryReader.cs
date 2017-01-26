@@ -99,11 +99,11 @@ namespace Lucene.Net.Index
             MultiReader mr3 = new MultiReader(readers2);
 
             // test mixing up TermDocs and TermEnums from different readers.
-            TermsEnum te2 = MultiFields.GetTerms(mr2, "body").Iterator(null);
+            TermsEnum te2 = MultiFields.GetTerms(mr2, "body").GetIterator(null);
             te2.SeekCeil(new BytesRef("wow"));
             DocsEnum td = TestUtil.Docs(Random(), mr2, "body", te2.Term, MultiFields.GetLiveDocs(mr2), null, 0);
 
-            TermsEnum te3 = MultiFields.GetTerms(mr3, "body").Iterator(null);
+            TermsEnum te3 = MultiFields.GetTerms(mr3, "body").GetIterator(null);
             te3.SeekCeil(new BytesRef("wow"));
             td = TestUtil.Docs(Random(), te3, MultiFields.GetLiveDocs(mr3), td, 0);
 
@@ -668,11 +668,11 @@ namespace Lucene.Net.Index
                     Assert.IsNull(fields2.Terms(field1));
                     continue;
                 }
-                TermsEnum enum1 = terms1.Iterator(null);
+                TermsEnum enum1 = terms1.GetIterator(null);
 
                 Terms terms2 = fields2.Terms(field1);
                 Assert.IsNotNull(terms2);
-                TermsEnum enum2 = terms2.Iterator(null);
+                TermsEnum enum2 = terms2.GetIterator(null);
 
                 while (enum1.Next() != null)
                 {

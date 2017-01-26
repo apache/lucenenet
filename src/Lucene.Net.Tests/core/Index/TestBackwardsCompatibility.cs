@@ -787,7 +787,7 @@ namespace Lucene.Net.Index
             {
                 Directory dir = OldIndexDirs[name];
                 IndexReader r = DirectoryReader.Open(dir);
-                TermsEnum terms = MultiFields.GetFields(r).Terms("content").Iterator(null);
+                TermsEnum terms = MultiFields.GetFields(r).Terms("content").GetIterator(null);
                 BytesRef t = terms.Next();
                 Assert.IsNotNull(t);
 

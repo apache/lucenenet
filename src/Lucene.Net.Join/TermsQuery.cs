@@ -54,7 +54,7 @@ namespace Lucene.Net.Join
                 return TermsEnum.EMPTY;
             }
 
-            return new SeekingTermSetTermsEnum(terms.Iterator(null), _terms, _ords);
+            return new SeekingTermSetTermsEnum(terms.GetIterator(null), _terms, _ords);
 
         }
 

@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
 
             protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
             {
-                return new SimplePrefixTermsEnum(this, terms.Iterator(null), Prefix);
+                return new SimplePrefixTermsEnum(this, terms.GetIterator(null), Prefix);
             }
 
             private class SimplePrefixTermsEnum : FilteredTermsEnum

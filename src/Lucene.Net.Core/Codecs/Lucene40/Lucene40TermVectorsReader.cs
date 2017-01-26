@@ -361,7 +361,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 tvfFPStart = outerInstance.tvf.FilePointer;
             }
 
-            public override TermsEnum Iterator(TermsEnum reuse)
+            public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 TVTermsEnum termsEnum;
                 if (reuse is TVTermsEnum)

@@ -168,7 +168,7 @@ namespace Lucene.Net.Search
         {
             if (maxEdits == 0 || prefixLength >= term.Text().Length) // can only match if it's exact
             {
-                return new SingleTermsEnum(terms.Iterator(null), term.Bytes);
+                return new SingleTermsEnum(terms.GetIterator(null), term.Bytes);
             }
             return new FuzzyTermsEnum(terms, atts, Term, maxEdits, prefixLength, transpositions);
         }

@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
         private void CheckTerms(Terms terms, IBits liveDocs, params string[] termsList)
         {
             Assert.IsNotNull(terms);
-            TermsEnum te = terms.Iterator(null);
+            TermsEnum te = terms.GetIterator(null);
 
             foreach (string t in termsList)
             {

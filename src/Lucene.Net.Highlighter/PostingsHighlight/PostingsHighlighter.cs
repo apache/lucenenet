@@ -533,7 +533,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                     Terms t = r.Terms(field);
                     if (t != null)
                     {
-                        termsEnum = t.Iterator(null);
+                        termsEnum = t.GetIterator(null);
                         postings = new DocsAndPositionsEnum[terms.Length];
                     }
                 }

@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs.Pulsing
             AtomicReader segment = GetOnlySegmentReader(ir);
             DocsEnum reuse = null;
             IDictionary<DocsEnum, bool?> allEnums = new IdentityHashMap<DocsEnum, bool?>();
-            TermsEnum te = segment.Terms("foo").Iterator(null);
+            TermsEnum te = segment.Terms("foo").GetIterator(null);
             while (te.Next() != null)
             {
                 reuse = te.Docs(null, reuse, DocsEnum.FLAG_NONE);
@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             allEnums.Clear();
             DocsAndPositionsEnum posReuse = null;
-            te = segment.Terms("foo").Iterator(null);
+            te = segment.Terms("foo").GetIterator(null);
             while (te.Next() != null)
             {
                 posReuse = te.DocsAndPositions(null, posReuse);
@@ -94,7 +94,7 @@ namespace Lucene.Net.Codecs.Pulsing
             AtomicReader segment = GetOnlySegmentReader(ir);
             DocsEnum reuse = null;
             IDictionary<DocsEnum, bool?> allEnums = new IdentityHashMap<DocsEnum, bool?>();
-            TermsEnum te = segment.Terms("foo").Iterator(null);
+            TermsEnum te = segment.Terms("foo").GetIterator(null);
             while (te.Next() != null)
             {
                 reuse = te.Docs(null, reuse, DocsEnum.FLAG_NONE);
@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             allEnums.Clear();
             DocsAndPositionsEnum posReuse = null;
-            te = segment.Terms("foo").Iterator(null);
+            te = segment.Terms("foo").GetIterator(null);
             while (te.Next() != null)
             {
                 posReuse = te.DocsAndPositions(null, posReuse);

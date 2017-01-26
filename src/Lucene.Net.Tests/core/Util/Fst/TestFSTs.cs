@@ -368,7 +368,7 @@ namespace Lucene.Net.Util.Fst
             if (terms != null)
             {
                 IntsRef scratchIntsRef = new IntsRef();
-                TermsEnum termsEnum = terms.Iterator(null);
+                TermsEnum termsEnum = terms.GetIterator(null);
                 if (VERBOSE)
                 {
                     Console.WriteLine("TEST: got termsEnum=" + termsEnum);
@@ -1108,7 +1108,7 @@ namespace Lucene.Net.Util.Fst
                 }
 
                 // Verify w/ MultiTermsEnum
-                TermsEnum termsEnum = MultiFields.GetTerms(r, "id").Iterator(null);
+                TermsEnum termsEnum = MultiFields.GetTerms(r, "id").GetIterator(null);
                 for (int iter = 0; iter < 2 * NUM_IDS; iter++)
                 {
                     string id;

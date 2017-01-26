@@ -368,7 +368,7 @@ namespace Lucene.Net.Analysis
             AtomicReader reader = GetOnlySegmentReader(writer.Reader);
             Fields fields = reader.GetTermVectors(0);
             Terms terms = fields.Terms("f");
-            TermsEnum te = terms.Iterator(null);
+            TermsEnum te = terms.GetIterator(null);
             Assert.AreEqual(new BytesRef("a"), te.Next());
             DocsAndPositionsEnum dpe = te.DocsAndPositions(null, null);
             Assert.AreEqual(0, dpe.NextDoc());
