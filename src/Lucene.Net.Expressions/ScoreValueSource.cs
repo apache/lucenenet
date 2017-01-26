@@ -3,6 +3,7 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Expressions
 {
@@ -53,7 +54,7 @@ namespace Lucene.Net.Expressions
 
 		public override int GetHashCode()
 		{
-		    return 777; // LUCENENET TODO: return RuntimeHelpers.GetHashCode(this);
+		    return RuntimeHelpers.GetHashCode(this); // LUCENENET NOTE: This is equivalent to System.identityHashCode(this) in Java
 		}
 
 		public override string GetDescription()
