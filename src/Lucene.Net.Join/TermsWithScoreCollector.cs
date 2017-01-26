@@ -25,14 +25,14 @@ namespace Lucene.Net.Join
 
     internal abstract class TermsWithScoreCollector : ICollector
     {
-        private const int InitialArraySize = 256; // LUCENENET TODO: Rename back to INITIAL_ARRAY_SIZE
+        private const int INITIAL_ARRAY_SIZE = 256;
 
         private readonly string _field;
         private readonly BytesRefHash _collectedTerms = new BytesRefHash();
         private readonly ScoreMode _scoreMode;
 
         private Scorer _scorer;
-        private float[] _scoreSums = new float[InitialArraySize];
+        private float[] _scoreSums = new float[INITIAL_ARRAY_SIZE];
 
         internal TermsWithScoreCollector(string field, ScoreMode scoreMode)
         {
@@ -108,28 +108,28 @@ namespace Lucene.Net.Join
                 switch (scoreMode)
                 {
                     case ScoreMode.Avg:
-                        return new Mv.Avg(field);
+                        return new MV.Avg(field);
                     default:
-                        return new Mv(field, scoreMode);
+                        return new MV(field, scoreMode);
                 }
             }
 
             switch (scoreMode)
             {
                 case ScoreMode.Avg:
-                    return new Sv.Avg(field);
+                    return new SV.Avg(field);
                 default:
-                    return new Sv(field, scoreMode);
+                    return new SV(field, scoreMode);
             }
         }
 
         // impl that works with single value per document
-        internal class Sv : TermsWithScoreCollector // LUCENENET TODO: Rename back to SV
+        internal class SV : TermsWithScoreCollector
         {
             private readonly BytesRef _spare = new BytesRef();
             private BinaryDocValues _fromDocTerms;
 
-            internal Sv(string field, ScoreMode scoreMode) 
+            internal SV(string field, ScoreMode scoreMode) 
                 : base(field, scoreMode)
             {
             }
@@ -178,9 +178,9 @@ namespace Lucene.Net.Join
                 _fromDocTerms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, _field, false);
             }
 
-            internal class Avg : Sv
+            internal class Avg : SV
             {
-                private int[] _scoreCounts = new int[InitialArraySize];
+                private int[] _scoreCounts = new int[INITIAL_ARRAY_SIZE];
 
                 internal Avg(string field) 
                     : base(field, ScoreMode.Avg)
@@ -237,12 +237,12 @@ namespace Lucene.Net.Join
         }
 
         // impl that works with multiple values per document
-        internal class Mv : TermsWithScoreCollector // LUCENENET TODO: Rename MV
+        internal class MV : TermsWithScoreCollector
         {
             private SortedSetDocValues _fromDocTermOrds;
             private readonly BytesRef _scratch = new BytesRef();
 
-            internal Mv(string field, ScoreMode scoreMode) 
+            internal MV(string field, ScoreMode scoreMode) 
                 : base(field, scoreMode)
             {
             }
@@ -285,9 +285,9 @@ namespace Lucene.Net.Join
                 _fromDocTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, _field);
             }
 
-            internal class Avg : Mv
+            internal class Avg : MV
             {
-                private int[] _scoreCounts = new int[InitialArraySize];
+                private int[] _scoreCounts = new int[INITIAL_ARRAY_SIZE];
 
                 internal Avg(string field) 
                     : base(field, ScoreMode.Avg)
