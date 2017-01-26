@@ -89,13 +89,13 @@ namespace Lucene.Net.Store
         ///           if context is <code>null</code> </exception>
         /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
         /// @lucene.experimental </exception>
-        public void SetMaxWriteMBPerSec(double? mbPerSec, IOContext.UsageContext context) // LUCENENET TODO: Can we get rid of the nullables?
+        public void SetMaxWriteMBPerSec(double? mbPerSec, IOContext.UsageContext context)
         {
             EnsureOpen();
-            if (context == null)
-            {
-                throw new System.ArgumentException("Context must not be null");
-            }
+            //if (context == null) // LUCENENET NOTE: enum values can never be null in .NET
+            //{
+            //    throw new System.ArgumentException("Context must not be null");
+            //}
             //int ord = context.ordinal();
             RateLimiter limiter;
             _contextRateLimiters.TryGetValue(context, out limiter);
