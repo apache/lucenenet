@@ -27,9 +27,9 @@ namespace Lucene.Net.Queries.Function.DocValues
     /// </summary>
     public abstract class DoubleDocValues : FunctionValues
     {
-        protected internal readonly ValueSource vs;
+        protected readonly ValueSource vs;
 
-        protected DoubleDocValues(ValueSource vs)
+        public DoubleDocValues(ValueSource vs)
         {
             this.vs = vs;
         }

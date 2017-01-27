@@ -46,10 +46,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
     ///  </seealso>
     public class ReciprocalFloatFunction : ValueSource
     {
-        protected internal readonly ValueSource source;
-        protected internal readonly float m;
-        protected internal readonly float a;
-        protected internal readonly float b;
+        protected readonly ValueSource source;
+        protected readonly float m;
+        protected readonly float a;
+        protected readonly float b;
 
         /// <summary>
         ///  f(source) = a/(m*float(source)+b)

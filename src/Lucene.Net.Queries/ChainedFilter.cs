@@ -39,7 +39,6 @@ namespace Lucene.Net.Queries
     /// </summary>
     public class ChainedFilter : Filter
     {
-
         public const int OR = 0;
         public const int AND = 1;
         public const int ANDNOT = 2;
@@ -200,9 +199,8 @@ namespace Lucene.Net.Queries
             return sb.ToString();
         }
 
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        //ORIGINAL LINE: private void doChain(org.apache.lucene.util.FixedBitSet result, int logic, org.apache.lucene.search.DocIdSet dis) throws java.io.IOException
-        private void doChain(FixedBitSet result, int logic, DocIdSet dis)
+        /// <exception cref="System.IO.IOException"/>
+        private void doChain(FixedBitSet result, int logic, DocIdSet dis) // LUCENENET TODO: Rename DoChain
         {
             if (dis is FixedBitSet)
             {

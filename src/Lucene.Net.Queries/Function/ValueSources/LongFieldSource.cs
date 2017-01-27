@@ -30,7 +30,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class LongFieldSource : FieldCacheSource
     {
-
         protected readonly FieldCache.ILongParser parser;
 
         public LongFieldSource(string field)

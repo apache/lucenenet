@@ -24,14 +24,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public abstract class SingleFunction : ValueSource
     {
-        protected internal readonly ValueSource source;
+        protected readonly ValueSource source;
 
-        protected SingleFunction(ValueSource source)
+        public SingleFunction(ValueSource source)
         {
             this.source = source;
         }
 
-        protected internal abstract string Name { get; }
+        protected abstract string Name { get; }
 
         public override string GetDescription()
         {
@@ -48,7 +48,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as SingleFunction;
             if (other == null)
                 return false;
-            return Name.Equals(other.Name) && source.Equals(other.source);
+            return Name.Equals(other.Name) 
+                && source.Equals(other.source);
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)

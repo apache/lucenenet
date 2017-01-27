@@ -34,7 +34,7 @@ namespace Lucene.Net.Queries.Function
     /// </summary>
     public class FunctionQuery : Query
     {
-        internal readonly ValueSource func;
+        private readonly ValueSource func;
 
         /// <param name="func"> defines the function to be used for scoring </param>
         public FunctionQuery(ValueSource func)
@@ -108,20 +108,19 @@ namespace Lucene.Net.Queries.Function
             }
         }
 
-        protected internal class AllScorer : Scorer
+        protected class AllScorer : Scorer
         {
             private readonly FunctionQuery outerInstance;
 
-            internal readonly IndexReader reader;
-            internal readonly FunctionWeight weight;
-            internal readonly int maxDoc;
-            internal readonly float qWeight;
-            internal int doc = -1;
-            internal readonly FunctionValues vals;
-            internal readonly IBits acceptDocs;
+            private readonly IndexReader reader;
+            private readonly FunctionWeight weight;
+            private readonly int maxDoc;
+            private readonly float qWeight;
+            private int doc = -1;
+            private readonly FunctionValues vals;
+            private readonly IBits acceptDocs;
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: public AllScorer(org.apache.lucene.index.AtomicReaderContext context, org.apache.lucene.util.Bits acceptDocs, FunctionWeight w, float qWeight) throws java.io.IOException
+            /// <exception cref="System.IO.IOException"/>
             public AllScorer(FunctionQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, FunctionWeight w, float qWeight)
                 : base(w)
             {
@@ -224,7 +223,8 @@ namespace Lucene.Net.Queries.Function
             {
                 return false;
             }
-            return Boost == other.Boost && func.Equals(other.func);
+            return Boost == other.Boost 
+                && func.Equals(other.func);
         }
 
         /// <summary>

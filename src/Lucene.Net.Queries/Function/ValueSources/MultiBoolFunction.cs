@@ -32,7 +32,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     {
         protected readonly IList<ValueSource> sources;
 
-        protected MultiBoolFunction(IList<ValueSource> sources)
+        public MultiBoolFunction(IList<ValueSource> sources)
         {
             this.sources = sources;
         }

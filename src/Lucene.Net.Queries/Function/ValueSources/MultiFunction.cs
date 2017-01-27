@@ -28,7 +28,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public abstract class MultiFunction : ValueSource
     {
-        protected internal readonly IList<ValueSource> sources;
+        protected readonly IList<ValueSource> sources;
 
         protected MultiFunction(IList<ValueSource> sources)
         {

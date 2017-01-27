@@ -36,7 +36,6 @@ namespace Lucene.Net.Queries
     /// </summary>
     public class BooleanFilter : Filter, IEnumerable<FilterClause>
     {
-
         private readonly IList<FilterClause> clauses = new List<FilterClause>();
 
         /// <summary>
@@ -190,6 +189,7 @@ namespace Lucene.Net.Queries
             return buffer.Append(')').ToString();
         }
 
+        // LUCENENET specific
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

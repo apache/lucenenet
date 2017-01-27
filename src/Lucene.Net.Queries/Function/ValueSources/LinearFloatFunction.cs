@@ -32,9 +32,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class LinearFloatFunction : ValueSource
     {
-        protected internal readonly ValueSource source;
-        protected internal readonly float slope;
-        protected internal readonly float intercept;
+        protected readonly ValueSource source;
+        protected readonly float slope;
+        protected readonly float intercept;
 
         public LinearFloatFunction(ValueSource source, float slope, float intercept)
         {

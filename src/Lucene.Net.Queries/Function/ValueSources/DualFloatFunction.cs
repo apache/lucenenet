@@ -28,12 +28,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public abstract class DualFloatFunction : ValueSource
     {
-        protected internal readonly ValueSource a;
-        protected internal readonly ValueSource b;
+        protected readonly ValueSource a;
+        protected readonly ValueSource b;
 
         /// <param name="a">  the base. </param>
         /// <param name="b">  the exponent. </param>
-        protected DualFloatFunction(ValueSource a, ValueSource b)
+        public DualFloatFunction(ValueSource a, ValueSource b)
         {
             this.a = a;
             this.b = b;

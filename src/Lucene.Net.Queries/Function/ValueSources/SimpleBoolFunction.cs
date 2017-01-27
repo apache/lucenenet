@@ -30,9 +30,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public abstract class SimpleBoolFunction : BoolFunction
     {
-        protected internal readonly ValueSource source;
+        protected readonly ValueSource source;
 
-        protected SimpleBoolFunction(ValueSource source)
+        public SimpleBoolFunction(ValueSource source)
         {
             this.source = source;
         }

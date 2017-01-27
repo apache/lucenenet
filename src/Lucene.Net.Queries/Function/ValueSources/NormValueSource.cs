@@ -33,7 +33,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class NormValueSource : ValueSource
     {
-        protected internal readonly string field;
+        protected readonly string field;
 
         public NormValueSource(string field)
         {

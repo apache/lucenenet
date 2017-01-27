@@ -26,7 +26,6 @@ namespace Lucene.Net.Queries
     /// </summary>
     public sealed class TermFilter : Filter
     {
-
         private readonly Term term;
 
         /// <param name="term"> The term documents need to have in order to be a match for this filter. </param>

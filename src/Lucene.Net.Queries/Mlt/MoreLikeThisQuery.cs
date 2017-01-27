@@ -35,7 +35,15 @@ namespace Lucene.Net.Queries.Mlt
     /// </summary>
     public class MoreLikeThisQuery : Query
     {
+        private string likeText;
+        private string[] moreLikeFields;
+        private Analyzer analyzer;
         private readonly string fieldName;
+        private float percentTermsToMatch = 0.3f;
+        private int minTermFrequency = 1;
+        private int maxQueryTerms = 5;
+        private ISet<string> stopWords = null;
+        private int minDocFreq = -1;
 
         /// <param name="moreLikeFields"> fields used for similarity measure </param>
         public MoreLikeThisQuery(string likeText, string[] moreLikeFields, Analyzer analyzer, string fieldName)
@@ -44,28 +52,27 @@ namespace Lucene.Net.Queries.Mlt
             this.MoreLikeFields = moreLikeFields;
             this.Analyzer = analyzer;
             this.fieldName = fieldName;
-            StopWords = null;
-
-            PercentTermsToMatch = 0.3f;
-            MinTermFrequency = 1;
-            MaxQueryTerms = 5;
-            MinDocFreq = -1;
         }
 
         public override Query Rewrite(IndexReader reader)
         {
-            var mlt = new MoreLikeThis(reader) { FieldNames = MoreLikeFields, Analyzer = Analyzer, MinTermFreq = MinTermFrequency };
+            var mlt = new MoreLikeThis(reader)
+            {
+                FieldNames = moreLikeFields,
+                Analyzer = analyzer,
+                MinTermFreq = minTermFrequency
+            };
 
             if (MinDocFreq >= 0)
             {
-                mlt.MinDocFreq = MinDocFreq;
+                mlt.MinDocFreq = minDocFreq;
             }
-            mlt.MaxQueryTerms = MaxQueryTerms;
-            mlt.StopWords = StopWords;
-            var bq = (BooleanQuery)mlt.Like(new StringReader(LikeText), fieldName);
+            mlt.MaxQueryTerms = maxQueryTerms;
+            mlt.StopWords = stopWords;
+            var bq = (BooleanQuery)mlt.Like(new StringReader(likeText), fieldName);
             var clauses = bq.GetClauses();
             //make at least half the terms match
-            bq.MinimumNumberShouldMatch = (int)(clauses.Length * PercentTermsToMatch);
+            bq.MinimumNumberShouldMatch = (int)(clauses.Length * percentTermsToMatch);
             return bq;
         }
 
@@ -77,35 +84,68 @@ namespace Lucene.Net.Queries.Mlt
             return "like:" + LikeText;
         }
 
-        public float PercentTermsToMatch { get; set; }
+        public virtual float PercentTermsToMatch
+        {
+            get { return percentTermsToMatch; }
+            set { percentTermsToMatch = value; }
+        }
 
-        public Analyzer Analyzer { get; set; }
+        public virtual Analyzer Analyzer
+        {
+            get { return analyzer; }
+            set { analyzer = value; }
+        }
 
-        public string LikeText { get; set; }
+        public virtual string LikeText
+        {
+            get { return likeText; }
+            set { likeText = value; }
+        }
 
-        public int MaxQueryTerms { get; set; }
+        public virtual int MaxQueryTerms
+        {
+            get { return maxQueryTerms; }
+            set { maxQueryTerms = value; }
+        }
 
-        public int MinTermFrequency { get; set; }
+        public virtual int MinTermFrequency
+        {
+            get { return minTermFrequency; }
+            set { minTermFrequency = value; }
+        }
 
-        public string[] MoreLikeFields { get; set; }
+        [WritableArray]
+        public virtual string[] MoreLikeFields
+        {
+            get { return moreLikeFields; }
+            set { moreLikeFields = value; }
+        }
 
-        public ISet<string> StopWords { get; set; }
+        public virtual ISet<string> StopWords
+        {
+            get { return stopWords; }
+            set { stopWords = value; }
+        }
 
-        public int MinDocFreq { get; set; }
+        public virtual int MinDocFreq
+        {
+            get { return minDocFreq; }
+            set { minDocFreq = value; }
+        }
 
         public override int GetHashCode()
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + ((Analyzer == null) ? 0 : Analyzer.GetHashCode());
+            result = prime * result + ((analyzer == null) ? 0 : analyzer.GetHashCode());
             result = prime * result + ((fieldName == null) ? 0 : fieldName.GetHashCode());
-            result = prime * result + ((LikeText == null) ? 0 : LikeText.GetHashCode());
-            result = prime * result + MaxQueryTerms;
-            result = prime * result + MinDocFreq;
-            result = prime * result + MinTermFrequency;
-            result = prime * result + Arrays.GetHashCode(MoreLikeFields);
-            result = prime * result + Number.FloatToIntBits(PercentTermsToMatch);
-            result = prime * result + ((StopWords == null) ? 0 : StopWords.GetHashCode());
+            result = prime * result + ((likeText == null) ? 0 : likeText.GetHashCode());
+            result = prime * result + maxQueryTerms;
+            result = prime * result + minDocFreq;
+            result = prime * result + minTermFrequency;
+            result = prime * result + Arrays.GetHashCode(moreLikeFields);
+            result = prime * result + Number.FloatToIntBits(percentTermsToMatch);
+            result = prime * result + ((stopWords == null) ? 0 : stopWords.GetValueHashCode());
             return result;
         }
 
@@ -124,14 +164,14 @@ namespace Lucene.Net.Queries.Mlt
                 return false;
             }
             var other = (MoreLikeThisQuery)obj;
-            if (Analyzer == null)
+            if (analyzer == null)
             {
-                if (other.Analyzer != null)
+                if (other.analyzer != null)
                 {
                     return false;
                 }
             }
-            else if (!Analyzer.Equals(other.Analyzer))
+            else if (!analyzer.Equals(other.analyzer))
             {
                 return false;
             }
@@ -146,45 +186,45 @@ namespace Lucene.Net.Queries.Mlt
             {
                 return false;
             }
-            if (LikeText == null)
+            if (likeText == null)
             {
-                if (other.LikeText != null)
+                if (other.likeText != null)
                 {
                     return false;
                 }
             }
-            else if (!LikeText.Equals(other.LikeText))
+            else if (!likeText.Equals(other.likeText))
             {
                 return false;
             }
-            if (MaxQueryTerms != other.MaxQueryTerms)
+            if (maxQueryTerms != other.maxQueryTerms)
             {
                 return false;
             }
-            if (MinDocFreq != other.MinDocFreq)
+            if (minDocFreq != other.minDocFreq)
             {
                 return false;
             }
-            if (MinTermFrequency != other.MinTermFrequency)
+            if (minTermFrequency != other.minTermFrequency)
             {
                 return false;
             }
-            if (!Arrays.Equals(MoreLikeFields, other.MoreLikeFields))
+            if (!Arrays.Equals(moreLikeFields, other.moreLikeFields))
             {
                 return false;
             }
-            if (Number.FloatToIntBits(PercentTermsToMatch) != Number.FloatToIntBits(other.PercentTermsToMatch))
+            if (Number.FloatToIntBits(percentTermsToMatch) != Number.FloatToIntBits(other.percentTermsToMatch))
             {
                 return false;
             }
-            if (StopWords == null)
+            if (stopWords == null)
             {
-                if (other.StopWords != null)
+                if (other.stopWords != null)
                 {
                     return false;
                 }
             }
-            else if (!StopWords.Equals(other.StopWords))
+            else if (!stopWords.Equals(other.stopWords))
             {
                 return false;
             }

@@ -25,9 +25,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public abstract class ConstNumberSource : ValueSource
     {
-        public abstract int Int { get; }
-        public abstract long Long { get; }
-        public abstract float Float { get; }
+        public abstract int Int { get; } // LUCENENET TODO: Rename Int32?
+        public abstract long Long { get; } // LUCENENET TODO: Rename Int64?
+        public abstract float Float { get; } // LUCENENET TODO: Rename Single?
         public abstract double Double { get; }
         //public abstract Number Number { get; }
         public abstract bool Bool { get; }

@@ -130,5 +130,4 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return h;
         }
     }
-
 }

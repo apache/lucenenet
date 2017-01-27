@@ -30,7 +30,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class IntFieldSource : FieldCacheSource
     {
-        internal readonly FieldCache.IIntParser parser;
+        private readonly FieldCache.IIntParser parser;
 
         public IntFieldSource(string field)
             : this(field, null)

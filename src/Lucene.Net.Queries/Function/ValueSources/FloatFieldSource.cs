@@ -30,7 +30,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     public class FloatFieldSource : FieldCacheSource
     {
 
-        protected internal readonly FieldCache.IFloatParser parser;
+        protected readonly FieldCache.IFloatParser parser;
 
         public FloatFieldSource(string field)
             : this(field, null)

@@ -122,7 +122,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as RangeMapFloatFunction;
             if (other == null)
                 return false;
-            return this.min == other.min && this.max == other.max && this.target.Equals(other.target) && this.source.Equals(other.source) && (this.defaultVal == other.defaultVal || (this.defaultVal != null && this.defaultVal.Equals(other.defaultVal)));
+            return this.min == other.min 
+                && this.max == other.max 
+                && this.target.Equals(other.target) 
+                && this.source.Equals(other.source) 
+                && (this.defaultVal == other.defaultVal || (this.defaultVal != null && this.defaultVal.Equals(other.defaultVal)));
         }
     }
 }

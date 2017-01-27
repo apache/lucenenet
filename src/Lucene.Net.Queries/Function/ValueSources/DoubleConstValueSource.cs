@@ -26,7 +26,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class DoubleConstValueSource : ConstNumberSource
     {
-        internal readonly double constant;
+        private readonly double constant;
         private readonly float fv;
         private readonly long lv;
 
@@ -140,6 +140,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return constant;
             }
         }
+
+        // LUCENENET NOTE: getNumber() not supported
 
         public override bool Bool
         {

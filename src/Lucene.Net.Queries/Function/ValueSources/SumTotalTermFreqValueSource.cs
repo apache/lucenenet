@@ -30,7 +30,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class SumTotalTermFreqValueSource : ValueSource
     {
-        protected internal readonly string indexedField;
+        protected readonly string indexedField;
 
         public SumTotalTermFreqValueSource(string indexedField)
         {

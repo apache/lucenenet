@@ -31,7 +31,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     [Obsolete]
     public class ShortFieldSource : FieldCacheSource
     {
-        readonly FieldCache.IShortParser parser;
+        private readonly FieldCache.IShortParser parser;
 
         public ShortFieldSource(string field)
             : this(field, null)
@@ -105,7 +105,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return outerInstance.GetDescription() + '=' + ShortVal(doc);
             }
-
         }
 
         public override bool Equals(object o)
@@ -113,7 +112,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as ShortFieldSource;
             if (other == null)
                 return false;
-            return base.Equals(other) && (parser == null ? other.parser == null : parser.GetType() == other.parser.GetType());
+            return base.Equals(other) 
+                && (parser == null ? other.parser == null : 
+                parser.GetType() == other.parser.GetType());
         }
 
         public override int GetHashCode()

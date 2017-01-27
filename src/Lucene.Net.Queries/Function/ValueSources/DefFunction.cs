@@ -126,6 +126,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 // return true if any source is exists?
                 return valsArr.Any(vals => vals.Exists(doc));
             }
+
+            public override AbstractValueFiller ValueFiller
+            {
+                get
+                {
+                    // TODO: need ValueSource.type() to determine correct type
+                    return base.ValueFiller;
+                }
+            }
         }
     }
 }

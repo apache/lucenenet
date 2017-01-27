@@ -30,9 +30,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public abstract class MultiFloatFunction : ValueSource
     {
-        protected internal readonly ValueSource[] sources;
+        protected readonly ValueSource[] sources;
 
-        protected MultiFloatFunction(ValueSource[] sources)
+        public MultiFloatFunction(ValueSource[] sources)
         {
             this.sources = sources;
         }

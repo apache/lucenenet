@@ -27,7 +27,6 @@ namespace Lucene.Net.Queries
     /// </summary>
     public sealed class FilterClause
     {
-
         private readonly Occur occur;
         private readonly Filter filter;
 
@@ -75,7 +74,8 @@ namespace Lucene.Net.Queries
             {
                 return false;
             }
-            return this.filter.Equals(other.filter) && this.occur == other.occur;
+            return this.filter.Equals(other.filter) 
+                && this.occur == other.occur;
         }
 
         public override int GetHashCode()

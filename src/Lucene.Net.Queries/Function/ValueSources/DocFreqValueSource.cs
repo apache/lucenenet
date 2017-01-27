@@ -122,10 +122,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class DocFreqValueSource : ValueSource
     {
-        protected internal readonly string field;
-        protected internal readonly string indexedField;
-        protected internal readonly string val;
-        protected internal readonly BytesRef indexedBytes;
+        protected readonly string field;
+        protected readonly string indexedField;
+        protected readonly string val;
+        protected readonly BytesRef indexedBytes;
 
         public DocFreqValueSource(string field, string val, string indexedField, BytesRef indexedBytes)
         {

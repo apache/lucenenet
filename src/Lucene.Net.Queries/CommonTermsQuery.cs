@@ -61,14 +61,15 @@ namespace Lucene.Net.Queries
          * rewrite to dismax rather than boolean. Yet, this can already be subclassed
          * to do so.
          */
-        protected internal readonly IList<Term> terms = new List<Term>();
-        protected internal readonly bool disableCoord;
-        protected internal readonly float maxTermFrequency;
-        protected internal readonly Occur lowFreqOccur;
-        protected internal readonly Occur highFreqOccur;
-        protected internal float lowFreqBoost = 1.0f;
-        protected internal float highFreqBoost = 1.0f;
-
+        protected readonly IList<Term> terms = new List<Term>();
+        protected readonly bool disableCoord;
+        protected readonly float maxTermFrequency;
+        protected readonly Occur lowFreqOccur;
+        protected readonly Occur highFreqOccur;
+        protected float lowFreqBoost = 1.0f;
+        protected float highFreqBoost = 1.0f;
+        protected float lowFreqMinNrShouldMatch = 0;
+        protected float highFreqMinNrShouldMatch = 0;
 
         /// <summary>
         /// Creates a new <seealso cref="CommonTermsQuery"/>
@@ -121,8 +122,6 @@ namespace Lucene.Net.Queries
             this.highFreqOccur = highFreqOccur;
             this.lowFreqOccur = lowFreqOccur;
             this.maxTermFrequency = maxTermFrequency;
-            LowFreqMinimumNumberShouldMatch = 0;
-            HighFreqMinimumNumberShouldMatch = 0;
         }
 
         /// <summary>
@@ -159,14 +158,14 @@ namespace Lucene.Net.Queries
             return BuildQuery(maxDoc, contextArray, queryTerms);
         }
 
-        protected internal virtual int CalcLowFreqMinimumNumberShouldMatch(int numOptional)
+        protected virtual int CalcLowFreqMinimumNumberShouldMatch(int numOptional)
         {
-            return MinNrShouldMatch(LowFreqMinimumNumberShouldMatch, numOptional);
+            return MinNrShouldMatch(lowFreqMinNrShouldMatch, numOptional);
         }
 
-        protected internal virtual int CalcHighFreqMinimumNumberShouldMatch(int numOptional)
+        protected virtual int CalcHighFreqMinimumNumberShouldMatch(int numOptional)
         {
-            return MinNrShouldMatch(HighFreqMinimumNumberShouldMatch, numOptional);
+            return MinNrShouldMatch(highFreqMinNrShouldMatch, numOptional);
         }
 
         private int MinNrShouldMatch(float minNrShouldMatch, int numOptional)
@@ -178,7 +177,7 @@ namespace Lucene.Net.Queries
             return (int)Math.Round(minNrShouldMatch * numOptional);
         }
 
-        protected internal virtual Query BuildQuery(int maxDoc, TermContext[] contextArray, Term[] queryTerms)
+        protected virtual Query BuildQuery(int maxDoc, TermContext[] contextArray, Term[] queryTerms)
         {
             var lowFreq = new BooleanQuery(disableCoord);
             var highFreq = new BooleanQuery(disableCoord) { Boost = highFreqBoost };
@@ -297,7 +296,7 @@ namespace Lucene.Net.Queries
         /// for the high and low frequency query instance. The top level query will
         /// always disable coords.
         /// </summary>
-        public virtual bool CoordDisabled
+        public virtual bool CoordDisabled // LUCENENET TODO: Rename IsCoordDisabled
         {
             get
             {
@@ -320,7 +319,11 @@ namespace Lucene.Net.Queries
         /// </summary>
         /// <param name="min">
         ///          the number of optional clauses that must match </param>
-        public float LowFreqMinimumNumberShouldMatch { get; set; }
+        public virtual float LowFreqMinimumNumberShouldMatch
+        {
+            get { return lowFreqMinNrShouldMatch; }
+            set { lowFreqMinNrShouldMatch = value; }
+        }
 
 
         /// <summary>
@@ -338,7 +341,11 @@ namespace Lucene.Net.Queries
         /// </summary>
         /// <param name="min">
         ///          the number of optional clauses that must match </param>
-        public float HighFreqMinimumNumberShouldMatch { get; set; }
+        public virtual float HighFreqMinimumNumberShouldMatch
+        {
+            get { return highFreqMinNrShouldMatch; }
+            set { highFreqMinNrShouldMatch = value; }
+        }
 
 
         public override void ExtractTerms(ISet<Term> terms)
@@ -393,8 +400,8 @@ namespace Lucene.Net.Queries
             result = prime * result + Number.FloatToIntBits(lowFreqBoost);
             result = prime * result + /*((lowFreqOccur == null) ? 0 :*/ lowFreqOccur.GetHashCode()/*)*/;
             result = prime * result + Number.FloatToIntBits(maxTermFrequency);
-            result = prime * result + Number.FloatToIntBits(LowFreqMinimumNumberShouldMatch);
-            result = prime * result + Number.FloatToIntBits(HighFreqMinimumNumberShouldMatch);
+            result = prime * result + Number.FloatToIntBits(lowFreqMinNrShouldMatch);
+            result = prime * result + Number.FloatToIntBits(highFreqMinNrShouldMatch);
             result = prime * result + ((terms == null) ? 0 : terms.GetValueHashCode());
             return result;
         }
@@ -438,11 +445,11 @@ namespace Lucene.Net.Queries
             {
                 return false;
             }
-            if (LowFreqMinimumNumberShouldMatch != other.LowFreqMinimumNumberShouldMatch)
+            if (lowFreqMinNrShouldMatch != other.lowFreqMinNrShouldMatch)
             {
                 return false;
             }
-            if (HighFreqMinimumNumberShouldMatch != other.HighFreqMinimumNumberShouldMatch)
+            if (highFreqMinNrShouldMatch != other.highFreqMinNrShouldMatch)
             {
                 return false;
             }

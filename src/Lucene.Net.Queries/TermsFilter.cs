@@ -35,7 +35,6 @@ namespace Lucene.Net.Queries
     /// </summary>
     public sealed class TermsFilter : Filter
     {
-
         /*
          * this class is often used for large number of terms in a single field.
          * to optimize for this case and to be filter-cache friendly we 
@@ -218,7 +217,6 @@ namespace Lucene.Net.Queries
             this.termsBytes = ArrayUtil.Shrink(serializedTerms, lastEndOffset);
             this.termsAndFields = termsAndFields.ToArray();
             this.hashCode_Renamed = hash;
-
         }
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
@@ -394,11 +392,11 @@ namespace Lucene.Net.Queries
 
             public abstract BytesRef Next();
 
-            protected FieldAndTermEnum()
+            public FieldAndTermEnum()
             {
             }
 
-            protected FieldAndTermEnum(string field)
+            public FieldAndTermEnum(string field)
             {
                 this.field = field;
             }

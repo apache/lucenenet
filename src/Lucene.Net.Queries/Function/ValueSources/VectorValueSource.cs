@@ -29,7 +29,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     //Not crazy about the name, but...
     public class VectorValueSource : MultiValueSource
     {
-        protected internal readonly IList<ValueSource> sources;
+        protected readonly IList<ValueSource> sources;
 
 
         public VectorValueSource(IList<ValueSource> sources)

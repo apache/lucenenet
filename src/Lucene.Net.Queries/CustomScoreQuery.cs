@@ -38,8 +38,7 @@ namespace Lucene.Net.Queries
     /// </summary>
     public class CustomScoreQuery : Query
     {
-
-        internal Query subQuery;
+        private Query subQuery;
         private Query[] scoringQueries; // never null (empty array if there are no valSrcQueries).
         private bool strict = false; // if true, valueSource part of query does not take part in weights normalization.
 
@@ -181,7 +180,7 @@ namespace Lucene.Net.Queries
         /// implementation as specified in the docs of <seealso cref="CustomScoreProvider"/>.
         /// @since 2.9.2
         /// </summary>
-        protected internal virtual CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context)
+        protected virtual CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context)
         {
             return new CustomScoreProvider(context);
         }
@@ -280,7 +279,7 @@ namespace Lucene.Net.Queries
                 return explain ?? new Explanation(0.0f, "no matching docs");
             }
 
-            internal virtual Explanation DoExplain(AtomicReaderContext info, int doc)
+            private Explanation DoExplain(AtomicReaderContext info, int doc)
             {
                 var subQueryExpl = subQueryWeight.Explain(info, doc);
                 if (!subQueryExpl.IsMatch)
@@ -410,7 +409,7 @@ namespace Lucene.Net.Queries
         /// <P>
         /// Note: only has effect when the <seealso cref="ValueSource"/> part is not null.
         /// </summary>
-        public virtual bool Strict { get; set; }
+        public virtual bool Strict { get; set; } // LUCENENET TODO: Rename IsStrict
 
 
         /// <summary>
@@ -422,6 +421,7 @@ namespace Lucene.Net.Queries
 
         /// <summary>
         /// The scoring queries that only affect the score of CustomScoreQuery. </summary>
+        [WritableArray]
         public virtual Query[] ScoringQueries
         {
             get { return scoringQueries; }
@@ -434,6 +434,5 @@ namespace Lucene.Net.Queries
         {
             get { return "custom"; }
         }
-
     }
 }

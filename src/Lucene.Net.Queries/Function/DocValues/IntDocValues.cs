@@ -27,7 +27,7 @@ namespace Lucene.Net.Queries.Function.DocValues
     /// </summary>
     public abstract class IntDocValues : FunctionValues
     {
-        protected internal readonly ValueSource vs;
+        protected readonly ValueSource vs;
 
         public IntDocValues(ValueSource vs)
         {
@@ -173,5 +173,4 @@ namespace Lucene.Net.Queries.Function.DocValues
             }
         }
     }
-
 }

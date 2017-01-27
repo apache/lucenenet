@@ -39,28 +39,27 @@ namespace Lucene.Net.Queries.Function
     //   want the Query carrying around big objects
     public abstract class FunctionValues
     {
-
         public virtual sbyte ByteVal(int doc)
         {
             throw new System.NotSupportedException();
         }
 
-        public virtual short ShortVal(int doc)
+        public virtual short ShortVal(int doc) // LUCENENET TODO: Rename Int16Val ?
         {
             throw new System.NotSupportedException();
         }
 
-        public virtual float FloatVal(int doc)
+        public virtual float FloatVal(int doc) // LUCENENET TODO: Rename SingleVal ?
         {
             throw new System.NotSupportedException();
         }
 
-        public virtual int IntVal(int doc)
+        public virtual int IntVal(int doc) // LUCENENET TODO: Rename Int32Val ?
         {
             throw new System.NotSupportedException();
         }
 
-        public virtual long LongVal(int doc)
+        public virtual long LongVal(int doc) // LUCENENET TODO: Rename Int64Val ?
         {
             throw new System.NotSupportedException();
         }
@@ -96,7 +95,7 @@ namespace Lucene.Net.Queries.Function
         }
 
         /// <summary>
-        /// Native Java Object representation of the value </summary>
+        /// Native Object representation of the value </summary>
         public virtual object ObjectVal(int doc)
         {
             // most FunctionValues are functions, so by default return a Float()
@@ -119,7 +118,7 @@ namespace Lucene.Net.Queries.Function
         }
 
         /// <returns> the number of unique sort ordinals this instance has </returns>
-        public virtual int NumOrd()
+        public virtual int NumOrd() // LUCENENET TODO: Make property ?
         {
             throw new System.NotSupportedException();
         }
@@ -134,7 +133,7 @@ namespace Lucene.Net.Queries.Function
         /// 
         /// @lucene.experimental
         /// </summary>
-        public abstract class AbstractValueFiller
+        public abstract class AbstractValueFiller // LUCENENET TODO: Rename ValueFiller (after renaming property ValueFiller)
         {
             /// <summary>
             /// MutableValue will be reused across calls </summary>
@@ -147,7 +146,7 @@ namespace Lucene.Net.Queries.Function
 
         /// <summary>
         /// @lucene.experimental </summary>
-        public virtual AbstractValueFiller ValueFiller
+        public virtual AbstractValueFiller ValueFiller // LUCENENET TODO: Make GetValueFiller() (returns new object)
         {
             get { return new ValueFillerAnonymousInnerClassHelper(this); }
         }
@@ -181,22 +180,22 @@ namespace Lucene.Net.Queries.Function
             throw new System.NotSupportedException();
         }
 
-        public virtual void ShortVal(int doc, short[] vals)
+        public virtual void ShortVal(int doc, short[] vals) // LUCENENET TODO: Rename Int16Val ?
         {
             throw new System.NotSupportedException();
         }
 
-        public virtual void FloatVal(int doc, float[] vals)
+        public virtual void FloatVal(int doc, float[] vals) // LUCENENET TODO: Rename SingleVal ?
         {
             throw new System.NotSupportedException();
         }
 
-        public virtual void IntVal(int doc, int[] vals)
+        public virtual void IntVal(int doc, int[] vals) // LUCENENET TODO: Rename Int32Val ?
         {
             throw new System.NotSupportedException();
         }
 
-        public virtual void LongVal(int doc, long[] vals)
+        public virtual void LongVal(int doc, long[] vals) // LUCENENET TODO: Rename Int64Val ?
         {
             throw new System.NotSupportedException();
         }

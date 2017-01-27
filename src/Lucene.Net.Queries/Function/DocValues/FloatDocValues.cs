@@ -26,7 +26,7 @@ namespace Lucene.Net.Queries.Function.DocValues
     /// </summary>
     public abstract class FloatDocValues : FunctionValues
     {
-        protected internal readonly ValueSource vs;
+        protected readonly ValueSource vs;
 
         public FloatDocValues(ValueSource vs)
         {

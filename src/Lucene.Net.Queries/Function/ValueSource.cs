@@ -33,7 +33,6 @@ namespace Lucene.Net.Queries.Function
     /// </summary>
     public abstract class ValueSource
     {
-
         /// <summary>
         /// Gets the values for this reader and the context that was previously
         /// passed to CreateWeight()
@@ -116,7 +115,7 @@ namespace Lucene.Net.Queries.Function
         {
             private readonly ValueSource outerInstance;
 
-            internal readonly IDictionary context;
+            private readonly IDictionary context;
 
             public ValueSourceComparerSource(ValueSource outerInstance, IDictionary context)
             {
@@ -139,11 +138,11 @@ namespace Lucene.Net.Queries.Function
         {
             private readonly ValueSource outerInstance;
 
-            internal readonly double[] values;
-            internal FunctionValues docVals;
-            internal double bottom;
-            internal readonly IDictionary fcontext;
-            internal double topValue;
+            private readonly double[] values;
+            private FunctionValues docVals;
+            private double bottom;
+            private readonly IDictionary fcontext;
+            private double topValue;
 
             internal ValueSourceComparer(ValueSource outerInstance, IDictionary fcontext, int numHits)
             {

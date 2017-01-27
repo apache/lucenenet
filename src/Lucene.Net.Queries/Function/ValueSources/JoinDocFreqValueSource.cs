@@ -31,10 +31,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class JoinDocFreqValueSource : FieldCacheSource
     {
-
         public const string NAME = "joindf";
 
-        protected internal readonly string qfield;
+        protected readonly string qfield;
 
         public JoinDocFreqValueSource(string field, string qfield)
             : base(field)

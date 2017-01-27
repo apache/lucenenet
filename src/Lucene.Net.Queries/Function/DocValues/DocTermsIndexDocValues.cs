@@ -28,13 +28,13 @@ namespace Lucene.Net.Queries.Function.DocValues
     /// </summary>
     public abstract class DocTermsIndexDocValues : FunctionValues
     {
-        protected internal readonly SortedDocValues termsIndex;
-        protected internal readonly ValueSource vs;
-        protected internal readonly MutableValueStr val = new MutableValueStr();
-        protected internal readonly BytesRef spare = new BytesRef();
-        protected internal readonly CharsRef spareChars = new CharsRef();
+        protected readonly SortedDocValues termsIndex;
+        protected readonly ValueSource vs;
+        protected readonly MutableValueStr val = new MutableValueStr();
+        protected readonly BytesRef spare = new BytesRef();
+        protected readonly CharsRef spareChars = new CharsRef();
 
-        protected DocTermsIndexDocValues(ValueSource vs, AtomicReaderContext context, string field)
+        public DocTermsIndexDocValues(ValueSource vs, AtomicReaderContext context, string field)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace Lucene.Net.Queries.Function.DocValues
             this.vs = vs;
         }
 
-        protected internal abstract string toTerm(string readableValue);
+        protected abstract string toTerm(string readableValue); // LUCENENET TODO: Rename ToTerm(string readableValue)
 
         public override bool Exists(int doc)
         {
@@ -59,7 +59,7 @@ namespace Lucene.Net.Queries.Function.DocValues
             return termsIndex.GetOrd(doc);
         }
 
-        public override int NumOrd()
+        public override int NumOrd() // LUCENENET TODO: Make property
         {
             return termsIndex.ValueCount;
         }
@@ -204,6 +204,10 @@ namespace Lucene.Net.Queries.Function.DocValues
         /// <summary>
         /// Custom Exception to be thrown when the DocTermsIndex for a field cannot be generated
         /// </summary>
+        // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
         public sealed class DocTermsIndexException : Exception
         {
             public DocTermsIndexException(string fieldName, Exception cause)

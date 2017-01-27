@@ -27,9 +27,9 @@ namespace Lucene.Net.Queries.Function.DocValues
     /// </summary>
     public abstract class LongDocValues : FunctionValues
     {
-        protected internal readonly ValueSource vs;
+        protected readonly ValueSource vs;
 
-        protected LongDocValues(ValueSource vs)
+        public LongDocValues(ValueSource vs)
         {
             this.vs = vs;
         }
@@ -183,5 +183,4 @@ namespace Lucene.Net.Queries.Function.DocValues
             }
         }
     }
-
 }

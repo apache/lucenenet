@@ -34,11 +34,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class EnumFieldSource : FieldCacheSource
     {
-        internal const int DEFAULT_VALUE = -1;
+        private const int DEFAULT_VALUE = -1;
 
-        internal readonly FieldCache.IIntParser parser;
-        internal readonly IDictionary<int?, string> enumIntToStringMap;
-        internal readonly IDictionary<string, int?> enumStringToIntMap;
+        private readonly FieldCache.IIntParser parser;
+        private readonly IDictionary<int?, string> enumIntToStringMap;
+        private readonly IDictionary<string, int?> enumStringToIntMap;
 
         public EnumFieldSource(string field, FieldCache.IIntParser parser, IDictionary<int?, string> enumIntToStringMap, IDictionary<string, int?> enumStringToIntMap)
             : base(field)
@@ -48,7 +48,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.enumStringToIntMap = enumStringToIntMap;
         }
 
-        private static int? TryParseInt(string valueStr)
+        private static int? TryParseInt(string valueStr) // LUCENENET TODO: Rename TryParseInt32 ?
         {
             int? intValue = null;
             try
@@ -61,7 +61,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return intValue;
         }
 
-        private string IntValueToStringValue(int? intVal)
+        private string IntValueToStringValue(int? intVal) // LUCENENET TODO: Rename Int32ToStringValue ?
         {
             if (intVal == null)
             {
@@ -77,7 +77,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return DEFAULT_VALUE.ToString(CultureInfo.InvariantCulture);
         }
 
-        private int? StringValueToIntValue(string stringVal)
+        private int? StringValueToIntValue(string stringVal) // LUCENENET TODO: Rename StringValueToInt32Value ?
         {
             if (stringVal == null)
             {

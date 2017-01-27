@@ -38,9 +38,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class ScaleFloatFunction : ValueSource
     {
-        protected internal readonly ValueSource source;
-        protected internal readonly float min;
-        protected internal readonly float max;
+        protected readonly ValueSource source;
+        protected readonly float min;
+        protected readonly float max;
 
         public ScaleFloatFunction(ValueSource source, float min, float max)
         {
@@ -56,8 +56,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         private class ScaleInfo
         {
-            internal float minVal;
-            internal float maxVal;
+            internal float minVal; // LUCENENET TODO: Make property
+            internal float maxVal; // LUCENENET TODO: Make property
         }
 
         private ScaleInfo CreateScaleInfo(IDictionary context, AtomicReaderContext readerContext)
@@ -169,7 +169,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as ScaleFloatFunction;
             if (other == null)
                 return false;
-            return this.min == other.min && this.max == other.max && this.source.Equals(other.source);
+            return this.min == other.min 
+                && this.max == other.max 
+                && this.source.Equals(other.source);
         }
     }
 }

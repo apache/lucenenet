@@ -23,6 +23,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Similarities;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Reader = System.IO.TextReader;
 
@@ -131,21 +132,21 @@ namespace Lucene.Net.Queries.Mlt
         /// Default maximum number of tokens to parse in each example doc field that is not stored with TermVector support.
         /// </summary>
         /// <seealso cref= #getMaxNumTokensParsed </seealso>
-        public const int DEFAULT_MAX_NUM_TOKENS_PARSED = 5000;
+        public static readonly int DEFAULT_MAX_NUM_TOKENS_PARSED = 5000;
 
         /// <summary>
         /// Ignore terms with less than this frequency in the source doc.
         /// </summary>
         /// <seealso cref= #getMinTermFreq </seealso>
         /// <seealso cref= #setMinTermFreq </seealso>
-        public const int DEFAULT_MIN_TERM_FREQ = 2;
+        public static readonly int DEFAULT_MIN_TERM_FREQ = 2;
 
         /// <summary>
         /// Ignore words which do not occur in at least this many docs.
         /// </summary>
         /// <seealso cref= #getMinDocFreq </seealso>
         /// <seealso cref= #setMinDocFreq </seealso>
-        public const int DEFAULT_MIN_DOC_FREQ = 5;
+        public static readonly int DEFAULT_MIN_DOC_FREQ = 5;
 
         /// <summary>
         /// Ignore words which occur in more than this many docs.
@@ -160,7 +161,7 @@ namespace Lucene.Net.Queries.Mlt
         /// </summary>
         /// <seealso cref= #isBoost </seealso>
         /// <seealso cref= #setBoost </seealso>
-        public const bool DEFAULT_BOOST = false;
+        public static readonly bool DEFAULT_BOOST = false;
 
         /// <summary>
         /// Default field names. Null is used to specify that the field names should be looked
@@ -173,14 +174,14 @@ namespace Lucene.Net.Queries.Mlt
         /// </summary>
         /// <seealso cref= #getMinWordLen </seealso>
         /// <seealso cref= #setMinWordLen </seealso>
-        public const int DEFAULT_MIN_WORD_LENGTH = 0;
+        public static readonly int DEFAULT_MIN_WORD_LENGTH = 0;
 
         /// <summary>
         /// Ignore words greater than this length or if 0 then this has no effect.
         /// </summary>
         /// <seealso cref= #getMaxWordLen </seealso>
         /// <seealso cref= #setMaxWordLen </seealso>
-        public const int DEFAULT_MAX_WORD_LENGTH = 0;
+        public static readonly int DEFAULT_MAX_WORD_LENGTH = 0;
 
         /// <summary>
         /// Default set of stopwords.
@@ -188,7 +189,7 @@ namespace Lucene.Net.Queries.Mlt
         /// </summary>
         /// <seealso cref= #setStopWords </seealso>
         /// <seealso cref= #getStopWords </seealso>
-        public const ISet<string> DEFAULT_STOP_WORDS = null;
+        public static readonly ISet<string> DEFAULT_STOP_WORDS = null;
 
         /// <summary>
         /// Return a Query with no more than this many terms.
@@ -196,7 +197,12 @@ namespace Lucene.Net.Queries.Mlt
         /// <seealso cref= BooleanQuery#getMaxClauseCount </seealso>
         /// <seealso cref= #getMaxQueryTerms </seealso>
         /// <seealso cref= #setMaxQueryTerms </seealso>
-        public const int DEFAULT_MAX_QUERY_TERMS = 25;
+        public static readonly int DEFAULT_MAX_QUERY_TERMS = 25;
+
+        // LUCNENENET NOTE: The following fields were made into auto-implemented properties:
+        // analyzer, minTermFreq, minDocFreq, maxDocFreq, boost, 
+        // fieldNames, maxNumTokensParsed, minWordLen, maxWordLen,
+        // maxQueryTerms, similarity
 
         /// <summary>
         /// IndexReader to use
@@ -238,8 +244,9 @@ namespace Lucene.Net.Queries.Mlt
         {
             this.ir = ir;
             this.Similarity = sim;
-            StopWords = DEFAULT_STOP_WORDS;
 
+            // LUCENENET specific: Set Defaults
+            StopWords = DEFAULT_STOP_WORDS;
             MinTermFreq = DEFAULT_MIN_TERM_FREQ;
             MinDocFreq = DEFAULT_MIN_DOC_FREQ;
             MaxDocFreq = DEFAULT_MAX_DOC_FREQ;
@@ -251,7 +258,9 @@ namespace Lucene.Net.Queries.Mlt
             MaxQueryTerms = DEFAULT_MAX_QUERY_TERMS;
         }
 
-
+        /// <summary>
+        /// For idf() calculations.
+        /// </summary>
         public TFIDFSimilarity Similarity { get; set; }
 
 
@@ -296,7 +305,7 @@ namespace Lucene.Net.Queries.Mlt
         /// </summary>
         /// <param name="maxPercentage"> the maximum percentage of documents (0-100) that a term may appear
         /// in to be still considered relevant </param>
-        public int MaxDocFreqPct
+        public int MaxDocFreqPct // LUCENENET TODO: Change to SetMaxDocFreqPct(int maxPercentage)
         {
             set
             {
@@ -311,7 +320,7 @@ namespace Lucene.Net.Queries.Mlt
         /// </summary>
         /// <returns> whether to boost terms in query based on "score" or not. </returns>
         /// <seealso cref= #setBoost </seealso>
-        public bool Boost { get; set; }
+        public bool Boost { get; set; } // LUCENENET TODO: Rename ApplyBoost ? IsBoost seems a bit odd
 
 
         /// <summary>
@@ -319,6 +328,7 @@ namespace Lucene.Net.Queries.Mlt
         /// The default field names that will be used is <seealso cref="#DEFAULT_FIELD_NAMES"/>.
         /// </summary>
         /// <returns> the field names that will be used when generating the 'More Like This' query. </returns>
+        [WritableArray]
         public string[] FieldNames { get; set; }
 
 
@@ -391,7 +401,7 @@ namespace Lucene.Net.Queries.Mlt
         /// <summary>
         /// Create the More like query from a PriorityQueue
         /// </summary>
-        private Query CreateQuery(PriorityQueue<object[]> q)
+        private Query CreateQuery(Util.PriorityQueue<object[]> q)
         {
             BooleanQuery query = new BooleanQuery();
             object cur;
@@ -437,9 +447,8 @@ namespace Lucene.Net.Queries.Mlt
         /// Create a PriorityQueue from a word->tf map.
         /// </summary>
         /// <param name="words"> a map of words keyed on the word(String) with Int objects as the values. </param>
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        //ORIGINAL LINE: private org.apache.lucene.util.PriorityQueue<Object[]> createQueue(Map<String, Int> words) throws IOException
-        private PriorityQueue<object[]> createQueue(IDictionary<string, Int> words)
+        /// <exception cref="IOException"/>
+        private Util.PriorityQueue<object[]> createQueue(IDictionary<string, Int> words) // LUCENENET TODO: Rename CreateQueue
         {
             // have collected all words in doc and their freqs
             int numDocs = ir.NumDocs;
@@ -490,7 +499,7 @@ namespace Lucene.Net.Queries.Mlt
         /// <summary>
         /// Describe the parameters that control how the "more like this" query is formed.
         /// </summary>
-        public string describeParams()
+        public string describeParams() // LUCENENET TODO: Rename DescribeParams()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("\t").Append("maxQueryTerms  : ").Append(MaxQueryTerms).Append("\n");
@@ -514,18 +523,13 @@ namespace Lucene.Net.Queries.Mlt
         /// Find words for a more-like-this query former.
         /// </summary>
         /// <param name="docNum"> the id of the lucene document from which to find terms </param>
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        //ORIGINAL LINE: public org.apache.lucene.util.PriorityQueue<Object[]> retrieveTerms(int docNum) throws IOException
-        public PriorityQueue<object[]> RetrieveTerms(int docNum)
+        /// <exception cref="IOException"/>
+        public Util.PriorityQueue<object[]> RetrieveTerms(int docNum)
         {
             IDictionary<string, Int> termFreqMap = new Dictionary<string, Int>();
             foreach (string fieldName in FieldNames)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final org.apache.lucene.index.Fields vectors = ir.getTermVectors(docNum);
                 Fields vectors = ir.GetTermVectors(docNum);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final org.apache.lucene.index.Terms vector;
                 Terms vector;
                 if (vectors != null)
                 {
@@ -686,10 +690,9 @@ namespace Lucene.Net.Queries.Mlt
         /// <param name="r"> the reader that has the content of the document </param>
         /// <param name="fieldName"> field passed to the analyzer to use when analyzing the content </param>
         /// <returns> the most interesting words in the document ordered by score, with the highest scoring, or best entry, first </returns>
+        /// <exception cref="IOException"/>
         /// <seealso cref= #retrieveInterestingTerms </seealso>
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        //ORIGINAL LINE: public org.apache.lucene.util.PriorityQueue<Object[]> retrieveTerms(Reader r, String fieldName) throws IOException
-        public PriorityQueue<object[]> RetrieveTerms(Reader r, string fieldName)
+        public Util.PriorityQueue<object[]> RetrieveTerms(Reader r, string fieldName)
         {
             IDictionary<string, Int> words = new Dictionary<string, Int>();
             AddTermFrequencies(r, words, fieldName);
@@ -724,7 +727,7 @@ namespace Lucene.Net.Queries.Mlt
         public string[] RetrieveInterestingTerms(Reader r, string fieldName)
         {
             var al = new List<string>(MaxQueryTerms);
-            PriorityQueue<object[]> pq = RetrieveTerms(r, fieldName);
+            Util.PriorityQueue<object[]> pq = RetrieveTerms(r, fieldName);
             object cur;
             int lim = MaxQueryTerms; // have to be careful, retrieveTerms returns all words but that's probably not useful to our caller...
             // we just want to return the top words
@@ -739,7 +742,7 @@ namespace Lucene.Net.Queries.Mlt
         /// <summary>
         /// PriorityQueue that orders words by score.
         /// </summary>
-        private class FreqQ : PriorityQueue<object[]>
+        private class FreqQ : Util.PriorityQueue<object[]>
         {
             internal FreqQ(int s)
                 : base(s)
@@ -767,5 +770,4 @@ namespace Lucene.Net.Queries.Mlt
             }
         }
     }
-
 }

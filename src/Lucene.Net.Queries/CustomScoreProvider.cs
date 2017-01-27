@@ -38,8 +38,7 @@ namespace Lucene.Net.Queries
     /// </summary>
     public class CustomScoreProvider
     {
-
-        protected internal readonly AtomicReaderContext context;
+        protected readonly AtomicReaderContext context;
 
         /// <summary>
         /// Creates a new instance of the provider class for the given <seealso cref="IndexReader"/>.

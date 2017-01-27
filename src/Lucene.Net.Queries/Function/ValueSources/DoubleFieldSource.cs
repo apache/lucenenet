@@ -29,8 +29,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class DoubleFieldSource : FieldCacheSource
     {
-
-        protected internal readonly FieldCache.IDoubleParser parser;
+        protected readonly FieldCache.IDoubleParser parser;
 
         public DoubleFieldSource(string field)
             : this(field, null)
@@ -53,7 +52,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var arr = cache.GetDoubles(readerContext.AtomicReader, field, parser, true);
             var valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
             return new DoubleDocValuesAnonymousInnerClassHelper(this, arr, valid);
-
         }
 
         private class DoubleDocValuesAnonymousInnerClassHelper : DoubleDocValues

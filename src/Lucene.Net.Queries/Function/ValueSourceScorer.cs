@@ -27,11 +27,11 @@ namespace Lucene.Net.Queries.Function
     /// </summary>
     public class ValueSourceScorer : Scorer
     {
-        protected internal readonly IndexReader reader;
+        protected readonly IndexReader reader;
         private int doc = -1;
-        protected internal readonly int maxDoc;
-        protected internal readonly FunctionValues values;
-        protected internal bool checkDeletes;
+        protected readonly int maxDoc;
+        protected readonly FunctionValues values;
+        protected bool checkDeletes;
         private readonly IBits liveDocs;
 
         protected internal ValueSourceScorer(IndexReader reader, FunctionValues values)
@@ -52,7 +52,7 @@ namespace Lucene.Net.Queries.Function
             }
         }
 
-        public virtual bool CheckDeletes
+        public virtual bool CheckDeletes // LUCENENET TODO: Change to SetCheckDeletes(bool checkDeletes) (has side-effect)
         {
             set
             {
