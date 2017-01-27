@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Mutable;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,6 +26,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Obtains int field values from <seealso cref="IFieldCache#getInts"/> and makes
     /// those values available as other numeric types, casting as needed.

@@ -1,16 +1,15 @@
 ﻿/*
  * Created on 25-Jan-2006
  */
-using System.Collections.Generic;
-using System.IO;
 using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Queries.Mlt
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with

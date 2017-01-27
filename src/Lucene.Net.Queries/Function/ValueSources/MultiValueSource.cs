@@ -17,7 +17,6 @@
 	 * limitations under the License.
 	 */
 
-
 	/// <summary>
 	/// A <seealso cref="ValueSource"/> that abstractly represents <seealso cref="ValueSource"/>s for
 	/// poly fields, and other things.

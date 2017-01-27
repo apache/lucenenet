@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Queries
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -19,6 +18,7 @@ namespace Lucene.Net.Queries
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+    
     /// <summary>
     /// A Filter that wrapped with an indication of how that filter
     /// is used when composed with another filter.

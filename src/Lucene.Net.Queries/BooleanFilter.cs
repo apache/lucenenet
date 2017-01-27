@@ -1,14 +1,13 @@
-﻿using System.Collections;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using Lucene.Net.Index;
-using Lucene.Net.Search;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Queries
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,6 +24,7 @@ namespace Lucene.Net.Queries
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// A container Filter that allows Boolean composition of Filters.
     /// Filters are allocated into one of three logical constructs;

@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Lucene.Net.Index;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -22,6 +22,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// <seealso cref="ValueSource"/> implementation which only returns the values from the provided
     /// ValueSources which are available for a particular docId.  Consequently, when combined

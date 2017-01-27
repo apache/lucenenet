@@ -1,11 +1,9 @@
-﻿using System.Linq;
-using Lucene.Net.Index;
-using Lucene.Net.Queries.Function;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
+using System.Linq;
 
 namespace Lucene.Net.Queries
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with

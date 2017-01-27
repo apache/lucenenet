@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using Lucene.Net.Search;
 using Lucene.Net.Util;
+using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +21,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// An implementation for retrieving <seealso cref="FunctionValues"/> instances for str based fields.
     /// </summary>

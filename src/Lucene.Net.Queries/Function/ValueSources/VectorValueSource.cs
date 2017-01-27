@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Search;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using Lucene.Net.Index;
-using Lucene.Net.Search;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -22,6 +22,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+    
     /// <summary>
     /// Converts individual ValueSource instances to leverage the FunctionValues *Val functions that work with multiple values,
     /// i.e. <seealso cref="FunctionValues#DoubleVal(int, double[])"/>

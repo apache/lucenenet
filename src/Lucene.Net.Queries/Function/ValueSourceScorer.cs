@@ -4,7 +4,6 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Queries.Function
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +20,7 @@ namespace Lucene.Net.Queries.Function
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+    
     /// <summary>
     /// <seealso cref="Scorer"/> which returns the result of <seealso cref="FunctionValues#FloatVal(int)"/> as
     /// the score for a document.

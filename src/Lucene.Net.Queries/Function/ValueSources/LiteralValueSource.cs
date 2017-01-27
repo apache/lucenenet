@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Util;
+using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -21,6 +21,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Pass a the field value through as a String, no matter the type // Q: doesn't this mean it's a "str"?
     /// 

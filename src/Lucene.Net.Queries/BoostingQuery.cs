@@ -4,7 +4,6 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Queries
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with

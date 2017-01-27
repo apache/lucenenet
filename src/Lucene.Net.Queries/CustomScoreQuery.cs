@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Lucene.Net.Queries
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with

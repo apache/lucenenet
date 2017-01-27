@@ -1,9 +1,8 @@
-﻿using System;
-using Lucene.Net.Util.Mutable;
+﻿using Lucene.Net.Util.Mutable;
+using System;
 
 namespace Lucene.Net.Queries.Function.DocValues
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Queries.Function.DocValues
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+    
     /// <summary>
     /// Abstract <seealso cref="FunctionValues"/> implementation which supports retrieving float values.
     /// Implementations can control how the float values are loaded through <seealso cref="#FloatVal(int)"/>}

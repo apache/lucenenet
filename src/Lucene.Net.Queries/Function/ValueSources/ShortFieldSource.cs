@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
+using System;
+using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -21,13 +21,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Obtains short field values from the <seealso cref="org.apache.lucene.search.FieldCache"/>
     /// using <code>getShorts()</code>
     /// and makes those values available as other numeric types, casting as needed.
     /// 
     /// </summary>
-     // LUCENENET TODO: Rename Int16FieldSource ?
     [Obsolete]
     public class ShortFieldSource : FieldCacheSource
     {

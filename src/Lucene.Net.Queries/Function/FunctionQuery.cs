@@ -1,13 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Queries.Function
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,6 +23,7 @@ namespace Lucene.Net.Queries.Function
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+    
     /// <summary>
     /// Returns a score for each document based on a ValueSource,
     /// often some function of the value of a field.

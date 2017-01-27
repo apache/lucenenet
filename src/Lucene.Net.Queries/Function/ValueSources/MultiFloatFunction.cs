@@ -1,9 +1,9 @@
-﻿using System.Collections;
-using System.Text;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using System.Collections;
+using System.Text;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -23,6 +23,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Abstract <seealso cref="ValueSource"/> implementation which wraps multiple ValueSources
     /// and applies an extendible float function to their values.
