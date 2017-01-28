@@ -19,10 +19,10 @@ namespace Lucene.Net.Queries.Function.DocValues
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
-    /// Abstract <seealso cref="FunctionValues"/> implementation which supports retrieving float values.
-    /// Implementations can control how the float values are loaded through <seealso cref="#FloatVal(int)"/>}
+    /// Abstract <see cref="FunctionValues"/> implementation which supports retrieving <see cref="float"/> values.
+    /// Implementations can control how the <see cref="float"/> values are loaded through <see cref="FloatVal(int)"/>
     /// </summary>
     public abstract class FloatDocValues : FunctionValues
     {

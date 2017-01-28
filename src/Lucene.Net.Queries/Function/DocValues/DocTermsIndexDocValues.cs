@@ -24,7 +24,7 @@ namespace Lucene.Net.Queries.Function.DocValues
      */
 
     /// <summary>
-    /// Serves as base class for FunctionValues based on DocTermsIndex.
+    /// Serves as base class for <see cref="FunctionValues"/> based on DocTermsIndex.
     /// @lucene.internal
     /// </summary>
     public abstract class DocTermsIndexDocValues : FunctionValues
@@ -200,7 +200,7 @@ namespace Lucene.Net.Queries.Function.DocValues
         }
 
         /// <summary>
-        /// Custom Exception to be thrown when the DocTermsIndex for a field cannot be generated
+        /// Custom <see cref="Exception"/> to be thrown when the DocTermsIndex for a field cannot be generated
         /// </summary>
         // LUCENENET: All exeption classes should be marked serializable
 #if FEATURE_SERIALIZABLE

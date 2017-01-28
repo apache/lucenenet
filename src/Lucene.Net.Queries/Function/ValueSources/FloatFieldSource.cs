@@ -25,7 +25,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Obtains float field values from <seealso cref="IFieldCache#getFloats"/> and makes those
+    /// Obtains <see cref="float"/> field values from <see cref="IFieldCache.GetFloats"/> and makes those
     /// values available as other numeric types, casting as needed.
     /// </summary>
     public class FloatFieldSource : FieldCacheSource

@@ -24,9 +24,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <seealso cref="ValueSource"/> implementation which only returns the values from the provided
-    /// ValueSources which are available for a particular docId.  Consequently, when combined
-    /// with a <seealso cref="ConstValueSource"/>, this function serves as a way to return a default
+    /// <see cref="ValueSource"/> implementation which only returns the values from the provided
+    /// <see cref="ValueSource"/>s which are available for a particular docId.  Consequently, when combined
+    /// with a <see cref="ConstValueSource"/>, this function serves as a way to return a default
     /// value when the values for a field are unavailable.
     /// </summary>
     public class DefFunction : MultiFunction

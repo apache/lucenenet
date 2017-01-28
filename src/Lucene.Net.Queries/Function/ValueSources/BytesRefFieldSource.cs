@@ -23,7 +23,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// An implementation for retrieving <seealso cref="FunctionValues"/> instances for str based fields.
+    /// An implementation for retrieving <see cref="FunctionValues"/> instances for <see cref="string"/> based fields.
     /// </summary>
     public class BytesRefFieldSource : FieldCacheSource
     {

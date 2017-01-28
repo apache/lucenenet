@@ -24,17 +24,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Scales values to be between min and max.
-    /// <para>This implementation currently traverses all of the source values to obtain
+    /// Scales values to be between <paramref name="min"/> and <paramref name="max"/>.
+    /// <para/>This implementation currently traverses all of the source values to obtain
     /// their min and max.
-    /// </para>
-    /// <para>This implementation currently cannot distinguish when documents have been
+    /// <para/>This implementation currently cannot distinguish when documents have been
     /// deleted or documents that have no value, and 0.0 values will be used for
     /// these cases.  This means that if values are normally all greater than 0.0, one can
     /// still end up with 0.0 as the min value to map from.  In these cases, an
     /// appropriate map() function could be used as a workaround to change 0.0
     /// to a value in the real range.
-    /// </para>
     /// </summary>
     public class ScaleFloatFunction : ValueSource
     {

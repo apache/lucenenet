@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Reader = System.IO.TextReader;
 
 namespace Lucene.Net.Queries.Mlt
 {
@@ -34,13 +33,13 @@ namespace Lucene.Net.Queries.Mlt
     /// <summary>
     /// Generate "more like this" similarity queries.
     /// Based on this mail:
-    /// <code><pre>
-    /// Lucene does let you access the document frequency of terms, with IndexReader.docFreq().
+    /// <code>
+    /// Lucene does let you access the document frequency of terms, with <see cref="IndexReader.DocFreq"/>.
     /// Term frequencies can be computed by re-tokenizing the text, which, for a single document,
-    /// is usually fast enough.  But looking up the docFreq() of every term in the document is
+    /// is usually fast enough.  But looking up the <see cref="IndexReader.DocFreq"/> of every term in the document is
     /// probably too slow.
-    /// <p/>
-    /// You can use some heuristics to prune the set of terms, to avoid calling docFreq() too much,
+    /// <para/>
+    /// You can use some heuristics to prune the set of terms, to avoid calling <see cref="IndexReader.DocFreq"/> too much,
     /// or at all.  Since you're trying to maximize a tf*idf score, you're probably most interested
     /// in terms with a high tf. Choosing a tf threshold even as low as two or three will radically
     /// reduce the number of terms under consideration.  Another heuristic is that terms with a
@@ -48,76 +47,73 @@ namespace Lucene.Net.Queries.Mlt
     /// number of characters, not selecting anything less than, e.g., six or seven characters.
     /// With these sorts of heuristics you can usually find small set of, e.g., ten or fewer terms
     /// that do a pretty good job of characterizing a document.
-    /// <p/>
+    /// <para/>
     /// It all depends on what you're trying to do.  If you're trying to eek out that last percent
     /// of precision and recall regardless of computational difficulty so that you can win a TREC
     /// competition, then the techniques I mention above are useless.  But if you're trying to
     /// provide a "more like this" button on a search results page that does a decent job and has
     /// good performance, such techniques might be useful.
-    /// <p/>
+    /// <para/>
     /// An efficient, effective "more-like-this" query generator would be a great contribution, if
     /// anyone's interested.  I'd imagine that it would take a Reader or a String (the document's
     /// text), analyzer Analyzer, and return a set of representative terms using heuristics like those
     /// above.  The frequency and length thresholds could be parameters, etc.
-    /// <p/>
+    /// <para/>
     /// Doug
-    /// </pre></code>
-    /// <p/>
-    /// <p/>
-    /// <p/>
-    /// <h3>Initial Usage</h3>
-    /// <p/>
+    /// </code>
+    /// <para/>
+    /// <para/>
+    /// <para/>
+    /// <b>Initial Usage</b>
+    /// <para/>
     /// This class has lots of options to try to make it efficient and flexible.
     /// The simplest possible usage is as follows. The bold
     /// fragment is specific to this class.
-    /// <p/>
-    /// <pre class="prettyprint">
-    /// <p/>
+    /// <para/>
+    /// <code>
     /// IndexReader ir = ...
     /// IndexSearcher is = ...
-    /// <p/>
+    /// 
     /// MoreLikeThis mlt = new MoreLikeThis(ir);
-    /// Reader target = ... // orig source of doc you want to find similarities to
-    /// Query query = mlt.like( target);
-    /// <p/>
-    /// Hits hits = is.search(query);
+    /// TextReader target = ... // orig source of doc you want to find similarities to
+    /// Query query = mlt.Like(target);
+    /// 
+    /// Hits hits = is.Search(query);
     /// // now the usual iteration thru 'hits' - the only thing to watch for is to make sure
     /// //you ignore the doc if it matches your 'target' document, as it should be similar to itself
-    /// <p/>
-    /// </pre>
-    /// <p/>
+    /// </code>
+    /// <para/>
     /// Thus you:
-    /// <ol>
-    /// <li> do your normal, Lucene setup for searching,
-    /// <li> create a MoreLikeThis,
-    /// <li> get the text of the doc you want to find similarities to
-    /// <li> then call one of the like() calls to generate a similarity query
-    /// <li> call the searcher to find the similar docs
-    /// </ol>
-    /// <p/>
-    /// <h3>More Advanced Usage</h3>
-    /// <p/>
-    /// You may want to use <seealso cref="#setFieldNames setFieldNames(...)"/> so you can examine
+    /// <list type="bullet">
+    ///     <item>do your normal, Lucene setup for searching,</item>
+    ///     <item>create a MoreLikeThis,</item>
+    ///     <item>get the text of the doc you want to find similarities to</item>
+    ///     <item>then call one of the <see cref="Like"/> calls to generate a similarity query</item>
+    ///     <item>call the searcher to find the similar docs</item>
+    /// </list>
+    /// <para/>
+    /// <b>More Advanced Usage</b>
+    /// <para/>
+    /// You may want to use the setter for <see cref="FieldNames"/> so you can examine
     /// multiple fields (e.g. body and title) for similarity.
-    /// <p/>
-    /// <p/>
+    /// <para/>
+    /// <para/>
     /// Depending on the size of your index and the size and makeup of your documents you
     /// may want to call the other set methods to control how the similarity queries are
     /// generated:
-    /// <ul>
-    /// <li> <seealso cref="#setMinTermFreq setMinTermFreq(...)"/>
-    /// <li> <seealso cref="#setMinDocFreq setMinDocFreq(...)"/>
-    /// <li> <seealso cref="#setMaxDocFreq setMaxDocFreq(...)"/>
-    /// <li> <seealso cref="#setMaxDocFreqPct setMaxDocFreqPct(...)"/>
-    /// <li> <seealso cref="#setMinWordLen setMinWordLen(...)"/>
-    /// <li> <seealso cref="#setMaxWordLen setMaxWordLen(...)"/>
-    /// <li> <seealso cref="#setMaxQueryTerms setMaxQueryTerms(...)"/>
-    /// <li> <seealso cref="#setMaxNumTokensParsed setMaxNumTokensParsed(...)"/>
-    /// <li> <seealso cref="#setStopWords setStopWord(...)"/>
-    /// </ul>
-    /// <p/>
-    /// <hr>
-    /// <pre>
+    /// <list type="bullet">
+    ///     <item><see cref="MinTermFreq"/></item>
+    ///     <item><see cref="MinDocFreq"/></item>
+    ///     <item><see cref="MaxDocFreq"/></item>
+    ///     <item><see cref="SetMaxDocFreqPct(int)"/></item>
+    ///     <item><see cref="MinWordLen"/></item>
+    ///     <item><see cref="MaxWordLen"/></item>
+    ///     <item><see cref="MaxQueryTerms"/></item>
+    ///     <item><see cref="MaxNumTokensParsed"/></item>
+    ///     <item><see cref="StopWords"/></item>
+    /// </list>
+    /// </summary>
+    /// <remarks>
     /// Changes: Mark Harwood 29/02/04
     /// Some bugfixing, some refactoring, some optimisation.
     /// - bugfix: retrieveTerms(int docNum) was not working for indexes without a termvector -added missing code
@@ -125,44 +121,38 @@ namespace Lucene.Net.Queries.Mlt
     /// was only counting one occurrence per term/field pair in calculations(ie not including frequency info from TermVector)
     /// - refactor: moved common code into isNoiseWord()
     /// - optimise: when no termvector support available - used maxNumTermsParsed to limit amount of tokenization
-    /// </pre>
-    /// </summary>
+    /// </remarks>
     public sealed class MoreLikeThis
     {
-
         /// <summary>
         /// Default maximum number of tokens to parse in each example doc field that is not stored with TermVector support.
         /// </summary>
-        /// <seealso cref= #getMaxNumTokensParsed </seealso>
+        /// <seealso cref="MaxNumTokensParsed"/>
         public static readonly int DEFAULT_MAX_NUM_TOKENS_PARSED = 5000;
 
         /// <summary>
         /// Ignore terms with less than this frequency in the source doc.
         /// </summary>
-        /// <seealso cref= #getMinTermFreq </seealso>
-        /// <seealso cref= #setMinTermFreq </seealso>
+        /// <seealso cref="MinTermFreq"/>
         public static readonly int DEFAULT_MIN_TERM_FREQ = 2;
 
         /// <summary>
         /// Ignore words which do not occur in at least this many docs.
         /// </summary>
-        /// <seealso cref= #getMinDocFreq </seealso>
-        /// <seealso cref= #setMinDocFreq </seealso>
+        /// <seealso cref="MinDocFreq"/>
         public static readonly int DEFAULT_MIN_DOC_FREQ = 5;
 
         /// <summary>
         /// Ignore words which occur in more than this many docs.
         /// </summary>
-        /// <seealso cref= #getMaxDocFreq </seealso>
-        /// <seealso cref= #setMaxDocFreq </seealso>
-        /// <seealso cref= #setMaxDocFreqPct </seealso>
+        /// <seealso cref="MaxDocFreq"/>
+        /// <seealso cref="SetMaxDocFreqPct(int)"/>
         public static readonly int DEFAULT_MAX_DOC_FREQ = int.MaxValue;
 
         /// <summary>
         /// Boost terms in query based on score.
         /// </summary>
-        /// <seealso cref= #isBoost </seealso>
-        /// <seealso cref= #setBoost </seealso>
+        /// <seealso cref="ApplyBoost"/>
         public static readonly bool DEFAULT_BOOST = false;
 
         /// <summary>
@@ -174,31 +164,27 @@ namespace Lucene.Net.Queries.Mlt
         /// <summary>
         /// Ignore words less than this length or if 0 then this has no effect.
         /// </summary>
-        /// <seealso cref= #getMinWordLen </seealso>
-        /// <seealso cref= #setMinWordLen </seealso>
+        /// <seealso cref="MinWordLen"/>
         public static readonly int DEFAULT_MIN_WORD_LENGTH = 0;
 
         /// <summary>
         /// Ignore words greater than this length or if 0 then this has no effect.
         /// </summary>
-        /// <seealso cref= #getMaxWordLen </seealso>
-        /// <seealso cref= #setMaxWordLen </seealso>
+        /// <seealso cref="MaxWordLen"/>
         public static readonly int DEFAULT_MAX_WORD_LENGTH = 0;
 
         /// <summary>
         /// Default set of stopwords.
         /// If null means to allow stop words.
         /// </summary>
-        /// <seealso cref= #setStopWords </seealso>
-        /// <seealso cref= #getStopWords </seealso>
+        /// <seealso cref="StopWords"/>
         public static readonly ISet<string> DEFAULT_STOP_WORDS = null;
 
         /// <summary>
         /// Return a Query with no more than this many terms.
         /// </summary>
-        /// <seealso cref= BooleanQuery#getMaxClauseCount </seealso>
-        /// <seealso cref= #getMaxQueryTerms </seealso>
-        /// <seealso cref= #setMaxQueryTerms </seealso>
+        /// <seealso cref="BooleanQuery.MaxClauseCount"/>
+        /// <seealso cref="MaxQueryTerms"/>
         public static readonly int DEFAULT_MAX_QUERY_TERMS = 25;
 
         // LUCNENENET NOTE: The following fields were made into auto-implemented properties:
@@ -207,7 +193,7 @@ namespace Lucene.Net.Queries.Mlt
         // maxQueryTerms, similarity
 
         /// <summary>
-        /// IndexReader to use
+        /// <see cref="IndexReader"/> to use
         /// </summary>
         private readonly IndexReader ir;
 
@@ -217,10 +203,8 @@ namespace Lucene.Net.Queries.Mlt
         private float boostFactor = 1;
 
         /// <summary>
-        /// Returns the boost factor used when boosting terms
+        /// Gets or Sets the boost factor used when boosting terms
         /// </summary>
-        /// <returns> the boost factor used when boosting terms </returns>
-        /// <seealso cref= #setBoostFactor(float) </seealso>
         public float BoostFactor
         {
             get
@@ -235,7 +219,7 @@ namespace Lucene.Net.Queries.Mlt
 
 
         /// <summary>
-        /// Constructor requiring an IndexReader.
+        /// Constructor requiring an <see cref="IndexReader"/>.
         /// </summary>
         public MoreLikeThis(IndexReader ir)
             : this(ir, new DefaultSimilarity())
@@ -267,37 +251,32 @@ namespace Lucene.Net.Queries.Mlt
 
 
         /// <summary>
-        /// Returns an analyzer that will be used to parse source doc with. The default analyzer
-        /// is not set.
+        /// Gets or Sets an analyzer that will be used to parse source doc with. The default analyzer
+        /// is not set. An analyzer is not required for generating a query with the 
+        /// <see cref="Like(int)"/> method, all other 'like' methods require an analyzer.
         /// </summary>
-        /// <returns> the analyzer that will be used to parse source doc with. </returns>
         public Analyzer Analyzer { get; set; }
 
 
         /// <summary>
-        /// Returns the frequency below which terms will be ignored in the source doc. The default
-        /// frequency is the <seealso cref="#DEFAULT_MIN_TERM_FREQ"/>.
+        /// Gets or Sets the frequency below which terms will be ignored in the source doc. The default
+        /// frequency is the <see cref="DEFAULT_MIN_TERM_FREQ"/>.
         /// </summary>
-        /// <returns> the frequency below which terms will be ignored in the source doc. </returns>
         public int MinTermFreq { get; set; }
 
 
         /// <summary>
-        /// Returns the frequency at which words will be ignored which do not occur in at least this
-        /// many docs. The default frequency is <seealso cref="#DEFAULT_MIN_DOC_FREQ"/>.
+        /// Gets or Sets the frequency at which words will be ignored which do not occur in at least this
+        /// many docs. The default frequency is <see cref="DEFAULT_MIN_DOC_FREQ"/>.
         /// </summary>
-        /// <returns> the frequency at which words will be ignored which do not occur in at least this
-        ///         many docs. </returns>
         public int MinDocFreq { get; set; }
 
 
         /// <summary>
-        /// Returns the maximum frequency in which words may still appear.
+        /// Gets or Sets the maximum frequency in which words may still appear.
         /// Words that appear in more than this many docs will be ignored. The default frequency is
-        /// <seealso cref="#DEFAULT_MAX_DOC_FREQ"/>.
+        /// <see cref="DEFAULT_MAX_DOC_FREQ"/>.
         /// </summary>
-        /// <returns> get the maximum frequency at which words are still allowed,
-        ///         words which occur in more docs than this are ignored. </returns>
         public int MaxDocFreq { get; set; }
 
 
@@ -317,55 +296,50 @@ namespace Lucene.Net.Queries.Mlt
         /// Gets or Sets whether to boost terms in query based on "score" or not. The default is
         /// <see cref="DEFAULT_BOOST"/>.
         /// </summary>
-        /// <returns> whether to boost terms in query based on "score" or not. </returns>
         public bool ApplyBoost { get; set; }
 
 
         /// <summary>
-        /// Returns the field names that will be used when generating the 'More Like This' query.
-        /// The default field names that will be used is <seealso cref="#DEFAULT_FIELD_NAMES"/>.
+        /// Gets or Sets the field names that will be used when generating the 'More Like This' query.
+        /// The default field names that will be used is <see cref="DEFAULT_FIELD_NAMES"/>. 
+        /// Set this to null for the field names to be determined at runtime from the <see cref="IndexReader"/>
+        /// provided in the constructor.
         /// </summary>
-        /// <returns> the field names that will be used when generating the 'More Like This' query. </returns>
         [WritableArray]
         public string[] FieldNames { get; set; }
 
 
         /// <summary>
-        /// Returns the minimum word length below which words will be ignored. Set this to 0 for no
-        /// minimum word length. The default is <seealso cref="#DEFAULT_MIN_WORD_LENGTH"/>.
+        /// Gets or Sets the minimum word length below which words will be ignored. Set this to 0 for no
+        /// minimum word length. The default is <see cref="DEFAULT_MIN_WORD_LENGTH"/>.
         /// </summary>
-        /// <returns> the minimum word length below which words will be ignored. </returns>
         public int MinWordLen { get; set; }
 
 
         /// <summary>
-        /// Returns the maximum word length above which words will be ignored. Set this to 0 for no
-        /// maximum word length. The default is <seealso cref="#DEFAULT_MAX_WORD_LENGTH"/>.
+        /// Gets or Sets the maximum word length above which words will be ignored. Set this to 0 for no
+        /// maximum word length. The default is <see cref="DEFAULT_MAX_WORD_LENGTH"/>.
         /// </summary>
-        /// <returns> the maximum word length above which words will be ignored. </returns>
         public int MaxWordLen { get; set; }
 
 
         /// <summary>
-        /// Set the set of stopwords.
+        /// Gets or Sets the set of stopwords.
         /// Any word in this set is considered "uninteresting" and ignored.
-        /// Even if your Analyzer allows stopwords, you might want to tell the MoreLikeThis code to ignore them, as
+        /// Even if your <see cref="Analysis.Analyzer"/> allows stopwords, you might want to tell the <see cref="MoreLikeThis"/> code to ignore them, as
         /// for the purposes of document similarity it seems reasonable to assume that "a stop word is never interesting".
         /// </summary>
-        /// <param name="stopWords"> set of stopwords, if null it means to allow stop words </param>
-        /// <seealso cref= #getStopWords </seealso>
         public ISet<string> StopWords { get; set; }
 
         /// <summary>
-        /// Returns the maximum number of query terms that will be included in any generated query.
-        /// The default is <seealso cref="#DEFAULT_MAX_QUERY_TERMS"/>.
+        /// Gets or Sets the maximum number of query terms that will be included in any generated query.
+        /// The default is <see cref="DEFAULT_MAX_QUERY_TERMS"/>.
         /// </summary>
-        /// <returns> the maximum number of query terms that will be included in any generated query. </returns>
         public int MaxQueryTerms { get; set; }
 
 
-        /// <returns> The maximum number of tokens to parse in each example doc field that is not stored with TermVector support </returns>
-        /// <seealso cref= #DEFAULT_MAX_NUM_TOKENS_PARSED </seealso>
+        /// <returns> Gets or Sets the maximum number of tokens to parse in each example doc field that is not stored with TermVector support </returns>
+        /// <seealso cref="DEFAULT_MAX_NUM_TOKENS_PARSED"/>
         public int MaxNumTokensParsed { get; set; }
 
 
@@ -388,16 +362,16 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <summary>
-        /// Return a query that will return docs like the passed Reader.
+        /// Return a query that will return docs like the passed <see cref="TextReader"/>.
         /// </summary>
-        /// <returns> a query that will return docs like the passed Reader. </returns>
-        public Query Like(Reader r, string fieldName)
+        /// <returns> a query that will return docs like the passed <see cref="TextReader"/>. </returns>
+        public Query Like(TextReader r, string fieldName)
         {
             return CreateQuery(RetrieveTerms(r, fieldName));
         }
 
         /// <summary>
-        /// Create the More like query from a PriorityQueue
+        /// Create the More like query from a <see cref="Util.PriorityQueue{Object[]}"/>
         /// </summary>
         private Query CreateQuery(Util.PriorityQueue<object[]> q)
         {
@@ -442,9 +416,9 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <summary>
-        /// Create a PriorityQueue from a word->tf map.
+        /// Create a <see cref="Util.PriorityQueue{Object[]}"/> from a word->tf map.
         /// </summary>
-        /// <param name="words"> a map of words keyed on the word(String) with Int objects as the values. </param>
+        /// <param name="words"> a map of words keyed on the word(<see cref="string"/>) with <see cref="Int"/> objects as the values. </param>
         /// <exception cref="IOException"/>
         private Util.PriorityQueue<object[]> CreateQueue(IDictionary<string, Int> words)
         {
@@ -562,9 +536,9 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <summary>
-        /// Adds terms and frequencies found in vector into the Map termFreqMap
+        /// Adds terms and frequencies found in vector into the <see cref="IDictionary{string, Int}"/> <paramref name="termFreqMap"/>
         /// </summary>
-        /// <param name="termFreqMap"> a Map of terms and their frequencies </param>
+        /// <param name="termFreqMap"> a <see cref="IDictionary{string, Int}"/> of terms and their frequencies </param>
         /// <param name="vector"> List of terms and their frequencies for a doc/field </param>
         private void AddTermFrequencies(IDictionary<string, Int> termFreqMap, Terms vector)
         {
@@ -597,12 +571,12 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <summary>
-        /// Adds term frequencies found by tokenizing text from reader into the Map words
+        /// Adds term frequencies found by tokenizing text from reader into the <see cref="IDictionary{string, Int}"/> words
         /// </summary>
         /// <param name="r"> a source of text to be tokenized </param>
-        /// <param name="termFreqMap"> a Map of terms and their frequencies </param>
+        /// <param name="termFreqMap"> a <see cref="IDictionary{string, Int}"/> of terms and their frequencies </param>
         /// <param name="fieldName"> Used by analyzer for any special per-field analysis </param>
-        private void AddTermFrequencies(Reader r, IDictionary<string, Int> termFreqMap, string fieldName)
+        private void AddTermFrequencies(TextReader r, IDictionary<string, Int> termFreqMap, string fieldName)
         {
             if (Analyzer == null)
             {
@@ -652,7 +626,7 @@ namespace Lucene.Net.Queries.Mlt
         /// determines if the passed term is likely to be of interest in "more like" comparisons
         /// </summary>
         /// <param name="term"> The word being considered </param>
-        /// <returns> true if should be ignored, false if should be used in further analysis </returns>
+        /// <returns> <c>true</c> if should be ignored, <c>false</c> if should be used in further analysis </returns>
         private bool IsNoiseWord(string term)
         {
             int len = term.Length;
@@ -673,31 +647,31 @@ namespace Lucene.Net.Queries.Mlt
         /// The result is a priority queue of arrays with one entry for <b>every word</b> in the document.
         /// Each array has 6 elements.
         /// The elements are:
-        /// <ol>
-        /// <li> The word (String)
-        /// <li> The top field that this word comes from (String)
-        /// <li> The score for this word (Float)
-        /// <li> The IDF value (Float)
-        /// <li> The frequency of this word in the index (Integer)
-        /// <li> The frequency of this word in the source document (Integer)
-        /// </ol>
+        /// <list type="bullet">
+        ///     <item>The word (<see cref="string"/>)</item>
+        ///     <item>The top field that this word comes from (<see cref="string"/>)</item>
+        ///     <item>The score for this word (<see cref="float"/>)</item>
+        ///     <item>The IDF value (<see cref="float"/>)</item>
+        ///     <item>The frequency of this word in the index (<see cref="int"/>)</item>
+        ///     <item>The frequency of this word in the source document (<see cref="int"/>)</item>
+        /// </list>
         /// This is a somewhat "advanced" routine, and in general only the 1st entry in the array is of interest.
         /// This method is exposed so that you can identify the "interesting words" in a document.
-        /// For an easier method to call see <seealso cref="#retrieveInterestingTerms retrieveInterestingTerms()"/>.
+        /// For an easier method to call see <see cref="RetrieveInterestingTerms"/>.
         /// </summary>
         /// <param name="r"> the reader that has the content of the document </param>
         /// <param name="fieldName"> field passed to the analyzer to use when analyzing the content </param>
         /// <returns> the most interesting words in the document ordered by score, with the highest scoring, or best entry, first </returns>
         /// <exception cref="IOException"/>
-        /// <seealso cref= #retrieveInterestingTerms </seealso>
-        public Util.PriorityQueue<object[]> RetrieveTerms(Reader r, string fieldName)
+        /// <seealso cref="RetrieveInterestingTerms"/>
+        public Util.PriorityQueue<object[]> RetrieveTerms(TextReader r, string fieldName)
         {
             IDictionary<string, Int> words = new Dictionary<string, Int>();
             AddTermFrequencies(r, words, fieldName);
             return CreateQueue(words);
         }
 
-        /// <seealso cref= #retrieveInterestingTerms(java.io.Reader, String) </seealso>
+        /// <seealso cref="RetrieveInterestingTerms(TextReader, string)"/>
         public string[] RetrieveInterestingTerms(int docNum)
         {
             var al = new List<string>(MaxQueryTerms);
@@ -715,14 +689,14 @@ namespace Lucene.Net.Queries.Mlt
 
         /// <summary>
         /// Convenience routine to make it easy to return the most interesting words in a document.
-        /// More advanced users will call <seealso cref="#retrieveTerms(Reader, String) retrieveTerms()"/> directly.
+        /// More advanced users will call <see cref="RetrieveTerms(TextReader, string)"/> directly.
         /// </summary>
         /// <param name="r"> the source document </param>
         /// <param name="fieldName"> field passed to analyzer to use when analyzing the content </param>
         /// <returns> the most interesting words in the document </returns>
-        /// <seealso cref= #retrieveTerms(java.io.Reader, String) </seealso>
-        /// <seealso cref= #setMaxQueryTerms </seealso>
-        public string[] RetrieveInterestingTerms(Reader r, string fieldName)
+        /// <seealso cref="RetrieveTerms(TextReader, string)"/>
+        /// <seealso cref="MaxQueryTerms"/>
+        public string[] RetrieveInterestingTerms(TextReader r, string fieldName)
         {
             var al = new List<string>(MaxQueryTerms);
             Util.PriorityQueue<object[]> pq = RetrieveTerms(r, fieldName);
@@ -738,7 +712,7 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <summary>
-        /// PriorityQueue that orders words by score.
+        /// <see cref="Util.PriorityQueue{object[]}"/> that orders words by score.
         /// </summary>
         private class FreqQ : Util.PriorityQueue<object[]>
         {
@@ -756,7 +730,7 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <summary>
-        /// Use for frequencies and to avoid renewing Integers.
+        /// Use for frequencies and to avoid renewing <see cref="int"/>s.
         /// </summary>
         private class Int
         {

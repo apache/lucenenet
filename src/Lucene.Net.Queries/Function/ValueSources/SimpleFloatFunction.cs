@@ -22,7 +22,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// A simple float function with a single argument
+    /// A simple <see cref="float"/> function with a single argument
     /// </summary>
     public abstract class SimpleFloatFunction : SingleFunction
     {

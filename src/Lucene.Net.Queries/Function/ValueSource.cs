@@ -24,17 +24,15 @@ namespace Lucene.Net.Queries.Function
      */
     
     /// <summary>
-    /// Instantiates <seealso cref="FunctionValues"/> for a particular reader.
-    /// <br>
-    /// Often used when creating a <seealso cref="FunctionQuery"/>.
-    /// 
-    /// 
+    /// Instantiates <see cref="FunctionValues"/> for a particular reader.
+    /// <para/>
+    /// Often used when creating a <see cref="FunctionQuery"/>.
     /// </summary>
     public abstract class ValueSource
     {
         /// <summary>
         /// Gets the values for this reader and the context that was previously
-        /// passed to CreateWeight()
+        /// passed to <see cref="CreateWeight"/>
         /// </summary>
         public abstract FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext);
 
@@ -43,7 +41,7 @@ namespace Lucene.Net.Queries.Function
         public override abstract int GetHashCode();
 
         /// <summary>
-        /// description of field, used in explain()
+        /// description of field, used in Explain()
         /// </summary>
         public abstract string GetDescription();
 
@@ -79,14 +77,12 @@ namespace Lucene.Net.Queries.Function
 
         /// <summary>
         /// EXPERIMENTAL: This method is subject to change.
-        /// <para>
-        /// Get the SortField for this ValueSource.  Uses the <seealso cref="#GetValues(java.util.Map, AtomicReaderContext)"/>
-        /// to populate the SortField.
-        /// 
-        /// </para>
+        /// <para/>
+        /// Get the <see cref="SortField"/> for this <see cref="ValueSource"/>.  Uses the <see cref="GetValues(IDictionary, AtomicReaderContext)"/>
+        /// to populate the <see cref="SortField"/>.
         /// </summary>
-        /// <param name="reverse"> true if this is a reverse sort. </param>
-        /// <returns> The <seealso cref="org.apache.lucene.search.SortField"/> for the ValueSource </returns>
+        /// <param name="reverse"> <c>true</c> if this is a reverse sort. </param>
+        /// <returns> The <see cref="SortField"/> for the <see cref="ValueSource"/> </returns>
         public virtual SortField GetSortField(bool reverse)
         {
             return new ValueSourceSortField(this, reverse);
@@ -129,9 +125,9 @@ namespace Lucene.Net.Queries.Function
         }
 
         /// <summary>
-        /// Implement a <seealso cref="org.apache.lucene.search.FieldComparer"/> that works
-        /// off of the <seealso cref="FunctionValues"/> for a ValueSource
-        /// instead of the normal Lucene FieldComparer that works off of a FieldCache.
+        /// Implement a <see cref="FieldComparer"/> that works
+        /// off of the <see cref="FunctionValues"/> for a <see cref="ValueSource"/>
+        /// instead of the normal Lucene <see cref="FieldComparer"/> that works off of a <see cref="FieldCache"/>.
         /// </summary>
         internal class ValueSourceComparer : FieldComparer<double?>
         {

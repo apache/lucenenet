@@ -22,7 +22,7 @@ namespace Lucene.Net.Queries.Function
      */
     
     /// <summary>
-    /// <seealso cref="Scorer"/> which returns the result of <seealso cref="FunctionValues#FloatVal(int)"/> as
+    /// <see cref="Scorer"/> which returns the result of <see cref="FunctionValues.FloatVal(int)"/> as
     /// the score for a document.
     /// </summary>
     public class ValueSourceScorer : Scorer

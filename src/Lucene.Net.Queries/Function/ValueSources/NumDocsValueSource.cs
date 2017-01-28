@@ -21,7 +21,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Returns the value of <seealso cref="IndexReader#numDocs()"/>
+    /// Returns the value of <see cref="IndexReader.NumDocs"/>
     /// for every document. This is the number of documents
     /// excluding deletions.
     /// </summary>

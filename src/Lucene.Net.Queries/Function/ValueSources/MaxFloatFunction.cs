@@ -20,7 +20,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <code>MaxFloatFunction</code> returns the max of it's components.
+    /// <see cref="MaxFloatFunction"/> returns the max of it's components.
     /// </summary>
     public class MaxFloatFunction : MultiFloatFunction
     {

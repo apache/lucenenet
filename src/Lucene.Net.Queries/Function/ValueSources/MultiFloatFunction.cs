@@ -25,9 +25,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Abstract <seealso cref="ValueSource"/> implementation which wraps multiple ValueSources
-    /// and applies an extendible float function to their values.
-    /// 
+    /// Abstract <see cref="ValueSource"/> implementation which wraps multiple <see cref="ValueSource"/>s
+    /// and applies an extendible <see cref="float"/> function to their values.
     /// </summary>
     public abstract class MultiFloatFunction : ValueSource
     {

@@ -20,10 +20,10 @@ namespace Lucene.Net.Queries.Function.DocValues
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
-    /// Abstract <seealso cref="FunctionValues"/> implementation which supports retrieving long values.
-    /// Implementations can control how the long values are loaded through <seealso cref="#LongVal(int)"/>}
+    /// Abstract <see cref="FunctionValues"/> implementation which supports retrieving <see cref="long"/> values.
+    /// Implementations can control how the <see cref="long"/> values are loaded through <see cref="LongVal(int)"/>
     /// </summary>
     public abstract class LongDocValues : FunctionValues
     {

@@ -18,9 +18,8 @@
 	 */
 
 	/// <summary>
-	/// A <seealso cref="ValueSource"/> that abstractly represents <seealso cref="ValueSource"/>s for
+	/// A <see cref="ValueSource"/> that abstractly represents <see cref="ValueSource"/>s for
 	/// poly fields, and other things.
-	/// 
 	/// </summary>
 	public abstract class MultiValueSource : ValueSource
 	{

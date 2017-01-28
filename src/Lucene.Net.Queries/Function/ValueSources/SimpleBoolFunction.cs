@@ -23,11 +23,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <seealso cref="BoolFunction"/> implementation which applies an extendible boolean
-    /// function to the values of a single wrapped <seealso cref="ValueSource"/>.
+    /// <see cref="BoolFunction"/> implementation which applies an extendible <see cref="bool"/>
+    /// function to the values of a single wrapped <see cref="ValueSource"/>.
     /// 
     /// Functions this can be used for include whether a field has a value or not,
-    /// or inverting the boolean value of the wrapped ValueSource.
+    /// or inverting the <see cref="bool"/> value of the wrapped <see cref="ValueSource"/>.
     /// </summary>
     public abstract class SimpleBoolFunction : BoolFunction
     {

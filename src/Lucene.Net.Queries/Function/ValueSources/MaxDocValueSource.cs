@@ -22,7 +22,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Returns the value of <seealso cref="IndexReader#maxDoc()"/>
+    /// Returns the value of <see cref="IndexReader.MaxDoc"/>
     /// for every document. This is the number of documents
     /// including deletions.
     /// </summary>

@@ -23,16 +23,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
     
     /// <summary>
-    /// Obtains int field values from the <seealso cref="org.apache.lucene.search.FieldCache"/>
-    /// using <code>getInts()</code>
+    /// Obtains <see cref="int"/> field values from the <see cref="Search.FieldCache"/>
+    /// using <see cref="IFieldCache.GetInts"/>
     /// and makes those values available as other numeric types, casting as needed. *
-    /// 
-    /// 
     /// </summary>
     [Obsolete]
     public class ByteFieldSource : FieldCacheSource
     {
-
         private readonly FieldCache.IByteParser parser;
 
         public ByteFieldSource(string field)

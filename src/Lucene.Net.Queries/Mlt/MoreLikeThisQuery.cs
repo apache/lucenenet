@@ -28,9 +28,9 @@ namespace Lucene.Net.Queries.Mlt
      */
 
     /// <summary>
-    /// A simple wrapper for MoreLikeThis for use in scenarios where a Query object is required eg
-    /// in custom QueryParser extensions. At query.rewrite() time the reader is used to construct the
-    /// actual MoreLikeThis object and obtain the real Query object.
+    /// A simple wrapper for <see cref="MoreLikeThis"/> for use in scenarios where a <see cref="Query"/> object is required eg
+    /// in custom QueryParser extensions. At query.Rewrite() time the reader is used to construct the
+    /// actual <see cref="MoreLikeThis"/> object and obtain the real <see cref="Query"/> object.
     /// </summary>
     public class MoreLikeThisQuery : Query
     {
@@ -75,9 +75,9 @@ namespace Lucene.Net.Queries.Mlt
             return bq;
         }
 
-        /* (non-Javadoc)
-        * @see org.apache.lucene.search.Query#toString(java.lang.String)
-        */
+        /// <summary>
+        /// <see cref="Query.ToString(string)"/>
+        /// </summary>
         public override string ToString(string field)
         {
             return "like:" + LikeText;

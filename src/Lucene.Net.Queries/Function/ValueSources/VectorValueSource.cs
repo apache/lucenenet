@@ -24,8 +24,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
     
     /// <summary>
-    /// Converts individual ValueSource instances to leverage the FunctionValues *Val functions that work with multiple values,
-    /// i.e. <seealso cref="FunctionValues#DoubleVal(int, double[])"/>
+    /// Converts individual <see cref="ValueSource"/> instances to leverage the FunctionValues *Val functions that work with multiple values,
+    /// i.e. <see cref="FunctionValues.DoubleVal(int, double[])"/>
     /// </summary>
     //Not crazy about the name, but...
     public class VectorValueSource : MultiValueSource

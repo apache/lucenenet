@@ -23,7 +23,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <code>SumTotalTermFreqValueSource</code> returns the number of tokens.
+    /// <see cref="SumTotalTermFreqValueSource"/> returns the number of tokens.
     /// (sum of term freqs across all documents, across all terms).
     /// Returns -1 if frequencies were omitted for the field, or if 
     /// the codec doesn't support this statistic.

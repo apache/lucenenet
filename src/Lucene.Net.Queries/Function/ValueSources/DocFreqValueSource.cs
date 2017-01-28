@@ -118,7 +118,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 
     /// <summary>
-    /// <code>DocFreqValueSource</code> returns the number of documents containing the term.
+    /// <see cref="DocFreqValueSource"/> returns the number of documents containing the term.
     /// @lucene.internal
     /// </summary>
     public class DocFreqValueSource : ValueSource

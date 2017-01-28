@@ -26,7 +26,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Obtains int field values from <seealso cref="FieldCache#getInts"/> and makes those
+    /// Obtains <see cref="int"/> field values from <see cref="IFieldCache.GetInts"/> and makes those
     /// values available as other numeric types, casting as needed.
     /// </summary>
     public class IntFieldSource : FieldCacheSource

@@ -25,26 +25,19 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <code>ReciprocalFloatFunction</code> implements a reciprocal function f(x) = a/(mx+b), based on
-    /// the float value of a field or function as exported by <seealso cref="ValueSource"/>.
-    /// <br>
-    /// 
-    /// When a and b are equal, and x>=0, this function has a maximum value of 1 that drops as x increases.
+    /// <see cref="ReciprocalFloatFunction"/> implements a reciprocal function <c>f(x) = a/(mx+b)</c>, based on
+    /// the <see cref="float"/> value of a field or function as exported by <see cref="ValueSource"/>.
+    /// <para/>
+    /// When a and b are equal, and <c>x&gt;=0</c>, this function has a maximum value of 1 that drops as x increases.
     /// Increasing the value of a and b together results in a movement of the entire function to a flatter part of the curve.
-    /// <para>These properties make this an idea function for boosting more recent documents.
-    /// </para>
-    /// <para>Example:<code>  recip(ms(NOW,mydatefield),3.16e-11,1,1)</code>
-    /// </para>
-    /// <para>A multiplier of 3.16e-11 changes the units from milliseconds to years (since there are about 3.16e10 milliseconds
+    /// <para/>These properties make this an idea function for boosting more recent documents.
+    /// <para/>Example:<c>  recip(ms(NOW,mydatefield),3.16e-11,1,1)</c>
+    /// <para/>A multiplier of 3.16e-11 changes the units from milliseconds to years (since there are about 3.16e10 milliseconds
     /// per year).  Thus, a very recent date will yield a value close to 1/(0+1) or 1,
     /// a date a year in the past will get a multiplier of about 1/(1+1) or 1/2,
     /// and date two years old will yield 1/(2+1) or 1/3.
-    /// 
-    /// </para>
     /// </summary>
-    /// <seealso cref= org.apache.lucene.queries.function.FunctionQuery
-    /// 
-    ///  </seealso>
+    /// <seealso cref="FunctionQuery"/>
     public class ReciprocalFloatFunction : ValueSource
     {
         protected readonly ValueSource m_source;

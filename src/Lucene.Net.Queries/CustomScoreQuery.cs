@@ -27,11 +27,11 @@ namespace Lucene.Net.Queries
 
     /// <summary>
     /// Query that sets document score as a programmatic function of several (sub) scores:
-    /// <ol>
-    ///    <li>the score of its subQuery (any query)</li>
-    ///    <li>(optional) the score of its <seealso cref="FunctionQuery"/> (or queries).</li>
-    /// </ol>
-    /// Subclasses can modify the computation by overriding <seealso cref="#getCustomScoreProvider"/>.
+    /// <list type="bullet">
+    ///    <item>the score of its subQuery (any query)</item>
+    ///    <item>(optional) the score of its <see cref="FunctionQuery"/> (or queries).</item>
+    /// </list>
+    /// Subclasses can modify the computation by overriding <see cref="GetCustomScoreProvider"/>.
     /// 
     /// @lucene.experimental
     /// </summary>
@@ -42,16 +42,16 @@ namespace Lucene.Net.Queries
         private bool strict = false; // if true, valueSource part of query does not take part in weights normalization.
 
         /// <summary>
-        /// Create a CustomScoreQuery over input subQuery. </summary>
-        /// <param name="subQuery"> the sub query whose scored is being customized. Must not be null.  </param>
+        /// Create a <see cref="CustomScoreQuery"/> over input <paramref name="subQuery"/>. </summary>
+        /// <param name="subQuery"> the sub query whose scored is being customized. Must not be <c>null</c>.  </param>
         public CustomScoreQuery(Query subQuery)
             : this(subQuery, new FunctionQuery[0])
         {
         }
 
         /// <summary>
-        /// Create a CustomScoreQuery over input subQuery and a <seealso cref="FunctionQuery"/>. </summary>
-        /// <param name="subQuery"> the sub query whose score is being customized. Must not be null. </param>
+        /// Create a <see cref="CustomScoreQuery"/> over input <paramref name="subQuery"/> and a <see cref="FunctionQuery"/>. </summary>
+        /// <param name="subQuery"> the sub query whose score is being customized. Must not be <c>null</c>. </param>
         /// <param name="scoringQuery"> a value source query whose scores are used in the custom score
         /// computation.  This parameter is optional - it can be null. </param>
         public CustomScoreQuery(Query subQuery, FunctionQuery scoringQuery)
@@ -61,8 +61,8 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Create a CustomScoreQuery over input subQuery and a <seealso cref="FunctionQuery"/>. </summary>
-        /// <param name="subQuery"> the sub query whose score is being customized. Must not be null. </param>
+        /// Create a <see cref="CustomScoreQuery"/> over input <paramref name="subQuery"/> and a <see cref="FunctionQuery"/>. </summary>
+        /// <param name="subQuery"> the sub query whose score is being customized. Must not be <c>null</c>. </param>
         /// <param name="scoringQueries"> value source queries whose scores are used in the custom score
         /// computation.  This parameter is optional - it can be null or even an empty array. </param>
         public CustomScoreQuery(Query subQuery, params FunctionQuery[] scoringQueries)
@@ -75,6 +75,9 @@ namespace Lucene.Net.Queries
             }
         }
 
+        /// <summary>
+        /// <seealso cref="Query.Rewrite(IndexReader)"/>
+        /// </summary>
         public override Query Rewrite(IndexReader reader)
         {
             CustomScoreQuery clone = null;
@@ -102,6 +105,9 @@ namespace Lucene.Net.Queries
             return clone ?? this;
         }
 
+        /// <summary>
+        /// <seealso cref="Query.ExtractTerms(ISet{Term})"/>
+        /// </summary>
         public override void ExtractTerms(ISet<Term> terms)
         {
             subQuery.ExtractTerms(terms);
@@ -111,8 +117,9 @@ namespace Lucene.Net.Queries
             }
         }
 
-        /*(non-Javadoc) @see org.apache.lucene.search.Query#clone() */
-
+        /// <summary>
+        /// <seealso cref="Query.Clone"/>
+        /// </summary>
         public override object Clone()
         {
             var clone = (CustomScoreQuery)base.Clone();
@@ -125,8 +132,9 @@ namespace Lucene.Net.Queries
             return clone;
         }
 
-        /* (non-Javadoc) @see org.apache.lucene.search.Query#toString(java.lang.String) */
-
+        /// <summary>
+        /// <seealso cref="Query.ToString(string)"/>
+        /// </summary>
         public override string ToString(string field)
         {
             StringBuilder sb = (new StringBuilder(Name)).Append("(");
@@ -141,7 +149,7 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Returns true if <code>o</code> is equal to this. </summary>
+        /// Returns true if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
             if (this == o)
@@ -174,12 +182,12 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Returns a <seealso cref="CustomScoreProvider"/> that calculates the custom scores
-        /// for the given <seealso cref="IndexReader"/>. The default implementation returns a default
-        /// implementation as specified in the docs of <seealso cref="CustomScoreProvider"/>.
+        /// Returns a <see cref="CustomScoreProvider"/> that calculates the custom scores
+        /// for the given <see cref="IndexReader"/>. The default implementation returns a default
+        /// implementation as specified in the docs of <see cref="CustomScoreProvider"/>.
         /// @since 2.9.2
         /// </summary>
-        protected virtual CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context)
+        protected internal virtual CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context) // LUCENENET NOTE: Marked internal for documentation comments in CustomScoreProvider
         {
             return new CustomScoreProvider(context);
         }
@@ -207,8 +215,9 @@ namespace Lucene.Net.Queries
                 this.qStrict = outerInstance.strict;
             }
 
-            /*(non-Javadoc) @see org.apache.lucene.search.Weight#getQuery() */
-
+            /// <summary>
+            /// <seealso cref="Weight.Query"/>
+            /// </summary>
             public override Query Query
             {
                 get { return outerInstance; }
@@ -232,8 +241,9 @@ namespace Lucene.Net.Queries
                 return sum;
             }
 
-            /*(non-Javadoc) @see org.apache.lucene.search.Weight#normalize(float) */
-
+            /// <summary>
+            /// <seealso cref="Weight.Normalize(float, float)"/>
+            /// </summary>
             public override void Normalize(float norm, float topLevelBoost)
             {
                 // note we DONT incorporate our boost, nor pass down any topLevelBoost 
@@ -354,8 +364,9 @@ namespace Lucene.Net.Queries
                 get { return subQueryScorer.DocID; }
             }
 
-            /*(non-Javadoc) @see org.apache.lucene.search.Scorer#score() */
-
+            /// <summary>
+            /// <seealso cref="Scorer.GetScore"/>
+            /// </summary>
             public override float GetScore()
             {
                 for (int i = 0; i < valSrcScorers.Length; i++)
@@ -401,25 +412,25 @@ namespace Lucene.Net.Queries
 
         /// <summary>
         /// Checks if this is strict custom scoring.
-        /// In strict custom scoring, the <seealso cref="ValueSource"/> part does not participate in weight normalization.
+        /// In strict custom scoring, the <see cref="ValueSource"/> part does not participate in weight normalization.
         /// This may be useful when one wants full control over how scores are modified, and does 
-        /// not care about normalizing by the <seealso cref="ValueSource"/> part.
+        /// not care about normalizing by the <see cref="ValueSource"/> part.
         /// One particular case where this is useful if for testing this query.   
-        /// <P>
-        /// Note: only has effect when the <seealso cref="ValueSource"/> part is not null.
+        /// <para/>
+        /// Note: only has effect when the <see cref="ValueSource"/> part is not <c>null</c>.
         /// </summary>
         public virtual bool IsStrict { get; set; }
 
 
         /// <summary>
-        /// The sub-query that CustomScoreQuery wraps, affecting both the score and which documents match. </summary>
+        /// The sub-query that <see cref="CustomScoreQuery"/> wraps, affecting both the score and which documents match. </summary>
         public virtual Query SubQuery
         {
             get { return subQuery; }
         }
 
         /// <summary>
-        /// The scoring queries that only affect the score of CustomScoreQuery. </summary>
+        /// The scoring queries that only affect the score of <see cref="CustomScoreQuery"/>. </summary>
         [WritableArray]
         public virtual Query[] ScoringQueries
         {
@@ -427,7 +438,7 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// A short name of this query, used in <seealso cref="#toString(String)"/>.
+        /// A short name of this query, used in <see cref="ToString(string)"/>.
         /// </summary>
         public virtual string Name
         {

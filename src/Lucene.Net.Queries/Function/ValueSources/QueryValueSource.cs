@@ -27,7 +27,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <code>QueryValueSource</code> returns the relevance score of the query
+    /// <see cref="QueryValueSource"/> returns the relevance score of the query
     /// </summary>
     public class QueryValueSource : ValueSource
     {

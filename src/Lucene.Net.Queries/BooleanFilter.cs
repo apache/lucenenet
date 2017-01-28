@@ -26,20 +26,20 @@ namespace Lucene.Net.Queries
      */
 
     /// <summary>
-    /// A container Filter that allows Boolean composition of Filters.
-    /// Filters are allocated into one of three logical constructs;
+    /// A container <see cref="Filter"/> that allows Boolean composition of <see cref="Filter"/>s.
+    /// <see cref="Filter"/>s are allocated into one of three logical constructs;
     /// SHOULD, MUST NOT, MUST
-    /// The results Filter BitSet is constructed as follows:
+    /// The results <see cref="Filter"/> BitSet is constructed as follows:
     /// SHOULD Filters are OR'd together
-    /// The resulting Filter is NOT'd with the NOT Filters
-    /// The resulting Filter is AND'd with the MUST Filters
+    /// The resulting <see cref="Filter"/> is NOT'd with the NOT <see cref="Filter"/>s
+    /// The resulting <see cref="Filter"/> is AND'd with the MUST <see cref="Filter"/>s
     /// </summary>
     public class BooleanFilter : Filter, IEnumerable<FilterClause>
     {
         private readonly IList<FilterClause> clauses = new List<FilterClause>();
 
         /// <summary>
-        /// Returns the a DocIdSetIterator representing the Boolean composition
+        /// Returns the a <see cref="DocIdSetIterator"/> representing the Boolean composition
         /// of the filters that have been added.
         /// </summary>
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
@@ -121,8 +121,8 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Adds a new FilterClause to the Boolean Filter container </summary>
-        /// <param name="filterClause"> A FilterClause object containing a Filter and an Occur parameter </param>
+        /// Adds a new <see cref="FilterClause"/> to the Boolean <see cref="Filter"/> container </summary>
+        /// <param name="filterClause"> A <see cref="FilterClause"/> object containing a <see cref="Filter"/> and an <see cref="Occur"/> parameter </param>
         public virtual void Add(FilterClause filterClause)
         {
             clauses.Add(filterClause);
@@ -134,7 +134,7 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Returns the list of clauses
+        /// Gets the list of clauses
         /// </summary>
         public virtual IList<FilterClause> Clauses
         {
@@ -142,9 +142,9 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Returns an iterator on the clauses in this query. It implements the <seealso cref="Iterable"/> interface to
+        /// Returns an iterator on the clauses in this query. It implements the <see cref="IEnumerable{T}"/> interface to
         /// make it possible to do:
-        /// <pre class="prettyprint">for (FilterClause clause : booleanFilter) {}</pre>
+        /// <code>for (FilterClause clause : booleanFilter) {}</code>
         /// </summary>
         public IEnumerator<FilterClause> GetEnumerator()
         {
@@ -173,7 +173,7 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Prints a user-readable version of this Filter. </summary>
+        /// Prints a user-readable version of this <see cref="Filter"/>. </summary>
         public override string ToString()
         {
             var buffer = new StringBuilder("BooleanFilter(");

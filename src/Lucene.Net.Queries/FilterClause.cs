@@ -20,9 +20,9 @@ namespace Lucene.Net.Queries
      */
     
     /// <summary>
-    /// A Filter that wrapped with an indication of how that filter
+    /// A <see cref="Search.Filter"/> that wrapped with an indication of how that filter
     /// is used when composed with another filter.
-    /// (Follows the boolean logic in BooleanClause for composition 
+    /// (Follows the boolean logic in <see cref="BooleanClause"/> for composition 
     /// of queries.)
     /// </summary>
     public sealed class FilterClause
@@ -31,8 +31,8 @@ namespace Lucene.Net.Queries
         private readonly Filter filter;
 
         /// <summary>
-        /// Create a new FilterClause </summary>
-        /// <param name="filter"> A Filter object containing a BitSet </param>
+        /// Create a new <see cref="FilterClause"/> </summary>
+        /// <param name="filter"> A <see cref="Search.Filter"/> object containing a BitSet </param>
         /// <param name="occur"> A parameter implementation indicating SHOULD, MUST or MUST NOT </param>
         public FilterClause(Filter filter, Occur occur)
         {
@@ -41,8 +41,8 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Returns this FilterClause's filter </summary>
-        /// <returns> A Filter object </returns>
+        /// Returns this <see cref="FilterClause"/>'s filter </summary>
+        /// <returns> A <see cref="Search.Filter"/> object </returns>
         public Filter Filter
         {
             get
@@ -52,8 +52,8 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Returns this FilterClause's occur parameter </summary>
-        /// <returns> An Occur object </returns>
+        /// Returns this <see cref="FilterClause"/>'s occur parameter </summary>
+        /// <returns> An <see cref="Search.Occur"/> object </returns>
         public Occur Occur
         {
             get

@@ -42,7 +42,7 @@ namespace Lucene.Net.Queries
             this.term = term;
         }
 
-        /// <returns> The term this filter includes documents with. </returns>
+        /// <summary> Gets the term this filter includes documents with. </summary>
         public Term Term
         {
             get

@@ -23,27 +23,25 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Obtains the ordinal of the field value from the default Lucene <seealso cref="FieldCache"/> using getTermsIndex()
+    /// Obtains the ordinal of the field value from the default Lucene <see cref="FieldCache"/> using <see cref="IFieldCache.GetTermsIndex"/>
     /// and reverses the order.
-    /// <br>
+    /// <para/>
     /// The native lucene index order is used to assign an ordinal value for each field value.
-    /// <br>Field values (terms) are lexicographically ordered by unicode value, and numbered starting at 1.
-    /// <br>
-    /// Example of reverse ordinal (rord):<br>
-    ///  If there were only three field values: "apple","banana","pear"
-    /// <br>then rord("apple")=3, rord("banana")=2, ord("pear")=1
-    /// <para>
-    ///  WARNING: ord() depends on the position in an index and can thus change when other documents are inserted or deleted,
+    /// <para/>Field values (terms) are lexicographically ordered by unicode value, and numbered starting at 1.
+    /// <para/>
+    /// Example of reverse ordinal (rord):
+    /// <code>
+    ///     If there were only three field values: "apple","banana","pear"
+    ///     then rord("apple")=3, rord("banana")=2, ord("pear")=1
+    /// </code>
+    /// <para/>
+    ///  WARNING: Ord depends on the position in an index and can thus change when other documents are inserted or deleted,
     ///  or if a MultiSearcher is used.
-    /// <br>
+    /// <para/>
     ///  WARNING: as of Solr 1.4, ord() and rord() can cause excess memory use since they must use a FieldCache entry
     /// at the top level reader, while sorting and function queries now use entries at the segment level.  Hence sorting
     /// or using a different function query, in addition to ord()/rord() will double memory use.
-    /// 
-    /// 
-    /// </para>
     /// </summary>
-
     public class ReverseOrdFieldSource : ValueSource
     {
         // LUCENENET NOTE: Made private and added public property for reading

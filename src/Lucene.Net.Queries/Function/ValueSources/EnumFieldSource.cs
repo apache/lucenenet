@@ -28,9 +28,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Obtains int field values from <seealso cref="IFieldCache#getInts"/> and makes
+    /// Obtains <see cref="int"/> field values from <see cref="IFieldCache.GetInts"/> and makes
     /// those values available as other numeric types, casting as needed.
-    /// StrVal of the value is not the int value, but its str (displayed) value
+    /// StrVal of the value is not the <see cref="int"/> value, but its <see cref="string"/> (displayed) value
     /// </summary>
     public class EnumFieldSource : FieldCacheSource
     {

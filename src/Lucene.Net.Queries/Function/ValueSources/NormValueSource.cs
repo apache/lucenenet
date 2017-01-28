@@ -24,13 +24,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Function that returns <seealso cref="TFIDFSimilarity#decodeNormValue(long)"/>
+    /// Function that returns <see cref="TFIDFSimilarity.DecodeNormValue(long)"/>
     /// for every document.
-    /// <para>
+    /// <para/>
     /// Note that the configured Similarity for the field must be
-    /// a subclass of <seealso cref="TFIDFSimilarity"/>
+    /// a subclass of <see cref="TFIDFSimilarity"/>
     /// @lucene.internal 
-    /// </para>
     /// </summary>
     public class NormValueSource : ValueSource
     {

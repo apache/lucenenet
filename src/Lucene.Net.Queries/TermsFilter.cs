@@ -31,7 +31,7 @@ namespace Lucene.Net.Queries
     /// Unlike a RangeFilter this can be used for filtering on multiple terms that are not necessarily in
     /// a sequence. An example might be a collection of primary keys from a database query result or perhaps
     /// a choice of "category" labels picked by the end user. As a filter, this is much faster than the
-    /// equivalent query (a BooleanQuery with many "should" TermQueries)
+    /// equivalent query (a <see cref="BooleanQuery"/> with many "should" <see cref="TermQuery"/>s)
     /// </summary>
     public sealed class TermsFilter : Filter
     {
@@ -52,7 +52,7 @@ namespace Lucene.Net.Queries
         private const int PRIME = 31;
 
         /// <summary>
-        /// Creates a new <seealso cref="TermsFilter"/> from the given list. The list
+        /// Creates a new <see cref="TermsFilter"/> from the given list. The list
         /// can contain duplicate terms and multiple fields.
         /// </summary>
         public TermsFilter(List<Term> terms)
@@ -91,7 +91,7 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="TermsFilter"/> from the given <seealso cref="BytesRef"/> list for
+        /// Creates a new <see cref="TermsFilter"/> from the given <see cref="BytesRef"/> list for
         /// a single field.
         /// </summary>
         public TermsFilter(string field, List<BytesRef> terms)
@@ -129,7 +129,7 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="TermsFilter"/> from the given <seealso cref="BytesRef"/> array for
+        /// Creates a new <see cref="TermsFilter"/> from the given <see cref="BytesRef"/> array for
         /// a single field.
         /// </summary>
         public TermsFilter(string field, params BytesRef[] terms)
@@ -139,7 +139,7 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="TermsFilter"/> from the given array. The array can
+        /// Creates a new <see cref="TermsFilter"/> from the given array. The array can
         /// contain duplicate terms and multiple fields.
         /// </summary>
         public TermsFilter(params Term[] terms)

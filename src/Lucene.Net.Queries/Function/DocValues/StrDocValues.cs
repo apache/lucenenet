@@ -18,10 +18,10 @@ namespace Lucene.Net.Queries.Function.DocValues
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
-    /// Abstract <seealso cref="FunctionValues"/> implementation which supports retrieving String values.
-    /// Implementations can control how the String values are loaded through <seealso cref="#StrVal(int)"/>}
+    /// Abstract <see cref="FunctionValues"/> implementation which supports retrieving <see cref="string"/> values.
+    /// Implementations can control how the <see cref="string"/> values are loaded through <see cref="StrVal(int)"/>
     /// </summary>
     public abstract class StrDocValues : FunctionValues
     {

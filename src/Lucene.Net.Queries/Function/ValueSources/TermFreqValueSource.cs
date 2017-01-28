@@ -26,12 +26,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Function that returns <seealso cref="DocsEnum#freq()"/> for the
+    /// Function that returns <see cref="DocsEnum.Freq"/> for the
     /// supplied term in every document.
-    /// <para>
+    /// <para/>
     /// If the term does not exist in the document, returns 0.
     /// If frequencies are omitted, returns 1.
-    /// </para>
     /// </summary>
     public class TermFreqValueSource : DocFreqValueSource
     {

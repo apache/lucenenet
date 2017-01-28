@@ -23,23 +23,22 @@ namespace Lucene.Net.Queries
 
     /// <summary>
     /// An instance of this subclass should be returned by
-    /// <seealso cref="CustomScoreQuery#getCustomScoreProvider"/>, if you want
-    /// to modify the custom score calculation of a <seealso cref="CustomScoreQuery"/>.
-    /// <para>Since Lucene 2.9, queries operate on each segment of an index separately,
-    /// so the protected <seealso cref="#context"/> field can be used to resolve doc IDs,
-    /// as the supplied <code>doc</code> ID is per-segment and without knowledge
-    /// of the IndexReader you cannot access the document or <seealso cref="IFieldCache"/>.
+    /// <see cref="CustomScoreQuery.GetCustomScoreProvider"/>, if you want
+    /// to modify the custom score calculation of a <see cref="CustomScoreQuery"/>.
+    /// <para/>Since Lucene 2.9, queries operate on each segment of an index separately,
+    /// so the protected <see cref="m_context"/> field can be used to resolve doc IDs,
+    /// as the supplied <c>doc</c> ID is per-segment and without knowledge
+    /// of the <see cref="IndexReader"/> you cannot access the document or <see cref="IFieldCache"/>.
     /// 
     /// @lucene.experimental
     /// @since 2.9.2
-    /// </para>
     /// </summary>
     public class CustomScoreProvider
     {
         protected readonly AtomicReaderContext m_context;
 
         /// <summary>
-        /// Creates a new instance of the provider class for the given <seealso cref="IndexReader"/>.
+        /// Creates a new instance of the provider class for the given <see cref="IndexReader"/>.
         /// </summary>
         public CustomScoreProvider(AtomicReaderContext context)
         {
@@ -48,29 +47,25 @@ namespace Lucene.Net.Queries
 
         /// <summary>
         /// Compute a custom score by the subQuery score and a number of 
-        /// <seealso cref="FunctionQuery"/> scores.
-        /// <para> 
+        /// <see cref="Function.FunctionQuery"/> scores.
+        /// <para/> 
         /// Subclasses can override this method to modify the custom score.  
-        /// </para>
-        /// <para>
+        /// <para/>
         /// If your custom scoring is different than the default herein you 
-        /// should override at least one of the two customScore() methods.
-        /// If the number of <seealso cref="FunctionQuery function queries"/> is always &lt; 2 it is 
+        /// should override at least one of the two <see cref="CustomScore"/> methods.
+        /// If the number of <see cref="Function.FunctionQuery"/>s is always &lt; 2 it is 
         /// sufficient to override the other 
-        /// <seealso cref="#customScore(int, float, float) customScore()"/> 
+        /// <see cref="CustomScore(int, float, float)"/> 
         /// method, which is simpler. 
-        /// </para>
-        /// <para>
+        /// <para/>
         /// The default computation herein is a multiplication of given scores:
-        /// <pre>
+        /// <code>
         ///     ModifiedScore = valSrcScore * valSrcScores[0] * valSrcScores[1] * ...
-        /// </pre>
-        /// 
-        /// </para>
+        /// </code>
         /// </summary>
         /// <param name="doc"> id of scored doc. </param>
         /// <param name="subQueryScore"> score of that doc by the subQuery. </param>
-        /// <param name="valSrcScores"> scores of that doc by the <seealso cref="FunctionQuery"/>. </param>
+        /// <param name="valSrcScores"> scores of that doc by the <see cref="Function.FunctionQuery"/>. </param>
         /// <returns> custom score. </returns>
         public virtual float CustomScore(int doc, float subQueryScore, float[] valSrcScores)
         {
@@ -86,27 +81,23 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Compute a custom score by the subQuery score and the <seealso cref="FunctionQuery"/> score.
-        /// <para> 
+        /// Compute a custom score by the <paramref name="subQueryScore"/> and the <see cref="Function.FunctionQuery"/> score.
+        /// <para/> 
         /// Subclasses can override this method to modify the custom score.
-        /// </para>
-        /// <para>
+        /// <para/>
         /// If your custom scoring is different than the default herein you 
-        /// should override at least one of the two customScore() methods.
-        /// If the number of <seealso cref="FunctionQuery function queries"/> is always &lt; 2 it is 
-        /// sufficient to override this customScore() method, which is simpler. 
-        /// </para>
-        /// <para>
+        /// should override at least one of the two <see cref="CustomScore"/> methods.
+        /// If the number of <see cref="Function.FunctionQuery"/>s is always &lt; 2 it is 
+        /// sufficient to override this <see cref="CustomScore(int, float, float)"/> method, which is simpler. 
+        /// <para/>
         /// The default computation herein is a multiplication of the two scores:
-        /// <pre>
+        /// <code>
         ///     ModifiedScore = subQueryScore * valSrcScore
-        /// </pre>
-        /// 
-        /// </para>
+        /// </code>
         /// </summary>
         /// <param name="doc"> id of scored doc. </param>
         /// <param name="subQueryScore"> score of that doc by the subQuery. </param>
-        /// <param name="valSrcScore"> score of that doc by the <seealso cref="FunctionQuery"/>. </param>
+        /// <param name="valSrcScore"> score of that doc by the <see cref="Function.FunctionQuery"/>. </param>
         /// <returns> custom score. </returns>
         public virtual float CustomScore(int doc, float subQueryScore, float valSrcScore)
         {
@@ -115,7 +106,7 @@ namespace Lucene.Net.Queries
 
         /// <summary>
         /// Explain the custom score.
-        /// Whenever overriding <seealso cref="#customScore(int, float, float[])"/>, 
+        /// Whenever overriding <see cref="CustomScore(int, float, float[])"/>, 
         /// this method should also be overridden to provide the correct explanation
         /// for the part of the custom scoring.
         /// </summary>
@@ -149,7 +140,7 @@ namespace Lucene.Net.Queries
 
         /// <summary>
         /// Explain the custom score.
-        /// Whenever overriding <seealso cref="#customScore(int, float, float)"/>, 
+        /// Whenever overriding <see cref="CustomScore(int, float, float)"/>, 
         /// this method should also be overridden to provide the correct explanation
         /// for the part of the custom scoring.
         /// </summary>

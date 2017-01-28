@@ -23,9 +23,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Pass a the field value through as a String, no matter the type // Q: doesn't this mean it's a "str"?
-    /// 
-    /// 
+    /// Pass a the field value through as a <see cref="string"/>, no matter the type // Q: doesn't this mean it's a "str"?
     /// </summary>
     public class LiteralValueSource : ValueSource
     {

@@ -25,12 +25,10 @@ namespace Lucene.Net.Queries.Function
      */
     
     /// <summary>
-    /// Returns a score for each document based on a ValueSource,
+    /// Returns a score for each document based on a <see cref="Function.ValueSource"/>,
     /// often some function of the value of a field.
     /// 
     /// <b>Note: This API is experimental and may change in non backward-compatible ways in the future</b>
-    /// 
-    /// 
     /// </summary>
     public class FunctionQuery : Query
     {
@@ -42,7 +40,7 @@ namespace Lucene.Net.Queries.Function
             this.func = func;
         }
 
-        /// <returns> The associated ValueSource </returns>
+        /// <returns> The associated <see cref="Function.ValueSource"/> </returns>
         public virtual ValueSource ValueSource
         {
             get
@@ -215,7 +213,8 @@ namespace Lucene.Net.Queries.Function
 
 
         /// <summary>
-        /// Returns true if <code>o</code> is equal to this. </summary>
+        /// Returns true if <paramref name="o"/> is equal to this.
+        /// </summary>
         public override bool Equals(object o)
         {
             var other = o as FunctionQuery;
@@ -228,7 +227,8 @@ namespace Lucene.Net.Queries.Function
         }
 
         /// <summary>
-        /// Returns a hash code value for this object. </summary>
+        /// Returns a hash code value for this object.
+        /// </summary>
         public override int GetHashCode()
         {
             return func.GetHashCode() * 31 + Number.FloatToIntBits(Boost);

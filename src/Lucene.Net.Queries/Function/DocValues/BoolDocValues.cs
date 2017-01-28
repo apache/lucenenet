@@ -21,8 +21,8 @@ namespace Lucene.Net.Queries.Function.DocValues
      */
 
     /// <summary>
-    /// Abstract <seealso cref="FunctionValues"/> implementation which supports retrieving boolean values.
-    /// Implementations can control how the boolean values are loaded through <seealso cref="#BoolVal(int)"/>}
+    /// Abstract <see cref="FunctionValues"/> implementation which supports retrieving <see cref="bool"/> values.
+    /// Implementations can control how the <see cref="bool"/> values are loaded through <see cref="BoolVal(int)"/>
     /// </summary>
     public abstract class BoolDocValues : FunctionValues
     {

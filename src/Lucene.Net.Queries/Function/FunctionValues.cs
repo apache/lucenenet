@@ -25,9 +25,7 @@ namespace Lucene.Net.Queries.Function
 
     /// <summary>
     /// Represents field values as different types.
-    /// Normally created via a <seealso cref="ValueSource"/> for a particular field and reader.
-    /// 
-    /// 
+    /// Normally created via a <see cref="ValueSource"/> for a particular field and reader.
     /// </summary>
 
     // FunctionValues is distinct from ValueSource because
@@ -94,7 +92,7 @@ namespace Lucene.Net.Queries.Function
         }
 
         /// <summary>
-        /// Native Object representation of the value </summary>
+        /// Native <see cref="object"/> representation of the value </summary>
         public virtual object ObjectVal(int doc)
         {
             // most FunctionValues are functions, so by default return a Float()
@@ -102,7 +100,7 @@ namespace Lucene.Net.Queries.Function
         }
 
         /// <summary>
-        /// Returns true if there is a value for this document </summary>
+        /// Returns <c>true</c> if there is a value for this document </summary>
         public virtual bool Exists(int doc)
         {
             return true;
@@ -126,20 +124,20 @@ namespace Lucene.Net.Queries.Function
 
         /// <summary>
         /// Abstraction of the logic required to fill the value of a specified doc into
-        /// a reusable <seealso cref="MutableValue"/>.  Implementations of <seealso cref="FunctionValues"/>
-        /// are encouraged to define their own implementations of ValueFiller if their
-        /// value is not a float.
+        /// a reusable <see cref="MutableValue"/>.  Implementations of <see cref="FunctionValues"/>
+        /// are encouraged to define their own implementations of <see cref="ValueFiller"/> if their
+        /// value is not a <see cref="float"/>.
         /// 
         /// @lucene.experimental
         /// </summary>
         public abstract class ValueFiller
         {
             /// <summary>
-            /// MutableValue will be reused across calls </summary>
+            /// <see cref="MutableValue"/> will be reused across calls </summary>
             public abstract MutableValue Value { get; }
 
             /// <summary>
-            /// MutableValue will be reused across calls.  Returns true if the value exists. </summary>
+            /// <see cref="MutableValue"/> will be reused across calls.  Returns <c>true</c> if the value exists. </summary>
             public abstract void FillValue(int doc);
         }
 

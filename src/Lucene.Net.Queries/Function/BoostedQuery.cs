@@ -26,7 +26,7 @@ namespace Lucene.Net.Queries.Function
      */
 
     /// <summary>
-    /// Query that is boosted by a ValueSource
+    /// Query that is boosted by a <see cref="Function.ValueSource"/>
     /// </summary>
     // TODO: BoostedQuery and BoostingQuery in the same module? 
     // something has to give

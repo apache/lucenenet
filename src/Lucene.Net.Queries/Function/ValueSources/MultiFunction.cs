@@ -22,10 +22,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
-    /// Abstract parent class for <seealso cref="ValueSource"/> implementations that wrap multiple
-    /// ValueSources and apply their own logic.
+    /// Abstract parent class for <see cref="ValueSource"/> implementations that wrap multiple
+    /// <see cref="ValueSource"/>s and apply their own logic.
     /// </summary>
     public abstract class MultiFunction : ValueSource
     {

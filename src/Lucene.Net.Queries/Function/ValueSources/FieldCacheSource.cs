@@ -20,10 +20,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// A base class for ValueSource implementations that retrieve values for
-    /// a single field from the <seealso cref="org.apache.lucene.search.FieldCache"/>.
-    /// 
-    /// 
+    /// A base class for <see cref="ValueSource"/> implementations that retrieve values for
+    /// a single field from the <see cref="Search.FieldCache"/>.
     /// </summary>
     public abstract class FieldCacheSource : ValueSource
     {

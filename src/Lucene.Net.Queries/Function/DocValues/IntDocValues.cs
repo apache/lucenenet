@@ -20,10 +20,10 @@ namespace Lucene.Net.Queries.Function.DocValues
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
-    /// Abstract <seealso cref="FunctionValues"/> implementation which supports retrieving int values.
-    /// Implementations can control how the int values are loaded through <seealso cref="#IntVal(int)"/>
+    /// Abstract <see cref="FunctionValues"/> implementation which supports retrieving <see cref="int"/> values.
+    /// Implementations can control how the <see cref="int"/> values are loaded through <see cref="IntVal(int)"/>
     /// </summary>
     public abstract class IntDocValues : FunctionValues
     {

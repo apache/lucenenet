@@ -24,12 +24,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <code>LinearFloatFunction</code> implements a linear function over
-    /// another <seealso cref="ValueSource"/>.
-    /// <br>
-    /// Normally Used as an argument to a <seealso cref="FunctionQuery"/>
-    /// 
-    /// 
+    /// <see cref="LinearFloatFunction"/> implements a linear function over
+    /// another <see cref="ValueSource"/>.
+    /// <para/>
+    /// Normally Used as an argument to a <see cref="FunctionQuery"/>
     /// </summary>
     public class LinearFloatFunction : ValueSource
     {

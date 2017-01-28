@@ -18,7 +18,7 @@
      */
 
     /// <summary>
-    /// <code>ConstNumberSource</code> is the base class for all constant numbers
+    /// <see cref="ConstNumberSource"/> is the base class for all constant numbers
     /// </summary>
     public abstract class ConstNumberSource : ValueSource
     {

@@ -31,18 +31,18 @@ namespace Lucene.Net.Queries
     /// <summary>
     /// A query that executes high-frequency terms in a optional sub-query to prevent
     /// slow queries due to "common" terms like stopwords. This query
-    /// builds 2 queries off the <seealso cref="#add(Term) added"/> terms: low-frequency
+    /// builds 2 queries off the <see cref="Add(Term) added"/> terms: low-frequency
     /// terms are added to a required boolean clause and high-frequency terms are
     /// added to an optional boolean clause. The optional clause is only executed if
     /// the required "low-frequency" clause matches. Scores produced by this query
-    /// will be slightly different than plain <seealso cref="BooleanQuery"/> scorer mainly due to
-    /// differences in the <seealso cref="Similarity#coord(int,int) number of leaf queries"/>
+    /// will be slightly different than plain <see cref="BooleanQuery"/> scorer mainly due to
+    /// differences in the <see cref="Search.Similarities.Similarity.Coord(int,int) number of leaf queries"/>
     /// in the required boolean clause. In most cases, high-frequency terms are
     /// unlikely to significantly contribute to the document score unless at least
     /// one of the low-frequency terms are matched.  This query can improve
     /// query execution times significantly if applicable.
     /// <para>
-    /// <seealso cref="CommonTermsQuery"/> has several advantages over stopword filtering at
+    /// <see cref="CommonTermsQuery"/> has several advantages over stopword filtering at
     /// index or query time since a term can be "classified" based on the actual
     /// document frequency in the index and can prevent slow queries even across
     /// domains without specialized stopword files.
@@ -71,41 +71,41 @@ namespace Lucene.Net.Queries
         protected float m_highFreqMinNrShouldMatch = 0;
 
         /// <summary>
-        /// Creates a new <seealso cref="CommonTermsQuery"/>
+        /// Creates a new <see cref="CommonTermsQuery"/>
         /// </summary>
         /// <param name="highFreqOccur">
-        ///          <seealso cref="Occur"/> used for high frequency terms </param>
+        ///          <see cref="Occur"/> used for high frequency terms </param>
         /// <param name="lowFreqOccur">
-        ///          <seealso cref="Occur"/> used for low frequency terms </param>
+        ///          <see cref="Occur"/> used for low frequency terms </param>
         /// <param name="maxTermFrequency">
         ///          a value in [0..1) (or absolute number >=1) representing the
         ///          maximum threshold of a terms document frequency to be considered a
         ///          low frequency term. </param>
         /// <exception cref="ArgumentException">
-        ///           if <seealso cref="Occur#MUST_NOT"/> is pass as lowFreqOccur or
-        ///           highFreqOccur </exception>
+        ///           if <see cref="Occur.MUST_NOT"/> is pass as <paramref name="lowFreqOccur"/> or
+        ///           <paramref name="highFreqOccur"/> </exception>
         public CommonTermsQuery(Occur highFreqOccur, Occur lowFreqOccur, float maxTermFrequency)
             : this(highFreqOccur, lowFreqOccur, maxTermFrequency, false)
         {
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="CommonTermsQuery"/>
+        /// Creates a new <see cref="CommonTermsQuery"/>
         /// </summary>
         /// <param name="highFreqOccur">
-        ///          <seealso cref="Occur"/> used for high frequency terms </param>
+        ///          <see cref="Occur"/> used for high frequency terms </param>
         /// <param name="lowFreqOccur">
-        ///          <seealso cref="Occur"/> used for low frequency terms </param>
+        ///          <see cref="Occur"/> used for low frequency terms </param>
         /// <param name="maxTermFrequency">
         ///          a value in [0..1) (or absolute number >=1) representing the
         ///          maximum threshold of a terms document frequency to be considered a
         ///          low frequency term. </param>
         /// <param name="disableCoord">
-        ///          disables <seealso cref="Similarity#coord(int,int)"/> in scoring for the low
+        ///          disables <see cref="Search.Similarities.Similarity.Coord(int,int)"/> in scoring for the low
         ///          / high frequency sub-queries </param>
         /// <exception cref="ArgumentException">
-        ///           if <seealso cref="Occur#MUST_NOT"/> is pass as lowFreqOccur or
-        ///           highFreqOccur </exception>
+        ///           if <see cref="Occur.MUST_NOT"/> is pass as <paramref name="lowFreqOccur"/> or
+        ///           <paramref name="highFreqOccur"/> </exception>
         public CommonTermsQuery(Occur highFreqOccur, Occur lowFreqOccur,
             float maxTermFrequency, bool disableCoord)
         {
@@ -124,7 +124,7 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Adds a term to the <seealso cref="CommonTermsQuery"/>
+        /// Adds a term to the <see cref="CommonTermsQuery"/>
         /// </summary>
         /// <param name="term">
         ///          the term to add </param>
@@ -291,7 +291,7 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Returns true iff <seealso cref="Similarity#coord(int,int)"/> is disabled in scoring
+        /// Returns true iff <see cref="Search.Similarities.Similarity.Coord(int,int)"/> is disabled in scoring
         /// for the high and low frequency query instance. The top level query will
         /// always disable coords.
         /// </summary>
@@ -304,7 +304,7 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Specifies a minimum number of the low frequent optional BooleanClauses which must be
+        /// Gets or Sets a minimum number of the low frequent optional BooleanClauses which must be
         /// satisfied in order to produce a match on the low frequency terms query
         /// part. This method accepts a float value in the range [0..1) as a fraction
         /// of the actual query terms in the low frequent clause or a number
@@ -316,8 +316,6 @@ namespace Lucene.Net.Queries
         /// clauses is required.
         /// </para>
         /// </summary>
-        /// <param name="min">
-        ///          the number of optional clauses that must match </param>
         public virtual float LowFreqMinimumNumberShouldMatch
         {
             get { return m_lowFreqMinNrShouldMatch; }
@@ -326,7 +324,7 @@ namespace Lucene.Net.Queries
 
 
         /// <summary>
-        /// Specifies a minimum number of the high frequent optional BooleanClauses which must be
+        /// Gets or Sets a minimum number of the high frequent optional BooleanClauses which must be
         /// satisfied in order to produce a match on the low frequency terms query
         /// part. This method accepts a float value in the range [0..1) as a fraction
         /// of the actual query terms in the low frequent clause or a number
@@ -467,11 +465,11 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// Builds a new TermQuery instance.
+        /// Builds a new <see cref="TermQuery"/> instance.
         /// <para>This is intended for subclasses that wish to customize the generated queries.</para> </summary>
         /// <param name="term"> term </param>
-        /// <param name="context"> the TermContext to be used to create the low level term query. Can be <code>null</code>. </param>
-        /// <returns> new TermQuery instance </returns>
+        /// <param name="context"> the <see cref="TermContext"/> to be used to create the low level term query. Can be <c>null</c>. </param>
+        /// <returns> new <see cref="TermQuery"/> instance </returns>
         protected virtual Query NewTermQuery(Term term, TermContext context)
         {
             return context == null ? new TermQuery(term) : new TermQuery(term, context);

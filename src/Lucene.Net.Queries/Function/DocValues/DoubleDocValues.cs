@@ -20,10 +20,10 @@ namespace Lucene.Net.Queries.Function.DocValues
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
-    /// Abstract <seealso cref="FunctionValues"/> implementation which supports retrieving double values.
-    /// Implementations can control how the double values are loaded through <seealso cref="#DoubleVal(int)"/>}
+    /// Abstract <see cref="FunctionValues"/> implementation which supports retrieving <see cref="double"/> values.
+    /// Implementations can control how the <see cref="double"/> values are loaded through <see cref="DoubleVal(int)"/>
     /// </summary>
     public abstract class DoubleDocValues : FunctionValues
     {

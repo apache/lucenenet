@@ -23,7 +23,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <code>ConstValueSource</code> returns a constant for all documents
+    /// <see cref="ConstValueSource"/> returns a constant for all documents
     /// </summary>
     public class ConstValueSource : ConstNumberSource
     {

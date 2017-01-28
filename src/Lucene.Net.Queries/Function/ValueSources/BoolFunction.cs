@@ -18,7 +18,7 @@
      */
 
     /// <summary>
-    /// Abstract parent class for those <seealso cref="ValueSource"/> implementations which
+    /// Abstract parent class for those <see cref="ValueSource"/> implementations which
     /// apply boolean logic to their values
     /// </summary>
     public abstract class BoolFunction : ValueSource

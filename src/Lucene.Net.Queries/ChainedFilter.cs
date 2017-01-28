@@ -24,7 +24,7 @@ namespace Lucene.Net.Queries
 
     /// <summary>
     /// <para>
-    /// Allows multiple <seealso cref="Filter"/>s to be chained.
+    /// Allows multiple <see cref="Filter"/>s to be chained.
     /// Logical operations such as <b>NOT</b> and <b>XOR</b>
     /// are applied between filters. One operation can be used
     /// for all filters, or a specific operation can be declared
@@ -33,8 +33,8 @@ namespace Lucene.Net.Queries
     /// <para>
     /// Order in which filters are called depends on
     /// the position of the filter in the chain. It's probably
-    /// more efficient to place the most restrictive filters
-    /// /least computationally-intensive filters first.
+    /// more efficient to place the most restrictive filters/least 
+    /// computationally-intensive filters first.
     /// </para>
     /// </summary>
     public class ChainedFilter : Filter
@@ -89,7 +89,7 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// <seealso cref="Filter#GetDocIdSet"/>.
+        /// <seealso cref="Filter.GetDocIdSet"/>.
         /// </summary>
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {

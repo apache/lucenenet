@@ -23,15 +23,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Depending on the boolean value of the <code>ifSource</code> function,
-    /// returns the value of the <code>trueSource</code> or <code>falseSource</code> function.
+    /// Depending on the <see cref="bool"/> value of the <paramref name="ifSource"/> function,
+    /// returns the value of the <paramref name="trueSource"/> or <paramref name="falseSource"/> function.
     /// </summary>
     public class IfFunction : BoolFunction
     {
         private readonly ValueSource ifSource;
         private readonly ValueSource trueSource;
         private readonly ValueSource falseSource;
-
 
         public IfFunction(ValueSource ifSource, ValueSource trueSource, ValueSource falseSource)
         {

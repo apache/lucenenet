@@ -23,10 +23,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Obtains short field values from the <seealso cref="org.apache.lucene.search.FieldCache"/>
-    /// using <code>getShorts()</code>
+    /// Obtains <see cref="short"/> field values from the <see cref="FieldCache"/>
+    /// using <see cref="IFieldCache.GetShorts"/>
     /// and makes those values available as other numeric types, casting as needed.
-    /// 
     /// </summary>
     [Obsolete]
     public class ShortFieldSource : FieldCacheSource

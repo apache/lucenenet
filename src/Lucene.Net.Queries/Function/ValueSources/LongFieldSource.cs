@@ -26,7 +26,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Obtains long field values from <seealso cref="FieldCache#getLongs"/> and makes those
+    /// Obtains <see cref="long"/> field values from <see cref="IFieldCache.GetLongs"/> and makes those
     /// values available as other numeric types, casting as needed.
     /// </summary>
     public class LongFieldSource : FieldCacheSource
