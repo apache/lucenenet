@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Similarities;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections;
 
@@ -32,6 +33,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// @lucene.internal 
     /// </para>
     /// </summary>
+    [ExceptionToClassNameConvention]
     public class IDFValueSource : DocFreqValueSource
     {
         public IDFValueSource(string field, string val, string indexedField, BytesRef indexedBytes)
