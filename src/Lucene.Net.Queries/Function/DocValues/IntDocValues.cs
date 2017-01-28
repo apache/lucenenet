@@ -34,9 +34,9 @@ namespace Lucene.Net.Queries.Function.DocValues
             this.m_vs = vs;
         }
 
-        public override sbyte ByteVal(int doc)
+        public override byte ByteVal(int doc)
         {
-            return (sbyte)IntVal(doc);
+            return (byte)IntVal(doc);
         }
 
         public override short ShortVal(int doc)

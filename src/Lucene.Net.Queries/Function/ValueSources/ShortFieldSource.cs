@@ -66,9 +66,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.arr = arr;
             }
 
-            public override sbyte ByteVal(int doc)
+            public override byte ByteVal(int doc)
             {
-                return (sbyte)arr.Get(doc);
+                return (byte)arr.Get(doc);
             }
 
             public override short ShortVal(int doc)

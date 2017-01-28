@@ -35,9 +35,9 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override abstract bool BoolVal(int doc);
 
-        public override sbyte ByteVal(int doc)
+        public override byte ByteVal(int doc)
         {
-            return BoolVal(doc) ? (sbyte)1 : (sbyte)0;
+            return BoolVal(doc) ? (byte)1 : (byte)0;
         }
 
         public override short ShortVal(int doc)

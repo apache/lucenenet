@@ -38,7 +38,7 @@ namespace Lucene.Net.Queries.Function
     //   want the Query carrying around big objects
     public abstract class FunctionValues
     {
-        public virtual sbyte ByteVal(int doc)
+        public virtual byte ByteVal(int doc)
         {
             throw new System.NotSupportedException();
         }
@@ -174,7 +174,7 @@ namespace Lucene.Net.Queries.Function
         }
 
         //For Functions that can work with multiple values from the same document.  This does not apply to all functions
-        public virtual void ByteVal(int doc, sbyte[] vals)
+        public virtual void ByteVal(int doc, byte[] vals)
         {
             throw new System.NotSupportedException();
         }

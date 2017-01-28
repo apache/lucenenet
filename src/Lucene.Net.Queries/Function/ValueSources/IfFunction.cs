@@ -62,7 +62,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.falseVals = falseVals;
             }
 
-            public override sbyte ByteVal(int doc)
+            public override byte ByteVal(int doc)
             {
                 return ifVals.BoolVal(doc) ? trueVals.ByteVal(doc) : falseVals.ByteVal(doc);
             }

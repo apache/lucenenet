@@ -72,7 +72,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return valsArr[upto];
             }
 
-            public override sbyte ByteVal(int doc)
+            public override byte ByteVal(int doc)
             {
                 return Get(doc).ByteVal(doc);
             }

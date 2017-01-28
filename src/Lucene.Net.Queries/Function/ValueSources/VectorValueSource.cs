@@ -90,7 +90,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.y = y;
             }
 
-            public override void ByteVal(int doc, sbyte[] vals)
+            public override void ByteVal(int doc, byte[] vals)
             {
                 vals[0] = x.ByteVal(doc);
                 vals[1] = y.ByteVal(doc);
@@ -143,7 +143,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.valsArr = valsArr;
             }
 
-            public override void ByteVal(int doc, sbyte[] vals)
+            public override void ByteVal(int doc, byte[] vals)
             {
                 for (int i = 0; i < valsArr.Length; i++)
                 {
