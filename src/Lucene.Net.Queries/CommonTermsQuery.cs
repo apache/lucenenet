@@ -295,7 +295,7 @@ namespace Lucene.Net.Queries
         /// for the high and low frequency query instance. The top level query will
         /// always disable coords.
         /// </summary>
-        public virtual bool CoordDisabled // LUCENENET TODO: Rename IsCoordDisabled
+        public virtual bool IsCoordDisabled
         {
             get
             {
