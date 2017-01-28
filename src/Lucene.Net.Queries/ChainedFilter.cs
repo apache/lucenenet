@@ -159,7 +159,7 @@ namespace Lucene.Net.Queries
             for (; index[0] < chain.Length; index[0]++)
             {
                 // we dont pass acceptDocs, we will filter at the end using an additional filter
-                doChain(result, logic, chain[index[0]].GetDocIdSet(context, null));
+                DoChain(result, logic, chain[index[0]].GetDocIdSet(context, null));
             }
             return result;
         }
@@ -181,7 +181,7 @@ namespace Lucene.Net.Queries
             for (; index[0] < chain.Length; index[0]++)
             {
                 // we dont pass acceptDocs, we will filter at the end using an additional filter
-                doChain(result, logic[index[0]], chain[index[0]].GetDocIdSet(context, null));
+                DoChain(result, logic[index[0]], chain[index[0]].GetDocIdSet(context, null));
             }
             return result;
         }
@@ -200,7 +200,7 @@ namespace Lucene.Net.Queries
         }
 
         /// <exception cref="System.IO.IOException"/>
-        private void doChain(FixedBitSet result, int logic, DocIdSet dis) // LUCENENET TODO: Rename DoChain
+        private void DoChain(FixedBitSet result, int logic, DocIdSet dis)
         {
             if (dis is FixedBitSet)
             {
@@ -220,7 +220,7 @@ namespace Lucene.Net.Queries
                         result.Xor((FixedBitSet)dis);
                         break;
                     default:
-                        doChain(result, DEFAULT, dis);
+                        DoChain(result, DEFAULT, dis);
                         break;
                 }
             }
@@ -251,7 +251,7 @@ namespace Lucene.Net.Queries
                         result.Xor(disi);
                         break;
                     default:
-                        doChain(result, DEFAULT, dis);
+                        DoChain(result, DEFAULT, dis);
                         break;
                 }
             }
