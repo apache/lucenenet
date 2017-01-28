@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.Grouping.Function
         private readonly ValueSource groupByVS;
         private readonly IDictionary /* Map<?, ?> */ vsContext;
 
-        private FunctionValues.AbstractValueFiller filler;
+        private FunctionValues.ValueFiller filler;
         private MutableValue mval;
 
         /// <summary>

@@ -83,12 +83,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return arr.Get(doc) != 0 || valid.Get(doc);
             }
 
-            public override AbstractValueFiller GetValueFiller()
+            public override ValueFiller GetValueFiller()
             {
                 return new ValueFillerAnonymousInnerClassHelper(this);
             }
 
-            private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller
+            private class ValueFillerAnonymousInnerClassHelper : ValueFiller
             {
                 private readonly FloatDocValuesAnonymousInnerClassHelper outerInstance;
 

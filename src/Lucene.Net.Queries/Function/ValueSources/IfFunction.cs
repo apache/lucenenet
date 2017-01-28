@@ -117,7 +117,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return true; // TODO: flow through to any sub-sources?
             }
 
-            public override AbstractValueFiller GetValueFiller()
+            public override ValueFiller GetValueFiller()
             {
                 // TODO: we need types of trueSource / falseSource to handle this
                 // for now, use float.

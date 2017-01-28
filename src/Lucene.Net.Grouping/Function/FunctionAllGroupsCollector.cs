@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.Grouping.Function
         private readonly ValueSource groupBy;
         private readonly SortedSet<MutableValue> groups = new SortedSet<MutableValue>();
 
-        private FunctionValues.AbstractValueFiller filler;
+        private FunctionValues.ValueFiller filler;
         private MutableValue mval;
 
         /// <summary>

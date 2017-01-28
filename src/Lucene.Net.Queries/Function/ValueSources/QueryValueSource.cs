@@ -233,7 +233,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
         }
 
-        public override AbstractValueFiller GetValueFiller()
+        public override ValueFiller GetValueFiller()
         {
             //
             // TODO: if we want to support more than one value-filler or a value-filler in conjunction with
@@ -243,7 +243,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new ValueFillerAnonymousInnerClassHelper(this);
         }
 
-        private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller
+        private class ValueFillerAnonymousInnerClassHelper : ValueFiller
         {
             private readonly QueryDocValues outerInstance;
 

@@ -132,7 +132,7 @@ namespace Lucene.Net.Queries.Function
         /// 
         /// @lucene.experimental
         /// </summary>
-        public abstract class AbstractValueFiller // LUCENENET TODO: Rename ValueFiller (after renaming property ValueFiller)
+        public abstract class ValueFiller
         {
             /// <summary>
             /// MutableValue will be reused across calls </summary>
@@ -145,12 +145,12 @@ namespace Lucene.Net.Queries.Function
 
         /// <summary>
         /// @lucene.experimental </summary>
-        public virtual AbstractValueFiller GetValueFiller()
+        public virtual ValueFiller GetValueFiller()
         {
             return new ValueFillerAnonymousInnerClassHelper(this);
         }
 
-        private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller
+        private class ValueFillerAnonymousInnerClassHelper : ValueFiller
         {
             private readonly FunctionValues outerInstance;
 

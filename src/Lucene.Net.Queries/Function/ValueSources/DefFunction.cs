@@ -128,7 +128,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return valsArr.Any(vals => vals.Exists(doc));
             }
 
-            public override AbstractValueFiller GetValueFiller()
+            public override ValueFiller GetValueFiller()
             {
                 // TODO: need ValueSource.type() to determine correct type
                 return base.GetValueFiller();

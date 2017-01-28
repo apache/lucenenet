@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Grouping.Function
         private readonly IDictionary<MutableValue, GroupHead> groups;
         private readonly Sort sortWithinGroup;
 
-        private FunctionValues.AbstractValueFiller filler;
+        private FunctionValues.ValueFiller filler;
         private MutableValue mval;
         private AtomicReaderContext readerContext;
         private Scorer scorer;

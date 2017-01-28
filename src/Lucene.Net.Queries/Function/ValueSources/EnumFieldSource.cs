@@ -241,12 +241,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 }
             }
 
-            public override AbstractValueFiller GetValueFiller()
+            public override ValueFiller GetValueFiller()
             {
                 return new ValueFillerAnonymousInnerClassHelper(this);
             }
 
-            private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller
+            private class ValueFillerAnonymousInnerClassHelper : ValueFiller
             {
                 private readonly IntDocValuesAnonymousInnerClassHelper outerInstance;
 

@@ -104,12 +104,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return sindex.GetOrd(doc + off) != 0;
             }
 
-            public override AbstractValueFiller GetValueFiller()
+            public override ValueFiller GetValueFiller()
             {
                 return new ValueFillerAnonymousInnerClassHelper(this);
             }
 
-            private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller
+            private class ValueFillerAnonymousInnerClassHelper : ValueFiller
             {
                 private readonly IntDocValuesAnonymousInnerClassHelper outerInstance;
 

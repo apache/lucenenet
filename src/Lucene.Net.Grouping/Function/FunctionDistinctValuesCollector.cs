@@ -36,8 +36,8 @@ namespace Lucene.Net.Search.Grouping.Function
         private readonly ValueSource countSource;
         private readonly IDictionary<MutableValue, GroupCount> groupMap;
 
-        private FunctionValues.AbstractValueFiller groupFiller;
-        private FunctionValues.AbstractValueFiller countFiller;
+        private FunctionValues.ValueFiller groupFiller;
+        private FunctionValues.ValueFiller countFiller;
         private MutableValue groupMval;
         private MutableValue countMval;
 
