@@ -48,7 +48,7 @@ namespace Lucene.Net.Queries.Function.DocValues
             this.vs = vs;
         }
 
-        protected abstract string toTerm(string readableValue); // LUCENENET TODO: Rename ToTerm(string readableValue)
+        protected abstract string ToTerm(string readableValue);
 
         public override bool Exists(int doc)
         {
@@ -60,9 +60,9 @@ namespace Lucene.Net.Queries.Function.DocValues
             return termsIndex.GetOrd(doc);
         }
 
-        public override int NumOrd() // LUCENENET TODO: Make property
+        public override int NumOrd
         {
-            return termsIndex.ValueCount;
+            get { return termsIndex.ValueCount; }
         }
 
         public override bool BytesVal(int doc, BytesRef target)
@@ -92,8 +92,8 @@ namespace Lucene.Net.Queries.Function.DocValues
         public override ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
         {
             // TODO: are lowerVal and upperVal in indexed form or not?
-            lowerVal = lowerVal == null ? null : toTerm(lowerVal);
-            upperVal = upperVal == null ? null : toTerm(upperVal);
+            lowerVal = lowerVal == null ? null : ToTerm(lowerVal);
+            upperVal = upperVal == null ? null : ToTerm(upperVal);
 
             int lower = int.MinValue;
             if (lowerVal != null)

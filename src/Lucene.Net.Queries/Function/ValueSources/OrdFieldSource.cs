@@ -94,9 +94,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return sindex.GetOrd(doc + off);
             }
-            public override int NumOrd()
+            public override int NumOrd
             {
-                return sindex.ValueCount;
+                get { return sindex.ValueCount; }
             }
 
             public override bool Exists(int doc)

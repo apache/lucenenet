@@ -113,7 +113,7 @@ namespace Lucene.Net.Tests.Queries.Function
                     {
                         case DocValuesType.SORTED:
                             values.OrdVal(i); // no exception
-                            assertTrue(values.NumOrd() >= 1);
+                            assertTrue(values.NumOrd >= 1);
                             goto case DocValuesType.BINARY;
                         case DocValuesType.BINARY:
                             assertEquals(expected, values.ObjectVal(i));

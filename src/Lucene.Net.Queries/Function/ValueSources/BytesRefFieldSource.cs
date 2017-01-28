@@ -104,7 +104,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
 
 
-            protected override string toTerm(string readableValue)
+            protected override string ToTerm(string readableValue)
             {
                 return readableValue;
             }
