@@ -252,7 +252,7 @@ namespace Lucene.Net.Queries.Mlt
             MinTermFreq = DEFAULT_MIN_TERM_FREQ;
             MinDocFreq = DEFAULT_MIN_DOC_FREQ;
             MaxDocFreq = DEFAULT_MAX_DOC_FREQ;
-            Boost = DEFAULT_BOOST;
+            ApplyBoost = DEFAULT_BOOST;
             FieldNames = DEFAULT_FIELD_NAMES;
             MaxNumTokensParsed = DEFAULT_MAX_NUM_TOKENS_PARSED;
             MinWordLen = DEFAULT_MIN_WORD_LENGTH;
@@ -314,12 +314,11 @@ namespace Lucene.Net.Queries.Mlt
 
 
         /// <summary>
-        /// Returns whether to boost terms in query based on "score" or not. The default is
-        /// <seealso cref="#DEFAULT_BOOST"/>.
+        /// Gets or Sets whether to boost terms in query based on "score" or not. The default is
+        /// <see cref="DEFAULT_BOOST"/>.
         /// </summary>
         /// <returns> whether to boost terms in query based on "score" or not. </returns>
-        /// <seealso cref= #setBoost </seealso>
-        public bool Boost { get; set; } // LUCENENET TODO: Rename ApplyBoost ? IsBoost seems a bit odd
+        public bool ApplyBoost { get; set; }
 
 
         /// <summary>
@@ -412,7 +411,7 @@ namespace Lucene.Net.Queries.Mlt
                 var ar = (object[])cur;
                 var tq = new TermQuery(new Term((string)ar[1], (string)ar[0]));
 
-                if (Boost)
+                if (ApplyBoost)
                 {
                     if (qterms == 0)
                     {
@@ -512,7 +511,7 @@ namespace Lucene.Net.Queries.Mlt
                 delim = ", ";
             }
             sb.Append("\n");
-            sb.Append("\t").Append("boost          : ").Append(Boost).Append("\n");
+            sb.Append("\t").Append("boost          : ").Append(ApplyBoost).Append("\n");
             sb.Append("\t").Append("minTermFreq    : ").Append(MinTermFreq).Append("\n");
             sb.Append("\t").Append("minDocFreq     : ").Append(MinDocFreq).Append("\n");
             return sb.ToString();

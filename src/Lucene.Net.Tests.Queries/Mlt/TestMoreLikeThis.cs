@@ -59,7 +59,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
             mlt.MinTermFreq = 1;
             mlt.MinWordLen = 1;
             mlt.FieldNames = new[] { "text" };
-            mlt.Boost = true;
+            mlt.ApplyBoost = true;
 
             // this mean that every term boost factor will be multiplied by this
             // number
@@ -93,7 +93,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
                 mlt.MinTermFreq = 1;
                 mlt.MinWordLen = 1;
                 mlt.FieldNames = new[] { "text" };
-                mlt.Boost = true;
+                mlt.ApplyBoost = true;
                 BooleanQuery query = (BooleanQuery)mlt.Like(new StringReader("lucene release"), "text");
                 IList<BooleanClause> clauses = query.Clauses;
 
