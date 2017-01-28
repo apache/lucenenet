@@ -56,8 +56,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         private class ScaleInfo
         {
-            internal float minVal; // LUCENENET TODO: Make property
-            internal float maxVal; // LUCENENET TODO: Make property
+            internal float MinVal { get; set; }
+            internal float MaxVal { get; set; }
         }
 
         private ScaleInfo CreateScaleInfo(IDictionary context, AtomicReaderContext readerContext)
@@ -98,7 +98,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 minVal = maxVal = 0;
             }
 
-            var scaleInfo = new ScaleInfo { minVal = minVal, maxVal = maxVal };
+            var scaleInfo = new ScaleInfo { MinVal = minVal, MaxVal = maxVal };
             context[this] = scaleInfo;
             return scaleInfo;
         }
@@ -112,9 +112,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 scaleInfo = CreateScaleInfo(context, readerContext);
             }
 
-            float scale = (scaleInfo.maxVal - scaleInfo.minVal == 0) ? 0 : (max - min) / (scaleInfo.maxVal - scaleInfo.minVal);
-            float minSource = scaleInfo.minVal;
-            float maxSource = scaleInfo.maxVal;
+            float scale = (scaleInfo.MaxVal - scaleInfo.MinVal == 0) ? 0 : (max - min) / (scaleInfo.MaxVal - scaleInfo.MinVal);
+            float minSource = scaleInfo.MinVal;
+            float maxSource = scaleInfo.MaxVal;
 
             var vals = source.GetValues(context, readerContext);
             return new FloatDocValuesAnonymousInnerClassHelper(this, this, scale, minSource, maxSource, vals);
