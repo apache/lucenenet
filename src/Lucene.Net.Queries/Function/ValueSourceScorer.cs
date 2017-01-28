@@ -40,7 +40,7 @@ namespace Lucene.Net.Queries.Function
             this.reader = reader;
             this.maxDoc = reader.MaxDoc;
             this.values = values;
-            CheckDeletes = true;
+            SetCheckDeletes(true);
             this.liveDocs = MultiFields.GetLiveDocs(reader);
         }
 
@@ -52,12 +52,9 @@ namespace Lucene.Net.Queries.Function
             }
         }
 
-        public virtual bool CheckDeletes // LUCENENET TODO: Change to SetCheckDeletes(bool checkDeletes) (has side-effect)
+        public virtual void SetCheckDeletes(bool checkDeletes)
         {
-            set
-            {
-                this.checkDeletes = value && reader.HasDeletions;
-            }
+            this.checkDeletes = checkDeletes && reader.HasDeletions;
         }
 
         public virtual bool Matches(int doc)
