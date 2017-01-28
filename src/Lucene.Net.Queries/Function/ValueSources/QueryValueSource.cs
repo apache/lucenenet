@@ -233,17 +233,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
         }
 
-        public override AbstractValueFiller ValueFiller
+        public override AbstractValueFiller GetValueFiller()
         {
-            get
-            {
-                //
-                // TODO: if we want to support more than one value-filler or a value-filler in conjunction with
-                // the FunctionValues, then members like "scorer" should be per ValueFiller instance.
-                // Or we can say that the user should just instantiate multiple FunctionValues.
-                //
-                return new ValueFillerAnonymousInnerClassHelper(this);
-            }
+            //
+            // TODO: if we want to support more than one value-filler or a value-filler in conjunction with
+            // the FunctionValues, then members like "scorer" should be per ValueFiller instance.
+            // Or we can say that the user should just instantiate multiple FunctionValues.
+            //
+            return new ValueFillerAnonymousInnerClassHelper(this);
         }
 
         private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller

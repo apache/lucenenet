@@ -111,12 +111,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return outerInstance.ExternalToLong(extVal);
             }
 
-            public override AbstractValueFiller ValueFiller
+            public override AbstractValueFiller GetValueFiller()
             {
-                get
-                {
-                    return new ValueFillerAnonymousInnerClassHelper(this);
-                }
+                return new ValueFillerAnonymousInnerClassHelper(this);
             }
 
             private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller

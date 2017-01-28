@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Grouping.Function
         {
             base.SetNextReader(context);
             FunctionValues values = groupByVS.GetValues(vsContext, context);
-            filler = values.ValueFiller;
+            filler = values.GetValueFiller();
             mval = filler.Value;
         }
     }

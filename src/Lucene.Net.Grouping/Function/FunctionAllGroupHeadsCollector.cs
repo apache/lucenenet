@@ -101,7 +101,7 @@ namespace Lucene.Net.Search.Grouping.Function
         {
             this.readerContext = context;
             FunctionValues values = groupBy.GetValues(vsContext, context);
-            filler = values.ValueFiller;
+            filler = values.GetValueFiller();
             mval = filler.Value;
 
             foreach (GroupHead groupHead in groups.Values)

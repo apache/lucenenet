@@ -117,14 +117,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return true; // TODO: flow through to any sub-sources?
             }
 
-            public override AbstractValueFiller ValueFiller
+            public override AbstractValueFiller GetValueFiller()
             {
-                get
-                {
-                    // TODO: we need types of trueSource / falseSource to handle this
-                    // for now, use float.
-                    return base.ValueFiller;
-                }
+                // TODO: we need types of trueSource / falseSource to handle this
+                // for now, use float.
+                return base.GetValueFiller();
             }
 
             public override string ToString(int doc)

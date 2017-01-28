@@ -145,9 +145,9 @@ namespace Lucene.Net.Queries.Function
 
         /// <summary>
         /// @lucene.experimental </summary>
-        public virtual AbstractValueFiller ValueFiller // LUCENENET TODO: Make GetValueFiller() (returns new object)
+        public virtual AbstractValueFiller GetValueFiller()
         {
-            get { return new ValueFillerAnonymousInnerClassHelper(this); }
+            return new ValueFillerAnonymousInnerClassHelper(this);
         }
 
         private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller

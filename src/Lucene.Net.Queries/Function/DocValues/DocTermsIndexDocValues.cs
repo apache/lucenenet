@@ -156,12 +156,9 @@ namespace Lucene.Net.Queries.Function.DocValues
             return vs.GetDescription() + '=' + StrVal(doc);
         }
 
-        public override AbstractValueFiller ValueFiller
+        public override AbstractValueFiller GetValueFiller()
         {
-            get
-            {
-                return new ValueFillerAnonymousInnerClassHelper(this);
-            }
+            return new ValueFillerAnonymousInnerClassHelper(this);
         }
 
         private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller
