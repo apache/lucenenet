@@ -46,7 +46,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
     public class ReverseOrdFieldSource : ValueSource
     {
-        public readonly string field;
+        // LUCENENET NOTE: Made private and added public property for reading
+        private readonly string field;
+        public string Field
+        {
+            get { return field; }
+        }
 
         public ReverseOrdFieldSource(string field)
         {
