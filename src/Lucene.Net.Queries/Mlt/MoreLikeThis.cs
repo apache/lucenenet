@@ -447,7 +447,7 @@ namespace Lucene.Net.Queries.Mlt
         /// </summary>
         /// <param name="words"> a map of words keyed on the word(String) with Int objects as the values. </param>
         /// <exception cref="IOException"/>
-        private Util.PriorityQueue<object[]> createQueue(IDictionary<string, Int> words) // LUCENENET TODO: Rename CreateQueue
+        private Util.PriorityQueue<object[]> CreateQueue(IDictionary<string, Int> words)
         {
             // have collected all words in doc and their freqs
             int numDocs = ir.NumDocs;
@@ -498,7 +498,7 @@ namespace Lucene.Net.Queries.Mlt
         /// <summary>
         /// Describe the parameters that control how the "more like this" query is formed.
         /// </summary>
-        public string describeParams() // LUCENENET TODO: Rename DescribeParams()
+        public string DescribeParams()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("\t").Append("maxQueryTerms  : ").Append(MaxQueryTerms).Append("\n");
@@ -559,7 +559,7 @@ namespace Lucene.Net.Queries.Mlt
                 }
             }
 
-            return createQueue(termFreqMap);
+            return CreateQueue(termFreqMap);
         }
 
         /// <summary>
@@ -695,7 +695,7 @@ namespace Lucene.Net.Queries.Mlt
         {
             IDictionary<string, Int> words = new Dictionary<string, Int>();
             AddTermFrequencies(r, words, fieldName);
-            return createQueue(words);
+            return CreateQueue(words);
         }
 
         /// <seealso cref= #retrieveInterestingTerms(java.io.Reader, String) </seealso>
