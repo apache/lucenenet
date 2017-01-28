@@ -94,7 +94,7 @@ namespace Lucene.Net.Queries
         /// Creates a new <see cref="TermsFilter"/> from the given <see cref="BytesRef"/> list for
         /// a single field.
         /// </summary>
-        public TermsFilter(string field, List<BytesRef> terms)
+        public TermsFilter(string field, List<BytesRef> terms) // LUCENENET TODO: Change to IList<BytesRef>
             : this(new FieldAndTermEnumAnonymousInnerClassHelper2(field, terms), terms.Count)
         {
         }
