@@ -31,11 +31,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public abstract class MultiFloatFunction : ValueSource
     {
-        protected readonly ValueSource[] sources;
+        protected readonly ValueSource[] m_sources;
 
         public MultiFloatFunction(ValueSource[] sources)
         {
-            this.sources = sources;
+            this.m_sources = sources;
         }
 
         protected abstract string Name { get; }
@@ -47,7 +47,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var sb = new StringBuilder();
             sb.Append(Name).Append('(');
             bool firstTime = true;
-            foreach (var source in sources)
+            foreach (var source in m_sources)
             {
                 if (firstTime)
                 {
@@ -65,10 +65,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            var valsArr = new FunctionValues[sources.Length];
-            for (int i = 0; i < sources.Length; i++)
+            var valsArr = new FunctionValues[m_sources.Length];
+            for (int i = 0; i < m_sources.Length; i++)
             {
-                valsArr[i] = sources[i].GetValues(context, readerContext);
+                valsArr[i] = m_sources[i].GetValues(context, readerContext);
             }
 
             return new FloatDocValuesAnonymousInnerClassHelper(this, this, valsArr);
@@ -115,7 +115,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)
         {
-            foreach (ValueSource source in sources)
+            foreach (ValueSource source in m_sources)
             {
                 source.CreateWeight(context, searcher);
             }
@@ -123,7 +123,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return Arrays.GetHashCode(sources) + Name.GetHashCode();
+            return Arrays.GetHashCode(m_sources) + Name.GetHashCode();
         }
 
         public override bool Equals(object o)
@@ -135,7 +135,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as MultiFloatFunction;
             if (other == null)
                 return false;
-            return Name.Equals(other.Name) && Arrays.Equals(this.sources, other.sources);
+            return Name.Equals(other.Name) && Arrays.Equals(this.m_sources, other.m_sources);
         }
     }
 }

@@ -34,11 +34,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class NormValueSource : ValueSource
     {
-        protected readonly string field;
+        protected readonly string m_field;
 
         public NormValueSource(string field)
         {
-            this.field = field;
+            this.m_field = field;
         }
 
         public virtual string Name
@@ -48,7 +48,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override string GetDescription()
         {
-            return Name + '(' + field + ')';
+            return Name + '(' + m_field + ')';
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)
@@ -59,13 +59,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             var searcher = (IndexSearcher)context["searcher"];
-            TFIDFSimilarity similarity = IDFValueSource.AsTFIDF(searcher.Similarity, field);
+            TFIDFSimilarity similarity = IDFValueSource.AsTFIDF(searcher.Similarity, m_field);
             if (similarity == null)
             {
                 throw new System.NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
             }
 
-            NumericDocValues norms = readerContext.AtomicReader.GetNormValues(field);
+            NumericDocValues norms = readerContext.AtomicReader.GetNormValues(m_field);
             if (norms == null)
             {
                 return new ConstDoubleDocValues(0.0, this);
@@ -101,12 +101,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return false;
             }
-            return this.field.Equals(((NormValueSource)o).field);
+            return this.m_field.Equals(((NormValueSource)o).m_field);
         }
 
         public override int GetHashCode()
         {
-            return this.GetType().GetHashCode() + field.GetHashCode();
+            return this.GetType().GetHashCode() + m_field.GetHashCode();
         }
     }
 }

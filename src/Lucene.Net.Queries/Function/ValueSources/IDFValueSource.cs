@@ -49,12 +49,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             var searcher = (IndexSearcher)context["searcher"];
-            TFIDFSimilarity sim = AsTFIDF(searcher.Similarity, field);
+            TFIDFSimilarity sim = AsTFIDF(searcher.Similarity, m_field);
             if (sim == null)
             {
                 throw new System.NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
             }
-            int docfreq = searcher.IndexReader.DocFreq(new Term(indexedField, indexedBytes));
+            int docfreq = searcher.IndexReader.DocFreq(new Term(m_indexedField, m_indexedBytes));
             float idf = sim.Idf(docfreq, searcher.IndexReader.MaxDoc);
             return new ConstDoubleDocValues(idf, this);
         }

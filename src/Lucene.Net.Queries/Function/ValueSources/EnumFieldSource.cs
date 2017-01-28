@@ -108,14 +108,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override string GetDescription()
         {
-            return "enum(" + field + ')';
+            return "enum(" + m_field + ')';
         }
 
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            var arr = cache.GetInts(readerContext.AtomicReader, field, parser, true);
-            var valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
+            var arr = m_cache.GetInts(readerContext.AtomicReader, m_field, parser, true);
+            var valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
 
             return new IntDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
         }

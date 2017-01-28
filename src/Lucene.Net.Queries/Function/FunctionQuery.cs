@@ -64,17 +64,17 @@ namespace Lucene.Net.Queries.Function
         {
             private readonly FunctionQuery outerInstance;
 
-            protected readonly IndexSearcher searcher;
-            protected internal float queryNorm;
-            protected float queryWeight;
-            protected internal readonly IDictionary context;
+            protected readonly IndexSearcher m_searcher;
+            protected internal float m_queryNorm;
+            protected float m_queryWeight;
+            protected internal readonly IDictionary m_context;
 
             public FunctionWeight(FunctionQuery outerInstance, IndexSearcher searcher)
             {
                 this.outerInstance = outerInstance;
-                this.searcher = searcher;
-                this.context = ValueSource.NewContext(searcher);
-                outerInstance.func.CreateWeight(context, searcher);
+                this.m_searcher = searcher;
+                this.m_context = ValueSource.NewContext(searcher);
+                outerInstance.func.CreateWeight(m_context, searcher);
             }
 
             public override Query Query
@@ -87,19 +87,19 @@ namespace Lucene.Net.Queries.Function
 
             public override float GetValueForNormalization()
             {
-                queryWeight = outerInstance.Boost;
-                return queryWeight * queryWeight;
+                m_queryWeight = outerInstance.Boost;
+                return m_queryWeight * m_queryWeight;
             }
 
             public override void Normalize(float norm, float topLevelBoost)
             {
-                this.queryNorm = norm * topLevelBoost;
-                queryWeight *= this.queryNorm;
+                this.m_queryNorm = norm * topLevelBoost;
+                m_queryWeight *= this.m_queryNorm;
             }
 
             public override Scorer GetScorer(AtomicReaderContext ctx, IBits acceptDocs)
             {
-                return new AllScorer(outerInstance, ctx, acceptDocs, this, queryWeight);
+                return new AllScorer(outerInstance, ctx, acceptDocs, this, m_queryWeight);
             }
 
             public override Explanation Explain(AtomicReaderContext ctx, int doc)
@@ -130,7 +130,7 @@ namespace Lucene.Net.Queries.Function
                 this.reader = context.Reader;
                 this.maxDoc = reader.MaxDoc;
                 this.acceptDocs = acceptDocs;
-                vals = outerInstance.func.GetValues(weight.context, context);
+                vals = outerInstance.func.GetValues(weight.m_context, context);
             }
 
             public override int DocID
@@ -194,7 +194,7 @@ namespace Lucene.Net.Queries.Function
 
                 result.AddDetail(vals.Explain(d));
                 result.AddDetail(new Explanation(outerInstance.Boost, "boost"));
-                result.AddDetail(new Explanation(weight.queryNorm, "queryNorm"));
+                result.AddDetail(new Explanation(weight.m_queryNorm, "queryNorm"));
                 return result;
             }
         }

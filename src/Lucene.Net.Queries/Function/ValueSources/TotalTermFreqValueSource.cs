@@ -32,17 +32,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class TotalTermFreqValueSource : ValueSource
     {
-        protected readonly string field;
-        protected readonly string indexedField;
-        protected readonly string val;
-        protected readonly BytesRef indexedBytes;
+        protected readonly string m_field;
+        protected readonly string m_indexedField;
+        protected readonly string m_val;
+        protected readonly BytesRef m_indexedBytes;
 
         public TotalTermFreqValueSource(string field, string val, string indexedField, BytesRef indexedBytes)
         {
-            this.field = field;
-            this.val = val;
-            this.indexedField = indexedField;
-            this.indexedBytes = indexedBytes;
+            this.m_field = field;
+            this.m_val = val;
+            this.m_indexedField = indexedField;
+            this.m_indexedBytes = indexedBytes;
         }
 
         public virtual string Name
@@ -52,7 +52,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override string GetDescription()
         {
-            return Name + '(' + field + ',' + val + ')';
+            return Name + '(' + m_field + ',' + m_val + ')';
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
@@ -65,7 +65,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             long totalTermFreq = 0;
             foreach (var readerContext in searcher.TopReaderContext.Leaves)
             {
-                long val = readerContext.Reader.TotalTermFreq(new Term(indexedField, indexedBytes));
+                long val = readerContext.Reader.TotalTermFreq(new Term(m_indexedField, m_indexedBytes));
                 if (val == -1)
                 {
                     totalTermFreq = -1;
@@ -101,7 +101,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return this.GetType().GetHashCode() + indexedField.GetHashCode() * 29 + indexedBytes.GetHashCode();
+            return this.GetType().GetHashCode() + m_indexedField.GetHashCode() * 29 + m_indexedBytes.GetHashCode();
         }
 
         public override bool Equals(object o)
@@ -111,7 +111,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return false;
             }
             var other = (TotalTermFreqValueSource)o;
-            return this.indexedField.Equals(other.indexedField) && this.indexedBytes.Equals(other.indexedBytes);
+            return this.m_indexedField.Equals(other.m_indexedField) && this.m_indexedBytes.Equals(other.m_indexedBytes);
         }
     }
 }

@@ -44,16 +44,16 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
     public class OrdFieldSource : ValueSource
     {
-        protected readonly string field;
+        protected readonly string m_field;
 
         public OrdFieldSource(string field)
         {
-            this.field = field;
+            this.m_field = field;
         }
 
         public override string GetDescription()
         {
-            return "ord(" + field + ')';
+            return "ord(" + m_field + ')';
         }
 
 
@@ -63,7 +63,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             int off = readerContext.DocBase;
             IndexReader topReader = ReaderUtil.GetTopLevelContext(readerContext).Reader;
             AtomicReader r = SlowCompositeReaderWrapper.Wrap(topReader);
-            SortedDocValues sindex = FieldCache.DEFAULT.GetTermsIndex(r, field);
+            SortedDocValues sindex = FieldCache.DEFAULT.GetTermsIndex(r, m_field);
             return new IntDocValuesAnonymousInnerClassHelper(this, this, off, sindex);
         }
 
@@ -139,14 +139,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            return o != null && o.GetType() == typeof(OrdFieldSource) && this.field.Equals(((OrdFieldSource)o).field);
+            return o != null && o.GetType() == typeof(OrdFieldSource) && this.m_field.Equals(((OrdFieldSource)o).m_field);
         }
 
         private static readonly int hcode = typeof(OrdFieldSource).GetHashCode();
 
         public override int GetHashCode()
         {
-            return hcode + field.GetHashCode();
+            return hcode + m_field.GetHashCode();
         }
     }
 }

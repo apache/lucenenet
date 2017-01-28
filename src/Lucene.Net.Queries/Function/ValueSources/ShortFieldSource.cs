@@ -46,12 +46,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override string GetDescription()
         {
-            return "short(" + field + ')';
+            return "short(" + m_field + ')';
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            var arr = cache.GetShorts(readerContext.AtomicReader, field, parser, false);
+            var arr = m_cache.GetShorts(readerContext.AtomicReader, m_field, parser, false);
             return new FunctionValuesAnonymousInnerClassHelper(this, arr);
         }
 

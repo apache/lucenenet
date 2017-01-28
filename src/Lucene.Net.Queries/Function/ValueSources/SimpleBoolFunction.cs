@@ -31,11 +31,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public abstract class SimpleBoolFunction : BoolFunction
     {
-        protected readonly ValueSource source;
+        protected readonly ValueSource m_source;
 
         public SimpleBoolFunction(ValueSource source)
         {
-            this.source = source;
+            this.m_source = source;
         }
 
         protected abstract string Name { get; }
@@ -44,7 +44,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            FunctionValues vals = source.GetValues(context, readerContext);
+            FunctionValues vals = m_source.GetValues(context, readerContext);
             return new BoolDocValuesAnonymousInnerClassHelper(this, this, vals);
         }
 
@@ -73,12 +73,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override string GetDescription()
         {
-            return Name + '(' + source.GetDescription() + ')';
+            return Name + '(' + m_source.GetDescription() + ')';
         }
 
         public override int GetHashCode()
         {
-            return source.GetHashCode() + Name.GetHashCode();
+            return m_source.GetHashCode() + Name.GetHashCode();
         }
 
         public override bool Equals(object o)
@@ -86,12 +86,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as SimpleBoolFunction;
             if (other == null)
                 return false;
-            return this.source.Equals(other.source);
+            return this.m_source.Equals(other.m_source);
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)
         {
-            source.CreateWeight(context, searcher);
+            m_source.CreateWeight(context, searcher);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            FunctionValues vals = source.GetValues(context, readerContext);
+            FunctionValues vals = m_source.GetValues(context, readerContext);
             return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals);
         }
 

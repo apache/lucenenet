@@ -29,18 +29,18 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public abstract class MultiFunction : ValueSource
     {
-        protected readonly IList<ValueSource> sources;
+        protected readonly IList<ValueSource> m_sources;
 
         protected MultiFunction(IList<ValueSource> sources)
         {
-            this.sources = sources;
+            this.m_sources = sources;
         }
 
         protected abstract string Name { get; }
 
         public override string GetDescription()
         {
-            return GetDescription(Name, sources);
+            return GetDescription(Name, m_sources);
         }
 
         public static string GetDescription(string name, IList<ValueSource> sources)
@@ -117,7 +117,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)
         {
-            foreach (ValueSource source in sources)
+            foreach (ValueSource source in m_sources)
             {
                 source.CreateWeight(context, searcher);
             }
@@ -125,7 +125,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return sources.GetHashCode() + Name.GetHashCode();
+            return m_sources.GetHashCode() + Name.GetHashCode();
         }
 
         public override bool Equals(object o)
@@ -135,7 +135,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return false;
             }
             var other = (MultiFunction)o;
-            return this.sources.Equals(other.sources);
+            return this.m_sources.Equals(other.m_sources);
         }
     }
 }

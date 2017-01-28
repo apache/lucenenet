@@ -27,19 +27,19 @@ namespace Lucene.Net.Queries.Function
     /// </summary>
     public class ValueSourceScorer : Scorer
     {
-        protected readonly IndexReader reader;
+        protected readonly IndexReader m_reader;
         private int doc = -1;
-        protected readonly int maxDoc;
-        protected readonly FunctionValues values;
-        protected bool checkDeletes;
+        protected readonly int m_maxDoc;
+        protected readonly FunctionValues m_values;
+        protected bool m_checkDeletes;
         private readonly IBits liveDocs;
 
         protected internal ValueSourceScorer(IndexReader reader, FunctionValues values)
             : base(null)
         {
-            this.reader = reader;
-            this.maxDoc = reader.MaxDoc;
-            this.values = values;
+            this.m_reader = reader;
+            this.m_maxDoc = reader.MaxDoc;
+            this.m_values = values;
             SetCheckDeletes(true);
             this.liveDocs = MultiFields.GetLiveDocs(reader);
         }
@@ -48,18 +48,18 @@ namespace Lucene.Net.Queries.Function
         {
             get
             {
-                return reader;
+                return m_reader;
             }
         }
 
         public virtual void SetCheckDeletes(bool checkDeletes)
         {
-            this.checkDeletes = checkDeletes && reader.HasDeletions;
+            this.m_checkDeletes = checkDeletes && m_reader.HasDeletions;
         }
 
         public virtual bool Matches(int doc)
         {
-            return (!checkDeletes || liveDocs.Get(doc)) && MatchesValue(doc);
+            return (!m_checkDeletes || liveDocs.Get(doc)) && MatchesValue(doc);
         }
 
         public virtual bool MatchesValue(int doc)
@@ -77,7 +77,7 @@ namespace Lucene.Net.Queries.Function
             for (; ; )
             {
                 doc++;
-                if (doc >= maxDoc)
+                if (doc >= m_maxDoc)
                 {
                     return doc = NO_MORE_DOCS;
                 }
@@ -97,7 +97,7 @@ namespace Lucene.Net.Queries.Function
 
         public override float GetScore()
         {
-            return values.FloatVal(doc);
+            return m_values.FloatVal(doc);
         }
 
         public override int Freq
@@ -107,7 +107,7 @@ namespace Lucene.Net.Queries.Function
 
         public override long GetCost()
         {
-            return maxDoc;
+            return m_maxDoc;
         }
     }
 }

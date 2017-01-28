@@ -31,11 +31,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public abstract class MultiBoolFunction : BoolFunction
     {
-        protected readonly IList<ValueSource> sources;
+        protected readonly IList<ValueSource> m_sources;
 
         public MultiBoolFunction(IList<ValueSource> sources)
         {
-            this.sources = sources;
+            this.m_sources = sources;
         }
 
         protected abstract string Name { get; }
@@ -44,9 +44,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            var vals = new FunctionValues[sources.Count];
+            var vals = new FunctionValues[m_sources.Count];
             int i = 0;
-            foreach (ValueSource source in sources)
+            foreach (ValueSource source in m_sources)
             {
                 vals[i++] = source.GetValues(context, readerContext);
             }
@@ -98,7 +98,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var sb = new StringBuilder(Name);
             sb.Append('(');
             bool first = true;
-            foreach (ValueSource source in sources)
+            foreach (ValueSource source in m_sources)
             {
                 if (first)
                 {
@@ -115,7 +115,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return sources.GetHashCode() + Name.GetHashCode();
+            return m_sources.GetHashCode() + Name.GetHashCode();
         }
 
         public override bool Equals(object o)
@@ -127,12 +127,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as MultiBoolFunction;
             if (other == null)
                 return false;
-            return this.sources.Equals(other.sources);
+            return this.m_sources.Equals(other.m_sources);
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)
         {
-            foreach (ValueSource source in sources)
+            foreach (ValueSource source in m_sources)
             {
                 source.CreateWeight(context, searcher);
             }

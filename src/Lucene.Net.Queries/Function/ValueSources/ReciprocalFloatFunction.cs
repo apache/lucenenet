@@ -47,25 +47,25 @@ namespace Lucene.Net.Queries.Function.ValueSources
     ///  </seealso>
     public class ReciprocalFloatFunction : ValueSource
     {
-        protected readonly ValueSource source;
-        protected readonly float m;
-        protected readonly float a;
-        protected readonly float b;
+        protected readonly ValueSource m_source;
+        protected readonly float m_m;
+        protected readonly float m_a;
+        protected readonly float m_b;
 
         /// <summary>
         ///  f(source) = a/(m*float(source)+b)
         /// </summary>
         public ReciprocalFloatFunction(ValueSource source, float m, float a, float b)
         {
-            this.source = source;
-            this.m = m;
-            this.a = a;
-            this.b = b;
+            this.m_source = source;
+            this.m_m = m;
+            this.m_a = a;
+            this.m_b = b;
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            var vals = source.GetValues(context, readerContext);
+            var vals = m_source.GetValues(context, readerContext);
             return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals);
         }
 
@@ -83,29 +83,29 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override float FloatVal(int doc)
             {
-                return outerInstance.a / (outerInstance.m * vals.FloatVal(doc) + outerInstance.b);
+                return outerInstance.m_a / (outerInstance.m_m * vals.FloatVal(doc) + outerInstance.m_b);
             }
             public override string ToString(int doc)
             {
-                return Convert.ToString(outerInstance.a) + "/(" + outerInstance.m + "*float(" + vals.ToString(doc) + ')' + '+' + outerInstance.b + ')';
+                return Convert.ToString(outerInstance.m_a) + "/(" + outerInstance.m_m + "*float(" + vals.ToString(doc) + ')' + '+' + outerInstance.m_b + ')';
             }
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)
         {
-            source.CreateWeight(context, searcher);
+            m_source.CreateWeight(context, searcher);
         }
 
         public override string GetDescription()
         {
-            return Convert.ToString(a) + "/(" + m + "*float(" + source.GetDescription() + ")" + "+" + b + ')';
+            return Convert.ToString(m_a) + "/(" + m_m + "*float(" + m_source.GetDescription() + ")" + "+" + m_b + ')';
         }
 
         public override int GetHashCode()
         {
-            int h = Number.FloatToIntBits(a) + Number.FloatToIntBits(m);
+            int h = Number.FloatToIntBits(m_a) + Number.FloatToIntBits(m_m);
             h ^= (h << 13) | ((int)((uint)h >> 20));
-            return h + (Number.FloatToIntBits(b)) + source.GetHashCode();
+            return h + (Number.FloatToIntBits(m_b)) + m_source.GetHashCode();
         }
 
         public override bool Equals(object o)
@@ -117,7 +117,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as ReciprocalFloatFunction;
             if (other == null)
                 return false;
-            return this.m == other.m && this.a == other.a && this.b == other.b && this.source.Equals(other.source);
+            return this.m_m == other.m_m && this.m_a == other.m_a && this.m_b == other.m_b && this.m_source.Equals(other.m_source);
         }
     }
 }

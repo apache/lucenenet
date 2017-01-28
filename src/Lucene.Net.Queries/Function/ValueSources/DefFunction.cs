@@ -43,7 +43,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary fcontext, AtomicReaderContext readerContext)
         {
-            return new ValuesAnonymousInnerClassHelper(this, ValsArr(sources, fcontext, readerContext));
+            return new ValuesAnonymousInnerClassHelper(this, ValsArr(m_sources, fcontext, readerContext));
         }
 
         private class ValuesAnonymousInnerClassHelper : Values

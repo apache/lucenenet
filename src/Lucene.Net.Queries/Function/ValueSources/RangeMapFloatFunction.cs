@@ -33,11 +33,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class RangeMapFloatFunction : ValueSource
     {
-        protected readonly ValueSource source;
-        protected readonly float min;
-        protected readonly float max;
-        protected readonly ValueSource target;
-        protected readonly ValueSource defaultVal;
+        protected readonly ValueSource m_source;
+        protected readonly float m_min;
+        protected readonly float m_max;
+        protected readonly ValueSource m_target;
+        protected readonly ValueSource m_defaultVal;
 
         public RangeMapFloatFunction(ValueSource source, float min, float max, float target, float? def)
             : this(source, min, max, new ConstValueSource(target), def == null ? null : new ConstValueSource(def.Value))
@@ -46,23 +46,23 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public RangeMapFloatFunction(ValueSource source, float min, float max, ValueSource target, ValueSource def)
         {
-            this.source = source;
-            this.min = min;
-            this.max = max;
-            this.target = target;
-            this.defaultVal = def;
+            this.m_source = source;
+            this.m_min = min;
+            this.m_max = max;
+            this.m_target = target;
+            this.m_defaultVal = def;
         }
 
         public override string GetDescription()
         {
-            return "map(" + source.GetDescription() + "," + min + "," + max + "," + target.GetDescription() + ")";
+            return "map(" + m_source.GetDescription() + "," + m_min + "," + m_max + "," + m_target.GetDescription() + ")";
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            FunctionValues vals = source.GetValues(context, readerContext);
-            FunctionValues targets = target.GetValues(context, readerContext);
-            FunctionValues defaults = (this.defaultVal == null) ? null : defaultVal.GetValues(context, readerContext);
+            FunctionValues vals = m_source.GetValues(context, readerContext);
+            FunctionValues targets = m_target.GetValues(context, readerContext);
+            FunctionValues defaults = (this.m_defaultVal == null) ? null : m_defaultVal.GetValues(context, readerContext);
             return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals, targets, defaults);
         }
 
@@ -86,30 +86,30 @@ namespace Lucene.Net.Queries.Function.ValueSources
             public override float FloatVal(int doc)
             {
                 float val = vals.FloatVal(doc);
-                return (val >= outerInstance.min && val <= outerInstance.max) ? targets.FloatVal(doc) : (outerInstance.defaultVal == null ? val : defaults.FloatVal(doc));
+                return (val >= outerInstance.m_min && val <= outerInstance.m_max) ? targets.FloatVal(doc) : (outerInstance.m_defaultVal == null ? val : defaults.FloatVal(doc));
             }
             public override string ToString(int doc)
             {
-                return "map(" + vals.ToString(doc) + ",min=" + outerInstance.min + ",max=" + outerInstance.max + ",target=" + targets.ToString(doc) + ")";
+                return "map(" + vals.ToString(doc) + ",min=" + outerInstance.m_min + ",max=" + outerInstance.m_max + ",target=" + targets.ToString(doc) + ")";
             }
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)
         {
-            source.CreateWeight(context, searcher);
+            m_source.CreateWeight(context, searcher);
         }
 
         public override int GetHashCode()
         {
-            int h = source.GetHashCode();
+            int h = m_source.GetHashCode();
             h ^= (h << 10) | ((int)((uint)h >> 23));
-            h += Number.FloatToIntBits(min);
+            h += Number.FloatToIntBits(m_min);
             h ^= (h << 14) | ((int)((uint)h >> 19));
-            h += Number.FloatToIntBits(max);
-            h += target.GetHashCode();
-            if (defaultVal != null)
+            h += Number.FloatToIntBits(m_max);
+            h += m_target.GetHashCode();
+            if (m_defaultVal != null)
             {
-                h += defaultVal.GetHashCode();
+                h += m_defaultVal.GetHashCode();
             }
             return h;
         }
@@ -123,11 +123,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as RangeMapFloatFunction;
             if (other == null)
                 return false;
-            return this.min == other.min 
-                && this.max == other.max 
-                && this.target.Equals(other.target) 
-                && this.source.Equals(other.source) 
-                && (this.defaultVal == other.defaultVal || (this.defaultVal != null && this.defaultVal.Equals(other.defaultVal)));
+            return this.m_min == other.m_min 
+                && this.m_max == other.m_max 
+                && this.m_target.Equals(other.m_target) 
+                && this.m_source.Equals(other.m_source) 
+                && (this.m_defaultVal == other.m_defaultVal || (this.m_defaultVal != null && this.m_defaultVal.Equals(other.m_defaultVal)));
         }
     }
 }

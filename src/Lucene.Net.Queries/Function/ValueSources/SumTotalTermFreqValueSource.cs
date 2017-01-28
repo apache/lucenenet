@@ -31,11 +31,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class SumTotalTermFreqValueSource : ValueSource
     {
-        protected readonly string indexedField;
+        protected readonly string m_indexedField;
 
         public SumTotalTermFreqValueSource(string indexedField)
         {
-            this.indexedField = indexedField;
+            this.m_indexedField = indexedField;
         }
 
         public virtual string Name
@@ -45,7 +45,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override string GetDescription()
         {
-            return Name + '(' + indexedField + ')';
+            return Name + '(' + m_indexedField + ')';
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
@@ -63,7 +63,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 {
                     continue;
                 }
-                Terms terms = fields.Terms(indexedField);
+                Terms terms = fields.Terms(m_indexedField);
                 if (terms == null)
                 {
                     continue;
@@ -104,7 +104,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return this.GetType().GetHashCode() + indexedField.GetHashCode();
+            return this.GetType().GetHashCode() + m_indexedField.GetHashCode();
         }
 
         public override bool Equals(object o)
@@ -112,7 +112,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as SumTotalTermFreqValueSource;
             if (other == null)
                 return false;
-            return this.indexedField.Equals(other.indexedField);
+            return this.m_indexedField.Equals(other.m_indexedField);
         }
     }
 }

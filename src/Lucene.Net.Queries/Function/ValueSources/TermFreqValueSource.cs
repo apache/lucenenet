@@ -48,7 +48,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             Fields fields = readerContext.AtomicReader.Fields;
-            Terms terms = fields.Terms(indexedField);
+            Terms terms = fields.Terms(m_indexedField);
 
             return new IntDocValuesAnonymousInnerClassHelper(this, this, terms);
         }
@@ -79,7 +79,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 if (terms != null)
                 {
                     TermsEnum termsEnum = terms.GetIterator(null);
-                    if (termsEnum.SeekExact(outerInstance.indexedBytes))
+                    if (termsEnum.SeekExact(outerInstance.m_indexedBytes))
                     {
                         docs = termsEnum.Docs(null, null);
                     }

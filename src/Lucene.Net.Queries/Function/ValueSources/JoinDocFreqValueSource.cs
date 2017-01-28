@@ -34,24 +34,24 @@ namespace Lucene.Net.Queries.Function.ValueSources
     {
         public const string NAME = "joindf";
 
-        protected readonly string qfield;
+        protected readonly string m_qfield;
 
         public JoinDocFreqValueSource(string field, string qfield)
             : base(field)
         {
-            this.qfield = qfield;
+            this.m_qfield = qfield;
         }
 
         public override string GetDescription()
         {
-            return NAME + "(" + field + ":(" + qfield + "))";
+            return NAME + "(" + m_field + ":(" + m_qfield + "))";
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            BinaryDocValues terms = cache.GetTerms(readerContext.AtomicReader, field, false, PackedInts.FAST);
+            BinaryDocValues terms = m_cache.GetTerms(readerContext.AtomicReader, m_field, false, PackedInts.FAST);
             IndexReader top = ReaderUtil.GetTopLevelContext(readerContext).Reader;
-            Terms t = MultiFields.GetTerms(top, qfield);
+            Terms t = MultiFields.GetTerms(top, m_qfield);
             TermsEnum termsEnum = t == null ? TermsEnum.EMPTY : t.GetIterator(null);
 
             return new IntDocValuesAnonymousInnerClassHelper(this, this, terms, termsEnum);
@@ -103,7 +103,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return false;
             }
             var other = (JoinDocFreqValueSource)o;
-            if (!qfield.Equals(other.qfield))
+            if (!m_qfield.Equals(other.m_qfield))
             {
                 return false;
             }
@@ -112,7 +112,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return qfield.GetHashCode() + base.GetHashCode();
+            return m_qfield.GetHashCode() + base.GetHashCode();
         }
     }
 }

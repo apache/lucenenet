@@ -26,11 +26,11 @@ namespace Lucene.Net.Queries.Function.DocValues
     /// </summary>
     public abstract class BoolDocValues : FunctionValues
     {
-        protected readonly ValueSource vs;
+        protected readonly ValueSource m_vs;
 
         public BoolDocValues(ValueSource vs)
         {
-            this.vs = vs;
+            this.m_vs = vs;
         }
 
         public override abstract bool BoolVal(int doc);
@@ -77,7 +77,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override string ToString(int doc)
         {
-            return vs.GetDescription() + '=' + StrVal(doc);
+            return m_vs.GetDescription() + '=' + StrVal(doc);
         }
 
         public override ValueFiller GetValueFiller()

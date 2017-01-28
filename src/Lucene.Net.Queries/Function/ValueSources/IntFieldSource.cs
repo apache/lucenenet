@@ -46,13 +46,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override string GetDescription()
         {
-            return "int(" + field + ')';
+            return "int(" + m_field + ')';
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            FieldCache.Ints arr = cache.GetInts(readerContext.AtomicReader, field, parser, true);
-            IBits valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
+            FieldCache.Ints arr = m_cache.GetInts(readerContext.AtomicReader, m_field, parser, true);
+            IBits valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
 
             return new IntDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
         }

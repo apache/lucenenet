@@ -27,11 +27,11 @@ namespace Lucene.Net.Queries.Function.DocValues
     /// </summary>
     public abstract class DoubleDocValues : FunctionValues
     {
-        protected readonly ValueSource vs;
+        protected readonly ValueSource m_vs;
 
         public DoubleDocValues(ValueSource vs)
         {
-            this.vs = vs;
+            this.m_vs = vs;
         }
 
         public override sbyte ByteVal(int doc)
@@ -78,7 +78,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override string ToString(int doc)
         {
-            return vs.GetDescription() + '=' + StrVal(doc);
+            return m_vs.GetDescription() + '=' + StrVal(doc);
         }
 
         public override ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal,

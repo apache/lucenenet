@@ -48,12 +48,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override string GetDescription()
         {
-            return "byte(" + field + ')';
+            return "byte(" + m_field + ')';
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            FieldCache.Bytes arr = cache.GetBytes(readerContext.AtomicReader, field, parser, false);
+            FieldCache.Bytes arr = m_cache.GetBytes(readerContext.AtomicReader, m_field, parser, false);
 
             return new FunctionValuesAnonymousInnerClassHelper(this, arr);
         }

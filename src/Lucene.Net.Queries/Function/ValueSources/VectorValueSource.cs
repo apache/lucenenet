@@ -30,25 +30,24 @@ namespace Lucene.Net.Queries.Function.ValueSources
     //Not crazy about the name, but...
     public class VectorValueSource : MultiValueSource
     {
-        protected readonly IList<ValueSource> sources;
-
+        protected readonly IList<ValueSource> m_sources;
 
         public VectorValueSource(IList<ValueSource> sources)
         {
-            this.sources = sources;
+            this.m_sources = sources;
         }
 
         public virtual IList<ValueSource> Sources
         {
             get
             {
-                return sources;
+                return m_sources;
             }
         }
 
         public override int Dimension
         {
-            get { return sources.Count; }
+            get { return m_sources.Count; }
         }
 
         public virtual string Name
@@ -58,20 +57,20 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            var size = sources.Count;
+            var size = m_sources.Count;
 
             // special-case x,y and lat,lon since it's so common
             if (size == 2)
             {
-                var x = sources[0].GetValues(context, readerContext);
-                var y = sources[1].GetValues(context, readerContext);
+                var x = m_sources[0].GetValues(context, readerContext);
+                var y = m_sources[1].GetValues(context, readerContext);
                 return new FunctionValuesAnonymousInnerClassHelper(this, x, y);
             }
 
             var valsArr = new FunctionValues[size];
             for (int i = 0; i < size; i++)
             {
-                valsArr[i] = sources[i].GetValues(context, readerContext);
+                valsArr[i] = m_sources[i].GetValues(context, readerContext);
             }
 
             return new FunctionValuesAnonymousInnerClassHelper2(this, valsArr);
@@ -224,7 +223,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)
         {
-            foreach (ValueSource source in sources)
+            foreach (ValueSource source in m_sources)
             {
                 source.CreateWeight(context, searcher);
             }
@@ -236,7 +235,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var sb = new StringBuilder();
             sb.Append(Name).Append('(');
             bool firstTime = true;
-            foreach (ValueSource source in sources)
+            foreach (ValueSource source in m_sources)
             {
                 if (firstTime)
                 {
@@ -264,12 +263,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
 
             var that = (VectorValueSource)o;
-            return sources.Equals(that.sources);
+            return m_sources.Equals(that.m_sources);
         }
 
         public override int GetHashCode()
         {
-            return sources.GetHashCode();
+            return m_sources.GetHashCode();
         }
     }
 }

@@ -202,7 +202,7 @@ namespace Lucene.Net.Tests.Queries
 
                 public override float CustomScore(int doc, float subScore, float valSrcScore)
                 {
-                    assertTrue(doc <= context.AtomicReader.MaxDoc);
+                    assertTrue(doc <= m_context.AtomicReader.MaxDoc);
                     return values.Get(doc);
                 }
             }

@@ -27,19 +27,19 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public abstract class FieldCacheSource : ValueSource
     {
-        protected readonly string field;
-        protected readonly IFieldCache cache = Search.FieldCache.DEFAULT;
+        protected readonly string m_field;
+        protected readonly IFieldCache m_cache = Search.FieldCache.DEFAULT;
 
         public FieldCacheSource(string field)
         {
-            this.field = field;
+            this.m_field = field;
         }
 
         public virtual IFieldCache FieldCache
         {
             get
             {
-                return cache;
+                return m_cache;
             }
         }
 
@@ -47,13 +47,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             get
             {
-                return field;
+                return m_field;
             }
         }
 
         public override string GetDescription()
         {
-            return field;
+            return m_field;
         }
 
         public override bool Equals(object o)
@@ -63,12 +63,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return false;
             }
-            return field.Equals(other.field) && cache == other.cache;
+            return m_field.Equals(other.m_field) && m_cache == other.m_cache;
         }
 
         public override int GetHashCode()
         {
-            return cache.GetHashCode() + field.GetHashCode();
+            return m_cache.GetHashCode() + m_field.GetHashCode();
         }
     }
 }

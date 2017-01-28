@@ -33,25 +33,25 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class LinearFloatFunction : ValueSource
     {
-        protected readonly ValueSource source;
-        protected readonly float slope;
-        protected readonly float intercept;
+        protected readonly ValueSource m_source;
+        protected readonly float m_slope;
+        protected readonly float m_intercept;
 
         public LinearFloatFunction(ValueSource source, float slope, float intercept)
         {
-            this.source = source;
-            this.slope = slope;
-            this.intercept = intercept;
+            this.m_source = source;
+            this.m_slope = slope;
+            this.m_intercept = intercept;
         }
 
         public override string GetDescription()
         {
-            return slope + "*float(" + source.GetDescription() + ")+" + intercept;
+            return m_slope + "*float(" + m_source.GetDescription() + ")+" + m_intercept;
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            FunctionValues vals = source.GetValues(context, readerContext);
+            FunctionValues vals = m_source.GetValues(context, readerContext);
             return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals);
         }
 
@@ -69,26 +69,26 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override float FloatVal(int doc)
             {
-                return vals.FloatVal(doc) * outerInstance.slope + outerInstance.intercept;
+                return vals.FloatVal(doc) * outerInstance.m_slope + outerInstance.m_intercept;
             }
             public override string ToString(int doc)
             {
-                return outerInstance.slope + "*float(" + vals.ToString(doc) + ")+" + outerInstance.intercept;
+                return outerInstance.m_slope + "*float(" + vals.ToString(doc) + ")+" + outerInstance.m_intercept;
             }
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)
         {
-            source.CreateWeight(context, searcher);
+            m_source.CreateWeight(context, searcher);
         }
 
         public override int GetHashCode()
         {
-            int h = Number.FloatToIntBits(slope);
+            int h = Number.FloatToIntBits(m_slope);
             h = ((int)((uint)h >> 2)) | (h << 30);
-            h += Number.FloatToIntBits(intercept);
+            h += Number.FloatToIntBits(m_intercept);
             h ^= (h << 14) | ((int)((uint)h >> 19));
-            return h + source.GetHashCode();
+            return h + m_source.GetHashCode();
         }
 
         public override bool Equals(object o)
@@ -96,7 +96,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as LinearFloatFunction;
             if (other == null)
                 return false;
-            return this.slope == other.slope && this.intercept == other.intercept && this.source.Equals(other.source);
+            return this.m_slope == other.m_slope && this.m_intercept == other.m_intercept && this.m_source.Equals(other.m_source);
         }
     }
 }

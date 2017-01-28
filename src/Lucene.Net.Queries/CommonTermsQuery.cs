@@ -60,15 +60,15 @@ namespace Lucene.Net.Queries
          * rewrite to dismax rather than boolean. Yet, this can already be subclassed
          * to do so.
          */
-        protected readonly IList<Term> terms = new List<Term>();
-        protected readonly bool disableCoord;
-        protected readonly float maxTermFrequency;
-        protected readonly Occur lowFreqOccur;
-        protected readonly Occur highFreqOccur;
-        protected float lowFreqBoost = 1.0f;
-        protected float highFreqBoost = 1.0f;
-        protected float lowFreqMinNrShouldMatch = 0;
-        protected float highFreqMinNrShouldMatch = 0;
+        protected readonly IList<Term> m_terms = new List<Term>();
+        protected readonly bool m_disableCoord;
+        protected readonly float m_maxTermFrequency;
+        protected readonly Occur m_lowFreqOccur;
+        protected readonly Occur m_highFreqOccur;
+        protected float m_lowFreqBoost = 1.0f;
+        protected float m_highFreqBoost = 1.0f;
+        protected float m_lowFreqMinNrShouldMatch = 0;
+        protected float m_highFreqMinNrShouldMatch = 0;
 
         /// <summary>
         /// Creates a new <seealso cref="CommonTermsQuery"/>
@@ -117,10 +117,10 @@ namespace Lucene.Net.Queries
             {
                 throw new System.ArgumentException("lowFreqOccur should be MUST or SHOULD but was MUST_NOT");
             }
-            this.disableCoord = disableCoord;
-            this.highFreqOccur = highFreqOccur;
-            this.lowFreqOccur = lowFreqOccur;
-            this.maxTermFrequency = maxTermFrequency;
+            this.m_disableCoord = disableCoord;
+            this.m_highFreqOccur = highFreqOccur;
+            this.m_lowFreqOccur = lowFreqOccur;
+            this.m_maxTermFrequency = maxTermFrequency;
         }
 
         /// <summary>
@@ -134,37 +134,37 @@ namespace Lucene.Net.Queries
             {
                 throw new ArgumentException("Term must not be null");
             }
-            this.terms.Add(term);
+            this.m_terms.Add(term);
         }
 
         public override Query Rewrite(IndexReader reader)
         {
-            if (this.terms.Count == 0)
+            if (this.m_terms.Count == 0)
             {
                 return new BooleanQuery();
             }
-            else if (this.terms.Count == 1)
+            else if (this.m_terms.Count == 1)
             {
-                Query tq = NewTermQuery(this.terms[0], null);
+                Query tq = NewTermQuery(this.m_terms[0], null);
                 tq.Boost = Boost;
                 return tq;
             }
             var leaves = reader.Leaves;
             int maxDoc = reader.MaxDoc;
-            var contextArray = new TermContext[terms.Count];
-            var queryTerms = this.terms.ToArray();
+            var contextArray = new TermContext[m_terms.Count];
+            var queryTerms = this.m_terms.ToArray();
             CollectTermContext(reader, leaves, contextArray, queryTerms);
             return BuildQuery(maxDoc, contextArray, queryTerms);
         }
 
         protected virtual int CalcLowFreqMinimumNumberShouldMatch(int numOptional)
         {
-            return MinNrShouldMatch(lowFreqMinNrShouldMatch, numOptional);
+            return MinNrShouldMatch(m_lowFreqMinNrShouldMatch, numOptional);
         }
 
         protected virtual int CalcHighFreqMinimumNumberShouldMatch(int numOptional)
         {
-            return MinNrShouldMatch(highFreqMinNrShouldMatch, numOptional);
+            return MinNrShouldMatch(m_highFreqMinNrShouldMatch, numOptional);
         }
 
         private int MinNrShouldMatch(float minNrShouldMatch, int numOptional)
@@ -178,38 +178,38 @@ namespace Lucene.Net.Queries
 
         protected virtual Query BuildQuery(int maxDoc, TermContext[] contextArray, Term[] queryTerms)
         {
-            var lowFreq = new BooleanQuery(disableCoord);
-            var highFreq = new BooleanQuery(disableCoord) { Boost = highFreqBoost };
-            lowFreq.Boost = lowFreqBoost;
+            var lowFreq = new BooleanQuery(m_disableCoord);
+            var highFreq = new BooleanQuery(m_disableCoord) { Boost = m_highFreqBoost };
+            lowFreq.Boost = m_lowFreqBoost;
             var query = new BooleanQuery(true);
             for (int i = 0; i < queryTerms.Length; i++)
             {
                 TermContext termContext = contextArray[i];
                 if (termContext == null)
                 {
-                    lowFreq.Add(NewTermQuery(queryTerms[i], null), lowFreqOccur);
+                    lowFreq.Add(NewTermQuery(queryTerms[i], null), m_lowFreqOccur);
                 }
                 else
                 {
-                    if ((maxTermFrequency >= 1f && termContext.DocFreq > maxTermFrequency) || (termContext.DocFreq > (int)Math.Ceiling(maxTermFrequency * (float)maxDoc)))
+                    if ((m_maxTermFrequency >= 1f && termContext.DocFreq > m_maxTermFrequency) || (termContext.DocFreq > (int)Math.Ceiling(m_maxTermFrequency * (float)maxDoc)))
                     {
-                        highFreq.Add(NewTermQuery(queryTerms[i], termContext), highFreqOccur);
+                        highFreq.Add(NewTermQuery(queryTerms[i], termContext), m_highFreqOccur);
                     }
                     else
                     {
-                        lowFreq.Add(NewTermQuery(queryTerms[i], termContext), lowFreqOccur);
+                        lowFreq.Add(NewTermQuery(queryTerms[i], termContext), m_lowFreqOccur);
                     }
                 }
 
             }
             int numLowFreqClauses = lowFreq.GetClauses().Length;
             int numHighFreqClauses = highFreq.GetClauses().Length;
-            if (lowFreqOccur == Occur.SHOULD && numLowFreqClauses > 0)
+            if (m_lowFreqOccur == Occur.SHOULD && numLowFreqClauses > 0)
             {
                 int minMustMatch = CalcLowFreqMinimumNumberShouldMatch(numLowFreqClauses);
                 lowFreq.MinimumNumberShouldMatch = minMustMatch;
             }
-            if (highFreqOccur == Occur.SHOULD && numHighFreqClauses > 0)
+            if (m_highFreqOccur == Occur.SHOULD && numHighFreqClauses > 0)
             {
                 int minMustMatch = CalcHighFreqMinimumNumberShouldMatch(numHighFreqClauses);
                 highFreq.MinimumNumberShouldMatch = minMustMatch;
@@ -220,7 +220,7 @@ namespace Lucene.Net.Queries
                  * if lowFreq is empty we rewrite the high freq terms in a conjunction to
                  * prevent slow queries.
                  */
-                if (highFreq.MinimumNumberShouldMatch == 0 && highFreqOccur != Occur.MUST)
+                if (highFreq.MinimumNumberShouldMatch == 0 && m_highFreqOccur != Occur.MUST)
                 {
                     foreach (BooleanClause booleanClause in highFreq)
                     {
@@ -299,7 +299,7 @@ namespace Lucene.Net.Queries
         {
             get
             {
-                return disableCoord;
+                return m_disableCoord;
             }
         }
 
@@ -320,8 +320,8 @@ namespace Lucene.Net.Queries
         ///          the number of optional clauses that must match </param>
         public virtual float LowFreqMinimumNumberShouldMatch
         {
-            get { return lowFreqMinNrShouldMatch; }
-            set { lowFreqMinNrShouldMatch = value; }
+            get { return m_lowFreqMinNrShouldMatch; }
+            set { m_lowFreqMinNrShouldMatch = value; }
         }
 
 
@@ -342,14 +342,14 @@ namespace Lucene.Net.Queries
         ///          the number of optional clauses that must match </param>
         public virtual float HighFreqMinimumNumberShouldMatch
         {
-            get { return highFreqMinNrShouldMatch; }
-            set { highFreqMinNrShouldMatch = value; }
+            get { return m_highFreqMinNrShouldMatch; }
+            set { m_highFreqMinNrShouldMatch = value; }
         }
 
 
         public override void ExtractTerms(ISet<Term> terms)
         {
-            terms.AddAll(this.terms);
+            terms.AddAll(this.m_terms);
         }
 
         public override string ToString(string field)
@@ -360,12 +360,12 @@ namespace Lucene.Net.Queries
             {
                 buffer.Append("(");
             }
-            for (int i = 0; i < terms.Count; i++)
+            for (int i = 0; i < m_terms.Count; i++)
             {
-                Term t = terms[i];
+                Term t = m_terms[i];
                 buffer.Append(NewTermQuery(t, null).ToString());
 
-                if (i != terms.Count - 1)
+                if (i != m_terms.Count - 1)
                 {
                     buffer.Append(", ");
                 }
@@ -393,15 +393,15 @@ namespace Lucene.Net.Queries
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + (disableCoord ? 1231 : 1237);
-            result = prime * result + Number.FloatToIntBits(highFreqBoost);
-            result = prime * result + /*((highFreqOccur == null) ? 0 :*/ highFreqOccur.GetHashCode()/*)*/;
-            result = prime * result + Number.FloatToIntBits(lowFreqBoost);
-            result = prime * result + /*((lowFreqOccur == null) ? 0 :*/ lowFreqOccur.GetHashCode()/*)*/;
-            result = prime * result + Number.FloatToIntBits(maxTermFrequency);
-            result = prime * result + Number.FloatToIntBits(lowFreqMinNrShouldMatch);
-            result = prime * result + Number.FloatToIntBits(highFreqMinNrShouldMatch);
-            result = prime * result + ((terms == null) ? 0 : terms.GetValueHashCode());
+            result = prime * result + (m_disableCoord ? 1231 : 1237);
+            result = prime * result + Number.FloatToIntBits(m_highFreqBoost);
+            result = prime * result + /*((highFreqOccur == null) ? 0 :*/ m_highFreqOccur.GetHashCode()/*)*/;
+            result = prime * result + Number.FloatToIntBits(m_lowFreqBoost);
+            result = prime * result + /*((lowFreqOccur == null) ? 0 :*/ m_lowFreqOccur.GetHashCode()/*)*/;
+            result = prime * result + Number.FloatToIntBits(m_maxTermFrequency);
+            result = prime * result + Number.FloatToIntBits(m_lowFreqMinNrShouldMatch);
+            result = prime * result + Number.FloatToIntBits(m_highFreqMinNrShouldMatch);
+            result = prime * result + ((m_terms == null) ? 0 : m_terms.GetValueHashCode());
             return result;
         }
 
@@ -420,46 +420,46 @@ namespace Lucene.Net.Queries
                 return false;
             }
             var other = (CommonTermsQuery)obj;
-            if (disableCoord != other.disableCoord)
+            if (m_disableCoord != other.m_disableCoord)
             {
                 return false;
             }
-            if (Number.FloatToIntBits(highFreqBoost) != Number.FloatToIntBits(other.highFreqBoost))
+            if (Number.FloatToIntBits(m_highFreqBoost) != Number.FloatToIntBits(other.m_highFreqBoost))
             {
                 return false;
             }
-            if (highFreqOccur != other.highFreqOccur)
+            if (m_highFreqOccur != other.m_highFreqOccur)
             {
                 return false;
             }
-            if (Number.FloatToIntBits(lowFreqBoost) != Number.FloatToIntBits(other.lowFreqBoost))
+            if (Number.FloatToIntBits(m_lowFreqBoost) != Number.FloatToIntBits(other.m_lowFreqBoost))
             {
                 return false;
             }
-            if (lowFreqOccur != other.lowFreqOccur)
+            if (m_lowFreqOccur != other.m_lowFreqOccur)
             {
                 return false;
             }
-            if (Number.FloatToIntBits(maxTermFrequency) != Number.FloatToIntBits(other.maxTermFrequency))
+            if (Number.FloatToIntBits(m_maxTermFrequency) != Number.FloatToIntBits(other.m_maxTermFrequency))
             {
                 return false;
             }
-            if (lowFreqMinNrShouldMatch != other.lowFreqMinNrShouldMatch)
+            if (m_lowFreqMinNrShouldMatch != other.m_lowFreqMinNrShouldMatch)
             {
                 return false;
             }
-            if (highFreqMinNrShouldMatch != other.highFreqMinNrShouldMatch)
+            if (m_highFreqMinNrShouldMatch != other.m_highFreqMinNrShouldMatch)
             {
                 return false;
             }
-            if (terms == null)
+            if (m_terms == null)
             {
-                if (other.terms != null)
+                if (other.m_terms != null)
                 {
                     return false;
                 }
             }
-            else if (!terms.SequenceEqual(other.terms))
+            else if (!m_terms.SequenceEqual(other.m_terms))
             {
                 return false;
             }

@@ -29,13 +29,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class LiteralValueSource : ValueSource
     {
-        protected readonly string str;
-        protected readonly BytesRef bytesRef;
+        protected readonly string m_str;
+        protected readonly BytesRef m_bytesRef;
 
         public LiteralValueSource(string str)
         {
-            this.str = str;
-            this.bytesRef = new BytesRef(str);
+            this.m_str = str;
+            this.m_bytesRef = new BytesRef(str);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             get
             {
-                return str;
+                return m_str;
             }
         }
 
@@ -66,24 +66,24 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override string StrVal(int doc)
             {
-                return outerInstance.str;
+                return outerInstance.m_str;
             }
 
             public override bool BytesVal(int doc, BytesRef target)
             {
-                target.CopyBytes(outerInstance.bytesRef);
+                target.CopyBytes(outerInstance.m_bytesRef);
                 return true;
             }
 
             public override string ToString(int doc)
             {
-                return outerInstance.str;
+                return outerInstance.m_str;
             }
         }
 
         public override string GetDescription()
         {
-            return "literal(" + str + ")";
+            return "literal(" + m_str + ")";
         }
 
         public override bool Equals(object o)
@@ -95,14 +95,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var that = o as LiteralValueSource;
             if (that == null)
                 return false;
-            return str.Equals(that.str);
+            return m_str.Equals(that.m_str);
 
         }
 
         public static readonly int hash = typeof(LiteralValueSource).GetHashCode();
         public override int GetHashCode()
         {
-            return hash + str.GetHashCode();
+            return hash + m_str.GetHashCode();
         }
     }
 }

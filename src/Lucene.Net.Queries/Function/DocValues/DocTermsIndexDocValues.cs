@@ -29,23 +29,23 @@ namespace Lucene.Net.Queries.Function.DocValues
     /// </summary>
     public abstract class DocTermsIndexDocValues : FunctionValues
     {
-        protected readonly SortedDocValues termsIndex;
-        protected readonly ValueSource vs;
-        protected readonly MutableValueStr val = new MutableValueStr();
-        protected readonly BytesRef spare = new BytesRef();
-        protected readonly CharsRef spareChars = new CharsRef();
+        protected readonly SortedDocValues m_termsIndex;
+        protected readonly ValueSource m_vs;
+        protected readonly MutableValueStr m_val = new MutableValueStr();
+        protected readonly BytesRef m_spare = new BytesRef();
+        protected readonly CharsRef m_spareChars = new CharsRef();
 
         public DocTermsIndexDocValues(ValueSource vs, AtomicReaderContext context, string field)
         {
             try
             {
-                termsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, field);
+                m_termsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, field);
             }
             catch (Exception e)
             {
                 throw new DocTermsIndexException(field, e);
             }
-            this.vs = vs;
+            this.m_vs = vs;
         }
 
         protected abstract string ToTerm(string readableValue);
@@ -57,29 +57,29 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override int OrdVal(int doc)
         {
-            return termsIndex.GetOrd(doc);
+            return m_termsIndex.GetOrd(doc);
         }
 
         public override int NumOrd
         {
-            get { return termsIndex.ValueCount; }
+            get { return m_termsIndex.ValueCount; }
         }
 
         public override bool BytesVal(int doc, BytesRef target)
         {
-            termsIndex.Get(doc, target);
+            m_termsIndex.Get(doc, target);
             return target.Length > 0;
         }
 
         public override string StrVal(int doc)
         {
-            termsIndex.Get(doc, spare);
-            if (spare.Length == 0)
+            m_termsIndex.Get(doc, m_spare);
+            if (m_spare.Length == 0)
             {
                 return null;
             }
-            UnicodeUtil.UTF8toUTF16(spare, spareChars);
-            return spareChars.ToString();
+            UnicodeUtil.UTF8toUTF16(m_spare, m_spareChars);
+            return m_spareChars.ToString();
         }
 
         public override bool BoolVal(int doc)
@@ -98,7 +98,7 @@ namespace Lucene.Net.Queries.Function.DocValues
             int lower = int.MinValue;
             if (lowerVal != null)
             {
-                lower = termsIndex.LookupTerm(new BytesRef(lowerVal));
+                lower = m_termsIndex.LookupTerm(new BytesRef(lowerVal));
                 if (lower < 0)
                 {
                     lower = -lower - 1;
@@ -112,7 +112,7 @@ namespace Lucene.Net.Queries.Function.DocValues
             int upper = int.MaxValue;
             if (upperVal != null)
             {
-                upper = termsIndex.LookupTerm(new BytesRef(upperVal));
+                upper = m_termsIndex.LookupTerm(new BytesRef(upperVal));
                 if (upper < 0)
                 {
                     upper = -upper - 2;
@@ -146,14 +146,14 @@ namespace Lucene.Net.Queries.Function.DocValues
 
             public override bool MatchesValue(int doc)
             {
-                int ord = outerInstance.termsIndex.GetOrd(doc);
+                int ord = outerInstance.m_termsIndex.GetOrd(doc);
                 return ord >= ll && ord <= uu;
             }
         }
 
         public override string ToString(int doc)
         {
-            return vs.GetDescription() + '=' + StrVal(doc);
+            return m_vs.GetDescription() + '=' + StrVal(doc);
         }
 
         public override ValueFiller GetValueFiller()
@@ -183,7 +183,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
             public override void FillValue(int doc)
             {
-                int ord = outerInstance.termsIndex.GetOrd(doc);
+                int ord = outerInstance.m_termsIndex.GetOrd(doc);
                 if (ord == -1)
                 {
                     mval.Value.Bytes = BytesRef.EMPTY_BYTES;
@@ -193,7 +193,7 @@ namespace Lucene.Net.Queries.Function.DocValues
                 }
                 else
                 {
-                    outerInstance.termsIndex.LookupOrd(ord, mval.Value);
+                    outerInstance.m_termsIndex.LookupOrd(ord, mval.Value);
                     mval.Exists = true;
                 }
             }

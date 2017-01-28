@@ -29,15 +29,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public abstract class DualFloatFunction : ValueSource
     {
-        protected readonly ValueSource a;
-        protected readonly ValueSource b;
+        protected readonly ValueSource m_a;
+        protected readonly ValueSource m_b;
 
         /// <param name="a">  the base. </param>
         /// <param name="b">  the exponent. </param>
         public DualFloatFunction(ValueSource a, ValueSource b)
         {
-            this.a = a;
-            this.b = b;
+            this.m_a = a;
+            this.m_b = b;
         }
 
         protected abstract string Name { get; }
@@ -45,13 +45,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override string GetDescription()
         {
-            return Name + "(" + a.GetDescription() + "," + b.GetDescription() + ")";
+            return Name + "(" + m_a.GetDescription() + "," + m_b.GetDescription() + ")";
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            FunctionValues aVals = a.GetValues(context, readerContext);
-            FunctionValues bVals = b.GetValues(context, readerContext);
+            FunctionValues aVals = m_a.GetValues(context, readerContext);
+            FunctionValues bVals = m_b.GetValues(context, readerContext);
             return new FloatDocValuesAnonymousInnerClassHelper(this, this, aVals, bVals);
         }
 
@@ -83,15 +83,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)
         {
-            a.CreateWeight(context, searcher);
-            b.CreateWeight(context, searcher);
+            m_a.CreateWeight(context, searcher);
+            m_b.CreateWeight(context, searcher);
         }
 
         public override int GetHashCode()
         {
-            int h = a.GetHashCode();
+            int h = m_a.GetHashCode();
             h ^= (h << 13) | ((int)((uint)h >> 20));
-            h += b.GetHashCode();
+            h += m_b.GetHashCode();
             h ^= (h << 23) | ((int)((uint)h >> 10));
             h += Name.GetHashCode();
             return h;
@@ -104,7 +104,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return false;
             }
-            return this.a.Equals(other.a) && this.b.Equals(other.b);
+            return this.m_a.Equals(other.m_a) && this.m_b.Equals(other.m_b);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class DoubleFieldSource : FieldCacheSource
     {
-        protected readonly FieldCache.IDoubleParser parser;
+        protected readonly FieldCache.IDoubleParser m_parser;
 
         public DoubleFieldSource(string field)
             : this(field, null)
@@ -40,18 +40,18 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public DoubleFieldSource(string field, FieldCache.IDoubleParser parser)
             : base(field)
         {
-            this.parser = parser;
+            this.m_parser = parser;
         }
 
         public override string GetDescription()
         {
-            return "double(" + field + ')';
+            return "double(" + m_field + ')';
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            var arr = cache.GetDoubles(readerContext.AtomicReader, field, parser, true);
-            var valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
+            var arr = m_cache.GetDoubles(readerContext.AtomicReader, m_field, m_parser, true);
+            var valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
             return new DoubleDocValuesAnonymousInnerClassHelper(this, arr, valid);
         }
 
@@ -119,12 +119,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return false;
             }
             return base.Equals(other) &&
-                   (this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType());
+                   (this.m_parser == null ? other.m_parser == null : this.m_parser.GetType() == other.m_parser.GetType());
         }
 
         public override int GetHashCode()
         {
-            int h = parser == null ? typeof(double?).GetHashCode() : parser.GetType().GetHashCode();
+            int h = m_parser == null ? typeof(double?).GetHashCode() : m_parser.GetType().GetHashCode();
             h += base.GetHashCode();
             return h;
         }

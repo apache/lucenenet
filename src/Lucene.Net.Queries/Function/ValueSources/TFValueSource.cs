@@ -55,9 +55,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             var fields = readerContext.AtomicReader.Fields;
-            var terms = fields.Terms(indexedField);
+            var terms = fields.Terms(m_indexedField);
             var searcher = (IndexSearcher)context["searcher"];
-            var similarity = IDFValueSource.AsTFIDF(searcher.Similarity, indexedField);
+            var similarity = IDFValueSource.AsTFIDF(searcher.Similarity, m_indexedField);
             if (similarity == null)
             {
                 throw new System.NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
@@ -94,7 +94,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 if (terms != null)
                 {
                     TermsEnum termsEnum = terms.GetIterator(null);
-                    if (termsEnum.SeekExact(outerInstance.indexedBytes))
+                    if (termsEnum.SeekExact(outerInstance.m_indexedBytes))
                     {
                         docs = termsEnum.Docs(null, null);
                     }

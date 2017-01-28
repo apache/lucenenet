@@ -30,8 +30,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class FloatFieldSource : FieldCacheSource
     {
-
-        protected readonly FieldCache.IFloatParser parser;
+        protected readonly FieldCache.IFloatParser m_parser;
 
         public FloatFieldSource(string field)
             : this(field, null)
@@ -41,18 +40,18 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public FloatFieldSource(string field, FieldCache.IFloatParser parser)
             : base(field)
         {
-            this.parser = parser;
+            this.m_parser = parser;
         }
 
         public override string GetDescription()
         {
-            return "float(" + field + ')';
+            return "float(" + m_field + ')';
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            var arr = cache.GetFloats(readerContext.AtomicReader, field, parser, true);
-            var valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
+            var arr = m_cache.GetFloats(readerContext.AtomicReader, m_field, m_parser, true);
+            var valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
             return new FloatDocValuesAnonymousInnerClassHelper(this, arr, valid);
         }
 
@@ -121,12 +120,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as FloatFieldSource;
             if (other == null)
                 return false;
-            return base.Equals(other) && (this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType());
+            return base.Equals(other) && (this.m_parser == null ? other.m_parser == null : this.m_parser.GetType() == other.m_parser.GetType());
         }
 
         public override int GetHashCode()
         {
-            int h = parser == null ? typeof(float?).GetHashCode() : parser.GetType().GetHashCode();
+            int h = m_parser == null ? typeof(float?).GetHashCode() : m_parser.GetType().GetHashCode();
             h += base.GetHashCode();
             return h;
         }

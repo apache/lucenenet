@@ -31,7 +31,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class LongFieldSource : FieldCacheSource
     {
-        protected readonly FieldCache.ILongParser parser;
+        protected readonly FieldCache.ILongParser m_parser;
 
         public LongFieldSource(string field)
             : this(field, null)
@@ -41,12 +41,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public LongFieldSource(string field, FieldCache.ILongParser parser)
             : base(field)
         {
-            this.parser = parser;
+            this.m_parser = parser;
         }
 
         public override string GetDescription()
         {
-            return "long(" + field + ')';
+            return "long(" + m_field + ')';
         }
 
         public virtual long ExternalToLong(string extVal)
@@ -66,8 +66,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            var arr = cache.GetLongs(readerContext.AtomicReader, field, parser, true);
-            var valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
+            var arr = m_cache.GetLongs(readerContext.AtomicReader, m_field, m_parser, true);
+            var valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
             return new LongDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
         }
 
@@ -158,12 +158,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as LongFieldSource;
             if (other == null)
                 return false;
-            return base.Equals(other) && (this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType());
+            return base.Equals(other) && (this.m_parser == null ? other.m_parser == null : this.m_parser.GetType() == other.m_parser.GetType());
         }
 
         public override int GetHashCode()
         {
-            int h = parser == null ? this.GetType().GetHashCode() : parser.GetType().GetHashCode();
+            int h = m_parser == null ? this.GetType().GetHashCode() : m_parser.GetType().GetHashCode();
             h += base.GetHashCode();
             return h;
         }

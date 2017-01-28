@@ -38,20 +38,20 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class ScaleFloatFunction : ValueSource
     {
-        protected readonly ValueSource source;
-        protected readonly float min;
-        protected readonly float max;
+        protected readonly ValueSource m_source;
+        protected readonly float m_min;
+        protected readonly float m_max;
 
         public ScaleFloatFunction(ValueSource source, float min, float max)
         {
-            this.source = source;
-            this.min = min;
-            this.max = max;
+            this.m_source = source;
+            this.m_min = min;
+            this.m_max = max;
         }
 
         public override string GetDescription()
         {
-            return "scale(" + source.GetDescription() + "," + min + "," + max + ")";
+            return "scale(" + m_source.GetDescription() + "," + m_min + "," + m_max + ")";
         }
 
         private class ScaleInfo
@@ -70,7 +70,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             foreach (AtomicReaderContext leaf in leaves)
             {
                 int maxDoc = leaf.Reader.MaxDoc;
-                FunctionValues vals = source.GetValues(context, leaf);
+                FunctionValues vals = m_source.GetValues(context, leaf);
                 for (int i = 0; i < maxDoc; i++)
                 {
 
@@ -112,11 +112,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 scaleInfo = CreateScaleInfo(context, readerContext);
             }
 
-            float scale = (scaleInfo.MaxVal - scaleInfo.MinVal == 0) ? 0 : (max - min) / (scaleInfo.MaxVal - scaleInfo.MinVal);
+            float scale = (scaleInfo.MaxVal - scaleInfo.MinVal == 0) ? 0 : (m_max - m_min) / (scaleInfo.MaxVal - scaleInfo.MinVal);
             float minSource = scaleInfo.MinVal;
             float maxSource = scaleInfo.MaxVal;
 
-            var vals = source.GetValues(context, readerContext);
+            var vals = m_source.GetValues(context, readerContext);
             return new FloatDocValuesAnonymousInnerClassHelper(this, this, scale, minSource, maxSource, vals);
         }
 
@@ -141,26 +141,26 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override float FloatVal(int doc)
             {
-                return (vals.FloatVal(doc) - minSource) * scale + outerInstance.min;
+                return (vals.FloatVal(doc) - minSource) * scale + outerInstance.m_min;
             }
             public override string ToString(int doc)
             {
-                return "scale(" + vals.ToString(doc) + ",toMin=" + outerInstance.min + ",toMax=" + outerInstance.max + ",fromMin=" + minSource + ",fromMax=" + maxSource + ")";
+                return "scale(" + vals.ToString(doc) + ",toMin=" + outerInstance.m_min + ",toMax=" + outerInstance.m_max + ",fromMin=" + minSource + ",fromMax=" + maxSource + ")";
             }
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)
         {
-            source.CreateWeight(context, searcher);
+            m_source.CreateWeight(context, searcher);
         }
 
         public override int GetHashCode()
         {
-            int h = Number.FloatToIntBits(min);
+            int h = Number.FloatToIntBits(m_min);
             h = h * 29;
-            h += Number.FloatToIntBits(max);
+            h += Number.FloatToIntBits(m_max);
             h = h * 29;
-            h += source.GetHashCode();
+            h += m_source.GetHashCode();
             return h;
         }
 
@@ -169,9 +169,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as ScaleFloatFunction;
             if (other == null)
                 return false;
-            return this.min == other.min 
-                && this.max == other.max 
-                && this.source.Equals(other.source);
+            return this.m_min == other.m_min 
+                && this.m_max == other.m_max 
+                && this.m_source.Equals(other.m_source);
         }
     }
 }

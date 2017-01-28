@@ -35,18 +35,18 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            FieldInfo fieldInfo = readerContext.AtomicReader.FieldInfos.FieldInfo(field);
+            FieldInfo fieldInfo = readerContext.AtomicReader.FieldInfos.FieldInfo(m_field);
             // To be sorted or not to be sorted, that is the question
             // TODO: do it cleaner?
             if (fieldInfo != null && fieldInfo.DocValuesType == DocValuesType.BINARY)
             {
-                BinaryDocValues binaryValues = Search.FieldCache.DEFAULT.GetTerms(readerContext.AtomicReader, field, true);
-                IBits docsWithField = Search.FieldCache.DEFAULT.GetDocsWithField(readerContext.AtomicReader, field);
+                BinaryDocValues binaryValues = Search.FieldCache.DEFAULT.GetTerms(readerContext.AtomicReader, m_field, true);
+                IBits docsWithField = Search.FieldCache.DEFAULT.GetDocsWithField(readerContext.AtomicReader, m_field);
                 return new FunctionValuesAnonymousInnerClassHelper(this, binaryValues, docsWithField);
             }
             else
             {
-                return new DocTermsIndexDocValuesAnonymousInnerClassHelper(this, this, readerContext, field);
+                return new DocTermsIndexDocValuesAnonymousInnerClassHelper(this, this, readerContext, m_field);
             }
         }
 
