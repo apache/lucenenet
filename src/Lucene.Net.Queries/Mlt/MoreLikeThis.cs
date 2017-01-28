@@ -307,12 +307,9 @@ namespace Lucene.Net.Queries.Mlt
         /// </summary>
         /// <param name="maxPercentage"> the maximum percentage of documents (0-100) that a term may appear
         /// in to be still considered relevant </param>
-        public int MaxDocFreqPct // LUCENENET TODO: Change to SetMaxDocFreqPct(int maxPercentage)
+        public void SetMaxDocFreqPct(int maxPercentage)
         {
-            set
-            {
-                this.MaxDocFreq = value * ir.NumDocs / 100;
-            }
+            this.MaxDocFreq = maxPercentage * ir.NumDocs / 100;
         }
 
 
