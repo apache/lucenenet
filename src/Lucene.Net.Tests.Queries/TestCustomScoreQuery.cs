@@ -287,19 +287,19 @@ namespace Lucene.Net.Tests.Queries
 
             // custom query, that should (by default) multiply the scores of q1 by that of the field
             CustomScoreQuery q3CustomMul = new CustomScoreQuery(q1, functionQuery);
-            q3CustomMul.Strict = true;
+            q3CustomMul.IsStrict = true;
             q3CustomMul.Boost = boost;
             Log(q3CustomMul);
 
             // custom query, that should add the scores of q1 to that of the field
             CustomScoreQuery q4CustomAdd = new CustomAddQuery(q1, functionQuery);
-            q4CustomAdd.Strict = true;
+            q4CustomAdd.IsStrict = true;
             q4CustomAdd.Boost = boost;
             Log(q4CustomAdd);
 
             // custom query, that multiplies and adds the field score to that of q1
             CustomScoreQuery q5CustomMulAdd = new CustomMulAddQuery(q1, functionQuery, functionQuery);
-            q5CustomMulAdd.Strict = true;
+            q5CustomMulAdd.IsStrict = true;
             q5CustomMulAdd.Boost = boost;
             Log(q5CustomMulAdd);
 

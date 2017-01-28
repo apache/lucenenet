@@ -408,7 +408,7 @@ namespace Lucene.Net.Queries
         /// <P>
         /// Note: only has effect when the <seealso cref="ValueSource"/> part is not null.
         /// </summary>
-        public virtual bool Strict { get; set; } // LUCENENET TODO: Rename IsStrict
+        public virtual bool IsStrict { get; set; }
 
 
         /// <summary>
