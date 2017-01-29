@@ -447,7 +447,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                             // Target term is after current term
                             if (!_didIndexNext)
                             {
-                                _nextIndexTerm = _indexEnum.Next == -1 ? null : _indexEnum.Term;
+                                _nextIndexTerm = _indexEnum.Next() == -1 ? null : _indexEnum.Term;
                                 _didIndexNext = true;
                             }
 
@@ -953,7 +953,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         public override long RamBytesUsed()
         {
             var sizeInBytes = (_postingsReader != null) ? _postingsReader.RamBytesUsed() : 0;
-            sizeInBytes += (_indexReader != null) ? _indexReader.RamBytesUsed : 0;
+            sizeInBytes += (_indexReader != null) ? _indexReader.RamBytesUsed() : 0;
             return sizeInBytes;
         }
 

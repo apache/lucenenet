@@ -143,29 +143,26 @@ namespace Lucene.Net.Codecs.BlockTerms
             public override long Seek(BytesRef target)
             {
                 _current = _fstEnum.SeekFloor(target);
-                return _current.Output.GetValueOrDefault(); // LUCENENET NOTE: Not sure what to return if OutPut is null, so we are returning 0
+                return _current.Output.GetValueOrDefault(); // LUCENENET NOTE: Not sure what to return if Output is null, so we are returning 0
             }
 
-            public override long Next
+            public override long Next()
             {
-                get
-                {
-                    _current = _fstEnum.Next();
-                    if (_current == null)
-                        return -1;
+                _current = _fstEnum.Next();
+                if (_current == null)
+                    return -1;
 
-                    return _current.Output.Value;
-                }
+                return _current.Output.Value;
             }
 
             public override long Ord
             {
-                get { throw new NotImplementedException(); }
+                get { throw new NotSupportedException(); } 
             }
 
             public override long Seek(long ord)
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException();
             }
         }
 
@@ -267,9 +264,9 @@ namespace Lucene.Net.Codecs.BlockTerms
             input.Seek(dirOffset);
         }
 
-        public override long RamBytesUsed
+        public override long RamBytesUsed()
         {
-            get { return _fields.Values.Sum(entry => entry.RamBytesUsed()); }
+            return _fields.Values.Sum(entry => entry.RamBytesUsed());
         }
     }
 }

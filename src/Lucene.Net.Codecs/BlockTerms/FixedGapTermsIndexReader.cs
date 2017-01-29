@@ -257,23 +257,20 @@ namespace Lucene.Net.Codecs.BlockTerms
                 return _fieldIndex.TermsStart + _fieldIndex.TermsDictOffsets.Get(hi);
             }
 
-            public override long Next // LUCENENET TODO: Make into Next() method
+            public override long Next()
             {
-                get
-                {
-                    var idx = 1 + (int)(ord / _fgtir._totalIndexInterval);
-                    if (idx >= _fieldIndex.NumIndexTerms)
-                        return -1;
+                var idx = 1 + (int)(ord / _fgtir._totalIndexInterval);
+                if (idx >= _fieldIndex.NumIndexTerms)
+                    return -1;
 
-                    ord += _fgtir._totalIndexInterval;
+                ord += _fgtir._totalIndexInterval;
 
-                    var offset = _fieldIndex.TermOffsets.Get(idx);
-                    var length = (int)(_fieldIndex.TermOffsets.Get(1 + idx) - offset);
+                var offset = _fieldIndex.TermOffsets.Get(idx);
+                var length = (int)(_fieldIndex.TermOffsets.Get(1 + idx) - offset);
 
-                    _fgtir._termBytesReader.FillSlice(Term, _fieldIndex.TermBytesStart + offset, length);
+                _fgtir._termBytesReader.FillSlice(Term, _fieldIndex.TermBytesStart + offset, length);
 
-                    return _fieldIndex.TermsStart + _fieldIndex.TermsDictOffsets.Get(idx);
-                }
+                return _fieldIndex.TermsStart + _fieldIndex.TermsDictOffsets.Get(idx);
             }
 
             public override long Ord { get { return ord; } }
@@ -522,16 +519,13 @@ namespace Lucene.Net.Codecs.BlockTerms
             input.Seek(dirOffset);
         }
 
-        public override long RamBytesUsed
+        public override long RamBytesUsed()
         {
-            get
-            {
-                var sizeInBytes = ((_termBytes != null) ? _termBytes.RamBytesUsed() : 0) +
-                                  ((_termBytesReader != null) ? _termBytesReader.RamBytesUsed() : 0);
+            var sizeInBytes = ((_termBytes != null) ? _termBytes.RamBytesUsed() : 0) +
+                                ((_termBytesReader != null) ? _termBytesReader.RamBytesUsed() : 0);
 
-                return _fields.Values.Aggregate(sizeInBytes,
-                    (current, entry) => (current + entry.CoreIndex.RamBytesUsed));
-            }
+            return _fields.Values.Aggregate(sizeInBytes,
+                (current, entry) => (current + entry.CoreIndex.RamBytesUsed));
         }
     }
 }

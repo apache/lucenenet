@@ -59,10 +59,10 @@ namespace Lucene.Net.Codecs.BlockTerms
             /// to term; returns file pointer index (into the main
             /// terms index file) for that term 
             /// </summary>
-            public abstract long Seek(BytesRef term); 
+            public abstract long Seek(BytesRef term);
 
             /// <summary>Returns -1 at end</summary>
-            public abstract long Next { get; } // LUCENENET TODO: Make Next()
+            public abstract long Next();
 
             public abstract BytesRef Term { get; }
 
@@ -80,6 +80,6 @@ namespace Lucene.Net.Codecs.BlockTerms
         }
 
         /// <summary>Returns approximate RAM bytes used</summary>
-        public abstract long RamBytesUsed { get; } // LUCENENET TODO: Make RamBytesUsed()
+        public abstract long RamBytesUsed();
     }
 }
