@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs.MockSep
                           MockSingleIntIndexOutput.VERSION_START);
         }
 
-        public override IntIndexInputReader Reader()
+        public override IntIndexInputReader GetReader()
         {
             return new MockReader((IndexInput)@in.Clone());
         }
@@ -110,7 +110,7 @@ namespace Lucene.Net.Codecs.MockSep
                 return other;
             }
         }
-        public override IntIndexInputIndex Index()
+        public override IntIndexInputIndex GetIndex()
         {
             return new MockSingleIntIndexInputIndex();
         }

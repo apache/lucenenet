@@ -116,8 +116,7 @@ namespace Lucene.Net.Codecs.Bloom
             {
                 throw new InvalidOperationException("Error - constructed without a choice of PostingsFormat");
             }
-            return new BloomFilteredFieldsConsumer(
-                _delegatePostingsFormat.FieldsConsumer(state), state, this);
+            return new BloomFilteredFieldsConsumer(this, _delegatePostingsFormat.FieldsConsumer(state), state);
         }
 
         public override FieldsProducer FieldsProducer(SegmentReadState state)

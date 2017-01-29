@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs.IntBlock
             @out.Dispose();
 
             IntIndexInput @in = f.OpenInput(dir, "test", NewIOContext(Random()));
-            IntIndexInputReader r = @in.Reader();
+            IntIndexInputReader r = @in.GetReader();
 
             for (int i = 0; i < 11777; i++)
             {
@@ -63,7 +63,7 @@ namespace Lucene.Net.Codecs.IntBlock
             @out.Dispose();
 
             IntIndexInput @in = f.OpenInput(dir, "test", NewIOContext(Random()));
-            @in.Reader();
+            @in.GetReader();
             // read no ints
             @in.Dispose();
             dir.Dispose();

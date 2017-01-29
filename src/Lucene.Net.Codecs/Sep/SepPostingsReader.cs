@@ -189,13 +189,13 @@ namespace Lucene.Net.Codecs.Sep
 
         public override BlockTermState NewTermState()
         {
-            var state = new SepTermState {DOC_INDEX = _docIn.Index()};
+            var state = new SepTermState {DOC_INDEX = _docIn.GetIndex()};
 
             if (_freqIn != null)
-                state.FREQ_INDEX = _freqIn.Index();
+                state.FREQ_INDEX = _freqIn.GetIndex();
 
             if (_posIn != null)
-                state.POS_INDEX = _posIn.Index();
+                state.POS_INDEX = _posIn.GetIndex();
 
             return state;
         }
@@ -326,19 +326,19 @@ namespace Lucene.Net.Codecs.Sep
             internal SepDocsEnum(SepPostingsReader outerInstance)
             {
                 _outerInstance = outerInstance;
-                _docReader = outerInstance._docIn.Reader();
-                _docIndex = outerInstance._docIn.Index();
+                _docReader = outerInstance._docIn.GetReader();
+                _docIndex = outerInstance._docIn.GetIndex();
                 if (outerInstance._freqIn != null)
                 {
-                    _freqReader = outerInstance._freqIn.Reader();
-                    _freqIndex = outerInstance._freqIn.Index();
+                    _freqReader = outerInstance._freqIn.GetReader();
+                    _freqIndex = outerInstance._freqIn.GetIndex();
                 }
                 else
                 {
                     _freqReader = null;
                     _freqIndex = null;
                 }
-                _posIndex = outerInstance._posIn != null ? outerInstance._posIn.Index() : null;
+                _posIndex = outerInstance._posIn != null ? outerInstance._posIn.GetIndex() : null;
 
                 START_DOC_IN = outerInstance._docIn;
             }
@@ -512,12 +512,12 @@ namespace Lucene.Net.Codecs.Sep
             internal SepDocsAndPositionsEnum(SepPostingsReader outerInstance)
             {
                 _outerInstance = outerInstance;
-                _docReader = outerInstance._docIn.Reader();
-                _docIndex = outerInstance._docIn.Index();
-                _freqReader = outerInstance._freqIn.Reader();
-                _freqIndex = outerInstance._freqIn.Index();
-                _posReader = outerInstance._posIn.Reader();
-                _posIndex = outerInstance._posIn.Index();
+                _docReader = outerInstance._docIn.GetReader();
+                _docIndex = outerInstance._docIn.GetIndex();
+                _freqReader = outerInstance._freqIn.GetReader();
+                _freqIndex = outerInstance._freqIn.GetIndex();
+                _posReader = outerInstance._posIn.GetReader();
+                _posIndex = outerInstance._posIn.GetIndex();
                 _payloadIn = (IndexInput) outerInstance._payloadIn.Clone();
 
                 START_DOC_IN = outerInstance._docIn;

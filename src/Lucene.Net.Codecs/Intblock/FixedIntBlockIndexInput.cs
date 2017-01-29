@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs.IntBlock
             blockSize = @in.ReadVInt();
         }
 
-        public override IntIndexInputReader Reader()
+        public override IntIndexInputReader GetReader()
         {
             var buffer = new int[blockSize];
             var clone = (IndexInput)input.Clone();
@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.IntBlock
             input.Dispose();
         }
 
-        public override IntIndexInputIndex Index()
+        public override IntIndexInputIndex GetIndex()
         {
             return new InputIndex(this);
         }

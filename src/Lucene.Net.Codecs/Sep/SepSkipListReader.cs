@@ -63,20 +63,20 @@ namespace Lucene.Net.Codecs.Sep
             for (var i = 0; i < maxSkipLevels; i++)
             {
                 if (freqIn != null)
-                    _freqIndex[i] = freqIn.Index();
+                    _freqIndex[i] = freqIn.GetIndex();
 
-                _docIndex[i] = docIn.Index();
+                _docIndex[i] = docIn.GetIndex();
 
                 if (posIn != null)
-                    _posIndex[i] = posIn.Index();
+                    _posIndex[i] = posIn.GetIndex();
             }
 
             _payloadPointer = new long[maxSkipLevels];
             _payloadLength = new int[maxSkipLevels];
 
-            _lastFreqIndex = freqIn != null ? freqIn.Index() : null;
-            _lastDocIndex = docIn.Index();
-            _lastPosIndex = posIn != null ? posIn.Index() : null;
+            _lastFreqIndex = freqIn != null ? freqIn.GetIndex() : null;
+            _lastDocIndex = docIn.GetIndex();
+            _lastPosIndex = posIn != null ? posIn.GetIndex() : null;
         }
 
 
