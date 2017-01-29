@@ -289,14 +289,14 @@ namespace Lucene.Net.Tartarus.Snowball
                 int common = common_i < common_j ? common_i : common_j; // smaller
                 Among w = v[k];
                 int i2;
-                for (i2 = common; i2 < w.s_size; i2++)
+                for (i2 = common; i2 < w.Length; i2++)
                 {
                     if (c + common == l)
                     {
                         diff = -1;
                         break;
                     }
-                    diff = m_current[c + common] - w.s[i2];
+                    diff = m_current[c + common] - w.S[i2];
                     if (diff != 0) break;
                     common++;
                 }
@@ -326,14 +326,14 @@ namespace Lucene.Net.Tartarus.Snowball
             while (true)
             {
                 Among w = v[i];
-                if (common_i >= w.s_size)
+                if (common_i >= w.Length)
                 {
-                    m_cursor = c + w.s_size;
-                    if (w.method == null) return w.result;
+                    m_cursor = c + w.Length;
+                    if (w.Method == null) return w.Result;
                     bool res;
                     try
                     {
-                        object resobj = w.method.Invoke(w.methodobject, EMPTY_ARGS);
+                        object resobj = w.Method.Invoke(w.MethodObject, EMPTY_ARGS);
                         res = resobj.ToString().Equals("true");
                     }
                     catch (TargetInvocationException /*e*/)
@@ -346,10 +346,10 @@ namespace Lucene.Net.Tartarus.Snowball
                         res = false;
                         // FIXME - debug message
                     }
-                    m_cursor = c + w.s_size;
-                    if (res) return w.result;
+                    m_cursor = c + w.Length;
+                    if (res) return w.Result;
                 }
-                i = w.substring_i;
+                i = w.SubstringIndex;
                 if (i < 0) return 0;
             }
         }
@@ -375,14 +375,14 @@ namespace Lucene.Net.Tartarus.Snowball
                 int common = common_i < common_j ? common_i : common_j;
                 Among w = v[k];
                 int i2;
-                for (i2 = w.s_size - 1 - common; i2 >= 0; i2--)
+                for (i2 = w.Length - 1 - common; i2 >= 0; i2--)
                 {
                     if (c - common == lb)
                     {
                         diff = -1;
                         break;
                     }
-                    diff = m_current[c - 1 - common] - w.s[i2];
+                    diff = m_current[c - 1 - common] - w.S[i2];
                     if (diff != 0) break;
                     common++;
                 }
@@ -407,15 +407,15 @@ namespace Lucene.Net.Tartarus.Snowball
             while (true)
             {
                 Among w = v[i];
-                if (common_i >= w.s_size)
+                if (common_i >= w.Length)
                 {
-                    m_cursor = c - w.s_size;
-                    if (w.method == null) return w.result;
+                    m_cursor = c - w.Length;
+                    if (w.Method == null) return w.Result;
 
                     bool res;
                     try
                     {
-                        object resobj = w.method.Invoke(w.methodobject, EMPTY_ARGS);
+                        object resobj = w.Method.Invoke(w.MethodObject, EMPTY_ARGS);
                         res = resobj.ToString().Equals("true");
                     }
                     catch (TargetInvocationException /*e*/)
@@ -428,10 +428,10 @@ namespace Lucene.Net.Tartarus.Snowball
                         res = false;
                         // FIXME - debug message
                     }
-                    m_cursor = c - w.s_size;
-                    if (res) return w.result;
+                    m_cursor = c - w.Length;
+                    if (res) return w.Result;
                 }
-                i = w.substring_i;
+                i = w.SubstringIndex;
                 if (i < 0) return 0;
             }
         }

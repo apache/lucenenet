@@ -29,6 +29,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,11 +77,47 @@ namespace Lucene.Net.Tartarus.Snowball
             }
         }
 
-        public readonly int s_size; /* search string */
-        public readonly char[] s; /* search string */
-        public readonly int substring_i; /* index to longest matching substring */
-        public readonly int result;      /* result of the lookup */
-        public readonly MethodInfo method; /* method to use if substring matches */
-        public readonly SnowballProgram methodobject; /* object to invoke method on */
+        /// <summary>search string</summary>
+        public int Length
+        {
+            get { return s_size; }
+        }
+        private readonly int s_size;
+
+        /// <summary>search string</summary>
+        [WritableArray]
+        public char[] S
+        {
+            get { return s; }
+        }
+        private readonly char[] s;
+
+        /// <summary>index to longest matching substring</summary>
+        public int SubstringIndex
+        {
+            get { return substring_i; }
+        }
+        private readonly int substring_i;
+
+        /// <summary>result of the lookup</summary>
+        public int Result
+        {
+            get { return result; }
+        }
+        private readonly int result;
+
+        /// <summary>method to use if substring matches</summary>
+        public MethodInfo Method
+        {
+            get { return method; }
+        }
+        private readonly MethodInfo method;
+
+        /// <summary>object to invoke method on</summary>
+        public SnowballProgram MethodObject
+        {
+            get { return MethodObject; }
+        }
+        private readonly SnowballProgram methodobject;
     }
 }
