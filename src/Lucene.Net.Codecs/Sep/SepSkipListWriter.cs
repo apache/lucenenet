@@ -90,21 +90,18 @@ namespace Lucene.Net.Codecs.Sep
             _indexOptions = v;
         }
 
-        internal virtual IntIndexOutput PosOutput // LUCENENET TODO: Make SetPosOutput(IntIndexOutput posOutput)
+        internal virtual void SetPosOutput(IntIndexOutput posOutput) 
         {
-            set
+            _posOutput = posOutput;
+            for (var i = 0; i < m_numberOfSkipLevels; i++)
             {
-                _posOutput = value;
-                for (var i = 0; i < m_numberOfSkipLevels; i++)
-                {
-                    _posIndex[i] = value.GetIndex();
-                }
+                _posIndex[i] = posOutput.GetIndex();
             }
         }
 
-        internal virtual IndexOutput PayloadOutput // LUCENENET TODO: Make SetPayloadOutput(IndexOutput payloadOutput)
+        internal virtual void SetPayloadOutput(IndexOutput payloadOutput)
         {
-            set { _payloadOutput = value; }
+            _payloadOutput = payloadOutput;
         }
 
         /// <summary>
