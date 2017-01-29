@@ -1082,7 +1082,7 @@ namespace Lucene.Net.Codecs.Memory
                         if (reuse is HighFreqDocsEnum)
                         {
                             docsEnum = (HighFreqDocsEnum) reuse;
-                            if (!docsEnum.canReuse(liveDocs))
+                            if (!docsEnum.CanReuse(liveDocs))
                             {
                                 docsEnum = new HighFreqDocsEnum(liveDocs);
                             }
@@ -2267,7 +2267,7 @@ namespace Lucene.Net.Codecs.Memory
                 this.liveDocs = liveDocs;
             }
 
-            public bool canReuse(IBits liveDocs) // LUCENENET TODO: Rename CanReuse()
+            public bool CanReuse(IBits liveDocs)
             {
                 return liveDocs == this.liveDocs;
             }
