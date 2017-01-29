@@ -1199,12 +1199,12 @@ namespace Lucene.Net.Codecs.Memory
                         this.outerInstance = outerInstance;
                     }
 
-                    internal int changeOrd; // LUCENENET TODO: Make Property
-                    internal int state; // LUCENENET TODO: Make Property
-                    internal Transition[] transitions; // LUCENENET TODO: Make Property
-                    internal int transitionUpto; // LUCENENET TODO: Make Property
-                    internal int transitionMax; // LUCENENET TODO: Make Property
-                    internal int transitionMin; // LUCENENET TODO: Make Property
+                    internal int changeOrd;
+                    internal int state;
+                    internal Transition[] transitions;
+                    internal int transitionUpto;
+                    internal int transitionMax;
+                    internal int transitionMin;
                 }
 
                 private State[] states;
