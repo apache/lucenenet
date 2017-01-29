@@ -115,8 +115,8 @@ namespace Lucene.Net.Analysis.Compound
                 Debug.Assert(current != null);
                 CompoundToken token = m_tokens.First.Value; m_tokens.RemoveFirst();
                 RestoreState(current); // keep all other attributes untouched
-                m_termAtt.SetEmpty().Append(token.txt);
-                m_offsetAtt.SetOffset(token.startOffset, token.endOffset);
+                m_termAtt.SetEmpty().Append(token.Text);
+                m_offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                 posIncAtt.PositionIncrement = 0;
                 return true;
             }
@@ -161,8 +161,23 @@ namespace Lucene.Net.Analysis.Compound
         /// </summary>
         protected internal class CompoundToken
         {
-            public readonly ICharSequence txt;
-            public readonly int startOffset, endOffset;
+            private readonly ICharSequence txt;
+            private readonly int startOffset, endOffset;
+
+            public ICharSequence Text // LUCENENET specific: changed public field into property backed by private field
+            {
+                get { return txt; }
+            }
+
+            public int StartOffset // LUCENENET specific: changed public field into property backed by private field
+            {
+                get { return startOffset; }
+            }
+
+            public int EndOffset // LUCENENET specific: changed public field into property backed by private field
+            {
+                get { return endOffset; }
+            }
 
             /// <summary>
             /// Construct the compound token based on a slice of the current <seealso cref="CompoundWordTokenFilterBase#termAtt"/>. </summary>

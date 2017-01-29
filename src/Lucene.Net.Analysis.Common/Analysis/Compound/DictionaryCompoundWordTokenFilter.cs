@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Compound
                         {
                             if (longestMatchToken != null)
                             {
-                                if (longestMatchToken.txt.Length < j)
+                                if (longestMatchToken.Text.Length < j)
                                 {
                                     longestMatchToken = new CompoundToken(this, i, j);
                                 }

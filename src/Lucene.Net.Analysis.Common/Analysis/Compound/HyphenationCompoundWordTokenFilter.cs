@@ -240,7 +240,7 @@ namespace Lucene.Net.Analysis.Compound
                         {
                             if (longestMatchToken != null)
                             {
-                                if (longestMatchToken.txt.Length < partLength)
+                                if (longestMatchToken.Text.Length < partLength)
                                 {
                                     longestMatchToken = new CompoundToken(this, start, partLength);
                                 }
@@ -265,7 +265,7 @@ namespace Lucene.Net.Analysis.Compound
                         {
                             if (longestMatchToken != null)
                             {
-                                if (longestMatchToken.txt.Length < partLength - 1)
+                                if (longestMatchToken.Text.Length < partLength - 1)
                                 {
                                     longestMatchToken = new CompoundToken(this, start, partLength - 1);
                                 }
