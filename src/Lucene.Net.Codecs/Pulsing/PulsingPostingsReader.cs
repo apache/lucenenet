@@ -664,7 +664,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             var atts = de.Attributes;
             DocsEnum result;
-            atts.AddAttribute<IPulsingEnumAttribute>().Enums().TryGetValue(this, out result);
+            atts.AddAttribute<IPulsingEnumAttribute>().Enums.TryGetValue(this, out result);
             return result;
         }
 
@@ -675,7 +675,7 @@ namespace Lucene.Net.Codecs.Pulsing
         private DocsEnum SetOther(DocsEnum de, DocsEnum other)
         {
             var atts = de.Attributes;
-            return atts.AddAttribute<IPulsingEnumAttribute>().Enums()[this] = other;
+            return atts.AddAttribute<IPulsingEnumAttribute>().Enums[this] = other;
         }
 
         ///<summary>
@@ -687,7 +687,7 @@ namespace Lucene.Net.Codecs.Pulsing
         /// </summary>
         public interface IPulsingEnumAttribute : IAttribute
         {
-            Dictionary<PulsingPostingsReader, DocsEnum> Enums(); // LUCENENET TODO: Make property, change to IDictionary
+            IDictionary<PulsingPostingsReader, DocsEnum> Enums { get; }
         }
 
         /// <summary>
@@ -704,11 +704,11 @@ namespace Lucene.Net.Codecs.Pulsing
             // you don't reuse? and maybe pulsingPostingsReader should throw an exc if it wraps
             // another pulsing, because this is just stupid and wasteful. 
             // we still have to be careful in case someone does Pulsing(Stomping(Pulsing(...
-            private readonly Dictionary<PulsingPostingsReader, DocsEnum> _enums = new Dictionary<PulsingPostingsReader, DocsEnum>();
+            private readonly IDictionary<PulsingPostingsReader, DocsEnum> _enums = new Dictionary<PulsingPostingsReader, DocsEnum>();
 
-            public Dictionary<PulsingPostingsReader, DocsEnum> Enums()
+            public IDictionary<PulsingPostingsReader, DocsEnum> Enums
             {
-                return _enums;
+                get { return _enums; }
             }
             public override void Clear()
             {
