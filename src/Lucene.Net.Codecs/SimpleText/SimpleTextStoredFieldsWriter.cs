@@ -184,7 +184,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        public override sealed void Abort()
+        public override void Abort()
 	    {
 	        try
 	        {
@@ -238,5 +238,4 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.WriteNewline(_output);
         }
     }
-
 }

@@ -165,7 +165,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return "false".Equals(dvType) ? null : (Index.DocValuesType?)Enum.Parse(typeof(Index.DocValuesType), dvType);
         }
 
-        private static string ReadString(int offset, BytesRef scratch)
+        private string ReadString(int offset, BytesRef scratch)
         {
             return Encoding.UTF8.GetString(scratch.Bytes, scratch.Offset + offset, scratch.Length - offset);
         }

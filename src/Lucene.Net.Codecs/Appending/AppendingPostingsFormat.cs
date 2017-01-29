@@ -26,9 +26,10 @@ namespace Lucene.Net.Codecs.Appending
     /// </summary>
     internal class AppendingPostingsFormat : PostingsFormat
     {
-        public static String CODEC_NAME = "Appending";
+        public static string CODEC_NAME = "Appending";
 
-        public AppendingPostingsFormat() : base(CODEC_NAME)
+        public AppendingPostingsFormat() 
+            : base(CODEC_NAME)
         {}
 
         public override FieldsConsumer FieldsConsumer(SegmentWriteState state)

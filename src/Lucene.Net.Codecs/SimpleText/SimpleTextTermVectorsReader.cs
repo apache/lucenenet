@@ -259,7 +259,7 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.ReadLine(_input, _scratch);
         }
 
-        private int ParseIntAt(int offset)
+        private int ParseIntAt(int offset) // LUCENENET TODO: Rename ParseInt32At ?
         {
             UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + offset, _scratch.Length - offset, _scratchUtf16);
             return ArrayUtil.ParseInt(_scratchUtf16.Chars, 0, _scratchUtf16.Length);
@@ -270,16 +270,6 @@ namespace Lucene.Net.Codecs.SimpleText
             UnicodeUtil.UTF8toUTF16(scratch.Bytes, scratch.Offset + offset, scratch.Length - offset, _scratchUtf16);
             return _scratchUtf16.ToString();
         }
-
-        public override long RamBytesUsed()
-        {
-            return 0;
-        }
-
-        public override void CheckIntegrity()
-        {
-        }
-
 
         private class SimpleTVFields : Fields
         {
@@ -310,7 +300,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private class SimpleTVTerms : Terms
         {
-            internal readonly SortedDictionary<BytesRef, SimpleTVPostings> TERMS;
+            internal readonly SortedDictionary<BytesRef, SimpleTVPostings> TERMS; // LUCENENET TODO: Rename camelCase
             private readonly bool _hasOffsetsRenamed;
             private readonly bool _hasPositionsRenamed;
             private readonly bool _hasPayloadsRenamed;
@@ -377,11 +367,11 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private class SimpleTVPostings
         {
-            internal int FREQ;
-            internal int[] POSITIONS;
-            internal int[] START_OFFSETS;
-            internal int[] END_OFFSETS;
-            internal BytesRef[] PAYLOADS;
+            internal int FREQ; // LUCENENET TODO: Rename camelCase
+            internal int[] POSITIONS; // LUCENENET TODO: Rename camelCase
+            internal int[] START_OFFSETS; // LUCENENET TODO: Rename camelCase
+            internal int[] END_OFFSETS; // LUCENENET TODO: Rename camelCase
+            internal BytesRef[] PAYLOADS; // LUCENENET TODO: Rename camelCase
         }
 
         private class SimpleTVTermsEnum : TermsEnum
@@ -481,7 +471,7 @@ namespace Lucene.Net.Codecs.SimpleText
         }
 
         // note: these two enum classes are exactly like the Default impl...
-        private sealed class SimpleTVDocsEnum : DocsEnum
+        private class SimpleTVDocsEnum : DocsEnum
         {
             private bool _didNext;
             private int _doc = -1;
@@ -514,7 +504,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return SlowAdvance(target);
             }
 
-            public void Reset(IBits liveDocs, int freq)
+            public virtual void Reset(IBits liveDocs, int freq)
             {
                 _liveDocs = liveDocs;
                 _freqRenamed = freq;
@@ -528,7 +518,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private sealed class SimpleTVDocsAndPositionsEnum : DocsAndPositionsEnum
+        private class SimpleTVDocsAndPositionsEnum : DocsAndPositionsEnum
         {
             private bool _didNext;
             private int _doc = -1;
@@ -574,7 +564,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return SlowAdvance(target);
             }
 
-            public void Reset(IBits liveDocs, int[] positions, int[] startOffsets, int[] endOffsets,
+            public virtual void Reset(IBits liveDocs, int[] positions, int[] startOffsets, int[] endOffsets,
                 BytesRef[] payloads)
             {
                 _liveDocs = liveDocs;
@@ -639,6 +629,15 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 return 1;
             }
+        }
+
+        public override long RamBytesUsed()
+        {
+            return 0;
+        }
+
+        public override void CheckIntegrity()
+        {
         }
     }
 }

@@ -49,7 +49,6 @@ namespace Lucene.Net.Codecs.Memory
     /// </summary>
     public class DirectDocValuesFormat : DocValuesFormat
     {
-
         /// <summary>
         /// The sum of all byte lengths for binary field, or for
         ///  the unique values in sorted or sorted set fields, cannot
@@ -63,14 +62,10 @@ namespace Lucene.Net.Codecs.Memory
         /// </summary>
         public static readonly int MAX_SORTED_SET_ORDS = ArrayUtil.MAX_ARRAY_LENGTH;
 
-        internal const string DATA_CODEC = "DirectDocValuesData";
-        internal const string DATA_EXTENSION = "dvdd";
-        internal const string METADATA_CODEC = "DirectDocValuesMetadata";
-        internal const string METADATA_EXTENSION = "dvdm";
-
         /// <summary>
         /// Sole constructor. </summary>
-        public DirectDocValuesFormat() : base("Direct")
+        public DirectDocValuesFormat() 
+            : base("Direct")
         {
         }
 
@@ -83,5 +78,10 @@ namespace Lucene.Net.Codecs.Memory
         {
             return new DirectDocValuesProducer(state, DATA_CODEC, DATA_EXTENSION, METADATA_CODEC, METADATA_EXTENSION);
         }
+
+        internal static readonly string DATA_CODEC = "DirectDocValuesData";
+        internal static readonly string DATA_EXTENSION = "dvdd";
+        internal static readonly string METADATA_CODEC = "DirectDocValuesMetadata";
+        internal static readonly string METADATA_EXTENSION = "dvdm";
     }
 }

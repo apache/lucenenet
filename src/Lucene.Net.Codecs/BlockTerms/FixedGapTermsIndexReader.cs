@@ -191,75 +191,30 @@ namespace Lucene.Net.Codecs.BlockTerms
             return version;
         }
 
-        public override bool SupportsOrd
-        {
-            get { return true; }
-        }
-
-        public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
-        {
-            FieldIndexData fieldData = _fields[fieldInfo];
-            return fieldData.CoreIndex == null ? null : new IndexEnum(fieldData.CoreIndex, this);
-        }
-
-        public override void Dispose()
-        {
-            if (_input != null && !_indexLoaded)
-                _input.Dispose();
-        }
-
-        private void SeekDir(IndexInput input, long dirOffset)
-        {
-            if (_version >= FixedGapTermsIndexWriter.VERSION_CHECKSUM)
-            {
-                input.Seek(input.Length - CodecUtil.FooterLength() - 8);
-                dirOffset = input.ReadLong();
-
-            }
-            else if (_version >= FixedGapTermsIndexWriter.VERSION_APPEND_ONLY)
-            {
-                input.Seek(input.Length - 8);
-                dirOffset = input.ReadLong();
-            }
-
-            input.Seek(dirOffset);
-        }
-
-        public override long RamBytesUsed
-        {
-            get
-            {
-                var sizeInBytes = ((_termBytes != null) ? _termBytes.RamBytesUsed() : 0) +
-                                  ((_termBytesReader != null) ? _termBytesReader.RamBytesUsed() : 0);
-
-                return _fields.Values.Aggregate(sizeInBytes,
-                    (current, entry) => (current + entry.CoreIndex.RamBytesUsed));
-            }
-        }
-
         private class IndexEnum : FieldIndexEnum
         {
-            private readonly FieldIndexData.CoreFieldIndex _fieldIndex;
+            // Outer intstance
             private readonly FixedGapTermsIndexReader _fgtir;
+
+            private readonly FieldIndexData.CoreFieldIndex _fieldIndex;
+            private readonly BytesRef term = new BytesRef();
+            private long ord;
 
             public IndexEnum(FieldIndexData.CoreFieldIndex fieldIndex, FixedGapTermsIndexReader fgtir)
             {
-                Term = new BytesRef();
                 _fieldIndex = fieldIndex;
                 _fgtir = fgtir;
             }
 
-            public override long Ord { get; set; }
+            public override sealed BytesRef Term { get { return term; } }
 
-            public override sealed BytesRef Term { get; set; }
-
-            public override long? Seek(BytesRef target)
+            public override long? Seek(BytesRef target) // LUCENENET TODO: return was not nullable in Lucene
             {
                 var lo = 0; // binary search
                 var hi = _fieldIndex.NumIndexTerms - 1;
 
                 Debug.Assert(_fgtir._totalIndexInterval > 0,
-                    String.Format("TotalIndexInterval: {0}", _fgtir._totalIndexInterval));
+                    string.Format("TotalIndexInterval: {0}", _fgtir._totalIndexInterval));
 
                 long offset;
                 int length;
@@ -268,7 +223,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     var mid = (int)((uint)(lo + hi) >> 1);
 
                     offset = _fieldIndex.TermOffsets.Get(mid);
-                    length = (int) (_fieldIndex.TermOffsets.Get(1 + mid) - offset);
+                    length = (int)(_fieldIndex.TermOffsets.Get(1 + mid) - offset);
                     _fgtir._termBytesReader.FillSlice(Term, _fieldIndex.TermBytesStart + offset, length);
 
                     int delta = _fgtir._termComp.Compare(target, Term);
@@ -283,7 +238,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     else
                     {
                         Debug.Assert(mid >= 0);
-                        Ord = mid * _fgtir._totalIndexInterval;
+                        ord = mid * _fgtir._totalIndexInterval;
                         return _fieldIndex.TermsStart + _fieldIndex.TermsDictOffsets.Get(mid);
                     }
                 }
@@ -295,22 +250,22 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
 
                 offset = _fieldIndex.TermOffsets.Get(hi);
-                length = (int) (_fieldIndex.TermOffsets.Get(1 + hi) - offset);
+                length = (int)(_fieldIndex.TermOffsets.Get(1 + hi) - offset);
                 _fgtir._termBytesReader.FillSlice(Term, _fieldIndex.TermBytesStart + offset, length);
 
-                Ord = hi * _fgtir._totalIndexInterval;
+                ord = hi * _fgtir._totalIndexInterval;
                 return _fieldIndex.TermsStart + _fieldIndex.TermsDictOffsets.Get(hi);
             }
 
-            public override long? Next
+            public override long? Next // LUCENENET TODO: Make into Next() method // LUCENENET TODO: return was not nullable in Lucene
             {
                 get
                 {
-                    var idx = 1 + (int)(Ord / _fgtir._totalIndexInterval);
+                    var idx = 1 + (int)(ord / _fgtir._totalIndexInterval);
                     if (idx >= _fieldIndex.NumIndexTerms)
                         return -1;
 
-                    Ord += _fgtir._totalIndexInterval;
+                    ord += _fgtir._totalIndexInterval;
 
                     var offset = _fieldIndex.TermOffsets.Get(idx);
                     var length = (int)(_fieldIndex.TermOffsets.Get(1 + idx) - offset);
@@ -321,7 +276,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
             }
 
-            public override long? Seek(long ord)
+            public override long Ord { get { return ord; } }
+
+            public override long? Seek(long ord) // LUCENENET TODO: return was not nullable in Lucene
             {
                 var idx = (int)(ord / _fgtir._totalIndexInterval);
 
@@ -332,23 +289,31 @@ namespace Lucene.Net.Codecs.BlockTerms
                 var length = (int)(_fieldIndex.TermOffsets.Get(1 + idx) - offset);
 
                 _fgtir._termBytesReader.FillSlice(Term, _fieldIndex.TermBytesStart + offset, length);
-                Ord = idx * _fgtir._totalIndexInterval;
+                this.ord = idx * _fgtir._totalIndexInterval;
 
                 return _fieldIndex.TermsStart + _fieldIndex.TermsDictOffsets.Get(idx);
             }
         }
 
-        protected class FieldIndexData
+        public override bool SupportsOrd
         {
-            public volatile CoreFieldIndex CoreIndex;
+            get { return true; }
+        }
+
+        private class FieldIndexData
+        {
+            // Outer instance
+            private readonly FixedGapTermsIndexReader _fgtir; // LUCENENET TODO: In this assembly, change all variables marked "Outer instance" to be named outerInstance and move them to the beginning of the ctor parameter list
+
+            internal volatile CoreFieldIndex CoreIndex;
 
             private readonly long _indexStart;
             private readonly long _termsStart;
             private readonly long _packedIndexStart;
             private readonly long _packedOffsetsStart;
-            private readonly int _numIndexTerms;
-            private readonly FixedGapTermsIndexReader _fgtir;
 
+            private readonly int _numIndexTerms;
+            
             public FieldIndexData(int numIndexTerms, long indexStart, long termsStart,
                 long packedIndexStart,
                 long packedOffsetsStart, FixedGapTermsIndexReader fgtir)
@@ -372,35 +337,25 @@ namespace Lucene.Net.Codecs.BlockTerms
                         _numIndexTerms, _fgtir);
             }
 
-            public class CoreFieldIndex
+            internal class CoreFieldIndex
             {
                 /// <summary>
                 /// Where this fields term begin in the packed byte[] data
                 /// </summary>
-                public long TermBytesStart { get; private set; }
+                internal long TermBytesStart { get; private set; }
 
                 /// <summary>
                 /// Offset into index TermBytes
                 /// </summary>
-                public PackedInts.Reader TermOffsets { get; private set; }
+                internal PackedInts.Reader TermOffsets { get; private set; }
 
                 /// <summary>
                 /// Index pointers into main terms dict
                 /// </summary>
-                public PackedInts.Reader TermsDictOffsets { get; private set; }
+                internal PackedInts.Reader TermsDictOffsets { get; private set; }
 
-                /// <summary>Returns approximate RAM bytes Used</summary>
-                public long RamBytesUsed
-                {
-                    get
-                    {
-                        return ((TermOffsets != null) ? TermOffsets.RamBytesUsed() : 0) +
-                               ((TermsDictOffsets != null) ? TermsDictOffsets.RamBytesUsed() : 0);
-                    }
-                }
-
-                public int NumIndexTerms { get; private set; }
-                public long TermsStart { get; private set; }
+                internal int NumIndexTerms { get; private set; }
+                internal long TermsStart { get; private set; }
 
                 public CoreFieldIndex(long indexStart, long termsStart, long packedIndexStart, long packedOffsetsStart,
                     int numIndexTerms, FixedGapTermsIndexReader fgtir)
@@ -419,7 +374,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     NumIndexTerms = 1 + (numIndexTerms - 1)/fgtir._indexDivisor;
 
                     Debug.Assert(NumIndexTerms > 0,
-                        String.Format("NumIndexTerms: {0}, IndexDivisor: {1}", NumIndexTerms, fgtir._indexDivisor));
+                        string.Format("NumIndexTerms: {0}, IndexDivisor: {1}", NumIndexTerms, fgtir._indexDivisor));
 
                     if (fgtir._indexDivisor == 1)
                     {
@@ -492,7 +447,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 clone.Seek(indexStart + termOffset);
                                 
                                 Debug.Assert(indexStart + termOffset < clone.Length,
-                                    String.Format("IndexStart: {0}, TermOffset: {1}, Len: {2}", indexStart, termOffset,
+                                    string.Format("IndexStart: {0}, TermOffset: {1}, Len: {2}", indexStart, termOffset,
                                         clone.Length));
                                 
                                 Debug.Assert(indexStart + termOffset + numTermBytes < clone.Length);
@@ -524,8 +479,59 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                 }
 
+                /// <summary>Returns approximate RAM bytes Used</summary>
+                public long RamBytesUsed // LUCENENET TODO: Make RamBytesUsed()
+                {
+                    get
+                    {
+                        return ((TermOffsets != null) ? TermOffsets.RamBytesUsed() : 0) +
+                               ((TermsDictOffsets != null) ? TermsDictOffsets.RamBytesUsed() : 0);
+                    }
+                }
             }
         }
 
+        public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
+        {
+            FieldIndexData fieldData = _fields[fieldInfo];
+            return fieldData.CoreIndex == null ? null : new IndexEnum(fieldData.CoreIndex, this);
+        }
+
+        public override void Dispose()
+        {
+            if (_input != null && !_indexLoaded)
+            {
+                _input.Dispose();
+            }
+        }
+
+        private void SeekDir(IndexInput input, long dirOffset)
+        {
+            if (_version >= FixedGapTermsIndexWriter.VERSION_CHECKSUM)
+            {
+                input.Seek(input.Length - CodecUtil.FooterLength() - 8);
+                dirOffset = input.ReadLong();
+
+            }
+            else if (_version >= FixedGapTermsIndexWriter.VERSION_APPEND_ONLY)
+            {
+                input.Seek(input.Length - 8);
+                dirOffset = input.ReadLong();
+            }
+
+            input.Seek(dirOffset);
+        }
+
+        public override long RamBytesUsed
+        {
+            get
+            {
+                var sizeInBytes = ((_termBytes != null) ? _termBytes.RamBytesUsed() : 0) +
+                                  ((_termBytesReader != null) ? _termBytesReader.RamBytesUsed() : 0);
+
+                return _fields.Values.Aggregate(sizeInBytes,
+                    (current, entry) => (current + entry.CoreIndex.RamBytesUsed));
+            }
+        }
     }
 }

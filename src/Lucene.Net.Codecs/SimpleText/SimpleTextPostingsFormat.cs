@@ -35,12 +35,8 @@ namespace Lucene.Net.Codecs.SimpleText
     /// </summary>
     public sealed class SimpleTextPostingsFormat : PostingsFormat
     {
-
-        /// <summary>
-        /// Extension of freq postings file </summary>
-        internal const string POSTINGS_EXTENSION = "pst";
-
-        public SimpleTextPostingsFormat() : base("SimpleText")
+        public SimpleTextPostingsFormat() 
+            : base("SimpleText")
         {
         }
 
@@ -54,10 +50,13 @@ namespace Lucene.Net.Codecs.SimpleText
             return new SimpleTextFieldsReader(state);
         }
 
+        /// <summary>
+        /// Extension of freq postings file </summary>
+        internal const string POSTINGS_EXTENSION = "pst";
+
         internal static string GetPostingsFileName(string segment, string segmentSuffix)
         {
             return IndexFileNames.SegmentFileName(segment, segmentSuffix, POSTINGS_EXTENSION);
         }
     }
-
 }

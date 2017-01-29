@@ -45,7 +45,6 @@ namespace Lucene.Net.Codecs.Bloom
     /// </summary>
     public class FuzzySet
     {
-
         public static readonly int VERSION_SPI = 1; // HashFunction used to be loaded through a SPI
         public static readonly int VERSION_START = VERSION_SPI;
         public static readonly int VERSION_CURRENT = 2;
@@ -70,7 +69,7 @@ namespace Lucene.Net.Codecs.Bloom
         /// </remarks>
         public enum ContainsResult
         {
-            Maybe,
+            Maybe, // LUCENENET TODO: Change to MAYBE, NO
             No
         };
 
@@ -87,27 +86,16 @@ namespace Lucene.Net.Codecs.Bloom
         // translation of the query term that mirrors the stored content's reprojections.
         private static int[] _usableBitSetSizes;
 
-        private static int[] UsableBitSetSizes
-        {
-            get
-            {
-                if (_usableBitSetSizes == null)
-                    InitializeUsableBitSetSizes();
 
-                return _usableBitSetSizes;
-            }
-            set { _usableBitSetSizes = value; }
-        }
-
-        private static void InitializeUsableBitSetSizes()
+        static FuzzySet()
         {
-            UsableBitSetSizes = new int[30];
+            _usableBitSetSizes = new int[30];
             const int mask = 1;
             var size = mask;
-            for (var i = 0; i < UsableBitSetSizes.Length; i++)
+            for (var i = 0; i < _usableBitSetSizes.Length; i++)
             {
                 size = (size << 1) | mask;
-                UsableBitSetSizes[i] = size;
+                _usableBitSetSizes[i] = size;
             }
         }
 
@@ -118,8 +106,8 @@ namespace Lucene.Net.Codecs.Bloom
         /// </summary>
         public static int GetNearestSetSize(int maxNumberOfBits)
         {
-            var result = UsableBitSetSizes[0];
-            foreach (var t in UsableBitSetSizes.Where(t => t <= maxNumberOfBits))
+            var result = _usableBitSetSizes[0];
+            foreach (var t in _usableBitSetSizes.Where(t => t <= maxNumberOfBits))
             {
                 result = t;
             }
@@ -138,7 +126,9 @@ namespace Lucene.Net.Codecs.Bloom
         {
             // Iterate around the various scales of bitset from smallest to largest looking for the first that
             // satisfies value volumes at the chosen saturation level
-            foreach (var t in from t in UsableBitSetSizes let numSetBitsAtDesiredSaturation = (int) (t*desiredSaturation) let estimatedNumUniqueValues = GetEstimatedNumberUniqueValuesAllowingForCollisions(
+            foreach (var t in from t in _usableBitSetSizes
+                              let numSetBitsAtDesiredSaturation = (int) (t*desiredSaturation)
+                              let estimatedNumUniqueValues = GetEstimatedNumberUniqueValuesAllowingForCollisions(
                 t, numSetBitsAtDesiredSaturation) where estimatedNumUniqueValues > maxNumberOfValuesExpected select t)
             {
                 return t;
@@ -170,7 +160,7 @@ namespace Lucene.Net.Codecs.Bloom
         /// Unlike a conventional set, the fuzzy set returns NO or MAYBE rather than true or false.
         /// </summary>
         /// <returns>NO or MAYBE</returns>
-        public ContainsResult Contains(BytesRef value)
+        public virtual ContainsResult Contains(BytesRef value)
         {
             var hash = _hashFunction.Hash(value);
             if (hash < 0)
@@ -198,7 +188,7 @@ namespace Lucene.Net.Codecs.Bloom
         ///  @param out Data output stream
         ///  @ If there is a low-level I/O error
         /// </summary>
-        public void Serialize(DataOutput output)
+        public virtual void Serialize(DataOutput output)
         {
             output.WriteInt(VERSION_CURRENT);
             output.WriteInt(_bloomSize);
@@ -244,7 +234,7 @@ namespace Lucene.Net.Codecs.Bloom
         /// chosen size of the internal bitset.
         /// </summary>
         /// <param name="value">The Key value to be hashed</param>
-        public void AddValue(BytesRef value)
+        public virtual void AddValue(BytesRef value)
         {
             var hash = _hashFunction.Hash(value);
             if (hash < 0)
@@ -261,14 +251,16 @@ namespace Lucene.Net.Codecs.Bloom
         /// Lower values have better accuracy but require more space.
         /// </param>
         /// <return>A smaller FuzzySet or null if the current set is already over-saturated</return>
-        public FuzzySet Downsize(float targetMaxSaturation)
+        public virtual FuzzySet Downsize(float targetMaxSaturation)
         {
             var numBitsSet = _filter.Cardinality();
             FixedBitSet rightSizedBitSet;
             var rightSizedBitSetSize = _bloomSize;
             //Hopefully find a smaller size bitset into which we can project accumulated values while maintaining desired saturation level
-            foreach (var candidateBitsetSize in from candidateBitsetSize in UsableBitSetSizes let candidateSaturation = numBitsSet
-                                                                                                                         /(float) candidateBitsetSize where candidateSaturation <= targetMaxSaturation select candidateBitsetSize)
+            foreach (var candidateBitsetSize in from candidateBitsetSize in _usableBitSetSizes
+                                                let candidateSaturation = numBitsSet /(float) candidateBitsetSize
+                                                where candidateSaturation <= targetMaxSaturation
+                                                select candidateBitsetSize)
             {
                 rightSizedBitSetSize = candidateBitsetSize;
                 break;
@@ -299,7 +291,7 @@ namespace Lucene.Net.Codecs.Bloom
             return new FuzzySet(rightSizedBitSet, rightSizedBitSetSize, _hashFunction);
         }
 
-        public int GetEstimatedUniqueValues()
+        public virtual int GetEstimatedUniqueValues()
         {
             return GetEstimatedNumberUniqueValuesAllowingForCollisions(_bloomSize, _filter.Cardinality());
         }
@@ -315,13 +307,13 @@ namespace Lucene.Net.Codecs.Bloom
             return (int) (setSizeAsDouble*logInverseSaturation);
         }
 
-        public float GetSaturation()
+        public virtual float GetSaturation()
         {
             var numBitsSet = _filter.Cardinality();
             return numBitsSet/(float) _bloomSize;
         }
 
-        public long RamBytesUsed()
+        public virtual long RamBytesUsed()
         {
             return RamUsageEstimator.SizeOf(_filter.GetBits());
         }

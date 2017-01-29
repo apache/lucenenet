@@ -49,9 +49,9 @@ namespace Lucene.Net.Codecs.Memory
     /// </summary>
     internal class MemoryDocValuesConsumer : DocValuesConsumer
     {
-        internal IndexOutput data, meta;
-        internal readonly int maxDoc;
-        internal readonly float acceptableOverheadRatio;
+        private IndexOutput data, meta;
+        private readonly int maxDoc;
+        private readonly float acceptableOverheadRatio;
 
         internal MemoryDocValuesConsumer(SegmentWriteState state, string dataCodec, string dataExtension,
             string metaCodec,
@@ -432,12 +432,12 @@ namespace Lucene.Net.Codecs.Memory
         // per-document vint-encoded byte[]
         internal class SortedSetIterator : IEnumerator<BytesRef>
         {
-            internal byte[] buffer = new byte[10];
-            internal ByteArrayDataOutput @out = new ByteArrayDataOutput();
-            internal BytesRef _current = new BytesRef();
+            private byte[] buffer = new byte[10];
+            private ByteArrayDataOutput @out = new ByteArrayDataOutput();
+            private BytesRef _current = new BytesRef();
 
-            internal readonly IEnumerator<long?> counts;
-            internal readonly IEnumerator<long?> ords;
+            private readonly IEnumerator<long?> counts;
+            private readonly IEnumerator<long?> ords;
 
             public BytesRef Current
             {
@@ -485,7 +485,7 @@ namespace Lucene.Net.Codecs.Memory
             }
 
             // encodes count values to buffer
-            internal virtual void EncodeValues(int count)
+            private void EncodeValues(int count)
             {
                 @out.Reset(buffer);
                 long lastOrd = 0;
@@ -499,7 +499,6 @@ namespace Lucene.Net.Codecs.Memory
                     lastOrd = ord;
                 }
             }
-
 
             public void Dispose()
             {

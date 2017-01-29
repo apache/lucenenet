@@ -27,6 +27,8 @@ using System.Runtime.InteropServices;
 namespace Lucene.Net.Codecs
 {
 
+
+    // LUCENENET TODO: Remove this class
     internal static class StringHelperClass
     {
         //----------------------------------------------------------------------------------

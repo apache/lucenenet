@@ -40,7 +40,6 @@ namespace Lucene.Net.Codecs.SimpleText
     /// </summary>
     public class SimpleTextTermVectorsWriter : TermVectorsWriter
     {
-
         internal static readonly BytesRef END = new BytesRef("END");
         internal static readonly BytesRef DOC = new BytesRef("doc ");
         internal static readonly BytesRef NUMFIELDS = new BytesRef("  numfields ");

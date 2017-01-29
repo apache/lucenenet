@@ -115,6 +115,78 @@ namespace Lucene.Net.Codecs.Sep
             IOUtils.Close(_freqIn, _docIn, _skipIn, _posIn, _payloadIn);
         }
 
+        internal sealed class SepTermState : BlockTermState
+        {
+            // We store only the seek point to the docs file because
+            // the rest of the info (freqIndex, posIndex, etc.) is
+            // stored in the docs file:
+            internal IntIndexInputIndex DOC_INDEX;
+            internal IntIndexInputIndex POS_INDEX;
+            internal IntIndexInputIndex FREQ_INDEX;
+            internal long PAYLOAD_FP;
+            internal long SKIP_FP;
+
+            public override object Clone()
+            {
+                var other = new SepTermState();
+                other.CopyFrom(this);
+                return other;
+            }
+
+            public override void CopyFrom(TermState tsOther)
+            {
+                base.CopyFrom(tsOther);
+
+                var other = (SepTermState)tsOther;
+                if (DOC_INDEX == null)
+                {
+                    DOC_INDEX = other.DOC_INDEX.Clone();
+                }
+                else
+                {
+                    DOC_INDEX.CopyFrom(other.DOC_INDEX);
+                }
+                if (other.FREQ_INDEX != null)
+                {
+                    if (FREQ_INDEX == null)
+                    {
+                        FREQ_INDEX = other.FREQ_INDEX.Clone();
+                    }
+                    else
+                    {
+                        FREQ_INDEX.CopyFrom(other.FREQ_INDEX);
+                    }
+                }
+                else
+                {
+                    FREQ_INDEX = null;
+                }
+                if (other.POS_INDEX != null)
+                {
+                    if (POS_INDEX == null)
+                    {
+                        POS_INDEX = other.POS_INDEX.Clone();
+                    }
+                    else
+                    {
+                        POS_INDEX.CopyFrom(other.POS_INDEX);
+                    }
+                }
+                else
+                {
+                    POS_INDEX = null;
+                }
+                PAYLOAD_FP = other.PAYLOAD_FP;
+                SKIP_FP = other.SKIP_FP;
+            }
+
+            public override string ToString()
+            {
+                return base.ToString() + " docIndex=" + DOC_INDEX + " freqIndex=" + FREQ_INDEX + " posIndex=" + POS_INDEX +
+                       " payloadFP=" + PAYLOAD_FP + " skipFP=" + SKIP_FP;
+            }
+        }
+
         public override BlockTermState NewTermState()
         {
             var state = new SepTermState {DOC_INDEX = _docIn.Index()};
@@ -222,89 +294,6 @@ namespace Lucene.Net.Codecs.Sep
             return postingsEnum.Init(fieldInfo, termState, liveDocs);
         }
 
-        public override long RamBytesUsed()
-        {
-            return 0;
-        }
-
-        public override void CheckIntegrity()
-        {
-            // TODO: remove sep layout, its fallen behind on features...
-        }
-
-        internal sealed class SepTermState : BlockTermState
-        {
-            // We store only the seek point to the docs file because
-            // the rest of the info (freqIndex, posIndex, etc.) is
-            // stored in the docs file:
-            internal IntIndexInputIndex DOC_INDEX;
-            internal IntIndexInputIndex POS_INDEX;
-            internal IntIndexInputIndex FREQ_INDEX;
-            internal long PAYLOAD_FP;
-            internal long SKIP_FP;
-
-            public override object Clone()
-            {
-                var other = new SepTermState();
-                other.CopyFrom(this);
-                return other;
-            }
-
-            public override void CopyFrom(TermState tsOther)
-            {
-                base.CopyFrom(tsOther);
-
-                var other = (SepTermState)tsOther;
-                if (DOC_INDEX == null)
-                {
-                    DOC_INDEX = other.DOC_INDEX.Clone();
-                }
-                else
-                {
-                    DOC_INDEX.CopyFrom(other.DOC_INDEX);
-                }
-                if (other.FREQ_INDEX != null)
-                {
-                    if (FREQ_INDEX == null)
-                    {
-                        FREQ_INDEX = other.FREQ_INDEX.Clone();
-                    }
-                    else
-                    {
-                        FREQ_INDEX.CopyFrom(other.FREQ_INDEX);
-                    }
-                }
-                else
-                {
-                    FREQ_INDEX = null;
-                }
-                if (other.POS_INDEX != null)
-                {
-                    if (POS_INDEX == null)
-                    {
-                        POS_INDEX = other.POS_INDEX.Clone();
-                    }
-                    else
-                    {
-                        POS_INDEX.CopyFrom(other.POS_INDEX);
-                    }
-                }
-                else
-                {
-                    POS_INDEX = null;
-                }
-                PAYLOAD_FP = other.PAYLOAD_FP;
-                SKIP_FP = other.SKIP_FP;
-            }
-
-            public override string ToString()
-            {
-                return base.ToString() + " docIndex=" + DOC_INDEX + " freqIndex=" + FREQ_INDEX + " posIndex=" + POS_INDEX +
-                       " payloadFP=" + PAYLOAD_FP + " skipFP=" + SKIP_FP;
-            }
-        }
-
-
         internal class SepDocsEnum : DocsEnum
         {
             private readonly SepPostingsReader _outerInstance;
@@ -327,13 +316,12 @@ namespace Lucene.Net.Codecs.Sep
             private readonly IntIndexInputIndex _docIndex;
             private readonly IntIndexInputIndex _freqIndex;
             private readonly IntIndexInputIndex _posIndex;
+            internal IntIndexInput START_DOC_IN; // LUCENENET TODO: Rename startDocIn
 
             // TODO: -- should we do hasProx with 2 different enum classes?
 
             private bool _skipped;
             private SepSkipListReader _skipper;
-
-            internal IntIndexInput START_DOC_IN;
 
             internal SepDocsEnum(SepPostingsReader outerInstance)
             {
@@ -389,7 +377,6 @@ namespace Lucene.Net.Codecs.Sep
 
             public override int NextDoc()
             {
-
                 while (true)
                 {
                     if (_count == _docFreq)
@@ -429,17 +416,15 @@ namespace Lucene.Net.Codecs.Sep
 
             public override int Advance(int target)
             {
-
                 if ((target - _outerInstance._skipInterval) >= _doc && _docFreq >= _outerInstance._skipMinimum)
                 {
-
                     // There are enough docs in the posting to have
                     // skip data, and its not too close
 
                     if (_skipper == null)
                     {
                         // This DocsEnum has never done any skipping
-                        _skipper = new SepSkipListReader((IndexInput) _outerInstance._skipIn.Clone(),
+                        _skipper = new SepSkipListReader((IndexInput)_outerInstance._skipIn.Clone(),
                             _outerInstance._freqIn,
                             _outerInstance._docIn, _outerInstance._posIn, _outerInstance._maxSkipLevels,
                             _outerInstance._skipInterval);
@@ -492,7 +477,6 @@ namespace Lucene.Net.Codecs.Sep
         internal class SepDocsAndPositionsEnum : DocsAndPositionsEnum
         {
             private readonly SepPostingsReader _outerInstance;
-            private BytesRef _payload;
 
             private int _docFreq;
             private int _doc = -1;
@@ -511,6 +495,7 @@ namespace Lucene.Net.Codecs.Sep
             private readonly IntIndexInputIndex _docIndex;
             private readonly IntIndexInputIndex _freqIndex;
             private readonly IntIndexInputIndex _posIndex;
+            internal IntIndexInput START_DOC_IN; // LUCENENET TODO: Rename startDocIn
 
             private long _payloadFp;
 
@@ -523,8 +508,6 @@ namespace Lucene.Net.Codecs.Sep
             private SepSkipListReader _skipper;
             private bool _payloadPending;
             private bool _posSeekPending;
-
-            internal IntIndexInput START_DOC_IN;
 
             internal SepDocsAndPositionsEnum(SepPostingsReader outerInstance)
             {
@@ -730,6 +713,8 @@ namespace Lucene.Net.Codecs.Sep
                 get { return -1; }
             }
 
+            private BytesRef _payload;
+
             public override BytesRef Payload
             {
                 get
@@ -771,6 +756,16 @@ namespace Lucene.Net.Codecs.Sep
             {
                 return _docFreq;
             }
+        }
+
+        public override long RamBytesUsed()
+        {
+            return 0;
+        }
+
+        public override void CheckIntegrity()
+        {
+            // TODO: remove sep layout, its fallen behind on features...
         }
     }
 }

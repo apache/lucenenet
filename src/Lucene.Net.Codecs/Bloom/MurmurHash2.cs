@@ -36,14 +36,13 @@ namespace Lucene.Net.Codecs.Bloom
     /// </summary>
     public sealed class MurmurHash2 : HashFunction
     {
-
         public static readonly MurmurHash2 INSTANCE = new MurmurHash2();
 
         private MurmurHash2()
         {
         }
 
-        public static int Hash(byte[] data, uint seed, int offset, int len)
+        public static int Hash(byte[] data, uint seed, int offset, int len) // LUCENENET TODO: Change to int
         {
             int m = 0x5bd1e995;
             int r = 24;
@@ -103,8 +102,7 @@ namespace Lucene.Net.Codecs.Bloom
 
         public override int Hash(BytesRef br)
         {
-            return Hash32((byte[])(Array)br.Bytes, br.Offset, br.Length);
+            return Hash32((byte[])(Array)br.Bytes, br.Offset, br.Length); // LUCENENET TODO: remove unnecessary cast
         }
-
     }
 }

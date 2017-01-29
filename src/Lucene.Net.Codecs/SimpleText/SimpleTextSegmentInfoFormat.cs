@@ -18,30 +18,28 @@
 namespace Lucene.Net.Codecs.SimpleText
 {
 
-	/// <summary>
-	/// plain text segments file format.
-	/// <para>
-	/// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-	/// @lucene.experimental
-	/// </para>
-	/// </summary>
-	public class SimpleTextSegmentInfoFormat : SegmentInfoFormat
-	{
-	  private readonly SegmentInfoReader _reader = new SimpleTextSegmentInfoReader();
-	  private readonly SegmentInfoWriter _writer = new SimpleTextSegmentInfoWriter();
+    /// <summary>
+    /// plain text segments file format.
+    /// <para>
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
+    /// @lucene.experimental
+    /// </para>
+    /// </summary>
+    public class SimpleTextSegmentInfoFormat : SegmentInfoFormat
+    {
+        private readonly SegmentInfoReader _reader = new SimpleTextSegmentInfoReader();
+        private readonly SegmentInfoWriter _writer = new SimpleTextSegmentInfoWriter();
 
-	  public const string SI_EXTENSION = "si";
+        public const string SI_EXTENSION = "si";
 
-	  public override SegmentInfoReader SegmentInfoReader
-	  {
-	      get { return _reader; }
-	  }
+        public override SegmentInfoReader SegmentInfoReader
+        {
+            get { return _reader; }
+        }
 
-	  public override SegmentInfoWriter SegmentInfoWriter
-	  {
-	      get { return _writer; }
-	  }
-
-	}
-
+        public override SegmentInfoWriter SegmentInfoWriter
+        {
+            get { return _writer; }
+        }
+    }
 }

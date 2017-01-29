@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
         /// Get the <seealso cref="Terms"/> for this field.  this will return
         ///  null if the field does not exist.
         /// </summary>
-        public abstract Terms Terms(string field);
+        public abstract Terms Terms(string field); // LUCENENET TODO: Rename GetTerms() ?
 
         /// <summary>
         /// Gets the number of fields or -1 if the number of

@@ -33,13 +33,8 @@ namespace Lucene.Net.Codecs.DiskDV
     /// </summary>
     public sealed class DiskDocValuesFormat : DocValuesFormat
     {
-
-        public const String DATA_CODEC = "DiskDocValuesData";
-        public const String DATA_EXTENSION = "dvdd";
-        public const String META_CODEC = "DiskDocValuesMetadata";
-        public const String META_EXTENSION = "dvdm";
-
-        public DiskDocValuesFormat() : base("Disk")
+        public DiskDocValuesFormat() 
+            : base("Disk")
         {
         }
 
@@ -69,5 +64,9 @@ namespace Lucene.Net.Codecs.DiskDV
             return new DiskDocValuesProducer(state, DATA_CODEC, DATA_EXTENSION, META_CODEC, META_EXTENSION);
         }
 
+        public static readonly string DATA_CODEC = "DiskDocValuesData";
+        public static readonly string DATA_EXTENSION = "dvdd";
+        public static readonly string META_CODEC = "DiskDocValuesMetadata";
+        public static readonly string META_EXTENSION = "dvdm";
     }
 }

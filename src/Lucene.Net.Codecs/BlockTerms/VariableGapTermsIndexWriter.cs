@@ -38,17 +38,18 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// </summary>
     public class VariableGapTermsIndexWriter : TermsIndexWriterBase
     {
-        protected IndexOutput Output;
+        protected IndexOutput Output; // out
 
         /** Extension of terms index file */
-        public const String TERMS_INDEX_EXTENSION = "tiv";
-        public const String CODEC_NAME = "VARIABLE_GAP_TERMS_INDEX";
-        public const int VERSION_START = 0;
-        public const int VERSION_APPEND_ONLY = 1;
-        public const int VERSION_CHECKSUM = 2;
-        public const int VERSION_CURRENT = VERSION_CHECKSUM;
+        internal const string TERMS_INDEX_EXTENSION = "tiv";
+        internal const string CODEC_NAME = "VARIABLE_GAP_TERMS_INDEX";
+        internal const int VERSION_START = 0;
+        internal const int VERSION_APPEND_ONLY = 1;
+        internal const int VERSION_CHECKSUM = 2;
+        internal const int VERSION_CURRENT = VERSION_CHECKSUM;
 
         private readonly List<FstFieldWriter> _fields = new List<FstFieldWriter>();
+
         private readonly IndexTermSelector _policy;
 
         /// <summary>
@@ -74,14 +75,14 @@ namespace Lucene.Net.Codecs.BlockTerms
         /// <remarks>
         /// Same policy as {@link FixedGapTermsIndexWriter}
         /// </remarks>
-        public class EveryNTermSelector : IndexTermSelector
+        public sealed class EveryNTermSelector : IndexTermSelector
         {
             private int _count;
             private readonly int _interval;
 
             public EveryNTermSelector(int interval)
             {
-                _interval = interval;
+                this._interval = interval;
                 _count = interval; // First term is first indexed term
             }
 
@@ -108,7 +109,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         /// every interval terms.  This should reduce seek time
         /// to high docFreq terms. 
         /// </summary>
-        public class EveryNOrDocFreqTermSelector : IndexTermSelector
+        public sealed class EveryNOrDocFreqTermSelector : IndexTermSelector
         {
             private int _count;
             private readonly int _docFreqThresh;
@@ -192,7 +193,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             }
         }
 
-        private static void WriteHeader(IndexOutput output)
+        private void WriteHeader(IndexOutput output)
         {
             CodecUtil.WriteHeader(output, CODEC_NAME, VERSION_CURRENT);
         }
@@ -209,7 +210,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         /// Note: If your codec does not sort in unicode code point order,
         /// you must override this method to simplly return IndexedTerm.Length
         /// </remarks>
-        protected int IndexedTermPrefixLength(BytesRef priorTerm, BytesRef indexedTerm)
+        protected virtual int IndexedTermPrefixLength(BytesRef priorTerm, BytesRef indexedTerm)
         {
             // As long as codec sorts terms in unicode codepoint
             // order, we can safely strip off the non-distinguishing
@@ -231,17 +232,19 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private class FstFieldWriter : FieldWriter
         {
-            private readonly Builder<long?> _fstBuilder;
-            private readonly long _startTermsFilePointer;
-            private readonly BytesRef _lastTerm = new BytesRef();
-            private readonly IntsRef _scratchIntsRef = new IntsRef();
+            // Outer instance
             private readonly VariableGapTermsIndexWriter _vgtiw;
 
-            private bool _first = true;
+            private readonly Builder<long?> _fstBuilder;
+            private readonly PositiveIntOutputs fstOutputs;
+            private readonly long _startTermsFilePointer;
 
-            public long IndexStart { get; private set; }
-            public FieldInfo FieldInfo { get; private set; }
-            public FST<long?> Fst { get; private set; }
+            internal FieldInfo FieldInfo { get; private set; }
+            internal FST<long?> Fst { get; private set; }
+            internal long IndexStart { get; private set; }
+
+            private readonly BytesRef _lastTerm = new BytesRef();
+            private bool _first = true;
 
             public FstFieldWriter(FieldInfo fieldInfo, long termsFilePointer, VariableGapTermsIndexWriter vgtiw)
             {
@@ -265,10 +268,12 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _first = false;
                     return true;
                 }
-            
+
                 _lastTerm.CopyBytes(text);
                 return false;
             }
+
+            private readonly IntsRef _scratchIntsRef = new IntsRef();
 
             public override void Add(BytesRef text, TermStats stats, long termsFilePointer)
             {
@@ -342,7 +347,5 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             Output.WriteLong(dirStart);
         }
-
     }
-
 }

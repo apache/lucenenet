@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Support;
+
 namespace Lucene.Net.Codecs.Pulsing
 {
 
@@ -36,7 +38,6 @@ namespace Lucene.Net.Codecs.Pulsing
     /// </summary>
     public class PulsingPostingsReader : PostingsReaderBase
     {
-
         // Fallback reader for non-pulsed terms:
         private readonly PostingsReaderBase _wrappedPostingsReader;
         private readonly SegmentReadState _segmentState;
@@ -91,6 +92,66 @@ namespace Lucene.Net.Codecs.Pulsing
                 {
                     IOUtils.CloseWhileHandlingException(input);
                 }
+            }
+        }
+
+        internal class PulsingTermState : BlockTermState
+        {
+            internal bool Absolute { get; set; }
+            [WritableArray]
+            internal long[] Longs { get; set; }
+            [WritableArray]
+            internal byte[] Postings { get; set; }
+            internal int PostingsSize { get; set; } // -1 if this term was not inlined
+            internal BlockTermState WrappedTermState { get; set; }
+
+            public override object Clone()
+            {
+                var clone = (PulsingTermState)base.Clone();
+                if (PostingsSize != -1)
+                {
+                    clone.Postings = new byte[PostingsSize];
+                    Array.Copy(Postings, 0, clone.Postings, 0, PostingsSize);
+                }
+                else
+                {
+                    Debug.Assert(WrappedTermState != null);
+                    clone.WrappedTermState = (BlockTermState)WrappedTermState.Clone();
+                    clone.Absolute = Absolute;
+
+                    if (Longs == null) return clone;
+
+                    clone.Longs = new long[Longs.Length];
+                    Array.Copy(Longs, 0, clone.Longs, 0, Longs.Length);
+                }
+                return clone;
+            }
+
+            public override void CopyFrom(TermState other)
+            {
+                base.CopyFrom(other);
+                var _other = (PulsingTermState)other;
+                PostingsSize = _other.PostingsSize;
+                if (_other.PostingsSize != -1)
+                {
+                    if (Postings == null || Postings.Length < _other.PostingsSize)
+                    {
+                        Postings = new byte[ArrayUtil.Oversize(_other.PostingsSize, 1)];
+                    }
+                    Array.Copy(_other.Postings, 0, Postings, 0, _other.PostingsSize);
+                }
+                else
+                {
+                    WrappedTermState.CopyFrom(_other.WrappedTermState);
+                }
+            }
+
+            public override string ToString()
+            {
+                if (PostingsSize == -1)
+                    return "PulsingTermState: not inlined: wrapped=" + WrappedTermState;
+
+                return "PulsingTermState: inlined size=" + PostingsSize + " " + base.ToString();
             }
         }
 
@@ -247,125 +308,7 @@ namespace Lucene.Net.Codecs.Pulsing
             return wrapped;
         }
 
-        public override long RamBytesUsed()
-        {
-            return ((_wrappedPostingsReader != null) ? _wrappedPostingsReader.RamBytesUsed() : 0);
-        }
-
-        public override void CheckIntegrity()
-        {
-            _wrappedPostingsReader.CheckIntegrity();
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _wrappedPostingsReader.Dispose();
-            }
-        }
-        
-        /// <summary>
-        /// for a docsenum, gets the 'other' reused enum.
-        /// Example: Pulsing(Standard).
-        /// when doing a term range query you are switching back and forth
-        /// between Pulsing and Standard
-        ///  
-        /// The way the reuse works is that Pulsing.other = Standard and
-        /// Standard.other = Pulsing.
-        /// </summary>
-        private DocsEnum GetOther(DocsEnum de)
-        {
-            if (de == null)
-                return null;
-            
-            var atts = de.Attributes;
-            DocsEnum result;
-            atts.AddAttribute<IPulsingEnumAttribute>().Enums().TryGetValue(this, out result);
-            return result;
-        }
-
-        /// <summary>
-        /// for a docsenum, sets the 'other' reused enum.
-        /// see GetOther for an example.
-        /// </summary>
-        private DocsEnum SetOther(DocsEnum de, DocsEnum other)
-        {
-            var atts = de.Attributes;
-            return atts.AddAttribute<IPulsingEnumAttribute>().Enums()[this] = other;
-        }
-
-        ///<summary>
-        /// A per-docsenum attribute that stores additional reuse information
-        /// so that pulsing enums can keep a reference to their wrapped enums,
-        /// and vice versa. this way we can always reuse.
-        /// 
-        /// @lucene.internal 
-        /// </summary>
-        public interface IPulsingEnumAttribute : IAttribute
-        {
-            Dictionary<PulsingPostingsReader, DocsEnum> Enums(); // LUCENENET TODO: Make property, change to IDictionary
-        }
-
-        internal class PulsingTermState : BlockTermState
-        {
-            public bool Absolute { get; set; }
-            public long[] Longs { get; set; }
-            public byte[] Postings { get; set; }
-            public int PostingsSize { get; set; } // -1 if this term was not inlined
-            public BlockTermState WrappedTermState { get; set; }
-
-            public override object Clone()
-            {
-                var clone = (PulsingTermState) base.Clone();
-                if (PostingsSize != -1)
-                {
-                    clone.Postings = new byte[PostingsSize];
-                    Array.Copy(Postings, 0, clone.Postings, 0, PostingsSize);
-                }
-                else
-                {
-                    Debug.Assert(WrappedTermState != null);
-                    clone.WrappedTermState = (BlockTermState) WrappedTermState.Clone();
-                    clone.Absolute = Absolute;
-                    
-                    if (Longs == null) return clone;
-
-                    clone.Longs = new long[Longs.Length];
-                    Array.Copy(Longs, 0, clone.Longs, 0, Longs.Length);
-                }
-                return clone;
-            }
-
-            public override void CopyFrom(TermState other)
-            {
-                base.CopyFrom(other);
-                var _other = (PulsingTermState) other;
-                PostingsSize = _other.PostingsSize;
-                if (_other.PostingsSize != -1)
-                {
-                    if (Postings == null || Postings.Length < _other.PostingsSize)
-                    {
-                        Postings = new byte[ArrayUtil.Oversize(_other.PostingsSize, 1)];
-                    }
-                    Array.Copy(_other.Postings, 0, Postings, 0, _other.PostingsSize);
-                }
-                else
-                {
-                    WrappedTermState.CopyFrom(_other.WrappedTermState);
-                }
-            }
-
-            public override String ToString()
-            {
-                if (PostingsSize == -1)
-                    return "PulsingTermState: not inlined: wrapped=" + WrappedTermState;
-                
-                return "PulsingTermState: inlined size=" + PostingsSize + " " + base.ToString();
-            }
-        }
-
-        internal class PulsingDocsEnum : DocsEnum
+        private class PulsingDocsEnum : DocsEnum
         {
             private byte[] _postingsBytes;
             private readonly ByteArrayDataInput _postings = new ByteArrayDataInput();
@@ -387,7 +330,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 _storeOffsets = _indexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
-            public PulsingDocsEnum Reset(IBits liveDocs, PulsingTermState termState)
+            public virtual PulsingDocsEnum Reset(IBits liveDocs, PulsingTermState termState)
             {
                 Debug.Assert(termState.PostingsSize != -1);
 
@@ -412,14 +355,9 @@ namespace Lucene.Net.Codecs.Pulsing
                 return this;
             }
 
-            public bool CanReuse(FieldInfo fieldInfo)
+            internal bool CanReuse(FieldInfo fieldInfo)
             {
                 return _indexOptions == fieldInfo.IndexOptions && _storePayloads == fieldInfo.HasPayloads;
-            }
-
-            public override int DocID
-            {
-                get { return _docId; }
             }
 
             public override int NextDoc()
@@ -428,7 +366,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 {
                     if (_postings.Eof)
                         return _docId = NO_MORE_DOCS;
-                    
+
                     var code = _postings.ReadVInt();
                     if (_indexOptions == IndexOptions.DOCS_ONLY)
                     {
@@ -483,6 +421,16 @@ namespace Lucene.Net.Codecs.Pulsing
                 }
             }
 
+            public override int Freq
+            {
+                get { return _freq; }
+            }
+
+            public override int DocID
+            {
+                get { return _docId; }
+            }
+
             public override int Advance(int target)
             {
                 return _docId = SlowAdvance(target);
@@ -492,14 +440,9 @@ namespace Lucene.Net.Codecs.Pulsing
             {
                 return _cost;
             }
-
-            public override int Freq
-            {
-                get { return _freq; }
-            }
         }
 
-        internal class PulsingDocsAndPositionsEnum : DocsAndPositionsEnum
+        private class PulsingDocsAndPositionsEnum : DocsAndPositionsEnum
         {
             private byte[] _postingsBytes;
             private readonly ByteArrayDataInput _postings = new ByteArrayDataInput();
@@ -531,7 +474,12 @@ namespace Lucene.Net.Codecs.Pulsing
                     _indexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
-            public PulsingDocsAndPositionsEnum Reset(IBits liveDocs, PulsingTermState termState)
+            internal bool CanReuse(FieldInfo fieldInfo)
+            {
+                return _indexOptions == fieldInfo.IndexOptions && _storePayloads == fieldInfo.HasPayloads;
+            }
+
+            public virtual PulsingDocsAndPositionsEnum Reset(IBits liveDocs, PulsingTermState termState)
             {
                 Debug.Assert(termState.PostingsSize != -1);
 
@@ -556,11 +504,6 @@ namespace Lucene.Net.Codecs.Pulsing
                 _offsetLength = 0;
                 //System.out.println("PR d&p reset storesPayloads=" + storePayloads + " bytes=" + bytes.length + " this=" + this);
                 return this;
-            }
-
-            public bool CanReuse(FieldInfo fieldInfo)
-            {
-                return _indexOptions == fieldInfo.IndexOptions && _storePayloads == fieldInfo.HasPayloads;
             }
 
             public override int NextDoc()
@@ -651,13 +594,26 @@ namespace Lucene.Net.Codecs.Pulsing
                 get { return _startOffset + _offsetLength; }
             }
 
+            private void SkipPositions()
+            {
+                while (_posPending != 0)
+                {
+                    NextPosition();
+                }
+                if (_storePayloads && !_payloadRetrieved)
+                {
+                    _postings.SkipBytes(_payloadLength);
+                    _payloadRetrieved = true;
+                }
+            }
+
             public override BytesRef Payload
             {
                 get
                 {
                     if (_payloadRetrieved)
                         return _payload;
-                    
+
                     if (_storePayloads && _payloadLength > 0)
                     {
                         _payloadRetrieved = true;
@@ -673,37 +629,74 @@ namespace Lucene.Net.Codecs.Pulsing
                         _payload.Length = _payloadLength;
                         return _payload;
                     }
-                    
+
                     return null;
                 }
             }
 
-            private void SkipPositions()
-            {
-                while (_posPending != 0)
-                {
-                    NextPosition();
-                }
-                if (_storePayloads && !_payloadRetrieved)
-                {
-                    _postings.SkipBytes(_payloadLength);
-                    _payloadRetrieved = true;
-                }
-            }
-            
             public override long GetCost()
             {
                 return _cost;
             }
         }
-        
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _wrappedPostingsReader.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// for a docsenum, gets the 'other' reused enum.
+        /// Example: Pulsing(Standard).
+        /// when doing a term range query you are switching back and forth
+        /// between Pulsing and Standard
+        ///  
+        /// The way the reuse works is that Pulsing.other = Standard and
+        /// Standard.other = Pulsing.
+        /// </summary>
+        private DocsEnum GetOther(DocsEnum de)
+        {
+            if (de == null)
+                return null;
+
+            var atts = de.Attributes;
+            DocsEnum result;
+            atts.AddAttribute<IPulsingEnumAttribute>().Enums().TryGetValue(this, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// for a docsenum, sets the 'other' reused enum.
+        /// see GetOther for an example.
+        /// </summary>
+        private DocsEnum SetOther(DocsEnum de, DocsEnum other)
+        {
+            var atts = de.Attributes;
+            return atts.AddAttribute<IPulsingEnumAttribute>().Enums()[this] = other;
+        }
+
+        ///<summary>
+        /// A per-docsenum attribute that stores additional reuse information
+        /// so that pulsing enums can keep a reference to their wrapped enums,
+        /// and vice versa. this way we can always reuse.
+        /// 
+        /// @lucene.internal 
+        /// </summary>
+        public interface IPulsingEnumAttribute : IAttribute
+        {
+            Dictionary<PulsingPostingsReader, DocsEnum> Enums(); // LUCENENET TODO: Make property, change to IDictionary
+        }
+
         /// <summary>
         /// Implementation of {@link PulsingEnumAttribute} for reuse of
         /// wrapped postings readers underneath pulsing.
         /// 
         /// @lucene.internal
         /// </summary>
-        internal sealed class PulsingEnumAttribute : Util.Attribute, IPulsingEnumAttribute
+        public sealed class PulsingEnumAttribute : Util.Attribute, IPulsingEnumAttribute
         {
             // we could store 'other', but what if someone 'chained' multiple postings readers,
             // this could cause problems?
@@ -730,5 +723,15 @@ namespace Lucene.Net.Codecs.Pulsing
                 // we don't want to copy any stuff over to another docsenum ever!
             }
         }
+
+        public override long RamBytesUsed()
+        {
+            return ((_wrappedPostingsReader != null) ? _wrappedPostingsReader.RamBytesUsed() : 0);
+        }
+
+        public override void CheckIntegrity()
+        {
+            _wrappedPostingsReader.CheckIntegrity();
+        }  
     }
 }

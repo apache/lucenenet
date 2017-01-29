@@ -39,12 +39,12 @@ namespace Lucene.Net.Codecs.IntBlock
     /// </summary>
     public abstract class FixedIntBlockIndexOutput : IntIndexOutput
     {
-        protected readonly IndexOutput output;
+        protected readonly IndexOutput output; // out
         private readonly int blockSize;
         protected readonly int[] buffer;
         private int upto;
 
-        protected internal FixedIntBlockIndexOutput(IndexOutput output, int fixedBlockSize)
+        protected FixedIntBlockIndexOutput(IndexOutput output, int fixedBlockSize)
         {
             blockSize = fixedBlockSize;
             this.output = output;
@@ -52,14 +52,14 @@ namespace Lucene.Net.Codecs.IntBlock
             buffer = new int[blockSize];
         }
 
-        protected internal abstract void FlushBlock();
+        protected abstract void FlushBlock();
 
         public override IntIndexOutputIndex Index()
         {
             return new OutputIndex(this);
         }
 
-        private class OutputIndex : IntIndexOutputIndex
+        private class OutputIndex : IntIndexOutputIndex // LUCENENET TODO: Rename Index
         {
             private readonly FixedIntBlockIndexOutput outerInstance;
 

@@ -27,10 +27,10 @@ namespace Lucene.Net.Codecs.Memory
     /// <summary>
     /// FST term dict + Lucene41PBF
     /// </summary>
-
     public sealed class FSTPostingsFormat : PostingsFormat
     {
-        public FSTPostingsFormat() : base("FST41")
+        public FSTPostingsFormat() 
+            : base("FST41")
         {
         }
 

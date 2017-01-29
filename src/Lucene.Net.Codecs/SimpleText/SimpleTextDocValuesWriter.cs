@@ -33,34 +33,45 @@ namespace Lucene.Net.Codecs.SimpleText
     using BytesRef = Util.BytesRef;
     using IOUtils = Util.IOUtils;
 
-    public class SimpleTextDocValuesWriter : DocValuesConsumer
+    public class SimpleTextDocValuesWriter : DocValuesConsumer // LUCENENET NOTE: changed from internal to public because it is subclassed by a public type
     {
         internal static readonly BytesRef END = new BytesRef("END");
         internal static readonly BytesRef FIELD = new BytesRef("field ");
         internal static readonly BytesRef TYPE = new BytesRef("  type ");
-        
+
         // used for numerics
         internal static readonly BytesRef MINVALUE = new BytesRef("  minvalue ");
         internal static readonly BytesRef PATTERN = new BytesRef("  pattern ");
-        
+
         // used for bytes
         internal static readonly BytesRef LENGTH = new BytesRef("length ");
         internal static readonly BytesRef MAXLENGTH = new BytesRef("  maxlength ");
-        
+
         // used for sorted bytes
         internal static readonly BytesRef NUMVALUES = new BytesRef("  numvalues ");
         internal static readonly BytesRef ORDPATTERN = new BytesRef("  ordpattern ");
 
-        internal IndexOutput data;
-        internal readonly BytesRef scratch = new BytesRef();
-        internal readonly int numDocs;
+        private IndexOutput data;
+        private readonly BytesRef scratch = new BytesRef();
+        private readonly int numDocs;
         private readonly HashSet<string> _fieldsSeen = new HashSet<string>(); // for asserting
 
-        public SimpleTextDocValuesWriter(SegmentWriteState state, string ext)
+        // LUCENENET NOTE: Changed from public to internal because the class had to be made public, but is not for public use.
+        internal SimpleTextDocValuesWriter(SegmentWriteState state, string ext)
         {
             data = state.Directory.CreateOutput(
                     IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, ext), state.Context);
             numDocs = state.SegmentInfo.DocCount;
+        }
+
+        /// <summary>
+        /// For Asserting
+        /// </summary>
+        private bool FieldSeen(string field)
+        {
+            Debug.Assert(!_fieldsSeen.Contains(field), "field \"" + field + "\" was added more than once during flush");
+            _fieldsSeen.Add(field);
+            return true;
         }
 
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
@@ -396,6 +407,18 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
+        /// <summary>Write the header for this field </summary>
+        private void WriteFieldEntry(FieldInfo field, DocValuesType type)
+        {
+            SimpleTextUtil.Write(data, FIELD);
+            SimpleTextUtil.Write(data, field.Name, scratch);
+            SimpleTextUtil.WriteNewline(data);
+
+            SimpleTextUtil.Write(data, TYPE);
+            SimpleTextUtil.Write(data, type.ToString(), scratch);
+            SimpleTextUtil.WriteNewline(data);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (data == null || !disposing) return;
@@ -422,30 +445,5 @@ namespace Lucene.Net.Codecs.SimpleText
                 data = null;
             }
         }
-
-        /// <summary>Write the header for this field </summary>
-        private void WriteFieldEntry(FieldInfo field, DocValuesType type)
-        {
-            SimpleTextUtil.Write(data, FIELD);
-            SimpleTextUtil.Write(data, field.Name, scratch);
-            SimpleTextUtil.WriteNewline(data);
-
-            SimpleTextUtil.Write(data, TYPE);
-            SimpleTextUtil.Write(data, type.ToString(), scratch);
-            SimpleTextUtil.WriteNewline(data);
-        }
-
-        /// <summary>
-        /// For Asserting
-        /// </summary>
-        /// <param name="field"></param>
-        /// <returns></returns>
-        private bool FieldSeen(string field)
-        {
-            Debug.Assert(!_fieldsSeen.Contains(field), "field \"" + field + "\" was added more than once during flush");
-            _fieldsSeen.Add(field);
-            return true;
-        }
-
     }
 }

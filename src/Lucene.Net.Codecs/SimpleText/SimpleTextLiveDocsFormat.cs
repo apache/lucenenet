@@ -49,7 +49,6 @@ namespace Lucene.Net.Codecs.SimpleText
     /// </summary>
     public class SimpleTextLiveDocsFormat : LiveDocsFormat
     {
-
         internal const string LIVEDOCS_EXTENSION = "liv";
 
         internal static readonly BytesRef SIZE = new BytesRef("size ");
@@ -64,7 +63,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public override IMutableBits NewLiveDocs(IBits existing)
         {
             var bits = (SimpleTextBits) existing;
-            return new SimpleTextMutableBits(new BitArray(bits.BITS), bits.SIZE);
+            return new SimpleTextMutableBits(new BitArray(bits.BITS), bits.Length);
         }
 
         public override IBits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)
@@ -114,7 +113,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private static int ParseIntAt(BytesRef bytes, int offset, CharsRef scratch)
+        private int ParseIntAt(BytesRef bytes, int offset, CharsRef scratch) // LUCENENET TODO: Rename ParseInt32At ?
         {
             UnicodeUtil.UTF8toUTF16(bytes.Bytes, bytes.Offset + offset, bytes.Length - offset, scratch);
             return ArrayUtil.ParseInt(scratch.Chars, 0, scratch.Length);
@@ -173,8 +172,8 @@ namespace Lucene.Net.Codecs.SimpleText
         // read-only
         internal class SimpleTextBits : IBits
         {
-            internal readonly BitArray BITS;
-            internal readonly int SIZE;
+            internal readonly BitArray BITS; // LUCENENET TODO: Rename camelCase
+            private readonly int SIZE; // LUCENENET TODO: Rename camelCase
 
             internal SimpleTextBits(BitArray bits, int size)
             {
@@ -182,12 +181,12 @@ namespace Lucene.Net.Codecs.SimpleText
                 SIZE = size;
             }
 
-            public bool Get(int index)
+            public virtual bool Get(int index)
             {
                 return BITS.SafeGet(index);
             }
 
-            public int Length
+            public virtual int Length
             {
                 get { return SIZE; }
             }
@@ -197,20 +196,21 @@ namespace Lucene.Net.Codecs.SimpleText
         internal class SimpleTextMutableBits : SimpleTextBits, IMutableBits
         {
 
-            internal SimpleTextMutableBits(int size) : this(new BitArray(size), size)
+            internal SimpleTextMutableBits(int size) 
+                : this(new BitArray(size), size)
             {
                 BITS.Set(0, size);
             }
 
-            internal SimpleTextMutableBits(BitArray bits, int size) : base(bits, size)
+            internal SimpleTextMutableBits(BitArray bits, int size) 
+                : base(bits, size)
             {
             }
 
-            public void Clear(int bit)
+            public virtual void Clear(int bit)
             {
                 BITS.SafeSet(bit, false);
             }
         }
     }
-
 }

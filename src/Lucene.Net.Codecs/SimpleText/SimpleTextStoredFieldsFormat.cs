@@ -32,7 +32,6 @@ namespace Lucene.Net.Codecs.SimpleText
     /// </summary>
     public class SimpleTextStoredFieldsFormat : StoredFieldsFormat
     {
-
         public override StoredFieldsReader FieldsReader(Directory directory, SegmentInfo si, FieldInfos fn,
             IOContext context)
         {

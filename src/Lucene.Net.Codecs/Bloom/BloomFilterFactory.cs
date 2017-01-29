@@ -28,7 +28,6 @@ namespace Lucene.Net.Codecs.Bloom
     /// </summary>
     public abstract class BloomFilterFactory
     {
-
         /// <summary>
         /// 
         /// </summary>
@@ -43,7 +42,7 @@ namespace Lucene.Net.Codecs.Bloom
         /// <param name="fieldInfo">The field with sparse set bits</param>
         /// <param name="initialSet">The bits accumulated</param>
         /// <returns> null or a hopefully more densely packed, smaller bitset</returns>
-        public FuzzySet Downsize(FieldInfo fieldInfo, FuzzySet initialSet)
+        public virtual FuzzySet Downsize(FieldInfo fieldInfo, FuzzySet initialSet)
         {
             // Aim for a bitset size that would have 10% of bits set (so 90% of searches
             // would fail-fast)
@@ -58,6 +57,5 @@ namespace Lucene.Net.Codecs.Bloom
         /// <param name="fieldInfo">The field with which this filter is associated</param>
         /// <returns>true if the set has reached saturation and should be retired</returns>
         public abstract bool IsSaturated(FuzzySet bloomFilter, FieldInfo fieldInfo);
-
     }
 }

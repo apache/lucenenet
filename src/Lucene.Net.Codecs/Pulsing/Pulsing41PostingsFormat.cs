@@ -26,21 +26,21 @@ namespace Lucene.Net.Codecs.Pulsing
     /// </summary>
     public class Pulsing41PostingsFormat : PulsingPostingsFormat
     {
-
         /// <summary>Inlines docFreq=1 terms, otherwise uses the normal "Lucene41" format.</summary>
-        public Pulsing41PostingsFormat() : this(1)
+        public Pulsing41PostingsFormat() 
+            : this(1)
         {
         }
 
         /// <summary>Inlines docFreq=<code>freqCutoff</code> terms, otherwise uses the normal "Lucene41" format.</summary>
-        public Pulsing41PostingsFormat(int freqCutoff) :
-            this(freqCutoff, BlockTreeTermsWriter.DEFAULT_MIN_BLOCK_SIZE, BlockTreeTermsWriter.DEFAULT_MAX_BLOCK_SIZE)
+        public Pulsing41PostingsFormat(int freqCutoff) 
+            : this(freqCutoff, BlockTreeTermsWriter.DEFAULT_MIN_BLOCK_SIZE, BlockTreeTermsWriter.DEFAULT_MAX_BLOCK_SIZE)
         {
         }
 
         /// <summary>Inlines docFreq=<code>freqCutoff</code> terms, otherwise uses the normal "Lucene41" format.</summary>
-        public Pulsing41PostingsFormat(int freqCutoff, int minBlockSize, int maxBlockSize) :
-            base("Pulsing41", new Lucene41PostingsBaseFormat(), freqCutoff, minBlockSize, maxBlockSize)
+        public Pulsing41PostingsFormat(int freqCutoff, int minBlockSize, int maxBlockSize) 
+            : base("Pulsing41", new Lucene41PostingsBaseFormat(), freqCutoff, minBlockSize, maxBlockSize)
         {
         }
     }

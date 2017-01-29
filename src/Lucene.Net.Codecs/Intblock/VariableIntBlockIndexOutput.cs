@@ -41,7 +41,7 @@ namespace Lucene.Net.Codecs.IntBlock
     /// </summary>
     public abstract class VariableIntBlockIndexOutput : IntIndexOutput
     {
-        protected readonly IndexOutput output;
+        protected readonly IndexOutput output; // out
 
         private int upto;
         private bool hitExcDuringWrite;
@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.IntBlock
         ///  requires lookahead=1 because on seeing the Nth value
         ///  it knows it must now encode the N-1 values before it. 
         /// </summary>
-        protected internal VariableIntBlockIndexOutput(IndexOutput output, int maxBlockSize)
+        protected VariableIntBlockIndexOutput(IndexOutput output, int maxBlockSize)
         {
             this.output = output;
             this.output.WriteInt(maxBlockSize);
@@ -63,16 +63,16 @@ namespace Lucene.Net.Codecs.IntBlock
 
         /// <summary>
         /// Called one value at a time.  Return the number of
-        ///  buffered input values that have been written to out. 
+        /// buffered input values that have been written to out. 
         /// </summary>
-        protected internal abstract int Add(int value);
+        protected abstract int Add(int value);
 
         public override IntIndexOutputIndex Index()
         {
             return new OutputIndex(this);
         }
 
-        private class OutputIndex : IntIndexOutputIndex
+        private class OutputIndex : IntIndexOutputIndex // LUCENENET TODO: Rename Index
         {
             private readonly VariableIntBlockIndexOutput outerInstance;
 
@@ -81,10 +81,10 @@ namespace Lucene.Net.Codecs.IntBlock
                 this.outerInstance = outerInstance;
             }
 
-            long fp;
-            int upto;
-            long lastFP;
-            int lastUpto;
+            private long fp;
+            private int upto;
+            private long lastFP;
+            private int lastUpto;
 
             public override void Mark()
             {

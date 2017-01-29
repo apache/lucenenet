@@ -41,7 +41,6 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// </summary>
     public class BlockTermsReader : FieldsProducer
     {
-
         // Open input to the main terms dict file (_X.tis)
         private readonly IndexInput _input;
 
@@ -59,9 +58,46 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private readonly int _version;
 
+        /// <summary>
+        /// Used as a key for the terms cache
+        /// </summary>
+        private class FieldAndTerm : DoubleBarrelLRUCache.CloneableKey
+        {
+            public string Field { get; set; }
+            private BytesRef Term { get; set; }
+
+            public FieldAndTerm()
+            {
+            }
+
+            private FieldAndTerm(FieldAndTerm other)
+            {
+                Field = other.Field;
+                Term = BytesRef.DeepCopyOf(other.Term);
+            }
+
+            public override bool Equals(object other)
+            {
+                var o = (FieldAndTerm)other;
+                return o.Field.Equals(Field) && Term.BytesEquals(o.Term);
+            }
+
+            public override DoubleBarrelLRUCache.CloneableKey Clone()
+            {
+                return new FieldAndTerm(this);
+            }
+
+            public override int GetHashCode()
+            {
+                return Field.GetHashCode() * 31 + Term.GetHashCode();
+            }
+        }
+
+        // private string segment;
+
         public BlockTermsReader(TermsIndexReaderBase indexReader, Directory dir, FieldInfos fieldInfos, SegmentInfo info,
             PostingsReaderBase postingsReader, IOContext context,
-            String segmentSuffix)
+            string segmentSuffix)
         {
             _postingsReader = postingsReader;
 
@@ -84,7 +120,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 int numFields = _input.ReadVInt();
                 if (numFields < 0)
                 {
-                    throw new CorruptIndexException(String.Format("Invalid number of fields: {0}, Resource: {1}",
+                    throw new CorruptIndexException(string.Format("Invalid number of fields: {0}, Resource: {1}",
                         numFields, _input));
                 }
 
@@ -108,7 +144,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     {
                         // #docs with field must be <= #docs
                         throw new CorruptIndexException(
-                            String.Format("Invalid DocCount: {0}, MaxDoc: {1}, Resource: {2}", docCount, info.DocCount,
+                            string.Format("Invalid DocCount: {0}, MaxDoc: {1}, Resource: {2}", docCount, info.DocCount,
                                 _input));
                     }
 
@@ -116,7 +152,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     {
                         // #postings must be >= #docs with field
                         throw new CorruptIndexException(
-                            String.Format("Invalid sumDocFreq: {0}, DocCount: {1}, Resource: {2}", sumDocFreq, docCount,
+                            string.Format("Invalid sumDocFreq: {0}, DocCount: {1}, Resource: {2}", sumDocFreq, docCount,
                                 _input));
                     }
 
@@ -124,7 +160,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     {
                         // #positions must be >= #postings
                         throw new CorruptIndexException(
-                            String.Format("Invalid sumTotalTermFreq: {0}, sumDocFreq: {1}, Resource: {2}",
+                            string.Format("Invalid sumTotalTermFreq: {0}, sumDocFreq: {1}, Resource: {2}",
                                 sumTotalTermFreq, sumDocFreq, _input));
                     }
 
@@ -137,7 +173,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                     catch (ArgumentException)
                     {
-                        throw new CorruptIndexException(String.Format("Duplicate fields: {0}, Resource: {1}",
+                        throw new CorruptIndexException(string.Format("Duplicate fields: {0}, Resource: {1}",
                             fieldInfo.Name, _input));
                     }
 
@@ -213,74 +249,18 @@ namespace Lucene.Net.Codecs.BlockTerms
             return _fields.Keys.GetEnumerator();
         }
 
-        public override Terms Terms(String field)
+        public override Terms Terms(string field)
         {
             Debug.Assert(field != null);
 
             return _fields[field];
         }
 
-        public override long RamBytesUsed()
-        {
-            var sizeInBytes = (_postingsReader != null) ? _postingsReader.RamBytesUsed() : 0;
-            sizeInBytes += (_indexReader != null) ? _indexReader.RamBytesUsed : 0;
-            return sizeInBytes;
-        }
-
-        public override void CheckIntegrity()
-        {
-            // verify terms
-            if (_version >= BlockTermsWriter.VERSION_CHECKSUM)
-            {
-                CodecUtil.ChecksumEntireFile(_input);
-            }
-            // verify postings
-            _postingsReader.CheckIntegrity();
-        }
-
         public override int Count
         {
             get
             {
-                {
-                    return _fields.Count;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Used as a key for the terms cache
-        /// </summary>
-        private class FieldAndTerm : DoubleBarrelLRUCache.CloneableKey
-        {
-            public String Field { get; set; }
-            private BytesRef Term { get; set; }
-
-            private FieldAndTerm(FieldAndTerm other)
-            {
-                Field = other.Field;
-                Term = BytesRef.DeepCopyOf(other.Term);
-            }
-
-            public override bool Equals(Object other)
-            {
-                var o = (FieldAndTerm)other;
-                return o.Field.Equals(Field) && Term.BytesEquals(o.Term);
-            }
-
-            public override DoubleBarrelLRUCache.CloneableKey Clone()
-            {
-                return new FieldAndTerm(this);
-            }
-
-            public override int GetHashCode()
-            {
-                return Field.GetHashCode() * 31 + Term.GetHashCode();
-            }
-
-            public FieldAndTerm()
-            {
-
+                return _fields.Count;
             }
         }
 
@@ -419,7 +399,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _fieldReader = fieldReader;
                     _blockTermsReader = blockTermsReader;
 
-                    _input = (IndexInput) _blockTermsReader._input.Clone();
+                    _input = (IndexInput)_blockTermsReader._input.Clone();
                     _input.Seek(_fieldReader._termsStartPointer);
                     _indexEnum = _blockTermsReader._indexReader.GetFieldEnum(_fieldReader._fieldInfo);
                     _doOrd = _blockTermsReader._indexReader.SupportsOrd;
@@ -450,7 +430,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     if (_indexEnum == null)
                         throw new InvalidOperationException("terms index was not loaded");
-                  
+
                     var doSeek = true;
 
                     // See if we can avoid seeking, because target term
@@ -461,7 +441,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                         if (cmp == 0)
                             return SeekStatus.FOUND;     // Already at the requested term
-                        
+
                         if (cmp < 0)
                         {
                             // Target term is after current term
@@ -501,7 +481,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                         if (_doOrd)
                             _state.Ord = _indexEnum.Ord - 1;
-                        
+
                         _term.CopyBytes(_indexEnum.Term);
                     }
                     else
@@ -660,7 +640,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 _termSuffixesReader.ReadBytes(_term.Bytes, _termBlockPrefix, suffix);
                                 break;
                             }
-                            
+
                             _termSuffixesReader.SkipBytes(suffix);
                         }
 
@@ -794,7 +774,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     //System.out.println("BTR.seekExact termState target=" + target.utf8ToString() + " " + target + " this=" + this);
                     Debug.Assert(otherState is BlockTermState);
-                    Debug.Assert(!_doOrd || ((BlockTermState) otherState).Ord < _fieldReader._numTerms);
+                    Debug.Assert(!_doOrd || ((BlockTermState)otherState).Ord < _fieldReader._numTerms);
                     _state.CopyFrom(otherState);
                     _seekPending = true;
                     _indexIsCurrent = false;
@@ -804,7 +784,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 public override TermState GetTermState()
                 {
                     DecodeMetaData();
-                    return (TermState) _state.Clone();
+                    return (TermState)_state.Clone();
                 }
 
                 public override void SeekExact(long ord)
@@ -833,7 +813,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _term.CopyBytes(_indexEnum.Term);
 
                     // Now, scan:
-                    var left = (int) (ord - _state.Ord);
+                    var left = (int)(ord - _state.Ord);
                     while (left > 0)
                     {
                         var term = _next();
@@ -970,6 +950,22 @@ namespace Lucene.Net.Codecs.BlockTerms
             }
         }
 
-     
+        public override long RamBytesUsed()
+        {
+            var sizeInBytes = (_postingsReader != null) ? _postingsReader.RamBytesUsed() : 0;
+            sizeInBytes += (_indexReader != null) ? _indexReader.RamBytesUsed : 0;
+            return sizeInBytes;
+        }
+
+        public override void CheckIntegrity()
+        {
+            // verify terms
+            if (_version >= BlockTermsWriter.VERSION_CHECKSUM)
+            {
+                CodecUtil.ChecksumEntireFile(_input);
+            }
+            // verify postings
+            _postingsReader.CheckIntegrity();
+        }
     }
 }

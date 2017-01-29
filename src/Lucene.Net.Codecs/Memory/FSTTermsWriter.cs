@@ -155,7 +155,7 @@ namespace Lucene.Net.Codecs.Memory
             CodecUtil.WriteHeader(output, TERMS_CODEC_NAME, TERMS_VERSION_CURRENT);
         }
 
-        private static void WriteTrailer(IndexOutput output, long dirStart)
+        private void WriteTrailer(IndexOutput output, long dirStart)
         {
             output.WriteLong(dirStart);
         }

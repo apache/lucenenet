@@ -42,20 +42,20 @@ namespace Lucene.Net.Codecs.Sep
         internal const int VERSION_START = 0;
         internal const int VERSION_CURRENT = VERSION_START;
 
-        internal IntIndexOutput FREQ_OUT;
-        internal IntIndexOutputIndex FREQ_INDEX;
+        internal IntIndexOutput FREQ_OUT; // LUCENENET TODO: Rename freqOut
+        internal IntIndexOutputIndex FREQ_INDEX; // LUCENENET TODO: Rename camelCase
 
-        internal IntIndexOutput POS_OUT;
-        internal IntIndexOutputIndex POS_INDEX;
+        internal IntIndexOutput POS_OUT; // LUCENENET TODO: Rename  camelCase
+        internal IntIndexOutputIndex POS_INDEX; // LUCENENET TODO: Rename  camelCase
 
-        internal IntIndexOutput DOC_OUT;
-        internal IntIndexOutputIndex DOC_INDEX;
+        internal IntIndexOutput DOC_OUT; // LUCENENET TODO: Rename  camelCase
+        internal IntIndexOutputIndex DOC_INDEX; // LUCENENET TODO: Rename  camelCase
 
-        internal IndexOutput PAYLOAD_OUT;
+        internal IndexOutput PAYLOAD_OUT; // LUCENENET TODO: Rename  camelCase
 
-        internal IndexOutput SKIP_OUT;
+        internal IndexOutput SKIP_OUT; // LUCENENET TODO: Rename  camelCase
 
-        internal readonly SepSkipListWriter SKIP_LIST_WRITER;
+        internal readonly SepSkipListWriter SKIP_LIST_WRITER; // LUCENENET TODO: Rename  camelCase
 
         /// <summary>
         /// Expert: The fraction of TermDocs entries stored in skip tables,
@@ -64,37 +64,37 @@ namespace Lucene.Net.Codecs.Sep
         /// smaller values result in bigger indexes, less acceleration and more
         /// accelerable cases. More detailed experiments would be useful here. 
         /// </summary>
-        internal readonly int SKIP_INTERVAL;
+        internal readonly int SKIP_INTERVAL; // LUCENENET TODO: Rename  camelCase
 
         internal const int DEFAULT_SKIP_INTERVAL = 16;
 
         /// <summary>
         /// Expert: minimum docFreq to write any skip data at all
         /// </summary>
-        internal readonly int SKIP_MINIMUM;
+        internal readonly int SKIP_MINIMUM; // LUCENENET TODO: Rename  camelCase
 
         /// <summary>
         /// Expert: The maximum number of skip levels. Smaller values result in 
         /// slightly smaller indexes, but slower skipping in big posting lists.
         /// </summary>
-        internal readonly int MAX_SKIP_LEVELS = 10;
+        internal readonly int MAX_SKIP_LEVELS = 10; // LUCENENET TODO: Rename  camelCase
 
-        internal readonly int TOTAL_NUM_DOCS;
+        internal readonly int TOTAL_NUM_DOCS; // LUCENENET TODO: Rename  camelCase
 
-        internal bool STORE_PAYLOADS;
-        internal IndexOptions INDEX_OPTIONS;
+        internal bool STORE_PAYLOADS; // LUCENENET TODO: Rename  camelCase
+        internal IndexOptions INDEX_OPTIONS; // LUCENENET TODO: Rename  camelCase
 
-        internal FieldInfo FIELD_INFO;
+        internal FieldInfo FIELD_INFO; // LUCENENET TODO: Rename 
 
-        internal int LAST_PAYLOAD_LENGTH;
-        internal int LAST_POSITION;
-        internal long PAYLOAD_START;
-        internal int LAST_DOC_ID;
-        internal int DF;
+        internal int LAST_PAYLOAD_LENGTH; // LUCENENET TODO: Rename  camelCase
+        internal int LAST_POSITION; // LUCENENET TODO: Rename  camelCase
+        internal long PAYLOAD_START; // LUCENENET TODO: Rename  camelCase
+        internal int LAST_DOC_ID; // LUCENENET TODO: Rename  camelCase
+        internal int DF; // LUCENENET TODO: Rename  camelCase
 
         private SepTermState _lastState;
-        internal long LAST_PAYLOAD_FP;
-        internal long LAST_SKIP_FP;
+        internal long LAST_PAYLOAD_FP; // LUCENENET TODO: Rename  camelCase
+        internal long LAST_SKIP_FP; // LUCENENET TODO: Rename  camelCase
 
         public SepPostingsWriter(SegmentWriteState state, IntStreamFactory factory)
             : this(state, factory, DEFAULT_SKIP_INTERVAL)
@@ -407,5 +407,4 @@ namespace Lucene.Net.Codecs.Sep
             IOUtils.Close(DOC_OUT, SKIP_OUT, FREQ_OUT, POS_OUT, PAYLOAD_OUT);
         }
     }
-
 }

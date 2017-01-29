@@ -23,12 +23,11 @@ namespace Lucene.Net.Codecs.DiskDV
     using Store;
     using Util.Packed;
 
-    public class DiskDocValuesProducer : Lucene45DocValuesProducer
+    internal class DiskDocValuesProducer : Lucene45DocValuesProducer
     {
-
-        public DiskDocValuesProducer(SegmentReadState state, String dataCodec, String dataExtension, String metaCodec,
-            String metaExtension) :
-                base(state, dataCodec, dataExtension, metaCodec, metaExtension)
+        internal DiskDocValuesProducer(SegmentReadState state, string dataCodec, string dataExtension, string metaCodec,
+            string metaExtension) 
+            : base(state, dataCodec, dataExtension, metaCodec, metaExtension)
         {
         }
 
@@ -43,7 +42,7 @@ namespace Lucene.Net.Codecs.DiskDV
         protected override MonotonicBlockPackedReader GetIntervalInstance(IndexInput data, FieldInfo field,
             BinaryEntry bytes)
         {
-            throw new InvalidOperationException();
+            throw new InvalidOperationException(); // LUCENENET NOTE: This was AssertionError in Lucene
         }
 
         protected override MonotonicBlockPackedReader GetOrdIndexInstance(IndexInput data, FieldInfo field,

@@ -76,11 +76,11 @@ namespace Lucene.Net.Codecs.Memory
     // loads itself in ram?
     public sealed class MemoryPostingsFormat : PostingsFormat
     {
-
         private readonly bool doPackFST;
         private readonly float acceptableOverheadRatio;
 
-        public MemoryPostingsFormat() : this(false, PackedInts.DEFAULT)
+        public MemoryPostingsFormat() 
+            : this(false, PackedInts.DEFAULT)
         {
         }
 
@@ -90,7 +90,8 @@ namespace Lucene.Net.Codecs.Memory
         ///        NOTE: packed FSTs are limited to ~2.1 GB of postings. </param>
         /// <param name="acceptableOverheadRatio"> allowable overhead for packed ints
         ///        during FST construction. </param>
-        public MemoryPostingsFormat(bool doPackFST, float acceptableOverheadRatio) : base("Memory")
+        public MemoryPostingsFormat(bool doPackFST, float acceptableOverheadRatio) 
+            : base("Memory")
         {
             this.doPackFST = doPackFST;
             this.acceptableOverheadRatio = acceptableOverheadRatio;
@@ -103,22 +104,18 @@ namespace Lucene.Net.Codecs.Memory
 
         private sealed class TermsWriter : TermsConsumer
         {
-            internal void InitializeInstanceFields()
-            {
-                postingsWriter = new PostingsWriter(this);
-            }
-
-            internal readonly IndexOutput @out;
-            internal readonly FieldInfo field;
-            internal readonly Builder<BytesRef> builder;
-            internal readonly ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
-            internal readonly bool doPackFST;
-            internal readonly float acceptableOverheadRatio;
-            internal int termCount;
+            private readonly IndexOutput @out;
+            private readonly FieldInfo field;
+            private readonly Builder<BytesRef> builder;
+            private readonly ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
+            private readonly bool doPackFST;
+            private readonly float acceptableOverheadRatio;
+            private int termCount;
 
             public TermsWriter(IndexOutput @out, FieldInfo field, bool doPackFST, float acceptableOverheadRatio)
             {
-                InitializeInstanceFields();
+                postingsWriter = new PostingsWriter(this);
+
                 this.@out = @out;
                 this.field = field;
                 this.doPackFST = doPackFST;
@@ -135,16 +132,16 @@ namespace Lucene.Net.Codecs.Memory
                     this.outerInstance = outerInstance;
                 }
 
-                internal int lastDocID;
-                internal int lastPos;
-                internal int lastPayloadLen;
+                private int lastDocID;
+                private int lastPos;
+                private int lastPayloadLen;
 
                 // NOTE: not private so we don't pay access check at runtime:
                 internal int docCount;
                 internal RAMOutputStream buffer = new RAMOutputStream();
 
-                internal int lastOffsetLength;
-                internal int lastOffset;
+                private int lastOffsetLength;
+                private int lastOffset;
 
                 public override void StartDoc(int docID, int termDocFreq)
                 {
@@ -232,7 +229,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                 }
 
-                public virtual PostingsWriter reset()
+                public virtual PostingsWriter reset() // LUCENENET TODO: Rename Reset()
                 {
                     Debug.Assert(buffer.FilePointer == 0);
                     lastDocID = 0;
@@ -243,22 +240,21 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            private PostingsWriter postingsWriter;
+            private readonly PostingsWriter postingsWriter;
 
             public override PostingsConsumer StartTerm(BytesRef text)
             {
                 return postingsWriter.reset();
             }
 
-            internal readonly RAMOutputStream buffer2 = new RAMOutputStream();
-            internal readonly BytesRef spare = new BytesRef();
-            internal byte[] finalBuffer = new byte[128];
+            private readonly RAMOutputStream buffer2 = new RAMOutputStream();
+            private readonly BytesRef spare = new BytesRef();
+            private byte[] finalBuffer = new byte[128];
 
-            internal readonly IntsRef scratchIntsRef = new IntsRef();
+            private readonly IntsRef scratchIntsRef = new IntsRef();
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
-
                 Debug.Assert(postingsWriter.docCount == stats.DocFreq);
 
                 Debug.Assert(buffer2.FilePointer == 0);
@@ -382,27 +378,23 @@ namespace Lucene.Net.Codecs.Memory
 
         private sealed class FSTDocsEnum : DocsEnum
         {
-            internal void InitializeInstanceFields()
-            {
-                @in = new ByteArrayDataInput(buffer);
-            }
+            private readonly IndexOptions indexOptions;
+            private readonly bool storePayloads;
+            private byte[] buffer = new byte[16];
+            private ByteArrayDataInput @in;
 
-            internal readonly IndexOptions indexOptions;
-            internal readonly bool storePayloads;
-            internal byte[] buffer = new byte[16];
-            internal ByteArrayDataInput @in;
-
-            internal IBits liveDocs;
-            internal int docUpto;
-            internal int docID_Renamed = -1;
-            internal int accum;
-            internal int freq_Renamed;
-            internal int payloadLen;
-            internal int numDocs;
+            private IBits liveDocs;
+            private int docUpto;
+            private int docID_Renamed = -1;
+            private int accum;
+            private int freq_Renamed;
+            private int payloadLen;
+            private int numDocs;
 
             public FSTDocsEnum(IndexOptions indexOptions, bool storePayloads)
             {
-                InitializeInstanceFields();
+                @in = new ByteArrayDataInput(buffer);
+
                 this.indexOptions = indexOptions;
                 this.storePayloads = storePayloads;
             }
@@ -539,33 +531,29 @@ namespace Lucene.Net.Codecs.Memory
 
         private sealed class FSTDocsAndPositionsEnum : DocsAndPositionsEnum
         {
-            internal void InitializeInstanceFields()
-            {
-                @in = new ByteArrayDataInput(buffer);
-            }
+            private readonly bool storePayloads;
+            private byte[] buffer = new byte[16];
+            private ByteArrayDataInput @in;
 
-            internal readonly bool storePayloads;
-            internal byte[] buffer = new byte[16];
-            internal ByteArrayDataInput @in;
+            private IBits liveDocs;
+            private int docUpto;
+            private int docID_Renamed = -1;
+            private int accum;
+            private int freq_Renamed;
+            private int numDocs;
+            private int posPending;
+            private int payloadLength;
+            private readonly bool storeOffsets;
+            private int offsetLength;
+            private int startOffset_Renamed;
 
-            internal IBits liveDocs;
-            internal int docUpto;
-            internal int docID_Renamed = -1;
-            internal int accum;
-            internal int freq_Renamed;
-            internal int numDocs;
-            internal int posPending;
-            internal int payloadLength;
-            internal readonly bool storeOffsets;
-            internal int offsetLength;
-            internal int startOffset_Renamed;
-
-            internal int pos;
-            internal readonly BytesRef payload = new BytesRef();
+            private int pos;
+            private readonly BytesRef payload = new BytesRef();
 
             public FSTDocsAndPositionsEnum(bool storePayloads, bool storeOffsets)
             {
-                InitializeInstanceFields();
+                @in = new ByteArrayDataInput(buffer);
+
                 this.storePayloads = storePayloads;
                 this.storeOffsets = storeOffsets;
             }
@@ -575,7 +563,7 @@ namespace Lucene.Net.Codecs.Memory
                 return storePayloads == this.storePayloads && storeOffsets == this.storeOffsets;
             }
 
-            public FSTDocsAndPositionsEnum reset(BytesRef bufferIn, IBits liveDocs, int numDocs)
+            public FSTDocsAndPositionsEnum reset(BytesRef bufferIn, IBits liveDocs, int numDocs) // LUCENENET TODO: Rename Reset
             {
                 Debug.Assert(numDocs > 0);
 
@@ -763,15 +751,15 @@ namespace Lucene.Net.Codecs.Memory
 
         private sealed class FSTTermsEnum : TermsEnum
         {
-            internal readonly FieldInfo field;
-            internal readonly BytesRefFSTEnum<BytesRef> fstEnum;
-            internal readonly ByteArrayDataInput buffer = new ByteArrayDataInput();
-            internal bool didDecode;
+            private readonly FieldInfo field;
+            private readonly BytesRefFSTEnum<BytesRef> fstEnum;
+            private readonly ByteArrayDataInput buffer = new ByteArrayDataInput();
+            private bool didDecode;
 
-            internal int docFreq_Renamed;
-            internal long totalTermFreq_Renamed;
-            internal BytesRefFSTEnum.InputOutput<BytesRef> current;
-            internal BytesRef postingsSpare = new BytesRef();
+            private int docFreq_Renamed;
+            private long totalTermFreq_Renamed;
+            private BytesRefFSTEnum.InputOutput<BytesRef> current;
+            private BytesRef postingsSpare = new BytesRef();
 
             public FSTTermsEnum(FieldInfo field, FST<BytesRef> fst)
             {
@@ -779,7 +767,7 @@ namespace Lucene.Net.Codecs.Memory
                 fstEnum = new BytesRefFSTEnum<BytesRef>(fst);
             }
 
-            internal void decodeMetaData() // LUCENENET TODO: Rename pascal case
+            private void decodeMetaData() // LUCENENET TODO: Rename pascal case
             {
                 if (!didDecode)
                 {
@@ -862,7 +850,6 @@ namespace Lucene.Net.Codecs.Memory
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
-
                 bool hasOffsets = field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 if (field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                 {
@@ -949,13 +936,12 @@ namespace Lucene.Net.Codecs.Memory
 
         private sealed class TermsReader : Terms
         {
-
-            internal readonly long sumTotalTermFreq;
-            internal readonly long sumDocFreq;
-            internal readonly int docCount;
-            internal readonly int termCount;
+            private readonly long sumTotalTermFreq;
+            private readonly long sumDocFreq;
+            private readonly int docCount;
+            private readonly int termCount;
             internal FST<BytesRef> fst;
-            internal readonly ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
+            private readonly ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
             internal readonly FieldInfo field;
 
             public TermsReader(FieldInfos fieldInfos, IndexInput @in, int termCount)
@@ -1021,17 +1007,17 @@ namespace Lucene.Net.Codecs.Memory
 
             public override bool HasFreqs
             {
-                get { return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
+                get { return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; } // LUCENENET TODO: Possible exception if IndexOptions is null
             }
 
             public override bool HasOffsets
             {
-                get { return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
+                get { return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; } // LUCENENET TODO: Possible exception if IndexOptions is null
             }
 
             public override bool HasPositions
             {
-                get { return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
+                get { return field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; } // LUCENENET TODO: Possible exception if IndexOptions is null
             }
 
             public override bool HasPayloads
@@ -1043,7 +1029,6 @@ namespace Lucene.Net.Codecs.Memory
             {
                 return ((fst != null) ? fst.SizeInBytes() : 0);
             }
-
         }
 
         public override FieldsProducer FieldsProducer(SegmentReadState state)
@@ -1129,5 +1114,4 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
     }
-
 }

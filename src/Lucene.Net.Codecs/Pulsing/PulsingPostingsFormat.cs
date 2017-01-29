@@ -30,26 +30,21 @@ namespace Lucene.Net.Codecs.Pulsing
     /// </summary>
     public abstract class PulsingPostingsFormat : PostingsFormat
     {
-
         private readonly int _freqCutoff;
         private readonly int _minBlockSize;
         private readonly int _maxBlockSize;
         private readonly PostingsBaseFormat _wrappedPostingsBaseFormat;
 
-        public int FreqCutoff
-        {
-            get { return _freqCutoff; }
-        }
-
-        protected PulsingPostingsFormat(String name, PostingsBaseFormat wrappedPostingsBaseFormat, int freqCutoff) :
-            this(name, wrappedPostingsBaseFormat, freqCutoff, BlockTreeTermsWriter.DEFAULT_MIN_BLOCK_SIZE,
+        public PulsingPostingsFormat(string name, PostingsBaseFormat wrappedPostingsBaseFormat, int freqCutoff) 
+            : this(name, wrappedPostingsBaseFormat, freqCutoff, BlockTreeTermsWriter.DEFAULT_MIN_BLOCK_SIZE,
             BlockTreeTermsWriter.DEFAULT_MAX_BLOCK_SIZE)
         {
         }
 
         /// <summary>Terms with freq less than or equal freqCutoff are inlined into terms dict.</summary>
-        protected PulsingPostingsFormat(String name, PostingsBaseFormat wrappedPostingsBaseFormat, int freqCutoff,
-            int minBlockSize, int maxBlockSize) : base(name)
+        public PulsingPostingsFormat(string name, PostingsBaseFormat wrappedPostingsBaseFormat, int freqCutoff,
+            int minBlockSize, int maxBlockSize) 
+            : base(name)
         {
             Debug.Assert(minBlockSize > 1);
 
@@ -59,7 +54,7 @@ namespace Lucene.Net.Codecs.Pulsing
             _wrappedPostingsBaseFormat = wrappedPostingsBaseFormat;
         }
 
-        public override String ToString()
+        public override string ToString()
         {
             return string.Format("{0} (freqCutoff={1}, minBlockSize={2}, maxBlockSize={3})", Name, _freqCutoff, _minBlockSize, _maxBlockSize);
         }
@@ -120,6 +115,11 @@ namespace Lucene.Net.Codecs.Pulsing
                     IOUtils.CloseWhileHandlingException(docsReader, pulsingReader);
                 }
             }
+        }
+
+        public virtual int FreqCutoff
+        {
+            get { return _freqCutoff; }
         }
     }
 }

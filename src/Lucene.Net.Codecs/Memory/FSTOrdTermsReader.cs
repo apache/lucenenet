@@ -41,10 +41,10 @@ namespace Lucene.Net.Codecs.Memory
     /// </summary>
     public class FSTOrdTermsReader : FieldsProducer
     {
-        internal const int INTERVAL = FSTOrdTermsWriter.SKIP_INTERVAL;
-        internal readonly SortedDictionary<string, TermsReader> fields = new SortedDictionary<string, TermsReader>();
-        internal readonly PostingsReaderBase postingsReader;
-        internal int version;
+        private const int INTERVAL = FSTOrdTermsWriter.SKIP_INTERVAL;
+        private readonly SortedDictionary<string, TermsReader> fields = new SortedDictionary<string, TermsReader>();
+        private readonly PostingsReaderBase postingsReader;
+        private int version;
         //static final boolean TEST = false;
 
         public FSTOrdTermsReader(SegmentReadState state, PostingsReaderBase postingsReader)
@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.Memory
             @in.Seek(@in.ReadLong());
         }
 
-        private static void CheckFieldSummary(SegmentInfo info, IndexInput indexIn, IndexInput blockIn, TermsReader field, TermsReader previous)
+        private void CheckFieldSummary(SegmentInfo info, IndexInput indexIn, IndexInput blockIn, TermsReader field, TermsReader previous)
         {
             // #docs with field must be <= #docs
             if (field.docCount < 0 || field.docCount > info.DocCount)
@@ -195,14 +195,14 @@ namespace Lucene.Net.Codecs.Memory
             private readonly FSTOrdTermsReader outerInstance;
 
             internal readonly FieldInfo fieldInfo;
-            internal readonly long numTerms;
+            private readonly long numTerms;
             internal readonly long sumTotalTermFreq;
             internal readonly long sumDocFreq;
             internal readonly int docCount;
-            internal readonly int longsSize;
+            private readonly int longsSize;
             internal readonly FST<long?> index;
 
-            internal readonly int numSkipInfo;
+            private readonly int numSkipInfo;
             internal readonly long[] skipInfo;
             internal readonly byte[] statsBlock;
             internal readonly byte[] metaLongsBlock;
@@ -252,17 +252,17 @@ namespace Lucene.Net.Codecs.Memory
 
             public override bool HasFreqs
             {
-                get { return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
+                get { return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; } // LUCENENET TODO: Possible exception if IndexOptions is null
             }
 
             public override bool HasOffsets
             {
-                get { return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
+                get { return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; } // LUCENENET TODO: Possible exception if IndexOptions is null
             }
 
             public override bool HasPositions
             {
-                get { return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
+                get { return fieldInfo.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; } // LUCENENET TODO: Possible exception if IndexOptions is null
             }
 
             public override bool HasPayloads
@@ -324,22 +324,22 @@ namespace Lucene.Net.Codecs.Memory
                 internal readonly BlockTermState state;
 
                 /* Datainput to load stats & metadata */
-                internal readonly ByteArrayDataInput statsReader = new ByteArrayDataInput();
-                internal readonly ByteArrayDataInput metaLongsReader = new ByteArrayDataInput();
-                internal readonly ByteArrayDataInput metaBytesReader = new ByteArrayDataInput();
+                private readonly ByteArrayDataInput statsReader = new ByteArrayDataInput();
+                private readonly ByteArrayDataInput metaLongsReader = new ByteArrayDataInput();
+                private readonly ByteArrayDataInput metaBytesReader = new ByteArrayDataInput();
 
                 /* To which block is buffered */
-                internal int statsBlockOrd;
-                internal int metaBlockOrd;
+                private int statsBlockOrd;
+                private int metaBlockOrd;
 
                 /* Current buffered metadata (long[] & byte[]) */
-                internal long[][] longs;
-                internal int[] bytesStart;
-                internal int[] bytesLength;
+                private long[][] longs;
+                private int[] bytesStart;
+                private int[] bytesLength;
 
                 /* Current buffered stats (df & ttf) */
-                internal int[] docFreq_Renamed;
-                internal long[] totalTermFreq_Renamed;
+                private int[] docFreq_Renamed;
+                private long[] totalTermFreq_Renamed;
 
                 internal BaseTermsEnum(TermsReader outerInstance)
                 {
@@ -599,33 +599,35 @@ namespace Lucene.Net.Codecs.Memory
             {
                 private readonly FSTOrdTermsReader.TermsReader outerInstance;
 
-                /* True when current term's metadata is decoded */
+                /// <summary>True when current term's metadata is decoded</summary>
                 private bool decoded;
 
-                /* True when there is pending term when calling next() */
+                /// <summary>True when there is pending term when calling Next()</summary>
                 private bool pending;
 
-                /* stack to record how current term is constructed, 
-                 * used to accumulate metadata or rewind term:
-                 *   level == term.length + 1,
-                 *         == 0 when term is null */
+                /// <summary>
+                /// stack to record how current term is constructed, 
+                /// used to accumulate metadata or rewind term:
+                ///   level == term.length + 1,
+                ///     == 0 when term is null
+                /// </summary>
                 private Frame[] stack;
                 private int level;
 
-                /* term dict fst */
+                /// <summary>term dict fst</summary>
                 private readonly FST<long?> fst;
                 private readonly FST.BytesReader fstReader;
                 private readonly Outputs<long?> fstOutputs;
 
-                /* query automaton to intersect with */
+                /// <summary>query automaton to intersect with</summary>
                 private readonly ByteRunAutomaton fsa;
 
                 private sealed class Frame
                 {
-                    /* fst stats */
+                    /// <summary>fst stats</summary>
                     internal FST.Arc<long?> arc;
 
-                    /* automaton stats */
+                    /// <summary>automaton stats</summary>
                     internal int state;
 
                     internal Frame()
@@ -954,7 +956,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        internal static void Walk<T>(FST<T> fst)
+        private static void Walk<T>(FST<T> fst) // LUCENENET NOTE: Not referenced anywhere
         {
             var queue = new List<FST.Arc<T>>();
 

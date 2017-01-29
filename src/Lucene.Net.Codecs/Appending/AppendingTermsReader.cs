@@ -29,12 +29,12 @@ namespace Lucene.Net.Codecs.Appending
     [Obsolete("Only for reading old Appending segments")]
     public class AppendingTermsReader : BlockTreeTermsReader
     {
-        private const String APPENDING_TERMS_CODEC_NAME = "APPENDING_TERMS_DICT";
-        private const String APPENDING_TERMS_INDEX_CODEC_NAME = "APPENDING_TERMS_INDEX";
+        private const string APPENDING_TERMS_CODEC_NAME = "APPENDING_TERMS_DICT";
+        private const string APPENDING_TERMS_INDEX_CODEC_NAME = "APPENDING_TERMS_INDEX";
 
         public AppendingTermsReader(Directory dir, FieldInfos fieldInfos, SegmentInfo info,
             PostingsReaderBase postingsReader,
-            IOContext ioContext, String segmentSuffix, int indexDivisor)
+            IOContext ioContext, string segmentSuffix, int indexDivisor)
             : base(dir, fieldInfos, info, postingsReader, ioContext, segmentSuffix, indexDivisor)
         {
         }

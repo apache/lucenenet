@@ -30,11 +30,6 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// </summary>
     public abstract class TermsIndexWriterBase : IDisposable
     {
-
-        public abstract FieldWriter AddField(FieldInfo fieldInfo, long termsFilePointer);
-
-        public abstract void Dispose();
-
         /// <summary>Terms index API for a single field</summary>
         public abstract class FieldWriter
         {
@@ -42,5 +37,9 @@ namespace Lucene.Net.Codecs.BlockTerms
             public abstract void Add(BytesRef text, TermStats stats, long termsFilePointer);
             public abstract void Finish(long termsFilePointer);
         }
+
+        public abstract FieldWriter AddField(FieldInfo fieldInfo, long termsFilePointer);
+
+        public abstract void Dispose(); // LUCENENET TODO: Implement disposable pattern
     }
 }

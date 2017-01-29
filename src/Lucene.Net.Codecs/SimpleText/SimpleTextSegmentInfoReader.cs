@@ -43,7 +43,6 @@ namespace Lucene.Net.Codecs.SimpleText
     /// </summary>
     public class SimpleTextSegmentInfoReader : SegmentInfoReader
     {
-
         public override SegmentInfo Read(Directory directory, string segmentName, IOContext context)
         {
             var scratch = new BytesRef();
@@ -116,7 +115,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private static string ReadString(int offset, BytesRef scratch)
+        private string ReadString(int offset, BytesRef scratch)
         {
             return Encoding.UTF8.GetString(scratch.Bytes, scratch.Offset + offset, scratch.Length - offset);
         }

@@ -35,6 +35,5 @@ namespace Lucene.Net.Codecs.Bloom
         /// @return the hash of the bytes referenced by bytes.offset and length bytes.length
         /// </summary>
         public abstract int Hash(BytesRef bytes);
-
     }
 }

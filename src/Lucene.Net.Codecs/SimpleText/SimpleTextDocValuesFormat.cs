@@ -119,8 +119,8 @@ namespace Lucene.Net.Codecs.SimpleText
     /// </summary>
     public class SimpleTextDocValuesFormat : DocValuesFormat
     {
-
-        public SimpleTextDocValuesFormat() : base("SimpleText")
+        public SimpleTextDocValuesFormat() 
+            : base("SimpleText")
         {
         }
 
@@ -128,11 +128,10 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             return new SimpleTextDocValuesWriter(state, "dat");
         }
+
         public override DocValuesProducer FieldsProducer(SegmentReadState state)
         {
             return new SimpleTextDocValuesReader(state, "dat");
         }
-
     }
-
 }

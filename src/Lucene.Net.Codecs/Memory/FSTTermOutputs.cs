@@ -50,10 +50,10 @@ namespace Lucene.Net.Codecs.Memory
         /// </summary>
         internal class TermData
         {
-            internal long[] LONGS;
-            internal byte[] BYTES;
-            internal int DOC_FREQ;
-            internal long TOTAL_TERM_FREQ;
+            internal long[] LONGS; // LUCENENET TODO: Rename longs
+            internal byte[] BYTES; // LUCENENET TODO: Rename bytes
+            internal int DOC_FREQ; // LUCENENET TODO: Rename docFreq
+            internal long TOTAL_TERM_FREQ; // LUCENENET TODO: Rename totalTermFreq
 
             internal TermData()
             {
@@ -109,7 +109,6 @@ namespace Lucene.Net.Codecs.Memory
                 var _other = (TermData) other;
                 return StatsEqual(this, _other) && LongsEqual(this, _other) && BytesEqual(this, _other);
             }
-
         }
 
         protected internal FSTTermOutputs(FieldInfo fieldInfo, int longsSize)
@@ -359,12 +358,12 @@ namespace Lucene.Net.Codecs.Memory
             return data.ToString();
         }
 
-        internal static bool StatsEqual(TermData t1, TermData t2)
+        private static bool StatsEqual(TermData t1, TermData t2)
         {
             return t1.DOC_FREQ == t2.DOC_FREQ && t1.TOTAL_TERM_FREQ == t2.TOTAL_TERM_FREQ;
         }
 
-        internal static bool BytesEqual(TermData t1, TermData t2)
+        private static bool BytesEqual(TermData t1, TermData t2)
         {
             if (t1.BYTES == null && t2.BYTES == null)
             {
@@ -373,7 +372,7 @@ namespace Lucene.Net.Codecs.Memory
             return t1.BYTES != null && t2.BYTES != null && Arrays.Equals(t1.BYTES, t2.BYTES);
         }
 
-        internal static bool LongsEqual(TermData t1, TermData t2)
+        private static bool LongsEqual(TermData t1, TermData t2)
         {
             if (t1.LONGS == null && t2.LONGS == null)
             {
@@ -382,7 +381,7 @@ namespace Lucene.Net.Codecs.Memory
             return t1.LONGS != null && t2.LONGS != null && Arrays.Equals(t1.LONGS, t2.LONGS);
         }
 
-        internal static bool AllZero(long[] l)
+        private static bool AllZero(long[] l)
         {
             return l.All(t => t == 0);
         }

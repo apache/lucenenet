@@ -42,7 +42,6 @@ namespace Lucene.Net.Codecs.SimpleText
     /// </summary>
     public class SimpleTextFieldInfosWriter : FieldInfosWriter
     {
-
         /// <summary>
         /// Extension of field infos </summary>
         internal const string FIELD_INFOS_EXTENSION = "inf";
@@ -163,5 +162,4 @@ namespace Lucene.Net.Codecs.SimpleText
             return type.HasValue ? type.ToString() : "false";
         }
     }
-
 }

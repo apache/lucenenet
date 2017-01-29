@@ -88,7 +88,6 @@ namespace Lucene.Net.Codecs.Sep
         internal virtual void Init(long skipPointer, IntIndexInputIndex docBaseIndex, IntIndexInputIndex freqBaseIndex,
             IntIndexInputIndex posBaseIndex, long payloadBasePointer, int df, bool storesPayloads)
         {
-
             base.Init(skipPointer, df);
             _currentFieldStoresPayloads = storesPayloads;
 
@@ -208,5 +207,4 @@ namespace Lucene.Net.Codecs.Sep
             return delta;
         }
     }
-
 }

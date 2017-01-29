@@ -36,7 +36,8 @@ namespace Lucene.Net.Codecs.SimpleText
         private readonly LiveDocsFormat _liveDocs = new SimpleTextLiveDocsFormat();
         private readonly DocValuesFormat _dvFormat = new SimpleTextDocValuesFormat();
 
-        public SimpleTextCodec() : base("SimpleText")
+        public SimpleTextCodec() 
+            : base("SimpleText")
         {
         }
 
@@ -80,5 +81,4 @@ namespace Lucene.Net.Codecs.SimpleText
             get { return _dvFormat; }
         }
     }
-
 }

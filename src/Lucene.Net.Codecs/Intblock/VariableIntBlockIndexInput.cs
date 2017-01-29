@@ -21,11 +21,9 @@ namespace Lucene.Net.Codecs.IntBlock
      * limitations under the License.
      */
 
-    /// <summary>
-    /// Naive int block API that writes vInts.  This is
-    /// expected to give poor performance; it's really only for
-    /// testing the pluggability.  One should typically use pfor instead. 
-    /// </summary>
+    // Naive int block API that writes vInts.  This is
+    // expected to give poor performance; it's really only for
+    // testing the pluggability.  One should typically use pfor instead. 
 
     // TODO: much of this can be shared code w/ the fixed case
 
@@ -40,8 +38,8 @@ namespace Lucene.Net.Codecs.IntBlock
     /// </summary>
     public abstract class VariableIntBlockIndexInput : IntIndexInput
     {
-        private readonly IndexInput input;
-        protected internal readonly int maxBlockSize;
+        private readonly IndexInput input; // in
+        protected readonly int maxBlockSize;
 
         protected internal VariableIntBlockIndexInput(IndexInput input)
         {
@@ -67,7 +65,7 @@ namespace Lucene.Net.Codecs.IntBlock
             return new InputIndex(this);
         }
 
-        protected internal abstract IBlockReader GetBlockReader(IndexInput @in, int[] buffer);
+        protected abstract IBlockReader GetBlockReader(IndexInput @in, int[] buffer);
 
         /// <summary>
         /// Interface for variable-size block decoders.
@@ -81,7 +79,7 @@ namespace Lucene.Net.Codecs.IntBlock
             void Seek(long pos);
         }
 
-        private class InputReader : IntIndexInputReader
+        private class InputReader : IntIndexInputReader // LUCENENET TODO: Rename Reader
         {
             private readonly IndexInput input;
 
@@ -102,7 +100,7 @@ namespace Lucene.Net.Codecs.IntBlock
                 this.blockReader = blockReader;
             }
 
-            internal void Seek(long fp, int upto)
+            internal virtual void Seek(long fp, int upto)
             {
                 // TODO: should we do this in real-time, not lazy?
                 pendingFP = fp;
@@ -157,7 +155,7 @@ namespace Lucene.Net.Codecs.IntBlock
             }
         }
 
-        private class InputIndex : IntIndexInputIndex
+        private class InputIndex : IntIndexInputIndex // LUCENENET TODO: Rename Index
         {
             private readonly VariableIntBlockIndexInput outerInstance;
 

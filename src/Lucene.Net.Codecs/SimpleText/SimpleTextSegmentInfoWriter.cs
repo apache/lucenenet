@@ -38,7 +38,6 @@ namespace Lucene.Net.Codecs.SimpleText
     /// </summary>
     public class SimpleTextSegmentInfoWriter : SegmentInfoWriter
     {
-
         internal static readonly BytesRef SI_VERSION = new BytesRef("    version ");
         internal static readonly BytesRef SI_DOCCOUNT = new BytesRef("    number of documents ");
         internal static readonly BytesRef SI_USECOMPOUND = new BytesRef("    uses compound file ");
@@ -50,7 +49,6 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override void Write(Directory dir, SegmentInfo si, FieldInfos fis, IOContext ioContext)
         {
-
             var segFileName = IndexFileNames.SegmentFileName(si.Name, "", SimpleTextSegmentInfoFormat.SI_EXTENSION);
             si.AddFile(segFileName);
 

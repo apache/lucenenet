@@ -34,30 +34,34 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// </summary>
     public class VariableGapTermsIndexReader : TermsIndexReaderBase
     {
+        private readonly PositiveIntOutputs _fstOutputs = PositiveIntOutputs.Singleton;
         private readonly int _indexDivisor;
-        private readonly IndexInput _input;       // Closed if indexLoaded is true:
-        private readonly int _version;
 
+        private readonly IndexInput _input;       // Closed if indexLoaded is true:
         private volatile bool _indexLoaded;
+
+        private readonly Dictionary<FieldInfo, FieldIndexData> _fields = new Dictionary<FieldInfo, FieldIndexData>();
+
         private long _dirOffset;                 // start of the field info data
 
-        private readonly PositiveIntOutputs _fstOutputs = PositiveIntOutputs.Singleton;
-        private readonly Dictionary<FieldInfo, FieldIndexData> _fields = new Dictionary<FieldInfo, FieldIndexData>();
+        private readonly int _version;
+
+        private readonly string segment;
         
-        public VariableGapTermsIndexReader(Directory dir, FieldInfos fieldInfos, String segment, int indexDivisor,
-            String segmentSuffix, IOContext context)
+        public VariableGapTermsIndexReader(Directory dir, FieldInfos fieldInfos, string segment, int indexDivisor,
+            string segmentSuffix, IOContext context)
         {
             _input =
                 dir.OpenInput(
                     IndexFileNames.SegmentFileName(segment, segmentSuffix,
                         VariableGapTermsIndexWriter.TERMS_INDEX_EXTENSION), new IOContext(context, true));
+            this.segment = segment;
             var success = false;
 
             Debug.Assert(indexDivisor == -1 || indexDivisor > 0);
 
             try
             {
-
                 _version = ReadHeader(_input);
                 _indexDivisor = indexDivisor;
 
@@ -85,7 +89,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                     catch (ArgumentException)
                     {
-                        throw new CorruptIndexException(String.Format("Duplicate Field: {0}, Resource: {1}",
+                        throw new CorruptIndexException(string.Format("Duplicate Field: {0}, Resource: {1}",
                             fieldInfo.Name, _input));
                     }
                 }
@@ -105,6 +109,11 @@ namespace Lucene.Net.Codecs.BlockTerms
             }
         }
 
+        public override int Divisor
+        {
+            get { return _indexDivisor; }
+        }
+
         private int ReadHeader(IndexInput input)
         {
             int version = CodecUtil.CheckHeader(input, VariableGapTermsIndexWriter.CODEC_NAME,
@@ -116,114 +125,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             return version;
         }
 
-        public override void Dispose()
-        {
-            if (_input != null && !_indexLoaded) { 
-                _input.Dispose(); 
-            } 
-        }
-
-        public override bool SupportsOrd
-        {
-            get { return false; }
-        }
-        
-        public override int Divisor
-        {
-            get { return _indexDivisor; }
-        }
-
-        public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
-        {
-            FieldIndexData fieldData = _fields[fieldInfo];
-            return fieldData.Fst == null ? null : new IndexEnum(fieldData.Fst);
-        }
-
-        private void SeekDir(IndexInput input, long dirOffset)
-        {
-            if (_version >= VariableGapTermsIndexWriter.VERSION_CHECKSUM)
-            {
-                input.Seek(input.Length - CodecUtil.FooterLength() - 8);
-                dirOffset = input.ReadLong();
-            }
-            else if (_version >= VariableGapTermsIndexWriter.VERSION_APPEND_ONLY)
-            {
-                input.Seek(input.Length - 8);
-                dirOffset = input.ReadLong();
-            }
-            input.Seek(dirOffset);
-        }
-
-        public override long RamBytesUsed
-        {
-            get { return _fields.Values.Sum(entry => entry.RamBytesUsed()); }
-        }
-
-        internal class FieldIndexData
-        {
-
-            private readonly long _indexStart;
-            // Set only if terms index is loaded:
-            public volatile FST<long?> Fst;
-            private readonly VariableGapTermsIndexReader _vgtir;
-
-            public FieldIndexData(long indexStart, VariableGapTermsIndexReader vgtir)
-            {
-                _vgtir = vgtir;
-                _indexStart = indexStart;
-
-                if (_vgtir._indexDivisor > 0)
-                    LoadTermsIndex();
-            }
-
-            private void LoadTermsIndex()
-            {
-                if (Fst != null) return;
-
-                var clone = (IndexInput) _vgtir._input.Clone();
-                clone.Seek(_indexStart);
-                Fst = new FST<long?>(clone, _vgtir._fstOutputs);
-                clone.Dispose();
-
-                /*
-                final String dotFileName = segment + "_" + fieldInfo.name + ".dot";
-                Writer w = new OutputStreamWriter(new FileOutputStream(dotFileName));
-                Util.toDot(fst, w, false, false);
-                System.out.println("FST INDEX: SAVED to " + dotFileName);
-                w.close();
-                */
-
-                if (_vgtir._indexDivisor > 1)
-                {
-                    // subsample
-                    var scratchIntsRef = new IntsRef();
-                    var outputs = PositiveIntOutputs.Singleton;
-                    var builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
-                    var fstEnum = new BytesRefFSTEnum<long?>(Fst);
-                    var count = _vgtir._indexDivisor;
-                        
-                    BytesRefFSTEnum.InputOutput<long?> result;
-                    while ((result = fstEnum.Next()) != null)
-                    {
-                        if (count == _vgtir._indexDivisor)
-                        {
-                            builder.Add(Util.ToIntsRef(result.Input, scratchIntsRef), result.Output);
-                            count = 0;
-                        }
-                        count++;
-                    }
-                    Fst = builder.Finish();
-                }
-            }
-
-            /// <summary>Returns approximate RAM bytes used</summary>
-            public long RamBytesUsed()
-            {
-                return Fst == null ? 0 : Fst.SizeInBytes();
-            }
-        }
-
-        protected class IndexEnum : FieldIndexEnum
+        private class IndexEnum : FieldIndexEnum
         {
             private readonly BytesRefFSTEnum<long?> _fstEnum;
             private BytesRefFSTEnum.InputOutput<long?> _current;
@@ -236,7 +138,6 @@ namespace Lucene.Net.Codecs.BlockTerms
             public override BytesRef Term
             {
                 get { return _current == null ? null : _current.Input; }
-                set { }
             }
 
             public override long? Seek(BytesRef target)
@@ -260,7 +161,6 @@ namespace Lucene.Net.Codecs.BlockTerms
             public override long Ord
             {
                 get { throw new NotImplementedException(); }
-                set { }
             }
 
             public override long? Seek(long ord)
@@ -269,5 +169,107 @@ namespace Lucene.Net.Codecs.BlockTerms
             }
         }
 
+        public override bool SupportsOrd
+        {
+            get { return false; }
+        }
+
+        private class FieldIndexData
+        {
+            // Outer instance
+            private readonly VariableGapTermsIndexReader _vgtir;
+
+            private readonly long _indexStart;
+            // Set only if terms index is loaded:
+            internal volatile FST<long?> Fst;
+            
+            public FieldIndexData(long indexStart, VariableGapTermsIndexReader vgtir)
+            {
+                _vgtir = vgtir;
+                _indexStart = indexStart;
+
+                if (_vgtir._indexDivisor > 0)
+                    LoadTermsIndex();
+            }
+
+            private void LoadTermsIndex()
+            {
+                if (Fst != null) return;
+
+                var clone = (IndexInput)_vgtir._input.Clone();
+                clone.Seek(_indexStart);
+                Fst = new FST<long?>(clone, _vgtir._fstOutputs);
+                clone.Dispose();
+
+                /*
+                final String dotFileName = segment + "_" + fieldInfo.name + ".dot";
+                Writer w = new OutputStreamWriter(new FileOutputStream(dotFileName));
+                Util.toDot(fst, w, false, false);
+                System.out.println("FST INDEX: SAVED to " + dotFileName);
+                w.close();
+                */
+
+                if (_vgtir._indexDivisor > 1)
+                {
+                    // subsample
+                    var scratchIntsRef = new IntsRef();
+                    var outputs = PositiveIntOutputs.Singleton;
+                    var builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
+                    var fstEnum = new BytesRefFSTEnum<long?>(Fst);
+                    var count = _vgtir._indexDivisor;
+
+                    BytesRefFSTEnum.InputOutput<long?> result;
+                    while ((result = fstEnum.Next()) != null)
+                    {
+                        if (count == _vgtir._indexDivisor)
+                        {
+                            builder.Add(Util.ToIntsRef(result.Input, scratchIntsRef), result.Output);
+                            count = 0;
+                        }
+                        count++;
+                    }
+                    Fst = builder.Finish();
+                }
+            }
+
+            /// <summary>Returns approximate RAM bytes used</summary>
+            public virtual long RamBytesUsed()
+            {
+                return Fst == null ? 0 : Fst.SizeInBytes();
+            }
+        }
+
+        public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
+        {
+            FieldIndexData fieldData = _fields[fieldInfo];
+            return fieldData.Fst == null ? null : new IndexEnum(fieldData.Fst);
+        }
+
+        public override void Dispose()
+        {
+            if (_input != null && !_indexLoaded) { 
+                _input.Dispose(); 
+            } 
+        }
+
+        private void SeekDir(IndexInput input, long dirOffset)
+        {
+            if (_version >= VariableGapTermsIndexWriter.VERSION_CHECKSUM)
+            {
+                input.Seek(input.Length - CodecUtil.FooterLength() - 8);
+                dirOffset = input.ReadLong();
+            }
+            else if (_version >= VariableGapTermsIndexWriter.VERSION_APPEND_ONLY)
+            {
+                input.Seek(input.Length - 8);
+                dirOffset = input.ReadLong();
+            }
+            input.Seek(dirOffset);
+        }
+
+        public override long RamBytesUsed
+        {
+            get { return _fields.Values.Sum(entry => entry.RamBytesUsed()); }
+        }
     }
 }

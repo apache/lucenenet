@@ -37,7 +37,6 @@ namespace Lucene.Net.Codecs.SimpleText
             return new SimpleTextTermVectorsReader(directory, segmentInfo, context);
         }
 
-
         public override TermVectorsWriter VectorsWriter(Directory directory, SegmentInfo segmentInfo, IOContext context)
         {
             return new SimpleTextTermVectorsWriter(directory, segmentInfo.Name, context);

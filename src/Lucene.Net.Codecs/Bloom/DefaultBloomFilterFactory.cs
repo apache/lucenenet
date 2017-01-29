@@ -27,7 +27,6 @@ namespace Lucene.Net.Codecs.Bloom
     /// </summary>
     public class DefaultBloomFilterFactory : BloomFilterFactory
     {
-
         public override FuzzySet GetSetForField(SegmentWriteState state, FieldInfo info)
         {
             //Assume all of the docs have a unique term (e.g. a primary key) and we hope to maintain a set with 10% of bits set
@@ -40,6 +39,5 @@ namespace Lucene.Net.Codecs.Bloom
             // throw any more memory at this problem.
             return bloomFilter.GetSaturation() > 0.9f;
         }
-
     }
 }

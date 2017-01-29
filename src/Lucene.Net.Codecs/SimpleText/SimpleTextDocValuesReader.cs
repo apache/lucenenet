@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs.SimpleText
     using StringHelper = Util.StringHelper;
     using System.Numerics;
 
-    public class SimpleTextDocValuesReader : DocValuesProducer
+    public class SimpleTextDocValuesReader : DocValuesProducer // LUCENENET NOTE: Changed from internal to public because it is subclassed by a public class
     {
         internal class OneField
         {
@@ -56,12 +56,13 @@ namespace Lucene.Net.Codecs.SimpleText
             public long NumValues { get; set; }
         }
 
-        internal readonly int MAX_DOC;
-        internal readonly IndexInput DATA;
-        internal readonly BytesRef SCRATCH = new BytesRef();
-        internal readonly IDictionary<string, OneField> FIELDS = new Dictionary<string, OneField>();
+        private readonly int MAX_DOC; // LUCENENET TODO: Rename camelCase
+        private readonly IndexInput DATA; // LUCENENET TODO: Rename camelCase
+        private readonly BytesRef SCRATCH = new BytesRef(); // LUCENENET TODO: Rename camelCase
+        private readonly IDictionary<string, OneField> FIELDS = new Dictionary<string, OneField>(); // LUCENENET TODO: Rename camelCase
 
-        public SimpleTextDocValuesReader(SegmentReadState state, string ext)
+        // LUCENENET NOTE: Changed from public to internal because the class had to be made public, but is not for public use.
+        internal SimpleTextDocValuesReader(SegmentReadState state, string ext)
         {
             DATA = state.Directory.OpenInput(
                     IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, ext), state.Context);
@@ -153,64 +154,47 @@ namespace Lucene.Net.Codecs.SimpleText
             return new NumericDocValuesAnonymousInnerClassHelper(this, field, @in, scratch);
         }
 
-        public override BinaryDocValues GetBinary(FieldInfo fieldInfo)
+        private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
         {
-            var field = FIELDS[fieldInfo.Name];
-            Debug.Assert(field != null);
-            var input = (IndexInput)DATA.Clone();
-            var scratch = new BytesRef();
+            private readonly SimpleTextDocValuesReader _outerInstance;
 
-            return new BinaryDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
-        }
+            private readonly OneField _field;
+            private readonly IndexInput _input;
+            private readonly BytesRef _scratch;
 
-        public override SortedDocValues GetSorted(FieldInfo fieldInfo)
-        {
-            var field = FIELDS[fieldInfo.Name];
-
-            // SegmentCoreReaders already verifies this field is valid:
-            Debug.Assert(field != null);
-            var input = (IndexInput)DATA.Clone();
-            var scratch = new BytesRef();
-
-            return new SortedDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
-        }
-
-        public override SortedSetDocValues GetSortedSet(FieldInfo fieldInfo)
-        {
-            var field = FIELDS[fieldInfo.Name];
-
-            // SegmentCoreReaders already verifies this field is
-            // valid:
-            Debug.Assert(field != null);
-
-            var input = (IndexInput) DATA.Clone();
-            var scratch = new BytesRef();
-            
-            return new SortedSetDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
-        }
-
-        public override IBits GetDocsWithField(FieldInfo field)
-        {
-            switch (field.DocValuesType)
+            public NumericDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance,
+                OneField field, IndexInput input, BytesRef scratch)
             {
-                case DocValuesType.SORTED_SET:
-                    return DocValues.DocsWithValue(GetSortedSet(field), MAX_DOC);
-                case DocValuesType.SORTED:
-                    return DocValues.DocsWithValue(GetSorted(field), MAX_DOC);
-                case DocValuesType.BINARY:
-                    return GetBinaryDocsWithField(field);
-                case DocValuesType.NUMERIC:
-                    return GetNumericDocsWithField(field);
-                default:
-                    throw new ArgumentOutOfRangeException();
+                _outerInstance = outerInstance;
+                _field = field;
+                _input = input;
+                _scratch = scratch;
             }
-        }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (!disposing) return;
+            public override long Get(int docId)
+            {
+                if (docId < 0 || docId >= _outerInstance.MAX_DOC)
+                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) +
+                                                       "; got " + docId);
 
-            DATA.Dispose();
+                _input.Seek(_field.DataStartFilePointer + (1 + _field.Pattern.Length + 2) * docId);
+                SimpleTextUtil.ReadLine(_input, _scratch);
+
+
+                decimal bd;
+                try
+                {
+                    // LUCNENENET: .NET doesn't have a way to specify a pattern with decimal, but all of the standard ones are built in.
+                    bd = decimal.Parse(_scratch.Utf8ToString(), NumberStyles.Float, CultureInfo.InvariantCulture);
+                }
+                catch (FormatException ex)
+                {
+                    throw new CorruptIndexException("failed to parse long value (resource=" + _input + ")", ex);
+                }
+
+                SimpleTextUtil.ReadLine(_input, _scratch); // read the line telling us if its real or not
+                return (long)BigInteger.Add(new BigInteger(_field.MinValue), new BigInteger(bd));
+            }
         }
 
         private IBits GetNumericDocsWithField(FieldInfo fieldInfo)
@@ -220,56 +204,6 @@ namespace Lucene.Net.Codecs.SimpleText
             var scratch = new BytesRef();
             return new BitsAnonymousInnerClassHelper(this, field, input, scratch);
         }
-
-        private IBits GetBinaryDocsWithField(FieldInfo fieldInfo)
-        {
-            var field = FIELDS[fieldInfo.Name];
-            var input = (IndexInput)DATA.Clone();
-            var scratch = new BytesRef();
-
-            return new BitsAnonymousInnerClassHelper2(this, field, input, scratch);
-        }
-
-        /// <summary> Used only in ctor: </summary>
-        private void ReadLine()
-        {
-            SimpleTextUtil.ReadLine(DATA, SCRATCH);
-        }
-
-        /// <summary> Used only in ctor: </summary>
-        private bool StartsWith(BytesRef prefix)
-        {
-            return StringHelper.StartsWith(SCRATCH, prefix);
-        }
-
-        /// <summary> Used only in ctor: </summary>
-        private string StripPrefix(BytesRef prefix)
-        {
-            return Encoding.UTF8.GetString(SCRATCH.Bytes, SCRATCH.Offset + prefix.Length, SCRATCH.Length - prefix.Length);
-        }
-
-        public override long RamBytesUsed()
-        {
-            return 0;
-        }
-
-        public override void CheckIntegrity()
-        {
-            var iScratch = new BytesRef();
-            var clone = (IndexInput) DATA.Clone();
-            clone.Seek(0);
-            ChecksumIndexInput input = new BufferedChecksumIndexInput(clone);
-            while (true)
-            {
-                SimpleTextUtil.ReadLine(input, iScratch);
-                if (!iScratch.Equals(SimpleTextDocValuesWriter.END)) continue;
-
-                SimpleTextUtil.CheckFooter(input);
-                break;
-            }
-        }
-
-
 
         private class BitsAnonymousInnerClassHelper : IBits
         {
@@ -300,6 +234,70 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 get { return _outerInstance.MAX_DOC; }
             }
+        }
+
+        public override BinaryDocValues GetBinary(FieldInfo fieldInfo)
+        {
+            var field = FIELDS[fieldInfo.Name];
+            Debug.Assert(field != null);
+            var input = (IndexInput)DATA.Clone();
+            var scratch = new BytesRef();
+
+            return new BinaryDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
+        }
+
+        private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
+        {
+            private readonly SimpleTextDocValuesReader _outerInstance;
+
+            private readonly OneField _field;
+            private readonly IndexInput _input;
+            private readonly BytesRef _scratch;
+
+            public BinaryDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance, OneField field,
+                IndexInput input, BytesRef scratch)
+            {
+                _outerInstance = outerInstance;
+                _field = field;
+                _input = input;
+                _scratch = scratch;
+            }
+
+            public override void Get(int docId, BytesRef result)
+            {
+                if (docId < 0 || docId >= _outerInstance.MAX_DOC)
+                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) +
+                                                       "; got " + docId);
+
+                _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2) * docId);
+                SimpleTextUtil.ReadLine(_input, _scratch);
+                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
+                int len;
+                try
+                {
+                    // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
+                    len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
+                        _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
+                }
+                catch (FormatException ex)
+                {
+                    throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", ex);
+                }
+
+                result.Bytes = new byte[len];
+                result.Offset = 0;
+                result.Length = len;
+                _input.ReadBytes(result.Bytes, 0, len);
+            }
+        }
+
+        private IBits GetBinaryDocsWithField(FieldInfo fieldInfo)
+        {
+            var field = FIELDS[fieldInfo.Name];
+            var input = (IndexInput)DATA.Clone();
+            var scratch = new BytesRef();
+
+            return new BitsAnonymousInnerClassHelper2(this, field, input, scratch);
         }
 
         private class BitsAnonymousInnerClassHelper2 : IBits
@@ -347,6 +345,18 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 get { return _outerInstance.MAX_DOC; }
             }
+        }
+
+        public override SortedDocValues GetSorted(FieldInfo fieldInfo)
+        {
+            var field = FIELDS[fieldInfo.Name];
+
+            // SegmentCoreReaders already verifies this field is valid:
+            Debug.Assert(field != null);
+            var input = (IndexInput)DATA.Clone();
+            var scratch = new BytesRef();
+
+            return new SortedDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
         }
 
         private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
@@ -430,6 +440,20 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
+        public override SortedSetDocValues GetSortedSet(FieldInfo fieldInfo)
+        {
+            var field = FIELDS[fieldInfo.Name];
+
+            // SegmentCoreReaders already verifies this field is
+            // valid:
+            Debug.Assert(field != null);
+
+            var input = (IndexInput) DATA.Clone();
+            var scratch = new BytesRef();
+            
+            return new SortedSetDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
+        }
+
         private class SortedSetDocValuesAnonymousInnerClassHelper : SortedSetDocValues
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
@@ -510,94 +534,67 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
+        public override IBits GetDocsWithField(FieldInfo field)
         {
-            private readonly SimpleTextDocValuesReader _outerInstance;
-
-            private readonly OneField _field;
-            private readonly IndexInput _input;
-            private readonly BytesRef _scratch;
-
-            public NumericDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance,
-                OneField field, IndexInput input, BytesRef scratch)
+            switch (field.DocValuesType)
             {
-                _outerInstance = outerInstance;
-                _field = field;
-                _input = input;
-                _scratch = scratch;
-            }
-
-            public override long Get(int docId)
-            {
-                if (docId < 0 || docId >= _outerInstance.MAX_DOC)
-                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) +
-                                                       "; got " + docId);
-
-                _input.Seek(_field.DataStartFilePointer + (1 + _field.Pattern.Length + 2) * docId);
-                SimpleTextUtil.ReadLine(_input, _scratch);
-
-                
-                decimal bd;
-                try
-                {
-                    // LUCNENENET: .NET doesn't have a way to specify a pattern with decimal, but all of the standard ones are built in.
-                    bd = decimal.Parse(_scratch.Utf8ToString(), NumberStyles.Float, CultureInfo.InvariantCulture);
-                }
-                catch (FormatException ex)
-                {
-                    throw new CorruptIndexException("failed to parse long value (resource=" + _input + ")", ex);
-                }
-
-                SimpleTextUtil.ReadLine(_input, _scratch); // read the line telling us if its real or not
-                return (long)BigInteger.Add(new BigInteger(_field.MinValue), new BigInteger(bd));
+                case DocValuesType.SORTED_SET:
+                    return DocValues.DocsWithValue(GetSortedSet(field), MAX_DOC);
+                case DocValuesType.SORTED:
+                    return DocValues.DocsWithValue(GetSorted(field), MAX_DOC);
+                case DocValuesType.BINARY:
+                    return GetBinaryDocsWithField(field);
+                case DocValuesType.NUMERIC:
+                    return GetNumericDocsWithField(field);
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
-        private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
+        protected override void Dispose(bool disposing)
         {
-            private readonly SimpleTextDocValuesReader _outerInstance;
+            if (!disposing) return;
 
-            private readonly OneField _field;
-            private readonly IndexInput _input;
-            private readonly BytesRef _scratch;
-
-            public BinaryDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance, OneField field,
-                IndexInput input, BytesRef scratch)
-            {
-                _outerInstance = outerInstance;
-                _field = field;
-                _input = input;
-                _scratch = scratch;
-            }
-
-            public override void Get(int docId, BytesRef result)
-            {
-                if (docId < 0 || docId >= _outerInstance.MAX_DOC)
-                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) +
-                                                       "; got " + docId);
-
-                _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2) * docId);
-                SimpleTextUtil.ReadLine(_input, _scratch);
-                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
-                int len;
-                try
-                {
-                    // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
-                    len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                        _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
-                }
-                catch (FormatException ex)
-                {
-                    throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", ex);
-                }
-
-                result.Bytes = new byte[len];
-                result.Offset = 0;
-                result.Length = len;
-                _input.ReadBytes(result.Bytes, 0, len);
-            }
+            DATA.Dispose();
         }
 
+        /// <summary> Used only in ctor: </summary>
+        private void ReadLine()
+        {
+            SimpleTextUtil.ReadLine(DATA, SCRATCH);
+        }
+
+        /// <summary> Used only in ctor: </summary>
+        private bool StartsWith(BytesRef prefix)
+        {
+            return StringHelper.StartsWith(SCRATCH, prefix);
+        }
+
+        /// <summary> Used only in ctor: </summary>
+        private string StripPrefix(BytesRef prefix)
+        {
+            return Encoding.UTF8.GetString(SCRATCH.Bytes, SCRATCH.Offset + prefix.Length, SCRATCH.Length - prefix.Length);
+        }
+
+        public override long RamBytesUsed()
+        {
+            return 0;
+        }
+
+        public override void CheckIntegrity()
+        {
+            var iScratch = new BytesRef();
+            var clone = (IndexInput) DATA.Clone();
+            clone.Seek(0);
+            ChecksumIndexInput input = new BufferedChecksumIndexInput(clone);
+            while (true)
+            {
+                SimpleTextUtil.ReadLine(input, iScratch);
+                if (!iScratch.Equals(SimpleTextDocValuesWriter.END)) continue;
+
+                SimpleTextUtil.CheckFooter(input);
+                break;
+            }
+        }
     }
-
 }

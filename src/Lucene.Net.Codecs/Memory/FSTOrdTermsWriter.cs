@@ -149,11 +149,11 @@ namespace Lucene.Net.Codecs.Memory
         public const int TERMS_VERSION_CURRENT = TERMS_VERSION_CHECKSUM;
         public const int SKIP_INTERVAL = 8;
 
-        internal readonly PostingsWriterBase postingsWriter;
-        internal readonly FieldInfos fieldInfos;
+        private readonly PostingsWriterBase postingsWriter;
+        private readonly FieldInfos fieldInfos;
         private readonly IList<FieldMetaData> _fields = new List<FieldMetaData>();
-        internal IndexOutput blockOut = null;
-        internal IndexOutput indexOut = null;
+        private IndexOutput blockOut = null;
+        private IndexOutput indexOut = null;
 
         public FSTOrdTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter)
         {
@@ -236,12 +236,12 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private static void WriteHeader(IndexOutput @out)
+        private void WriteHeader(IndexOutput @out)
         {
             CodecUtil.WriteHeader(@out, TERMS_CODEC_NAME, TERMS_VERSION_CURRENT);
         }
 
-        private static void WriteTrailer(IndexOutput output, long dirStart)
+        private void WriteTrailer(IndexOutput output, long dirStart)
         {
             output.WriteLong(dirStart);
         }
@@ -387,7 +387,7 @@ namespace Lucene.Net.Codecs.Memory
                 _outerInstance._fields.Add(metadata);
             }
 
-            internal void BufferSkip()
+            private void BufferSkip()
             {
                 _skipOut.WriteVLong(_statsOut.FilePointer - _lastBlockStatsFp);
                 _skipOut.WriteVLong(_metaLongsOut.FilePointer - _lastBlockMetaLongsFp);

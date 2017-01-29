@@ -30,7 +30,6 @@ namespace Lucene.Net.Codecs.SimpleText
 
     internal class SimpleTextFieldsWriter : FieldsConsumer
     {
-
         private IndexOutput _output;
         private readonly BytesRef _scratch = new BytesRef(10);
 
@@ -73,23 +72,6 @@ namespace Lucene.Net.Codecs.SimpleText
             return new SimpleTextTermsWriter(this, field);
         }
 
-        public override void Dispose()
-        {
-            if (_output == null) return;
-
-            try
-            {
-                Write(END);
-                Newline();
-                SimpleTextUtil.WriteChecksum(_output, _scratch);
-            }
-            finally
-            {
-                _output.Dispose();
-                _output = null;
-            }
-        }
-
         private class SimpleTextTermsWriter : TermsConsumer
         {
             private readonly SimpleTextFieldsWriter _outerInstance;
@@ -120,7 +102,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private sealed class SimpleTextPostingsWriter : PostingsConsumer
+        private class SimpleTextPostingsWriter : PostingsConsumer
         {
             private readonly SimpleTextFieldsWriter _outerInstance;
 
@@ -165,7 +147,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 _lastStartOffset = 0;
             }
 
-            public PostingsConsumer Reset(BytesRef term)
+            public virtual PostingsConsumer Reset(BytesRef term)
             {
                 _term = term;
                 _wroteTerm = false;
@@ -209,6 +191,22 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-    }
 
+        public override void Dispose()
+        {
+            if (_output == null) return;
+
+            try
+            {
+                Write(END);
+                Newline();
+                SimpleTextUtil.WriteChecksum(_output, _scratch);
+            }
+            finally
+            {
+                _output.Dispose();
+                _output = null;
+            }
+        }
+    }
 }

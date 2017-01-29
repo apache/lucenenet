@@ -21,11 +21,9 @@ namespace Lucene.Net.Codecs.IntBlock
      * limitations under the License.
      */
 
-    /// <summary>
-    /// Naive int block API that writes vInts.  This is
-    ///  expected to give poor performance; it's really only for
-    ///  testing the pluggability.  One should typically use pfor instead. 
-    /// </summary>
+    // Naive int block API that writes vInts.  This is
+    // expected to give poor performance; it's really only for
+    // testing the pluggability.  One should typically use pfor instead. 
 
     /// <summary>
     /// Abstract base class that reads fixed-size blocks of ints
@@ -38,9 +36,8 @@ namespace Lucene.Net.Codecs.IntBlock
     /// </summary>
     public abstract class FixedIntBlockIndexInput : IntIndexInput
     {
-
         private readonly IndexInput input;
-        protected internal readonly int blockSize;
+        protected readonly int blockSize;
 
         public FixedIntBlockIndexInput(IndexInput @in)
         {
@@ -66,7 +63,7 @@ namespace Lucene.Net.Codecs.IntBlock
             return new InputIndex(this);
         }
 
-        protected internal abstract IBlockReader GetBlockReader(IndexInput @in, int[] buffer);
+        protected abstract IBlockReader GetBlockReader(IndexInput @in, int[] buffer);
 
 
         /// <summary>
@@ -80,7 +77,7 @@ namespace Lucene.Net.Codecs.IntBlock
             void ReadBlock();
         }
 
-        private class InputReader : IntIndexInputReader
+        private class InputReader : IntIndexInputReader // LUCENENET TODO: Rename Reader
         {
             private readonly IndexInput input;
             private readonly IBlockReader blockReader;
@@ -101,7 +98,7 @@ namespace Lucene.Net.Codecs.IntBlock
                 upto = blockSize;
             }
 
-            internal void Seek(long fp, int upto)
+            internal virtual void Seek(long fp, int upto)
             {
                 Debug.Assert(upto < blockSize);
                 if (seekPending || fp != lastBlockFP)
@@ -133,7 +130,7 @@ namespace Lucene.Net.Codecs.IntBlock
             }
         }
 
-        private class InputIndex : IntIndexInputIndex
+        private class InputIndex : IntIndexInputIndex // LUCENENET TODO: Rename Index
         {
             private readonly FixedIntBlockIndexInput outerInstance;
 

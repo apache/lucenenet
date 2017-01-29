@@ -251,7 +251,7 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.ReadLine(_input, _scratch);
         }
 
-        private int ParseIntAt(int offset)
+        private int ParseIntAt(int offset) // LUCENENET TODO: Rename ParseInt32At
         {
             UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + offset, _scratch.Length - offset, _scratchUtf16);
             return ArrayUtil.ParseInt(_scratchUtf16.Chars, 0, _scratchUtf16.Length);

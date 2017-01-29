@@ -25,22 +25,17 @@ namespace Lucene.Net.Codecs.Memory
     /// In-memory docvalues format </summary>
     public class MemoryDocValuesFormat : DocValuesFormat
     {
-
         /// <summary>Maximum length for each binary doc values field. </summary>
         public static readonly int MAX_BINARY_FIELD_LENGTH = (1 << 15) - 2;
 
-        internal readonly float ACCEPTABLE_OVERHEAD_RATIO;
+        internal readonly float ACCEPTABLE_OVERHEAD_RATIO; // LUCENENET TODO: Rename acceptableOverheadRatio
 
-        internal const string DATA_CODEC = "MemoryDocValuesData";
-        internal const string DATA_EXTENSION = "mdvd";
-        internal const string METADATA_CODEC = "MemoryDocValuesMetadata";
-        internal const string METADATA_EXTENSION = "mdvm";
-    
         /// <summary>
         /// Calls {@link #MemoryDocValuesFormat(float) 
         /// MemoryDocValuesFormat(PackedInts.DEFAULT)} 
         /// </summary>
-        public MemoryDocValuesFormat() : this(PackedInts.DEFAULT)
+        public MemoryDocValuesFormat() 
+            : this(PackedInts.DEFAULT)
         {
         }
 
@@ -51,7 +46,8 @@ namespace Lucene.Net.Codecs.Memory
         ///        Currently this is only used when the number of unique values is small.
         ///        
         /// @lucene.experimental </param>
-        public MemoryDocValuesFormat(float acceptableOverheadRatio) : base("Memory")
+        public MemoryDocValuesFormat(float acceptableOverheadRatio) 
+            : base("Memory")
         {
             ACCEPTABLE_OVERHEAD_RATIO = acceptableOverheadRatio;
         }
@@ -67,6 +63,9 @@ namespace Lucene.Net.Codecs.Memory
             return new MemoryDocValuesProducer(state, DATA_CODEC, DATA_EXTENSION, METADATA_CODEC, METADATA_EXTENSION);
         }
 
+        internal const string DATA_CODEC = "MemoryDocValuesData";
+        internal const string DATA_EXTENSION = "mdvd";
+        internal const string METADATA_CODEC = "MemoryDocValuesMetadata";
+        internal const string METADATA_EXTENSION = "mdvm";
     }
-
 }

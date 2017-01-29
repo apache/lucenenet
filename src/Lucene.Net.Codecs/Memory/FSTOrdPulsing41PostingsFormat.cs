@@ -34,11 +34,13 @@ namespace Lucene.Net.Codecs.Memory
         private readonly PostingsBaseFormat _wrappedPostingsBaseFormat;
         private readonly int _freqCutoff;
 
-        public FSTOrdPulsing41PostingsFormat() : this(1)
+        public FSTOrdPulsing41PostingsFormat() 
+            : this(1)
         {
         }
 
-        public FSTOrdPulsing41PostingsFormat(int freqCutoff) : base("FSTOrdPulsing41")
+        public FSTOrdPulsing41PostingsFormat(int freqCutoff) 
+            : base("FSTOrdPulsing41")
         {
             _wrappedPostingsBaseFormat = new Lucene41PostingsBaseFormat();
             _freqCutoff = freqCutoff;

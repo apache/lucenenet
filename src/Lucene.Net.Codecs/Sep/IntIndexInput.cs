@@ -29,15 +29,15 @@ namespace Lucene.Net.Codecs.Sep
     /// </summary>
     public abstract class IntIndexInput : IDisposable
     {
-        public abstract IntIndexInputReader Reader();
+        public abstract IntIndexInputReader Reader(); // LUCENENET TODO: Rename GetReader()
         public abstract void Dispose();
-        public abstract IntIndexInputIndex Index();
+        public abstract IntIndexInputIndex Index(); // LUCENENET TODO: Rename GetIndex()
 
       
     }
     
     /// <summary>Reads int values</summary>
-    public abstract class IntIndexInputReader
+    public abstract class IntIndexInputReader // LUCENENET TODO: Rename AbstractReader and nest within IntIndexInput
     {
         /// <summary>Reads next single int</summary>
         public abstract int Next();
@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs.Sep
 
     /// <summary>
     /// Records a single skip-point in the <seealso cref="IntIndexInput.Reader"/>. </summary>
-    public abstract class IntIndexInputIndex
+    public abstract class IntIndexInputIndex // LUCENENET TODO: Rename AbstractIndex and nest within IntIndexInput
     {
         public abstract void Read(DataInput indexIn, bool absolute);
 

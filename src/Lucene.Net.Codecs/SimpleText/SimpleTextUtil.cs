@@ -31,8 +31,8 @@ namespace Lucene.Net.Codecs.SimpleText
 
     internal class SimpleTextUtil
     {
-        public const byte NEWLINE = 10;
-        public const byte ESCAPE = 92;
+        public static readonly byte NEWLINE = 10; // LUCENENET TODO: Should this be Environment.Newline?
+        public static readonly byte ESCAPE = 92;
         internal static readonly BytesRef CHECKSUM = new BytesRef("checksum ");
 
         public static void Write(DataOutput output, string s, BytesRef scratch)

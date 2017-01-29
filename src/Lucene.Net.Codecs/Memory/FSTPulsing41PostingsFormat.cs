@@ -30,17 +30,18 @@ namespace Lucene.Net.Codecs.Memory
     ///  FST does no delta encoding here!
     ///  @lucene.experimental 
     /// </summary>
-
     public class FSTPulsing41PostingsFormat : PostingsFormat
     {
         private readonly PostingsBaseFormat _wrappedPostingsBaseFormat;
         private readonly int _freqCutoff;
 
-        public FSTPulsing41PostingsFormat() : this(1)
+        public FSTPulsing41PostingsFormat() 
+            : this(1)
         {
         }
 
-        public FSTPulsing41PostingsFormat(int freqCutoff) : base("FSTPulsing41")
+        public FSTPulsing41PostingsFormat(int freqCutoff) 
+            : base("FSTPulsing41")
         {
             _wrappedPostingsBaseFormat = new Lucene41PostingsBaseFormat();
             _freqCutoff = freqCutoff;

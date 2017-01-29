@@ -756,16 +756,16 @@ namespace Lucene.Net.Codecs.Memory
         // exposes FSTEnum directly as a TermsEnum: avoids binary-search next()
         internal class FSTTermsEnum : TermsEnum
         {
-            internal readonly BytesRefFSTEnum<long?> input;
+            private readonly BytesRefFSTEnum<long?> input;
 
             // this is all for the complicated seek(ord)...
             // maybe we should add a FSTEnum that supports this operation?
-            internal readonly FST<long?> fst;
-            internal readonly FST.BytesReader bytesReader;
-            internal readonly FST.Arc<long?> firstArc = new FST.Arc<long?>();
-            internal readonly FST.Arc<long?> scratchArc = new FST.Arc<long?>();
-            internal readonly IntsRef scratchInts = new IntsRef();
-            internal readonly BytesRef scratchBytes = new BytesRef();
+            private readonly FST<long?> fst;
+            private readonly FST.BytesReader bytesReader;
+            private readonly FST.Arc<long?> firstArc = new FST.Arc<long?>();
+            private readonly FST.Arc<long?> scratchArc = new FST.Arc<long?>();
+            private readonly IntsRef scratchInts = new IntsRef();
+            private readonly BytesRef scratchBytes = new BytesRef();
 
             internal FSTTermsEnum(FST<long?> fst)
             {
@@ -854,5 +854,4 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
     }
-
 }

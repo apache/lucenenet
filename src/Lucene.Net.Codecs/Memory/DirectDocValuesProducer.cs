@@ -118,7 +118,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private static NumericEntry ReadNumericEntry(IndexInput meta)
+        private NumericEntry ReadNumericEntry(IndexInput meta)
         {
             var entry = new NumericEntry { offset = meta.ReadLong(), count = meta.ReadInt(), missingOffset = meta.ReadLong() };
             if (entry.missingOffset != -1)

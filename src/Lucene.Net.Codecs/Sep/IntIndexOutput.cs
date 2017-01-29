@@ -34,9 +34,6 @@ namespace Lucene.Net.Codecs.Sep
     /// </remarks>
     public abstract class IntIndexOutput : IDisposable
     {
-        protected internal IndexOutput OUTPUT;
-        protected internal int _upto;
-
         /// <summary>
         /// Write an int to the primary file.  The value must be
         /// >= 0.  
@@ -47,14 +44,14 @@ namespace Lucene.Net.Codecs.Sep
         /// If you are indexing the primary output file, call
         ///  this and interact with the returned IndexWriter. 
         /// </summary>
-        public abstract IntIndexOutputIndex Index();
+        public abstract IntIndexOutputIndex Index(); // LUCENENET TODO: Rename GetIndex()
 
-        public abstract void Dispose();
+        public abstract void Dispose(); // LUCENENET TODO: Implement disposable pattern
     }
 
 
     /// <summary>Records a single skip-point in the IndexOutput. </summary>
-    public abstract class IntIndexOutputIndex
+    public abstract class IntIndexOutputIndex // LUCENENET TODO: Rename AbstractIndex and nest within IntIndexOutput
     {
 
         /// <summary>Internally records the current location </summary>

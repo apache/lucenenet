@@ -42,9 +42,8 @@ namespace Lucene.Net.Codecs.Pulsing
     /// </summary>
     public sealed class PulsingPostingsWriter : PostingsWriterBase
     {
-
-        internal static readonly String CODEC = "PulsedPostingsWriter";
-        internal static readonly String SUMMARY_EXTENSION = "smy";         // recording field summary
+        internal static readonly string CODEC = "PulsedPostingsWriter";
+        internal static readonly string SUMMARY_EXTENSION = "smy";         // recording field summary
         
         // To add a new version, increment from the last one, and
         // change VERSION_CURRENT to point to your new version:
@@ -65,10 +64,10 @@ namespace Lucene.Net.Codecs.Pulsing
 
         private class PulsingTermState : BlockTermState
         {
-            internal byte[] BYTES;
-            internal BlockTermState WRAPPED_STATE;
+            internal byte[] BYTES; // LUCENENET TODO: Rename bytes
+            internal BlockTermState WRAPPED_STATE; // LUCENENET TODO: Rename wrappedState
 
-            public override String ToString()
+            public override string ToString()
             {
                 if (BYTES != null)
                 {
@@ -95,8 +94,8 @@ namespace Lucene.Net.Codecs.Pulsing
 
         private class FieldMetaData
         {
-            public int FieldNumber { get; private set; }
-            public int LongsSize { get; private set; }
+            internal int FieldNumber { get; private set; }
+            internal int LongsSize { get; private set; }
 
             public FieldMetaData(int number, int size)
             {
@@ -118,7 +117,6 @@ namespace Lucene.Net.Codecs.Pulsing
         /// </summary>
         public PulsingPostingsWriter(SegmentWriteState state, int maxPositions, PostingsWriterBase wrappedPostingsWriter)
         {
-
             _pending = new Position[maxPositions];
             for (var i = 0; i < maxPositions; i++)
             {
@@ -169,6 +167,8 @@ namespace Lucene.Net.Codecs.Pulsing
             _fields.Add(new FieldMetaData(fieldInfo.Number, _longsSize));
             return 0;
         }
+
+        private bool DEBUG;
 
         public override void StartDoc(int docId, int termDocFreq)
         {

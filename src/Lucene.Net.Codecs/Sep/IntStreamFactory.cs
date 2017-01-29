@@ -27,7 +27,6 @@ namespace Lucene.Net.Codecs.Sep
     /// </summary>
     public abstract class IntStreamFactory
     {
-
         /// <summary>
         /// Create an <seealso cref="IntIndexInput"/> on the provided fileName. 
         /// </summary>
@@ -38,5 +37,4 @@ namespace Lucene.Net.Codecs.Sep
         /// </summary>
         public abstract IntIndexOutput CreateOutput(Directory dir, string fileName, IOContext context);
     }
-
 }

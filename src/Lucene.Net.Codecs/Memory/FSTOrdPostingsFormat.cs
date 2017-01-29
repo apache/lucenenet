@@ -26,10 +26,10 @@ namespace Lucene.Net.Codecs.Memory
     /// <summary>
     /// FSTOrd term dict + Lucene41PBF
     /// </summary>
-
     public sealed class FSTOrdPostingsFormat : PostingsFormat
     {
-        public FSTOrdPostingsFormat() : base("FSTOrd41")
+        public FSTOrdPostingsFormat() 
+            : base("FSTOrd41")
         {
         }
 

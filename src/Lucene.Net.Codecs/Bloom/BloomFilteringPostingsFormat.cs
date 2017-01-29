@@ -61,13 +61,13 @@ namespace Lucene.Net.Codecs.Bloom
     /// </summary>
     public sealed class BloomFilteringPostingsFormat : PostingsFormat
     {
-        public static readonly String BLOOM_CODEC_NAME = "BloomFilter";
+        public static readonly string BLOOM_CODEC_NAME = "BloomFilter";
         public static readonly int VERSION_START = 1;
         public static readonly int VERSION_CHECKSUM = 2;
         public static readonly int VERSION_CURRENT = VERSION_CHECKSUM;
 
-        /** Extension of Bloom Filters file */
-        private const String BLOOM_EXTENSION = "blm";
+        /// <summary>Extension of Bloom Filters file</summary>
+        private const string BLOOM_EXTENSION = "blm";
 
         private readonly BloomFilterFactory _bloomFilterFactory = new DefaultBloomFilterFactory();
         private readonly PostingsFormat _delegatePostingsFormat;
@@ -105,7 +105,8 @@ namespace Lucene.Net.Codecs.Bloom
         /// Used only by core Lucene at read-time via Service Provider instantiation -
         /// do not use at Write-time in application code.
         /// </summary>
-        public BloomFilteringPostingsFormat() : base(BLOOM_CODEC_NAME)
+        public BloomFilteringPostingsFormat() 
+            : base(BLOOM_CODEC_NAME)
         {
         }
 
@@ -127,11 +128,10 @@ namespace Lucene.Net.Codecs.Bloom
         internal class BloomFilteredFieldsProducer : FieldsProducer
         {
             private readonly FieldsProducer _delegateFieldsProducer;
-            private readonly HashMap<String, FuzzySet> _bloomsByFieldName = new HashMap<String, FuzzySet>();
+            private readonly HashMap<string, FuzzySet> _bloomsByFieldName = new HashMap<string, FuzzySet>();
 
             public BloomFilteredFieldsProducer(SegmentReadState state)
             {
-
                 var bloomFileName = IndexFileNames.SegmentFileName(
                     state.SegmentInfo.Name, state.SegmentSuffix, BLOOM_EXTENSION);
                 ChecksumIndexInput bloomIn = null;
@@ -184,7 +184,12 @@ namespace Lucene.Net.Codecs.Bloom
                 return _delegateFieldsProducer.GetEnumerator();
             }
 
-            public override Terms Terms(String field)
+            public override void Dispose()
+            {
+                _delegateFieldsProducer.Dispose();
+            }
+
+            public override Terms Terms(string field)
             {
                 var filter = _bloomsByFieldName[field];
                 if (filter == null)
@@ -198,37 +203,14 @@ namespace Lucene.Net.Codecs.Bloom
             {
                 get
                 {
-                    {
-                        return _delegateFieldsProducer.Count;
-                    }
+                    return _delegateFieldsProducer.Count;
                 }
             }
 
-            [Obsolete("iterate fields and add their size() instead.")]
+            [Obsolete("iterate fields and add their Count instead.")]
             public override long UniqueTermCount
             {
                 get { return _delegateFieldsProducer.UniqueTermCount; }
-            }
-
-            public override void Dispose()
-            {
-                _delegateFieldsProducer.Dispose();
-            }
-
-            public override long RamBytesUsed()
-            {
-                var sizeInBytes = ((_delegateFieldsProducer != null) ? _delegateFieldsProducer.RamBytesUsed() : 0);
-                foreach (var entry in _bloomsByFieldName.EntrySet())
-                {
-                    sizeInBytes += entry.Key.Length*RamUsageEstimator.NUM_BYTES_CHAR;
-                    sizeInBytes += entry.Value.RamBytesUsed();
-                }
-                return sizeInBytes;
-            }
-
-            public override void CheckIntegrity()
-            {
-                _delegateFieldsProducer.CheckIntegrity();
             }
 
             internal class BloomFilteredTerms : Terms
@@ -316,13 +298,13 @@ namespace Lucene.Net.Codecs.Bloom
                 private Terms _delegateTerms;
                 internal TermsEnum DELEGATE_TERMS_ENUM;
                 private TermsEnum _reuseDelegate;
-                internal readonly FuzzySet FILTER;
+                internal readonly FuzzySet FILTER; // LUCENENET TODO: rename filter
 
                 public BloomFilteredTermsEnum(Terms delegateTerms, TermsEnum reuseDelegate, FuzzySet filter)
                 {
                     _delegateTerms = delegateTerms;
                     _reuseDelegate = reuseDelegate;
-                    FILTER = filter;
+                    this.FILTER = filter;
                 }
 
                 internal void Reset(Terms delegateTerms, TermsEnum reuseDelegate)
@@ -341,17 +323,17 @@ namespace Lucene.Net.Codecs.Bloom
                     return DELEGATE_TERMS_ENUM ?? (DELEGATE_TERMS_ENUM = _delegateTerms.GetIterator(_reuseDelegate));
                 }
 
-                public override BytesRef Next()
+                public override sealed BytesRef Next()
                 {
                     return Delegate().Next();
                 }
 
-                public override IComparer<BytesRef> Comparer
+                public override sealed IComparer<BytesRef> Comparer
                 {
                     get { return _delegateTerms.Comparer; }
                 }
 
-                public override bool SeekExact(BytesRef text)
+                public override sealed bool SeekExact(BytesRef text)
                 {
                     // The magical fail-fast speed up that is the entire point of all of
                     // this code - save a disk seek if there is a match on an in-memory
@@ -365,32 +347,32 @@ namespace Lucene.Net.Codecs.Bloom
                     return Delegate().SeekExact(text);
                 }
 
-                public override SeekStatus SeekCeil(BytesRef text)
+                public override sealed SeekStatus SeekCeil(BytesRef text)
                 {
                     return Delegate().SeekCeil(text);
                 }
 
-                public override void SeekExact(long ord)
+                public override sealed void SeekExact(long ord)
                 {
                     Delegate().SeekExact(ord);
                 }
 
-                public override BytesRef Term
+                public override sealed BytesRef Term
                 {
                     get { return Delegate().Term; }
                 }
 
-                public override long Ord
+                public override sealed long Ord
                 {
                     get { return Delegate().Ord; }
                 }
 
-                public override int DocFreq
+                public override sealed int DocFreq
                 {
                     get { return Delegate().DocFreq; }
                 }
 
-                public override long TotalTermFreq
+                public override sealed long TotalTermFreq
                 {
                     get { return Delegate().TotalTermFreq; }
                 }
@@ -407,15 +389,32 @@ namespace Lucene.Net.Codecs.Bloom
                 }
             }
 
+            public override long RamBytesUsed()
+            {
+                var sizeInBytes = ((_delegateFieldsProducer != null) ? _delegateFieldsProducer.RamBytesUsed() : 0);
+                foreach (var entry in _bloomsByFieldName.EntrySet())
+                {
+                    sizeInBytes += entry.Key.Length * RamUsageEstimator.NUM_BYTES_CHAR;
+                    sizeInBytes += entry.Value.RamBytesUsed();
+                }
+                return sizeInBytes;
+            }
+
+            public override void CheckIntegrity()
+            {
+                _delegateFieldsProducer.CheckIntegrity();
+            }
         }
 
         internal class BloomFilteredFieldsConsumer : FieldsConsumer
         {
+            // Outer instance
+            private readonly BloomFilteringPostingsFormat _bfpf;
+
             private readonly FieldsConsumer _delegateFieldsConsumer;
             private readonly Dictionary<FieldInfo, FuzzySet> _bloomFilters = new Dictionary<FieldInfo, FuzzySet>();
             private readonly SegmentWriteState _state;
-            private readonly BloomFilteringPostingsFormat _bfpf;
-
+            
             public BloomFilteredFieldsConsumer(FieldsConsumer fieldsConsumer,
                 SegmentWriteState state, BloomFilteringPostingsFormat bfpf)
             {
@@ -480,13 +479,11 @@ namespace Lucene.Net.Codecs.Bloom
             private void SaveAppropriatelySizedBloomFilter(DataOutput bloomOutput,
                 FuzzySet bloomFilter, FieldInfo fieldInfo)
             {
-
                 var rightSizedSet = _bfpf._bloomFilterFactory.Downsize(fieldInfo,
                     bloomFilter) ?? bloomFilter;
 
                 rightSizedSet.Serialize(bloomOutput);
             }
-
         }
 
         internal class WrappedTermsConsumer : TermsConsumer
@@ -524,8 +521,6 @@ namespace Lucene.Net.Codecs.Bloom
             {
                 get { return _delegateTermsConsumer.Comparer; }
             }
-
         }
-
     }
 }

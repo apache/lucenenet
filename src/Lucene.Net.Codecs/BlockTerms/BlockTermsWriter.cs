@@ -36,8 +36,7 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// </remarks>
     public class BlockTermsWriter : FieldsConsumer
     {
-
-        public const String CODEC_NAME = "BLOCK_TERMS_DICT";
+        internal const string CODEC_NAME = "BLOCK_TERMS_DICT";
 
         // Initial format
         public const int VERSION_START = 0;
@@ -46,14 +45,40 @@ namespace Lucene.Net.Codecs.BlockTerms
         public const int VERSION_CHECKSUM = 3;
         public const int VERSION_CURRENT = VERSION_CHECKSUM;
 
-        /** Extension of terms file */
-        public const String TERMS_EXTENSION = "tib";
+        /// <summary>Extension of terms file</summary>
+        public const string TERMS_EXTENSION = "tib";
 
-        private IndexOutput _output;
-        protected readonly PostingsWriterBase PostingsWriter;
-        protected readonly FieldInfos FieldInfos;
-        protected FieldInfo CurrentField;
+        protected IndexOutput _output;
+        private readonly PostingsWriterBase PostingsWriter;
+        private readonly FieldInfos FieldInfos;
+        private FieldInfo CurrentField;
         private readonly TermsIndexWriterBase _termsIndexWriter;
+        
+        protected class FieldMetaData
+        {
+            public FieldInfo FieldInfo { get; private set; }
+            public long NumTerms { get; private set; }
+            public long TermsStartPointer { get; private set; }
+            public long SumTotalTermFreq { get; private set; }
+            public long SumDocFreq { get; private set; }
+            public int DocCount { get; private set; }
+            public int LongsSize { get; private set; }
+
+            public FieldMetaData(FieldInfo fieldInfo, long numTerms, long termsStartPointer, long sumTotalTermFreq,
+                long sumDocFreq, int docCount, int longsSize)
+            {
+                Debug.Assert(numTerms > 0);
+
+                FieldInfo = fieldInfo;
+                TermsStartPointer = termsStartPointer;
+                NumTerms = numTerms;
+                SumTotalTermFreq = sumTotalTermFreq;
+                SumDocFreq = sumDocFreq;
+                DocCount = docCount;
+                LongsSize = longsSize;
+            }
+        }
+
         private readonly List<FieldMetaData> _fields = new List<FieldMetaData>();
 
         public BlockTermsWriter(TermsIndexWriterBase termsIndexWriter,
@@ -140,59 +165,32 @@ namespace Lucene.Net.Codecs.BlockTerms
             _output.WriteLong(dirStart);
         }
 
-        protected class FieldMetaData
-        {
-            public FieldInfo FieldInfo { get; private set; }
-            public long NumTerms { get; private set; }
-            public long TermsStartPointer { get; private set; }
-            public long SumTotalTermFreq { get; private set; }
-            public long SumDocFreq { get; private set; }
-            public int DocCount { get; private set; }
-            public int LongsSize { get; private set; }
-
-            public FieldMetaData(FieldInfo fieldInfo, long numTerms, long termsStartPointer, long sumTotalTermFreq,
-                long sumDocFreq, int docCount, int longsSize)
-            {
-                Debug.Assert(numTerms > 0);
-
-                FieldInfo = fieldInfo;
-                TermsStartPointer = termsStartPointer;
-                NumTerms = numTerms;
-                SumTotalTermFreq = sumTotalTermFreq;
-                SumDocFreq = sumDocFreq;
-                DocCount = docCount;
-                LongsSize = longsSize;
-            }
-        }
-
         private class TermEntry
         {
             public readonly BytesRef Term = new BytesRef();
             public BlockTermState State;
         }
 
-        public class TermsWriter : TermsConsumer
+        internal class TermsWriter : TermsConsumer
         {
-            private readonly RAMOutputStream _bytesWriter = new RAMOutputStream();
-            private readonly RAMOutputStream _bufferWriter = new RAMOutputStream();
-            private readonly BytesRef _lastPrevTerm = new BytesRef();
-            
+            // Outer instance
+            private readonly BlockTermsWriter _btw;
+
             private readonly FieldInfo _fieldInfo;
             private readonly PostingsWriterBase _postingsWriter;
             private readonly long _termsStartPointer;
-            private readonly TermsIndexWriterBase.FieldWriter _fieldIndexWriter;
-            private readonly BlockTermsWriter _btw;
-
-            private TermEntry[] _pendingTerms;
-            private int _pendingCount;
-
             private long _numTerms;
+            private readonly TermsIndexWriterBase.FieldWriter _fieldIndexWriter;
             private long _sumTotalTermFreq;
             private long _sumDocFreq;
             private int _docCount;
             private readonly int _longsSize;
 
-            public TermsWriter(
+            private TermEntry[] _pendingTerms;
+
+            private int _pendingCount;
+
+            internal TermsWriter(
                 TermsIndexWriterBase.FieldWriter fieldIndexWriter,
                 FieldInfo fieldInfo,
                 PostingsWriterBase postingsWriter, BlockTermsWriter btw)
@@ -222,9 +220,10 @@ namespace Lucene.Net.Codecs.BlockTerms
                 return _postingsWriter;
             }
 
+            private readonly BytesRef _lastPrevTerm = new BytesRef();
+
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
-
                 Debug.Assert(stats.DocFreq > 0);
 
                 var isIndexTerm = _fieldIndexWriter.CheckIndexTerm(text, stats);
@@ -291,7 +290,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
             }
 
-            private static int SharedPrefix(BytesRef term1, BytesRef term2)
+            private int SharedPrefix(BytesRef term1, BytesRef term2)
             {
                 Debug.Assert(term1.Offset == 0);
                 Debug.Assert(term2.Offset == 0);
@@ -312,6 +311,9 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 return pos1;
             }
+
+            private readonly RAMOutputStream _bytesWriter = new RAMOutputStream();
+            private readonly RAMOutputStream _bufferWriter = new RAMOutputStream();
 
             private void FlushBlock()
             {
@@ -385,6 +387,5 @@ namespace Lucene.Net.Codecs.BlockTerms
                 _pendingCount = 0;
             }
         }
-
     }
 }
