@@ -61,7 +61,6 @@
     <Compile Include="DiskDV\DiskDocValuesFormat.cs" />
     <Compile Include="DiskDV\DiskDocValuesProducer.cs" />
     <Compile Include="DiskDV\DiskNormsFormat.cs" />
-    <Compile Include="HashMapHelperClass.cs" />
     <Compile Include="IntBlock\FixedIntBlockIndexInput.cs" />
     <Compile Include="IntBlock\FixedIntBlockIndexOutput.cs" />
     <Compile Include="IntBlock\VariableIntBlockIndexInput.cs" />

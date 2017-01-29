@@ -174,7 +174,7 @@ namespace Lucene.Net.Codecs.Memory
             public override long RamBytesUsed()
             {
                 long sizeInBytes = 0;
-                foreach (KeyValuePair<string, DirectField> entry in fields.SetOfKeyValuePairs())
+                foreach (KeyValuePair<string, DirectField> entry in fields)
                 {
                     sizeInBytes += entry.Key.Length*RamUsageEstimator.NUM_BYTES_CHAR;
                     sizeInBytes += entry.Value.RamBytesUsed();
