@@ -278,7 +278,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             this.synonyms = synonyms;
             this.ignoreCase = ignoreCase;
-            this.fst = synonyms.fst;
+            this.fst = synonyms.Fst;
             if (fst == null)
             {
                 throw new System.ArgumentException("fst must be non-null");
@@ -288,7 +288,7 @@ namespace Lucene.Net.Analysis.Synonym
             // Must be 1+ so that when roll buffer is at full
             // lookahead we can distinguish this full buffer from
             // the empty buffer:
-            rollBufferSize = 1 + synonyms.maxHorizontalContext;
+            rollBufferSize = 1 + synonyms.MaxHorizontalContext;
 
             futureInputs = new PendingInput[rollBufferSize];
             futureOutputs = new PendingOutputs[rollBufferSize];
@@ -507,7 +507,7 @@ namespace Lucene.Net.Analysis.Synonym
             //System.out.println("  addOutput count=" + count + " keepOrig=" + keepOrig);
             for (int outputIDX = 0; outputIDX < count; outputIDX++)
             {
-                synonyms.words.Get(bytesReader.ReadVInt(), scratchBytes);
+                synonyms.Words.Get(bytesReader.ReadVInt(), scratchBytes);
                 //System.out.println("    outIDX=" + outputIDX + " bytes=" + scratchBytes.length);
                 UnicodeUtil.UTF8toUTF16(scratchBytes, scratchChars);
                 int lastStart = scratchChars.Offset;

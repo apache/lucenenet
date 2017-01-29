@@ -32,10 +32,20 @@ namespace Lucene.Net.Analysis.Synonym
     {
         /// <summary>
         /// @lucene.internal </summary>
-        public CharArrayMap<SlowSynonymMap> submap; // recursive: Map<String, SynonymMap>
+        public CharArrayMap<SlowSynonymMap> Submap // recursive: Map<String, SynonymMap>
+        {
+            get { return submap; }
+            set { submap = value; }
+        }
+        private CharArrayMap<SlowSynonymMap> submap;
         /// <summary>
         /// @lucene.internal </summary>
-        public Token[] synonyms;
+        public Token[] Synonyms
+        {
+            get { return synonyms; }
+            set { synonyms = value; }
+        }
+        private Token[] synonyms;
         internal int flags;
 
         internal const int INCLUDE_ORIG = 0x01;

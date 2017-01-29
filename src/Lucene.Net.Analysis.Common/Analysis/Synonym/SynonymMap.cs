@@ -39,13 +39,27 @@ namespace Lucene.Net.Analysis.Synonym
         public const char WORD_SEPARATOR = (char)0;
         /// <summary>
         /// map&lt;input word, list&lt;ord&gt;&gt; </summary>
-        public readonly FST<BytesRef> fst;
+        public FST<BytesRef> Fst
+        {
+            get { return fst; }
+        }
+        private readonly FST<BytesRef> fst;
+
         /// <summary>
         /// map&lt;ord, outputword&gt; </summary>
-        public readonly BytesRefHash words;
+        public BytesRefHash Words
+        {
+            get { return words; }
+        }
+        private readonly BytesRefHash words;
+
         /// <summary>
         /// maxHorizontalContext: maximum context we need on the tokenstream </summary>
-        public readonly int maxHorizontalContext;
+        public int MaxHorizontalContext
+        {
+            get { return maxHorizontalContext; }
+        }
+        private readonly int maxHorizontalContext;
 
         public SynonymMap(FST<BytesRef> fst, BytesRefHash words, int maxHorizontalContext)
         {

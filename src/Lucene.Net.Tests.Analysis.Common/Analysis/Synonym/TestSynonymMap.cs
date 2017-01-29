@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("a=>b");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
-            assertEquals(1, synMap.submap.size());
+            assertEquals(1, synMap.Submap.size());
             AssertTokIncludes(synMap, "a", "b");
 
             // (a)->[c]
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("a,b=>c");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
-            assertEquals(2, synMap.submap.size());
+            assertEquals(2, synMap.Submap.size());
             AssertTokIncludes(synMap, "a", "c");
             AssertTokIncludes(synMap, "b", "c");
 
@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("a=>b,c");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
-            assertEquals(1, synMap.submap.size());
+            assertEquals(1, synMap.Submap.size());
             AssertTokIncludes(synMap, "a", "b");
             AssertTokIncludes(synMap, "a", "c");
 
@@ -86,9 +86,9 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("a b=>a2");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
-            assertEquals(1, synMap.submap.size());
+            assertEquals(1, synMap.Submap.size());
             AssertTokIncludes(synMap, "a", "a1");
-            assertEquals(1, GetSubSynonymMap(synMap, "a").submap.size());
+            assertEquals(1, GetSubSynonymMap(synMap, "a").Submap.size());
             AssertTokIncludes(GetSubSynonymMap(synMap, "a"), "b", "a2");
 
             // (a)->(b)->[a2]
@@ -100,9 +100,9 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("a c=>a3");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
-            assertEquals(1, synMap.submap.size());
+            assertEquals(1, synMap.Submap.size());
             AssertTokIncludes(synMap, "a", "a1");
-            assertEquals(2, GetSubSynonymMap(synMap, "a").submap.size());
+            assertEquals(2, GetSubSynonymMap(synMap, "a").Submap.size());
             AssertTokIncludes(GetSubSynonymMap(synMap, "a"), "b", "a2");
             AssertTokIncludes(GetSubSynonymMap(synMap, "a"), "c", "a3");
 
@@ -117,12 +117,12 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("b c=>b2");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
-            assertEquals(2, synMap.submap.size());
+            assertEquals(2, synMap.Submap.size());
             AssertTokIncludes(synMap, "a", "a1");
-            assertEquals(1, GetSubSynonymMap(synMap, "a").submap.size());
+            assertEquals(1, GetSubSynonymMap(synMap, "a").Submap.size());
             AssertTokIncludes(GetSubSynonymMap(synMap, "a"), "b", "a2");
             AssertTokIncludes(synMap, "b", "b1");
-            assertEquals(1, GetSubSynonymMap(synMap, "b").submap.size());
+            assertEquals(1, GetSubSynonymMap(synMap, "b").Submap.size());
             AssertTokIncludes(GetSubSynonymMap(synMap, "b"), "c", "b2");
         }
 
@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("a,b");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", false, null);
-            assertEquals(2, synMap.submap.size());
+            assertEquals(2, synMap.Submap.size());
             AssertTokIncludes(synMap, "a", "a");
             AssertTokIncludes(synMap, "b", "a");
 
@@ -148,7 +148,7 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("a,b,c");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", false, null);
-            assertEquals(3, synMap.submap.size());
+            assertEquals(3, synMap.Submap.size());
             AssertTokIncludes(synMap, "a", "a");
             AssertTokIncludes(synMap, "b", "a");
             AssertTokIncludes(synMap, "c", "a");
@@ -159,9 +159,9 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("a,b1 b2");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", false, null);
-            assertEquals(2, synMap.submap.size());
+            assertEquals(2, synMap.Submap.size());
             AssertTokIncludes(synMap, "a", "a");
-            assertEquals(1, GetSubSynonymMap(synMap, "b1").submap.size());
+            assertEquals(1, GetSubSynonymMap(synMap, "b1").Submap.size());
             AssertTokIncludes(GetSubSynonymMap(synMap, "b1"), "b2", "a");
 
             // (a1)->(a2)->[a1][a2]
@@ -170,8 +170,8 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("a1 a2,b");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", false, null);
-            assertEquals(2, synMap.submap.size());
-            assertEquals(1, GetSubSynonymMap(synMap, "a1").submap.size());
+            assertEquals(2, synMap.Submap.size());
+            assertEquals(1, GetSubSynonymMap(synMap, "a1").Submap.size());
             AssertTokIncludes(GetSubSynonymMap(synMap, "a1"), "a2", "a1");
             AssertTokIncludes(GetSubSynonymMap(synMap, "a1"), "a2", "a2");
             AssertTokIncludes(synMap, "b", "a1");
@@ -189,7 +189,7 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("a,b");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
-            assertEquals(2, synMap.submap.size());
+            assertEquals(2, synMap.Submap.size());
             AssertTokIncludes(synMap, "a", "a");
             AssertTokIncludes(synMap, "a", "b");
             AssertTokIncludes(synMap, "b", "a");
@@ -202,7 +202,7 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("a,b,c");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
-            assertEquals(3, synMap.submap.size());
+            assertEquals(3, synMap.Submap.size());
             AssertTokIncludes(synMap, "a", "a");
             AssertTokIncludes(synMap, "a", "b");
             AssertTokIncludes(synMap, "a", "c");
@@ -221,11 +221,11 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("a,b1 b2");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
-            assertEquals(2, synMap.submap.size());
+            assertEquals(2, synMap.Submap.size());
             AssertTokIncludes(synMap, "a", "a");
             AssertTokIncludes(synMap, "a", "b1");
             AssertTokIncludes(synMap, "a", "b2");
-            assertEquals(1, GetSubSynonymMap(synMap, "b1").submap.size());
+            assertEquals(1, GetSubSynonymMap(synMap, "b1").Submap.size());
             AssertTokIncludes(GetSubSynonymMap(synMap, "b1"), "b2", "a");
             AssertTokIncludes(GetSubSynonymMap(synMap, "b1"), "b2", "b1");
             AssertTokIncludes(GetSubSynonymMap(synMap, "b1"), "b2", "b2");
@@ -238,8 +238,8 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("a1 a2,b");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
-            assertEquals(2, synMap.submap.size());
-            assertEquals(1, GetSubSynonymMap(synMap, "a1").submap.size());
+            assertEquals(2, synMap.Submap.size());
+            assertEquals(1, GetSubSynonymMap(synMap, "a1").Submap.size());
             AssertTokIncludes(GetSubSynonymMap(synMap, "a1"), "a2", "a1");
             AssertTokIncludes(GetSubSynonymMap(synMap, "a1"), "a2", "a2");
             AssertTokIncludes(GetSubSynonymMap(synMap, "a1"), "a2", "b");
@@ -265,9 +265,9 @@ namespace Lucene.Net.Analysis.Synonym
             rules.Add("abcd=>efgh");
             synMap = new SlowSynonymMap(true);
             SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, tf);
-            assertEquals(1, synMap.submap.size());
-            assertEquals(1, GetSubSynonymMap(synMap, "ab").submap.size());
-            assertEquals(1, GetSubSynonymMap(GetSubSynonymMap(synMap, "ab"), "bc").submap.size());
+            assertEquals(1, synMap.Submap.size());
+            assertEquals(1, GetSubSynonymMap(synMap, "ab").Submap.size());
+            assertEquals(1, GetSubSynonymMap(GetSubSynonymMap(synMap, "ab"), "bc").Submap.size());
             AssertTokIncludes(GetSubSynonymMap(GetSubSynonymMap(synMap, "ab"), "bc"), "cd", "ef");
             AssertTokIncludes(GetSubSynonymMap(GetSubSynonymMap(synMap, "ab"), "bc"), "cd", "fg");
             AssertTokIncludes(GetSubSynonymMap(GetSubSynonymMap(synMap, "ab"), "bc"), "cd", "gh");
@@ -283,7 +283,7 @@ namespace Lucene.Net.Analysis.Synonym
             ff.Inform(new ResourceLoaderAnonymousInnerClassHelper());
 
             SlowSynonymMap synMap = ff.SynonymMap;
-            assertEquals(2, synMap.submap.size());
+            assertEquals(2, synMap.Submap.size());
             AssertTokIncludes(synMap, "a", "a");
             AssertTokIncludes(synMap, "a", "b");
             AssertTokIncludes(synMap, "b", "a");
@@ -317,7 +317,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         private void AssertTokIncludes(SlowSynonymMap map, string src, string exp)
         {
-            Token[] tokens = map.submap.Get(src).synonyms;
+            Token[] tokens = map.Submap.Get(src).Synonyms;
             bool inc = false;
             foreach (Token token in tokens)
             {
@@ -331,7 +331,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         private SlowSynonymMap GetSubSynonymMap(SlowSynonymMap map, string src)
         {
-            return map.submap.Get(src);
+            return map.Submap.Get(src);
         }
     }
 }

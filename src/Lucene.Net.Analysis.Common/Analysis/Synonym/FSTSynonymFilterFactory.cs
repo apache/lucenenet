@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             // if the fst is null, it means there's actually no synonyms... just return the original stream
             // as there is nothing to do here.
-            return map.fst == null ? input : new SynonymFilter(input, map, ignoreCase);
+            return map.Fst == null ? input : new SynonymFilter(input, map, ignoreCase);
         }
 
         public void Inform(IResourceLoader loader)

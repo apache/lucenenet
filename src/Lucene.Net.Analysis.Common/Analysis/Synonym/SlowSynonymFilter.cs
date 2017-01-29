@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Synonym
                     return false;
                 }
                 var termAtt = firstTok.AddAttribute<ICharTermAttribute>();
-                SlowSynonymMap result = map.submap != null ? map.submap.Get(termAtt.Buffer, 0, termAtt.Length) : null;
+                SlowSynonymMap result = map.Submap != null ? map.Submap.Get(termAtt.Buffer, 0, termAtt.Length) : null;
                 if (result == null)
                 {
                     Copy(this, firstTok);
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Synonym
                 }
 
                 // reuse, or create new one each time?
-                List<AttributeSource> generated = new List<AttributeSource>(result.synonyms.Length + matched.Count + 1);
+                List<AttributeSource> generated = new List<AttributeSource>(result.Synonyms.Length + matched.Count + 1);
 
                 //
                 // there was a match... let's generate the new tokens, merging
@@ -134,9 +134,9 @@ namespace Lucene.Net.Analysis.Synonym
                 int repPos = 0; // curr position in replacement token stream
                 int pos = 0; // current position in merged token stream
 
-                for (int i = 0; i < result.synonyms.Length; i++)
+                for (int i = 0; i < result.Synonyms.Length; i++)
                 {
-                    Token repTok = result.synonyms[i];
+                    Token repTok = result.Synonyms[i];
                     AttributeSource newTok = firstTok.CloneAttributes();
                     ICharTermAttribute newTermAtt = newTok.AddAttribute<ICharTermAttribute>();
                     IOffsetAttribute newOffsetAtt = newTok.AddAttribute<IOffsetAttribute>();
@@ -261,7 +261,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             SlowSynonymMap result = null;
 
-            if (map.submap != null)
+            if (map.Submap != null)
             {
                 AttributeSource tok = NextTok();
                 if (tok != null)
@@ -273,7 +273,7 @@ namespace Lucene.Net.Analysis.Synonym
                     }
                     // check for positionIncrement!=1?  if>1, should not match, if==0, check multiple at this level?
                     var termAtt = tok.GetAttribute<ICharTermAttribute>();
-                    SlowSynonymMap subMap = map.submap.Get(termAtt.Buffer, 0, termAtt.Length);
+                    SlowSynonymMap subMap = map.Submap.Get(termAtt.Buffer, 0, termAtt.Length);
 
                     if (subMap != null)
                     {
@@ -294,7 +294,7 @@ namespace Lucene.Net.Analysis.Synonym
             }
 
             // if no longer sequence matched, so if this node has synonyms, it's the match.
-            if (result == null && map.synonyms != null)
+            if (result == null && map.Synonyms != null)
             {
                 result = map;
             }
