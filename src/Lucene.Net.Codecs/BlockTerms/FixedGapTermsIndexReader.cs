@@ -208,7 +208,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override sealed BytesRef Term { get { return term; } }
 
-            public override long? Seek(BytesRef target) // LUCENENET TODO: return was not nullable in Lucene
+            public override long Seek(BytesRef target)
             {
                 var lo = 0; // binary search
                 var hi = _fieldIndex.NumIndexTerms - 1;
@@ -257,7 +257,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 return _fieldIndex.TermsStart + _fieldIndex.TermsDictOffsets.Get(hi);
             }
 
-            public override long? Next // LUCENENET TODO: Make into Next() method // LUCENENET TODO: return was not nullable in Lucene
+            public override long Next // LUCENENET TODO: Make into Next() method
             {
                 get
                 {
@@ -278,7 +278,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override long Ord { get { return ord; } }
 
-            public override long? Seek(long ord) // LUCENENET TODO: return was not nullable in Lucene
+            public override long Seek(long ord)
             {
                 var idx = (int)(ord / _fgtir._totalIndexInterval);
 

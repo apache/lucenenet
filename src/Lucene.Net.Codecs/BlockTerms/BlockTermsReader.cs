@@ -468,7 +468,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                         // Ask terms index to find biggest indexed term (=
                         // first term in a block) that's <= our text:
-                        _input.Seek(_indexEnum.Seek(target).Value);
+                        _input.Seek(_indexEnum.Seek(target));
                         var result = NextBlock();
 
                         // Block must exist since, at least, the indexed term
@@ -797,7 +797,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // TODO: if ord is in same terms block and
                     // after current ord, we should avoid this seek just
                     // like we do in the seek(BytesRef) case
-                    _input.Seek(_indexEnum.Seek(ord).Value);
+                    _input.Seek(_indexEnum.Seek(ord));
                     bool result = NextBlock();
 
                     // Block must exist since ord < numTerms:

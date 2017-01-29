@@ -140,13 +140,13 @@ namespace Lucene.Net.Codecs.BlockTerms
                 get { return _current == null ? null : _current.Input; }
             }
 
-            public override long? Seek(BytesRef target)
+            public override long Seek(BytesRef target)
             {
                 _current = _fstEnum.SeekFloor(target);
-                return _current.Output;
+                return _current.Output.GetValueOrDefault(); // LUCENENET NOTE: Not sure what to return if OutPut is null, so we are returning 0
             }
 
-            public override long? Next
+            public override long Next
             {
                 get
                 {
@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     if (_current == null)
                         return -1;
 
-                    return _current.Output;
+                    return _current.Output.Value;
                 }
             }
 
@@ -163,7 +163,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 get { throw new NotImplementedException(); }
             }
 
-            public override long? Seek(long ord)
+            public override long Seek(long ord)
             {
                 throw new NotImplementedException();
             }

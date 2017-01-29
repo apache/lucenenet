@@ -59,10 +59,10 @@ namespace Lucene.Net.Codecs.BlockTerms
             /// to term; returns file pointer index (into the main
             /// terms index file) for that term 
             /// </summary>
-            public abstract long? Seek(BytesRef term); // LUCENENET TODO: make non-null
+            public abstract long Seek(BytesRef term); 
 
             /// <summary>Returns -1 at end</summary>
-            public abstract long? Next { get; } // LUCENENET TODO: Make Next(), make non-null
+            public abstract long Next { get; } // LUCENENET TODO: Make Next()
 
             public abstract BytesRef Term { get; }
 
@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             /// <remarks>Only implemented if {@link TermsIndexReaderBase.supportsOrd()} 
             /// returns true</remarks>
             /// <returns></returns>
-            public abstract long? Seek(long ord); // LUCENENET TODO: make non-null
+            public abstract long Seek(long ord);
 
             /// <summary></summary>
             /// <remarks>Only implemented if {@link TermsIndexReaderBase.supportsOrd()} 
