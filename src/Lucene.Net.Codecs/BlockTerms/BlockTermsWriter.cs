@@ -167,8 +167,13 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private class TermEntry
         {
-            public readonly BytesRef Term = new BytesRef();
-            public BlockTermState State;
+            public BytesRef Term { get; private set; }
+            public BlockTermState State { get; set; }
+
+            public TermEntry()
+            {
+                Term = new BytesRef();
+            }
         }
 
         internal class TermsWriter : TermsConsumer

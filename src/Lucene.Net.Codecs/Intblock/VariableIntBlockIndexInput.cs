@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Codecs.Sep;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.IntBlock
@@ -83,7 +84,12 @@ namespace Lucene.Net.Codecs.IntBlock
         {
             private readonly IndexInput input;
 
-            public readonly int[] pending;
+            [WritableArray]
+            public int[] Pending
+            {
+                get { return pending; }
+            }
+            private readonly int[] pending;
             private int upto;
 
             private bool seekPending;
