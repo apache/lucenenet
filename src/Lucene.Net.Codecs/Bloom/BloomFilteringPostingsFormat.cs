@@ -241,8 +241,8 @@ namespace Lucene.Net.Codecs.Bloom
 
                     // We have been handed something we cannot reuse (either null, wrong
                     // class or wrong filter) so allocate a new object
-                    if (bfte.FILTER != _filter) return new BloomFilteredTermsEnum(_delegateTerms, reuse, _filter);
-                    bfte.Reset(_delegateTerms, bfte.DELEGATE_TERMS_ENUM);
+                    if (bfte.filter != _filter) return new BloomFilteredTermsEnum(_delegateTerms, reuse, _filter);
+                    bfte.Reset(_delegateTerms, bfte.delegateTermsEnum);
                     return bfte;
                     
                 }
@@ -296,22 +296,22 @@ namespace Lucene.Net.Codecs.Bloom
             internal sealed class BloomFilteredTermsEnum : TermsEnum
             {
                 private Terms _delegateTerms;
-                internal TermsEnum DELEGATE_TERMS_ENUM;
+                internal TermsEnum delegateTermsEnum;
                 private TermsEnum _reuseDelegate;
-                internal readonly FuzzySet FILTER; // LUCENENET TODO: rename filter
+                internal readonly FuzzySet filter; 
 
                 public BloomFilteredTermsEnum(Terms delegateTerms, TermsEnum reuseDelegate, FuzzySet filter)
                 {
                     _delegateTerms = delegateTerms;
                     _reuseDelegate = reuseDelegate;
-                    this.FILTER = filter;
+                    this.filter = filter;
                 }
 
                 internal void Reset(Terms delegateTerms, TermsEnum reuseDelegate)
                 {
                     _delegateTerms = delegateTerms;
                     _reuseDelegate = reuseDelegate;
-                    DELEGATE_TERMS_ENUM = null;
+                    delegateTermsEnum = null;
                 }
 
                 private TermsEnum Delegate() // LUCENENET TODO: Make property
@@ -320,7 +320,7 @@ namespace Lucene.Net.Codecs.Bloom
                     // this can be a relativly heavy operation depending on the 
                     // delegate postings format and they underlying directory
                     // (clone IndexInput)
-                    return DELEGATE_TERMS_ENUM ?? (DELEGATE_TERMS_ENUM = _delegateTerms.GetIterator(_reuseDelegate));
+                    return delegateTermsEnum ?? (delegateTermsEnum = _delegateTerms.GetIterator(_reuseDelegate));
                 }
 
                 public override sealed BytesRef Next()
@@ -340,7 +340,7 @@ namespace Lucene.Net.Codecs.Bloom
                     // structure
                     // that may occasionally give a false positive but guaranteed no false
                     // negatives
-                    if (FILTER.Contains(text) == FuzzySet.ContainsResult.No)
+                    if (filter.Contains(text) == FuzzySet.ContainsResult.No)
                     {
                         return false;
                     }
