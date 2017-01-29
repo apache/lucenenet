@@ -69,8 +69,8 @@ namespace Lucene.Net.Codecs.Bloom
         /// </remarks>
         public enum ContainsResult
         {
-            Maybe, // LUCENENET TODO: Change to MAYBE, NO
-            No
+            MAYBE,
+            NO
         };
 
         private readonly HashFunction _hashFunction;
@@ -226,7 +226,7 @@ namespace Lucene.Net.Codecs.Bloom
 
             // Bloom sizes are always base 2 and so can be ANDed for a fast modulo
             var pos = positiveHash & _bloomSize;
-            return _filter.Get(pos) ? ContainsResult.Maybe : ContainsResult.No;
+            return _filter.Get(pos) ? ContainsResult.MAYBE : ContainsResult.NO;
         }
 
         /// <summary>

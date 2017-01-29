@@ -340,7 +340,7 @@ namespace Lucene.Net.Codecs.Bloom
                     // structure
                     // that may occasionally give a false positive but guaranteed no false
                     // negatives
-                    if (filter.Contains(text) == FuzzySet.ContainsResult.No)
+                    if (filter.Contains(text) == FuzzySet.ContainsResult.NO)
                     {
                         return false;
                     }
