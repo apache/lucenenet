@@ -42,11 +42,11 @@ namespace Lucene.Net.Codecs.Bloom
         {
         }
 
-        public static int Hash(byte[] data, uint seed, int offset, int len) // LUCENENET TODO: Change to int
+        public static int Hash(byte[] data, int seed, int offset, int len)
         {
             int m = 0x5bd1e995;
             int r = 24;
-            int h = (int)(seed ^ (long)len);
+            int h = (int)(((uint)seed) ^ (long)len); // LUCENENET NOTE: Need to convert seed to uint (since the constant was a uint)
             int len_4 = len >> 2;
             for (int i = 0; i < len_4; i++)
             {
@@ -97,12 +97,12 @@ namespace Lucene.Net.Codecs.Bloom
         /// <returns>32 bit hash of the given array</returns>
         public static int Hash32(byte[] data, int offset, int len)
         {
-            return Hash(data, 0x9747b28c, offset, len);
+            return Hash(data, unchecked((int)0x9747b28c), offset, len);
         }
 
         public override int Hash(BytesRef br)
         {
-            return Hash32((byte[])(Array)br.Bytes, br.Offset, br.Length); // LUCENENET TODO: remove unnecessary cast
+            return Hash32(br.Bytes, br.Offset, br.Length);
         }
     }
 }
