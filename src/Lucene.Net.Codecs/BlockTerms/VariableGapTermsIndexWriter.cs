@@ -38,7 +38,7 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// </summary>
     public class VariableGapTermsIndexWriter : TermsIndexWriterBase
     {
-        protected IndexOutput Output; // out
+        protected IndexOutput m_output;
 
         /** Extension of terms index file */
         internal const string TERMS_INDEX_EXTENSION = "tiv";
@@ -177,19 +177,19 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             string indexFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
                 TERMS_INDEX_EXTENSION);
-            Output = state.Directory.CreateOutput(indexFileName, state.Context);
+            m_output = state.Directory.CreateOutput(indexFileName, state.Context);
             bool success = false;
 
             try
             {
                 _policy = policy;
-                WriteHeader(Output);
+                WriteHeader(m_output);
                 success = true;
             }
             finally
             {
                 if (!success)
-                    IOUtils.CloseWhileHandlingException(Output);
+                    IOUtils.CloseWhileHandlingException(m_output);
             }
         }
 
@@ -251,7 +251,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 FieldInfo = fieldInfo;
                 PositiveIntOutputs fstOutputs = PositiveIntOutputs.Singleton;
                 _fstBuilder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, fstOutputs);
-                IndexStart = this.outerInstance.Output.FilePointer;
+                IndexStart = this.outerInstance.m_output.FilePointer;
 
                 // Always put empty string in
                 _fstBuilder.Add(new IntsRef(), termsFilePointer);
@@ -299,17 +299,17 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 Fst = _fstBuilder.Finish();
                 if (Fst != null)
-                    Fst.Save(outerInstance.Output);
+                    Fst.Save(outerInstance.m_output);
             }
         }
 
         public override void Dispose()
         {
-            if (Output == null) return;
+            if (m_output == null) return;
 
             try
             {
-                long dirStart = Output.FilePointer;
+                long dirStart = m_output.FilePointer;
                 int fieldCount = _fields.Count;
 
                 int nonNullFieldCount = 0;
@@ -322,29 +322,29 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                 }
 
-                Output.WriteVInt(nonNullFieldCount);
+                m_output.WriteVInt(nonNullFieldCount);
                 for (int i = 0; i < fieldCount; i++)
                 {
                     FstFieldWriter field = _fields[i];
                     if (field.Fst != null)
                     {
-                        Output.WriteVInt(field.FieldInfo.Number);
-                        Output.WriteVLong(field.IndexStart);
+                        m_output.WriteVInt(field.FieldInfo.Number);
+                        m_output.WriteVLong(field.IndexStart);
                     }
                 }
                 WriteTrailer(dirStart);
-                CodecUtil.WriteFooter(Output);
+                CodecUtil.WriteFooter(m_output);
             }
             finally
             {
-                Output.Dispose();
-                Output = null;
+                m_output.Dispose();
+                m_output = null;
             }
         }
 
         private void WriteTrailer(long dirStart)
         {
-            Output.WriteLong(dirStart);
+            m_output.WriteLong(dirStart);
         }
     }
 }

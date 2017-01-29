@@ -38,18 +38,18 @@ namespace Lucene.Net.Codecs.IntBlock
     /// </summary>
     public abstract class VariableIntBlockIndexInput : IntIndexInput
     {
-        private readonly IndexInput input; // in
-        protected readonly int maxBlockSize;
+        private readonly IndexInput input;
+        protected readonly int m_maxBlockSize;
 
         protected internal VariableIntBlockIndexInput(IndexInput input)
         {
             this.input = input;
-            maxBlockSize = input.ReadInt();
+            m_maxBlockSize = input.ReadInt();
         }
 
         public override AbstractReader GetReader()
         {
-            var buffer = new int[maxBlockSize];
+            var buffer = new int[m_maxBlockSize];
             var clone = (IndexInput)input.Clone();
             // TODO: can this be simplified?
             return new Reader(clone, buffer, GetBlockReader(clone, buffer));
@@ -196,7 +196,7 @@ namespace Lucene.Net.Codecs.IntBlock
 
             public override string ToString()
             {
-                return "VarIntBlock.Index fp=" + fp + " upto=" + upto + " maxBlock=" + outerInstance.maxBlockSize;
+                return "VarIntBlock.Index fp=" + fp + " upto=" + upto + " maxBlock=" + outerInstance.m_maxBlockSize;
             }
 
             public override void Seek(AbstractReader other)

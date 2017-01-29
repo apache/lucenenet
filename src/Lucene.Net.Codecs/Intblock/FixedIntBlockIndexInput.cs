@@ -37,17 +37,17 @@ namespace Lucene.Net.Codecs.IntBlock
     public abstract class FixedIntBlockIndexInput : IntIndexInput
     {
         private readonly IndexInput input;
-        protected readonly int blockSize;
+        protected readonly int m_blockSize;
 
         public FixedIntBlockIndexInput(IndexInput @in)
         {
             input = @in;
-            blockSize = @in.ReadVInt();
+            m_blockSize = @in.ReadVInt();
         }
 
         public override AbstractReader GetReader()
         {
-            var buffer = new int[blockSize];
+            var buffer = new int[m_blockSize];
             var clone = (IndexInput)input.Clone();
             // TODO: can this be simplified?
             return new Reader(clone, buffer, GetBlockReader(clone, buffer));
@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs.IntBlock
                         fp += indexIn.ReadVLong();
                     }
                 }
-                Debug.Assert(upto < outerInstance.blockSize);
+                Debug.Assert(upto < outerInstance.m_blockSize);
             }
 
             public override void Seek(AbstractReader other)

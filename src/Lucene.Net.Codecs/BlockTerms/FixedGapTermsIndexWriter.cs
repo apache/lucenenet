@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// </summary>
     public class FixedGapTermsIndexWriter : TermsIndexWriterBase
     {
-        protected IndexOutput Output; // out
+        protected IndexOutput m_output;
 
         /// <summary>Extension of terms index file</summary>
         internal const string TERMS_INDEX_EXTENSION = "tii";
@@ -58,20 +58,20 @@ namespace Lucene.Net.Codecs.BlockTerms
             string indexFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
                 TERMS_INDEX_EXTENSION);
             _termIndexInterval = state.TermIndexInterval;
-            Output = state.Directory.CreateOutput(indexFileName, state.Context);
+            m_output = state.Directory.CreateOutput(indexFileName, state.Context);
             bool success = false;
             try
             {
                 _fieldInfos = state.FieldInfos;
-                WriteHeader(Output);
-                Output.WriteInt(_termIndexInterval);
+                WriteHeader(m_output);
+                m_output.WriteInt(_termIndexInterval);
                 success = true;
             }
             finally
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(Output);
+                    IOUtils.CloseWhileHandlingException(m_output);
                 }
             }
         }
@@ -137,7 +137,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 this.outerInstance = outerInstance;
                 this.fieldInfo = fieldInfo;
-                indexStart = outerInstance.Output.FilePointer;
+                indexStart = outerInstance.m_output.FilePointer;
                 termsStart = lastTermsPointer = termsFilePointer;
                 termLengths = new short[0];
                 termsPointerDeltas = new int[0];
@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 // write only the min prefix that shows the diff
                 // against prior term
-                outerInstance.Output.WriteBytes(text.Bytes, text.Offset, indexedTermLength);
+                outerInstance.m_output.WriteBytes(text.Bytes, text.Offset, indexedTermLength);
 
                 if (termLengths.Length == numIndexTerms)
                 {
@@ -191,9 +191,9 @@ namespace Lucene.Net.Codecs.BlockTerms
             public override void Finish(long termsFilePointer)
             {
                 // write primary terms dict offsets
-                packedIndexStart = outerInstance.Output.FilePointer;
+                packedIndexStart = outerInstance.m_output.FilePointer;
 
-                PackedInts.Writer w = PackedInts.GetWriter(outerInstance.Output, numIndexTerms,
+                PackedInts.Writer w = PackedInts.GetWriter(outerInstance.m_output, numIndexTerms,
                     PackedInts.BitsRequired(termsFilePointer),
                     PackedInts.DEFAULT);
 
@@ -206,10 +206,10 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
                 w.Finish();
 
-                packedOffsetsStart = outerInstance.Output.FilePointer;
+                packedOffsetsStart = outerInstance.m_output.FilePointer;
 
                 // write offsets into the byte[] terms
-                w = PackedInts.GetWriter(outerInstance.Output, 1 + numIndexTerms, PackedInts.BitsRequired(totTermLength),
+                w = PackedInts.GetWriter(outerInstance.m_output, 1 + numIndexTerms, PackedInts.BitsRequired(totTermLength),
                     PackedInts.DEFAULT);
                 upto = 0;
                 for (int i = 0; i < numIndexTerms; i++)
@@ -229,12 +229,12 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override void Dispose()
         {
-            if (Output != null)
+            if (m_output != null)
             {
                 bool success = false;
                 try
                 {
-                    long dirStart = Output.FilePointer;
+                    long dirStart = m_output.FilePointer;
                     int fieldCount = _fields.Count;
 
                     int nonNullFieldCount = 0;
@@ -247,42 +247,42 @@ namespace Lucene.Net.Codecs.BlockTerms
                         }
                     }
 
-                    Output.WriteVInt(nonNullFieldCount);
+                    m_output.WriteVInt(nonNullFieldCount);
                     for (int i = 0; i < fieldCount; i++)
                     {
                         SimpleFieldWriter field = _fields[i];
                         if (field.numIndexTerms > 0)
                         {
-                            Output.WriteVInt(field.fieldInfo.Number);
-                            Output.WriteVInt(field.numIndexTerms);
-                            Output.WriteVLong(field.termsStart);
-                            Output.WriteVLong(field.indexStart);
-                            Output.WriteVLong(field.packedIndexStart);
-                            Output.WriteVLong(field.packedOffsetsStart);
+                            m_output.WriteVInt(field.fieldInfo.Number);
+                            m_output.WriteVInt(field.numIndexTerms);
+                            m_output.WriteVLong(field.termsStart);
+                            m_output.WriteVLong(field.indexStart);
+                            m_output.WriteVLong(field.packedIndexStart);
+                            m_output.WriteVLong(field.packedOffsetsStart);
                         }
                     }
                     WriteTrailer(dirStart);
-                    CodecUtil.WriteFooter(Output);
+                    CodecUtil.WriteFooter(m_output);
                     success = true;
                 }
                 finally
                 {
                     if (success)
                     {
-                        IOUtils.Close(Output);
+                        IOUtils.Close(m_output);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(Output);
+                        IOUtils.CloseWhileHandlingException(m_output);
                     }
-                    Output = null;
+                    m_output = null;
                 }
             }
         }
 
         private void WriteTrailer(long dirStart)
         {
-            Output.WriteLong(dirStart);
+            m_output.WriteLong(dirStart);
         }
     }
 }

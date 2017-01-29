@@ -142,9 +142,9 @@ namespace Lucene.Net.Codecs.IntBlock
             }
             protected override void FlushBlock()
             {
-                for (int i = 0; i < buffer.Length; i++)
+                for (int i = 0; i < m_buffer.Length; i++)
                 {
-                    output.WriteVInt(buffer[i]);
+                    m_output.WriteVInt(m_buffer[i]);
                 }
             }
         }

@@ -41,7 +41,7 @@ namespace Lucene.Net.Codecs.IntBlock
     /// </summary>
     public abstract class VariableIntBlockIndexOutput : IntIndexOutput
     {
-        protected readonly IndexOutput output; // out
+        protected readonly IndexOutput m_output;
 
         private int upto;
         private bool hitExcDuringWrite;
@@ -57,8 +57,8 @@ namespace Lucene.Net.Codecs.IntBlock
         /// </summary>
         protected VariableIntBlockIndexOutput(IndexOutput output, int maxBlockSize)
         {
-            this.output = output;
-            this.output.WriteInt(maxBlockSize);
+            this.m_output = output;
+            this.m_output.WriteInt(maxBlockSize);
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.IntBlock
 
             public override void Mark()
             {
-                fp = outerInstance.output.FilePointer;
+                fp = outerInstance.m_output.FilePointer;
                 upto = outerInstance.upto;
             }
 
@@ -155,7 +155,7 @@ namespace Lucene.Net.Codecs.IntBlock
             }
             finally
             {
-                output.Dispose();
+                m_output.Dispose();
             }
         }
     }

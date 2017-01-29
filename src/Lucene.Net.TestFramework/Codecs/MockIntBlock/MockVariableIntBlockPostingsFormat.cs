@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs.IntBlock
                 {
                     for (int i = 0; i < flushAt; i++)
                     {
-                        output.WriteVInt(buffer[i]);
+                        m_output.WriteVInt(buffer[i]);
                     }
                     buffer[0] = buffer[flushAt];
                     pendingCount = 1;

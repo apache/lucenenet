@@ -39,17 +39,17 @@ namespace Lucene.Net.Codecs.IntBlock
     /// </summary>
     public abstract class FixedIntBlockIndexOutput : IntIndexOutput
     {
-        protected readonly IndexOutput output; // out
+        protected readonly IndexOutput m_output;
         private readonly int blockSize;
-        protected readonly int[] buffer;
+        protected readonly int[] m_buffer;
         private int upto;
 
         protected FixedIntBlockIndexOutput(IndexOutput output, int fixedBlockSize)
         {
             blockSize = fixedBlockSize;
-            this.output = output;
+            this.m_output = output;
             output.WriteVInt(blockSize);
-            buffer = new int[blockSize];
+            m_buffer = new int[blockSize];
         }
 
         protected abstract void FlushBlock();
@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.IntBlock
 
             public override void Mark()
             {
-                fp = outerInstance.output.FilePointer;
+                fp = outerInstance.m_output.FilePointer;
                 upto = outerInstance.upto;
             }
 
@@ -123,7 +123,7 @@ namespace Lucene.Net.Codecs.IntBlock
 
         public override void Write(int v)
         {
-            buffer[upto++] = v;
+            m_buffer[upto++] = v;
             if (upto == blockSize)
             {
                 FlushBlock();
@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.IntBlock
             }
             finally
             {
-                output.Dispose();
+                m_output.Dispose();
             }
         }
     }
