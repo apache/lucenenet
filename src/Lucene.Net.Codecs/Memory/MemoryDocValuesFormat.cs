@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.Memory
         /// <summary>Maximum length for each binary doc values field. </summary>
         public static readonly int MAX_BINARY_FIELD_LENGTH = (1 << 15) - 2;
 
-        internal readonly float ACCEPTABLE_OVERHEAD_RATIO; // LUCENENET TODO: Rename acceptableOverheadRatio
+        internal readonly float acceptableOverheadRatio;
 
         /// <summary>
         /// Calls {@link #MemoryDocValuesFormat(float) 
@@ -49,13 +49,13 @@ namespace Lucene.Net.Codecs.Memory
         public MemoryDocValuesFormat(float acceptableOverheadRatio) 
             : base("Memory")
         {
-            ACCEPTABLE_OVERHEAD_RATIO = acceptableOverheadRatio;
+            this.acceptableOverheadRatio = acceptableOverheadRatio;
         }
 
         public override DocValuesConsumer FieldsConsumer(SegmentWriteState state)
         {
             return new MemoryDocValuesConsumer(state, DATA_CODEC, DATA_EXTENSION, METADATA_CODEC, METADATA_EXTENSION,
-                ACCEPTABLE_OVERHEAD_RATIO);
+                acceptableOverheadRatio);
         }
 
         public override DocValuesProducer FieldsProducer(SegmentReadState state)

@@ -56,33 +56,33 @@ namespace Lucene.Net.Codecs.SimpleText
             public long NumValues { get; set; }
         }
 
-        private readonly int MAX_DOC; // LUCENENET TODO: Rename camelCase
-        private readonly IndexInput DATA; // LUCENENET TODO: Rename camelCase
-        private readonly BytesRef SCRATCH = new BytesRef(); // LUCENENET TODO: Rename camelCase
-        private readonly IDictionary<string, OneField> FIELDS = new Dictionary<string, OneField>(); // LUCENENET TODO: Rename camelCase
+        private readonly int maxDoc;
+        private readonly IndexInput data;
+        private readonly BytesRef scratch = new BytesRef();
+        private readonly IDictionary<string, OneField> fields = new Dictionary<string, OneField>();
 
         // LUCENENET NOTE: Changed from public to internal because the class had to be made public, but is not for public use.
         internal SimpleTextDocValuesReader(SegmentReadState state, string ext)
         {
-            DATA = state.Directory.OpenInput(
+            data = state.Directory.OpenInput(
                     IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, ext), state.Context);
-            MAX_DOC = state.SegmentInfo.DocCount;
+            maxDoc = state.SegmentInfo.DocCount;
             
             while (true)
             {
                 ReadLine();
-                if (SCRATCH.Equals(SimpleTextDocValuesWriter.END))
+                if (scratch.Equals(SimpleTextDocValuesWriter.END))
                 {
                     break;
                 }
-                Debug.Assert(StartsWith(SimpleTextDocValuesWriter.FIELD), SCRATCH.Utf8ToString());
+                Debug.Assert(StartsWith(SimpleTextDocValuesWriter.FIELD), scratch.Utf8ToString());
                 var fieldName = StripPrefix(SimpleTextDocValuesWriter.FIELD);
                 var field = new OneField();
                 
-                FIELDS[fieldName] = field;
+                fields[fieldName] = field;
 
                 ReadLine();
-                Debug.Assert(StartsWith(SimpleTextDocValuesWriter.TYPE), SCRATCH.Utf8ToString());
+                Debug.Assert(StartsWith(SimpleTextDocValuesWriter.TYPE), scratch.Utf8ToString());
 
                 var dvType =
                     (DocValuesType)
@@ -92,13 +92,13 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.MINVALUE),
-                        "got " + SCRATCH.Utf8ToString() + " field=" + fieldName + " ext=" + ext);
+                        "got " + scratch.Utf8ToString() + " field=" + fieldName + " ext=" + ext);
                     field.MinValue = Convert.ToInt64(StripPrefix(SimpleTextDocValuesWriter.MINVALUE));
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.PATTERN));
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
-                    field.DataStartFilePointer = DATA.FilePointer;
-                    DATA.Seek(DATA.FilePointer + (1 + field.Pattern.Length + 2)*MAX_DOC);
+                    field.DataStartFilePointer = data.FilePointer;
+                    data.Seek(data.FilePointer + (1 + field.Pattern.Length + 2)*maxDoc);
                 }
                 else if (dvType == DocValuesType.BINARY)
                 {
@@ -108,8 +108,8 @@ namespace Lucene.Net.Codecs.SimpleText
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.PATTERN));
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
-                    field.DataStartFilePointer = DATA.FilePointer;
-                    DATA.Seek(DATA.FilePointer + (9 + field.Pattern.Length + field.MaxLength + 2)*MAX_DOC);
+                    field.DataStartFilePointer = data.FilePointer;
+                    data.Seek(data.FilePointer + (9 + field.Pattern.Length + field.MaxLength + 2)*maxDoc);
                 }
                 else if (dvType == DocValuesType.SORTED || dvType == DocValuesType.SORTED_SET)
                 {
@@ -125,9 +125,9 @@ namespace Lucene.Net.Codecs.SimpleText
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.ORDPATTERN));
                     field.OrdPattern = StripPrefix(SimpleTextDocValuesWriter.ORDPATTERN);
-                    field.DataStartFilePointer = DATA.FilePointer;
-                    DATA.Seek(DATA.FilePointer + (9 + field.Pattern.Length + field.MaxLength)*field.NumValues +
-                              (1 + field.OrdPattern.Length)*MAX_DOC);
+                    field.DataStartFilePointer = data.FilePointer;
+                    data.Seek(data.FilePointer + (9 + field.Pattern.Length + field.MaxLength)*field.NumValues +
+                              (1 + field.OrdPattern.Length)*maxDoc);
                 }
                 else
                 {
@@ -137,18 +137,18 @@ namespace Lucene.Net.Codecs.SimpleText
 
             // We should only be called from above if at least one
             // field has DVs:
-            Debug.Assert(FIELDS.Count > 0);
+            Debug.Assert(fields.Count > 0);
         }
 
         public override NumericDocValues GetNumeric(FieldInfo fieldInfo)
         {
-            var field = FIELDS[fieldInfo.Name];
+            var field = fields[fieldInfo.Name];
             Debug.Assert(field != null);
 
             // SegmentCoreReaders already verifies this field is valid:
-            Debug.Assert(field != null, "field=" + fieldInfo.Name + " fields=" + FIELDS);
+            Debug.Assert(field != null, "field=" + fieldInfo.Name + " fields=" + fields);
 
-            var @in = (IndexInput)DATA.Clone();
+            var @in = (IndexInput)data.Clone();
             var scratch = new BytesRef();
             
             return new NumericDocValuesAnonymousInnerClassHelper(this, field, @in, scratch);
@@ -173,8 +173,8 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override long Get(int docId)
             {
-                if (docId < 0 || docId >= _outerInstance.MAX_DOC)
-                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) +
+                if (docId < 0 || docId >= _outerInstance.maxDoc)
+                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.maxDoc - 1) +
                                                        "; got " + docId);
 
                 _input.Seek(_field.DataStartFilePointer + (1 + _field.Pattern.Length + 2) * docId);
@@ -199,8 +199,8 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private IBits GetNumericDocsWithField(FieldInfo fieldInfo)
         {
-            var field = FIELDS[fieldInfo.Name];
-            var input = (IndexInput)DATA.Clone();
+            var field = fields[fieldInfo.Name];
+            var input = (IndexInput)data.Clone();
             var scratch = new BytesRef();
             return new BitsAnonymousInnerClassHelper(this, field, input, scratch);
         }
@@ -232,15 +232,15 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public int Length
             {
-                get { return _outerInstance.MAX_DOC; }
+                get { return _outerInstance.maxDoc; }
             }
         }
 
         public override BinaryDocValues GetBinary(FieldInfo fieldInfo)
         {
-            var field = FIELDS[fieldInfo.Name];
+            var field = fields[fieldInfo.Name];
             Debug.Assert(field != null);
-            var input = (IndexInput)DATA.Clone();
+            var input = (IndexInput)data.Clone();
             var scratch = new BytesRef();
 
             return new BinaryDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
@@ -265,8 +265,8 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override void Get(int docId, BytesRef result)
             {
-                if (docId < 0 || docId >= _outerInstance.MAX_DOC)
-                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) +
+                if (docId < 0 || docId >= _outerInstance.maxDoc)
+                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.maxDoc - 1) +
                                                        "; got " + docId);
 
                 _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2) * docId);
@@ -293,8 +293,8 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private IBits GetBinaryDocsWithField(FieldInfo fieldInfo)
         {
-            var field = FIELDS[fieldInfo.Name];
-            var input = (IndexInput)DATA.Clone();
+            var field = fields[fieldInfo.Name];
+            var input = (IndexInput)data.Clone();
             var scratch = new BytesRef();
 
             return new BitsAnonymousInnerClassHelper2(this, field, input, scratch);
@@ -343,17 +343,17 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public int Length
             {
-                get { return _outerInstance.MAX_DOC; }
+                get { return _outerInstance.maxDoc; }
             }
         }
 
         public override SortedDocValues GetSorted(FieldInfo fieldInfo)
         {
-            var field = FIELDS[fieldInfo.Name];
+            var field = fields[fieldInfo.Name];
 
             // SegmentCoreReaders already verifies this field is valid:
             Debug.Assert(field != null);
-            var input = (IndexInput)DATA.Clone();
+            var input = (IndexInput)data.Clone();
             var scratch = new BytesRef();
 
             return new SortedDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
@@ -382,9 +382,9 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override int GetOrd(int docId)
             {
-                if (docId < 0 || docId >= _outerInstance.MAX_DOC)
+                if (docId < 0 || docId >= _outerInstance.maxDoc)
                 {
-                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) + "; got " +
+                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.maxDoc - 1) + "; got " +
                                                        docId);
                 }
 
@@ -442,13 +442,13 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override SortedSetDocValues GetSortedSet(FieldInfo fieldInfo)
         {
-            var field = FIELDS[fieldInfo.Name];
+            var field = fields[fieldInfo.Name];
 
             // SegmentCoreReaders already verifies this field is
             // valid:
             Debug.Assert(field != null);
 
-            var input = (IndexInput) DATA.Clone();
+            var input = (IndexInput) data.Clone();
             var scratch = new BytesRef();
             
             return new SortedSetDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
@@ -485,8 +485,8 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override void SetDocument(int docID)
             {
-                if (docID < 0 || docID >= _outerInstance.MAX_DOC)
-                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) + "; got " +
+                if (docID < 0 || docID >= _outerInstance.maxDoc)
+                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.maxDoc - 1) + "; got " +
                                                         docID);
 
 
@@ -539,9 +539,9 @@ namespace Lucene.Net.Codecs.SimpleText
             switch (field.DocValuesType)
             {
                 case DocValuesType.SORTED_SET:
-                    return DocValues.DocsWithValue(GetSortedSet(field), MAX_DOC);
+                    return DocValues.DocsWithValue(GetSortedSet(field), maxDoc);
                 case DocValuesType.SORTED:
-                    return DocValues.DocsWithValue(GetSorted(field), MAX_DOC);
+                    return DocValues.DocsWithValue(GetSorted(field), maxDoc);
                 case DocValuesType.BINARY:
                     return GetBinaryDocsWithField(field);
                 case DocValuesType.NUMERIC:
@@ -555,25 +555,25 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             if (!disposing) return;
 
-            DATA.Dispose();
+            data.Dispose();
         }
 
         /// <summary> Used only in ctor: </summary>
         private void ReadLine()
         {
-            SimpleTextUtil.ReadLine(DATA, SCRATCH);
+            SimpleTextUtil.ReadLine(data, scratch);
         }
 
         /// <summary> Used only in ctor: </summary>
         private bool StartsWith(BytesRef prefix)
         {
-            return StringHelper.StartsWith(SCRATCH, prefix);
+            return StringHelper.StartsWith(scratch, prefix);
         }
 
         /// <summary> Used only in ctor: </summary>
         private string StripPrefix(BytesRef prefix)
         {
-            return Encoding.UTF8.GetString(SCRATCH.Bytes, SCRATCH.Offset + prefix.Length, SCRATCH.Length - prefix.Length);
+            return Encoding.UTF8.GetString(scratch.Bytes, scratch.Offset + prefix.Length, scratch.Length - prefix.Length);
         }
 
         public override long RamBytesUsed()
@@ -584,7 +584,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void CheckIntegrity()
         {
             var iScratch = new BytesRef();
-            var clone = (IndexInput) DATA.Clone();
+            var clone = (IndexInput) data.Clone();
             clone.Seek(0);
             ChecksumIndexInput input = new BufferedChecksumIndexInput(clone);
             while (true)

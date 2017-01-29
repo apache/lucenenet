@@ -50,25 +50,25 @@ namespace Lucene.Net.Codecs.Memory
         /// </summary>
         internal class TermData
         {
-            internal long[] LONGS; // LUCENENET TODO: Rename longs
-            internal byte[] BYTES; // LUCENENET TODO: Rename bytes
-            internal int DOC_FREQ; // LUCENENET TODO: Rename docFreq
-            internal long TOTAL_TERM_FREQ; // LUCENENET TODO: Rename totalTermFreq
+            internal long[] longs;
+            internal byte[] bytes;
+            internal int docFreq;
+            internal long totalTermFreq;
 
             internal TermData()
             {
-                LONGS = null;
-                BYTES = null;
-                DOC_FREQ = 0;
-                TOTAL_TERM_FREQ = -1;
+                longs = null;
+                bytes = null;
+                docFreq = 0;
+                totalTermFreq = -1;
             }
 
             internal TermData(long[] longs, byte[] bytes, int docFreq, long totalTermFreq)
             {
-                LONGS = longs;
-                BYTES = bytes;
-                DOC_FREQ = docFreq;
-                TOTAL_TERM_FREQ = totalTermFreq;
+                this.longs = longs;
+                this.bytes = bytes;
+                this.docFreq = docFreq;
+                this.totalTermFreq = totalTermFreq;
             }
 
             // NOTE: actually, FST nodes are seldom 
@@ -77,24 +77,24 @@ namespace Lucene.Net.Codecs.Memory
             public override int GetHashCode()
             {
                 var hash = 0;
-                if (LONGS != null)
+                if (longs != null)
                 {
-                    var end = LONGS.Length;
+                    var end = longs.Length;
                     for (var i = 0; i < end; i++)
                     {
-                        hash -= (int) LONGS[i];
+                        hash -= (int) longs[i];
                     }
                 }
-                if (BYTES != null)
+                if (bytes != null)
                 {
                     hash = -hash;
-                    var end = BYTES.Length;
+                    var end = bytes.Length;
                     for (var i = 0; i < end; i++)
                     {
-                        hash += BYTES[i];
+                        hash += bytes[i];
                     }
                 }
-                hash += (int) (DOC_FREQ + TOTAL_TERM_FREQ);
+                hash += (int) (docFreq + totalTermFreq);
                 return hash;
             }
 
@@ -131,9 +131,9 @@ namespace Lucene.Net.Codecs.Memory
             if (Equals(t1, NO_OUTPUT) || Equals(t2, NO_OUTPUT))
                 return NO_OUTPUT;
             
-            Debug.Assert(t1.LONGS.Length == t2.LONGS.Length);
+            Debug.Assert(t1.longs.Length == t2.longs.Length);
 
-            long[] min = t1.LONGS, max = t2.LONGS;
+            long[] min = t1.longs, max = t2.longs;
             int pos = 0;
             TermData ret;
 
@@ -145,8 +145,8 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (min[pos] > max[pos])
                 {
-                    min = t2.LONGS;
-                    max = t1.LONGS;
+                    min = t2.longs;
+                    max = t1.longs;
                 }
                 // check whether strictly smaller
                 while (pos < _longsSize && min[pos] <= max[pos])
@@ -186,7 +186,7 @@ namespace Lucene.Net.Codecs.Memory
             if (Equals(t2, NO_OUTPUT))
                 return t1;
             
-            Debug.Assert(t1.LONGS.Length == t2.LONGS.Length);
+            Debug.Assert(t1.longs.Length == t2.longs.Length);
 
             int pos = 0;
             long diff = 0;
@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs.Memory
 
             while (pos < _longsSize)
             {
-                share[pos] = t1.LONGS[pos] - t2.LONGS[pos];
+                share[pos] = t1.longs[pos] - t2.longs[pos];
                 diff += share[pos];
                 pos++;
             }
@@ -206,7 +206,7 @@ namespace Lucene.Net.Codecs.Memory
             }
             else
             {
-                ret = new TermData(share, t1.BYTES, t1.DOC_FREQ, t1.TOTAL_TERM_FREQ);
+                ret = new TermData(share, t1.bytes, t1.docFreq, t1.totalTermFreq);
             }
             //if (TEST) System.out.println("ret:"+ret);
             return ret;
@@ -223,25 +223,25 @@ namespace Lucene.Net.Codecs.Memory
             if (Equals(t2, NO_OUTPUT))
                 return t1;
             
-            Debug.Assert(t1.LONGS.Length == t2.LONGS.Length);
+            Debug.Assert(t1.longs.Length == t2.longs.Length);
 
             var pos = 0;
             var accum = new long[_longsSize];
 
             while (pos < _longsSize)
             {
-                accum[pos] = t1.LONGS[pos] + t2.LONGS[pos];
+                accum[pos] = t1.longs[pos] + t2.longs[pos];
                 pos++;
             }
 
             TermData ret;
-            if (t2.BYTES != null || t2.DOC_FREQ > 0)
+            if (t2.bytes != null || t2.docFreq > 0)
             {
-                ret = new TermData(accum, t2.BYTES, t2.DOC_FREQ, t2.TOTAL_TERM_FREQ);
+                ret = new TermData(accum, t2.bytes, t2.docFreq, t2.totalTermFreq);
             }
             else
             {
-                ret = new TermData(accum, t1.BYTES, t1.DOC_FREQ, t1.TOTAL_TERM_FREQ);
+                ret = new TermData(accum, t1.bytes, t1.docFreq, t1.totalTermFreq);
             }
 
             return ret;
@@ -249,21 +249,21 @@ namespace Lucene.Net.Codecs.Memory
 
         public override void Write(TermData data, DataOutput output)
         {
-            int bit0 = AllZero(data.LONGS) ? 0 : 1;
-            int bit1 = ((data.BYTES == null || data.BYTES.Length == 0) ? 0 : 1) << 1;
-            int bit2 = ((data.DOC_FREQ == 0) ? 0 : 1) << 2;
+            int bit0 = AllZero(data.longs) ? 0 : 1;
+            int bit1 = ((data.bytes == null || data.bytes.Length == 0) ? 0 : 1) << 1;
+            int bit2 = ((data.docFreq == 0) ? 0 : 1) << 2;
             int bits = bit0 | bit1 | bit2;
             if (bit1 > 0) // determine extra length
             {
-                if (data.BYTES.Length < 32)
+                if (data.bytes.Length < 32)
                 {
-                    bits |= (data.BYTES.Length << 3);
+                    bits |= (data.bytes.Length << 3);
                     output.WriteByte((byte) bits);
                 }
                 else
                 {
                     output.WriteByte((byte) bits);
-                    output.WriteVInt(data.BYTES.Length);
+                    output.WriteVInt(data.bytes.Length);
                 }
             }
             else
@@ -274,30 +274,30 @@ namespace Lucene.Net.Codecs.Memory
             {
                 for (int pos = 0; pos < _longsSize; pos++)
                 {
-                    output.WriteVLong(data.LONGS[pos]);
+                    output.WriteVLong(data.longs[pos]);
                 }
             }
             if (bit1 > 0) // bytes exists
             {
-                output.WriteBytes(data.BYTES, 0, data.BYTES.Length);
+                output.WriteBytes(data.bytes, 0, data.bytes.Length);
             }
             if (bit2 > 0) // stats exist
             {
                 if (_hasPos)
                 {
-                    if (data.DOC_FREQ == data.TOTAL_TERM_FREQ)
+                    if (data.docFreq == data.totalTermFreq)
                     {
-                        output.WriteVInt((data.DOC_FREQ << 1) | 1);
+                        output.WriteVInt((data.docFreq << 1) | 1);
                     }
                     else
                     {
-                        output.WriteVInt((data.DOC_FREQ << 1));
-                        output.WriteVLong(data.TOTAL_TERM_FREQ - data.DOC_FREQ);
+                        output.WriteVInt((data.docFreq << 1));
+                        output.WriteVLong(data.totalTermFreq - data.docFreq);
                     }
                 }
                 else
                 {
-                    output.WriteVInt(data.DOC_FREQ);
+                    output.WriteVInt(data.docFreq);
                 }
             }
         }
@@ -360,25 +360,25 @@ namespace Lucene.Net.Codecs.Memory
 
         private static bool StatsEqual(TermData t1, TermData t2)
         {
-            return t1.DOC_FREQ == t2.DOC_FREQ && t1.TOTAL_TERM_FREQ == t2.TOTAL_TERM_FREQ;
+            return t1.docFreq == t2.docFreq && t1.totalTermFreq == t2.totalTermFreq;
         }
 
         private static bool BytesEqual(TermData t1, TermData t2)
         {
-            if (t1.BYTES == null && t2.BYTES == null)
+            if (t1.bytes == null && t2.bytes == null)
             {
                 return true;
             }
-            return t1.BYTES != null && t2.BYTES != null && Arrays.Equals(t1.BYTES, t2.BYTES);
+            return t1.bytes != null && t2.bytes != null && Arrays.Equals(t1.bytes, t2.bytes);
         }
 
         private static bool LongsEqual(TermData t1, TermData t2)
         {
-            if (t1.LONGS == null && t2.LONGS == null)
+            if (t1.longs == null && t2.longs == null)
             {
                 return true;
             }
-            return t1.LONGS != null && t2.LONGS != null && Arrays.Equals(t1.LONGS, t2.LONGS);
+            return t1.longs != null && t2.longs != null && Arrays.Equals(t1.longs, t2.longs);
         }
 
         private static bool AllZero(long[] l)

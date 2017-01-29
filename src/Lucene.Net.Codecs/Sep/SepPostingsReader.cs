@@ -256,7 +256,7 @@ namespace Lucene.Net.Codecs.Sep
             else
             {
                 docsEnum = (SepDocsEnum) reuse;
-                if (docsEnum.START_DOC_IN != _docIn)
+                if (docsEnum.startDocIn != _docIn)
                 {
                     // If you are using ParellelReader, and pass in a
                     // reused DocsAndPositionsEnum, it could have come
@@ -282,7 +282,7 @@ namespace Lucene.Net.Codecs.Sep
             else
             {
                 postingsEnum = (SepDocsAndPositionsEnum) reuse;
-                if (postingsEnum.START_DOC_IN != _docIn)
+                if (postingsEnum.startDocIn != _docIn)
                 {
                     // If you are using ParellelReader, and pass in a
                     // reused DocsAndPositionsEnum, it could have come
@@ -316,7 +316,7 @@ namespace Lucene.Net.Codecs.Sep
             private readonly IntIndexInput.AbstractIndex _docIndex;
             private readonly IntIndexInput.AbstractIndex _freqIndex;
             private readonly IntIndexInput.AbstractIndex _posIndex;
-            internal IntIndexInput START_DOC_IN; // LUCENENET TODO: Rename startDocIn
+            internal IntIndexInput startDocIn;
 
             // TODO: -- should we do hasProx with 2 different enum classes?
 
@@ -340,7 +340,7 @@ namespace Lucene.Net.Codecs.Sep
                 }
                 _posIndex = outerInstance._posIn != null ? outerInstance._posIn.GetIndex() : null;
 
-                START_DOC_IN = outerInstance._docIn;
+                startDocIn = outerInstance._docIn;
             }
 
             internal virtual SepDocsEnum Init(FieldInfo fieldInfo, SepTermState termState, IBits liveDocs)
@@ -495,7 +495,7 @@ namespace Lucene.Net.Codecs.Sep
             private readonly IntIndexInput.AbstractIndex _docIndex;
             private readonly IntIndexInput.AbstractIndex _freqIndex;
             private readonly IntIndexInput.AbstractIndex _posIndex;
-            internal IntIndexInput START_DOC_IN; // LUCENENET TODO: Rename startDocIn
+            internal IntIndexInput startDocIn;
 
             private long _payloadFp;
 
@@ -520,7 +520,7 @@ namespace Lucene.Net.Codecs.Sep
                 _posIndex = outerInstance._posIn.GetIndex();
                 _payloadIn = (IndexInput) outerInstance._payloadIn.Clone();
 
-                START_DOC_IN = outerInstance._docIn;
+                startDocIn = outerInstance._docIn;
             }
 
             internal virtual SepDocsAndPositionsEnum Init(FieldInfo fieldInfo, SepTermState termState, IBits liveDocs)

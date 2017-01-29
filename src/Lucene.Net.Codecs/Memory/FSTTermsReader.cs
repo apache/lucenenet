@@ -388,11 +388,11 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     if (!decoded && !seekPending)
                     {
-                        if (meta.BYTES != null)
+                        if (meta.bytes != null)
                         {
-                            bytesReader.Reset(meta.BYTES, 0, meta.BYTES.Length);
+                            bytesReader.Reset(meta.bytes, 0, meta.bytes.Length);
                         }
-                        outerInstance.outerInstance.postingsReader.DecodeTerm(meta.LONGS, bytesReader, outerInstance.fieldInfo, state, true);
+                        outerInstance.outerInstance.postingsReader.DecodeTerm(meta.longs, bytesReader, outerInstance.fieldInfo, state, true);
                         decoded = true;
                     }
                 }
@@ -408,8 +408,8 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         term_Renamed = pair.Input;
                         meta = pair.Output;
-                        state.DocFreq = meta.DOC_FREQ;
-                        state.TotalTermFreq = meta.TOTAL_TERM_FREQ;
+                        state.DocFreq = meta.docFreq;
+                        state.TotalTermFreq = meta.totalTermFreq;
                     }
                     decoded = false;
                     seekPending = false;
@@ -564,11 +564,11 @@ namespace Lucene.Net.Codecs.Memory
                     Debug.Assert(term_Renamed != null);
                     if (!decoded)
                     {
-                        if (meta.BYTES != null)
+                        if (meta.bytes != null)
                         {
-                            bytesReader.Reset(meta.BYTES, 0, meta.BYTES.Length);
+                            bytesReader.Reset(meta.bytes, 0, meta.bytes.Length);
                         }
-                        outerInstance.outerInstance.postingsReader.DecodeTerm(meta.LONGS, bytesReader, outerInstance.fieldInfo, state, true);
+                        outerInstance.outerInstance.postingsReader.DecodeTerm(meta.longs, bytesReader, outerInstance.fieldInfo, state, true);
                         decoded = true;
                     }
                 }
@@ -595,8 +595,8 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         meta = last.Output;
                     }
-                    state.DocFreq = meta.DOC_FREQ;
-                    state.TotalTermFreq = meta.TOTAL_TERM_FREQ;
+                    state.DocFreq = meta.docFreq;
+                    state.TotalTermFreq = meta.totalTermFreq;
                 }
 
                 public override SeekStatus SeekCeil(BytesRef target)

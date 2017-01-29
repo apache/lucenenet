@@ -64,16 +64,16 @@ namespace Lucene.Net.Codecs.Pulsing
 
         private class PulsingTermState : BlockTermState
         {
-            internal byte[] BYTES; // LUCENENET TODO: Rename bytes
-            internal BlockTermState WRAPPED_STATE; // LUCENENET TODO: Rename wrappedState
+            internal byte[] bytes;
+            internal BlockTermState wrappedState;
 
             public override string ToString()
             {
-                if (BYTES != null)
+                if (bytes != null)
                 {
                     return "inlined";
                 }
-                return "not inlined wrapped=" + WRAPPED_STATE;
+                return "not inlined wrapped=" + wrappedState;
             }
         }
 
@@ -140,7 +140,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
         public override BlockTermState NewTermState()
         {
-            var state = new PulsingTermState {WRAPPED_STATE = _wrappedPostingsWriter.NewTermState()};
+            var state = new PulsingTermState {wrappedState = _wrappedPostingsWriter.NewTermState()};
             return state;
         }
 
@@ -269,10 +269,10 @@ namespace Lucene.Net.Codecs.Pulsing
 
             if (_pendingCount == -1)
             {
-                state.WRAPPED_STATE.DocFreq = state.DocFreq;
-                state.WRAPPED_STATE.TotalTermFreq = state.TotalTermFreq;
-                state.BYTES = null;
-                _wrappedPostingsWriter.FinishTerm(state.WRAPPED_STATE);
+                state.wrappedState.DocFreq = state.DocFreq;
+                state.wrappedState.TotalTermFreq = state.TotalTermFreq;
+                state.bytes = null;
+                _wrappedPostingsWriter.FinishTerm(state.wrappedState);
             }
             else
             {
@@ -403,8 +403,8 @@ namespace Lucene.Net.Codecs.Pulsing
                         break;
                 }
 
-                state.BYTES = new byte[(int) _buffer.FilePointer];
-                _buffer.WriteTo(state.BYTES, 0);
+                state.bytes = new byte[(int) _buffer.FilePointer];
+                _buffer.WriteTo(state.bytes, 0);
                 _buffer.Reset();
             }
             _pendingCount = 0;
@@ -416,9 +416,9 @@ namespace Lucene.Net.Codecs.Pulsing
             var _state = (PulsingTermState) state;
             Debug.Assert(empty.Length == 0);
             _absolute = _absolute || abs;
-            if (_state.BYTES == null)
+            if (_state.bytes == null)
             {
-                _wrappedPostingsWriter.EncodeTerm(_longs, _buffer, fieldInfo, _state.WRAPPED_STATE, _absolute);
+                _wrappedPostingsWriter.EncodeTerm(_longs, _buffer, fieldInfo, _state.wrappedState, _absolute);
                 for (var i = 0; i < _longsSize; i++)
                 {
                     output.WriteVLong(_longs[i]);
@@ -429,8 +429,8 @@ namespace Lucene.Net.Codecs.Pulsing
             }
             else
             {
-                output.WriteVInt(_state.BYTES.Length);
-                output.WriteBytes(_state.BYTES, 0, _state.BYTES.Length);
+                output.WriteVInt(_state.bytes.Length);
+                output.WriteBytes(_state.bytes, 0, _state.bytes.Length);
                 _absolute = _absolute || abs;
             }
         }

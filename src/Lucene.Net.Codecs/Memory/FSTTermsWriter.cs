@@ -269,18 +269,18 @@ namespace Lucene.Net.Codecs.Memory
 
                 var meta = new FSTTermOutputs.TermData
                 {
-                    LONGS = new long[_longsSize],
-                    BYTES = null,
-                    DOC_FREQ = state.DocFreq = stats.DocFreq,
-                    TOTAL_TERM_FREQ = state.TotalTermFreq = stats.TotalTermFreq
+                    longs = new long[_longsSize],
+                    bytes = null,
+                    docFreq = state.DocFreq = stats.DocFreq,
+                    totalTermFreq = state.TotalTermFreq = stats.TotalTermFreq
                 };
                 _outerInstance._postingsWriter.FinishTerm(state);
-                _outerInstance._postingsWriter.EncodeTerm(meta.LONGS, _metaWriter, _fieldInfo, state, true);
+                _outerInstance._postingsWriter.EncodeTerm(meta.longs, _metaWriter, _fieldInfo, state, true);
                 var bytesSize = (int) _metaWriter.FilePointer;
                 if (bytesSize > 0)
                 {
-                    meta.BYTES = new byte[bytesSize];
-                    _metaWriter.WriteTo(meta.BYTES, 0);
+                    meta.bytes = new byte[bytesSize];
+                    _metaWriter.WriteTo(meta.bytes, 0);
                     _metaWriter.Reset();
                 }
                 _builder.Add(Util.ToIntsRef(text, _scratchTerm), meta);

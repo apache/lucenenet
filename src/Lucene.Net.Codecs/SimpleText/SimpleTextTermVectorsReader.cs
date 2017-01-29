@@ -167,50 +167,50 @@ namespace Lucene.Net.Codecs.SimpleText
                     Array.Copy(_scratch.Bytes, _scratch.Offset + SimpleTextTermVectorsWriter.TERMTEXT.Length, term.Bytes, term.Offset, termLength);
 
                     var postings = new SimpleTVPostings();
-                    terms.TERMS.Add(term, postings);
+                    terms.terms.Add(term, postings);
 
                     ReadLine();
                     Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.TERMFREQ));
-                    postings.FREQ = ParseIntAt(SimpleTextTermVectorsWriter.TERMFREQ.Length);
+                    postings.freq = ParseIntAt(SimpleTextTermVectorsWriter.TERMFREQ.Length);
 
                     if (!positions && !offsets) continue;
 
                     if (positions)
                     {
-                        postings.POSITIONS = new int[postings.FREQ];
+                        postings.positions = new int[postings.freq];
                         if (payloads)
                         {
-                            postings.PAYLOADS = new BytesRef[postings.FREQ];
+                            postings.payloads = new BytesRef[postings.freq];
                         }
                     }
 
                     if (offsets)
                     {
-                        postings.START_OFFSETS = new int[postings.FREQ];
-                        postings.END_OFFSETS = new int[postings.FREQ];
+                        postings.startOffsets = new int[postings.freq];
+                        postings.endOffsets = new int[postings.freq];
                     }
 
-                    for (var k = 0; k < postings.FREQ; k++)
+                    for (var k = 0; k < postings.freq; k++)
                     {
                         if (positions)
                         {
                             ReadLine();
                             Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.POSITION));
-                            postings.POSITIONS[k] = ParseIntAt(SimpleTextTermVectorsWriter.POSITION.Length);
+                            postings.positions[k] = ParseIntAt(SimpleTextTermVectorsWriter.POSITION.Length);
                             if (payloads)
                             {
                                 ReadLine();
                                 Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.PAYLOAD));
                                 if (_scratch.Length - SimpleTextTermVectorsWriter.PAYLOAD.Length == 0)
                                 {
-                                    postings.PAYLOADS[k] = null;
+                                    postings.payloads[k] = null;
                                 }
                                 else
                                 {
                                     var payloadBytes = new byte[_scratch.Length - SimpleTextTermVectorsWriter.PAYLOAD.Length];
                                     Array.Copy(_scratch.Bytes, _scratch.Offset + SimpleTextTermVectorsWriter.PAYLOAD.Length, payloadBytes, 0,
                                         payloadBytes.Length);
-                                    postings.PAYLOADS[k] = new BytesRef(payloadBytes);
+                                    postings.payloads[k] = new BytesRef(payloadBytes);
                                 }
                             }
                         }
@@ -219,11 +219,11 @@ namespace Lucene.Net.Codecs.SimpleText
 
                         ReadLine();
                         Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.STARTOFFSET));
-                        postings.START_OFFSETS[k] = ParseIntAt(SimpleTextTermVectorsWriter.STARTOFFSET.Length);
+                        postings.startOffsets[k] = ParseIntAt(SimpleTextTermVectorsWriter.STARTOFFSET.Length);
 
                         ReadLine();
                         Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.ENDOFFSET));
-                        postings.END_OFFSETS[k] = ParseIntAt(SimpleTextTermVectorsWriter.ENDOFFSET.Length);
+                        postings.endOffsets[k] = ParseIntAt(SimpleTextTermVectorsWriter.ENDOFFSET.Length);
                     }
                 }
             }
@@ -300,7 +300,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private class SimpleTVTerms : Terms
         {
-            internal readonly SortedDictionary<BytesRef, SimpleTVPostings> TERMS; // LUCENENET TODO: Rename camelCase
+            internal readonly SortedDictionary<BytesRef, SimpleTVPostings> terms;
             private readonly bool _hasOffsetsRenamed;
             private readonly bool _hasPositionsRenamed;
             private readonly bool _hasPayloadsRenamed;
@@ -310,13 +310,13 @@ namespace Lucene.Net.Codecs.SimpleText
                 _hasOffsetsRenamed = hasOffsets;
                 _hasPositionsRenamed = hasPositions;
                 _hasPayloadsRenamed = hasPayloads;
-                TERMS = new SortedDictionary<BytesRef, SimpleTVPostings>();
+                terms = new SortedDictionary<BytesRef, SimpleTVPostings>();
             }
 
             public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 // TODO: reuse
-                return new SimpleTVTermsEnum(TERMS);
+                return new SimpleTVTermsEnum(terms);
             }
 
             public override IComparer<BytesRef> Comparer
@@ -326,7 +326,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override long Count
             {
-                get { return TERMS.Count; }
+                get { return terms.Count; }
             }
 
             public override long SumTotalTermFreq
@@ -336,7 +336,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override long SumDocFreq
             {
-                get { return TERMS.Count; }
+                get { return terms.Count; }
             }
 
             public override int DocCount
@@ -367,11 +367,11 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private class SimpleTVPostings
         {
-            internal int FREQ; // LUCENENET TODO: Rename camelCase
-            internal int[] POSITIONS; // LUCENENET TODO: Rename camelCase
-            internal int[] START_OFFSETS; // LUCENENET TODO: Rename camelCase
-            internal int[] END_OFFSETS; // LUCENENET TODO: Rename camelCase
-            internal BytesRef[] PAYLOADS; // LUCENENET TODO: Rename camelCase
+            internal int freq;
+            internal int[] positions;
+            internal int[] startOffsets; 
+            internal int[] endOffsets;
+            internal BytesRef[] payloads;
         }
 
         private class SimpleTVTermsEnum : TermsEnum
@@ -441,26 +441,26 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override long TotalTermFreq
             {
-                get { return _current.Value.FREQ; }
+                get { return _current.Value.freq; }
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
                 // TODO: reuse
                 var e = new SimpleTVDocsEnum();
-                e.Reset(liveDocs, (flags & DocsEnum.FLAG_FREQS) == 0 ? 1 : _current.Value.FREQ);
+                e.Reset(liveDocs, (flags & DocsEnum.FLAG_FREQS) == 0 ? 1 : _current.Value.freq);
                 return e;
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
                 var postings = _current.Value;
-                if (postings.POSITIONS == null && postings.START_OFFSETS == null)
+                if (postings.positions == null && postings.startOffsets == null)
                     return null;
 
                 // TODO: reuse
                 var e = new SimpleTVDocsAndPositionsEnum();
-                e.Reset(liveDocs, postings.POSITIONS, postings.START_OFFSETS, postings.END_OFFSETS, postings.PAYLOADS);
+                e.Reset(liveDocs, postings.positions, postings.startOffsets, postings.endOffsets, postings.payloads);
                 return e;
             }
 

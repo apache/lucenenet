@@ -63,7 +63,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public override IMutableBits NewLiveDocs(IBits existing)
         {
             var bits = (SimpleTextBits) existing;
-            return new SimpleTextMutableBits(new BitArray(bits.BITS), bits.Length);
+            return new SimpleTextMutableBits(new BitArray(bits.bits), bits.Length);
         }
 
         public override IBits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)
@@ -122,7 +122,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void WriteLiveDocs(IMutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount,
             IOContext context)
         {
-            var set = ((SimpleTextBits) bits).BITS;
+            var set = ((SimpleTextBits) bits).bits;
             var size = bits.Length;
             var scratch = new BytesRef();
 
@@ -172,23 +172,23 @@ namespace Lucene.Net.Codecs.SimpleText
         // read-only
         internal class SimpleTextBits : IBits
         {
-            internal readonly BitArray BITS; // LUCENENET TODO: Rename camelCase
-            private readonly int SIZE; // LUCENENET TODO: Rename camelCase
+            internal readonly BitArray bits;
+            private readonly int size;
 
             internal SimpleTextBits(BitArray bits, int size)
             {
-                BITS = bits;
-                SIZE = size;
+                this.bits = bits;
+                this.size = size;
             }
 
             public virtual bool Get(int index)
             {
-                return BITS.SafeGet(index);
+                return bits.SafeGet(index);
             }
 
             public virtual int Length
             {
-                get { return SIZE; }
+                get { return size; }
             }
         }
 
@@ -199,7 +199,7 @@ namespace Lucene.Net.Codecs.SimpleText
             internal SimpleTextMutableBits(int size) 
                 : this(new BitArray(size), size)
             {
-                BITS.Set(0, size);
+                bits.Set(0, size);
             }
 
             internal SimpleTextMutableBits(BitArray bits, int size) 
@@ -209,7 +209,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public virtual void Clear(int bit)
             {
-                BITS.SafeSet(bit, false);
+                bits.SafeSet(bit, false);
             }
         }
     }
