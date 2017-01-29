@@ -208,10 +208,31 @@ namespace Lucene.Net.Codecs.Memory
 
             private sealed class LowFreqTerm : TermAndSkip
             {
-                public readonly int[] postings; // LUCENENET TODO: Make property
-                public readonly byte[] payloads; // LUCENENET TODO: Make property
-                public readonly int docFreq; // LUCENENET TODO: Make property
-                public readonly int totalTermFreq; // LUCENENET TODO: Make property
+                [WritableArray]
+                public int[] Postings
+                {
+                    get { return postings; }
+                }
+                private readonly int[] postings;
+
+                [WritableArray]
+                public byte[] Payloads
+                {
+                    get { return payloads; }
+                }
+                private readonly byte[] payloads;
+
+                public int DocFreq
+                {
+                    get { return docFreq; }
+                }
+                private readonly int docFreq;
+
+                public int TotalTermFreq
+                {
+                    get { return totalTermFreq; }
+                }
+                private readonly int totalTermFreq;
 
                 public LowFreqTerm(int[] postings, byte[] payloads, int docFreq, int totalTermFreq)
                 {
@@ -231,11 +252,39 @@ namespace Lucene.Net.Codecs.Memory
             // TODO: maybe specialize into prx/no-prx/no-frq cases?
             private sealed class HighFreqTerm : TermAndSkip
             {
-                public readonly long totalTermFreq; // LUCENENET TODO: Make property
-                public readonly int[] docIDs; // LUCENENET TODO: Make property
-                public readonly int[] freqs; // LUCENENET TODO: Make property
-                public readonly int[][] positions; // LUCENENET TODO: Make property
-                public readonly byte[][][] payloads; // LUCENENET TODO: Make property
+                public long TotalTermFreq
+                {
+                    get { return totalTermFreq; }
+                }
+                private readonly long totalTermFreq;
+
+                [WritableArray]
+                public int[] DocIDs
+                {
+                    get { return docIDs; }
+                }
+                private readonly int[] docIDs;
+
+                [WritableArray]
+                public int[] Freqs
+                {
+                    get { return freqs; }
+                }
+                private readonly int[] freqs;
+
+                [WritableArray]
+                public int[][] Positions
+                {
+                    get { return positions; }
+                }
+                private readonly int[][] positions;
+
+                [WritableArray]
+                public byte[][][] Payloads
+                {
+                    get { return payloads; }
+                }
+                private readonly byte[][][] payloads;
 
                 public HighFreqTerm(int[] docIDs, int[] freqs, int[][] positions, byte[][][] payloads,
                     long totalTermFreq)
@@ -977,11 +1026,11 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         if (outerInstance.terms[termOrd] is LowFreqTerm)
                         {
-                            return ((LowFreqTerm)outerInstance.terms[termOrd]).docFreq;
+                            return ((LowFreqTerm)outerInstance.terms[termOrd]).DocFreq;
                         }
                         else
                         {
-                            return ((HighFreqTerm)outerInstance.terms[termOrd]).docIDs.Length;
+                            return ((HighFreqTerm)outerInstance.terms[termOrd]).DocIDs.Length;
                         }
                     }
                 }
@@ -992,11 +1041,11 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         if (outerInstance.terms[termOrd] is LowFreqTerm)
                         {
-                            return ((LowFreqTerm)outerInstance.terms[termOrd]).totalTermFreq;
+                            return ((LowFreqTerm)outerInstance.terms[termOrd]).TotalTermFreq;
                         }
                         else
                         {
-                            return ((HighFreqTerm)outerInstance.terms[termOrd]).totalTermFreq;
+                            return ((HighFreqTerm)outerInstance.terms[termOrd]).TotalTermFreq;
                         }
                     }
                 }
@@ -1008,7 +1057,7 @@ namespace Lucene.Net.Codecs.Memory
 
                     if (outerInstance.terms[termOrd] is LowFreqTerm)
                     {
-                        int[] postings = ((LowFreqTerm) outerInstance.terms[termOrd]).postings;
+                        int[] postings = ((LowFreqTerm) outerInstance.terms[termOrd]).Postings;
                         if (outerInstance.hasFreq)
                         {
                             if (outerInstance.hasPos)
@@ -1099,7 +1148,7 @@ namespace Lucene.Net.Codecs.Memory
                         }
 
                         //System.out.println("  DE for term=" + new BytesRef(terms[termOrd].term).utf8ToString() + ": " + term.docIDs.length + " docs");
-                        return docsEnum.Reset(term.docIDs, term.freqs);
+                        return docsEnum.Reset(term.DocIDs, term.Freqs);
                     }
                 }
 
@@ -1117,8 +1166,8 @@ namespace Lucene.Net.Codecs.Memory
                     if (outerInstance.terms[termOrd] is LowFreqTerm)
                     {
                         LowFreqTerm term = ((LowFreqTerm) outerInstance.terms[termOrd]);
-                        int[] postings = term.postings;
-                        byte[] payloads = term.payloads;
+                        int[] postings = term.Postings;
+                        byte[] payloads = term.Payloads;
                         return
                             (new LowFreqDocsAndPositionsEnum(liveDocs, outerInstance.hasOffsets_Renamed,
                                 outerInstance.hasPayloads_Renamed)).Reset(postings, payloads);
@@ -1127,7 +1176,7 @@ namespace Lucene.Net.Codecs.Memory
                     {   HighFreqTerm term = (HighFreqTerm) outerInstance.terms[termOrd];
                         return
                             (new HighFreqDocsAndPositionsEnum(liveDocs, outerInstance.hasOffsets_Renamed)).Reset(
-                                term.docIDs, term.freqs, term.positions, term.payloads);
+                                term.DocIDs, term.Freqs, term.Positions, term.Payloads);
                     }
                 }
             }
@@ -1683,11 +1732,11 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         if (outerInstance.terms[termOrd] is LowFreqTerm)
                         {
-                            return ((LowFreqTerm)outerInstance.terms[termOrd]).docFreq;
+                            return ((LowFreqTerm)outerInstance.terms[termOrd]).DocFreq;
                         }
                         else
                         {
-                            return ((HighFreqTerm)outerInstance.terms[termOrd]).docIDs.Length;
+                            return ((HighFreqTerm)outerInstance.terms[termOrd]).DocIDs.Length;
                         }
                     }
                 }
@@ -1698,11 +1747,11 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         if (outerInstance.terms[termOrd] is LowFreqTerm)
                         {
-                            return ((LowFreqTerm)outerInstance.terms[termOrd]).totalTermFreq;
+                            return ((LowFreqTerm)outerInstance.terms[termOrd]).TotalTermFreq;
                         }
                         else
                         {
-                            return ((HighFreqTerm)outerInstance.terms[termOrd]).totalTermFreq;
+                            return ((HighFreqTerm)outerInstance.terms[termOrd]).TotalTermFreq;
                         }
                     }
                 }
@@ -1714,7 +1763,7 @@ namespace Lucene.Net.Codecs.Memory
 
                     if (outerInstance.terms[termOrd] is LowFreqTerm)
                     {
-                        int[] postings = ((LowFreqTerm) outerInstance.terms[termOrd]).postings;
+                        int[] postings = ((LowFreqTerm) outerInstance.terms[termOrd]).Postings;
                         if (outerInstance.hasFreq)
                         {
                             if (outerInstance.hasPos)
@@ -1748,7 +1797,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         HighFreqTerm term = (HighFreqTerm) outerInstance.terms[termOrd];
                         //  System.out.println("DE for term=" + new BytesRef(terms[termOrd].term).utf8ToString() + ": " + term.docIDs.length + " docs");
-                        return (new HighFreqDocsEnum(liveDocs)).Reset(term.docIDs, term.freqs);
+                        return (new HighFreqDocsEnum(liveDocs)).Reset(term.DocIDs, term.Freqs);
                     }
                 }
 
@@ -1766,8 +1815,8 @@ namespace Lucene.Net.Codecs.Memory
                     if (outerInstance.terms[termOrd] is LowFreqTerm)
                     {
                         LowFreqTerm term = ((LowFreqTerm) outerInstance.terms[termOrd]);
-                        int[] postings = term.postings;
-                        byte[] payloads = term.payloads;
+                        int[] postings = term.Postings;
+                        byte[] payloads = term.Payloads;
                         return
                             (new LowFreqDocsAndPositionsEnum(liveDocs, outerInstance.hasOffsets_Renamed,
                                 outerInstance.hasPayloads_Renamed)).Reset(postings, payloads);
@@ -1777,7 +1826,7 @@ namespace Lucene.Net.Codecs.Memory
                         HighFreqTerm term = (HighFreqTerm) outerInstance.terms[termOrd];
                         return
                             (new HighFreqDocsAndPositionsEnum(liveDocs, outerInstance.hasOffsets_Renamed)).Reset(
-                                term.docIDs, term.freqs, term.positions, term.payloads);
+                                term.DocIDs, term.Freqs, term.Positions, term.Payloads);
                     }
                 }
 
