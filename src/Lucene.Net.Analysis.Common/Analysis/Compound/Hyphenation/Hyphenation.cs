@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Analysis.Compound.Hyphenation
+﻿using Lucene.Net.Support;
+
+namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -42,6 +44,7 @@
         }
 
         /// <returns> the hyphenation points </returns>
+        [WritableArray]
         public virtual int[] HyphenationPoints
         {
             get

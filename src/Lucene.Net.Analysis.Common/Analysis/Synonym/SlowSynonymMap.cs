@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -40,6 +41,7 @@ namespace Lucene.Net.Analysis.Synonym
         private CharArrayMap<SlowSynonymMap> submap;
         /// <summary>
         /// @lucene.internal </summary>
+        [WritableArray]
         public Token[] Synonyms
         {
             get { return synonyms; }

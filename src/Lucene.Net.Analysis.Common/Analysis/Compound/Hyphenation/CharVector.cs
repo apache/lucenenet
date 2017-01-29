@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -47,7 +48,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// </summary>
         private int n;
 
-        public CharVector() : this(DEFAULT_BLOCK_SIZE)
+        public CharVector() 
+            : this(DEFAULT_BLOCK_SIZE)
         {
         }
 
@@ -101,6 +103,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return cv;
         }
 
+        [WritableArray]
         public virtual char[] Array
         {
             get

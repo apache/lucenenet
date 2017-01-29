@@ -407,6 +407,7 @@ namespace Lucene.Net.Analysis.Util
             /// Returns the internal buffer
             /// </summary>
             /// <returns> the buffer </returns>
+            [WritableArray]
             public char[] Buffer
             {
                 get
@@ -451,7 +452,5 @@ namespace Lucene.Net.Analysis.Util
                 lastTrailingHighSurrogate = (char)0;
             }
         }
-
     }
-
 }

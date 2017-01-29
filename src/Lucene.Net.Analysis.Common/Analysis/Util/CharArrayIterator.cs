@@ -33,6 +33,7 @@ namespace Lucene.Net.Analysis.Util
         private int length;
         private int limit;
 
+        [WritableArray]
         public virtual char[] Text
         {
             get

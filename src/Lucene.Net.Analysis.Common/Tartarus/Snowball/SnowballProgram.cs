@@ -29,6 +29,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Reflection;
@@ -107,6 +108,7 @@ namespace Lucene.Net.Tartarus.Snowball
          * </p>
          * @see #getCurrentBufferLength()
          */
+        [WritableArray]
         public char[] CurrentBuffer
         {
             get { return m_current; }

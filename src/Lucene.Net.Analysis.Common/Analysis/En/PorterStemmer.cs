@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 
 namespace Lucene.Net.Analysis.En
@@ -60,7 +61,6 @@ namespace Lucene.Net.Analysis.En
     /// word can be provided a character at time (by calling add()), or at once
     /// by calling one of the various stem(something) methods.
     /// </summary>
-
     internal class PorterStemmer
     {
         private char[] b;
@@ -124,6 +124,7 @@ namespace Lucene.Net.Analysis.En
         /// the stemming process.  You also need to consult getResultLength()
         /// to determine the length of the result.
         /// </summary>
+        [WritableArray]
         public virtual char[] ResultBuffer
         {
             get

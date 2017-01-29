@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Analysis.Compound.Hyphenation
+﻿using Lucene.Net.Support;
+
+namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -42,7 +44,8 @@
         /// </summary>
         private int n;
 
-        public ByteVector() : this(DEFAULT_BLOCK_SIZE)
+        public ByteVector() 
+            : this(DEFAULT_BLOCK_SIZE)
         {
         }
 
@@ -81,6 +84,7 @@
             n = 0;
         }
 
+        [WritableArray]
         public virtual sbyte[] Array
         {
             get
