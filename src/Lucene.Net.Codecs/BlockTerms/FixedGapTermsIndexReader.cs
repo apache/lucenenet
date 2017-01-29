@@ -331,7 +331,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         _numIndexTerms, outerInstance);
             }
 
-            internal class CoreFieldIndex
+            internal sealed class CoreFieldIndex
             {
                 /// <summary>
                 /// Where this fields term begin in the packed byte[] data
@@ -474,13 +474,10 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
 
                 /// <summary>Returns approximate RAM bytes Used</summary>
-                public long RamBytesUsed // LUCENENET TODO: Make RamBytesUsed()
+                public long RamBytesUsed()
                 {
-                    get
-                    {
-                        return ((TermOffsets != null) ? TermOffsets.RamBytesUsed() : 0) +
-                               ((TermsDictOffsets != null) ? TermsDictOffsets.RamBytesUsed() : 0);
-                    }
+                    return ((TermOffsets != null) ? TermOffsets.RamBytesUsed() : 0) +
+                            ((TermsDictOffsets != null) ? TermsDictOffsets.RamBytesUsed() : 0);
                 }
             }
         }
@@ -522,7 +519,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 ((_termBytesReader != null) ? _termBytesReader.RamBytesUsed() : 0);
 
             return _fields.Values.Aggregate(sizeInBytes,
-                (current, entry) => (current + entry.CoreIndex.RamBytesUsed));
+                (current, entry) => (current + entry.CoreIndex.RamBytesUsed()));
         }
     }
 }
