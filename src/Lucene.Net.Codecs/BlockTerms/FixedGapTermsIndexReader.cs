@@ -301,7 +301,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             private readonly FixedGapTermsIndexReader outerInstance;
 
-            internal volatile CoreFieldIndex CoreIndex;
+            internal volatile CoreFieldIndex coreIndex;
 
             private readonly long _indexStart;
             private readonly long _termsStart;
@@ -326,8 +326,8 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private void LoadTermsIndex()
             {
-                if (CoreIndex == null)
-                    CoreIndex = new CoreFieldIndex(_indexStart, _termsStart, _packedIndexStart, _packedOffsetsStart,
+                if (coreIndex == null)
+                    coreIndex = new CoreFieldIndex(_indexStart, _termsStart, _packedIndexStart, _packedOffsetsStart,
                         _numIndexTerms, outerInstance);
             }
 
@@ -485,7 +485,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
         {
             FieldIndexData fieldData = _fields[fieldInfo];
-            return fieldData.CoreIndex == null ? null : new IndexEnum(fieldData.CoreIndex, this);
+            return fieldData.coreIndex == null ? null : new IndexEnum(fieldData.coreIndex, this);
         }
 
         public override void Dispose()
@@ -519,7 +519,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 ((_termBytesReader != null) ? _termBytesReader.RamBytesUsed() : 0);
 
             return _fields.Values.Aggregate(sizeInBytes,
-                (current, entry) => (current + entry.CoreIndex.RamBytesUsed()));
+                (current, entry) => (current + entry.coreIndex.RamBytesUsed()));
         }
     }
 }

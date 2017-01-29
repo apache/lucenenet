@@ -49,10 +49,10 @@ namespace Lucene.Net.Codecs.BlockTerms
         public const string TERMS_EXTENSION = "tib";
 
         protected IndexOutput _output;
-        private readonly PostingsWriterBase PostingsWriter;
-        private readonly FieldInfos FieldInfos;
-        private FieldInfo CurrentField;
-        private readonly TermsIndexWriterBase _termsIndexWriter;
+        private readonly PostingsWriterBase postingsWriter;
+        private readonly FieldInfos fieldInfos;
+        private FieldInfo currentField;
+        private readonly TermsIndexWriterBase termsIndexWriter;
         
         protected class FieldMetaData
         {
@@ -86,16 +86,16 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             var termsFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
                 TERMS_EXTENSION);
-            _termsIndexWriter = termsIndexWriter;
+            this.termsIndexWriter = termsIndexWriter;
             _output = state.Directory.CreateOutput(termsFileName, state.Context);
             var success = false;
 
             try
             {
-                FieldInfos = state.FieldInfos;
+                fieldInfos = state.FieldInfos;
                 WriteHeader(_output);
-                CurrentField = null;
-                PostingsWriter = postingsWriter;
+                currentField = null;
+                this.postingsWriter = postingsWriter;
 
                 postingsWriter.Init(_output); // have consumer write its format/header
                 success = true;
@@ -116,11 +116,11 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override TermsConsumer AddField(FieldInfo field)
         {
-            Debug.Assert(CurrentField == null || CurrentField.Name.CompareTo(field.Name) < 0);
+            Debug.Assert(currentField == null || currentField.Name.CompareTo(field.Name) < 0);
 
-            CurrentField = field;
-            var fiw = _termsIndexWriter.AddField(field, _output.FilePointer);
-            return new TermsWriter(this, fiw, field, PostingsWriter);
+            currentField = field;
+            var fiw = termsIndexWriter.AddField(field, _output.FilePointer);
+            return new TermsWriter(this, fiw, field, postingsWriter);
         }
 
         public override void Dispose()
@@ -155,7 +155,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             }
             finally
             {
-                IOUtils.Close(_output, PostingsWriter, _termsIndexWriter);
+                IOUtils.Close(_output, postingsWriter, termsIndexWriter);
                 _output = null;
             }
         }

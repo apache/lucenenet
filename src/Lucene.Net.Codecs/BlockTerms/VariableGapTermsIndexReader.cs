@@ -177,7 +177,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private readonly long _indexStart;
             // Set only if terms index is loaded:
-            internal volatile FST<long?> Fst;
+            internal volatile FST<long?> fst;
             
             public FieldIndexData(VariableGapTermsIndexReader outerInstance, long indexStart)
             {
@@ -190,11 +190,11 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private void LoadTermsIndex()
             {
-                if (Fst != null) return;
+                if (fst != null) return;
 
                 var clone = (IndexInput)outerInstance._input.Clone();
                 clone.Seek(_indexStart);
-                Fst = new FST<long?>(clone, outerInstance._fstOutputs);
+                fst = new FST<long?>(clone, outerInstance._fstOutputs);
                 clone.Dispose();
 
                 /*
@@ -211,7 +211,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     var scratchIntsRef = new IntsRef();
                     var outputs = PositiveIntOutputs.Singleton;
                     var builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
-                    var fstEnum = new BytesRefFSTEnum<long?>(Fst);
+                    var fstEnum = new BytesRefFSTEnum<long?>(fst);
                     var count = outerInstance._indexDivisor;
 
                     BytesRefFSTEnum.InputOutput<long?> result;
@@ -224,21 +224,21 @@ namespace Lucene.Net.Codecs.BlockTerms
                         }
                         count++;
                     }
-                    Fst = builder.Finish();
+                    fst = builder.Finish();
                 }
             }
 
             /// <summary>Returns approximate RAM bytes used</summary>
             public virtual long RamBytesUsed()
             {
-                return Fst == null ? 0 : Fst.SizeInBytes();
+                return fst == null ? 0 : fst.SizeInBytes();
             }
         }
 
         public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
         {
             FieldIndexData fieldData = _fields[fieldInfo];
-            return fieldData.Fst == null ? null : new IndexEnum(fieldData.Fst);
+            return fieldData.fst == null ? null : new IndexEnum(fieldData.fst);
         }
 
         public override void Dispose()
