@@ -313,18 +313,21 @@ namespace Lucene.Net.Codecs.Bloom
                     delegateTermsEnum = null;
                 }
 
-                private TermsEnum Delegate() // LUCENENET TODO: Make property
+                private TermsEnum Delegate
                 {
-                    // pull the iterator only if we really need it -
-                    // this can be a relativly heavy operation depending on the 
-                    // delegate postings format and they underlying directory
-                    // (clone IndexInput)
-                    return delegateTermsEnum ?? (delegateTermsEnum = _delegateTerms.GetIterator(_reuseDelegate));
+                    get
+                    {
+                        // pull the iterator only if we really need it -
+                        // this can be a relativly heavy operation depending on the 
+                        // delegate postings format and they underlying directory
+                        // (clone IndexInput)
+                        return delegateTermsEnum ?? (delegateTermsEnum = _delegateTerms.GetIterator(_reuseDelegate));
+                    }
                 }
 
                 public override sealed BytesRef Next()
                 {
-                    return Delegate().Next();
+                    return Delegate.Next();
                 }
 
                 public override sealed IComparer<BytesRef> Comparer
@@ -343,48 +346,48 @@ namespace Lucene.Net.Codecs.Bloom
                     {
                         return false;
                     }
-                    return Delegate().SeekExact(text);
+                    return Delegate.SeekExact(text);
                 }
 
                 public override sealed SeekStatus SeekCeil(BytesRef text)
                 {
-                    return Delegate().SeekCeil(text);
+                    return Delegate.SeekCeil(text);
                 }
 
                 public override sealed void SeekExact(long ord)
                 {
-                    Delegate().SeekExact(ord);
+                    Delegate.SeekExact(ord);
                 }
 
                 public override sealed BytesRef Term
                 {
-                    get { return Delegate().Term; }
+                    get { return Delegate.Term; }
                 }
 
                 public override sealed long Ord
                 {
-                    get { return Delegate().Ord; }
+                    get { return Delegate.Ord; }
                 }
 
                 public override sealed int DocFreq
                 {
-                    get { return Delegate().DocFreq; }
+                    get { return Delegate.DocFreq; }
                 }
 
                 public override sealed long TotalTermFreq
                 {
-                    get { return Delegate().TotalTermFreq; }
+                    get { return Delegate.TotalTermFreq; }
                 }
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs,
                     DocsAndPositionsEnum reuse, int flags)
                 {
-                    return Delegate().DocsAndPositions(liveDocs, reuse, flags);
+                    return Delegate.DocsAndPositions(liveDocs, reuse, flags);
                 }
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
                 {
-                    return Delegate().Docs(liveDocs, reuse, flags);
+                    return Delegate.Docs(liveDocs, reuse, flags);
                 }
             }
 
