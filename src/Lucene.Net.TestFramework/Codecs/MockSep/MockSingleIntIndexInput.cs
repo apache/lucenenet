@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs.MockSep
                           MockSingleIntIndexOutput.VERSION_START);
         }
 
-        public override IntIndexInputReader GetReader()
+        public override AbstractReader GetReader()
         {
             return new MockReader((IndexInput)@in.Clone());
         }
@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.MockSep
         /**
          * Just reads a vInt directly from the file.
          */
-        public class MockReader : IntIndexInputReader
+        public class MockReader : AbstractReader
         {
             // clone:
             internal readonly IndexInput @in;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Codecs.MockSep
             }
         }
 
-        internal class MockSingleIntIndexInputIndex : IntIndexInputIndex
+        internal class MockSingleIntIndexInputIndex : AbstractIndex
         {
             private long fp;
 
@@ -87,12 +87,12 @@ namespace Lucene.Net.Codecs.MockSep
                 }
             }
 
-            public override void CopyFrom(IntIndexInputIndex other)
+            public override void CopyFrom(AbstractIndex other)
             {
                 fp = ((MockSingleIntIndexInputIndex)other).fp;
             }
 
-            public override void Seek(IntIndexInputReader other)
+            public override void Seek(AbstractReader other)
             {
                 ((MockReader)other).@in.Seek(fp);
             }
@@ -103,14 +103,14 @@ namespace Lucene.Net.Codecs.MockSep
             }
 
 
-            public override IntIndexInputIndex Clone()
+            public override AbstractIndex Clone()
             {
                 MockSingleIntIndexInputIndex other = new MockSingleIntIndexInputIndex();
                 other.fp = fp;
                 return other;
             }
         }
-        public override IntIndexInputIndex GetIndex()
+        public override AbstractIndex GetIndex()
         {
             return new MockSingleIntIndexInputIndex();
         }

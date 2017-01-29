@@ -120,9 +120,9 @@ namespace Lucene.Net.Codecs.Sep
             // We store only the seek point to the docs file because
             // the rest of the info (freqIndex, posIndex, etc.) is
             // stored in the docs file:
-            internal IntIndexInputIndex DOC_INDEX;
-            internal IntIndexInputIndex POS_INDEX;
-            internal IntIndexInputIndex FREQ_INDEX;
+            internal IntIndexInput.AbstractIndex DOC_INDEX;
+            internal IntIndexInput.AbstractIndex POS_INDEX;
+            internal IntIndexInput.AbstractIndex FREQ_INDEX;
             internal long PAYLOAD_FP;
             internal long SKIP_FP;
 
@@ -309,13 +309,13 @@ namespace Lucene.Net.Codecs.Sep
             private IndexOptions _indexOptions;
             private bool _storePayloads;
             private IBits _liveDocs;
-            private readonly IntIndexInputReader _docReader;
-            private readonly IntIndexInputReader _freqReader;
+            private readonly IntIndexInput.AbstractReader _docReader;
+            private readonly IntIndexInput.AbstractReader _freqReader;
             private long _skipFp;
 
-            private readonly IntIndexInputIndex _docIndex;
-            private readonly IntIndexInputIndex _freqIndex;
-            private readonly IntIndexInputIndex _posIndex;
+            private readonly IntIndexInput.AbstractIndex _docIndex;
+            private readonly IntIndexInput.AbstractIndex _freqIndex;
+            private readonly IntIndexInput.AbstractIndex _posIndex;
             internal IntIndexInput START_DOC_IN; // LUCENENET TODO: Rename startDocIn
 
             // TODO: -- should we do hasProx with 2 different enum classes?
@@ -486,15 +486,15 @@ namespace Lucene.Net.Codecs.Sep
 
             private bool _storePayloads;
             private IBits _liveDocs;
-            private readonly IntIndexInputReader _docReader;
-            private readonly IntIndexInputReader _freqReader;
-            private readonly IntIndexInputReader _posReader;
+            private readonly IntIndexInput.AbstractReader _docReader;
+            private readonly IntIndexInput.AbstractReader _freqReader;
+            private readonly IntIndexInput.AbstractReader _posReader;
             private readonly IndexInput _payloadIn;
             private long _skipFp;
 
-            private readonly IntIndexInputIndex _docIndex;
-            private readonly IntIndexInputIndex _freqIndex;
-            private readonly IntIndexInputIndex _posIndex;
+            private readonly IntIndexInput.AbstractIndex _docIndex;
+            private readonly IntIndexInput.AbstractIndex _freqIndex;
+            private readonly IntIndexInput.AbstractIndex _posIndex;
             internal IntIndexInput START_DOC_IN; // LUCENENET TODO: Rename startDocIn
 
             private long _payloadFp;

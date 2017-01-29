@@ -29,31 +29,29 @@ namespace Lucene.Net.Codecs.Sep
     /// </summary>
     public abstract class IntIndexInput : IDisposable
     {
-        public abstract IntIndexInputReader GetReader();
+        public abstract AbstractReader GetReader();
         public abstract void Dispose();
-        public abstract IntIndexInputIndex GetIndex();
+        public abstract AbstractIndex GetIndex();
 
-      
-    }
-    
-    /// <summary>Reads int values</summary>
-    public abstract class IntIndexInputReader // LUCENENET TODO: Rename AbstractReader and nest within IntIndexInput
-    {
-        /// <summary>Reads next single int</summary>
-        public abstract int Next();
-    }
+        /// <summary>
+        /// Records a single skip-point in the <see cref="IntIndexInput.GetReader"/>. </summary>
+        public abstract class AbstractIndex
+        {
+            public abstract void Read(DataInput indexIn, bool absolute);
 
-    /// <summary>
-    /// Records a single skip-point in the <seealso cref="IntIndexInput.GetReader"/>. </summary>
-    public abstract class IntIndexInputIndex // LUCENENET TODO: Rename AbstractIndex and nest within IntIndexInput
-    {
-        public abstract void Read(DataInput indexIn, bool absolute);
+            /// <summary>Seeks primary stream to the last read offset </summary>
+            public abstract void Seek(AbstractReader stream);
 
-        /// <summary>Seeks primary stream to the last read offset </summary>
-        public abstract void Seek(IntIndexInputReader stream);
+            public abstract void CopyFrom(AbstractIndex other);
 
-        public abstract void CopyFrom(IntIndexInputIndex other);
+            public abstract AbstractIndex Clone();
+        }
 
-        public abstract IntIndexInputIndex Clone();
+        /// <summary>Reads int values</summary>
+        public abstract class AbstractReader
+        {
+            /// <summary>Reads next single int</summary>
+            public abstract int Next();
+        }
     }
 }

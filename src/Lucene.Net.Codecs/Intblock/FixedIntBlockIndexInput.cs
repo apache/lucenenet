@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs.IntBlock
             blockSize = @in.ReadVInt();
         }
 
-        public override IntIndexInputReader GetReader()
+        public override AbstractReader GetReader()
         {
             var buffer = new int[blockSize];
             var clone = (IndexInput)input.Clone();
@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.IntBlock
             input.Dispose();
         }
 
-        public override IntIndexInputIndex GetIndex()
+        public override AbstractIndex GetIndex()
         {
             return new InputIndex(this);
         }
@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.IntBlock
             void ReadBlock();
         }
 
-        private class InputReader : IntIndexInputReader // LUCENENET TODO: Rename Reader
+        private class InputReader : AbstractReader // LUCENENET TODO: Rename Reader
         {
             private readonly IndexInput input;
             private readonly IBlockReader blockReader;
@@ -130,7 +130,7 @@ namespace Lucene.Net.Codecs.IntBlock
             }
         }
 
-        private class InputIndex : IntIndexInputIndex // LUCENENET TODO: Rename Index
+        private class InputIndex : AbstractIndex // LUCENENET TODO: Rename Index
         {
             private readonly FixedIntBlockIndexInput outerInstance;
 
@@ -167,19 +167,19 @@ namespace Lucene.Net.Codecs.IntBlock
                 Debug.Assert(upto < outerInstance.blockSize);
             }
 
-            public override void Seek(IntIndexInputReader other)
+            public override void Seek(AbstractReader other)
             {
                 ((InputReader)other).Seek(fp, upto);
             }
 
-            public override void CopyFrom(IntIndexInputIndex other)
+            public override void CopyFrom(AbstractIndex other)
             {
                 InputIndex idx = (InputIndex)other;
                 fp = idx.fp;
                 upto = idx.upto;
             }
 
-            public override IntIndexInputIndex Clone()
+            public override AbstractIndex Clone()
             {
                 InputIndex other = new InputIndex(outerInstance);
                 other.fp = fp;
