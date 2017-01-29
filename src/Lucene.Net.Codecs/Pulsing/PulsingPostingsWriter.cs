@@ -167,7 +167,7 @@ namespace Lucene.Net.Codecs.Pulsing
             return 0;
         }
 
-        private bool DEBUG;
+        //private bool DEBUG; // LUCENENET NOTE: Not used
 
         public override void StartDoc(int docId, int termDocFreq)
         {

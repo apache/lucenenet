@@ -233,7 +233,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             private readonly VariableGapTermsIndexWriter outerInstance;
 
             private readonly Builder<long?> _fstBuilder;
-            private readonly PositiveIntOutputs fstOutputs;
+            //private readonly PositiveIntOutputs fstOutputs; // LUCENENET NOTE: Not used
             private readonly long _startTermsFilePointer;
 
             internal FieldInfo FieldInfo { get; private set; }
