@@ -229,7 +229,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                 }
 
-                public virtual PostingsWriter reset() // LUCENENET TODO: Rename Reset()
+                public virtual PostingsWriter Reset()
                 {
                     Debug.Assert(buffer.FilePointer == 0);
                     lastDocID = 0;
@@ -244,7 +244,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override PostingsConsumer StartTerm(BytesRef text)
             {
-                return postingsWriter.reset();
+                return postingsWriter.Reset();
             }
 
             private readonly RAMOutputStream buffer2 = new RAMOutputStream();
@@ -563,7 +563,7 @@ namespace Lucene.Net.Codecs.Memory
                 return storePayloads == this.storePayloads && storeOffsets == this.storeOffsets;
             }
 
-            public FSTDocsAndPositionsEnum reset(BytesRef bufferIn, IBits liveDocs, int numDocs) // LUCENENET TODO: Rename Reset
+            public FSTDocsAndPositionsEnum Reset(BytesRef bufferIn, IBits liveDocs, int numDocs)
             {
                 Debug.Assert(numDocs > 0);
 
@@ -767,7 +767,7 @@ namespace Lucene.Net.Codecs.Memory
                 fstEnum = new BytesRefFSTEnum<BytesRef>(fst);
             }
 
-            private void decodeMetaData() // LUCENENET TODO: Rename pascal case
+            private void DecodeMetaData()
             {
                 if (!didDecode)
                 {
@@ -830,7 +830,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
             {
-                decodeMetaData();
+                DecodeMetaData();
                 FSTDocsEnum docsEnum;
 
                 if (reuse == null || !(reuse is FSTDocsEnum))
@@ -855,7 +855,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     return null;
                 }
-                decodeMetaData();
+                DecodeMetaData();
                 FSTDocsAndPositionsEnum docsAndPositionsEnum;
                 if (reuse == null || !(reuse is FSTDocsAndPositionsEnum))
                 {
@@ -870,7 +870,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
                 //System.out.println("D&P reset this=" + this);
-                return docsAndPositionsEnum.reset(postingsSpare, liveDocs, docFreq_Renamed);
+                return docsAndPositionsEnum.Reset(postingsSpare, liveDocs, docFreq_Renamed);
             }
 
             public override BytesRef Term
@@ -896,7 +896,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 get
                 {
-                    decodeMetaData();
+                    DecodeMetaData();
                     return docFreq_Renamed;
                 }
             }
@@ -905,7 +905,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 get
                 {
-                    decodeMetaData();
+                    DecodeMetaData();
                     return totalTermFreq_Renamed;
                 }
             }
