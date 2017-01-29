@@ -142,22 +142,22 @@ namespace Lucene.Net.Analysis.It
         ///         provided and <seealso cref="ItalianLightStemFilter"/>. </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            Tokenizer source = new StandardTokenizer(matchVersion, reader);
-            TokenStream result = new StandardFilter(matchVersion, source);
+            Tokenizer source = new StandardTokenizer(m_matchVersion, reader);
+            TokenStream result = new StandardFilter(m_matchVersion, source);
 #pragma warning disable 612, 618
-            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_32))
+            if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_32))
 #pragma warning restore 612, 618
             {
                 result = new ElisionFilter(result, DEFAULT_ARTICLES);
             }
-            result = new LowerCaseFilter(matchVersion, result);
-            result = new StopFilter(matchVersion, result, stopwords);
+            result = new LowerCaseFilter(m_matchVersion, result);
+            result = new StopFilter(m_matchVersion, result, m_stopwords);
             if (stemExclusionSet.Count > 0)
             {
                 result = new SetKeywordMarkerFilter(result, stemExclusionSet);
             }
 #pragma warning disable 612, 618
-            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
+            if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
 #pragma warning restore 612, 618
             {
                 result = new ItalianLightStemFilter(result);

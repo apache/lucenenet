@@ -88,9 +88,9 @@ namespace Lucene.Net.Analysis.Pt
         /// </summary>
         protected internal class Rule
         {
-            protected internal readonly char[] suffix;
-            protected internal readonly char[] replacement;
-            protected internal readonly int min;
+            protected internal readonly char[] m_suffix;
+            protected internal readonly char[] m_replacement;
+            protected internal readonly int m_min;
 
             /// <summary>
             /// Create a rule. </summary>
@@ -99,25 +99,25 @@ namespace Lucene.Net.Analysis.Pt
             /// <param name="replacement"> replacement string </param>
             public Rule(string suffix, int min, string replacement)
             {
-                this.suffix = suffix.ToCharArray();
-                this.replacement = replacement.ToCharArray();
-                this.min = min;
+                this.m_suffix = suffix.ToCharArray();
+                this.m_replacement = replacement.ToCharArray();
+                this.m_min = min;
             }
 
             /// <returns> true if the word matches this rule. </returns>
             public virtual bool Matches(char[] s, int len)
             {
-                return (len - suffix.Length >= min && StemmerUtil.EndsWith(s, len, suffix));
+                return (len - m_suffix.Length >= m_min && StemmerUtil.EndsWith(s, len, m_suffix));
             }
 
             /// <returns> new valid length of the string after firing this rule. </returns>
             public virtual int Replace(char[] s, int len)
             {
-                if (replacement.Length > 0)
+                if (m_replacement.Length > 0)
                 {
-                    Array.Copy(replacement, 0, s, len - suffix.Length, replacement.Length);
+                    Array.Copy(m_replacement, 0, s, len - m_suffix.Length, m_replacement.Length);
                 }
-                return len - suffix.Length + replacement.Length;
+                return len - m_suffix.Length + m_replacement.Length;
             }
         }
 
@@ -126,7 +126,7 @@ namespace Lucene.Net.Analysis.Pt
         /// </summary>
         protected internal class RuleWithSetExceptions : Rule
         {
-            protected internal readonly CharArraySet exceptions;
+            protected internal readonly CharArraySet m_exceptions;
 
             public RuleWithSetExceptions(string suffix, int min, string replacement, string[] exceptions) : base(suffix, min, replacement)
             {
@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis.Pt
                         throw new Exception("useless exception '" + exceptions[i] + "' does not end with '" + suffix + "'");
                     }
                 }
-                this.exceptions = new CharArraySet(
+                this.m_exceptions = new CharArraySet(
 #pragma warning disable 612, 618
                     LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
@@ -146,7 +146,7 @@ namespace Lucene.Net.Analysis.Pt
 
             public override bool Matches(char[] s, int len)
             {
-                return base.Matches(s, len) && !exceptions.Contains(s, 0, len);
+                return base.Matches(s, len) && !m_exceptions.Contains(s, 0, len);
             }
         }
 
@@ -156,7 +156,7 @@ namespace Lucene.Net.Analysis.Pt
         protected internal class RuleWithSuffixExceptions : Rule
         {
             // TODO: use a more efficient datastructure: automaton?
-            protected internal readonly char[][] exceptions;
+            protected internal readonly char[][] m_exceptions;
 
             public RuleWithSuffixExceptions(string suffix, int min, string replacement, string[] exceptions) : base(suffix, min, replacement)
             {
@@ -167,10 +167,10 @@ namespace Lucene.Net.Analysis.Pt
                         throw new Exception("warning: useless exception '" + exceptions[i] + "' does not end with '" + suffix + "'");
                     }
                 }
-                this.exceptions = new char[exceptions.Length][];
+                this.m_exceptions = new char[exceptions.Length][];
                 for (int i = 0; i < exceptions.Length; i++)
                 {
-                    this.exceptions[i] = exceptions[i].ToCharArray();
+                    this.m_exceptions[i] = exceptions[i].ToCharArray();
                 }
             }
 
@@ -181,9 +181,9 @@ namespace Lucene.Net.Analysis.Pt
                     return false;
                 }
 
-                for (int i = 0; i < exceptions.Length; i++)
+                for (int i = 0; i < m_exceptions.Length; i++)
                 {
-                    if (StemmerUtil.EndsWith(s, len, exceptions[i]))
+                    if (StemmerUtil.EndsWith(s, len, m_exceptions[i]))
                     {
                         return false;
                     }
@@ -198,10 +198,10 @@ namespace Lucene.Net.Analysis.Pt
         /// </summary>
         protected internal class Step
         {
-            protected internal readonly string name;
-            protected internal readonly Rule[] rules;
-            protected internal readonly int min;
-            protected internal readonly char[][] suffixes;
+            protected internal readonly string m_name;
+            protected internal readonly Rule[] m_rules;
+            protected internal readonly int m_min;
+            protected internal readonly char[][] m_suffixes;
 
             /// <summary>
             /// Create a new step </summary>
@@ -211,28 +211,28 @@ namespace Lucene.Net.Analysis.Pt
             /// <param name="suffixes"> optional list of conditional suffixes. may be null. </param>
             public Step(string name, Rule[] rules, int min, string[] suffixes)
             {
-                this.name = name;
-                this.rules = rules;
+                this.m_name = name;
+                this.m_rules = rules;
                 if (min == 0)
                 {
                     min = int.MaxValue;
                     foreach (Rule r in rules)
                     {
-                        min = Math.Min(min, r.min + r.suffix.Length);
+                        min = Math.Min(min, r.m_min + r.m_suffix.Length);
                     }
                 }
-                this.min = min;
+                this.m_min = min;
 
                 if (suffixes == null || suffixes.Length == 0)
                 {
-                    this.suffixes = null;
+                    this.m_suffixes = null;
                 }
                 else
                 {
-                    this.suffixes = new char[suffixes.Length][];
+                    this.m_suffixes = new char[suffixes.Length][];
                     for (int i = 0; i < suffixes.Length; i++)
                     {
-                        this.suffixes[i] = suffixes[i].ToCharArray();
+                        this.m_suffixes[i] = suffixes[i].ToCharArray();
                     }
                 }
             }
@@ -240,18 +240,18 @@ namespace Lucene.Net.Analysis.Pt
             /// <returns> new valid length of the string after applying the entire step. </returns>
             public virtual int Apply(char[] s, int len)
             {
-                if (len < min)
+                if (len < m_min)
                 {
                     return len;
                 }
 
-                if (suffixes != null)
+                if (m_suffixes != null)
                 {
                     bool found = false;
 
-                    for (int i = 0; i < suffixes.Length; i++)
+                    for (int i = 0; i < m_suffixes.Length; i++)
                     {
-                        if (StemmerUtil.EndsWith(s, len, suffixes[i]))
+                        if (StemmerUtil.EndsWith(s, len, m_suffixes[i]))
                         {
                             found = true;
                             break;
@@ -264,11 +264,11 @@ namespace Lucene.Net.Analysis.Pt
                     }
                 }
 
-                for (int i = 0; i < rules.Length; i++)
+                for (int i = 0; i < m_rules.Length; i++)
                 {
-                    if (rules[i].Matches(s, len))
+                    if (m_rules[i].Matches(s, len))
                     {
-                        return rules[i].Replace(s, len);
+                        return m_rules[i].Replace(s, len);
                     }
                 }
 
@@ -289,7 +289,7 @@ namespace Lucene.Net.Analysis.Pt
                 while ((step = ReadLine(r)) != null)
                 {
                     Step s = ParseStep(r, step);
-                    steps[s.name] = s;
+                    steps[s.m_name] = s;
                 }
             }
             return steps;

@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Util
         public static readonly Locale LocaleUS = new Locale("en-US");
 
         protected internal const int BUFFERMAX = 1024;
-        protected internal readonly char[] buffer = new char[BUFFERMAX];
+        protected internal readonly char[] m_buffer = new char[BUFFERMAX];
         /// <summary>
         /// true length of text in the buffer </summary>
         private int length = 0;
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Util
         private int usableLength = 0;
         /// <summary>
         /// accumulated offset of previous buffers for this reader, for offsetAtt </summary>
-        protected internal int offset = 0;
+        protected internal int m_offset = 0;
 
         private readonly Locale locale;
         private readonly BreakIterator.UBreakIteratorType iteratorType;
@@ -121,15 +121,15 @@ namespace Lucene.Net.Analysis.Util
         public override void Reset()
         {
             base.Reset();
-            wrapper.SetText(buffer, 0, 0);
+            wrapper.SetText(m_buffer, 0, 0);
             enumerator = Enumerable.Empty<Boundary>().GetEnumerator();
-            length = usableLength = offset = 0;
+            length = usableLength = m_offset = 0;
         }
 
         public override void End()
         {
             base.End();
-            int finalOffset = CorrectOffset(length < 0 ? offset : offset + length);
+            int finalOffset = CorrectOffset(length < 0 ? m_offset : m_offset + length);
             offsetAtt.SetOffset(finalOffset, finalOffset);
         }
 
@@ -139,7 +139,7 @@ namespace Lucene.Net.Analysis.Util
         {
             for (int i = length - 1; i >= 0; i--)
             {
-                if (IsSafeEnd(buffer[i]))
+                if (IsSafeEnd(m_buffer[i]))
                 {
                     return i + 1;
                 }
@@ -170,11 +170,11 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         private void Refill()
         {
-            offset += usableLength;
+            m_offset += usableLength;
             int leftover = length - usableLength;
-            Array.Copy(buffer, usableLength, buffer, 0, leftover);
-            int requested = buffer.Length - leftover;
-            int returned = Read(m_input, buffer, leftover, requested);
+            Array.Copy(m_buffer, usableLength, m_buffer, 0, leftover);
+            int requested = m_buffer.Length - leftover;
+            int returned = Read(m_input, m_buffer, leftover, requested);
             length = returned < 0 ? leftover : returned + leftover;
             if (returned < requested) // reader has been emptied, process the rest
             {
@@ -192,7 +192,7 @@ namespace Lucene.Net.Analysis.Util
                 }
             }
 
-            wrapper.SetText(buffer, 0, Math.Max(0, usableLength));
+            wrapper.SetText(m_buffer, 0, Math.Max(0, usableLength));
 
             var text = new string(wrapper.Text, wrapper.Start, wrapper.Length);
 

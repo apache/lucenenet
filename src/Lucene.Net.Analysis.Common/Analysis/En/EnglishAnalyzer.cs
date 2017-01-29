@@ -98,17 +98,17 @@ namespace Lucene.Net.Analysis.En
         ///         provided and <seealso cref="PorterStemFilter"/>. </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            Tokenizer source = new StandardTokenizer(matchVersion, reader);
-            TokenStream result = new StandardFilter(matchVersion, source);
+            Tokenizer source = new StandardTokenizer(m_matchVersion, reader);
+            TokenStream result = new StandardFilter(m_matchVersion, source);
             // prior to this we get the classic behavior, standardfilter does it for us.
 #pragma warning disable 612, 618
-            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+            if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
 #pragma warning restore 612, 618
             {
-                result = new EnglishPossessiveFilter(matchVersion, result);
+                result = new EnglishPossessiveFilter(m_matchVersion, result);
             }
-            result = new LowerCaseFilter(matchVersion, result);
-            result = new StopFilter(matchVersion, result, stopwords);
+            result = new LowerCaseFilter(m_matchVersion, result);
+            result = new StopFilter(m_matchVersion, result, m_stopwords);
             if (stemExclusionSet.Any())
             {
                 result = new SetKeywordMarkerFilter(result, stemExclusionSet);

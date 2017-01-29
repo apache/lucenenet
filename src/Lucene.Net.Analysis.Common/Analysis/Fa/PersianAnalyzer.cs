@@ -121,18 +121,18 @@ namespace Lucene.Net.Analysis.Fa
         {
             Tokenizer source;
 #pragma warning disable 612, 618
-            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+            if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
 #pragma warning restore 612, 618
             {
-                source = new StandardTokenizer(matchVersion, reader);
+                source = new StandardTokenizer(m_matchVersion, reader);
             }
             else
             {
 #pragma warning disable 612, 618
-                source = new ArabicLetterTokenizer(matchVersion, reader);
+                source = new ArabicLetterTokenizer(m_matchVersion, reader);
 #pragma warning restore 612, 618
             }
-            TokenStream result = new LowerCaseFilter(matchVersion, source);
+            TokenStream result = new LowerCaseFilter(m_matchVersion, source);
             result = new ArabicNormalizationFilter(result);
             /* additional persian-specific normalization */
             result = new PersianNormalizationFilter(result);
@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis.Fa
              * the order here is important: the stopword list is normalized with the
              * above!
              */
-            return new TokenStreamComponents(source, new StopFilter(matchVersion, result, stopwords));
+            return new TokenStreamComponents(source, new StopFilter(m_matchVersion, result, m_stopwords));
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace Lucene.Net.Analysis.Fa
         protected override TextReader InitReader(string fieldName, TextReader reader)
         {
 #pragma warning disable 612, 618
-            return matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ?
+            return m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ?
 #pragma warning restore 612, 618
                 new PersianCharFilter(reader) : reader;
         }

@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Th
 
         public override TokenStream Create(TokenStream input)
         {
-            return new ThaiWordFilter(luceneMatchVersion, input);
+            return new ThaiWordFilter(m_luceneMatchVersion, input);
         }
     }
 }

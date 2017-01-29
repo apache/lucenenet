@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Ngram
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
 #pragma warning disable 612, 618
-            if (luceneMatchVersion.OnOrAfter(LuceneVersion.LUCENE_44))
+            if (m_luceneMatchVersion.OnOrAfter(LuceneVersion.LUCENE_44))
 #pragma warning restore 612, 618
             {
                 EdgeNGramTokenFilter.Side sideEnum;
@@ -62,12 +62,12 @@ namespace Lucene.Net.Analysis.Ngram
                 {
                     throw new System.ArgumentException(typeof(EdgeNGramTokenizer).Name + " does not support backward n-grams as of Lucene 4.4");
                 }
-                return new EdgeNGramTokenizer(luceneMatchVersion, input, minGramSize, maxGramSize);
+                return new EdgeNGramTokenizer(m_luceneMatchVersion, input, minGramSize, maxGramSize);
             }
             else
             {
 #pragma warning disable 612, 618
-                return new Lucene43EdgeNGramTokenizer(luceneMatchVersion, input, side, minGramSize, maxGramSize);
+                return new Lucene43EdgeNGramTokenizer(m_luceneMatchVersion, input, side, minGramSize, maxGramSize);
 #pragma warning restore 612, 618
             }
         }

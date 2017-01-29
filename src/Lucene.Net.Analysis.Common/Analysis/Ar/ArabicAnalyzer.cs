@@ -143,13 +143,13 @@ namespace Lucene.Net.Analysis.Ar
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
 #pragma warning disable 612, 618
-            Tokenizer source = matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) 
-                ? new StandardTokenizer(matchVersion, reader) 
-                : (Tokenizer)new ArabicLetterTokenizer(matchVersion, reader);
+            Tokenizer source = m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) 
+                ? new StandardTokenizer(m_matchVersion, reader) 
+                : (Tokenizer)new ArabicLetterTokenizer(m_matchVersion, reader);
 #pragma warning restore 612, 618
-            TokenStream result = new LowerCaseFilter(matchVersion, source);
+            TokenStream result = new LowerCaseFilter(m_matchVersion, source);
             // the order here is important: the stopword list is not normalized!
-            result = new StopFilter(matchVersion, result, stopwords);
+            result = new StopFilter(m_matchVersion, result, m_stopwords);
             // TODO maybe we should make ArabicNormalization filter also KeywordAttribute aware?!
             result = new ArabicNormalizationFilter(result);
             if (stemExclusionSet.Count > 0)

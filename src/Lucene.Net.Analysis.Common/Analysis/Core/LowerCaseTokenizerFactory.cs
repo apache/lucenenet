@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Core
 
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
-            return new LowerCaseTokenizer(luceneMatchVersion, factory, input);
+            return new LowerCaseTokenizer(m_luceneMatchVersion, factory, input);
         }
 
         public virtual AbstractAnalysisFactory MultiTermComponent

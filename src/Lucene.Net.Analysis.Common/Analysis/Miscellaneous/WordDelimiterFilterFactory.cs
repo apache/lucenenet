@@ -124,9 +124,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public override TokenStream Create(TokenStream input)
         {
-            if (luceneMatchVersion.OnOrAfter(LuceneVersion.LUCENE_48))
+            if (m_luceneMatchVersion.OnOrAfter(LuceneVersion.LUCENE_48))
             {
-                return new WordDelimiterFilter(luceneMatchVersion, input, typeTable == null ? WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE : typeTable, flags, protectedWords);
+                return new WordDelimiterFilter(m_luceneMatchVersion, input, typeTable == null ? WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE : typeTable, flags, protectedWords);
             }
             else
             {

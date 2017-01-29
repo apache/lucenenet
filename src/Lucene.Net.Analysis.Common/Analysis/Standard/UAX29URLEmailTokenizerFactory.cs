@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Standard
 
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
-            UAX29URLEmailTokenizer tokenizer = new UAX29URLEmailTokenizer(luceneMatchVersion, factory, input);
+            UAX29URLEmailTokenizer tokenizer = new UAX29URLEmailTokenizer(m_luceneMatchVersion, factory, input);
             tokenizer.MaxTokenLength = maxTokenLength;
             return tokenizer;
         }

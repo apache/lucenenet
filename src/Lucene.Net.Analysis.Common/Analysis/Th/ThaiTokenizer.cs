@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Th
         {
             this.sentenceStart = sentenceStart;
             this.sentenceEnd = sentenceEnd;
-            wrapper.SetText(buffer, sentenceStart, sentenceEnd - sentenceStart);
+            wrapper.SetText(m_buffer, sentenceStart, sentenceEnd - sentenceStart);
             wordBreaker.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
         }
 
@@ -104,7 +104,7 @@ namespace Lucene.Net.Analysis.Th
 
             // find the next set of boundaries, skipping over non-tokens
             int end = wordBreaker.Next();
-            while (end != BreakIterator.DONE && !char.IsLetterOrDigit((char)Support.Character.CodePointAt(buffer, sentenceStart + start, sentenceEnd)))
+            while (end != BreakIterator.DONE && !char.IsLetterOrDigit((char)Support.Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
             {
                 start = end;
                 end = wordBreaker.Next();
@@ -116,8 +116,8 @@ namespace Lucene.Net.Analysis.Th
             }
 
             ClearAttributes();
-            termAtt.CopyBuffer(buffer, sentenceStart + start, end - start);
-            offsetAtt.SetOffset(CorrectOffset(offset + sentenceStart + start), CorrectOffset(offset + sentenceStart + end));
+            termAtt.CopyBuffer(m_buffer, sentenceStart + start, end - start);
+            offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart + start), CorrectOffset(m_offset + sentenceStart + end));
             return true;
         }
     }

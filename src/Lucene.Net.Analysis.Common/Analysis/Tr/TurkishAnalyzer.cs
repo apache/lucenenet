@@ -127,14 +127,14 @@ namespace Lucene.Net.Analysis.Tr
         ///         exclusion set is provided and <seealso cref="SnowballFilter"/>. </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            Tokenizer source = new StandardTokenizer(matchVersion, reader);
-            TokenStream result = new StandardFilter(matchVersion, source);
-            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_48))
+            Tokenizer source = new StandardTokenizer(m_matchVersion, reader);
+            TokenStream result = new StandardFilter(m_matchVersion, source);
+            if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_48))
             {
                 result = new ApostropheFilter(result);
             }
             result = new TurkishLowerCaseFilter(result);
-            result = new StopFilter(matchVersion, result, stopwords);
+            result = new StopFilter(m_matchVersion, result, m_stopwords);
             if (stemExclusionSet.Any())
             {
                 result = new SetKeywordMarkerFilter(result, stemExclusionSet);

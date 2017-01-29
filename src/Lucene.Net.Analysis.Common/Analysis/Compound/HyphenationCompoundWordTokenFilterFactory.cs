@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis.Compound
 
         public override TokenStream Create(TokenStream input)
         {
-            return new HyphenationCompoundWordTokenFilter(luceneMatchVersion, input, hyphenator, dictionary, minWordSize, minSubwordSize, maxSubwordSize, onlyLongestMatch);
+            return new HyphenationCompoundWordTokenFilter(m_luceneMatchVersion, input, hyphenator, dictionary, minWordSize, minSubwordSize, maxSubwordSize, onlyLongestMatch);
         }
     }
 }

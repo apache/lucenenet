@@ -30938,13 +30938,13 @@ namespace Lucene.Net.Analysis.CharFilters
             internal int NextChar()
             {
                 Debug.Assert(!IsRead, "Attempting to read past the end of a segment.");
-                return buf[pos++];
+                return m_buf[pos++];
             }
 
             /** Returns true when all characters in the text segment have been read */
             internal bool IsRead
             {
-                get { return pos >= len; }
+                get { return pos >= m_len; }
             }
         }
 

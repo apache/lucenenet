@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.El
 
         public override TokenStream Create(TokenStream @in)
         {
-            return new GreekLowerCaseFilter(luceneMatchVersion, @in);
+            return new GreekLowerCaseFilter(m_luceneMatchVersion, @in);
         }
 
         public virtual AbstractAnalysisFactory MultiTermComponent

@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Core
         public override TokenStream Create(TokenStream input)
         {
 #pragma warning disable 612, 618
-            TokenStream filter = new TypeTokenFilter(luceneMatchVersion, enablePositionIncrements, input, stopTypes, useWhitelist);
+            TokenStream filter = new TypeTokenFilter(m_luceneMatchVersion, enablePositionIncrements, input, stopTypes, useWhitelist);
 #pragma warning restore 612, 618
             return filter;
         }

@@ -78,42 +78,42 @@
             int v_1;
             int v_2;
             // (, line 26
-            I_p1 = limit;
+            I_p1 = m_limit;
             // test, line 30
-            v_1 = cursor;
+            v_1 = m_cursor;
             // (, line 30
             // hop, line 30
             {
-                int c = cursor + 3;
-                if (0 > c || c > limit)
+                int c = m_cursor + 3;
+                if (0 > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
             // setmark x, line 30
-            I_x = cursor;
-            cursor = v_1;
+            I_x = m_cursor;
+            m_cursor = v_1;
             // goto, line 31
             while (true)
             {
-                v_2 = cursor;
+                v_2 = m_cursor;
                 do
                 {
                     if (!(in_grouping(g_v, 97, 248)))
                     {
                         goto lab1;
                     }
-                    cursor = v_2;
+                    m_cursor = v_2;
                     goto golab0;
                 } while (false);
                 lab1:
-                cursor = v_2;
-                if (cursor >= limit)
+                m_cursor = v_2;
+                if (m_cursor >= m_limit)
                 {
                     return false;
                 }
-                cursor++;
+                m_cursor++;
             }
             golab0:
             // gopast, line 31
@@ -128,15 +128,15 @@
                     goto golab2;
                 } while (false);
                 lab3:
-                if (cursor >= limit)
+                if (m_cursor >= m_limit)
                 {
                     return false;
                 }
-                cursor++;
+                m_cursor++;
             }
             golab2:
             // setmark p1, line 31
-            I_p1 = cursor;
+            I_p1 = m_cursor;
             // try, line 32
             do
             {
@@ -159,29 +159,29 @@
             int v_3;
             // (, line 37
             // setlimit, line 38
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // tomark, line 38
-            if (cursor < I_p1)
+            if (m_cursor < I_p1)
             {
                 return false;
             }
-            cursor = I_p1;
-            v_2 = limit_backward;
-            limit_backward = cursor;
-            cursor = limit - v_1;
+            m_cursor = I_p1;
+            v_2 = m_limit_backward;
+            m_limit_backward = m_cursor;
+            m_cursor = m_limit - v_1;
             // (, line 38
             // [, line 38
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 38
             among_var = find_among_b(a_0, 29);
             if (among_var == 0)
             {
-                limit_backward = v_2;
+                m_limit_backward = v_2;
                 return false;
             }
             // ], line 38
-            bra = cursor;
-            limit_backward = v_2;
+            m_bra = m_cursor;
+            m_limit_backward = v_2;
             switch (among_var)
             {
                 case 0:
@@ -196,7 +196,7 @@
                     // or, line 46
                     do
                     {
-                        v_3 = limit - cursor;
+                        v_3 = m_limit - m_cursor;
                         do
                         {
                             if (!(in_grouping_b(g_s_ending, 98, 122)))
@@ -206,7 +206,7 @@
                             goto lab0;
                         } while (false);
                         lab1:
-                        cursor = limit - v_3;
+                        m_cursor = m_limit - v_3;
                         // (, line 46
                         // literal, line 46
                         if (!(eq_s_b(1, "k")))
@@ -238,40 +238,40 @@
             int v_3;
             // (, line 52
             // test, line 53
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // (, line 53
             // setlimit, line 54
-            v_2 = limit - cursor;
+            v_2 = m_limit - m_cursor;
             // tomark, line 54
-            if (cursor < I_p1)
+            if (m_cursor < I_p1)
             {
                 return false;
             }
-            cursor = I_p1;
-            v_3 = limit_backward;
-            limit_backward = cursor;
-            cursor = limit - v_2;
+            m_cursor = I_p1;
+            v_3 = m_limit_backward;
+            m_limit_backward = m_cursor;
+            m_cursor = m_limit - v_2;
             // (, line 54
             // [, line 54
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 54
             if (find_among_b(a_1, 2) == 0)
             {
-                limit_backward = v_3;
+                m_limit_backward = v_3;
                 return false;
             }
             // ], line 54
-            bra = cursor;
-            limit_backward = v_3;
-            cursor = limit - v_1;
+            m_bra = m_cursor;
+            m_limit_backward = v_3;
+            m_cursor = m_limit - v_1;
             // next, line 59
-            if (cursor <= limit_backward)
+            if (m_cursor <= m_limit_backward)
             {
                 return false;
             }
-            cursor--;
+            m_cursor--;
             // ], line 59
-            bra = cursor;
+            m_bra = m_cursor;
             // delete, line 59
             slice_del();
             return true;
@@ -284,29 +284,29 @@
             int v_2;
             // (, line 62
             // setlimit, line 63
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // tomark, line 63
-            if (cursor < I_p1)
+            if (m_cursor < I_p1)
             {
                 return false;
             }
-            cursor = I_p1;
-            v_2 = limit_backward;
-            limit_backward = cursor;
-            cursor = limit - v_1;
+            m_cursor = I_p1;
+            v_2 = m_limit_backward;
+            m_limit_backward = m_cursor;
+            m_cursor = m_limit - v_1;
             // (, line 63
             // [, line 63
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 63
             among_var = find_among_b(a_2, 11);
             if (among_var == 0)
             {
-                limit_backward = v_2;
+                m_limit_backward = v_2;
                 return false;
             }
             // ], line 63
-            bra = cursor;
-            limit_backward = v_2;
+            m_bra = m_cursor;
+            m_limit_backward = v_2;
             switch (among_var)
             {
                 case 0:
@@ -329,7 +329,7 @@
             int v_4;
             // (, line 72
             // do, line 74
-            v_1 = cursor;
+            v_1 = m_cursor;
             do
             {
                 // call mark_regions, line 74
@@ -339,12 +339,12 @@
                 }
             } while (false);
             lab0:
-            cursor = v_1;
+            m_cursor = v_1;
             // backwards, line 75
-            limit_backward = cursor; cursor = limit;
+            m_limit_backward = m_cursor; m_cursor = m_limit;
             // (, line 75
             // do, line 76
-            v_2 = limit - cursor;
+            v_2 = m_limit - m_cursor;
             do
             {
                 // call main_suffix, line 76
@@ -354,9 +354,9 @@
                 }
             } while (false);
             lab1:
-            cursor = limit - v_2;
+            m_cursor = m_limit - v_2;
             // do, line 77
-            v_3 = limit - cursor;
+            v_3 = m_limit - m_cursor;
             do
             {
                 // call consonant_pair, line 77
@@ -366,9 +366,9 @@
                 }
             } while (false);
             lab2:
-            cursor = limit - v_3;
+            m_cursor = m_limit - v_3;
             // do, line 78
-            v_4 = limit - cursor;
+            v_4 = m_limit - m_cursor;
             do
             {
                 // call other_suffix, line 78
@@ -378,8 +378,8 @@
                 }
             } while (false);
             lab3:
-            cursor = limit - v_4;
-            cursor = limit_backward; return true;
+            m_cursor = m_limit - v_4;
+            m_cursor = m_limit_backward; return true;
         }
 
         public override bool Equals(object o)

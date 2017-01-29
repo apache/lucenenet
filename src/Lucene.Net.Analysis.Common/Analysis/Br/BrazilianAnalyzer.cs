@@ -129,10 +129,10 @@ namespace Lucene.Net.Analysis.Br
         ///         , and <seealso cref="BrazilianStemFilter"/>. </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            Tokenizer source = new StandardTokenizer(matchVersion, reader);
-            TokenStream result = new LowerCaseFilter(matchVersion, source);
-            result = new StandardFilter(matchVersion, result);
-            result = new StopFilter(matchVersion, result, stopwords);
+            Tokenizer source = new StandardTokenizer(m_matchVersion, reader);
+            TokenStream result = new LowerCaseFilter(m_matchVersion, source);
+            result = new StandardFilter(m_matchVersion, result);
+            result = new StopFilter(m_matchVersion, result, m_stopwords);
             if (excltable != null && excltable.Count > 0)
             {
                 result = new SetKeywordMarkerFilter(result, excltable);

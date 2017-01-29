@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Core
 
         public override TokenStream Create(TokenStream input)
         {
-            return new UpperCaseFilter(luceneMatchVersion, input);
+            return new UpperCaseFilter(m_luceneMatchVersion, input);
         }
 
         public virtual AbstractAnalysisFactory MultiTermComponent

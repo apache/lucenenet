@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Position
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
             }
-            if (luceneMatchVersion.OnOrAfter(Lucene.Net.Util.LuceneVersion.LUCENE_44))
+            if (m_luceneMatchVersion.OnOrAfter(Lucene.Net.Util.LuceneVersion.LUCENE_44))
             {
                 throw new System.ArgumentException("PositionFilter is deprecated as of Lucene 4.4. You should either fix your code to not use it or use Lucene 4.3 version compatibility");
             }

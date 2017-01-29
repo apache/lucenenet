@@ -56,16 +56,16 @@ namespace Lucene.Net.Analysis.Compound
         /// </summary>
         public const int DEFAULT_MAX_SUBWORD_SIZE = 15;
 
-        protected internal readonly LuceneVersion matchVersion;
-        protected internal readonly CharArraySet dictionary;
-        protected internal readonly LinkedList<CompoundToken> tokens;
-        protected internal readonly int minWordSize;
-        protected internal readonly int minSubwordSize;
-        protected internal readonly int maxSubwordSize;
-        protected internal readonly bool onlyLongestMatch;
+        protected internal readonly LuceneVersion m_matchVersion;
+        protected internal readonly CharArraySet m_dictionary;
+        protected internal readonly LinkedList<CompoundToken> m_tokens;
+        protected internal readonly int m_minWordSize;
+        protected internal readonly int m_minSubwordSize;
+        protected internal readonly int m_maxSubwordSize;
+        protected internal readonly bool m_onlyLongestMatch;
 
-        protected internal readonly ICharTermAttribute termAtt;
-        protected internal readonly IOffsetAttribute offsetAtt;
+        protected internal readonly ICharTermAttribute m_termAtt;
+        protected internal readonly IOffsetAttribute m_offsetAtt;
         private readonly IPositionIncrementAttribute posIncAtt;
 
         private AttributeSource.State current;
@@ -83,40 +83,40 @@ namespace Lucene.Net.Analysis.Compound
         protected CompoundWordTokenFilterBase(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary, int minWordSize, int minSubwordSize, int maxSubwordSize, bool onlyLongestMatch)
             : base(input)
         {
-            termAtt = AddAttribute<ICharTermAttribute>();
-            offsetAtt = AddAttribute<IOffsetAttribute>();
+            m_termAtt = AddAttribute<ICharTermAttribute>();
+            m_offsetAtt = AddAttribute<IOffsetAttribute>();
             posIncAtt = AddAttribute<IPositionIncrementAttribute>();
 
-            this.matchVersion = matchVersion;
-            this.tokens = new LinkedList<CompoundToken>();
+            this.m_matchVersion = matchVersion;
+            this.m_tokens = new LinkedList<CompoundToken>();
             if (minWordSize < 0)
             {
                 throw new System.ArgumentException("minWordSize cannot be negative");
             }
-            this.minWordSize = minWordSize;
+            this.m_minWordSize = minWordSize;
             if (minSubwordSize < 0)
             {
                 throw new System.ArgumentException("minSubwordSize cannot be negative");
             }
-            this.minSubwordSize = minSubwordSize;
+            this.m_minSubwordSize = minSubwordSize;
             if (maxSubwordSize < 0)
             {
                 throw new System.ArgumentException("maxSubwordSize cannot be negative");
             }
-            this.maxSubwordSize = maxSubwordSize;
-            this.onlyLongestMatch = onlyLongestMatch;
-            this.dictionary = dictionary;
+            this.m_maxSubwordSize = maxSubwordSize;
+            this.m_onlyLongestMatch = onlyLongestMatch;
+            this.m_dictionary = dictionary;
         }
 
         public override sealed bool IncrementToken()
         {
-            if (tokens.Count > 0)
+            if (m_tokens.Count > 0)
             {
                 Debug.Assert(current != null);
-                CompoundToken token = tokens.First.Value; tokens.RemoveFirst();
+                CompoundToken token = m_tokens.First.Value; m_tokens.RemoveFirst();
                 RestoreState(current); // keep all other attributes untouched
-                termAtt.SetEmpty().Append(token.txt);
-                offsetAtt.SetOffset(token.startOffset, token.endOffset);
+                m_termAtt.SetEmpty().Append(token.txt);
+                m_offsetAtt.SetOffset(token.startOffset, token.endOffset);
                 posIncAtt.PositionIncrement = 0;
                 return true;
             }
@@ -125,11 +125,11 @@ namespace Lucene.Net.Analysis.Compound
             if (m_input.IncrementToken())
             {
                 // Only words longer than minWordSize get processed
-                if (termAtt.Length >= this.minWordSize)
+                if (m_termAtt.Length >= this.m_minWordSize)
                 {
                     Decompose();
                     // only capture the state if we really need it for producing new tokens
-                    if (tokens.Count > 0)
+                    if (m_tokens.Count > 0)
                     {
                         current = CaptureState();
                     }
@@ -152,7 +152,7 @@ namespace Lucene.Net.Analysis.Compound
         public override void Reset()
         {
             base.Reset();
-            tokens.Clear();
+            m_tokens.Clear();
             current = null;
         }
 
@@ -168,14 +168,14 @@ namespace Lucene.Net.Analysis.Compound
             /// Construct the compound token based on a slice of the current <seealso cref="CompoundWordTokenFilterBase#termAtt"/>. </summary>
             public CompoundToken(CompoundWordTokenFilterBase outerInstance, int offset, int length)
             {
-                this.txt = outerInstance.termAtt.SubSequence(offset, offset + length);
+                this.txt = outerInstance.m_termAtt.SubSequence(offset, offset + length);
 
                 // offsets of the original word
-                int startOff = outerInstance.offsetAtt.StartOffset;
-                int endOff = outerInstance.offsetAtt.EndOffset;
+                int startOff = outerInstance.m_offsetAtt.StartOffset;
+                int endOff = outerInstance.m_offsetAtt.EndOffset;
 
 #pragma warning disable 612, 618
-                if (outerInstance.matchVersion.OnOrAfter(LuceneVersion.LUCENE_44) || endOff - startOff != outerInstance.termAtt.Length)
+                if (outerInstance.m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_44) || endOff - startOff != outerInstance.m_termAtt.Length)
 #pragma warning restore 612, 618
                 {
                     // if length by start + end offsets doesn't match the term text then assume

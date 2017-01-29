@@ -92,19 +92,19 @@ namespace Lucene.Net.Analysis.Compound
 
         protected override void Decompose()
         {
-            int len = termAtt.Length;
-            for (int i = 0; i <= len - this.minSubwordSize; ++i)
+            int len = m_termAtt.Length;
+            for (int i = 0; i <= len - this.m_minSubwordSize; ++i)
             {
                 CompoundToken longestMatchToken = null;
-                for (int j = this.minSubwordSize; j <= this.maxSubwordSize; ++j)
+                for (int j = this.m_minSubwordSize; j <= this.m_maxSubwordSize; ++j)
                 {
                     if (i + j > len)
                     {
                         break;
                     }
-                    if (dictionary.Contains(termAtt.Buffer, i, j))
+                    if (m_dictionary.Contains(m_termAtt.Buffer, i, j))
                     {
-                        if (this.onlyLongestMatch)
+                        if (this.m_onlyLongestMatch)
                         {
                             if (longestMatchToken != null)
                             {
@@ -120,13 +120,13 @@ namespace Lucene.Net.Analysis.Compound
                         }
                         else
                         {
-                            tokens.AddLast(new CompoundToken(this, i, j));
+                            m_tokens.AddLast(new CompoundToken(this, i, j));
                         }
                     }
                 }
-                if (this.onlyLongestMatch && longestMatchToken != null)
+                if (this.m_onlyLongestMatch && longestMatchToken != null)
                 {
-                    tokens.AddLast(longestMatchToken);
+                    m_tokens.AddLast(longestMatchToken);
                 }
             }
         }

@@ -59,31 +59,31 @@ namespace Lucene.Net.Analysis.Pattern
     /// <seealso cref= PatternTokenizer
     /// @since solr1.2 </seealso>
     public class PatternTokenizerFactory : TokenizerFactory
-	{
-	  public const string PATTERN = "pattern";
-	  public const string GROUP = "group";
+    {
+        public const string PATTERN = "pattern";
+        public const string GROUP = "group";
 
-	  protected internal readonly Regex pattern;
-	  protected internal readonly int group;
+        protected internal readonly Regex m_pattern;
+        protected internal readonly int m_group;
 
-	  /// <summary>
-	  /// Creates a new PatternTokenizerFactory </summary>
-	  public PatternTokenizerFactory(IDictionary<string, string> args) : base(args)
-	  {
-		pattern = GetPattern(args, PATTERN);
-		group = GetInt(args, GROUP, -1);
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
+        /// <summary>
+        /// Creates a new PatternTokenizerFactory </summary>
+        public PatternTokenizerFactory(IDictionary<string, string> args) : base(args)
+        {
+            m_pattern = GetPattern(args, PATTERN);
+            m_group = GetInt(args, GROUP, -1);
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
         /// <summary>
         /// Split the input using configured pattern
         /// </summary>
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
-            return new PatternTokenizer(factory, input, pattern, group);
+            return new PatternTokenizer(factory, input, m_pattern, m_group);
         }
     }
 }

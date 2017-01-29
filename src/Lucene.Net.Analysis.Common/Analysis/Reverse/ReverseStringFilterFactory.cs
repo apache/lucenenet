@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Reverse
 
         public override TokenStream Create(TokenStream input)
         {
-            return new ReverseStringFilter(luceneMatchVersion, input);
+            return new ReverseStringFilter(m_luceneMatchVersion, input);
         }
     }
 }

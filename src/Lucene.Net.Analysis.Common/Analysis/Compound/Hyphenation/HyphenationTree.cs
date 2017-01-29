@@ -32,21 +32,20 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 	/// </summary>
 	public class HyphenationTree : TernaryTree, IPatternConsumer
     {
-
         /// <summary>
         /// value space: stores the interletter values
         /// </summary>
-        protected internal ByteVector vspace;
+        protected internal ByteVector m_vspace;
 
         /// <summary>
         /// This map stores hyphenation exceptions
         /// </summary>
-        protected internal IDictionary<string, IList<object>> stoplist;
+        protected internal IDictionary<string, IList<object>> m_stoplist;
 
         /// <summary>
         /// This map stores the character classes
         /// </summary>
-        protected internal TernaryTree classmap;
+        protected internal TernaryTree m_classmap;
 
         /// <summary>
         /// Temporary map to store interletter values on pattern loading.
@@ -58,10 +57,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public HyphenationTree()
         {
-            stoplist = new HashMap<string, IList<object>>(23); // usually a small table
-            classmap = new TernaryTree();
-            vspace = new ByteVector();
-            vspace.Alloc(1); // this reserves index 0, which we don't use
+            m_stoplist = new HashMap<string, IList<object>>(23); // usually a small table
+            m_classmap = new TernaryTree();
+            m_vspace = new ByteVector();
+            m_vspace.Alloc(1); // this reserves index 0, which we don't use
         }
 
         /// <summary>
@@ -76,8 +75,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         {
             int i, n = values.Length;
             int m = (n & 1) == 1 ? (n >> 1) + 2 : (n >> 1) + 1;
-            int offset = vspace.Alloc(m);
-            sbyte[] va = vspace.Array;
+            int offset = m_vspace.Alloc(m);
+            sbyte[] va = m_vspace.Array;
             for (i = 0; i < n; i++)
             {
                 int j = i >> 1;
@@ -98,7 +97,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         protected internal virtual string UnpackValues(int k)
         {
             StringBuilder buf = new StringBuilder();
-            sbyte v = vspace[k++];
+            sbyte v = m_vspace[k++];
             while (v != 0)
             {
                 char c = (char)(((int)((uint)v >> 4)) - 1 + '0');
@@ -110,7 +109,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 }
                 c = (char)(c - 1 + '0');
                 buf.Append(c);
-                v = vspace[k++];
+                v = m_vspace[k++];
             }
             return buf.ToString();
         }
@@ -201,8 +200,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             // patterns/values should be now in the tree
             // let's optimize a bit
             TrimToSize();
-            vspace.TrimToSize();
-            classmap.TrimToSize();
+            m_vspace.TrimToSize();
+            m_classmap.TrimToSize();
 
             // get rid of the auxiliary map
             ivalues = null;
@@ -240,7 +239,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         protected internal virtual sbyte[] GetValues(int k)
         {
             StringBuilder buf = new StringBuilder();
-            sbyte v = vspace[k++];
+            sbyte v = m_vspace[k++];
             while (v != 0)
             {
                 char c = (char)((((int)((uint)v >> 4))) - 1);
@@ -252,7 +251,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 }
                 c = (char)(c - 1);
                 buf.Append(c);
-                v = vspace[k++];
+                v = m_vspace[k++];
             }
             sbyte[] res = new sbyte[buf.Length];
             for (int i = 0; i < res.Length; i++)
@@ -293,15 +292,15 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             int i = index;
             char p, q;
             char sp = word[i];
-            p = root;
+            p = m_root;
 
-            while (p > 0 && p < sc.Length)
+            while (p > 0 && p < m_sc.Length)
             {
-                if (sc[p] == 0xFFFF)
+                if (m_sc[p] == 0xFFFF)
                 {
-                    if (HStrCmp(word, i, kv.Array, lo[p]) == 0)
+                    if (HStrCmp(word, i, m_kv.Array, m_lo[p]) == 0)
                     {
-                        values = GetValues(eq[p]); // data pointer is in eq[]
+                        values = GetValues(m_eq[p]); // data pointer is in eq[]
                         int j = index;
                         for (int k = 0; k < values.Length; k++)
                         {
@@ -314,7 +313,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     }
                     return;
                 }
-                int d = sp - sc[p];
+                int d = sp - m_sc[p];
                 if (d == 0)
                 {
                     if (sp == 0)
@@ -322,20 +321,20 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                         break;
                     }
                     sp = word[++i];
-                    p = eq[p];
+                    p = m_eq[p];
                     q = p;
 
                     // look for a pattern ending at this position by searching for
                     // the null char ( splitchar == 0 )
-                    while (q > 0 && q < sc.Length)
+                    while (q > 0 && q < m_sc.Length)
                     {
-                        if (sc[q] == 0xFFFF) // stop at compressed branch
+                        if (m_sc[q] == 0xFFFF) // stop at compressed branch
                         {
                             break;
                         }
-                        if (sc[q] == 0)
+                        if (m_sc[q] == 0)
                         {
-                            values = GetValues(eq[q]);
+                            values = GetValues(m_eq[q]);
                             int j = index;
                             for (int k = 0; k < values.Length; k++)
                             {
@@ -349,7 +348,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                         }
                         else
                         {
-                            q = lo[q];
+                            q = m_lo[q];
 
                             /// <summary>
                             /// actually the code should be: q = sc[q] < 0 ? hi[q] : lo[q]; but
@@ -360,7 +359,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 }
                 else
                 {
-                    p = d < 0 ? lo[p] : hi[p];
+                    p = d < 0 ? m_lo[p] : m_hi[p];
                 }
             }
         }
@@ -420,7 +419,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             for (i = 1; i <= len; i++)
             {
                 c[0] = w[offset + i - 1];
-                int nc = classmap.Find(c, 0);
+                int nc = m_classmap.Find(c, 0);
                 if (nc < 0) // found a non-letter character ...
                 {
                     if (i == (1 + iIgnoreAtBeginning))
@@ -458,11 +457,11 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
             // check exception list first
             string sw = new string(word, 1, len);
-            if (stoplist.ContainsKey(sw))
+            if (m_stoplist.ContainsKey(sw))
             {
                 // assume only simple hyphens (Hyphen.pre="-", Hyphen.post = Hyphen.no =
                 // null)
-                IList<object> hw = stoplist[sw];
+                IList<object> hw = m_stoplist[sw];
                 int j = 0;
                 for (i = 0; i < hw.Count; i++)
                 {
@@ -541,7 +540,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 for (int i = 0; i < chargroup.Length; i++)
                 {
                     key[0] = chargroup[i];
-                    classmap.Insert(key, 0, equivChar);
+                    m_classmap.Insert(key, 0, equivChar);
                 }
             }
         }
@@ -556,7 +555,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         ///        <seealso cref="Hyphen hyphen"/> objects. </param>
         public virtual void AddException(string word, List<object> hyphenatedword)
         {
-            stoplist[word] = hyphenatedword;
+            m_stoplist[word] = hyphenatedword;
         }
 
         /// <summary>

@@ -144,12 +144,12 @@ namespace Lucene.Net.Analysis.Cz
 
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            Tokenizer source = new StandardTokenizer(matchVersion, reader);
-            TokenStream result = new StandardFilter(matchVersion, source);
-            result = new LowerCaseFilter(matchVersion, result);
-            result = new StopFilter(matchVersion, result, stopwords);
+            Tokenizer source = new StandardTokenizer(m_matchVersion, reader);
+            TokenStream result = new StandardFilter(m_matchVersion, source);
+            result = new LowerCaseFilter(m_matchVersion, result);
+            result = new StopFilter(m_matchVersion, result, m_stopwords);
 #pragma warning disable 612, 618
-            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+            if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
 #pragma warning restore 612, 618
             {
                 if (this.stemExclusionTable.Any())

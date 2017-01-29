@@ -33,15 +33,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <seealso cref= TrimFilter </seealso>
     public class TrimFilterFactory : TokenFilterFactory
     {
-
-        protected internal readonly bool updateOffsets;
+        protected internal readonly bool m_updateOffsets;
 
         /// <summary>
         /// Creates a new TrimFilterFactory </summary>
         public TrimFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            updateOffsets = GetBoolean(args, "updateOffsets", false);
+            m_updateOffsets = GetBoolean(args, "updateOffsets", false);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
@@ -51,7 +50,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public override TokenStream Create(TokenStream input)
         {
 #pragma warning disable 612, 618
-            var filter = new TrimFilter(luceneMatchVersion, input, updateOffsets);
+            var filter = new TrimFilter(m_luceneMatchVersion, input, m_updateOffsets);
 #pragma warning restore 612, 618
             return filter;
         }

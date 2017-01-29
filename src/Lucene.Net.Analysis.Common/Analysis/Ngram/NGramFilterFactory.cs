@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Ngram
 
         public override TokenStream Create(TokenStream input)
         {
-            return new NGramTokenFilter(luceneMatchVersion, input, minGramSize, maxGramSize);
+            return new NGramTokenFilter(m_luceneMatchVersion, input, minGramSize, maxGramSize);
         }
     }
 }

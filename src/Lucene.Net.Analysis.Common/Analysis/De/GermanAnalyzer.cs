@@ -165,18 +165,18 @@ namespace Lucene.Net.Analysis.De
         ///         provided, <seealso cref="GermanNormalizationFilter"/> and <seealso cref="GermanLightStemFilter"/> </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            Tokenizer source = new StandardTokenizer(matchVersion, reader);
-            TokenStream result = new StandardFilter(matchVersion, source);
-            result = new LowerCaseFilter(matchVersion, result);
-            result = new StopFilter(matchVersion, result, stopwords);
+            Tokenizer source = new StandardTokenizer(m_matchVersion, reader);
+            TokenStream result = new StandardFilter(m_matchVersion, source);
+            result = new LowerCaseFilter(m_matchVersion, result);
+            result = new StopFilter(m_matchVersion, result, m_stopwords);
             result = new SetKeywordMarkerFilter(result, exclusionSet);
 #pragma warning disable 612, 618
-            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
+            if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
             {
                 result = new GermanNormalizationFilter(result);
                 result = new GermanLightStemFilter(result);
             }
-            else if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+            else if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
 #pragma warning restore 612, 618
             {
                 result = new SnowballFilter(result, new German2Stemmer());

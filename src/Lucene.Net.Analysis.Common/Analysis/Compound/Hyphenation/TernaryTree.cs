@@ -82,17 +82,17 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// Pointer to low branch and to rest of the key when it is stored directly in
         /// this node, we don't have unions in java!
         /// </summary>
-        protected internal char[] lo;
+        protected internal char[] m_lo;
 
         /// <summary>
         /// Pointer to high branch.
         /// </summary>
-        protected internal char[] hi;
+        protected internal char[] m_hi;
 
         /// <summary>
         /// Pointer to equal branch and to data when this node is a string terminator.
         /// </summary>
-        protected internal char[] eq;
+        protected internal char[] m_eq;
 
         /// <summary>
         /// <P>
@@ -108,18 +108,18 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// 0xFFFF is guaranteed not to be an Unicode character.
         /// </para>
         /// </summary>
-        protected internal char[] sc;
+        protected internal char[] m_sc;
 
         /// <summary>
         /// This vector holds the trailing of the keys when the branch is compressed.
         /// </summary>
-        protected internal CharVector kv;
+        protected internal CharVector m_kv;
 
-        protected internal char root;
+        protected internal char m_root;
 
-        protected internal char freenode;
+        protected internal char m_freenode;
 
-        protected internal int length; // number of items in tree
+        protected internal int m_length; // number of items in tree
 
         protected internal const int BLOCK_SIZE = 2048; // allocation size for arrays
 
@@ -130,14 +130,14 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         protected internal virtual void Init()
         {
-            root = (char)0;
-            freenode = (char)1;
-            length = 0;
-            lo = new char[BLOCK_SIZE];
-            hi = new char[BLOCK_SIZE];
-            eq = new char[BLOCK_SIZE];
-            sc = new char[BLOCK_SIZE];
-            kv = new CharVector();
+            m_root = (char)0;
+            m_freenode = (char)1;
+            m_length = 0;
+            m_lo = new char[BLOCK_SIZE];
+            m_hi = new char[BLOCK_SIZE];
+            m_eq = new char[BLOCK_SIZE];
+            m_sc = new char[BLOCK_SIZE];
+            m_kv = new CharVector();
         }
 
         /// <summary>
@@ -150,24 +150,24 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         {
             // make sure we have enough room in the arrays
             int len = key.Length + 1; // maximum number of nodes that may be generated
-            if (freenode + len > eq.Length)
+            if (m_freenode + len > m_eq.Length)
             {
-                RedimNodeArrays(eq.Length + BLOCK_SIZE);
+                RedimNodeArrays(m_eq.Length + BLOCK_SIZE);
             }
             char[] strkey = new char[len--];
             key.CopyTo(0, strkey, 0, len - 0);
             strkey[len] = (char)0;
-            root = Insert(root, strkey, 0, val);
+            m_root = Insert(m_root, strkey, 0, val);
         }
 
         public virtual void Insert(char[] key, int start, char val)
         {
             int len = StrLen(key) + 1;
-            if (freenode + len > eq.Length)
+            if (m_freenode + len > m_eq.Length)
             {
-                RedimNodeArrays(eq.Length + BLOCK_SIZE);
+                RedimNodeArrays(m_eq.Length + BLOCK_SIZE);
             }
-            root = Insert(root, key, start, val);
+            m_root = Insert(m_root, key, start, val);
         }
 
         /// <summary>
@@ -181,83 +181,83 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 // this means there is no branch, this node will start a new branch.
                 // Instead of doing that, we store the key somewhere else and create
                 // only one node with a pointer to the key
-                p = freenode++;
-                eq[p] = val; // holds data
-                length++;
-                hi[p] = (char)0;
+                p = m_freenode++;
+                m_eq[p] = val; // holds data
+                m_length++;
+                m_hi[p] = (char)0;
                 if (len > 0)
                 {
-                    sc[p] = (char)0xFFFF; // indicates branch is compressed
-                    lo[p] = (char)kv.Alloc(len + 1); // use 'lo' to hold pointer to key
-                    StrCpy(kv.Array, lo[p], key, start);
+                    m_sc[p] = (char)0xFFFF; // indicates branch is compressed
+                    m_lo[p] = (char)m_kv.Alloc(len + 1); // use 'lo' to hold pointer to key
+                    StrCpy(m_kv.Array, m_lo[p], key, start);
                 }
                 else
                 {
-                    sc[p] = (char)0;
-                    lo[p] = (char)0;
+                    m_sc[p] = (char)0;
+                    m_lo[p] = (char)0;
                 }
                 return p;
             }
 
-            if (sc[p] == 0xFFFF)
+            if (m_sc[p] == 0xFFFF)
             {
                 // branch is compressed: need to decompress
                 // this will generate garbage in the external key array
                 // but we can do some garbage collection later
-                char pp = freenode++;
-                lo[pp] = lo[p]; // previous pointer to key
-                eq[pp] = eq[p]; // previous pointer to data
-                lo[p] = (char)0;
+                char pp = m_freenode++;
+                m_lo[pp] = m_lo[p]; // previous pointer to key
+                m_eq[pp] = m_eq[p]; // previous pointer to data
+                m_lo[p] = (char)0;
                 if (len > 0)
                 {
-                    sc[p] = kv[lo[pp]];
-                    eq[p] = pp;
-                    lo[pp]++;
-                    if (kv[lo[pp]] == 0)
+                    m_sc[p] = m_kv[m_lo[pp]];
+                    m_eq[p] = pp;
+                    m_lo[pp]++;
+                    if (m_kv[m_lo[pp]] == 0)
                     {
                         // key completly decompressed leaving garbage in key array
-                        lo[pp] = (char)0;
-                        sc[pp] = (char)0;
-                        hi[pp] = (char)0;
+                        m_lo[pp] = (char)0;
+                        m_sc[pp] = (char)0;
+                        m_hi[pp] = (char)0;
                     }
                     else
                     {
                         // we only got first char of key, rest is still there
-                        sc[pp] = (char)0xFFFF;
+                        m_sc[pp] = (char)0xFFFF;
                     }
                 }
                 else
                 {
                     // In this case we can save a node by swapping the new node
                     // with the compressed node
-                    sc[pp] = (char)0xFFFF;
-                    hi[p] = pp;
-                    sc[p] = (char)0;
-                    eq[p] = val;
-                    length++;
+                    m_sc[pp] = (char)0xFFFF;
+                    m_hi[p] = pp;
+                    m_sc[p] = (char)0;
+                    m_eq[p] = val;
+                    m_length++;
                     return p;
                 }
             }
             char s = key[start];
-            if (s < sc[p])
+            if (s < m_sc[p])
             {
-                lo[p] = Insert(lo[p], key, start, val);
+                m_lo[p] = Insert(m_lo[p], key, start, val);
             }
-            else if (s == sc[p])
+            else if (s == m_sc[p])
             {
                 if (s != 0)
                 {
-                    eq[p] = Insert(eq[p], key, start + 1, val);
+                    m_eq[p] = Insert(m_eq[p], key, start + 1, val);
                 }
                 else
                 {
                     // key already in tree, overwrite data
-                    eq[p] = val;
+                    m_eq[p] = val;
                 }
             }
             else
             {
-                hi[p] = Insert(hi[p], key, start, val);
+                m_hi[p] = Insert(m_hi[p], key, start, val);
             }
             return p;
         }
@@ -340,17 +340,17 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         public virtual int Find(char[] key, int start)
         {
             int d;
-            char p = root;
+            char p = m_root;
             int i = start;
             char c;
 
             while (p != 0)
             {
-                if (sc[p] == 0xFFFF)
+                if (m_sc[p] == 0xFFFF)
                 {
-                    if (StrCmp(key, i, kv.Array, lo[p]) == 0)
+                    if (StrCmp(key, i, m_kv.Array, m_lo[p]) == 0)
                     {
-                        return eq[p];
+                        return m_eq[p];
                     }
                     else
                     {
@@ -358,23 +358,23 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     }
                 }
                 c = key[i];
-                d = c - sc[p];
+                d = c - m_sc[p];
                 if (d == 0)
                 {
                     if (c == 0)
                     {
-                        return eq[p];
+                        return m_eq[p];
                     }
                     i++;
-                    p = eq[p];
+                    p = m_eq[p];
                 }
                 else if (d < 0)
                 {
-                    p = lo[p];
+                    p = m_lo[p];
                 }
                 else
                 {
-                    p = hi[p];
+                    p = m_hi[p];
                 }
             }
             return -1;
@@ -388,37 +388,37 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         // redimension the arrays
         private void RedimNodeArrays(int newsize)
         {
-            int len = newsize < lo.Length ? newsize : lo.Length;
+            int len = newsize < m_lo.Length ? newsize : m_lo.Length;
             char[] na = new char[newsize];
-            Array.Copy(lo, 0, na, 0, len);
-            lo = na;
+            Array.Copy(m_lo, 0, na, 0, len);
+            m_lo = na;
             na = new char[newsize];
-            Array.Copy(hi, 0, na, 0, len);
-            hi = na;
+            Array.Copy(m_hi, 0, na, 0, len);
+            m_hi = na;
             na = new char[newsize];
-            Array.Copy(eq, 0, na, 0, len);
-            eq = na;
+            Array.Copy(m_eq, 0, na, 0, len);
+            m_eq = na;
             na = new char[newsize];
-            Array.Copy(sc, 0, na, 0, len);
-            sc = na;
+            Array.Copy(m_sc, 0, na, 0, len);
+            m_sc = na;
         }
 
         public virtual int Length
         {
-            get { return length; }
+            get { return m_length; }
         }
 
         public object Clone()
         {
             TernaryTree t = new TernaryTree();
-            t.lo = (char[])this.lo.Clone();
-            t.hi = (char[])this.hi.Clone();
-            t.eq = (char[])this.eq.Clone();
-            t.sc = (char[])this.sc.Clone();
-            t.kv = (CharVector)this.kv.Clone();
-            t.root = this.root;
-            t.freenode = this.freenode;
-            t.length = this.length;
+            t.m_lo = (char[])this.m_lo.Clone();
+            t.m_hi = (char[])this.m_hi.Clone();
+            t.m_eq = (char[])this.m_eq.Clone();
+            t.m_sc = (char[])this.m_sc.Clone();
+            t.m_kv = (CharVector)this.m_kv.Clone();
+            t.m_root = this.m_root;
+            t.m_freenode = this.m_freenode;
+            t.m_length = this.m_length;
 
             return t;
         }
@@ -451,7 +451,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             // System.out.print("Before root splitchar = ");
             // System.out.println(sc[root]);
 
-            int i = 0, n = length;
+            int i = 0, n = m_length;
             string[] k = new string[n];
             char[] v = new char[n];
             Iterator iter = new Iterator(this);
@@ -485,15 +485,15 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             Balance();
 
             // redimension the node arrays
-            RedimNodeArrays(freenode);
+            RedimNodeArrays(m_freenode);
 
             // ok, compact kv array
             CharVector kx = new CharVector();
             kx.Alloc(1);
             TernaryTree map = new TernaryTree();
-            Compact(kx, map, root);
-            kv = kx;
-            kv.TrimToSize();
+            Compact(kx, map, m_root);
+            m_kv = kx;
+            m_kv.TrimToSize();
         }
 
         private void Compact(CharVector kx, TernaryTree map, char p)
@@ -503,25 +503,25 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             {
                 return;
             }
-            if (sc[p] == 0xFFFF)
+            if (m_sc[p] == 0xFFFF)
             {
-                k = map.Find(kv.Array, lo[p]);
+                k = map.Find(m_kv.Array, m_lo[p]);
                 if (k < 0)
                 {
-                    k = kx.Alloc(StrLen(kv.Array, lo[p]) + 1);
-                    StrCpy(kx.Array, k, kv.Array, lo[p]);
+                    k = kx.Alloc(StrLen(m_kv.Array, m_lo[p]) + 1);
+                    StrCpy(kx.Array, k, m_kv.Array, m_lo[p]);
                     map.Insert(kx.Array, k, (char)k);
                 }
-                lo[p] = (char)k;
+                m_lo[p] = (char)k;
             }
             else
             {
-                Compact(kx, map, lo[p]);
-                if (sc[p] != 0)
+                Compact(kx, map, m_lo[p]);
+                if (m_sc[p] != 0)
                 {
-                    Compact(kx, map, eq[p]);
+                    Compact(kx, map, m_eq[p]);
                 }
-                Compact(kx, map, hi[p]);
+                Compact(kx, map, m_hi[p]);
             }
         }
 
@@ -607,7 +607,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             {
                 ns.Clear();
                 ks.Length = 0;
-                cur = outerInstance.root;
+                cur = outerInstance.m_root;
                 Run();
             }
 
@@ -617,7 +617,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 {
                     if (cur >= 0)
                     {
-                        return outerInstance.eq[cur];
+                        return outerInstance.m_eq[cur];
                     }
                     return (char)0;
                 }
@@ -636,9 +636,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     return -1;
                 }
 
-                if (cur != 0 && outerInstance.sc[cur] == 0)
+                if (cur != 0 && outerInstance.m_sc[cur] == 0)
                 {
-                    return outerInstance.lo[cur];
+                    return outerInstance.m_lo[cur];
                 }
 
                 bool climb = true;
@@ -650,23 +650,23 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     switch ((int)i.child)
                     {
                         case 1:
-                            if (outerInstance.sc[i.parent] != 0)
+                            if (outerInstance.m_sc[i.parent] != 0)
                             {
-                                res = outerInstance.eq[i.parent];
+                                res = outerInstance.m_eq[i.parent];
                                 ns.Push((Item)i.Clone());
-                                ks.Append(outerInstance.sc[i.parent]);
+                                ks.Append(outerInstance.m_sc[i.parent]);
                             }
                             else
                             {
                                 i.child++;
                                 ns.Push((Item)i.Clone());
-                                res = outerInstance.hi[i.parent];
+                                res = outerInstance.m_hi[i.parent];
                             }
                             climb = false;
                             break;
 
                         case 2:
-                            res = outerInstance.hi[i.parent];
+                            res = outerInstance.m_hi[i.parent];
                             ns.Push((Item)i.Clone());
                             if (ks.Length > 0)
                             {
@@ -703,18 +703,18 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     // first go down on low branch until leaf or compressed branch
                     while (cur != 0)
                     {
-                        if (outerInstance.sc[cur] == 0xFFFF)
+                        if (outerInstance.m_sc[cur] == 0xFFFF)
                         {
                             leaf = true;
                             break;
                         }
                         ns.Push(new Item((char)cur, '\u0000'));
-                        if (outerInstance.sc[cur] == 0)
+                        if (outerInstance.m_sc[cur] == 0)
                         {
                             leaf = true;
                             break;
                         }
-                        cur = outerInstance.lo[cur];
+                        cur = outerInstance.m_lo[cur];
                     }
                     if (leaf)
                     {
@@ -730,12 +730,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 // The current node should be a data node and
                 // the key should be in the key stack (at least partially)
                 StringBuilder buf = new StringBuilder(ks.ToString());
-                if (outerInstance.sc[cur] == 0xFFFF)
+                if (outerInstance.m_sc[cur] == 0xFFFF)
                 {
-                    int p = outerInstance.lo[cur];
-                    while (outerInstance.kv[p] != 0)
+                    int p = outerInstance.m_lo[cur];
+                    while (outerInstance.m_kv[p] != 0)
                     {
-                        buf.Append(outerInstance.kv[p++]);
+                        buf.Append(outerInstance.m_kv[p++]);
                     }
                 }
                 curkey = buf.ToString();
@@ -791,10 +791,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual void PrintStats(TextWriter @out)
         {
-            @out.WriteLine("Number of keys = " + Convert.ToString(length));
-            @out.WriteLine("Node count = " + Convert.ToString(freenode));
+            @out.WriteLine("Number of keys = " + Convert.ToString(m_length));
+            @out.WriteLine("Node count = " + Convert.ToString(m_freenode));
             // System.out.println("Array length = " + Integer.toString(eq.length));
-            @out.WriteLine("Key Array length = " + Convert.ToString(kv.Length()));
+            @out.WriteLine("Key Array length = " + Convert.ToString(m_kv.Length()));
 
             /*
              * for(int i=0; i<kv.length(); i++) if ( kv.get(i) != 0 )

@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Core
 
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
-            return new LetterTokenizer(luceneMatchVersion, factory, input);
+            return new LetterTokenizer(m_luceneMatchVersion, factory, input);
         }
     }
 }

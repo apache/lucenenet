@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// the luceneVersion arg </summary>
-        protected internal readonly LuceneVersion luceneMatchVersion;
+        protected internal readonly LuceneVersion m_luceneMatchVersion;
 
         /// <summary>
         /// Initialize this factory via a set of key-value pairs.
@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Util
             string version = Get(args, LUCENE_MATCH_VERSION_PARAM);
             // LUCENENET TODO: What should we do if the version is null?
             //luceneMatchVersion = version == null ? (LuceneVersion?)null : LuceneVersionHelpers.ParseLeniently(version);
-            luceneMatchVersion = version == null ?
+            m_luceneMatchVersion = version == null ?
 #pragma warning disable 612, 618
                 LuceneVersion.LUCENE_CURRENT :
 #pragma warning restore 612, 618
@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.Util
 
         public LuceneVersion LuceneMatchVersion
         {
-            get { return this.luceneMatchVersion; }
+            get { return this.m_luceneMatchVersion; }
         }
 
         public virtual string Require(IDictionary<string, string> args, string name)
@@ -311,11 +311,11 @@ namespace Lucene.Net.Analysis.Util
             {
                 // default stopwords list has 35 or so words, but maybe don't make it that
                 // big to start
-                words = new CharArraySet(luceneMatchVersion, files.Count() * 10, ignoreCase);
+                words = new CharArraySet(m_luceneMatchVersion, files.Count() * 10, ignoreCase);
                 foreach (string file in files)
                 {
                     var wlist = GetLines(loader, file.Trim());
-                    words.UnionWith(StopFilter.MakeStopSet(luceneMatchVersion, wlist, ignoreCase));
+                    words.UnionWith(StopFilter.MakeStopSet(m_luceneMatchVersion, wlist, ignoreCase));
                 }
             }
             return words;
@@ -342,7 +342,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 // default stopwords list has 35 or so words, but maybe don't make it that
                 // big to start
-                words = new CharArraySet(luceneMatchVersion, files.Count() * 10, ignoreCase);
+                words = new CharArraySet(m_luceneMatchVersion, files.Count() * 10, ignoreCase);
                 foreach (string file in files)
                 {
                     using (Stream stream = loader.OpenResource(file.Trim()))

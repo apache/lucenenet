@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.En
 
         public override TokenStream Create(TokenStream input)
         {
-            return new EnglishPossessiveFilter(luceneMatchVersion, input);
+            return new EnglishPossessiveFilter(m_luceneMatchVersion, input);
         }
     }
 }

@@ -33,9 +33,9 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// An immutable stopword set
         /// </summary>
-        protected internal readonly CharArraySet stopwords;
+        protected internal readonly CharArraySet m_stopwords;
 
-        protected internal readonly LuceneVersion matchVersion;
+        protected internal readonly LuceneVersion m_matchVersion;
 
         /// <summary>
         /// Returns the analyzer's stopword set or an empty set if the analyzer has no
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Util
         {
             get
             {
-                return stopwords;
+                return m_stopwords;
             }
         }
 
@@ -60,9 +60,9 @@ namespace Lucene.Net.Analysis.Util
         ///          the analyzer's stopword set </param>
         protected internal StopwordAnalyzerBase(LuceneVersion version, CharArraySet stopwords)
         {
-            matchVersion = version;
+            m_matchVersion = version;
             // analyzers should use char array set for stopwords!
-            this.stopwords = stopwords == null ? CharArraySet.EMPTY_SET : CharArraySet.UnmodifiableSet(CharArraySet.Copy(version, stopwords));
+            this.m_stopwords = stopwords == null ? CharArraySet.EMPTY_SET : CharArraySet.UnmodifiableSet(CharArraySet.Copy(version, stopwords));
         }
 
         /// <summary>

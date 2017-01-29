@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Hi
         public HindiAnalyzer(LuceneVersion version, CharArraySet stopwords, CharArraySet stemExclusionSet)
               : base(version, stopwords)
         {
-            this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
+            this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(m_matchVersion, stemExclusionSet));
         }
 
         /// <summary>
@@ -132,23 +132,23 @@ namespace Lucene.Net.Analysis.Hi
         {
             Tokenizer source;
 #pragma warning disable 612, 618
-            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
+            if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
             {
-                source = new StandardTokenizer(matchVersion, reader);
+                source = new StandardTokenizer(m_matchVersion, reader);
             }
             else
             {
-                source = new IndicTokenizer(matchVersion, reader);
+                source = new IndicTokenizer(m_matchVersion, reader);
             }
 #pragma warning restore 612, 618
-            TokenStream result = new LowerCaseFilter(matchVersion, source);
+            TokenStream result = new LowerCaseFilter(m_matchVersion, source);
             if (stemExclusionSet.Count > 0)
             {
                 result = new SetKeywordMarkerFilter(result, stemExclusionSet);
             }
             result = new IndicNormalizationFilter(result);
             result = new HindiNormalizationFilter(result);
-            result = new StopFilter(matchVersion, result, stopwords);
+            result = new StopFilter(m_matchVersion, result, m_stopwords);
             result = new HindiStemFilter(result);
             return new TokenStreamComponents(source, result);
         }

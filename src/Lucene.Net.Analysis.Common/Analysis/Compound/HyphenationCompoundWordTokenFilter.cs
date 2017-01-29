@@ -199,7 +199,7 @@ namespace Lucene.Net.Analysis.Compound
         protected override void Decompose()
         {
             // get the hyphenation points
-            Hyphenation.Hyphenation hyphens = hyphenator.Hyphenate(termAtt.Buffer, 0, termAtt.Length, 1, 1);
+            Hyphenation.Hyphenation hyphens = hyphenator.Hyphenate(m_termAtt.Buffer, 0, m_termAtt.Length, 1, 1);
             // No hyphen points found -> exit
             if (hyphens == null)
             {
@@ -219,14 +219,14 @@ namespace Lucene.Net.Analysis.Compound
 
                     // if the part is longer than maxSubwordSize we
                     // are done with this round
-                    if (partLength > this.maxSubwordSize)
+                    if (partLength > this.m_maxSubwordSize)
                     {
                         break;
                     }
 
                     // we only put subwords to the token stream
                     // that are longer than minPartSize
-                    if (partLength < this.minSubwordSize)
+                    if (partLength < this.m_minSubwordSize)
                     {
                         // BOGUS/BROKEN/FUNKY/WACKO: somehow we have negative 'parts' according to the 
                         // calculation above, and we rely upon minSubwordSize being >=0 to filter them out...
@@ -234,9 +234,9 @@ namespace Lucene.Net.Analysis.Compound
                     }
 
                     // check the dictionary
-                    if (dictionary == null || dictionary.Contains(termAtt.Buffer, start, partLength))
+                    if (m_dictionary == null || m_dictionary.Contains(m_termAtt.Buffer, start, partLength))
                     {
-                        if (this.onlyLongestMatch)
+                        if (this.m_onlyLongestMatch)
                         {
                             if (longestMatchToken != null)
                             {
@@ -252,16 +252,16 @@ namespace Lucene.Net.Analysis.Compound
                         }
                         else
                         {
-                            tokens.AddLast(new CompoundToken(this, start, partLength));
+                            m_tokens.AddLast(new CompoundToken(this, start, partLength));
                         }
                     }
-                    else if (dictionary.Contains(termAtt.Buffer, start, partLength - 1))
+                    else if (m_dictionary.Contains(m_termAtt.Buffer, start, partLength - 1))
                     {
                         // check the dictionary again with a word that is one character
                         // shorter
                         // to avoid problems with genitive 's characters and other binding
                         // characters
-                        if (this.onlyLongestMatch)
+                        if (this.m_onlyLongestMatch)
                         {
                             if (longestMatchToken != null)
                             {
@@ -277,13 +277,13 @@ namespace Lucene.Net.Analysis.Compound
                         }
                         else
                         {
-                            tokens.AddLast(new CompoundToken(this, start, partLength - 1));
+                            m_tokens.AddLast(new CompoundToken(this, start, partLength - 1));
                         }
                     }
                 }
-                if (this.onlyLongestMatch && longestMatchToken != null)
+                if (this.m_onlyLongestMatch && longestMatchToken != null)
                 {
-                    tokens.AddLast(longestMatchToken);
+                    m_tokens.AddLast(longestMatchToken);
                 }
             }
         }

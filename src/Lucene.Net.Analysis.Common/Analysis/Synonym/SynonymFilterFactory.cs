@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             AssureMatchVersion();
 #pragma warning disable 612, 618
-            if (luceneMatchVersion.OnOrAfter(Lucene.Net.Util.LuceneVersion.LUCENE_34))
+            if (m_luceneMatchVersion.OnOrAfter(Lucene.Net.Util.LuceneVersion.LUCENE_34))
             {
                 delegator = new FSTSynonymFilterFactory(new Dictionary<string, string>(OriginalArgs));
             }

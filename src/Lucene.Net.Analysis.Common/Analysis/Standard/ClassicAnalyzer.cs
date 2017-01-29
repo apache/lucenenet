@@ -104,11 +104,11 @@ namespace Lucene.Net.Analysis.Standard
 
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            var src = new ClassicTokenizer(matchVersion, reader);
+            var src = new ClassicTokenizer(m_matchVersion, reader);
             src.MaxTokenLength = maxTokenLength;
             TokenStream tok = new ClassicFilter(src);
-            tok = new LowerCaseFilter(matchVersion, tok);
-            tok = new StopFilter(matchVersion, tok, stopwords);
+            tok = new LowerCaseFilter(m_matchVersion, tok);
+            tok = new StopFilter(m_matchVersion, tok, m_stopwords);
             return new TokenStreamComponentsAnonymousInnerClassHelper(this, src, tok, reader);
         }
 

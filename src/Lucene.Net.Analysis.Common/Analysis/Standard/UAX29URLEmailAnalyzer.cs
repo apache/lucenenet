@@ -96,11 +96,11 @@ namespace Lucene.Net.Analysis.Standard
 
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            UAX29URLEmailTokenizer src = new UAX29URLEmailTokenizer(matchVersion, reader);
+            UAX29URLEmailTokenizer src = new UAX29URLEmailTokenizer(m_matchVersion, reader);
             src.MaxTokenLength = maxTokenLength;
-            TokenStream tok = new StandardFilter(matchVersion, src);
-            tok = new LowerCaseFilter(matchVersion, tok);
-            tok = new StopFilter(matchVersion, tok, stopwords);
+            TokenStream tok = new StandardFilter(m_matchVersion, src);
+            tok = new LowerCaseFilter(m_matchVersion, tok);
+            tok = new StopFilter(m_matchVersion, tok, m_stopwords);
             return new TokenStreamComponentsAnonymousInnerClassHelper(this, src, tok, reader);
         }
 

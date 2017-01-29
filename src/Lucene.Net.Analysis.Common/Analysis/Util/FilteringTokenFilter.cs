@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        protected internal readonly LuceneVersion version;
+        protected internal readonly LuceneVersion m_version;
         private readonly IPositionIncrementAttribute posIncrAtt;
         private bool enablePositionIncrements; // no init needed, as ctor enforces setting value!
         private bool first = true;
@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.Util
             : base(@in)
         {
             posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
-            this.version = version;
+            this.m_version = version;
             this.enablePositionIncrements = true;
         }
 
@@ -142,7 +142,7 @@ namespace Lucene.Net.Analysis.Util
             // to make it show the obsolete warning is to change this back to separate Get and Set methods.
             set
             {
-                CheckPositionIncrement(version, value);
+                CheckPositionIncrement(m_version, value);
                 this.enablePositionIncrements = value;
             }
         }

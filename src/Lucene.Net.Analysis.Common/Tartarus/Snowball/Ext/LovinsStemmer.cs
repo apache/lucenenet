@@ -378,12 +378,12 @@
             // (, line 21
             // hop, line 21
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
             return true;
         }
@@ -393,12 +393,12 @@
             // (, line 22
             // hop, line 22
             {
-                int c = cursor - 3;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 3;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
             return true;
         }
@@ -408,12 +408,12 @@
             // (, line 23
             // hop, line 23
             {
-                int c = cursor - 4;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 4;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
             return true;
         }
@@ -423,12 +423,12 @@
             // (, line 24
             // hop, line 24
             {
-                int c = cursor - 5;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 5;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
             return true;
         }
@@ -439,20 +439,20 @@
             int v_2;
             // (, line 25
             // test, line 25
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 25
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // not, line 25
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 25
@@ -463,7 +463,7 @@
                     return false;
                 } while (false);
                 lab0:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
             }
             return true;
         }
@@ -474,20 +474,20 @@
             int v_2;
             // (, line 26
             // test, line 26
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 26
             {
-                int c = cursor - 3;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 3;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // not, line 26
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 26
@@ -498,7 +498,7 @@
                     return false;
                 } while (false);
                 lab0:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
             }
             return true;
         }
@@ -508,17 +508,17 @@
             int v_1;
             // (, line 27
             // test, line 27
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 27
             {
-                int c = cursor - 3;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 3;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // literal, line 27
             if (!(eq_s_b(1, "f")))
             {
@@ -533,21 +533,21 @@
             int v_2;
             // (, line 28
             // test, line 28
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 28
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // or, line 28
             do
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 28
@@ -558,7 +558,7 @@
                     goto lab0;
                 } while (false);
                 lab1:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
                 // literal, line 28
                 if (!(eq_s_b(2, "ll")))
                 {
@@ -576,20 +576,20 @@
             int v_3;
             // (, line 29
             // test, line 29
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 29
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // not, line 29
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 29
@@ -600,11 +600,11 @@
                     return false;
                 } while (false);
                 lab0:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
             }
             // not, line 29
             {
-                v_3 = limit - cursor;
+                v_3 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 29
@@ -615,7 +615,7 @@
                     return false;
                 } while (false);
                 lab1:
-                cursor = limit - v_3;
+                m_cursor = m_limit - v_3;
             }
             return true;
         }
@@ -627,20 +627,20 @@
             int v_3;
             // (, line 30
             // test, line 30
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 30
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // not, line 30
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 30
@@ -651,11 +651,11 @@
                     return false;
                 } while (false);
                 lab0:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
             }
             // not, line 30
             {
-                v_3 = limit - cursor;
+                v_3 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 30
@@ -666,7 +666,7 @@
                     return false;
                 } while (false);
                 lab1:
-                cursor = limit - v_3;
+                m_cursor = m_limit - v_3;
             }
             return true;
         }
@@ -677,21 +677,21 @@
             int v_2;
             // (, line 31
             // test, line 31
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 31
             {
-                int c = cursor - 3;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 3;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // or, line 31
             do
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 31
@@ -702,7 +702,7 @@
                     goto lab0;
                 } while (false);
                 lab1:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
                 do
                 {
                     // literal, line 31
@@ -713,7 +713,7 @@
                     goto lab0;
                 } while (false);
                 lab2:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
                 // (, line 31
                 // literal, line 31
                 if (!(eq_s_b(1, "e")))
@@ -721,11 +721,11 @@
                     return false;
                 }
                 // next, line 31
-                if (cursor <= limit_backward)
+                if (m_cursor <= m_limit_backward)
                 {
                     return false;
                 }
-                cursor--;
+                m_cursor--;
                 // literal, line 31
                 if (!(eq_s_b(1, "u")))
                 {
@@ -745,20 +745,20 @@
             int v_5;
             // (, line 32
             // test, line 32
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 32
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // not, line 32
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 32
@@ -769,11 +769,11 @@
                     return false;
                 } while (false);
                 lab0:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
             }
             // not, line 32
             {
-                v_3 = limit - cursor;
+                v_3 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 32
@@ -784,11 +784,11 @@
                     return false;
                 } while (false);
                 lab1:
-                cursor = limit - v_3;
+                m_cursor = m_limit - v_3;
             }
             // not, line 32
             {
-                v_4 = limit - cursor;
+                v_4 = m_limit - m_cursor;
                 do
                 {
                     // (, line 32
@@ -799,7 +799,7 @@
                     }
                     // not, line 32
                     {
-                        v_5 = limit - cursor;
+                        v_5 = m_limit - m_cursor;
                         do
                         {
                             // literal, line 32
@@ -810,12 +810,12 @@
                             goto lab2;
                         } while (false);
                         lab3:
-                        cursor = limit - v_5;
+                        m_cursor = m_limit - v_5;
                     }
                     return false;
                 } while (false);
                 lab2:
-                cursor = limit - v_4;
+                m_cursor = m_limit - v_4;
             }
             return true;
         }
@@ -829,20 +829,20 @@
             int v_5;
             // (, line 33
             // test, line 33
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 33
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // not, line 33
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 33
@@ -853,11 +853,11 @@
                     return false;
                 } while (false);
                 lab0:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
             }
             // not, line 33
             {
-                v_3 = limit - cursor;
+                v_3 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 33
@@ -868,11 +868,11 @@
                     return false;
                 } while (false);
                 lab1:
-                cursor = limit - v_3;
+                m_cursor = m_limit - v_3;
             }
             // not, line 33
             {
-                v_4 = limit - cursor;
+                v_4 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 33
@@ -883,11 +883,11 @@
                     return false;
                 } while (false);
                 lab2:
-                cursor = limit - v_4;
+                m_cursor = m_limit - v_4;
             }
             // not, line 33
             {
-                v_5 = limit - cursor;
+                v_5 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 33
@@ -898,7 +898,7 @@
                     return false;
                 } while (false);
                 lab3:
-                cursor = limit - v_5;
+                m_cursor = m_limit - v_5;
             }
             return true;
         }
@@ -910,36 +910,36 @@
             int v_3;
             // (, line 34
             // test, line 34
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 34
             {
-                int c = cursor - 3;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 3;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // (, line 34
             // hop, line 34
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
             // or, line 34
             do
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // not, line 34
                     {
-                        v_3 = limit - cursor;
+                        v_3 = m_limit - m_cursor;
                         do
                         {
                             // literal, line 34
@@ -950,20 +950,20 @@
                             goto lab1;
                         } while (false);
                         lab2:
-                        cursor = limit - v_3;
+                        m_cursor = m_limit - v_3;
                     }
                     goto lab0;
                 } while (false);
                 lab1:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
                 // hop, line 34
                 {
-                    int c = cursor - 2;
-                    if (limit_backward > c || c > limit)
+                    int c = m_cursor - 2;
+                    if (m_limit_backward > c || c > m_limit)
                     {
                         return false;
                     }
-                    cursor = c;
+                    m_cursor = c;
                 }
             } while (false);
             lab0:
@@ -976,21 +976,21 @@
             int v_2;
             // (, line 35
             // test, line 35
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 35
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // or, line 35
             do
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 35
@@ -1001,7 +1001,7 @@
                     goto lab0;
                 } while (false);
                 lab1:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
                 // literal, line 35
                 if (!(eq_s_b(1, "i")))
                 {
@@ -1018,20 +1018,20 @@
             int v_2;
             // (, line 36
             // test, line 36
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 36
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // not, line 36
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 36
@@ -1042,7 +1042,7 @@
                     return false;
                 } while (false);
                 lab0:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
             }
             return true;
         }
@@ -1055,32 +1055,32 @@
             int v_4;
             // (, line 37
             // test, line 37
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 37
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // test, line 37
-            v_2 = limit - cursor;
+            v_2 = m_limit - m_cursor;
             // hop, line 37
             {
-                int c = cursor - 3;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 3;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_2;
+            m_cursor = m_limit - v_2;
             // not, line 37
             {
-                v_3 = limit - cursor;
+                v_3 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 37
@@ -1091,11 +1091,11 @@
                     return false;
                 } while (false);
                 lab0:
-                cursor = limit - v_3;
+                m_cursor = m_limit - v_3;
             }
             // not, line 37
             {
-                v_4 = limit - cursor;
+                v_4 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 37
@@ -1106,7 +1106,7 @@
                     return false;
                 } while (false);
                 lab1:
-                cursor = limit - v_4;
+                m_cursor = m_limit - v_4;
             }
             return true;
         }
@@ -1117,21 +1117,21 @@
             int v_2;
             // (, line 38
             // test, line 38
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 38
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // or, line 38
             do
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 38
@@ -1142,7 +1142,7 @@
                     goto lab0;
                 } while (false);
                 lab1:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
                 // literal, line 38
                 if (!(eq_s_b(1, "r")))
                 {
@@ -1160,21 +1160,21 @@
             int v_3;
             // (, line 39
             // test, line 39
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 39
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // or, line 39
             do
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 39
@@ -1185,7 +1185,7 @@
                     goto lab0;
                 } while (false);
                 lab1:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
                 // (, line 39
                 // literal, line 39
                 if (!(eq_s_b(1, "t")))
@@ -1194,7 +1194,7 @@
                 }
                 // not, line 39
                 {
-                    v_3 = limit - cursor;
+                    v_3 = m_limit - m_cursor;
                     do
                     {
                         // literal, line 39
@@ -1205,7 +1205,7 @@
                         return false;
                     } while (false);
                     lab2:
-                    cursor = limit - v_3;
+                    m_cursor = m_limit - v_3;
                 }
             } while (false);
             lab0:
@@ -1219,21 +1219,21 @@
             int v_3;
             // (, line 40
             // test, line 40
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 40
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // or, line 40
             do
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 40
@@ -1244,7 +1244,7 @@
                     goto lab0;
                 } while (false);
                 lab1:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
                 // (, line 40
                 // literal, line 40
                 if (!(eq_s_b(1, "t")))
@@ -1253,7 +1253,7 @@
                 }
                 // not, line 40
                 {
-                    v_3 = limit - cursor;
+                    v_3 = m_limit - m_cursor;
                     do
                     {
                         // literal, line 40
@@ -1264,7 +1264,7 @@
                         return false;
                     } while (false);
                     lab2:
-                    cursor = limit - v_3;
+                    m_cursor = m_limit - v_3;
                 }
             } while (false);
             lab0:
@@ -1277,21 +1277,21 @@
             int v_2;
             // (, line 41
             // test, line 41
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 41
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // or, line 41
             do
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 41
@@ -1302,7 +1302,7 @@
                     goto lab0;
                 } while (false);
                 lab1:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
                 do
                 {
                     // literal, line 41
@@ -1313,7 +1313,7 @@
                     goto lab0;
                 } while (false);
                 lab2:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
                 do
                 {
                     // literal, line 41
@@ -1324,7 +1324,7 @@
                     goto lab0;
                 } while (false);
                 lab3:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
                 // literal, line 41
                 if (!(eq_s_b(1, "r")))
                 {
@@ -1340,17 +1340,17 @@
             int v_1;
             // (, line 42
             // test, line 42
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 42
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // literal, line 42
             if (!(eq_s_b(1, "c")))
             {
@@ -1366,20 +1366,20 @@
             int v_3;
             // (, line 43
             // test, line 43
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 43
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // not, line 43
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 43
@@ -1390,11 +1390,11 @@
                     return false;
                 } while (false);
                 lab0:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
             }
             // not, line 43
             {
-                v_3 = limit - cursor;
+                v_3 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 43
@@ -1405,7 +1405,7 @@
                     return false;
                 } while (false);
                 lab1:
-                cursor = limit - v_3;
+                m_cursor = m_limit - v_3;
             }
             return true;
         }
@@ -1416,21 +1416,21 @@
             int v_2;
             // (, line 44
             // test, line 44
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 44
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // or, line 44
             do
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 44
@@ -1441,7 +1441,7 @@
                     goto lab0;
                 } while (false);
                 lab1:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
                 do
                 {
                     // literal, line 44
@@ -1452,7 +1452,7 @@
                     goto lab0;
                 } while (false);
                 lab2:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
                 // (, line 44
                 // literal, line 44
                 if (!(eq_s_b(1, "e")))
@@ -1460,11 +1460,11 @@
                     return false;
                 }
                 // next, line 44
-                if (cursor <= limit_backward)
+                if (m_cursor <= m_limit_backward)
                 {
                     return false;
                 }
-                cursor--;
+                m_cursor--;
                 // literal, line 44
                 if (!(eq_s_b(1, "u")))
                 {
@@ -1480,17 +1480,17 @@
             int v_1;
             // (, line 45
             // test, line 45
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 45
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // literal, line 45
             if (!(eq_s_b(2, "in")))
             {
@@ -1505,20 +1505,20 @@
             int v_2;
             // (, line 46
             // test, line 46
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 46
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // not, line 46
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 46
@@ -1529,7 +1529,7 @@
                     return false;
                 } while (false);
                 lab0:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
             }
             return true;
         }
@@ -1539,17 +1539,17 @@
             int v_1;
             // (, line 47
             // test, line 47
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 47
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // among, line 47
             if (find_among_b(a_0, 9) == 0)
             {
@@ -1565,20 +1565,20 @@
             int v_3;
             // (, line 49
             // test, line 49
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 49
             {
-                int c = cursor - 3;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 3;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // not, line 49
             {
-                v_2 = limit - cursor;
+                v_2 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 49
@@ -1589,11 +1589,11 @@
                     return false;
                 } while (false);
                 lab0:
-                cursor = limit - v_2;
+                m_cursor = m_limit - v_2;
             }
             // not, line 49
             {
-                v_3 = limit - cursor;
+                v_3 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 49
@@ -1604,7 +1604,7 @@
                     return false;
                 } while (false);
                 lab1:
-                cursor = limit - v_3;
+                m_cursor = m_limit - v_3;
             }
             return true;
         }
@@ -1614,17 +1614,17 @@
             int v_1;
             // (, line 50
             // test, line 50
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // hop, line 50
             {
-                int c = cursor - 2;
-                if (limit_backward > c || c > limit)
+                int c = m_cursor - 2;
+                if (m_limit_backward > c || c > m_limit)
                 {
                     return false;
                 }
-                cursor = c;
+                m_cursor = c;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // literal, line 50
             if (!(eq_s_b(1, "l")))
             {
@@ -1638,7 +1638,7 @@
             int among_var;
             // (, line 55
             // [, line 56
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 56
             among_var = find_among_b(a_1, 294);
             if (among_var == 0)
@@ -1646,7 +1646,7 @@
                 return false;
             }
             // ], line 56
-            bra = cursor;
+            m_bra = m_cursor;
             switch (among_var)
             {
                 case 0:
@@ -1665,23 +1665,23 @@
             int v_1;
             // (, line 151
             // test, line 152
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // substring, line 152
             if (find_among_b(a_2, 10) == 0)
             {
                 return false;
             }
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // [, line 154
-            ket = cursor;
+            m_ket = m_cursor;
             // next, line 154
-            if (cursor <= limit_backward)
+            if (m_cursor <= m_limit_backward)
             {
                 return false;
             }
-            cursor--;
+            m_cursor--;
             // ], line 154
-            bra = cursor;
+            m_bra = m_cursor;
             // delete, line 154
             slice_del();
             return true;
@@ -1700,7 +1700,7 @@
             int v_8;
             // (, line 159
             // [, line 160
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 160
             among_var = find_among_b(a_3, 34);
             if (among_var == 0)
@@ -1708,7 +1708,7 @@
                 return false;
             }
             // ], line 160
-            bra = cursor;
+            m_bra = m_cursor;
             switch (among_var)
             {
                 case 0:
@@ -1757,7 +1757,7 @@
                     // (, line 169
                     // not, line 169
                     {
-                        v_1 = limit - cursor;
+                        v_1 = m_limit - m_cursor;
                         do
                         {
                             // literal, line 169
@@ -1768,11 +1768,11 @@
                             return false;
                         } while (false);
                         lab0:
-                        cursor = limit - v_1;
+                        m_cursor = m_limit - v_1;
                     }
                     // not, line 169
                     {
-                        v_2 = limit - cursor;
+                        v_2 = m_limit - m_cursor;
                         do
                         {
                             // literal, line 169
@@ -1783,11 +1783,11 @@
                             return false;
                         } while (false);
                         lab1:
-                        cursor = limit - v_2;
+                        m_cursor = m_limit - v_2;
                     }
                     // not, line 169
                     {
-                        v_3 = limit - cursor;
+                        v_3 = m_limit - m_cursor;
                         do
                         {
                             // literal, line 169
@@ -1798,7 +1798,7 @@
                             return false;
                         } while (false);
                         lab2:
-                        cursor = limit - v_3;
+                        m_cursor = m_limit - v_3;
                     }
                     // <-, line 169
                     slice_from("l");
@@ -1877,7 +1877,7 @@
                     // (, line 184
                     // not, line 184
                     {
-                        v_4 = limit - cursor;
+                        v_4 = m_limit - m_cursor;
                         do
                         {
                             // literal, line 184
@@ -1888,7 +1888,7 @@
                             return false;
                         } while (false);
                         lab3:
-                        cursor = limit - v_4;
+                        m_cursor = m_limit - v_4;
                     }
                     // <-, line 184
                     slice_from("ens");
@@ -1912,7 +1912,7 @@
                     // (, line 188
                     // not, line 188
                     {
-                        v_5 = limit - cursor;
+                        v_5 = m_limit - m_cursor;
                         do
                         {
                             // literal, line 188
@@ -1923,11 +1923,11 @@
                             return false;
                         } while (false);
                         lab4:
-                        cursor = limit - v_5;
+                        m_cursor = m_limit - v_5;
                     }
                     // not, line 188
                     {
-                        v_6 = limit - cursor;
+                        v_6 = m_limit - m_cursor;
                         do
                         {
                             // literal, line 188
@@ -1938,7 +1938,7 @@
                             return false;
                         } while (false);
                         lab5:
-                        cursor = limit - v_6;
+                        m_cursor = m_limit - v_6;
                     }
                     // <-, line 188
                     slice_from("hes");
@@ -1952,7 +1952,7 @@
                     // (, line 190
                     // not, line 190
                     {
-                        v_7 = limit - cursor;
+                        v_7 = m_limit - m_cursor;
                         do
                         {
                             // literal, line 190
@@ -1963,7 +1963,7 @@
                             return false;
                         } while (false);
                         lab6:
-                        cursor = limit - v_7;
+                        m_cursor = m_limit - v_7;
                     }
                     // <-, line 190
                     slice_from("ens");
@@ -1977,7 +1977,7 @@
                     // (, line 193
                     // not, line 193
                     {
-                        v_8 = limit - cursor;
+                        v_8 = m_limit - m_cursor;
                         do
                         {
                             // literal, line 193
@@ -1988,7 +1988,7 @@
                             return false;
                         } while (false);
                         lab7:
-                        cursor = limit - v_8;
+                        m_cursor = m_limit - v_8;
                     }
                     // <-, line 193
                     slice_from("es");
@@ -2015,10 +2015,10 @@
             int v_3;
             // (, line 200
             // backwards, line 202
-            limit_backward = cursor; cursor = limit;
+            m_limit_backward = m_cursor; m_cursor = m_limit;
             // (, line 202
             // do, line 203
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             do
             {
                 // call endings, line 203
@@ -2028,9 +2028,9 @@
                 }
             } while (false);
             lab0:
-            cursor = limit - v_1;
+            m_cursor = m_limit - v_1;
             // do, line 204
-            v_2 = limit - cursor;
+            v_2 = m_limit - m_cursor;
             do
             {
                 // call undouble, line 204
@@ -2040,9 +2040,9 @@
                 }
             } while (false);
             lab1:
-            cursor = limit - v_2;
+            m_cursor = m_limit - v_2;
             // do, line 205
-            v_3 = limit - cursor;
+            v_3 = m_limit - m_cursor;
             do
             {
                 // call respell, line 205
@@ -2052,8 +2052,8 @@
                 }
             } while (false);
             lab2:
-            cursor = limit - v_3;
-            cursor = limit_backward; return true;
+            m_cursor = m_limit - v_3;
+            m_cursor = m_limit_backward; return true;
         }
 
 

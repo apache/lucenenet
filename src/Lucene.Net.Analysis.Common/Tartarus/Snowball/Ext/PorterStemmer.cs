@@ -128,7 +128,7 @@
 
         private bool r_R1()
         {
-            if (!(I_p1 <= cursor))
+            if (!(I_p1 <= m_cursor))
             {
                 return false;
             }
@@ -137,7 +137,7 @@
 
         private bool r_R2()
         {
-            if (!(I_p2 <= cursor))
+            if (!(I_p2 <= m_cursor))
             {
                 return false;
             }
@@ -149,7 +149,7 @@
             int among_var;
             // (, line 24
             // [, line 25
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 25
             among_var = find_among_b(a_0, 4);
             if (among_var == 0)
@@ -157,7 +157,7 @@
                 return false;
             }
             // ], line 25
-            bra = cursor;
+            m_bra = m_cursor;
             switch (among_var)
             {
                 case 0:
@@ -189,7 +189,7 @@
             int v_4;
             // (, line 33
             // [, line 34
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 34
             among_var = find_among_b(a_2, 3);
             if (among_var == 0)
@@ -197,7 +197,7 @@
                 return false;
             }
             // ], line 34
-            bra = cursor;
+            m_bra = m_cursor;
             switch (among_var)
             {
                 case 0:
@@ -215,7 +215,7 @@
                 case 2:
                     // (, line 37
                     // test, line 38
-                    v_1 = limit - cursor;
+                    v_1 = m_limit - m_cursor;
                     // gopast, line 38
                     while (true)
                     {
@@ -228,25 +228,25 @@
                             goto golab0;
                         } while (false);
                         lab1:
-                        if (cursor <= limit_backward)
+                        if (m_cursor <= m_limit_backward)
                         {
                             return false;
                         }
-                        cursor--;
+                        m_cursor--;
                     }
                     golab0:
-                    cursor = limit - v_1;
+                    m_cursor = m_limit - v_1;
                     // delete, line 38
                     slice_del();
                     // test, line 39
-                    v_3 = limit - cursor;
+                    v_3 = m_limit - m_cursor;
                     // substring, line 39
                     among_var = find_among_b(a_1, 13);
                     if (among_var == 0)
                     {
                         return false;
                     }
-                    cursor = limit - v_3;
+                    m_cursor = m_limit - v_3;
                     switch (among_var)
                     {
                         case 0:
@@ -255,46 +255,46 @@
                             // (, line 41
                             // <+, line 41
                             {
-                                int c = cursor;
-                                insert(cursor, cursor, "e");
-                                cursor = c;
+                                int c = m_cursor;
+                                insert(m_cursor, m_cursor, "e");
+                                m_cursor = c;
                             }
                             break;
                         case 2:
                             // (, line 44
                             // [, line 44
-                            ket = cursor;
+                            m_ket = m_cursor;
                             // next, line 44
-                            if (cursor <= limit_backward)
+                            if (m_cursor <= m_limit_backward)
                             {
                                 return false;
                             }
-                            cursor--;
+                            m_cursor--;
                             // ], line 44
-                            bra = cursor;
+                            m_bra = m_cursor;
                             // delete, line 44
                             slice_del();
                             break;
                         case 3:
                             // (, line 45
                             // atmark, line 45
-                            if (cursor != I_p1)
+                            if (m_cursor != I_p1)
                             {
                                 return false;
                             }
                             // test, line 45
-                            v_4 = limit - cursor;
+                            v_4 = m_limit - m_cursor;
                             // call shortv, line 45
                             if (!r_shortv())
                             {
                                 return false;
                             }
-                            cursor = limit - v_4;
+                            m_cursor = m_limit - v_4;
                             // <+, line 45
                             {
-                                int c = cursor;
-                                insert(cursor, cursor, "e");
-                                cursor = c;
+                                int c = m_cursor;
+                                insert(m_cursor, m_cursor, "e");
+                                m_cursor = c;
                             }
                             break;
                     }
@@ -308,11 +308,11 @@
             int v_1;
             // (, line 51
             // [, line 52
-            ket = cursor;
+            m_ket = m_cursor;
             // or, line 52
             do
             {
-                v_1 = limit - cursor;
+                v_1 = m_limit - m_cursor;
                 do
                 {
                     // literal, line 52
@@ -323,7 +323,7 @@
                     goto lab0;
                 } while (false);
                 lab1:
-                cursor = limit - v_1;
+                m_cursor = m_limit - v_1;
                 // literal, line 52
                 if (!(eq_s_b(1, "Y")))
                 {
@@ -332,7 +332,7 @@
             } while (false);
             lab0:
             // ], line 52
-            bra = cursor;
+            m_bra = m_cursor;
             // gopast, line 53
             while (true)
             {
@@ -345,11 +345,11 @@
                     goto golab2;
                 } while (false);
                 lab3:
-                if (cursor <= limit_backward)
+                if (m_cursor <= m_limit_backward)
                 {
                     return false;
                 }
-                cursor--;
+                m_cursor--;
             }
             golab2:
             // <-, line 54
@@ -362,7 +362,7 @@
             int among_var;
             // (, line 57
             // [, line 58
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 58
             among_var = find_among_b(a_3, 20);
             if (among_var == 0)
@@ -370,7 +370,7 @@
                 return false;
             }
             // ], line 58
-            bra = cursor;
+            m_bra = m_cursor;
             // call R1, line 58
             if (!r_R1())
             {
@@ -459,7 +459,7 @@
             int among_var;
             // (, line 81
             // [, line 82
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 82
             among_var = find_among_b(a_4, 7);
             if (among_var == 0)
@@ -467,7 +467,7 @@
                 return false;
             }
             // ], line 82
-            bra = cursor;
+            m_bra = m_cursor;
             // call R1, line 82
             if (!r_R1())
             {
@@ -502,7 +502,7 @@
             int v_1;
             // (, line 91
             // [, line 92
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 92
             among_var = find_among_b(a_5, 19);
             if (among_var == 0)
@@ -510,7 +510,7 @@
                 return false;
             }
             // ], line 92
-            bra = cursor;
+            m_bra = m_cursor;
             // call R2, line 92
             if (!r_R2())
             {
@@ -530,7 +530,7 @@
                     // or, line 96
                     do
                     {
-                        v_1 = limit - cursor;
+                        v_1 = m_limit - m_cursor;
                         do
                         {
                             // literal, line 96
@@ -541,7 +541,7 @@
                             goto lab0;
                         } while (false);
                         lab1:
-                        cursor = limit - v_1;
+                        m_cursor = m_limit - v_1;
                         // literal, line 96
                         if (!(eq_s_b(1, "t")))
                         {
@@ -562,18 +562,18 @@
             int v_2;
             // (, line 100
             // [, line 101
-            ket = cursor;
+            m_ket = m_cursor;
             // literal, line 101
             if (!(eq_s_b(1, "e")))
             {
                 return false;
             }
             // ], line 101
-            bra = cursor;
+            m_bra = m_cursor;
             // or, line 102
             do
             {
-                v_1 = limit - cursor;
+                v_1 = m_limit - m_cursor;
                 do
                 {
                     // call R2, line 102
@@ -584,7 +584,7 @@
                     goto lab0;
                 } while (false);
                 lab1:
-                cursor = limit - v_1;
+                m_cursor = m_limit - v_1;
                 // (, line 102
                 // call R1, line 102
                 if (!r_R1())
@@ -593,7 +593,7 @@
                 }
                 // not, line 102
                 {
-                    v_2 = limit - cursor;
+                    v_2 = m_limit - m_cursor;
                     do
                     {
                         // call shortv, line 102
@@ -604,7 +604,7 @@
                         return false;
                     } while (false);
                     lab2:
-                    cursor = limit - v_2;
+                    m_cursor = m_limit - v_2;
                 }
             } while (false);
             lab0:
@@ -617,14 +617,14 @@
         {
             // (, line 106
             // [, line 107
-            ket = cursor;
+            m_ket = m_cursor;
             // literal, line 107
             if (!(eq_s_b(1, "l")))
             {
                 return false;
             }
             // ], line 107
-            bra = cursor;
+            m_bra = m_cursor;
             // call R2, line 108
             if (!r_R2())
             {
@@ -663,41 +663,41 @@
             // unset Y_found, line 115
             B_Y_found = false;
             // do, line 116
-            v_1 = cursor;
+            v_1 = m_cursor;
             do
             {
                 // (, line 116
                 // [, line 116
-                bra = cursor;
+                m_bra = m_cursor;
                 // literal, line 116
                 if (!(eq_s(1, "y")))
                 {
                     goto lab0;
                 }
                 // ], line 116
-                ket = cursor;
+                m_ket = m_cursor;
                 // <-, line 116
                 slice_from("Y");
                 // set Y_found, line 116
                 B_Y_found = true;
             } while (false);
             lab0:
-            cursor = v_1;
+            m_cursor = v_1;
             // do, line 117
-            v_2 = cursor;
+            v_2 = m_cursor;
             do
             {
                 // repeat, line 117
                 while (true)
                 {
-                    v_3 = cursor;
+                    v_3 = m_cursor;
                     do
                     {
                         // (, line 117
                         // goto, line 117
                         while (true)
                         {
-                            v_4 = cursor;
+                            v_4 = m_cursor;
                             do
                             {
                                 // (, line 117
@@ -706,24 +706,24 @@
                                     goto lab5;
                                 }
                                 // [, line 117
-                                bra = cursor;
+                                m_bra = m_cursor;
                                 // literal, line 117
                                 if (!(eq_s(1, "y")))
                                 {
                                     goto lab5;
                                 }
                                 // ], line 117
-                                ket = cursor;
-                                cursor = v_4;
+                                m_ket = m_cursor;
+                                m_cursor = v_4;
                                 goto golab4;
                             } while (false);
                             lab5:
-                            cursor = v_4;
-                            if (cursor >= limit)
+                            m_cursor = v_4;
+                            if (m_cursor >= m_limit)
                             {
                                 goto lab3;
                             }
-                            cursor++;
+                            m_cursor++;
                         }
                         golab4:
                         // <-, line 117
@@ -741,18 +741,18 @@
 
                     } while (false);
                     lab3:
-                    cursor = v_3;
+                    m_cursor = v_3;
                     goto replab2;
                     end_of_outer_loop: { }
                 }
                 replab2:;
             } while (false);
             //lab1: // not referenced
-            cursor = v_2;
-            I_p1 = limit;
-            I_p2 = limit;
+            m_cursor = v_2;
+            I_p1 = m_limit;
+            I_p2 = m_limit;
             // do, line 121
-            v_5 = cursor;
+            v_5 = m_cursor;
             do
             {
                 // (, line 121
@@ -768,11 +768,11 @@
                         goto golab7;
                     } while (false);
                     lab8:
-                    if (cursor >= limit)
+                    if (m_cursor >= m_limit)
                     {
                         goto lab6;
                     }
-                    cursor++;
+                    m_cursor++;
                 }
                 golab7:
                 // gopast, line 122
@@ -787,15 +787,15 @@
                         goto golab9;
                     } while (false);
                     lab10:
-                    if (cursor >= limit)
+                    if (m_cursor >= m_limit)
                     {
                         goto lab6;
                     }
-                    cursor++;
+                    m_cursor++;
                 }
                 golab9:
                 // setmark p1, line 122
-                I_p1 = cursor;
+                I_p1 = m_cursor;
                 // gopast, line 123
                 while (true)
                 {
@@ -808,11 +808,11 @@
                         goto golab11;
                     } while (false);
                     lab12:
-                    if (cursor >= limit)
+                    if (m_cursor >= m_limit)
                     {
                         goto lab6;
                     }
-                    cursor++;
+                    m_cursor++;
                 }
                 golab11:
                 // gopast, line 123
@@ -827,23 +827,23 @@
                         goto golab13;
                     } while (false);
                     lab14:
-                    if (cursor >= limit)
+                    if (m_cursor >= m_limit)
                     {
                         goto lab6;
                     }
-                    cursor++;
+                    m_cursor++;
                 }
                 golab13:
                 // setmark p2, line 123
-                I_p2 = cursor;
+                I_p2 = m_cursor;
             } while (false);
             lab6:
-            cursor = v_5;
+            m_cursor = v_5;
             // backwards, line 126
-            limit_backward = cursor; cursor = limit;
+            m_limit_backward = m_cursor; m_cursor = m_limit;
             // (, line 126
             // do, line 127
-            v_10 = limit - cursor;
+            v_10 = m_limit - m_cursor;
             do
             {
                 // call Step_1a, line 127
@@ -853,9 +853,9 @@
                 }
             } while (false);
             lab15:
-            cursor = limit - v_10;
+            m_cursor = m_limit - v_10;
             // do, line 128
-            v_11 = limit - cursor;
+            v_11 = m_limit - m_cursor;
             do
             {
                 // call Step_1b, line 128
@@ -865,9 +865,9 @@
                 }
             } while (false);
             lab16:
-            cursor = limit - v_11;
+            m_cursor = m_limit - v_11;
             // do, line 129
-            v_12 = limit - cursor;
+            v_12 = m_limit - m_cursor;
             do
             {
                 // call Step_1c, line 129
@@ -877,9 +877,9 @@
                 }
             } while (false);
             lab17:
-            cursor = limit - v_12;
+            m_cursor = m_limit - v_12;
             // do, line 130
-            v_13 = limit - cursor;
+            v_13 = m_limit - m_cursor;
             do
             {
                 // call Step_2, line 130
@@ -889,9 +889,9 @@
                 }
             } while (false);
             lab18:
-            cursor = limit - v_13;
+            m_cursor = m_limit - v_13;
             // do, line 131
-            v_14 = limit - cursor;
+            v_14 = m_limit - m_cursor;
             do
             {
                 // call Step_3, line 131
@@ -901,9 +901,9 @@
                 }
             } while (false);
             lab19:
-            cursor = limit - v_14;
+            m_cursor = m_limit - v_14;
             // do, line 132
-            v_15 = limit - cursor;
+            v_15 = m_limit - m_cursor;
             do
             {
                 // call Step_4, line 132
@@ -913,9 +913,9 @@
                 }
             } while (false);
             lab20:
-            cursor = limit - v_15;
+            m_cursor = m_limit - v_15;
             // do, line 133
-            v_16 = limit - cursor;
+            v_16 = m_limit - m_cursor;
             do
             {
                 // call Step_5a, line 133
@@ -925,9 +925,9 @@
                 }
             } while (false);
             lab21:
-            cursor = limit - v_16;
+            m_cursor = m_limit - v_16;
             // do, line 134
-            v_17 = limit - cursor;
+            v_17 = m_limit - m_cursor;
             do
             {
                 // call Step_5b, line 134
@@ -937,9 +937,9 @@
                 }
             } while (false);
             lab22:
-            cursor = limit - v_17;
-            cursor = limit_backward;                    // do, line 137
-            v_18 = cursor;
+            m_cursor = m_limit - v_17;
+            m_cursor = m_limit_backward;                    // do, line 137
+            v_18 = m_cursor;
             do
             {
                 // (, line 137
@@ -951,36 +951,36 @@
                 // repeat, line 137
                 while (true)
                 {
-                    v_19 = cursor;
+                    v_19 = m_cursor;
                     do
                     {
                         // (, line 137
                         // goto, line 137
                         while (true)
                         {
-                            v_20 = cursor;
+                            v_20 = m_cursor;
                             do
                             {
                                 // (, line 137
                                 // [, line 137
-                                bra = cursor;
+                                m_bra = m_cursor;
                                 // literal, line 137
                                 if (!(eq_s(1, "Y")))
                                 {
                                     goto lab27;
                                 }
                                 // ], line 137
-                                ket = cursor;
-                                cursor = v_20;
+                                m_ket = m_cursor;
+                                m_cursor = v_20;
                                 goto golab26;
                             } while (false);
                             lab27:
-                            cursor = v_20;
-                            if (cursor >= limit)
+                            m_cursor = v_20;
+                            if (m_cursor >= m_limit)
                             {
                                 goto lab25;
                             }
-                            cursor++;
+                            m_cursor++;
                         }
                         golab26:
                         // <-, line 137
@@ -996,14 +996,14 @@
 
                     } while (false);
                     lab25:
-                    cursor = v_19;
+                    m_cursor = v_19;
                     goto replab24;
                     end_of_outer_loop_2: { }
                 }
                 replab24:;
             } while (false);
             lab23:
-            cursor = v_18;
+            m_cursor = v_18;
             return true;
         }
 

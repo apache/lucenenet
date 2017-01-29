@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Standard
 
         public override TokenStream Create(TokenStream input)
         {
-            return new StandardFilter(luceneMatchVersion, input);
+            return new StandardFilter(m_luceneMatchVersion, input);
         }
     }
 }

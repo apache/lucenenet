@@ -32,10 +32,10 @@ namespace Lucene.Net.Analysis.Sinks
     /// </summary>
     public class DateRecognizerSinkFilter : TeeSinkTokenFilter.SinkFilter
     {
-        protected internal DateTimeStyles style;
-        protected internal ICharTermAttribute termAtt;
-        protected internal IFormatProvider culture;
-        protected internal string[] formats;
+        protected internal DateTimeStyles m_style;
+        protected internal ICharTermAttribute m_termAtt;
+        protected internal IFormatProvider m_culture;
+        protected internal string[] m_formats;
 
         /// <summary>
         /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/> using the current culture and <see cref="DateTimeStyles.None"/>.
@@ -132,26 +132,26 @@ namespace Lucene.Net.Analysis.Sinks
         /// A typical value to specify is <seealso cref="DateTimeStyles.None"/></param>
         public DateRecognizerSinkFilter(string[] formats, IFormatProvider culture, DateTimeStyles style)
         {
-            this.culture = culture;
-            this.style = style;
-            this.formats = formats;
+            this.m_culture = culture;
+            this.m_style = style;
+            this.m_formats = formats;
         }
 
         public override bool Accept(AttributeSource source)
         {
-            if (termAtt == null)
+            if (m_termAtt == null)
             {
-                termAtt = source.AddAttribute<ICharTermAttribute>();
+                m_termAtt = source.AddAttribute<ICharTermAttribute>();
             }
 
             DateTime date; //We don't care about the date, just that we can parse it as a date
-            if (formats == null)
+            if (m_formats == null)
             {
-                return DateTime.TryParse(termAtt.ToString(), culture, style, out date);
+                return DateTime.TryParse(m_termAtt.ToString(), m_culture, m_style, out date);
             }
             else
             {
-                return DateTime.TryParseExact(termAtt.ToString(), formats, culture, style, out date);
+                return DateTime.TryParseExact(m_termAtt.ToString(), m_formats, m_culture, m_style, out date);
             }
         }
     }

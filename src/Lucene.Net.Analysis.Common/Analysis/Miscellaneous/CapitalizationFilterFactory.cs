@@ -80,7 +80,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             IEnumerable<string> k = GetSet(args, KEEP);
             if (k != null)
             {
-                keep = new CharArraySet(luceneMatchVersion, 10, ignoreCase);
+                keep = new CharArraySet(m_luceneMatchVersion, 10, ignoreCase);
                 keep.UnionWith(k);
             }
 

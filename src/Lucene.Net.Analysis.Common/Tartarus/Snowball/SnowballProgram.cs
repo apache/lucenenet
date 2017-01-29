@@ -51,7 +51,7 @@ namespace Lucene.Net.Tartarus.Snowball
 
     protected SnowballProgram()
         {
-            current = new char[8];
+            m_current = new char[8];
             SetCurrent("");
         }
 
@@ -62,12 +62,12 @@ namespace Lucene.Net.Tartarus.Snowball
          */
         public void SetCurrent(string value)
         {
-            current = value.ToCharArray();
-            cursor = 0;
-            limit = value.Length;
-            limit_backward = 0;
-            bra = cursor;
-            ket = limit;
+            m_current = value.ToCharArray();
+            m_cursor = 0;
+            m_limit = value.Length;
+            m_limit_backward = 0;
+            m_bra = m_cursor;
+            m_ket = m_limit;
         }
 
         /**
@@ -75,7 +75,7 @@ namespace Lucene.Net.Tartarus.Snowball
          */
         public string Current
         {
-            get { return new string(current, 0, limit); }
+            get { return new string(m_current, 0, m_limit); }
         }
 
         /**
@@ -85,12 +85,12 @@ namespace Lucene.Net.Tartarus.Snowball
          */
         public void SetCurrent(char[] text, int length)
         {
-            current = text;
-            cursor = 0;
-            limit = length;
-            limit_backward = 0;
-            bra = cursor;
-            ket = limit;
+            m_current = text;
+            m_cursor = 0;
+            m_limit = length;
+            m_limit_backward = 0;
+            m_bra = m_cursor;
+            m_ket = m_limit;
         }
 
         /**
@@ -109,7 +109,7 @@ namespace Lucene.Net.Tartarus.Snowball
          */
         public char[] CurrentBuffer
         {
-            get { return current; }
+            get { return m_current; }
         }
 
         /**
@@ -119,63 +119,63 @@ namespace Lucene.Net.Tartarus.Snowball
          */
         public int CurrentBufferLength
         {
-            get { return limit; }
+            get { return m_limit; }
         }
 
         // current string
-        protected char[] current;
+        protected char[] m_current;
 
-        protected int cursor;
-        protected int limit;
-        protected int limit_backward;
-        protected int bra;
-        protected int ket;
+        protected int m_cursor;
+        protected int m_limit;
+        protected int m_limit_backward;
+        protected int m_bra;
+        protected int m_ket;
 
         protected void copy_from(SnowballProgram other)
         {
-            current = other.current;
-            cursor = other.cursor;
-            limit = other.limit;
-            limit_backward = other.limit_backward;
-            bra = other.bra;
-            ket = other.ket;
+            m_current = other.m_current;
+            m_cursor = other.m_cursor;
+            m_limit = other.m_limit;
+            m_limit_backward = other.m_limit_backward;
+            m_bra = other.m_bra;
+            m_ket = other.m_ket;
         }
 
         protected bool in_grouping(char[] s, int min, int max)
         {
-            if (cursor >= limit) return false;
-            char ch = current[cursor];
+            if (m_cursor >= m_limit) return false;
+            char ch = m_current[m_cursor];
             if (ch > max || ch < min) return false;
             ch -= (char)min;
             if ((s[ch >> 3] & (0X1 << (ch & 0X7))) == 0) return false;
-            cursor++;
+            m_cursor++;
             return true;
         }
 
         protected bool in_grouping_b(char[] s, int min, int max)
         {
-            if (cursor <= limit_backward) return false;
-            char ch = current[cursor - 1];
+            if (m_cursor <= m_limit_backward) return false;
+            char ch = m_current[m_cursor - 1];
             if (ch > max || ch < min) return false;
             ch -= (char)min;
             if ((s[ch >> 3] & (0X1 << (ch & 0X7))) == 0) return false;
-            cursor--;
+            m_cursor--;
             return true;
         }
 
         protected bool out_grouping(char[] s, int min, int max)
         {
-            if (cursor >= limit) return false;
-            char ch = current[cursor];
+            if (m_cursor >= m_limit) return false;
+            char ch = m_current[m_cursor];
             if (ch > max || ch < min)
             {
-                cursor++;
+                m_cursor++;
                 return true;
             }
             ch -= (char)min;
             if ((s[ch >> 3] & (0X1 << (ch & 0X7))) == 0)
             {
-                cursor++;
+                m_cursor++;
                 return true;
             }
             return false;
@@ -183,17 +183,17 @@ namespace Lucene.Net.Tartarus.Snowball
 
         protected bool out_grouping_b(char[] s, int min, int max)
         {
-            if (cursor <= limit_backward) return false;
-            char ch = current[cursor - 1];
+            if (m_cursor <= m_limit_backward) return false;
+            char ch = m_current[m_cursor - 1];
             if (ch > max || ch < min)
             {
-                cursor--;
+                m_cursor--;
                 return true;
             }
             ch -= (char)min;
             if ((s[ch >> 3] & (0X1 << (ch & 0X7))) == 0)
             {
-                cursor--;
+                m_cursor--;
                 return true;
             }
             return false;
@@ -201,61 +201,61 @@ namespace Lucene.Net.Tartarus.Snowball
 
         protected bool in_range(int min, int max)
         {
-            if (cursor >= limit) return false;
-            char ch = current[cursor];
+            if (m_cursor >= m_limit) return false;
+            char ch = m_current[m_cursor];
             if (ch > max || ch < min) return false;
-            cursor++;
+            m_cursor++;
             return true;
         }
 
         protected bool in_range_b(int min, int max)
         {
-            if (cursor <= limit_backward) return false;
-            char ch = current[cursor - 1];
+            if (m_cursor <= m_limit_backward) return false;
+            char ch = m_current[m_cursor - 1];
             if (ch > max || ch < min) return false;
-            cursor--;
+            m_cursor--;
             return true;
         }
 
         protected bool out_range(int min, int max)
         {
-            if (cursor >= limit) return false;
-            char ch = current[cursor];
+            if (m_cursor >= m_limit) return false;
+            char ch = m_current[m_cursor];
             if (!(ch > max || ch < min)) return false;
-            cursor++;
+            m_cursor++;
             return true;
         }
 
         protected bool out_range_b(int min, int max)
         {
-            if (cursor <= limit_backward) return false;
-            char ch = current[cursor - 1];
+            if (m_cursor <= m_limit_backward) return false;
+            char ch = m_current[m_cursor - 1];
             if (!(ch > max || ch < min)) return false;
-            cursor--;
+            m_cursor--;
             return true;
         }
 
         protected bool eq_s(int s_size, string s)
         {
-            if (limit - cursor < s_size) return false;
+            if (m_limit - m_cursor < s_size) return false;
             int i;
             for (i = 0; i != s_size; i++)
             {
-                if (current[cursor + i] != s[i]) return false;
+                if (m_current[m_cursor + i] != s[i]) return false;
             }
-            cursor += s_size;
+            m_cursor += s_size;
             return true;
         }
 
         protected bool eq_s_b(int s_size, string s)
         {
-            if (cursor - limit_backward < s_size) return false;
+            if (m_cursor - m_limit_backward < s_size) return false;
             int i;
             for (i = 0; i != s_size; i++)
             {
-                if (current[cursor - s_size + i] != s[i]) return false;
+                if (m_current[m_cursor - s_size + i] != s[i]) return false;
             }
-            cursor -= s_size;
+            m_cursor -= s_size;
             return true;
         }
 
@@ -274,8 +274,8 @@ namespace Lucene.Net.Tartarus.Snowball
             int i = 0;
             int j = v_size;
 
-            int c = cursor;
-            int l = limit;
+            int c = m_cursor;
+            int l = m_limit;
 
             int common_i = 0;
             int common_j = 0;
@@ -296,7 +296,7 @@ namespace Lucene.Net.Tartarus.Snowball
                         diff = -1;
                         break;
                     }
-                    diff = current[c + common] - w.s[i2];
+                    diff = m_current[c + common] - w.s[i2];
                     if (diff != 0) break;
                     common++;
                 }
@@ -328,7 +328,7 @@ namespace Lucene.Net.Tartarus.Snowball
                 Among w = v[i];
                 if (common_i >= w.s_size)
                 {
-                    cursor = c + w.s_size;
+                    m_cursor = c + w.s_size;
                     if (w.method == null) return w.result;
                     bool res;
                     try
@@ -346,7 +346,7 @@ namespace Lucene.Net.Tartarus.Snowball
                         res = false;
                         // FIXME - debug message
                     }
-                    cursor = c + w.s_size;
+                    m_cursor = c + w.s_size;
                     if (res) return w.result;
                 }
                 i = w.substring_i;
@@ -360,8 +360,8 @@ namespace Lucene.Net.Tartarus.Snowball
             int i = 0;
             int j = v_size;
 
-            int c = cursor;
-            int lb = limit_backward;
+            int c = m_cursor;
+            int lb = m_limit_backward;
 
             int common_i = 0;
             int common_j = 0;
@@ -382,7 +382,7 @@ namespace Lucene.Net.Tartarus.Snowball
                         diff = -1;
                         break;
                     }
-                    diff = current[c - 1 - common] - w.s[i2];
+                    diff = m_current[c - 1 - common] - w.s[i2];
                     if (diff != 0) break;
                     common++;
                 }
@@ -409,7 +409,7 @@ namespace Lucene.Net.Tartarus.Snowball
                 Among w = v[i];
                 if (common_i >= w.s_size)
                 {
-                    cursor = c - w.s_size;
+                    m_cursor = c - w.s_size;
                     if (w.method == null) return w.result;
 
                     bool res;
@@ -428,7 +428,7 @@ namespace Lucene.Net.Tartarus.Snowball
                         res = false;
                         // FIXME - debug message
                     }
-                    cursor = c - w.s_size;
+                    m_cursor = c - w.s_size;
                     if (res) return w.result;
                 }
                 i = w.substring_i;
@@ -442,40 +442,40 @@ namespace Lucene.Net.Tartarus.Snowball
         protected int replace_s(int c_bra, int c_ket, string s)
         {
             int adjustment = s.Length - (c_ket - c_bra);
-            int newLength = limit + adjustment;
+            int newLength = m_limit + adjustment;
             //resize if necessary
-            if (newLength > current.Length)
+            if (newLength > m_current.Length)
             {
                 char[] newBuffer = new char[ArrayUtil.Oversize(newLength, RamUsageEstimator.NUM_BYTES_CHAR)];
-                System.Array.Copy(current, 0, newBuffer, 0, limit);
-                current = newBuffer;
+                System.Array.Copy(m_current, 0, newBuffer, 0, m_limit);
+                m_current = newBuffer;
             }
             // if the substring being replaced is longer or shorter than the
             // replacement, need to shift things around
-            if (adjustment != 0 && c_ket < limit)
+            if (adjustment != 0 && c_ket < m_limit)
             {
-                System.Array.Copy(current, c_ket, current, c_bra + s.Length,
-                    limit - c_ket);
+                System.Array.Copy(m_current, c_ket, m_current, c_bra + s.Length,
+                    m_limit - c_ket);
             }
             // insert the replacement text
             // Note, faster is s.getChars(0, s.length(), current, c_bra);
             // but would have to duplicate this method for both String and StringBuilder
             for (int i = 0; i < s.Length; i++)
-                current[c_bra + i] = s[i];
+                m_current[c_bra + i] = s[i];
 
-            limit += adjustment;
-            if (cursor >= c_ket) cursor += adjustment;
-            else if (cursor > c_bra) cursor = c_bra;
+            m_limit += adjustment;
+            if (m_cursor >= c_ket) m_cursor += adjustment;
+            else if (m_cursor > c_bra) m_cursor = c_bra;
             return adjustment;
         }
 
         protected void slice_check()
         {
-            if (bra < 0 ||
-                bra > ket ||
-                ket > limit)
+            if (m_bra < 0 ||
+                m_bra > m_ket ||
+                m_ket > m_limit)
             {
-                throw new ArgumentException("faulty slice operation: bra=" + bra + ",ket=" + ket + ",limit=" + limit);
+                throw new ArgumentException("faulty slice operation: bra=" + m_bra + ",ket=" + m_ket + ",limit=" + m_limit);
                 // FIXME: report error somehow.
                 /*
                 fprintf(stderr, "faulty slice operation:\n");
@@ -488,7 +488,7 @@ namespace Lucene.Net.Tartarus.Snowball
         protected void slice_from(string s)
         {
             slice_check();
-            replace_s(bra, ket, s);
+            replace_s(m_bra, m_ket, s);
         }
 
         protected void slice_del()
@@ -499,24 +499,24 @@ namespace Lucene.Net.Tartarus.Snowball
         protected void insert(int c_bra, int c_ket, string s)
         {
             int adjustment = replace_s(c_bra, c_ket, s);
-            if (c_bra <= bra) bra += adjustment;
-            if (c_bra <= ket) ket += adjustment;
+            if (c_bra <= m_bra) m_bra += adjustment;
+            if (c_bra <= m_ket) m_ket += adjustment;
         }
 
         /* Copy the slice into the supplied StringBuffer */
         protected StringBuilder slice_to(StringBuilder s)
         {
             slice_check();
-            int len = ket - bra;
+            int len = m_ket - m_bra;
             s.Length = 0;
-            s.Append(current, bra, len);
+            s.Append(m_current, m_bra, len);
             return s;
         }
 
         protected StringBuilder assign_to(StringBuilder s)
         {
             s.Length = 0;
-            s.Append(current, 0, limit);
+            s.Append(m_current, 0, m_limit);
             return s;
         }
 

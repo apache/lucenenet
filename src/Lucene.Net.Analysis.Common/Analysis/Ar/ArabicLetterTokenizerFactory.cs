@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Ar
 
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
-            return new ArabicLetterTokenizer(luceneMatchVersion, factory, input);
+            return new ArabicLetterTokenizer(m_luceneMatchVersion, factory, input);
         }
     }
 }

@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public override TokenStream Create(TokenStream input)
         {
-            return new CodepointCountFilter(luceneMatchVersion, input, min, max);
+            return new CodepointCountFilter(m_luceneMatchVersion, input, min, max);
         }
     }
 }

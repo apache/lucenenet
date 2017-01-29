@@ -54,10 +54,10 @@ namespace Lucene.Net.Analysis.Ngram
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
 #pragma warning disable 612, 618
-            if (luceneMatchVersion.OnOrAfter(LuceneVersion.LUCENE_44))
+            if (m_luceneMatchVersion.OnOrAfter(LuceneVersion.LUCENE_44))
 #pragma warning restore 612, 618
             {
-                return new NGramTokenizer(luceneMatchVersion, factory, input, minGramSize, maxGramSize);
+                return new NGramTokenizer(m_luceneMatchVersion, factory, input, minGramSize, maxGramSize);
             }
             else
             {

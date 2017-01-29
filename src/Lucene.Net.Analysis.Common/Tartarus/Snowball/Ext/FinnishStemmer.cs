@@ -155,13 +155,13 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             int v_1;
             int v_3;
             // (, line 41
-            I_p1 = limit;
-            I_p2 = limit;
+            I_p1 = m_limit;
+            I_p2 = m_limit;
             // goto, line 46
 
             while (true)
             {
-                v_1 = cursor;
+                v_1 = m_cursor;
 
                 do
                 {
@@ -169,16 +169,16 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     {
                         goto lab1;
                     }
-                    cursor = v_1;
+                    m_cursor = v_1;
                     goto golab0;
                 } while (false);
                 lab1:
-                cursor = v_1;
-                if (cursor >= limit)
+                m_cursor = v_1;
+                if (m_cursor >= m_limit)
                 {
                     return false;
                 }
-                cursor++;
+                m_cursor++;
             }
             golab0:
             // gopast, line 46
@@ -195,20 +195,20 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     goto golab2;
                 } while (false);
                 lab3:
-                if (cursor >= limit)
+                if (m_cursor >= m_limit)
                 {
                     return false;
                 }
-                cursor++;
+                m_cursor++;
             }
             golab2:
             // setmark p1, line 46
-            I_p1 = cursor;
+            I_p1 = m_cursor;
             // goto, line 47
 
             while (true)
             {
-                v_3 = cursor;
+                v_3 = m_cursor;
 
                 do
                 {
@@ -216,16 +216,16 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     {
                         goto lab5;
                     }
-                    cursor = v_3;
+                    m_cursor = v_3;
                     goto golab4;
                 } while (false);
                 lab5:
-                cursor = v_3;
-                if (cursor >= limit)
+                m_cursor = v_3;
+                if (m_cursor >= m_limit)
                 {
                     return false;
                 }
-                cursor++;
+                m_cursor++;
             }
             golab4:
             // gopast, line 47
@@ -242,21 +242,21 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     goto golab6;
                 } while (false);
                 lab7:
-                if (cursor >= limit)
+                if (m_cursor >= m_limit)
                 {
                     return false;
                 }
-                cursor++;
+                m_cursor++;
             }
             golab6:
             // setmark p2, line 47
-            I_p2 = cursor;
+            I_p2 = m_cursor;
             return true;
         }
 
         private bool r_R2()
         {
-            if (!(I_p2 <= cursor))
+            if (!(I_p2 <= m_cursor))
             {
                 return false;
             }
@@ -270,29 +270,29 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             int v_2;
             // (, line 54
             // setlimit, line 55
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // tomark, line 55
-            if (cursor < I_p1)
+            if (m_cursor < I_p1)
             {
                 return false;
             }
-            cursor = I_p1;
-            v_2 = limit_backward;
-            limit_backward = cursor;
-            cursor = limit - v_1;
+            m_cursor = I_p1;
+            v_2 = m_limit_backward;
+            m_limit_backward = m_cursor;
+            m_cursor = m_limit - v_1;
             // (, line 55
             // [, line 55
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 55
             among_var = find_among_b(a_0, 10);
             if (among_var == 0)
             {
-                limit_backward = v_2;
+                m_limit_backward = v_2;
                 return false;
             }
             // ], line 55
-            bra = cursor;
-            limit_backward = v_2;
+            m_bra = m_cursor;
+            m_limit_backward = v_2;
             switch (among_var)
             {
                 case 0:
@@ -326,29 +326,29 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             int v_3;
             // (, line 68
             // setlimit, line 69
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // tomark, line 69
-            if (cursor < I_p1)
+            if (m_cursor < I_p1)
             {
                 return false;
             }
-            cursor = I_p1;
-            v_2 = limit_backward;
-            limit_backward = cursor;
-            cursor = limit - v_1;
+            m_cursor = I_p1;
+            v_2 = m_limit_backward;
+            m_limit_backward = m_cursor;
+            m_cursor = m_limit - v_1;
             // (, line 69
             // [, line 69
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 69
             among_var = find_among_b(a_4, 9);
             if (among_var == 0)
             {
-                limit_backward = v_2;
+                m_limit_backward = v_2;
                 return false;
             }
             // ], line 69
-            bra = cursor;
-            limit_backward = v_2;
+            m_bra = m_cursor;
+            m_limit_backward = v_2;
             switch (among_var)
             {
                 case 0:
@@ -357,7 +357,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     // (, line 72
                     // not, line 72
                     {
-                        v_3 = limit - cursor;
+                        v_3 = m_limit - m_cursor;
 
                         do
                         {
@@ -369,7 +369,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                             return false;
                         } while (false);
                         lab0:
-                        cursor = limit - v_3;
+                        m_cursor = m_limit - v_3;
                     }
                     // delete, line 72
                     slice_del();
@@ -379,14 +379,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     // delete, line 74
                     slice_del();
                     // [, line 74
-                    ket = cursor;
+                    m_ket = m_cursor;
                     // literal, line 74
                     if (!(eq_s_b(3, "kse")))
                     {
                         return false;
                     }
                     // ], line 74
-                    bra = cursor;
+                    m_bra = m_cursor;
                     // <-, line 74
                     slice_from("ksi");
                     break;
@@ -464,29 +464,29 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             int v_5;
             // (, line 95
             // setlimit, line 96
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // tomark, line 96
-            if (cursor < I_p1)
+            if (m_cursor < I_p1)
             {
                 return false;
             }
-            cursor = I_p1;
-            v_2 = limit_backward;
-            limit_backward = cursor;
-            cursor = limit - v_1;
+            m_cursor = I_p1;
+            v_2 = m_limit_backward;
+            m_limit_backward = m_cursor;
+            m_cursor = m_limit - v_1;
             // (, line 96
             // [, line 96
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 96
             among_var = find_among_b(a_6, 30);
             if (among_var == 0)
             {
-                limit_backward = v_2;
+                m_limit_backward = v_2;
                 return false;
             }
             // ], line 96
-            bra = cursor;
-            limit_backward = v_2;
+            m_bra = m_cursor;
+            m_limit_backward = v_2;
             switch (among_var)
             {
                 case 0:
@@ -542,18 +542,18 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 case 7:
                     // (, line 111
                     // try, line 111
-                    v_3 = limit - cursor;
+                    v_3 = m_limit - m_cursor;
 
                     do
                     {
                         // (, line 111
                         // and, line 113
-                        v_4 = limit - cursor;
+                        v_4 = m_limit - m_cursor;
                         // or, line 112
 
                         do
                         {
-                            v_5 = limit - cursor;
+                            v_5 = m_limit - m_cursor;
 
                             do
                             {
@@ -565,25 +565,25 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                                 goto lab1;
                             } while (false);
                             lab2:
-                            cursor = limit - v_5;
+                            m_cursor = m_limit - v_5;
                             // literal, line 112
                             if (!(eq_s_b(2, "ie")))
                             {
-                                cursor = limit - v_3;
+                                m_cursor = m_limit - v_3;
                                 goto lab0;
                             }
                         } while (false);
                         lab1:
-                        cursor = limit - v_4;
+                        m_cursor = m_limit - v_4;
                         // next, line 113
-                        if (cursor <= limit_backward)
+                        if (m_cursor <= m_limit_backward)
                         {
-                            cursor = limit - v_3;
+                            m_cursor = m_limit - v_3;
                             goto lab0;
                         }
-                        cursor--;
+                        m_cursor--;
                         // ], line 113
-                        bra = cursor;
+                        m_bra = m_cursor;
                     } while (false);
                     lab0:
                     break;
@@ -622,29 +622,29 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             int v_3;
             // (, line 141
             // setlimit, line 142
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // tomark, line 142
-            if (cursor < I_p2)
+            if (m_cursor < I_p2)
             {
                 return false;
             }
-            cursor = I_p2;
-            v_2 = limit_backward;
-            limit_backward = cursor;
-            cursor = limit - v_1;
+            m_cursor = I_p2;
+            v_2 = m_limit_backward;
+            m_limit_backward = m_cursor;
+            m_cursor = m_limit - v_1;
             // (, line 142
             // [, line 142
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 142
             among_var = find_among_b(a_7, 14);
             if (among_var == 0)
             {
-                limit_backward = v_2;
+                m_limit_backward = v_2;
                 return false;
             }
             // ], line 142
-            bra = cursor;
-            limit_backward = v_2;
+            m_bra = m_cursor;
+            m_limit_backward = v_2;
             switch (among_var)
             {
                 case 0:
@@ -653,7 +653,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     // (, line 146
                     // not, line 146
                     {
-                        v_3 = limit - cursor;
+                        v_3 = m_limit - m_cursor;
 
                         do
                         {
@@ -665,7 +665,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                             return false;
                         } while (false);
                         lab0:
-                        cursor = limit - v_3;
+                        m_cursor = m_limit - v_3;
                     }
                     break;
             }
@@ -680,28 +680,28 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             int v_2;
             // (, line 153
             // setlimit, line 154
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // tomark, line 154
-            if (cursor < I_p1)
+            if (m_cursor < I_p1)
             {
                 return false;
             }
-            cursor = I_p1;
-            v_2 = limit_backward;
-            limit_backward = cursor;
-            cursor = limit - v_1;
+            m_cursor = I_p1;
+            v_2 = m_limit_backward;
+            m_limit_backward = m_cursor;
+            m_cursor = m_limit - v_1;
             // (, line 154
             // [, line 154
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 154
             if (find_among_b(a_8, 2) == 0)
             {
-                limit_backward = v_2;
+                m_limit_backward = v_2;
                 return false;
             }
             // ], line 154
-            bra = cursor;
-            limit_backward = v_2;
+            m_bra = m_cursor;
+            m_limit_backward = v_2;
             // delete, line 158
             slice_del();
             return true;
@@ -718,62 +718,62 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             int v_6;
             // (, line 160
             // setlimit, line 161
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // tomark, line 161
-            if (cursor < I_p1)
+            if (m_cursor < I_p1)
             {
                 return false;
             }
-            cursor = I_p1;
-            v_2 = limit_backward;
-            limit_backward = cursor;
-            cursor = limit - v_1;
+            m_cursor = I_p1;
+            v_2 = m_limit_backward;
+            m_limit_backward = m_cursor;
+            m_cursor = m_limit - v_1;
             // (, line 161
             // [, line 162
-            ket = cursor;
+            m_ket = m_cursor;
             // literal, line 162
             if (!(eq_s_b(1, "t")))
             {
-                limit_backward = v_2;
+                m_limit_backward = v_2;
                 return false;
             }
             // ], line 162
-            bra = cursor;
+            m_bra = m_cursor;
             // test, line 162
-            v_3 = limit - cursor;
+            v_3 = m_limit - m_cursor;
             if (!(in_grouping_b(g_V1, 97, 246)))
             {
-                limit_backward = v_2;
+                m_limit_backward = v_2;
                 return false;
             }
-            cursor = limit - v_3;
+            m_cursor = m_limit - v_3;
             // delete, line 163
             slice_del();
-            limit_backward = v_2;
+            m_limit_backward = v_2;
             // setlimit, line 165
-            v_4 = limit - cursor;
+            v_4 = m_limit - m_cursor;
             // tomark, line 165
-            if (cursor < I_p2)
+            if (m_cursor < I_p2)
             {
                 return false;
             }
-            cursor = I_p2;
-            v_5 = limit_backward;
-            limit_backward = cursor;
-            cursor = limit - v_4;
+            m_cursor = I_p2;
+            v_5 = m_limit_backward;
+            m_limit_backward = m_cursor;
+            m_cursor = m_limit - v_4;
             // (, line 165
             // [, line 165
-            ket = cursor;
+            m_ket = m_cursor;
             // substring, line 165
             among_var = find_among_b(a_9, 2);
             if (among_var == 0)
             {
-                limit_backward = v_5;
+                m_limit_backward = v_5;
                 return false;
             }
             // ], line 165
-            bra = cursor;
-            limit_backward = v_5;
+            m_bra = m_cursor;
+            m_limit_backward = v_5;
             switch (among_var)
             {
                 case 0:
@@ -782,7 +782,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     // (, line 167
                     // not, line 167
                     {
-                        v_6 = limit - cursor;
+                        v_6 = m_limit - m_cursor;
 
                         do
                         {
@@ -794,7 +794,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                             return false;
                         } while (false);
                         lab0:
-                        cursor = limit - v_6;
+                        m_cursor = m_limit - v_6;
                     }
                     break;
             }
@@ -816,61 +816,61 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             int v_9;
             // (, line 172
             // setlimit, line 173
-            v_1 = limit - cursor;
+            v_1 = m_limit - m_cursor;
             // tomark, line 173
-            if (cursor < I_p1)
+            if (m_cursor < I_p1)
             {
                 return false;
             }
-            cursor = I_p1;
-            v_2 = limit_backward;
-            limit_backward = cursor;
-            cursor = limit - v_1;
+            m_cursor = I_p1;
+            v_2 = m_limit_backward;
+            m_limit_backward = m_cursor;
+            m_cursor = m_limit - v_1;
             // (, line 173
             // do, line 174
-            v_3 = limit - cursor;
+            v_3 = m_limit - m_cursor;
 
             do
             {
                 // (, line 174
                 // and, line 174
-                v_4 = limit - cursor;
+                v_4 = m_limit - m_cursor;
                 // call LONG, line 174
                 if (!r_LONG())
                 {
                     goto lab0;
                 }
-                cursor = limit - v_4;
+                m_cursor = m_limit - v_4;
                 // (, line 174
                 // [, line 174
-                ket = cursor;
+                m_ket = m_cursor;
                 // next, line 174
-                if (cursor <= limit_backward)
+                if (m_cursor <= m_limit_backward)
                 {
                     goto lab0;
                 }
-                cursor--;
+                m_cursor--;
                 // ], line 174
-                bra = cursor;
+                m_bra = m_cursor;
                 // delete, line 174
                 slice_del();
             } while (false);
             lab0:
-            cursor = limit - v_3;
+            m_cursor = m_limit - v_3;
             // do, line 175
-            v_5 = limit - cursor;
+            v_5 = m_limit - m_cursor;
 
             do
             {
                 // (, line 175
                 // [, line 175
-                ket = cursor;
+                m_ket = m_cursor;
                 if (!(in_grouping_b(g_AEI, 97, 228)))
                 {
                     goto lab1;
                 }
                 // ], line 175
-                bra = cursor;
+                m_bra = m_cursor;
                 if (!(out_grouping_b(g_V1, 97, 246)))
                 {
                     goto lab1;
@@ -879,27 +879,27 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 slice_del();
             } while (false);
             lab1:
-            cursor = limit - v_5;
+            m_cursor = m_limit - v_5;
             // do, line 176
-            v_6 = limit - cursor;
+            v_6 = m_limit - m_cursor;
 
             do
             {
                 // (, line 176
                 // [, line 176
-                ket = cursor;
+                m_ket = m_cursor;
                 // literal, line 176
                 if (!(eq_s_b(1, "j")))
                 {
                     goto lab2;
                 }
                 // ], line 176
-                bra = cursor;
+                m_bra = m_cursor;
                 // or, line 176
 
                 do
                 {
-                    v_7 = limit - cursor;
+                    v_7 = m_limit - m_cursor;
 
                     do
                     {
@@ -911,7 +911,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         goto lab3;
                     } while (false);
                     lab4:
-                    cursor = limit - v_7;
+                    m_cursor = m_limit - v_7;
                     // literal, line 176
                     if (!(eq_s_b(1, "u")))
                     {
@@ -923,22 +923,22 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 slice_del();
             } while (false);
             lab2:
-            cursor = limit - v_6;
+            m_cursor = m_limit - v_6;
             // do, line 177
-            v_8 = limit - cursor;
+            v_8 = m_limit - m_cursor;
 
             do
             {
                 // (, line 177
                 // [, line 177
-                ket = cursor;
+                m_ket = m_cursor;
                 // literal, line 177
                 if (!(eq_s_b(1, "o")))
                 {
                     goto lab5;
                 }
                 // ], line 177
-                bra = cursor;
+                m_bra = m_cursor;
                 // literal, line 177
                 if (!(eq_s_b(1, "j")))
                 {
@@ -948,13 +948,13 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 slice_del();
             } while (false);
             lab5:
-            cursor = limit - v_8;
-            limit_backward = v_2;
+            m_cursor = m_limit - v_8;
+            m_limit_backward = v_2;
             // goto, line 179
 
             while (true)
             {
-                v_9 = limit - cursor;
+                v_9 = m_limit - m_cursor;
 
                 do
                 {
@@ -962,28 +962,28 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     {
                         goto lab7;
                     }
-                    cursor = limit - v_9;
+                    m_cursor = m_limit - v_9;
                     goto golab6;
                 } while (false);
                 lab7:
-                cursor = limit - v_9;
-                if (cursor <= limit_backward)
+                m_cursor = m_limit - v_9;
+                if (m_cursor <= m_limit_backward)
                 {
                     return false;
                 }
-                cursor--;
+                m_cursor--;
             }
             golab6:
             // [, line 179
-            ket = cursor;
+            m_ket = m_cursor;
             // next, line 179
-            if (cursor <= limit_backward)
+            if (m_cursor <= m_limit_backward)
             {
                 return false;
             }
-            cursor--;
+            m_cursor--;
             // ], line 179
-            bra = cursor;
+            m_bra = m_cursor;
             // -> x, line 179
             S_x = slice_to(S_x);
             // name x, line 179
@@ -1010,7 +1010,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             int v_9;
             // (, line 183
             // do, line 185
-            v_1 = cursor;
+            v_1 = m_cursor;
 
             do
             {
@@ -1021,14 +1021,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 }
             } while (false);
             lab0:
-            cursor = v_1;
+            m_cursor = v_1;
             // unset ending_removed, line 186
             B_ending_removed = false;
             // backwards, line 187
-            limit_backward = cursor; cursor = limit;
+            m_limit_backward = m_cursor; m_cursor = m_limit;
             // (, line 187
             // do, line 188
-            v_2 = limit - cursor;
+            v_2 = m_limit - m_cursor;
 
             do
             {
@@ -1039,9 +1039,9 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 }
             } while (false);
             lab1:
-            cursor = limit - v_2;
+            m_cursor = m_limit - v_2;
             // do, line 189
-            v_3 = limit - cursor;
+            v_3 = m_limit - m_cursor;
 
             do
             {
@@ -1052,9 +1052,9 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 }
             } while (false);
             lab2:
-            cursor = limit - v_3;
+            m_cursor = m_limit - v_3;
             // do, line 190
-            v_4 = limit - cursor;
+            v_4 = m_limit - m_cursor;
 
             do
             {
@@ -1065,9 +1065,9 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 }
             } while (false);
             lab3:
-            cursor = limit - v_4;
+            m_cursor = m_limit - v_4;
             // do, line 191
-            v_5 = limit - cursor;
+            v_5 = m_limit - m_cursor;
 
             do
             {
@@ -1078,12 +1078,12 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 }
             } while (false);
             lab4:
-            cursor = limit - v_5;
+            m_cursor = m_limit - v_5;
             // or, line 192
 
             do
             {
-                v_6 = limit - cursor;
+                v_6 = m_limit - m_cursor;
 
                 do
                 {
@@ -1094,7 +1094,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         goto lab6;
                     }
                     // do, line 192
-                    v_7 = limit - cursor;
+                    v_7 = m_limit - m_cursor;
 
                     do
                     {
@@ -1105,13 +1105,13 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         }
                     } while (false);
                     lab7:
-                    cursor = limit - v_7;
+                    m_cursor = m_limit - v_7;
                     goto lab5;
                 } while (false);
                 lab6:
-                cursor = limit - v_6;
+                m_cursor = m_limit - v_6;
                 // do, line 192
-                v_8 = limit - cursor;
+                v_8 = m_limit - m_cursor;
 
                 do
                 {
@@ -1122,11 +1122,11 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     }
                 } while (false);
                 lab8:
-                cursor = limit - v_8;
+                m_cursor = m_limit - v_8;
             } while (false);
             lab5:
             // do, line 193
-            v_9 = limit - cursor;
+            v_9 = m_limit - m_cursor;
 
             do
             {
@@ -1137,8 +1137,8 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 }
             } while (false);
             lab9:
-            cursor = limit - v_9;
-            cursor = limit_backward; return true;
+            m_cursor = m_limit - v_9;
+            m_cursor = m_limit_backward; return true;
         }
 
         public override bool Equals(object o)

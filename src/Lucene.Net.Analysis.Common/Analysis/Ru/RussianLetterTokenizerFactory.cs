@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Ru
 
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
-            return new RussianLetterTokenizer(luceneMatchVersion, factory, input);
+            return new RussianLetterTokenizer(m_luceneMatchVersion, factory, input);
         }
     }
 }

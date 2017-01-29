@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis.Core
                 {
                     throw new System.ArgumentException("'format' can not be specified w/o an explicit 'words' file: " + format);
                 }
-                stopWords = new CharArraySet(luceneMatchVersion, StopAnalyzer.ENGLISH_STOP_WORDS_SET, ignoreCase);
+                stopWords = new CharArraySet(m_luceneMatchVersion, StopAnalyzer.ENGLISH_STOP_WORDS_SET, ignoreCase);
             }
         }
 
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Core
 
         public override TokenStream Create(TokenStream input)
         {
-            StopFilter stopFilter = new StopFilter(luceneMatchVersion, input, stopWords);
+            StopFilter stopFilter = new StopFilter(m_luceneMatchVersion, input, stopWords);
             stopFilter.EnablePositionIncrements = enablePositionIncrements;
             return stopFilter;
         }

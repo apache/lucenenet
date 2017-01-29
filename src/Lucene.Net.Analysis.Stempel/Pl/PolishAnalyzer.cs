@@ -153,10 +153,10 @@ namespace Lucene.Net.Analysis.Pl
         protected override TokenStreamComponents CreateComponents(string fieldName,
             TextReader reader)
         {
-            Tokenizer source = new StandardTokenizer(matchVersion, reader);
-            TokenStream result = new StandardFilter(matchVersion, source);
-            result = new LowerCaseFilter(matchVersion, result);
-            result = new StopFilter(matchVersion, result, stopwords);
+            Tokenizer source = new StandardTokenizer(m_matchVersion, reader);
+            TokenStream result = new StandardFilter(m_matchVersion, source);
+            result = new LowerCaseFilter(m_matchVersion, result);
+            result = new StopFilter(m_matchVersion, result, m_stopwords);
             if (stemExclusionSet.Any())
                 result = new SetKeywordMarkerFilter(result, stemExclusionSet);
             result = new StempelFilter(result, new StempelStemmer(stemTable));

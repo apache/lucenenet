@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Standard
 
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
-            var tokenizer = new StandardTokenizer(luceneMatchVersion, factory, input);
+            var tokenizer = new StandardTokenizer(m_luceneMatchVersion, factory, input);
             tokenizer.MaxTokenLength = maxTokenLength;
             return tokenizer;
         }

@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             else
             {
 #pragma warning disable 612, 618
-                TokenStream filter = new KeepWordFilter(luceneMatchVersion, enablePositionIncrements, input, words);
+                TokenStream filter = new KeepWordFilter(m_luceneMatchVersion, enablePositionIncrements, input, words);
 #pragma warning restore 612, 618
                 return filter;
             }

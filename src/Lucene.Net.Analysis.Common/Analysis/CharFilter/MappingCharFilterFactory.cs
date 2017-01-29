@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.CharFilters
     public class MappingCharFilterFactory : CharFilterFactory, IResourceLoaderAware, IMultiTermAwareComponent
     {
 
-        protected internal NormalizeCharMap normMap;
+        protected internal NormalizeCharMap m_normMap;
         private readonly string mapping;
 
         /// <summary>
@@ -74,12 +74,12 @@ namespace Lucene.Net.Analysis.CharFilters
                 }
                 NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
                 ParseRules(wlist, builder);
-                normMap = builder.Build();
-                if (normMap.map == null)
+                m_normMap = builder.Build();
+                if (m_normMap.map == null)
                 {
                     // if the inner FST is null, it means it accepts nothing (e.g. the file is empty)
                     // so just set the whole map to null
-                    normMap = null;
+                    m_normMap = null;
                 }
             }
         }
@@ -88,7 +88,7 @@ namespace Lucene.Net.Analysis.CharFilters
         {
             // if the map is null, it means there's actually no mappings... just return the original stream
             // as there is nothing to do here.
-            return normMap == null ? input : new MappingCharFilter(normMap, input);
+            return m_normMap == null ? input : new MappingCharFilter(m_normMap, input);
         }
 
         // "source" => "target"

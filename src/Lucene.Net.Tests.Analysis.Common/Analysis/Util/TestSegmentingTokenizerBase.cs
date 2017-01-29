@@ -149,8 +149,8 @@ namespace Lucene.Net.Analysis.Util
                 {
                     hasSentence = false;
                     ClearAttributes();
-                    termAtt.CopyBuffer(buffer, sentenceStart, sentenceEnd - sentenceStart);
-                    offsetAtt.SetOffset(CorrectOffset(offset + sentenceStart), CorrectOffset(offset + sentenceEnd));
+                    termAtt.CopyBuffer(m_buffer, sentenceStart, sentenceEnd - sentenceStart);
+                    offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart), CorrectOffset(m_offset + sentenceEnd));
                     return true;
                 }
                 else
@@ -200,7 +200,7 @@ namespace Lucene.Net.Analysis.Util
                 wordStart = wordEnd;
                 while (wordStart < sentenceEnd)
                 {
-                    if (char.IsLetterOrDigit(buffer[wordStart]))
+                    if (char.IsLetterOrDigit(m_buffer[wordStart]))
                     {
                         break;
                     }
@@ -213,14 +213,14 @@ namespace Lucene.Net.Analysis.Util
                 }
 
                 wordEnd = wordStart + 1;
-                while (wordEnd < sentenceEnd && char.IsLetterOrDigit(buffer[wordEnd]))
+                while (wordEnd < sentenceEnd && char.IsLetterOrDigit(m_buffer[wordEnd]))
                 {
                     wordEnd++;
                 }
 
                 ClearAttributes();
-                termAtt.CopyBuffer(buffer, wordStart, wordEnd - wordStart);
-                offsetAtt.SetOffset(CorrectOffset(offset + wordStart), CorrectOffset(offset + wordEnd));
+                termAtt.CopyBuffer(m_buffer, wordStart, wordEnd - wordStart);
+                offsetAtt.SetOffset(CorrectOffset(m_offset + wordStart), CorrectOffset(m_offset + wordEnd));
                 posIncAtt.PositionIncrement = posIncAtt.PositionIncrement + posBoost;
                 posBoost = 0;
                 return true;

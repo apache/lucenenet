@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Ngram
         public override TokenStream Create(TokenStream input)
         {
 #pragma warning disable 612, 618
-            return new EdgeNGramTokenFilter(luceneMatchVersion, input, side, minGramSize, maxGramSize);
+            return new EdgeNGramTokenFilter(m_luceneMatchVersion, input, side, minGramSize, maxGramSize);
 #pragma warning restore 612, 618
         }
     }

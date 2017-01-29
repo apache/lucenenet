@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Payloads
     /// </summary>
     public class IdentityEncoder : AbstractEncoder, IPayloadEncoder
     {
-        protected internal Encoding charset = Encoding.UTF8;
+        protected internal Encoding m_charset = Encoding.UTF8;
 
         public IdentityEncoder()
         {
@@ -35,12 +35,12 @@ namespace Lucene.Net.Analysis.Payloads
 
         public IdentityEncoder(Encoding charset)
         {
-            this.charset = charset;
+            this.m_charset = charset;
         }
 
         public override BytesRef Encode(char[] buffer, int offset, int length)
         {
-            return new BytesRef(charset.GetBytes(buffer, offset, length));
+            return new BytesRef(m_charset.GetBytes(buffer, offset, length));
         }
     }
 }

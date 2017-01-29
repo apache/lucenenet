@@ -94,22 +94,22 @@ namespace Lucene.Net.Analysis.Cjk
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
 #pragma warning disable 612, 618
-            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
+            if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
 #pragma warning restore 612, 618
             {
-                Tokenizer source = new StandardTokenizer(matchVersion, reader);
+                Tokenizer source = new StandardTokenizer(m_matchVersion, reader);
                 // run the widthfilter first before bigramming, it sometimes combines characters.
                 TokenStream result = new CJKWidthFilter(source);
-                result = new LowerCaseFilter(matchVersion, result);
+                result = new LowerCaseFilter(m_matchVersion, result);
                 result = new CJKBigramFilter(result);
-                return new TokenStreamComponents(source, new StopFilter(matchVersion, result, stopwords));
+                return new TokenStreamComponents(source, new StopFilter(m_matchVersion, result, m_stopwords));
             }
             else
             {
 #pragma warning disable 612, 618
                 Tokenizer source = new CJKTokenizer(reader);
 #pragma warning restore 612, 618
-                return new TokenStreamComponents(source, new StopFilter(matchVersion, source, stopwords));
+                return new TokenStreamComponents(source, new StopFilter(m_matchVersion, source, m_stopwords));
             }
         }
     }

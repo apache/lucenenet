@@ -117,27 +117,27 @@ namespace Lucene.Net.Analysis.Th
         ///         <seealso cref="StopFilter"/> </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_48))
+            if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_48))
             {
                 Tokenizer source = new ThaiTokenizer(reader);
-                TokenStream result = new LowerCaseFilter(matchVersion, source);
-                result = new StopFilter(matchVersion, result, stopwords);
+                TokenStream result = new LowerCaseFilter(m_matchVersion, source);
+                result = new StopFilter(m_matchVersion, result, m_stopwords);
                 return new TokenStreamComponents(source, result);
             }
             else
             {
-                Tokenizer source = new StandardTokenizer(matchVersion, reader);
-                TokenStream result = new StandardFilter(matchVersion, source);
+                Tokenizer source = new StandardTokenizer(m_matchVersion, reader);
+                TokenStream result = new StandardFilter(m_matchVersion, source);
 #pragma warning disable 612, 618
-                if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+                if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
 #pragma warning restore 612, 618
                 {
-                    result = new LowerCaseFilter(matchVersion, result);
+                    result = new LowerCaseFilter(m_matchVersion, result);
                 }
 #pragma warning disable 612, 618
-                result = new ThaiWordFilter(matchVersion, result);
+                result = new ThaiWordFilter(m_matchVersion, result);
 #pragma warning restore 612, 618
-                return new TokenStreamComponents(source, new StopFilter(matchVersion, result, stopwords));
+                return new TokenStreamComponents(source, new StopFilter(m_matchVersion, result, m_stopwords));
             }
         }
     }

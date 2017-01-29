@@ -25,16 +25,17 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public class OpenStringBuilder : ICharSequence
     {
-        protected internal char[] buf;
-        protected internal int len;
+        protected internal char[] m_buf;
+        protected internal int m_len;
 
-        public OpenStringBuilder() : this(32)
+        public OpenStringBuilder() 
+            : this(32)
         {
         }
 
         public OpenStringBuilder(int size)
         {
-            buf = new char[size];
+            m_buf = new char[size];
         }
 
         public OpenStringBuilder(char[] arr, int len)
@@ -46,15 +47,15 @@ namespace Lucene.Net.Analysis.Util
         {
             set
             {
-                this.len = value;
+                this.m_len = value;
             }
-            get { return len; }
+            get { return m_len; }
         }
 
         public virtual void Set(char[] arr, int end)
         {
-            this.buf = arr;
-            this.len = end;
+            this.m_buf = arr;
+            this.m_len = end;
         }
 
         [WritableArray]
@@ -62,17 +63,17 @@ namespace Lucene.Net.Analysis.Util
         {
             get
             {
-                return buf;
+                return m_buf;
             }
         }
         public virtual int Count // LUCENENET NOTE: This was size() in Lucene.
         {
-            get{ return len; }
+            get{ return m_len; }
         }
 
         public virtual int Capacity
         {
-            get { return buf.Length; }
+            get { return m_buf.Length; }
         }
 
         public virtual OpenStringBuilder Append(string csq)
@@ -98,19 +99,19 @@ namespace Lucene.Net.Analysis.Util
 
         public virtual char CharAt(int index)
         {
-            return buf[index];
+            return m_buf[index];
         }
 
         public virtual void SetCharAt(int index, char ch)
         {
-            buf[index] = ch;
+            m_buf[index] = ch;
         }
 
         // LUCENENET specific - added to .NETify
         public virtual char this[int index]
         {
-            get { return buf[index]; }
-            set { buf[index] = value; }
+            get { return m_buf[index]; }
+            set { m_buf[index] = value; }
         }
 
         public virtual ICharSequence SubSequence(int start, int end)
@@ -120,7 +121,7 @@ namespace Lucene.Net.Analysis.Util
 
         public virtual void UnsafeWrite(char b)
         {
-            buf[len++] = b;
+            m_buf[m_len++] = b;
         }
 
         public virtual void UnsafeWrite(int b)
@@ -130,30 +131,30 @@ namespace Lucene.Net.Analysis.Util
 
         public virtual void UnsafeWrite(char[] b, int off, int len)
         {
-            System.Array.Copy(b, off, buf, this.len, len);
-            this.len += len;
+            System.Array.Copy(b, off, m_buf, this.m_len, len);
+            this.m_len += len;
         }
 
         protected internal virtual void Resize(int len)
         {
-            char[] newbuf = new char[Math.Max(buf.Length << 1, len)];
-            System.Array.Copy(buf, 0, newbuf, 0, Count);
-            buf = newbuf;
+            char[] newbuf = new char[Math.Max(m_buf.Length << 1, len)];
+            System.Array.Copy(m_buf, 0, newbuf, 0, Count);
+            m_buf = newbuf;
         }
 
         public virtual void Reserve(int num)
         {
-            if (len + num > buf.Length)
+            if (m_len + num > m_buf.Length)
             {
-                Resize(len + num);
+                Resize(m_len + num);
             }
         }
 
         public virtual void Write(char b)
         {
-            if (len >= buf.Length)
+            if (m_len >= m_buf.Length)
             {
-                Resize(len + 1);
+                Resize(m_len + 1);
             }
             UnsafeWrite(b);
         }
@@ -176,14 +177,14 @@ namespace Lucene.Net.Analysis.Util
 
         public void Write(OpenStringBuilder arr)
         {
-            Write(arr.buf, 0, len);
+            Write(arr.m_buf, 0, m_len);
         }
 
         public virtual void Write(string s)
         {
             Reserve(s.Length);
-            s.CopyTo(0, buf, len, s.Length - 0);
-            len += s.Length;
+            s.CopyTo(0, m_buf, m_len, s.Length - 0);
+            m_len += s.Length;
         }
 
         public virtual void Flush()
@@ -192,19 +193,19 @@ namespace Lucene.Net.Analysis.Util
 
         public void Reset()
         {
-            len = 0;
+            m_len = 0;
         }
 
         public virtual char[] ToCharArray()
         {
             char[] newbuf = new char[Count];
-            System.Array.Copy(buf, 0, newbuf, 0, Count);
+            System.Array.Copy(m_buf, 0, newbuf, 0, Count);
             return newbuf;
         }
 
         public override string ToString()
         {
-            return new string(buf, 0, Count);
+            return new string(m_buf, 0, Count);
         }
     }
 }
