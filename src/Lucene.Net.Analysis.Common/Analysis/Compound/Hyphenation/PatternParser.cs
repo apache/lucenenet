@@ -329,9 +329,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 }
                 else
                 {
-                    if (((Hyphen)item).noBreak != null)
+                    if (((Hyphen)item).NoBreak != null)
                     {
-                        res.Append(((Hyphen)item).noBreak);
+                        res.Append(((Hyphen)item).NoBreak);
                     }
                 }
             }

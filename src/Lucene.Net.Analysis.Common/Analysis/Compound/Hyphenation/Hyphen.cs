@@ -33,38 +33,38 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// </summary>
     public class Hyphen
     {
-        public string preBreak;
+        public string PreBreak { get; set; }
 
-        public string noBreak;
+        public string NoBreak { get; set; }
 
-        public string postBreak;
+        public string PostBreak { get; set; }
 
         internal Hyphen(string pre, string no, string post)
         {
-            preBreak = pre;
-            noBreak = no;
-            postBreak = post;
+            PreBreak = pre;
+            NoBreak = no;
+            PostBreak = post;
         }
 
         internal Hyphen(string pre)
         {
-            preBreak = pre;
-            noBreak = null;
-            postBreak = null;
+            PreBreak = pre;
+            NoBreak = null;
+            PostBreak = null;
         }
 
         public override string ToString()
         {
-            if (noBreak == null && postBreak == null && preBreak != null && preBreak.Equals("-"))
+            if (NoBreak == null && PostBreak == null && PreBreak != null && PreBreak.Equals("-"))
             {
                 return "-";
             }
             StringBuilder res = new StringBuilder("{");
-            res.Append(preBreak);
+            res.Append(PreBreak);
             res.Append("}{");
-            res.Append(postBreak);
+            res.Append(PostBreak);
             res.Append("}{");
-            res.Append(noBreak);
+            res.Append(NoBreak);
             res.Append('}');
             return res.ToString();
         }
