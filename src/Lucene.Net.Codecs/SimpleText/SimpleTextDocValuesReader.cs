@@ -1,48 +1,45 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.Numerics;
+using System.Text;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
-    using System;
-    using System.Diagnostics;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Globalization;
-    using System.Text;
-    using Support;
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using BinaryDocValues = Index.BinaryDocValues;
+    using BufferedChecksumIndexInput = Store.BufferedChecksumIndexInput;
+    using BytesRef = Util.BytesRef;
+    using ChecksumIndexInput = Store.ChecksumIndexInput;
     using CorruptIndexException = Index.CorruptIndexException;
     using DocValues = Index.DocValues;
-    using FieldInfo = Index.FieldInfo;
     using DocValuesType = Index.DocValuesType;
+    using FieldInfo = Index.FieldInfo;
+    using IBits = Util.IBits;
     using IndexFileNames = Index.IndexFileNames;
+    using IndexInput = Store.IndexInput;
     using NumericDocValues = Index.NumericDocValues;
     using SegmentReadState = Index.SegmentReadState;
     using SortedDocValues = Index.SortedDocValues;
     using SortedSetDocValues = Index.SortedSetDocValues;
-    using BufferedChecksumIndexInput = Store.BufferedChecksumIndexInput;
-    using ChecksumIndexInput = Store.ChecksumIndexInput;
-    using IndexInput = Store.IndexInput;
-    using IBits = Util.IBits;
-    using BytesRef = Util.BytesRef;
     using StringHelper = Util.StringHelper;
-    using System.Numerics;
-    using System.Text.RegularExpressions;
 
     public class SimpleTextDocValuesReader : DocValuesProducer // LUCENENET NOTE: Changed from internal to public because it is subclassed by a public class
     {

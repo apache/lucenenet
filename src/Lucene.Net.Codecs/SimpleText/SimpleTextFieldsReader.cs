@@ -1,55 +1,51 @@
-﻿/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+﻿using Lucene.Net.Util.Fst;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
-    using System;
-    using System.Diagnostics;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using Support;
-    using Util.Fst;
-    
+    using ArrayUtil = Util.ArrayUtil;
+    using BufferedChecksumIndexInput = Store.BufferedChecksumIndexInput;
+    using BytesRef = Util.BytesRef;
+    using CharsRef = Util.CharsRef;
+    using ChecksumIndexInput = Store.ChecksumIndexInput;
     using DocsAndPositionsEnum = Index.DocsAndPositionsEnum;
     using DocsEnum = Index.DocsEnum;
     using FieldInfo = Index.FieldInfo;
-    using IndexOptions = Index.IndexOptions;
     using FieldInfos = Index.FieldInfos;
+    using FixedBitSet = Util.FixedBitSet;
+    using FST = Util.Fst.FST;
+    using IBits = Util.IBits;
+    using IndexInput = Store.IndexInput;
+    using IndexOptions = Index.IndexOptions;
+    using IntsRef = Util.IntsRef;
+    using IOUtils = Util.IOUtils;
+    using PositiveIntOutputs = Util.Fst.PositiveIntOutputs;
     using SegmentReadState = Index.SegmentReadState;
+    using StringHelper = Util.StringHelper;
     using Terms = Index.Terms;
     using TermsEnum = Index.TermsEnum;
-    using BufferedChecksumIndexInput = Store.BufferedChecksumIndexInput;
-    using ChecksumIndexInput = Store.ChecksumIndexInput;
-    using IndexInput = Store.IndexInput;
-    using ArrayUtil = Util.ArrayUtil;
-    using IBits = Util.IBits;
-    using BytesRef = Util.BytesRef;
-    using CharsRef = Util.CharsRef;
-    using FixedBitSet = Util.FixedBitSet;
-    using IOUtils = Util.IOUtils;
-    using IntsRef = Util.IntsRef;
-    using StringHelper = Util.StringHelper;
     using UnicodeUtil = Util.UnicodeUtil;
-    using BytesRefFSTEnum = Util.Fst.BytesRefFSTEnum<Util.Fst.PairOutputs<long,long>.Pair>;
-    using FST = Util.Fst.FST;
-    using PairOutputs = Util.Fst.PairOutputs<long,long>;
-    using PositiveIntOutputs = Util.Fst.PositiveIntOutputs;
     using Util = Util.Fst.Util;
 
     internal class SimpleTextFieldsReader : FieldsProducer

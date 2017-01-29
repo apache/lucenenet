@@ -1,56 +1,53 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+﻿using Lucene.Net.Util.Fst;
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using Lucene.Net.Util.Packed;
+using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Memory
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
+    using ArrayUtil = Util.ArrayUtil;
+    using ByteArrayDataInput = Store.ByteArrayDataInput;
+    using ByteSequenceOutputs = Util.Fst.ByteSequenceOutputs;
+    using BytesRef = Util.BytesRef;
+    using ChecksumIndexInput = Store.ChecksumIndexInput;
     using DocsAndPositionsEnum = Index.DocsAndPositionsEnum;
     using DocsEnum = Index.DocsEnum;
-    using IndexOptions = Index.IndexOptions;
     using FieldInfo = Index.FieldInfo;
     using FieldInfos = Index.FieldInfos;
+    using FST = Util.Fst.FST;
+    using IBits = Util.IBits;
     using IndexFileNames = Index.IndexFileNames;
+    using IndexInput = Store.IndexInput;
+    using IndexOptions = Index.IndexOptions;
+    using IndexOutput = Store.IndexOutput;
+    using IntsRef = Util.IntsRef;
+    using IOContext = Store.IOContext;
+    using IOUtils = Util.IOUtils;
+    using PackedInts = Util.Packed.PackedInts;
+    using RAMOutputStream = Store.RAMOutputStream;
+    using RamUsageEstimator = Util.RamUsageEstimator;
     using SegmentReadState = Index.SegmentReadState;
     using SegmentWriteState = Index.SegmentWriteState;
     using Terms = Index.Terms;
     using TermsEnum = Index.TermsEnum;
-    using ByteArrayDataInput = Store.ByteArrayDataInput;
-    using ChecksumIndexInput = Store.ChecksumIndexInput;
-    using IOContext = Store.IOContext;
-    using IndexInput = Store.IndexInput;
-    using IndexOutput = Store.IndexOutput;
-    using RAMOutputStream = Store.RAMOutputStream;
-    using ArrayUtil = Util.ArrayUtil;
-    using IBits = Util.IBits;
-    using BytesRef = Util.BytesRef;
-    using IOUtils = Util.IOUtils;
-    using IntsRef = Util.IntsRef;
-    using RamUsageEstimator = Util.RamUsageEstimator;
-    using ByteSequenceOutputs = Util.Fst.ByteSequenceOutputs;
-    using FST = Util.Fst.FST;
     using Util = Util.Fst.Util;
-    using PackedInts = Util.Packed.PackedInts;
-    using Lucene.Net.Util.Fst;
-
 
     // TODO: would be nice to somehow allow this to act like
     // InstantiatedIndex, by never writing to disk; ie you write

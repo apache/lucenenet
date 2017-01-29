@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Fst
     ///
     /// @lucene.experimental
     /// </summary>
-    public sealed class Util
+    public sealed class Util // LUCENENET TODO: Fix naming conflict with containing namespace
     {
         private Util()
         {

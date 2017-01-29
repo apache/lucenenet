@@ -1,14 +1,13 @@
-﻿using System.Diagnostics;
-using System.Collections.Generic;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Memory
 {
-
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
@@ -29,7 +28,6 @@ namespace Lucene.Net.Codecs.Memory
     /// <summary>
     /// TextReader for <seealso cref="DirectDocValuesFormat"/>
     /// </summary>
-
     internal class DirectDocValuesProducer : DocValuesProducer
     {
         // metadata maps (just file pointers and minimal stuff)
