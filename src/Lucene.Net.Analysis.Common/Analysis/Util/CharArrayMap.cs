@@ -85,7 +85,12 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         internal class MapValue
         {
-            public TValue value = default(TValue);
+            private TValue value = default(TValue);
+            public TValue Value
+            {
+                get { return value; }
+                set { this.value = value; }
+            }
 
             public MapValue()
             { }
@@ -298,7 +303,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Get(char[] text, int offset, int length)
         {
             var value = values[GetSlot(text, offset, length)];
-            return (value != null) ? value.value : default(TValue);
+            return (value != null) ? value.Value : default(TValue);
         }
 
         /// <summary>
@@ -307,7 +312,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Get(char[] text)
         {
             var value = values[GetSlot(text, 0, text.Length)];
-            return (value != null) ? value.value : default(TValue);
+            return (value != null) ? value.Value : default(TValue);
         }
 
         /// <summary>
@@ -316,7 +321,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Get(ICharSequence cs)
         {
             var value = values[GetSlot(cs)];
-            return (value != null) ? value.value : default(TValue);
+            return (value != null) ? value.Value : default(TValue);
         }
 
         /// <summary>
@@ -325,7 +330,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Get(string cs)
         {
             var value = values[GetSlot(cs)];
-            return (value != null) ? value.value : default(TValue);
+            return (value != null) ? value.Value : default(TValue);
         }
 
         /// <summary>
@@ -410,7 +415,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Put(ICharSequence text, TValue value)
         {
             MapValue oldValue = PutImpl(text, new MapValue(value)); // could be more efficient
-            return (oldValue != null) ? oldValue.value : default(TValue);
+            return (oldValue != null) ? oldValue.Value : default(TValue);
         }
 
         /// <summary>
@@ -420,7 +425,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Put(object o, TValue value)
         {
             MapValue oldValue = PutImpl(o, new MapValue(value));
-            return (oldValue != null) ? oldValue.value : default(TValue);
+            return (oldValue != null) ? oldValue.Value : default(TValue);
         }
 
         /// <summary>
@@ -429,7 +434,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Put(string text, TValue value)
         {
             MapValue oldValue = PutImpl(text, new MapValue(value));
-            return (oldValue != null) ? oldValue.value : default(TValue);
+            return (oldValue != null) ? oldValue.Value : default(TValue);
         }
 
         /// <summary>
@@ -440,7 +445,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Put(char[] text, TValue value)
         {
             MapValue oldValue = PutImpl(text, new MapValue(value));
-            return (oldValue != null) ? oldValue.value : default(TValue);
+            return (oldValue != null) ? oldValue.Value : default(TValue);
         }
 
         /// <summary>
@@ -932,7 +937,7 @@ namespace Lucene.Net.Analysis.Util
             var val = values[GetSlot(key, offset, length)];
             if (val != null)
             {
-                value = val.value;
+                value = val.Value;
                 return true;
             }
             value = default(TValue);
@@ -952,7 +957,7 @@ namespace Lucene.Net.Analysis.Util
             var val = values[GetSlot(key, 0, key.Length)];
             if (val != null)
             {
-                value = val.value;
+                value = val.Value;
                 return true;
             }
             value = default(TValue);
@@ -972,7 +977,7 @@ namespace Lucene.Net.Analysis.Util
             var val = values[GetSlot(key)];
             if (val != null)
             {
-                value = val.value;
+                value = val.Value;
                 return true;
             }
             value = default(TValue);
@@ -992,7 +997,7 @@ namespace Lucene.Net.Analysis.Util
             var val = values[GetSlot(key)];
             if (val != null)
             {
-                value = val.value;
+                value = val.Value;
                 return true;
             }
             value = default(TValue);
@@ -1260,7 +1265,7 @@ namespace Lucene.Net.Analysis.Util
 
             public bool Contains(TValue item)
             {
-                return outerInstance.values.Select(x => (x != null) ? x.value : default(TValue)).Contains(item);
+                return outerInstance.values.Select(x => (x != null) ? x.Value : default(TValue)).Contains(item);
             }
 
             public void CopyTo(TValue[] array, int arrayIndex)
@@ -1570,7 +1575,7 @@ namespace Lucene.Net.Analysis.Util
                 get
                 {
                     var val = outerInstance.values[lastPos];
-                    return val != null ? val.value : default(TValue);
+                    return val != null ? val.Value : default(TValue);
                 }
             }
 
@@ -1583,8 +1588,8 @@ namespace Lucene.Net.Analysis.Util
                 {
                     throw new NotSupportedException();
                 }
-                TValue old = outerInstance.values[lastPos].value;
-                outerInstance.values[lastPos].value = value;
+                TValue old = outerInstance.values[lastPos].Value;
+                outerInstance.values[lastPos].Value = value;
                 return old;
             }
 
@@ -1616,7 +1621,7 @@ namespace Lucene.Net.Analysis.Util
                     var val = outerInstance.values[lastPos];
                     return new KeyValuePair<string, TValue>(
                         new string(outerInstance.keys[lastPos]), 
-                        val != null ? val.value : default(TValue));
+                        val != null ? val.Value : default(TValue));
                 }
             }
 
