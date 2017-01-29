@@ -193,7 +193,13 @@ namespace Lucene.Net.Codecs.Memory
         {
             internal abstract class TermAndSkip
             {
-                public int[] skips; // LUCENENET TODO: Make property
+                [WritableArray]
+                public int[] Skips
+                {
+                    get { return skips; }
+                    set { skips = value; }
+                }
+                private int[] skips;
 
                 /// <summary>
                 /// Returns the approximate number of RAM bytes used </summary>
@@ -565,13 +571,13 @@ namespace Lucene.Net.Codecs.Memory
                 int skipOffset = 0;
                 for (int i = 0; i < numTerms; i++)
                 {
-                    int[] termSkips = terms[i].skips;
+                    int[] termSkips = terms[i].Skips;
                     skipOffsets[i] = skipOffset;
                     if (termSkips != null)
                     {
                         Array.Copy(termSkips, 0, skips, skipOffset, termSkips.Length);
                         skipOffset += termSkips.Length;
-                        terms[i].skips = null;
+                        terms[i].Skips = null;
                     }
                 }
                 this.skipOffsets[numTerms] = skipOffset;
@@ -705,15 +711,15 @@ namespace Lucene.Net.Codecs.Memory
                 for (int termID = 0; termID < terms.Length; termID++)
                 {
                     TermAndSkip term = terms[termID];
-                    if (term.skips != null && term.skips.Length > 1)
+                    if (term.Skips != null && term.Skips.Length > 1)
                     {
-                        for (int pos = 0; pos < term.skips.Length/2; pos++)
+                        for (int pos = 0; pos < term.Skips.Length/2; pos++)
                         {
-                            int otherPos = term.skips.Length - pos - 1;
+                            int otherPos = term.Skips.Length - pos - 1;
 
-                            int temp = term.skips[pos];
-                            term.skips[pos] = term.skips[otherPos];
-                            term.skips[otherPos] = temp;
+                            int temp = term.Skips[pos];
+                            term.Skips[pos] = term.Skips[otherPos];
+                            term.Skips[otherPos] = temp;
                         }
                     }
                 }
@@ -723,9 +729,9 @@ namespace Lucene.Net.Codecs.Memory
             {
                 TermAndSkip term = terms[ord - backCount];
                 skipCount++;
-                if (term.skips == null)
+                if (term.Skips == null)
                 {
-                    term.skips = new int[] {ord};
+                    term.Skips = new int[] {ord};
                 }
                 else
                 {
@@ -733,10 +739,10 @@ namespace Lucene.Net.Codecs.Memory
                     // given that the skips themselves are already log(N)
                     // we can grow by only 1 and still have amortized
                     // linear time:
-                    int[] newSkips = new int[term.skips.Length + 1];
-                    Array.Copy(term.skips, 0, newSkips, 0, term.skips.Length);
-                    term.skips = newSkips;
-                    term.skips[term.skips.Length - 1] = ord;
+                    int[] newSkips = new int[term.Skips.Length + 1];
+                    Array.Copy(term.Skips, 0, newSkips, 0, term.Skips.Length);
+                    term.Skips = newSkips;
+                    term.Skips[term.Skips.Length - 1] = ord;
                 }
             }
 
