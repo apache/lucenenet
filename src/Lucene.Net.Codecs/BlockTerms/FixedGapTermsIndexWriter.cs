@@ -83,7 +83,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override FieldWriter AddField(FieldInfo field, long termsFilePointer)
         {
-            var writer = new SimpleFieldWriter(field, termsFilePointer, this);
+            var writer = new SimpleFieldWriter(this, field, termsFilePointer);
             _fields.Add(writer);
             return writer;
         }
@@ -113,8 +113,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private class SimpleFieldWriter : FieldWriter
         {
-            // Outer instance
-            private readonly FixedGapTermsIndexWriter _fgtiw;
+            private readonly FixedGapTermsIndexWriter outerInstance;
 
             internal readonly FieldInfo FieldInfo;
             internal int NumIndexTerms;
@@ -134,26 +133,26 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private readonly BytesRef _lastTerm = new BytesRef();
 
-            internal SimpleFieldWriter(FieldInfo fieldInfo, long termsFilePointer, FixedGapTermsIndexWriter fgtiw)
+            internal SimpleFieldWriter(FixedGapTermsIndexWriter outerInstance, FieldInfo fieldInfo, long termsFilePointer)
             {
+                this.outerInstance = outerInstance;
                 FieldInfo = fieldInfo;
-                IndexStart = fgtiw.Output.FilePointer;
+                IndexStart = outerInstance.Output.FilePointer;
                 TermsStart = _lastTermsPointer = termsFilePointer;
                 _termLengths = new short[0];
                 _termsPointerDeltas = new int[0];
-                _fgtiw = fgtiw;
             }
 
             public override bool CheckIndexTerm(BytesRef text, TermStats stats)
             {
                 // First term is first indexed term:
                 //System.output.println("FGW: checkIndexTerm text=" + text.utf8ToString());
-                if (0 == (_numTerms++ % _fgtiw._termIndexInterval))
+                if (0 == (_numTerms++ % outerInstance._termIndexInterval))
                     return true;
 
                 // save last term just before next index term so we
                 // can compute wasted suffix
-                if (0 == _numTerms % _fgtiw._termIndexInterval)
+                if (0 == _numTerms % outerInstance._termIndexInterval)
                     _lastTerm.CopyBytes(text);
 
                 return false;
@@ -161,11 +160,11 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override void Add(BytesRef text, TermStats stats, long termsFilePointer)
             {
-                int indexedTermLength = _fgtiw.IndexedTermPrefixLength(_lastTerm, text);
+                int indexedTermLength = outerInstance.IndexedTermPrefixLength(_lastTerm, text);
 
                 // write only the min prefix that shows the diff
                 // against prior term
-                _fgtiw.Output.WriteBytes(text.Bytes, text.Offset, indexedTermLength);
+                outerInstance.Output.WriteBytes(text.Bytes, text.Offset, indexedTermLength);
 
                 if (_termLengths.Length == NumIndexTerms)
                 {
@@ -192,9 +191,9 @@ namespace Lucene.Net.Codecs.BlockTerms
             public override void Finish(long termsFilePointer)
             {
                 // write primary terms dict offsets
-                PackedIndexStart = _fgtiw.Output.FilePointer;
+                PackedIndexStart = outerInstance.Output.FilePointer;
 
-                PackedInts.Writer w = PackedInts.GetWriter(_fgtiw.Output, NumIndexTerms,
+                PackedInts.Writer w = PackedInts.GetWriter(outerInstance.Output, NumIndexTerms,
                     PackedInts.BitsRequired(termsFilePointer),
                     PackedInts.DEFAULT);
 
@@ -207,10 +206,10 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
                 w.Finish();
 
-                PackedOffsetsStart = _fgtiw.Output.FilePointer;
+                PackedOffsetsStart = outerInstance.Output.FilePointer;
 
                 // write offsets into the byte[] terms
-                w = PackedInts.GetWriter(_fgtiw.Output, 1 + NumIndexTerms, PackedInts.BitsRequired(_totTermLength),
+                w = PackedInts.GetWriter(outerInstance.Output, 1 + NumIndexTerms, PackedInts.BitsRequired(_totTermLength),
                     PackedInts.DEFAULT);
                 upto = 0;
                 for (int i = 0; i < NumIndexTerms; i++)

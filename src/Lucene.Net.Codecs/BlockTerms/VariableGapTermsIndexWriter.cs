@@ -201,7 +201,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         public override FieldWriter AddField(FieldInfo field, long termsFilePointer)
         {
             _policy.NewField(field);
-            var writer = new FstFieldWriter(field, termsFilePointer, this);
+            var writer = new FstFieldWriter(this, field, termsFilePointer);
             _fields.Add(writer);
             return writer;
         }
@@ -232,8 +232,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private class FstFieldWriter : FieldWriter
         {
-            // Outer instance
-            private readonly VariableGapTermsIndexWriter _vgtiw;
+            private readonly VariableGapTermsIndexWriter outerInstance;
 
             private readonly Builder<long?> _fstBuilder;
             private readonly PositiveIntOutputs fstOutputs;
@@ -246,13 +245,13 @@ namespace Lucene.Net.Codecs.BlockTerms
             private readonly BytesRef _lastTerm = new BytesRef();
             private bool _first = true;
 
-            public FstFieldWriter(FieldInfo fieldInfo, long termsFilePointer, VariableGapTermsIndexWriter vgtiw)
+            public FstFieldWriter(VariableGapTermsIndexWriter outerInstance, FieldInfo fieldInfo, long termsFilePointer)
             {
-                _vgtiw = vgtiw;
+                this.outerInstance = outerInstance;
                 FieldInfo = fieldInfo;
                 PositiveIntOutputs fstOutputs = PositiveIntOutputs.Singleton;
                 _fstBuilder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, fstOutputs);
-                IndexStart = _vgtiw.Output.FilePointer;
+                IndexStart = this.outerInstance.Output.FilePointer;
 
                 // Always put empty string in
                 _fstBuilder.Add(new IntsRef(), termsFilePointer);
@@ -263,7 +262,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 // NOTE: we must force the first term per field to be
                 // indexed, in case policy doesn't:
-                if (_vgtiw._policy.IsIndexTerm(text, stats) || _first)
+                if (outerInstance._policy.IsIndexTerm(text, stats) || _first)
                 {
                     _first = false;
                     return true;
@@ -284,7 +283,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     return;
                 }
                 int lengthSave = text.Length;
-                text.Length = _vgtiw.IndexedTermPrefixLength(_lastTerm, text);
+                text.Length = outerInstance.IndexedTermPrefixLength(_lastTerm, text);
                 try
                 {
                     _fstBuilder.Add(Util.ToIntsRef(text, _scratchIntsRef), termsFilePointer);
@@ -300,7 +299,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 Fst = _fstBuilder.Finish();
                 if (Fst != null)
-                    Fst.Save(_vgtiw.Output);
+                    Fst.Save(outerInstance.Output);
             }
         }
 

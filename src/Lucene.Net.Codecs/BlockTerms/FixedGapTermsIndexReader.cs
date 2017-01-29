@@ -143,8 +143,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                     try
                     {
                         _fields.Add(fieldInfo,
-                            new FieldIndexData(numIndexTerms, indexStart, termsStart, packedIndexStart,
-                                packedOffsetsStart, this));
+                            new FieldIndexData(this, numIndexTerms, indexStart, termsStart, packedIndexStart,
+                                packedOffsetsStart));
                     }
                     catch (ArgumentException)
                     {
@@ -299,8 +299,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private class FieldIndexData
         {
-            // Outer instance
-            private readonly FixedGapTermsIndexReader _fgtir; // LUCENENET TODO: In this assembly, change all variables marked "Outer instance" to be named outerInstance and move them to the beginning of the ctor parameter list
+            private readonly FixedGapTermsIndexReader outerInstance;
 
             internal volatile CoreFieldIndex CoreIndex;
 
@@ -311,19 +310,17 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private readonly int _numIndexTerms;
             
-            public FieldIndexData(int numIndexTerms, long indexStart, long termsStart,
-                long packedIndexStart,
-                long packedOffsetsStart, FixedGapTermsIndexReader fgtir)
+            public FieldIndexData(FixedGapTermsIndexReader outerInstance, int numIndexTerms, long indexStart, long termsStart,
+                long packedIndexStart, long packedOffsetsStart)
             {
-
+                this.outerInstance = outerInstance;
                 _termsStart = termsStart;
                 _indexStart = indexStart;
                 _packedIndexStart = packedIndexStart;
                 _packedOffsetsStart = packedOffsetsStart;
                 _numIndexTerms = numIndexTerms;
-                _fgtir = fgtir;
-
-                if (_fgtir._indexDivisor > 0)
+                
+                if (this.outerInstance._indexDivisor > 0)
                     LoadTermsIndex();
             }
 
@@ -331,7 +328,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 if (CoreIndex == null)
                     CoreIndex = new CoreFieldIndex(_indexStart, _termsStart, _packedIndexStart, _packedOffsetsStart,
-                        _numIndexTerms, _fgtir);
+                        _numIndexTerms, outerInstance);
             }
 
             internal class CoreFieldIndex

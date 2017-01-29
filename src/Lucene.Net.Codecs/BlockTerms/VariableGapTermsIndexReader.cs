@@ -85,7 +85,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     
                     try
                     {
-                        _fields.Add(fieldInfo, new FieldIndexData(indexStart, this));
+                        _fields.Add(fieldInfo, new FieldIndexData(this, indexStart));
                     }
                     catch (ArgumentException)
                     {
@@ -173,19 +173,18 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private class FieldIndexData
         {
-            // Outer instance
-            private readonly VariableGapTermsIndexReader _vgtir;
+            private readonly VariableGapTermsIndexReader outerInstance;
 
             private readonly long _indexStart;
             // Set only if terms index is loaded:
             internal volatile FST<long?> Fst;
             
-            public FieldIndexData(long indexStart, VariableGapTermsIndexReader vgtir)
+            public FieldIndexData(VariableGapTermsIndexReader outerInstance, long indexStart)
             {
-                _vgtir = vgtir;
+                this.outerInstance = outerInstance;
                 _indexStart = indexStart;
 
-                if (_vgtir._indexDivisor > 0)
+                if (this.outerInstance._indexDivisor > 0)
                     LoadTermsIndex();
             }
 
@@ -193,9 +192,9 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 if (Fst != null) return;
 
-                var clone = (IndexInput)_vgtir._input.Clone();
+                var clone = (IndexInput)outerInstance._input.Clone();
                 clone.Seek(_indexStart);
-                Fst = new FST<long?>(clone, _vgtir._fstOutputs);
+                Fst = new FST<long?>(clone, outerInstance._fstOutputs);
                 clone.Dispose();
 
                 /*
@@ -206,19 +205,19 @@ namespace Lucene.Net.Codecs.BlockTerms
                 w.close();
                 */
 
-                if (_vgtir._indexDivisor > 1)
+                if (outerInstance._indexDivisor > 1)
                 {
                     // subsample
                     var scratchIntsRef = new IntsRef();
                     var outputs = PositiveIntOutputs.Singleton;
                     var builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
                     var fstEnum = new BytesRefFSTEnum<long?>(Fst);
-                    var count = _vgtir._indexDivisor;
+                    var count = outerInstance._indexDivisor;
 
                     BytesRefFSTEnum.InputOutput<long?> result;
                     while ((result = fstEnum.Next()) != null)
                     {
-                        if (count == _vgtir._indexDivisor)
+                        if (count == outerInstance._indexDivisor)
                         {
                             builder.Add(Util.ToIntsRef(result.Input, scratchIntsRef), result.Output);
                             count = 0;

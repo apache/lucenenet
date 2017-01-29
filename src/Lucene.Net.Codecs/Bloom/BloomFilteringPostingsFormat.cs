@@ -408,24 +408,23 @@ namespace Lucene.Net.Codecs.Bloom
 
         internal class BloomFilteredFieldsConsumer : FieldsConsumer
         {
-            // Outer instance
-            private readonly BloomFilteringPostingsFormat _bfpf;
+            private readonly BloomFilteringPostingsFormat outerInstance;
 
             private readonly FieldsConsumer _delegateFieldsConsumer;
             private readonly Dictionary<FieldInfo, FuzzySet> _bloomFilters = new Dictionary<FieldInfo, FuzzySet>();
             private readonly SegmentWriteState _state;
             
-            public BloomFilteredFieldsConsumer(FieldsConsumer fieldsConsumer,
-                SegmentWriteState state, BloomFilteringPostingsFormat bfpf)
+            public BloomFilteredFieldsConsumer(BloomFilteringPostingsFormat outerInstance, FieldsConsumer fieldsConsumer,
+                SegmentWriteState state)
             {
+                this.outerInstance = outerInstance;
                 _delegateFieldsConsumer = fieldsConsumer;
                 _state = state;
-                _bfpf = bfpf;
             }
 
             public override TermsConsumer AddField(FieldInfo field)
             {
-                var bloomFilter = _bfpf._bloomFilterFactory.GetSetForField(_state, field);
+                var bloomFilter = outerInstance._bloomFilterFactory.GetSetForField(_state, field);
                 if (bloomFilter != null)
                 {
                     Debug.Assert((_bloomFilters.ContainsKey(field) == false));
@@ -443,7 +442,7 @@ namespace Lucene.Net.Codecs.Bloom
             {
                 _delegateFieldsConsumer.Dispose();
                 // Now we are done accumulating values for these fields
-                var nonSaturatedBlooms = (from entry in _bloomFilters.EntrySet() let bloomFilter = entry.Value where !_bfpf._bloomFilterFactory.IsSaturated(bloomFilter, entry.Key) select entry).ToList();
+                var nonSaturatedBlooms = (from entry in _bloomFilters.EntrySet() let bloomFilter = entry.Value where !outerInstance._bloomFilterFactory.IsSaturated(bloomFilter, entry.Key) select entry).ToList();
 
                 var bloomFileName = IndexFileNames.SegmentFileName(
                     _state.SegmentInfo.Name, _state.SegmentSuffix, BLOOM_EXTENSION);
@@ -454,7 +453,7 @@ namespace Lucene.Net.Codecs.Bloom
                     bloomOutput = _state.Directory.CreateOutput(bloomFileName, _state.Context);
                     CodecUtil.WriteHeader(bloomOutput, BLOOM_CODEC_NAME, VERSION_CURRENT);
                     // remember the name of the postings format we will delegate to
-                    bloomOutput.WriteString(_bfpf._delegatePostingsFormat.Name);
+                    bloomOutput.WriteString(outerInstance._delegatePostingsFormat.Name);
 
                     // First field in the output file is the number of fields+blooms saved
                     bloomOutput.WriteInt(nonSaturatedBlooms.Count);
@@ -479,7 +478,7 @@ namespace Lucene.Net.Codecs.Bloom
             private void SaveAppropriatelySizedBloomFilter(DataOutput bloomOutput,
                 FuzzySet bloomFilter, FieldInfo fieldInfo)
             {
-                var rightSizedSet = _bfpf._bloomFilterFactory.Downsize(fieldInfo,
+                var rightSizedSet = outerInstance._bloomFilterFactory.Downsize(fieldInfo,
                     bloomFilter) ?? bloomFilter;
 
                 rightSizedSet.Serialize(bloomOutput);

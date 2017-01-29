@@ -120,7 +120,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             CurrentField = field;
             var fiw = _termsIndexWriter.AddField(field, _output.FilePointer);
-            return new TermsWriter(fiw, field, PostingsWriter, this);
+            return new TermsWriter(this, fiw, field, PostingsWriter);
         }
 
         public override void Dispose()
@@ -173,8 +173,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         internal class TermsWriter : TermsConsumer
         {
-            // Outer instance
-            private readonly BlockTermsWriter _btw;
+            private readonly BlockTermsWriter outerInstance;
 
             private readonly FieldInfo _fieldInfo;
             private readonly PostingsWriterBase _postingsWriter;
@@ -191,20 +190,21 @@ namespace Lucene.Net.Codecs.BlockTerms
             private int _pendingCount;
 
             internal TermsWriter(
+                BlockTermsWriter outerInstance,
                 TermsIndexWriterBase.FieldWriter fieldIndexWriter,
                 FieldInfo fieldInfo,
-                PostingsWriterBase postingsWriter, BlockTermsWriter btw)
+                PostingsWriterBase postingsWriter)
             {
+                this.outerInstance = outerInstance;
                 _fieldInfo = fieldInfo;
                 _fieldIndexWriter = fieldIndexWriter;
-                _btw = btw;
 
                 _pendingTerms = new TermEntry[32];
                 for (int i = 0; i < _pendingTerms.Length; i++)
                 {
                     _pendingTerms[i] = new TermEntry();
                 }
-                _termsStartPointer = _btw._output.FilePointer;
+                _termsStartPointer = this.outerInstance._output.FilePointer;
                 _postingsWriter = postingsWriter;
                 _longsSize = postingsWriter.SetField(fieldInfo);
             }
@@ -237,7 +237,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         // entire block in between index terms:
                         FlushBlock();
                     }
-                    _fieldIndexWriter.Add(text, stats, _btw._output.FilePointer);
+                    _fieldIndexWriter.Add(text, stats, outerInstance._output.FilePointer);
                 }
 
                 if (_pendingTerms.Length == _pendingCount)
@@ -271,16 +271,16 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
 
                 // EOF marker:
-                _btw._output.WriteVInt(0);
+                outerInstance._output.WriteVInt(0);
 
                 _sumTotalTermFreq = sumTotalTermFreq;
                 _sumDocFreq = sumDocFreq;
                 _docCount = docCount;
-                _fieldIndexWriter.Finish(_btw._output.FilePointer);
+                _fieldIndexWriter.Finish(outerInstance._output.FilePointer);
 
                 if (_numTerms > 0)
                 {
-                    _btw._fields.Add(new FieldMetaData(_fieldInfo,
+                    outerInstance._fields.Add(new FieldMetaData(_fieldInfo,
                         _numTerms,
                         _termsStartPointer,
                         sumTotalTermFreq,
@@ -329,8 +329,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                             _pendingTerms[termCount].Term));
                 }
 
-                _btw._output.WriteVInt(_pendingCount);
-                _btw._output.WriteVInt(commonPrefix);
+                outerInstance._output.WriteVInt(_pendingCount);
+                outerInstance._output.WriteVInt(commonPrefix);
 
                 // 2nd pass: write suffixes, as separate byte[] blob
                 for (var termCount = 0; termCount < _pendingCount; termCount++)
@@ -341,8 +341,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _bytesWriter.WriteVInt(suffix);
                     _bytesWriter.WriteBytes(_pendingTerms[termCount].Term.Bytes, commonPrefix, suffix);
                 }
-                _btw._output.WriteVInt((int)_bytesWriter.FilePointer);
-                _bytesWriter.WriteTo(_btw._output);
+                outerInstance._output.WriteVInt((int)_bytesWriter.FilePointer);
+                _bytesWriter.WriteTo(outerInstance._output);
                 _bytesWriter.Reset();
 
                 // 3rd pass: write the freqs as byte[] blob
@@ -360,8 +360,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                         _bytesWriter.WriteVLong(state.TotalTermFreq - state.DocFreq);
                     }
                 }
-                _btw._output.WriteVInt((int)_bytesWriter.FilePointer);
-                _bytesWriter.WriteTo(_btw._output);
+                outerInstance._output.WriteVInt((int)_bytesWriter.FilePointer);
+                _bytesWriter.WriteTo(outerInstance._output);
                 _bytesWriter.Reset();
 
                 // 4th pass: write the metadata 
@@ -379,8 +379,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _bufferWriter.Reset();
                     absolute = false;
                 }
-                _btw._output.WriteVInt((int)_bytesWriter.FilePointer);
-                _bytesWriter.WriteTo(_btw._output);
+                outerInstance._output.WriteVInt((int)_bytesWriter.FilePointer);
+                _bytesWriter.WriteTo(outerInstance._output);
                 _bytesWriter.Reset();
 
                 _lastPrevTerm.CopyBytes(_pendingTerms[_pendingCount - 1].Term);
