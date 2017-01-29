@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Hunspell
     {
         private static Dictionary dictionary;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void BeforeClass()
         {
             System.IO.Stream affixStream = typeof(TestStemmer).getResourceAsStream("simple.aff");
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void afterClass()
         {
             dictionary = null;

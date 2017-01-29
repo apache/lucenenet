@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis.Hunspell
     public class TestTwoSuffixes : StemmerTestBase
     {
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void BeforeClass()
         {
             Init("twosuffixes.aff", "twosuffixes.dic");
