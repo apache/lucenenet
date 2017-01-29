@@ -50,7 +50,7 @@ namespace Lucene.Net.Codecs.IntBlock
             var buffer = new int[blockSize];
             var clone = (IndexInput)input.Clone();
             // TODO: can this be simplified?
-            return new InputReader(clone, buffer, GetBlockReader(clone, buffer));
+            return new Reader(clone, buffer, GetBlockReader(clone, buffer));
         }
 
         public override void Dispose()
@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs.IntBlock
 
         public override AbstractIndex GetIndex()
         {
-            return new InputIndex(this);
+            return new Index(this);
         }
 
         protected abstract IBlockReader GetBlockReader(IndexInput @in, int[] buffer);
@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.IntBlock
             void ReadBlock();
         }
 
-        private class InputReader : AbstractReader // LUCENENET TODO: Rename Reader
+        private class Reader : AbstractReader
         {
             private readonly IndexInput input;
             private readonly IBlockReader blockReader;
@@ -89,7 +89,7 @@ namespace Lucene.Net.Codecs.IntBlock
             private long pendingFP;
             private long lastBlockFP = -1;
 
-            public InputReader(IndexInput input, int[] pending, IBlockReader blockReader)
+            public Reader(IndexInput input, int[] pending, IBlockReader blockReader)
             {
                 this.input = input;
                 this.pending = pending;
@@ -130,11 +130,11 @@ namespace Lucene.Net.Codecs.IntBlock
             }
         }
 
-        private class InputIndex : AbstractIndex // LUCENENET TODO: Rename Index
+        private class Index : AbstractIndex
         {
             private readonly FixedIntBlockIndexInput outerInstance;
 
-            public InputIndex(FixedIntBlockIndexInput outerInstance)
+            public Index(FixedIntBlockIndexInput outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
@@ -169,19 +169,19 @@ namespace Lucene.Net.Codecs.IntBlock
 
             public override void Seek(AbstractReader other)
             {
-                ((InputReader)other).Seek(fp, upto);
+                ((Reader)other).Seek(fp, upto);
             }
 
             public override void CopyFrom(AbstractIndex other)
             {
-                InputIndex idx = (InputIndex)other;
+                Index idx = (Index)other;
                 fp = idx.fp;
                 upto = idx.upto;
             }
 
             public override AbstractIndex Clone()
             {
-                InputIndex other = new InputIndex(outerInstance);
+                Index other = new Index(outerInstance);
                 other.fp = fp;
                 other.upto = upto;
                 return other;
