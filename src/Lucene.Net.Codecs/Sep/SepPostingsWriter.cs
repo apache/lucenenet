@@ -200,7 +200,7 @@ namespace Lucene.Net.Codecs.Sep
             {
                 throw new System.NotSupportedException("this codec cannot index offsets");
             }
-            skipListWriter.IndexOptions = indexOptions;
+            skipListWriter.SetIndexOptions(indexOptions);
             storePayloads = indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS &&
                             fieldInfo.HasPayloads;
             lastPayloadFP = 0;

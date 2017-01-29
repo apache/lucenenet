@@ -43,8 +43,6 @@ namespace Lucene.Net.Codecs.Sep
         private readonly IntIndexInput.AbstractIndex _lastDocIndex;
         private readonly IntIndexInput.AbstractIndex _lastPosIndex;
 
-        private IndexOptions _indexOptions;
-
         private long _lastPayloadPointer;
         private int _lastPayloadLength;
 
@@ -79,10 +77,11 @@ namespace Lucene.Net.Codecs.Sep
             _lastPosIndex = posIn != null ? posIn.GetIndex() : null;
         }
 
+        private IndexOptions _indexOptions;
 
-        internal virtual IndexOptions IndexOptions // LUCENENET TODO: Make into SetIndexOptions(IndexOptions)
+        internal virtual void SetIndexOptions(IndexOptions v)
         {
-            set { _indexOptions = value; }
+            _indexOptions = v;
         }
 
         internal virtual void Init(long skipPointer, IntIndexInput.AbstractIndex docBaseIndex, IntIndexInput.AbstractIndex freqBaseIndex,

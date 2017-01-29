@@ -435,7 +435,7 @@ namespace Lucene.Net.Codecs.Sep
                     {
                         // We haven't yet skipped for this posting
                         _skipper.Init(_skipFp, _docIndex, _freqIndex, _posIndex, 0, _docFreq, _storePayloads);
-                        _skipper.IndexOptions = _indexOptions;
+                        _skipper.SetIndexOptions(_indexOptions);
 
                         _skipped = true;
                     }
@@ -610,7 +610,7 @@ namespace Lucene.Net.Codecs.Sep
                         //System.out.println("  init skip data skipFP=" + skipFP);
                         // We haven't yet skipped for this posting
                         _skipper.Init(_skipFp, _docIndex, _freqIndex, _posIndex, _payloadFp, _docFreq, _storePayloads);
-                        _skipper.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                        _skipper.SetIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
                         _skipped = true;
                     }
 
