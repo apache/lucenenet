@@ -160,64 +160,64 @@ namespace Lucene.Net.Codecs.Pulsing
             return new PulsingTermState {WrappedTermState = _wrappedPostingsReader.NewTermState()};
         }
 
-        public override void DecodeTerm(long[] empty, DataInput input, FieldInfo fieldInfo, BlockTermState _termState,
+        public override void DecodeTerm(long[] empty, DataInput input, FieldInfo fieldInfo, BlockTermState termState,
             bool absolute)
         {
-            var termState = (PulsingTermState) _termState;
+            var termState2 = (PulsingTermState) termState;
 
             Debug.Assert(empty.Length == 0);
 
-            termState.Absolute = termState.Absolute || absolute;
+            termState2.Absolute = termState2.Absolute || absolute;
             // if we have positions, its total TF, otherwise its computed based on docFreq.
             // TODO Double check this is right..
             long count = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS.CompareTo(fieldInfo.IndexOptions) <= 0
-                ? termState.TotalTermFreq
-                : termState.DocFreq;
+                ? termState2.TotalTermFreq
+                : termState2.DocFreq;
            
             if (count <= _maxPositions)
             {
                 // Inlined into terms dict -- just read the byte[] blob in,
                 // but don't decode it now (we only decode when a DocsEnum
                 // or D&PEnum is pulled):
-                termState.PostingsSize = input.ReadVInt();
-                if (termState.Postings == null || termState.Postings.Length < termState.PostingsSize)
+                termState2.PostingsSize = input.ReadVInt();
+                if (termState2.Postings == null || termState2.Postings.Length < termState2.PostingsSize)
                 {
-                    termState.Postings = new byte[ArrayUtil.Oversize(termState.PostingsSize, 1)];
+                    termState2.Postings = new byte[ArrayUtil.Oversize(termState2.PostingsSize, 1)];
                 }
                 // TODO: sort of silly to copy from one big byte[]
                 // (the blob holding all inlined terms' blobs for
                 // current term block) into another byte[] (just the
                 // blob for this term)...
-                input.ReadBytes(termState.Postings, 0, termState.PostingsSize);
+                input.ReadBytes(termState2.Postings, 0, termState2.PostingsSize);
                 //System.out.println("  inlined bytes=" + termState.postingsSize);
-                termState.Absolute = termState.Absolute || absolute;
+                termState2.Absolute = termState2.Absolute || absolute;
             }
             else
             {
                 var longsSize = _fields == null ? 0 : _fields[fieldInfo.Number];
-                if (termState.Longs == null)
+                if (termState2.Longs == null)
                 {
-                    termState.Longs = new long[longsSize];
+                    termState2.Longs = new long[longsSize];
                 }
                 for (var i = 0; i < longsSize; i++)
                 {
-                    termState.Longs[i] = input.ReadVLong();
+                    termState2.Longs[i] = input.ReadVLong();
                 }
-                termState.PostingsSize = -1;
-                termState.WrappedTermState.DocFreq = termState.DocFreq;
-                termState.WrappedTermState.TotalTermFreq = termState.TotalTermFreq;
-                _wrappedPostingsReader.DecodeTerm(termState.Longs, input, fieldInfo,
-                    termState.WrappedTermState,
-                    termState.Absolute);
-                termState.Absolute = false;
+                termState2.PostingsSize = -1;
+                termState2.WrappedTermState.DocFreq = termState2.DocFreq;
+                termState2.WrappedTermState.TotalTermFreq = termState2.TotalTermFreq;
+                _wrappedPostingsReader.DecodeTerm(termState2.Longs, input, fieldInfo,
+                    termState2.WrappedTermState,
+                    termState2.Absolute);
+                termState2.Absolute = false;
             }
         }
 
-        public override DocsEnum Docs(FieldInfo field, BlockTermState _termState, IBits liveDocs, DocsEnum reuse,
+        public override DocsEnum Docs(FieldInfo field, BlockTermState termState, IBits liveDocs, DocsEnum reuse,
             int flags)
         {
-            var termState = (PulsingTermState) _termState;
-            if (termState.PostingsSize != -1)
+            var termState2 = (PulsingTermState) termState;
+            if (termState2.PostingsSize != -1)
             {
                 PulsingDocsEnum postings;
                 if (reuse is PulsingDocsEnum)
@@ -245,27 +245,27 @@ namespace Lucene.Net.Codecs.Pulsing
                 if (reuse != postings)
                     SetOther(postings, reuse); // postings.other = reuse
                 
-                return postings.Reset(liveDocs, termState);
+                return postings.Reset(liveDocs, termState2);
             }
 
             if (!(reuse is PulsingDocsEnum))
-                return _wrappedPostingsReader.Docs(field, termState.WrappedTermState, liveDocs, reuse, flags);
+                return _wrappedPostingsReader.Docs(field, termState2.WrappedTermState, liveDocs, reuse, flags);
 
-            var wrapped = _wrappedPostingsReader.Docs(field, termState.WrappedTermState, liveDocs,
+            var wrapped = _wrappedPostingsReader.Docs(field, termState2.WrappedTermState, liveDocs,
                 GetOther(reuse), flags);
 
             SetOther(wrapped, reuse); // wrapped.other = reuse
             return wrapped;
         }
 
-        public override DocsAndPositionsEnum DocsAndPositions(FieldInfo field, BlockTermState _termState, IBits liveDocs,
+        public override DocsAndPositionsEnum DocsAndPositions(FieldInfo field, BlockTermState termState, IBits liveDocs,
             DocsAndPositionsEnum reuse,
             int flags)
         {
 
-            var termState = (PulsingTermState) _termState;
+            var termState2 = (PulsingTermState) termState;
 
-            if (termState.PostingsSize != -1)
+            if (termState2.PostingsSize != -1)
             {
                 PulsingDocsAndPositionsEnum postings;
                 if (reuse is PulsingDocsAndPositionsEnum)
@@ -293,15 +293,15 @@ namespace Lucene.Net.Codecs.Pulsing
                 {
                     SetOther(postings, reuse); // postings.other = reuse 
                 }
-                return postings.Reset(liveDocs, termState);
+                return postings.Reset(liveDocs, termState2);
             }
 
             if (!(reuse is PulsingDocsAndPositionsEnum))
-                return _wrappedPostingsReader.DocsAndPositions(field, termState.WrappedTermState, liveDocs, reuse,
+                return _wrappedPostingsReader.DocsAndPositions(field, termState2.WrappedTermState, liveDocs, reuse,
                     flags);
 
             var wrapped = _wrappedPostingsReader.DocsAndPositions(field,
-                termState.WrappedTermState,
+                termState2.WrappedTermState,
                 liveDocs, (DocsAndPositionsEnum) GetOther(reuse),
                 flags);
             SetOther(wrapped, reuse); // wrapped.other = reuse

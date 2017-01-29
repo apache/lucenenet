@@ -260,19 +260,19 @@ namespace Lucene.Net.Codecs.Pulsing
         /// <summary>
         /// Called when we are done adding docs to this term
         /// </summary>
-        /// <param name="_state"></param>
-        public override void FinishTerm(BlockTermState _state)
+        /// <param name="state"></param>
+        public override void FinishTerm(BlockTermState state)
         {
-            var state = (PulsingTermState) _state;
+            var state2 = (PulsingTermState) state;
 
             Debug.Assert(_pendingCount > 0 || _pendingCount == -1);
 
             if (_pendingCount == -1)
             {
-                state.wrappedState.DocFreq = state.DocFreq;
-                state.wrappedState.TotalTermFreq = state.TotalTermFreq;
-                state.bytes = null;
-                _wrappedPostingsWriter.FinishTerm(state.wrappedState);
+                state2.wrappedState.DocFreq = state2.DocFreq;
+                state2.wrappedState.TotalTermFreq = state2.TotalTermFreq;
+                state2.bytes = null;
+                _wrappedPostingsWriter.FinishTerm(state2.wrappedState);
             }
             else
             {
@@ -403,8 +403,8 @@ namespace Lucene.Net.Codecs.Pulsing
                         break;
                 }
 
-                state.bytes = new byte[(int) _buffer.FilePointer];
-                _buffer.WriteTo(state.bytes, 0);
+                state2.bytes = new byte[(int) _buffer.FilePointer];
+                _buffer.WriteTo(state2.bytes, 0);
                 _buffer.Reset();
             }
             _pendingCount = 0;
