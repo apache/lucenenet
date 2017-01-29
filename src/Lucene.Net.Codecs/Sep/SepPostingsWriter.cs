@@ -43,13 +43,13 @@ namespace Lucene.Net.Codecs.Sep
         internal const int VERSION_CURRENT = VERSION_START;
 
         internal IntIndexOutput freqOut;
-        internal IntIndexOutputIndex freqIndex;
+        internal IntIndexOutput.AbstractIndex freqIndex;
 
         internal IntIndexOutput posOut;
-        internal IntIndexOutputIndex posIndex;
+        internal IntIndexOutput.AbstractIndex posIndex;
 
         internal IntIndexOutput docOut;
-        internal IntIndexOutputIndex docIndex;
+        internal IntIndexOutput.AbstractIndex docIndex;
 
         internal IndexOutput payloadOut;
 
@@ -116,20 +116,20 @@ namespace Lucene.Net.Codecs.Sep
                 var docFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, DOC_EXTENSION);
 
                 docOut = factory.CreateOutput(state.Directory, docFileName, state.Context);
-                docIndex = docOut.Index();
+                docIndex = docOut.GetIndex();
 
                 if (state.FieldInfos.HasFreq)
                 {
                     var frqFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, FREQ_EXTENSION);
                     freqOut = factory.CreateOutput(state.Directory, frqFileName, state.Context);
-                    freqIndex = freqOut.Index();
+                    freqIndex = freqOut.GetIndex();
                 }
 
                 if (state.FieldInfos.HasProx)
                 {
                     var posFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, POS_EXTENSION);
                     posOut = factory.CreateOutput(state.Directory, posFileName, state.Context);
-                    posIndex = posOut.Index();
+                    posIndex = posOut.GetIndex();
 
                     // TODO: -- only if at least one field stores payloads?
                     var payloadFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,PAYLOAD_EXTENSION);
@@ -211,13 +211,13 @@ namespace Lucene.Net.Codecs.Sep
 
         private SepTermState SetEmptyState()
         {
-            var emptyState = new SepTermState {DocIndex = docOut.Index()};
+            var emptyState = new SepTermState {DocIndex = docOut.GetIndex()};
             if (indexOptions != IndexOptions.DOCS_ONLY)
             {
-                emptyState.FreqIndex = freqOut.Index();
+                emptyState.FreqIndex = freqOut.GetIndex();
                 if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
-                    emptyState.PosIndex = posOut.Index();
+                    emptyState.PosIndex = posOut.GetIndex();
                 }
             }
             emptyState.PayloadFp = 0;
@@ -302,9 +302,9 @@ namespace Lucene.Net.Codecs.Sep
 
         private class SepTermState : BlockTermState
         {
-            public IntIndexOutputIndex DocIndex { get; set; }
-            public IntIndexOutputIndex FreqIndex { get; set; }
-            public IntIndexOutputIndex PosIndex { get; set; }
+            public IntIndexOutput.AbstractIndex DocIndex { get; set; }
+            public IntIndexOutput.AbstractIndex FreqIndex { get; set; }
+            public IntIndexOutput.AbstractIndex PosIndex { get; set; }
             public long PayloadFp { get; set; }
             public long SkipFp { get; set; }
         }
@@ -317,15 +317,15 @@ namespace Lucene.Net.Codecs.Sep
             Debug.Assert(state.DocFreq > 0);
             Debug.Assert(state.DocFreq == df);
 
-            state.DocIndex = docOut.Index();
+            state.DocIndex = docOut.GetIndex();
             state.DocIndex.CopyFrom(docIndex, false);
             if (indexOptions != IndexOptions.DOCS_ONLY)
             {
-                state.FreqIndex = freqOut.Index();
+                state.FreqIndex = freqOut.GetIndex();
                 state.FreqIndex.CopyFrom(freqIndex, false);
                 if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
-                    state.PosIndex = posOut.Index();
+                    state.PosIndex = posOut.GetIndex();
                     state.PosIndex.CopyFrom(posIndex, false);
                 }
                 else

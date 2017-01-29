@@ -40,31 +40,28 @@ namespace Lucene.Net.Codecs.Sep
         /// </summary>
         public abstract void Write(int v);
 
+        /// <summary>Records a single skip-point in the IndexOutput. </summary>
+        public abstract class AbstractIndex
+        {
+            /// <summary>Internally records the current location </summary>
+            public abstract void Mark();
+
+            /// <summary>Copies index from other </summary>
+            public abstract void CopyFrom(AbstractIndex other, bool copyLast);
+
+            /// <summary>
+            /// Writes "location" of current output pointer of primary
+            ///  output to different output (out) 
+            /// </summary>
+            public abstract void Write(DataOutput indexOut, bool absolute);
+        }
+
         /// <summary>
         /// If you are indexing the primary output file, call
         ///  this and interact with the returned IndexWriter. 
         /// </summary>
-        public abstract IntIndexOutputIndex Index(); // LUCENENET TODO: Rename GetIndex()
+        public abstract AbstractIndex GetIndex();
 
         public abstract void Dispose(); // LUCENENET TODO: Implement disposable pattern
     }
-
-
-    /// <summary>Records a single skip-point in the IndexOutput. </summary>
-    public abstract class IntIndexOutputIndex // LUCENENET TODO: Rename AbstractIndex and nest within IntIndexOutput
-    {
-
-        /// <summary>Internally records the current location </summary>
-        public abstract void Mark();
-
-        /// <summary>Copies index from other </summary>
-        public abstract void CopyFrom(IntIndexOutputIndex other, bool copyLast);
-
-        /// <summary>
-        /// Writes "location" of current output pointer of primary
-        ///  output to different output (out) 
-        /// </summary>
-        public abstract void Write(DataOutput indexOut, bool absolute);
-    }
-
 }

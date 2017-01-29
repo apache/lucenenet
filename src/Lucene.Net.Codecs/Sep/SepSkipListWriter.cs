@@ -38,9 +38,9 @@ namespace Lucene.Net.Codecs.Sep
         private readonly int[] _lastSkipPayloadLength;
         private readonly long[] _lastSkipPayloadPointer;
 
-        private readonly IntIndexOutputIndex[] _docIndex;
-        private readonly IntIndexOutputIndex[] _freqIndex;
-        private readonly IntIndexOutputIndex[] _posIndex;
+        private readonly IntIndexOutput.AbstractIndex[] _docIndex;
+        private readonly IntIndexOutput.AbstractIndex[] _freqIndex;
+        private readonly IntIndexOutput.AbstractIndex[] _posIndex;
 
         private readonly IntIndexOutput _freqOutput;
         private IntIndexOutput _posOutput;
@@ -65,20 +65,20 @@ namespace Lucene.Net.Codecs.Sep
             // TODO: -- also cutover normal IndexOutput to use getIndex()?
             _lastSkipPayloadPointer = new long[numberOfSkipLevels];
 
-            _freqIndex = new IntIndexOutputIndex[numberOfSkipLevels];
-            _docIndex = new IntIndexOutputIndex[numberOfSkipLevels];
-            _posIndex = new IntIndexOutputIndex[numberOfSkipLevels];
+            _freqIndex = new IntIndexOutput.AbstractIndex[numberOfSkipLevels];
+            _docIndex = new IntIndexOutput.AbstractIndex[numberOfSkipLevels];
+            _posIndex = new IntIndexOutput.AbstractIndex[numberOfSkipLevels];
 
             for (var i = 0; i < numberOfSkipLevels; i++)
             {
                 if (freqOutput != null)
                 {
-                    _freqIndex[i] = freqOutput.Index();
+                    _freqIndex[i] = freqOutput.GetIndex();
                 }
-                _docIndex[i] = docOutput.Index();
+                _docIndex[i] = docOutput.GetIndex();
                 if (posOutput != null)
                 {
-                    _posIndex[i] = posOutput.Index();
+                    _posIndex[i] = posOutput.GetIndex();
                 }
             }
         }
@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.Sep
                 _posOutput = value;
                 for (var i = 0; i < m_numberOfSkipLevels; i++)
                 {
-                    _posIndex[i] = value.Index();
+                    _posIndex[i] = value.GetIndex();
                 }
             }
         }
@@ -125,8 +125,8 @@ namespace Lucene.Net.Codecs.Sep
         /// <summary>
         /// Called @ start of new term
         /// </summary>
-        protected internal virtual void ResetSkip(IntIndexOutputIndex topDocIndex, IntIndexOutputIndex topFreqIndex,
-            IntIndexOutputIndex topPosIndex)
+        protected internal virtual void ResetSkip(IntIndexOutput.AbstractIndex topDocIndex, IntIndexOutput.AbstractIndex topFreqIndex,
+            IntIndexOutput.AbstractIndex topPosIndex)
         {
             base.ResetSkip();
 
