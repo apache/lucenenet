@@ -177,21 +177,18 @@ namespace Lucene.Net.Analysis.Query
         /// Provides information on which stop words have been identified for all fields
         /// </summary>
         /// <returns> the stop words (as terms) </returns>
-        public Term[] StopWords
+        public Term[] GetStopWords()
         {
-            get
+            IList<Term> allStopWords = new List<Term>();
+            foreach (string fieldName in stopWordsPerField.Keys)
             {
-                IList<Term> allStopWords = new List<Term>();
-                foreach (string fieldName in stopWordsPerField.Keys)
+                HashSet<string> stopWords = stopWordsPerField[fieldName];
+                foreach (string text in stopWords)
                 {
-                    HashSet<string> stopWords = stopWordsPerField[fieldName];
-                    foreach (string text in stopWords)
-                    {
-                        allStopWords.Add(new Term(fieldName, text));
-                    }
+                    allStopWords.Add(new Term(fieldName, text));
                 }
-                return allStopWords.ToArray();
             }
+            return allStopWords.ToArray();
         }
     }
 }
