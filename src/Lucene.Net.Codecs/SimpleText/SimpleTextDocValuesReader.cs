@@ -42,6 +42,7 @@ namespace Lucene.Net.Codecs.SimpleText
     using BytesRef = Util.BytesRef;
     using StringHelper = Util.StringHelper;
     using System.Numerics;
+    using System.Text.RegularExpressions;
 
     public class SimpleTextDocValuesReader : DocValuesProducer // LUCENENET NOTE: Changed from internal to public because it is subclassed by a public class
     {
@@ -494,7 +495,7 @@ namespace Lucene.Net.Codecs.SimpleText
                             docID * (1 + _field.OrdPattern.Length));
                 SimpleTextUtil.ReadLine(_input, _scratch);
                 var ordList = _scratch.Utf8ToString().Trim();
-                _currentOrds = ordList.Length == 0 ? new string[0] : ordList.Split(",", true);
+                _currentOrds = ordList.Length == 0 ? new string[0] : ordList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 _currentIndex = 0;
             }
 
