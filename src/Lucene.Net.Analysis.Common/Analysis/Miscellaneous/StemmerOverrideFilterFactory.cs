@@ -56,13 +56,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
             if (dictionaryFiles != null)
             {
                 AssureMatchVersion();
-                IEnumerable<string> files = SplitFileNames(dictionaryFiles);
+                IList<string> files = SplitFileNames(dictionaryFiles);
                 if (files.Count() > 0)
                 {
                     StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(ignoreCase);
                     foreach (string file in files)
                     {
-                        IEnumerable<string> list = GetLines(loader, file.Trim());
+                        IList<string> list = GetLines(loader, file.Trim());
                         foreach (string line in list)
                         {
                             string[] mapping = new Regex("\t").Split(line, 2);

@@ -283,6 +283,7 @@ namespace Lucene.Net.Analysis.Core
             { typeof(Random), new RandomArgProducer() },
             { typeof(LuceneVersion), new VersionArgProducer() },
             { typeof(IEnumerable<string>), new StringEnumerableArgProducer() },
+            { typeof(ICollection<string>), new StringEnumerableArgProducer() },
             { typeof(ICollection<char[]>), new CharArrayCollectionArgProducer() },// CapitalizationFilter
             { typeof(CharArraySet), new CharArraySetArgProducer() },
             { typeof(Regex), new RegexArgProducer() },

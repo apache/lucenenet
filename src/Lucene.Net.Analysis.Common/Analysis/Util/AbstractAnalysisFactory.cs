@@ -148,15 +148,15 @@ namespace Lucene.Net.Analysis.Util
                 args.Remove(name);
             return s ?? defaultVal;
         }
-        public virtual string Get(IDictionary<string, string> args, string name, IEnumerable<string> allowedValues)
+        public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues)
         {
             return Get(args, name, allowedValues, null); // defaultVal = null
         }
-        public virtual string Get(IDictionary<string, string> args, string name, IEnumerable<string> allowedValues, string defaultVal)
+        public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal)
         {
             return Get(args, name, allowedValues, defaultVal, true);
         }
-        public virtual string Get(IDictionary<string, string> args, string name, IEnumerable<string> allowedValues, string defaultVal, bool caseSensitive)
+        public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal, bool caseSensitive)
         {
             string s = null;
             if (!args.TryGetValue(name, out s) || s == null)
@@ -259,7 +259,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Returns whitespace- and/or comma-separated set of values, or null if none are found </summary>
-        public virtual IEnumerable<string> GetSet(IDictionary<string, string> args, string name)
+        public virtual ICollection<string> GetSet(IDictionary<string, string> args, string name)
         {
             string s;
             if (args.TryGetValue(name, out s))
@@ -305,7 +305,7 @@ namespace Lucene.Net.Analysis.Util
         protected internal CharArraySet GetWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)
         {
             AssureMatchVersion();
-            IEnumerable<string> files = SplitFileNames(wordFiles);
+            IList<string> files = SplitFileNames(wordFiles);
             CharArraySet words = null;
             if (files.Count() > 0)
             {
@@ -324,7 +324,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Returns the resource's lines (with content treated as UTF-8)
         /// </summary>
-        protected internal IEnumerable<string> GetLines(IResourceLoader loader, string resource)
+        protected internal IList<string> GetLines(IResourceLoader loader, string resource)
         {
             return WordlistLoader.GetLines(loader.OpenResource(resource), Encoding.UTF8);
         }
@@ -336,7 +336,7 @@ namespace Lucene.Net.Analysis.Util
         protected internal CharArraySet GetSnowballWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)
         {
             AssureMatchVersion();
-            IEnumerable<string> files = SplitFileNames(wordFiles);
+            IList<string> files = SplitFileNames(wordFiles);
             CharArraySet words = null;
             if (files.Count() > 0)
             {
@@ -363,11 +363,11 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="fileNames"> the string containing file names </param>
         /// <returns> a list of file names with the escaping backslashed removed </returns>
-        protected internal IEnumerable<string> SplitFileNames(string fileNames)
+        protected internal IList<string> SplitFileNames(string fileNames)
         {
             if (fileNames == null)
             {
-                return Enumerable.Empty<string>();
+                return Collections.EmptyList<string>();
             }
 
             IList<string> result = new List<string>();

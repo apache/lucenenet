@@ -93,8 +93,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive
         ///          otherwise <c>true</c>. </param>
-        public CharArraySet(LuceneVersion matchVersion, IEnumerable<string> c, bool ignoreCase)
-            : this(matchVersion, c.Count(), ignoreCase)
+        public CharArraySet(LuceneVersion matchVersion, ICollection<string> c, bool ignoreCase)
+            : this(matchVersion, c.Count, ignoreCase)
         {
             this.UnionWith(c);
         }
@@ -266,7 +266,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> a copy of the given set as a <see cref="CharArraySet"/>. If the given set
         ///         is a <see cref="CharArraySet"/> the <see cref="CharArrayMap{TValue}.ignoreCase"/> field as well as the
         ///         <see cref="CharArrayMap{TValue}.MatchVersion"/> will be preserved. </returns>
-        public static CharArraySet Copy<T>(LuceneVersion matchVersion, IEnumerable<T> set)
+        public static CharArraySet Copy<T>(LuceneVersion matchVersion, ICollection<T> set)
         {
             if (set == EMPTY_SET)
             {

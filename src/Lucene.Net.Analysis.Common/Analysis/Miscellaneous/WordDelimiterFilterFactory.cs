@@ -111,11 +111,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
             if (types != null)
             {
-                IEnumerable<string> files = SplitFileNames(types);
+                IList<string> files = SplitFileNames(types);
                 IList<string> wlist = new List<string>();
                 foreach (string file in files)
                 {
-                    IEnumerable<string> lines = GetLines(loader, file.Trim());
+                    IList<string> lines = GetLines(loader, file.Trim());
                     wlist.AddRange(lines);
                 }
                 typeTable = ParseTypes(wlist);
@@ -142,7 +142,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private static Regex typePattern = new Regex("(.*)\\s*=>\\s*(.*)\\s*$", RegexOptions.Compiled);
 
         // parses a list of MappingCharFilter style rules into a custom byte[] type table
-        private sbyte[] ParseTypes(IEnumerable<string> rules)
+        private sbyte[] ParseTypes(IList<string> rules)
         {
             IDictionary<char, sbyte> typeMap = new SortedDictionary<char, sbyte>();
             foreach (string rule in rules)

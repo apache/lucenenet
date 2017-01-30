@@ -227,7 +227,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <returns> a list of non-blank non-comment lines with whitespace trimmed </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
-        public static IEnumerable<string> GetLines(Stream stream, Encoding encoding)
+        public static IList<string> GetLines(Stream stream, Encoding encoding)
         {
             List<string> lines = new List<string>();
 

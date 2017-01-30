@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// returns a list of all available tokenfilter names from context classpath </summary>
-        public static IEnumerable<string> AvailableTokenFilters
+        public static ICollection<string> AvailableTokenFilters
         {
             get { return loader.AvailableServices; }
         }

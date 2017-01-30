@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.CharFilters
     /// </summary>
     public class HTMLStripCharFilterFactory : CharFilterFactory
     {
-        internal readonly IEnumerable<string> escapedTags;
+        internal readonly ICollection<string> escapedTags;
         internal static readonly Regex TAG_NAME_PATTERN = new Regex(@"[^\\s,]+", RegexOptions.Compiled);
 
         /// <summary>

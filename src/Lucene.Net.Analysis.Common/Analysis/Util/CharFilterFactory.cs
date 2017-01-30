@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// returns a list of all available charfilter names </summary>
-        public static IEnumerable<string> AvailableCharFilters
+        public static ICollection<string> AvailableCharFilters
         {
             get { return loader.AvailableServices; }
         }

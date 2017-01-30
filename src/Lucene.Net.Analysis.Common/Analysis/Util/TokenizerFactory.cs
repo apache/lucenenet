@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// returns a list of all available tokenizer names from context classpath </summary>
-        public static IEnumerable<string> AvailableTokenizers
+        public static ICollection<string> AvailableTokenizers
         {
             get { return loader.AvailableServices; }
         }

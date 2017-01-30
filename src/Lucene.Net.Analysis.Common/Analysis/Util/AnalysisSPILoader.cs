@@ -130,7 +130,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        public IEnumerable<string> AvailableServices
+        public ICollection<string> AvailableServices
         {
             get { return services.Keys; }
         }

@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Query
         public virtual void TestNoStopwords()
         {
             // Note: an empty list of fields passed in
-            protectedAnalyzer = new QueryAutoStopWordAnalyzer(TEST_VERSION_CURRENT, appAnalyzer, reader, Enumerable.Empty<string>(), 1);
+            protectedAnalyzer = new QueryAutoStopWordAnalyzer(TEST_VERSION_CURRENT, appAnalyzer, reader, Collections.EmptyList<string>(), 1);
             TokenStream protectedTokenStream = protectedAnalyzer.TokenStream("variedField", "quick");
             AssertTokenStreamContents(protectedTokenStream, new string[] { "quick" });
 

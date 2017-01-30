@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             AssureMatchVersion();
             bool ignoreCase = GetBoolean(args, KEEP_IGNORE_CASE, false);
-            IEnumerable<string> k = GetSet(args, KEEP);
+            ICollection<string> k = GetSet(args, KEEP);
             if (k != null)
             {
                 keep = new CharArraySet(m_luceneMatchVersion, 10, ignoreCase);

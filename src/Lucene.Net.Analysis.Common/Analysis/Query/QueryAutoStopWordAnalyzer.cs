@@ -101,7 +101,7 @@ namespace Lucene.Net.Analysis.Query
         /// <param name="maxPercentDocs"> The maximum percentage (between 0.0 and 1.0) of index documents which
         ///                      contain a term, after which the word is considered to be a stop word </param>
         /// <exception cref="IOException"> Can be thrown while reading from the IndexReader </exception>
-        public QueryAutoStopWordAnalyzer(LuceneVersion matchVersion, Analyzer @delegate, IndexReader indexReader, IEnumerable<string> fields, float maxPercentDocs)
+        public QueryAutoStopWordAnalyzer(LuceneVersion matchVersion, Analyzer @delegate, IndexReader indexReader, ICollection<string> fields, float maxPercentDocs)
             : this(matchVersion, @delegate, indexReader, fields, (int)(indexReader.NumDocs * maxPercentDocs))
         {
         }
@@ -117,7 +117,7 @@ namespace Lucene.Net.Analysis.Query
         /// <param name="fields"> Selection of fields to calculate stopwords for </param>
         /// <param name="maxDocFreq"> Document frequency terms should be above in order to be stopwords </param>
         /// <exception cref="IOException"> Can be thrown while reading from the IndexReader </exception>
-        public QueryAutoStopWordAnalyzer(LuceneVersion matchVersion, Analyzer @delegate, IndexReader indexReader, IEnumerable<string> fields, int maxDocFreq)
+        public QueryAutoStopWordAnalyzer(LuceneVersion matchVersion, Analyzer @delegate, IndexReader indexReader, ICollection<string> fields, int maxDocFreq)
             : base(@delegate.Strategy)
         {
             this.matchVersion = matchVersion;

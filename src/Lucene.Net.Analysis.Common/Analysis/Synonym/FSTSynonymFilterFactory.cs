@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Synonym
             }
             else
             {
-                IEnumerable<string> files = SplitFileNames(synonyms);
+                IList<string> files = SplitFileNames(synonyms);
                 foreach (string file in files)
                 {
                     parser.Parse(new StreamReader(loader.OpenResource(synonyms), decoder));

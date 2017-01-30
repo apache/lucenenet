@@ -266,7 +266,7 @@ namespace Lucene.Net.Analysis.Synonym
 
                 var spare = new byte[5];
 
-                IEnumerable<CharsRef> keys = workingSet.Keys;
+                ICollection<CharsRef> keys = workingSet.Keys;
                 CharsRef[] sortedKeys = keys.ToArray();
 #pragma warning disable 612, 618
                 System.Array.Sort(sortedKeys, CharsRef.UTF16SortedAsUTF8Comparer);

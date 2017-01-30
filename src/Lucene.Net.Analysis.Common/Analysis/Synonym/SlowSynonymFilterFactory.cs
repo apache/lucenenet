@@ -98,11 +98,11 @@ namespace Lucene.Net.Analysis.Synonym
             }
             else
             {
-                IEnumerable<string> files = SplitFileNames(synonyms);
+                IList<string> files = SplitFileNames(synonyms);
                 wlist = new List<string>();
                 foreach (string file in files)
                 {
-                    IEnumerable<string> lines = GetLines(loader, file.Trim());
+                    IList<string> lines = GetLines(loader, file.Trim());
                     wlist.AddRange(lines);
                 }
             }

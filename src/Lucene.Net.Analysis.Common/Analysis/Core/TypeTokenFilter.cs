@@ -29,24 +29,23 @@ namespace Lucene.Net.Analysis.Core
     /// </summary>
     public sealed class TypeTokenFilter : FilteringTokenFilter
     {
-
-        private readonly IEnumerable<string> stopTypes;
+        private readonly ICollection<string> stopTypes;
         private readonly ITypeAttribute typeAttribute;
         private readonly bool useWhiteList;
 
         /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4. 
         [Obsolete("enablePositionIncrements=false is not supported anymore as of Lucene 4.4.")]
-        public TypeTokenFilter(LuceneVersion version, bool enablePositionIncrements, TokenStream input, IEnumerable<string> stopTypes, bool useWhiteList)
+        public TypeTokenFilter(LuceneVersion version, bool enablePositionIncrements, TokenStream input, ICollection<string> stopTypes, bool useWhiteList)
             : base(version, enablePositionIncrements, input)
         {
             typeAttribute = AddAttribute<ITypeAttribute>();
-            this.stopTypes = new HashSet<string>(stopTypes);
+            this.stopTypes = stopTypes;
             this.useWhiteList = useWhiteList;
         }
 
         /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4. 
         [Obsolete("enablePositionIncrements=false is not supported anymore as of Lucene 4.4.")]
-        public TypeTokenFilter(LuceneVersion version, bool enablePositionIncrements, TokenStream input, IEnumerable<string> stopTypes)
+        public TypeTokenFilter(LuceneVersion version, bool enablePositionIncrements, TokenStream input, ICollection<string> stopTypes)
             : this(version, enablePositionIncrements, input, stopTypes, false)
         {
         }
@@ -58,11 +57,11 @@ namespace Lucene.Net.Analysis.Core
         /// <param name="stopTypes">    the types to filter </param>
         /// <param name="useWhiteList"> if true, then tokens whose type is in stopTypes will
         ///                     be kept, otherwise they will be filtered out </param>
-        public TypeTokenFilter(LuceneVersion version, TokenStream input, IEnumerable<string> stopTypes, bool useWhiteList)
+        public TypeTokenFilter(LuceneVersion version, TokenStream input, ICollection<string> stopTypes, bool useWhiteList)
             : base(version, input)
         {
             typeAttribute = AddAttribute<ITypeAttribute>();
-            this.stopTypes = new HashSet<string>(stopTypes);
+            this.stopTypes = stopTypes;
             this.useWhiteList = useWhiteList;
         }
 
@@ -70,7 +69,7 @@ namespace Lucene.Net.Analysis.Core
         /// Create a new <seealso cref="TypeTokenFilter"/> that filters tokens out
         /// (useWhiteList=false). </summary>
         /// <seealso cref= #TypeTokenFilter(Version, TokenStream, Set, boolean) </seealso>
-        public TypeTokenFilter(LuceneVersion version, TokenStream input, IEnumerable<string> stopTypes)
+        public TypeTokenFilter(LuceneVersion version, TokenStream input, ICollection<string> stopTypes)
             : this(version, input, stopTypes, false)
         {
         }

@@ -30816,7 +30816,7 @@ namespace Lucene.Net.Analysis.CharFilters
          * @param escapedTags Tags in this set (both start and end tags)
          *  will not be filtered out.
          */
-        public HTMLStripCharFilter(TextReader source, IEnumerable<string> escapedTags)
+        public HTMLStripCharFilter(TextReader source, ICollection<string> escapedTags)
                     : base(source)
         {
             this.outputSegment = inputSegment;

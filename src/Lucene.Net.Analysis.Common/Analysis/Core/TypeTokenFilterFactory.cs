@@ -56,13 +56,13 @@ namespace Lucene.Net.Analysis.Core
 
         public virtual void Inform(IResourceLoader loader)
         {
-            IEnumerable<string> files = SplitFileNames(stopTypesFiles);
+            IList<string> files = SplitFileNames(stopTypesFiles);
             if (files.Count() > 0)
             {
                 stopTypes = new HashSet<string>();
                 foreach (string file in files)
                 {
-                    IEnumerable<string> typesLines = GetLines(loader, file.Trim());
+                    IList<string> typesLines = GetLines(loader, file.Trim());
                     stopTypes.AddAll(typesLines);
                 }
             }

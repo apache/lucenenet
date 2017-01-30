@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         private readonly WikipediaTokenizerImpl scanner;
 
         private int tokenOutput = TOKENS_ONLY;
-        private IEnumerable<string> untokenizedTypes = Enumerable.Empty<string>();
+        private ICollection<string> untokenizedTypes = Collections.EmptyList<string>();
         private IEnumerator<AttributeSource.State> tokens = null;
 
         private IOffsetAttribute offsetAtt;
@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         /// </summary>
         /// <param name="input"> The Input TextReader </param>
         public WikipediaTokenizer(TextReader input)
-              : this(input, TOKENS_ONLY, Enumerable.Empty<string>())
+              : this(input, TOKENS_ONLY, Collections.EmptyList<string>())
         {
         }
 
@@ -117,7 +117,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         /// </summary>
         /// <param name="input"> The input </param>
         /// <param name="tokenOutput"> One of <seealso cref="#TOKENS_ONLY"/>, <seealso cref="#UNTOKENIZED_ONLY"/>, <seealso cref="#BOTH"/> </param>
-        public WikipediaTokenizer(TextReader input, int tokenOutput, IEnumerable<string> untokenizedTypes)
+        public WikipediaTokenizer(TextReader input, int tokenOutput, ICollection<string> untokenizedTypes)
               : base(input)
         {
             this.scanner = new WikipediaTokenizerImpl(this.m_input);
@@ -130,14 +130,14 @@ namespace Lucene.Net.Analysis.Wikipedia
         /// </summary>
         /// <param name="input"> The input </param>
         /// <param name="tokenOutput"> One of <seealso cref="#TOKENS_ONLY"/>, <seealso cref="#UNTOKENIZED_ONLY"/>, <seealso cref="#BOTH"/> </param>
-        public WikipediaTokenizer(AttributeFactory factory, TextReader input, int tokenOutput, IEnumerable<string> untokenizedTypes)
+        public WikipediaTokenizer(AttributeFactory factory, TextReader input, int tokenOutput, ICollection<string> untokenizedTypes)
               : base(factory, input)
         {
             this.scanner = new WikipediaTokenizerImpl(this.m_input);
             Init(tokenOutput, untokenizedTypes);
         }
 
-        private void Init(int tokenOutput, IEnumerable<string> untokenizedTypes)
+        private void Init(int tokenOutput, ICollection<string> untokenizedTypes)
         {
             // TODO: cutover to enum
             if (tokenOutput != TOKENS_ONLY && tokenOutput != UNTOKENIZED_ONLY && tokenOutput != BOTH)
