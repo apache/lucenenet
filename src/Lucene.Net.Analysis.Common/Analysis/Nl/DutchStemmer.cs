@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Nl
     /// </para> </summary>
     /// @deprecated (3.1) Use <seealso cref="org.tartarus.snowball.ext.DutchStemmer"/> instead, 
     /// which has the same functionality. This filter will be removed in Lucene 5.0 
-    [Obsolete("(3.1) Use DutchStemmer instead, which has the same functionality. This filter will be removed in Lucene 5.0")]
+    [Obsolete("(3.1) Use Tartarus.Snowball.Ext.DutchStemmer instead, which has the same functionality. This filter will be removed in Lucene 5.0")]
     public class DutchStemmer
     {
         private static readonly CultureInfo locale = new CultureInfo("nl-NL");
@@ -466,10 +466,8 @@ namespace Lucene.Net.Analysis.Nl
 
         internal virtual IDictionary<string, string> StemDictionary
         {
-            set
-            {
-                _stemDict = value;
-            }
+            get { return _stemDict; } // LUCENENET NOTE: Added setter per MSDN guidelines
+            set { _stemDict = value; }
         }
     }
 }

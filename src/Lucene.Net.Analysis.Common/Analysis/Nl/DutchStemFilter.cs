@@ -94,6 +94,10 @@ namespace Lucene.Net.Analysis.Nl
         /// </summary>
         public DutchStemmer Stemmer
         {
+            get // LUCENENET NOTE: Added getter per MSDN guidelines
+            {
+                return this.stemmer;
+            }
             set
             {
                 if (value != null)
@@ -109,6 +113,14 @@ namespace Lucene.Net.Analysis.Nl
         /// </summary>
         public CharArrayMap<string> StemDictionary
         {
+            get // LUCENENET NOTE: Added getter per MSDN guidelines
+            {
+                if (stemmer != null)
+                {
+                    return stemmer.StemDictionary as CharArrayMap<string>;
+                }
+                return null;
+            }
             set
             {
                 if (stemmer != null)
