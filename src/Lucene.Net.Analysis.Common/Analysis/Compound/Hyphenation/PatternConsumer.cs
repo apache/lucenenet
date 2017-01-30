@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 	  /// his own hyphenation. A hyphenatedword is a vector of alternating String's
 	  /// and <seealso cref="Hyphen"/> instances
 	  /// </summary>
-	  void AddException(string word, List<object> hyphenatedword);
+	  void AddException(string word, IList<object> hyphenatedword);
 
 	  /// <summary>
 	  /// Add hyphenation patterns.

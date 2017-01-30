@@ -553,7 +553,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="word"> normalized word </param>
         /// <param name="hyphenatedword"> a vector of alternating strings and
         ///        <seealso cref="Hyphen hyphen"/> objects. </param>
-        public virtual void AddException(string word, List<object> hyphenatedword)
+        public virtual void AddException(string word, IList<object> hyphenatedword)
         {
             m_stoplist[word] = hyphenatedword;
         }

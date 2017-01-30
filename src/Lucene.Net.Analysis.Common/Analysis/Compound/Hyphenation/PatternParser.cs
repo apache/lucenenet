@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         internal StringBuilder token;
 
-        internal List<object> exception;
+        internal IList<object> exception;
 
         internal char hyphenChar;
 
@@ -280,7 +280,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return pat.ToString();
         }
 
-        protected internal virtual List<object> NormalizeException<T1>(List<T1> ex)
+        protected internal virtual IList<object> NormalizeException<T1>(IList<T1> ex)
         {
             List<object> res = new List<object>();
             for (int i = 0; i < ex.Count; i++)
@@ -321,7 +321,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return res;
         }
 
-        protected internal virtual string GetExceptionWord<T1>(List<T1> ex)
+        protected internal virtual string GetExceptionWord<T1>(IList<T1> ex)
         {
             StringBuilder res = new StringBuilder();
             for (int i = 0; i < ex.Count; i++)
