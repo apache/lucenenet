@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -302,6 +303,41 @@ namespace Lucene.Net.Util
             Assert.IsFalse(names.Any(), names.Count() + " members that are type nullable enum detected. " +
                 "Nullable enum parameters, fields, methods, and properties should be eliminated, either by " +
                 "eliminating the logic that depends on 'null' or by adding a NOT_SET=0 state to the enum.");
+        }
+
+        //[Test, LuceneNetSpecific]
+        public virtual void TestForMembersAcceptingOrReturningIEnumerable(Type typeFromTargetAssembly)
+        {
+            var names = GetMembersAcceptingOrReturningType(typeof(IEnumerable<>), typeFromTargetAssembly.Assembly, false);
+
+            //if (VERBOSE)
+            //{
+            foreach (var name in names)
+            {
+                Console.WriteLine(name);
+            }
+            //}
+
+            Assert.IsFalse(names.Any(), names.Count() + " members that accept or return IEnumerable<T> detected.");
+        }
+
+        //[Test, LuceneNetSpecific]
+        public virtual void TestForMembersAcceptingOrReturningListOrDictionary(Type typeFromTargetAssembly)
+        {
+            var names = new List<string>();
+            names.AddRange(GetMembersAcceptingOrReturningType(typeof(List<>), typeFromTargetAssembly.Assembly, false));
+            names.AddRange(GetMembersAcceptingOrReturningType(typeof(Dictionary<,>), typeFromTargetAssembly.Assembly, false));
+
+            //if (VERBOSE)
+            //{
+            foreach (var name in names)
+            {
+                Console.WriteLine(name);
+            }
+            //}
+
+            Assert.IsFalse(names.Any(), names.Count() + " members that accept or return List<T> or Dictionary<K, V> detected. " +
+                "These should be changed to IList<T> and IDictionary<K, V>, respectively.");
         }
 
         private static IEnumerable<string> GetInvalidPrivateFields(Assembly assembly, string exceptionRegex)
@@ -849,6 +885,99 @@ namespace Lucene.Net.Util
             var setMethod = property.GetSetMethod();
             return ((getMethod != null && !getMethod.IsPrivate) ||
                 (setMethod != null && !setMethod.IsPrivate));
+        }
+
+        /// <summary>
+        /// Some parameters were incorrectly changed from List to IEnumerable during the port. This is
+        /// to track down constructor and method parameters and property and method return types
+        /// containing IEnumerable
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
+        private static IEnumerable<string> GetMembersAcceptingOrReturningType(Type lookFor, Assembly assembly, bool publiclyVisibleOnly)
+        {
+            var result = new List<string>();
+
+            var types = assembly.GetTypes();
+
+            foreach (var t in types)
+            {
+                var members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+
+                foreach (var member in members)
+                {
+                    if (member.Name.StartsWith("<")) // Ignore auto-generated methods
+                    {
+                        continue;
+                    }
+
+                    if (member.DeclaringType.Equals(t.UnderlyingSystemType))
+                    {
+                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_") || member.Name.StartsWith("set_")))
+                        {
+                            var method = (MethodInfo)member;
+
+                            if (!publiclyVisibleOnly || !method.IsPrivate)
+                            {
+
+                                if (method.ReturnParameter != null
+                                    && method.ReturnParameter.ParameterType.IsGenericType
+                                    && method.ReturnParameter.ParameterType.GetGenericTypeDefinition().IsAssignableFrom(lookFor))
+                                {
+                                    result.Add(string.Concat(t.FullName, ".", member.Name, "()"));
+                                }
+
+                                var parameters = method.GetParameters();
+
+                                foreach (var parameter in parameters)
+                                {
+                                    if (parameter.ParameterType.IsGenericType
+                                        && parameter.ParameterType.GetGenericTypeDefinition().IsAssignableFrom(lookFor)
+                                        && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                                    {
+                                        result.Add(string.Concat(t.FullName, ".", member.Name, "()", " -parameter- ", parameter.Name));
+                                    }
+                                }
+                            }
+                        }
+                        else if (member.MemberType == MemberTypes.Constructor)
+                        {
+                            var constructor = (ConstructorInfo)member;
+
+                            if (!publiclyVisibleOnly || !constructor.IsPrivate)
+                            {
+                                var parameters = constructor.GetParameters();
+
+                                foreach (var parameter in parameters)
+                                {
+                                    if (parameter.ParameterType.IsGenericType
+                                        && parameter.ParameterType.GetGenericTypeDefinition().IsAssignableFrom(lookFor)
+                                        && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                                    {
+                                        result.Add(string.Concat(t.FullName, ".", member.Name, "()", " -parameter- ", parameter.Name));
+                                    }
+                                }
+                            }
+                        }
+                        else if (member.MemberType == MemberTypes.Property
+                            && ((PropertyInfo)member).PropertyType.IsGenericType
+                            && ((PropertyInfo)member).PropertyType.GetGenericTypeDefinition().IsAssignableFrom(lookFor)
+                            && (!publiclyVisibleOnly || IsNonPrivateProperty((PropertyInfo)member)))
+                        {
+                            result.Add(string.Concat(t.FullName, ".", member.Name));
+                        }
+                        //else if (member.MemberType == MemberTypes.Field
+                        //    && ((FieldInfo)member).FieldType.IsGenericType
+                        //    && ((FieldInfo)member).FieldType.GetGenericTypeDefinition().IsAssignableFrom(lookFor)
+                        //    && (!publiclyVisibleOnly || (((FieldInfo)member).IsFamily || ((FieldInfo)member).IsFamilyOrAssembly)))
+                        //{
+                        //    result.Add(string.Concat(t.FullName, ".", member.Name, " (field)"));
+                        //}
+                    }
+                }
+            }
+
+            return result.ToArray();
         }
     }
 }

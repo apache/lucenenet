@@ -100,5 +100,21 @@ namespace Lucene.Net
         {
             base.TestForPublicMembersWithNullableEnum(typeFromTargetAssembly);
         }
+
+        // LUCENENET NOTE: This test is only for identifying members who were changed from
+        // ICollection, IList or ISet to IEnumerable during the port (that should be changed back)
+        //[Test, LuceneNetSpecific]
+        //[TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
+        //public override void TestForMembersAcceptingOrReturningIEnumerable(Type typeFromTargetAssembly)
+        //{
+        //    base.TestForMembersAcceptingOrReturningIEnumerable(typeFromTargetAssembly);
+        //}
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
+        public override void TestForMembersAcceptingOrReturningListOrDictionary(Type typeFromTargetAssembly)
+        {
+            base.TestForMembersAcceptingOrReturningListOrDictionary(typeFromTargetAssembly);
+        }
     }
 }
