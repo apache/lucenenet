@@ -202,7 +202,7 @@ namespace Lucene.Net.Codecs.Lucene41
             if (numBits == ALL_VALUES_EQUAL)
             {
                 int value = @in.ReadVInt();
-                CollectionsHelper.Fill(decoded, 0, Lucene41PostingsFormat.BLOCK_SIZE, value);
+                Arrays.Fill(decoded, 0, Lucene41PostingsFormat.BLOCK_SIZE, value);
                 return;
             }
 

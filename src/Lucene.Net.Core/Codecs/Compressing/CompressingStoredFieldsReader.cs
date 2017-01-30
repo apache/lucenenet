@@ -533,7 +533,7 @@ namespace Lucene.Net.Codecs.Compressing
                     int bitsPerStoredFields = fieldsStream.ReadVInt();
                     if (bitsPerStoredFields == 0)
                     {
-                        CollectionsHelper.Fill(numStoredFields, 0, chunkDocs, fieldsStream.ReadVInt());
+                        Arrays.Fill(numStoredFields, 0, chunkDocs, fieldsStream.ReadVInt());
                     }
                     else if (bitsPerStoredFields > 31)
                     {
@@ -551,7 +551,7 @@ namespace Lucene.Net.Codecs.Compressing
                     int bitsPerLength = fieldsStream.ReadVInt();
                     if (bitsPerLength == 0)
                     {
-                        CollectionsHelper.Fill(lengths, 0, chunkDocs, fieldsStream.ReadVInt());
+                        Arrays.Fill(lengths, 0, chunkDocs, fieldsStream.ReadVInt());
                     }
                     else if (bitsPerLength > 31)
                     {

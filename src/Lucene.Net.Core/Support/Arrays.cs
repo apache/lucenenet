@@ -21,6 +21,12 @@ namespace Lucene.Net.Support
             return hash;
         }
 
+        /// <summary>
+        /// Assigns the specified value to each element of the specified array.
+        /// </summary>
+        /// <typeparam name="T">the type of the array</typeparam>
+        /// <param name="a">the array to be filled</param>
+        /// <param name="val">the value to be stored in all elements of the array</param>
         public static void Fill<T>(T[] a, T val)
         {
             for (int i = 0; i < a.Length; i++)
@@ -29,11 +35,35 @@ namespace Lucene.Net.Support
             }
         }
 
+        /// <summary>
+        /// Assigns the specified long value to each element of the specified
+        /// range of the specified array of longs.  The range to be filled
+        /// extends from index <paramref name="fromIndex"/>, inclusive, to index
+        /// <paramref name="toIndex"/>, exclusive.  (If <c>fromIndex==toIndex</c>, the
+        /// range to be filled is empty.)
+        /// </summary>
+        /// <typeparam name="T">the type of the array</typeparam>
+        /// <param name="a">the array to be filled</param>
+        /// <param name="fromIndex">
+        /// the index of the first element (inclusive) to be
+        /// filled with the specified value
+        /// </param>
+        /// <param name="toIndex">
+        /// the index of the last element (exclusive) to be
+        /// filled with the specified value
+        /// </param>
+        /// <param name="val">the value to be stored in all elements of the array</param>
+        /// <exception cref="ArgumentException">if <c>fromIndex &gt; toIndex</c></exception>
+        /// <exception cref="ArgumentOutOfRangeException">if <c>fromIndex &lt; 0</c> or <c>toIndex &gt; a.Length</c></exception>
         public static void Fill<T>(T[] a, int fromIndex, int toIndex, T val)
         {
             //Java Arrays.fill exception logic
-            if(fromIndex > toIndex || fromIndex < 0 || toIndex > a.Length)
+            if (fromIndex > toIndex)
+                throw new ArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
+            if (fromIndex < 0)
                 throw new ArgumentOutOfRangeException("fromIndex");
+            if (toIndex > a.Length)
+                throw new ArgumentOutOfRangeException("toIndex");
 
             for (int i = fromIndex; i < toIndex; i++)
             {

@@ -190,8 +190,8 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             if (tvx == null)
             {
-                CollectionsHelper.Fill(tvdLengths, 0);
-                CollectionsHelper.Fill(tvfLengths, 0);
+                Arrays.Fill(tvdLengths, 0);
+                Arrays.Fill(tvfLengths, 0);
                 return;
             }
 

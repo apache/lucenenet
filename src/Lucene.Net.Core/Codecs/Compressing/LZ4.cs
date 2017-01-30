@@ -336,8 +336,8 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 this.@base = @base;
                 nextToUpdate = @base;
-                CollectionsHelper.Fill(hashTable, -1);
-                CollectionsHelper.Fill(chainTable, (short)0);
+                Arrays.Fill(hashTable, -1);
+                Arrays.Fill(chainTable, (short)0);
             }
 
             private int HashPointer(byte[] bytes, int off)

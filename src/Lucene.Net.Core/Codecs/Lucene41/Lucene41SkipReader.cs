@@ -119,13 +119,13 @@ namespace Lucene.Net.Codecs.Lucene41
             lastPosPointer = posBasePointer;
             lastPayPointer = payBasePointer;
 
-            CollectionsHelper.Fill(docPointer, docBasePointer);
+            Arrays.Fill(docPointer, docBasePointer);
             if (posPointer != null)
             {
-                CollectionsHelper.Fill(posPointer, posBasePointer);
+                Arrays.Fill(posPointer, posBasePointer);
                 if (payPointer != null)
                 {
-                    CollectionsHelper.Fill(payPointer, payBasePointer);
+                    Arrays.Fill(payPointer, payBasePointer);
                 }
             }
             else

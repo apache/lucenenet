@@ -378,7 +378,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 this.needsFreq = (flags & DocsEnum.FLAG_FREQS) != 0;
                 if (!indexHasFreq)
                 {
-                    CollectionsHelper.Fill(freqBuffer, 1);
+                    Arrays.Fill(freqBuffer, 1);
                 }
                 accum = 0;
                 docUpto = 0;

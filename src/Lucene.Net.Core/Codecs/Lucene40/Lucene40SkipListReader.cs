@@ -64,10 +64,10 @@ namespace Lucene.Net.Codecs.Lucene40
             lastFreqPointer = freqBasePointer;
             lastProxPointer = proxBasePointer;
 
-            CollectionsHelper.Fill(freqPointer, freqBasePointer);
-            CollectionsHelper.Fill(proxPointer, proxBasePointer);
-            CollectionsHelper.Fill(payloadLength, 0);
-            CollectionsHelper.Fill(offsetLength, 0);
+            Arrays.Fill(freqPointer, freqBasePointer);
+            Arrays.Fill(proxPointer, proxBasePointer);
+            Arrays.Fill(payloadLength, 0);
+            Arrays.Fill(offsetLength, 0);
         }
 
         /// <summary>

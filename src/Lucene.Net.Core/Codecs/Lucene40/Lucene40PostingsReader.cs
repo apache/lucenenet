@@ -367,7 +367,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 m_freq = 1;
                 if (m_indexOmitsTF)
                 {
-                    CollectionsHelper.Fill(m_freqs, 1);
+                    Arrays.Fill(m_freqs, 1);
                 }
                 m_maxBufferedDocId = -1;
                 return this;

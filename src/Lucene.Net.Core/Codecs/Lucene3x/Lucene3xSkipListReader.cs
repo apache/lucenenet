@@ -51,9 +51,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             lastFreqPointer = freqBasePointer;
             lastProxPointer = proxBasePointer;
 
-            CollectionsHelper.Fill(freqPointer, freqBasePointer);
-            CollectionsHelper.Fill(proxPointer, proxBasePointer);
-            CollectionsHelper.Fill(payloadLength, 0);
+            Arrays.Fill(freqPointer, freqBasePointer);
+            Arrays.Fill(proxPointer, proxBasePointer);
+            Arrays.Fill(payloadLength, 0);
         }
 
         /// <summary>

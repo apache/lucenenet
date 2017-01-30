@@ -95,18 +95,18 @@ namespace Lucene.Net.Codecs.Lucene41
         public override void ResetSkip()
         {
             base.ResetSkip();
-            CollectionsHelper.Fill(lastSkipDoc, 0);
-            CollectionsHelper.Fill(lastSkipDocPointer, docOut.FilePointer);
+            Arrays.Fill(lastSkipDoc, 0);
+            Arrays.Fill(lastSkipDocPointer, docOut.FilePointer);
             if (fieldHasPositions)
             {
-                CollectionsHelper.Fill(lastSkipPosPointer, posOut.FilePointer);
+                Arrays.Fill(lastSkipPosPointer, posOut.FilePointer);
                 if (fieldHasPayloads)
                 {
-                    CollectionsHelper.Fill(lastPayloadByteUpto, 0);
+                    Arrays.Fill(lastPayloadByteUpto, 0);
                 }
                 if (fieldHasOffsets || fieldHasPayloads)
                 {
-                    CollectionsHelper.Fill(lastSkipPayPointer, payOut.FilePointer);
+                    Arrays.Fill(lastSkipPayPointer, payOut.FilePointer);
                 }
             }
         }
