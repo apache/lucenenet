@@ -61,7 +61,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 output.WriteByte((byte)(sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
                 output.WriteStringStringMap(si.Diagnostics);
-                output.WriteStringStringMap(CollectionsHelper.EmptyMap<string, string>());
+                output.WriteStringStringMap(Collections.EmptyMap<string, string>());
                 output.WriteStringSet(si.GetFiles());
 
                 success = true;

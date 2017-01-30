@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Util
     internal sealed class AnalysisSPILoader<S> where S : AbstractAnalysisFactory
     {
 
-        private volatile IDictionary<string, Type> services = CollectionsHelper.EmptyMap<string, Type>();
+        private volatile IDictionary<string, Type> services = Collections.EmptyMap<string, Type>();
         private readonly Type clazz = typeof(S);
         private readonly string[] suffixes;
 

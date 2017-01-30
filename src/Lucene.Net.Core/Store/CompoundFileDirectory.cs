@@ -83,7 +83,7 @@ namespace Lucene.Net.Store
         private readonly int readBufferSize;
         private readonly IDictionary<string, FileEntry> entries;
         private readonly bool openForWrite;
-        private static readonly IDictionary<string, FileEntry> SENTINEL = CollectionsHelper.EmptyMap<string, FileEntry>();
+        private static readonly IDictionary<string, FileEntry> SENTINEL = Collections.EmptyMap<string, FileEntry>();
         private readonly CompoundFileWriter writer;
         private readonly IndexInputSlicer handle;
 

@@ -147,7 +147,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Opaque Map&lt;String, String&gt; that user can specify during IndexWriter.commit </summary>
-        private IDictionary<string, string> userData = CollectionsHelper.EmptyMap<string, string>();
+        private IDictionary<string, string> userData = Collections.EmptyMap<string, string>();
 
         private List<SegmentCommitInfo> segments = new List<SegmentCommitInfo>();
 
@@ -391,7 +391,7 @@ namespace Lucene.Net.Index
                             IDictionary<long, ISet<string>> genUpdatesFiles;
                             if (numGensUpdatesFiles == 0)
                             {
-                                genUpdatesFiles = CollectionsHelper.EmptyMap<long, ISet<string>>();
+                                genUpdatesFiles = Collections.EmptyMap<long, ISet<string>>();
                             }
                             else
                             {
@@ -1305,7 +1305,7 @@ namespace Lucene.Net.Index
             {
                 if (value == null)
                 {
-                    userData = CollectionsHelper.EmptyMap<string, string>();
+                    userData = Collections.EmptyMap<string, string>();
                 }
                 else
                 {

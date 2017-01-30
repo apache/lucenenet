@@ -11,14 +11,45 @@ namespace Lucene.Net
 {
     public static class Collections
     {
+        public static IList<T> EmptyList<T>()
+        {
+            return ImmutableList<T>.Empty; // LUCENENET TODO: Shouldn't be Immutable
+        }
+
+        public static IDictionary<TKey, TValue> EmptyMap<TKey, TValue>()
+        {
+            return new Dictionary<TKey, TValue>();
+        }
+
+        public static ISet<T> NewSetFromMap<T, S>(IDictionary<T, bool?> map)
+        {
+            return new SetFromMap<T>(map);
+        }
+
+        public static IComparer<T> ReverseOrder<T>()
+        {
+            return (IComparer<T>)ReverseComparer.REVERSE_ORDER;
+        }
+
+        public static IComparer<T> ReverseOrder<T>(IComparer<T> cmp)
+        {
+            if (cmp == null)
+                return ReverseOrder<T>();
+
+            if (cmp is ReverseComparer2<T>)
+                return ((ReverseComparer2<T>)cmp).cmp;
+
+            return new ReverseComparer2<T>(cmp);
+        }
+
         public static ISet<T> Singleton<T>(T o)
         {
             return ImmutableHashSet.Create(o); // LUCENENET TODO: Immutable != Singleton
         }
 
-        public static IList<T> EmptyList<T>()
+        public static IDictionary<TKey, TValue> SingletonMap<TKey, TValue>(TKey key, TValue value)
         {
-            return ImmutableList<T>.Empty; // LUCENENET TODO: Shouldn't be Immutable
+            return new Dictionary<TKey, TValue> { { key, value } };
         }
 
         public static IList<T> UnmodifiableList<T>(IEnumerable<T> items)
@@ -41,19 +72,13 @@ namespace Lucene.Net
             return new UnmodifiableDictionary<TKey, TValue>(d);
         }
 
-        public static IDictionary<TKey, TValue> SingletonMap<TKey, TValue>(TKey key, TValue value)
-        {
-            return new Dictionary<TKey, TValue> {{key, value}};
-        }
 
-        public static ISet<T> NewSetFromMap<T, S>(IDictionary<T, bool?> map)
-        {
-            return new SetFromMap<T>(map);
-        }
+        #region Nested Types
 
+        #region SetFromMap
         internal class SetFromMap<T> : ICollection<T>, IEnumerable<T>, IEnumerable, ISet<T>, IReadOnlyCollection<T>
 #if FEATURE_SERIALIZABLE
-            ,ISerializable, IDeserializationCallback
+            , ISerializable, IDeserializationCallback
 #endif
         {
             private readonly IDictionary<T, bool?> m; // The backing map
@@ -183,7 +208,7 @@ namespace Lucene.Net
                 return true;
             }
 
-#region Not Implemented Members
+            #region Not Implemented Members
             public void ExceptWith(IEnumerable<T> other)
             {
                 throw new NotImplementedException();
@@ -240,15 +265,13 @@ namespace Lucene.Net
             {
                 throw new NotImplementedException();
             }
-#endregion
+            #endregion
         }
+        #endregion SetFromMap
 
-        public static IComparer<T> ReverseOrder<T>()
-        {
-            return (IComparer<T>)ReverseComparer.REVERSE_ORDER;
-        }
+        #region ReverseComparer
 
-        private class ReverseComparer : IComparer<IComparable>
+        internal class ReverseComparer : IComparer<IComparable>
         {
             internal static readonly ReverseComparer REVERSE_ORDER = new ReverseComparer();
 
@@ -259,18 +282,11 @@ namespace Lucene.Net
             }
         }
 
-        public static IComparer<T> ReverseOrder<T>(IComparer<T> cmp)
-        {
-            if (cmp == null)
-                return ReverseOrder<T>();
+        #endregion ReverseComparer
 
-            if (cmp is ReverseComparer2<T>)
-                return ((ReverseComparer2<T>)cmp).cmp;
+        #region ReverseComparer2
 
-            return new ReverseComparer2<T>(cmp);
-        }
-
-        private class ReverseComparer2<T> : IComparer<T>
+        internal class ReverseComparer2<T> : IComparer<T>
 
         {
             /**
@@ -305,11 +321,14 @@ namespace Lucene.Net
                 return cmp.GetHashCode() ^ int.MinValue;
             }
 
-
             public IComparer<T> Reversed()
             {
                 return cmp;
             }
         }
+
+        #endregion ReverseComparer2
+
+        #endregion Nested Types
     }
 }

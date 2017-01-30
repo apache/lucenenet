@@ -29,7 +29,7 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class NamedSPILoader<S> : IEnumerable<S> where S : NamedSPILoader.INamedSPI
     {
-        private volatile IDictionary<string, S> services = CollectionsHelper.EmptyMap<string, S>();
+        private volatile IDictionary<string, S> services = Collections.EmptyMap<string, S>();
         private readonly Type clazz;
 
         public NamedSPILoader(Type clazz)

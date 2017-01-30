@@ -355,11 +355,7 @@ namespace Lucene.Net.Support
             return retKVPair;
         }
 
-        public static IDictionary<TKey, TValue> EmptyMap<TKey, TValue>()
-        {
-            // todo: should this return a singleton instance?
-            return new HashMap<TKey, TValue>();
-        }
+        
 
         
 
