@@ -66,6 +66,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual IPatternConsumer Consumer
         {
+            get // LUCENENET NOTE: Added getter per MSDN guidelines
+            {
+                return this.consumer;
+            }
             set
             {
                 this.consumer = value;
