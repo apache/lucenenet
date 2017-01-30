@@ -2340,7 +2340,7 @@ namespace Lucene.Net.Index
 
                 // add in any order to the dv field
                 IList<string> unordered = new List<string>(values);
-                CollectionsHelper.Shuffle(unordered);
+                Collections.Shuffle(unordered);
                 foreach (string v in unordered)
                 {
                     doc.Add(new SortedSetDocValuesField("dv", new BytesRef(v)));
@@ -2594,7 +2594,7 @@ namespace Lucene.Net.Index
 
                 // add in any order to the indexed field
                 IList<string> unordered = new List<string>(values);
-                CollectionsHelper.Shuffle(unordered);
+                Collections.Shuffle(unordered);
                 foreach (string v in unordered)
                 {
                     doc.Add(NewStringField("indexed", v, Field.Store.NO));
@@ -2602,7 +2602,7 @@ namespace Lucene.Net.Index
 
                 // add in any order to the dv field
                 IList<string> unordered2 = new List<string>(values);
-                CollectionsHelper.Shuffle(unordered2);
+                Collections.Shuffle(unordered2);
                 foreach (string v in unordered2)
                 {
                     doc.Add(new SortedSetDocValuesField("dv", new BytesRef(v)));

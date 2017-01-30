@@ -304,30 +304,11 @@ namespace Lucene.Net.Support
             return true;
         }
 
-        public static void Swap<T>(IList<T> list, int index1, int index2)
-        {
-            T tmp = list[index1];
-            list[index1] = list[index2];
-            list[index2] = tmp;
-        }
+        
 
-        public static void Shuffle<T>(IList<T> list)
-        {
-            Shuffle(list, new Random());
-        }
+        
 
-        // Method found here http://stackoverflow.com/a/2301091/181087
-        // This shuffles the list in place without using LINQ, which is fast and efficient.
-        public static void Shuffle<T>(IList<T> list, Random random)
-        {
-            for (int i = list.Count; i > 1; i--)
-            {
-                int pos = random.Next(i);
-                var x = list[i - 1];
-                list[i - 1] = list[pos];
-                list[pos] = x;
-            }
-        }
+        
 
         public static KeyValuePair<int, TValue> LowerEntry<TValue>(SortedDictionary<int, TValue> sd, int keyLimit)
         {

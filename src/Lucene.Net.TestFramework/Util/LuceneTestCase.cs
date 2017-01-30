@@ -1537,7 +1537,7 @@ namespace Lucene.Net.Util
                             {
                                 allFields.Add(fi.Name);
                             }
-                            CollectionsHelper.Shuffle(allFields);
+                            Collections.Shuffle(allFields);
                             int end = allFields.Count == 0 ? 0 : random.Next(allFields.Count);
                             HashSet<string> fields = new HashSet<string>(allFields.SubList(0, end));
                             // will create no FC insanity as ParallelAtomicReader has own cache key:
@@ -2251,7 +2251,7 @@ namespace Lucene.Net.Util
             rightEnum = rightTerms.GetIterator(rightEnum);
 
             IList<BytesRef> shuffledTests = new List<BytesRef>(tests);
-            CollectionsHelper.Shuffle(shuffledTests);
+            Collections.Shuffle(shuffledTests);
 
             foreach (BytesRef b in shuffledTests)
             {

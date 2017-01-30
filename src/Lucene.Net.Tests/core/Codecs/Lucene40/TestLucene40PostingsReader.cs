@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 i++;
             }
-            CollectionsHelper.Shuffle(shuffled);
+            Collections.Shuffle(shuffled);
             foreach (string term in shuffled)
             {
                 sb.Append(term);

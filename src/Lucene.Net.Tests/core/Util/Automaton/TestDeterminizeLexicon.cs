@@ -53,7 +53,7 @@ namespace Lucene.Net.Util.Automaton
 
         public void AssertLexicon()
         {
-            CollectionsHelper.Shuffle(automata, Random());
+            Collections.Shuffle(automata, Random());
             var lex = BasicOperations.Union(automata);
             lex.Determinize();
             Assert.IsTrue(SpecialOperations.IsFinite(lex));

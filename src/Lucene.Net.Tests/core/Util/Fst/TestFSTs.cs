@@ -1226,7 +1226,7 @@ namespace Lucene.Net.Util.Fst
             w.Dispose();
 
             IList<string> allTermsList = new List<string>(allTerms);
-            CollectionsHelper.Shuffle(allTermsList);
+            Collections.Shuffle(allTermsList);
 
             // verify exact lookup
             foreach (string term in allTermsList)

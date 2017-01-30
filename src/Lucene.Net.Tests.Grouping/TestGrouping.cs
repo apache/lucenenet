@@ -656,7 +656,7 @@ namespace Lucene.Net.Search.Grouping
         private DirectoryReader GetDocBlockReader(Directory dir, GroupDoc[] groupDocs)
         {
             // Coalesce by group, but in random order:
-            CollectionsHelper.Shuffle(groupDocs, Random());
+            Collections.Shuffle(groupDocs, Random());
             HashMap<BytesRef, List<GroupDoc>> groupMap = new HashMap<BytesRef, List<GroupDoc>>();
             List<BytesRef> groupValues = new List<BytesRef>();
 

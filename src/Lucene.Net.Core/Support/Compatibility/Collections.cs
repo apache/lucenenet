@@ -52,6 +52,24 @@ namespace Lucene.Net
             return new ReverseComparer2<T>(cmp);
         }
 
+        public static void Shuffle<T>(IList<T> list)
+        {
+            Shuffle(list, new Random());
+        }
+
+        // Method found here http://stackoverflow.com/a/2301091/181087
+        // This shuffles the list in place without using LINQ, which is fast and efficient.
+        public static void Shuffle<T>(IList<T> list, Random random)
+        {
+            for (int i = list.Count; i > 1; i--)
+            {
+                int pos = random.Next(i);
+                var x = list[i - 1];
+                list[i - 1] = list[pos];
+                list[pos] = x;
+            }
+        }
+
         public static ISet<T> Singleton<T>(T o)
         {
             return ImmutableHashSet.Create(o); // LUCENENET TODO: Immutable != Singleton
@@ -60,6 +78,13 @@ namespace Lucene.Net
         public static IDictionary<TKey, TValue> SingletonMap<TKey, TValue>(TKey key, TValue value)
         {
             return new Dictionary<TKey, TValue> { { key, value } };
+        }
+
+        public static void Swap<T>(IList<T> list, int index1, int index2)
+        {
+            T tmp = list[index1];
+            list[index1] = list[index2];
+            list[index2] = tmp;
         }
 
         public static IList<T> UnmodifiableList<T>(IEnumerable<T> items)

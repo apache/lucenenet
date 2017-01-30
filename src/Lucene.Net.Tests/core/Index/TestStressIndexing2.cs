@@ -987,7 +987,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     // random placement of id field also
-                    CollectionsHelper.Swap(fields, NextInt(fields.Count), 0);
+                    Collections.Swap(fields, NextInt(fields.Count), 0);
                 }
 
                 for (int i = 0; i < fields.Count; i++)

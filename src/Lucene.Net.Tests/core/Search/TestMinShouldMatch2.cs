@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
         private static void AddSome(Document doc, string[] values)
         {
             IList<string> list = Arrays.AsList(values);
-            CollectionsHelper.Shuffle(list);
+            Collections.Shuffle(list);
             int howMany = TestUtil.NextInt(Random(), 1, list.Count);
             for (int i = 0; i < howMany; i++)
             {
@@ -286,7 +286,7 @@ namespace Lucene.Net.Search
             termsList.AddRange(Arrays.AsList(CommonTerms));
             termsList.AddRange(Arrays.AsList(MediumTerms));
             termsList.AddRange(Arrays.AsList(RareTerms));
-            CollectionsHelper.Shuffle(termsList);
+            Collections.Shuffle(termsList);
 
             for (int numTerms = 2; numTerms <= termsList.Count; numTerms++)
             {
@@ -309,7 +309,7 @@ namespace Lucene.Net.Search
             termsList.AddRange(Arrays.AsList(CommonTerms));
             termsList.AddRange(Arrays.AsList(MediumTerms));
             termsList.AddRange(Arrays.AsList(RareTerms));
-            CollectionsHelper.Shuffle(termsList);
+            Collections.Shuffle(termsList);
 
             for (int amount = 25; amount < 200; amount += 25)
             {

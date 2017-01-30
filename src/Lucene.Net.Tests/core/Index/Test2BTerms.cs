@@ -280,7 +280,7 @@ namespace Lucene.Net.Index
         {
             Console.WriteLine("TEST: run " + terms.Count + " terms on reader=" + r);
             IndexSearcher s = NewSearcher(r);
-            CollectionsHelper.Shuffle(terms);
+            Collections.Shuffle(terms);
             TermsEnum termsEnum = MultiFields.GetTerms(r, "field").GetIterator(null);
             bool failed = false;
             for (int iter = 0; iter < 10 * terms.Count; iter++)

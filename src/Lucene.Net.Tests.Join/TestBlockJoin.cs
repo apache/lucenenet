@@ -283,13 +283,13 @@ namespace Lucene.Net.Tests.Join
             IList<Document> docs = new List<Document>();
             docs.Add(MakeJob("java", 2007));
             docs.Add(MakeJob("python", 2010));
-            CollectionsHelper.Shuffle(docs);
+            Collections.Shuffle(docs);
             docs.Add(MakeResume("Lisa", "United Kingdom"));
 
             IList<Document> docs2 = new List<Document>();
             docs2.Add(MakeJob("ruby", 2005));
             docs2.Add(MakeJob("java", 2006));
-            CollectionsHelper.Shuffle(docs2);
+            Collections.Shuffle(docs2);
             docs2.Add(MakeResume("Frank", "United States"));
 
             AddSkillless(w);
@@ -1278,7 +1278,7 @@ namespace Lucene.Net.Tests.Join
             docs.Add(MakeJob("java", 2006));
             docs.Add(MakeJob("java", 2010));
             docs.Add(MakeJob("java", 2012));
-            CollectionsHelper.Shuffle(docs);
+            Collections.Shuffle(docs);
             docs.Add(MakeResume("Frank", "United States"));
 
             AddSkillless(w);

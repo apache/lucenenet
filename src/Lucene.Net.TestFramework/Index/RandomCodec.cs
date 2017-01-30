@@ -159,8 +159,8 @@ namespace Lucene.Net.Index
 
             AddDocValues(avoidCodecs, new Lucene45DocValuesFormat(), /*new DiskDocValuesFormat(), new MemoryDocValuesFormat(), new SimpleTextDocValuesFormat(),*/ new AssertingDocValuesFormat());
 
-            CollectionsHelper.Shuffle(Formats);
-            CollectionsHelper.Shuffle(DvFormats);
+            Collections.Shuffle(Formats);
+            Collections.Shuffle(DvFormats);
 
             // Avoid too many open files:
             if (Formats.Count > 4)
