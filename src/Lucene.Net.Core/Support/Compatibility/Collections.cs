@@ -41,9 +41,9 @@ namespace Lucene.Net
             return new UnmodifiableDictionary<TKey, TValue>(d);
         }
 
-        public static IDictionary<T, S> SingletonMap<T, S>(T key, S value)
+        public static IDictionary<TKey, TValue> SingletonMap<TKey, TValue>(TKey key, TValue value)
         {
-            return new Dictionary<T, S> {{key, value}};
+            return new Dictionary<TKey, TValue> {{key, value}};
         }
 
         public static ISet<T> NewSetFromMap<T, S>(IDictionary<T, bool?> map)
