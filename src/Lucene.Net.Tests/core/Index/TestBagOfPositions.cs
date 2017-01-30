@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            postingsList = CollectionsHelper.Shuffle(postingsList);
+            CollectionsHelper.Shuffle(postingsList);
 
             ConcurrentQueue<string> postings = new ConcurrentQueue<string>(postingsList);
 

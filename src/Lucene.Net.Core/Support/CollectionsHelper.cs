@@ -317,10 +317,22 @@ namespace Lucene.Net.Support
             list[index2] = tmp;
         }
 
-        // Method found here http://www.dailycoding.com/Posts/random_sort_a_list_using_linq.aspx
-        public static IList<T> Shuffle<T>(IList<T> list)
+        public static void Shuffle<T>(IList<T> list)
         {
-            return list.OrderBy(str => Guid.NewGuid()).ToList();
+            Shuffle(list, new Random());
+        }
+
+        // Method found here http://stackoverflow.com/a/2301091/181087
+        // This shuffles the list in place without using LINQ, which is fast and efficient.
+        public static void Shuffle<T>(IList<T> list, Random random)
+        {
+            for (int i = list.Count; i > 1; i--)
+            {
+                int pos = random.Next(i);
+                var x = list[i - 1];
+                list[i - 1] = list[pos];
+                list[pos] = x;
+            }
         }
 
         public static KeyValuePair<int, TValue> LowerEntry<TValue>(SortedDictionary<int, TValue> sd, int keyLimit)

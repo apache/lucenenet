@@ -989,7 +989,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 new Input(" a", 60),
             });
 
-            keys = CollectionsHelper.Shuffle(keys);
+            CollectionsHelper.Shuffle(keys, Random());
             suggester.Build(new InputArrayIterator(keys));
 
             IList<Lookup.LookupResult> results = suggester.DoLookup("a", false, 5);
@@ -1013,7 +1013,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 new Input("barbazfoo", 10),
             });
 
-            keys = CollectionsHelper.Shuffle(keys);
+            CollectionsHelper.Shuffle(keys, Random());
             suggester.Build(new InputArrayIterator(keys));
 
             assertEquals("[foo bar baz/50, foo bar/40]", suggester.DoLookup("foobar", false, 5).toString());
@@ -1148,7 +1148,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 Console.WriteLine("TEST: maxEdits=" + maxEdits + " prefixLen=" + prefixLen + " transpositions=" + transpositions + " num=" + NUM);
             }
 
-            answers = new List<Input>(CollectionsHelper.Shuffle(answers));
+            CollectionsHelper.Shuffle(answers);
             suggest.Build(new InputArrayIterator(answers.ToArray()));
 
             int ITERS = AtLeast(100);

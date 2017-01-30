@@ -1499,7 +1499,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 asList.Add(value);
             }
-            asList = CollectionsHelper.Shuffle(asList);
+            CollectionsHelper.Shuffle(asList);
             return asList;
         }
     }

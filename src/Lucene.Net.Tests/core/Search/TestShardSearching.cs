@@ -323,7 +323,7 @@ namespace Lucene.Net.Search
                     priorSearches.Add(searchState);
                     if (priorSearches.Count > 200)
                     {
-                        priorSearches = (List<PreviousSearchState>)CollectionsHelper.Shuffle(priorSearches);
+                        CollectionsHelper.Shuffle(priorSearches);
                         priorSearches.SubList(100, priorSearches.Count).Clear();
                     }
                 }

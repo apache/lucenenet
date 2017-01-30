@@ -1516,7 +1516,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomIntParser()
         {
             List<string> letters = Arrays.AsList(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" });
-            letters = (List<string>)CollectionsHelper.Shuffle(letters);
+            CollectionsHelper.Shuffle(letters);
 
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
@@ -1574,7 +1574,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomByteParser()
         {
             List<string> letters = Arrays.AsList(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" });
-            letters = (List<string>)CollectionsHelper.Shuffle(letters);
+            CollectionsHelper.Shuffle(letters);
 
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
@@ -1632,7 +1632,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomShortParser()
         {
             List<string> letters = Arrays.AsList(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" });
-            letters = (List<string>)CollectionsHelper.Shuffle(letters);
+            CollectionsHelper.Shuffle(letters);
 
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
@@ -1690,7 +1690,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomLongParser()
         {
             List<string> letters = Arrays.AsList(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" });
-            letters = (List<string>)CollectionsHelper.Shuffle(letters);
+            CollectionsHelper.Shuffle(letters);
 
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
@@ -1748,7 +1748,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomFloatParser()
         {
             List<string> letters = Arrays.AsList(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" });
-            letters = (List<string>)CollectionsHelper.Shuffle(letters);
+            CollectionsHelper.Shuffle(letters);
 
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
@@ -1806,7 +1806,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomDoubleParser()
         {
             List<string> letters = Arrays.AsList(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" });
-            letters = (List<string>)CollectionsHelper.Shuffle(letters);
+            CollectionsHelper.Shuffle(letters);
 
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);

@@ -30,12 +30,12 @@ namespace Lucene.Net.Util.Automaton
     [TestFixture]
     public class TestDeterminizeLexicon : LuceneTestCase
     {
+        private IList<Automaton> automata = new List<Automaton>();
+        private IList<string> terms = new List<string>();
+
         [Test]
         public void TestLexicon()
         {
-            var automata = new List<Automaton>();
-            var terms = new List<string>();
-
             int num = AtLeast(1);
             for (int i = 0; i < num; i++)
             {
@@ -47,25 +47,25 @@ namespace Lucene.Net.Util.Automaton
                     terms.Add(randomString);
                     automata.Add(BasicAutomata.MakeString(randomString));
                 }
-                AssertLexicon(automata, terms);
+                AssertLexicon();
             }
         }
 
-        public void AssertLexicon(List<Automaton> a, List<string> terms)
+        public void AssertLexicon()
         {
-            var automata = CollectionsHelper.Shuffle(a);
+            CollectionsHelper.Shuffle(automata, Random());
             var lex = BasicOperations.Union(automata);
             lex.Determinize();
             Assert.IsTrue(SpecialOperations.IsFinite(lex));
             foreach (string s in terms)
             {
-                Assert.IsTrue(BasicOperations.Run(lex, s));
+                assertTrue(BasicOperations.Run(lex, s));
             }
             var lexByte = new ByteRunAutomaton(lex);
             foreach (string s in terms)
             {
                 var bytes = s.GetBytes(Encoding.UTF8);
-                Assert.IsTrue(lexByte.Run(bytes, 0, bytes.Length));
+                assertTrue(lexByte.Run(bytes, 0, bytes.Length));
             }
         }
     }

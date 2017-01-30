@@ -1100,14 +1100,14 @@ namespace Lucene.Net.Index
             {
                 ids.Add(id);
             }
-            ids = CollectionsHelper.Shuffle(ids);
+            CollectionsHelper.Shuffle(ids);
             foreach (int id in ids)
             {
                 Document doc = new Document();
                 doc.Add(NewStringField("id", "" + id, Field.Store.NO));
                 w.AddDocument(doc);
             }
-            ids = CollectionsHelper.Shuffle(ids);
+            CollectionsHelper.Shuffle(ids);
             int upto = 0;
             while (upto < ids.Count)
             {

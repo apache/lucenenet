@@ -74,9 +74,9 @@ namespace Lucene.Net.Search.Suggest
         {
             Debug.Assert(false, "disable assertions before running benchmarks!");
             IList<Input> input = ReadTop50KWiki();
-            input = CollectionsHelper.Shuffle(input);
+            CollectionsHelper.Shuffle(input);
             dictionaryInput = input.ToArray();
-            input = CollectionsHelper.Shuffle(input);
+            CollectionsHelper.Shuffle(input);
             benchmarkInput = input;
         }
 

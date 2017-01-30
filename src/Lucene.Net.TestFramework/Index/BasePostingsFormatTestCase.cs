@@ -1117,7 +1117,7 @@ namespace Lucene.Net.Index
             IList<TermState> termStates = new List<TermState>();
             IList<FieldAndTerm> termStateTerms = new List<FieldAndTerm>();
 
-            AllTerms = CollectionsHelper.Shuffle(AllTerms);
+            CollectionsHelper.Shuffle(AllTerms);
             int upto = 0;
             while (upto < AllTerms.Count)
             {

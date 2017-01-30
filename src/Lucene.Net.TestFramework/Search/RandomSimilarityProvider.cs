@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
             CoordType = random.Next(3);
             ShouldQueryNorm = random.NextBoolean();
             KnownSims = new List<Similarity>(AllSims);
-            KnownSims = CollectionsHelper.Shuffle(KnownSims);
+            CollectionsHelper.Shuffle(KnownSims, random);
             //Collections.shuffle(KnownSims, random);
         }
 
