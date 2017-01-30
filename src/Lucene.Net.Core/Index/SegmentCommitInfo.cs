@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
             // Must separately add any field updates files
             foreach (ISet<string> updateFiles in genUpdatesFiles.Values)
             {
-                CollectionsHelper.AddAll(files, updateFiles);
+                Collections.AddAll(files, updateFiles);
             }
 
             return files;

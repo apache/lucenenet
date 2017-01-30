@@ -11,6 +11,16 @@ namespace Lucene.Net
 {
     public static class Collections
     {
+        public static bool AddAll<T>(ISet<T> set, IEnumerable<T> elements)
+        {
+            bool result = false;
+            foreach (T element in elements)
+            {
+                result |= set.Add(element);
+            }
+            return result;
+        }
+
         public static IList<T> EmptyList<T>()
         {
             return ImmutableList<T>.Empty; // LUCENENET TODO: Shouldn't be Immutable

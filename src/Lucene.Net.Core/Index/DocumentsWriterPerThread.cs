@@ -182,7 +182,7 @@ namespace Lucene.Net.Index
                 }
 
                 pendingUpdates.Clear();
-                CollectionsHelper.AddAll(createdFiles, directory.CreatedFiles);
+                Collections.AddAll(createdFiles, directory.CreatedFiles);
             }
             finally
             {
@@ -627,7 +627,7 @@ namespace Lucene.Net.Index
             {
                 if (indexWriterConfig.UseCompoundFile)
                 {
-                    CollectionsHelper.AddAll(filesToDelete, IndexWriter.CreateCompoundFile(infoStream, directory, CheckAbort.NONE, newSegment.Info, context));
+                    Collections.AddAll(filesToDelete, IndexWriter.CreateCompoundFile(infoStream, directory, CheckAbort.NONE, newSegment.Info, context));
                     newSegment.Info.UseCompoundFile = true;
                 }
 
