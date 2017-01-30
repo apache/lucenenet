@@ -502,7 +502,7 @@ namespace Lucene.Net.Util
 
                 foreach (var property in properties)
                 {
-                    if (property.GetSetMethod() != null && property.GetGetMethod() == null && property.DeclaringType.Equals(c.UnderlyingSystemType))
+                    if (property.GetSetMethod(true) != null && property.GetGetMethod(true) == null && property.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", property.Name));
                     }
