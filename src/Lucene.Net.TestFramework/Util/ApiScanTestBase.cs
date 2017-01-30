@@ -83,7 +83,13 @@ namespace Lucene.Net.Util
         //[Test, LuceneNetSpecific]
         public virtual void TestPrivateFieldNames(Type typeFromTargetAssembly)
         {
-            var names = GetInvalidPrivateFields(typeFromTargetAssembly.Assembly);
+            TestPrivateFieldNames(typeFromTargetAssembly, null);
+        }
+
+        //[Test, LuceneNetSpecific]
+        public virtual void TestPrivateFieldNames(Type typeFromTargetAssembly, string exceptionRegex)
+        {
+            var names = GetInvalidPrivateFields(typeFromTargetAssembly.Assembly, exceptionRegex);
 
             //if (VERBOSE)
             //{
@@ -298,7 +304,7 @@ namespace Lucene.Net.Util
                 "eliminating the logic that depends on 'null' or by adding a NOT_SET=0 state to the enum.");
         }
 
-        private static IEnumerable<string> GetInvalidPrivateFields(Assembly assembly)
+        private static IEnumerable<string> GetInvalidPrivateFields(Assembly assembly, string exceptionRegex)
         {
             var result = new List<string>();
 
@@ -322,7 +328,11 @@ namespace Lucene.Net.Util
 
                     if ((field.IsPrivate || field.IsAssembly) && !PrivateFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
-                        result.Add(string.Concat(c.FullName, ".", field.Name));
+                        var name = string.Concat(c.FullName, ".", field.Name);
+                        if (!string.IsNullOrWhiteSpace(exceptionRegex) && !Regex.IsMatch(name, exceptionRegex))
+                        {
+                            result.Add(name);
+                        }
                     }
                 }
             }
