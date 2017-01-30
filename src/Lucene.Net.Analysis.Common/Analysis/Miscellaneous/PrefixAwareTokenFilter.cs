@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     {
                         previousPrefixToken.Payload = (BytesRef)p.Clone();
                     }
-                    CurrentToken = nextToken;
+                    SetCurrentToken(nextToken);
                     return true;
                 }
             }
@@ -107,26 +107,23 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
 
             nextToken = UpdateSuffixToken(nextToken, previousPrefixToken);
-            CurrentToken = nextToken;
+            SetCurrentToken(nextToken);
             return true;
         }
 
-        private Token CurrentToken
+        private void SetCurrentToken(Token token)
         {
-            set
+            if (token == null)
             {
-                if (value == null)
-                {
-                    return;
-                }
-                ClearAttributes();
-                termAtt.CopyBuffer(value.Buffer, 0, value.Length);
-                posIncrAtt.PositionIncrement = value.PositionIncrement;
-                flagsAtt.Flags = value.Flags;
-                offsetAtt.SetOffset(value.StartOffset, value.EndOffset);
-                typeAtt.Type = value.Type;
-                payloadAtt.Payload = value.Payload;
+                return;
             }
+            ClearAttributes();
+            termAtt.CopyBuffer(token.Buffer, 0, token.Length);
+            posIncrAtt.PositionIncrement = token.PositionIncrement;
+            flagsAtt.Flags = token.Flags;
+            offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
+            typeAtt.Type = token.Type;
+            payloadAtt.Payload = token.Payload;
         }
 
         private Token GetNextPrefixInputToken(Token token)
