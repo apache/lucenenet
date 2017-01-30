@@ -1113,7 +1113,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
         internal static bool HasFlag(char[] flags, char flag)
         {
-            return Arrays.BinarySearch(flags, flag) >= 0;
+            return Array.BinarySearch(flags, flag) >= 0;
         }
 
         internal virtual string CleanInput(string input, StringBuilder reuse)
@@ -1124,7 +1124,7 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 char ch = input[i];
 
-                if (ignore != null && Arrays.BinarySearch(ignore, ch) >= 0)
+                if (ignore != null && Array.BinarySearch(ignore, ch) >= 0)
                 {
                     continue;
                 }

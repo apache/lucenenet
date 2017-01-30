@@ -57,19 +57,6 @@ namespace Lucene.Net.Support
 
             return true;
         }
-        
-        public static T[] Sort<T>(T[] original)
-		{
-			T[] newArray = new T[original.Length];
-			Array.Copy(original, newArray, original.Length);
-			Sort<T>(newArray);
-			return newArray;
-		}
-
-		public static int BinarySearch<T>(T[] list, T item)
-		{
-			return Array.BinarySearch<T>(list, item);
-		}
 
         public static T[] CopyOf<T>(T[] original, int newLength)
         {

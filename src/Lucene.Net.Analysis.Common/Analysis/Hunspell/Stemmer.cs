@@ -462,7 +462,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <returns> {@code true} if the flag is found in the array or the array is {@code null}, {@code false} otherwise </returns>
         private bool HasCrossCheckedFlag(char flag, char[] flags, bool matchEmpty)
         {
-            return (flags.Length == 0 && matchEmpty) || Arrays.BinarySearch(flags, flag) >= 0;
+            return (flags.Length == 0 && matchEmpty) || Array.BinarySearch(flags, flag) >= 0;
         }
     }
 }
