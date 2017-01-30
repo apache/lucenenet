@@ -40,6 +40,30 @@ namespace Lucene.Net.Support
             list[indexB] = tmp;
             return list;
         }
+
+        public static void TimSort<T>(this IList<T> list)
+            where T : IComparable<T>
+        {
+            Util.CollectionUtil.TimSort(list);
+        }
+
+        public static void TimSort<T>(this IList<T> list, IComparer<T> comparer)
+            where T : IComparable<T>
+        {
+            Util.CollectionUtil.TimSort(list, comparer);
+        }
+
+        public static void IntroSort<T>(this IList<T> list)
+            where T : IComparable<T>
+        {
+            Util.CollectionUtil.IntroSort(list);
+        }
+
+        public static void IntroSort<T>(this IList<T> list, IComparer<T> comparer)
+            where T : IComparable<T>
+        {
+            Util.CollectionUtil.IntroSort(list, comparer);
+        }
     }
 
     public sealed class SubList<T> : IList<T>
