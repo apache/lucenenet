@@ -83,6 +83,10 @@ namespace Lucene.Net.Analysis.Fr
         /// </summary>
         public FrenchStemmer Stemmer
         {
+            get // LUCENENET NOTE: Added getter per MSDN guidelines
+            {
+                return this.stemmer;
+            }
             set
             {
                 if (value != null)
