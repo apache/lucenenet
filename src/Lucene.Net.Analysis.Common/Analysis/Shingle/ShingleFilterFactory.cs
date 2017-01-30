@@ -72,10 +72,10 @@ namespace Lucene.Net.Analysis.Shingle
         public override TokenStream Create(TokenStream input)
         {
             ShingleFilter r = new ShingleFilter(input, minShingleSize, maxShingleSize);
-            r.OutputUnigrams = outputUnigrams;
-            r.OutputUnigramsIfNoShingles = outputUnigramsIfNoShingles;
-            r.TokenSeparator = tokenSeparator;
-            r.FillerToken = fillerToken;
+            r.SetOutputUnigrams(outputUnigrams);
+            r.SetOutputUnigramsIfNoShingles(outputUnigramsIfNoShingles);
+            r.SetTokenSeparator(tokenSeparator);
+            r.SetFillerToken(fillerToken);
             return r;
         }
     }

@@ -280,7 +280,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             protected override TokenStreamComponents WrapComponents(string fieldName, TokenStreamComponents components)
             {
                 ShingleFilter shingles = new ShingleFilter(components.TokenStream, 2, outerInstance.grams);
-                shingles.TokenSeparator = char.ToString((char)outerInstance.separator);
+                shingles.SetTokenSeparator(char.ToString((char)outerInstance.separator));
                 return new TokenStreamComponents(components.Tokenizer, shingles);
             }
         }

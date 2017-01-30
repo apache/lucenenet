@@ -450,30 +450,30 @@ namespace Lucene.Net.Analysis.Shingle
         {
 
             ShingleFilter filter = new ShingleFilter(new CannedTokenStream(tokensToShingle), maxSize);
-            filter.OutputUnigrams = outputUnigrams;
+            filter.SetOutputUnigrams(outputUnigrams);
             shingleFilterTestCommon(filter, tokensToCompare, positionIncrements, types);
         }
 
         protected internal virtual void shingleFilterTest(int minSize, int maxSize, Token[] tokensToShingle, Token[] tokensToCompare, int[] positionIncrements, string[] types, bool outputUnigrams)
         {
             ShingleFilter filter = new ShingleFilter(new CannedTokenStream(tokensToShingle), minSize, maxSize);
-            filter.OutputUnigrams = outputUnigrams;
+            filter.SetOutputUnigrams(outputUnigrams);
             shingleFilterTestCommon(filter, tokensToCompare, positionIncrements, types);
         }
 
         protected internal virtual void shingleFilterTest(int minSize, int maxSize, Token[] tokensToShingle, Token[] tokensToCompare, int[] positionIncrements, string[] types, bool outputUnigrams, bool outputUnigramsIfNoShingles)
         {
             ShingleFilter filter = new ShingleFilter(new CannedTokenStream(tokensToShingle), minSize, maxSize);
-            filter.OutputUnigrams = outputUnigrams;
-            filter.OutputUnigramsIfNoShingles = outputUnigramsIfNoShingles;
+            filter.SetOutputUnigrams(outputUnigrams);
+            filter.SetOutputUnigramsIfNoShingles(outputUnigramsIfNoShingles);
             shingleFilterTestCommon(filter, tokensToCompare, positionIncrements, types);
         }
 
         protected internal virtual void shingleFilterTest(string tokenSeparator, int minSize, int maxSize, Token[] tokensToShingle, Token[] tokensToCompare, int[] positionIncrements, string[] types, bool outputUnigrams)
         {
             ShingleFilter filter = new ShingleFilter(new CannedTokenStream(tokensToShingle), minSize, maxSize);
-            filter.TokenSeparator = tokenSeparator;
-            filter.OutputUnigrams = outputUnigrams;
+            filter.SetTokenSeparator(tokenSeparator);
+            filter.SetOutputUnigrams(outputUnigrams);
             shingleFilterTestCommon(filter, tokensToCompare, positionIncrements, types);
         }
         protected internal virtual void shingleFilterTestCommon(ShingleFilter filter, Token[] tokensToCompare, int[] positionIncrements, string[] types)
@@ -630,25 +630,25 @@ namespace Lucene.Net.Analysis.Shingle
             // stopwords, leaving two trailing holes:
             Token[] inputTokens = new Token[] { CreateToken("purple", 0, 6), CreateToken("wizard", 7, 13) };
             ShingleFilter filter = new ShingleFilter(new CannedTokenStream(2, 20, inputTokens), 2, 3);
-            filter.FillerToken = "--";
+            filter.SetFillerToken("--");
 
             AssertTokenStreamContents(filter, new string[] { "purple", "purple wizard", "purple wizard --", "wizard", "wizard --", "wizard -- --" }, new int[] { 0, 0, 0, 7, 7, 7 }, new int[] { 6, 13, 20, 13, 20, 20 }, new int[] { 1, 0, 0, 1, 0, 0 }, 20);
 
             filter = new ShingleFilter(new CannedTokenStream(2, 20, inputTokens), 2, 3);
-            filter.FillerToken = "";
+            filter.SetFillerToken("");
 
             AssertTokenStreamContents(filter, new string[] { "purple", "purple wizard", "purple wizard ", "wizard", "wizard ", "wizard  " }, new int[] { 0, 0, 0, 7, 7, 7 }, new int[] { 6, 13, 20, 13, 20, 20 }, new int[] { 1, 0, 0, 1, 0, 0 }, 20);
 
 
             filter = new ShingleFilter(new CannedTokenStream(2, 20, inputTokens), 2, 3);
-            filter.FillerToken = null;
+            filter.SetFillerToken(null);
 
             AssertTokenStreamContents(filter, new string[] { "purple", "purple wizard", "purple wizard ", "wizard", "wizard ", "wizard  " }, new int[] { 0, 0, 0, 7, 7, 7 }, new int[] { 6, 13, 20, 13, 20, 20 }, new int[] { 1, 0, 0, 1, 0, 0 }, 20);
 
 
             filter = new ShingleFilter(new CannedTokenStream(2, 20, inputTokens), 2, 3);
-            filter.FillerToken = null;
-            filter.TokenSeparator = null;
+            filter.SetFillerToken(null);
+            filter.SetTokenSeparator(null);
 
             AssertTokenStreamContents(filter, new string[] { "purple", "purplewizard", "purplewizard", "wizard", "wizard", "wizard" }, new int[] { 0, 0, 0, 7, 7, 7 }, new int[] { 6, 13, 20, 13, 20, 20 }, new int[] { 1, 0, 0, 1, 0, 0 }, 20);
         }

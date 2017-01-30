@@ -41,7 +41,6 @@ namespace Lucene.Net.Analysis.Shingle
     /// </summary>
     public sealed class ShingleFilter : TokenFilter
     {
-
         /// <summary>
         /// filler token for when positionIncrement is more than 1
         /// </summary>
@@ -174,8 +173,8 @@ namespace Lucene.Net.Analysis.Shingle
         public ShingleFilter(TokenStream input, int minShingleSize, int maxShingleSize)
               : base(input)
         {
-            MaxShingleSize = maxShingleSize;
-            MinShingleSize = minShingleSize;
+            SetMaxShingleSize(maxShingleSize);
+            SetMinShingleSize(minShingleSize);
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
             posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
@@ -212,7 +211,7 @@ namespace Lucene.Net.Analysis.Shingle
         public ShingleFilter(TokenStream input, string tokenType)
               : this(input, DEFAULT_MIN_SHINGLE_SIZE, DEFAULT_MAX_SHINGLE_SIZE)
         {
-            TokenType = tokenType;
+            SetTokenType(tokenType);
         }
 
         /// <summary>
@@ -220,12 +219,9 @@ namespace Lucene.Net.Analysis.Shingle
         /// (default: "shingle")
         /// </summary>
         /// <param name="tokenType"> token tokenType </param>
-        public string TokenType
+        public void SetTokenType(string tokenType)
         {
-            set
-            {
-                this.tokenType = value;
-            }
+            this.tokenType = tokenType;
         }
 
         /// <summary>
@@ -234,13 +230,10 @@ namespace Lucene.Net.Analysis.Shingle
         /// </summary>
         /// <param name="outputUnigrams"> Whether or not the output stream shall contain
         /// the input tokens (unigrams) </param>
-        public bool OutputUnigrams
+        public void SetOutputUnigrams(bool outputUnigrams)
         {
-            set
-            {
-                this.outputUnigrams = value;
-                gramSize = new CircularSequence(this);
-            }
+            this.outputUnigrams = outputUnigrams;
+            gramSize = new CircularSequence(this);
         }
 
         /// <summary>
@@ -255,28 +248,22 @@ namespace Lucene.Net.Analysis.Shingle
         /// </summary>
         /// <param name="outputUnigramsIfNoShingles"> Whether or not to output a single
         /// unigram when no shingles are available. </param>
-        public bool OutputUnigramsIfNoShingles
+        public void SetOutputUnigramsIfNoShingles(bool outputUnigramsIfNoShingles)
         {
-            set
-            {
-                this.outputUnigramsIfNoShingles = value;
-            }
+            this.outputUnigramsIfNoShingles = outputUnigramsIfNoShingles;
         }
 
         /// <summary>
         /// Set the max shingle size (default: 2)
         /// </summary>
         /// <param name="maxShingleSize"> max size of output shingles </param>
-        public int MaxShingleSize
+        public void SetMaxShingleSize(int maxShingleSize)
         {
-            set
+            if (maxShingleSize < 2)
             {
-                if (value < 2)
-                {
-                    throw new System.ArgumentException("Max shingle size must be >= 2");
-                }
-                this.maxShingleSize = value;
+                throw new System.ArgumentException("Max shingle size must be >= 2");
             }
+            this.maxShingleSize = maxShingleSize;
         }
 
         /// <summary>
@@ -291,32 +278,26 @@ namespace Lucene.Net.Analysis.Shingle
         /// </para>
         /// </summary>
         /// <param name="minShingleSize"> min size of output shingles </param>
-        public int MinShingleSize
+        public void SetMinShingleSize(int minShingleSize)
         {
-            set
+            if (minShingleSize < 2)
             {
-                if (value < 2)
-                {
-                    throw new System.ArgumentException("Min shingle size must be >= 2");
-                }
-                if (value > maxShingleSize)
-                {
-                    throw new System.ArgumentException("Min shingle size must be <= max shingle size");
-                }
-                this.minShingleSize = value;
-                gramSize = new CircularSequence(this);
+                throw new System.ArgumentException("Min shingle size must be >= 2");
             }
+            if (minShingleSize > maxShingleSize)
+            {
+                throw new System.ArgumentException("Min shingle size must be <= max shingle size");
+            }
+            this.minShingleSize = minShingleSize;
+            gramSize = new CircularSequence(this);
         }
 
         /// <summary>
         /// Sets the string to use when joining adjacent tokens to form a shingle </summary>
         /// <param name="tokenSeparator"> used to separate input stream tokens in output shingles </param>
-        public string TokenSeparator
+        public void SetTokenSeparator(string tokenSeparator)
         {
-            set
-            {
-                this.tokenSeparator = null == value ? "" : value;
-            }
+            this.tokenSeparator = null == tokenSeparator ? "" : tokenSeparator;
         }
 
         /// <summary>
@@ -324,12 +305,9 @@ namespace Lucene.Net.Analysis.Shingle
         /// (i.e., when position increment is greater than one).
         /// </summary>
         /// <param name="fillerToken"> string to insert at each position where there is no token </param>
-        public string FillerToken
+        public void SetFillerToken(string fillerToken)
         {
-            set
-            {
-                this.fillerToken = null == value ? new char[0] : value.ToCharArray();
-            }
+            this.fillerToken = null == fillerToken ? new char[0] : fillerToken.ToCharArray();
         }
 
         public override bool IncrementToken()

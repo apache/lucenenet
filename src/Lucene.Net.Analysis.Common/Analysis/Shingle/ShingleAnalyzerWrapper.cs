@@ -176,12 +176,12 @@ namespace Lucene.Net.Analysis.Shingle
         protected override TokenStreamComponents WrapComponents(string fieldName, TokenStreamComponents components)
         {
             ShingleFilter filter = new ShingleFilter(components.TokenStream, minShingleSize, maxShingleSize);
-            filter.MinShingleSize = minShingleSize;
-            filter.MaxShingleSize = maxShingleSize;
-            filter.TokenSeparator = tokenSeparator;
-            filter.OutputUnigrams = outputUnigrams;
-            filter.OutputUnigramsIfNoShingles = outputUnigramsIfNoShingles;
-            filter.FillerToken = fillerToken;
+            filter.SetMinShingleSize(minShingleSize);
+            filter.SetMaxShingleSize(maxShingleSize);
+            filter.SetTokenSeparator(tokenSeparator);
+            filter.SetOutputUnigrams(outputUnigrams);
+            filter.SetOutputUnigramsIfNoShingles(outputUnigramsIfNoShingles);
+            filter.SetFillerToken(fillerToken);
             return new TokenStreamComponents(components.Tokenizer, filter);
         }
     }
