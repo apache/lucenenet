@@ -26,6 +26,8 @@ using System.Linq;
 
 namespace Lucene.Net.Support
 {
+    // LUCENENET TODO: Many of the members in here (such as UnmodifyableMap) should be moved to Compatibility.Collections
+
     /// <summary>
     /// Support class used to handle Hashtable addition, which does a check
     /// first to make sure the added item is unique in the hash.
