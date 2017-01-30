@@ -168,7 +168,7 @@ namespace Lucene.Net.Analysis.Sinks
                 SinkTokenStream sink; ;
                 if (@ref.TryGetTarget(out sink))
                 {
-                    sink.FinalState = finalState;
+                    sink.SetFinalState(finalState);
                 }
             }
         }
@@ -224,12 +224,9 @@ namespace Lucene.Net.Analysis.Sinks
                 cachedStates.Add(state);
             }
 
-            internal AttributeSource.State FinalState
+            internal void SetFinalState(AttributeSource.State finalState)
             {
-                set
-                {
-                    this.finalState = value;
-                }
+                this.finalState = finalState;
             }
 
             public override bool IncrementToken()
