@@ -79,7 +79,7 @@ namespace Lucene.Net.Util
                         throw new InvalidOperationException("Cannot instantiate SPI class: " + c.Name, e);
                     }
                 }
-                this.services = CollectionsHelper.UnmodifiableMap(services);
+                this.services = Collections.UnmodifiableMap(services);
             }
         }
 

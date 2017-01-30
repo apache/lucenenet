@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Util
                         services.Add(name, service);
                     }
                 }
-                this.services = CollectionsHelper.UnmodifiableMap(services);
+                this.services = Collections.UnmodifiableMap(services);
             }
         }
 

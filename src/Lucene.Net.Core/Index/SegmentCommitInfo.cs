@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return CollectionsHelper.UnmodifiableMap(genUpdatesFiles);
+                return Collections.UnmodifiableMap(genUpdatesFiles);
             }
         }
 

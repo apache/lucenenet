@@ -361,11 +361,6 @@ namespace Lucene.Net.Support
             return new HashMap<TKey, TValue>();
         }
 
-        public static IDictionary<TKey, TValue> UnmodifiableMap<TKey, TValue>(IDictionary<TKey, TValue> dict)
-        {
-            return new UnmodifiableDictionary<TKey, TValue>(dict);
-        }
-
         public static IDictionary<TKey, TValue> SingletonMap<TKey, TValue>(TKey key, TValue value)
         {
             return new Dictionary<TKey, TValue>() {
