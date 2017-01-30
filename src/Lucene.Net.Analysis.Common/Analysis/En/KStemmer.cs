@@ -696,7 +696,7 @@ namespace Lucene.Net.Analysis.En
                     }
                     k++;
                     word.UnsafeWrite('s');
-                    Suffix = "y";
+                    SetSuffix("y");
                     Lookup();
                 }
                 else if (EndsIn('e', 's'))
@@ -759,12 +759,9 @@ namespace Lucene.Net.Analysis.En
             }
         }
 
-        private string Suffix
+        private void SetSuffix(string s)
         {
-            set
-            {
-                SetSuff(value, value.Length);
-            }
+            SetSuff(s, s.Length);
         }
 
         /* replace old suffix with s */
@@ -826,7 +823,7 @@ namespace Lucene.Net.Analysis.En
                 }
                 k++; // I don't know any long words that this applies to,
                 word.UnsafeWrite('d'); // but just in case...
-                Suffix = "y";
+                SetSuffix("y");
                 Lookup();
                 return;
             }
