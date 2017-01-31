@@ -73,7 +73,7 @@ namespace Lucene.Net.Facet.SortedSet
 
         /// <summary>
         /// Return top-level doc values. </summary>
-        public abstract SortedSetDocValues DocValues { get; } // LUCENENET TODO: Make GetDocValues() 
+        public abstract SortedSetDocValues GetDocValues();
 
         /// <summary>
         /// Indexed field we are reading. </summary>
