@@ -26,8 +26,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestCollectionUtil : LuceneTestCase
     {
-        private CollectionsHelper.ReverseComparer<int> ReverseOrder = new CollectionsHelper.ReverseComparer<int>();
-
         private List<int> CreateRandomList(int maxSize)
         {
             Random rnd = Random();
@@ -51,8 +49,8 @@ namespace Lucene.Net.Util
 
                 list1 = CreateRandomList(2000);
                 list2 = new List<int>(list1);
-                CollectionUtil.IntroSort<int>(list1, ReverseOrder);
-                list2.Sort(ReverseOrder);
+                CollectionUtil.IntroSort(list1, Collections.ReverseOrder<int>());
+                list2.Sort(Collections.ReverseOrder<int>());
                 Assert.AreEqual(list2, list1);
                 // reverse back, so we can test that completely backwards sorted array (worst case) is working:
                 CollectionUtil.IntroSort(list1);
@@ -73,8 +71,8 @@ namespace Lucene.Net.Util
 
                 list1 = CreateRandomList(2000);
                 list2 = new List<int>(list1);
-                CollectionUtil.TimSort(list1, ReverseOrder);
-                list2.Sort(ReverseOrder);
+                CollectionUtil.TimSort(list1, Collections.ReverseOrder<int>());
+                list2.Sort(Collections.ReverseOrder<int>());
                 Assert.AreEqual(list2, list1);
                 // reverse back, so we can test that completely backwards sorted array (worst case) is working:
                 CollectionUtil.TimSort(list1);
@@ -90,15 +88,15 @@ namespace Lucene.Net.Util
             IList<int> list = Arrays.AsList(new int[0]); // LUCENE-2989
             CollectionUtil.IntroSort(list);
             CollectionUtil.TimSort(list);
-            CollectionUtil.IntroSort(list, ReverseOrder);
-            CollectionUtil.TimSort(list, ReverseOrder);
+            CollectionUtil.IntroSort(list, Collections.ReverseOrder<int>());
+            CollectionUtil.TimSort(list, Collections.ReverseOrder<int>());
 
             // check that empty non-random access lists pass sorting without ex (as sorting is not needed)
             list = new List<int>();
             CollectionUtil.IntroSort(list);
             CollectionUtil.TimSort(list);
-            CollectionUtil.IntroSort(list, ReverseOrder);
-            CollectionUtil.TimSort(list, ReverseOrder);
+            CollectionUtil.IntroSort(list, Collections.ReverseOrder<int>());
+            CollectionUtil.TimSort(list, Collections.ReverseOrder<int>());
         }
 
         [Test]
@@ -109,8 +107,8 @@ namespace Lucene.Net.Util
             list.Add(1);
             CollectionUtil.IntroSort(list);
             CollectionUtil.TimSort(list);
-            CollectionUtil.IntroSort(list, ReverseOrder);
-            CollectionUtil.TimSort(list, ReverseOrder);
+            CollectionUtil.IntroSort(list, Collections.ReverseOrder<int>());
+            CollectionUtil.TimSort(list, Collections.ReverseOrder<int>());
         }
     }
 }

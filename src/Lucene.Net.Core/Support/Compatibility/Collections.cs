@@ -38,7 +38,7 @@ namespace Lucene.Net
 
         public static IComparer<T> ReverseOrder<T>()
         {
-            return (IComparer<T>)ReverseComparer.REVERSE_ORDER;
+            return (IComparer<T>)ReverseComparer<T>.REVERSE_ORDER;
         }
 
         public static IComparer<T> ReverseOrder<T>(IComparer<T> cmp)
@@ -306,14 +306,28 @@ namespace Lucene.Net
 
         #region ReverseComparer
 
-        internal class ReverseComparer : IComparer<IComparable>
+        //private class ReverseComparer : IComparer<IComparable>
+        //{
+        //    internal static readonly ReverseComparer REVERSE_ORDER = new ReverseComparer();
+
+
+        //    public int Compare(IComparable c1, IComparable c2)
+        //    {
+        //        return c2.CompareTo(c1);
+        //    }
+        //}
+
+        // LUCENENET NOTE: When consolidating this, it turns out that only the 
+        // CaseInsensitiveComparer works correctly in .NET (not sure why).
+        // So, this hybrid was made from the original Java implementation and the
+        // original implemenation (above) that used CaseInsensitiveComparer.
+        public class ReverseComparer<T> : IComparer<T>
         {
-            internal static readonly ReverseComparer REVERSE_ORDER = new ReverseComparer();
+            internal static readonly ReverseComparer<T> REVERSE_ORDER = new ReverseComparer<T>();
 
-
-            public int Compare(IComparable c1, IComparable c2)
+            public int Compare(T x, T y)
             {
-                return c2.CompareTo(c1);
+                return (new CaseInsensitiveComparer()).Compare(y, x);
             }
         }
 
@@ -321,7 +335,7 @@ namespace Lucene.Net
 
         #region ReverseComparer2
 
-        internal class ReverseComparer2<T> : IComparer<T>
+        private class ReverseComparer2<T> : IComparer<T>
 
         {
             /**

@@ -169,8 +169,6 @@ namespace Lucene.Net.Util
             return a;
         }
 
-        private CollectionsHelper.ReverseComparer<int> ReverseOrder = new CollectionsHelper.ReverseComparer<int>();
-
         [Test]
         public virtual void TestIntroSort()
         {
@@ -185,8 +183,8 @@ namespace Lucene.Net.Util
 
                 a1 = CreateRandomArray(2000);
                 a2 = (int[])a1.Clone();
-                ArrayUtil.IntroSort(a1, ReverseOrder);
-                Array.Sort(a2, ReverseOrder);
+                ArrayUtil.IntroSort(a1, Collections.ReverseOrder<int>());
+                Array.Sort(a2, Collections.ReverseOrder<int>());
                 Assert.AreEqual(a2, a1);
                 // reverse back, so we can test that completely backwards sorted array (worst case) is working:
                 ArrayUtil.IntroSort(a1);
@@ -234,8 +232,8 @@ namespace Lucene.Net.Util
 
                 a1 = CreateRandomArray(2000);
                 a2 = (int[])a1.Clone();
-                ArrayUtil.TimSort(a1, ReverseOrder);
-                Array.Sort(a2, ReverseOrder);
+                ArrayUtil.TimSort(a1, Collections.ReverseOrder<int>());
+                Array.Sort(a2, Collections.ReverseOrder<int>());
                 Assert.AreEqual(a2, a1);
                 // reverse back, so we can test that completely backwards sorted array (worst case) is working:
                 ArrayUtil.TimSort(a1);
@@ -352,8 +350,8 @@ namespace Lucene.Net.Util
             int[] a = new int[0];
             ArrayUtil.IntroSort(a);
             ArrayUtil.TimSort(a);
-            ArrayUtil.IntroSort(a, ReverseOrder);
-            ArrayUtil.TimSort(a, ReverseOrder);
+            ArrayUtil.IntroSort(a, Collections.ReverseOrder<int>());
+            ArrayUtil.TimSort(a, Collections.ReverseOrder<int>());
         }
     }
 }
