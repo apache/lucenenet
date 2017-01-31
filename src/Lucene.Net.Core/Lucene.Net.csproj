@@ -628,7 +628,7 @@
     <Compile Include="Support\DataOutputStream.cs" />
     <Compile Include="Support\ExceptionToClassNameConventionAttribute.cs" />
     <Compile Include="Support\FileStreamExtensions.cs" />
-    <Compile Include="Support\HashCodeMerge.cs" />
+    <Compile Include="Support\HashHelpers.cs" />
     <Compile Include="Support\ICallable.cs" />
     <Compile Include="Support\ICharSequence.cs" />
     <Compile Include="Support\ICompletionService.cs" />
