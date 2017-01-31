@@ -757,13 +757,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// taxonomy writer has been created.
         /// </para>
         /// </summary>
-        public virtual int CacheMissesUntilFill
+        public virtual void SetCacheMissesUntilFill(int i)
         {
-            set
-            {
-                EnsureOpen();
-                cacheMissesUntilFill = value;
-            }
+            EnsureOpen();
+            cacheMissesUntilFill = i;
         }
 
         // we need to guarantee that if several threads call this concurrently, only

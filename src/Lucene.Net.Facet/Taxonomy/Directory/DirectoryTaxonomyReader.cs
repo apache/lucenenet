@@ -376,26 +376,23 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Setting <see cref="CacheSize"/> controls the maximum allowed size of each of the caches
+        /// <see cref="SetCacheSize"/> controls the maximum allowed size of each of the caches
         /// used by <see cref="GetPath(int)"/> and <see cref="GetOrdinal(FacetLabel)"/>.
         /// <P>
         /// Currently, if the given size is smaller than the current size of
         /// a cache, it will not shrink, and rather we be limited to its current
         /// size. </summary>
         /// <param name="value"> the new maximum cache size, in number of entries. </param>
-        public virtual int CacheSize
+        public virtual void SetCacheSize(int size)
         {
-            set
+            EnsureOpen();
+            lock (categoryCache)
             {
-                EnsureOpen();
-                lock (categoryCache)
-                {
-                    categoryCache.Limit = value;
-                }
-                lock (ordinalCache)
-                {
-                    ordinalCache.Limit = value;
-                }
+                categoryCache.Limit = size;
+            }
+            lock (ordinalCache)
+            {
+                ordinalCache.Limit = size;
             }
         }
 
