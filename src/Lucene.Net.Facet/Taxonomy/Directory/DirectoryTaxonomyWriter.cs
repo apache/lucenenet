@@ -717,8 +717,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 EnsureOpen();
                 // LUCENE-4972: if we always call setCommitData, we create empty commits
-                string epochStr = indexWriter.CommitData[INDEX_EPOCH];
-                if (epochStr == null || Convert.ToInt64(epochStr, 16) != indexEpoch)
+                string epochStr;
+                if (!indexWriter.CommitData.TryGetValue(INDEX_EPOCH, out epochStr) 
+                    || epochStr == null 
+                    || Convert.ToInt64(epochStr, 16) != indexEpoch)
                 {
                     indexWriter.CommitData = CombinedCommitData(indexWriter.CommitData);
                 }
