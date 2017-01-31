@@ -687,7 +687,6 @@
     <Compile Include="Support\Number.cs" />
     <Compile Include="Support\OS.cs" />
     <Compile Include="Support\SharpZipLib.cs" />
-    <Compile Include="Support\Single.cs" />
     <Compile Include="Support\TextSupport.cs" />
     <Compile Include="Support\ThreadClass.cs" />
     <Compile Include="Support\ThreadLock.cs" />
