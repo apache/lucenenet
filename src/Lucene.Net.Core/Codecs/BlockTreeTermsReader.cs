@@ -3,6 +3,7 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Lucene.Net.Codecs
@@ -380,6 +381,7 @@ namespace Lucene.Net.Codecs
             /// <summary>
             /// Number of blocks at each prefix depth. </summary>
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public int[] BlockCountByPrefixLen
             {
                 get { return blockCountByPrefixLen; }
@@ -770,6 +772,7 @@ namespace Lucene.Net.Codecs
 
                     // metadata buffer, holding monotonic values
                     [WritableArray]
+                    [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                     public long[] Longs
                     {
                         get { return longs; }
@@ -779,6 +782,7 @@ namespace Lucene.Net.Codecs
 
                     // metadata buffer, holding general values
                     [WritableArray]
+                    [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                     public byte[] Bytes
                     {
                         get { return bytes; }
@@ -2747,6 +2751,7 @@ namespace Lucene.Net.Codecs
 
                     // metadata buffer, holding monotonic values
                     [WritableArray]
+                    [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                     public long[] Longs
                     {
                         get { return longs; }
@@ -2756,6 +2761,7 @@ namespace Lucene.Net.Codecs
 
                     // metadata buffer, holding general values
                     [WritableArray]
+                    [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                     public byte[] Bytes
                     {
                         get { return bytes; }

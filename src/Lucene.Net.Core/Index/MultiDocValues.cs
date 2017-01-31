@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Index
 {
@@ -572,6 +573,7 @@ namespace Lucene.Net.Index
             /// <summary>
             /// docbase for each leaf: parallel with <seealso cref="#values"/> </summary>
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public int[] DocStarts
             {
                 get { return docStarts; }
@@ -581,6 +583,7 @@ namespace Lucene.Net.Index
             /// <summary>
             /// leaf values </summary>
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public SortedDocValues[] Values
             {
                 get { return values; }
@@ -638,6 +641,7 @@ namespace Lucene.Net.Index
             /// <summary>
             /// docbase for each leaf: parallel with <seealso cref="#values"/> </summary>
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public int[] DocStarts
             {
                 get { return docStarts; }
@@ -647,6 +651,7 @@ namespace Lucene.Net.Index
             /// <summary>
             /// leaf values </summary>
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public SortedSetDocValues[] Values
             {
                 get { return values; }

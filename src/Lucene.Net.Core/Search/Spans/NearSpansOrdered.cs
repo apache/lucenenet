@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -145,6 +146,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public virtual Spans[] SubSpans
         {
             get { return subSpans; }

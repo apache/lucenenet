@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -237,6 +238,7 @@ namespace Lucene.Net.Util
             public long AlignedShallowInstanceSize { get; private set; }
 
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public FieldInfo[] ReferenceFields { get; private set; }
 
             public ClassCache(long alignedShallowInstanceSize, FieldInfo[] referenceFields)
@@ -656,6 +658,7 @@ namespace Lucene.Net.Util
             /// All of set entries. Always of power of two length.
             /// </summary>
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public object[] Keys
             {
                 get { return keys; }

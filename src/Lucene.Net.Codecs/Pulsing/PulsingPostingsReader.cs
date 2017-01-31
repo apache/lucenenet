@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Codecs.Pulsing
 {
@@ -97,8 +98,10 @@ namespace Lucene.Net.Codecs.Pulsing
         {
             internal bool Absolute { get; set; }
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             internal long[] Longs { get; set; }
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             internal byte[] Postings { get; set; }
             internal int PostingsSize { get; set; } // -1 if this term was not inlined
             internal BlockTermState WrappedTermState { get; set; }

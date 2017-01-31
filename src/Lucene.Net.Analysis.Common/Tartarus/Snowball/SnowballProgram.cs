@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
 
@@ -109,6 +110,7 @@ namespace Lucene.Net.Tartarus.Snowball
          * @see #getCurrentBufferLength()
          */
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public char[] CurrentBuffer
         {
             get { return m_current; }

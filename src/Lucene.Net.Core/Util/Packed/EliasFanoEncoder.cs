@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Lucene.Net.Util.Packed
@@ -314,6 +315,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Expert. The low bits. </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public virtual long[] LowerBits
         {
             get { return lowerLongs; }
@@ -322,6 +324,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Expert. The high bits. </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public virtual long[] UpperBits
         {
             get { return upperLongs; }
@@ -330,6 +333,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Expert. The index bits. </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public virtual long[] IndexBits
         {
             get { return upperZeroBitPositionIndex; }

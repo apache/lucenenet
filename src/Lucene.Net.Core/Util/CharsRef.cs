@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Util
 {
@@ -38,6 +39,7 @@ namespace Lucene.Net.Util
         /// The contents of the CharsRef. Should never be {@code null}.
         /// </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public char[] Chars
         {
             get { return chars; }

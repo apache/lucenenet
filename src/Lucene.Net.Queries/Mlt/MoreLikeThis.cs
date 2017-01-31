@@ -7,6 +7,7 @@ using Lucene.Net.Search.Similarities;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -306,6 +307,7 @@ namespace Lucene.Net.Queries.Mlt
         /// provided in the constructor.
         /// </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public string[] FieldNames { get; set; }
 
 

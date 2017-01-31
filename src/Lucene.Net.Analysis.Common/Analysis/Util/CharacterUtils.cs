@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Reader = System.IO.TextReader;
@@ -408,6 +408,7 @@ namespace Lucene.Net.Analysis.Util
             /// </summary>
             /// <returns> the buffer </returns>
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public char[] Buffer
             {
                 get

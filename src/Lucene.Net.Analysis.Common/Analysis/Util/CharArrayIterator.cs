@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Support;
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Icu;
 
 namespace Lucene.Net.Analysis.Util
@@ -34,6 +35,7 @@ namespace Lucene.Net.Analysis.Util
         private int limit;
 
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public virtual char[] Text
         {
             get

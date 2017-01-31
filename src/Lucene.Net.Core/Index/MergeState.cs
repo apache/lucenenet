@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Index
 {
@@ -180,11 +181,13 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Maps docIDs around deletions. </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public DocMap[] DocMaps { get; set; }
 
         /// <summary>
         /// New docID base per reader. </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public int[] DocBase { get; set; }
 
         /// <summary>
@@ -206,6 +209,7 @@ namespace Lucene.Net.Index
         /// vectors may be bulk merged.
         /// </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public SegmentReader[] MatchingSegmentReaders { get; set; }
 
         /// <summary>

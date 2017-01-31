@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Codecs
 {
@@ -86,6 +87,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Returns sub-readers we are merging. </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public MultiDocsAndPositionsEnum.EnumWithSlice[] Subs
         {
             get { return subs; }

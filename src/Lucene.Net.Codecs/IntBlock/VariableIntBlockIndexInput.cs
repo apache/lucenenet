@@ -2,6 +2,7 @@
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Codecs.IntBlock
 {
@@ -85,6 +86,7 @@ namespace Lucene.Net.Codecs.IntBlock
             private readonly IndexInput input;
 
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public int[] Pending
             {
                 get { return pending; }

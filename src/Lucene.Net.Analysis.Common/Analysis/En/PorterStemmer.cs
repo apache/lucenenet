@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Analysis.En
 {
@@ -125,6 +126,7 @@ namespace Lucene.Net.Analysis.En
         /// to determine the length of the result.
         /// </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public virtual char[] ResultBuffer
         {
             get

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Support;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -45,6 +46,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         /// <returns> the hyphenation points </returns>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public virtual int[] HyphenationPoints
         {
             get

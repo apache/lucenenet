@@ -2,7 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 /*
@@ -45,6 +45,7 @@ namespace Lucene.Net.Util.Automaton
     {
         internal bool accept;
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public Transition[] TransitionsArray
         {
             get { return transitionsArray; }

@@ -1,6 +1,7 @@
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -403,7 +404,8 @@ namespace Lucene.Net.Util
             /// <summary>
             /// CacheEntry objects which suggest a problem
             /// </summary>
-            [WritableArray] // LUCENENET NOTE: In Lucene, this method allows writing to the array, although it probably doesn't make sense to do this.
+            [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public FieldCache.CacheEntry[] CacheEntries
             {
                 get { return entries; }

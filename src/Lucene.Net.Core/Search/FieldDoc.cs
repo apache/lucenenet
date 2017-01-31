@@ -1,5 +1,5 @@
 using Lucene.Net.Support;
-using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -50,6 +50,7 @@ namespace Lucene.Net.Search
         /// <seealso cref= Sort </seealso>
         /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public object[] Fields
         {
             get { return fields; }

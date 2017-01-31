@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Util
 {
@@ -72,6 +73,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// array of buffers currently used in the pool. Buffers are allocated if needed don't modify this outside of this class </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public int[][] Buffers
         {
             get { return buffers; }
@@ -90,6 +92,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Current head buffer </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public int[] Buffer
         {
             get { return buffer; }

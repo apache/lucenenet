@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -38,6 +39,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// The contents of the IntsRef. Should never be {@code null}. </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public int[] Ints
         {
             get { return ints; }

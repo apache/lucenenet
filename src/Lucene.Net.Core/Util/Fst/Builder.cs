@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -648,6 +649,7 @@ namespace Lucene.Net.Util.Fst
             public int NumArcs { get; set; }
 
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public Arc<S>[] Arcs { get; set; }
 
             // TODO: instead of recording isFinal/output on the

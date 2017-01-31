@@ -6,6 +6,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Lucene.Net.Queries.Mlt
@@ -114,6 +115,7 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public virtual string[] MoreLikeFields
         {
             get { return moreLikeFields; }

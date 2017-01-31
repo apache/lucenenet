@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -28,7 +29,7 @@ namespace Lucene.Net.Analysis.Synonym
     /// <summary>
     /// Mapping rules for use with <seealso cref="SlowSynonymFilter"/> </summary>
     /// @deprecated (3.4) use <seealso cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
-    [Obsolete("(3.4) use <seealso cref=\"SynonymFilterFactory\"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
+    [Obsolete("(3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
     internal class SlowSynonymMap
     {
         /// <summary>
@@ -42,6 +43,7 @@ namespace Lucene.Net.Analysis.Synonym
         /// <summary>
         /// @lucene.internal </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public Token[] Synonyms
         {
             get { return synonyms; }

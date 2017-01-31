@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Lucene.Net.Util
@@ -135,6 +136,7 @@ namespace Lucene.Net.Util
         /// needed don't modify this outside of this class.
         /// </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public byte[][] Buffers
         {
             get { return buffers; }
@@ -154,6 +156,7 @@ namespace Lucene.Net.Util
         /// Current head buffer
         /// </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public byte[] Buffer
         {
             get { return buffer; }

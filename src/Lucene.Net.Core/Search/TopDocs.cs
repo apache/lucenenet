@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Search
 {
@@ -35,6 +36,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// The top hits for the query. </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public ScoreDoc[] ScoreDocs { get; set; }
 
         /// <summary>

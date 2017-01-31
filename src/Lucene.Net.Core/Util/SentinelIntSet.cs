@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Util
 {
@@ -44,6 +45,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// A power-of-2 over-sized array holding the integers in the set along with empty values. </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public int[] Keys
         {
             get { return keys; }

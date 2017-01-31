@@ -4,6 +4,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Lucene.Net.Queries
@@ -432,6 +433,7 @@ namespace Lucene.Net.Queries
         /// <summary>
         /// The scoring queries that only affect the score of <see cref="CustomScoreQuery"/>. </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public virtual Query[] ScoringQueries
         {
             get { return scoringQueries; }

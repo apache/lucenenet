@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Support;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Search.Spell
 {
@@ -42,6 +43,7 @@ namespace Lucene.Net.Search.Spell
         /// The indexes from the passed-in array of terms used to make this word combination
         /// </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public int[] OriginalTermIndexes
         {
             get { return originalTermIndexes; }

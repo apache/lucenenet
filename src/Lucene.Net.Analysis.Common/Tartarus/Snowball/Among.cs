@@ -31,11 +31,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using Lucene.Net.Support;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Tartarus.Snowball
 {
@@ -86,6 +83,7 @@ namespace Lucene.Net.Tartarus.Snowball
 
         /// <summary>search string</summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public char[] S
         {
             get { return s; }

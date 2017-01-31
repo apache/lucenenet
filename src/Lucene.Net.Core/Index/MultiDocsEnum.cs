@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Index
 {
@@ -88,6 +89,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns sub-readers we are merging. </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public EnumWithSlice[] Subs
         {
             get { return subs; }

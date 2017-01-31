@@ -1,6 +1,7 @@
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Expressions
 {
@@ -48,6 +49,7 @@ namespace Lucene.Net.Expressions
 
         /// <summary>Named variables referred to by this expression</summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public string[] Variables { get; private set; }
 
         /// <summary>

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Lucene.Net.Codecs.Memory
@@ -191,6 +192,7 @@ namespace Lucene.Net.Codecs.Memory
             internal abstract class TermAndSkip
             {
                 [WritableArray]
+                [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                 public int[] Skips
                 {
                     get { return skips; }
@@ -206,6 +208,7 @@ namespace Lucene.Net.Codecs.Memory
             private sealed class LowFreqTerm : TermAndSkip
             {
                 [WritableArray]
+                [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                 public int[] Postings
                 {
                     get { return postings; }
@@ -213,6 +216,7 @@ namespace Lucene.Net.Codecs.Memory
                 private readonly int[] postings;
 
                 [WritableArray]
+                [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                 public byte[] Payloads
                 {
                     get { return payloads; }
@@ -256,6 +260,7 @@ namespace Lucene.Net.Codecs.Memory
                 private readonly long totalTermFreq;
 
                 [WritableArray]
+                [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                 public int[] DocIDs
                 {
                     get { return docIDs; }
@@ -263,6 +268,7 @@ namespace Lucene.Net.Codecs.Memory
                 private readonly int[] docIDs;
 
                 [WritableArray]
+                [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                 public int[] Freqs
                 {
                     get { return freqs; }
@@ -270,6 +276,7 @@ namespace Lucene.Net.Codecs.Memory
                 private readonly int[] freqs;
 
                 [WritableArray]
+                [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                 public int[][] Positions
                 {
                     get { return positions; }
@@ -277,6 +284,7 @@ namespace Lucene.Net.Codecs.Memory
                 private readonly int[][] positions;
 
                 [WritableArray]
+                [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                 public byte[][][] Payloads
                 {
                     get { return payloads; }
@@ -2325,12 +2333,14 @@ namespace Lucene.Net.Codecs.Memory
             }
 
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public int[] DocIDs
             {
                 get { return docIDs; }
             }
 
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public int[] Freqs
             {
                 get { return freqs; }
@@ -2520,12 +2530,14 @@ namespace Lucene.Net.Codecs.Memory
             }
 
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public int[] DocIDs
             {
                 get { return docIDs; }
             }
 
             [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public int[][] Positions
             {
                 get { return positions; }

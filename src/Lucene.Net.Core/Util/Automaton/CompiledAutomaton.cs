@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Lucene.Net.Util.Automaton
@@ -87,6 +88,7 @@ namespace Lucene.Net.Util.Automaton
         /// Only valid for <seealso cref="AUTOMATON_TYPE#NORMAL"/>.
         /// </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public Transition[][] SortedTransitions
         {
             get { return sortedTransitions; }

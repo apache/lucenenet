@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Util
 {
@@ -30,6 +31,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// The bytes </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public byte[] Bytes
         {
             get { return bytes; }

@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Index
 {
@@ -76,6 +77,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns sub-reader slices positioned to the current term. </summary>
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public TermsEnumWithSlice[] MatchArray
         {
             get { return top; }

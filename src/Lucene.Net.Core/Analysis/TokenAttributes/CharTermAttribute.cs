@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -56,6 +57,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         }
 
         [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public char[] Buffer
         {
             get { return termBuffer; }
