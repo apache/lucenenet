@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace Lucene.Net.Analysis
 {
@@ -28,7 +29,7 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public class MockCharFilter : CharFilter
     {
-        internal readonly int Remainder;
+        internal readonly int remainder;
 
         // for testing only
         public MockCharFilter(TextReader @in, int remainder)
@@ -36,7 +37,7 @@ namespace Lucene.Net.Analysis
         {
             // TODO: instead of fixed remainder... maybe a fixed
             // random seed?
-            this.Remainder = remainder;
+            this.remainder = remainder;
             if (remainder < 0 || remainder >= 10)
             {
                 throw new System.ArgumentException("invalid remainder parameter (must be 0..10): " + remainder);
@@ -49,21 +50,21 @@ namespace Lucene.Net.Analysis
         {
         }
 
-        internal int CurrentOffset = -1;
-        internal int Delta = 0;
-        internal int BufferedCh = -1;
+        internal int currentOffset = -1;
+        internal int delta = 0;
+        internal int bufferedCh = -1;
 
         public override int Read()
         {
             // we have a buffered character, add an offset correction and return it
-            if (BufferedCh >= 0)
+            if (bufferedCh >= 0)
             {
-                int ch = BufferedCh;
-                BufferedCh = -1;
-                CurrentOffset++;
+                int ch = bufferedCh;
+                bufferedCh = -1;
+                currentOffset++;
 
-                AddOffCorrectMap(CurrentOffset, Delta - 1);
-                Delta--;
+                AddOffCorrectMap(currentOffset, delta - 1);
+                delta--;
                 return ch;
             }
 
@@ -74,14 +75,14 @@ namespace Lucene.Net.Analysis
                 return c;
             }
 
-            CurrentOffset++;
-            if ((c % 10) != Remainder || char.IsHighSurrogate((char)c) || char.IsLowSurrogate((char)c))
+            currentOffset++;
+            if ((c % 10) != remainder || char.IsHighSurrogate((char)c) || char.IsLowSurrogate((char)c))
             {
                 return c;
             }
 
             // we will double this character, so buffer it.
-            BufferedCh = c;
+            bufferedCh = c;
             return c;
         }
 
@@ -94,7 +95,7 @@ namespace Lucene.Net.Analysis
 
         protected override int Correct(int currentOff)
         {
-            KeyValuePair<int, int> lastEntry = CollectionsHelper.LowerEntry(Corrections, currentOff + 1);
+            KeyValuePair<int, int> lastEntry = corrections.LowerEntry(currentOff + 1);
             int ret = lastEntry.Equals(default(KeyValuePair<int, int>)) ? currentOff : currentOff + lastEntry.Value;
             Debug.Assert(ret >= 0, "currentOff=" + currentOff + ",diff=" + (ret - currentOff));
             return ret;
@@ -102,9 +103,9 @@ namespace Lucene.Net.Analysis
 
         protected internal virtual void AddOffCorrectMap(int off, int cumulativeDiff)
         {
-            Corrections[off] = cumulativeDiff;
+            corrections[off] = cumulativeDiff;
         }
 
-        internal SortedDictionary<int, int> Corrections = new SortedDictionary<int, int>();
+        internal SortedDictionary<int, int> corrections = new SortedDictionary<int, int>();
     }
 }

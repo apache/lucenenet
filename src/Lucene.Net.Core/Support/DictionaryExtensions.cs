@@ -31,5 +31,25 @@ namespace Lucene.Net.Support
             dict[key] = value;
             return oldValue;
         }
+
+        public static KeyValuePair<int, TValue> LowerEntry<TValue>(this SortedDictionary<int, TValue> sd, int keyLimit)
+        {
+            KeyValuePair<int, TValue> retKVPair = default(KeyValuePair<int, TValue>);
+
+            foreach (var kvPair in sd)
+            {
+                if (kvPair.Key < keyLimit)
+                {
+                    retKVPair = kvPair;
+                }
+                else
+                {
+                    // No other key lesser key found
+                    break;
+                }
+            }
+
+            return retKVPair;
+        }
     }
 }
