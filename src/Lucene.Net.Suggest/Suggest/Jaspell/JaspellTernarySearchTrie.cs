@@ -911,6 +911,10 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          word. </param>
         public virtual int MatchAlmostDiff
         {
+            get // LUCENENET NOTE: Added property get per MSDN guidelines
+            {
+                return matchAlmostDiff;
+            }
             set
             {
                 if (value < 0)
@@ -942,6 +946,10 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          methods above. </param>
         public virtual int NumReturnValues
         {
+            get // LUCENENET NOTE: Added property get per MSDN guidelines
+            {
+                return defaultNumReturnValues;
+            }
             set
             {
                 defaultNumReturnValues = (value < 0) ? -1 : value;
@@ -962,7 +970,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="numReturnValues">
         ///          The maximum number of values returned from this method. </param>
         /// <returns> A <see cref="IList{String}"/> with the results. </returns>
-        protected internal virtual IList<string> SortKeys(TSTNode startNode, int numReturnValues)
+        protected virtual IList<string> SortKeys(TSTNode startNode, int numReturnValues)
         {
             return SortKeysRecursion(startNode, ((numReturnValues < 0) ? -1 : numReturnValues), new List<string>());
         }

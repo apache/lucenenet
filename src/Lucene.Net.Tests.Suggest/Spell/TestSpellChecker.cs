@@ -447,7 +447,7 @@ namespace Lucene.Net.Search.Spell
 
                 try
                 {
-                    spellChecker.SpellIndex = (spellindex);
+                    spellChecker.SetSpellIndex(spellindex);
                     fail("spellchecker was already closed");
                 }
                 catch (AlreadyClosedException /*e*/)
@@ -492,7 +492,7 @@ namespace Lucene.Net.Search.Spell
                 {
                     Thread.Sleep(100);
                     // concurrently reset the spell index
-                    spellChecker.SpellIndex = (this.spellindex);
+                    spellChecker.SetSpellIndex(this.spellindex);
                     // for debug - prints the internal open searchers 
                     // showSearchersOpen();
                 }

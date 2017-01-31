@@ -128,7 +128,7 @@ namespace Lucene.Net.Search.Spell
         /// <exception cref="System.IO.IOException"> if there is a problem opening the index </exception>
         public SpellChecker(Directory spellIndex, IStringDistance sd, IComparer<SuggestWord> comparer)
         {
-            SpellIndex = spellIndex;
+            SetSpellIndex(spellIndex);
             StringDistance = sd;
             this.comparer = comparer;
         }
@@ -141,25 +141,22 @@ namespace Lucene.Net.Search.Spell
         /// <exception cref="AlreadyClosedException"> if the Spellchecker is already closed </exception>
         /// <exception cref="System.IO.IOException"> if spellchecker can not open the directory </exception>
         // TODO: we should make this final as it is called in the constructor
-        public virtual Directory SpellIndex
+        public virtual void SetSpellIndex(Directory spellIndexDir)
         {
-            set
+            // this could be the same directory as the current spellIndex
+            // modifications to the directory should be synchronized 
+            lock (modifyCurrentIndexLock)
             {
-                // this could be the same directory as the current spellIndex
-                // modifications to the directory should be synchronized 
-                lock (modifyCurrentIndexLock)
+                EnsureOpen();
+                if (!DirectoryReader.IndexExists(spellIndexDir))
                 {
-                    EnsureOpen();
-                    if (!DirectoryReader.IndexExists(value))
-                    {
 #pragma warning disable 612, 618
-                        using (var writer = new IndexWriter(value, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, null)))
-                        {
-                        }
-#pragma warning restore 612, 618
+                    using (var writer = new IndexWriter(spellIndexDir, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, null)))
+                    {
                     }
-                    SwapSearcher(value);
+#pragma warning restore 612, 618
                 }
+                SwapSearcher(spellIndexDir);
             }
         }
 
