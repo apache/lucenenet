@@ -155,7 +155,7 @@ namespace Lucene.Net.Util
         /// algorithm, but falls back to insertion sort for small lists. </summary>
         /// <exception cref="IllegalArgumentException"> if list is e.g. a linked list without random access. </exception>
         public static void IntroSort<T>(IList<T> list)
-            where T : IComparable<T>
+            //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
             int size = list.Count;
             if (size <= 1)
@@ -188,7 +188,7 @@ namespace Lucene.Net.Util
         /// algorithm, but falls back to binary sort for small lists. </summary>
         /// <exception cref="IllegalArgumentException"> if list is e.g. a linked list without random access. </exception>
         public static void TimSort<T>(IList<T> list)
-            where T : IComparable<T>
+            //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
             int size = list.Count;
             if (size <= 1)

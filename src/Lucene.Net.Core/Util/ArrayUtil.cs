@@ -781,7 +781,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Get the natural <seealso cref="Comparer"/> for the provided object class. </summary>
         public static IComparer<T> NaturalComparer<T>()
-            where T : IComparable<T>
+            //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
             return Comparer<T>.Default;
             //return (IComparer<T>)new NaturalComparerImpl<T>();
@@ -826,7 +826,7 @@ namespace Lucene.Net.Util
         /// algorithm, but falls back to insertion sort for small arrays. </summary>
         /// <param name="fromIndex"> start index (inclusive) </param>
         /// <param name="toIndex"> end index (exclusive) </param>
-        public static void IntroSort<T>(T[] a, int fromIndex, int toIndex) where T : IComparable<T>
+        public static void IntroSort<T>(T[] a, int fromIndex, int toIndex) //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
             if (toIndex - fromIndex <= 1)
             {
@@ -839,7 +839,7 @@ namespace Lucene.Net.Util
         /// Sorts the given array in natural order. this method uses the intro sort
         /// algorithm, but falls back to insertion sort for small arrays.
         /// </summary>
-        public static void IntroSort<T>(T[] a) where T : IComparable<T>
+        public static void IntroSort<T>(T[] a) //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
             IntroSort(a, 0, a.Length);
         }
@@ -874,7 +874,7 @@ namespace Lucene.Net.Util
         /// algorithm, but falls back to binary sort for small arrays. </summary>
         /// <param name="fromIndex"> start index (inclusive) </param>
         /// <param name="toIndex"> end index (exclusive) </param>
-        public static void TimSort<T>(T[] a, int fromIndex, int toIndex) where T : IComparable<T>
+        public static void TimSort<T>(T[] a, int fromIndex, int toIndex) //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
             if (toIndex - fromIndex <= 1)
             {
@@ -887,7 +887,7 @@ namespace Lucene.Net.Util
         /// Sorts the given array in natural order. this method uses the Tim sort
         /// algorithm, but falls back to binary sort for small arrays.
         /// </summary>
-        public static void TimSort<T>(T[] a) where T : IComparable<T>
+        public static void TimSort<T>(T[] a) //where T : IComparable<T>  // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
             TimSort(a, 0, a.Length);
         }
