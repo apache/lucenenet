@@ -673,8 +673,8 @@ namespace Lucene.Net.Index
 
         public static void VerifyEquals(Document d1, Document d2)
         {
-            List<IIndexableField> ff1 = d1.Fields;
-            List<IIndexableField> ff2 = d2.Fields;
+            IList<IIndexableField> ff1 = d1.Fields;
+            IList<IIndexableField> ff2 = d2.Fields;
 
             ff1.Sort(fieldNameComparer);
             ff2.Sort(fieldNameComparer);

@@ -214,7 +214,7 @@ namespace Lucene.Net.Documents
         /// index, e.g. <seealso cref="IndexSearcher#doc(int)"/> or {@link
         /// IndexReader#document(int)}.</p>
         /// </summary>
-        public List<IIndexableField> Fields
+        public IList<IIndexableField> Fields
         {
             get
             {
