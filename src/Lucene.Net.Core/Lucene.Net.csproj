@@ -678,7 +678,6 @@
     <Compile Include="Support\Compatibility\WrappedHashSet.cs" />
     <Compile Include="Support\CRC32.cs" />
     <Compile Include="Support\Deflater.cs" />
-    <Compile Include="Support\Double.cs" />
     <Compile Include="Support\EquatableList.cs" />
     <Compile Include="Support\FileSupport.cs" />
     <Compile Include="Support\GeneralKeyedCollection.cs" />
