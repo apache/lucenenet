@@ -669,7 +669,6 @@
     <Compile Include="Support\TreeSet.cs" />
     <Compile Include="Support\UnmodifiableDictionary.cs" />
     <Compile Include="Support\CloseableThreadLocalProfiler.cs" />
-    <Compile Include="Support\Compare.cs" />
     <Compile Include="Support\Compatibility\ConcurrentDictionary.cs" />
     <Compile Include="Support\Compatibility\Func.cs" />
     <Compile Include="Support\Compatibility\ISet.cs" />
