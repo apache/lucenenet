@@ -2,6 +2,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Search.Spell
 {
@@ -524,6 +525,8 @@ namespace Lucene.Net.Search.Spell
                 this.freqMax = aFreqMax;
             }
 
+            [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public SuggestWord[] SuggestWords
             {
                 get { return suggestWords; }
