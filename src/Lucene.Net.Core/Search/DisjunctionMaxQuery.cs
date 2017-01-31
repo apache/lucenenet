@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
         }
 
         /// <returns> the disjuncts. </returns>
-        public virtual List<Query> Disjuncts
+        public virtual IList<Query> Disjuncts
         {
             get
             {
