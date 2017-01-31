@@ -308,7 +308,7 @@ namespace Lucene.Net.Store
         /// <seealso cref="#writeString(String) String"/>.
         /// </summary>
         /// <param name="set"> Input set. May be null (equivalent to an empty set) </param>
-        public virtual void WriteStringSet(ISet<string> set)
+        public virtual void WriteStringSet(ICollection<string> set)
         {
             if (set == null)
             {

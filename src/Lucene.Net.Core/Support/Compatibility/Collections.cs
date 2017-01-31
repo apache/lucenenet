@@ -87,19 +87,9 @@ namespace Lucene.Net
             list[index2] = tmp;
         }
 
-        public static IList<T> UnmodifiableList<T>(IEnumerable<T> items)
+        public static IList<T> UnmodifiableList<T>(IList<T> list)
         {
-            return ImmutableList.Create<T>(items.ToArray()); // LUCENENET TODO: Immutable != Unmodifiable
-        }
-
-        public static IList<T> UnmodifiableList<T>(List<T> items)
-        {
-            return items.AsReadOnly();
-        }
-
-        public static ISet<T> UnmodifiableSet<T>(IEnumerable<T> items)
-        {
-            return ImmutableHashSet.Create<T>(items.ToArray()); // LUCENENET TODO: Immutable != Unmodifiable
+            return new UnmodifiableListImpl<T>(list);
         }
 
         public static IDictionary<TKey, TValue> UnmodifiableMap<TKey, TValue>(IDictionary<TKey, TValue> d)
@@ -107,6 +97,10 @@ namespace Lucene.Net
             return new UnmodifiableDictionary<TKey, TValue>(d);
         }
 
+        public static ICollection<T> UnmodifiableSet<T>(ICollection<T> list)
+        {
+            return new UnmodifiableSetImpl<T>(list);
+        }
 
         #region Nested Types
 
@@ -378,6 +372,100 @@ namespace Lucene.Net
 
         #endregion ReverseComparer2
 
+        #region UnmodifiableListImpl
+
+        private class UnmodifiableListImpl<T> : IList<T>
+        {
+            private readonly IList<T> list;
+
+            public UnmodifiableListImpl(IList<T> list)
+            {
+                if (list == null)
+                    throw new ArgumentNullException("list");
+                this.list = list;
+            }
+
+            public T this[int index]
+            {
+                get
+                {
+                    return list[index];
+                }
+                set
+                {
+                    throw new InvalidOperationException("Unable to modify this list.");
+                }
+            }
+
+            public int Count
+            {
+                get
+                {
+                    return list.Count;
+                }
+            }
+
+            public bool IsReadOnly
+            {
+                get
+                {
+                    return true;
+                }
+            }
+
+            public void Add(T item)
+            {
+                throw new InvalidOperationException("Unable to modify this list.");
+            }
+
+            public void Clear()
+            {
+                throw new InvalidOperationException("Unable to modify this list.");
+            }
+
+            public bool Contains(T item)
+            {
+                return list.Contains(item);
+            }
+
+            public void CopyTo(T[] array, int arrayIndex)
+            {
+                list.CopyTo(array, arrayIndex);
+            }
+
+            public IEnumerator<T> GetEnumerator()
+            {
+                return list.GetEnumerator();
+            }
+
+            public int IndexOf(T item)
+            {
+                return list.IndexOf(item);
+            }
+
+            public void Insert(int index, T item)
+            {
+                throw new InvalidOperationException("Unable to modify this list.");
+            }
+
+            public bool Remove(T item)
+            {
+                throw new InvalidOperationException("Unable to modify this list.");
+            }
+
+            public void RemoveAt(int index)
+            {
+                throw new InvalidOperationException("Unable to modify this list.");
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+        }
+
+        #endregion UnmodifiableListImpl
+
         #region UnmodifiableDictionary
 
         private class UnmodifiableDictionary<TKey, TValue> : IDictionary<TKey, TValue>
@@ -485,6 +573,71 @@ namespace Lucene.Net
         }
 
         #endregion UnmodifiableDictionary
+
+        #region UnmodifiableSetImpl
+
+        private class UnmodifiableSetImpl<T> : ICollection<T>
+        {
+            private readonly ICollection<T> set;
+            public UnmodifiableSetImpl(ICollection<T> set)
+            {
+                if (set == null)
+                    throw new ArgumentNullException("set");
+                this.set = set;
+            }
+            public int Count
+            {
+                get
+                {
+                    return set.Count;
+                }
+            }
+
+            public bool IsReadOnly
+            {
+                get
+                {
+                    return true;
+                }
+            }
+
+            public void Add(T item)
+            {
+                throw new InvalidOperationException("Unable to modify this set.");
+            }
+
+            public void Clear()
+            {
+                throw new InvalidOperationException("Unable to modify this set.");
+            }
+
+            public bool Contains(T item)
+            {
+                return set.Contains(item);
+            }
+
+            public void CopyTo(T[] array, int arrayIndex)
+            {
+                set.CopyTo(array, arrayIndex);
+            }
+
+            public IEnumerator<T> GetEnumerator()
+            {
+                return set.GetEnumerator();
+            }
+
+            public bool Remove(T item)
+            {
+                throw new InvalidOperationException("Unable to modify this set.");
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+        }
+
+        #endregion
 
         #endregion Nested Types
     }
