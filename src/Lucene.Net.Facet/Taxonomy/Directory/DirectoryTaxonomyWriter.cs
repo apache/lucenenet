@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.IO;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
@@ -979,7 +980,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             /// needed. Calling it will also free all resources that the map might
             /// be holding (such as temporary disk space), other than the returned int[].
             /// </summary>
-            int[] Map { get; }
+            int[] GetMap();
         }
 
         /// <summary>
@@ -1018,12 +1019,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             public void AddDone() // nothing to do
             {
             }
-            public int[] Map
+
+            public int[] GetMap()
             {
-                get
-                {
-                    return map;
-                }
+                return map.ToArray(); // LUCENENET specific: Since this is clearly not meant to be written to, we are cloning the array
             }
         }
 
@@ -1067,37 +1066,34 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             int[] map = null;
 
-            public int[] Map
+            public int[] GetMap()
             {
-                get
+                if (map != null)
                 {
-                    if (map != null)
-                    {
-                        return map;
-                    }
-                    AddDone(); // in case this wasn't previously called
-
-                    var ifs = new FileStream(tmpfile, FileMode.OpenOrCreate, FileAccess.Read);
-                    var @in = new InputStreamDataInput(ifs);
-                    map = new int[@in.ReadInt()];
-                    // NOTE: The current code assumes here that the map is complete,
-                    // i.e., every ordinal gets one and exactly one value. Otherwise,
-                    // we may run into an EOF here, or vice versa, not read everything.
-                    for (int i = 0; i < map.Length; i++)
-                    {
-                        int origordinal = @in.ReadInt();
-                        int newordinal = @in.ReadInt();
-                        map[origordinal] = newordinal;
-                    }
-                    @in.Dispose();
-
-                    // Delete the temporary file, which is no longer needed.
-                    if (File.Exists(tmpfile))
-                    {
-                        File.Delete(tmpfile);
-                    }
                     return map;
                 }
+                AddDone(); // in case this wasn't previously called
+
+                var ifs = new FileStream(tmpfile, FileMode.OpenOrCreate, FileAccess.Read);
+                var @in = new InputStreamDataInput(ifs);
+                map = new int[@in.ReadInt()];
+                // NOTE: The current code assumes here that the map is complete,
+                // i.e., every ordinal gets one and exactly one value. Otherwise,
+                // we may run into an EOF here, or vice versa, not read everything.
+                for (int i = 0; i < map.Length; i++)
+                {
+                    int origordinal = @in.ReadInt();
+                    int newordinal = @in.ReadInt();
+                    map[origordinal] = newordinal;
+                }
+                @in.Dispose();
+
+                // Delete the temporary file, which is no longer needed.
+                if (File.Exists(tmpfile))
+                {
+                    File.Delete(tmpfile);
+                }
+                return map;
             }
         }
 

@@ -129,7 +129,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 var srcTR = new DirectoryTaxonomyReader(src);
                 try
                 {
-                    var map = ordMap.Map;
+                    var map = ordMap.GetMap();
 
                     // validate taxo sizes
                     int srcSize = srcTR.Count;
