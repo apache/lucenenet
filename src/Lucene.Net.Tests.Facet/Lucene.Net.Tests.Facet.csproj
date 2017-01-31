@@ -58,6 +58,7 @@
     <Compile Include="Taxonomy\TestTaxonomyFacetSumValueSource.cs" />
     <Compile Include="Taxonomy\WriterCache\TestCharBlockArray.cs" />
     <Compile Include="Taxonomy\WriterCache\TestCompactLabelToOrdinal.cs" />
+    <Compile Include="TestApiConsistency.cs" />
     <Compile Include="TestDrillDownQuery.cs" />
     <Compile Include="TestDrillSideways.cs" />
     <Compile Include="TestFacetsConfig.cs" />
