@@ -711,7 +711,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENENET specific property for accessing segments private field
-        public List<SegmentCommitInfo> Segments
+        public IList<SegmentCommitInfo> Segments
         {
             get { return segments; }
         }
