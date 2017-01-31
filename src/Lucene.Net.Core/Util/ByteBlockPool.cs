@@ -1,7 +1,8 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Lucene.Net.Support;
+using System.Linq;
 
 namespace Lucene.Net.Util
 {
@@ -63,7 +64,7 @@ namespace Lucene.Net.Util
 
             public abstract void RecycleByteBlocks(byte[][] blocks, int start, int end);
 
-            public virtual void RecycleByteBlocks(List<byte[]> blocks)
+            public virtual void RecycleByteBlocks(IList<byte[]> blocks)
             {
                 var b = blocks.ToArray();
                 RecycleByteBlocks(b, 0, b.Length);
