@@ -666,7 +666,6 @@
     <Compile Include="Support\TimeHelper.cs" />
     <Compile Include="Support\TreeDictionary.cs" />
     <Compile Include="Support\TreeSet.cs" />
-    <Compile Include="Support\UnmodifiableDictionary.cs" />
     <Compile Include="Support\CloseableThreadLocalProfiler.cs" />
     <Compile Include="Support\Compatibility\ConcurrentDictionary.cs" />
     <Compile Include="Support\Compatibility\Func.cs" />
