@@ -609,7 +609,6 @@
     <Compile Include="Support\AttributeItem.cs" />
     <Compile Include="Support\BitArrayExtensions.cs" />
     <Compile Include="Support\BufferExceptions.cs" />
-    <Compile Include="Support\BuildType.cs" />
     <Compile Include="Support\BundleResourceManagerFactory.cs" />
     <Compile Include="Support\ByteArrayOutputStream.cs" />
     <Compile Include="Support\ByteBuffer.cs" />
