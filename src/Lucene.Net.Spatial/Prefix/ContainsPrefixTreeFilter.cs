@@ -290,12 +290,38 @@ namespace Lucene.Net.Spatial.Prefix
                 }
             }
 
-            private sealed class _DocIdSetIterator_225 : DocIdSetIterator
+            public override DocIdSetIterator GetIterator()
+            {
+                if (Count == 0)
+                {
+                    return null;
+                }
+                //copy the unsorted values to a new array then sort them
+                int d = 0;
+                int[] docs = new int[intSet.Count];
+                foreach (int v in intSet.Keys)
+                {
+                    if (v == intSet.EmptyVal)
+                    {
+                        continue;
+                    }
+                    docs[d++] = v;
+                }
+                Debug.Assert(d == intSet.Count);
+                int size = d;
+                //sort them
+                Array.Sort(docs, 0, size);
+                return new DocIdSetIteratorAnonymousHelper(size, docs);
+            }
+
+            #region Nested Type: DocIdSetIteratorAnonymousHelper
+
+            private sealed class DocIdSetIteratorAnonymousHelper : DocIdSetIterator
             {
                 private readonly int size;
                 private readonly int[] docs;
 
-                public _DocIdSetIterator_225(int size, int[] docs)
+                public DocIdSetIteratorAnonymousHelper(int size, int[] docs)
                 {
                     this.size = size;
                     this.docs = docs;
@@ -340,29 +366,7 @@ namespace Lucene.Net.Spatial.Prefix
                 }
             }
 
-            public override DocIdSetIterator GetIterator()
-            {
-                if (Count == 0)
-                {
-                    return null;
-                }
-                //copy the unsorted values to a new array then sort them
-                int d = 0;
-                int[] docs = new int[intSet.Count];
-                foreach (int v in intSet.Keys)
-                {
-                    if (v == intSet.EmptyVal)
-                    {
-                        continue;
-                    }
-                    docs[d++] = v;
-                }
-                Debug.Assert(d == intSet.Count);
-                int size = d;
-                //sort them
-                Array.Sort(docs, 0, size);
-                return new _DocIdSetIterator_225(size, docs);
-            }
+            #endregion
         }
     }
 }
