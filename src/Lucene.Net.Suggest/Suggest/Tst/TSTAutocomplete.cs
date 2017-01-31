@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         ///          index of current character to be searched while traversing through
         ///          the prefix in TST. </param>
         /// <returns> suggest list of auto-completed keys for the given prefix query. </returns>
-        public virtual List<TernaryTreeNode> PrefixCompletion(TernaryTreeNode root, string s, int x)
+        public virtual IList<TernaryTreeNode> PrefixCompletion(TernaryTreeNode root, string s, int x)
         {
 
             TernaryTreeNode p = root;

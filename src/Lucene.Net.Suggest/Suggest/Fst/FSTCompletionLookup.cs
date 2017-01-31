@@ -249,7 +249,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             return (int)value;
         }
 
-        public override List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool higherWeightsFirst, int num)
+        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool higherWeightsFirst, int num)
         {
             if (contexts != null)
             {

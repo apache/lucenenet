@@ -225,7 +225,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         ///          At most this number of suggestions will be returned. </param>
         /// <returns> Returns the suggestions, sorted by their approximated weight first
         ///         (decreasing) and then alphabetically (UTF-8 codepoint order). </returns>
-        public virtual List<Completion> DoLookup(string key, int num)
+        public virtual IList<Completion> DoLookup(string key, int num)
         {
             if (key.Length == 0 || automaton == null)
             {

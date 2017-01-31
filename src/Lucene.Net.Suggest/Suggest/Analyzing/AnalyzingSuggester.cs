@@ -705,7 +705,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        public override List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             Debug.Assert(num > 0);
 
@@ -757,9 +757,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 var scratchArc = new FST.Arc<PairOutputs<long?, BytesRef>.Pair>();
 
-                List<LookupResult> results = new List<LookupResult>();
+                IList<LookupResult> results = new List<LookupResult>();
 
-                List<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths =
+                IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths =
                     FSTUtil.IntersectPrefixPaths(ConvertAutomaton(lookupAutomaton), fst);
 
                 if (exactFirst)
@@ -939,8 +939,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Returns all prefix paths to initialize the search.
         /// </summary>
-        protected internal virtual List<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> GetFullPrefixPaths(
-            List<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths, Automaton lookupAutomaton,
+        protected internal virtual IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> GetFullPrefixPaths(
+            IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths, Automaton lookupAutomaton,
             FST<PairOutputs<long?, BytesRef>.Pair> fst)
         {
             return prefixPaths;

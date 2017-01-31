@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Enumerates all minimal prefix paths in the automaton that also intersect the <see cref="FST"/>,
         /// accumulating the <see cref="FST"/> end node and output for each path.
         /// </summary>
-        public static List<Path<T>> IntersectPrefixPaths<T>(Automaton a, FST<T> fst)
+        public static IList<Path<T>> IntersectPrefixPaths<T>(Automaton a, FST<T> fst)
         {
             Debug.Assert(a.IsDeterministic);
             IList<Path<T>> queue = new List<Path<T>>();

@@ -675,7 +675,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         }
 
         /// <summary>
-        /// Returns a <see cref="List{String}"/> of keys that almost match the argument key.
+        /// Returns a <see cref="IList{String}"/> of keys that almost match the argument key.
         /// Keys returned will have exactly diff characters that do not match the
         /// target key, where diff is equal to the last value set
         /// to the <see cref="MatchAlmostDiff"/> property.
@@ -688,14 +688,14 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// </summary>
         /// <param name="key">
         ///          The target key. </param>
-        /// <returns> A <see cref="List{String}"/> with the results. </returns>
-        public virtual List<string> MatchAlmost(string key)
+        /// <returns> A <see cref="IList{String}"/> with the results. </returns>
+        public virtual IList<string> MatchAlmost(string key)
         {
             return MatchAlmost(key, defaultNumReturnValues);
         }
 
         /// <summary>
-        /// Returns a <see cref="List{String}"/> of keys that almost match the argument key.
+        /// Returns a <see cref="IList{String}"/> of keys that almost match the argument key.
         /// Keys returned will have exactly diff characters that do not match the
         /// target key, where diff is equal to the last value set
         /// to the <see cref="MatchAlmostDiff"/> property.
@@ -708,8 +708,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// </summary>
         /// <param name="key"> The target key. </param>
         /// <param name="numReturnValues"> The maximum number of values returned by this method. </param>
-        /// <returns> A <see cref="List{String}"/> with the results </returns>
-        public virtual List<string> MatchAlmost(string key, int numReturnValues)
+        /// <returns> A <see cref="IList{String}"/> with the results </returns>
+        public virtual IList<string> MatchAlmost(string key, int numReturnValues)
         {
             return MatchAlmostRecursion(rootNode, 0, matchAlmostDiff, key, ((numReturnValues < 0) ? -1 : numReturnValues), new List<string>(), false);
         }
@@ -736,15 +736,15 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          <see cref="MatchAlmostDiff"/> number of mismatched letters. </param>
         /// <param name="matchAlmostKey">
         ///          The key being searched. </param>
-        /// <returns> A <see cref="List{String}"/> with the results. </returns>
-        private List<string> MatchAlmostRecursion(TSTNode currentNode, int charIndex, int d, string matchAlmostKey, int matchAlmostNumReturnValues, List<string> matchAlmostResult2, bool upTo)
+        /// <returns> A <see cref="IList{String}"/> with the results. </returns>
+        private IList<string> MatchAlmostRecursion(TSTNode currentNode, int charIndex, int d, string matchAlmostKey, int matchAlmostNumReturnValues, IList<string> matchAlmostResult2, bool upTo)
         {
             if ((currentNode == null) || (matchAlmostNumReturnValues != -1 && matchAlmostResult2.Count >= matchAlmostNumReturnValues) || (d < 0) || (charIndex >= matchAlmostKey.Length))
             {
                 return matchAlmostResult2;
             }
             int charComp = CompareCharsAlphabetically(matchAlmostKey[charIndex], currentNode.splitchar, this.culture);
-            List<string> matchAlmostResult = matchAlmostResult2;
+            IList<string> matchAlmostResult = matchAlmostResult2;
             if ((d > 0) || (charComp < 0))
             {
                 matchAlmostResult = MatchAlmostRecursion(currentNode.relatives[TSTNode.LOKID], charIndex, d, matchAlmostKey, matchAlmostNumReturnValues, matchAlmostResult, upTo);
@@ -764,28 +764,28 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         }
 
         /// <summary>
-        /// Returns an alphabetical <see cref="List{String}"/> of all keys in the trie that
+        /// Returns an alphabetical <see cref="IList{String}"/> of all keys in the trie that
         /// begin with a given prefix. Only keys for nodes having non-null data are
-        /// included in the <see cref="List{String}"/>.
+        /// included in the <see cref="IList{String}"/>.
         /// </summary>
         /// <param name="prefix"> Each key returned from this method will begin with the characters
         ///          in prefix. </param>
-        /// <returns> A <see cref="List{String}"/> with the results. </returns>
-        public virtual List<string> MatchPrefix(string prefix)
+        /// <returns> A <see cref="IList{String}"/> with the results. </returns>
+        public virtual IList<string> MatchPrefix(string prefix)
         {
             return MatchPrefix(prefix, defaultNumReturnValues);
         }
 
         /// <summary>
-        /// Returns an alphabetical <see cref="List{String}"/> of all keys in the trie that
+        /// Returns an alphabetical <see cref="IList{String}"/> of all keys in the trie that
         /// begin with a given prefix. Only keys for nodes having non-null data are
-        /// included in the <see cref="List{String}"/>.
+        /// included in the <see cref="IList{String}"/>.
         /// </summary>
         /// <param name="prefix"> Each key returned from this method will begin with the characters
         ///          in prefix. </param>
         /// <param name="numReturnValues"> The maximum number of values returned from this method. </param>
-        /// <returns> A <see cref="List{String}"/> with the results </returns>
-        public virtual List<string> MatchPrefix(string prefix, int numReturnValues)
+        /// <returns> A <see cref="IList{String}"/> with the results </returns>
+        public virtual IList<string> MatchPrefix(string prefix, int numReturnValues)
         {
             List<string> sortKeysResult = new List<string>();
             TSTNode startNode = GetNode(prefix);
@@ -961,8 +961,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          The top node defining the subtrie to be searched. </param>
         /// <param name="numReturnValues">
         ///          The maximum number of values returned from this method. </param>
-        /// <returns> A <see cref="List{String}"/> with the results. </returns>
-        protected internal virtual List<string> SortKeys(TSTNode startNode, int numReturnValues)
+        /// <returns> A <see cref="IList{String}"/> with the results. </returns>
+        protected internal virtual IList<string> SortKeys(TSTNode startNode, int numReturnValues)
         {
             return SortKeysRecursion(startNode, ((numReturnValues < 0) ? -1 : numReturnValues), new List<string>());
         }
@@ -983,14 +983,14 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          The maximum number of values in the result. </param>
         /// <param name="sortKeysResult2">
         ///          The results so far. </param>
-        /// <returns> A <see cref="List{String}"/> with the results. </returns>
-        private List<string> SortKeysRecursion(TSTNode currentNode, int sortKeysNumReturnValues, List<string> sortKeysResult2)
+        /// <returns> A <see cref="IList{String}"/> with the results. </returns>
+        private IList<string> SortKeysRecursion(TSTNode currentNode, int sortKeysNumReturnValues, IList<string> sortKeysResult2)
         {
             if (currentNode == null)
             {
                 return sortKeysResult2;
             }
-            List<string> sortKeysResult = SortKeysRecursion(currentNode.relatives[TSTNode.LOKID], sortKeysNumReturnValues, sortKeysResult2);
+            IList<string> sortKeysResult = SortKeysRecursion(currentNode.relatives[TSTNode.LOKID], sortKeysNumReturnValues, sortKeysResult2);
             if (sortKeysNumReturnValues != -1 && sortKeysResult.Count >= sortKeysNumReturnValues)
             {
                 return sortKeysResult;

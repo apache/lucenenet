@@ -115,13 +115,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             this.numFactor = numFactor;
         }
 
-        public override List<Lookup.LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override IList<Lookup.LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             // here we multiply the number of searched element by the defined factor
             return base.DoLookup(key, contexts, onlyMorePopular, num * numFactor);
         }
 
-        public override List<Lookup.LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num, bool allTermsRequired, bool doHighlight)
+        public override IList<Lookup.LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num, bool allTermsRequired, bool doHighlight)
         {
             // here we multiply the number of searched element by the defined factor
             return base.DoLookup(key, contexts, num * numFactor, allTermsRequired, doHighlight);
@@ -141,7 +141,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        protected internal override List<Lookup.LookupResult> CreateResults(IndexSearcher searcher, TopFieldDocs hits,
+        protected internal override IList<Lookup.LookupResult> CreateResults(IndexSearcher searcher, TopFieldDocs hits,
             int num, string key, bool doHighlight, IEnumerable<string> matchedTokens, string prefixToken)
         {
 

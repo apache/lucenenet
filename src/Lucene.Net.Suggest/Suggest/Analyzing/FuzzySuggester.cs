@@ -171,8 +171,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             this.unicodeAware = unicodeAware;
         }
 
-        protected internal override List<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> GetFullPrefixPaths(
-            List<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths, 
+        protected internal override IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> GetFullPrefixPaths(
+            IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths, 
             Automaton lookupAutomaton, 
             FST<PairOutputs<long?, BytesRef>.Pair> fst)
         {

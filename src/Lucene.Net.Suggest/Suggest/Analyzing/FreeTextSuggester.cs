@@ -483,19 +483,19 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return true;
         }
 
-        public override List<LookupResult> DoLookup(string key, bool onlyMorePopular, int num) // ignored
+        public override IList<LookupResult> DoLookup(string key, bool onlyMorePopular, int num) // ignored
         {
             return DoLookup(key, null, onlyMorePopular, num);
         }
 
         /// <summary>
         /// Lookup, without any context. </summary>
-        public virtual List<LookupResult> DoLookup(string key, int num)
+        public virtual IList<LookupResult> DoLookup(string key, int num)
         {
             return DoLookup(key, null, true, num);
         }
 
-        public override List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, /* ignored */ bool onlyMorePopular, int num)
+        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, /* ignored */ bool onlyMorePopular, int num)
         {
             return DoLookup(key, contexts, num);
         }
@@ -525,7 +525,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Retrieve suggestions.
         /// </summary>
-        public virtual List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num)
+        public virtual IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num)
         {
             if (contexts != null)
             {
