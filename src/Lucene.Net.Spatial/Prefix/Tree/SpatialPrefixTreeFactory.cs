@@ -36,9 +36,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         public const string MAX_LEVELS = "maxLevels";
         public const string MAX_DIST_ERR = "maxDistErr";
 
-        protected internal IDictionary<string, string> args;
-        protected internal SpatialContext ctx;
-        protected internal int? maxLevels;
+        protected IDictionary<string, string> m_args;
+        protected SpatialContext m_ctx;
+        protected int? m_maxLevels;
 
         /// <summary>The factory  is looked up via "prefixTree" in args, expecting "geohash" or "quad".</summary>
         /// <remarks>
@@ -79,24 +79,24 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         protected internal virtual void Init(IDictionary<string, string> args, SpatialContext ctx)
         {
-            this.args = args;
-            this.ctx = ctx;
+            this.m_args = args;
+            this.m_ctx = ctx;
             InitMaxLevels();
         }
 
         protected internal virtual void InitMaxLevels()
         {
             string mlStr;
-            if (args.TryGetValue(MAX_LEVELS, out mlStr))
+            if (m_args.TryGetValue(MAX_LEVELS, out mlStr))
             {
-                maxLevels = int.Parse(mlStr, CultureInfo.InvariantCulture);
+                m_maxLevels = int.Parse(mlStr, CultureInfo.InvariantCulture);
                 return;
             }
             double degrees;
             string maxDetailDistStr;
-            if (!args.TryGetValue(MAX_DIST_ERR, out maxDetailDistStr))
+            if (!m_args.TryGetValue(MAX_DIST_ERR, out maxDetailDistStr))
             {
-                if (!ctx.IsGeo)
+                if (!m_ctx.IsGeo)
                 {
                     return;
                 }
@@ -107,7 +107,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             {
                 degrees = double.Parse(maxDetailDistStr, CultureInfo.InvariantCulture);
             }
-            maxLevels = GetLevelForDistance(degrees);
+            m_maxLevels = GetLevelForDistance(degrees);
         }
 
         /// <summary>

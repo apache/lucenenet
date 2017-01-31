@@ -39,7 +39,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// So we need to move the reference here and also set it before running the normal constructor
         /// logic.
         /// </summary>
-        protected readonly SpatialPrefixTree outerInstance;
+        protected readonly SpatialPrefixTree m_outerInstance;
 
 
         public const byte LEAF_BYTE = (byte)('+');//NOTE: must sort before letters & numbers
@@ -58,7 +58,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// When set via <see cref="GetSubCells(IShape)">GetSubCells(filter)</see>, it is the relationship between this cell
         /// and the given shape filter.
         /// </summary>
-        protected internal SpatialRelation shapeRel;//set in GetSubCells(filter), and via SetLeaf().
+        protected SpatialRelation m_shapeRel;//set in GetSubCells(filter), and via SetLeaf().
 
         /// <summary>Always false for points.</summary>
         /// <remarks>
@@ -66,13 +66,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// to be provided because shapeRel is WITHIN or maxLevels or a detailLevel is
         /// hit.
         /// </remarks>
-        protected internal bool leaf;
+        protected bool m_leaf;
 
-        protected internal Cell(SpatialPrefixTree outerInstance, string token)
+        protected Cell(SpatialPrefixTree outerInstance, string token)
         {
             // LUCENENET specific - set the outer instance here
             // because overrides of Shape may require it
-            this.outerInstance = outerInstance;
+            this.m_outerInstance = outerInstance;
 
             //NOTE: must sort before letters & numbers
             //this is the only part of equality
@@ -92,7 +92,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             // LUCENENET specific - set the outer instance here
             // because overrides of Shape may require it
-            this.outerInstance = outerInstance;
+            this.m_outerInstance = outerInstance;
 
             //ensure any lazy instantiation completes to make this threadsafe
             this.bytes = bytes;
@@ -105,7 +105,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             Debug.Assert(Level != 0);
             token = null;
-            shapeRel = SpatialRelation.NOT_SET;
+            m_shapeRel = SpatialRelation.NOT_SET;
             this.bytes = bytes;
             b_off = off;
             b_len = len;
@@ -122,13 +122,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
             else
             {
-                leaf = false;
+                m_leaf = false;
             }
         }
 
         public virtual SpatialRelation ShapeRel
         {
-            get { return shapeRel; }
+            get { return m_shapeRel; }
         }
 
         /// <summary>For points, this is always false.</summary>
@@ -138,14 +138,14 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// </remarks>
         public virtual bool IsLeaf
         {
-            get { return leaf; }
+            get { return m_leaf; }
         }
 
         /// <summary>Note: not supported at level 0.</summary>
         public virtual void SetLeaf()
         {
             Debug.Assert(Level != 0);
-            leaf = true;
+            m_leaf = true;
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             if (shapeFilter is IPoint)
             {
                 Cell subCell = GetSubCell((IPoint)shapeFilter);
-                subCell.shapeRel = SpatialRelation.CONTAINS;
+                subCell.m_shapeRel = SpatialRelation.CONTAINS;
 #if !NET35
                 return new ReadOnlyCollection<Cell>(new[] { subCell });
 #else
@@ -230,7 +230,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 {
                     continue;
                 }
-                cell.shapeRel = rel;
+                cell.m_shapeRel = rel;
                 if (rel == SpatialRelation.WITHIN)
                 {
                     cell.SetLeaf();

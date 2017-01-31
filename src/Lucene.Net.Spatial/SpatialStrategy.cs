@@ -51,7 +51,7 @@ namespace Lucene.Net.Spatial
     /// </summary>
     public abstract class SpatialStrategy
     {
-        protected readonly SpatialContext ctx;
+        protected readonly SpatialContext m_ctx;
         private readonly string fieldName;
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Lucene.Net.Spatial
         {
             if (ctx == null)
                 throw new ArgumentException("ctx is required", "ctx");
-            this.ctx = ctx;
+            this.m_ctx = ctx;
             if (string.IsNullOrEmpty(fieldName))
                 throw new ArgumentException("fieldName is required", "fieldName");
             this.fieldName = fieldName;
@@ -69,7 +69,7 @@ namespace Lucene.Net.Spatial
 
         public virtual SpatialContext SpatialContext
         {
-            get { return ctx; }
+            get { return m_ctx; }
         }
 
         /// <summary>
@@ -154,8 +154,8 @@ namespace Lucene.Net.Spatial
         public ValueSource MakeRecipDistanceValueSource(IShape queryShape)
         {
             IRectangle bbox = queryShape.BoundingBox;
-            double diagonalDist = ctx.DistCalc.Distance(
-                ctx.MakePoint(bbox.MinX, bbox.MinY), bbox.MaxX, bbox.MaxY);
+            double diagonalDist = m_ctx.DistCalc.Distance(
+                m_ctx.MakePoint(bbox.MinX, bbox.MinY), bbox.MaxX, bbox.MaxY);
             double distToEdge = diagonalDist * 0.5;
             float c = (float)distToEdge * 0.1f; //one tenth
             return new ReciprocalFloatFunction(MakeDistanceValueSource(queryShape.Center, 1.0), 1f, c, c);
@@ -163,7 +163,7 @@ namespace Lucene.Net.Spatial
 
         public override string ToString()
         {
-            return GetType().Name + " field:" + fieldName + " ctx=" + ctx;
+            return GetType().Name + " field:" + fieldName + " ctx=" + m_ctx;
         }
     }
 }

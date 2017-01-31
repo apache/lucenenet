@@ -52,8 +52,8 @@ namespace Lucene.Net.Spatial.Prefix
                 throw new UnsupportedSpatialOperation(op);
             }
             IShape shape = args.Shape;
-            int detailLevel = grid.GetLevelForDistance(args.ResolveDistErr(ctx, distErrPct));
-            IList<Cell> cells = grid.GetCells(shape, detailLevel, false /*no parents*/, true /*simplify*/);
+            int detailLevel = m_grid.GetLevelForDistance(args.ResolveDistErr(m_ctx, m_distErrPct));
+            IList<Cell> cells = m_grid.GetCells(shape, detailLevel, false /*no parents*/, true /*simplify*/);
             var terms = new BytesRef[cells.Count];
             int i = 0;
             foreach (Cell cell in cells)

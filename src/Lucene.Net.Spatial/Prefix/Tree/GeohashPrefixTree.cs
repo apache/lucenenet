@@ -42,13 +42,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             protected internal override int GetLevelForDistance(double degrees)
             {
-                var grid = new GeohashPrefixTree(ctx, GeohashPrefixTree.MaxLevelsPossible);
+                var grid = new GeohashPrefixTree(m_ctx, GeohashPrefixTree.MaxLevelsPossible);
                 return grid.GetLevelForDistance(degrees);
             }
 
             protected internal override SpatialPrefixTree NewSPT()
             {
-                return new GeohashPrefixTree(ctx, maxLevels.HasValue ? maxLevels.Value : GeohashPrefixTree.MaxLevelsPossible);
+                return new GeohashPrefixTree(m_ctx, m_maxLevels.HasValue ? m_maxLevels.Value : GeohashPrefixTree.MaxLevelsPossible);
             }
         }
 
@@ -79,11 +79,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             if (dist == 0)
             {
-                return maxLevels;//short circuit
+                return m_maxLevels;//short circuit
             }
             
             int level = GeohashUtils.LookupHashLenForWidthHeight(dist, dist);
-            return Math.Max(Math.Min(level, maxLevels), 1);
+            return Math.Max(Math.Min(level, m_maxLevels), 1);
         }
 
         protected internal override Cell GetCell(IPoint p, int level)
@@ -128,7 +128,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 IList<Cell> cells = new List<Cell>(hashes.Length);
                 foreach (string hash in hashes)
                 {
-                    cells.Add(new GhCell((GeohashPrefixTree)outerInstance, hash));
+                    cells.Add(new GhCell((GeohashPrefixTree)m_outerInstance, hash));
                 }
                 return cells;
             }
@@ -140,7 +140,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             public override Cell GetSubCell(IPoint p)
             {
-                return outerInstance.GetCell(p, Level + 1);//not performant!
+                return m_outerInstance.GetCell(p, Level + 1);//not performant!
             }
 
             private IShape shape;//cache
@@ -151,7 +151,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 {
                     if (shape == null)
                     {
-                        shape = GeohashUtils.DecodeBoundary(Geohash, outerInstance.ctx);
+                        shape = GeohashUtils.DecodeBoundary(Geohash, m_outerInstance.m_ctx);
                     }
                     return shape;
                 }
@@ -159,7 +159,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             public override IPoint Center
             {
-                get { return GeohashUtils.Decode(Geohash, outerInstance.ctx); }
+                get { return GeohashUtils.Decode(Geohash, m_outerInstance.m_ctx); }
             }
 
             private string Geohash

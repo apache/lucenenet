@@ -44,29 +44,29 @@ namespace Lucene.Net.Spatial.Prefix
         /// increase performance if you don't care about that circumstance (such as if your indexed
         /// data doesn't even have such conditions).  See LUCENE-5062.
         /// </summary>
-        protected readonly bool multiOverlappingIndexedShapes;
+        protected readonly bool m_multiOverlappingIndexedShapes;
 
         public ContainsPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, int detailLevel, bool multiOverlappingIndexedShapes)
             : base(queryShape, fieldName, grid, detailLevel)
         {
-            this.multiOverlappingIndexedShapes = multiOverlappingIndexedShapes;
+            this.m_multiOverlappingIndexedShapes = multiOverlappingIndexedShapes;
         }
 
         public override bool Equals(object o)
         {
             if (!base.Equals(o))
                 return false;
-            return multiOverlappingIndexedShapes == ((ContainsPrefixTreeFilter)o).multiOverlappingIndexedShapes;
+            return m_multiOverlappingIndexedShapes == ((ContainsPrefixTreeFilter)o).m_multiOverlappingIndexedShapes;
         }
 
         public override int GetHashCode()
         {
-            return base.GetHashCode() + (multiOverlappingIndexedShapes ? 1 : 0);
+            return base.GetHashCode() + (m_multiOverlappingIndexedShapes ? 1 : 0);
         }
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
-            return new ContainsVisitor(this, context, acceptDocs).Visit(grid.WorldCell, acceptDocs);
+            return new ContainsVisitor(this, context, acceptDocs).Visit(m_grid.WorldCell, acceptDocs);
         }
 
         private class ContainsVisitor : BaseTermsEnumTraverser
@@ -83,24 +83,24 @@ namespace Lucene.Net.Spatial.Prefix
             /// <exception cref="System.IO.IOException"></exception>
             internal SmallDocSet Visit(Cell cell, IBits acceptContains)
             {
-                if (termsEnum == null)
+                if (m_termsEnum == null)
                 {
                     //signals all done
                     return null;
                 }
 
-                ContainsPrefixTreeFilter outerInstance = (ContainsPrefixTreeFilter)base.outerInstance;
+                ContainsPrefixTreeFilter outerInstance = (ContainsPrefixTreeFilter)base.m_outerInstance;
 
                 //Leaf docs match all query shape
                 SmallDocSet leafDocs = GetLeafDocs(cell, acceptContains);
                 // Get the AND of all child results (into combinedSubResults)
                 SmallDocSet combinedSubResults = null;
                 //   Optimization: use null subCellsFilter when we know cell is within the query shape.
-                IShape subCellsFilter = outerInstance.queryShape;
+                IShape subCellsFilter = outerInstance.m_queryShape;
                 if (cell.Level != 0 && ((cell.ShapeRel == SpatialRelation.NOT_SET || cell.ShapeRel == SpatialRelation.WITHIN)))
                 {
                     subCellsFilter = null;
-                    Debug.Assert(cell.Shape.Relate(outerInstance.queryShape) == SpatialRelation.WITHIN);
+                    Debug.Assert(cell.Shape.Relate(outerInstance.m_queryShape) == SpatialRelation.WITHIN);
                 }
                 ICollection<Cell> subCells = cell.GetSubCells(subCellsFilter);
                 foreach (Cell subCell in subCells)
@@ -109,11 +109,11 @@ namespace Lucene.Net.Spatial.Prefix
                     {
                         combinedSubResults = null;
                     }
-                    else if (subCell.Level == outerInstance.detailLevel)
+                    else if (subCell.Level == outerInstance.m_detailLevel)
                     {
                         combinedSubResults = GetDocs(subCell, acceptContains);
                     }
-                    else if (!outerInstance.multiOverlappingIndexedShapes && 
+                    else if (!outerInstance.m_multiOverlappingIndexedShapes && 
                         subCell.ShapeRel == SpatialRelation.WITHIN)
                     {
                         combinedSubResults = GetLeafDocs(subCell, acceptContains); //recursion
@@ -148,9 +148,9 @@ namespace Lucene.Net.Spatial.Prefix
                 Debug.Assert(new BytesRef(cell.GetTokenBytes()).CompareTo(termBytes) > 0);
                 this.termBytes.Bytes = cell.GetTokenBytes();
                 this.termBytes.Length = this.termBytes.Bytes.Length;
-                if (termsEnum == null)
+                if (m_termsEnum == null)
                     return false;
-                return this.termsEnum.SeekExact(termBytes);
+                return this.m_termsEnum.SeekExact(termBytes);
             }
 
             private SmallDocSet GetDocs(Cell cell, IBits acceptContains)
@@ -167,15 +167,15 @@ namespace Lucene.Net.Spatial.Prefix
                 Debug.Assert(!leafCell.Equals(lastLeaf));//don't call for same leaf again
                 lastLeaf = leafCell;
 
-                if (termsEnum == null)
+                if (m_termsEnum == null)
                     return null;
-                BytesRef nextTerm = this.termsEnum.Next();
+                BytesRef nextTerm = this.m_termsEnum.Next();
                 if (nextTerm == null)
                 {
-                    termsEnum = null;//signals all done
+                    m_termsEnum = null;//signals all done
                     return null;
                 }
-                nextCell = outerInstance.grid.GetCell(nextTerm.Bytes, nextTerm.Offset, nextTerm.Length, this.nextCell);
+                nextCell = m_outerInstance.m_grid.GetCell(nextTerm.Bytes, nextTerm.Offset, nextTerm.Length, this.nextCell);
                 if (nextCell.Level == leafCell.Level && nextCell.IsLeaf)
                 {
                     return CollectDocs(acceptContains);
@@ -190,13 +190,13 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 SmallDocSet set = null;
 
-                docsEnum = termsEnum.Docs(acceptContains, docsEnum, DocsEnum.FLAG_NONE);
+                m_docsEnum = m_termsEnum.Docs(acceptContains, m_docsEnum, DocsEnum.FLAG_NONE);
                 int docid;
-                while ((docid = docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+                while ((docid = m_docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                 {
                     if (set == null)
                     {
-                        int size = this.termsEnum.DocFreq;
+                        int size = this.m_termsEnum.DocFreq;
                         if (size <= 0)
                         {
                             size = 16;

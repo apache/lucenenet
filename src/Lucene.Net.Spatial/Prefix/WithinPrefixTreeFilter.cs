@@ -81,7 +81,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 throw new ArgumentException("distErr must be > 0");
             }
-            SpatialContext ctx = grid.SpatialContext;
+            SpatialContext ctx = m_grid.SpatialContext;
             if (shape is IPoint)
             {
                 return ctx.MakeCircle((IPoint)shape, distErr);
@@ -158,8 +158,8 @@ namespace Lucene.Net.Spatial.Prefix
 
             protected internal override void Start()
             {
-                inside = new FixedBitSet(maxDoc);
-                outside = new FixedBitSet(maxDoc);
+                inside = new FixedBitSet(m_maxDoc);
+                outside = new FixedBitSet(m_maxDoc);
             }
 
             protected internal override DocIdSet Finish()
@@ -171,14 +171,14 @@ namespace Lucene.Net.Spatial.Prefix
             protected internal override IEnumerator<Cell> FindSubCellsToVisit(Cell cell)
             {
                 //use buffered query shape instead of orig.  Works with null too.
-                return cell.GetSubCells(((WithinPrefixTreeFilter)outerInstance).bufferedQueryShape).GetEnumerator();
+                return cell.GetSubCells(((WithinPrefixTreeFilter)m_outerInstance).bufferedQueryShape).GetEnumerator();
             }
 
             protected internal override bool Visit(Cell cell)
             {
                 //cell.relate is based on the bufferedQueryShape; we need to examine what
                 // the relation is against the queryShape
-                visitRelation = cell.Shape.Relate(outerInstance.queryShape);
+                visitRelation = cell.Shape.Relate(m_outerInstance.m_queryShape);
                 if (visitRelation == SpatialRelation.WITHIN)
                 {
                     CollectDocs(inside);
@@ -189,7 +189,7 @@ namespace Lucene.Net.Spatial.Prefix
                     CollectDocs(outside);
                     return false;
                 }
-                else if (cell.Level == outerInstance.detailLevel)
+                else if (cell.Level == m_outerInstance.m_detailLevel)
                 {
                     CollectDocs(inside);
                     return false;
@@ -201,8 +201,8 @@ namespace Lucene.Net.Spatial.Prefix
             protected internal override void VisitLeaf(Cell cell)
             {
                 //visitRelation is declared as a field, populated by visit() so we don't recompute it
-                Debug.Assert(outerInstance.detailLevel != cell.Level);
-                Debug.Assert(visitRelation == cell.Shape.Relate(outerInstance.queryShape));
+                Debug.Assert(m_outerInstance.m_detailLevel != cell.Level);
+                Debug.Assert(visitRelation == cell.Shape.Relate(m_outerInstance.m_queryShape));
                 if (AllCellsIntersectQuery(cell, visitRelation))
                 {
                     CollectDocs(inside);
@@ -221,9 +221,9 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 if (relate == SpatialRelation.NOT_SET)
                 {
-                    relate = cell.Shape.Relate(outerInstance.queryShape);
+                    relate = cell.Shape.Relate(m_outerInstance.m_queryShape);
                 }
-                if (cell.Level == outerInstance.detailLevel)
+                if (cell.Level == m_outerInstance.m_detailLevel)
                 {
                     return relate.Intersects();
                 }

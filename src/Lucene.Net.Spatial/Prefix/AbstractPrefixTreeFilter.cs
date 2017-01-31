@@ -30,17 +30,17 @@ namespace Lucene.Net.Spatial.Prefix
     /// </summary>
     public abstract class AbstractPrefixTreeFilter : Filter
     {
-        protected internal readonly IShape queryShape;
-        protected internal readonly string fieldName;
-        protected internal readonly SpatialPrefixTree grid;//not in equals/hashCode since it's implied for a specific field
-        protected internal readonly int detailLevel;
+        protected internal readonly IShape m_queryShape;
+        protected internal readonly string m_fieldName;
+        protected internal readonly SpatialPrefixTree m_grid;//not in equals/hashCode since it's implied for a specific field
+        protected internal readonly int m_detailLevel;
         
         public AbstractPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, int detailLevel)
         {
-            this.queryShape = queryShape;
-            this.fieldName = fieldName;
-            this.grid = grid;
-            this.detailLevel = detailLevel;
+            this.m_queryShape = queryShape;
+            this.m_fieldName = fieldName;
+            this.m_grid = grid;
+            this.m_detailLevel = detailLevel;
         }
 
         public override bool Equals(object o)
@@ -54,15 +54,15 @@ namespace Lucene.Net.Spatial.Prefix
                 return false;
             }
             var that = (AbstractPrefixTreeFilter)o;
-            if (detailLevel != that.detailLevel)
+            if (m_detailLevel != that.m_detailLevel)
             {
                 return false;
             }
-            if (!fieldName.Equals(that.fieldName))
+            if (!m_fieldName.Equals(that.m_fieldName))
             {
                 return false;
             }
-            if (!queryShape.Equals(that.queryShape))
+            if (!m_queryShape.Equals(that.m_queryShape))
             {
                 return false;
             }
@@ -71,9 +71,9 @@ namespace Lucene.Net.Spatial.Prefix
 
         public override int GetHashCode()
         {
-            int result = queryShape.GetHashCode();
-            result = 31 * result + fieldName.GetHashCode();
-            result = 31 * result + detailLevel;
+            int result = m_queryShape.GetHashCode();
+            result = 31 * result + m_fieldName.GetHashCode();
+            result = 31 * result + m_detailLevel;
             return result;
         }
 
@@ -85,36 +85,36 @@ namespace Lucene.Net.Spatial.Prefix
         /// </summary>
         public abstract class BaseTermsEnumTraverser
         {
-            protected readonly AbstractPrefixTreeFilter outerInstance;
-            protected readonly AtomicReaderContext context;
-            protected IBits acceptDocs;
-            protected readonly int maxDoc;
+            protected readonly AbstractPrefixTreeFilter m_outerInstance;
+            protected readonly AtomicReaderContext m_context;
+            protected IBits m_acceptDocs;
+            protected readonly int m_maxDoc;
 
-            protected TermsEnum termsEnum;//remember to check for null in getDocIdSet
-            protected DocsEnum docsEnum;
+            protected TermsEnum m_termsEnum;//remember to check for null in getDocIdSet
+            protected DocsEnum m_docsEnum;
             
             public BaseTermsEnumTraverser(AbstractPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs)
             {
-                this.outerInstance = outerInstance;
+                this.m_outerInstance = outerInstance;
                 
-                this.context = context;
+                this.m_context = context;
                 AtomicReader reader = context.AtomicReader;
-                this.acceptDocs = acceptDocs;
-                maxDoc = reader.MaxDoc;
-                Terms terms = reader.Terms(outerInstance.fieldName);
+                this.m_acceptDocs = acceptDocs;
+                m_maxDoc = reader.MaxDoc;
+                Terms terms = reader.Terms(outerInstance.m_fieldName);
                 if (terms != null)
                 {
-                    termsEnum = terms.GetIterator(null);
+                    m_termsEnum = terms.GetIterator(null);
                 }
             }
 
             protected virtual void CollectDocs(FixedBitSet bitSet)
             {
                 //WARN: keep this specialization in sync
-                Debug.Assert(termsEnum != null);
-                docsEnum = termsEnum.Docs(acceptDocs, docsEnum, DocsEnum.FLAG_NONE);
+                Debug.Assert(m_termsEnum != null);
+                m_docsEnum = m_termsEnum.Docs(m_acceptDocs, m_docsEnum, DocsEnum.FLAG_NONE);
                 int docid;
-                while ((docid = docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+                while ((docid = m_docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                 {
                     bitSet.Set(docid);
                 }

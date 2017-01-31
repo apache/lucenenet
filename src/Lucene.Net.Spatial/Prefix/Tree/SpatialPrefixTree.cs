@@ -41,30 +41,30 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// </remarks>
     public abstract class SpatialPrefixTree
     {
-        protected internal readonly int maxLevels;
+        protected readonly int m_maxLevels;
 
-        protected internal readonly SpatialContext ctx;
+        protected internal readonly SpatialContext m_ctx;
 
         public SpatialPrefixTree(SpatialContext ctx, int maxLevels)
         {
             Debug.Assert(maxLevels > 0);
-            this.ctx = ctx;
-            this.maxLevels = maxLevels;
+            this.m_ctx = ctx;
+            this.m_maxLevels = maxLevels;
         }
 
         public virtual SpatialContext SpatialContext
         {
-            get { return ctx; }
+            get { return m_ctx; }
         }
 
         public virtual int MaxLevels
         {
-            get { return maxLevels; }
+            get { return m_maxLevels; }
         }
 
         public override string ToString()
         {
-            return GetType().Name + "(maxLevels:" + maxLevels + ",ctx:" + ctx + ")";
+            return GetType().Name + "(maxLevels:" + m_maxLevels + ",ctx:" + m_ctx + ")";
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 throw new ArgumentException("Level must be in 1 to maxLevels range");
             }
             //TODO cache for each level
-            Cell cell = GetCell(ctx.WorldBounds.Center, level);
+            Cell cell = GetCell(m_ctx.WorldBounds.Center, level);
             IRectangle bbox = cell.Shape.BoundingBox;
             double width = bbox.Width;
             double height = bbox.Height;
@@ -190,7 +190,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             bool simplify)
         {
             //TODO consider an on-demand iterator -- it won't build up all cells in memory.
-            if (detailLevel > maxLevels)
+            if (detailLevel > m_maxLevels)
             {
                 throw new ArgumentException("detailLevel > maxLevels");
             }

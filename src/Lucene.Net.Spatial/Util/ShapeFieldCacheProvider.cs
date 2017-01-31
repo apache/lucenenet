@@ -42,14 +42,14 @@ namespace Lucene.Net.Spatial.Util
         private readonly WeakDictionary<IndexReader, ShapeFieldCache<T>> sidx =
             new WeakDictionary<IndexReader, ShapeFieldCache<T>>();
 
-        protected internal readonly int defaultSize;
-        protected internal readonly string shapeField;
+        protected internal readonly int m_defaultSize;
+        protected internal readonly string m_shapeField;
 
         public ShapeFieldCacheProvider(string shapeField, int defaultSize)
         {
             // it may be a List<T> or T
-            this.shapeField = shapeField;
-            this.defaultSize = defaultSize;
+            this.m_shapeField = shapeField;
+            this.m_defaultSize = defaultSize;
         }
 
         protected internal abstract T ReadShape(BytesRef term);
@@ -67,10 +67,10 @@ namespace Lucene.Net.Spatial.Util
                 }
                 /*long startTime = Runtime.CurrentTimeMillis();
 				log.Fine("Building Cache [" + reader.MaxDoc() + "]");*/
-                idx = new ShapeFieldCache<T>(reader.MaxDoc, defaultSize);
+                idx = new ShapeFieldCache<T>(reader.MaxDoc, m_defaultSize);
                 int count = 0;
                 DocsEnum docs = null;
-                Terms terms = reader.Terms(shapeField);
+                Terms terms = reader.Terms(m_shapeField);
                 TermsEnum te = null;
                 if (terms != null)
                 {

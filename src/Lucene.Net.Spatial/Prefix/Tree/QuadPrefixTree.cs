@@ -43,13 +43,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             protected internal override int GetLevelForDistance(double degrees)
             {
-                var grid = new QuadPrefixTree(ctx, MAX_LEVELS_POSSIBLE);
+                var grid = new QuadPrefixTree(m_ctx, MAX_LEVELS_POSSIBLE);
                 return grid.GetLevelForDistance(degrees);
             }
 
             protected internal override SpatialPrefixTree NewSPT()
             {
-                return new QuadPrefixTree(ctx, maxLevels.HasValue ? maxLevels.Value : MAX_LEVELS_POSSIBLE);
+                return new QuadPrefixTree(m_ctx, m_maxLevels.HasValue ? m_maxLevels.Value : MAX_LEVELS_POSSIBLE);
             }
         }
 
@@ -122,7 +122,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             // Format the number to min 3 integer digits and exactly 5 fraction digits
             const string FORMAT_STR = @"000.00000";
-            for (int i = 0; i < maxLevels; i++)
+            for (int i = 0; i < m_maxLevels; i++)
             {
                 @out.WriteLine(i + "]\t" + levelW[i].ToString(FORMAT_STR) + "\t" + levelH[i].ToString(FORMAT_STR) + "\t" +
                                levelS[i] + "\t" + (levelS[i] * levelS[i]));
@@ -133,9 +133,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         {
             if (dist == 0)//short circuit
             {
-                return maxLevels;
+                return m_maxLevels;
             }
-            for (int i = 0; i < maxLevels - 1; i++)
+            for (int i = 0; i < m_maxLevels - 1; i++)
             {
                 //note: level[i] is actually a lookup for level i+1
                 if (dist > levelW[i] && dist > levelH[i])
@@ -143,13 +143,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                     return i + 1;
                 }
             }
-            return maxLevels;
+            return m_maxLevels;
         }
 
         protected internal override Cell GetCell(IPoint p, int level)
         {
             IList<Cell> cells = new List<Cell>(1);
-            Build(xmid, ymid, 0, cells, new StringBuilder(), ctx.MakePoint(p.X, p.Y), level);
+            Build(xmid, ymid, 0, cells, new StringBuilder(), m_ctx.MakePoint(p.X, p.Y), level);
             return cells[0];
         }
 
@@ -204,7 +204,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             double h = levelH[level] / 2;
 
             int strlen = str.Length;
-            IRectangle rectangle = ctx.MakeRectangle(cx - w, cx + w, cy - h, cy + h);
+            IRectangle rectangle = m_ctx.MakeRectangle(cx - w, cx + w, cy - h, cy + h);
             SpatialRelation v = shape.Relate(rectangle);
             if (SpatialRelation.CONTAINS == v)
             {
@@ -246,7 +246,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             public QuadCell(QuadPrefixTree outerInstance, string token, SpatialRelation shapeRel)
                 : base(outerInstance, token)
             {
-                this.shapeRel = shapeRel;
+                this.m_shapeRel = shapeRel;
             }
 
             internal QuadCell(QuadPrefixTree outerInstance, byte[] bytes, int off, int len)
@@ -262,7 +262,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             protected internal override ICollection<Cell> GetSubCells()
             {
-                QuadPrefixTree outerInstance = (QuadPrefixTree)this.outerInstance;
+                QuadPrefixTree outerInstance = (QuadPrefixTree)this.m_outerInstance;
                 IList<Cell> cells = new List<Cell>(4);
                 cells.Add(new QuadCell(outerInstance, TokenString + "A"));
                 cells.Add(new QuadCell(outerInstance, TokenString + "B"));
@@ -278,7 +278,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             public override Cell GetSubCell(IPoint p)
             {
-                return outerInstance.GetCell(p, Level + 1);//not performant!
+                return m_outerInstance.GetCell(p, Level + 1);//not performant!
             }
 
             private IShape shape; //cache
@@ -297,7 +297,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             private IRectangle MakeShape()
             {
-                QuadPrefixTree outerInstance = (QuadPrefixTree)this.outerInstance;
+                QuadPrefixTree outerInstance = (QuadPrefixTree)this.m_outerInstance;
                 string token = TokenString;
                 double xmin = outerInstance.xmin;
                 double ymin = outerInstance.ymin;
@@ -339,7 +339,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                     width = outerInstance.gridW;
                     height = outerInstance.gridH;
                 }
-                return outerInstance.ctx.MakeRectangle(xmin, xmin + width, ymin, ymin + height);
+                return outerInstance.m_ctx.MakeRectangle(xmin, xmin + width, ymin, ymin + height);
             }
         }//QuadCell
 

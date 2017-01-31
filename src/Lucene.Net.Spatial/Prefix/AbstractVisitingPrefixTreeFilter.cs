@@ -43,13 +43,13 @@ namespace Lucene.Net.Spatial.Prefix
         // Historical note: this code resulted from a refactoring of RecursivePrefixTreeFilter,
         // which in turn came out of SOLR-2155
 
-        protected internal readonly int prefixGridScanLevel;//at least one less than grid.getMaxLevels()
+        protected readonly int m_prefixGridScanLevel;//at least one less than grid.getMaxLevels()
 
         public AbstractVisitingPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, 
                                                 int detailLevel, int prefixGridScanLevel)
             : base(queryShape, fieldName, grid, detailLevel)
         {
-            this.prefixGridScanLevel = Math.Max(0, Math.Min(prefixGridScanLevel, grid.MaxLevels - 1));
+            this.m_prefixGridScanLevel = Math.Max(0, Math.Min(prefixGridScanLevel, grid.MaxLevels - 1));
             Debug.Assert(detailLevel <= grid.MaxLevels);
         }
 
@@ -116,7 +116,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             */
 
-            protected internal readonly bool hasIndexedLeaves;//if false then we can skip looking for them
+            protected readonly bool m_hasIndexedLeaves;//if false then we can skip looking for them
 
             private VNode curVNode;//current pointer, derived from query shape
             private BytesRef curVNodeTerm = new BytesRef();//curVNode.cell's term.
@@ -128,24 +128,24 @@ namespace Lucene.Net.Spatial.Prefix
                                    bool hasIndexedLeaves)
                 : base(outerInstance, context, acceptDocs)
             {
-                this.hasIndexedLeaves = hasIndexedLeaves;
+                this.m_hasIndexedLeaves = hasIndexedLeaves;
             }
 
             public virtual DocIdSet GetDocIdSet()
             {
                 Debug.Assert(curVNode == null, "Called more than once?");
-                if (termsEnum == null)
+                if (m_termsEnum == null)
                 {
                     return null;
                 }
                 //advance
-                if ((thisTerm = termsEnum.Next()) == null)
+                if ((thisTerm = m_termsEnum.Next()) == null)
                 {
                     return null;// all done
                 }
                 
                 curVNode = new VNode(null);
-                curVNode.Reset(outerInstance.grid.WorldCell);
+                curVNode.Reset(m_outerInstance.m_grid.WorldCell);
 
                 Start();
 
@@ -200,23 +200,23 @@ namespace Lucene.Net.Spatial.Prefix
                     //Seek to curVNode's cell (or skip if termsEnum has moved beyond)
                     curVNodeTerm.Bytes = curVNode.cell.GetTokenBytes();
                     curVNodeTerm.Length = curVNodeTerm.Bytes.Length;
-                    int compare = termsEnum.Comparer.Compare(thisTerm, curVNodeTerm);
+                    int compare = m_termsEnum.Comparer.Compare(thisTerm, curVNodeTerm);
                     if (compare > 0)
                     {
                         // leap frog (termsEnum is beyond where we would otherwise seek)
-                        Debug.Assert(!context.AtomicReader.Terms(outerInstance.fieldName).GetIterator(null).SeekExact(curVNodeTerm), "should be absent");
+                        Debug.Assert(!m_context.AtomicReader.Terms(m_outerInstance.m_fieldName).GetIterator(null).SeekExact(curVNodeTerm), "should be absent");
                     }
                     else
                     {
                         if (compare < 0)
                         {
                             // Seek !
-                            TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(curVNodeTerm);
+                            TermsEnum.SeekStatus seekStatus = m_termsEnum.SeekCeil(curVNodeTerm);
                             if (seekStatus == TermsEnum.SeekStatus.END)
                             {
                                 break;// all done
                             }
-                            thisTerm = termsEnum.Term;
+                            thisTerm = m_termsEnum.Term;
                             if (seekStatus == TermsEnum.SeekStatus.NOT_FOUND)
                             {
                                 continue; // leap frog
@@ -225,7 +225,7 @@ namespace Lucene.Net.Spatial.Prefix
                         // Visit!
                         bool descend = Visit(curVNode.cell);
                         //advance
-                        if ((thisTerm = termsEnum.Next()) == null)
+                        if ((thisTerm = m_termsEnum.Next()) == null)
                         {
                             break;// all done
                         }
@@ -250,22 +250,22 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 Debug.Assert(thisTerm != null);
                 Cell cell = curVNode.cell;
-                if (cell.Level >= outerInstance.detailLevel)
+                if (cell.Level >= m_outerInstance.m_detailLevel)
                 {
                     throw new InvalidOperationException("Spatial logic error");
                 }
                 //Check for adjacent leaf (happens for indexed non-point shapes)
-                if (hasIndexedLeaves && cell.Level != 0)
+                if (m_hasIndexedLeaves && cell.Level != 0)
                 {
                     //If the next indexed term just adds a leaf marker ('+') to cell,
                     // then add all of those docs
                     Debug.Assert(StringHelper.StartsWith(thisTerm, curVNodeTerm));//TODO refactor to use method on curVNode.cell
-                    scanCell = outerInstance.grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
+                    scanCell = m_outerInstance.m_grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
                     if (scanCell.Level == cell.Level && scanCell.IsLeaf)
                     {
                         VisitLeaf(scanCell);
                         //advance
-                        if ((thisTerm = termsEnum.Next()) == null)
+                        if ((thisTerm = m_termsEnum.Next()) == null)
                         {
                             return;// all done
                         }
@@ -277,7 +277,7 @@ namespace Lucene.Net.Spatial.Prefix
                 // Scanning is a performance optimization trade-off.
 
                 //TODO use termsEnum.docFreq() as heuristic
-                bool scan = cell.Level >= ((AbstractVisitingPrefixTreeFilter)outerInstance).prefixGridScanLevel;//simple heuristic
+                bool scan = cell.Level >= ((AbstractVisitingPrefixTreeFilter)m_outerInstance).m_prefixGridScanLevel;//simple heuristic
 
                 if (!scan)
                 {
@@ -294,7 +294,7 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     //Scan (loop of termsEnum.next())
 
-                    Scan(outerInstance.detailLevel);
+                    Scan(m_outerInstance.m_detailLevel);
                 }
             }
 
@@ -306,7 +306,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// </summary>
             protected internal virtual IEnumerator<Cell> FindSubCellsToVisit(Cell cell)
             {
-                return cell.GetSubCells(outerInstance.queryShape).GetEnumerator();
+                return cell.GetSubCells(m_outerInstance.m_queryShape).GetEnumerator();
             }
 
             /// <summary>
@@ -320,9 +320,9 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 for (;
                     thisTerm != null && StringHelper.StartsWith(thisTerm, curVNodeTerm);//TODO refactor to use method on curVNode.cell
-                    thisTerm = termsEnum.Next())
+                    thisTerm = m_termsEnum.Next())
                 {
-                    scanCell = outerInstance.grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
+                    scanCell = m_outerInstance.m_grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
 
                     int termLevel = scanCell.Level;
                     if (termLevel < scanDetailLevel)

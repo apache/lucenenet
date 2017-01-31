@@ -76,7 +76,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             protected internal override void Start()
             {
-                results = new FixedBitSet(maxDoc);
+                results = new FixedBitSet(m_maxDoc);
             }
 
             protected internal override DocIdSet Finish()
@@ -86,7 +86,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             protected internal override bool Visit(Cell cell)
             {
-                if (cell.ShapeRel == SpatialRelation.WITHIN || cell.Level == outerInstance.detailLevel)
+                if (cell.ShapeRel == SpatialRelation.WITHIN || cell.Level == m_outerInstance.m_detailLevel)
                 {
                     CollectDocs(results);
                     return false;
@@ -101,7 +101,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             protected internal override void VisitScanned(Cell cell)
             {
-                if (outerInstance.queryShape.Relate(cell.Shape).Intersects())
+                if (m_outerInstance.m_queryShape.Relate(cell.Shape).Intersects())
                 {
                     CollectDocs(results);
                 }

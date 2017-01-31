@@ -38,12 +38,12 @@ namespace Lucene.Net.Spatial.Prefix
         /// <summary>
         /// True if only indexed points shall be supported.  See <see cref="IntersectsPrefixTreeFilter.hasIndexedLeaves"/>.
         /// </summary>
-        protected bool pointsOnly = false;
+        protected bool m_pointsOnly = false;
 
         /// <summary>
-        /// See <see cref="ContainsPrefixTreeFilter.multiOverlappingIndexedShapes"/>.
+        /// See <see cref="ContainsPrefixTreeFilter.m_multiOverlappingIndexedShapes"/>.
         /// </summary>
-        protected bool multiOverlappingIndexedShapes = true;
+        protected bool m_multiOverlappingIndexedShapes = true;
 
         public RecursivePrefixTreeStrategy(SpatialPrefixTree grid, string fieldName)
             : base(grid, fieldName, true) //simplify indexed cells
@@ -67,7 +67,7 @@ namespace Lucene.Net.Spatial.Prefix
 
         public override string ToString()
         {
-            return GetType().Name + "(prefixGridScanLevel:" + prefixGridScanLevel + ",SPG:(" + grid + "))";
+            return GetType().Name + "(prefixGridScanLevel:" + prefixGridScanLevel + ",SPG:(" + m_grid + "))";
         }
 
         public override Filter MakeFilter(SpatialArgs args)
@@ -78,24 +78,24 @@ namespace Lucene.Net.Spatial.Prefix
                 return new DisjointSpatialFilter(this, args, FieldName);
             }
             IShape shape = args.Shape;
-            int detailLevel = grid.GetLevelForDistance(args.ResolveDistErr(ctx, distErrPct));
+            int detailLevel = m_grid.GetLevelForDistance(args.ResolveDistErr(m_ctx, m_distErrPct));
 
         
-            if (pointsOnly || op == SpatialOperation.Intersects)
+            if (m_pointsOnly || op == SpatialOperation.Intersects)
             {
                 return new IntersectsPrefixTreeFilter(
-                    shape, FieldName, grid, detailLevel, prefixGridScanLevel, !pointsOnly);
+                    shape, FieldName, m_grid, detailLevel, prefixGridScanLevel, !m_pointsOnly);
             }
             else if (op == SpatialOperation.IsWithin)
             {
                 return new WithinPrefixTreeFilter(
-                    shape, FieldName, grid, detailLevel, prefixGridScanLevel, 
+                    shape, FieldName, m_grid, detailLevel, prefixGridScanLevel, 
                     -1); //-1 flag is slower but ensures correct results
             }
             else if (op == SpatialOperation.Contains)
             {
-                return new ContainsPrefixTreeFilter(shape, FieldName, grid, detailLevel, 
-                    multiOverlappingIndexedShapes);
+                return new ContainsPrefixTreeFilter(shape, FieldName, m_grid, detailLevel, 
+                    m_multiOverlappingIndexedShapes);
             }
             throw new UnsupportedSpatialOperation(op);
         }

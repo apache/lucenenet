@@ -76,20 +76,20 @@ namespace Lucene.Net.Spatial.Prefix
     /// </summary>
     public abstract class PrefixTreeStrategy : SpatialStrategy
     {
-        protected internal readonly SpatialPrefixTree grid;
+        protected readonly SpatialPrefixTree m_grid;
 
         private readonly ConcurrentDictionary<string, PointPrefixTreeFieldCacheProvider> provider =
             new ConcurrentDictionary<string, PointPrefixTreeFieldCacheProvider>();
 
-        protected internal readonly bool simplifyIndexedCells;
-        protected internal int defaultFieldValuesArrayLen = 2;
-        protected internal double distErrPct = SpatialArgs.DEFAULT_DISTERRPCT;// [ 0 TO 0.5 ]
+        protected readonly bool m_simplifyIndexedCells;
+        protected int m_defaultFieldValuesArrayLen = 2;
+        protected double m_distErrPct = SpatialArgs.DEFAULT_DISTERRPCT;// [ 0 TO 0.5 ]
 
         public PrefixTreeStrategy(SpatialPrefixTree grid, string fieldName, bool simplifyIndexedCells)
             : base(grid.SpatialContext, fieldName)
         {
-            this.grid = grid;
-            this.simplifyIndexedCells = simplifyIndexedCells;
+            this.m_grid = grid;
+            this.m_simplifyIndexedCells = simplifyIndexedCells;
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Lucene.Net.Spatial.Prefix
         /// </summary>
         public virtual int DefaultFieldValuesArrayLen
         {
-            set { defaultFieldValuesArrayLen = value; }
+            set { m_defaultFieldValuesArrayLen = value; }
         }
 
         /// <summary>
@@ -119,20 +119,20 @@ namespace Lucene.Net.Spatial.Prefix
         /// <seealso cref="Lucene.Net.Spatial.Queries.SpatialArgs.DistErrPct"/>
         public virtual double DistErrPct
         {
-            get { return distErrPct; }
-            set { distErrPct = value; }
+            get { return m_distErrPct; }
+            set { m_distErrPct = value; }
         }
 
         public override Field[] CreateIndexableFields(IShape shape)
         {
-            double distErr = SpatialArgs.CalcDistanceFromErrPct(shape, distErrPct, ctx);
+            double distErr = SpatialArgs.CalcDistanceFromErrPct(shape, m_distErrPct, m_ctx);
             return CreateIndexableFields(shape, distErr);
         }
 
         public virtual Field[] CreateIndexableFields(IShape shape, double distErr)
         {
-            int detailLevel = grid.GetLevelForDistance(distErr);
-            IList<Cell> cells = grid.GetCells(shape, detailLevel, true, simplifyIndexedCells);//intermediates cells
+            int detailLevel = m_grid.GetLevelForDistance(distErr);
+            IList<Cell> cells = m_grid.GetCells(shape, detailLevel, true, m_simplifyIndexedCells);//intermediates cells
 
             //TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
             //  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
@@ -197,13 +197,13 @@ namespace Lucene.Net.Spatial.Prefix
 
         public override ValueSource MakeDistanceValueSource(IPoint queryPoint, double multiplier)
         {
-            var p = provider.GetOrAdd(FieldName, f => new PointPrefixTreeFieldCacheProvider(grid, FieldName, defaultFieldValuesArrayLen));
-            return new ShapeFieldCacheDistanceValueSource(ctx, p, queryPoint, multiplier);
+            var p = provider.GetOrAdd(FieldName, f => new PointPrefixTreeFieldCacheProvider(m_grid, FieldName, m_defaultFieldValuesArrayLen));
+            return new ShapeFieldCacheDistanceValueSource(m_ctx, p, queryPoint, multiplier);
         }
 
         public virtual SpatialPrefixTree Grid
         {
-            get { return grid; }
+            get { return m_grid; }
         }
     }
 }

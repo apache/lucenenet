@@ -65,7 +65,7 @@ namespace Lucene.Net.Spatial.Serialized
             BytesRef bytesRef = new BytesRef();//receiver of byteStream's bytes
             try
             {
-                ctx.BinaryCodec.WriteShape(new BinaryWriter(byteStream), shape);
+                m_ctx.BinaryCodec.WriteShape(new BinaryWriter(byteStream), shape);
 
                 //this is a hack to avoid redundant byte array copying by byteStream.toByteArray()
                 byteStream.WriteTo(new OutputStreamAnonymousHelper(bytesRef));
@@ -98,7 +98,7 @@ namespace Lucene.Net.Spatial.Serialized
         public override ValueSource MakeDistanceValueSource(IPoint queryPoint, double multiplier)
         {
             //TODO if makeShapeValueSource gets lifted to the top; this could become a generic impl.
-            return new DistanceToShapeValueSource(MakeShapeValueSource(), queryPoint, multiplier, ctx);
+            return new DistanceToShapeValueSource(MakeShapeValueSource(), queryPoint, multiplier, m_ctx);
         }
 
         public override ConstantScoreQuery MakeQuery(SpatialArgs args)
@@ -127,7 +127,7 @@ namespace Lucene.Net.Spatial.Serialized
         //TODO raise to SpatialStrategy
         public virtual ValueSource MakeShapeValueSource()
         {
-            return new ShapeDocValueSource(this, FieldName, ctx.BinaryCodec);
+            return new ShapeDocValueSource(this, FieldName, m_ctx.BinaryCodec);
         }
 
         /// <summary>
