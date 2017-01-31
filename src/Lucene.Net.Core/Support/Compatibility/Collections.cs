@@ -72,7 +72,7 @@ namespace Lucene.Net
 
         public static ISet<T> Singleton<T>(T o)
         {
-            return ImmutableHashSet.Create(o); // LUCENENET TODO: Immutable != Singleton
+            return new HashSet<T>(new T[] { o });
         }
 
         public static IDictionary<TKey, TValue> SingletonMap<TKey, TValue>(TKey key, TValue value)
@@ -321,7 +321,7 @@ namespace Lucene.Net
         // CaseInsensitiveComparer works correctly in .NET (not sure why).
         // So, this hybrid was made from the original Java implementation and the
         // original implemenation (above) that used CaseInsensitiveComparer.
-        public class ReverseComparer<T> : IComparer<T>
+        private class ReverseComparer<T> : IComparer<T>
         {
             internal static readonly ReverseComparer<T> REVERSE_ORDER = new ReverseComparer<T>();
 
