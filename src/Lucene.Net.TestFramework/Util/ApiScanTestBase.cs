@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
         /// "Long", "Short", or "Float". These should be converted to their .NET names "Int32", "Int64", "Int16", and "Short".
         /// Note we need to ignore common words such as "point", "intern", and "intersect".
         /// </summary>
-        private static Regex ContainsNonNetNumeric = new Regex("(?<![Pp]o|[Pp]r)[Ii]nt(?!16|32|64|er|eg|ro)|[Ll]ong(?!est|er)|[Ss]hort(?!est|er)|[Ff]loat", RegexOptions.Compiled);
+        private static Regex ContainsNonNetNumeric = new Regex("(?<![Pp]o|[Pp]r|[Jj]o)[Ii]nt(?!16|32|64|er|eg|ro)|[Ll]ong(?!est|er)|[Ss]hort(?!est|er)|[Ff]loat", RegexOptions.Compiled);
 
         /// <summary>
         /// Matches IL code pattern for a method body with only a return statement for a local variable.
