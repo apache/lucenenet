@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// An arbitrary byte[] to record per suggestion.  See
-        /// <see cref="Lookup.LookupResult.payload"/> to retrieve the payload
+        /// <see cref="Lookup.LookupResult.Payload"/> to retrieve the payload
         /// for each suggestion. 
         /// </summary>
         BytesRef Payload { get; }

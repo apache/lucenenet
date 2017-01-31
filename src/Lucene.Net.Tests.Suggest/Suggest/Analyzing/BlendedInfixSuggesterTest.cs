@@ -205,9 +205,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             foreach (Lookup.LookupResult response in responses)
             {
-                if (response.payload.equals(payload))
+                if (response.Payload.equals(payload))
                 {
-                    return response.value;
+                    return response.Value;
                 }
             }
 

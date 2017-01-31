@@ -91,16 +91,16 @@ namespace Lucene.Net.Search.Suggest
                 IList<Lookup.LookupResult> list = lookup.DoLookup(TestUtil.BytesToCharSequence(k.term, random).ToString(), false, 1);
                 assertEquals(1, list.size());
                 Lookup.LookupResult lookupResult = list[0];
-                assertNotNull(k.term.Utf8ToString(), lookupResult.key);
+                assertNotNull(k.term.Utf8ToString(), lookupResult.Key);
 
                 if (supportsExactWeights)
                 {
-                    assertEquals(k.term.Utf8ToString(), k.v, lookupResult.value);
+                    assertEquals(k.term.Utf8ToString(), k.v, lookupResult.Value);
                 }
                 else
                 {
-                    assertTrue(lookupResult.value + ">=" + previous, lookupResult.value >= previous);
-                    previous = lookupResult.value;
+                    assertTrue(lookupResult.Value + ">=" + previous, lookupResult.Value >= previous);
+                    previous = lookupResult.Value;
                 }
             }
         }

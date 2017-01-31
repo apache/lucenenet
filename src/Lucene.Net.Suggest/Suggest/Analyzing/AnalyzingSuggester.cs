@@ -768,7 +768,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     int count = 0;
                     foreach (FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair> path in prefixPaths)
                     {
-                        if (fst.FindTargetArc(END_BYTE, path.fstNode, scratchArc, bytesReader) != null)
+                        if (fst.FindTargetArc(END_BYTE, path.FstNode, scratchArc, bytesReader) != null)
                         {
                             // This node has END_BYTE arc leaving, meaning it's an
                             // "exact" match:
@@ -789,12 +789,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // ...:
                     foreach (var path in prefixPaths)
                     {
-                        if (fst.FindTargetArc(END_BYTE, path.fstNode, scratchArc, bytesReader) != null)
+                        if (fst.FindTargetArc(END_BYTE, path.FstNode, scratchArc, bytesReader) != null)
                         {
                             // This node has END_BYTE arc leaving, meaning it's an
                             // "exact" match:
-                            searcher_Renamed.AddStartPaths(scratchArc, fst.Outputs.Add(path.output, scratchArc.Output), false,
-                                path.input);
+                            searcher_Renamed.AddStartPaths(scratchArc, fst.Outputs.Add(path.Output, scratchArc.Output), false,
+                                path.Input);
                         }
                     }
 
@@ -838,7 +838,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 foreach (FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair> path in prefixPaths)
                 {
-                    searcher.AddStartPaths(path.fstNode, path.output, true, path.input);
+                    searcher.AddStartPaths(path.FstNode, path.Output, true, path.Input);
                 }
 
                 var completions = searcher.Search();

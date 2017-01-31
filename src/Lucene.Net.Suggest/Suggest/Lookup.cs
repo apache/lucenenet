@@ -39,25 +39,25 @@ namespace Lucene.Net.Search.Suggest
         {
             /// <summary>
             /// the key's text </summary>
-            public readonly string key;
+            public string Key { get; private set; }
 
             /// <summary>
             /// Expert: custom Object to hold the result of a
             /// highlighted suggestion. 
             /// </summary>
-            public readonly object highlightKey;
+            public object HighlightKey { get; private set; }
 
             /// <summary>
             /// the key's weight </summary>
-            public readonly long value;
+            public long Value { get; private set; }
 
             /// <summary>
             /// the key's payload (null if not present) </summary>
-            public readonly BytesRef payload;
+            public BytesRef Payload { get; private set; }
 
             /// <summary>
             /// the key's contexts (null if not present) </summary>
-            public readonly IEnumerable<BytesRef> contexts;
+            public IEnumerable<BytesRef> Contexts { get; private set; }
 
             /// <summary>
             /// Create a new result from a key+weight pair.
@@ -104,23 +104,23 @@ namespace Lucene.Net.Search.Suggest
             /// </summary>
             public LookupResult(string key, object highlightKey, long value, BytesRef payload, IEnumerable<BytesRef> contexts)
             {
-                this.key = key;
-                this.highlightKey = highlightKey;
-                this.value = value;
-                this.payload = payload;
-                this.contexts = contexts;
+                this.Key = key;
+                this.HighlightKey = highlightKey;
+                this.Value = value;
+                this.Payload = payload;
+                this.Contexts = contexts;
             }
 
             public override string ToString()
             {
-                return key + "/" + value;
+                return Key + "/" + Value;
             }
 
             /// <summary>
             /// Compare alphabetically. </summary>
             public int CompareTo(LookupResult o)
             {
-                return CHARSEQUENCE_COMPARER.Compare(key, o.key);
+                return CHARSEQUENCE_COMPARER.Compare(Key, o.Key);
             }
         }
 
@@ -168,7 +168,7 @@ namespace Lucene.Net.Search.Suggest
 
             protected internal override bool LessThan(LookupResult a, LookupResult b)
             {
-                return a.value < b.value;
+                return a.Value < b.Value;
             }
 
             /// <summary>

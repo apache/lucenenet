@@ -48,26 +48,26 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             /// <summary>
             /// UTF-8 bytes of the suggestion </summary>
-            public readonly BytesRef utf8;
+            public BytesRef Utf8 { get; private set; }
             /// <summary>
             /// source bucket (weight) of the suggestion </summary>
-            public readonly int bucket;
+            public int Bucket { get; private set; }
 
             internal Completion(BytesRef key, int bucket)
             {
-                this.utf8 = BytesRef.DeepCopyOf(key);
-                this.bucket = bucket;
+                this.Utf8 = BytesRef.DeepCopyOf(key);
+                this.Bucket = bucket;
             }
 
             public override string ToString()
             {
-                return utf8.Utf8ToString() + "/" + bucket.ToString("0.0", CultureInfo.InvariantCulture);
+                return Utf8.Utf8ToString() + "/" + Bucket.ToString("0.0", CultureInfo.InvariantCulture);
             }
 
             /// <seealso cref="BytesRef.CompareTo(BytesRef)"></seealso>
             public int CompareTo(Completion o)
             {
-                return this.utf8.CompareTo(o.utf8);
+                return this.Utf8.CompareTo(o.Utf8);
             }
         }
 
@@ -347,14 +347,14 @@ namespace Lucene.Net.Search.Suggest.Fst
             // We assume list does not have duplicates (because of how the FST is created).
             for (int i = list.Count; --i >= 0; )
             {
-                if (key.Equals(list[i].utf8))
+                if (key.Equals(list[i].Utf8))
                 {
                     // Key found. Unless already at i==0, remove it and push up front so
                     // that the ordering
                     // remains identical with the exception of the exact match.
                     lock (syncLock)
                     {
-                        if (key.Equals(list[i].utf8))
+                        if (key.Equals(list[i].Utf8))
                         {
                             var element = list.ElementAt(i);
                             list.Remove(element);

@@ -853,18 +853,18 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             public int Compare(LookupResult a, LookupResult b)
             {
-                if (a.value > b.value)
+                if (a.Value > b.Value)
                 {
                     return -1;
                 }
-                else if (a.value < b.value)
+                else if (a.Value < b.Value)
                 {
                     return 1;
                 }
                 else
                 {
                     // Tie break by UTF16 sort order:
-                    return a.key.CompareToOrdinal(b.key);
+                    return a.Key.CompareToOrdinal(b.Key);
                 }
             }
         }

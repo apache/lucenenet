@@ -337,18 +337,18 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             public int Compare(Lookup.LookupResult a, Lookup.LookupResult b)
             {
-                if (a.value > b.value)
+                if (a.Value > b.Value)
                 {
                     return -1;
                 }
-                else if (a.value < b.value)
+                else if (a.Value < b.Value)
                 {
                     return 1;
                 }
                 else
                 {
                     // Tie break by UTF16 sort order:
-                    return ((string)a.key).CompareToOrdinal((string)b.key);
+                    return ((string)a.Key).CompareToOrdinal((string)b.Key);
                 }
             }
         }
@@ -682,7 +682,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                                 tmp.Add(lr);
                                 if (VERBOSE)
                                 {
-                                    Console.WriteLine("      add tmp key='" + lr.key + "' score=" + lr.value);
+                                    Console.WriteLine("      add tmp key='" + lr.Key + "' score=" + lr.Value);
                                 }
                             }
                         }
@@ -698,7 +698,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                     foreach (Lookup.LookupResult result in tmp)
                     {
-                        string key = result.key.toString();
+                        string key = result.Key.toString();
                         int idx = key.LastIndexOf(' ');
                         string lastToken;
                         if (idx != -1)
@@ -715,7 +715,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             expected.Add(result);
                             if (VERBOSE)
                             {
-                                Console.WriteLine("      keep key='" + result.key + "' score=" + result.value);
+                                Console.WriteLine("      keep key='" + result.Key + "' score=" + result.Value);
                             }
                         }
                     }
@@ -763,9 +763,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             foreach (Lookup.LookupResult result in results)
             {
                 b.Append(' ');
-                b.Append(result.key);
+                b.Append(result.Key);
                 b.Append('/');
-                b.AppendFormat(CultureInfo.InvariantCulture, "{0:0.00}", ((double)result.value) / long.MaxValue);
+                b.AppendFormat(CultureInfo.InvariantCulture, "{0:0.00}", ((double)result.Value) / long.MaxValue);
             }
             return b.toString().Trim();
         }

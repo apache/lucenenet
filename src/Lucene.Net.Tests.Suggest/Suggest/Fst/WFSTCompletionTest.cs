@@ -43,38 +43,38 @@ namespace Lucene.Net.Search.Suggest.Fst
             // top N of 2, but only foo is available
             IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("f", random).ToString(), false, 2);
             assertEquals(1, results.size());
-            assertEquals("foo", results[0].key.toString());
-            assertEquals(50, results[0].value, 0.01F);
+            assertEquals("foo", results[0].Key.toString());
+            assertEquals(50, results[0].Value, 0.01F);
 
             // make sure we don't get a dup exact suggestion:
             results = suggester.DoLookup(TestUtil.StringToCharSequence("foo", random).ToString(), false, 2);
             assertEquals(1, results.size());
-            assertEquals("foo", results[0].key.toString());
-            assertEquals(50, results[0].value, 0.01F);
+            assertEquals("foo", results[0].Key.toString());
+            assertEquals(50, results[0].Value, 0.01F);
 
             // top N of 1 for 'bar': we return this even though barbar is higher
             results = suggester.DoLookup(TestUtil.StringToCharSequence("bar", random).ToString(), false, 1);
             assertEquals(1, results.size());
-            assertEquals("bar", results[0].key.toString());
-            assertEquals(10, results[0].value, 0.01F);
+            assertEquals("bar", results[0].Key.toString());
+            assertEquals(10, results[0].Value, 0.01F);
 
             // top N Of 2 for 'b'
             results = suggester.DoLookup(TestUtil.StringToCharSequence("b", random).ToString(), false, 2);
             assertEquals(2, results.size());
-            assertEquals("barbar", results[0].key.toString());
-            assertEquals(12, results[0].value, 0.01F);
-            assertEquals("bar", results[1].key.toString());
-            assertEquals(10, results[1].value, 0.01F);
+            assertEquals("barbar", results[0].Key.toString());
+            assertEquals(12, results[0].Value, 0.01F);
+            assertEquals("bar", results[1].Key.toString());
+            assertEquals(10, results[1].Value, 0.01F);
 
             // top N of 3 for 'ba'
             results = suggester.DoLookup(TestUtil.StringToCharSequence("ba", random).ToString(), false, 3);
             assertEquals(3, results.size());
-            assertEquals("barbar", results[0].key.toString());
-            assertEquals(12, results[0].value, 0.01F);
-            assertEquals("bar", results[1].key.toString());
-            assertEquals(10, results[1].value, 0.01F);
-            assertEquals("barbara", results[2].key.toString());
-            assertEquals(6, results[2].value, 0.01F);
+            assertEquals("barbar", results[0].Key.toString());
+            assertEquals(12, results[0].Value, 0.01F);
+            assertEquals("bar", results[1].Key.toString());
+            assertEquals(10, results[1].Value, 0.01F);
+            assertEquals("barbara", results[2].Key.toString());
+            assertEquals(6, results[2].Value, 0.01F);
         }
 
         [Test]
@@ -94,13 +94,13 @@ namespace Lucene.Net.Search.Suggest.Fst
 
                 assertEquals(Math.Min(topN, 2), results.size());
 
-                assertEquals("x", results[0].key);
-                assertEquals(2, results[0].value);
+                assertEquals("x", results[0].Key);
+                assertEquals(2, results[0].Value);
 
                 if (topN > 1)
                 {
-                    assertEquals("x y", results[1].key);
-                    assertEquals(20, results[1].value);
+                    assertEquals("x y", results[1].Key);
+                    assertEquals(20, results[1].Value);
                 }
             }
         }
@@ -122,13 +122,13 @@ namespace Lucene.Net.Search.Suggest.Fst
 
                 assertEquals(Math.Min(topN, 2), results.size());
 
-                assertEquals("x y", results[0].key);
-                assertEquals(20, results[0].value);
+                assertEquals("x y", results[0].Key);
+                assertEquals(20, results[0].Value);
 
                 if (topN > 1)
                 {
-                    assertEquals("x", results[1].key);
-                    assertEquals(2, results[1].value);
+                    assertEquals("x", results[1].Key);
+                    assertEquals(2, results[1].Value);
                 }
             }
         }
@@ -203,8 +203,8 @@ namespace Lucene.Net.Search.Suggest.Fst
                 for (int hit = 0; hit < r.size(); hit++)
                 {
                     //System.out.println("  check hit " + hit);
-                    assertEquals(matches[hit].key.toString(), r[hit].key.toString());
-                    assertEquals(matches[hit].value, r[hit].value, 0f);
+                    assertEquals(matches[hit].Key.toString(), r[hit].Key.toString());
+                    assertEquals(matches[hit].Value, r[hit].Value, 0f);
                 }
             }
         }
@@ -213,7 +213,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             public int Compare(Lookup.LookupResult left, Lookup.LookupResult right)
             {
-                int cmp = ((float)right.value).CompareTo((float)left.value);
+                int cmp = ((float)right.Value).CompareTo((float)left.Value);
                 if (cmp == 0)
                 {
                     return left.CompareTo(right);

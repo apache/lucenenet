@@ -214,13 +214,13 @@ namespace Lucene.Net.Search.Suggest.Fst
             foreach (Input tf in input)
             {
                 assertNotNull("Not found: " + tf.term.toString(), lookup.Get(TestUtil.BytesToCharSequence(tf.term, Random()).ToString()));
-                assertEquals(tf.term.Utf8ToString(), lookup.DoLookup(TestUtil.BytesToCharSequence(tf.term, Random()).ToString(), true, 1)[0].key.toString());
+                assertEquals(tf.term.Utf8ToString(), lookup.DoLookup(TestUtil.BytesToCharSequence(tf.term, Random()).ToString(), true, 1)[0].Key.toString());
             }
 
             IList<Lookup.LookupResult> result = lookup.DoLookup(StringToCharSequence("wit").ToString(), true, 5);
             assertEquals(5, result.size());
-            assertTrue(result[0].key.toString().equals("wit"));  // exact match.
-            assertTrue(result[1].key.toString().equals("with")); // highest count.
+            assertTrue(result[0].Key.toString().equals("wit"));  // exact match.
+            assertTrue(result[1].Key.toString().equals("with")); // highest count.
         }
 
         [Test]
@@ -252,7 +252,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                     String prefix = term.Substring(0, i - 0);
                     foreach (Lookup.LookupResult lr in lookup.DoLookup(StringToCharSequence(prefix).ToString(), true, 10))
                     {
-                        assertTrue(lr.key.toString().StartsWith(prefix));
+                        assertTrue(lr.Key.toString().StartsWith(prefix));
                     }
                 }
             }

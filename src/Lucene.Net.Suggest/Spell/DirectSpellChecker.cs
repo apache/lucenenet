@@ -419,14 +419,14 @@ namespace Lucene.Net.Search.Spell
             foreach (ScoreTerm s in terms)
             {
                 SuggestWord suggestion = new SuggestWord();
-                if (s.termAsString == null)
+                if (s.TermAsString == null)
                 {
-                    UnicodeUtil.UTF8toUTF16(s.term, spare);
-                    s.termAsString = spare.ToString();
+                    UnicodeUtil.UTF8toUTF16(s.Term, spare);
+                    s.TermAsString = spare.ToString();
                 }
-                suggestion.String = s.termAsString;
-                suggestion.Score = s.score;
-                suggestion.Freq = s.docfreq;
+                suggestion.String = s.TermAsString;
+                suggestion.Score = s.Score;
+                suggestion.Freq = s.Docfreq;
                 suggestions[index--] = suggestion;
             }
 
@@ -475,7 +475,7 @@ namespace Lucene.Net.Search.Spell
             {
                 float boost = boostAtt.Boost;
                 // ignore uncompetitive hits
-                if (stQueue.Count >= numSug && boost <= stQueue.Peek().boost)
+                if (stQueue.Count >= numSug && boost <= stQueue.Peek().Boost)
                 {
                     continue;
                 }
@@ -516,15 +516,15 @@ namespace Lucene.Net.Search.Spell
                 }
 
                 // add new entry in PQ
-                st.term = BytesRef.DeepCopyOf(candidateTerm);
-                st.boost = boost;
-                st.docfreq = df;
-                st.termAsString = termAsString;
-                st.score = score;
+                st.Term = BytesRef.DeepCopyOf(candidateTerm);
+                st.Boost = boost;
+                st.Docfreq = df;
+                st.TermAsString = termAsString;
+                st.Score = score;
                 stQueue.Offer(st);
                 // possibly drop entries from queue
                 st = (stQueue.Count > numSug) ? stQueue.Poll() : new ScoreTerm();
-                maxBoostAtt.MaxNonCompetitiveBoost = (stQueue.Count >= numSug) ? stQueue.Peek().boost : float.NegativeInfinity;
+                maxBoostAtt.MaxNonCompetitiveBoost = (stQueue.Count >= numSug) ? stQueue.Peek().Boost : float.NegativeInfinity;
             }
 
             return stQueue;
@@ -539,27 +539,27 @@ namespace Lucene.Net.Search.Spell
             /// <summary>
             /// The actual spellcheck correction.
             /// </summary>
-            public BytesRef term;
+            public BytesRef Term { get; set; }
 
             /// <summary>
             /// The boost representing the similarity from the FuzzyTermsEnum (internal similarity score)
             /// </summary>
-            public float boost;
+            public float Boost { get; set; }
 
             /// <summary>
             /// The df of the spellcheck correction.
             /// </summary>
-            public int docfreq;
+            public int Docfreq { get; set; }
 
             /// <summary>
             /// The spellcheck correction represented as string, can be <code>null</code>.
             /// </summary>
-            public string termAsString;
+            public string TermAsString { get; set; }
 
             /// <summary>
             /// The similarity score.
             /// </summary>
-            public float score;
+            public float Score { get; set; }
 
             /// <summary>
             /// Constructor.
@@ -570,17 +570,17 @@ namespace Lucene.Net.Search.Spell
 
             public virtual int CompareTo(ScoreTerm other)
             {
-                if (term.BytesEquals(other.term))
+                if (Term.BytesEquals(other.Term))
                 {
                     return 0; // consistent with equals
                 }
-                if (this.boost == other.boost)
+                if (this.Boost == other.Boost)
                 {
-                    return other.term.CompareTo(this.term);
+                    return other.Term.CompareTo(this.Term);
                 }
                 else
                 {
-                    return this.boost.CompareTo(other.boost);
+                    return this.Boost.CompareTo(other.Boost);
                 }
             }
 
@@ -588,7 +588,7 @@ namespace Lucene.Net.Search.Spell
             {
                 const int prime = 31;
                 int result = 1;
-                result = prime * result + ((term == null) ? 0 : term.GetHashCode());
+                result = prime * result + ((Term == null) ? 0 : Term.GetHashCode());
                 return result;
             }
 
@@ -607,14 +607,14 @@ namespace Lucene.Net.Search.Spell
                     return false;
                 }
                 ScoreTerm other = (ScoreTerm)obj;
-                if (term == null)
+                if (Term == null)
                 {
-                    if (other.term != null)
+                    if (other.Term != null)
                     {
                         return false;
                     }
                 }
-                else if (!term.BytesEquals(other.term))
+                else if (!Term.BytesEquals(other.Term))
                 {
                     return false;
                 }

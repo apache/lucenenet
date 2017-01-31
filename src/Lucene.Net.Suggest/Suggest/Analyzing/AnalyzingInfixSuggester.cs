@@ -625,7 +625,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Override this method to customize the Object
         /// representing a single highlighted suggestions; the
-        /// result is set on each <see cref="Lookup.LookupResult.highlightKey"/>
+        /// result is set on each <see cref="Lookup.LookupResult.HighlightKey"/>
         /// member. 
         /// </summary>
         protected internal virtual object Highlight(string text, IEnumerable<string> matchedTokens, string prefixToken)

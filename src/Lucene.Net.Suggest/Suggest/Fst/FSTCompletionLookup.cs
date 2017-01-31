@@ -269,9 +269,9 @@ namespace Lucene.Net.Search.Suggest.Fst
             CharsRef spare = new CharsRef();
             foreach (FSTCompletion.Completion c in completions)
             {
-                spare.Grow(c.utf8.Length);
-                UnicodeUtil.UTF8toUTF16(c.utf8, spare);
-                results.Add(new LookupResult(spare.ToString(), c.bucket));
+                spare.Grow(c.Utf8.Length);
+                UnicodeUtil.UTF8toUTF16(c.Utf8, spare);
+                results.Add(new LookupResult(spare.ToString(), c.Bucket));
             }
             return results;
         }

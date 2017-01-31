@@ -42,28 +42,28 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             /// <summary>
             /// Node in the automaton where path ends: </summary>
-            public readonly State state;
+            public State State { get; private set; }
 
             /// <summary>
             /// Node in the <see cref="FST"/> where path ends: </summary>
-            public readonly FST.Arc<T> fstNode;
+            public FST.Arc<T> FstNode { get; private set; }
 
             /// <summary>
             /// Output of the path so far: </summary>
-            internal T output;
+            internal T Output { get; set; }
 
             /// <summary>
             /// Input of the path so far: </summary>
-            public readonly IntsRef input;
+            public IntsRef Input { get; private set; }
 
             /// <summary>
             /// Sole constructor. </summary>
             public Path(State state, FST.Arc<T> fstNode, T output, IntsRef input)
             {
-                this.state = state;
-                this.fstNode = fstNode;
-                this.output = output;
-                this.input = input;
+                this.State = state;
+                this.FstNode = fstNode;
+                this.Output = output;
+                this.Input = input;
             }
         }
 
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 Path<T> path = queue.ElementAt(queue.Count - 1);
                 queue.Remove(path);
-                if (path.state.Accept)
+                if (path.State.Accept)
                 {
                     endNodes.Add(path);
                     // we can stop here if we accept this path,
@@ -93,14 +93,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     continue;
                 }
 
-                IntsRef currentInput = path.input;
-                foreach (Transition t in path.state.GetTransitions())
+                IntsRef currentInput = path.Input;
+                foreach (Transition t in path.State.GetTransitions())
                 {
                     int min = t.Min;
                     int max = t.Max;
                     if (min == max)
                     {
-                        FST.Arc<T> nextArc = fst.FindTargetArc(t.Min, path.fstNode, scratchArc, fstReader);
+                        FST.Arc<T> nextArc = fst.FindTargetArc(t.Min, path.FstNode, scratchArc, fstReader);
                         if (nextArc != null)
                         {
                             IntsRef newInput = new IntsRef(currentInput.Length + 1);
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             newInput.Ints[currentInput.Length] = t.Min;
                             newInput.Length = currentInput.Length + 1;
                             queue.Add(new Path<T>(t.Dest, new FST.Arc<T>()
-                              .CopyFrom(nextArc), fst.Outputs.Add(path.output, nextArc.Output), newInput));
+                              .CopyFrom(nextArc), fst.Outputs.Add(path.Output, nextArc.Output), newInput));
                         }
                     }
                     else
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         // (this one) to another (the completion search
                         // done in AnalyzingSuggester).
 
-                        FST.Arc<T> nextArc = Lucene.Net.Util.Fst.Util.ReadCeilArc(min, fst, path.fstNode, scratchArc, fstReader);
+                        FST.Arc<T> nextArc = Lucene.Net.Util.Fst.Util.ReadCeilArc(min, fst, path.FstNode, scratchArc, fstReader);
                         while (nextArc != null && nextArc.Label <= max)
                         {
                             Debug.Assert(nextArc.Label <= max);
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             newInput.Ints[currentInput.Length] = nextArc.Label;
                             newInput.Length = currentInput.Length + 1;
                             queue.Add(new Path<T>(t.Dest, new FST.Arc<T>()
-                              .CopyFrom(nextArc), fst.Outputs.Add(path.output, nextArc.Output), newInput));
+                              .CopyFrom(nextArc), fst.Outputs.Add(path.Output, nextArc.Output), newInput));
                             int label = nextArc.Label; // used in assert
                             nextArc = nextArc.IsLast ? null : fst.ReadNextRealArc(nextArc, fstReader);
                             Debug.Assert(nextArc == null || label < nextArc.Label, "last: " + label + " next: " + (nextArc == null ? "" : nextArc.Label.ToString()));

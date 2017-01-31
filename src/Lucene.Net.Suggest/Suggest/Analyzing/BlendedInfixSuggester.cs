@@ -218,11 +218,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             if (results.Count >= num)
             {
-                if (results.Min.value < result.value)
+                if (results.Min.Value < result.Value)
                 {
                     lock (syncLock)
                     {
-                        if (results.Min.value < result.value)
+                        if (results.Min.Value < result.Value)
                         {
                             // Code similar to the java TreeMap class
                             var entry = results.FirstOrDefault();
@@ -318,17 +318,17 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             public virtual int Compare(Lookup.LookupResult o1, Lookup.LookupResult o2)
             {
                 // order on weight
-                if (o1.value > o2.value)
+                if (o1.Value > o2.Value)
                 {
                     return 1;
                 }
-                else if (o1.value < o2.value)
+                else if (o1.Value < o2.Value)
                 {
                     return -1;
                 }
 
                 // otherwise on alphabetic order
-                return CHARSEQUENCE_COMPARER.Compare(o1.key, o2.key);
+                return CHARSEQUENCE_COMPARER.Compare(o1.Key, o2.Key);
             }
         }
     }
