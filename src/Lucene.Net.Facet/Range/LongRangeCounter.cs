@@ -141,7 +141,7 @@ namespace Lucene.Net.Facet.Range
             boundaries = new long[elementaryIntervals.Count];
             for (int i = 0; i < boundaries.Length; i++)
             {
-                boundaries[i] = elementaryIntervals[i].end;
+                boundaries[i] = elementaryIntervals[i].End;
             }
 
             leafCounts = new int[boundaries.Length];
@@ -254,7 +254,7 @@ namespace Lucene.Net.Facet.Range
             {
                 // leaf
                 InclusiveRange range = elementaryIntervals[start];
-                return new LongRangeNode(range.start, range.end, null, null, start);
+                return new LongRangeNode(range.Start, range.End, null, null, start);
             }
             else
             {
@@ -267,19 +267,19 @@ namespace Lucene.Net.Facet.Range
 
         private sealed class InclusiveRange
         {
-            public readonly long start;
-            public readonly long end;
+            public long Start { get; private set; }
+            public long End { get; private set; }
 
             public InclusiveRange(long start, long end)
             {
                 Debug.Assert(end >= start);
-                this.start = start;
-                this.end = end;
+                this.Start = start;
+                this.End = end;
             }
 
             public override string ToString()
             {
-                return start + " to " + end;
+                return Start + " to " + End;
             }
         }
 
