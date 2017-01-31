@@ -101,7 +101,7 @@ namespace Lucene.Net.Search.Suggest
         {
             get
             {
-                return new DocumentValueSourceInputIterator(this, payloadField != null, contextsField != null);
+                return new DocumentValueSourceInputIterator(this, m_payloadField != null, m_contextsField != null);
             }
         }
 
@@ -125,13 +125,13 @@ namespace Lucene.Net.Search.Suggest
                 : base(outerInstance, hasPayloads, hasContexts)
             {
                 this.outerInstance = outerInstance;
-                leaves = outerInstance.reader.Leaves;
+                leaves = outerInstance.m_reader.Leaves;
                 starts = new int[leaves.Count + 1];
                 for (int i = 0; i < leaves.Count; i++)
                 {
                     starts[i] = leaves[i].DocBase;
                 }
-                starts[leaves.Count] = outerInstance.reader.MaxDoc;
+                starts[leaves.Count] = outerInstance.m_reader.MaxDoc;
                 currentWeightValues = (leaves.Count > 0) ? outerInstance.weightsValueSource.GetValues(new Dictionary<string, object>(), leaves[currentLeafIndex]) : null;
             }
 

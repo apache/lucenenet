@@ -66,26 +66,26 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Field name used for the indexed text. </summary>
-        protected internal const string TEXT_FIELD_NAME = "text";
+        protected const string TEXT_FIELD_NAME = "text";
 
         /// <summary>
         /// Field name used for the indexed text, as a
         /// <see cref="StringField"/>, for exact lookup. 
         /// </summary>
-        protected internal const string EXACT_TEXT_FIELD_NAME = "exacttext";
+        protected const string EXACT_TEXT_FIELD_NAME = "exacttext";
 
         /// <summary>
         /// Field name used for the indexed context, as a
         /// <see cref="StringField"/> and a <see cref="SortedSetDocValuesField"/>, for filtering. 
         /// </summary>
-        protected internal const string CONTEXTS_FIELD_NAME = "contexts";
+        protected const string CONTEXTS_FIELD_NAME = "contexts";
 
         /// <summary>
         /// Analyzer used at search time </summary>
-        protected internal readonly Analyzer queryAnalyzer;
+        protected readonly Analyzer m_queryAnalyzer;
         /// <summary>
         /// Analyzer used at index time </summary>
-        protected internal readonly Analyzer indexAnalyzer;
+        protected readonly Analyzer m_indexAnalyzer;
         internal readonly LuceneVersion matchVersion;
         private readonly Directory dir;
         internal readonly int minPrefixChars;
@@ -96,7 +96,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// <see cref="IndexSearcher"/> used for lookups. </summary>
-        protected internal SearcherManager searcherMgr;
+        protected SearcherManager m_searcherMgr;
 
         /// <summary>
         /// Default minimum number of leading characters before
@@ -142,8 +142,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 throw new System.ArgumentException("minPrefixChars must be >= 0; got: " + minPrefixChars);
             }
 
-            this.queryAnalyzer = queryAnalyzer;
-            this.indexAnalyzer = indexAnalyzer;
+            this.m_queryAnalyzer = queryAnalyzer;
+            this.m_indexAnalyzer = indexAnalyzer;
             this.matchVersion = matchVersion;
             this.dir = dir;
             this.minPrefixChars = minPrefixChars;
@@ -152,7 +152,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 // Already built; open it:
                 writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GramAnalyzer, OpenMode.APPEND));
-                searcherMgr = new SearcherManager(writer, true, null);
+                m_searcherMgr = new SearcherManager(writer, true, null);
             }
         }
 
@@ -187,10 +187,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public override void Build(IInputIterator iter)
         {
 
-            if (searcherMgr != null)
+            if (m_searcherMgr != null)
             {
-                searcherMgr.Dispose();
-                searcherMgr = null;
+                m_searcherMgr.Dispose();
+                m_searcherMgr = null;
             }
 
             if (writer != null)
@@ -227,7 +227,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 //System.out.println("initial indexing time: " + ((System.nanoTime()-t0)/1000000) + " msec");
 
-                searcherMgr = new SearcherManager(writer, true, null);
+                m_searcherMgr = new SearcherManager(writer, true, null);
                 success = true;
             }
             finally
@@ -264,7 +264,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             protected override Analyzer GetWrappedAnalyzer(string fieldName)
             {
-                return outerInstance.indexAnalyzer;
+                return outerInstance.m_indexAnalyzer;
             }
 
             protected override TokenStreamComponents WrapComponents(string fieldName, TokenStreamComponents components)
@@ -347,7 +347,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual void Refresh()
         {
-            searcherMgr.MaybeRefreshBlocking();
+            m_searcherMgr.MaybeRefreshBlocking();
         }
 
         /// <summary>
@@ -403,7 +403,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public virtual IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num, bool allTermsRequired, bool doHighlight)
         {
 
-            if (searcherMgr == null)
+            if (m_searcherMgr == null)
             {
                 throw new InvalidOperationException("suggester was not built");
             }
@@ -425,7 +425,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             try
             {
-                ts = queryAnalyzer.TokenStream("", new StringReader(key));
+                ts = m_queryAnalyzer.TokenStream("", new StringReader(key));
 
                 //long t0 = System.currentTimeMillis();
                 ts.Reset();
@@ -517,7 +517,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // We sorted postings by weight during indexing, so we
             // only retrieve the first num hits now:
             ICollector c2 = new EarlyTerminatingSortingCollector(c, SORT, num);
-            IndexSearcher searcher = searcherMgr.Acquire();
+            IndexSearcher searcher = m_searcherMgr.Acquire();
             IList<LookupResult> results = null;
             try
             {
@@ -532,7 +532,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             finally
             {
-                searcherMgr.Release(searcher);
+                m_searcherMgr.Release(searcher);
             }
 
             //System.out.println((System.currentTimeMillis() - t0) + " msec for infix suggest");
@@ -630,7 +630,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         protected internal virtual object Highlight(string text, IEnumerable<string> matchedTokens, string prefixToken)
         {
-            TokenStream ts = queryAnalyzer.TokenStream("text", new StringReader(text));
+            TokenStream ts = m_queryAnalyzer.TokenStream("text", new StringReader(text));
             try
             {
                 var termAtt = ts.AddAttribute<ICharTermAttribute>();
@@ -737,10 +737,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         public virtual void Dispose()
         {
-            if (searcherMgr != null)
+            if (m_searcherMgr != null)
             {
-                searcherMgr.Dispose();
-                searcherMgr = null;
+                m_searcherMgr.Dispose();
+                m_searcherMgr = null;
             }
             if (writer != null)
             {
@@ -755,9 +755,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             long mem = RamUsageEstimator.ShallowSizeOf(this);
             try
             {
-                if (searcherMgr != null)
+                if (m_searcherMgr != null)
                 {
-                    IndexSearcher searcher = searcherMgr.Acquire();
+                    IndexSearcher searcher = m_searcherMgr.Acquire();
                     try
                     {
                         foreach (AtomicReaderContext context in searcher.IndexReader.Leaves)
@@ -771,7 +771,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                     finally
                     {
-                        searcherMgr.Release(searcher);
+                        m_searcherMgr.Release(searcher);
                     }
                 }
                 return mem;
@@ -786,14 +786,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             get
             {
-                IndexSearcher searcher = searcherMgr.Acquire();
+                IndexSearcher searcher = m_searcherMgr.Acquire();
                 try
                 {
                     return searcher.IndexReader.NumDocs;
                 }
                 finally
                 {
-                    searcherMgr.Release(searcher);
+                    m_searcherMgr.Release(searcher);
                 }
             }
         }

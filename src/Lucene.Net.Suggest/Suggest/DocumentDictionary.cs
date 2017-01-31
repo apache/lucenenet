@@ -51,14 +51,14 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// <see cref="IndexReader"/> to load documents from </summary>
-        protected internal readonly IndexReader reader;
+        protected readonly IndexReader m_reader;
 
         /// <summary>
         /// Field to read payload from </summary>
-        protected internal readonly string payloadField;
+        protected readonly string m_payloadField;
         /// <summary>
         /// Field to read contexts from </summary>
-        protected internal readonly string contextsField;
+        protected readonly string m_contextsField;
         private readonly string field;
         private readonly string weightField;
 
@@ -91,18 +91,18 @@ namespace Lucene.Net.Search.Suggest
         /// </summary>
         public DocumentDictionary(IndexReader reader, string field, string weightField, string payloadField, string contextsField)
         {
-            this.reader = reader;
+            this.m_reader = reader;
             this.field = field;
             this.weightField = weightField;
-            this.payloadField = payloadField;
-            this.contextsField = contextsField;
+            this.m_payloadField = payloadField;
+            this.m_contextsField = contextsField;
         }
 
         public virtual IInputIterator EntryIterator
         {
             get
             {
-                return new DocumentInputIterator(this, payloadField != null, contextsField != null);
+                return new DocumentInputIterator(this, m_payloadField != null, m_contextsField != null);
             }
         }
 
@@ -135,10 +135,10 @@ namespace Lucene.Net.Search.Suggest
                 this.outerInstance = outerInstance;
                 this.hasPayloads = hasPayloads;
                 this.hasContexts = hasContexts;
-                docCount = outerInstance.reader.MaxDoc - 1;
-                weightValues = (outerInstance.weightField != null) ? MultiDocValues.GetNumericValues(outerInstance.reader, outerInstance.weightField) : null;
-                liveDocs = (outerInstance.reader.Leaves.Count > 0) ? MultiFields.GetLiveDocs(outerInstance.reader) : null;
-                relevantFields = GetRelevantFields(new string[] { outerInstance.field, outerInstance.weightField, outerInstance.payloadField, outerInstance.contextsField });
+                docCount = outerInstance.m_reader.MaxDoc - 1;
+                weightValues = (outerInstance.weightField != null) ? MultiDocValues.GetNumericValues(outerInstance.m_reader, outerInstance.weightField) : null;
+                liveDocs = (outerInstance.m_reader.Leaves.Count > 0) ? MultiFields.GetLiveDocs(outerInstance.m_reader) : null;
+                relevantFields = GetRelevantFields(new string[] { outerInstance.field, outerInstance.weightField, outerInstance.m_payloadField, outerInstance.m_contextsField });
             }
 
             public virtual long Weight
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search.Suggest
                         continue;
                     }
 
-                    Document doc = outerInstance.reader.Document(currentDocId, relevantFields);
+                    Document doc = outerInstance.m_reader.Document(currentDocId, relevantFields);
 
                     BytesRef tempPayload = null;
                     BytesRef tempTerm = null;
@@ -172,7 +172,7 @@ namespace Lucene.Net.Search.Suggest
 
                     if (hasPayloads)
                     {
-                        IIndexableField payload = doc.GetField(outerInstance.payloadField);
+                        IIndexableField payload = doc.GetField(outerInstance.m_payloadField);
                         if (payload == null || (payload.GetBinaryValue() == null && payload.GetStringValue() == null))
                         {
                             continue;
@@ -182,7 +182,7 @@ namespace Lucene.Net.Search.Suggest
 
                     if (hasContexts)
                     {
-                        IIndexableField[] contextFields = doc.GetFields(outerInstance.contextsField);
+                        IIndexableField[] contextFields = doc.GetFields(outerInstance.m_contextsField);
                         foreach (IIndexableField contextField in contextFields)
                         {
                             if (contextField.GetBinaryValue() == null && contextField.GetStringValue() == null)

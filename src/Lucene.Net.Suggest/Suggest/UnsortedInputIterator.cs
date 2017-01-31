@@ -42,7 +42,7 @@ namespace Lucene.Net.Search.Suggest
         public UnsortedInputIterator(IInputIterator source)
             : base(source)
         {
-            ords = new int[entries.Length];
+            ords = new int[m_entries.Length];
             Random random = new Random();
             for (int i = 0; i < ords.Length; i++)
             {
@@ -61,17 +61,17 @@ namespace Lucene.Net.Search.Suggest
         {
             get
             {
-                Debug.Assert(currentOrd == ords[curPos]);
-                return freqs[currentOrd];
+                Debug.Assert(currentOrd == ords[m_curPos]);
+                return m_freqs[currentOrd];
             }
         }
 
         public override BytesRef Next()
         {
-            if (++curPos < entries.Length)
+            if (++m_curPos < m_entries.Length)
             {
-                currentOrd = ords[curPos];
-                return entries.Get(spare, currentOrd);
+                currentOrd = ords[m_curPos];
+                return m_entries.Get(spare, currentOrd);
             }
             return null;
         }
@@ -81,10 +81,10 @@ namespace Lucene.Net.Search.Suggest
             get
             {
                 {
-                    if (HasPayloads && curPos < payloads.Length)
+                    if (HasPayloads && m_curPos < m_payloads.Length)
                     {
-                        Debug.Assert(currentOrd == ords[curPos]);
-                        return payloads.Get(payloadSpare, currentOrd);
+                        Debug.Assert(currentOrd == ords[m_curPos]);
+                        return m_payloads.Get(payloadSpare, currentOrd);
                     }
                     return null;
                 }
@@ -95,10 +95,10 @@ namespace Lucene.Net.Search.Suggest
         {
             get
             {
-                if (HasContexts && curPos < contextSets.Count)
+                if (HasContexts && m_curPos < m_contextSets.Count)
                 {
-                    Debug.Assert(currentOrd == ords[curPos]);
-                    return contextSets[currentOrd];
+                    Debug.Assert(currentOrd == ords[m_curPos]);
+                    return m_contextSets[currentOrd];
                 }
                 return null;
             }

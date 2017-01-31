@@ -30,13 +30,13 @@ namespace Lucene.Net.Search.Suggest
         // TODO keep this for now
         /// <summary>
         /// buffered term entries </summary>
-        protected internal BytesRefArray entries = new BytesRefArray(Counter.NewCounter());
+        protected BytesRefArray m_entries = new BytesRefArray(Counter.NewCounter());
         /// <summary>
         /// current buffer position </summary>
-        protected internal int curPos = -1;
+        protected int m_curPos = -1;
         /// <summary>
-        /// buffered weights, parallel with <see cref="entries"/> </summary>
-        protected internal long[] freqs = new long[1];
+        /// buffered weights, parallel with <see cref="m_entries"/> </summary>
+        protected long[] m_freqs = new long[1];
         private readonly BytesRef spare = new BytesRef();
         private readonly IComparer<BytesRef> comp;
 
@@ -50,26 +50,26 @@ namespace Lucene.Net.Search.Suggest
             int freqIndex = 0;
             while ((spare = source.Next()) != null)
             {
-                entries.Append(spare);
-                if (freqIndex >= freqs.Length)
+                m_entries.Append(spare);
+                if (freqIndex >= m_freqs.Length)
                 {
-                    freqs = ArrayUtil.Grow(freqs, freqs.Length + 1);
+                    m_freqs = ArrayUtil.Grow(m_freqs, m_freqs.Length + 1);
                 }
-                freqs[freqIndex++] = source.Weight;
+                m_freqs[freqIndex++] = source.Weight;
             }
 
         }
 
         public virtual long Weight
         {
-            get { return freqs[curPos]; }
+            get { return m_freqs[m_curPos]; }
         }
 
         public virtual BytesRef Next()
         {
-            if (++curPos < entries.Length)
+            if (++m_curPos < m_entries.Length)
             {
-                entries.Get(spare, curPos);
+                m_entries.Get(spare, m_curPos);
                 return spare;
             }
             return null;

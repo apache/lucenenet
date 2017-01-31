@@ -29,19 +29,19 @@ namespace Lucene.Net.Search.Suggest
         // TODO keep this for now
         /// <summary>
         /// buffered term entries </summary>
-        protected internal BytesRefArray entries = new BytesRefArray(Counter.NewCounter());
+        protected BytesRefArray m_entries = new BytesRefArray(Counter.NewCounter());
         /// <summary>
         /// buffered payload entries </summary>
-        protected internal BytesRefArray payloads = new BytesRefArray(Counter.NewCounter());
+        protected BytesRefArray m_payloads = new BytesRefArray(Counter.NewCounter());
         /// <summary>
         /// buffered context set entries </summary>
-        protected internal IList<IEnumerable<BytesRef>> contextSets = new List<IEnumerable<BytesRef>>();
+        protected IList<IEnumerable<BytesRef>> m_contextSets = new List<IEnumerable<BytesRef>>();
         /// <summary>
         /// current buffer position </summary>
-        protected internal int curPos = -1;
+        protected int m_curPos = -1;
         /// <summary>
-        /// buffered weights, parallel with <see cref="entries"/> </summary>
-        protected internal long[] freqs = new long[1];
+        /// buffered weights, parallel with <see cref="m_entries"/> </summary>
+        protected long[] m_freqs = new long[1];
         private readonly BytesRef spare = new BytesRef();
         private readonly BytesRef payloadSpare = new BytesRef();
         private readonly bool hasPayloads;
@@ -59,34 +59,34 @@ namespace Lucene.Net.Search.Suggest
             hasContexts = source.HasContexts;
             while ((spare = source.Next()) != null)
             {
-                entries.Append(spare);
+                m_entries.Append(spare);
                 if (hasPayloads)
                 {
-                    payloads.Append(source.Payload);
+                    m_payloads.Append(source.Payload);
                 }
                 if (hasContexts)
                 {
-                    contextSets.Add(source.Contexts);
+                    m_contextSets.Add(source.Contexts);
                 }
-                if (freqIndex >= freqs.Length)
+                if (freqIndex >= m_freqs.Length)
                 {
-                    freqs = ArrayUtil.Grow(freqs, freqs.Length + 1);
+                    m_freqs = ArrayUtil.Grow(m_freqs, m_freqs.Length + 1);
                 }
-                freqs[freqIndex++] = source.Weight;
+                m_freqs[freqIndex++] = source.Weight;
             }
             comp = source.Comparer;
         }
 
         public virtual long Weight
         {
-            get { return freqs[curPos]; }
+            get { return m_freqs[m_curPos]; }
         }
 
         public virtual BytesRef Next()
         {
-            if (++curPos < entries.Length)
+            if (++m_curPos < m_entries.Length)
             {
-                entries.Get(spare, curPos);
+                m_entries.Get(spare, m_curPos);
                 return spare;
             }
             return null;
@@ -96,9 +96,9 @@ namespace Lucene.Net.Search.Suggest
         {
             get
             {
-                if (hasPayloads && curPos < payloads.Length)
+                if (hasPayloads && m_curPos < m_payloads.Length)
                 {
-                    return payloads.Get(payloadSpare, curPos);
+                    return m_payloads.Get(payloadSpare, m_curPos);
                 }
                 return null;
             }
@@ -121,9 +121,9 @@ namespace Lucene.Net.Search.Suggest
         {
             get
             {
-                if (hasContexts && curPos < contextSets.Count)
+                if (hasContexts && m_curPos < m_contextSets.Count)
                 {
-                    return contextSets[curPos];
+                    return m_contextSets[m_curPos];
                 }
                 return null;
             }
