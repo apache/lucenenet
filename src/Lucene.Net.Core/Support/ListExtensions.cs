@@ -41,32 +41,131 @@ namespace Lucene.Net.Support
             return list;
         }
 
+        /// <summary>
+        /// If the underlying type is <see cref="List{T}"/>,
+        /// calls <see cref="List{T}.Sort"/>. If not, 
+        /// uses <see cref="Util.CollectionUtil.TimSort{T}(IList{T})"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list">this <see cref="IList{T}"/></param>
+        public static void Sort<T>(this IList<T> list)
+        {
+            if (list is List<T>)
+            {
+                ((List<T>)list).Sort();
+            }
+            else
+            {
+                Util.CollectionUtil.TimSort(list);
+            }
+        }
+
+        /// <summary>
+        /// If the underlying type is <see cref="List{T}"/>,
+        /// calls <see cref="List{T}.Sort(IComparer{T})"/>. If not, 
+        /// uses <see cref="Util.CollectionUtil.TimSort{T}(IList{T}, IComparer{T})"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list">this <see cref="IList{T}"/></param>
+        /// <param name="comparer">the comparer to use for the sort</param>
+        public static void Sort<T>(this IList<T> list, IComparer<T> comparer)
+        {
+            if (list is List<T>)
+            {
+                ((List<T>)list).Sort(comparer);
+            }
+            else
+            {
+                Util.CollectionUtil.TimSort(list, comparer);
+            }
+        }
+
+        /// <summary>
+        /// If the underlying type is <see cref="List{T}"/>,
+        /// calls <see cref="List{T}.Sort(IComparer{T})"/>. If not, 
+        /// uses <see cref="Util.CollectionUtil.TimSort{T}(IList{T}, IComparer{T})"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list">this <see cref="IList{T}"/></param>
+        /// <param name="comparison">the comparison function to use for the sort</param>
+        public static void Sort<T>(this IList<T> list, Comparison<T> comparison)
+        {
+            IComparer<T> comparer = new FunctorComparer<T>(comparison);
+            Sort(list, comparer);
+        }
+
+        /// <summary>
+        /// Sorts the given <see cref="IList{T}"/> using the <see cref="IComparer{T}"/>.
+        /// This method uses the Tim sort
+        /// algorithm, but falls back to binary sort for small lists.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list">this <see cref="IList{T}"/></param>
         public static void TimSort<T>(this IList<T> list)
-            where T : IComparable<T>
         {
             Util.CollectionUtil.TimSort(list);
         }
 
+        /// <summary>
+        /// Sorts the given <see cref="IList{T}"/> using the <see cref="IComparer{T}"/>.
+        /// This method uses the Tim sort
+        /// algorithm, but falls back to binary sort for small lists.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list">this <see cref="IList{T}"/></param>
+        /// <param name="comparer">The <see cref="IComparer{T}"/> to use for the sort.</param>
         public static void TimSort<T>(this IList<T> list, IComparer<T> comparer)
-            where T : IComparable<T>
         {
             Util.CollectionUtil.TimSort(list, comparer);
         }
 
+        /// Sorts the given <see cref="IList{T}"/> using the <see cref="IComparer{T}"/>.
+        /// This method uses the intro sort
+        /// algorithm, but falls back to insertion sort for small lists. 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list">this <see cref="IList{T}"/></param>
         public static void IntroSort<T>(this IList<T> list)
-            where T : IComparable<T>
         {
             Util.CollectionUtil.IntroSort(list);
         }
 
+        /// <summary>
+        /// Sorts the given <see cref="IList{T}"/> using the <see cref="IComparer{T}"/>.
+        /// This method uses the intro sort
+        /// algorithm, but falls back to insertion sort for small lists. 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list">this <see cref="IList{T}"/></param>
+        /// <param name="comparer">The <see cref="IComparer{T}"/> to use for the sort.</param>
         public static void IntroSort<T>(this IList<T> list, IComparer<T> comparer)
-            where T : IComparable<T>
         {
             Util.CollectionUtil.IntroSort(list, comparer);
         }
+
+        #region Nested Type: FunctorComparer<T>
+
+        private sealed class FunctorComparer<T> : IComparer<T>
+        {
+            private Comparison<T> comparison;
+
+            public FunctorComparer(Comparison<T> comparison)
+            {
+                this.comparison = comparison;
+            }
+
+            public int Compare(T x, T y)
+            {
+                return this.comparison(x, y);
+            }
+        }
+
+        #endregion Nested Type: FunctorComparer<T>
     }
 
-    public sealed class SubList<T> : IList<T>
+    #region SubList<T>
+
+    internal sealed class SubList<T> : IList<T>
     {
         private readonly IList<T> list;
         private readonly int fromIndex;
@@ -212,4 +311,6 @@ namespace Lucene.Net.Support
             }
         }
     }
+
+    #endregion SubList<T>
 }
