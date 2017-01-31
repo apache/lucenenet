@@ -549,9 +549,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 currentNode = currentNode.relatives[TSTNode.PARENT];
             }
 
-            // LUCENENET NOTE: Reverse doesn't happen in place in a .NET StringBuilder,
-            // so we need to return the reversed result.
-            return getKeyBuffer.Reverse().ToString();
+            getKeyBuffer.Reverse();
+            return getKeyBuffer.ToString();
         }
 
         /// <summary>
