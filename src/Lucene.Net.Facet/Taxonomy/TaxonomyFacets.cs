@@ -109,7 +109,7 @@ namespace Lucene.Net.Facet.Taxonomy
             return dimConfig;
         }
 
-        public override List<FacetResult> GetAllDims(int topN)
+        public override IList<FacetResult> GetAllDims(int topN)
         {
             int ord = children[TaxonomyReader.ROOT_ORDINAL];
             IList<FacetResult> results = new List<FacetResult>();

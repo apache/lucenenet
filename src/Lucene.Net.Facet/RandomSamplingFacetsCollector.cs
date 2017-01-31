@@ -90,7 +90,7 @@ namespace Lucene.Net.Facet
         private readonly XORShift64Random random;
 
         private double samplingRate;
-        private List<MatchingDocs> sampledDocs;
+        private IList<MatchingDocs> sampledDocs;
         private int totalHits = NOT_CALCULATED;
         private int leftoverBin = NOT_CALCULATED;
         private int leftoverIndex = NOT_CALCULATED;
@@ -136,9 +136,9 @@ namespace Lucene.Net.Facet
         /// <see cref="FacetsCollector.MatchingDocs"/>, scores is set to <c>null</c>
         /// </para>
         /// </summary>
-        public override List<MatchingDocs> GetMatchingDocs()
+        public override IList<MatchingDocs> GetMatchingDocs()
         {
-            List<MatchingDocs> matchingDocs = base.GetMatchingDocs();
+            IList<MatchingDocs> matchingDocs = base.GetMatchingDocs();
 
             if (totalHits == NOT_CALCULATED)
             {
@@ -165,7 +165,7 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Returns the original matching documents.
         /// </summary>
-        public virtual List<MatchingDocs> GetOriginalMatchingDocs()
+        public virtual IList<MatchingDocs> GetOriginalMatchingDocs()
         {
             return base.GetMatchingDocs();
         }
@@ -173,7 +173,7 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Create a sampled copy of the matching documents list.
         /// </summary>
-        private List<MatchingDocs> CreateSampledDocs(IEnumerable<MatchingDocs> matchingDocsList)
+        private IList<MatchingDocs> CreateSampledDocs(IEnumerable<MatchingDocs> matchingDocsList)
         {
             List<MatchingDocs> sampledDocsList = new List<MatchingDocs>(matchingDocsList.Count());
             foreach (MatchingDocs docs in matchingDocsList)

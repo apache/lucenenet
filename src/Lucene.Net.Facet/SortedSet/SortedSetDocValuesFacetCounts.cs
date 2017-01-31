@@ -291,9 +291,9 @@ namespace Lucene.Net.Facet.SortedSet
             return counts[ord];
         }
 
-        public override List<FacetResult> GetAllDims(int topN)
+        public override IList<FacetResult> GetAllDims(int topN)
         {
-            IList<FacetResult> results = new List<FacetResult>();
+            List<FacetResult> results = new List<FacetResult>();
             foreach (KeyValuePair<string, OrdRange> ent in state.PrefixToOrdRange)
             {
                 FacetResult fr = GetDim(ent.Key, ent.Value, topN);
@@ -303,10 +303,9 @@ namespace Lucene.Net.Facet.SortedSet
                 }
             }
 
-            var resultArray = results.ToList();
             // Sort by highest count:
-            resultArray.Sort(new ComparerAnonymousInnerClassHelper(this));
-            return resultArray;
+            results.Sort(new ComparerAnonymousInnerClassHelper(this));
+            return results;
         }
 
         private class ComparerAnonymousInnerClassHelper : IComparer<FacetResult>

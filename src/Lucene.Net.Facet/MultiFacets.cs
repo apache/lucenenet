@@ -67,7 +67,7 @@ namespace Lucene.Net.Facet
             return facets.GetSpecificValue(dim, path);
         }
 
-        public override List<FacetResult> GetAllDims(int topN)
+        public override IList<FacetResult> GetAllDims(int topN)
         {
 
             List<FacetResult> results = new List<FacetResult>();
