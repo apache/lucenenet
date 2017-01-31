@@ -118,14 +118,14 @@ namespace Lucene.Net.Facet
             return sb.ToString();
         }
 
-        public override bool Equals(object _other)
+        public override bool Equals(object other)
         {
-            if ((_other is FacetResult) == false)
+            if ((other is FacetResult) == false)
             {
                 return false;
             }
-            FacetResult other = (FacetResult)_other;
-            return Value.Equals(other.Value) && ChildCount == other.ChildCount && Arrays.Equals(LabelValues, other.LabelValues);
+            FacetResult other2 = (FacetResult)other;
+            return Value.Equals(other2.Value) && ChildCount == other2.ChildCount && Arrays.Equals(LabelValues, other2.LabelValues);
         }
 
         public override int GetHashCode()
