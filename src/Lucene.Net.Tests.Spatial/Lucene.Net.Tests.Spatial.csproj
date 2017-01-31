@@ -59,6 +59,7 @@
     <Compile Include="SpatialTestException.cs" />
     <Compile Include="SpatialTestQuery.cs" />
     <Compile Include="StrategyTestCase.cs" />
+    <Compile Include="TestApiConsistency.cs" />
     <Compile Include="TestTestFramework.cs" />
     <Compile Include="Vector\TestPointVectorStrategy.cs" />
   </ItemGroup>
