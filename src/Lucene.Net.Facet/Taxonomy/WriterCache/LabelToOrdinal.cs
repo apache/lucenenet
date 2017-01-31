@@ -26,7 +26,7 @@
     {
         /// <summary>
         /// How many ordinals we've seen. </summary>
-        protected internal int counter;
+        protected int m_counter;
 
         /// <summary>
         /// Returned by <see cref="GetOrdinal"/> when the label isn't
@@ -48,7 +48,7 @@
         {
             get
             {
-                return this.counter;
+                return this.m_counter;
             }
         }
 
@@ -58,7 +58,7 @@
         /// </summary>
         public virtual int GetNextOrdinal()
         {
-            return this.counter++;
+            return this.m_counter++;
         }
 
         /// <summary>

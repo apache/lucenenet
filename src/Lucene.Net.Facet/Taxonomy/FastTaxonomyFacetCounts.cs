@@ -58,7 +58,7 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             foreach (FacetsCollector.MatchingDocs hits in matchingDocs)
             {
-                BinaryDocValues dv = hits.Context.AtomicReader.GetBinaryDocValues(indexFieldName);
+                BinaryDocValues dv = hits.Context.AtomicReader.GetBinaryDocValues(m_indexFieldName);
                 if (dv == null) // this reader does not have DocValues for the requested category list
                 {
                     continue;
@@ -82,7 +82,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         if ((sbyte)b >= 0)
                         {
                             prev = ord = ((ord << 7) | b) + prev;
-                            ++values[ord];
+                            ++m_values[ord];
                             ord = 0;
                         }
                         else

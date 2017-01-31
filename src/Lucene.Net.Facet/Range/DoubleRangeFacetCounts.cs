@@ -85,7 +85,7 @@ namespace Lucene.Net.Facet.Range
         private void Count(ValueSource valueSource, IEnumerable<MatchingDocs> matchingDocs)
         {
 
-            DoubleRange[] ranges = (DoubleRange[])this.ranges;
+            DoubleRange[] ranges = (DoubleRange[])this.m_ranges;
 
             LongRange[] longRanges = new LongRange[ranges.Length];
             for (int i = 0; i < ranges.Length; i++)
@@ -101,11 +101,11 @@ namespace Lucene.Net.Facet.Range
             {
                 FunctionValues fv = valueSource.GetValues(new Dictionary<string, object>(), hits.Context);
 
-                totCount += hits.TotalHits;
+                m_totCount += hits.TotalHits;
                 IBits bits;
-                if (fastMatchFilter != null)
+                if (m_fastMatchFilter != null)
                 {
-                    DocIdSet dis = fastMatchFilter.GetDocIdSet(hits.Context, null);
+                    DocIdSet dis = m_fastMatchFilter.GetDocIdSet(hits.Context, null);
                     if (dis == null)
                     {
                         // No documents match
@@ -144,8 +144,8 @@ namespace Lucene.Net.Facet.Range
                 }
             }
 
-            missingCount += counter.FillCounts(counts);
-            totCount -= missingCount;
+            missingCount += counter.FillCounts(m_counts);
+            m_totCount -= missingCount;
         }
     }
 }

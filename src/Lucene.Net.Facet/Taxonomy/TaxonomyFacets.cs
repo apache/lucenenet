@@ -57,41 +57,41 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Index field name provided to the constructor.
         /// </summary>
-        protected readonly string indexFieldName;
+        protected readonly string m_indexFieldName;
 
         /// <summary>
         /// <see cref="TaxonomyReader"/> provided to the constructor.
         /// </summary>
-        protected readonly TaxonomyReader taxoReader;
+        protected readonly TaxonomyReader m_taxoReader;
 
         /// <summary>
         /// <see cref="FacetsConfig"/> provided to the constructor.
         /// </summary>
-        protected readonly FacetsConfig config;
+        protected readonly FacetsConfig m_config;
 
         /// <summary>
         /// Maps parent ordinal to its child, or -1 if the parent
         /// is childless. 
         /// </summary>
-        protected readonly int[] children;
+        protected readonly int[] m_children;
 
         /// <summary>
         /// Maps an ordinal to its sibling, or -1 if there is no
         /// sibling. 
         /// </summary>
-        protected readonly int[] siblings;
+        protected readonly int[] m_siblings;
 
         /// <summary>
         /// Sole constructor. 
         /// </summary>
         protected internal TaxonomyFacets(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config)
         {
-            this.indexFieldName = indexFieldName;
-            this.taxoReader = taxoReader;
-            this.config = config;
+            this.m_indexFieldName = indexFieldName;
+            this.m_taxoReader = taxoReader;
+            this.m_config = config;
             ParallelTaxonomyArrays pta = taxoReader.ParallelTaxonomyArrays;
-            children = pta.Children;
-            siblings = pta.Siblings;
+            m_children = pta.Children;
+            m_siblings = pta.Siblings;
         }
 
         /// <summary>
@@ -99,25 +99,25 @@ namespace Lucene.Net.Facet.Taxonomy
         /// dimension is not recognized.  Otherwise, returns the
         /// <see cref="DimConfig"/> for this dimension. 
         /// </summary>
-        protected internal virtual DimConfig VerifyDim(string dim)
+        protected virtual DimConfig VerifyDim(string dim)
         {
-            DimConfig dimConfig = config.GetDimConfig(dim);
-            if (!dimConfig.IndexFieldName.Equals(indexFieldName))
+            DimConfig dimConfig = m_config.GetDimConfig(dim);
+            if (!dimConfig.IndexFieldName.Equals(m_indexFieldName))
             {
-                throw new System.ArgumentException("dimension \"" + dim + "\" was not indexed into field \"" + indexFieldName);
+                throw new System.ArgumentException("dimension \"" + dim + "\" was not indexed into field \"" + m_indexFieldName);
             }
             return dimConfig;
         }
 
         public override IList<FacetResult> GetAllDims(int topN)
         {
-            int ord = children[TaxonomyReader.ROOT_ORDINAL];
-            IList<FacetResult> results = new List<FacetResult>();
+            int ord = m_children[TaxonomyReader.ROOT_ORDINAL];
+            List<FacetResult> results = new List<FacetResult>();
             while (ord != TaxonomyReader.INVALID_ORDINAL)
             {
-                string dim = taxoReader.GetPath(ord).Components[0];
-                DimConfig dimConfig = config.GetDimConfig(dim);
-                if (dimConfig.IndexFieldName.Equals(indexFieldName))
+                string dim = m_taxoReader.GetPath(ord).Components[0];
+                DimConfig dimConfig = m_config.GetDimConfig(dim);
+                if (dimConfig.IndexFieldName.Equals(m_indexFieldName))
                 {
                     FacetResult result = GetTopChildren(topN, dim);
                     if (result != null)
@@ -125,13 +125,12 @@ namespace Lucene.Net.Facet.Taxonomy
                         results.Add(result);
                     }
                 }
-                ord = siblings[ord];
+                ord = m_siblings[ord];
             }
 
             // Sort by highest value, tie break by dim:
-            var resultArray = results.ToList();
-            resultArray.Sort(BY_VALUE_THEN_DIM);
-            return resultArray;
+            results.Sort(BY_VALUE_THEN_DIM);
+            return results;
         }
     }
 }

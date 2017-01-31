@@ -50,23 +50,23 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// <see cref="IndexSearcher"/> passed to constructor.
         /// </summary>
-        protected internal readonly IndexSearcher searcher;
+        protected readonly IndexSearcher m_searcher;
 
         /// <summary>
         /// <see cref="TaxonomyReader"/> passed to constructor.
         /// </summary>
-        protected internal readonly TaxonomyReader taxoReader;
+        protected readonly TaxonomyReader m_taxoReader;
 
         /// <summary>
         /// <see cref="SortedSetDocValuesReaderState"/> passed to
         /// constructor; can be <c>null</c>. 
         /// </summary>
-        protected internal readonly SortedSetDocValuesReaderState state;
+        protected readonly SortedSetDocValuesReaderState m_state;
 
         /// <summary>
         /// <see cref="FacetsConfig"/> passed to constructor.
         /// </summary>
-        protected internal readonly FacetsConfig config;
+        protected readonly FacetsConfig m_config;
 
         /// <summary>
         /// Create a new <see cref="DrillSideways"/> instance.
@@ -92,10 +92,10 @@ namespace Lucene.Net.Facet
         /// </summary>
         public DrillSideways(IndexSearcher searcher, FacetsConfig config, TaxonomyReader taxoReader, SortedSetDocValuesReaderState state)
         {
-            this.searcher = searcher;
-            this.config = config;
-            this.taxoReader = taxoReader;
-            this.state = state;
+            this.m_searcher = searcher;
+            this.m_config = config;
+            this.m_taxoReader = taxoReader;
+            this.m_state = state;
         }
 
         /// <summary>
@@ -108,25 +108,25 @@ namespace Lucene.Net.Facet
             Facets drillDownFacets;
             var drillSidewaysFacets = new Dictionary<string, Facets>();
 
-            if (taxoReader != null)
+            if (m_taxoReader != null)
             {
-                drillDownFacets = new FastTaxonomyFacetCounts(taxoReader, config, drillDowns);
+                drillDownFacets = new FastTaxonomyFacetCounts(m_taxoReader, m_config, drillDowns);
                 if (drillSideways != null)
                 {
                     for (int i = 0; i < drillSideways.Length; i++)
                     {
-                        drillSidewaysFacets[drillSidewaysDims[i]] = new FastTaxonomyFacetCounts(taxoReader, config, drillSideways[i]);
+                        drillSidewaysFacets[drillSidewaysDims[i]] = new FastTaxonomyFacetCounts(m_taxoReader, m_config, drillSideways[i]);
                     }
                 }
             }
             else
             {
-                drillDownFacets = new SortedSetDocValuesFacetCounts(state, drillDowns);
+                drillDownFacets = new SortedSetDocValuesFacetCounts(m_state, drillDowns);
                 if (drillSideways != null)
                 {
                     for (int i = 0; i < drillSideways.Length; i++)
                     {
-                        drillSidewaysFacets[drillSidewaysDims[i]] = new SortedSetDocValuesFacetCounts(state, drillSideways[i]);
+                        drillSidewaysFacets[drillSidewaysDims[i]] = new SortedSetDocValuesFacetCounts(m_state, drillSideways[i]);
                     }
                 }
             }
@@ -156,7 +156,7 @@ namespace Lucene.Net.Facet
             {
                 // There are no drill-down dims, so there is no
                 // drill-sideways to compute:
-                searcher.Search(query, MultiCollector.Wrap(hitCollector, drillDownCollector));
+                m_searcher.Search(query, MultiCollector.Wrap(hitCollector, drillDownCollector));
                 return new DrillSidewaysResult(BuildFacetsResult(drillDownCollector, null, null), null);
             }
 
@@ -191,7 +191,7 @@ namespace Lucene.Net.Facet
                 drillDownQueries[i - startClause] = clauses[i].Query;
             }
             DrillSidewaysQuery dsq = new DrillSidewaysQuery(baseQuery, drillDownCollector, drillSidewaysCollectors, drillDownQueries, ScoreSubDocsAtOnce());
-            searcher.Search(dsq, hitCollector);
+            m_searcher.Search(dsq, hitCollector);
 
             return new DrillSidewaysResult(BuildFacetsResult(drillDownCollector, drillSidewaysCollectors, drillDownDims.Keys.ToArray()), null);
         }
@@ -204,11 +204,11 @@ namespace Lucene.Net.Facet
         {
             if (filter != null)
             {
-                query = new DrillDownQuery(config, filter, query);
+                query = new DrillDownQuery(m_config, filter, query);
             }
             if (sort != null)
             {
-                int limit = searcher.IndexReader.MaxDoc;
+                int limit = m_searcher.IndexReader.MaxDoc;
                 if (limit == 0)
                 {
                     limit = 1; // the collector does not alow numHits = 0
@@ -239,7 +239,7 @@ namespace Lucene.Net.Facet
         /// </summary>
         public virtual DrillSidewaysResult Search(ScoreDoc after, DrillDownQuery query, int topN)
         {
-            int limit = searcher.IndexReader.MaxDoc;
+            int limit = m_searcher.IndexReader.MaxDoc;
             if (limit == 0)
             {
                 limit = 1; // the collector does not alow numHits = 0

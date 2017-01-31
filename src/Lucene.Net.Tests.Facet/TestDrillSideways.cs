@@ -899,12 +899,12 @@ namespace Lucene.Net.Facet
             protected override Facets BuildFacetsResult(FacetsCollector drillDowns, FacetsCollector[] drillSideways, string[] drillSidewaysDims)
             {
                 IDictionary<string, Facets> drillSidewaysFacets = new Dictionary<string, Facets>();
-                Facets drillDownFacets = outerInstance.GetTaxonomyFacetCounts(taxoReader, config, drillDowns);
+                Facets drillDownFacets = outerInstance.GetTaxonomyFacetCounts(m_taxoReader, config, drillDowns);
                 if (drillSideways != null)
                 {
                     for (int i = 0; i < drillSideways.Length; i++)
                     {
-                        drillSidewaysFacets[drillSidewaysDims[i]] = outerInstance.GetTaxonomyFacetCounts(taxoReader, config, drillSideways[i]);
+                        drillSidewaysFacets[drillSidewaysDims[i]] = outerInstance.GetTaxonomyFacetCounts(m_taxoReader, config, drillSideways[i]);
                     }
                 }
 

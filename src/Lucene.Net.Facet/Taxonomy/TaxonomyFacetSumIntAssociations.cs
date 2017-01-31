@@ -57,7 +57,7 @@ namespace Lucene.Net.Facet.Taxonomy
             //System.out.println("count matchingDocs=" + matchingDocs + " facetsField=" + facetsFieldName);
             foreach (FacetsCollector.MatchingDocs hits in matchingDocs)
             {
-                BinaryDocValues dv = hits.Context.AtomicReader.GetBinaryDocValues(indexFieldName);
+                BinaryDocValues dv = hits.Context.AtomicReader.GetBinaryDocValues(m_indexFieldName);
                 if (dv == null) // this reader does not have DocValues for the requested category list
                 {
                     continue;
@@ -84,7 +84,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         int value = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | 
                             ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
                         offset += 4;
-                        values[ord] += value;
+                        m_values[ord] += value;
                     }
                 }
             }

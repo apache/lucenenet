@@ -146,7 +146,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     float value = (float)functionValues.DoubleVal(doc);
                     for (int i = 0; i < scratch.Length; i++)
                     {
-                        values[scratch.Ints[i]] += value;
+                        m_values[scratch.Ints[i]] += value;
                     }
                 }
             }

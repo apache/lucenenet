@@ -318,7 +318,7 @@ namespace Lucene.Net.Facet.Range
 
                 IDictionary<string, Facets> byDim = new Dictionary<string, Facets>();
                 byDim["field"] = new LongRangeFacetCounts("field", fieldFC, new LongRange("less than 10", 0L, true, 10L, false), new LongRange("less than or equal to 10", 0L, true, 10L, true), new LongRange("over 90", 90L, false, 100L, false), new LongRange("90 or above", 90L, true, 100L, false), new LongRange("over 1000", 1000L, false, long.MaxValue, false));
-                byDim["dim"] = outerInstance.GetTaxonomyFacetCounts(taxoReader, config, dimFC);
+                byDim["dim"] = outerInstance.GetTaxonomyFacetCounts(m_taxoReader, config, dimFC);
                 return new MultiFacets(byDim, null);
             }
 

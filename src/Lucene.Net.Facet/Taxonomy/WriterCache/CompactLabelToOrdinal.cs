@@ -91,7 +91,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             Init();
             this.collisionMap = new CollisionMap(this.labelRepository);
 
-            this.counter = 0;
+            this.m_counter = 0;
             this.loadFactor = loadFactor;
 
             this.threshold = (int)(this.loadFactor * this.capacity);
@@ -414,9 +414,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 // TaxiReader needs to load the "counter" or occupancy (L2O) to know
                 // the next unique facet. we used to load the delimiter too, but
                 // never used it.
-                l2o.counter = dis.ReadInt32();
+                l2o.m_counter = dis.ReadInt32();
 
-                l2o.capacity = DetermineCapacity((int)Math.Pow(2, l2o.hashArrays.Length), l2o.counter);
+                l2o.capacity = DetermineCapacity((int)Math.Pow(2, l2o.hashArrays.Length), l2o.m_counter);
                 l2o.Init();
 
                 // now read the chars
@@ -484,7 +484,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             using (BinaryWriter dos = new BinaryWriter(stream))
             {
-                dos.Write(this.counter);
+                dos.Write(this.m_counter);
 
                 // write the labelRepository
                 this.labelRepository.Flush(dos.BaseStream);

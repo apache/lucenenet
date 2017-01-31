@@ -60,7 +60,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     ords.Get(doc, scratch);
                     for (int i = 0; i < scratch.Length; i++)
                     {
-                        values[scratch.Ints[scratch.Offset + i]]++;
+                        m_values[scratch.Ints[scratch.Offset + i]]++;
                     }
                 }
             }
