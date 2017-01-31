@@ -66,7 +66,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         private readonly double ymid;
 
         private readonly double gridW;
-        public readonly double gridH;
+        public double GridH
+        {
+            get { return gridH; }
+        }
+        private readonly double gridH;
         
         internal readonly double[] levelW;
         internal readonly double[] levelH;

@@ -33,10 +33,17 @@ namespace Lucene.Net.Spatial.Util
     public class ShapeFieldCache<T> where T : IShape
     {
         private readonly IList<T>[] cache;
-        public int defaultLength;
+        public int DefaultLength
+        {
+            get { return defaultLength; }
+            set { defaultLength = value; }
+        }
+        private int defaultLength;
 
         public ShapeFieldCache(int length, int defaultLength)
         {
+            IList<int> test = new int[66];
+
             cache = new IList<T>[length];
             this.defaultLength = defaultLength;
         }
