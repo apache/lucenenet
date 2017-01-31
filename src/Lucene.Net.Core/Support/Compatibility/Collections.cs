@@ -23,7 +23,7 @@ namespace Lucene.Net
 
         public static IList<T> EmptyList<T>()
         {
-            return ImmutableList<T>.Empty; // LUCENENET TODO: Shouldn't be Immutable
+            return (IList<T>)Enumerable.Empty<T>();
         }
 
         public static IDictionary<TKey, TValue> EmptyMap<TKey, TValue>()
