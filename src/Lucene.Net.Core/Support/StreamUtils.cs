@@ -5,27 +5,27 @@ namespace Lucene.Net.Support
 {
     public static class StreamUtils
     {
-        static readonly BinaryFormatter Formatter = new BinaryFormatter();
+        static readonly BinaryFormatter formatter = new BinaryFormatter();
 
         public static void SerializeToStream(object o, Stream outputStream)
         {
-            Formatter.Serialize(outputStream, o);
+            formatter.Serialize(outputStream, o);
         }
 
         public static void SerializeToStream(object o, BinaryWriter writer)
         {
-            Formatter.Serialize(writer.BaseStream, o);
+            formatter.Serialize(writer.BaseStream, o);
         }
 
         public static object DeserializeFromStream(Stream stream)
         {
-            object o = Formatter.Deserialize(stream);
+            object o = formatter.Deserialize(stream);
             return o;
         }
 
         public static object DeserializeFromStream(BinaryReader reader)
         {
-            object o = Formatter.Deserialize(reader.BaseStream);
+            object o = formatter.Deserialize(reader.BaseStream);
             return o;
         }
     }
