@@ -135,10 +135,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Sorts the given random access <seealso cref="List"/> using the <seealso cref="Comparer"/>.
-        /// The list must implement <seealso cref="RandomAccess"/>. this method uses the intro sort
-        /// algorithm, but falls back to insertion sort for small lists. </summary>
-        /// <exception cref="IllegalArgumentException"> if list is e.g. a linked list without random access. </exception>
+        /// Sorts the given <see cref="IList{T}"/> using the <see cref="IComparer{T}"/>.
+        /// This method uses the intro sort
+        /// algorithm, but falls back to insertion sort for small lists. 
+        /// </summary>
+        /// <param name="list">this <see cref="IList{T}"/></param>
+        /// <param name="comp">The <see cref="IComparer{T}"/> to use for the sort.</param>
         public static void IntroSort<T>(IList<T> list, IComparer<T> comp)
         {
             int size = list.Count;
@@ -150,10 +152,11 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Sorts the given random access <seealso cref="List"/> in natural order.
-        /// The list must implement <seealso cref="RandomAccess"/>. this method uses the intro sort
-        /// algorithm, but falls back to insertion sort for small lists. </summary>
-        /// <exception cref="IllegalArgumentException"> if list is e.g. a linked list without random access. </exception>
+        /// Sorts the given random access <see cref="IList{T}"/> in natural order.
+        /// This method uses the intro sort
+        /// algorithm, but falls back to insertion sort for small lists. 
+        /// </summary>
+        /// <param name="list">this <see cref="IList{T}"/></param>
         public static void IntroSort<T>(IList<T> list)
             //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
@@ -168,10 +171,13 @@ namespace Lucene.Net.Util
         // Tim sorts:
 
         /// <summary>
-        /// Sorts the given random access <seealso cref="List"/> using the <seealso cref="Comparer"/>.
-        /// The list must implement <seealso cref="RandomAccess"/>. this method uses the Tim sort
-        /// algorithm, but falls back to binary sort for small lists. </summary>
-        /// <exception cref="IllegalArgumentException"> if list is e.g. a linked list without random access. </exception>
+        /// Sorts the given <see cref="IList{T}"/> using the <see cref="IComparer{T}"/>.
+        /// This method uses the Tim sort
+        /// algorithm, but falls back to binary sort for small lists.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list">this <see cref="IList{T}"/></param>
+        /// <param name="comp">The <see cref="IComparer{T}"/> to use for the sort.</param>
         public static void TimSort<T>(IList<T> list, IComparer<T> comp)
         {
             int size = list.Count;
@@ -183,10 +189,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Sorts the given random access <seealso cref="List"/> in natural order.
-        /// The list must implement <seealso cref="RandomAccess"/>. this method uses the Tim sort
+        /// Sorts the given <see cref="IList{T}"/> in natural order.
+        /// This method uses the Tim sort
         /// algorithm, but falls back to binary sort for small lists. </summary>
-        /// <exception cref="IllegalArgumentException"> if list is e.g. a linked list without random access. </exception>
+        /// <param name="list">this <see cref="IList{T}"/></param>
         public static void TimSort<T>(IList<T> list)
             //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
