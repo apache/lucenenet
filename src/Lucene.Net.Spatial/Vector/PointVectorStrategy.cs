@@ -70,6 +70,10 @@ namespace Lucene.Net.Spatial.Vector
 
         public virtual int PrecisionStep
         {
+            get // LUCENENET NOTE: Added getter per MSDN guidelines
+            {
+                return precisionStep;
+            }
             set
             {
                 precisionStep = value;

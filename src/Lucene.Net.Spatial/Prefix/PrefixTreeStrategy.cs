@@ -100,6 +100,7 @@ namespace Lucene.Net.Spatial.Prefix
         /// </summary>
         public virtual int DefaultFieldValuesArrayLen
         {
+            get { return m_defaultFieldValuesArrayLen; } // LUCENENET NOTE: Added getter per MSDN guidelines
             set { m_defaultFieldValuesArrayLen = value; }
         }
 
