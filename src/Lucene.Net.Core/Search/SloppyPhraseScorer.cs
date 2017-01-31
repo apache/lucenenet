@@ -405,7 +405,7 @@ namespace Lucene.Net.Search
             if (hasRpts)
             {
                 rptStack = new PhrasePositions[numPostings]; // needed with repetitions
-                List<List<PhrasePositions>> rgs = GatherRptGroups(rptTerms);
+                IList<IList<PhrasePositions>> rgs = GatherRptGroups(rptTerms);
                 SortRptGroups(rgs);
                 if (!AdvanceRepeatGroups())
                 {
@@ -421,7 +421,7 @@ namespace Lucene.Net.Search
         /// sort each repetition group by (query) offset.
         /// Done only once (at first doc) and allows to initialize faster for each doc.
         /// </summary>
-        private void SortRptGroups(List<List<PhrasePositions>> rgs)
+        private void SortRptGroups(IList<IList<PhrasePositions>> rgs)
         {
             rptGroups = new PhrasePositions[rgs.Count][];
             IComparer<PhrasePositions> cmprtr = new ComparerAnonymousInnerClassHelper(this);
@@ -454,10 +454,10 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Detect repetition groups. Done once - for first doc </summary>
-        private List<List<PhrasePositions>> GatherRptGroups(HashMap<Term, int?> rptTerms)
+        private IList<IList<PhrasePositions>> GatherRptGroups(LinkedHashMap<Term, int?> rptTerms)
         {
             PhrasePositions[] rpp = RepeatingPPs(rptTerms);
-            List<List<PhrasePositions>> res = new List<List<PhrasePositions>>();
+            IList<IList<PhrasePositions>> res = new List<IList<PhrasePositions>>();
             if (!hasMultiTermRpts)
             {
                 // simpler - no multi-terms - can base on positions in first doc
@@ -495,9 +495,9 @@ namespace Lucene.Net.Search
             {
                 // more involved - has multi-terms
                 List<HashSet<PhrasePositions>> tmp = new List<HashSet<PhrasePositions>>();
-                List<FixedBitSet> bb = PpTermsBitSets(rpp, rptTerms);
+                IList<FixedBitSet> bb = PpTermsBitSets(rpp, rptTerms);
                 UnionTermGroups(bb);
-                Dictionary<Term, int> tg = TermGroups(rptTerms, bb);
+                IDictionary<Term, int> tg = TermGroups(rptTerms, bb);
                 HashSet<int> distinctGroupIDs = new HashSet<int>(tg.Values);
                 for (int i = 0; i < distinctGroupIDs.Count; i++)
                 {
@@ -533,9 +533,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// find repeating terms and assign them ordinal values </summary>
-        private HashMap<Term, int?> RepeatingTerms()
+        private LinkedHashMap<Term, int?> RepeatingTerms()
         {
-            HashMap<Term, int?> tord = new HashMap<Term, int?>();
+            LinkedHashMap<Term, int?> tord = new LinkedHashMap<Term, int?>();
             Dictionary<Term, int?> tcnt = new Dictionary<Term, int?>();
             for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
             {
@@ -576,7 +576,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// bit-sets - for each repeating pp, for each of its repeating terms, the term ordinal values is set </summary>
-        private List<FixedBitSet> PpTermsBitSets(PhrasePositions[] rpp, HashMap<Term, int?> tord)
+        private IList<FixedBitSet> PpTermsBitSets(PhrasePositions[] rpp, HashMap<Term, int?> tord)
         {
             List<FixedBitSet> bb = new List<FixedBitSet>(rpp.Length);
             foreach (PhrasePositions pp in rpp)
@@ -594,7 +594,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// union (term group) bit-sets until they are disjoint (O(n^^2)), and each group have different terms </summary>
-        private void UnionTermGroups(List<FixedBitSet> bb)
+        private void UnionTermGroups(IList<FixedBitSet> bb)
         {
             int incr;
             for (int i = 0; i < bb.Count - 1; i += incr)
@@ -619,7 +619,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// map each term to the single group that contains it </summary>
-        private Dictionary<Term, int> TermGroups(HashMap<Term, int?> tord, List<FixedBitSet> bb)
+        private IDictionary<Term, int> TermGroups(LinkedHashMap<Term, int?> tord, IList<FixedBitSet> bb)
         {
             Dictionary<Term, int> tg = new Dictionary<Term, int>();
             Term[] t = tord.Keys.ToArray(/*new Term[0]*/);
