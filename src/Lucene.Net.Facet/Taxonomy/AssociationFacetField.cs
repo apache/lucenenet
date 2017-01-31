@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Support;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -54,6 +55,8 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Facet path for this field.
         /// </summary>
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public string[] Path { get; private set; }
 
         /// <summary>

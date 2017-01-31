@@ -1,4 +1,7 @@
-﻿namespace Lucene.Net.Facet.Taxonomy
+﻿using Lucene.Net.Support;
+using System.Diagnostics.CodeAnalysis;
+
+namespace Lucene.Net.Facet.Taxonomy
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -53,18 +56,24 @@
         /// Returns the parents array, where <c>Parents[i]</c> denotes the parent of
         /// category ordinal <c>i</c>.
         /// </summary>
-        public abstract int[] Parents { get; } // LUCENENET TODO: Change to GetParents()
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        public abstract int[] Parents { get; }
 
         /// <summary>
         /// Returns the children array, where <c>Children[i]</c> denotes a child of
         /// category ordinal <c>i</c>.
         /// </summary>
-        public abstract int[] Children { get; } // LUCENENET TODO: Change to GetChildren()
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        public abstract int[] Children { get; }
 
         /// <summary>
         /// Returns the siblings array, where <c>Siblings[i]</c> denotes the sibling
         /// of category ordinal <c>i</c>.
         /// </summary>
-        public abstract int[] Siblings { get; } // LUCENENET TODO: Change to GetSiblings()
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        public abstract int[] Siblings { get; }
     }
 }

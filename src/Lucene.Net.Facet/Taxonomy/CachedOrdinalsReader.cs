@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -129,12 +130,16 @@ namespace Lucene.Net.Facet.Taxonomy
             /// <summary>
             /// Index into <see cref="Ordinals"/> for each document.
             /// </summary>
-            public int[] Offsets { get; private set; } // LUCENENET TODO: property returning array
+            [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+            public int[] Offsets { get; private set; }
 
             /// <summary>
             /// Holds ords for all docs.
             /// </summary>
-            public int[] Ordinals { get; private set; } // LUCENENET TODO: property returning array
+            [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+            public int[] Ordinals { get; private set; }
 
             /// <summary>
             /// Creates a new <see cref="CachedOrds"/> from the <see cref="BinaryDocValues"/>.

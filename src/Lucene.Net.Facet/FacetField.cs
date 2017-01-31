@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Support;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Facet
 {
@@ -48,7 +49,9 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Path for this field.
         /// </summary>
-        public string[] Path { get; private set; } // LUCENENET TODO: public array property
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        public string[] Path { get; private set; }
 
         /// <summary>
         /// Creates the this from <paramref name="dim"/> and

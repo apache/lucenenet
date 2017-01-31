@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Support;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 
@@ -35,7 +36,9 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Path whose children were requested.
         /// </summary>
-        public string[] Path { get; private set; } // LUCENENET TODO: public array property
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        public string[] Path { get; private set; } 
 
         /// <summary>
         /// Total value for this path (sum of all child counts, or
@@ -52,7 +55,9 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Child counts.
         /// </summary>
-        public LabelAndValue[] LabelValues { get; private set; } // LUCENENET TODO: public array property
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        public LabelAndValue[] LabelValues { get; private set; }
 
         /// <summary>
         /// The original data type of <see cref="Value"/> that was passed through the constructor.

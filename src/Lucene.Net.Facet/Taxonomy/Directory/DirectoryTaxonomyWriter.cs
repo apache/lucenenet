@@ -1022,7 +1022,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             public int[] GetMap()
             {
-                return map.ToArray(); // LUCENENET specific: Since this is clearly not meant to be written to, we are cloning the array
+                return (int[])map.Clone(); // LUCENENET specific: Since this is clearly not meant to be written to, we are cloning the array https://msdn.microsoft.com/en-us/library/0fss9skc.aspx
             }
         }
 

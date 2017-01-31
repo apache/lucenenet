@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -41,7 +42,9 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <see cref="Subpath(int)"/>, therefore you should traverse the array up to
         /// <see cref="Length"/> for this path's components.
         /// </summary>
-        public string[] Components { get; private set; } // LUCENENET TODO: public array property
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        public string[] Components { get; private set; }
 
         /// <summary>
         /// The number of components of this <see cref="CategoryPath"/>. </summary>

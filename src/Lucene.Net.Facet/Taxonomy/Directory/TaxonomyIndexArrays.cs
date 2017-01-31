@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
@@ -210,6 +212,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// Returns the parents array, where <c>Parents[i]</c> denotes the parent of
         /// category ordinal <c>i</c>.
         /// </summary>
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public override int[] Parents
         {
             get
@@ -224,7 +228,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// category that was added last to the taxonomy as an immediate child of
         /// <c>i</c>.
         /// </summary>
-        public override int[] Children // LUCENENET TODO: Change to GetChildren() (check consistency)
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        public override int[] Children
         {
             get
             {
@@ -243,6 +249,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// of category ordinal <c>i</c>. The sibling is defined as the previous
         /// youngest child of <c>Parents[i]</c>.
         /// </summary>
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public override int[] Siblings
         {
             get

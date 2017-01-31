@@ -1,8 +1,10 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Facet
 {
@@ -83,6 +85,8 @@ namespace Lucene.Net.Facet
 
             /// <summary>
             /// Non-sparse scores array. </summary>
+            [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public float[] Scores { get; private set; }
 
             /// <summary>
