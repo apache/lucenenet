@@ -607,7 +607,7 @@
     <Compile Include="Support\BreakIterator.cs" />
     <Compile Include="Support\Buffer.cs" />
     <Compile Include="Support\AttributeItem.cs" />
-    <Compile Include="Support\BitSetSupport.cs" />
+    <Compile Include="Support\BitArrayExtensions.cs" />
     <Compile Include="Support\BufferExceptions.cs" />
     <Compile Include="Support\BuildType.cs" />
     <Compile Include="Support\BundleResourceManagerFactory.cs" />

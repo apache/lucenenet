@@ -29,7 +29,7 @@ namespace Lucene.Net.Support
     /// This class provides supporting methods of java.util.BitSet
     /// that are not present in System.Collections.BitArray.
     /// </summary>
-    public static class BitSetSupport
+    public static class BitArrayExtensions
     {
         /// <summary>
         /// Returns the next set bit at or after index, or -1 if no such bit exists.
