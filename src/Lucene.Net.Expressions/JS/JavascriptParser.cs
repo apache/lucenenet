@@ -118,12 +118,12 @@ namespace Lucene.Net.Expressions.JS
         {
         }
 
-        protected ITreeAdaptor adaptor = new CommonTreeAdaptor();
+        protected ITreeAdaptor m_adaptor = new CommonTreeAdaptor();
 
         public virtual ITreeAdaptor TreeAdaptor
         {
-            get { return adaptor; }
-            set { adaptor = value; }
+            get { return m_adaptor; }
+            set { m_adaptor = value; }
         }
 
         // delegators
@@ -371,22 +371,22 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:251:5: ( conditional EOF !)
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:251:7: conditional EOF !
-                    root = (CommonTree)adaptor.Nil();
+                    root = (CommonTree)m_adaptor.Nil();
                     PushFollow(FOLLOW_conditional_in_expression737);
                     conditional1 = Conditional();
                     state._fsp--;
-                    adaptor.AddChild(root, conditional1.Tree);
+                    m_adaptor.AddChild(root, conditional1.Tree);
                     EOF2 = (IToken)Match(input, EOF, FOLLOW_EOF_in_expression739);
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re);
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re);
             }
             // do for sure before leaving
             return retval;
@@ -412,11 +412,11 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:255:5: ( logical_or ( AT_COND_QUE ^ conditional AT_COLON ! conditional )? )
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:255:7: logical_or ( AT_COND_QUE ^ conditional AT_COLON ! conditional )?
-                    root_0 = (CommonTree)adaptor.Nil();
+                    root_0 = (CommonTree)m_adaptor.Nil();
                     PushFollow(FOLLOW_logical_or_in_conditional757);
                     logical_or3 = Logical_Or();
                     state._fsp--;
-                    adaptor.AddChild(root_0, logical_or3.Tree);
+                    m_adaptor.AddChild(root_0, logical_or3.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:255:18: ( AT_COND_QUE ^ conditional AT_COLON ! conditional )?
                     int alt1 = 2;
                     int LA1_0 = input.LA(1);
@@ -430,30 +430,30 @@ namespace Lucene.Net.Expressions.JS
                             {
                                 // src/java/org/apache/lucene/expressions/js/Javascript.g:255:19: AT_COND_QUE ^ conditional AT_COLON ! conditional
                                 AT_COND_QUE4 = (IToken)Match(input, AT_COND_QUE, FOLLOW_AT_COND_QUE_in_conditional760);
-                                AT_COND_QUE4_tree = (CommonTree)adaptor.Create(AT_COND_QUE4);
-                                root_0 = (CommonTree)adaptor.BecomeRoot(AT_COND_QUE4_tree, root_0);
+                                AT_COND_QUE4_tree = (CommonTree)m_adaptor.Create(AT_COND_QUE4);
+                                root_0 = (CommonTree)m_adaptor.BecomeRoot(AT_COND_QUE4_tree, root_0);
                                 PushFollow(FOLLOW_conditional_in_conditional763);
                                 conditional5 = Conditional();
                                 state._fsp--;
-                                adaptor.AddChild(root_0, conditional5.Tree);
+                                m_adaptor.AddChild(root_0, conditional5.Tree);
                                 AT_COLON6 = (IToken)Match(input, AT_COLON, FOLLOW_AT_COLON_in_conditional765);
                                 PushFollow(FOLLOW_conditional_in_conditional768);
                                 conditional7 = Conditional();
                                 state._fsp--;
-                                adaptor.AddChild(root_0, conditional7.Tree);
+                                m_adaptor.AddChild(root_0, conditional7.Tree);
                                 break;
                             }
                     }
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root_0);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root_0);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re);
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re);
             }
             // do for sure before leaving
             return retval;
@@ -475,11 +475,11 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:259:5: ( logical_and ( AT_BOOL_OR ^ logical_and )* )
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:259:7: logical_and ( AT_BOOL_OR ^ logical_and )*
-                    root_0 = (CommonTree)adaptor.Nil();
+                    root_0 = (CommonTree)m_adaptor.Nil();
                     PushFollow(FOLLOW_logical_and_in_logical_or787);
                     logical_and8 = Logical_And();
                     state._fsp--;
-                    adaptor.AddChild(root_0, logical_and8.Tree);
+                    m_adaptor.AddChild(root_0, logical_and8.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:259:19: ( AT_BOOL_OR ^ logical_and )*
                     while (true)
                     {
@@ -495,12 +495,12 @@ namespace Lucene.Net.Expressions.JS
                                 {
                                     // src/java/org/apache/lucene/expressions/js/Javascript.g:259:20: AT_BOOL_OR ^ logical_and
                                     AT_BOOL_OR9 = (IToken)Match(input, AT_BOOL_OR, FOLLOW_AT_BOOL_OR_in_logical_or790);
-                                    AT_BOOL_OR9_tree = (CommonTree)adaptor.Create(AT_BOOL_OR9);
-                                    root_0 = (CommonTree)adaptor.BecomeRoot(AT_BOOL_OR9_tree, root_0);
+                                    AT_BOOL_OR9_tree = (CommonTree)m_adaptor.Create(AT_BOOL_OR9);
+                                    root_0 = (CommonTree)m_adaptor.BecomeRoot(AT_BOOL_OR9_tree, root_0);
                                     PushFollow(FOLLOW_logical_and_in_logical_or793);
                                     logical_and10 = Logical_And();
                                     state._fsp--;
-                                    adaptor.AddChild(root_0, logical_and10.Tree);
+                                    m_adaptor.AddChild(root_0, logical_and10.Tree);
                                     break;
                                 }
 
@@ -514,14 +514,14 @@ namespace Lucene.Net.Expressions.JS
                 loop2_break: ;
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root_0);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root_0);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re);
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re);
             }
             // do for sure before leaving
             return retval;
@@ -545,11 +545,11 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:263:5: ( bitwise_or ( AT_BOOL_AND ^ bitwise_or )* )
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:263:7: bitwise_or ( AT_BOOL_AND ^ bitwise_or )*
-                    root = (CommonTree)adaptor.Nil();
+                    root = (CommonTree)m_adaptor.Nil();
                     PushFollow(FOLLOW_bitwise_or_in_logical_and812);
                     bitwise_or11 = Bitwise_Or();
                     state._fsp--;
-                    adaptor.AddChild(root, bitwise_or11.Tree);
+                    m_adaptor.AddChild(root, bitwise_or11.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:263:18: ( AT_BOOL_AND ^ bitwise_or )*
                     while (true)
                     {
@@ -565,12 +565,12 @@ namespace Lucene.Net.Expressions.JS
                                 {
                                     // src/java/org/apache/lucene/expressions/js/Javascript.g:263:19: AT_BOOL_AND ^ bitwise_or
                                     AT_BOOL_AND12 = (IToken)Match(input, AT_BOOL_AND, FOLLOW_AT_BOOL_AND_in_logical_and815);
-                                    AT_BOOL_AND12_tree = (CommonTree)adaptor.Create(AT_BOOL_AND12);
-                                    root = (CommonTree)adaptor.BecomeRoot(AT_BOOL_AND12_tree, root);
+                                    AT_BOOL_AND12_tree = (CommonTree)m_adaptor.Create(AT_BOOL_AND12);
+                                    root = (CommonTree)m_adaptor.BecomeRoot(AT_BOOL_AND12_tree, root);
                                     PushFollow(FOLLOW_bitwise_or_in_logical_and818);
                                     bitwise_or13 = Bitwise_Or();
                                     state._fsp--;
-                                    adaptor.AddChild(root, bitwise_or13.Tree);
+                                    m_adaptor.AddChild(root, bitwise_or13.Tree);
                                     break;
                                 }
 
@@ -584,14 +584,14 @@ namespace Lucene.Net.Expressions.JS
                 loop3_break: ;
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
                     );
             }
             // do for sure before leaving
@@ -610,11 +610,11 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:267:5: ( bitwise_xor ( AT_BIT_OR ^ bitwise_xor )* )
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:267:7: bitwise_xor ( AT_BIT_OR ^ bitwise_xor )*
-                    root = (CommonTree)adaptor.Nil();
+                    root = (CommonTree)m_adaptor.Nil();
                     PushFollow(FOLLOW_bitwise_xor_in_bitwise_or837);
                     AstParserRuleReturnScope<ITree, IToken> bitwise_xor14 = Bitwise_XOr();
                     state._fsp--;
-                    adaptor.AddChild(root, bitwise_xor14.Tree);
+                    m_adaptor.AddChild(root, bitwise_xor14.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:267:19: ( AT_BIT_OR ^ bitwise_xor )*
                     while (true)
                     {
@@ -630,12 +630,12 @@ namespace Lucene.Net.Expressions.JS
                                 {
                                     // src/java/org/apache/lucene/expressions/js/Javascript.g:267:20: AT_BIT_OR ^ bitwise_xor
                                     IToken AT_BIT_OR15 = (IToken)Match(input, AT_BIT_OR, FOLLOW_AT_BIT_OR_in_bitwise_or840);
-                                    CommonTree AT_BIT_OR15_tree = (CommonTree)adaptor.Create(AT_BIT_OR15);
-                                    root = (CommonTree)adaptor.BecomeRoot(AT_BIT_OR15_tree, root);
+                                    CommonTree AT_BIT_OR15_tree = (CommonTree)m_adaptor.Create(AT_BIT_OR15);
+                                    root = (CommonTree)m_adaptor.BecomeRoot(AT_BIT_OR15_tree, root);
                                     PushFollow(FOLLOW_bitwise_xor_in_bitwise_or843);
                                     AstParserRuleReturnScope<ITree, IToken> bitwise_xor16 = Bitwise_XOr();
                                     state._fsp--;
-                                    adaptor.AddChild(root, bitwise_xor16.Tree);
+                                    m_adaptor.AddChild(root, bitwise_xor16.Tree);
                                     break;
                                 }
 
@@ -649,14 +649,14 @@ namespace Lucene.Net.Expressions.JS
                     loop4_break: ;
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re);
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re);
             }
             // do for sure before leaving
             return retval;
@@ -674,11 +674,11 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:271:5: ( bitwise_and ( AT_BIT_XOR ^ bitwise_and )* )
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:271:7: bitwise_and ( AT_BIT_XOR ^ bitwise_and )*
-                    root = (CommonTree)adaptor.Nil();
+                    root = (CommonTree)m_adaptor.Nil();
                     PushFollow(FOLLOW_bitwise_and_in_bitwise_xor862);
                     AstParserRuleReturnScope<ITree, IToken> bitwise_and17 = Bitwise_And();
                     state._fsp--;
-                    adaptor.AddChild(root, bitwise_and17.Tree);
+                    m_adaptor.AddChild(root, bitwise_and17.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:271:19: ( AT_BIT_XOR ^ bitwise_and )*
                     while (true)
                     {
@@ -695,12 +695,12 @@ namespace Lucene.Net.Expressions.JS
                                     // src/java/org/apache/lucene/expressions/js/Javascript.g:271:20: AT_BIT_XOR ^ bitwise_and
                                     IToken AT_BIT_XOR18 = (IToken)Match(input, AT_BIT_XOR, FOLLOW_AT_BIT_XOR_in_bitwise_xor865
                                         );
-                                    CommonTree AT_BIT_XOR18_tree = (CommonTree)adaptor.Create(AT_BIT_XOR18);
-                                    root = (CommonTree)adaptor.BecomeRoot(AT_BIT_XOR18_tree, root);
+                                    CommonTree AT_BIT_XOR18_tree = (CommonTree)m_adaptor.Create(AT_BIT_XOR18);
+                                    root = (CommonTree)m_adaptor.BecomeRoot(AT_BIT_XOR18_tree, root);
                                     PushFollow(FOLLOW_bitwise_and_in_bitwise_xor868);
                                     AstParserRuleReturnScope<ITree, IToken> bitwise_and19 = Bitwise_And();
                                     state._fsp--;
-                                    adaptor.AddChild(root, bitwise_and19.Tree);
+                                    m_adaptor.AddChild(root, bitwise_and19.Tree);
                                     break;
                                 }
 
@@ -714,14 +714,14 @@ namespace Lucene.Net.Expressions.JS
                     loop5_break: ;
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
                     );
             }
             // do for sure before leaving
@@ -741,11 +741,11 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:275:5: ( equality ( AT_BIT_AND ^ equality )* )
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:275:8: equality ( AT_BIT_AND ^ equality )*
-                    root = (CommonTree)adaptor.Nil();
+                    root = (CommonTree)m_adaptor.Nil();
                     PushFollow(FOLLOW_equality_in_bitwise_and888);
                     AstParserRuleReturnScope<ITree, IToken> equality20 = Equality();
                     state._fsp--;
-                    adaptor.AddChild(root, equality20.Tree);
+                    m_adaptor.AddChild(root, equality20.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:275:17: ( AT_BIT_AND ^ equality )*
                     while (true)
                     {
@@ -762,12 +762,12 @@ namespace Lucene.Net.Expressions.JS
                                     // src/java/org/apache/lucene/expressions/js/Javascript.g:275:18: AT_BIT_AND ^ equality
                                     IToken AT_BIT_AND21 = (IToken)Match(input, AT_BIT_AND, FOLLOW_AT_BIT_AND_in_bitwise_and891
                                         );
-                                    CommonTree AT_BIT_AND21_tree = (CommonTree)adaptor.Create(AT_BIT_AND21);
-                                    root = (CommonTree)adaptor.BecomeRoot(AT_BIT_AND21_tree, root);
+                                    CommonTree AT_BIT_AND21_tree = (CommonTree)m_adaptor.Create(AT_BIT_AND21);
+                                    root = (CommonTree)m_adaptor.BecomeRoot(AT_BIT_AND21_tree, root);
                                     PushFollow(FOLLOW_equality_in_bitwise_and894);
                                     AstParserRuleReturnScope<ITree, IToken> equality22 = Equality();
                                     state._fsp--;
-                                    adaptor.AddChild(root, equality22.Tree);
+                                    m_adaptor.AddChild(root, equality22.Tree);
                                     break;
                                 }
 
@@ -781,14 +781,14 @@ namespace Lucene.Net.Expressions.JS
                     loop6_break: ;
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re);
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re);
             }
             // do for sure before leaving
             return retval;
@@ -807,11 +807,11 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:279:5: ( relational ( ( AT_COMP_EQ | AT_COMP_NEQ ) ^ relational )* )
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:279:7: relational ( ( AT_COMP_EQ | AT_COMP_NEQ ) ^ relational )*
-                    root = (CommonTree)adaptor.Nil();
+                    root = (CommonTree)m_adaptor.Nil();
                     PushFollow(FOLLOW_relational_in_equality913);
                     AstParserRuleReturnScope<ITree, IToken> relational23 = Relational();
                     state._fsp--;
-                    adaptor.AddChild(root, relational23.Tree);
+                    m_adaptor.AddChild(root, relational23.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:279:18: ( ( AT_COMP_EQ | AT_COMP_NEQ ) ^ relational )*
                     while (true)
                     {
@@ -831,7 +831,7 @@ namespace Lucene.Net.Expressions.JS
                                     if (input.LA(1) == AT_COMP_EQ || input.LA(1) == AT_COMP_NEQ)
                                     {
                                         input.Consume();
-                                        root = (CommonTree)adaptor.BecomeRoot((CommonTree)adaptor.Create(set24), root
+                                        root = (CommonTree)m_adaptor.BecomeRoot((CommonTree)m_adaptor.Create(set24), root
                                             );
                                         state.errorRecovery = false;
                                     }
@@ -843,7 +843,7 @@ namespace Lucene.Net.Expressions.JS
                                     PushFollow(FOLLOW_relational_in_equality925);
                                     AstParserRuleReturnScope<ITree, IToken> relational25 = Relational();
                                     state._fsp--;
-                                    adaptor.AddChild(root, relational25.Tree);
+                                    m_adaptor.AddChild(root, relational25.Tree);
                                     break;
                                 }
 
@@ -857,14 +857,14 @@ namespace Lucene.Net.Expressions.JS
                     loop7_break: ;
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
                     );
             }
             // do for sure before leaving
@@ -885,11 +885,11 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:283:5: ( shift ( ( AT_COMP_LT | AT_COMP_GT | AT_COMP_LTE | AT_COMP_GTE ) ^ shift )* )
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:283:7: shift ( ( AT_COMP_LT | AT_COMP_GT | AT_COMP_LTE | AT_COMP_GTE ) ^ shift )*
-                    root = (CommonTree)adaptor.Nil();
+                    root = (CommonTree)m_adaptor.Nil();
                     PushFollow(FOLLOW_shift_in_relational944);
                     AstParserRuleReturnScope<ITree, IToken> shift26 = Shift();
                     state._fsp--;
-                    adaptor.AddChild(root, shift26.Tree);
+                    m_adaptor.AddChild(root, shift26.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:283:13: ( ( AT_COMP_LT | AT_COMP_GT | AT_COMP_LTE | AT_COMP_GTE ) ^ shift )*
                     while (true)
                     {
@@ -909,7 +909,7 @@ namespace Lucene.Net.Expressions.JS
                                     if ((input.LA(1) >= AT_COMP_GT && input.LA(1) <= AT_COMP_LTE))
                                     {
                                         input.Consume();
-                                        root = (CommonTree)adaptor.BecomeRoot((CommonTree)adaptor.Create(set27), root
+                                        root = (CommonTree)m_adaptor.BecomeRoot((CommonTree)m_adaptor.Create(set27), root
                                             );
                                         state.errorRecovery = false;
                                     }
@@ -921,7 +921,7 @@ namespace Lucene.Net.Expressions.JS
                                     PushFollow(FOLLOW_shift_in_relational964);
                                     AstParserRuleReturnScope<ITree, IToken> shift28 = Shift();
                                     state._fsp--;
-                                    adaptor.AddChild(root, shift28.Tree);
+                                    m_adaptor.AddChild(root, shift28.Tree);
                                     break;
                                 }
 
@@ -935,14 +935,14 @@ namespace Lucene.Net.Expressions.JS
                     loop8_break: ;
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
                     );
             }
             // do for sure before leaving
@@ -963,11 +963,11 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:287:5: ( additive ( ( AT_BIT_SHL | AT_BIT_SHR | AT_BIT_SHU ) ^ additive )* )
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:287:7: additive ( ( AT_BIT_SHL | AT_BIT_SHR | AT_BIT_SHU ) ^ additive )*
-                    root = (CommonTree)adaptor.Nil();
+                    root = (CommonTree)m_adaptor.Nil();
                     PushFollow(FOLLOW_additive_in_shift983);
                     AstParserRuleReturnScope<ITree, IToken> additive29 = Additive();
                     state._fsp--;
-                    adaptor.AddChild(root, additive29.Tree);
+                    m_adaptor.AddChild(root, additive29.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:287:16: ( ( AT_BIT_SHL | AT_BIT_SHR | AT_BIT_SHU ) ^ additive )*
                     while (true)
                     {
@@ -987,7 +987,7 @@ namespace Lucene.Net.Expressions.JS
                                     if ((input.LA(1) >= AT_BIT_SHL && input.LA(1) <= AT_BIT_SHU))
                                     {
                                         input.Consume();
-                                        root = (CommonTree)adaptor.BecomeRoot((CommonTree)adaptor.Create(set30), root
+                                        root = (CommonTree)m_adaptor.BecomeRoot((CommonTree)m_adaptor.Create(set30), root
                                             );
                                         state.errorRecovery = false;
                                     }
@@ -999,7 +999,7 @@ namespace Lucene.Net.Expressions.JS
                                     PushFollow(FOLLOW_additive_in_shift999);
                                     AstParserRuleReturnScope<ITree, IToken> additive31 = Additive();
                                     state._fsp--;
-                                    adaptor.AddChild(root, additive31.Tree);
+                                    m_adaptor.AddChild(root, additive31.Tree);
                                     break;
                                 }
 
@@ -1013,14 +1013,14 @@ namespace Lucene.Net.Expressions.JS
                     loop9_break: ;
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
                     );
             }
             // do for sure before leaving
@@ -1041,11 +1041,11 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:291:5: ( multiplicative ( ( AT_ADD | AT_SUBTRACT ) ^ multiplicative )* )
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:291:7: multiplicative ( ( AT_ADD | AT_SUBTRACT ) ^ multiplicative )*
-                    root = (CommonTree)adaptor.Nil();
+                    root = (CommonTree)m_adaptor.Nil();
                     PushFollow(FOLLOW_multiplicative_in_additive1018);
                     AstParserRuleReturnScope<ITree, IToken> multiplicative32 = Multiplicative();
                     state._fsp--;
-                    adaptor.AddChild(root, multiplicative32.Tree);
+                    m_adaptor.AddChild(root, multiplicative32.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:291:22: ( ( AT_ADD | AT_SUBTRACT ) ^ multiplicative )*
                     while (true)
                     {
@@ -1065,7 +1065,7 @@ namespace Lucene.Net.Expressions.JS
                                     if (input.LA(1) == AT_ADD || input.LA(1) == AT_SUBTRACT)
                                     {
                                         input.Consume();
-                                        root = (CommonTree)adaptor.BecomeRoot((CommonTree)adaptor.Create(set33), root
+                                        root = (CommonTree)m_adaptor.BecomeRoot((CommonTree)m_adaptor.Create(set33), root
                                             );
                                         state.errorRecovery = false;
                                     }
@@ -1077,7 +1077,7 @@ namespace Lucene.Net.Expressions.JS
                                     PushFollow(FOLLOW_multiplicative_in_additive1030);
                                     AstParserRuleReturnScope<ITree, IToken> multiplicative34 = Multiplicative();
                                     state._fsp--;
-                                    adaptor.AddChild(root, multiplicative34.Tree);
+                                    m_adaptor.AddChild(root, multiplicative34.Tree);
                                     break;
                                 }
 
@@ -1091,14 +1091,14 @@ namespace Lucene.Net.Expressions.JS
                     loop10_break: ;
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
                     );
             }
             // do for sure before leaving
@@ -1118,11 +1118,11 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:295:5: ( unary ( ( AT_MULTIPLY | AT_DIVIDE | AT_MODULO ) ^ unary )* )
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:295:7: unary ( ( AT_MULTIPLY | AT_DIVIDE | AT_MODULO ) ^ unary )*
-                    root = (CommonTree)adaptor.Nil();
+                    root = (CommonTree)m_adaptor.Nil();
                     PushFollow(FOLLOW_unary_in_multiplicative1049);
                     AstParserRuleReturnScope<ITree, IToken> unary35 = Unary();
                     state._fsp--;
-                    adaptor.AddChild(root, unary35.Tree);
+                    m_adaptor.AddChild(root, unary35.Tree);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:295:13: ( ( AT_MULTIPLY | AT_DIVIDE | AT_MODULO ) ^ unary )*
                     while (true)
                     {
@@ -1143,7 +1143,7 @@ namespace Lucene.Net.Expressions.JS
                                         ))
                                     {
                                         input.Consume();
-                                        root = (CommonTree)adaptor.BecomeRoot((CommonTree)adaptor.Create(set36), root
+                                        root = (CommonTree)m_adaptor.BecomeRoot((CommonTree)m_adaptor.Create(set36), root
                                             );
                                         state.errorRecovery = false;
                                     }
@@ -1155,7 +1155,7 @@ namespace Lucene.Net.Expressions.JS
                                     PushFollow(FOLLOW_unary_in_multiplicative1065);
                                     AstParserRuleReturnScope<ITree, IToken> unary37 = Unary();
                                     state._fsp--;
-                                    adaptor.AddChild(root, unary37.Tree);
+                                    m_adaptor.AddChild(root, unary37.Tree);
                                     break;
                                 }
 
@@ -1169,14 +1169,14 @@ namespace Lucene.Net.Expressions.JS
                     loop11_break: ;
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
                     );
             }
             // do for sure before leaving
@@ -1233,50 +1233,50 @@ namespace Lucene.Net.Expressions.JS
                     case 1:
                         {
                             // src/java/org/apache/lucene/expressions/js/Javascript.g:299:7: postfix
-                            root = (CommonTree)adaptor.Nil();
+                            root = (CommonTree)m_adaptor.Nil();
                             PushFollow(FOLLOW_postfix_in_unary1084);
                             AstParserRuleReturnScope<ITree, IToken> postfix38 = Postfix();
                             state._fsp--;
-                            adaptor.AddChild(root, postfix38.Tree);
+                            m_adaptor.AddChild(root, postfix38.Tree);
                             break;
                         }
 
                     case 2:
                         {
                             // src/java/org/apache/lucene/expressions/js/Javascript.g:300:7: AT_ADD ! unary
-                            root = (CommonTree)adaptor.Nil();
+                            root = (CommonTree)m_adaptor.Nil();
                             IToken AT_ADD39 = (IToken)Match(input, AT_ADD, FOLLOW_AT_ADD_in_unary1092);
                             PushFollow(FOLLOW_unary_in_unary1095);
                             AstParserRuleReturnScope<ITree, IToken> unary40 = Unary();
                             state._fsp--;
-                            adaptor.AddChild(root, unary40.Tree);
+                            m_adaptor.AddChild(root, unary40.Tree);
                             break;
                         }
 
                     case 3:
                         {
                             // src/java/org/apache/lucene/expressions/js/Javascript.g:301:7: unary_operator ^ unary
-                            root = (CommonTree)adaptor.Nil();
+                            root = (CommonTree)m_adaptor.Nil();
                             PushFollow(FOLLOW_unary_operator_in_unary1103);
                             AstParserRuleReturnScope<ITree, IToken> unary_operator41 = Unary_Operator();
                             state._fsp--;
-                            root = (CommonTree)adaptor.BecomeRoot(unary_operator41.Tree, root);
+                            root = (CommonTree)m_adaptor.BecomeRoot(unary_operator41.Tree, root);
                             PushFollow(FOLLOW_unary_in_unary1106);
                             AstParserRuleReturnScope<ITree, IToken> unary42 = Unary();
                             state._fsp--;
-                            adaptor.AddChild(root, unary42.Tree);
+                            m_adaptor.AddChild(root, unary42.Tree);
                             break;
                         }
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
                     );
             }
             // do for sure before leaving
@@ -1292,7 +1292,7 @@ namespace Lucene.Net.Expressions.JS
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
             CommonTree root = null;
             //CommonTree AT_SUBTRACT43_tree = null; // LUCENENET NOTE: Not used
-            RewriteRuleTokenStream stream_AT_SUBTRACT = new RewriteRuleTokenStream(adaptor, "token AT_SUBTRACT"
+            RewriteRuleTokenStream stream_AT_SUBTRACT = new RewriteRuleTokenStream(m_adaptor, "token AT_SUBTRACT"
                 );
             try
             {
@@ -1340,12 +1340,12 @@ namespace Lucene.Net.Expressions.JS
                             // rule list labels: 
                             // wildcard labels: 
                             retval.Tree = root;
-                            RewriteRuleSubtreeStream stream_retval = new RewriteRuleSubtreeStream(adaptor, "rule retval"
+                            RewriteRuleSubtreeStream stream_retval = new RewriteRuleSubtreeStream(m_adaptor, "rule retval"
                                 , retval != null ? ((CommonTree)retval.Tree) : null);
-                            root = (CommonTree)adaptor.Nil();
+                            root = (CommonTree)m_adaptor.Nil();
                             {
                                 // 305:19: -> AT_NEGATE
-                                adaptor.AddChild(root, (CommonTree)adaptor.Create(AT_NEGATE, "AT_NEGATE"));
+                                m_adaptor.AddChild(root, (CommonTree)m_adaptor.Create(AT_NEGATE, "AT_NEGATE"));
                             }
                             retval.Tree = root;
                             break;
@@ -1354,34 +1354,34 @@ namespace Lucene.Net.Expressions.JS
                     case 2:
                         {
                             // src/java/org/apache/lucene/expressions/js/Javascript.g:306:7: AT_BIT_NOT
-                            root = (CommonTree)adaptor.Nil();
+                            root = (CommonTree)m_adaptor.Nil();
                             IToken AT_BIT_NOT44 = (IToken)Match(input, AT_BIT_NOT, FOLLOW_AT_BIT_NOT_in_unary_operator1135
                                 );
-                            CommonTree AT_BIT_NOT44_tree = (CommonTree)adaptor.Create(AT_BIT_NOT44);
-                            adaptor.AddChild(root, AT_BIT_NOT44_tree);
+                            CommonTree AT_BIT_NOT44_tree = (CommonTree)m_adaptor.Create(AT_BIT_NOT44);
+                            m_adaptor.AddChild(root, AT_BIT_NOT44_tree);
                             break;
                         }
 
                     case 3:
                         {
                             // src/java/org/apache/lucene/expressions/js/Javascript.g:307:7: AT_BOOL_NOT
-                            root = (CommonTree)adaptor.Nil();
+                            root = (CommonTree)m_adaptor.Nil();
                             IToken AT_BOOL_NOT45 = (IToken)Match(input, AT_BOOL_NOT, FOLLOW_AT_BOOL_NOT_in_unary_operator1143
                                 );
-                            CommonTree AT_BOOL_NOT45_tree = (CommonTree)adaptor.Create(AT_BOOL_NOT45);
-                            adaptor.AddChild(root, AT_BOOL_NOT45_tree);
+                            CommonTree AT_BOOL_NOT45_tree = (CommonTree)m_adaptor.Create(AT_BOOL_NOT45);
+                            m_adaptor.AddChild(root, AT_BOOL_NOT45_tree);
                             break;
                         }
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
                     );
             }
             // do for sure before leaving
@@ -1396,8 +1396,8 @@ namespace Lucene.Net.Expressions.JS
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
             CommonTree root = null;
             //CommonTree NAMESPACE_ID47_tree = null; // LUCENENET NOTE: Not used
-            var streamNamespaceId = new RewriteRuleTokenStream(adaptor, "token NAMESPACE_ID");
-            var streamArguments = new RewriteRuleSubtreeStream(adaptor, "rule arguments");
+            var streamNamespaceId = new RewriteRuleTokenStream(m_adaptor, "token NAMESPACE_ID");
+            var streamArguments = new RewriteRuleSubtreeStream(m_adaptor, "rule arguments");
             try
             {
                 // src/java/org/apache/lucene/expressions/js/Javascript.g:311:5: ( primary | NAMESPACE_ID arguments -> ^( AT_CALL NAMESPACE_ID ( arguments )? ) )
@@ -1453,11 +1453,11 @@ namespace Lucene.Net.Expressions.JS
                     case 1:
                         {
                             // src/java/org/apache/lucene/expressions/js/Javascript.g:311:7: primary
-                            root = (CommonTree)adaptor.Nil();
+                            root = (CommonTree)m_adaptor.Nil();
                             PushFollow(FOLLOW_primary_in_postfix1160);
                             AstParserRuleReturnScope<ITree, IToken> primary46 = Primary();
                             state._fsp--;
-                            adaptor.AddChild(root, primary46.Tree);
+                            m_adaptor.AddChild(root, primary46.Tree);
                             break;
                         }
 
@@ -1479,24 +1479,24 @@ namespace Lucene.Net.Expressions.JS
                             // rule list labels: 
                             // wildcard labels: 
                             retval.Tree = root;
-                            RewriteRuleSubtreeStream stream_retval = new RewriteRuleSubtreeStream(adaptor, "rule retval"
+                            RewriteRuleSubtreeStream stream_retval = new RewriteRuleSubtreeStream(m_adaptor, "rule retval"
                                 , retval != null ? ((CommonTree)retval.Tree) : null);
-                            root = (CommonTree)adaptor.Nil();
+                            root = (CommonTree)m_adaptor.Nil();
                             {
                                 {
                                     // 312:30: -> ^( AT_CALL NAMESPACE_ID ( arguments )? )
                                     // src/java/org/apache/lucene/expressions/js/Javascript.g:312:33: ^( AT_CALL NAMESPACE_ID ( arguments )? )
-                                    CommonTree root_1 = (CommonTree)adaptor.Nil();
-                                    root_1 = (CommonTree)adaptor.BecomeRoot((CommonTree)adaptor.Create(AT_CALL, "AT_CALL"
+                                    CommonTree root_1 = (CommonTree)m_adaptor.Nil();
+                                    root_1 = (CommonTree)m_adaptor.BecomeRoot((CommonTree)m_adaptor.Create(AT_CALL, "AT_CALL"
                                         ), root_1);
-                                    adaptor.AddChild(root_1, streamNamespaceId.NextNode());
+                                    m_adaptor.AddChild(root_1, streamNamespaceId.NextNode());
                                     // src/java/org/apache/lucene/expressions/js/Javascript.g:312:56: ( arguments )?
                                     if (streamArguments.HasNext)
                                     {
-                                        adaptor.AddChild(root_1, streamArguments.NextTree());
+                                        m_adaptor.AddChild(root_1, streamArguments.NextTree());
                                     }
                                     streamArguments.Reset();
-                                    adaptor.AddChild(root, root_1);
+                                    m_adaptor.AddChild(root, root_1);
                                 }
                             }
                             retval.Tree = root;
@@ -1504,14 +1504,14 @@ namespace Lucene.Net.Expressions.JS
                         }
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
                     );
             }
             // do for sure before leaving
@@ -1568,47 +1568,47 @@ namespace Lucene.Net.Expressions.JS
                     case 1:
                         {
                             // src/java/org/apache/lucene/expressions/js/Javascript.g:316:7: NAMESPACE_ID
-                            root = (CommonTree)adaptor.Nil();
+                            root = (CommonTree)m_adaptor.Nil();
                             IToken NAMESPACE_ID49 = (IToken)Match(input, NAMESPACE_ID, FOLLOW_NAMESPACE_ID_in_primary1198
                                 );
-                            NAMESPACE_ID49_tree = (CommonTree)adaptor.Create(NAMESPACE_ID49);
-                            adaptor.AddChild(root, NAMESPACE_ID49_tree);
+                            NAMESPACE_ID49_tree = (CommonTree)m_adaptor.Create(NAMESPACE_ID49);
+                            m_adaptor.AddChild(root, NAMESPACE_ID49_tree);
                             break;
                         }
 
                     case 2:
                         {
                             // src/java/org/apache/lucene/expressions/js/Javascript.g:317:7: numeric
-                            root = (CommonTree)adaptor.Nil();
+                            root = (CommonTree)m_adaptor.Nil();
                             PushFollow(FOLLOW_numeric_in_primary1206);
                             AstParserRuleReturnScope<ITree, IToken> numeric50 = Numeric();
                             state._fsp--;
-                            adaptor.AddChild(root, numeric50.Tree);
+                            m_adaptor.AddChild(root, numeric50.Tree);
                             break;
                         }
 
                     case 3:
                         {
                             // src/java/org/apache/lucene/expressions/js/Javascript.g:318:7: AT_LPAREN ! conditional AT_RPAREN !
-                            root = (CommonTree)adaptor.Nil();
+                            root = (CommonTree)m_adaptor.Nil();
                             AT_LPAREN51 = (IToken)Match(input, AT_LPAREN, FOLLOW_AT_LPAREN_in_primary1214);
                             PushFollow(FOLLOW_conditional_in_primary1217);
                             AstParserRuleReturnScope<ITree, IToken> conditional52 = Conditional();
                             state._fsp--;
-                            adaptor.AddChild(root, conditional52.Tree);
+                            m_adaptor.AddChild(root, conditional52.Tree);
                             AT_RPAREN53 = (IToken)Match(input, AT_RPAREN, FOLLOW_AT_RPAREN_in_primary1219);
                             break;
                         }
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
                     );
             }
             // do for sure before leaving
@@ -1633,7 +1633,7 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:322:5: ( AT_LPAREN ! ( conditional ( AT_COMMA ! conditional )* )? AT_RPAREN !)
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:322:7: AT_LPAREN ! ( conditional ( AT_COMMA ! conditional )* )? AT_RPAREN !
-                    root = (CommonTree)adaptor.Nil();
+                    root = (CommonTree)m_adaptor.Nil();
                     AT_LPAREN54 = (IToken)Match(input, AT_LPAREN, FOLLOW_AT_LPAREN_in_arguments1237);
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:322:18: ( conditional ( AT_COMMA ! conditional )* )?
                     int alt17 = 2;
@@ -1652,7 +1652,7 @@ namespace Lucene.Net.Expressions.JS
                                 PushFollow(FOLLOW_conditional_in_arguments1241);
                                 AstParserRuleReturnScope<ITree, IToken> conditional55 = Conditional();
                                 state._fsp--;
-                                adaptor.AddChild(root, conditional55.Tree);
+                                m_adaptor.AddChild(root, conditional55.Tree);
                                 // src/java/org/apache/lucene/expressions/js/Javascript.g:322:31: ( AT_COMMA ! conditional )*
                                 while (true)
                                 {
@@ -1671,7 +1671,7 @@ namespace Lucene.Net.Expressions.JS
                                                 PushFollow(FOLLOW_conditional_in_arguments1247);
                                                 AstParserRuleReturnScope<ITree, IToken> conditional57 = Conditional();
                                                 state._fsp--;
-                                                adaptor.AddChild(root, conditional57.Tree);
+                                                m_adaptor.AddChild(root, conditional57.Tree);
                                                 break;
                                             }
 
@@ -1689,14 +1689,14 @@ namespace Lucene.Net.Expressions.JS
                     AT_RPAREN58 = (IToken)Match(input, AT_RPAREN, FOLLOW_AT_RPAREN_in_arguments1253);
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
                     );
             }
             // do for sure before leaving
@@ -1718,12 +1718,12 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:326:5: ( HEX | OCTAL | DECIMAL )
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:
-                    root = (CommonTree)adaptor.Nil();
+                    root = (CommonTree)m_adaptor.Nil();
                     IToken set59 = input.LT(1);
                     if (input.LA(1) == DECIMAL || input.LA(1) == HEX || input.LA(1) == OCTAL)
                     {
                         input.Consume();
-                        adaptor.AddChild(root, (CommonTree)adaptor.Create(set59));
+                        m_adaptor.AddChild(root, (CommonTree)m_adaptor.Create(set59));
                         state.errorRecovery = false;
                     }
                     else
@@ -1733,14 +1733,14 @@ namespace Lucene.Net.Expressions.JS
                     }
                 }
                 retval.Stop = input.LT(-1);
-                retval.Tree = (CommonTree)adaptor.RulePostProcessing(root);
-                adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+                retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
+                m_adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
             }
             catch (RecognitionException re)
             {
                 ReportError(re);
                 Recover(input, re);
-                retval.Tree = (CommonTree)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
+                retval.Tree = (CommonTree)m_adaptor.ErrorNode(input, retval.Start, input.LT(-1), re
                     );
             }
             // do for sure before leaving

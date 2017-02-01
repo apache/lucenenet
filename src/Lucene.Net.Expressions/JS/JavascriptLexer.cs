@@ -106,19 +106,19 @@ namespace Lucene.Net.Expressions.JS
 
 		public JavascriptLexer()
 		{
-			dfa9 = new JavascriptLexer.DFA9(this, this);
+			m_dfa9 = new JavascriptLexer.DFA9(this, this);
 		}
 
 		public JavascriptLexer(ICharStream input) : this(input, new RecognizerSharedState(
 			))
 		{
-			dfa9 = new JavascriptLexer.DFA9(this, this);
+			m_dfa9 = new JavascriptLexer.DFA9(this, this);
 		}
 
 		public JavascriptLexer(ICharStream input, RecognizerSharedState state) : base(input
 			, state)
 		{
-			dfa9 = new JavascriptLexer.DFA9(this, this);
+			m_dfa9 = new JavascriptLexer.DFA9(this, this);
 		}
 
 		public override string GrammarFileName
@@ -933,7 +933,7 @@ loop2_break: ;
 		        int channel = TokenChannels.Default;
 		        // src/java/org/apache/lucene/expressions/js/Javascript.g:347:5: ( DECIMALINTEGER AT_DOT ( DECIMALDIGIT )* ( EXPONENT )? | AT_DOT ( DECIMALDIGIT )+ ( EXPONENT )? | DECIMALINTEGER ( EXPONENT )? )
 		        int alt9 = 3;
-		        alt9 = dfa9.Predict(input);
+		        alt9 = m_dfa9.Predict(input);
 		        switch (alt9)
 		        {
 		            case 1:
@@ -2088,7 +2088,7 @@ loop2_break: ;
 			}
 		}
 
-		protected JavascriptLexer.DFA9 dfa9;
+		protected JavascriptLexer.DFA9 m_dfa9;
 
 		internal static readonly string DFA9_eotS = "\x1\uffff\x2\x4\x3\uffff\x1\x4";
 
