@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         private SrndQuery q;
         private IEnumerable<string> fieldNames;
         private readonly char fieldOp;
-        private readonly string OrOperatorName = "OR"; /* for expanded queries, not normally visible */
+        private readonly string orOperatorName = "OR"; /* for expanded queries, not normally visible */
 
         public FieldsQuery(SrndQuery q, IEnumerable<string> fieldNames, char fieldOp)
         {
@@ -68,7 +68,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 }
                 OrQuery oq = new OrQuery(queries,
                                         true /* infix OR for field names */,
-                                        OrOperatorName);
+                                        orOperatorName);
                 // System.out.println(getClass().toString() + ", fields expanded: " + oq.toString()); /* needs testing */
                 return oq.MakeLuceneQueryField(null, qf);
             }
