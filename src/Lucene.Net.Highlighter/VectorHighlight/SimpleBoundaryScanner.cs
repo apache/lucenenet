@@ -30,8 +30,8 @@ namespace Lucene.Net.Search.VectorHighlight
         public static readonly int DEFAULT_MAX_SCAN = 20;
         public static readonly char[] DEFAULT_BOUNDARY_CHARS = { '.', ',', '!', '?', ' ', '\t', '\n' };
 
-        protected int maxScan;
-        protected ISet<char> boundaryChars;
+        protected int m_maxScan;
+        protected ISet<char> m_boundaryChars;
 
         public SimpleBoundaryScanner()
             : this(DEFAULT_MAX_SCAN, DEFAULT_BOUNDARY_CHARS)
@@ -50,26 +50,26 @@ namespace Lucene.Net.Search.VectorHighlight
 
         public SimpleBoundaryScanner(int maxScan, char[] boundaryChars)
         {
-            this.maxScan = maxScan;
-            this.boundaryChars = new HashSet<char>();
-            this.boundaryChars.UnionWith(Arrays.AsList(boundaryChars));
+            this.m_maxScan = maxScan;
+            this.m_boundaryChars = new HashSet<char>();
+            this.m_boundaryChars.UnionWith(Arrays.AsList(boundaryChars));
         }
 
         public SimpleBoundaryScanner(int maxScan, ISet<char> boundaryChars)
         {
-            this.maxScan = maxScan;
-            this.boundaryChars = boundaryChars;
+            this.m_maxScan = maxScan;
+            this.m_boundaryChars = boundaryChars;
         }
 
         public virtual int FindStartOffset(StringBuilder buffer, int start)
         {
             // avoid illegal start offset
             if (start > buffer.Length || start < 1) return start;
-            int offset, count = maxScan;
+            int offset, count = m_maxScan;
             for (offset = start; offset > 0 && count > 0; count--)
             {
                 // found?
-                if (boundaryChars.Contains(buffer[offset - 1])) return offset;
+                if (m_boundaryChars.Contains(buffer[offset - 1])) return offset;
                 offset--;
             }
             // if we scanned up to the start of the text, return it, its a "boundary"
@@ -85,12 +85,12 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             // avoid illegal start offset
             if (start > buffer.Length || start < 0) return start;
-            int offset, count = maxScan;
+            int offset, count = m_maxScan;
             //for( offset = start; offset <= buffer.length() && count > 0; count-- ){
             for (offset = start; offset < buffer.Length && count > 0; count--)
             {
                 // found?
-                if (boundaryChars.Contains(buffer[offset])) return offset;
+                if (m_boundaryChars.Contains(buffer[offset])) return offset;
                 offset++;
             }
             // not found

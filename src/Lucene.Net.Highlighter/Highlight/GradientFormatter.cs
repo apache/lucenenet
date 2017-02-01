@@ -27,12 +27,12 @@ namespace Lucene.Net.Search.Highlight
     {
         private float maxScore;
 
-        protected internal int fgRMin, fgGMin, fgBMin;
-        protected internal int fgRMax, fgGMax, fgBMax;
-        protected bool highlightForeground;
-        protected internal int bgRMin, bgGMin, bgBMin;
-        protected internal int bgRMax, bgGMax, bgBMax;
-        protected bool highlightBackground;
+        protected int m_fgRMin, m_fgGMin, m_fgBMin;
+        protected int m_fgRMax, m_fgGMax, m_fgBMax;
+        protected bool m_highlightForeground;
+        protected int m_bgRMin, m_bgGMin, m_bgBMin;
+        protected int m_bgRMax, m_bgGMax, m_bgBMax;
+        protected bool m_highlightBackground;
 
         /// <summary> Sets the color range for the IDF scores</summary>
         /// <param name="maxScore">
@@ -59,9 +59,9 @@ namespace Lucene.Net.Search.Highlight
             string maxForegroundColor, string minBackgroundColor, 
             string maxBackgroundColor)
         {
-            highlightForeground = (minForegroundColor != null) && (maxForegroundColor != null);
+            m_highlightForeground = (minForegroundColor != null) && (maxForegroundColor != null);
 
-            if (highlightForeground)
+            if (m_highlightForeground)
             {
                 if (minForegroundColor.Length != 7)
                 {
@@ -73,18 +73,18 @@ namespace Lucene.Net.Search.Highlight
                     throw new ArgumentException("minForegroundColor is not 7 bytes long eg a hex " 
                         + "RGB value such as #FFFFFF");
                 }
-                fgRMin = HexToInt(minForegroundColor.Substring(1, 3 - 1));
-                fgGMin = HexToInt(minForegroundColor.Substring(3, 5 - 3));
-                fgBMin = HexToInt(minForegroundColor.Substring(5, 7 - 5));
+                m_fgRMin = HexToInt(minForegroundColor.Substring(1, 3 - 1));
+                m_fgGMin = HexToInt(minForegroundColor.Substring(3, 5 - 3));
+                m_fgBMin = HexToInt(minForegroundColor.Substring(5, 7 - 5));
 
-                fgRMax = HexToInt(maxForegroundColor.Substring(1, 3 - 1));
-                fgGMax = HexToInt(maxForegroundColor.Substring(3, 5 - 3));
-                fgBMax = HexToInt(maxForegroundColor.Substring(5, 7 - 5));
+                m_fgRMax = HexToInt(maxForegroundColor.Substring(1, 3 - 1));
+                m_fgGMax = HexToInt(maxForegroundColor.Substring(3, 5 - 3));
+                m_fgBMax = HexToInt(maxForegroundColor.Substring(5, 7 - 5));
             }
 
-            highlightBackground = (minBackgroundColor != null) 
+            m_highlightBackground = (minBackgroundColor != null) 
                 && (maxBackgroundColor != null);
-            if (highlightBackground)
+            if (m_highlightBackground)
             {
                 if (minBackgroundColor.Length != 7)
                 {
@@ -96,13 +96,13 @@ namespace Lucene.Net.Search.Highlight
                     throw new ArgumentException("minBackgroundColor is not 7 bytes long eg a hex " 
                         + "RGB value such as #FFFFFF");
                 }
-                bgRMin = HexToInt(minBackgroundColor.Substring(1, 3 - 1));
-                bgGMin = HexToInt(minBackgroundColor.Substring(3, 5 - 3));
-                bgBMin = HexToInt(minBackgroundColor.Substring(5, 7 - 5));
+                m_bgRMin = HexToInt(minBackgroundColor.Substring(1, 3 - 1));
+                m_bgGMin = HexToInt(minBackgroundColor.Substring(3, 5 - 3));
+                m_bgBMin = HexToInt(minBackgroundColor.Substring(5, 7 - 5));
 
-                bgRMax = HexToInt(maxBackgroundColor.Substring(1, 3 - 1));
-                bgGMax = HexToInt(maxBackgroundColor.Substring(3, 5 - 3));
-                bgBMax = HexToInt(maxBackgroundColor.Substring(5, 7 - 5));
+                m_bgRMax = HexToInt(maxBackgroundColor.Substring(1, 3 - 1));
+                m_bgGMax = HexToInt(maxBackgroundColor.Substring(3, 5 - 3));
+                m_bgBMax = HexToInt(maxBackgroundColor.Substring(5, 7 - 5));
             }
             //        this.corpusReader = corpusReader;
             this.maxScore = maxScore;
@@ -121,13 +121,13 @@ namespace Lucene.Net.Search.Highlight
 
             var sb = new StringBuilder();
             sb.Append("<font ");
-            if (highlightForeground)
+            if (m_highlightForeground)
             {
                 sb.Append("color=\"");
                 sb.Append(GetForegroundColorString(score));
                 sb.Append("\" ");
             }
-            if (highlightBackground)
+            if (m_highlightBackground)
             {
                 sb.Append("bgcolor=\"");
                 sb.Append(GetBackgroundColorString(score));
@@ -141,9 +141,9 @@ namespace Lucene.Net.Search.Highlight
 
         protected internal virtual string GetForegroundColorString(float score)
         {
-            int rVal = GetColorVal(fgRMin, fgRMax, score);
-            int gVal = GetColorVal(fgGMin, fgGMax, score);
-            int bVal = GetColorVal(fgBMin, fgBMax, score);
+            int rVal = GetColorVal(m_fgRMin, m_fgRMax, score);
+            int gVal = GetColorVal(m_fgGMin, m_fgGMax, score);
+            int bVal = GetColorVal(m_fgBMin, m_fgBMax, score);
             var sb = new StringBuilder();
             sb.Append("#");
             sb.Append(IntToHex(rVal));
@@ -154,9 +154,9 @@ namespace Lucene.Net.Search.Highlight
 
         protected internal virtual string GetBackgroundColorString(float score)
         {
-            int rVal = GetColorVal(bgRMin, bgRMax, score);
-            int gVal = GetColorVal(bgGMin, bgGMax, score);
-            int bVal = GetColorVal(bgBMin, bgBMax, score);
+            int rVal = GetColorVal(m_bgRMin, m_bgRMax, score);
+            int gVal = GetColorVal(m_bgGMin, m_bgGMax, score);
+            int bVal = GetColorVal(m_bgBMin, m_bgBMax, score);
             var sb = new StringBuilder();
             sb.Append("#");
             sb.Append(IntToHex(rVal));

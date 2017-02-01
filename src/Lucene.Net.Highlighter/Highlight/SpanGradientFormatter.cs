@@ -51,13 +51,13 @@ namespace Lucene.Net.Search.Highlight
             var sb = new StringBuilder(originalText.Length + EXTRA);
 
             sb.Append("<span style=\"");
-            if (highlightForeground)
+            if (m_highlightForeground)
             {
                 sb.Append("color: ");
                 sb.Append(GetForegroundColorString(score));
                 sb.Append("; ");
             }
-            if (highlightBackground)
+            if (m_highlightBackground)
             {
                 sb.Append("background: ");
                 sb.Append(GetBackgroundColorString(score));

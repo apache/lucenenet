@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.VectorHighlight
     /// </summary>
     public abstract class BaseFragmentsBuilder : IFragmentsBuilder
     {
-        protected string[] preTags, postTags;
+        protected string[] m_preTags, m_postTags;
         public static readonly string[] COLORED_PRE_TAGS = {
             "<b style=\"background:yellow\">", "<b style=\"background:lawngreen\">", "<b style=\"background:aquamarine\">",
             "<b style=\"background:magenta\">", "<b style=\"background:palegreen\">", "<b style=\"background:coral\">",
@@ -70,8 +70,8 @@ namespace Lucene.Net.Search.VectorHighlight
 
         protected BaseFragmentsBuilder(string[] preTags, string[] postTags, IBoundaryScanner boundaryScanner)
         {
-            this.preTags = preTags;
-            this.postTags = postTags;
+            this.m_preTags = preTags;
+            this.m_postTags = postTags;
             this.boundaryScanner = boundaryScanner;
         }
 
@@ -90,14 +90,14 @@ namespace Lucene.Net.Search.VectorHighlight
             string fieldName, FieldFragList fieldFragList)
         {
             return CreateFragment(reader, docId, fieldName, fieldFragList,
-                preTags, postTags, NULL_ENCODER);
+                m_preTags, m_postTags, NULL_ENCODER);
         }
 
         public virtual string[] CreateFragments(IndexReader reader, int docId,
             string fieldName, FieldFragList fieldFragList, int maxNumFragments)
         {
             return CreateFragments(reader, docId, fieldName, fieldFragList, maxNumFragments,
-                preTags, postTags, NULL_ENCODER);
+                m_preTags, m_postTags, NULL_ENCODER);
         }
 
         public virtual string CreateFragment(IndexReader reader, int docId,
@@ -373,12 +373,12 @@ namespace Lucene.Net.Search.VectorHighlight
 
         protected virtual string GetPreTag(int num)
         {
-            return GetPreTag(preTags, num);
+            return GetPreTag(m_preTags, num);
         }
 
         protected virtual string GetPostTag(int num)
         {
-            return GetPostTag(postTags, num);
+            return GetPostTag(m_postTags, num);
         }
 
         protected virtual string GetPreTag(string[] preTags, int num)

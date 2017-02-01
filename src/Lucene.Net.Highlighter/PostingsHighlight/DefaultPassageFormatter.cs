@@ -29,13 +29,13 @@ namespace Lucene.Net.Search.PostingsHighlight
     public class DefaultPassageFormatter : PassageFormatter
     {
         /// <summary>text that will appear before highlighted terms</summary>
-        protected readonly string preTag;
+        protected readonly string m_preTag;
         /// <summary>text that will appear after highlighted terms</summary>
-        protected readonly string postTag;
+        protected readonly string m_postTag;
         /// <summary>text that will appear between two unconnected passages</summary>
-        protected readonly string ellipsis;
+        protected readonly string m_ellipsis;
         /// <summary>true if we should escape for html</summary>
-        protected readonly bool escape;
+        protected readonly bool m_escape;
 
         /// <summary>
         /// Creates a new DefaultPassageFormatter with the default tags.
@@ -58,10 +58,10 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 throw new ArgumentException(); //throw new NullPointerException();
             }
-            this.preTag = preTag;
-            this.postTag = postTag;
-            this.ellipsis = ellipsis;
-            this.escape = escape;
+            this.m_preTag = preTag;
+            this.m_postTag = postTag;
+            this.m_ellipsis = ellipsis;
+            this.m_escape = escape;
         }
 
         public override object Format(Passage[] passages, string content)
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 // don't add ellipsis if its the first one, or if its connected.
                 if (passage.startOffset > pos && pos > 0)
                 {
-                    sb.Append(ellipsis);
+                    sb.Append(m_ellipsis);
                 }
                 pos = passage.startOffset;
                 for (int i = 0; i < passage.numMatches; i++)
@@ -87,9 +87,9 @@ namespace Lucene.Net.Search.PostingsHighlight
                     }
                     if (end > pos)
                     {
-                        sb.Append(preTag);
+                        sb.Append(m_preTag);
                         Append(sb, content, Math.Max(pos, start), end);
-                        sb.Append(postTag);
+                        sb.Append(m_postTag);
                         pos = end;
                     }
                 }
@@ -107,9 +107,9 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <param name="content">original text content</param>
         /// <param name="start">index of the first character in content</param>
         /// <param name="end">index of the character following the last character in content</param>
-        protected virtual void Append(StringBuilder dest, String content, int start, int end)
+        protected virtual void Append(StringBuilder dest, string content, int start, int end)
         {
-            if (escape)
+            if (m_escape)
             {
                 // note: these are the rules from owasp.org
                 for (int i = start; i < end; i++)

@@ -43,12 +43,12 @@ namespace Lucene.Net.Search
         /// <summary>
         /// The start offset for the string, if supplied by a <see cref="CharacterIterator"/>
         /// </summary>
-        protected int start;
+        protected int m_start;
 
         /// <summary>
         /// The end offset for the string, if supplied by a <see cref="CharacterIterator"/>
         /// </summary>
-        protected int end;
+        protected int m_end;
 
         public IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType type)
             : this(type, CultureInfo.CurrentCulture)
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
         /// <param name="offset"></param>
         private void CheckOffset(int offset)
         {
-            if (offset < start || offset > end)
+            if (offset < m_start || offset > m_end)
             {
                 throw new ArgumentException("offset out of bounds");
             }
@@ -262,20 +262,20 @@ namespace Lucene.Net.Search
         {
             text = newText;
             currentBoundaryIndex = 0;
-            start = 0;
-            end = newText.Length;
+            m_start = 0;
+            m_end = newText.Length;
 
-            LoadBoundaries(start, end);
+            LoadBoundaries(m_start, m_end);
         }
 
         public override void SetText(CharacterIterator newText)
         {
             text = newText.GetTextAsString();
             currentBoundaryIndex = 0;
-            start = newText.BeginIndex;
-            end = newText.EndIndex;
+            m_start = newText.BeginIndex;
+            m_end = newText.EndIndex;
 
-            LoadBoundaries(start, end);
+            LoadBoundaries(m_start, m_end);
         }
 
         private void LoadBoundaries(int start, int end)
@@ -333,7 +333,7 @@ namespace Lucene.Net.Search
             }
 
             // If there are no boundaries, we must return the start offset
-            return start;
+            return m_start;
         }
 
         /// <summary>
