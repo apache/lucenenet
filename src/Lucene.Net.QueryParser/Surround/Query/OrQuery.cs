@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// </summary>
     public class OrQuery : ComposedQuery, IDistanceSubQuery
     {
-        public OrQuery(IEnumerable<SrndQuery> queries, bool infix, string opName)
+        public OrQuery(IList<SrndQuery> queries, bool infix, string opName)
             : base(queries, infix, opName)
         {
         }

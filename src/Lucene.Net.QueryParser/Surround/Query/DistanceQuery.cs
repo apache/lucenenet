@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     public class DistanceQuery : ComposedQuery, IDistanceSubQuery
     {
         public DistanceQuery(
-            IEnumerable<SrndQuery> queries,
+            IList<SrndQuery> queries,
             bool infix,
             int opDistance,
             string opName,

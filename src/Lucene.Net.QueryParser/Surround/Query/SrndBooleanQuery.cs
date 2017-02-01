@@ -26,7 +26,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     {
         public static void AddQueriesToBoolean(
             BooleanQuery bq,
-            IEnumerable<Search.Query> queries,
+            IList<Search.Query> queries,
             Occur occur)
         {
             foreach (var query in queries)
@@ -36,12 +36,12 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         }
 
         public static Search.Query MakeBooleanQuery(
-            IEnumerable<Search.Query> queries,
+            IList<Search.Query> queries,
             Occur occur)
         {
-            if (queries.Count() <= 1)
+            if (queries.Count <= 1)
             {
-                throw new InvalidOperationException("Too few subqueries: " + queries.Count());
+                throw new InvalidOperationException("Too few subqueries: " + queries.Count);
             }
             BooleanQuery bq = new BooleanQuery();
             AddQueriesToBoolean(bq, queries, occur);

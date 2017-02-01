@@ -26,7 +26,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// </summary>
     public class NotQuery : ComposedQuery
     {
-        public NotQuery(IEnumerable<SrndQuery> queries, string opName)
+        public NotQuery(IList<SrndQuery> queries, string opName)
             : base(queries, true /* infix */, opName)
         {
         }

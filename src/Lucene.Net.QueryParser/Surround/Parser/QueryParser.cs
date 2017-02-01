@@ -91,7 +91,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         }
 
         protected virtual SrndQuery GetFieldsQuery(
-            SrndQuery q, IEnumerable<string> fieldNames)
+            SrndQuery q, IList<string> fieldNames)
         {
             /* FIXME: check acceptable subquery: at least one subquery should not be
              * a fields query.
@@ -99,17 +99,17 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             return new FieldsQuery(q, fieldNames, fieldOperator);
         }
 
-        protected virtual SrndQuery GetOrQuery(IEnumerable<SrndQuery> queries, bool infix, Token orToken)
+        protected virtual SrndQuery GetOrQuery(IList<SrndQuery> queries, bool infix, Token orToken)
         {
             return new OrQuery(queries, infix, orToken.Image);
         }
 
-        protected virtual SrndQuery GetAndQuery(IEnumerable<SrndQuery> queries, bool infix, Token andToken)
+        protected virtual SrndQuery GetAndQuery(IList<SrndQuery> queries, bool infix, Token andToken)
         {
             return new AndQuery(queries, infix, andToken.Image);
         }
 
-        protected virtual SrndQuery GetNotQuery(IEnumerable<SrndQuery> queries, Token notToken)
+        protected virtual SrndQuery GetNotQuery(IList<SrndQuery> queries, Token notToken)
         {
             return new NotQuery(queries, notToken.Image);
         }
@@ -132,7 +132,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         }
 
         protected virtual SrndQuery GetDistanceQuery(
-            IEnumerable<SrndQuery> queries,
+            IList<SrndQuery> queries,
             bool infix,
             Token dToken,
             bool ordered)
@@ -195,14 +195,14 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         public SrndQuery FieldsQuery()
         {
             SrndQuery q;
-            IEnumerable<string> fieldNames;
+            IList<string> fieldNames;
             fieldNames = OptionalFields();
             q = OrQuery();
             { if (true) return (fieldNames == null) ? q : GetFieldsQuery(q, fieldNames); }
             throw new Exception("Missing return statement in function");
         }
 
-        public IEnumerable<string> OptionalFields()
+        public IList<string> OptionalFields()
         {
             Token fieldName;
             IList<string> fieldNames = null;
@@ -429,7 +429,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         public SrndQuery PrefixOperatorQuery()
         {
             Token oprt;
-            IEnumerable<SrndQuery> queries;
+            IList<SrndQuery> queries;
             switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
             {
                 case RegexpToken.OR:
@@ -464,7 +464,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             throw new Exception("Missing return statement in function");
         }
 
-        public IEnumerable<SrndQuery> FieldsQueryList()
+        public IList<SrndQuery> FieldsQueryList()
         {
             SrndQuery q;
             IList<SrndQuery> queries = new List<SrndQuery>();

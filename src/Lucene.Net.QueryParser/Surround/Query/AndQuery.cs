@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// </summary>
     public class AndQuery : ComposedQuery
     {
-        public AndQuery(IEnumerable<SrndQuery> queries, bool inf, string opName)
+        public AndQuery(IList<SrndQuery> queries, bool inf, string opName)
             : base(queries, inf, opName)
         {
         }

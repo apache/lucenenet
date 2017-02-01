@@ -27,14 +27,14 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     public class FieldsQuery : SrndQuery /* mostly untested */
     {
         private SrndQuery q;
-        private IEnumerable<string> fieldNames;
+        private IList<string> fieldNames;
         private readonly char fieldOp;
         private readonly string orOperatorName = "OR"; /* for expanded queries, not normally visible */
 
-        public FieldsQuery(SrndQuery q, IEnumerable<string> fieldNames, char fieldOp)
+        public FieldsQuery(SrndQuery q, IList<string> fieldNames, char fieldOp)
         {
             this.q = q;
-            this.fieldNames = new List<string>(fieldNames);
+            this.fieldNames = fieldNames;
             this.fieldOp = fieldOp;
         }
 
@@ -54,7 +54,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         public virtual Search.Query MakeLuceneQueryNoBoost(BasicQueryFactory qf)
         {
-            if (fieldNames.Count() == 1)
+            if (fieldNames.Count == 1)
             { /* single field name: no new queries needed */
                 return q.MakeLuceneQueryFieldNoBoost(fieldNames.FirstOrDefault(), qf);
             }
@@ -79,7 +79,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             return MakeLuceneQueryNoBoost(qf); /* use this.fieldNames instead of fieldName */
         }
 
-        public virtual IEnumerable<string> FieldNames { get { return fieldNames; } }
+        public virtual IList<string> FieldNames { get { return fieldNames; } }
 
         public virtual char FieldOperator { get { return fieldOp; } }
 

@@ -27,16 +27,16 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// </summary>
     public abstract class ComposedQuery : SrndQuery
     {
-        public ComposedQuery(IEnumerable<SrndQuery> qs, bool operatorInfix, string opName)
+        public ComposedQuery(IList<SrndQuery> qs, bool operatorInfix, string opName)
         {
             Recompose(qs);
             this.operatorInfix = operatorInfix;
             this.m_opName = opName;
         }
 
-        protected virtual void Recompose(IEnumerable<SrndQuery> queries)
+        protected virtual void Recompose(IList<SrndQuery> queries)
         {
-            if (queries.Count() < 2) throw new InvalidOperationException("Too few subqueries");
+            if (queries.Count < 2) throw new InvalidOperationException("Too few subqueries");
             this.m_queries = new List<SrndQuery>(queries);
         }
 
@@ -57,7 +57,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         private bool operatorInfix;
         public virtual bool IsOperatorInfix { get { return operatorInfix; } } /* else prefix operator */
 
-        public virtual IEnumerable<Search.Query> MakeLuceneSubQueriesField(string fn, BasicQueryFactory qf)
+        public virtual IList<Search.Query> MakeLuceneSubQueriesField(string fn, BasicQueryFactory qf)
         {
             List<Search.Query> luceneSubQueries = new List<Search.Query>();
             IEnumerator<SrndQuery> sqi = GetSubQueriesEnumerator();
