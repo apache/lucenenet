@@ -710,7 +710,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
 
-        public class State
+        internal class State
         {
             //private readonly char[] data;   // the characters in the query string
             //private readonly char[] buffer; // a temporary buffer used to reduce necessary allocations
@@ -731,12 +731,12 @@ namespace Lucene.Net.QueryParsers.Simple
                 this.Length = length;
             }
 
-            public char[] Data { get; protected set; } // the characters in the query string
-            public char[] Buffer { get; protected set; } // a temporary buffer used to reduce necessary allocations
-            public int Index { get; set; }
-            public int Length { get; protected set; }
+            internal char[] Data { get; private set; } // the characters in the query string
+            internal char[] Buffer { get; private set; } // a temporary buffer used to reduce necessary allocations
+            internal int Index { get; set; }
+            internal int Length { get; set; }
 
-            public Occur CurrentOperation 
+            internal Occur CurrentOperation 
             {
                 get 
                 { 
@@ -749,7 +749,7 @@ namespace Lucene.Net.QueryParsers.Simple
                 }
             }
 
-            public Occur PreviousOperation
+            internal Occur PreviousOperation
             {
                 get
                 {
@@ -762,11 +762,11 @@ namespace Lucene.Net.QueryParsers.Simple
                 }
             }
 
-            public bool CurrentOperationIsSet { get; set; }
-            public bool PreviousOperationIsSet { get; set; }
+            internal bool CurrentOperationIsSet { get; set; }
+            internal bool PreviousOperationIsSet { get; set; }
 
-            public int Not { get; set; }
-            public Query Top { get; set; }
+            internal int Not { get; set; }
+            internal Query Top { get; set; }
         }
     }
 }
