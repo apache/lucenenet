@@ -91,6 +91,10 @@ namespace Lucene.Net.Index.Sorter
 
             public override SegmentCommitInfo Info
             {
+                get // LUCENENET specific: added getter
+                {
+                    return base.info;
+                }
                 set
                 {
                     IDictionary<string, string> diagnostics = value.Info.Diagnostics;
