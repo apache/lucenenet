@@ -594,6 +594,10 @@ namespace Lucene.Net.Index.Memory
 
             internal IndexSearcher Searcher
             {
+                get // LUCENENET specific: added getter per MSDN guidelines
+                {
+                    return this.searcher;
+                }
                 set
                 {
                     this.searcher = value;
