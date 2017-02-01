@@ -51,7 +51,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// Replaces unprintable characters by their escaped (or unicode escaped)
         /// equivalents in the given string
         /// </summary>
-        protected internal static string AddEscapes(string str)
+        protected static string AddEscapes(string str)
         {
             StringBuilder retval = new StringBuilder();
             char ch;
@@ -117,19 +117,19 @@ namespace Lucene.Net.QueryParsers.Classic
         /// token manager to indicate a lexical error.
         /// </summary>
         /// <remarks>You can customize the lexical error message by modifying this method.</remarks>
-        /// <param name="EOFSeen">indicates if EOF caused the lexical error</param>
+        /// <param name="eofSeen">indicates if EOF caused the lexical error</param>
         /// <param name="lexState">lexical state in which this error occurred</param>
         /// <param name="errorLine">line number when the error occurred</param>
         /// <param name="errorColumn">column number when the error occurred</param>
         /// <param name="errorAfter">prefix that was seen before this error occurred</param>
         /// <param name="curChar">the offending character</param>
         /// <returns>Detailed error message</returns>
-        protected internal static string LexicalError(bool EOFSeen, int lexState, int errorLine, int errorColumn, string errorAfter, char curChar)
+        protected internal static string LexicalError(bool eofSeen, int lexState, int errorLine, int errorColumn, string errorAfter, char curChar)
         {
             return ("Lexical error at line " +
                 errorLine + ", column " +
                 errorColumn + ".  Encountered: " +
-                (EOFSeen ? "<EOF> " : ("\"" + AddEscapes(Convert.ToString(curChar)) + "\"") + " (" + (int)curChar + "), ") +
+                (eofSeen ? "<EOF> " : ("\"" + AddEscapes(Convert.ToString(curChar)) + "\"") + " (" + (int)curChar + "), ") +
                 "after : \"" + AddEscapes(errorAfter) + "\"");
         }
 
@@ -164,8 +164,8 @@ namespace Lucene.Net.QueryParsers.Classic
 		}
 		
 		/// <summary>Full Constructor. </summary>
-		public TokenMgrError(bool EOFSeen, int lexState, int errorLine, int errorColumn, string errorAfter, char curChar, int reason)
-            : this(LexicalError(EOFSeen, lexState, errorLine, errorColumn, errorAfter, curChar), reason)
+		public TokenMgrError(bool eofSeen, int lexState, int errorLine, int errorColumn, string errorAfter, char curChar, int reason)
+            : this(LexicalError(eofSeen, lexState, errorLine, errorColumn, errorAfter, curChar), reason)
 		{
 		}
 	}

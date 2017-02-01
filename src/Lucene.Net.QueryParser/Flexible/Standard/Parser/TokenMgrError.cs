@@ -115,19 +115,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// Returns a detailed message for the Error when it is thrown by the
         /// token manager to indicate a lexical error.
         /// </summary>
-        /// <param name="EOFSeen">indicates if EOF caused the lexical error</param>
+        /// <param name="eofSeen">indicates if EOF caused the lexical error</param>
         /// <param name="lexState">lexical state in which this error occurred</param>
         /// <param name="errorLine">line number when the error occurred</param>
         /// <param name="errorColumn">column number when the error occurred</param>
         /// <param name="errorAfter">prefix that was seen before this error occurred</param>
         /// <param name="curChar">the offending character</param>
         /// <remarks>Note: You can customize the lexical error message by modifying this method.</remarks>
-        protected static string LexicalError(bool EOFSeen, int lexState, int errorLine, int errorColumn, string errorAfter, char curChar)
+        protected static string LexicalError(bool eofSeen, int lexState, int errorLine, int errorColumn, string errorAfter, char curChar)
         {
             return ("Lexical error at line " +
                   errorLine + ", column " +
                   errorColumn + ".  Encountered: " +
-                  (EOFSeen ? "<EOF> " : ("\"" + AddEscapes(curChar.ToString()) + "\"") + " (" + (int)curChar + "), ") +
+                  (eofSeen ? "<EOF> " : ("\"" + AddEscapes(curChar.ToString()) + "\"") + " (" + (int)curChar + "), ") +
                   "after : \"" + AddEscapes(errorAfter) + "\"");
         }
 
@@ -160,15 +160,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         }
 
         /// <summary>Full Constructor.</summary>
-        /// <param name="EOFSeen">indicates if EOF caused the lexical error</param>
+        /// <param name="eofSeen">indicates if EOF caused the lexical error</param>
         /// <param name="lexState">lexical state in which this error occurred</param>
         /// <param name="errorLine">line number when the error occurred</param>
         /// <param name="errorColumn">column number when the error occurred</param>
         /// <param name="errorAfter">prefix that was seen before this error occurred</param>
         /// <param name="curChar">the offending character</param>
         /// <param name="reason"></param>
-        public TokenMgrError(bool EOFSeen, int lexState, int errorLine, int errorColumn, string errorAfter, char curChar, int reason)
-            : this(LexicalError(EOFSeen, lexState, errorLine, errorColumn, errorAfter, curChar), reason)
+        public TokenMgrError(bool eofSeen, int lexState, int errorLine, int errorColumn, string errorAfter, char curChar, int reason)
+            : this(LexicalError(eofSeen, lexState, errorLine, errorColumn, errorAfter, curChar), reason)
         {
         }
     }
