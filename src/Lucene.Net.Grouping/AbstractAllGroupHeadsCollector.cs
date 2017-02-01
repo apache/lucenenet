@@ -30,15 +30,15 @@ namespace Lucene.Net.Search.Grouping
     public abstract class AbstractAllGroupHeadsCollector<GH> : AbstractAllGroupHeadsCollector
         where GH : AbstractAllGroupHeadsCollector_GroupHead
     {
-        protected readonly int[] reversed;
-        protected readonly int compIDXEnd;
-        protected readonly TemporalResult temporalResult;
+        protected readonly int[] m_reversed;
+        protected readonly int m_compIDXEnd;
+        protected readonly TemporalResult m_temporalResult;
 
         protected AbstractAllGroupHeadsCollector(int numberOfSorts)
         {
-            this.reversed = new int[numberOfSorts];
-            this.compIDXEnd = numberOfSorts - 1;
-            temporalResult = new TemporalResult();
+            this.m_reversed = new int[numberOfSorts];
+            this.m_compIDXEnd = numberOfSorts - 1;
+            m_temporalResult = new TemporalResult();
         }
 
         /// <summary>
@@ -111,16 +111,16 @@ namespace Lucene.Net.Search.Grouping
         public override void Collect(int doc)
         {
             RetrieveGroupHeadAndAddIfNotExist(doc);
-            if (temporalResult.stop)
+            if (m_temporalResult.stop)
             {
                 return;
             }
-            GH groupHead = temporalResult.groupHead;
+            GH groupHead = m_temporalResult.groupHead;
 
             // Ok now we need to check if the current doc is more relevant then current doc for this group
             for (int compIDX = 0; ; compIDX++)
             {
-                int c = reversed[compIDX] * groupHead.Compare(compIDX, doc);
+                int c = m_reversed[compIDX] * groupHead.Compare(compIDX, doc);
                 if (c < 0)
                 {
                     // Definitely not competitive. So don't even bother to continue
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Grouping
                     // Definitely competitive.
                     break;
                 }
-                else if (compIDX == compIDXEnd)
+                else if (compIDX == m_compIDXEnd)
                 {
                     // Here c=0. If we're at the last comparer, this doc is not
                     // competitive, since docs are visited in doc Id order, which means

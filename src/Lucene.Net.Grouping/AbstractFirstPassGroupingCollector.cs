@@ -48,7 +48,7 @@ namespace Lucene.Net.Search.Grouping
 
         // Set once we reach topNGroups unique groups:
         // @lucene.internal
-        protected SortedSet<CollectedSearchGroup<TGroupValue>> orderedGroups;
+        protected SortedSet<CollectedSearchGroup<TGroupValue>> m_orderedGroups;
         private int docBase;
         private int spareSlot;
 
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Grouping
                 return null;
             }
 
-            if (orderedGroups == null)
+            if (m_orderedGroups == null)
             {
                 BuildSortedSet();
             }
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Grouping
             ICollection<ISearchGroup<TGroupValue>> result = new List<ISearchGroup<TGroupValue>>();
             int upto = 0;
             int sortFieldCount = groupSort.GetSort().Length;
-            foreach (CollectedSearchGroup<TGroupValue> group in orderedGroups)
+            foreach (CollectedSearchGroup<TGroupValue> group in m_orderedGroups)
             {
                 if (upto++ < groupOffset)
                 {
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search.Grouping
 
             // Downside: if the number of unique groups is very low, this is
             // wasted effort as we will most likely be updating an existing group.
-            if (orderedGroups != null)
+            if (m_orderedGroups != null)
             {
                 for (int compIDX = 0; ; compIDX++)
                 {
@@ -241,12 +241,12 @@ namespace Lucene.Net.Search.Grouping
                 // the bottom group with this new group.
                 //CollectedSearchGroup<TGroupValue> bottomGroup = orderedGroups.PollLast();
                 CollectedSearchGroup<TGroupValue> bottomGroup;
-                lock (orderedGroups)
+                lock (m_orderedGroups)
                 {
-                    bottomGroup = orderedGroups.Last();
-                    orderedGroups.Remove(bottomGroup);
+                    bottomGroup = m_orderedGroups.Last();
+                    m_orderedGroups.Remove(bottomGroup);
                 }
-                Debug.Assert(orderedGroups.Count == topNGroups - 1);
+                Debug.Assert(m_orderedGroups.Count == topNGroups - 1);
 
                 groupMap.Remove(bottomGroup.GroupValue);
 
@@ -260,10 +260,10 @@ namespace Lucene.Net.Search.Grouping
                 }
 
                 groupMap[bottomGroup.GroupValue] = bottomGroup;
-                orderedGroups.Add(bottomGroup);
-                Debug.Assert(orderedGroups.Count == topNGroups);
+                m_orderedGroups.Add(bottomGroup);
+                Debug.Assert(m_orderedGroups.Count == topNGroups);
 
-                int lastComparerSlot = orderedGroups.Last().ComparerSlot;
+                int lastComparerSlot = m_orderedGroups.Last().ComparerSlot;
                 foreach (FieldComparer fc in comparers)
                 {
                     fc.SetBottom(lastComparerSlot);
@@ -306,14 +306,14 @@ namespace Lucene.Net.Search.Grouping
             // TODO: optimize this
 
             CollectedSearchGroup<TGroupValue> prevLast;
-            if (orderedGroups != null)
+            if (m_orderedGroups != null)
             {
-                lock (orderedGroups)
+                lock (m_orderedGroups)
                 {
-                    prevLast = orderedGroups.Last();
-                    orderedGroups.Remove(group);
+                    prevLast = m_orderedGroups.Last();
+                    m_orderedGroups.Remove(group);
                 }
-                Debug.Assert(orderedGroups.Count == topNGroups - 1);
+                Debug.Assert(m_orderedGroups.Count == topNGroups - 1);
             }
             else
             {
@@ -328,11 +328,11 @@ namespace Lucene.Net.Search.Grouping
             group.ComparerSlot = tmp;
 
             // Re-add the changed group
-            if (orderedGroups != null)
+            if (m_orderedGroups != null)
             {
-                orderedGroups.Add(group);
-                Debug.Assert(orderedGroups.Count == topNGroups);
-                var newLast = orderedGroups.Last();
+                m_orderedGroups.Add(group);
+                Debug.Assert(m_orderedGroups.Count == topNGroups);
+                var newLast = m_orderedGroups.Last();
                 // If we changed the value of the last group, or changed which group was last, then update bottom:
                 if (group == newLast || prevLast != newLast)
                 {
@@ -372,13 +372,13 @@ namespace Lucene.Net.Search.Grouping
         private void BuildSortedSet()
         {
             var comparer = new BuildSortedSetComparer(this);
-            orderedGroups = new SortedSet<CollectedSearchGroup<TGroupValue>>(comparer);
-            orderedGroups.UnionWith(groupMap.Values);
-            Debug.Assert(orderedGroups.Count > 0);
+            m_orderedGroups = new SortedSet<CollectedSearchGroup<TGroupValue>>(comparer);
+            m_orderedGroups.UnionWith(groupMap.Values);
+            Debug.Assert(m_orderedGroups.Count > 0);
 
             foreach (FieldComparer fc in comparers)
             {
-                fc.SetBottom(orderedGroups.Last().ComparerSlot);
+                fc.SetBottom(m_orderedGroups.Last().ComparerSlot);
             }
         }
 

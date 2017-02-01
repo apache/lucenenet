@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Grouping.Function
             SortField[] sortFields = sortWithinGroup.GetSort();
             for (int i = 0; i < sortFields.Length; i++)
             {
-                reversed[i] = sortFields[i].IsReverse ? -1 : 1;
+                m_reversed[i] = sortFields[i].IsReverse ? -1 : 1;
             }
         }
 
@@ -71,13 +71,13 @@ namespace Lucene.Net.Search.Grouping.Function
                 MutableValue groupValue = mval.Duplicate();
                 groupHead = new GroupHead(this, groupValue, sortWithinGroup, doc);
                 groups[groupValue] = groupHead;
-                temporalResult.stop = true;
+                m_temporalResult.stop = true;
             }
             else
             {
-                temporalResult.stop = false;
+                m_temporalResult.stop = false;
             }
-            this.temporalResult.groupHead = groupHead;
+            this.m_temporalResult.groupHead = groupHead;
         }
 
         protected override ICollection<GroupHead> CollectedGroupHeads

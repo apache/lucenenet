@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             public override void Collect(int doc)
             {
                 int facetOrd = facetFieldTermsIndex.GetOrd(doc);
-                if (facetOrd < startFacetOrd || facetOrd >= endFacetOrd)
+                if (facetOrd < m_startFacetOrd || facetOrd >= m_endFacetOrd)
                 {
                     return;
                 }
@@ -100,8 +100,8 @@ namespace Lucene.Net.Search.Grouping.Terms
                     return;
                 }
 
-                segmentTotalCount++;
-                segmentFacetCounts[facetOrd + 1]++;
+                m_segmentTotalCount++;
+                m_segmentFacetCounts[facetOrd + 1]++;
 
                 segmentGroupedFacetHits.Put(segmentGroupedFacetsIndex);
 
@@ -132,17 +132,17 @@ namespace Lucene.Net.Search.Grouping.Terms
 
             public override void SetNextReader(AtomicReaderContext context)
             {
-                if (segmentFacetCounts != null)
+                if (m_segmentFacetCounts != null)
                 {
-                    segmentResults.Add(CreateSegmentResult());
+                    m_segmentResults.Add(CreateSegmentResult());
                 }
 
-                groupFieldTermsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, groupField);
-                facetFieldTermsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, facetField);
+                groupFieldTermsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, m_groupField);
+                facetFieldTermsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, m_facetField);
 
                 // 1+ to allow for the -1 "not set":
-                segmentFacetCounts = new int[facetFieldTermsIndex.ValueCount + 1];
-                segmentTotalCount = 0;
+                m_segmentFacetCounts = new int[facetFieldTermsIndex.ValueCount + 1];
+                m_segmentTotalCount = 0;
 
                 segmentGroupedFacetHits.Clear();
                 foreach (GroupedFacetHit groupedFacetHit in groupedFacetHits)
@@ -163,31 +163,31 @@ namespace Lucene.Net.Search.Grouping.Terms
                     segmentGroupedFacetHits.Put(segmentGroupedFacetsIndex);
                 }
 
-                if (facetPrefix != null)
+                if (m_facetPrefix != null)
                 {
-                    startFacetOrd = facetFieldTermsIndex.LookupTerm(facetPrefix);
-                    if (startFacetOrd < 0)
+                    m_startFacetOrd = facetFieldTermsIndex.LookupTerm(m_facetPrefix);
+                    if (m_startFacetOrd < 0)
                     {
                         // Points to the ord one higher than facetPrefix
-                        startFacetOrd = -startFacetOrd - 1;
+                        m_startFacetOrd = -m_startFacetOrd - 1;
                     }
-                    BytesRef facetEndPrefix = BytesRef.DeepCopyOf(facetPrefix);
+                    BytesRef facetEndPrefix = BytesRef.DeepCopyOf(m_facetPrefix);
                     facetEndPrefix.Append(UnicodeUtil.BIG_TERM);
-                    endFacetOrd = facetFieldTermsIndex.LookupTerm(facetEndPrefix);
-                    Debug.Assert(endFacetOrd < 0);
-                    endFacetOrd = -endFacetOrd - 1; // Points to the ord one higher than facetEndPrefix
+                    m_endFacetOrd = facetFieldTermsIndex.LookupTerm(facetEndPrefix);
+                    Debug.Assert(m_endFacetOrd < 0);
+                    m_endFacetOrd = -m_endFacetOrd - 1; // Points to the ord one higher than facetEndPrefix
                 }
                 else
                 {
-                    startFacetOrd = -1;
-                    endFacetOrd = facetFieldTermsIndex.ValueCount;
+                    m_startFacetOrd = -1;
+                    m_endFacetOrd = facetFieldTermsIndex.ValueCount;
                 }
             }
 
 
             protected override AbstractSegmentResult CreateSegmentResult()
             {
-                return new SegmentResult(segmentFacetCounts, segmentTotalCount, facetFieldTermsIndex.GetTermsEnum(), startFacetOrd, endFacetOrd);
+                return new SegmentResult(m_segmentFacetCounts, m_segmentTotalCount, facetFieldTermsIndex.GetTermsEnum(), m_startFacetOrd, m_endFacetOrd);
             }
 
             internal class SegmentResult : AbstractGroupFacetCollector.AbstractSegmentResult
@@ -199,18 +199,18 @@ namespace Lucene.Net.Search.Grouping.Terms
                                 : base(counts, total - counts[0], counts[0], endFacetOrd + 1)
                 {
                     this.tenum = tenum;
-                    this.mergePos = startFacetOrd == -1 ? 1 : startFacetOrd + 1;
-                    if (mergePos < maxTermPos)
+                    this.m_mergePos = startFacetOrd == -1 ? 1 : startFacetOrd + 1;
+                    if (m_mergePos < m_maxTermPos)
                     {
                         Debug.Assert(tenum != null);
                         tenum.SeekExact(startFacetOrd == -1 ? 0 : startFacetOrd);
-                        mergeTerm = tenum.Term;
+                        m_mergeTerm = tenum.Term;
                     }
                 }
 
                 protected internal override void NextTerm()
                 {
-                    mergeTerm = tenum.Next();
+                    m_mergeTerm = tenum.Next();
                 }
             }
         }
@@ -237,13 +237,13 @@ namespace Lucene.Net.Search.Grouping.Terms
                 if (facetFieldNumTerms == 0)
                 {
                     int segmentGroupedFacetsIndex = groupOrd * (facetFieldNumTerms + 1);
-                    if (facetPrefix != null || segmentGroupedFacetHits.Exists(segmentGroupedFacetsIndex))
+                    if (m_facetPrefix != null || segmentGroupedFacetHits.Exists(segmentGroupedFacetsIndex))
                     {
                         return;
                     }
 
-                    segmentTotalCount++;
-                    segmentFacetCounts[facetFieldNumTerms]++;
+                    m_segmentTotalCount++;
+                    m_segmentFacetCounts[facetFieldNumTerms]++;
 
                     segmentGroupedFacetHits.Put(segmentGroupedFacetsIndex);
                     BytesRef groupKey;
@@ -277,7 +277,7 @@ namespace Lucene.Net.Search.Grouping.Terms
 
             private void Process(int groupOrd, int facetOrd)
             {
-                if (facetOrd < startFacetOrd || facetOrd >= endFacetOrd)
+                if (facetOrd < m_startFacetOrd || facetOrd >= m_endFacetOrd)
                 {
                     return;
                 }
@@ -288,8 +288,8 @@ namespace Lucene.Net.Search.Grouping.Terms
                     return;
                 }
 
-                segmentTotalCount++;
-                segmentFacetCounts[facetOrd]++;
+                m_segmentTotalCount++;
+                m_segmentFacetCounts[facetOrd]++;
 
                 segmentGroupedFacetHits.Put(segmentGroupedFacetsIndex);
 
@@ -319,13 +319,13 @@ namespace Lucene.Net.Search.Grouping.Terms
 
             public override void SetNextReader(AtomicReaderContext context)
             {
-                if (segmentFacetCounts != null)
+                if (m_segmentFacetCounts != null)
                 {
-                    segmentResults.Add(CreateSegmentResult());
+                    m_segmentResults.Add(CreateSegmentResult());
                 }
 
-                groupFieldTermsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, groupField);
-                facetFieldDocTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, facetField);
+                groupFieldTermsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, m_groupField);
+                facetFieldDocTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, m_facetField);
                 facetFieldNumTerms = (int)facetFieldDocTermOrds.ValueCount;
                 if (facetFieldNumTerms == 0)
                 {
@@ -336,8 +336,8 @@ namespace Lucene.Net.Search.Grouping.Terms
                     facetOrdTermsEnum = facetFieldDocTermOrds.GetTermsEnum();
                 }
                 // [facetFieldNumTerms() + 1] for all possible facet values and docs not containing facet field
-                segmentFacetCounts = new int[facetFieldNumTerms + 1];
-                segmentTotalCount = 0;
+                m_segmentFacetCounts = new int[facetFieldNumTerms + 1];
+                m_segmentTotalCount = 0;
 
                 segmentGroupedFacetHits.Clear();
                 foreach (GroupedFacetHit groupedFacetHit in groupedFacetHits)
@@ -367,12 +367,12 @@ namespace Lucene.Net.Search.Grouping.Terms
                     segmentGroupedFacetHits.Put(segmentGroupedFacetsIndex);
                 }
 
-                if (facetPrefix != null)
+                if (m_facetPrefix != null)
                 {
                     TermsEnum.SeekStatus seekStatus;
                     if (facetOrdTermsEnum != null)
                     {
-                        seekStatus = facetOrdTermsEnum.SeekCeil(facetPrefix);
+                        seekStatus = facetOrdTermsEnum.SeekCeil(m_facetPrefix);
                     }
                     else
                     {
@@ -381,37 +381,37 @@ namespace Lucene.Net.Search.Grouping.Terms
 
                     if (seekStatus != TermsEnum.SeekStatus.END)
                     {
-                        startFacetOrd = (int)facetOrdTermsEnum.Ord;
+                        m_startFacetOrd = (int)facetOrdTermsEnum.Ord;
                     }
                     else
                     {
-                        startFacetOrd = 0;
-                        endFacetOrd = 0;
+                        m_startFacetOrd = 0;
+                        m_endFacetOrd = 0;
                         return;
                     }
 
-                    BytesRef facetEndPrefix = BytesRef.DeepCopyOf(facetPrefix);
+                    BytesRef facetEndPrefix = BytesRef.DeepCopyOf(m_facetPrefix);
                     facetEndPrefix.Append(UnicodeUtil.BIG_TERM);
                     seekStatus = facetOrdTermsEnum.SeekCeil(facetEndPrefix);
                     if (seekStatus != TermsEnum.SeekStatus.END)
                     {
-                        endFacetOrd = (int)facetOrdTermsEnum.Ord;
+                        m_endFacetOrd = (int)facetOrdTermsEnum.Ord;
                     }
                     else
                     {
-                        endFacetOrd = facetFieldNumTerms; // Don't include null...
+                        m_endFacetOrd = facetFieldNumTerms; // Don't include null...
                     }
                 }
                 else
                 {
-                    startFacetOrd = 0;
-                    endFacetOrd = facetFieldNumTerms + 1;
+                    m_startFacetOrd = 0;
+                    m_endFacetOrd = facetFieldNumTerms + 1;
                 }
             }
 
             protected override AbstractSegmentResult CreateSegmentResult()
             {
-                return new SegmentResult(segmentFacetCounts, segmentTotalCount, facetFieldNumTerms, facetOrdTermsEnum, startFacetOrd, endFacetOrd);
+                return new SegmentResult(m_segmentFacetCounts, m_segmentTotalCount, facetFieldNumTerms, facetOrdTermsEnum, m_startFacetOrd, m_endFacetOrd);
             }
 
             internal class SegmentResult : AbstractGroupFacetCollector.AbstractSegmentResult
@@ -424,17 +424,17 @@ namespace Lucene.Net.Search.Grouping.Terms
                         endFacetOrd == missingCountIndex + 1 ? missingCountIndex : endFacetOrd)
                 {
                     this.tenum = tenum;
-                    this.mergePos = startFacetOrd;
+                    this.m_mergePos = startFacetOrd;
                     if (tenum != null)
                     {
-                        tenum.SeekExact(mergePos);
-                        mergeTerm = tenum.Term;
+                        tenum.SeekExact(m_mergePos);
+                        m_mergeTerm = tenum.Term;
                     }
                 }
 
                 protected internal override void NextTerm()
                 {
-                    mergeTerm = tenum.Next();
+                    m_mergeTerm = tenum.Next();
                 }
             }
         }

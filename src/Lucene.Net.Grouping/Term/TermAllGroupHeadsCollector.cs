@@ -154,7 +154,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             SortField[] sortFields = sortWithinGroup.GetSort();
             for (int i = 0; i < sortFields.Length; i++)
             {
-                reversed[i] = sortFields[i].IsReverse ? -1 : 1;
+                m_reversed[i] = sortFields[i].IsReverse ? -1 : 1;
             }
         }
 
@@ -176,13 +176,13 @@ namespace Lucene.Net.Search.Grouping.Terms
             {
                 groupHead = new GroupHead(this, groupValue, sortWithinGroup, doc);
                 groups[groupValue == null ? null : BytesRef.DeepCopyOf(groupValue)] = groupHead;
-                temporalResult.stop = true;
+                m_temporalResult.stop = true;
             }
             else
             {
-                temporalResult.stop = false;
+                m_temporalResult.stop = false;
             }
-            temporalResult.groupHead = groupHead;
+            m_temporalResult.groupHead = groupHead;
         }
 
         protected override ICollection<GroupHead> CollectedGroupHeads
@@ -284,7 +284,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             sortsIndex = new SortedDocValues[sortFields.Length];
             for (int i = 0; i < sortFields.Length; i++)
             {
-                reversed[i] = sortFields[i].IsReverse ? -1 : 1;
+                m_reversed[i] = sortFields[i].IsReverse ? -1 : 1;
                 fields[i] = sortFields[i];
             }
         }
@@ -320,14 +320,14 @@ namespace Lucene.Net.Search.Grouping.Terms
                 groupHead = new GroupHead(this, doc, term);
                 collectedGroups.Add(groupHead);
                 segmentGroupHeads[key + 1] = groupHead;
-                temporalResult.stop = true;
+                m_temporalResult.stop = true;
             }
             else
             {
-                temporalResult.stop = false;
+                m_temporalResult.stop = false;
                 groupHead = segmentGroupHeads[key + 1];
             }
-            temporalResult.groupHead = groupHead;
+            m_temporalResult.groupHead = groupHead;
         }
 
         public override void SetNextReader(AtomicReaderContext context)
@@ -510,7 +510,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             sortsIndex = new SortedDocValues[sortFields.Length];
             for (int i = 0; i < sortFields.Length; i++)
             {
-                reversed[i] = sortFields[i].IsReverse ? -1 : 1;
+                m_reversed[i] = sortFields[i].IsReverse ? -1 : 1;
                 fields[i] = sortFields[i];
             }
         }
@@ -545,14 +545,14 @@ namespace Lucene.Net.Search.Grouping.Terms
                 groupHead = new GroupHead(this, doc, term);
                 collectedGroups.Add(groupHead);
                 segmentGroupHeads[key + 1] = groupHead;
-                temporalResult.stop = true;
+                m_temporalResult.stop = true;
             }
             else
             {
-                temporalResult.stop = false;
+                m_temporalResult.stop = false;
                 groupHead = segmentGroupHeads[key + 1];
             }
-            temporalResult.groupHead = groupHead;
+            m_temporalResult.groupHead = groupHead;
         }
 
         public override void SetNextReader(AtomicReaderContext context)
@@ -693,7 +693,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             fields = new SortField[sortFields.Length];
             for (int i = 0; i < sortFields.Length; i++)
             {
-                reversed[i] = sortFields[i].IsReverse ? -1 : 1;
+                m_reversed[i] = sortFields[i].IsReverse ? -1 : 1;
                 fields[i] = sortFields[i];
             }
         }
@@ -728,14 +728,14 @@ namespace Lucene.Net.Search.Grouping.Terms
                 groupHead = new GroupHead(this, doc, term);
                 collectedGroups.Add(groupHead);
                 segmentGroupHeads[key + 1] = groupHead;
-                temporalResult.stop = true;
+                m_temporalResult.stop = true;
             }
             else
             {
-                temporalResult.stop = false;
+                m_temporalResult.stop = false;
                 groupHead = segmentGroupHeads[key + 1];
             }
-            temporalResult.groupHead = groupHead;
+            m_temporalResult.groupHead = groupHead;
         }
         public override void SetNextReader(AtomicReaderContext context)
         {

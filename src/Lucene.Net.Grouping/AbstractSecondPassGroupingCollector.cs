@@ -38,9 +38,9 @@ namespace Lucene.Net.Search.Grouping
     /// <typeparam name="TGroupValue"></typeparam>
     public abstract class AbstractSecondPassGroupingCollector<TGroupValue> : IAbstractSecondPassGroupingCollector<TGroupValue>
     {
-        protected readonly IDictionary<TGroupValue, AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>> groupMap;
+        protected readonly IDictionary<TGroupValue, AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>> m_groupMap;
         private readonly int maxDocsPerGroup;
-        protected AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>[] groupDocs;
+        protected AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>[] m_groupDocs;
         private readonly IEnumerable<ISearchGroup<TGroupValue>> groups;
         private readonly Sort withinGroupSort;
         private readonly Sort groupSort;
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Grouping
             this.withinGroupSort = withinGroupSort;
             this.groups = groups;
             this.maxDocsPerGroup = maxDocsPerGroup;
-            groupMap = new HashMap<TGroupValue, AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>>(groups.Count());
+            m_groupMap = new HashMap<TGroupValue, AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>>(groups.Count());
 
             foreach (SearchGroup<TGroupValue> group in groups)
             {
@@ -78,13 +78,13 @@ namespace Lucene.Net.Search.Grouping
                     // Sort by fields
                     collector = TopFieldCollector.Create(withinGroupSort, maxDocsPerGroup, fillSortFields, getScores, getMaxScores, true);
                 }
-                groupMap[group.GroupValue] = new AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>(group.GroupValue, collector);
+                m_groupMap[group.GroupValue] = new AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>(group.GroupValue, collector);
             }
         }
 
         public virtual void SetScorer(Scorer scorer)
         {
-            foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> group in groupMap.Values)
+            foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> group in m_groupMap.Values)
             {
                 group.collector.SetScorer(scorer);
             }
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Grouping
         public virtual void SetNextReader(AtomicReaderContext context)
         {
             //System.out.println("SP.setNextReader");
-            foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> group in groupMap.Values)
+            foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> group in m_groupMap.Values)
             {
                 group.collector.SetNextReader(context);
             }
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Grouping
             float maxScore = float.MinValue;
             foreach (var group in groups)
             {
-                AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> groupDocs = groupMap.ContainsKey(group.GroupValue) ? groupMap[group.GroupValue] : null;
+                AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> groupDocs = m_groupMap.ContainsKey(group.GroupValue) ? m_groupMap[group.GroupValue] : null;
                 TopDocs topDocs = groupDocs.collector.GetTopDocs(withinGroupOffset, maxDocsPerGroup);
                 groupDocsResult[groupIDX++] = new GroupDocs<TGroupValue>(float.NaN,
                                                                               topDocs.MaxScore,

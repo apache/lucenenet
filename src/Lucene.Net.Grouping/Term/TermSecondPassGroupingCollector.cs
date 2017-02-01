@@ -38,9 +38,9 @@ namespace Lucene.Net.Search.Grouping.Terms
                                                int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields)
                   : base(groups, groupSort, withinGroupSort, maxDocsPerGroup, getScores, getMaxScores, fillSortFields)
         {
-            ordSet = new SentinelIntSet(groupMap.Count, -2);
+            ordSet = new SentinelIntSet(m_groupMap.Count, -2);
             this.groupField = groupField;
-            groupDocs = /*(SearchGroupDocs<BytesRef>[])*/ new AbstractSecondPassGroupingCollector.SearchGroupDocs<BytesRef>[ordSet.Keys.Length];
+            m_groupDocs = /*(SearchGroupDocs<BytesRef>[])*/ new AbstractSecondPassGroupingCollector.SearchGroupDocs<BytesRef>[ordSet.Keys.Length];
         }
 
         public override void SetNextReader(AtomicReaderContext context)
@@ -50,13 +50,13 @@ namespace Lucene.Net.Search.Grouping.Terms
 
             // Rebuild ordSet
             ordSet.Clear();
-            foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<BytesRef> group in groupMap.Values)
+            foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<BytesRef> group in m_groupMap.Values)
             {
                 //      System.out.println("  group=" + (group.groupValue == null ? "null" : group.groupValue.utf8ToString()));
                 int ord = group.groupValue == null ? -1 : index.LookupTerm(group.groupValue);
                 if (group.groupValue == null || ord >= 0)
                 {
-                    groupDocs[ordSet.Put(ord)] = group;
+                    m_groupDocs[ordSet.Put(ord)] = group;
                 }
             }
         }
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             int slot = ordSet.Find(index.GetOrd(doc));
             if (slot >= 0)
             {
-                return groupDocs[slot];
+                return m_groupDocs[slot];
             }
             return null;
         }

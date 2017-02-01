@@ -28,22 +28,22 @@ namespace Lucene.Net.Search.Grouping
     /// </summary>
     public abstract class AbstractGroupFacetCollector : ICollector
     {
-        protected readonly string groupField;
-        protected readonly string facetField;
-        protected readonly BytesRef facetPrefix;
-        protected readonly IList<AbstractSegmentResult> segmentResults;
+        protected readonly string m_groupField;
+        protected readonly string m_facetField;
+        protected readonly BytesRef m_facetPrefix;
+        protected readonly IList<AbstractSegmentResult> m_segmentResults;
 
-        protected int[] segmentFacetCounts;
-        protected int segmentTotalCount;
-        protected int startFacetOrd;
-        protected int endFacetOrd;
+        protected int[] m_segmentFacetCounts;
+        protected int m_segmentTotalCount;
+        protected int m_startFacetOrd;
+        protected int m_endFacetOrd;
 
         protected AbstractGroupFacetCollector(string groupField, string facetField, BytesRef facetPrefix)
         {
-            this.groupField = groupField;
-            this.facetField = facetField;
-            this.facetPrefix = facetPrefix;
-            segmentResults = new List<AbstractSegmentResult>();
+            this.m_groupField = groupField;
+            this.m_facetField = facetField;
+            this.m_facetPrefix = facetPrefix;
+            m_segmentResults = new List<AbstractSegmentResult>();
         }
 
         /// <summary>
@@ -60,23 +60,23 @@ namespace Lucene.Net.Search.Grouping
         /// <exception cref="IOException">If I/O related errors occur during merging segment grouped facet counts.</exception>
         public virtual GroupedFacetResult MergeSegmentResults(int size, int minCount, bool orderByCount)
         {
-            if (segmentFacetCounts != null)
+            if (m_segmentFacetCounts != null)
             {
-                segmentResults.Add(CreateSegmentResult());
-                segmentFacetCounts = null; // reset
+                m_segmentResults.Add(CreateSegmentResult());
+                m_segmentFacetCounts = null; // reset
             }
 
             int totalCount = 0;
             int missingCount = 0;
-            SegmentResultPriorityQueue segments = new SegmentResultPriorityQueue(segmentResults.Count);
-            foreach (AbstractSegmentResult segmentResult in segmentResults)
+            SegmentResultPriorityQueue segments = new SegmentResultPriorityQueue(m_segmentResults.Count);
+            foreach (AbstractSegmentResult segmentResult in m_segmentResults)
             {
-                missingCount += segmentResult.missing;
-                if (segmentResult.mergePos >= segmentResult.maxTermPos)
+                missingCount += segmentResult.m_missing;
+                if (segmentResult.m_mergePos >= segmentResult.m_maxTermPos)
                 {
                     continue;
                 }
-                totalCount += segmentResult.total;
+                totalCount += segmentResult.m_total;
                 segments.Add(segmentResult);
             }
 
@@ -84,13 +84,13 @@ namespace Lucene.Net.Search.Grouping
             while (segments.Count > 0)
             {
                 AbstractSegmentResult segmentResult = segments.Top;
-                BytesRef currentFacetValue = BytesRef.DeepCopyOf(segmentResult.mergeTerm);
+                BytesRef currentFacetValue = BytesRef.DeepCopyOf(segmentResult.m_mergeTerm);
                 int count = 0;
 
                 do
                 {
-                    count += segmentResult.counts[segmentResult.mergePos++];
-                    if (segmentResult.mergePos < segmentResult.maxTermPos)
+                    count += segmentResult.m_counts[segmentResult.m_mergePos++];
+                    if (segmentResult.m_mergePos < segmentResult.m_maxTermPos)
                     {
                         segmentResult.NextTerm();
                         segmentResult = segments.UpdateTop();
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search.Grouping
                             break;
                         }
                     }
-                } while (currentFacetValue.Equals(segmentResult.mergeTerm));
+                } while (currentFacetValue.Equals(segmentResult.m_mergeTerm));
                 facetResult.AddFacetCount(currentFacetValue, count);
             }
             return facetResult;
@@ -325,20 +325,20 @@ namespace Lucene.Net.Search.Grouping
         /// </remarks>
         protected internal abstract class AbstractSegmentResult
         {
-            protected internal readonly int[] counts;
-            protected internal readonly int total;
-            protected internal readonly int missing;
-            protected internal readonly int maxTermPos;
+            protected internal readonly int[] m_counts;
+            protected internal readonly int m_total;
+            protected internal readonly int m_missing;
+            protected internal readonly int m_maxTermPos;
 
-            protected internal BytesRef mergeTerm;
-            protected internal int mergePos;
+            protected internal BytesRef m_mergeTerm;
+            protected internal int m_mergePos;
 
             protected AbstractSegmentResult(int[] counts, int total, int missing, int maxTermPos)
             {
-                this.counts = counts;
-                this.total = total;
-                this.missing = missing;
-                this.maxTermPos = maxTermPos;
+                this.m_counts = counts;
+                this.m_total = total;
+                this.m_missing = missing;
+                this.m_maxTermPos = maxTermPos;
             }
 
             /// <summary>
@@ -358,7 +358,7 @@ namespace Lucene.Net.Search.Grouping
 
             protected override bool LessThan(AbstractSegmentResult a, AbstractSegmentResult b)
             {
-                return a.mergeTerm.CompareTo(b.mergeTerm) < 0;
+                return a.m_mergeTerm.CompareTo(b.m_mergeTerm) < 0;
             }
         }
     }

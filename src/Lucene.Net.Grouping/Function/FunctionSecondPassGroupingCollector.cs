@@ -63,7 +63,7 @@ namespace Lucene.Net.Search.Grouping.Function
         {
             filler.FillValue(doc);
             AbstractSecondPassGroupingCollector.SearchGroupDocs<MutableValue> result;
-            groupMap.TryGetValue(mval, out result);
+            m_groupMap.TryGetValue(mval, out result);
             return result;
         }
 
