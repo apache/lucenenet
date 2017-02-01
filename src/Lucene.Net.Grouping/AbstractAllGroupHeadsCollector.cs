@@ -78,10 +78,11 @@ namespace Lucene.Net.Search.Grouping
         }
 
         /// <summary>
-        /// 
+        /// The number of group heads found for a query.
+        /// LUCENENET NOTE: This was groupHeadsSize() in Lucene
         /// </summary>
         /// <returns>the number of group heads found for a query.</returns>
-        public override int GroupHeadsSize
+        public override int GroupHeadsCount
         {
             get
             {
@@ -225,10 +226,11 @@ namespace Lucene.Net.Search.Grouping
         public abstract int[] RetrieveGroupHeads();
 
         /// <summary>
-        /// 
+        /// The number of group heads found for a query.
+        /// LUCENENET NOTE: This was groupHeadsSize() in Lucene
         /// </summary>
         /// <returns>the number of group heads found for a query.</returns>
-        public abstract int GroupHeadsSize { get; } // LUCENENET TODO: Rename GroupHeadsCount ?
+        public abstract int GroupHeadsCount { get; }
 
         /// <summary>
         /// Returns the group head and puts it into <see cref="TemporalResult"/>.
