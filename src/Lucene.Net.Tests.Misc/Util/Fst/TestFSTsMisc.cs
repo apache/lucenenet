@@ -157,13 +157,13 @@ namespace Lucene.Net.Util.Fst
                 {
                     UpToTwoPositiveIntOutputs.TwoLongs twoLongs1 = output1 as UpToTwoPositiveIntOutputs.TwoLongs;
                     long[] list2 = (output2 as IEnumerable<long>).ToArray();
-                    return (new long[] { twoLongs1.first, twoLongs1.second }).SequenceEqual(list2);
+                    return (new long[] { twoLongs1.First, twoLongs1.Second }).SequenceEqual(list2);
                 }
                 else if (output2 is UpToTwoPositiveIntOutputs.TwoLongs && output1 is IEnumerable<long>)
                 {
                     long[] list1 = (output1 as IEnumerable<long>).ToArray();
                     UpToTwoPositiveIntOutputs.TwoLongs twoLongs2 = output2 as UpToTwoPositiveIntOutputs.TwoLongs;
-                    return (new long[] { twoLongs2.first, twoLongs2.second }).SequenceEqual(list1);
+                    return (new long[] { twoLongs2.First, twoLongs2.Second }).SequenceEqual(list1);
                 }
 
                 return output1.Equals(output2);

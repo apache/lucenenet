@@ -54,8 +54,17 @@ namespace Lucene.Net.Util.Fst
         /// Holds two long outputs. </summary>
         public sealed class TwoLongs
         {
-            public readonly long first;
-            public readonly long second;
+            public long First
+            {
+                get { return first; }
+            }
+            private readonly long first;
+
+            public long Second
+            {
+                get { return second; }
+            }
+            private readonly long second;
 
             public TwoLongs(long first, long second)
             {
@@ -196,7 +205,7 @@ namespace Lucene.Net.Util.Fst
             {
                 TwoLongs output = (TwoLongs)_output;
                 long v = prefix.Value;
-                return new TwoLongs(output.first + v, output.second + v);
+                return new TwoLongs(output.First + v, output.Second + v);
             }
         }
 
@@ -211,8 +220,8 @@ namespace Lucene.Net.Util.Fst
             else
             {
                 TwoLongs output = (TwoLongs)_output;
-                @out.WriteVLong((output.first << 1) | 1);
-                @out.WriteVLong(output.second);
+                @out.WriteVLong((output.First << 1) | 1);
+                @out.WriteVLong(output.Second);
             }
         }
 

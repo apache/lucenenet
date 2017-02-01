@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
     /// </summary>
     public class IndexSplitter
     {
-        public SegmentInfos infos;
+        public SegmentInfos Infos { get; set; }
 
         internal FSDirectory fsDir;
 
@@ -93,15 +93,15 @@ namespace Lucene.Net.Index
         {
             this.dir = dir;
             fsDir = FSDirectory.Open(dir);
-            infos = new SegmentInfos();
-            infos.Read(fsDir);
+            Infos = new SegmentInfos();
+            Infos.Read(fsDir);
         }
 
         public virtual void ListSegments()
         {
-            for (int x = 0; x < infos.Count; x++)
+            for (int x = 0; x < Infos.Count; x++)
             {
-                SegmentCommitInfo info = infos.Info(x);
+                SegmentCommitInfo info = Infos.Info(x);
                 string sizeStr = string.Format(CultureInfo.InvariantCulture, "{0:###,###.###}", info.SizeInBytes());
                 Console.WriteLine(info.Info.Name + " " + sizeStr);
             }
@@ -109,9 +109,9 @@ namespace Lucene.Net.Index
 
         private int GetIdx(string name)
         {
-            for (int x = 0; x < infos.Count; x++)
+            for (int x = 0; x < Infos.Count; x++)
             {
-                if (name.Equals(infos.Info(x).Info.Name))
+                if (name.Equals(Infos.Info(x).Info.Name))
                 {
                     return x;
                 }
@@ -121,11 +121,11 @@ namespace Lucene.Net.Index
 
         private SegmentCommitInfo GetInfo(string name)
         {
-            for (int x = 0; x < infos.Count; x++)
+            for (int x = 0; x < Infos.Count; x++)
             {
-                if (name.Equals(infos.Info(x).Info.Name))
+                if (name.Equals(Infos.Info(x).Info.Name))
                 {
-                    return infos.Info(x);
+                    return Infos.Info(x);
                 }
             }
             return null;
@@ -136,10 +136,10 @@ namespace Lucene.Net.Index
             foreach (string n in segs)
             {
                 int idx = GetIdx(n);
-                infos.Remove(idx);
+                Infos.Remove(idx);
             }
-            infos.Changed();
-            infos.Commit(fsDir);
+            Infos.Changed();
+            Infos.Commit(fsDir);
         }
 
         public virtual void Split(DirectoryInfo destDir, string[] segs)
@@ -147,7 +147,7 @@ namespace Lucene.Net.Index
             destDir.Create();
             FSDirectory destFSDir = FSDirectory.Open(destDir);
             SegmentInfos destInfos = new SegmentInfos();
-            destInfos.Counter = infos.Counter;
+            destInfos.Counter = Infos.Counter;
             foreach (string n in segs)
             {
                 SegmentCommitInfo infoPerCommit = GetInfo(n);
