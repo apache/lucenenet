@@ -947,6 +947,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add this <see cref="sbyte"/> into the set
         /// </summary>
         /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        [CLSCompliant(false)]
         public static bool Add(this CharArraySet set, sbyte text)
         {
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
@@ -965,6 +966,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add this <see cref="uint"/> into the set
         /// </summary>
         /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        [CLSCompliant(false)]
         public static bool Add(this CharArraySet set, uint text)
         {
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
@@ -974,6 +976,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add this <see cref="ulong"/> into the set
         /// </summary>
         /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        [CLSCompliant(false)]
         public static bool Add(this CharArraySet set, ulong text)
         {
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
@@ -983,6 +986,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add this <see cref="ushort"/> into the set
         /// </summary>
         /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        [CLSCompliant(false)]
         public static bool Add(this CharArraySet set, ushort text)
         {
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
@@ -1059,6 +1063,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// <c>true</c> if the <see cref="sbyte"/> is in the set
         /// </summary>
+        [CLSCompliant(false)]
         public static bool Contains(this CharArraySet set, sbyte text)
         {
             return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
@@ -1075,6 +1080,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// <c>true</c> if the <see cref="uint"/> is in the set
         /// </summary>
+        [CLSCompliant(false)]
         public static bool Contains(this CharArraySet set, uint text)
         {
             return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
@@ -1083,6 +1089,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// <c>true</c> if the <see cref="ulong"/> is in the set
         /// </summary>
+        [CLSCompliant(false)]
         public static bool Contains(this CharArraySet set, ulong text)
         {
             return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
@@ -1091,6 +1098,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// <c>true</c> if the <see cref="ushort"/> is in the set
         /// </summary>
+        [CLSCompliant(false)]
         public static bool Contains(this CharArraySet set, ushort text)
         {
             return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
@@ -1295,6 +1303,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        [CLSCompliant(false)]
         public static bool UnionWith(this CharArraySet set, IEnumerable<sbyte> other)
         {
             if (other == null)
@@ -1349,6 +1358,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        [CLSCompliant(false)]
         public static bool UnionWith(this CharArraySet set, IEnumerable<uint> other)
         {
             if (other == null)
@@ -1376,6 +1386,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        [CLSCompliant(false)]
         public static bool UnionWith(this CharArraySet set, IEnumerable<ulong> other)
         {
             if (other == null)
@@ -1403,6 +1414,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
+        [CLSCompliant(false)]
         public static bool UnionWith(this CharArraySet set, IEnumerable<ushort> other)
         {
             if (other == null)

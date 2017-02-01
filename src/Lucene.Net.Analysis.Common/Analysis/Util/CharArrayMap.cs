@@ -2187,6 +2187,7 @@ namespace Lucene.Net.Analysis.Util
         /// <c>true</c> if the <paramref name="key"/> <see cref="sbyte"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
         /// otherwise <c>false</c>
         /// </summary>
+        [CLSCompliant(false)]
         public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, sbyte key)
         {
             return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
@@ -2205,6 +2206,7 @@ namespace Lucene.Net.Analysis.Util
         /// <c>true</c> if the <paramref name="key"/> <see cref="uint"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
         /// otherwise <c>false</c>
         /// </summary>
+        [CLSCompliant(false)]
         public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, uint key)
         {
             return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
@@ -2214,6 +2216,7 @@ namespace Lucene.Net.Analysis.Util
         /// <c>true</c> if the <paramref name="key"/> <see cref="ulong"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
         /// otherwise <c>false</c>
         /// </summary>
+        [CLSCompliant(false)]
         public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, ulong key)
         {
             return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
@@ -2223,6 +2226,7 @@ namespace Lucene.Net.Analysis.Util
         /// <c>true</c> if the <paramref name="key"/> <see cref="ushort"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
         /// otherwise <c>false</c>
         /// </summary>
+        [CLSCompliant(false)]
         public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, ushort key)
         {
             return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
@@ -2299,6 +2303,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
+        [CLSCompliant(false)]
         public static TValue Get<TValue>(this CharArrayMap<TValue> map, sbyte text)
         {
             return map.Get(text.ToString(CultureInfo.InvariantCulture));
@@ -2315,6 +2320,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
+        [CLSCompliant(false)]
         public static TValue Get<TValue>(this CharArrayMap<TValue> map, uint text)
         {
             return map.Get(text.ToString(CultureInfo.InvariantCulture));
@@ -2323,6 +2329,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
+        [CLSCompliant(false)]
         public static TValue Get<TValue>(this CharArrayMap<TValue> map, ulong text)
         {
             return map.Get(text.ToString(CultureInfo.InvariantCulture));
@@ -2331,6 +2338,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// returns the value of the mapping of the chars inside this <paramref name="text"/>
         /// </summary>
+        [CLSCompliant(false)]
         public static TValue Get<TValue>(this CharArrayMap<TValue> map, ushort text)
         {
             return map.Get(text.ToString(CultureInfo.InvariantCulture));
@@ -2407,6 +2415,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add the given mapping.
         /// </summary>
+        [CLSCompliant(false)]
         public static TValue Put<TValue>(this CharArrayMap<TValue> map, sbyte text, TValue value)
         {
             return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
@@ -2423,6 +2432,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add the given mapping.
         /// </summary>
+        [CLSCompliant(false)]
         public static TValue Put<TValue>(this CharArrayMap<TValue> map, uint text, TValue value)
         {
             return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
@@ -2431,6 +2441,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add the given mapping.
         /// </summary>
+        [CLSCompliant(false)]
         public static TValue Put<TValue>(this CharArrayMap<TValue> map, ulong text, TValue value)
         {
             return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
@@ -2439,6 +2450,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add the given mapping.
         /// </summary>
+        [CLSCompliant(false)]
         public static TValue Put<TValue>(this CharArrayMap<TValue> map, ushort text, TValue value)
         {
             return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
@@ -2557,6 +2569,7 @@ namespace Lucene.Net.Analysis.Util
         /// entries, and calls this map's <see cref="Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current map.</param>
+        [CLSCompliant(false)]
         public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<sbyte, TValue> collection)
         {
             foreach (var kvp in collection)
@@ -2583,6 +2596,7 @@ namespace Lucene.Net.Analysis.Util
         /// entries, and calls this map's <see cref="Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current map.</param>
+        [CLSCompliant(false)]
         public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<uint, TValue> collection)
         {
             foreach (var kvp in collection)
@@ -2596,6 +2610,7 @@ namespace Lucene.Net.Analysis.Util
         /// entries, and calls this map's <see cref="Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current map.</param>
+        [CLSCompliant(false)]
         public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<ulong, TValue> collection)
         {
             foreach (var kvp in collection)
@@ -2609,6 +2624,7 @@ namespace Lucene.Net.Analysis.Util
         /// entries, and calls this map's <see cref="Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current map.</param>
+        [CLSCompliant(false)]
         public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<ushort, TValue> collection)
         {
             foreach (var kvp in collection)
@@ -2727,6 +2743,7 @@ namespace Lucene.Net.Analysis.Util
         /// entries, and calls this map's <see cref="Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">The values to add/update in the current map.</param>
+        [CLSCompliant(false)]
         public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<sbyte, TValue>> collection)
         {
             foreach (var kvp in collection)
@@ -2753,6 +2770,7 @@ namespace Lucene.Net.Analysis.Util
         /// entries, and calls this map's <see cref="Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">The values to add/update in the current map.</param>
+        [CLSCompliant(false)]
         public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<uint, TValue>> collection)
         {
             foreach (var kvp in collection)
@@ -2766,6 +2784,7 @@ namespace Lucene.Net.Analysis.Util
         /// entries, and calls this map's <see cref="Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">The values to add/update in the current map.</param>
+        [CLSCompliant(false)]
         public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<ulong, TValue>> collection)
         {
             foreach (var kvp in collection)
@@ -2779,6 +2798,7 @@ namespace Lucene.Net.Analysis.Util
         /// entries, and calls this map's <see cref="Put(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">The values to add/update in the current map.</param>
+        [CLSCompliant(false)]
         public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<ushort, TValue>> collection)
         {
             foreach (var kvp in collection)
@@ -2903,6 +2923,7 @@ namespace Lucene.Net.Analysis.Util
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        [CLSCompliant(false)]
         public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, sbyte key, out TValue value)
         {
             return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
@@ -2929,6 +2950,7 @@ namespace Lucene.Net.Analysis.Util
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        [CLSCompliant(false)]
         public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, uint key, out TValue value)
         {
             return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
@@ -2942,6 +2964,7 @@ namespace Lucene.Net.Analysis.Util
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        [CLSCompliant(false)]
         public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, ulong key, out TValue value)
         {
             return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
@@ -2955,6 +2978,7 @@ namespace Lucene.Net.Analysis.Util
         /// if the key is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        [CLSCompliant(false)]
         public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, ushort key, out TValue value)
         {
             return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
