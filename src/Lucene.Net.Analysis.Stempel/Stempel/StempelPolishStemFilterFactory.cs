@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Stempel
 
         public override TokenStream Create(TokenStream input)
         {
-            return new StempelFilter(input, new StempelStemmer(PolishAnalyzer.GetDefaultTable()));
+            return new StempelFilter(input, new StempelStemmer(PolishAnalyzer.DefaultTable));
         }
     }
 }

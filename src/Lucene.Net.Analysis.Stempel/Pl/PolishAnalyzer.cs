@@ -52,17 +52,17 @@ namespace Lucene.Net.Analysis.Pl
         /// Returns an unmodifiable instance of the default stop words set.
         /// </summary>
         /// <returns>default stop words set.</returns>
-        public static CharArraySet GetDefaultStopSet()
+        public static CharArraySet DefaultStopSet
         {
-            return DefaultsHolder.DEFAULT_STOP_SET;
+            get { return DefaultsHolder.DEFAULT_STOP_SET; }
         }
 
         /// <summary>
         /// Returns an unmodifiable instance of the default stemmer table.
         /// </summary>
-        public static Trie GetDefaultTable()
+        public static Trie DefaultTable
         {
-            return DefaultsHolder.DEFAULT_TABLE;
+            get { return DefaultsHolder.DEFAULT_TABLE; }
         }
 
         /// <summary>
