@@ -7,17 +7,17 @@
 //----------------------------------------------------------------------------------------
 internal static partial class RectangularArrays
 {
-    internal static string[][] ReturnRectangularStringArray(int Size1, int Size2)
+    internal static string[][] ReturnRectangularStringArray(int size1, int size2)
     {
         string[][] Array;
-        if (Size1 > -1)
+        if (size1 > -1)
         {
-            Array = new string[Size1][];
-            if (Size2 > -1)
+            Array = new string[size1][];
+            if (size2 > -1)
             {
-                for (int Array1 = 0; Array1 < Size1; Array1++)
+                for (int Array1 = 0; Array1 < size1; Array1++)
                 {
-                    Array[Array1] = new string[Size2];
+                    Array[Array1] = new string[size2];
                 }
             }
         }
