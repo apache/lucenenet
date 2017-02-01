@@ -10,17 +10,17 @@ using Lucene.Net.Util;
 
 internal static partial class RectangularArrays
 {
-    internal static int[][] ReturnRectangularIntArray(int Size1, int Size2)
+    internal static int[][] ReturnRectangularIntArray(int size1, int size2)
     {
         int[][] Array;
-        if (Size1 > -1)
+        if (size1 > -1)
         {
-            Array = new int[Size1][];
-            if (Size2 > -1)
+            Array = new int[size1][];
+            if (size2 > -1)
             {
-                for (int Array1 = 0; Array1 < Size1; Array1++)
+                for (int Array1 = 0; Array1 < size1; Array1++)
                 {
-                    Array[Array1] = new int[Size2];
+                    Array[Array1] = new int[size2];
                 }
             }
         }
@@ -30,17 +30,17 @@ internal static partial class RectangularArrays
         return Array;
     }
 
-    internal static BytesRef[][] ReturnRectangularBytesRefArray(int Size1, int Size2)
+    internal static BytesRef[][] ReturnRectangularBytesRefArray(int size1, int size2)
     {
         BytesRef[][] Array;
-        if (Size1 > -1)
+        if (size1 > -1)
         {
-            Array = new BytesRef[Size1][];
-            if (Size2 > -1)
+            Array = new BytesRef[size1][];
+            if (size2 > -1)
             {
-                for (int Array1 = 0; Array1 < Size1; Array1++)
+                for (int Array1 = 0; Array1 < size1; Array1++)
                 {
-                    Array[Array1] = new BytesRef[Size2];
+                    Array[Array1] = new BytesRef[size2];
                 }
             }
         }
