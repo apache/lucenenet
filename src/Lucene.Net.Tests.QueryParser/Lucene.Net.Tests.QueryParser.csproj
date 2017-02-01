@@ -82,6 +82,7 @@
     <Compile Include="Surround\Query\Test01Exceptions.cs" />
     <Compile Include="Surround\Query\Test02Boolean.cs" />
     <Compile Include="Surround\Query\Test03Distance.cs" />
+    <Compile Include="TestApiConsistency.cs" />
     <Compile Include="Util\QueryParserTestBase.cs" />
     <Compile Include="Xml\Builders\TestNumericRangeFilterBuilder.cs" />
     <Compile Include="Xml\Builders\TestNumericRangeQueryBuilder.cs" />
