@@ -30,7 +30,7 @@ namespace Lucene.Net.Util
         private static int NUM_RANDOM_TESTS;
         private static int MAX_RANDOM_BINARY_LENGTH;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void BeforeClass()
         {
             NUM_RANDOM_TESTS = AtLeast(200);

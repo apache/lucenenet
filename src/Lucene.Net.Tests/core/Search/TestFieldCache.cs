@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
 
 
         // LUCENENET: Changed to non-static because NewIndexWriterConfig is non-static
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClass()
         {
             NUM_DOCS = AtLeast(500);
@@ -165,7 +165,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             Reader.Dispose();

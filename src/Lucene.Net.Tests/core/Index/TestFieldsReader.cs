@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
         /// LUCENENET specific
         /// Is non-static because NewIndexWriterConfig is no longer static.
         /// </summary>
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClass()
         {
             TestDoc = new Document();
@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
             FaultyIndexInput.DoFail = false;
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             Dir.Dispose();

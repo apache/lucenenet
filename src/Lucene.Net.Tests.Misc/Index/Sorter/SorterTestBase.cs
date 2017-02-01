@@ -212,7 +212,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClassSorterTestBase()
         {
             dir = NewDirectory();
@@ -222,7 +222,7 @@ namespace Lucene.Net.Index.Sorter
             reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClassSorterTestBase()
         {
             reader.Dispose();

@@ -49,7 +49,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// LUCENENET specific
         /// Is non-static because Similarity and TimeZone are not static.
         /// </summary>
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClass()
         {
             dir = NewDirectory();
@@ -92,7 +92,7 @@ namespace Lucene.Net.Facet.Taxonomy
             taxoReader = new DirectoryTaxonomyReader(taxoDir);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             reader.Dispose();

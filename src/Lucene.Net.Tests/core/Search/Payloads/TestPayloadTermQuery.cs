@@ -119,7 +119,7 @@ namespace Lucene.Net.Search.Payloads
         /// LUCENENET specific
         /// Is non-static because NewIndexWriterConfig is no longer static.
         /// </summary>
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClass()
         {
             Directory = NewDirectory();
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search.Payloads
             Searcher.Similarity = similarity;
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             Searcher = null;

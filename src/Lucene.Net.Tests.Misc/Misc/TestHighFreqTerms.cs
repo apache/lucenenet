@@ -14,7 +14,7 @@ namespace Lucene.Net.Misc
         private static Directory dir = null;
         private static IndexReader reader = null;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SetUpClass()
         {
             dir = NewDirectory();
@@ -26,7 +26,7 @@ namespace Lucene.Net.Misc
             TestUtil.CheckIndex(dir);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void TearDownClass()
         {
             reader.Dispose();

@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
         private const int DOC_FREQ_RAND = 500; // must be > 16 to test skipping
         private const int TERM_DOC_FREQ_RAND = 20;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void BeforeClass()
         {
             NUM_TEST_ITER = AtLeast(20);

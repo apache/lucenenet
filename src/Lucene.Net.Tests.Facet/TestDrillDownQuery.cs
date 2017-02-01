@@ -56,7 +56,7 @@ namespace Lucene.Net.Facet
         private static FacetsConfig config;
 
       
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClassDrillDownQueryTest()
         {
             IOUtils.Close(reader, taxo, dir, taxoDir);
@@ -67,7 +67,7 @@ namespace Lucene.Net.Facet
             config = null;
         }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClassDrillDownQueryTest()
         {
             dir = NewDirectory();

@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
         /// LUCENENET specific
         /// Is non-static because NewIndexWriterConfig is no longer static.
         /// </summary>
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeClass()
         {
             Directory = NewDirectory();
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public static void AfterClass()
         {
             Reader.Dispose();
