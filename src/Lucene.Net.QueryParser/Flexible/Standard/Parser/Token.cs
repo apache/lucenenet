@@ -32,21 +32,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// system is determined by JavaCCParser, and a table of these numbers is
         /// stored in the file ...Constants.java.
         /// </summary>
-        public int kind;
+        public int Kind { get; set; }
 
         /// <summary>The line number of the first character of this Token.</summary>
-        public int beginLine;
+        public int BeginLine { get; set; }
         /// <summary>The column number of the first character of this Token.</summary>
-        public int beginColumn;
+        public int BeginColumn { get; set; }
         /// <summary>The line number of the last character of this Token.</summary>
-        public int endLine;
+        public int EndLine { get; set; }
         /// <summary>The column number of the last character of this Token.</summary>
-        public int endColumn;
+        public int EndColumn { get; set; }
 
         /// <summary>
         /// The string image of the token.
         /// </summary>
-        public string image;
+        public string Image { get; set; }
 
         /// <summary>
         /// A reference to the next regular (non-special) token from the input
@@ -56,7 +56,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// token.  Otherwise, see below for a description of the contents of
         /// this field.
         /// </summary>
-        public Token next;
+        public Token Next { get; set; }
 
         /// <summary>
         /// This field is used to access special tokens that occur prior to this
@@ -70,7 +70,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// immediately follow it (without an intervening regular token).  If there
         /// is no such token, this field is null.
         /// </summary>
-        public Token specialToken;
+        public Token SpecialToken { get; set; }
 
         /// <summary>
         /// An optional attribute value of the Token.
@@ -103,8 +103,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// </summary>
         public Token(int kind, string image)
         {
-            this.kind = kind;
-            this.image = image;
+            this.Kind = kind;
+            this.Image = image;
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// </summary>
         public override string ToString()
         {
-            return image;
+            return Image;
         }
 
         /// <summary>

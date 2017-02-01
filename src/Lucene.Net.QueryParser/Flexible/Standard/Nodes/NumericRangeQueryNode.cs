@@ -33,7 +33,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     /// <seealso cref="AbstractRangeQueryNode{T}"/>
     public class NumericRangeQueryNode : AbstractRangeQueryNode<NumericQueryNode>
     {
-        public NumericConfig numericConfig;
+        private NumericConfig numericConfig; // LUCENENET specific: made private and added a public setter to the property
 
         /// <summary>
         /// Constructs a <see cref="NumericRangeQueryNode"/> object using the given
@@ -142,6 +142,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         public virtual NumericConfig NumericConfig
         {
             get { return this.numericConfig; }
+            set { this.numericConfig = value; } // LUCENENET specific: made the field private and added setter (confusing)
         }
 
         public override string ToString()

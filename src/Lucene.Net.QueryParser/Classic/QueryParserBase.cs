@@ -806,18 +806,18 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             Query q;
 
-            string termImage = DiscardEscapeChar(term.image);
+            string termImage = DiscardEscapeChar(term.Image);
             if (wildcard)
             {
-                q = GetWildcardQuery(qfield, term.image);
+                q = GetWildcardQuery(qfield, term.Image);
             }
             else if (prefix)
             {
-                q = GetPrefixQuery(qfield, DiscardEscapeChar(term.image.Substring(0, term.image.Length - 1)));
+                q = GetPrefixQuery(qfield, DiscardEscapeChar(term.Image.Substring(0, term.Image.Length - 1)));
             }
             else if (regexp)
             {
-                q = GetRegexpQuery(qfield, term.image.Substring(1, term.image.Length - 2));
+                q = GetRegexpQuery(qfield, term.Image.Substring(1, term.Image.Length - 2));
             }
             else if (fuzzy)
             {
@@ -836,7 +836,7 @@ namespace Lucene.Net.QueryParsers.Classic
             float fms = FuzzyMinSim;
             try
             {
-                fms = float.Parse(fuzzySlop.image.Substring(1), Locale);
+                fms = float.Parse(fuzzySlop.Image.Substring(1), Locale);
             }
             catch (Exception /*ignored*/) { }
             if (fms < 0.0f)
@@ -859,11 +859,11 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 try
                 {
-                    s = (int)float.Parse(fuzzySlop.image.Substring(1), Locale);
+                    s = (int)float.Parse(fuzzySlop.Image.Substring(1), Locale);
                 }
                 catch (Exception /*ignored*/) { }
             }
-            return GetFieldQuery(qfield, DiscardEscapeChar(term.image.Substring(1, term.image.Length - 2)), s);
+            return GetFieldQuery(qfield, DiscardEscapeChar(term.Image.Substring(1, term.Image.Length - 2)), s);
         }
 
         // extracted from the .jj grammar
@@ -874,7 +874,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 float f = (float)1.0;
                 try
                 {
-                    f = float.Parse(boost.image, Locale);
+                    f = float.Parse(boost.Image, Locale);
                 }
                 catch (Exception /*ignored*/)
                 {

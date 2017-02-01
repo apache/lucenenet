@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
@@ -27,11 +28,11 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
     public class QueryParserTokenManager //: QueryParserConstants
     {
         /// <summary>Debug output. </summary>
-        public TextWriter debugStream;
+        private TextWriter debugStream; // LUCENENET specific - made private, since we already have a setter
         /// <summary>Set debug output. </summary>
         public virtual void SetDebugStream(TextWriter ds)
         {
-            debugStream = ds;
+            debugStream = new SafeTextWriterWrapper(ds);
         }
         private int JjStopStringLiteralDfa_1(int pos, long active0)
         {
@@ -626,10 +627,10 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             endColumn = m_input_stream.EndColumn;
             t = Token.NewToken(jjmatchedKind, curTokenImage);
 
-            t.beginLine = beginLine;
-            t.endLine = endLine;
-            t.beginColumn = beginColumn;
-            t.endColumn = endColumn;
+            t.BeginLine = beginLine;
+            t.EndLine = endLine;
+            t.BeginColumn = beginColumn;
+            t.EndColumn = endColumn;
 
             return t;
         }

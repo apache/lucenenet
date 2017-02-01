@@ -101,17 +101,17 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
 
         protected virtual SrndQuery GetOrQuery(IEnumerable<SrndQuery> queries, bool infix, Token orToken)
         {
-            return new OrQuery(queries, infix, orToken.image);
+            return new OrQuery(queries, infix, orToken.Image);
         }
 
         protected virtual SrndQuery GetAndQuery(IEnumerable<SrndQuery> queries, bool infix, Token andToken)
         {
-            return new AndQuery(queries, infix, andToken.image);
+            return new AndQuery(queries, infix, andToken.Image);
         }
 
         protected virtual SrndQuery GetNotQuery(IEnumerable<SrndQuery> queries, Token notToken)
         {
-            return new NotQuery(queries, notToken.image);
+            return new NotQuery(queries, notToken.Image);
         }
 
         protected static int GetOpDistance(string distanceOp)
@@ -139,10 +139,10 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         {
             DistanceQuery dq = new DistanceQuery(queries,
                                                 infix,
-                                                GetOpDistance(dToken.image),
-                                                dToken.image,
+                                                GetOpDistance(dToken.Image),
+                                                dToken.Image,
                                                 ordered);
-            CheckDistanceSubQueries(dq, dToken.image);
+            CheckDistanceSubQueries(dq, dToken.Image);
             return dq;
         }
 
@@ -224,7 +224,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 {
                     fieldNames = new List<string>();
                 }
-                fieldNames.Add(fieldName.image);
+                fieldNames.Add(fieldName.Image);
             }
         label_1:
             { if (true) return fieldNames; }
@@ -500,38 +500,38 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             {
                 case RegexpToken.TERM:
                     term = Jj_consume_token(RegexpToken.TERM);
-                    { if (true) return GetTermQuery(term.image, false /* not quoted */); }
+                    { if (true) return GetTermQuery(term.Image, false /* not quoted */); }
                     //break; // unreachable
                 case RegexpToken.QUOTED:
                     term = Jj_consume_token(RegexpToken.QUOTED);
-                    { if (true) return GetTermQuery(term.image.Substring(1, (term.image.Length - 1) - 1), true /* quoted */); }
+                    { if (true) return GetTermQuery(term.Image.Substring(1, (term.Image.Length - 1) - 1), true /* quoted */); }
                     //break; // unreachable
                 case RegexpToken.SUFFIXTERM:
                     term = Jj_consume_token(RegexpToken.SUFFIXTERM);
                     /* ending in * */
-                    if (!AllowedSuffix(term.image))
+                    if (!AllowedSuffix(term.Image))
                     {
-                        { if (true) throw new ParseException(truncationErrorMessage + term.image); }
+                        { if (true) throw new ParseException(truncationErrorMessage + term.Image); }
                     }
-                    { if (true) return GetPrefixQuery(term.image.Substring(0, term.image.Length - 1), false /* not quoted */); }
+                    { if (true) return GetPrefixQuery(term.Image.Substring(0, term.Image.Length - 1), false /* not quoted */); }
                     //break; // unreachable
                 case RegexpToken.TRUNCTERM:
                     term = Jj_consume_token(RegexpToken.TRUNCTERM);
                     /* with at least one * or ? */
-                    if (!AllowedTruncation(term.image))
+                    if (!AllowedTruncation(term.Image))
                     {
-                        { if (true) throw new ParseException(truncationErrorMessage + term.image); }
+                        { if (true) throw new ParseException(truncationErrorMessage + term.Image); }
                     }
-                    { if (true) return GetTruncQuery(term.image); }
+                    { if (true) return GetTruncQuery(term.Image); }
                     //break; // unreachable
                 case RegexpToken.TRUNCQUOTED:
                     term = Jj_consume_token(RegexpToken.TRUNCQUOTED);
                     /* eg. "9b-b,m"* */
-                    if ((term.image.Length - 3) < minimumPrefixLength)
+                    if ((term.Image.Length - 3) < minimumPrefixLength)
                     {
-                        { if (true) throw new ParseException(truncationErrorMessage + term.image); }
+                        { if (true) throw new ParseException(truncationErrorMessage + term.Image); }
                     }
-                    { if (true) return GetPrefixQuery(term.image.Substring(1, (term.image.Length - 2) - 1), true /* quoted */); }
+                    { if (true) return GetPrefixQuery(term.Image.Substring(1, (term.Image.Length - 2) - 1), true /* quoted */); }
                     //break; // unreachable
                 default:
                     jj_la1[8] = jj_gen;
@@ -561,15 +561,15 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 try
                 {
                     // LUCENENET TODO: Test parsing float in various cultures (.NET)
-                    f = float.Parse(weight.image);
+                    f = float.Parse(weight.Image);
                 }
                 catch (Exception floatExc)
                 {
-                    { if (true) throw new ParseException(boostErrorMessage + weight.image + " (" + floatExc + ")"); }
+                    { if (true) throw new ParseException(boostErrorMessage + weight.Image + " (" + floatExc + ")"); }
                 }
                 if (f <= 0.0)
                 {
-                    { if (true) throw new ParseException(boostErrorMessage + weight.image); }
+                    { if (true) throw new ParseException(boostErrorMessage + weight.Image); }
                 }
                 q.Weight = (f * q.Weight); /* left associative, fwiw */
             }
@@ -578,7 +578,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
 
         private bool Jj_2_1(int xla)
         {
-            jj_la = xla; jj_lastpos = jj_scanpos = token;
+            jj_la = xla; jj_lastpos = jj_scanpos = Token;
             try { return !Jj_3_1(); }
             catch (LookaheadSuccess) { return true; }
             finally { Jj_save(0, xla); }
@@ -592,11 +592,11 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         }
 
         /// <summary>Generated Token Manager.</summary>
-        public QueryParserTokenManager token_source;
+        public QueryParserTokenManager TokenSource { get; set; }
         /// <summary>Current token.</summary>
-        public Token token;
+        public Token Token { get; set; }
         /// <summary>Next token.</summary>
-        public Token jj_nt;
+        public Token Jj_nt { get; set; }
         private int jj_ntk;
         private Token jj_scanpos, jj_lastpos;
         private int jj_la;
@@ -619,8 +619,8 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /// <summary>Constructor with user supplied <see cref="ICharStream"/>.</summary>
         public QueryParser(ICharStream stream)
         {
-            token_source = new QueryParserTokenManager(stream);
-            token = new Token();
+            TokenSource = new QueryParserTokenManager(stream);
+            Token = new Token();
             jj_ntk = -1;
             jj_gen = 0;
             for (int i = 0; i < 10; i++) jj_la1[i] = -1;
@@ -630,8 +630,8 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /// <summary>Reinitialize.</summary>
         public virtual void ReInit(ICharStream stream)
         {
-            token_source.ReInit(stream);
-            token = new Token();
+            TokenSource.ReInit(stream);
+            Token = new Token();
             jj_ntk = -1;
             jj_gen = 0;
             for (int i = 0; i < 10; i++) jj_la1[i] = -1;
@@ -641,8 +641,8 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /// <summary>Constructor with generated Token Manager.</summary>
         public QueryParser(QueryParserTokenManager tm)
         {
-            token_source = tm;
-            token = new Token();
+            TokenSource = tm;
+            Token = new Token();
             jj_ntk = -1;
             jj_gen = 0;
             for (int i = 0; i < 10; i++) jj_la1[i] = -1;
@@ -652,8 +652,8 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /// <summary>Reinitialize.</summary>
         public virtual void ReInit(QueryParserTokenManager tm)
         {
-            token_source = tm;
-            token = new Token();
+            TokenSource = tm;
+            Token = new Token();
             jj_ntk = -1;
             jj_gen = 0;
             for (int i = 0; i < 10; i++) jj_la1[i] = -1;
@@ -663,10 +663,10 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         private Token Jj_consume_token(int kind)
         {
             Token oldToken;
-            if ((oldToken = token).next != null) token = token.next;
-            else token = token.next = token_source.GetNextToken();
+            if ((oldToken = Token).Next != null) Token = Token.Next;
+            else Token = Token.Next = TokenSource.GetNextToken();
             jj_ntk = -1;
-            if (token.kind == kind)
+            if (Token.Kind == kind)
             {
                 jj_gen++;
                 if (++jj_gc > 100)
@@ -682,9 +682,9 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                         }
                     }
                 }
-                return token;
+                return Token;
             }
-            token = oldToken;
+            Token = oldToken;
             jj_kind = kind;
             throw GenerateParseException();
         }
@@ -697,26 +697,26 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             if (jj_scanpos == jj_lastpos)
             {
                 jj_la--;
-                if (jj_scanpos.next == null)
+                if (jj_scanpos.Next == null)
                 {
-                    jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.GetNextToken();
+                    jj_lastpos = jj_scanpos = jj_scanpos.Next = TokenSource.GetNextToken();
                 }
                 else
                 {
-                    jj_lastpos = jj_scanpos = jj_scanpos.next;
+                    jj_lastpos = jj_scanpos = jj_scanpos.Next;
                 }
             }
             else
             {
-                jj_scanpos = jj_scanpos.next;
+                jj_scanpos = jj_scanpos.Next;
             }
             if (jj_rescan)
             {
-                int i = 0; Token tok = token;
-                while (tok != null && tok != jj_scanpos) { i++; tok = tok.next; }
+                int i = 0; Token tok = Token;
+                while (tok != null && tok != jj_scanpos) { i++; tok = tok.Next; }
                 if (tok != null) Jj_add_error_token(kind, i);
             }
-            if (jj_scanpos.kind != kind) return true;
+            if (jj_scanpos.Kind != kind) return true;
             if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
             return false;
         }
@@ -724,31 +724,31 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /// <summary>Get the next Token.</summary>
         public Token GetNextToken()
         {
-            if (token.next != null) token = token.next;
-            else token = token.next = token_source.GetNextToken();
+            if (Token.Next != null) Token = Token.Next;
+            else Token = Token.Next = TokenSource.GetNextToken();
             jj_ntk = -1;
             jj_gen++;
-            return token;
+            return Token;
         }
 
         /// <summary>Get the specific Token.</summary>
         public Token GetToken(int index)
         {
-            Token t = token;
+            Token t = Token;
             for (int i = 0; i < index; i++)
             {
-                if (t.next != null) t = t.next;
-                else t = t.next = token_source.GetNextToken();
+                if (t.Next != null) t = t.Next;
+                else t = t.Next = TokenSource.GetNextToken();
             }
             return t;
         }
 
         private int Jj_ntk()
         {
-            if ((jj_nt = token.next) == null)
-                return (jj_ntk = (token.next = token_source.GetNextToken()).kind);
+            if ((Jj_nt = Token.Next) == null)
+                return (jj_ntk = (Token.Next = TokenSource.GetNextToken()).Kind);
             else
-                return (jj_ntk = jj_nt.kind);
+                return (jj_ntk = Jj_nt.Kind);
         }
 
         private IList<int[]> jj_expentries = new List<int[]>();
@@ -832,7 +832,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             {
                 exptokseq[i] = jj_expentries[i];
             }
-            return new ParseException(token, exptokseq, QueryParserConstants.TokenImage);
+            return new ParseException(Token, exptokseq, QueryParserConstants.TokenImage);
         }
 
         /// <summary>Enable tracing. </summary>
@@ -879,7 +879,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 if (p.next == null) { p = p.next = new JJCalls(); break; }
                 p = p.next;
             }
-            p.gen = jj_gen + xla - jj_la; p.first = token; p.arg = xla;
+            p.gen = jj_gen + xla - jj_la; p.first = Token; p.arg = xla;
         }
 
         internal sealed class JJCalls

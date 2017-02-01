@@ -269,7 +269,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     case RegexpToken.TERM:
                         fieldToken = Jj_consume_token(RegexpToken.TERM);
                         Jj_consume_token(RegexpToken.COLON);
-                        field = DiscardEscapeChar(fieldToken.image);
+                        field = DiscardEscapeChar(fieldToken.Image);
                         break;
                     case RegexpToken.STAR:
                         Jj_consume_token(RegexpToken.STAR);
@@ -371,7 +371,7 @@ namespace Lucene.Net.QueryParsers.Classic
                             break;
                         case RegexpToken.BAREOPER:
                             term = Jj_consume_token(RegexpToken.BAREOPER);
-                            term.image = term.image.Substring(0, 1);
+                            term.Image = term.Image.Substring(0, 1);
                             break;
                         default:
                             jj_la1[8] = jj_gen;
@@ -487,23 +487,23 @@ namespace Lucene.Net.QueryParsers.Classic
                     }
                     bool startOpen = false;
                     bool endOpen = false;
-                    if (goop1.kind == RegexpToken.RANGE_QUOTED)
+                    if (goop1.Kind == RegexpToken.RANGE_QUOTED)
                     {
-                        goop1.image = goop1.image.Substring(1, goop1.image.Length - 2);
+                        goop1.Image = goop1.Image.Substring(1, goop1.Image.Length - 2);
                     }
-                    else if ("*".Equals(goop1.image))
+                    else if ("*".Equals(goop1.Image))
                     {
                         startOpen = true;
                     }
-                    if (goop2.kind == RegexpToken.RANGE_QUOTED)
+                    if (goop2.Kind == RegexpToken.RANGE_QUOTED)
                     {
-                        goop2.image = goop2.image.Substring(1, goop2.image.Length - 2);
+                        goop2.Image = goop2.Image.Substring(1, goop2.Image.Length - 2);
                     }
-                    else if ("*".Equals(goop2.image))
+                    else if ("*".Equals(goop2.Image))
                     {
                         endOpen = true;
                     }
-                    q = GetRangeQuery(field, startOpen ? null : DiscardEscapeChar(goop1.image), endOpen ? null : DiscardEscapeChar(goop2.image), startInc, endInc);
+                    q = GetRangeQuery(field, startOpen ? null : DiscardEscapeChar(goop1.Image), endOpen ? null : DiscardEscapeChar(goop2.Image), startInc, endInc);
                     break;
                 case RegexpToken.QUOTED:
                     term = Jj_consume_token(RegexpToken.QUOTED);
@@ -540,7 +540,7 @@ namespace Lucene.Net.QueryParsers.Classic
         private bool Jj_2_1(int xla)
         {
             jj_la = xla;
-            jj_lastpos = jj_scanpos = token;
+            jj_lastpos = jj_scanpos = Token;
             try
             {
                 return !Jj_3_1();
@@ -582,11 +582,11 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         /// <summary>Generated Token Manager.</summary>
-        public QueryParserTokenManager token_source;
+        public QueryParserTokenManager TokenSource { get; set; }
         /// <summary>Current token.</summary>
-        public Token token;
+        public Token Token { get; set; }
         /// <summary>Next token.</summary>
-        public Token jj_nt;
+        public Token Jj_nt { get; set; }
         private int jj_ntk;
         private Token jj_scanpos, jj_lastpos;
         private int jj_la;
@@ -629,8 +629,8 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>Constructor with user supplied <see cref="ICharStream"/>. </summary>
         protected internal QueryParser(ICharStream stream)
         {
-            token_source = new QueryParserTokenManager(stream);
-            token = new Token();
+            TokenSource = new QueryParserTokenManager(stream);
+            Token = new Token();
             jj_ntk = -1;
             jj_gen = 0;
             for (int i = 0; i < 21; i++) jj_la1[i] = -1;
@@ -640,8 +640,8 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>Reinitialize. </summary>
         public override void ReInit(ICharStream stream)
         {
-            token_source.ReInit(stream);
-            token = new Token();
+            TokenSource.ReInit(stream);
+            Token = new Token();
             jj_ntk = -1;
             jj_gen = 0;
             for (int i = 0; i < 21; i++) jj_la1[i] = -1;
@@ -651,8 +651,8 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>Constructor with generated Token Manager. </summary>
         protected QueryParser(QueryParserTokenManager tm)
         {
-            token_source = tm;
-            token = new Token();
+            TokenSource = tm;
+            Token = new Token();
             jj_ntk = -1;
             jj_gen = 0;
             for (int i = 0; i < 21; i++) jj_la1[i] = -1;
@@ -662,8 +662,8 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>Reinitialize. </summary>
         public virtual void ReInit(QueryParserTokenManager tm)
         {
-            token_source = tm;
-            token = new Token();
+            TokenSource = tm;
+            Token = new Token();
             jj_ntk = -1;
             jj_gen = 0;
             for (int i = 0; i < 21; i++) jj_la1[i] = -1;
@@ -673,10 +673,10 @@ namespace Lucene.Net.QueryParsers.Classic
         private Token Jj_consume_token(int kind)
         {
             Token oldToken;
-            if ((oldToken = token).next != null) token = token.next;
-            else token = token.next = token_source.GetNextToken();
+            if ((oldToken = Token).Next != null) Token = Token.Next;
+            else Token = Token.Next = TokenSource.GetNextToken();
             jj_ntk = -1;
-            if (token.kind == kind)
+            if (Token.Kind == kind)
             {
                 jj_gen++;
                 if (++jj_gc > 100)
@@ -692,9 +692,9 @@ namespace Lucene.Net.QueryParsers.Classic
                         }
                     }
                 }
-                return token;
+                return Token;
             }
-            token = oldToken;
+            Token = oldToken;
             jj_kind = kind;
             throw GenerateParseException();
         }
@@ -712,31 +712,31 @@ namespace Lucene.Net.QueryParsers.Classic
             if (jj_scanpos == jj_lastpos)
             {
                 jj_la--;
-                if (jj_scanpos.next == null)
+                if (jj_scanpos.Next == null)
                 {
-                    jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.GetNextToken();
+                    jj_lastpos = jj_scanpos = jj_scanpos.Next = TokenSource.GetNextToken();
                 }
                 else
                 {
-                    jj_lastpos = jj_scanpos = jj_scanpos.next;
+                    jj_lastpos = jj_scanpos = jj_scanpos.Next;
                 }
             }
             else
             {
-                jj_scanpos = jj_scanpos.next;
+                jj_scanpos = jj_scanpos.Next;
             }
             if (jj_rescan)
             {
                 int i = 0;
-                Token tok = token;
+                Token tok = Token;
                 while (tok != null && tok != jj_scanpos)
                 {
                     i++;
-                    tok = tok.next;
+                    tok = tok.Next;
                 }
                 if (tok != null) Jj_add_error_token(kind, i);
             }
-            if (jj_scanpos.kind != kind) return true;
+            if (jj_scanpos.Kind != kind) return true;
             if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
             return false;
         }
@@ -744,31 +744,31 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>Get the next Token. </summary>
         public Token GetNextToken()
         {
-            if (token.next != null) token = token.next;
-            else token = token.next = token_source.GetNextToken();
+            if (Token.Next != null) Token = Token.Next;
+            else Token = Token.Next = TokenSource.GetNextToken();
             jj_ntk = -1;
             jj_gen++;
-            return token;
+            return Token;
         }
 
         /// <summary>Get the specific Token. </summary>
         public Token GetToken(int index)
         {
-            Token t = token;
+            Token t = Token;
             for (int i = 0; i < index; i++)
             {
-                if (t.next != null) t = t.next;
-                else t = t.next = token_source.GetNextToken();
+                if (t.Next != null) t = t.Next;
+                else t = t.Next = TokenSource.GetNextToken();
             }
             return t;
         }
 
         private int Jj_ntk()
         {
-            if ((jj_nt = token.next) == null)
-                return (jj_ntk = (token.next = token_source.GetNextToken()).kind);
+            if ((Jj_nt = Token.Next) == null)
+                return (jj_ntk = (Token.Next = TokenSource.GetNextToken()).Kind);
             else
-                return (jj_ntk = jj_nt.kind);
+                return (jj_ntk = Jj_nt.Kind);
         }
 
         private List<int[]> jj_expentries = new List<int[]>();
@@ -857,7 +857,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 exptokseq[i] = jj_expentries[i];
             }
-            return new ParseException(token, exptokseq, QueryParserConstants.TokenImage);
+            return new ParseException(Token, exptokseq, QueryParserConstants.TokenImage);
         }
 
         /// <summary>Enable tracing. </summary>
@@ -914,7 +914,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 p = p.next;
             }
             p.gen = jj_gen + xla - jj_la;
-            p.first = token;
+            p.first = Token;
             p.arg = xla;
         }
 

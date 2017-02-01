@@ -1,7 +1,9 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core;
 using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Messages;
+using Lucene.Net.Support;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
@@ -80,21 +82,40 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// this object has been created due to a parse error, the token
         /// followng this token will (therefore) be the first error token.
         /// </summary>
-        public Token currentToken;
+        public Token CurrentToken
+        {
+            get { return currentToken; }
+            set { currentToken = value; }
+        }
+        private Token currentToken;
 
         /// <summary>
         /// Each entry in this array is an array of integers.  Each array
         /// of integers represents a sequence of tokens (by their ordinal
         /// values) that is expected at this point of the parse.
         /// </summary>
-        public int[][] expectedTokenSequences;
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        public int[][] ExpectedTokenSequences
+        {
+            get { return expectedTokenSequences; }
+            set { expectedTokenSequences = value; }
+        }
+        private int[][] expectedTokenSequences;
 
         /// <summary>
         /// This is a reference to the "tokenImage" array of the generated
         /// parser within which the parse error occurred.  This array is
         /// defined in the generated ...Constants interface.
         /// </summary>
-        public string[] tokenImage;
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        public string[] TokenImage
+        {
+            get { return tokenImage; }
+            set { tokenImage = value; }
+        }
+        private string[] tokenImage;
 
         /// <summary>
         /// It uses <paramref name="currentToken"/> and <paramref name="expectedTokenSequences"/> to generate a parse
@@ -132,22 +153,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 expected.Append(eol).Append("    ");
             }
             string retval = "Encountered \"";
-            Token tok = currentToken.next;
+            Token tok = currentToken.Next;
             for (int i = 0; i < maxSize; i++)
             {
                 if (i != 0) retval += " ";
-                if (tok.kind == 0)
+                if (tok.Kind == 0)
                 {
                     retval += tokenImage[0];
                     break;
                 }
-                retval += " " + tokenImage[tok.kind];
+                retval += " " + tokenImage[tok.Kind];
                 retval += " \"";
-                retval += Add_Escapes(tok.image);
+                retval += Add_Escapes(tok.Image);
                 retval += " \"";
-                tok = tok.next;
+                tok = tok.Next;
             }
-            retval += "\" at line " + currentToken.next.beginLine + ", column " + currentToken.next.beginColumn;
+            retval += "\" at line " + currentToken.Next.BeginLine + ", column " + currentToken.Next.BeginColumn;
             retval += "." + eol;
             if (expectedTokenSequences.Length == 1)
             {

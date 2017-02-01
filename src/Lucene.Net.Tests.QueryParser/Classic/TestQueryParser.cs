@@ -170,12 +170,12 @@ namespace Lucene.Net.QueryParsers.Classic
 
             internal override Query HandleBareFuzzy(string qfield, Token fuzzySlop, string termImage)
             {
-                if (fuzzySlop.image.EndsWith("€"))
+                if (fuzzySlop.Image.EndsWith("€"))
                 {
                     float fms = FuzzyMinSim;
                     try
                     {
-                        fms = float.Parse(fuzzySlop.image.Substring(1, fuzzySlop.image.Length - 2));
+                        fms = float.Parse(fuzzySlop.Image.Substring(1, fuzzySlop.Image.Length - 2));
                     }
                     catch (Exception /*ignored*/) { }
                     float value = float.Parse(termImage);

@@ -366,7 +366,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                 Jj_consume_token(-1);
                                 throw new ParseException();
                         }
-                        field = EscapeQuerySyntax.DiscardEscapeChar(fieldToken.image).ToString();
+                        field = EscapeQuerySyntax.DiscardEscapeChar(fieldToken.Image).ToString();
                         q = Term(field);
                         break;
                     case RegexpToken.OP_LESSTHAN:
@@ -392,7 +392,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                 Jj_consume_token(-1);
                                 throw new ParseException();
                         }
-                        field = EscapeQuerySyntax.DiscardEscapeChar(fieldToken.image).ToString();
+                        field = EscapeQuerySyntax.DiscardEscapeChar(fieldToken.Image).ToString();
                         switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                         {
                             case RegexpToken.TERM:
@@ -409,20 +409,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                 Jj_consume_token(-1);
                                 throw new ParseException();
                         }
-                        if (term.kind == RegexpToken.QUOTED)
+                        if (term.Kind == RegexpToken.QUOTED)
                         {
-                            term.image = term.image.Substring(1, (term.image.Length - 1) - 1);
+                            term.Image = term.Image.Substring(1, (term.Image.Length - 1) - 1);
                         }
-                        switch (@operator.kind)
+                        switch (@operator.Kind)
                         {
                             case RegexpToken.OP_LESSTHAN:
                                 lowerInclusive = true;
                                 upperInclusive = false;
 
                                 qLower = new FieldQueryNode(field,
-                                                           "*", term.beginColumn, term.endColumn);
+                                                           "*", term.BeginColumn, term.EndColumn);
                                 qUpper = new FieldQueryNode(field,
-                                                     EscapeQuerySyntax.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
+                                                     EscapeQuerySyntax.DiscardEscapeChar(term.Image), term.BeginColumn, term.EndColumn);
 
                                 break;
                             case RegexpToken.OP_LESSTHANEQ:
@@ -430,27 +430,27 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                 upperInclusive = true;
 
                                 qLower = new FieldQueryNode(field,
-                                                         "*", term.beginColumn, term.endColumn);
+                                                         "*", term.BeginColumn, term.EndColumn);
                                 qUpper = new FieldQueryNode(field,
-                                                         EscapeQuerySyntax.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
+                                                         EscapeQuerySyntax.DiscardEscapeChar(term.Image), term.BeginColumn, term.EndColumn);
                                 break;
                             case RegexpToken.OP_MORETHAN:
                                 lowerInclusive = false;
                                 upperInclusive = true;
 
                                 qLower = new FieldQueryNode(field,
-                                                         EscapeQuerySyntax.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
+                                                         EscapeQuerySyntax.DiscardEscapeChar(term.Image), term.BeginColumn, term.EndColumn);
                                 qUpper = new FieldQueryNode(field,
-                                                         "*", term.beginColumn, term.endColumn);
+                                                         "*", term.BeginColumn, term.EndColumn);
                                 break;
                             case RegexpToken.OP_MORETHANEQ:
                                 lowerInclusive = true;
                                 upperInclusive = true;
 
                                 qLower = new FieldQueryNode(field,
-                                                         EscapeQuerySyntax.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
+                                                         EscapeQuerySyntax.DiscardEscapeChar(term.Image), term.BeginColumn, term.EndColumn);
                                 qUpper = new FieldQueryNode(field,
-                                                         "*", term.beginColumn, term.endColumn);
+                                                         "*", term.BeginColumn, term.EndColumn);
                                 break;
                             default:
                                 { if (true) throw new Exception("Unhandled case: operator=" + @operator.ToString()); }
@@ -490,7 +490,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                     Jj_consume_token(-1);
                                     throw new ParseException();
                             }
-                            field = EscapeQuerySyntax.DiscardEscapeChar(fieldToken.image).ToString();
+                            field = EscapeQuerySyntax.DiscardEscapeChar(fieldToken.Image).ToString();
                         }
                         else
                         {
@@ -539,7 +539,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 float f = (float)1.0;
                 try
                 {
-                    f = Convert.ToSingle(boost.image, CultureInfo.InvariantCulture);
+                    f = Convert.ToSingle(boost.Image, CultureInfo.InvariantCulture);
                     // avoid boosting null queries, such as those caused by stop words
                     if (q != null)
                     {
@@ -581,7 +581,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     {
                         case RegexpToken.TERM:
                             term = Jj_consume_token(RegexpToken.TERM);
-                            q = new FieldQueryNode(field, EscapeQuerySyntax.DiscardEscapeChar(term.image), term.beginColumn, term.endColumn);
+                            q = new FieldQueryNode(field, EscapeQuerySyntax.DiscardEscapeChar(term.Image), term.BeginColumn, term.EndColumn);
                             break;
                         case RegexpToken.REGEXPTERM:
                             term = Jj_consume_token(RegexpToken.REGEXPTERM);
@@ -630,7 +630,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         float fms = defaultMinSimilarity;
                         try
                         {
-                            fms = Convert.ToSingle(fuzzySlop.image.Substring(1), CultureInfo.InvariantCulture);
+                            fms = Convert.ToSingle(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
                         }
 #pragma warning disable 168
                         catch (Exception ignored) { }
@@ -643,11 +643,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         {
                             { if (true) throw new ParseException(new Message(QueryParserMessages.INVALID_SYNTAX_FUZZY_EDITS)); }
                         }
-                        q = new FuzzyQueryNode(field, EscapeQuerySyntax.DiscardEscapeChar(term.image), fms, term.beginColumn, term.endColumn);
+                        q = new FuzzyQueryNode(field, EscapeQuerySyntax.DiscardEscapeChar(term.Image), fms, term.BeginColumn, term.EndColumn);
                     }
                     else if (regexp)
                     {
-                        string re = term.image.Substring(1, (term.image.Length - 1) - 1);
+                        string re = term.Image.Substring(1, (term.Image.Length - 1) - 1);
                         q = new RegexpQueryNode(field, re, 0, re.Length);
                     }
                     break;
@@ -726,24 +726,24 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                             jj_la1[24] = jj_gen;
                             break;
                     }
-                    if (goop1.kind == RegexpToken.RANGE_QUOTED)
+                    if (goop1.Kind == RegexpToken.RANGE_QUOTED)
                     {
-                        goop1.image = goop1.image.Substring(1, (goop1.image.Length - 1) - 1);
+                        goop1.Image = goop1.Image.Substring(1, (goop1.Image.Length - 1) - 1);
                     }
-                    if (goop2.kind == RegexpToken.RANGE_QUOTED)
+                    if (goop2.Kind == RegexpToken.RANGE_QUOTED)
                     {
-                        goop2.image = goop2.image.Substring(1, (goop2.image.Length - 1) - 1);
+                        goop2.Image = goop2.Image.Substring(1, (goop2.Image.Length - 1) - 1);
                     }
 
                     qLower = new FieldQueryNode(field,
-                                             EscapeQuerySyntax.DiscardEscapeChar(goop1.image), goop1.beginColumn, goop1.endColumn);
+                                             EscapeQuerySyntax.DiscardEscapeChar(goop1.Image), goop1.BeginColumn, goop1.EndColumn);
                     qUpper = new FieldQueryNode(field,
-                                                 EscapeQuerySyntax.DiscardEscapeChar(goop2.image), goop2.beginColumn, goop2.endColumn);
+                                                 EscapeQuerySyntax.DiscardEscapeChar(goop2.Image), goop2.BeginColumn, goop2.EndColumn);
                     q = new TermRangeQueryNode(qLower, qUpper, startInc ? true : false, endInc ? true : false);
                     break;
                 case RegexpToken.QUOTED:
                     term = Jj_consume_token(RegexpToken.QUOTED);
-                    q = new QuotedFieldQueryNode(field, EscapeQuerySyntax.DiscardEscapeChar(term.image.Substring(1, (term.image.Length - 1) - 1)), term.beginColumn + 1, term.endColumn - 1);
+                    q = new QuotedFieldQueryNode(field, EscapeQuerySyntax.DiscardEscapeChar(term.Image.Substring(1, (term.Image.Length - 1) - 1)), term.BeginColumn + 1, term.EndColumn - 1);
                     switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
                     {
                         case RegexpToken.FUZZY_SLOP:
@@ -769,7 +769,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     {
                         try
                         {
-                            phraseSlop = (int)Convert.ToSingle(fuzzySlop.image.Substring(1), CultureInfo.InvariantCulture);
+                            phraseSlop = (int)Convert.ToSingle(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
                             q = new SlopQueryNode(q, phraseSlop);
                         }
 #pragma warning disable 168
@@ -792,7 +792,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 float f = (float)1.0;
                 try
                 {
-                    f = Convert.ToSingle(boost.image, CultureInfo.InvariantCulture);
+                    f = Convert.ToSingle(boost.Image, CultureInfo.InvariantCulture);
                     // avoid boosting null queries, such as those caused by stop words
                     if (q != null)
                     {
@@ -814,7 +814,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
         private bool Jj_2_1(int xla)
         {
-            jj_la = xla; jj_lastpos = jj_scanpos = token;
+            jj_la = xla; jj_lastpos = jj_scanpos = Token;
             try { return !Jj_3_1(); }
 #pragma warning disable 168
             catch (LookaheadSuccess ls) { return true; }
@@ -824,7 +824,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
         private bool Jj_2_2(int xla)
         {
-            jj_la = xla; jj_lastpos = jj_scanpos = token;
+            jj_la = xla; jj_lastpos = jj_scanpos = Token;
             try { return !Jj_3_2(); }
 #pragma warning disable 168
             catch (LookaheadSuccess ls) { return true; }
@@ -970,11 +970,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         }
 
         /// <summary>Generated Token Manager.</summary>
-        public StandardSyntaxParserTokenManager token_source;
+        public StandardSyntaxParserTokenManager TokenSource { get; set; }
         /// <summary>Current token.</summary>
-        public Token token;
+        public Token Token { get; set; }
         /// <summary>Next token.</summary>
-        public Token jj_nt;
+        public Token Jj_nt { get; set; }
         private int jj_ntk;
         private Token jj_scanpos, jj_lastpos;
         private int jj_la;
@@ -1004,8 +1004,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// </summary>
         public StandardSyntaxParser(ICharStream stream)
         {
-            token_source = new StandardSyntaxParserTokenManager(stream);
-            token = new Token();
+            TokenSource = new StandardSyntaxParserTokenManager(stream);
+            Token = new Token();
             jj_ntk = -1;
             jj_gen = 0;
             for (int i = 0; i < 28; i++) jj_la1[i] = -1;
@@ -1015,8 +1015,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// <summary>Reinitialize.</summary>
         public void ReInit(ICharStream stream)
         {
-            token_source.ReInit(stream);
-            token = new Token();
+            TokenSource.ReInit(stream);
+            Token = new Token();
             jj_ntk = -1;
             jj_gen = 0;
             for (int i = 0; i < 28; i++) jj_la1[i] = -1;
@@ -1026,8 +1026,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// <summary>Constructor with generated Token Manager.</summary>
         public StandardSyntaxParser(StandardSyntaxParserTokenManager tm)
         {
-            token_source = tm;
-            token = new Token();
+            TokenSource = tm;
+            Token = new Token();
             jj_ntk = -1;
             jj_gen = 0;
             for (int i = 0; i < 28; i++) jj_la1[i] = -1;
@@ -1037,8 +1037,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// <summary>Reinitialize.</summary>
         public void ReInit(StandardSyntaxParserTokenManager tm)
         {
-            token_source = tm;
-            token = new Token();
+            TokenSource = tm;
+            Token = new Token();
             jj_ntk = -1;
             jj_gen = 0;
             for (int i = 0; i < 28; i++) jj_la1[i] = -1;
@@ -1048,10 +1048,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private Token Jj_consume_token(int kind)
         {
             Token oldToken;
-            if ((oldToken = token).next != null) token = token.next;
-            else token = token.next = token_source.GetNextToken();
+            if ((oldToken = Token).Next != null) Token = Token.Next;
+            else Token = Token.Next = TokenSource.GetNextToken();
             jj_ntk = -1;
-            if (token.kind == kind)
+            if (Token.Kind == kind)
             {
                 jj_gen++;
                 if (++jj_gc > 100)
@@ -1067,9 +1067,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         }
                     }
                 }
-                return token;
+                return Token;
             }
-            token = oldToken;
+            Token = oldToken;
             jj_kind = kind;
             throw GenerateParseException();
         }
@@ -1081,26 +1081,26 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             if (jj_scanpos == jj_lastpos)
             {
                 jj_la--;
-                if (jj_scanpos.next == null)
+                if (jj_scanpos.Next == null)
                 {
-                    jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.GetNextToken();
+                    jj_lastpos = jj_scanpos = jj_scanpos.Next = TokenSource.GetNextToken();
                 }
                 else
                 {
-                    jj_lastpos = jj_scanpos = jj_scanpos.next;
+                    jj_lastpos = jj_scanpos = jj_scanpos.Next;
                 }
             }
             else
             {
-                jj_scanpos = jj_scanpos.next;
+                jj_scanpos = jj_scanpos.Next;
             }
             if (jj_rescan)
             {
-                int i = 0; Token tok = token;
-                while (tok != null && tok != jj_scanpos) { i++; tok = tok.next; }
+                int i = 0; Token tok = Token;
+                while (tok != null && tok != jj_scanpos) { i++; tok = tok.Next; }
                 if (tok != null) Jj_add_error_token(kind, i);
             }
-            if (jj_scanpos.kind != kind) return true;
+            if (jj_scanpos.Kind != kind) return true;
             if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
             return false;
         }
@@ -1109,31 +1109,31 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// <summary>Get the next Token.</summary>
         public Token GetNextToken()
         {
-            if (token.next != null) token = token.next;
-            else token = token.next = token_source.GetNextToken();
+            if (Token.Next != null) Token = Token.Next;
+            else Token = Token.Next = TokenSource.GetNextToken();
             jj_ntk = -1;
             jj_gen++;
-            return token;
+            return Token;
         }
 
         /// <summary>Get the specific Token.</summary>
         public Token GetToken(int index)
         {
-            Token t = token;
+            Token t = Token;
             for (int i = 0; i < index; i++)
             {
-                if (t.next != null) t = t.next;
-                else t = t.next = token_source.GetNextToken();
+                if (t.Next != null) t = t.Next;
+                else t = t.Next = TokenSource.GetNextToken();
             }
             return t;
         }
 
         private int Jj_ntk()
         {
-            if ((jj_nt = token.next) == null)
-                return (jj_ntk = (token.next = token_source.GetNextToken()).kind);
+            if ((Jj_nt = Token.Next) == null)
+                return (jj_ntk = (Token.Next = TokenSource.GetNextToken()).Kind);
             else
-                return (jj_ntk = jj_nt.kind);
+                return (jj_ntk = Jj_nt.Kind);
         }
 
         private List<int[]> jj_expentries = new List<int[]>();
@@ -1222,7 +1222,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             {
                 exptokseq[i] = jj_expentries[i];
             }
-            return new ParseException(token, exptokseq, StandardSyntaxParserConstants.TokenImage);
+            return new ParseException(Token, exptokseq, StandardSyntaxParserConstants.TokenImage);
         }
 
         /// <summary>Enable tracing.</summary>
@@ -1272,7 +1272,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 if (p.next == null) { p = p.next = new JJCalls(); break; }
                 p = p.next;
             }
-            p.gen = jj_gen + xla - jj_la; p.first = token; p.arg = xla;
+            p.gen = jj_gen + xla - jj_la; p.first = Token; p.arg = xla;
         }
 
         internal sealed class JJCalls
