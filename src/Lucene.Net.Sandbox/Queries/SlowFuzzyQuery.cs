@@ -44,7 +44,7 @@ namespace Lucene.Net.Sandbox.Queries
         private int prefixLength;
         private bool termLongEnough = false;
 
-        protected Term term;
+        protected Term m_term;
 
         /// <summary>
         /// Create a new <see cref="SlowFuzzyQuery"/> that will match terms with a similarity 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Sandbox.Queries
             int maxExpansions)
             : base(term.Field)
         {
-            this.term = term;
+            this.m_term = term;
 
             if (minimumSimilarity >= 1.0f && minimumSimilarity != (int)minimumSimilarity)
                 throw new ArgumentException("fractional edit distances are not allowed");
@@ -150,7 +150,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             if (!termLongEnough)
             {  // can only match if it's exact
-                return new SingleTermsEnum(terms.GetIterator(null), term.Bytes);
+                return new SingleTermsEnum(terms.GetIterator(null), m_term.Bytes);
             }
             return new SlowFuzzyTermsEnum(terms, atts, Term, minimumSimilarity, prefixLength);
         }
@@ -160,18 +160,18 @@ namespace Lucene.Net.Sandbox.Queries
         /// </summary>
         public virtual Term Term
         {
-            get { return term; }
+            get { return m_term; }
         }
 
         public override string ToString(string field)
         {
             StringBuilder buffer = new StringBuilder();
-            if (!term.Field.Equals(field))
+            if (!m_term.Field.Equals(field))
             {
-                buffer.Append(term.Field);
+                buffer.Append(m_term.Field);
                 buffer.Append(":");
             }
-            buffer.Append(term.Text());
+            buffer.Append(m_term.Text());
             buffer.Append('~');
             buffer.Append(Number.ToString(minimumSimilarity));
             buffer.Append(ToStringUtils.Boost(Boost));
@@ -184,7 +184,7 @@ namespace Lucene.Net.Sandbox.Queries
             int result = base.GetHashCode();
             result = prime * result + Number.FloatToIntBits(minimumSimilarity);
             result = prime * result + prefixLength;
-            result = prime * result + ((term == null) ? 0 : term.GetHashCode());
+            result = prime * result + ((m_term == null) ? 0 : m_term.GetHashCode());
             return result;
         }
 
@@ -202,12 +202,12 @@ namespace Lucene.Net.Sandbox.Queries
                 return false;
             if (prefixLength != other.prefixLength)
                 return false;
-            if (term == null)
+            if (m_term == null)
             {
-                if (other.term != null)
+                if (other.m_term != null)
                     return false;
             }
-            else if (!term.Equals(other.term))
+            else if (!m_term.Equals(other.m_term))
                 return false;
             return true;
         }
