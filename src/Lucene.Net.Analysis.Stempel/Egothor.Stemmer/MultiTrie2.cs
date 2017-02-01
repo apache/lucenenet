@@ -96,15 +96,15 @@ namespace Egothor.Stemmer
         /// <returns>the element</returns>
         public override string GetFully(string key)
         {
-            StringBuilder result = new StringBuilder(tries.Count * 2);
+            StringBuilder result = new StringBuilder(m_tries.Count * 2);
             try
             {
                 string lastkey = key;
-                string[] p = new string[tries.Count];
+                string[] p = new string[m_tries.Count];
                 char lastch = ' ';
-                for (int i = 0; i < tries.Count; i++)
+                for (int i = 0; i < m_tries.Count; i++)
                 {
-                    string r = tries[i].GetFully(lastkey);
+                    string r = m_tries[i].GetFully(lastkey);
                     if (r == null || (r.Length == 1 && r[0] == EOM))
                     {
                         return result.ToString();
@@ -153,15 +153,15 @@ namespace Egothor.Stemmer
         /// <returns>the element that is stored as last on a path</returns>
         public override string GetLastOnPath(string key)
         {
-            StringBuilder result = new StringBuilder(tries.Count * 2);
+            StringBuilder result = new StringBuilder(m_tries.Count * 2);
             try
             {
                 string lastkey = key;
-                string[] p = new string[tries.Count];
+                string[] p = new string[m_tries.Count];
                 char lastch = ' ';
-                for (int i = 0; i < tries.Count; i++)
+                for (int i = 0; i < m_tries.Count; i++)
                 {
-                    string r = tries[i].GetLastOnPath(lastkey);
+                    string r = m_tries[i].GetLastOnPath(lastkey);
                     if (r == null || (r.Length == 1 && r[0] == EOM))
                     {
                         return result.ToString();
@@ -233,21 +233,21 @@ namespace Egothor.Stemmer
             string[] p = Decompose(cmd);
             int levels = p.Length;
             // System.err.println("levels "+key+" cmd "+cmd+"|"+levels);
-            while (levels >= tries.Count)
+            while (levels >= m_tries.Count)
             {
-                tries.Add(new Trie(forward));
+                m_tries.Add(new Trie(forward));
             }
             string lastkey = key;
             for (int i = 0; i < levels; i++)
             {
                 if (key.Length > 0)
                 {
-                    tries[i].Add(key, p[i]);
+                    m_tries[i].Add(key, p[i]);
                     lastkey = key;
                 }
                 else
                 {
-                    tries[i].Add(lastkey, p[i]);
+                    m_tries[i].Add(lastkey, p[i]);
                 }
                 // System.err.println("-"+key+" "+p[i]+"|"+key.length());
                 /*
@@ -277,11 +277,11 @@ namespace Egothor.Stemmer
             }
             if (key.Length > 0)
             {
-                tries[levels].Add(key, EOM_NODE);
+                m_tries[levels].Add(key, EOM_NODE);
             }
             else
             {
-                tries[levels].Add(lastkey, EOM_NODE);
+                m_tries[levels].Add(lastkey, EOM_NODE);
             }
         }
 
@@ -338,11 +338,11 @@ namespace Egothor.Stemmer
         public override Trie Reduce(Reduce by)
         {
             List<Trie> h = new List<Trie>();
-            foreach (Trie trie in tries)
+            foreach (Trie trie in m_tries)
                 h.Add(trie.Reduce(by));
 
             MultiTrie2 m = new MultiTrie2(forward);
-            m.tries = h;
+            m.m_tries = h;
             return m;
         }
 
