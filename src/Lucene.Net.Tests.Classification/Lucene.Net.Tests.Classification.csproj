@@ -43,6 +43,7 @@
     <Compile Include="KNearestNeighborClassifierTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleNaiveBayesClassifierTest.cs" />
+    <Compile Include="TestApiConsistency.cs" />
     <Compile Include="Utils\DataSplitterTest.cs" />
   </ItemGroup>
   <ItemGroup>
