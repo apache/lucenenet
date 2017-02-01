@@ -235,7 +235,7 @@ namespace Lucene.Net.Sandbox.Queries
                             {
                                 ScoreTerm st = new ScoreTerm(new Term(startTerm.Field, BytesRef.DeepCopyOf(possibleMatch)), score, startTerm);
                                 variantsQ.InsertWithOverflow(st);
-                                minScore = variantsQ.Top.score; // maintain minScore
+                                minScore = variantsQ.Top.Score; // maintain minScore
                             }
                             maxBoostAtt.MaxNonCompetitiveBoost = variantsQ.Count >= MAX_VARIANTS_PER_TERM ? minScore : float.NegativeInfinity;
                         }
@@ -255,7 +255,7 @@ namespace Lucene.Net.Sandbox.Queries
                             for (int i = 0; i < size; i++)
                             {
                                 ScoreTerm st = variantsQ.Pop();
-                                st.score = (st.score * st.score) * sim.Idf(df, corpusNumDocs);
+                                st.Score = (st.Score * st.Score) * sim.Idf(df, corpusNumDocs);
                                 q.InsertWithOverflow(st);
                             }
                         }
@@ -298,10 +298,10 @@ namespace Lucene.Net.Sandbox.Queries
                 //List<ScoreTerm> l = variantQueries.get(st.fuzziedSourceTerm);
                 //          if(l==null)
                 List<ScoreTerm> l;
-                if (!variantQueries.TryGetValue(st.fuzziedSourceTerm, out l) || l == null)
+                if (!variantQueries.TryGetValue(st.FuzziedSourceTerm, out l) || l == null)
                 {
                     l = new List<ScoreTerm>();
-                    variantQueries[st.fuzziedSourceTerm] = l;
+                    variantQueries[st.FuzziedSourceTerm] = l;
                 }
                 l.Add(st);
             }
@@ -313,8 +313,8 @@ namespace Lucene.Net.Sandbox.Queries
                 {
                     //optimize where only one selected variant
                     ScoreTerm st = variants[0];
-                    Query tq = ignoreTF ? (Query)new ConstantScoreQuery(new TermQuery(st.term)) : new TermQuery(st.term, 1);
-                    tq.Boost = st.score; // set the boost to a mix of IDF and score
+                    Query tq = ignoreTF ? (Query)new ConstantScoreQuery(new TermQuery(st.Term)) : new TermQuery(st.Term, 1);
+                    tq.Boost = st.Score; // set the boost to a mix of IDF and score
                     bq.Add(tq, Occur.SHOULD);
                 }
                 else
@@ -325,8 +325,8 @@ namespace Lucene.Net.Sandbox.Queries
                     {
                         ScoreTerm st = iterator2.Current;
                         // found a match
-                        Query tq = ignoreTF ? (Query)new ConstantScoreQuery(new TermQuery(st.term)) : new TermQuery(st.term, 1);
-                        tq.Boost = st.score; // set the boost using the ScoreTerm's score
+                        Query tq = ignoreTF ? (Query)new ConstantScoreQuery(new TermQuery(st.Term)) : new TermQuery(st.Term, 1);
+                        tq.Boost = st.Score; // set the boost using the ScoreTerm's score
                         termVariants.Add(tq, Occur.SHOULD);          // add to query                    
                     }
                     bq.Add(termVariants, Occur.SHOULD);          // add to query
@@ -344,15 +344,15 @@ namespace Lucene.Net.Sandbox.Queries
         // terms/fields
         internal class ScoreTerm
         {
-            public Term term;
-            public float score;
-            internal Term fuzziedSourceTerm;
+            public Term Term { get; set; }
+            public float Score { get; set; }
+            internal Term FuzziedSourceTerm { get; set; }
 
             public ScoreTerm(Term term, float score, Term fuzziedSourceTerm)
             {
-                this.term = term;
-                this.score = score;
-                this.fuzziedSourceTerm = fuzziedSourceTerm;
+                this.Term = term;
+                this.Score = score;
+                this.FuzziedSourceTerm = fuzziedSourceTerm;
             }
         }
 
@@ -369,10 +369,10 @@ namespace Lucene.Net.Sandbox.Queries
             /// </summary>
             protected override bool LessThan(ScoreTerm termA, ScoreTerm termB)
             {
-                if (termA.score == termB.score)
-                    return termA.term.CompareTo(termB.term) > 0;
+                if (termA.Score == termB.Score)
+                    return termA.Term.CompareTo(termB.Term) > 0;
                 else
-                    return termA.score < termB.score;
+                    return termA.Score < termB.Score;
             }
 
         }
