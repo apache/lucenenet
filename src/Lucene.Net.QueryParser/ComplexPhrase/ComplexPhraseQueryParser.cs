@@ -47,7 +47,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
     /// status
     /// </para>
     /// </summary>
-    public class ComplexPhraseQueryParser : Classic.QueryParser
+    public class ComplexPhraseQueryParser : QueryParser
     {
         private List<ComplexPhraseQuery> complexPhrases = null;
 
@@ -356,7 +356,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                 return snot;
             }
 
-            private void AddComplexPhraseClause(List<SpanQuery> spanClauses, BooleanQuery qc)
+            private void AddComplexPhraseClause(IList<SpanQuery> spanClauses, BooleanQuery qc)
             {
                 List<SpanQuery> ors = new List<SpanQuery>();
                 List<SpanQuery> nots = new List<SpanQuery>();
