@@ -29,8 +29,7 @@ namespace Lucene.Net.Analysis.Payloads
     /// </summary>
     public interface IPayloadEncoder
     {
-
-        BytesRef encode(char[] buffer);
+        BytesRef Encode(char[] buffer);
 
         /// <summary>
         /// Convert a char array to a <seealso cref="BytesRef"/> </summary>

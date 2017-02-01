@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Payloads
     public abstract class AbstractEncoder : IPayloadEncoder
     {
         public abstract BytesRef Encode(char[] buffer, int offset, int length);
-        public virtual BytesRef encode(char[] buffer)
+        public virtual BytesRef Encode(char[] buffer)
         {
             return Encode(buffer, 0, buffer.Length);
         }
