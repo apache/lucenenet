@@ -89,7 +89,7 @@ namespace Lucene.Net.QueryParsers.Classic
         // LUCENENET-423 - DateRange differences with Java and .NET
         private bool _useJavaStyleDateRangeParsing = false;
 
-        protected string field;
+        protected string m_field;
         //int phraseSlop = 0;
         //float fuzzyMinSim = FuzzyQuery.DefaultMinSimilarity;
         //int fuzzyPrefixLength = FuzzyQuery.DefaultPrefixLength;
@@ -145,7 +145,7 @@ namespace Lucene.Net.QueryParsers.Classic
         public virtual void Init(LuceneVersion matchVersion, string f, Analyzer a)
         {
             Analyzer = a;
-            field = f;
+            m_field = f;
 #pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
 #pragma warning restore 612, 618
@@ -173,7 +173,7 @@ namespace Lucene.Net.QueryParsers.Classic
             try
             {
                 // TopLevelQuery is a Query followed by the end-of-input (EOF)
-                Query res = TopLevelQuery(field);
+                Query res = TopLevelQuery(m_field);
                 return res != null ? res : NewBooleanQuery(false);
             }
             catch (ParseException tme)
@@ -196,7 +196,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         public virtual string Field
         {
-            get { return field; }
+            get { return m_field; }
         }
 
         /// <summary>

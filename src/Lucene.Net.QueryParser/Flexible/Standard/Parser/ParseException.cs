@@ -164,7 +164,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// <summary>
         /// The end of line string for this machine.
         /// </summary>
-        protected string eol = Environment.NewLine;
+        protected string m_eol = Environment.NewLine;
 
         /// <summary>
         /// Used to convert raw characters to their escaped version

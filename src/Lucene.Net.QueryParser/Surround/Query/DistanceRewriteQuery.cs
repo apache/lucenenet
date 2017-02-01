@@ -29,7 +29,7 @@
 
         public override Search.Query Rewrite(Index.IndexReader reader)
         {
-            return srndQuery.GetSpanNearQuery(reader, fieldName, Boost, qf);
+            return m_srndQuery.GetSpanNearQuery(reader, m_fieldName, Boost, m_qf);
         }
     }
 }

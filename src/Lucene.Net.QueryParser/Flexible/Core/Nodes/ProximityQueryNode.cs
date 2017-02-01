@@ -105,7 +105,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             {
                 if (clause is FieldQueryNode)
                 {
-                    ((FieldQueryNode)clause).toQueryStringIgnoreFields = true;
+                    ((FieldQueryNode)clause).m_toQueryStringIgnoreFields = true;
                     ((FieldQueryNode)clause).Field = field;
                 }
             }

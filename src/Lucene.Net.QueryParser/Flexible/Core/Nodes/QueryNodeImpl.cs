@@ -218,7 +218,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <summary>
         /// If set to true the the method toQueryString will not write field names
         /// </summary>
-        protected internal bool toQueryStringIgnoreFields = false;
+        protected internal bool m_toQueryStringIgnoreFields = false;
 
         /// <summary>
         /// This method is use toQueryString to detect if fld is the default field
@@ -232,7 +232,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         // should receive the default field value directly by parameter
         protected virtual bool IsDefaultField(string fld)
         {
-            if (this.toQueryStringIgnoreFields)
+            if (this.m_toQueryStringIgnoreFields)
                 return true;
             if (fld == null)
                 return true;

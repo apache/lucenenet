@@ -59,7 +59,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         public virtual void SetQuery(string query)
         {
             this.query = query;
-            this.message = new Message(
+            this.m_message = new Message(
                 QueryParserMessages.INVALID_SYNTAX_CANNOT_PARSE, query, "");
         }
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
 
         public virtual void SetNonLocalizedMessage(IMessage message)
         {
-            this.message = message;
+            this.m_message = message;
         }
 
         /// <summary>

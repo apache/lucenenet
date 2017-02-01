@@ -22,18 +22,18 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
     internal abstract class RewriteQuery<SQ> : Search.Query
     {
-        protected readonly SQ srndQuery;
-        protected readonly string fieldName;
-        protected readonly BasicQueryFactory qf;
+        protected readonly SQ m_srndQuery;
+        protected readonly string m_fieldName;
+        protected readonly BasicQueryFactory m_qf;
 
         public RewriteQuery(
             SQ srndQuery,
             string fieldName,
             BasicQueryFactory qf)
         {
-            this.srndQuery = srndQuery;
-            this.fieldName = fieldName;
-            this.qf = qf;
+            this.m_srndQuery = srndQuery;
+            this.m_fieldName = fieldName;
+            this.m_qf = qf;
         }
 
         public abstract override Search.Query Rewrite(IndexReader reader);
@@ -47,18 +47,18 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         {
             return GetType().Name
                 + (field == null ? "" : "(unused: " + field + ")")
-                + "(" + fieldName
-                + ", " + srndQuery.ToString()
-                + ", " + qf.ToString()
+                + "(" + m_fieldName
+                + ", " + m_srndQuery.ToString()
+                + ", " + m_qf.ToString()
                 + ")";
         }
 
         public override int GetHashCode()
         {
             return GetType().GetHashCode()
-                ^ fieldName.GetHashCode()
-                ^ qf.GetHashCode()
-                ^ srndQuery.GetHashCode();
+                ^ m_fieldName.GetHashCode()
+                ^ m_qf.GetHashCode()
+                ^ m_srndQuery.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -68,9 +68,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             if (!GetType().Equals(obj.GetType()))
                 return false;
             RewriteQuery<SQ> other = (RewriteQuery<SQ>)obj;
-            return fieldName.Equals(other.fieldName)
-                && qf.Equals(other.qf)
-                && srndQuery.Equals(other.srndQuery);
+            return m_fieldName.Equals(other.m_fieldName)
+                && m_qf.Equals(other.m_qf)
+                && m_srndQuery.Equals(other.m_srndQuery);
         }
 
         /// <summary>

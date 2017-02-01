@@ -38,12 +38,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
 #endif
     public class QueryNodeException : Exception, INLSException
     {
-        protected IMessage message = new Message(QueryParserMessages.EMPTY_MESSAGE);
+        protected IMessage m_message = new Message(QueryParserMessages.EMPTY_MESSAGE);
 
         public QueryNodeException(IMessage message)
             : base(message.Key)
         {
-            this.message = message;
+            this.m_message = message;
         }
 
         public QueryNodeException(Exception throwable)
@@ -54,12 +54,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         public QueryNodeException(IMessage message, Exception throwable)
             : base(message.Key, throwable)
         {
-            this.message = message;
+            this.m_message = message;
         }
 
         public virtual IMessage MessageObject
         {
-            get { return this.message; }
+            get { return this.m_message; }
         }
 
         public override string Message
@@ -74,12 +74,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
 
         public virtual string GetLocalizedMessage(CultureInfo locale)
         {
-            return this.message.GetLocalizedMessage(locale);
+            return this.m_message.GetLocalizedMessage(locale);
         }
 
         public override string ToString()
         {
-            return this.message.Key + ": " + GetLocalizedMessage();
+            return this.m_message.Key + ": " + GetLocalizedMessage();
         }
     }
 }

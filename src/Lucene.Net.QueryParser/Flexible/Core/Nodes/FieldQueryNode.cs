@@ -29,27 +29,27 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <summary>
         /// The term's field
         /// </summary>
-        protected string field;
+        protected string m_field;
 
         /// <summary>
         /// The term's text.
         /// </summary>
-        protected ICharSequence text;
+        protected ICharSequence m_text;
 
         /// <summary>
         /// The term's begin position.
         /// </summary>
-        protected int begin;
+        protected int m_begin;
 
         /// <summary>
         /// The term's end position.
         /// </summary>
-        protected int end;
+        protected int m_end;
 
         /// <summary>
         /// The term's position increment.
         /// </summary>
-        protected int positionIncrement;
+        protected int m_positionIncrement;
 
         /// <summary>
         /// 
@@ -75,42 +75,42 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         public FieldQueryNode(string field, ICharSequence text, int begin,
             int end)
         {
-            this.field = field;
-            this.text = text;
-            this.begin = begin;
-            this.end = end;
+            this.m_field = field;
+            this.m_text = text;
+            this.m_begin = begin;
+            this.m_end = end;
             this.IsLeaf = true;
 
         }
 
         protected virtual string GetTermEscaped(IEscapeQuerySyntax escaper)
         {
-            return escaper.Escape(this.text, CultureInfo.InvariantCulture /*Locale.getDefault()*/, EscapeQuerySyntaxType.NORMAL).ToString();
+            return escaper.Escape(this.m_text, CultureInfo.InvariantCulture /*Locale.getDefault()*/, EscapeQuerySyntaxType.NORMAL).ToString();
         }
 
         protected virtual string GetTermEscapeQuoted(IEscapeQuerySyntax escaper)
         {
-            return escaper.Escape(this.text, CultureInfo.InvariantCulture /*Locale.getDefault()*/, EscapeQuerySyntaxType.STRING).ToString();
+            return escaper.Escape(this.m_text, CultureInfo.InvariantCulture /*Locale.getDefault()*/, EscapeQuerySyntaxType.STRING).ToString();
         }
 
 
         public override string ToQueryString(IEscapeQuerySyntax escaper)
         {
-            if (IsDefaultField(this.field))
+            if (IsDefaultField(this.m_field))
             {
                 return GetTermEscaped(escaper);
             }
             else
             {
-                return this.field + ":" + GetTermEscaped(escaper);
+                return this.m_field + ":" + GetTermEscaped(escaper);
             }
         }
 
 
         public override string ToString()
         {
-            return "<field start='" + this.begin + "' end='" + this.end + "' field='"
-                + this.field + "' text='" + this.text + "'/>";
+            return "<field start='" + this.m_begin + "' end='" + this.m_end + "' field='"
+                + this.m_field + "' text='" + this.m_text + "'/>";
         }
 
         /// <summary>
@@ -119,10 +119,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <returns>the term</returns>
         public virtual string GetTextAsString()
         {
-            if (this.text == null)
+            if (this.m_text == null)
                 return null;
             else
-                return this.text.ToString();
+                return this.m_text.ToString();
         }
 
         // LUCENENET TODO: this method is not required because Field is already type string in .NET
@@ -132,34 +132,34 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <returns>the field</returns>
         public virtual string GetFieldAsString()
         {
-            if (this.field == null)
+            if (this.m_field == null)
                 return null;
             else
-                return this.field.ToString();
+                return this.m_field.ToString();
         }
 
         public virtual int Begin
         {
-            get { return this.begin; }
-            set { this.begin = value; }
+            get { return this.m_begin; }
+            set { this.m_begin = value; }
         }
 
         public virtual int End
         {
-            get { return this.end; }
-            set { this.end = value; }
+            get { return this.m_end; }
+            set { this.m_end = value; }
         }
 
         public virtual string Field
         {
-            get { return this.field; }
-            set { this.field = value; }
+            get { return this.m_field; }
+            set { this.m_field = value; }
         }
 
         public virtual int PositionIncrement
         {
-            get { return this.positionIncrement; }
-            set { this.positionIncrement = value; }
+            get { return this.m_positionIncrement; }
+            set { this.m_positionIncrement = value; }
         }
 
         /// <summary>
@@ -167,19 +167,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// </summary>
         public virtual ICharSequence Text
         {
-            get { return this.text; }
-            set { this.text = value; }
+            get { return this.m_text; }
+            set { this.m_text = value; }
         }
 
         public override IQueryNode CloneTree()
         {
             FieldQueryNode fqn = (FieldQueryNode)base.CloneTree();
-            fqn.begin = this.begin;
-            fqn.end = this.end;
-            fqn.field = this.field;
-            fqn.text = this.text;
-            fqn.positionIncrement = this.positionIncrement;
-            fqn.toQueryStringIgnoreFields = this.toQueryStringIgnoreFields;
+            fqn.m_begin = this.m_begin;
+            fqn.m_end = this.m_end;
+            fqn.m_field = this.m_field;
+            fqn.m_text = this.m_text;
+            fqn.m_positionIncrement = this.m_positionIncrement;
+            fqn.m_toQueryStringIgnoreFields = this.m_toQueryStringIgnoreFields;
 
             return fqn;
         }

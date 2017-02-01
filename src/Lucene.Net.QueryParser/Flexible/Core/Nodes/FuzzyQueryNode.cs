@@ -69,20 +69,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public override string ToQueryString(IEscapeQuerySyntax escaper)
         {
-            if (IsDefaultField(this.field))
+            if (IsDefaultField(this.m_field))
             {
                 return GetTermEscaped(escaper) + "~" + this.similarity;
             }
             else
             {
-                return this.field + ":" + GetTermEscaped(escaper) + "~" + this.similarity;
+                return this.m_field + ":" + GetTermEscaped(escaper) + "~" + this.similarity;
             }
         }
 
         public override string ToString()
         {
-            return "<fuzzy field='" + this.field + "' similarity='" + this.similarity
-                + "' term='" + this.text + "'/>";
+            return "<fuzzy field='" + this.m_field + "' similarity='" + this.similarity
+                + "' term='" + this.m_text + "'/>";
         }
 
         /// <summary>

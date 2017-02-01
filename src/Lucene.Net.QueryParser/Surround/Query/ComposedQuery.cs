@@ -31,28 +31,28 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         {
             Recompose(qs);
             this.operatorInfix = operatorInfix;
-            this.opName = opName;
+            this.m_opName = opName;
         }
 
         protected virtual void Recompose(IEnumerable<SrndQuery> queries)
         {
             if (queries.Count() < 2) throw new InvalidOperationException("Too few subqueries");
-            this.queries = new List<SrndQuery>(queries);
+            this.m_queries = new List<SrndQuery>(queries);
         }
 
-        protected string opName;
-        public virtual string OperatorName { get { return opName; } }
+        protected string m_opName;
+        public virtual string OperatorName { get { return m_opName; } }
 
-        protected IList<SrndQuery> queries;
+        protected IList<SrndQuery> m_queries;
 
         public virtual IEnumerator<SrndQuery> GetSubQueriesEnumerator()
         {
-            return queries.GetEnumerator();
+            return m_queries.GetEnumerator();
         }
 
-        public virtual int NrSubQueries { get { return queries.Count; } }
+        public virtual int NrSubQueries { get { return m_queries.Count; } }
 
-        public virtual SrndQuery GetSubQuery(int qn) { return queries[qn]; }
+        public virtual SrndQuery GetSubQuery(int qn) { return m_queries[qn]; }
 
         private bool operatorInfix;
         public virtual bool IsOperatorInfix { get { return operatorInfix; } } /* else prefix operator */

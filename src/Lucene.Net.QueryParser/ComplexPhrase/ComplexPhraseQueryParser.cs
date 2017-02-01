@@ -241,12 +241,12 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                 try
                 {
                     //temporarily set the QueryParser to be parsing the default field for this phrase e.g author:"fred* smith"
-                    qp.field = this.field;
+                    qp.m_field = this.field;
                     contents = qp.Parse(phrasedQueryStringContents);
                 }
                 finally
                 {
-                    qp.field = oldDefaultParserField;
+                    qp.m_field = oldDefaultParserField;
                 }
             }
 

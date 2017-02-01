@@ -61,19 +61,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
         public override string ToQueryString(IEscapeQuerySyntax escaper)
         {
-            if (IsDefaultField(this.field))
+            if (IsDefaultField(this.m_field))
             {
-                return this.text.ToString();
+                return this.m_text.ToString();
             }
             else
             {
-                return this.field + ":" + this.text;
+                return this.m_field + ":" + this.m_text;
             }
         }
 
         public override string ToString()
         {
-            return "<wildcard field='" + this.field + "' term='" + this.text + "'/>";
+            return "<wildcard field='" + this.m_field + "' term='" + this.m_text + "'/>";
         }
 
         public override IQueryNode CloneTree()

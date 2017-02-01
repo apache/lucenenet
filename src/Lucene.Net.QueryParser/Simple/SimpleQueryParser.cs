@@ -93,13 +93,13 @@ namespace Lucene.Net.QueryParsers.Simple
     public class SimpleQueryParser : QueryBuilder
     {
         /// <summary>Map of fields to query against with their weights</summary>
-        protected readonly IDictionary<string, float> weights;
+        protected readonly IDictionary<string, float> m_weights;
 
         // LUCENENET specific - Made the int operator constants into a [Flags] enum
         // to make them easier to pass in .NET.
 
         /// <summary>flags to the parser (to turn features on/off)</summary>
-        protected readonly Operator flags;
+        protected readonly Operator m_flags;
 
         [Flags]
         public enum Operator : int
@@ -146,8 +146,8 @@ namespace Lucene.Net.QueryParsers.Simple
         public SimpleQueryParser(Analyzer analyzer, IDictionary<string, float> weights, Operator flags)
             : base(analyzer)
         {
-            this.weights = weights;
-            this.flags = flags;
+            this.m_weights = weights;
+            this.m_flags = flags;
         }
 
         /// <summary>Parses the query text and returns parsed query (or null if empty)</summary>
@@ -165,22 +165,22 @@ namespace Lucene.Net.QueryParsers.Simple
         {
             while (state.Index < state.Length)
             {
-                if (state.Data[state.Index] == '(' && (flags & Operator.PRECEDENCE_OPERATORS) != 0)
+                if (state.Data[state.Index] == '(' && (m_flags & Operator.PRECEDENCE_OPERATORS) != 0)
                 {
                     // the beginning of a subquery has been found
                     ConsumeSubQuery(state);
                 }
-                else if (state.Data[state.Index] == ')' && (flags & Operator.PRECEDENCE_OPERATORS) != 0)
+                else if (state.Data[state.Index] == ')' && (m_flags & Operator.PRECEDENCE_OPERATORS) != 0)
                 {
                     // this is an extraneous character so it is ignored
                     ++state.Index;
                 }
-                else if (state.Data[state.Index] == '"' && (flags & Operator.PHRASE_OPERATOR) != 0)
+                else if (state.Data[state.Index] == '"' && (m_flags & Operator.PHRASE_OPERATOR) != 0)
                 {
                     // the beginning of a phrase has been found
                     ConsumePhrase(state);
                 }
-                else if (state.Data[state.Index] == '+' && (flags & Operator.AND_OPERATOR) != 0)
+                else if (state.Data[state.Index] == '+' && (m_flags & Operator.AND_OPERATOR) != 0)
                 {
                     // an and operation has been explicitly set
                     // if an operation has already been set this one is ignored
@@ -194,7 +194,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
                     ++state.Index;
                 }
-                else if (state.Data[state.Index] == '|' && (flags & Operator.OR_OPERATOR) != 0)
+                else if (state.Data[state.Index] == '|' && (m_flags & Operator.OR_OPERATOR) != 0)
                 {
                     // an or operation has been explicitly set
                     // if an operation has already been set this one is ignored
@@ -208,7 +208,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
                     ++state.Index;
                 }
-                else if (state.Data[state.Index] == '-' && (flags & Operator.NOT_OPERATOR) != 0)
+                else if (state.Data[state.Index] == '-' && (m_flags & Operator.NOT_OPERATOR) != 0)
                 {
                     // a not operator has been found, so increase the not count
                     // two not operators in a row negate each other
@@ -222,7 +222,7 @@ namespace Lucene.Net.QueryParsers.Simple
                 else if ((state.Data[state.Index] == ' '
                   || state.Data[state.Index] == '\t'
                   || state.Data[state.Index] == '\n'
-                  || state.Data[state.Index] == '\r') && (flags & Operator.WHITESPACE_OPERATOR) != 0)
+                  || state.Data[state.Index] == '\r') && (m_flags & Operator.WHITESPACE_OPERATOR) != 0)
                 {
                     // ignore any whitespace found as it may have already been
                     // used a delimiter across a term (or phrase or subquery)
@@ -243,7 +243,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         private void ConsumeSubQuery(State state)
         {
-            Debug.Assert((flags & Operator.PRECEDENCE_OPERATORS) != 0);
+            Debug.Assert((m_flags & Operator.PRECEDENCE_OPERATORS) != 0);
             int start = ++state.Index;
             int precedence = 1;
             bool escaped = false;
@@ -252,7 +252,7 @@ namespace Lucene.Net.QueryParsers.Simple
             {
                 if (!escaped)
                 {
-                    if (state.Data[state.Index] == '\\' && (flags & Operator.ESCAPE_OPERATOR) != 0)
+                    if (state.Data[state.Index] == '\\' && (m_flags & Operator.ESCAPE_OPERATOR) != 0)
                     {
                         // an escape character has been found so
                         // whatever character is next will become
@@ -316,7 +316,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         private void ConsumePhrase(State state)
         {
-            Debug.Assert((flags & Operator.PHRASE_OPERATOR) != 0);
+            Debug.Assert((m_flags & Operator.PHRASE_OPERATOR) != 0);
             int start = ++state.Index;
             int copied = 0;
             bool escaped = false;
@@ -326,7 +326,7 @@ namespace Lucene.Net.QueryParsers.Simple
             {
                 if (!escaped)
                 {
-                    if (state.Data[state.Index] == '\\' && (flags & Operator.ESCAPE_OPERATOR) != 0)
+                    if (state.Data[state.Index] == '\\' && (m_flags & Operator.ESCAPE_OPERATOR) != 0)
                     {
                         // an escape character has been found so
                         // whatever character is next will become
@@ -343,7 +343,7 @@ namespace Lucene.Net.QueryParsers.Simple
                         // tilde
                         if (state.Length > (state.Index + 1) &&
                             state.Data[state.Index + 1] == '~' &&
-                            (flags & Operator.NEAR_OPERATOR) != 0)
+                            (m_flags & Operator.NEAR_OPERATOR) != 0)
                         {
                             state.Index++;
                             // check for characters after the tilde
@@ -413,7 +413,7 @@ namespace Lucene.Net.QueryParsers.Simple
             {
                 if (!escaped)
                 {
-                    if (state.Data[state.Index] == '\\' && (flags & Operator.ESCAPE_OPERATOR) != 0)
+                    if (state.Data[state.Index] == '\\' && (m_flags & Operator.ESCAPE_OPERATOR) != 0)
                     {
                         // an escape character has been found so
                         // whatever character is next will become
@@ -432,7 +432,7 @@ namespace Lucene.Net.QueryParsers.Simple
                         // creating the term query
                         break;
                     }
-                    else if (copied > 0 && state.Data[state.Index] == '~' && (flags & Operator.FUZZY_OPERATOR) != 0)
+                    else if (copied > 0 && state.Data[state.Index] == '~' && (m_flags & Operator.FUZZY_OPERATOR) != 0)
                     {
                         fuzzy = true;
                         break;
@@ -442,7 +442,7 @@ namespace Lucene.Net.QueryParsers.Simple
                     // was a '*' operator that hasn't been escaped
                     // there must be at least one valid character before
                     // searching for a prefixed set of terms
-                    prefix = copied > 0 && state.Data[state.Index] == '*' && (flags & Operator.PREFIX_OPERATOR) != 0;
+                    prefix = copied > 0 && state.Data[state.Index] == '*' && (m_flags & Operator.PREFIX_OPERATOR) != 0;
                 }
 
                 escaped = false;
@@ -453,7 +453,7 @@ namespace Lucene.Net.QueryParsers.Simple
             {
                 Query branch;
 
-                if (fuzzy && (flags & Operator.FUZZY_OPERATOR) != 0)
+                if (fuzzy && (m_flags & Operator.FUZZY_OPERATOR) != 0)
                 {
                     string token = new string(state.Buffer, 0, copied);
                     int fuzziness = ParseFuzziness(state);
@@ -586,15 +586,15 @@ namespace Lucene.Net.QueryParsers.Simple
         /// </summary>
         private bool TokenFinished(State state)
         {
-            if ((state.Data[state.Index] == '"' && (flags & Operator.PHRASE_OPERATOR) != 0)
-                || (state.Data[state.Index] == '|' && (flags & Operator.OR_OPERATOR) != 0)
-                || (state.Data[state.Index] == '+' && (flags & Operator.AND_OPERATOR) != 0)
-                || (state.Data[state.Index] == '(' && (flags & Operator.PRECEDENCE_OPERATORS) != 0)
-                || (state.Data[state.Index] == ')' && (flags & Operator.PRECEDENCE_OPERATORS) != 0)
+            if ((state.Data[state.Index] == '"' && (m_flags & Operator.PHRASE_OPERATOR) != 0)
+                || (state.Data[state.Index] == '|' && (m_flags & Operator.OR_OPERATOR) != 0)
+                || (state.Data[state.Index] == '+' && (m_flags & Operator.AND_OPERATOR) != 0)
+                || (state.Data[state.Index] == '(' && (m_flags & Operator.PRECEDENCE_OPERATORS) != 0)
+                || (state.Data[state.Index] == ')' && (m_flags & Operator.PRECEDENCE_OPERATORS) != 0)
                 || ((state.Data[state.Index] == ' '
                 || state.Data[state.Index] == '\t'
                 || state.Data[state.Index] == '\n'
-                || state.Data[state.Index] == '\r') && (flags & Operator.WHITESPACE_OPERATOR) != 0))
+                || state.Data[state.Index] == '\r') && (m_flags & Operator.WHITESPACE_OPERATOR) != 0))
             {
                 return true;
             }
@@ -607,7 +607,7 @@ namespace Lucene.Net.QueryParsers.Simple
         protected virtual Query NewDefaultQuery(string text)
         {
             BooleanQuery bq = new BooleanQuery(true);
-            foreach (var entry in weights)
+            foreach (var entry in m_weights)
             {
                 Query q = CreateBooleanQuery(entry.Key, text, defaultOperator);
                 if (q != null)
@@ -625,7 +625,7 @@ namespace Lucene.Net.QueryParsers.Simple
         protected virtual Query NewFuzzyQuery(string text, int fuzziness)
         {
             BooleanQuery bq = new BooleanQuery(true);
-            foreach (var entry in weights)
+            foreach (var entry in m_weights)
             {
                 Query q = new FuzzyQuery(new Term(entry.Key, text), fuzziness);
                 if (q != null)
@@ -643,7 +643,7 @@ namespace Lucene.Net.QueryParsers.Simple
         protected virtual Query NewPhraseQuery(string text, int slop)
         {
             BooleanQuery bq = new BooleanQuery(true);
-            foreach (var entry in weights)
+            foreach (var entry in m_weights)
             {
                 Query q = CreatePhraseQuery(entry.Key, text, slop);
                 if (q != null)
@@ -661,7 +661,7 @@ namespace Lucene.Net.QueryParsers.Simple
         protected virtual Query NewPrefixQuery(string text)
         {
             BooleanQuery bq = new BooleanQuery(true);
-            foreach (var entry in weights)
+            foreach (var entry in m_weights)
             {
                 PrefixQuery prefix = new PrefixQuery(new Term(entry.Key, text));
                 prefix.Boost = entry.Value;

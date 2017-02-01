@@ -55,20 +55,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public override string ToQueryString(IEscapeQuerySyntax escaper)
         {
-            if (IsDefaultField(this.field))
+            if (IsDefaultField(this.m_field))
             {
                 return "\"" + GetTermEscapeQuoted(escaper) + "\"";
             }
             else
             {
-                return this.field + ":" + "\"" + GetTermEscapeQuoted(escaper) + "\"";
+                return this.m_field + ":" + "\"" + GetTermEscapeQuoted(escaper) + "\"";
             }
         }
 
         public override string ToString()
         {
-            return "<quotedfield start='" + this.begin + "' end='" + this.end
-                + "' field='" + this.field + "' term='" + this.text + "'/>";
+            return "<quotedfield start='" + this.m_begin + "' end='" + this.m_end
+                + "' field='" + this.m_field + "' term='" + this.m_text + "'/>";
         }
 
         public override IQueryNode CloneTree()
