@@ -885,26 +885,24 @@ namespace Lucene.Net.Facet
         {
             private readonly TestDrillSideways outerInstance;
 
-            private new Lucene.Net.Facet.FacetsConfig config;
             private string[][] drillDowns;
 
             public DrillSidewaysAnonymousInnerClassHelper2(TestDrillSideways outerInstance, IndexSearcher s, Lucene.Net.Facet.FacetsConfig config, TaxonomyReader tr, string[][] drillDowns)
                 : base(s, config, tr)
             {
                 this.outerInstance = outerInstance;
-                this.config = config;
                 this.drillDowns = drillDowns;
             }
 
             protected override Facets BuildFacetsResult(FacetsCollector drillDowns, FacetsCollector[] drillSideways, string[] drillSidewaysDims)
             {
                 IDictionary<string, Facets> drillSidewaysFacets = new Dictionary<string, Facets>();
-                Facets drillDownFacets = outerInstance.GetTaxonomyFacetCounts(m_taxoReader, config, drillDowns);
+                Facets drillDownFacets = outerInstance.GetTaxonomyFacetCounts(m_taxoReader, m_config, drillDowns);
                 if (drillSideways != null)
                 {
                     for (int i = 0; i < drillSideways.Length; i++)
                     {
-                        drillSidewaysFacets[drillSidewaysDims[i]] = outerInstance.GetTaxonomyFacetCounts(m_taxoReader, config, drillSideways[i]);
+                        drillSidewaysFacets[drillSidewaysDims[i]] = outerInstance.GetTaxonomyFacetCounts(m_taxoReader, m_config, drillSideways[i]);
                     }
                 }
 
