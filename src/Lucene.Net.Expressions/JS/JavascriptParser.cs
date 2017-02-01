@@ -1,8 +1,10 @@
 // ANTLR GENERATED CODE: DO NOT EDIT (LUCENENET: Not really auto generated in the port)
 
-using System;
 using Antlr.Runtime;
 using Antlr.Runtime.Tree;
+using Lucene.Net.Support;
+using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Expressions.JS
 {
@@ -128,7 +130,8 @@ namespace Lucene.Net.Expressions.JS
 
         // delegators
 
-
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public override string[] TokenNames
         {
             get { return tokenNames; }
