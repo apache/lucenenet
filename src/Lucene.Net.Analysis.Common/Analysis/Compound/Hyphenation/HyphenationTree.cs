@@ -76,18 +76,18 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             int i, n = values.Length;
             int m = (n & 1) == 1 ? (n >> 1) + 2 : (n >> 1) + 1;
             int offset = m_vspace.Alloc(m);
-            sbyte[] va = m_vspace.Array;
+            byte[] va = m_vspace.Array;
             for (i = 0; i < n; i++)
             {
                 int j = i >> 1;
-                sbyte v = (sbyte)((values[i] - '0' + 1) & 0x0f);
+                byte v = (byte)((values[i] - '0' + 1) & 0x0f);
                 if ((i & 1) == 1)
                 {
-                    va[j + offset] = (sbyte)(va[j + offset] | v);
+                    va[j + offset] = (byte)(va[j + offset] | v);
                 }
                 else
                 {
-                    va[j + offset] = (sbyte)(v << 4); // big endian
+                    va[j + offset] = (byte)(v << 4); // big endian
                 }
             }
             va[m - 1 + offset] = 0; // terminator
@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         protected internal virtual string UnpackValues(int k)
         {
             StringBuilder buf = new StringBuilder();
-            sbyte v = m_vspace[k++];
+            byte v = m_vspace[k++];
             while (v != 0)
             {
                 char c = (char)(((int)((uint)v >> 4)) - 1 + '0');
@@ -236,10 +236,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return s[si] - t[ti];
         }
 
-        protected internal virtual sbyte[] GetValues(int k)
+        protected internal virtual byte[] GetValues(int k)
         {
             StringBuilder buf = new StringBuilder();
-            sbyte v = m_vspace[k++];
+            byte v = m_vspace[k++];
             while (v != 0)
             {
                 char c = (char)((((int)((uint)v >> 4))) - 1);
@@ -253,10 +253,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 buf.Append(c);
                 v = m_vspace[k++];
             }
-            sbyte[] res = new sbyte[buf.Length];
+            byte[] res = new byte[buf.Length];
             for (int i = 0; i < res.Length; i++)
             {
-                res[i] = (sbyte)buf[i];
+                res[i] = (byte)buf[i];
             }
             return res;
         }
@@ -286,9 +286,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="word"> null terminated word to match </param>
         /// <param name="index"> start index from word </param>
         /// <param name="il"> interletter values array to update </param>
-        protected internal virtual void SearchPatterns(char[] word, int index, sbyte[] il)
+        protected internal virtual void SearchPatterns(char[] word, int index, byte[] il)
         {
-            sbyte[] values;
+            byte[] values;
             int i = index;
             char p, q;
             char sp = word[i];
@@ -484,7 +484,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 word[0] = '.'; // word start marker
                 word[len + 1] = '.'; // word end marker
                 word[len + 2] = (char)0; // null terminated
-                sbyte[] il = new sbyte[len + 3]; // initialized to zero
+                byte[] il = new byte[len + 3]; // initialized to zero
                 for (i = 0; i < len + 1; i++)
                 {
                     SearchPatterns(word, i, il);

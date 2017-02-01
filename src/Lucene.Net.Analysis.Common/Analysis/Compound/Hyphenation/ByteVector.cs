@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// The encapsulated array
         /// </summary>
-        private sbyte[] array;
+        private byte[] array;
 
         /// <summary>
         /// Points to next free item
@@ -60,18 +60,18 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             {
                 blockSize = DEFAULT_BLOCK_SIZE;
             }
-            array = new sbyte[blockSize];
+            array = new byte[blockSize];
             n = 0;
         }
 
-        public ByteVector(sbyte[] a)
+        public ByteVector(byte[] a)
         {
             blockSize = DEFAULT_BLOCK_SIZE;
             array = a;
             n = 0;
         }
 
-        public ByteVector(sbyte[] a, int capacity)
+        public ByteVector(byte[] a, int capacity)
         {
             if (capacity > 0)
             {
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual sbyte[] Array
+        public virtual byte[] Array
         {
             get
             {
@@ -100,7 +100,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public virtual sbyte this[int index]
+        public virtual byte this[int index]
         {
             get { return array[index]; }
             set { array[index] = value; }
@@ -141,7 +141,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             int len = array.Length;
             if (n + size >= len)
             {
-                sbyte[] aux = new sbyte[len + blockSize];
+                byte[] aux = new byte[len + blockSize];
                 System.Array.Copy(array, 0, aux, 0, len);
                 array = aux;
             }
@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         {
             if (n < array.Length)
             {
-                sbyte[] aux = new sbyte[n];
+                byte[] aux = new byte[n];
                 System.Array.Copy(array, 0, aux, 0, n);
                 array = aux;
             }
