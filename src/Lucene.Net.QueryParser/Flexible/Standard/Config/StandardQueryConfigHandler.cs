@@ -62,8 +62,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// </summary>
         public enum Operator
         {
-            AND,
-            OR
+            AND = 1,
+            OR = 0 // LUCENENET: Default value if not set
         }
     }
 
@@ -100,7 +100,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// Key used to set the default boolean operator
         /// </summary>
         /// <seealso cref="StandardQueryParser.DefaultOperator"/>
-        public readonly static ConfigurationKey<Operator?> DEFAULT_OPERATOR = ConfigurationKey.NewInstance<Operator?>();
+        public readonly static ConfigurationKey<Operator> DEFAULT_OPERATOR = ConfigurationKey.NewInstance<Operator>();
 
         /// <summary>
         /// Key used to set the default phrase slop

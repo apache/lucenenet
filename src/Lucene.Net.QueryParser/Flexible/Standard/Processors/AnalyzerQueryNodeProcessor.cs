@@ -74,8 +74,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 this.analyzer = analyzer;
                 this.positionIncrementsEnabled = false;
                 bool? positionIncrementsEnabled = GetQueryConfigHandler().Get(ConfigurationKeys.ENABLE_POSITION_INCREMENTS);
-                var defaultOperator = GetQueryConfigHandler().Get(ConfigurationKeys.DEFAULT_OPERATOR);
-                this.defaultOperator = defaultOperator != null ? defaultOperator.Value : Operator.OR;
+
+                // LUCENENET specific - rather than using null, we are relying on the behavior that the default
+                // value for an enum is 0 (OR in this case).
+                //var defaultOperator = GetQueryConfigHandler().Get(ConfigurationKeys.DEFAULT_OPERATOR);
+                //this.defaultOperator = defaultOperator != null ? defaultOperator.Value : Operator.OR;
+                this.defaultOperator = GetQueryConfigHandler().Get(ConfigurationKeys.DEFAULT_OPERATOR);
 
                 if (positionIncrementsEnabled != null)
                 {

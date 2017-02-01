@@ -157,7 +157,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// In <see cref="Operator.AND"/> mode terms are considered to be in conjunction: the
         /// above mentioned query is parsed as <c>capital AND of AND Hungary</c>
         /// </summary>
-        public virtual Operator? DefaultOperator
+        public virtual Operator DefaultOperator
         {
             get { return QueryConfigHandler.Get(ConfigurationKeys.DEFAULT_OPERATOR); }
             set { QueryConfigHandler.Set(ConfigurationKeys.DEFAULT_OPERATOR, value); }
