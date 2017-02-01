@@ -10,7 +10,7 @@ using Lucene.Net.Util;
 
 internal static partial class RectangularArrays
 {
-    internal static int[][] ReturnRectangularIntArray(int size1, int size2)
+    internal static int[][] ReturnRectangularInt32Array(int size1, int size2)
     {
         int[][] Array;
         if (size1 > -1)

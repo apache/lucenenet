@@ -198,8 +198,8 @@ namespace Egothor.Stemmer
             {
                 sizex = maxx + 8;
                 sizey = maxy + 8;
-                net = RectangularArrays.ReturnRectangularIntArray(sizex, sizey);
-                way = RectangularArrays.ReturnRectangularIntArray(sizex, sizey);
+                net = RectangularArrays.ReturnRectangularInt32Array(sizex, sizey);
+                way = RectangularArrays.ReturnRectangularInt32Array(sizex, sizey);
             }
 
             /*
