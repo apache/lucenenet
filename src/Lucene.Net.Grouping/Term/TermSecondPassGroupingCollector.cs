@@ -53,8 +53,8 @@ namespace Lucene.Net.Search.Grouping.Terms
             foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<BytesRef> group in m_groupMap.Values)
             {
                 //      System.out.println("  group=" + (group.groupValue == null ? "null" : group.groupValue.utf8ToString()));
-                int ord = group.groupValue == null ? -1 : index.LookupTerm(group.groupValue);
-                if (group.groupValue == null || ord >= 0)
+                int ord = group.GroupValue == null ? -1 : index.LookupTerm(group.GroupValue);
+                if (group.GroupValue == null || ord >= 0)
                 {
                     m_groupDocs[ordSet.Put(ord)] = group;
                 }

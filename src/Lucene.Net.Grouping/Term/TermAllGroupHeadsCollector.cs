@@ -176,13 +176,13 @@ namespace Lucene.Net.Search.Grouping.Terms
             {
                 groupHead = new GroupHead(this, groupValue, sortWithinGroup, doc);
                 groups[groupValue == null ? null : BytesRef.DeepCopyOf(groupValue)] = groupHead;
-                m_temporalResult.stop = true;
+                m_temporalResult.Stop = true;
             }
             else
             {
-                m_temporalResult.stop = false;
+                m_temporalResult.Stop = false;
             }
-            m_temporalResult.groupHead = groupHead;
+            m_temporalResult.GroupHead = groupHead;
         }
 
         protected override ICollection<GroupHead> CollectedGroupHeads
@@ -221,7 +221,11 @@ namespace Lucene.Net.Search.Grouping.Terms
             private readonly GeneralAllGroupHeadsCollector outerInstance;
             // LUCENENET: Moved groupValue here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
             // need to reference the generic closing type BytesRef.
-            public readonly BytesRef groupValue;
+            public BytesRef GroupValue
+            {
+                get { return groupValue; }
+            }
+            private readonly BytesRef groupValue;
 
             internal readonly FieldComparer[] comparers;
 
@@ -320,14 +324,14 @@ namespace Lucene.Net.Search.Grouping.Terms
                 groupHead = new GroupHead(this, doc, term);
                 collectedGroups.Add(groupHead);
                 segmentGroupHeads[key + 1] = groupHead;
-                m_temporalResult.stop = true;
+                m_temporalResult.Stop = true;
             }
             else
             {
-                m_temporalResult.stop = false;
+                m_temporalResult.Stop = false;
                 groupHead = segmentGroupHeads[key + 1];
             }
-            m_temporalResult.groupHead = groupHead;
+            m_temporalResult.GroupHead = groupHead;
         }
 
         public override void SetNextReader(AtomicReaderContext context)
@@ -350,15 +354,15 @@ namespace Lucene.Net.Search.Grouping.Terms
             foreach (GroupHead collectedGroup in collectedGroups)
             {
                 int ord;
-                if (collectedGroup.groupValue == null)
+                if (collectedGroup.GroupValue == null)
                 {
                     ord = -1;
                 }
                 else
                 {
-                    ord = groupIndex.LookupTerm(collectedGroup.groupValue);
+                    ord = groupIndex.LookupTerm(collectedGroup.GroupValue);
                 }
-                if (collectedGroup.groupValue == null || ord >= 0)
+                if (collectedGroup.GroupValue == null || ord >= 0)
                 {
                     ordSet.Put(ord);
                     segmentGroupHeads[ord + 1] = collectedGroup;
@@ -390,7 +394,11 @@ namespace Lucene.Net.Search.Grouping.Terms
             private readonly OrdScoreAllGroupHeadsCollector outerInstance;
             // LUCENENET: Moved groupValue here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
             // need to reference the generic closing type BytesRef.
-            public readonly BytesRef groupValue;
+            public BytesRef GroupValue
+            {
+                get { return groupValue; }
+            }
+            private readonly BytesRef groupValue;
 
             internal BytesRef[] sortValues;
             internal int[] sortOrds;
@@ -545,14 +553,14 @@ namespace Lucene.Net.Search.Grouping.Terms
                 groupHead = new GroupHead(this, doc, term);
                 collectedGroups.Add(groupHead);
                 segmentGroupHeads[key + 1] = groupHead;
-                m_temporalResult.stop = true;
+                m_temporalResult.Stop = true;
             }
             else
             {
-                m_temporalResult.stop = false;
+                m_temporalResult.Stop = false;
                 groupHead = segmentGroupHeads[key + 1];
             }
-            m_temporalResult.groupHead = groupHead;
+            m_temporalResult.GroupHead = groupHead;
         }
 
         public override void SetNextReader(AtomicReaderContext context)
@@ -570,15 +578,15 @@ namespace Lucene.Net.Search.Grouping.Terms
             foreach (GroupHead collectedGroup in collectedGroups)
             {
                 int groupOrd;
-                if (collectedGroup.groupValue == null)
+                if (collectedGroup.GroupValue == null)
                 {
                     groupOrd = -1;
                 }
                 else
                 {
-                    groupOrd = groupIndex.LookupTerm(collectedGroup.groupValue);
+                    groupOrd = groupIndex.LookupTerm(collectedGroup.GroupValue);
                 }
-                if (collectedGroup.groupValue == null || groupOrd >= 0)
+                if (collectedGroup.GroupValue == null || groupOrd >= 0)
                 {
                     ordSet.Put(groupOrd);
                     segmentGroupHeads[groupOrd + 1] = collectedGroup;
@@ -605,7 +613,11 @@ namespace Lucene.Net.Search.Grouping.Terms
             private readonly OrdAllGroupHeadsCollector outerInstance;
             // LUCENENET: Moved groupValue here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
             // need to reference the generic closing type BytesRef.
-            public readonly BytesRef groupValue;
+            public BytesRef GroupValue
+            {
+                get { return groupValue; }
+            }
+            private readonly BytesRef groupValue;
             internal BytesRef[] sortValues;
             internal int[] sortOrds;
 
@@ -728,14 +740,14 @@ namespace Lucene.Net.Search.Grouping.Terms
                 groupHead = new GroupHead(this, doc, term);
                 collectedGroups.Add(groupHead);
                 segmentGroupHeads[key + 1] = groupHead;
-                m_temporalResult.stop = true;
+                m_temporalResult.Stop = true;
             }
             else
             {
-                m_temporalResult.stop = false;
+                m_temporalResult.Stop = false;
                 groupHead = segmentGroupHeads[key + 1];
             }
-            m_temporalResult.groupHead = groupHead;
+            m_temporalResult.GroupHead = groupHead;
         }
         public override void SetNextReader(AtomicReaderContext context)
         {
@@ -748,15 +760,15 @@ namespace Lucene.Net.Search.Grouping.Terms
             foreach (GroupHead collectedGroup in collectedGroups)
             {
                 int ord;
-                if (collectedGroup.groupValue == null)
+                if (collectedGroup.GroupValue == null)
                 {
                     ord = -1;
                 }
                 else
                 {
-                    ord = groupIndex.LookupTerm(collectedGroup.groupValue);
+                    ord = groupIndex.LookupTerm(collectedGroup.GroupValue);
                 }
-                if (collectedGroup.groupValue == null || ord >= 0)
+                if (collectedGroup.GroupValue == null || ord >= 0)
                 {
                     ordSet.Put(ord);
                     segmentGroupHeads[ord + 1] = collectedGroup;
@@ -769,7 +781,11 @@ namespace Lucene.Net.Search.Grouping.Terms
             private readonly ScoreAllGroupHeadsCollector outerInstance;
             // LUCENENET: Moved groupValue here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
             // need to reference the generic closing type BytesRef.
-            public readonly BytesRef groupValue;
+            public BytesRef GroupValue
+            {
+                get { return groupValue; }
+            }
+            private readonly BytesRef groupValue;
             internal float[] scores;
 
             internal GroupHead(ScoreAllGroupHeadsCollector outerInstance, int doc, BytesRef groupValue)

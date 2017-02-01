@@ -71,13 +71,13 @@ namespace Lucene.Net.Search.Grouping.Function
                 MutableValue groupValue = mval.Duplicate();
                 groupHead = new GroupHead(this, groupValue, sortWithinGroup, doc);
                 groups[groupValue] = groupHead;
-                m_temporalResult.stop = true;
+                m_temporalResult.Stop = true;
             }
             else
             {
-                m_temporalResult.stop = false;
+                m_temporalResult.Stop = false;
             }
-            this.m_temporalResult.groupHead = groupHead;
+            this.m_temporalResult.GroupHead = groupHead;
         }
 
         protected override ICollection<GroupHead> CollectedGroupHeads
@@ -124,7 +124,11 @@ namespace Lucene.Net.Search.Grouping.Function
             private readonly FunctionAllGroupHeadsCollector outerInstance;
             // LUCENENET: Moved this here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
             // need to reference the generic closing type MutableValue.
-            public readonly MutableValue groupValue;
+            public MutableValue GroupValue
+            {
+                get { return groupValue; }
+            }
+            private readonly MutableValue groupValue;
             internal readonly FieldComparer[] comparers;
 
             internal GroupHead(FunctionAllGroupHeadsCollector outerInstance, MutableValue groupValue, Sort sort, int doc)

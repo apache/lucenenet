@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Grouping
         {
             foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> group in m_groupMap.Values)
             {
-                group.collector.SetScorer(scorer);
+                group.Collector.SetScorer(scorer);
             }
         }
 
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Grouping
             if (group != null)
             {
                 totalGroupedHitCount++;
-                group.collector.Collect(doc);
+                group.Collector.Collect(doc);
             }
         }
 
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search.Grouping
             //System.out.println("SP.setNextReader");
             foreach (AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> group in m_groupMap.Values)
             {
-                group.collector.SetNextReader(context);
+                group.Collector.SetNextReader(context);
             }
         }
 
@@ -132,12 +132,12 @@ namespace Lucene.Net.Search.Grouping
             foreach (var group in groups)
             {
                 AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> groupDocs = m_groupMap.ContainsKey(group.GroupValue) ? m_groupMap[group.GroupValue] : null;
-                TopDocs topDocs = groupDocs.collector.GetTopDocs(withinGroupOffset, maxDocsPerGroup);
+                TopDocs topDocs = groupDocs.Collector.GetTopDocs(withinGroupOffset, maxDocsPerGroup);
                 groupDocsResult[groupIDX++] = new GroupDocs<TGroupValue>(float.NaN,
                                                                               topDocs.MaxScore,
                                                                               topDocs.TotalHits,
                                                                               topDocs.ScoreDocs,
-                                                                              groupDocs.groupValue,
+                                                                              groupDocs.GroupValue,
                                                                               group.SortValues);
                 maxScore = Math.Max(maxScore, topDocs.MaxScore);
             }
@@ -169,8 +169,17 @@ namespace Lucene.Net.Search.Grouping
         // disad: blows up the size of SearchGroup if we need many of them, and couples implementations
         public class SearchGroupDocs<TGroupValue>
         {
-            public readonly TGroupValue groupValue;
-            public readonly ITopDocsCollector collector;
+            public TGroupValue GroupValue
+            {
+                get { return groupValue; }
+            }
+            private readonly TGroupValue groupValue;
+
+            public ITopDocsCollector Collector
+            {
+                get { return collector; }
+            }
+            private readonly ITopDocsCollector collector;
             public SearchGroupDocs(TGroupValue groupValue, ITopDocsCollector collector)
             {
                 this.groupValue = groupValue;

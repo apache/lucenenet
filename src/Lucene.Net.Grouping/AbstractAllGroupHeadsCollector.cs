@@ -93,7 +93,7 @@ namespace Lucene.Net.Search.Grouping
         /// Returns the group head and puts it into <see cref="TemporalResult"/>.
         /// If the group head wasn't encountered before then it will be added to the collected group heads.
         /// <para>
-        /// The <see cref="TemporalResult.stop"/> property will be <c>true</c> if the group head wasn't encountered before
+        /// The <see cref="TemporalResult.Stop"/> property will be <c>true</c> if the group head wasn't encountered before
         /// otherwise <c>false</c>.
         /// </para>
         /// </summary>
@@ -111,11 +111,11 @@ namespace Lucene.Net.Search.Grouping
         public override void Collect(int doc)
         {
             RetrieveGroupHeadAndAddIfNotExist(doc);
-            if (m_temporalResult.stop)
+            if (m_temporalResult.Stop)
             {
                 return;
             }
-            GH groupHead = m_temporalResult.groupHead;
+            GH groupHead = m_temporalResult.GroupHead;
 
             // Ok now we need to check if the current doc is more relevant then current doc for this group
             for (int compIDX = 0; ; compIDX++)
@@ -153,8 +153,8 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         protected class TemporalResult
         {
-            public GH groupHead;
-            public bool stop;
+            public GH GroupHead { get; set; }
+            public bool Stop { get; set; }
         }
     }
 

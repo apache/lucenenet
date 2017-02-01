@@ -94,8 +94,17 @@ namespace Lucene.Net.Search.Grouping
 
         private class ShardIter<T>
         {
-            public readonly IEnumerator<ISearchGroup<T>> iter;
-            public readonly int shardIndex;
+            public IEnumerator<ISearchGroup<T>> Iter
+            {
+                get { return iter; }
+            }
+            private readonly IEnumerator<ISearchGroup<T>> iter;
+
+            public int ShardIndex
+            {
+                get { return shardIndex; }
+            }
+            private readonly int shardIndex;
 
             public ShardIter(IEnumerable<ISearchGroup<T>> shard, int shardIndex)
             {
@@ -129,13 +138,47 @@ namespace Lucene.Net.Search.Grouping
         {
 
             // groupValue may be null!
-            public readonly T groupValue;
+            public T GroupValue
+            {
+                get { return groupValue; }
+            }
+            private readonly T groupValue;
 
-            public object[] topValues;
-            public readonly List<ShardIter<T>> shards = new List<ShardIter<T>>();
-            public int minShardIndex;
-            public bool processed;
-            public bool inQueue;
+            [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+            public object[] TopValues
+            {
+                get { return topValues; }
+                set { topValues = value; }
+            }
+            private object[] topValues;
+
+            public IList<ShardIter<T>> Shards
+            {
+                get { return shards; }
+            }
+            private readonly List<ShardIter<T>> shards = new List<ShardIter<T>>();
+
+            public int MinShardIndex
+            {
+                get { return minShardIndex; }
+                set { minShardIndex = value; }
+            }
+            private int minShardIndex;
+
+            public bool IsProcessed
+            {
+                get { return processed; }
+                set { processed = value; }
+            }
+            private bool processed;
+
+            public bool IsInQueue
+            {
+                get { return inQueue; }
+                set { inQueue = value; }
+            }
+            private bool inQueue;
 
             public MergedGroup(T groupValue)
             {
@@ -199,9 +242,21 @@ namespace Lucene.Net.Search.Grouping
 
         private class GroupComparer<T> : IComparer<MergedGroup<T>>
         {
+            [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+            public FieldComparer[] Comparers
+            {
+                get { return comparers; }
+            }
+            private readonly FieldComparer[] comparers;
 
-            public readonly FieldComparer[] comparers;
-            public readonly int[] reversed;
+            [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+            public int[] Reversed
+            {
+                get { return reversed; }
+            }
+            private readonly int[] reversed;
 
             public GroupComparer(Sort groupSort)
             {
@@ -223,8 +278,8 @@ namespace Lucene.Net.Search.Grouping
                     return 0;
                 }
                 //System.out.println("compare group=" + group + " other=" + other);
-                object[] groupValues = group.topValues;
-                object[] otherValues = other.topValues;
+                object[] groupValues = group.TopValues;
+                object[] otherValues = other.TopValues;
                 //System.out.println("  groupValues=" + groupValues + " otherValues=" + otherValues);
                 for (int compIDX = 0; compIDX < comparers.Length; compIDX++)
                 {
@@ -237,8 +292,8 @@ namespace Lucene.Net.Search.Grouping
                 }
 
                 // Tie break by min shard index:
-                Debug.Assert(group.minShardIndex != other.minShardIndex);
-                return group.minShardIndex - other.minShardIndex;
+                Debug.Assert(group.MinShardIndex != other.MinShardIndex);
+                return group.MinShardIndex - other.MinShardIndex;
             }
         }
 
@@ -258,7 +313,7 @@ namespace Lucene.Net.Search.Grouping
 
             private void UpdateNextGroup(int topN, ShardIter<T> shard)
             {
-                while (shard.iter.MoveNext())
+                while (shard.Iter.MoveNext())
                 {
                     ISearchGroup<T> group = shard.Next();
                     MergedGroup<T> mergedGroup = groupsSeen.ContainsKey(group.GroupValue) ? groupsSeen[group.GroupValue] : null;
@@ -270,14 +325,14 @@ namespace Lucene.Net.Search.Grouping
                         // Start a new group:
                         //System.out.println("      new");
                         mergedGroup = new MergedGroup<T>(group.GroupValue);
-                        mergedGroup.minShardIndex = shard.shardIndex;
+                        mergedGroup.MinShardIndex = shard.ShardIndex;
                         Debug.Assert(group.SortValues != null);
-                        mergedGroup.topValues = group.SortValues;
+                        mergedGroup.TopValues = group.SortValues;
                         groupsSeen[group.GroupValue] = mergedGroup;
-                        mergedGroup.inQueue = true;
+                        mergedGroup.IsInQueue = true;
                         queue.Add(mergedGroup);
                     }
-                    else if (mergedGroup.processed)
+                    else if (mergedGroup.IsProcessed)
                     {
                         // This shard produced a group that we already
                         // processed; move on to next group...
@@ -287,10 +342,10 @@ namespace Lucene.Net.Search.Grouping
                     {
                         //System.out.println("      old");
                         bool competes = false;
-                        for (int compIDX = 0; compIDX < groupComp.comparers.Length; compIDX++)
+                        for (int compIDX = 0; compIDX < groupComp.Comparers.Length; compIDX++)
                         {
-                            int cmp = groupComp.reversed[compIDX] * groupComp.comparers[compIDX].CompareValues(group.SortValues[compIDX],
-                                                                                                                       mergedGroup.topValues[compIDX]);
+                            int cmp = groupComp.Reversed[compIDX] * groupComp.Comparers[compIDX].CompareValues(group.SortValues[compIDX],
+                                                                                                                       mergedGroup.TopValues[compIDX]);
                             if (cmp < 0)
                             {
                                 // Definitely competes
@@ -302,9 +357,9 @@ namespace Lucene.Net.Search.Grouping
                                 // Definitely does not compete
                                 break;
                             }
-                            else if (compIDX == groupComp.comparers.Length - 1)
+                            else if (compIDX == groupComp.Comparers.Length - 1)
                             {
-                                if (shard.shardIndex < mergedGroup.minShardIndex)
+                                if (shard.ShardIndex < mergedGroup.MinShardIndex)
                                 {
                                     competes = true;
                                 }
@@ -316,18 +371,18 @@ namespace Lucene.Net.Search.Grouping
                         if (competes)
                         {
                             // Group's sort changed -- remove & re-insert
-                            if (mergedGroup.inQueue)
+                            if (mergedGroup.IsInQueue)
                             {
                                 queue.Remove(mergedGroup);
                             }
-                            mergedGroup.topValues = group.SortValues;
-                            mergedGroup.minShardIndex = shard.shardIndex;
+                            mergedGroup.TopValues = group.SortValues;
+                            mergedGroup.MinShardIndex = shard.ShardIndex;
                             queue.Add(mergedGroup);
-                            mergedGroup.inQueue = true;
+                            mergedGroup.IsInQueue = true;
                         }
                     }
 
-                    mergedGroup.shards.Add(shard);
+                    mergedGroup.Shards.Add(shard);
                     break;
                 }
 
@@ -337,7 +392,7 @@ namespace Lucene.Net.Search.Grouping
                     MergedGroup<T> group = queue.Last();
                     queue.Remove(group);
                     //System.out.println("PRUNE: " + group);
-                    group.inQueue = false;
+                    group.IsInQueue = false;
                 }
             }
 
@@ -367,13 +422,13 @@ namespace Lucene.Net.Search.Grouping
                 {
                     MergedGroup<T> group = queue.First();
                     queue.Remove(group);
-                    group.processed = true;
+                    group.IsProcessed = true;
                     //System.out.println("  pop: shards=" + group.shards + " group=" + (group.groupValue == null ? "null" : (((BytesRef) group.groupValue).utf8ToString())) + " sortValues=" + Arrays.toString(group.topValues));
                     if (count++ >= offset)
                     {
                         SearchGroup<T> newGroup = new SearchGroup<T>();
-                        newGroup.GroupValue = group.groupValue;
-                        newGroup.SortValues = group.topValues;
+                        newGroup.GroupValue = group.GroupValue;
+                        newGroup.SortValues = group.TopValues;
                         newTopGroups.Add(newGroup);
                         if (newTopGroups.Count == topN)
                         {
@@ -384,7 +439,7 @@ namespace Lucene.Net.Search.Grouping
                     }
 
                     // Advance all iters in this group:
-                    foreach (ShardIter<T> shardIter in group.shards)
+                    foreach (ShardIter<T> shardIter in group.Shards)
                     {
                         UpdateNextGroup(maxQueueSize, shardIter);
                     }
