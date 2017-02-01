@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Util;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Lucene.Net.Search.PostingsHighlight
@@ -139,8 +140,8 @@ namespace Lucene.Net.Search.PostingsHighlight
 
         /// <summary>
         /// Number of term matches available in 
-        /// <see cref="GetMatchStarts()"/>, <see cref="GetMatchEnds()"/>,
-        /// <see cref="GetMatchTerms()"/>
+        /// <see cref="MatchStarts"/>, <see cref="MatchEnds"/>,
+        /// <see cref="MatchTerms"/>
         /// </summary>
         public int NumMatches
         {
@@ -154,31 +155,31 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// offsets are absolute (not relative to <see cref="StartOffset"/>).
         /// </summary>
         /// <returns></returns>
-        public int[] GetMatchStarts()
+        public IReadOnlyList<int> MatchStarts
         {
-            return matchStarts;
+            get { return matchStarts; }
         }
 
         /// <summary>
-        /// End offsets of the term matches, corresponding with <see cref="GetMatchStarts()"/>. 
+        /// End offsets of the term matches, corresponding with <see cref="MatchStarts"/>. 
         /// <para/>
         /// Only <see cref="NumMatches"/> are valid. Note that its possible that an end offset 
         /// could exceed beyond the bounds of the passage <see cref="EndOffset"/>, if the 
         /// <see cref="Analysis.Analyzer"/> produced a term which spans a passage boundary.
         /// </summary>
-        public int[] GetMatchEnds()
+        public IReadOnlyList<int> MatchEnds
         {
-            return matchEnds;
+            get { return matchEnds; }
         }
 
         /// <summary>
-        /// BytesRef (term text) of the matches, corresponding with <see cref="GetMatchStarts()"/>.
+        /// BytesRef (term text) of the matches, corresponding with <see cref="MatchStarts"/>.
         /// <para/>
         /// Only <see cref="NumMatches"/> are valid.
         /// </summary>
-        public BytesRef[] GetMatchTerms()
+        public IReadOnlyList<BytesRef> MatchTerms
         {
-            return matchTerms;
+            get { return matchTerms; }
         }
     }
 }

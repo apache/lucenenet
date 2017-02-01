@@ -199,12 +199,12 @@ namespace Lucene.Net.Search.PostingsHighlight
                     int lastMatchStart = -1;
                     for (int i = 0; i < p.NumMatches; i++)
                     {
-                        BytesRef term = p.GetMatchTerms()[i];
-                        int matchStart = p.GetMatchStarts()[i];
+                        BytesRef term = p.MatchTerms[i];
+                        int matchStart = p.MatchStarts[i];
                         assertTrue(matchStart >= 0);
                         // must at least start within the passage
                         assertTrue(matchStart < p.EndOffset);
-                        int matchEnd = p.GetMatchEnds()[i];
+                        int matchEnd = p.MatchEnds[i];
                         assertTrue(matchEnd >= 0);
                         // always moving forward
                         assertTrue(matchStart >= lastMatchStart);

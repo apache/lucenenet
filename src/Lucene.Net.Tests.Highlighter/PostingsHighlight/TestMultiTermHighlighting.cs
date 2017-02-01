@@ -781,7 +781,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                             int startPos = Math.Max(pos, start);
                             sb.Append(content, startPos, end - startPos);
                             sb.Append('(');
-                            sb.Append(passage.GetMatchTerms()[i].Utf8ToString());
+                            sb.Append(passage.MatchTerms[i].Utf8ToString());
                             sb.Append(')');
                             sb.Append("</b>");
                             pos = end;
