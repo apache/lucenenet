@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Search;
+﻿using Lucene.Net.Support;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -46,6 +47,8 @@ namespace Lucene.Net.Search.Grouping
         /// Hits; this may be <see cref="FieldDoc"/> instances if the
         /// withinGroupSort sorted by fields. 
         /// </summary>
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public ScoreDoc[] ScoreDocs { get; private set; }
 
         /// <summary>
@@ -56,6 +59,8 @@ namespace Lucene.Net.Search.Grouping
         /// <summary>
         /// Matches the groupSort passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}"/>. 
         /// </summary>
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public object[] GroupSortValues { get; private set; }
 
         public GroupDocs(float score, float maxScore, int totalHits, ScoreDoc[] scoreDocs, TGroupValue groupValue, object[] groupSortValues)
@@ -96,6 +101,7 @@ namespace Lucene.Net.Search.Grouping
         /// Hits; this may be <see cref="FieldDoc"/> instances if the
         /// withinGroupSort sorted by fields. 
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         ScoreDoc[] ScoreDocs { get; }
 
         /// <summary>

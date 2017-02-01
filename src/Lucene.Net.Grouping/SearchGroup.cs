@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Lucene.Net.Search.Grouping
@@ -43,6 +44,8 @@ namespace Lucene.Net.Search.Grouping
         /// <c>null</c> if <c>fillFields=false</c> had
         /// been passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}.GetTopGroups(int, bool)"/>
         /// </summary>
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public object[] SortValues { get; set; }
 
         public override string ToString()

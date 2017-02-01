@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -40,14 +42,20 @@ namespace Lucene.Net.Search.Grouping
 
         /// <summary>
         /// Group results in groupSort order </summary>
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public IGroupDocs<TGroupValue>[] Groups { get; private set; }
 
         /// <summary>
         /// How groups are sorted against each other </summary>
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public SortField[] GroupSort { get; private set; }
 
         /// <summary>
         /// How docs are sorted within each group </summary>
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public SortField[] WithinGroupSort { get; private set; }
 
         /// <summary>
