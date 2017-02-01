@@ -79,12 +79,12 @@ namespace Lucene.Net.Util.Fst
                 return "TwoLongs:" + first + "," + second;
             }
 
-            public override bool Equals(object _other)
+            public override bool Equals(object other)
             {
-                if (_other is TwoLongs)
+                if (other is TwoLongs)
                 {
-                    TwoLongs other = (TwoLongs)_other;
-                    return first == other.first && second == other.second;
+                    TwoLongs other2 = (TwoLongs)other;
+                    return first == other2.first && second == other2.second;
                 }
                 else
                 {
@@ -132,25 +132,25 @@ namespace Lucene.Net.Util.Fst
             return new TwoLongs(first, second);
         }
 
-        public override object Common(object _output1, object _output2)
+        public override object Common(object output1, object output2)
         {
-            Debug.Assert(Valid(_output1, false));
-            Debug.Assert(Valid(_output2, false));
-            long? output1 = (long?)_output1;
-            long? output2 = (long?)_output2;
-            if (output1 == NO_OUTPUT || output2 == NO_OUTPUT)
+            Debug.Assert(Valid(output1, false));
+            Debug.Assert(Valid(output2, false));
+            long? output1_ = (long?)output1;
+            long? output2_ = (long?)output2;
+            if (output1_ == NO_OUTPUT || output2_ == NO_OUTPUT)
             {
                 return NO_OUTPUT;
             }
             else if (doShare)
             {
-                Debug.Assert(output1 > 0);
-                Debug.Assert(output2 > 0);
-                return Math.Min(output1.GetValueOrDefault(), output2.GetValueOrDefault());
+                Debug.Assert(output1_ > 0);
+                Debug.Assert(output2_ > 0);
+                return Math.Min(output1_.GetValueOrDefault(), output2_.GetValueOrDefault());
             }
-            else if (output1.Equals(output2))
+            else if (output1_.Equals(output2_))
             {
-                return output1;
+                return output1_;
             }
             else
             {
@@ -158,70 +158,70 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override object Subtract(object _output, object _inc)
+        public override object Subtract(object output, object inc)
         {
-            Debug.Assert(Valid(_output, false));
-            Debug.Assert(Valid(_inc, false));
-            long? output = (long?)_output;
-            long? inc = (long?)_inc;
-            Debug.Assert(output >= inc);
+            Debug.Assert(Valid(output, false));
+            Debug.Assert(Valid(inc, false));
+            long? output2 = (long?)output;
+            long? inc2 = (long?)inc;
+            Debug.Assert(output2 >= inc2);
 
-            if (inc == NO_OUTPUT)
+            if (inc2 == NO_OUTPUT)
             {
-                return output;
+                return output2;
             }
-            else if (output.Equals(inc))
+            else if (output2.Equals(inc2))
             {
                 return NO_OUTPUT;
             }
             else
             {
-                return output - inc;
+                return output2 - inc2;
             }
         }
 
-        public override object Add(object _prefix, object _output)
+        public override object Add(object prefix, object output)
         {
-            Debug.Assert(Valid(_prefix, false));
-            Debug.Assert(Valid(_output, true));
-            long? prefix = (long?)_prefix;
-            if (_output is long?)
+            Debug.Assert(Valid(prefix, false));
+            Debug.Assert(Valid(output, true));
+            long? prefix2 = (long?)prefix;
+            if (output is long?)
             {
-                long? output = (long?)_output;
-                if (prefix == NO_OUTPUT)
+                long? output2 = (long?)output;
+                if (prefix2 == NO_OUTPUT)
                 {
-                    return output;
+                    return output2;
                 }
-                else if (output == NO_OUTPUT)
+                else if (output2 == NO_OUTPUT)
                 {
-                    return prefix;
+                    return prefix2;
                 }
                 else
                 {
-                    return prefix + output;
+                    return prefix2 + output2;
                 }
             }
             else
             {
-                TwoLongs output = (TwoLongs)_output;
-                long v = prefix.Value;
-                return new TwoLongs(output.First + v, output.Second + v);
+                TwoLongs output3 = (TwoLongs)output;
+                long v = prefix2.Value;
+                return new TwoLongs(output3.First + v, output3.Second + v);
             }
         }
 
-        public override void Write(object _output, DataOutput @out)
+        public override void Write(object output, DataOutput @out)
         {
-            Debug.Assert(Valid(_output, true));
-            if (_output is long?)
+            Debug.Assert(Valid(output, true));
+            if (output is long?)
             {
-                long? output = (long?)_output;
-                @out.WriteVLong(output.GetValueOrDefault() << 1);
+                long? output2 = (long?)output;
+                @out.WriteVLong(output2.GetValueOrDefault() << 1);
             }
             else
             {
-                TwoLongs output = (TwoLongs)_output;
-                @out.WriteVLong((output.First << 1) | 1);
-                @out.WriteVLong(output.Second);
+                TwoLongs output3 = (TwoLongs)output;
+                @out.WriteVLong((output3.First << 1) | 1);
+                @out.WriteVLong(output3.Second);
             }
         }
 
@@ -259,20 +259,20 @@ namespace Lucene.Net.Util.Fst
         }
 
         // Used only by assert
-        private bool Valid(object _o, bool allowDouble)
+        private bool Valid(object o, bool allowDouble)
         {
             if (!allowDouble)
             {
-                Debug.Assert(_o is long?);
-                return Valid((long?)_o);
+                Debug.Assert(o is long?);
+                return Valid((long?)o);
             }
-            else if (_o is TwoLongs)
+            else if (o is TwoLongs)
             {
                 return true;
             }
             else
             {
-                return Valid((long?)_o);
+                return Valid((long?)o);
             }
         }
 
