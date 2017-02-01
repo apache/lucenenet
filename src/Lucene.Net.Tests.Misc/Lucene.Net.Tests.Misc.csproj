@@ -50,6 +50,7 @@
     <Compile Include="Misc\SweetSpotSimilarityTest.cs" />
     <Compile Include="Misc\TestHighFreqTerms.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestApiConsistency.cs" />
     <Compile Include="Util\Fst\TestFSTsMisc.cs" />
   </ItemGroup>
   <ItemGroup>
