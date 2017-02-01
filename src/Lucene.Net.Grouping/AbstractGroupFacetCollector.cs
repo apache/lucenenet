@@ -204,7 +204,7 @@ namespace Lucene.Net.Search.Grouping
             /// <param name="offset">The offset in the collected facet entries during merging</param>
             /// <param name="limit">The number of facets to return starting from the offset.</param>
             /// <returns>a list of facet entries to be rendered based on the specified offset and limit</returns>
-            public virtual List<FacetEntry> GetFacetEntries(int offset, int limit)
+            public virtual IList<FacetEntry> GetFacetEntries(int offset, int limit)
             {
                 List<FacetEntry> entries = new List<FacetEntry>();
 

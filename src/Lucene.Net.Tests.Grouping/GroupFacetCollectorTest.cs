@@ -87,7 +87,7 @@ namespace Lucene.Net.Search.Grouping
 
             IndexSearcher indexSearcher = NewSearcher(w.Reader);
 
-            List<TermGroupFacetCollector.FacetEntry> entries = null;
+            IList<TermGroupFacetCollector.FacetEntry> entries = null;
             AbstractGroupFacetCollector groupedAirportFacetCollector = null;
             TermGroupFacetCollector.GroupedFacetResult airportResult = null;
 
@@ -348,7 +348,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(3, airportResult.TotalCount);
             assertEquals(1, airportResult.TotalMissingCount);
 
-            List<TermGroupFacetCollector.FacetEntry> entries = airportResult.GetFacetEntries(0, 10);
+            IList<TermGroupFacetCollector.FacetEntry> entries = airportResult.GetFacetEntries(0, 10);
             assertEquals(2, entries.size());
             assertEquals("ams", entries[0].Value.Utf8ToString());
             assertEquals(2, entries[0].Count);
@@ -423,8 +423,8 @@ namespace Lucene.Net.Search.Grouping
                     searcher.Search(new TermQuery(new Term("content", searchTerm)), groupFacetCollector);
                     TermGroupFacetCollector.GroupedFacetResult actualFacetResult = groupFacetCollector.MergeSegmentResults(size, minCount, orderByCount);
 
-                    List<TermGroupFacetCollector.FacetEntry> expectedFacetEntries = expectedFacetResult.GetFacetEntries();
-                    List<TermGroupFacetCollector.FacetEntry> actualFacetEntries = actualFacetResult.GetFacetEntries(offset, limit);
+                    IList<TermGroupFacetCollector.FacetEntry> expectedFacetEntries = expectedFacetResult.GetFacetEntries();
+                    IList<TermGroupFacetCollector.FacetEntry> actualFacetEntries = actualFacetResult.GetFacetEntries(offset, limit);
 
                     if (VERBOSE)
                     {
