@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly string wordFiles;
         private readonly string types;
         private readonly int flags;
-        internal sbyte[] typeTable = null;
+        internal byte[] typeTable = null;
         private CharArraySet protectedWords = null;
 
         /// <summary>
@@ -142,9 +142,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private static Regex typePattern = new Regex("(.*)\\s*=>\\s*(.*)\\s*$", RegexOptions.Compiled);
 
         // parses a list of MappingCharFilter style rules into a custom byte[] type table
-        private sbyte[] ParseTypes(IList<string> rules)
+        private byte[] ParseTypes(IList<string> rules)
         {
-            IDictionary<char, sbyte> typeMap = new SortedDictionary<char, sbyte>();
+            IDictionary<char, byte> typeMap = new SortedDictionary<char, byte>();
             foreach (string rule in rules)
             {
                 //Matcher m = typePattern.matcher(rule);
@@ -155,7 +155,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     throw new System.ArgumentException("Invalid Mapping Rule : [" + rule + "]");
                 }
                 string lhs = ParseString(m.Groups[1].Value.Trim());
-                sbyte rhs = ParseType(m.Groups[2].Value.Trim());
+                byte rhs = ParseType(m.Groups[2].Value.Trim());
                 if (lhs.Length != 1)
                 {
                     throw new System.ArgumentException("Invalid Mapping Rule : [" + rule + "]. Only a single character is allowed.");
@@ -168,7 +168,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
 
             // ensure the table is always at least as big as DEFAULT_WORD_DELIM_TABLE for performance
-            sbyte[] types = new sbyte[Math.Max(typeMap.Keys.LastOrDefault() + 1, WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE.Length)];
+            byte[] types = new byte[Math.Max(typeMap.Keys.LastOrDefault() + 1, WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE.Length)];
             for (int i = 0; i < types.Length; i++)
             {
                 types[i] = WordDelimiterIterator.GetType(i);
@@ -180,7 +180,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             return types;
         }
 
-        private sbyte ParseType(string s)
+        private byte ParseType(string s)
         {
             if (s.Equals("LOWER"))
             {

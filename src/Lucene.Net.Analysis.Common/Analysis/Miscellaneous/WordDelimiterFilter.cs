@@ -206,7 +206,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="charTypeTable"> table containing character types </param>
         /// <param name="configurationFlags"> Flags configuring the filter </param>
         /// <param name="protWords"> If not null is the set of tokens to protect from being delimited </param>
-        public WordDelimiterFilter(LuceneVersion matchVersion, TokenStream @in, sbyte[] charTypeTable, int configurationFlags, CharArraySet protWords)
+        public WordDelimiterFilter(LuceneVersion matchVersion, TokenStream @in, byte[] charTypeTable, int configurationFlags, CharArraySet protWords)
               : base(@in)
         {
             InitializeInstanceFields();

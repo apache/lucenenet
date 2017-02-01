@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// Indicates the end of iteration </summary>
         public const int DONE = -1;
 
-        public static readonly sbyte[] DEFAULT_WORD_DELIM_TABLE;
+        public static readonly byte[] DEFAULT_WORD_DELIM_TABLE;
 
         internal char[] text;
         internal int length;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         internal readonly bool stemEnglishPossessive;
 
-        private readonly sbyte[] charTypeTable;
+        private readonly byte[] charTypeTable;
 
         /// <summary>
         /// if true, need to skip over a possessive found in the last call to next() </summary>
@@ -81,21 +81,21 @@ namespace Lucene.Net.Analysis.Miscellaneous
         // done if separated by these chars?) "," would be an obvious candidate...
         static WordDelimiterIterator()
         {
-            var tab = new sbyte[256];
+            var tab = new byte[256];
             for (int i = 0; i < 256; i++)
             {
-                sbyte code = 0;
+                byte code = 0;
                 if (char.IsLower((char)i))
                 {
-                    code |= (sbyte)WordDelimiterFilter.LOWER;
+                    code |= (byte)WordDelimiterFilter.LOWER;
                 }
                 else if (char.IsUpper((char)i))
                 {
-                    code |= (sbyte)WordDelimiterFilter.UPPER;
+                    code |= (byte)WordDelimiterFilter.UPPER;
                 }
                 else if (char.IsDigit((char)i))
                 {
-                    code |= (sbyte)WordDelimiterFilter.DIGIT;
+                    code |= (byte)WordDelimiterFilter.DIGIT;
                 }
                 if (code == 0)
                 {
@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="splitOnCaseChange"> if true, causes "PowerShot" to be two tokens; ("Power-Shot" remains two parts regards) </param>
         /// <param name="splitOnNumerics"> if true, causes "j2se" to be three tokens; "j" "2" "se" </param>
         /// <param name="stemEnglishPossessive"> if true, causes trailing "'s" to be removed for each subword: "O'Neil's" => "O", "Neil" </param>
-        internal WordDelimiterIterator(sbyte[] charTypeTable, bool splitOnCaseChange, bool splitOnNumerics, bool stemEnglishPossessive)
+        internal WordDelimiterIterator(byte[] charTypeTable, bool splitOnCaseChange, bool splitOnNumerics, bool stemEnglishPossessive)
         {
             this.charTypeTable = charTypeTable;
             this.splitOnCaseChange = splitOnCaseChange;
@@ -315,7 +315,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         /// <param name="ch"> Character whose type is to be determined </param>
         /// <returns> Type of the character </returns>
-        public static sbyte GetType(int ch)
+        public static byte GetType(int ch)
         {
             switch (CharUnicodeInfo.GetUnicodeCategory((char)ch))
             {

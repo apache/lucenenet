@@ -155,7 +155,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="charTypeTable"> table containing character types </param>
         /// <param name="configurationFlags"> Flags configuring the filter </param>
         /// <param name="protWords"> If not null is the set of tokens to protect from being delimited </param>
-        public Lucene47WordDelimiterFilter(TokenStream @in, sbyte[] charTypeTable, int configurationFlags, CharArraySet protWords)
+        public Lucene47WordDelimiterFilter(TokenStream @in, byte[] charTypeTable, int configurationFlags, CharArraySet protWords)
             : base(@in)
         {
             termAttribute = AddAttribute<ICharTermAttribute>();
