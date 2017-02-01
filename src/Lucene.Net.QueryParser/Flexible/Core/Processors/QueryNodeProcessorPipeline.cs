@@ -224,7 +224,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             }
         }
 
-        public virtual List<IQueryNodeProcessor> GetRange(int index, int count)
+        public virtual IList<IQueryNodeProcessor> GetRange(int index, int count)
         {
             return this.processors.GetRange(index, count);
         }
