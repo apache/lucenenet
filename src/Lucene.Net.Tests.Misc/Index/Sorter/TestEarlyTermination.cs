@@ -155,7 +155,7 @@ namespace Lucene.Net.Index.Sorter
             public override void SetNextReader(AtomicReaderContext context)
             {
                 base.SetNextReader(context);
-                assertFalse("segment should not be recognized as sorted as different sorter was used", segmentSorted);
+                assertFalse("segment should not be recognized as sorted as different sorter was used", m_segmentSorted);
             }
         }
 

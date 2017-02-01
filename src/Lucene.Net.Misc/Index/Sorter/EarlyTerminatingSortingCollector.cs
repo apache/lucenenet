@@ -28,7 +28,7 @@ namespace Lucene.Net.Index.Sorter
     /// <para>
     /// <b>NOTE:</b> the <see cref="ICollector"/> detects sorted segments according to
     /// <see cref="SortingMergePolicy"/>, so it's best used in conjunction with it. Also,
-    /// it collects up to a specified <see cref="numDocsToCollect"/> from each segment, 
+    /// it collects up to a specified <see cref="m_numDocsToCollect"/> from each segment, 
     /// and therefore is mostly suitable for use in conjunction with collectors such as
     /// <see cref="Search.TopDocsCollector{T}"/>, and not e.g. <see cref="TotalHitCountCollector"/>.
     /// </para>
@@ -60,19 +60,19 @@ namespace Lucene.Net.Index.Sorter
     {
         /// <summary>
         /// The wrapped Collector </summary>
-        protected internal readonly ICollector @in;
+        protected readonly ICollector m_in;
         /// <summary>
         /// Sort used to sort the search results </summary>
-        protected internal readonly Sort sort;
+        protected readonly Sort m_sort;
         /// <summary>
         /// Number of documents to collect in each segment </summary>
-        protected internal readonly int numDocsToCollect;
+        protected readonly int m_numDocsToCollect;
         /// <summary>
         /// Number of documents to collect in the current segment being processed </summary>
-        protected internal int segmentTotalCollect;
+        protected int m_segmentTotalCollect;
         /// <summary>
         /// True if the current segment being processed is sorted by <see cref="Sort()"/> </summary>
-        protected internal bool segmentSorted;
+        protected bool m_segmentSorted;
 
         private int numCollected;
 
@@ -91,22 +91,22 @@ namespace Lucene.Net.Index.Sorter
         {
             if (numDocsToCollect <= 0)
             {
-                throw new InvalidOperationException("numDocsToCollect must always be > 0, got " + segmentTotalCollect);
+                throw new InvalidOperationException("numDocsToCollect must always be > 0, got " + m_segmentTotalCollect);
             }
-            this.@in = @in;
-            this.sort = sort;
-            this.numDocsToCollect = numDocsToCollect;
+            this.m_in = @in;
+            this.m_sort = sort;
+            this.m_numDocsToCollect = numDocsToCollect;
         }
 
         public virtual void SetScorer(Scorer scorer)
         {
-            @in.SetScorer(scorer);
+            m_in.SetScorer(scorer);
         }
 
         public virtual void Collect(int doc)
         {
-            @in.Collect(doc);
-            if (++numCollected >= segmentTotalCollect)
+            m_in.Collect(doc);
+            if (++numCollected >= m_segmentTotalCollect)
             {
                 throw new CollectionTerminatedException();
             }
@@ -114,15 +114,15 @@ namespace Lucene.Net.Index.Sorter
 
         public virtual void SetNextReader(AtomicReaderContext context)
         {
-            @in.SetNextReader(context);
-            segmentSorted = SortingMergePolicy.IsSorted(context.AtomicReader, sort);
-            segmentTotalCollect = segmentSorted ? numDocsToCollect : int.MaxValue;
+            m_in.SetNextReader(context);
+            m_segmentSorted = SortingMergePolicy.IsSorted(context.AtomicReader, m_sort);
+            m_segmentTotalCollect = m_segmentSorted ? m_numDocsToCollect : int.MaxValue;
             numCollected = 0;
         }
 
         public virtual bool AcceptsDocsOutOfOrder
         {
-            get { return !segmentSorted && @in.AcceptsDocsOutOfOrder; }
+            get { return !m_segmentSorted && m_in.AcceptsDocsOutOfOrder; }
         }
     }
 }
