@@ -60,12 +60,12 @@ namespace Lucene.Net.Search.VectorHighlight
         /// </summary>
         public class WeightedFragInfo
         {
-            private List<SubInfo> subInfos;
+            private IList<SubInfo> subInfos;
             private float totalBoost;
             private int startOffset;
             private int endOffset;
 
-            public WeightedFragInfo(int startOffset, int endOffset, List<SubInfo> subInfos, float totalBoost)
+            public WeightedFragInfo(int startOffset, int endOffset, IList<SubInfo> subInfos, float totalBoost)
             {
                 this.startOffset = startOffset;
                 this.endOffset = endOffset;
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 this.subInfos = subInfos;
             }
 
-            public List<SubInfo> SubInfos
+            public IList<SubInfo> SubInfos
             {
                 get { return subInfos; }
             }
