@@ -66,7 +66,7 @@ namespace Lucene.Net.Index.Sorter
                 }
                 else
                 {
-                    return new SortingTerms(terms, infos.FieldInfo(field).IndexOptions, docMap);
+                    return new SortingTerms(terms, infos.FieldInfo(field).IndexOptions.GetValueOrDefault(), docMap);
                 }
             }
         }
@@ -75,10 +75,9 @@ namespace Lucene.Net.Index.Sorter
         {
 
             internal readonly Sorter.DocMap docMap;
-            internal readonly IndexOptions? indexOptions;
+            internal readonly IndexOptions indexOptions;
 
-            // LUCENENET TODO: Make the IndexOptions non nullable
-            public SortingTerms(Terms input, IndexOptions? indexOptions, Sorter.DocMap docMap) : base(input)
+            public SortingTerms(Terms input, IndexOptions indexOptions, Sorter.DocMap docMap) : base(input)
             {
                 this.docMap = docMap;
                 this.indexOptions = indexOptions;
@@ -99,9 +98,9 @@ namespace Lucene.Net.Index.Sorter
         {
 
             internal readonly Sorter.DocMap docMap; // pkg-protected to avoid synthetic accessor methods
-            internal readonly IndexOptions? indexOptions;
+            internal readonly IndexOptions indexOptions;
 
-            public SortingTermsEnum(TermsEnum @in, Sorter.DocMap docMap, IndexOptions? indexOptions)
+            public SortingTermsEnum(TermsEnum @in, Sorter.DocMap docMap, IndexOptions indexOptions)
                 : base(@in)
             {
                 this.docMap = docMap;
@@ -159,7 +158,7 @@ namespace Lucene.Net.Index.Sorter
                 }
 
                 DocsEnum inDocs = m_input.Docs(NewToOld(liveDocs), inReuse, flags);
-                bool withFreqs = indexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0 && (flags & DocsEnum.FLAG_FREQS) != 0;
+                bool withFreqs = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0 && (flags & DocsEnum.FLAG_FREQS) != 0;
                 return new SortingDocsEnum(docMap.Count, wrapReuse, inDocs, withFreqs, docMap);
             }
 
@@ -190,7 +189,7 @@ namespace Lucene.Net.Index.Sorter
                 // since this code is expected to be used during addIndexes which will
                 // ask for everything. if that assumption changes in the future, we can
                 // factor in whether 'flags' says offsets are not required.
-                bool storeOffsets = indexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                bool storeOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 return new SortingDocsAndPositionsEnum(docMap.Count, wrapReuse, inDocsAndPositions, docMap, storeOffsets);
             }
         }
