@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Pl
         {
             CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("studenta"), false); ;
             Analyzer a = new PolishAnalyzer(TEST_VERSION_CURRENT,
-                PolishAnalyzer.GetDefaultStopSet(), exclusionSet);
+                PolishAnalyzer.DefaultStopSet, exclusionSet);
             CheckOneTerm(a, "studenta", "studenta");
             CheckOneTerm(a, "studenci", "student");
         }
