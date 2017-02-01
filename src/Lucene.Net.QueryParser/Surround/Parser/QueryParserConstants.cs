@@ -22,17 +22,17 @@
         /// <summary>End of File. </summary>
         public const int EOF = 0;
         /// <summary>RegularExpression Id. </summary>
-        public const int _NUM_CHAR = 1;
+        public const int NUM_CHAR = 1; // LUCENENET specific: removed leading underscore to make CLS compliant
         /// <summary>RegularExpression Id. </summary>
-        public const int _TERM_CHAR = 2;
+        public const int TERM_CHAR = 2; // LUCENENET specific: removed leading underscore to make CLS compliant
         /// <summary>RegularExpression Id. </summary>
-        public const int _WHITESPACE = 3;
+        public const int WHITESPACE = 3; // LUCENENET specific: removed leading underscore to make CLS compliant
         /// <summary>RegularExpression Id. </summary>
-        public const int _STAR = 4;
+        public const int STAR = 4; // LUCENENET specific: removed leading underscore to make CLS compliant
         /// <summary>RegularExpression Id. </summary>
-        public const int _ONE_CHAR = 5;
+        public const int ONE_CHAR = 5; // LUCENENET specific: removed leading underscore to make CLS compliant
         /// <summary>RegularExpression Id. </summary>
-        public const int _DISTOP_NUM = 6;
+        public const int DISTOP_NUM = 6; // LUCENENET specific: removed leading underscore to make CLS compliant
         /// <summary>RegularExpression Id. </summary>
         public const int OR = 8;
         /// <summary>RegularExpression Id. </summary>

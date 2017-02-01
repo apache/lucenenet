@@ -22,17 +22,17 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>End of File. </summary>
         public const int EOF = 0;
         /// <summary>RegularExpression Id. </summary>
-        public const int _NUM_CHAR = 1;
+        public const int NUM_CHAR = 1; // LUCENENET specific: removed leading underscore to make CLS compliant
         /// <summary>RegularExpression Id. </summary>
-        public const int _ESCAPED_CHAR = 2;
+        public const int ESCAPED_CHAR = 2; // LUCENENET specific: removed leading underscore to make CLS compliant
         /// <summary>RegularExpression Id. </summary>
-        public const int _TERM_START_CHAR = 3;
+        public const int TERM_START_CHAR = 3; // LUCENENET specific: removed leading underscore to make CLS compliant
         /// <summary>RegularExpression Id. </summary>
-        public const int _TERM_CHAR = 4;
+        public const int TERM_CHAR = 4; // LUCENENET specific: removed leading underscore to make CLS compliant
         /// <summary>RegularExpression Id. </summary>
-        public const int _WHITESPACE = 5;
+        public const int WHITESPACE = 5; // LUCENENET specific: removed leading underscore to make CLS compliant
         /// <summary>RegularExpression Id. </summary>
-        public const int _QUOTED_CHAR = 6;
+        public const int QUOTED_CHAR = 6; // LUCENENET specific: removed leading underscore to make CLS compliant
         /// <summary>RegularExpression Id. </summary>
         public const int AND = 8;
         /// <summary>RegularExpression Id. </summary>
