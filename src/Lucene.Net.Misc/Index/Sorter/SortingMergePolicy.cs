@@ -234,7 +234,6 @@ namespace Lucene.Net.Index.Sorter
             this.sort = sort;
         }
 
-        // LUCENENET TODO: Try to find a way to make MergeTrigger enumeration non-nullable (in core)
         public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)
         {
             return SortedMergeSpecification(@in.FindMerges(mergeTrigger, segmentInfos));
