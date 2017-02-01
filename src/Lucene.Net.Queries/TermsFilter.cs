@@ -55,7 +55,7 @@ namespace Lucene.Net.Queries
         /// Creates a new <see cref="TermsFilter"/> from the given list. The list
         /// can contain duplicate terms and multiple fields.
         /// </summary>
-        public TermsFilter(List<Term> terms)
+        public TermsFilter(IList<Term> terms)
             : this(new FieldAndTermEnumAnonymousInnerClassHelper(terms), terms.Count)
         {
         }
@@ -64,7 +64,7 @@ namespace Lucene.Net.Queries
         {            
             private IList<Term> terms;
 
-            public FieldAndTermEnumAnonymousInnerClassHelper(List<Term> terms)
+            public FieldAndTermEnumAnonymousInnerClassHelper(IList<Term> terms)
             {
                 if (!terms.Any())
                 {
@@ -94,7 +94,7 @@ namespace Lucene.Net.Queries
         /// Creates a new <see cref="TermsFilter"/> from the given <see cref="BytesRef"/> list for
         /// a single field.
         /// </summary>
-        public TermsFilter(string field, List<BytesRef> terms) // LUCENENET TODO: Change to IList<BytesRef>
+        public TermsFilter(string field, IList<BytesRef> terms)
             : this(new FieldAndTermEnumAnonymousInnerClassHelper2(field, terms), terms.Count)
         {
         }
@@ -103,7 +103,7 @@ namespace Lucene.Net.Queries
         {
             private IList<BytesRef> terms;
 
-            public FieldAndTermEnumAnonymousInnerClassHelper2(string field, List<BytesRef> terms)
+            public FieldAndTermEnumAnonymousInnerClassHelper2(string field, IList<BytesRef> terms)
                 : base(field)
             {
                 if (!terms.Any())
