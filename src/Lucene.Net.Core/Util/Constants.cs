@@ -1,6 +1,9 @@
 using Lucene.Net.Support;
 using System;
 using System.Reflection;
+#if NETSTANDARD
+using System.Runtime.InteropServices;
+#endif
 using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Util
