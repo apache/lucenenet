@@ -26,27 +26,28 @@ namespace Lucene.Net.Analysis.Cn
     /// Tokenize Chinese text as individual chinese characters.
     /// 
     /// <para>
-    /// The difference between ChineseTokenizer and
-    /// CJKTokenizer is that they have different
+    /// The difference between <see cref="ChineseTokenizer"/> and
+    /// <see cref="Cjk.CJKTokenizer"/> is that they have different
     /// token parsing logic.
     /// </para>
     /// <para>
     /// For example, if the Chinese text
     /// "C1C2C3C4" is to be indexed:
-    /// <ul>
-    /// <li>The tokens returned from ChineseTokenizer are C1, C2, C3, C4. 
-    /// <li>The tokens returned from the CJKTokenizer are C1C2, C2C3, C3C4.
-    /// </ul>
+    /// <list type="bullet">
+    ///     <item>The tokens returned from ChineseTokenizer are C1, C2, C3, C4.</item>
+    ///     <item>The tokens returned from the CJKTokenizer are C1C2, C2C3, C3C4.</item>
+    /// </list>
     /// </para>
     /// <para>
-    /// Therefore the index created by CJKTokenizer is much larger.
+    /// Therefore the index created by <see cref="CJKTokenizer"/> is much larger.
     /// </para>
     /// <para>
     /// The problem is that when searching for C1, C1C2, C1C3,
-    /// C4C2, C1C2C3 ... the ChineseTokenizer works, but the
-    /// CJKTokenizer will not work.
-    /// </para> </summary>
-    /// @deprecated (3.1) Use <seealso cref="StandardTokenizer"/> instead, which has the same functionality.
+    /// C4C2, C1C2C3 ... the <see cref="ChineseTokenizer"/> works, but the
+    /// <see cref="Cjk.CJKTokenizer"/> will not work.
+    /// </para> 
+    /// </summary>
+    /// @deprecated (3.1) Use <see cref="Standard.StandardTokenizer"/> instead, which has the same functionality.
     /// This filter will be removed in Lucene 5.0 
     [Obsolete("(3.1) Use StandardTokenizer instead, which has the same functionality.")]
     public sealed class ChineseTokenizer : Tokenizer
@@ -82,9 +83,8 @@ namespace Lucene.Net.Analysis.Cn
         private ICharTermAttribute termAtt;
         private IOffsetAttribute offsetAtt;
 
-        private void push(char c)
+        private void Push(char c)
         {
-
             if (length == 0) // start of token
             {
                 start = offset - 1;
@@ -93,9 +93,8 @@ namespace Lucene.Net.Analysis.Cn
 
         }
 
-        private bool flush()
+        private bool Flush()
         {
-
             if (length > 0)
             {
                 //System.out.println(new String(buffer, 0,
@@ -132,7 +131,7 @@ namespace Lucene.Net.Analysis.Cn
                 if (dataLen <= 0)
                 {
                     offset--;
-                    return flush();
+                    return Flush();
                 }
                 else
                 {
@@ -145,10 +144,10 @@ namespace Lucene.Net.Analysis.Cn
                     case UnicodeCategory.DecimalDigitNumber:
                     case UnicodeCategory.LowercaseLetter:
                     case UnicodeCategory.UppercaseLetter:
-                        push(c);
+                        Push(c);
                         if (length == MAX_WORD_LEN)
                         {
-                            return flush();
+                            return Flush();
                         }
                         break;
 
@@ -157,22 +156,22 @@ namespace Lucene.Net.Analysis.Cn
                         {
                             bufferIndex--;
                             offset--;
-                            return flush();
+                            return Flush();
                         }
-                        push(c);
-                        return flush();
+                        Push(c);
+                        return Flush();
 
                     default:
                         if (length > 0)
                         {
-                            return flush();
+                            return Flush();
                         }
                         break;
                 }
             }
         }
 
-        public override void End()
+        public override sealed void End()
         {
             base.End();
             // set final offset

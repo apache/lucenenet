@@ -22,14 +22,14 @@ namespace Lucene.Net.Analysis.Cn
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="ChineseFilter"/> </summary>
-    /// @deprecated Use <seealso cref="StopFilterFactory"/> instead. 
+    /// Factory for <see cref="ChineseFilter"/> </summary>
+    /// @deprecated Use <see cref="Core.StopFilterFactory"/> instead. 
     [Obsolete("Use StopFilterFactory instead.")]
     public class ChineseFilterFactory : TokenFilterFactory
     {
 
         /// <summary>
-        /// Creates a new ChineseFilterFactory </summary>
+        /// Creates a new <see cref="ChineseFilterFactory"/> </summary>
         public ChineseFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

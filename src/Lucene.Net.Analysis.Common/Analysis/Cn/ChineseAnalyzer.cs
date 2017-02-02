@@ -21,21 +21,22 @@ namespace Lucene.Net.Analysis.Cn
 	 */
 
     /// <summary>
-    /// An <seealso cref="Analyzer"/> that tokenizes text with <seealso cref="ChineseTokenizer"/> and
-    /// filters with <seealso cref="ChineseFilter"/> </summary>
-    /// @deprecated (3.1) Use <seealso cref="StandardAnalyzer"/> instead, which has the same functionality.
+    /// An <see cref="Analyzer"/> that tokenizes text with <see cref="ChineseTokenizer"/> and
+    /// filters with <see cref="ChineseFilter"/>
+    /// </summary>
+    /// @deprecated (3.1) Use <see cref="Standard.StandardAnalyzer"/> instead, which has the same functionality.
     /// This analyzer will be removed in Lucene 5.0 
     [Obsolete("(3.1) Use StandardAnalyzer instead, which has the same functionality.")]
     public sealed class ChineseAnalyzer : Analyzer
-    /// <summary>
-    /// Creates
-    /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-    /// used to tokenize all the text in the provided <seealso cref="Reader"/>.
-    /// </summary>
-    /// <returns> <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-    ///         built from a <seealso cref="ChineseTokenizer"/> filtered with
-    ///         <seealso cref="ChineseFilter"/> </returns>
     {
+        /// <summary>
+        /// Creates
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
+        /// </summary>
+        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from a <see cref="ChineseTokenizer"/> filtered with
+        ///         <see cref="ChineseFilter"/> </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new ChineseTokenizer(reader);

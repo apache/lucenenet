@@ -24,14 +24,14 @@ namespace Lucene.Net.Analysis.Cn
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="ChineseTokenizer"/> </summary>
-    /// @deprecated Use <seealso cref="org.apache.lucene.analysis.standard.StandardTokenizerFactory"/> instead. 
+    /// Factory for <see cref="ChineseTokenizer"/>
+    /// </summary>
+    /// @deprecated Use <see cref="Standard.StandardTokenizerFactory"/> instead. 
     [Obsolete("Use StandardTokenizerFactory instead.")]
     public class ChineseTokenizerFactory : TokenizerFactory
     {
-
         /// <summary>
-        /// Creates a new ChineseTokenizerFactory </summary>
+        /// Creates a new <see cref="ChineseTokenizerFactory"/> </summary>
         public ChineseTokenizerFactory(IDictionary<string, string> args)
               : base(args)
         {

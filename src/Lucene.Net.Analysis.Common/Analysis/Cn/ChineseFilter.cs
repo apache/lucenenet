@@ -25,28 +25,32 @@ namespace Lucene.Net.Analysis.Cn
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> with a stop word table.  
-    /// <ul>
-    /// <li>Numeric tokens are removed.
-    /// <li>English tokens must be larger than 1 character.
-    /// <li>One Chinese character as one Chinese word.
-    /// </ul>
+    /// A <see cref="TokenFilter"/> with a stop word table.  
+    /// <list type="bullet">
+    ///     <item>Numeric tokens are removed.</item>
+    ///     <item>English tokens must be larger than 1 character.</item>
+    ///     <item>One Chinese character as one Chinese word.</item>
+    /// </list>
     /// TO DO:
-    /// <ol>
-    /// <li>Add Chinese stop words, such as \ue400
-    /// <li>Dictionary based Chinese word extraction
-    /// <li>Intelligent Chinese word extraction
-    /// </ol>
+    /// <list type="number">
+    ///     <item>Add Chinese stop words, such as \ue400</item>
+    ///     <item>Dictionary based Chinese word extraction</item>
+    ///     <item>Intelligent Chinese word extraction</item>
+    /// </list>
     /// </summary>
-    /// @deprecated (3.1) Use <seealso cref="StopFilter"/> instead, which has the same functionality.
+    /// @deprecated (3.1) Use <see cref="Core.StopFilter"/> instead, which has the same functionality.
     /// This filter will be removed in Lucene 5.0 
     [Obsolete("(3.1) Use StopFilter instead, which has the same functionality.")]
     public sealed class ChineseFilter : TokenFilter
     {
-
         // Only English now, Chinese to be added later.
-        public static readonly string[] STOP_WORDS = new string[] { "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with" };
-
+        public static readonly string[] STOP_WORDS = new string[] {
+            "and", "are", "as", "at", "be", "but", "by",
+            "for", "if", "in", "into", "is", "it",
+            "no", "not", "of", "on", "or", "such",
+            "that", "the", "their", "then", "there", "these",
+            "they", "this", "to", "was", "will", "with"
+        };
 
         private CharArraySet stopTable;
 
@@ -55,13 +59,12 @@ namespace Lucene.Net.Analysis.Cn
         public ChineseFilter(TokenStream @in)
             : base(@in)
         {
-
             stopTable = new CharArraySet(LuceneVersion.LUCENE_CURRENT, Arrays.AsList(STOP_WORDS), false);
             termAtt = AddAttribute<ICharTermAttribute>();
         }
+
         public override bool IncrementToken()
         {
-
             while (m_input.IncrementToken())
             {
                 char[] text = termAtt.Buffer;
