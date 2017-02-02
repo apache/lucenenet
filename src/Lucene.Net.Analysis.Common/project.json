@@ -16,6 +16,9 @@
       ]
     },
     "compile": {
+      "includeFiles": [
+        "../IcuBreakIterator.cs"
+      ],
       "exclude": [
       ]
     }

@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace Lucene.Net.Search
+namespace Lucene.Net
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more

@@ -6,6 +6,13 @@
     "Lucene.Net.Analysis.Common": "4.8.0-alpha",
     "Lucene.Net.Queries": "4.8.0-alpha"
   },
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [
+        "../IcuBreakIterator.cs"
+      ]
+    }
+  },
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",
