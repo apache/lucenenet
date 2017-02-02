@@ -183,15 +183,15 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// this method is called by a consumer before it begins consumption using
-        /// <seealso cref="#IncrementToken()"/>.
-        /// <p>
+        /// This method is called by a consumer before it begins consumption using
+        /// <see cref="IncrementToken()"/>.
+        /// <para/>
         /// Resets this stream to a clean state. Stateful implementations must implement
         /// this method so that they can be reused, just as if they had been created fresh.
-        /// <p>
-        /// If you override this method, always call {@code super.reset()}, otherwise
-        /// some internal state will not be correctly reset (e.g., <seealso cref="Tokenizer"/> will
-        /// throw <seealso cref="IllegalStateException"/> on further usage).
+        /// <para/>
+        /// If you override this method, always call <c>base.Reset()</c>, otherwise
+        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
+        /// throw <see cref="InvalidOperationException"/> on further usage).
         /// </summary>
         public virtual void Reset()
         {

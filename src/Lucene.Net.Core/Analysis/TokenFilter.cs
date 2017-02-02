@@ -61,12 +61,21 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// {@inheritDoc}
-        /// <p>
-        /// <b>NOTE:</b>
-        /// The default implementation chains the call to the input TokenStream, so
-        /// be sure to call <code>super.reset()</code> when overriding this method.
+        /// This method is called by a consumer before it begins consumption using
+        /// <see cref="IncrementToken()"/>.
+        /// <para/>
+        /// Resets this stream to a clean state. Stateful implementations must implement
+        /// this method so that they can be reused, just as if they had been created fresh.
+        /// <para/>
+        /// If you override this method, always call <c>base.Reset()</c>, otherwise
+        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
+        /// throw <see cref="InvalidOperationException"/> on further usage).
         /// </summary>
+        /// <remarks>
+        /// <b>NOTE:</b>
+        /// The default implementation chains the call to the input <see cref="TokenStream"/>, so
+        /// be sure to call <c>base.Reset()</c> when overriding this method.
+        /// </remarks>
         public override void Reset()
         {
             m_input.Reset();

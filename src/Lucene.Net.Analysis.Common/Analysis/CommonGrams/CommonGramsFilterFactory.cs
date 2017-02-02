@@ -23,14 +23,15 @@ namespace Lucene.Net.Analysis.CommonGrams
      */
 
     /// <summary>
-    /// Constructs a <seealso cref="CommonGramsFilter"/>.
-    /// <pre class="prettyprint">
+    /// Constructs a <see cref="CommonGramsFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_cmmngrms" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.CommonGramsFilterFactory" words="commongramsstopwords.txt" ignoreCase="false"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class CommonGramsFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         private readonly bool ignoreCase;
 
         /// <summary>
-        /// Creates a new CommonGramsFilterFactory </summary>
+        /// Creates a new <see cref="CommonGramsFilterFactory"/> </summary>
         public CommonGramsFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

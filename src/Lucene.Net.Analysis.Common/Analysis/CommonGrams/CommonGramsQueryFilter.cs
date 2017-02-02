@@ -18,28 +18,26 @@ namespace Lucene.Net.Analysis.CommonGrams
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
- 
-    /// <summary>
-    /// Wrap a CommonGramsFilter optimizing phrase queries by only returning single
-    /// words when they are not a member of a bigram.
-    /// 
-    /// Example:
-    /// <ul>
-    /// <li>query input to CommonGramsFilter: "the rain in spain falls mainly"
-    /// <li>output of CommomGramsFilter/input to CommonGramsQueryFilter:
-    /// |"the, "the-rain"|"rain" "rain-in"|"in, "in-spain"|"spain"|"falls"|"mainly"
-    /// <li>output of CommonGramsQueryFilter:"the-rain", "rain-in" ,"in-spain",
-    /// "falls", "mainly"
-    /// </ul>
-    /// </summary>
 
-    /*
-     * See:http://hudson.zones.apache.org/hudson/job/Lucene-trunk/javadoc//all/org/apache/lucene/analysis/TokenStream.html and
-     * http://svn.apache.org/viewvc/lucene/dev/trunk/lucene/src/java/org/apache/lucene/analysis/package.html?revision=718798
-     */
+    /// <summary>
+    /// Wrap a <see cref="CommonGramsFilter"/> optimizing phrase queries by only returning single
+    /// words when they are not a member of a bigram.
+    /// <para/>
+    /// Example:
+    /// <list type="bullet">
+    ///     <item>query input to CommonGramsFilter: "the rain in spain falls mainly"</item>
+    ///     <item>output of CommomGramsFilter/input to CommonGramsQueryFilter:
+    ///     |"the, "the-rain"|"rain" "rain-in"|"in, "in-spain"|"spain"|"falls"|"mainly"</item>
+    ///     <item>output of CommonGramsQueryFilter:"the-rain", "rain-in" ,"in-spain",
+    ///     "falls", "mainly"</item>
+    /// </list>
+    /// </summary>
+    /// <remarks>
+    /// See:http://hudson.zones.apache.org/hudson/job/Lucene-trunk/javadoc//all/org/apache/lucene/analysis/TokenStream.html and
+    /// http://svn.apache.org/viewvc/lucene/dev/trunk/lucene/src/java/org/apache/lucene/analysis/package.html?revision=718798
+    /// </remarks>
     public sealed class CommonGramsQueryFilter : TokenFilter
     {
-
         private readonly ITypeAttribute typeAttribute;
         private readonly IPositionIncrementAttribute posIncAttribute;
 
@@ -59,8 +57,21 @@ namespace Lucene.Net.Analysis.CommonGrams
         }
 
         /// <summary>
-        /// {@inheritDoc}
+        /// This method is called by a consumer before it begins consumption using
+        /// <see cref="IncrementToken()"/>.
+        /// <para/>
+        /// Resets this stream to a clean state. Stateful implementations must implement
+        /// this method so that they can be reused, just as if they had been created fresh.
+        /// <para/>
+        /// If you override this method, always call <c>base.Reset()</c>, otherwise
+        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
+        /// throw <see cref="InvalidOperationException"/> on further usage).
         /// </summary>
+        /// <remarks>
+        /// <b>NOTE:</b>
+        /// The default implementation chains the call to the input <see cref="TokenStream"/>, so
+        /// be sure to call <c>base.Reset()</c> when overriding this method.
+        /// </remarks>
         public override void Reset()
         {
             base.Reset();
@@ -72,10 +83,10 @@ namespace Lucene.Net.Analysis.CommonGrams
         /// <summary>
         /// Output bigrams whenever possible to optimize queries. Only output unigrams
         /// when they are not a member of a bigram. Example:
-        /// <ul>
-        /// <li>input: "the rain in spain falls mainly"
-        /// <li>output:"the-rain", "rain-in" ,"in-spain", "falls", "mainly"
-        /// </ul>
+        /// <list type="bullet">
+        ///     <item>input: "the rain in spain falls mainly"</item>
+        ///     <item>output:"the-rain", "rain-in" ,"in-spain", "falls", "mainly"</item>
+        /// </list>
         /// </summary>
         public override bool IncrementToken()
         {
@@ -83,13 +94,13 @@ namespace Lucene.Net.Analysis.CommonGrams
             {
                 State current = CaptureState();
 
-                if (previous != null && !GramType)
+                if (previous != null && !IsGramType)
                 {
                     RestoreState(previous);
                     previous = current;
                     previousType = typeAttribute.Type;
 
-                    if (GramType)
+                    if (IsGramType)
                     {
                         posIncAttribute.PositionIncrement = 1;
                     }
@@ -109,7 +120,7 @@ namespace Lucene.Net.Analysis.CommonGrams
             RestoreState(previous);
             previous = null;
 
-            if (GramType)
+            if (IsGramType)
             {
                 posIncAttribute.PositionIncrement = 1;
             }
@@ -121,8 +132,8 @@ namespace Lucene.Net.Analysis.CommonGrams
         /// <summary>
         /// Convenience method to check if the current type is a gram type
         /// </summary>
-        /// <returns> {@code true} if the current type is a gram type, {@code false} otherwise </returns>
-        public bool GramType
+        /// <returns> <c>true</c> if the current type is a gram type, <c>false</c> otherwise </returns>
+        public bool IsGramType
         {
             get
             {

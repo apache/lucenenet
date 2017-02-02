@@ -21,28 +21,28 @@ namespace Lucene.Net.Analysis.CommonGrams
 
 
     /// <summary>
-    /// Construct <seealso cref="CommonGramsQueryFilter"/>.
+    /// Construct <see cref="CommonGramsQueryFilter"/>.
     /// 
-    /// <pre class="prettyprint">
+    /// <code>
     /// &lt;fieldType name="text_cmmngrmsqry" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.CommonGramsQueryFilterFactory" words="commongramsquerystopwords.txt" ignoreCase="false"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class CommonGramsQueryFilterFactory : CommonGramsFilterFactory
     {
-
         /// <summary>
-        /// Creates a new CommonGramsQueryFilterFactory </summary>
+        /// Creates a new <see cref="CommonGramsQueryFilterFactory"/> </summary>
         public CommonGramsQueryFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
         }
 
         /// <summary>
-        /// Create a CommonGramsFilter and wrap it with a CommonGramsQueryFilter
+        /// Create a <see cref="CommonGramsFilter"/> and wrap it with a <see cref="CommonGramsQueryFilter"/>
         /// </summary>
         public override TokenStream Create(TokenStream input)
         {

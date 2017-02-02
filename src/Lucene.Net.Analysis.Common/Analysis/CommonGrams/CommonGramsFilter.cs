@@ -31,15 +31,14 @@ namespace Lucene.Net.Analysis.CommonGrams
     /// <summary>
     /// Construct bigrams for frequently occurring terms while indexing. Single terms
     /// are still indexed too, with bigrams overlaid. This is achieved through the
-    /// use of <seealso cref="PositionIncrementAttribute#setPositionIncrement(int)"/>. Bigrams have a type
-    /// of <seealso cref="#GRAM_TYPE"/> Example:
-    /// <ul>
-    /// <li>input:"the quick brown fox"</li>
-    /// <li>output:|"the","the-quick"|"brown"|"fox"|</li>
-    /// <li>"the-quick" has a position increment of 0 so it is in the same position
-    /// as "the" "the-quick" has a term.type() of "gram"</li>
-    /// 
-    /// </ul>
+    /// use of <see cref="PositionIncrementAttribute.PositionIncrement"/>. Bigrams have a type
+    /// of <see cref="GRAM_TYPE"/> Example:
+    /// <list type="bullet">
+    ///     <item>input:"the quick brown fox"</item>
+    ///     <item>output:|"the","the-quick"|"brown"|"fox"|</item>
+    ///     <item>"the-quick" has a position increment of 0 so it is in the same position
+    /// as "the" "the-quick" has a term.type() of "gram"</item>
+    /// </list>
     /// </summary>
 
     /*
@@ -47,7 +46,6 @@ namespace Lucene.Net.Analysis.CommonGrams
      */
     public sealed class CommonGramsFilter : TokenFilter
     {
-
         public const string GRAM_TYPE = "gram";
         private const char SEPARATOR = '_';
 
@@ -71,7 +69,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         /// bigrams with position increment 0 type=gram where one or both of the words
         /// in a potential bigram are in the set of common words .
         /// </summary>
-        /// <param name="input"> TokenStream input in filter chain </param>
+        /// <param name="input"> <see cref="TokenStream"/> input in filter chain </param>
         /// <param name="commonWords"> The set of common words. </param>
         public CommonGramsFilter(LuceneVersion matchVersion, TokenStream input, CharArraySet commonWords)
             : base(input)
@@ -89,11 +87,11 @@ namespace Lucene.Net.Analysis.CommonGrams
         /// output the token. If the token and/or the following token are in the list
         /// of common words also output a bigram with position increment 0 and
         /// type="gram"
-        /// 
+        /// <para/>
         /// TODO:Consider adding an option to not emit unigram stopwords
-        /// as in CDL XTF BigramStopFilter, CommonGramsQueryFilter would need to be
+        /// as in CDL XTF BigramStopFilter, <see cref="CommonGramsQueryFilter"/> would need to be
         /// changed to work with this.
-        /// 
+        /// <para/>
         /// TODO: Consider optimizing for the case of three
         /// commongrams i.e "man of the year" normally produces 3 bigrams: "man-of",
         /// "of-the", "the-year" but with proper management of positions we could
@@ -119,7 +117,7 @@ namespace Lucene.Net.Analysis.CommonGrams
              * When valid, the buffer always contains at least the separator.
              * If its empty, there is nothing before this stopword.
              */
-            if (lastWasCommon || (Common && buffer.Length > 0))
+            if (lastWasCommon || (IsCommon && buffer.Length > 0))
             {
                 savedState = CaptureState();
                 GramToken();
@@ -131,8 +129,21 @@ namespace Lucene.Net.Analysis.CommonGrams
         }
 
         /// <summary>
-        /// {@inheritDoc}
+        /// This method is called by a consumer before it begins consumption using
+        /// <see cref="IncrementToken()"/>.
+        /// <para/>
+        /// Resets this stream to a clean state. Stateful implementations must implement
+        /// this method so that they can be reused, just as if they had been created fresh.
+        /// <para/>
+        /// If you override this method, always call <c>base.Reset()</c>, otherwise
+        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
+        /// throw <see cref="System.InvalidOperationException"/> on further usage).
         /// </summary>
+        /// <remarks>
+        /// <b>NOTE:</b>
+        /// The default implementation chains the call to the input <see cref="TokenStream"/>, so
+        /// be sure to call <c>base.Reset()</c> when overriding this method.
+        /// </remarks>
         public override void Reset()
         {
             base.Reset();
@@ -146,8 +157,8 @@ namespace Lucene.Net.Analysis.CommonGrams
         /// <summary>
         /// Determines if the current token is a common term
         /// </summary>
-        /// <returns> {@code true} if the current token is a common term, {@code false} otherwise </returns>
-        private bool Common
+        /// <returns> <c>true</c> if the current token is a common term, <c>false</c> otherwise </returns>
+        private bool IsCommon
         {
             get
             {
@@ -164,7 +175,7 @@ namespace Lucene.Net.Analysis.CommonGrams
             buffer.Append(termAttribute.Buffer, 0, termAttribute.Length);
             buffer.Append(SEPARATOR);
             lastStartOffset = offsetAttribute.StartOffset;
-            lastWasCommon = Common;
+            lastWasCommon = IsCommon;
         }
 
         /// <summary>
