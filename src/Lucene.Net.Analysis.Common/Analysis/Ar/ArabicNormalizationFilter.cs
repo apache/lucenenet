@@ -20,10 +20,8 @@ namespace Lucene.Net.Analysis.Ar
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="ArabicNormalizer"/> to normalize the orthography.
-    /// 
+    /// A <see cref="TokenFilter"/> that applies <see cref="ArabicNormalizer"/> to normalize the orthography.
     /// </summary>
-
     public sealed class ArabicNormalizationFilter : TokenFilter
     {
         private readonly ArabicNormalizer normalizer = new ArabicNormalizer();

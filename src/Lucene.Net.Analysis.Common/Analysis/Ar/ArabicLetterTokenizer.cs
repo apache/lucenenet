@@ -31,52 +31,54 @@ namespace Lucene.Net.Analysis.Ar
     /// Handling similar to this is necessary for Indic Scripts, Hebrew, Thaana, etc.
     /// </para>
     /// <para>
-    /// <a name="version"/>
-    /// You must specify the required <seealso cref="Version"/> compatibility when creating
-    /// <seealso cref="ArabicLetterTokenizer"/>:
-    /// <ul>
-    /// <li>As of 3.1, <seealso cref="CharTokenizer"/> uses an int based API to normalize and
-    /// detect token characters. See <seealso cref="#isTokenChar(int)"/> and
-    /// <seealso cref="#normalize(int)"/> for details.</li>
-    /// </ul>
+    /// <paramref name="matchVersion"/>
+    /// You must specify the required <see cref="LuceneVersion"/> compatibility when creating
+    /// <see cref="ArabicLetterTokenizer"/>:
+    /// <list type="bullet">
+    /// <item>As of 3.1, <see cref="Util.CharTokenizer"/> uses an int based API to normalize and
+    /// detect token characters. See <see cref="IsTokenChar(int)"/> and
+    /// <see cref="Util.CharTokenizer.Normalize(int)"/> for details.</item>
+    /// </list>
     /// </para>
     /// </summary>
-    /// @deprecated (3.1) Use <seealso cref="StandardTokenizer"/> instead. 
+    /// @deprecated (3.1) Use <see cref="Standard.StandardTokenizer"/> instead. 
     [Obsolete("(3.1) Use StandardTokenizer instead.")]
-	public class ArabicLetterTokenizer : LetterTokenizer
-	{
-	  /// <summary>
-	  /// Construct a new ArabicLetterTokenizer. </summary>
-	  /// <param name="matchVersion"> Lucene version
-	  /// to match See <seealso cref="<a href="#version">above</a>"/>
-	  /// </param>
-	  /// <param name="in">
-	  ///          the input to split up into tokens </param>
-	  public ArabicLetterTokenizer(LuceneVersion matchVersion, TextReader @in) 
-            : base(matchVersion, @in)
-	  {
-	  }
+    public class ArabicLetterTokenizer : LetterTokenizer
+    {
+        /// <summary>
+        /// Construct a new ArabicLetterTokenizer. </summary>
+        /// <param name="matchVersion"> Lucene version
+        /// to match See <seealso cref="<a href="#version">above</a>"/>
+        /// </param>
+        /// <param name="in">
+        ///          the input to split up into tokens </param>
+        public ArabicLetterTokenizer(LuceneVersion matchVersion, TextReader @in)
+              : base(matchVersion, @in)
+        {
+        }
 
-	  /// <summary>
-	  /// Construct a new ArabicLetterTokenizer using a given
-	  /// <seealso cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/>. * @param
-	  /// matchVersion Lucene version to match See
-	  /// <seealso cref="<a href="#version">above</a>"/>
-	  /// </summary>
-	  /// <param name="factory">
-	  ///          the attribute factory to use for this Tokenizer </param>
-	  /// <param name="in">
-	  ///          the input to split up into tokens </param>
-	  public ArabicLetterTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader @in) 
+        /// <summary>
+        /// Construct a new <see cref="ArabicLetterTokenizer"/> using a given
+        /// <see cref="AttributeSource.AttributeFactory"/>. 
+        /// </summary>
+        /// <param name="matchVersion">
+        ///         matchVersion Lucene version to match See
+        ///         <see cref="LuceneVersion"/>.
+        /// </param>
+        /// <param name="factory">
+        ///          the attribute factory to use for this Tokenizer </param>
+        /// <param name="in">
+        ///          the input to split up into tokens </param>
+        public ArabicLetterTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader @in)
             : base(matchVersion, factory, @in)
-	  {
-	  }
+        {
+        }
 
-	  /// <summary>
-	  /// Allows for Letter category or NonspacingMark category </summary>
-	  /// <seealso cref= org.apache.lucene.analysis.core.LetterTokenizer#isTokenChar(int) </seealso>
-	  protected override bool IsTokenChar(int c)
-	  {
+        /// <summary>
+        /// Allows for Letter category or NonspacingMark category </summary>
+        /// <seealso cref="LetterTokenizer.IsTokenChar(int)"/>
+        protected override bool IsTokenChar(int c)
+        {
             return base.IsTokenChar(c) || Character.GetType(c) == UnicodeCategory.NonSpacingMark;
         }
     }

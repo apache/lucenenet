@@ -20,18 +20,15 @@ namespace Lucene.Net.Analysis.Ar
 	 */
 
     /// <summary>
-    ///  Stemmer for Arabic.
-    ///  <para>
-    ///  Stemming  is done in-place for efficiency, operating on a termbuffer.
-    /// </para>
-    ///  <para>
-    ///  Stemming is defined as:
-    ///  <ul>
-    ///  <li> Removal of attached definite article, conjunction, and prepositions.
-    ///  <li> Stemming of common suffixes.
-    /// </ul>
-    /// 
-    /// </para>
+    /// Stemmer for Arabic.
+    /// <para/>
+    /// Stemming is done in-place for efficiency, operating on a termbuffer.
+    /// <para/>
+    /// Stemming is defined as:
+    /// <list type="bullet">
+    ///     <item> Removal of attached definite article, conjunction, and prepositions.</item>
+    ///     <item> Stemming of common suffixes.</item>
+    /// </list>
     /// </summary>
     public class ArabicStemmer
     {

@@ -24,24 +24,24 @@ namespace Lucene.Net.Analysis.Ar
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="ArabicLetterTokenizer"/> </summary>
+    /// Factory for <see cref="ArabicLetterTokenizer"/> </summary>
     /// @deprecated (3.1) Use StandardTokenizerFactory instead.
     ///  
     [Obsolete("(3.1) Use StandardTokenizerFactory instead.")]
-	public class ArabicLetterTokenizerFactory : TokenizerFactory
-	{
+    public class ArabicLetterTokenizerFactory : TokenizerFactory
+    {
 
-	  /// <summary>
-	  /// Creates a new ArabicNormalizationFilterFactory </summary>
-	  public ArabicLetterTokenizerFactory(IDictionary<string, string> args) 
-            : base(args)
-	  {
-		AssureMatchVersion();
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
+        /// <summary>
+        /// Creates a new <see cref="ArabicNormalizationFilterFactory"/> </summary>
+        public ArabicLetterTokenizerFactory(IDictionary<string, string> args)
+              : base(args)
+        {
+            AssureMatchVersion();
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {

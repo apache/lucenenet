@@ -27,23 +27,20 @@ namespace Lucene.Net.Analysis.Ar
 	 */
 
     /// <summary>
-    /// <seealso cref="Analyzer"/> for Arabic. 
-    /// <para>
+    /// <see cref="Analyzer"/> for Arabic. 
+    /// <para/>
     /// This analyzer implements light-stemming as specified by:
-    /// <i>
+    /// <c>
     /// Light Stemming for Arabic Information Retrieval
-    /// </i>    
+    /// </c>    
     /// http://www.mtholyoke.edu/~lballest/Pubs/arab_stem05.pdf
-    /// </para>
-    /// <para>
+    /// <para/>
     /// The analysis package contains three primary components:
-    /// <ul>
-    ///  <li><seealso cref="ArabicNormalizationFilter"/>: Arabic orthographic normalization.
-    ///  <li><seealso cref="ArabicStemFilter"/>: Arabic light stemming
-    ///  <li>Arabic stop words file: a set of default Arabic stop words.
-    /// </ul>
-    /// 
-    /// </para>
+    /// <list type="bullet">
+    ///     <item><see cref="ArabicNormalizationFilter"/>: Arabic orthographic normalization.</item>
+    ///     <item><see cref="ArabicStemFilter"/>: Arabic light stemming</item>
+    ///     <item>Arabic stop words file: a set of default Arabic stop words.</item>
+    /// </list>
     /// </summary>
     public sealed class ArabicAnalyzer : StopwordAnalyzerBase
     {
@@ -94,7 +91,7 @@ namespace Lucene.Net.Analysis.Ar
         private readonly CharArraySet stemExclusionSet;
 
         /// <summary>
-        /// Builds an analyzer with the default stop words: <seealso cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public ArabicAnalyzer(LuceneVersion matchVersion)
               : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
@@ -115,8 +112,8 @@ namespace Lucene.Net.Analysis.Ar
 
         /// <summary>
         /// Builds an analyzer with the given stop word. If a none-empty stem exclusion set is
-        /// provided this analyzer will add a <seealso cref="SetKeywordMarkerFilter"/> before
-        /// <seealso cref="ArabicStemFilter"/>.
+        /// provided this analyzer will add a <see cref="SetKeywordMarkerFilter"/> before
+        /// <see cref="ArabicStemFilter"/>.
         /// </summary>
         /// <param name="matchVersion">
         ///          lucene compatibility version </param>
@@ -131,15 +128,14 @@ namespace Lucene.Net.Analysis.Ar
         }
 
         /// <summary>
-        /// Creates
-        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <seealso cref="Reader"/>.
+        /// Creates <see cref="Analyzer.TokenStreamComponents"/>
+        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
-        /// <returns> <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        ///         built from an <seealso cref="StandardTokenizer"/> filtered with
-        ///         <seealso cref="LowerCaseFilter"/>, <seealso cref="StopFilter"/>,
-        ///         <seealso cref="ArabicNormalizationFilter"/>, <seealso cref="SetKeywordMarkerFilter"/>
-        ///         if a stem exclusion set is provided and <seealso cref="ArabicStemFilter"/>. </returns>
+        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from an <see cref="StandardTokenizer"/> filtered with
+        ///         <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,
+        ///         <see cref="ArabicNormalizationFilter"/>, <see cref="SetKeywordMarkerFilter"/>
+        ///         if a stem exclusion set is provided and <see cref="ArabicStemFilter"/>. </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
 #pragma warning disable 612, 618

@@ -21,20 +21,21 @@ namespace Lucene.Net.Analysis.Ar
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="ArabicNormalizationFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="ArabicNormalizationFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_arnormal" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.ArabicNormalizationFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class ArabicNormalizationFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
 
         /// <summary>
-        /// Creates a new ArabicNormalizationFilterFactory </summary>
+        /// Creates a new <see cref="ArabicNormalizationFilterFactory"/> </summary>
         public ArabicNormalizationFilterFactory(IDictionary<string, string> args)
               : base(args)
         {

@@ -20,14 +20,13 @@ namespace Lucene.Net.Analysis.Ar
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="ArabicStemmer"/> to stem Arabic words..
-    /// <para>
+    /// A <see cref="TokenFilter"/> that applies <see cref="ArabicStemmer"/> to stem Arabic words..
+    /// <para/>
     /// To prevent terms from being stemmed use an instance of
-    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
-    /// </para> </summary>
-    /// <seealso cref= SetKeywordMarkerFilter  </seealso>
-
+    /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// the <see cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// </summary>
+    /// <seealso cref="Miscellaneous.SetKeywordMarkerFilter"/>
     public sealed class ArabicStemFilter : TokenFilter
     {
         private readonly ArabicStemmer stemmer = new ArabicStemmer();

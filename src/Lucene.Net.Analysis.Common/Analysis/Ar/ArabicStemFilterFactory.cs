@@ -21,21 +21,22 @@ namespace Lucene.Net.Analysis.Ar
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="ArabicStemFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="ArabicStemFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_arstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.ArabicNormalizationFilterFactory"/&gt;
     ///     &lt;filter class="solr.ArabicStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class ArabicStemFilterFactory : TokenFilterFactory
     {
 
         /// <summary>
-        /// Creates a new ArabicStemFilterFactory </summary>
+        /// Creates a new <see cref="ArabicStemFilterFactory"/> </summary>
         public ArabicStemFilterFactory(IDictionary<string, string> args)
               : base(args)
         {
