@@ -28,6 +28,13 @@
           "type": "platform",
           "version": "1.0.1"
         }
+      },
+      "buildOptions": {
+        "compile": {
+          "excludeFiles": [
+            "TestApiConsistency.cs"
+          ]
+        }
       }
     }
   },

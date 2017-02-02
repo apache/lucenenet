@@ -5,7 +5,7 @@
     "NUnit": "3.5.0",
     "Lucene.Net.Analysis.Common": "4.8.0-alpha",
     "Lucene.Net.Codecs": "4.8.0-alpha",
-    "Lucene.Net.Tests": "4.8.0-alpha"
+    "Lucene.Net.TestFramework": "4.8.0-alpha"
   },
 
   "testRunner": "nunit",
@@ -13,7 +13,12 @@
   "frameworks": {
     "netcoreapp1.0": {
       "buildOptions": {
-        "define": [ "NETSTANDARD" ]
+        "define": [ "NETSTANDARD" ],
+        "compile": {
+          "excludeFiles": [
+            "TestApiConsistency.cs"
+          ]
+        }
       },
       "imports": "dnxcore50",
       "dependencies": {

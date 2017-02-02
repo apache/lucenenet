@@ -9,7 +9,7 @@
   },
   "buildOptions": {
     "embed": {
-      "includeFiles": [ 
+      "includeFiles": [
         "Queries/fuzzyTestData.txt"
       ]
     }
@@ -26,7 +26,12 @@
       },
       "imports": "dnxcore50",
       "buildOptions": {
-        "define": [ "FEATURE_EMBEDDED_RESOURCE" ]
+        "define": [ "FEATURE_EMBEDDED_RESOURCE" ],
+        "compile": {
+          "excludeFiles": [
+            "TestApiConsistency.cs"
+          ]
+        }
       }
     }
   },

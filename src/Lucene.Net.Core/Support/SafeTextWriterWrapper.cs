@@ -1,5 +1,8 @@
 ﻿using System;
 using System.IO;
+#if FEATURE_MARSHAL_BY_REF
+using System.Runtime.Remoting;
+#endif
 using System.Text;
 using System.Threading.Tasks;
 
@@ -64,15 +67,19 @@ namespace Lucene.Net.Support
             }
         }
 
+#if FEATURE_CLOSEABLE
         public override void Close()
         {
             Run(() => textWriter.Close());
         }
+#endif
 
+#if FEATURE_MARSHAL_BY_REF
         public override ObjRef CreateObjRef(Type requestedType)
         {
             return Run(() => textWriter.CreateObjRef(requestedType));
         }
+#endif
 
         public override bool Equals(object obj)
         {
@@ -94,10 +101,12 @@ namespace Lucene.Net.Support
             return Run(() => textWriter.GetHashCode());
         }
 
+#if FEATURE_LIFETIME_SERVICE
         public override object InitializeLifetimeService()
         {
             return Run(() => textWriter.InitializeLifetimeService());
         }
+#endif
 
         public override string ToString()
         {

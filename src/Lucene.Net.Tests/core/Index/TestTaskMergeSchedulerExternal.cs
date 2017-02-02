@@ -56,7 +56,7 @@ namespace Lucene.Net.Tests
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override void HandleMergeException(Exception t)
+            protected override void HandleMergeException(Exception t)
             {
                 OuterInstance.ExcCalled = true;
             }
@@ -109,7 +109,7 @@ namespace Lucene.Net.Tests
             public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
             {
                 MergePolicy.OneMerge merge = null;
-                while ((merge = writer.NextMerge) != null)
+                while ((merge = writer.GetNextMerge()) != null)
                 {
                     if (VERBOSE)
                     {
@@ -119,7 +119,7 @@ namespace Lucene.Net.Tests
                 }
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
             }
         }

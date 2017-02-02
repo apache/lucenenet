@@ -16,6 +16,7 @@
         "core/Util/Junitcompat"
       ],
       "excludeFiles": [
+        "core/TestApiConsistency.cs",
         "core/TestMergeSchedulerExternal.cs",
         "core/TestWorstCaseTestBehavior.cs",
         "core/Index/TestBackwardsCompatibility.cs",

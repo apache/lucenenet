@@ -107,7 +107,12 @@
   "frameworks": {
     "netcoreapp1.0": {
       "buildOptions": {
-        "define": [ "NETSTANDARD" ]
+        "define": [ "NETSTANDARD" ],
+        "compile": {
+          "excludeFiles": [
+            "TestApiConsistency.cs"
+          ]
+        }
       },
       "dependencies": {
         "Microsoft.NETCore.App": {

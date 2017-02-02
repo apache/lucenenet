@@ -6,18 +6,25 @@
     "Lucene.Net.Grouping": "4.8.0-alpha",
     "Lucene.Net.Join": "4.8.0-alpha",
     "Lucene.Net.TestFramework": "4.8.0-alpha",
-    "NUnit": "3.5.0",
+    "NUnit": "3.5.0"
   },
 
   "testRunner": "nunit",
-
+  
   "frameworks": {
     "netcoreapp1.0": {
       "imports": "dnxcore50",
-      "dependencies": { 
+      "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
           "version": "1.0.1"
+        }
+      },
+      "buildOptions": {
+        "compile": {
+          "excludeFiles": [
+            "TestApiConsistency.cs"
+          ]
         }
       }
     }

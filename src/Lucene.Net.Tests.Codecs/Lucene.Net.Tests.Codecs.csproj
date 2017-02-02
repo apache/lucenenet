@@ -81,10 +81,6 @@
       <Project>{b2c0d749-ce34-4f62-a15e-00cb2ff5ddb3}</Project>
       <Name>Lucene.Net.TestFramework</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Tests\Lucene.Net.Tests.csproj">
-      <Project>{de63db10-975f-460d-af85-572c17a91284}</Project>
-      <Name>Lucene.Net.Tests</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

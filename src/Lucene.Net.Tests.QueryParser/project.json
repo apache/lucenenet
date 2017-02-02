@@ -9,7 +9,6 @@
   },
 
   "testRunner": "nunit",
-
   "frameworks": {
     "netcoreapp1.0": {
       "imports": "dnxcore50",
@@ -22,13 +21,14 @@
       "buildOptions": {
         "compile": {
           "excludeFiles": [
-            "Xml/TestQueryTemplateManager.cs"
+            "Xml/TestQueryTemplateManager.cs",
+            "TestApiConsistency.cs"
           ]
         }
       }
     }
   },
-  
+
   "runtimes": {
     "win7-x86": {},
     "win7-x64": {}

@@ -19,7 +19,12 @@
   "frameworks": {
     "netcoreapp1.0": {
       "buildOptions": {
-        "define": [ "NETSTANDARD", "FEATURE_EMBEDDED_RESOURCE" ]
+        "define": [ "NETSTANDARD", "FEATURE_EMBEDDED_RESOURCE" ],
+        "compile": {
+          "excludeFiles": [
+            "TestApiConsistency.cs"
+          ]
+        }
       },
       "dependencies": {
         "Microsoft.NETCore.App": {

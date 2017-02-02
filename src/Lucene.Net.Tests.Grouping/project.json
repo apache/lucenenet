@@ -20,7 +20,12 @@
         }
       },
       "buildOptions": {
-        "define": [ "NETSTANDARD" ]
+        "define": [ "NETSTANDARD" ],
+        "compile": {
+          "excludeFiles": [
+            "TestApiConsistency.cs"
+          ]
+        }
       }
     }
   },

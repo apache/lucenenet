@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
         /// }
         /// </pre>
         /// </summary>
-        protected internal bool Verbose
+        protected bool Verbose
         {
             get { return _writer != null && _writer.infoStream.IsEnabled(COMPONENT_NAME); }
         }
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
         /// Outputs the given message - this method assumes <seealso cref="#verbose()"/> was
         /// called and returned true.
         /// </summary>
-        protected internal virtual void Message(string message)
+        protected virtual void Message(string message)
         {
             _writer.infoStream.Message(COMPONENT_NAME, message);
         }
@@ -357,7 +357,7 @@ namespace Lucene.Net.Index
         /// Called when an exception is hit in a background merge
         ///  thread
         /// </summary>
-        protected internal virtual void HandleMergeException(Exception exc)
+        protected virtual void HandleMergeException(Exception exc)
         {
             // suppressExceptions is normally only set during testing
             if (suppressExceptions)
