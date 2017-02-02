@@ -21,21 +21,22 @@ namespace Lucene.Net.Analysis.Bg
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="BulgarianStemFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="BulgarianStemFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_bgstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
     ///     &lt;filter class="solr.BulgarianStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class BulgarianStemFilterFactory : TokenFilterFactory
     {
 
         /// <summary>
-        /// Creates a new BulgarianStemFilterFactory </summary>
+        /// Creates a new <see cref="BulgarianStemFilterFactory"/> </summary>
         public BulgarianStemFilterFactory(IDictionary<string, string> args)
               : base(args)
         {

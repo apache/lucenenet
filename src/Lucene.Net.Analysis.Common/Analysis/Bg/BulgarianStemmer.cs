@@ -23,9 +23,9 @@ namespace Lucene.Net.Analysis.Bg
     /// Light Stemmer for Bulgarian.
     /// <para>
     /// Implements the algorithm described in:  
-    /// <i>
+    /// <c>
     /// Searching Strategies for the Bulgarian Language
-    /// </i>
+    /// </c>
     /// http://members.unine.ch/jacques.savoy/Papers/BUIR.pdf
     /// </para>
     /// </summary>

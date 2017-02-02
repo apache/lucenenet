@@ -26,13 +26,11 @@ namespace Lucene.Net.Analysis.Bg
 	 */
 
     /// <summary>
-    /// <seealso cref="Analyzer"/> for Bulgarian.
+    /// <see cref="Analyzer"/> for Bulgarian.
     /// <para>
     /// This analyzer implements light-stemming as specified by: <i> Searching
     /// Strategies for the Bulgarian Language </i>
     /// http://members.unine.ch/jacques.savoy/Papers/BUIR.pdf
-    /// </para>
-    /// <para>
     /// </para>
     /// </summary>
     public sealed class BulgarianAnalyzer : StopwordAnalyzerBase
@@ -86,7 +84,7 @@ namespace Lucene.Net.Analysis.Bg
 
         /// <summary>
         /// Builds an analyzer with the default stop words:
-        /// <seealso cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public BulgarianAnalyzer(LuceneVersion matchVersion)
               : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
@@ -103,8 +101,8 @@ namespace Lucene.Net.Analysis.Bg
 
         /// <summary>
         /// Builds an analyzer with the given stop words and a stem exclusion set.
-        /// If a stem exclusion set is provided this analyzer will add a <seealso cref="SetKeywordMarkerFilter"/> 
-        /// before <seealso cref="BulgarianStemFilter"/>.
+        /// If a stem exclusion set is provided this analyzer will add a <see cref="SetKeywordMarkerFilter"/> 
+        /// before <see cref="BulgarianStemFilter"/>.
         /// </summary>
         public BulgarianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
               : base(matchVersion, stopwords)
@@ -114,15 +112,15 @@ namespace Lucene.Net.Analysis.Bg
 
         /// <summary>
         /// Creates a
-        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        /// which tokenizes all the text in the provided <seealso cref="Reader"/>.
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// which tokenizes all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> A
-        ///         <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        ///         built from an <seealso cref="StandardTokenizer"/> filtered with
-        ///         <seealso cref="StandardFilter"/>, <seealso cref="LowerCaseFilter"/>, <seealso cref="StopFilter"/>
-        ///         , <seealso cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
-        ///         provided and <seealso cref="BulgarianStemFilter"/>. </returns>
+        ///         <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from an <see cref="StandardTokenizer"/> filtered with
+        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>, 
+        ///         <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
+        ///         provided and <see cref="BulgarianStemFilter"/>. </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new StandardTokenizer(m_matchVersion, reader);
