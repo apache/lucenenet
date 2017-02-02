@@ -21,21 +21,21 @@ namespace Lucene.Net.Analysis.Cz
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="CzechStemFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="CzechStemFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_czstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
     ///     &lt;filter class="solr.CzechStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class CzechStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new CzechStemFilterFactory </summary>
+        /// Creates a new <see cref="CzechStemFilterFactory"/> </summary>
         public CzechStemFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

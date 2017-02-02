@@ -20,15 +20,15 @@ namespace Lucene.Net.Analysis.Cz
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="CzechStemmer"/> to stem Czech words.
+    /// A <see cref="TokenFilter"/> that applies <see cref="CzechStemmer"/> to stem Czech words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para>
     /// <para><b>NOTE</b>: Input is expected to be in lowercase, 
     /// but with diacritical marks</para> </summary>
-    /// <seealso cref= SetKeywordMarkerFilter </seealso>
+    /// <seealso cref="Miscellaneous.SetKeywordMarkerFilter"/>
     public sealed class CzechStemFilter : TokenFilter
     {
         private readonly CzechStemmer stemmer = new CzechStemmer();
@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Cz
         private readonly IKeywordAttribute keywordAttr;
 
         public CzechStemFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();

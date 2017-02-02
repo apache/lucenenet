@@ -23,9 +23,9 @@ namespace Lucene.Net.Analysis.Cz
     /// Light Stemmer for Czech.
     /// <para>
     /// Implements the algorithm described in:  
-    /// <i>
+    /// <c>
     /// Indexing and stemming approaches for the Czech language
-    /// </i>
+    /// </c>
     /// http://portal.acm.org/citation.cfm?id=1598600
     /// </para>
     /// </summary>
@@ -33,13 +33,12 @@ namespace Lucene.Net.Analysis.Cz
     {
         /// <summary>
         /// Stem an input buffer of Czech text.
+        /// <para><b>NOTE</b>: Input is expected to be in lowercase, 
+        /// but with diacritical marks</para>
         /// </summary>
         /// <param name="s"> input buffer </param>
         /// <param name="len"> length of input buffer </param>
-        /// <returns> length of input buffer after normalization
-        /// 
-        /// <para><b>NOTE</b>: Input is expected to be in lowercase, 
-        /// but with diacritical marks</para> </returns>
+        /// <returns> length of input buffer after normalization</returns>
         public virtual int Stem(char[] s, int len)
         {
             len = RemoveCase(s, len);

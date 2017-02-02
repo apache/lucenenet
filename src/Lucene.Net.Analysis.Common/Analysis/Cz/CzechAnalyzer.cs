@@ -28,23 +28,21 @@ namespace Lucene.Net.Analysis.Cz
 	 */
 
     /// <summary>
-    /// <seealso cref="Analyzer"/> for Czech language.
+    /// <see cref="Analyzer"/> for Czech language.
     /// <para>
     /// Supports an external list of stopwords (words that will not be indexed at
     /// all). A default set of stopwords is used unless an alternative list is
     /// specified.
     /// </para>
-    /// 
-    /// <a name="version"/>
     /// <para>
-    /// You must specify the required <seealso cref="Version"/> compatibility when creating
-    /// CzechAnalyzer:
-    /// <ul>
-    /// <li>As of 3.1, words are stemmed with <seealso cref="CzechStemFilter"/>
-    /// <li>As of 2.9, StopFilter preserves position increments
-    /// <li>As of 2.4, Tokens incorrectly identified as acronyms are corrected (see
-    /// <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1068</a>)
-    /// </ul>
+    /// You must specify the required <see cref="LuceneVersion"/> compatibility when creating
+    /// <see cref="CzechAnalyzer"/>:
+    /// <list type="bullet">
+    ///     <item>As of 3.1, words are stemmed with <see cref="CzechStemFilter"/></item>
+    ///     <item>As of 2.9, StopFilter preserves position increments</item>
+    ///     <item>As of 2.4, Tokens incorrectly identified as acronyms are corrected (see
+    ///     <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1068</a>)</item>
+    /// </list>
     /// </para>
     /// </summary>
     public sealed class CzechAnalyzer : StopwordAnalyzerBase
@@ -94,10 +92,9 @@ namespace Lucene.Net.Analysis.Cz
         private readonly CharArraySet stemExclusionTable;
 
         /// <summary>
-        /// Builds an analyzer with the default stop words (<seealso cref="#getDefaultStopSet()"/>).
+        /// Builds an analyzer with the default stop words (<see cref="DefaultStopSet"/>).
         /// </summary>
-        /// <param name="matchVersion"> Lucene version to match See
-        ///          <seealso cref="<a href="#version">above</a>"/> </param>
+        /// <param name="matchVersion"> <see cref="LuceneVersion"/> to match </param>
         public CzechAnalyzer(LuceneVersion matchVersion)
               : this(matchVersion, DefaultSetHolder.DEFAULT_SET)
         {
@@ -106,8 +103,7 @@ namespace Lucene.Net.Analysis.Cz
         /// <summary>
         /// Builds an analyzer with the given stop words.
         /// </summary>
-        /// <param name="matchVersion"> Lucene version to match See
-        ///          <seealso cref="<a href="#version">above</a>"/> </param>
+        /// <param name="matchVersion"> <see cref="LuceneVersion"/> to match </param>
         /// <param name="stopwords"> a stopword set </param>
         public CzechAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
               : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
@@ -116,10 +112,9 @@ namespace Lucene.Net.Analysis.Cz
 
         /// <summary>
         /// Builds an analyzer with the given stop words and a set of work to be
-        /// excluded from the <seealso cref="CzechStemFilter"/>.
+        /// excluded from the <see cref="CzechStemFilter"/>.
         /// </summary>
-        /// <param name="matchVersion"> Lucene version to match See
-        ///          <seealso cref="<a href="#version">above</a>"/> </param>
+        /// <param name="matchVersion"> <see cref="LuceneVersion"/> to match </param>
         /// <param name="stopwords"> a stopword set </param>
         /// <param name="stemExclusionTable"> a stemming exclusion set </param>
         public CzechAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionTable)
@@ -130,17 +125,17 @@ namespace Lucene.Net.Analysis.Cz
 
         /// <summary>
         /// Creates
-        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <seealso cref="Reader"/>.
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
-        /// <returns> <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        ///         built from a <seealso cref="StandardTokenizer"/> filtered with
-        ///         <seealso cref="StandardFilter"/>, <seealso cref="LowerCaseFilter"/>, <seealso cref="StopFilter"/>
-        ///         , and <seealso cref="CzechStemFilter"/> (only if version is >= LUCENE_31). If
+        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from a <see cref="StandardTokenizer"/> filtered with
+        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,
+        ///         and <see cref="CzechStemFilter"/> (only if version is >= LUCENE_31). If
         ///         a version is >= LUCENE_31 and a stem exclusion set is provided via
-        ///         <seealso cref="#CzechAnalyzer(Version, CharArraySet, CharArraySet)"/> a
-        ///         <seealso cref="SetKeywordMarkerFilter"/> is added before
-        ///         <seealso cref="CzechStemFilter"/>. </returns>
+        ///         <see cref="CzechAnalyzer(LuceneVersion, CharArraySet, CharArraySet)"/> a
+        ///         <see cref="SetKeywordMarkerFilter"/> is added before
+        ///         <see cref="CzechStemFilter"/>. </returns>
 
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
