@@ -27,15 +27,15 @@ namespace Lucene.Net.Analysis.Br
 	 */
 
     /// <summary>
-    /// <seealso cref="Analyzer"/> for Brazilian Portuguese language. 
+    /// <see cref="Analyzer"/> for Brazilian Portuguese language. 
     /// <para>
     /// Supports an external list of stopwords (words that
     /// will not be indexed at all) and an external list of exclusions (words that will
     /// not be stemmed, but indexed).
     /// </para>
     /// 
-    /// <para><b>NOTE</b>: This class uses the same <seealso cref="Version"/>
-    /// dependent settings as <seealso cref="StandardAnalyzer"/>.</para>
+    /// <para><b>NOTE</b>: This class uses the same <see cref="LuceneVersion"/>
+    /// dependent settings as <see cref="StandardAnalyzer"/>.</para>
     /// </summary>
     public sealed class BrazilianAnalyzer : StopwordAnalyzerBase
     {
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Br
         private CharArraySet excltable = CharArraySet.EMPTY_SET;
 
         /// <summary>
-        /// Builds an analyzer with the default stop words (<seealso cref="#getDefaultStopSet()"/>).
+        /// Builds an analyzer with the default stop words (<see cref="DefaultStopSet"/>).
         /// </summary>
         public BrazilianAnalyzer(LuceneVersion matchVersion)
               : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
@@ -120,13 +120,13 @@ namespace Lucene.Net.Analysis.Br
 
         /// <summary>
         /// Creates
-        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <seealso cref="Reader"/>.
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
-        /// <returns> <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        ///         built from a <seealso cref="StandardTokenizer"/> filtered with
-        ///         <seealso cref="LowerCaseFilter"/>, <seealso cref="StandardFilter"/>, <seealso cref="StopFilter"/>
-        ///         , and <seealso cref="BrazilianStemFilter"/>. </returns>
+        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from a <see cref="StandardTokenizer"/> filtered with
+        ///         <see cref="LowerCaseFilter"/>, <see cref="StandardFilter"/>, <see cref="StopFilter"/>,
+        ///         and <see cref="BrazilianStemFilter"/>. </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new StandardTokenizer(m_matchVersion, reader);

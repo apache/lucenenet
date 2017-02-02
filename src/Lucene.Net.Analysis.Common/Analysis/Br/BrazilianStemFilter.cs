@@ -21,19 +21,19 @@ namespace Lucene.Net.Analysis.Br
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="BrazilianStemmer"/>.
+    /// A <see cref="TokenFilter"/> that applies <see cref="BrazilianStemmer"/>.
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
-    /// </para> </summary>
-    /// <seealso cref= SetKeywordMarkerFilter
-    ///  </seealso>
+    /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
+    /// </para>
+    /// </summary>
+    /// <seealso cref="Miscellaneous.SetKeywordMarkerFilter"/>
     public sealed class BrazilianStemFilter : TokenFilter
     {
 
         /// <summary>
-        /// <seealso cref="BrazilianStemmer"/> in use by this filter.
+        /// <see cref="BrazilianStemmer"/> in use by this filter.
         /// </summary>
         private BrazilianStemmer stemmer = new BrazilianStemmer();
         private HashSet<string> exclusions = null; // LUCENENET TODO: This is odd. No way to set it at all, so it cannot possibly have any values.
@@ -41,9 +41,9 @@ namespace Lucene.Net.Analysis.Br
         private readonly IKeywordAttribute keywordAttr;
 
         /// <summary>
-        /// Creates a new BrazilianStemFilter 
+        /// Creates a new <see cref="BrazilianStemFilter"/> 
         /// </summary>
-        /// <param name="in"> the source <seealso cref="TokenStream"/>  </param>
+        /// <param name="in"> the source <see cref="TokenStream"/>  </param>
         public BrazilianStemFilter(TokenStream @in)
               : base(@in)
         {

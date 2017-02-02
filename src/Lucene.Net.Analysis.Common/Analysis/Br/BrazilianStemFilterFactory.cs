@@ -21,21 +21,22 @@ namespace Lucene.Net.Analysis.Br
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="BrazilianStemFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="BrazilianStemFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_brstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
     ///     &lt;filter class="solr.BrazilianStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class BrazilianStemFilterFactory : TokenFilterFactory
     {
 
         /// <summary>
-        /// Creates a new BrazilianStemFilterFactory </summary>
+        /// Creates a new <see cref="BrazilianStemFilterFactory"/> </summary>
         public BrazilianStemFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

@@ -41,10 +41,10 @@ namespace Lucene.Net.Analysis.Br
         }
 
         /// <summary>
-        /// Stems the given term to an unique <tt>discriminator</tt>.
+        /// Stems the given term to an unique <c>discriminator</c>.
         /// </summary>
         /// <param name="term">  The term that should be stemmed. </param>
-        /// <returns>      Discriminator for <tt>term</tt> </returns>
+        /// <returns>Discriminator for <paramref name="term"/></returns>
         protected internal virtual string Stem(string term)
         {
             bool altered = false; // altered the term
@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Br
         /// <summary>
         /// Checks a term if it can be processed indexed.
         /// </summary>
-        /// <returns>  true if it can be indexed </returns>
+        /// <returns> true if it can be indexed </returns>
         private bool IsIndexable(string term)
         {
             return (term.Length < 30) && (term.Length > 2);
@@ -335,9 +335,9 @@ namespace Lucene.Net.Analysis.Br
         }
 
         /// <summary>
-        /// Replace a string suffix by another
+        /// Replace a <see cref="string"/> suffix by another
         /// </summary>
-        /// <returns> the replaced String </returns>
+        /// <returns> the replaced <see cref="string"/> </returns>
         private string ReplaceSuffix(string value, string toReplace, string changeTo)
         {
             string vvalue;
@@ -361,9 +361,9 @@ namespace Lucene.Net.Analysis.Br
         }
 
         /// <summary>
-        /// Remove a string suffix
+        /// Remove a <see cref="string"/> suffix
         /// </summary>
-        /// <returns> the String without the suffix </returns>
+        /// <returns> the <see cref="string"/> without the suffix </returns>
         private string RemoveSuffix(string value, string toRemove)
         {
             // be-safe !!!
@@ -376,7 +376,7 @@ namespace Lucene.Net.Analysis.Br
         }
 
         /// <summary>
-        /// See if a suffix is preceded by a String
+        /// See if a suffix is preceded by a <see cref="string"/>
         /// </summary>
         /// <returns> true if the suffix is preceded </returns>
         private bool SuffixPreceded(string value, string suffix, string preceded)
@@ -1292,7 +1292,6 @@ namespace Lucene.Net.Analysis.Br
 
         /// <summary>
         /// Delete suffix 'i' if in RV and preceded by 'c'
-        /// 
         /// </summary>
         private void Step3()
         {
@@ -1313,7 +1312,6 @@ namespace Lucene.Net.Analysis.Br
         /// 
         /// If the word ends with one of the suffixes (os a i o á í ó)
         /// in RV, delete it
-        /// 
         /// </summary>
         private void Step4()
         {
@@ -1351,7 +1349,6 @@ namespace Lucene.Net.Analysis.Br
         /// delete the 'u' (or 'i')
         /// 
         /// Or if the word ends ç remove the cedilha
-        /// 
         /// </summary>
         private void Step5()
         {
@@ -1384,7 +1381,7 @@ namespace Lucene.Net.Analysis.Br
         /// <summary>
         /// For log and debug purpose
         /// </summary>
-        /// <returns>  TERM, CT, RV, R1 and R2 </returns>
+        /// <returns> TERM, CT, RV, R1 and R2 </returns>
         public virtual string Log()
         {
             return " (TERM = " + TERM + ")" + " (CT = " + CT + ")" + " (RV = " + RV + ")" + " (R1 = " + R1 + ")" + " (R2 = " + R2 + ")";
