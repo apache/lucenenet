@@ -27,13 +27,12 @@ namespace Lucene.Net.Analysis.CharFilters
     // TODO: save/load?
 
     /// <summary>
-    /// Holds a map of String input to String output, to be used
-    /// with <seealso cref="Builder"/>.  Use the <seealso cref="MappingCharFilter"/>
+    /// Holds a map of <see cref="string"/> input to <see cref="string"/> output, to be used
+    /// with <see cref="Builder"/>.  Use the <see cref="MappingCharFilter"/>
     /// to create this.
     /// </summary>
     public class NormalizeCharMap
     {
-
         internal readonly FST<CharsRef> map;
         internal readonly IDictionary<char?, FST.Arc<CharsRef>> cachedRootArcs = new Dictionary<char?, FST.Arc<CharsRef>>();
 
@@ -82,8 +81,7 @@ namespace Lucene.Net.Analysis.CharFilters
         /// </summary>
         public class Builder
         {
-
-            internal readonly IDictionary<string, string> pendingPairs = new SortedDictionary<string, string>();
+            private readonly IDictionary<string, string> pendingPairs = new SortedDictionary<string, string>();
 
             /// <summary>
             /// Records a replacement to be applied to the input
@@ -115,7 +113,6 @@ namespace Lucene.Net.Analysis.CharFilters
             /// </summary>
             public virtual NormalizeCharMap Build()
             {
-
                 FST<CharsRef> map;
                 try
                 {

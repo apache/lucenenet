@@ -24,25 +24,25 @@ namespace Lucene.Net.Analysis.CharFilters
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="MappingCharFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="MappingCharFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_map" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;charFilter class="solr.MappingCharFilterFactory" mapping="mapping.txt"/&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// 
     /// @since Solr 1.4
     /// </summary>
     public class MappingCharFilterFactory : CharFilterFactory, IResourceLoaderAware, IMultiTermAwareComponent
     {
-
         protected internal NormalizeCharMap m_normMap;
         private readonly string mapping;
 
         /// <summary>
-        /// Creates a new MappingCharFilterFactory </summary>
+        /// Creates a new <see cref="MappingCharFilterFactory"/> </summary>
         public MappingCharFilterFactory(IDictionary<string, string> args) : base(args)
         {
             mapping = Get(args, "mapping");
@@ -92,10 +92,9 @@ namespace Lucene.Net.Analysis.CharFilters
         }
 
         // "source" => "target"
-        //internal static Pattern p = Pattern.compile("\"(.*)\"\\s*=>\\s*\"(.*)\"\\s*$");
-        internal static Regex p = new Regex(@"\""(.*)\""\\s*=>\\s*\""(.*)\""\\s*$", RegexOptions.Compiled);
+        private static Regex p = new Regex(@"\""(.*)\""\\s*=>\\s*\""(.*)\""\\s*$", RegexOptions.Compiled);
 
-        protected internal virtual void ParseRules(IList<string> rules, NormalizeCharMap.Builder builder)
+        protected virtual void ParseRules(IList<string> rules, NormalizeCharMap.Builder builder)
         {
             foreach (string rule in rules)
             {
@@ -108,7 +107,7 @@ namespace Lucene.Net.Analysis.CharFilters
             }
         }
 
-        internal char[] @out = new char[256];
+        private char[] @out = new char[256];
 
         protected internal virtual string ParseString(string s)
         {

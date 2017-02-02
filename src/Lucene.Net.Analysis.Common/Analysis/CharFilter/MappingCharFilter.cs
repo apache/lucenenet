@@ -26,8 +26,8 @@ namespace Lucene.Net.Analysis.CharFilters
 	 */
 
     /// <summary>
-    /// Simplistic <seealso cref="CharFilter"/> that applies the mappings
-    /// contained in a <seealso cref="NormalizeCharMap"/> to the character
+    /// Simplistic <see cref="CharFilter"/> that applies the mappings
+    /// contained in a <see cref="NormalizeCharMap"/> to the character
     /// stream, and correcting the resulting changes to the
     /// offsets.  Matching is greedy (longest pattern matching at
     /// a given point wins).  Replacement is allowed to be the
@@ -35,7 +35,6 @@ namespace Lucene.Net.Analysis.CharFilters
     /// </summary>
     public class MappingCharFilter : BaseCharFilter
     {
-
         private readonly Outputs<CharsRef> outputs = CharSequenceOutputs.Singleton;
         private readonly FST<CharsRef> map;
         private readonly FST.BytesReader fstReader;
@@ -48,13 +47,14 @@ namespace Lucene.Net.Analysis.CharFilters
         private int inputOff;
 
         /// <summary>
-        /// LUCENENET support to buffer the reader.
+        /// LUCENENET specific support to buffer the reader.
         /// </summary>
-        private BufferedCharFilter _input;
+        private readonly BufferedCharFilter _input;
 
         /// <summary>
-        /// Default constructor that takes a <seealso cref="TextReader"/>. </summary>
-        public MappingCharFilter(NormalizeCharMap normMap, TextReader @in) : base(@in)
+        /// Default constructor that takes a <see cref="TextReader"/>. </summary>
+        public MappingCharFilter(NormalizeCharMap normMap, TextReader @in) 
+            : base(@in)
         {
             //LUCENENET support to reset the reader.
             _input = GetBufferedReader(@in);
@@ -76,10 +76,10 @@ namespace Lucene.Net.Analysis.CharFilters
         }
 
         /// <summary>
-        /// LUCENENET: Copied this method from the WordlistLoader class - this class requires readers
-        /// with a Reset() method (which .NET readers don't support). So, we use the BufferedCharFilter 
+        /// LUCENENET: Copied this method from the <see cref="WordlistLoader"/> class - this class requires readers
+        /// with a Reset() method (which .NET readers don't support). So, we use the <see cref="BufferedCharFilter"/> 
         /// (which is similar to Java BufferedReader) as a wrapper for whatever reader the user passes 
-        /// (unless it is already a BufferedCharFilter).
+        /// (unless it is already a <see cref="BufferedCharFilter"/>).
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>

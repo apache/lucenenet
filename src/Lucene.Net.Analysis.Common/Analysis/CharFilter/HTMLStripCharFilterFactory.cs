@@ -23,22 +23,23 @@ namespace Lucene.Net.Analysis.CharFilters
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="HTMLStripCharFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="HTMLStripCharFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_html" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;charFilter class="solr.HTMLStripCharFilterFactory" escapedTags="a, title" /&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class HTMLStripCharFilterFactory : CharFilterFactory
     {
-        internal readonly ICollection<string> escapedTags;
-        internal static readonly Regex TAG_NAME_PATTERN = new Regex(@"[^\\s,]+", RegexOptions.Compiled);
+        private readonly ICollection<string> escapedTags;
+        private static readonly Regex TAG_NAME_PATTERN = new Regex(@"[^\\s,]+", RegexOptions.Compiled);
 
         /// <summary>
-        /// Creates a new HTMLStripCharFilterFactory </summary>
+        /// Creates a new <see cref="HTMLStripCharFilterFactory"/> </summary>
         public HTMLStripCharFilterFactory(IDictionary<string, string> args) : base(args)
         {
             escapedTags = GetSet(args, "escapedTags");

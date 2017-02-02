@@ -23,9 +23,9 @@ namespace Lucene.Net.Analysis.CharFilters
      */
 
     /// <summary>
-    /// Base utility class for implementing a <seealso cref="CharFilter"/>.
+    /// Base utility class for implementing a <see cref="CharFilter"/>.
     /// You subclass this, and then record mappings by calling
-    /// <seealso cref="#addOffCorrectMap"/>, and then invoke the correct
+    /// <see cref="AddOffCorrectMap"/>, and then invoke the correct
     /// method to correct an offset.
     /// </summary>
     public abstract class BaseCharFilter : CharFilter
@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.CharFilters
         private int[] diffs;
         private int size = 0;
 
-        protected BaseCharFilter(TextReader @in)
+        public BaseCharFilter(TextReader @in)
             : base(@in)
         {
         }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.CharFilters
             }
         }
 
-        protected internal virtual int LastCumulativeDiff
+        protected virtual int LastCumulativeDiff
         {
             get
             {
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.CharFilters
         /// <param name="off"> The output stream offset at which to apply the correction </param>
         /// <param name="cumulativeDiff"> The input offset is given by adding this
         ///                       to the output offset </param>
-        protected internal virtual void AddOffCorrectMap(int off, int cumulativeDiff)
+        protected virtual void AddOffCorrectMap(int off, int cumulativeDiff)
         {
             if (offsets == null)
             {

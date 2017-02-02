@@ -27,17 +27,17 @@ namespace Lucene.Net.Analysis.CharFilters
 	 */
 
     /// <summary>
-    /// A CharFilter that wraps another TextReader and attempts to strip out HTML constructs.
+    /// A <see cref="CharFilter"/> that wraps another <see cref="TextReader"/> and attempts to strip out HTML constructs.
     /// </summary>
-    public class HTMLStripCharFilter : BaseCharFilter
+    public sealed class HTMLStripCharFilter : BaseCharFilter
     {
-        /** This character denotes the end of file */
+        /// <summary>This character denotes the end of file</summary>
         private const int YYEOF = -1;
 
-        /** initial size of the lookahead buffer */
+        /// <summary>initial size of the lookahead buffer</summary>
         private const int ZZ_BUFFERSIZE = 16384;
 
-        /** lexical states */
+        // lexical states
         private const int YYINITIAL = 0;
         private const int AMPERSAND = 2;
         private const int NUMERIC_CHARACTER = 4;
@@ -62,21 +62,21 @@ namespace Lucene.Net.Analysis.CharFilters
         private const int STYLE = 42;
         private const int STYLE_COMMENT = 44;
 
-        /**
-         * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
-         * ZZ_LEXSTATE[l+1] is the state in the DFA for the lexical state l
-         *                  at the beginning of a line
-         * l is of the form l = 2*k, k a non negative integer
-         */
+        /// <summary>
+        /// ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
+        /// ZZ_LEXSTATE[l+1] is the state in the DFA for the lexical state l
+        ///     at the beginning of a line
+        /// l is of the form l = 2*k, k a non negative integer
+        /// </summary>
         private static readonly int[] ZZ_LEXSTATE = {
             0,  0,  1,  1,  2,  2,  3,  3,  4,  4,  5,  5,  6,  6,  7,  7,
             8,  8,  9,  9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
             16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22
         };
 
-        /** 
-         * Translates characters to character classes
-         */
+        /// <summary>
+        /// Translates characters to character classes
+        /// </summary>
         private const string ZZ_CMAP_PACKED =
             "\x0009\x0000\x0005\x0021\x0012\x0000\x0001\x0021\x0001\x001D\x0001\x001B\x0001\x001F\x0002\x0000\x0001\x00B6\x0001\x0019" +
             "\x0005\x0000\x0001\x001E\x0001\x0002\x0001\x00BE\x0001\x00B8\x0001\x003C\x0001\x003D\x0001\x003F\x0001\x003E\x0001\x00BA" +
@@ -2230,9 +2230,9 @@ namespace Lucene.Net.Analysis.CharFilters
             return j;
         }
 
-        /** 
-         * The transition table of the DFA
-         */
+        /// <summary>
+        /// The transition table of the DFA
+        /// </summary>
         private static readonly int[] ZZ_TRANS = ZzUnpackTrans();
 
         private const string ZZ_TRANS_PACKED_0 =
@@ -30492,21 +30492,21 @@ namespace Lucene.Net.Analysis.CharFilters
         }
 
 
-        /* error codes */
+        /// <summary>error codes</summary>
         private static readonly int ZZ_UNKNOWN_ERROR = 0;
         private static readonly int ZZ_NO_MATCH = 1;
         private static readonly int ZZ_PUSHBACK_2BIG = 2;
 
-        /* error messages for the codes above */
+        /// <summary>error messages for the codes above</summary>
         private static readonly string[] ZZ_ERROR_MSG = {
             "Unkown internal scanner error",
             "Error: could not match input",
             "Error: pushback value was too large"
         };
 
-        /**
-         * ZZ_ATTRIBUTE[aState] contains the attributes of state <code>aState</code>
-         */
+        /// <summary>
+        /// ZZ_ATTRIBUTE[aState] contains the attributes of state <c>aState</c>
+        /// </summary>
         private static readonly int[] ZZ_ATTRIBUTE = ZzUnpackAttribute();
 
         private const string ZZ_ATTRIBUTE_PACKED_0 =
@@ -30618,59 +30618,62 @@ namespace Lucene.Net.Analysis.CharFilters
             return j;
         }
 
-        /** the input device */
+        /// <summary>the input device</summary>
         private BufferedCharFilter zzReader;
 
-        /** the current state of the DFA */
+        /// <summary>the current state of the DFA</summary>
         private int zzState;
 
-        /** the current lexical state */
+        /// <summary>the current lexical state</summary>
         private int zzLexicalState = YYINITIAL;
 
-        /** this buffer contains the current text to be matched and is
-            the source of the YyText() string */
+        /// <summary>
+        /// this buffer contains the current text to be matched and is the source of the YyText() string
+        /// </summary>
         private char[] zzBuffer = new char[ZZ_BUFFERSIZE];
 
-        /** the textposition at the last accepting state */
+        /// <summary>the textposition at the last accepting state</summary>
         private int zzMarkedPos;
 
-        /** the current text position in the buffer */
+        /// <summary>the current text position in the buffer</summary>
         private int zzCurrentPos;
 
-        /** startRead marks the beginning of the YyText() string in the buffer */
+        /// <summary>startRead marks the beginning of the YyText() string in the buffer</summary>
         private int zzStartRead;
 
-        /** endRead marks the last character in the buffer, that has been read
-            from input */
+        /// <summary>
+        /// endRead marks the last character in the buffer, that has been read from input
+        /// </summary>
         private int zzEndRead;
 
-        /** number of newlines encountered up to the start of the matched text */
+        /// <summary>number of newlines encountered up to the start of the matched text</summary>
         private int yyline;
 
-        /** the number of characters up to the start of the matched text */
+        /// <summary>the number of characters up to the start of the matched text</summary>
         private int yychar;
 
 #pragma warning disable 169, 414
-        /**
-         * the number of characters from the last newline up to the start of the 
-         * matched text
-         */
+        /// <summary>
+        /// the number of characters from the last newline up to the start of the matched text
+        /// </summary>
         private int yycolumn;
 
-        /** 
-         * zzAtBOL == true <=> the scanner is currently at the beginning of a line
-         */
+        /// <summary>
+        /// zzAtBOL == true <=> the scanner is currently at the beginning of a line
+        /// </summary>
         private bool zzAtBOL = true;
 
 #pragma warning restore 169, 414
 
-        /** zzAtEOF == true <=> the scanner is at the EOF */
+        /// <summary>zzAtEOF == true <=> the scanner is at the EOF</summary>
         private bool zzAtEOF;
 
-        /** denotes if the user-EOF-code has already been executed */
+        /// <summary>denotes if the user-EOF-code has already been executed</summary>
         private bool zzEOFDone;
 
-        /* user code: */
+        /// <summary>
+        /// user code:
+        /// </summary>
         private static readonly IDictionary<string, string> upperCaseVariantsAccepted
             = new Dictionary<string, string>()
             {
@@ -30798,10 +30801,10 @@ namespace Lucene.Net.Analysis.CharFilters
         private TextSegment outputSegment;
         private TextSegment entitySegment = new TextSegment(2);
 
-        /**
-         * Creates a new HTMLStripCharFilter over the provided TextReader.
-         * @param source SetReader to strip html tags from.
-         */
+        /// <summary>
+        /// Creates a new HTMLStripCharFilter over the provided TextReader.
+        /// </summary>
+        /// <param name="source"><see cref="TextReader"/> to strip html tags from.</param>
         public HTMLStripCharFilter(TextReader source)
                     : base(source)
         {
@@ -30809,13 +30812,12 @@ namespace Lucene.Net.Analysis.CharFilters
             this.zzReader = GetBufferedReader(source);
         }
 
-        /**
-         * Creates a new HTMLStripCharFilter over the provided TextReader
-         * with the specified start and end tags.
-         * @param source SetReader to strip html tags from.
-         * @param escapedTags Tags in this set (both start and end tags)
-         *  will not be filtered out.
-         */
+        /// <summary>
+        /// Creates a new <see cref="HTMLStripCharFilter"/> over the provided <see cref="TextReader"/>
+        /// with the specified start and end tags.
+        /// </summary>
+        /// <param name="source"><see cref="TextReader"/> to strip html tags from.</param>
+        /// <param name="escapedTags">Tags in this set (both start and end tags) will not be filtered out.</param>
         public HTMLStripCharFilter(TextReader source, ICollection<string> escapedTags)
                     : base(source)
         {
@@ -30910,54 +30912,63 @@ namespace Lucene.Net.Analysis.CharFilters
 
         private class TextSegment : OpenStringBuilder
         {
-            /** The position from which the next char will be read. */
+            /// <summary>
+            /// The position from which the next char will be read.
+            /// </summary>
             int pos = 0;
 
-            /** Wraps the given buffer and sets this.len to the given length. */
+            /// <summary>
+            /// Wraps the given <paramref name="buffer"/> and sets this.len to the given <paramref name="length"/>.
+            /// </summary>
             internal TextSegment(char[] buffer, int length) : base(buffer, length)
             { }
 
-            /** Allocates an internal buffer of the given size. */
+            /// <summary>
+            /// Allocates an internal buffer of the given size.
+            /// </summary>
             internal TextSegment(int size) : base(size)
             { }
 
-            /** Sets len = 0 and pos = 0. */
+            /// <summary>
+            /// Sets len = 0 and pos = 0.
+            /// </summary>
             internal void Clear()
             {
                 Reset();
                 Restart();
             }
 
-            /** Sets pos = 0 */
+            /// <summary>
+            /// Sets pos = 0
+            /// </summary>
             internal void Restart()
             {
                 pos = 0;
             }
 
-            /** Returns the next char in the segment. */
+            /// <summary>
+            /// Returns the next char in the segment.
+            /// </summary>
             internal int NextChar()
             {
                 Debug.Assert(!IsRead, "Attempting to read past the end of a segment.");
                 return m_buf[pos++];
             }
 
-            /** Returns true when all characters in the text segment have been read */
+            /// <summary>
+            /// Returns true when all characters in the text segment have been read
+            /// </summary>
             internal bool IsRead
             {
                 get { return pos >= m_len; }
             }
         }
 
-
-
-
-
-        /** 
-         * Unpacks the compressed character translation table.
-         *
-         * @param packed   the packed character translation table
-         * @return         the unpacked character translation table
-         */
+        /// <summary>
+        /// Unpacks the compressed character translation table.
+        /// </summary>
+        /// <param name="packed">the packed character translation table</param>
+        /// <returns>the unpacked character translation table</returns>
         private static char[] ZzUnpackCMap(string packed)
         {
             char[] map = new char[0x10000];
@@ -30972,14 +30983,11 @@ namespace Lucene.Net.Analysis.CharFilters
             return map;
         }
 
-
-        /**
-         * Refills the input buffer.
-         *
-         * @return      <code>false</code>, iff there was new input.
-         * 
-         * @exception   java.io.IOException  if any I/O-Error occurs
-         */
+        /// <summary>
+        /// Refills the input buffer.
+        /// </summary>
+        /// <returns><c>false</c>, iff there was new input.</returns>
+        /// <exception cref="IOException">if any I/O-Error occurs</exception>
         private bool ZzRefill()
         {
 
@@ -31035,9 +31043,9 @@ namespace Lucene.Net.Analysis.CharFilters
         }
 
 
-        /**
-         * Closes the input stream.
-         */
+        /// <summary>
+        /// Disposes the input stream.
+        /// </summary>
         private void YyClose()
         {
             zzAtEOF = true;            /* indicate end of file */
@@ -31047,19 +31055,17 @@ namespace Lucene.Net.Analysis.CharFilters
                 zzReader.Dispose();
         }
 
-
-        /**
-         * Resets the scanner to read from a new input stream.
-         * Does not close the old reader.
-         *
-         * All internal variables are reset, the old input stream 
-         * <b>cannot</b> be reused (internal buffer is discarded and lost).
-         * Lexical state is set to <tt>ZZ_INITIAL</tt>.
-         *
-         * Internal scan buffer is resized down to its initial length, if it has grown.
-         *
-         * @param reader   the new input stream 
-         */
+        /// <summary>
+        /// Resets the scanner to read from a new input stream.
+        /// Does not close the old reader.
+        /// <para/>
+        /// All internal variables are reset, the old input stream
+        /// <b>cannot</b> be reused (internal buffer is discarded and lost).
+        /// Lexical state is set to <see cref="ZZ_INITIAL"/>.
+        /// <para/>
+        /// Internal scan buffer is resized down to its initial length, if it has grown.
+        /// </summary>
+        /// <param name="reader">the new input stream</param>
         private void YyReset(BufferedCharFilter reader)
         {
             zzReader = reader;
@@ -31075,75 +31081,66 @@ namespace Lucene.Net.Analysis.CharFilters
         }
 
 
-        /**
-         * Returns the current lexical state.
-         */
+        /// <summary>
+        /// Returns the current lexical state.
+        /// </summary>
         private int YyState
         {
             get { return zzLexicalState; }
         }
 
-
-        /**
-         * Enters a new lexical state
-         *
-         * @param newState the new lexical state
-         */
+        /// <summary>
+        /// Enters a new lexical state
+        /// </summary>
+        /// <param name="newState">the new lexical state</param>
         private void YyBegin(int newState)
         {
             zzLexicalState = newState;
         }
 
 
-        /**
-         * Returns the text matched by the current regular expression.
-         */
-        private string YyText
+        /// <summary>
+        /// Returns the text matched by the current regular expression.
+        /// </summary>
+        /// <returns>Returns the text matched by the current regular expression.</returns>
+        private string YyText()
         {
-            get { return new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead); }
+            return new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
         }
 
-
-        /**
-         * Returns the character at position <tt>pos</tt> from the 
-         * matched text. 
-         * 
-         * It is equivalent to YyText[pos], but faster
-         *
-         * @param pos the position of the character to fetch. 
-         *            A value from 0 to YyLength()-1.
-         *
-         * @return the character at position pos
-         */
+        /// <summary>
+        /// Returns the character at position <tt>pos</tt> from the 
+        /// matched text. It is equivalent to YyText[pos], but faster
+        /// </summary>
+        /// <param name="pos">the position of the character to fetch. A value from 0 to YyLength()-1.</param>
+        /// <returns>the character at position pos</returns>
         private char YyCharAt(int pos)
         {
             return zzBuffer[zzStartRead + pos];
         }
 
 
-        /**
-         * Returns the length of the matched text region.
-         */
+        /// <summary>
+        /// Returns the length of the matched text region.
+        /// </summary>
         private int YyLength
         {
             get { return zzMarkedPos - zzStartRead; }
         }
 
-
-        /**
-         * Reports an error that occured while scanning.
-         *
-         * In a wellformed scanner (no or only correct usage of 
-         * YyPushBack(int) and a match-all fallback rule) this method 
-         * will only be called with things that "Can't Possibly Happen".
-         * If this method is called, something is seriously wrong
-         * (e.g. a JFlex bug producing a faulty scanner etc.).
-         *
-         * Usual syntax/scanner level error handling should be done
-         * in error fallback rules.
-         *
-         * @param   errorCode  the code of the errormessage to display
-         */
+        /// <summary>
+        /// Reports an error that occured while scanning.
+        /// <para/>
+        /// In a wellformed scanner (no or only correct usage of
+        /// YyPushBack(int) and a match-all fallback rule) this method 
+        /// will only be called with things that "Can't Possibly Happen".
+        /// If this method is called, something is seriously wrong
+        /// (e.g. a JFlex bug producing a faulty scanner etc.).
+        /// <para/>
+        /// Usual syntax/scanner level error handling should be done
+        /// in error fallback rules.
+        /// </summary>
+        /// <param name="errorCode">the code of the errormessage to display</param>
         private void ZzScanError(int errorCode)
         {
             string message;
@@ -31159,15 +31156,13 @@ namespace Lucene.Net.Analysis.CharFilters
             throw new Exception(message);
         }
 
-
-        /**
-         * Pushes the specified amount of characters back into the input stream.
-         *
-         * They will be read again by then next call of the scanning method
-         *
-         * @param number  the number of characters to be read again.
-         *                This number must not be greater than YyLength()!
-         */
+        /// <summary>
+        /// Pushes the specified amount of characters back into the input stream.
+        /// 
+        /// They will be read again by then next call of the scanning method
+        /// </summary>
+        /// <param name="number">the number of characters to be read again.
+        /// This number must not be greater than YyLength()!</param>
         private void YyPushBack(int number)
         {
             if (number > YyLength)
@@ -31177,10 +31172,10 @@ namespace Lucene.Net.Analysis.CharFilters
         }
 
 
-        /**
-         * Contains user EOF-code, which will be executed exactly once,
-         * when the end of file is reached
-         */
+        /// <summary>
+        /// Contains user EOF-code, which will be executed exactly once,
+        /// when the end of file is reached
+        /// </summary>
         private void ZzDoEOF()
         {
             if (!zzEOFDone)
@@ -31243,14 +31238,12 @@ namespace Lucene.Net.Analysis.CharFilters
             }
         }
 
-
-        /**
-         * Resumes scanning until the next regular expression is matched,
-         * the end of input is encountered or an I/O-Error occurs.
-         *
-         * @return      the next token
-         * @exception   java.io.IOException  if any I/O-Error occurs
-         */
+        /// <summary>
+        /// Resumes scanning until the next regular expression is matched,
+        /// the end of input is encountered or an I/O-Error occurs.
+        /// </summary>
+        /// <returns>the next token</returns>
+        /// <exception cref="IOException">if any I/O-Error occurs</exception>
         private int NextChar()
         {
             int zzInput;
@@ -31384,7 +31377,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             inputSegment.Write(zzBuffer, zzStartRead, matchLength);
                             if (matchLength <= 7)
                             { // 0x10FFFF = 1114111: max 7 decimal chars
-                                string decimalCharRef = YyText;
+                                string decimalCharRef = YyText();
                                 int codePoint = 0;
                                 try
                                 {
@@ -31689,7 +31682,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         {
                             if (inputSegment.Length > 2)
                             { // Chars between "<!" and "--" - this is not a comment
-                                inputSegment.Append(YyText);
+                                inputSegment.Append(YyText());
                             }
                             else
                             {
@@ -31835,7 +31828,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         {
                             if (inputSegment.Length > 2)
                             { // Chars between "<!" and "[CDATA[" - this is not a CDATA section
-                                inputSegment.Append(YyText);
+                                inputSegment.Append(YyText());
                             }
                             else
                             {
@@ -31907,7 +31900,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         { // Handle paired UTF-16 surrogates.
                             outputSegment = entitySegment;
                             outputSegment.Clear();
-                            string surrogatePair = YyText;
+                            string surrogatePair = YyText();
                             char highSurrogate = '\u0000';
                             try
                             {
@@ -31937,7 +31930,7 @@ namespace Lucene.Net.Analysis.CharFilters
                     case 103: break;
                     case 51:
                         { // Handle paired UTF-16 surrogates.
-                            string surrogatePair = YyText;
+                            string surrogatePair = YyText();
                             char highSurrogate = '\u0000';
                             char lowSurrogate = '\u0000';
                             try
@@ -31979,7 +31972,7 @@ namespace Lucene.Net.Analysis.CharFilters
                     case 104: break;
                     case 52:
                         { // Handle paired UTF-16 surrogates.
-                            string surrogatePair = YyText;
+                            string surrogatePair = YyText();
                             char highSurrogate = '\u0000';
                             try
                             { // High surrogates are in decimal range [55296, 56319]
@@ -32019,7 +32012,7 @@ namespace Lucene.Net.Analysis.CharFilters
                     case 105: break;
                     case 53:
                         { // Handle paired UTF-16 surrogates.
-                            string surrogatePair = YyText;
+                            string surrogatePair = YyText();
                             char highSurrogate = '\u0000';
                             try
                             { // High surrogates are in decimal range [55296, 56319]
