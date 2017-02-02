@@ -21,20 +21,20 @@ namespace Lucene.Net.Analysis.Ckb
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="SoraniNormalizationFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="SoraniNormalizationFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_ckbnormal" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.SoraniNormalizationFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class SoraniNormalizationFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
-
         /// <summary>
-        /// Creates a new SoraniNormalizationFilterFactory </summary>
+        /// Creates a new <see cref="SoraniNormalizationFilterFactory"/> </summary>
         public SoraniNormalizationFilterFactory(IDictionary<string, string> args)
               : base(args)
         {

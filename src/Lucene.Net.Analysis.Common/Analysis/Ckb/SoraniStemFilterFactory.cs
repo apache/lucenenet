@@ -21,23 +21,23 @@ namespace Lucene.Net.Analysis.Ckb
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="SoraniStemFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="SoraniStemFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_ckbstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.SoraniNormalizationFilterFactory"/&gt;
     ///     &lt;filter class="solr.SoraniStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class SoraniStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new SoraniStemFilterFactory </summary>
+        /// Creates a new <see cref="SoraniStemFilterFactory"/> </summary>
         public SoraniStemFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {

@@ -23,21 +23,19 @@ namespace Lucene.Net.Analysis.Ckb
 
     /// <summary>
     /// Normalizes the Unicode representation of Sorani text.
-    /// <para>
+    /// <para/>
     /// Normalization consists of:
-    /// <ul>
-    ///   <li>Alternate forms of 'y' (0064, 0649) are converted to 06CC (FARSI YEH)
-    ///   <li>Alternate form of 'k' (0643) is converted to 06A9 (KEHEH)
-    ///   <li>Alternate forms of vowel 'e' (0647+200C, word-final 0647, 0629) are converted to 06D5 (AE)
-    ///   <li>Alternate (joining) form of 'h' (06BE) is converted to 0647
-    ///   <li>Alternate forms of 'rr' (0692, word-initial 0631) are converted to 0695 (REH WITH SMALL V BELOW)
-    ///   <li>Harakat, tatweel, and formatting characters such as directional controls are removed.
-    /// </ul>
-    /// </para>
+    /// <list type="bullet">
+    ///   <item>Alternate forms of 'y' (0064, 0649) are converted to 06CC (FARSI YEH)</item>
+    ///   <item>Alternate form of 'k' (0643) is converted to 06A9 (KEHEH)</item>
+    ///   <item>Alternate forms of vowel 'e' (0647+200C, word-final 0647, 0629) are converted to 06D5 (AE)</item>
+    ///   <item>Alternate (joining) form of 'h' (06BE) is converted to 0647</item>
+    ///   <item>Alternate forms of 'rr' (0692, word-initial 0631) are converted to 0695 (REH WITH SMALL V BELOW)</item>
+    ///   <item>Harakat, tatweel, and formatting characters such as directional controls are removed.</item>
+    /// </list>
     /// </summary>
     public class SoraniNormalizer
     {
-
         internal const char YEH = '\u064A';
         internal const char DOTLESS_YEH = '\u0649';
         internal const char FARSI_YEH = '\u06CC';
@@ -71,7 +69,7 @@ namespace Lucene.Net.Analysis.Ckb
         /// <param name="s"> input buffer </param>
         /// <param name="len"> length of input buffer </param>
         /// <returns> length of input buffer after normalization </returns>
-        public virtual int normalize(char[] s, int len)
+        public virtual int Normalize(char[] s, int len)
         {
             for (int i = 0; i < len; i++)
             {

@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis.Ckb
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="SoraniNormalizer"/> to normalize the
+    /// A <see cref="TokenFilter"/> that applies <see cref="SoraniNormalizer"/> to normalize the
     /// orthography.
     /// </summary>
     public sealed class SoraniNormalizationFilter : TokenFilter
@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Ckb
         {
             if (m_input.IncrementToken())
             {
-                int newlen = normalizer.normalize(termAtt.Buffer, termAtt.Length);
+                int newlen = normalizer.Normalize(termAtt.Buffer, termAtt.Length);
                 termAtt.Length = newlen;
                 return true;
             }

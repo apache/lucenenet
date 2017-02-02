@@ -24,7 +24,6 @@ namespace Lucene.Net.Analysis.Ckb
     /// </summary>
     public class SoraniStemmer
     {
-
         /// <summary>
         /// Stem an input buffer of Sorani text.
         /// </summary>

@@ -20,13 +20,14 @@ namespace Lucene.Net.Analysis.Ckb
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="SoraniStemmer"/> to stem Sorani words.
+    /// A <see cref="TokenFilter"/> that applies <see cref="SoraniStemmer"/> to stem Sorani words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
-    /// </para> </summary>
-    /// <seealso cref= SetKeywordMarkerFilter  </seealso>
+    /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
+    /// </para> 
+    /// </summary>
+    /// <seealso cref="Miscellaneous.SetKeywordMarkerFilter"/>
     public sealed class SoraniStemFilter : TokenFilter
     {
         private readonly SoraniStemmer stemmer = new SoraniStemmer();
@@ -34,7 +35,7 @@ namespace Lucene.Net.Analysis.Ckb
         private readonly IKeywordAttribute keywordAttr;
 
         public SoraniStemFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();
