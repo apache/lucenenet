@@ -541,7 +541,7 @@ namespace Lucene.Net.QueryParsers.Simple
         [Test]
         public virtual void TestWeightedTerm()
         {
-            IDictionary<string, float> weights = new Dictionary<string, float>();
+            IDictionary<string, float> weights = new LinkedHashMap<string, float>();
             weights["field0"] = 5f;
             weights["field1"] = 10f;
 
@@ -562,7 +562,7 @@ namespace Lucene.Net.QueryParsers.Simple
         [Test]
         public virtual void TestWeightedOR()
         {
-            IDictionary<string, float> weights = new Dictionary<string, float>();
+            IDictionary<string, float> weights = new LinkedHashMap<string, float>();
             weights["field0"] = 5f;
             weights["field1"] = 10f;
 

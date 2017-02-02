@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Util
         {
             lock (this)
             {
-                IDictionary<string, Type> services = new Dictionary<string, Type>(this.services);
+                IDictionary<string, Type> services = new LinkedHashMap<string, Type>(this.services);
                 SPIClassIterator<S> loader = SPIClassIterator<S>.Get();
 
                 foreach (var service in loader)

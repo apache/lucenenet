@@ -92,7 +92,7 @@ namespace Lucene.Net.Expressions.JS
 
         private readonly string sourceText;
 
-        private readonly IDictionary<string, int> externalsMap = new HashMap<string, int>();
+        private readonly IDictionary<string, int> externalsMap = new LinkedHashMap<string, int>();
 
         private TypeBuilder dynamicType;
 

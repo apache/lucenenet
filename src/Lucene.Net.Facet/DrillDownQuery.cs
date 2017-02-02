@@ -60,7 +60,7 @@ namespace Lucene.Net.Facet
 
         private readonly FacetsConfig config;
         private readonly BooleanQuery query;
-        private readonly IDictionary<string, int?> drillDownDims = new Dictionary<string, int?>();
+        private readonly IDictionary<string, int?> drillDownDims = new LinkedHashMap<string, int?>();
 
         /// <summary>
         /// Used by <see cref="Clone"/>

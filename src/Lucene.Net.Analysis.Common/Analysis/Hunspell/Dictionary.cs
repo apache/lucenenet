@@ -269,7 +269,7 @@ namespace Lucene.Net.Analysis.Hunspell
             patterns.Add(null);
 
             // zero strip -> 0 ord
-            IDictionary<string, int?> seenStrips = new Dictionary<string, int?>();
+            IDictionary<string, int?> seenStrips = new LinkedHashMap<string, int?>();
             seenStrips[""] = 0;
 
             var reader = new StreamReader(affixStream, decoder);
