@@ -133,24 +133,15 @@ namespace Lucene.Net.Analysis.Th
         [Test]
         public virtual void TestRandomStrings()
         {
-            fail("This test is somehow crashing NUnit and causing it not to complete");
             CheckRandomData(Random(), new ThaiAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
 
         /// <summary>
         /// blast some random large strings through the analyzer </summary>
         /// 
-#if NETSTANDARD
-        // NUnit does not have TimeoutAttribute for .NET Standard, so it can run for a long time.
-        // https://github.com/nunit/nunit/issues/1658
-        [LongRunningTest]
-#endif
         [Test]
         public virtual void TestRandomHugeStrings()
         {
-            // LUCENENET NOTE: This is NOT a long running test - it should only take a few seconds
-            fail("This test is somehow crashing NUnit and causing it not to complete");
-
             Random random = Random();
             CheckRandomData(random, new ThaiAnalyzer(TEST_VERSION_CURRENT), 100 * RANDOM_MULTIPLIER, 8192);
         }

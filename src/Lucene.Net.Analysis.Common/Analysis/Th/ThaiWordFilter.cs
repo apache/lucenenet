@@ -1,9 +1,11 @@
-﻿using Icu;
+﻿//using Icu;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Th
@@ -48,7 +50,7 @@ namespace Lucene.Net.Analysis.Th
         /// If this is false, this filter will not work at all!
         /// </summary>
         public static readonly bool DBBI_AVAILABLE = ThaiTokenizer.DBBI_AVAILABLE;
-        private readonly ThaiWordBreaker breaker = new ThaiWordBreaker(new Locale());
+        private readonly ThaiWordBreaker breaker = new ThaiWordBreaker(new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.WORD, new CultureInfo("th")));
         private readonly CharArrayIterator charIterator = CharArrayIterator.NewWordInstance();
 
         private readonly bool handlePosIncr;

@@ -4,7 +4,8 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using NUnit.Framework;
-﻿using System;
+using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using BreakIterator = Icu.BreakIterator;
@@ -130,20 +131,20 @@ namespace Lucene.Net.Analysis.Util
             internal IOffsetAttribute offsetAtt;
 
             public WholeSentenceTokenizer(TextReader reader)
-                : base(reader, new Locale("en-US"), BreakIterator.UBreakIteratorType.SENTENCE)
+                : base(reader, new IcuBreakIterator(BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture)  /*new Locale("en-US"), BreakIterator.UBreakIteratorType.SENTENCE*/)
             {
                 termAtt = AddAttribute<ICharTermAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
-            protected internal override void SetNextSentence(int sentenceStart, int sentenceEnd)
+            protected override void SetNextSentence(int sentenceStart, int sentenceEnd)
             {
                 this.sentenceStart = sentenceStart;
                 this.sentenceEnd = sentenceEnd;
                 hasSentence = true;
             }
 
-            protected internal override bool IncrementWord()
+            protected override bool IncrementWord()
             {
                 if (hasSentence)
                 {
@@ -175,14 +176,14 @@ namespace Lucene.Net.Analysis.Util
             internal IPositionIncrementAttribute posIncAtt;
 
             public SentenceAndWordTokenizer(TextReader reader)
-                : base(reader, new Locale("en-US"), BreakIterator.UBreakIteratorType.SENTENCE)
+                : base(reader, new IcuBreakIterator(BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture) /*new Locale("en-US"), BreakIterator.UBreakIteratorType.SENTENCE*/)
             {
                 termAtt = AddAttribute<ICharTermAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();
                 posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             }
 
-            protected internal override void SetNextSentence(int sentenceStart, int sentenceEnd)
+            protected override void SetNextSentence(int sentenceStart, int sentenceEnd)
             {
                 this.wordStart = this.wordEnd = this.sentenceStart = sentenceStart;
                 this.sentenceEnd = sentenceEnd;
@@ -195,7 +196,7 @@ namespace Lucene.Net.Analysis.Util
                 posBoost = -1;
             }
 
-            protected internal override bool IncrementWord()
+            protected override bool IncrementWord()
             {
                 wordStart = wordEnd;
                 while (wordStart < sentenceEnd)

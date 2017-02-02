@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
-using System.Linq;
 using System.IO;
-using Icu;
-using Lucene.Net.Analysis.TokenAttributes;
-using Version = Lucene.Net.Util.LuceneVersion;
-
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -28,9 +23,8 @@ namespace Lucene.Net.Analysis.Util
      * limitations under the License.
      */
 
-
     /// <summary>
-    /// Breaks text into sentences with a <seealso cref="BreakIterator"/> and
+    /// Breaks text into sentences with a <see cref="BreakIterator"/> and
     /// allows subclasses to decompose these sentences into words.
     /// <para>
     /// This can be used by subclasses that need sentence context 
@@ -46,11 +40,8 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public abstract class SegmentingTokenizerBase : Tokenizer
     {
-        // LUCENENET: Using Icu .NET to get Local_US
-        public static readonly Locale LocaleUS = new Locale("en-US");
-
-        protected internal const int BUFFERMAX = 1024;
-        protected internal readonly char[] m_buffer = new char[BUFFERMAX];
+        protected const int BUFFERMAX = 1024;
+        protected readonly char[] m_buffer = new char[BUFFERMAX];
         /// <summary>
         /// true length of text in the buffer </summary>
         private int length = 0;
@@ -59,11 +50,9 @@ namespace Lucene.Net.Analysis.Util
         private int usableLength = 0;
         /// <summary>
         /// accumulated offset of previous buffers for this reader, for offsetAtt </summary>
-        protected internal int m_offset = 0;
+        protected int m_offset = 0;
 
-        private readonly Locale locale;
-        private readonly BreakIterator.UBreakIteratorType iteratorType;
-        private IEnumerator<Boundary> enumerator;
+        private readonly BreakIterator iterator;
         private readonly CharArrayIterator wrapper = CharArrayIterator.NewSentenceInstance();
 
         private readonly IOffsetAttribute offsetAtt;
@@ -77,28 +66,19 @@ namespace Lucene.Net.Analysis.Util
         /// be provided to this constructor.
         /// </para>
         /// </summary>
-        protected SegmentingTokenizerBase(TextReader reader, BreakIterator.UBreakIteratorType iteratorType)
-            : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader, LocaleUS, iteratorType)
-        { }
-
-        protected SegmentingTokenizerBase(TextReader reader, Locale locale, BreakIterator.UBreakIteratorType iteratorType)
-            : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader, locale, iteratorType)
-        { }
+        protected SegmentingTokenizerBase(TextReader reader, BreakIterator iterator)
+            : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader, iterator)
+        {
+        }
 
         /// <summary>
         /// Construct a new SegmenterBase, also supplying the AttributeFactory
         /// </summary>
-        protected SegmentingTokenizerBase(AttributeFactory factory, TextReader reader, BreakIterator.UBreakIteratorType iteratorType)
-            : this(factory, reader, LocaleUS, iteratorType) 
-        { }
-
-        protected SegmentingTokenizerBase(AttributeFactory factory, TextReader reader, Locale locale, BreakIterator.UBreakIteratorType iteratorType)
+        protected SegmentingTokenizerBase(AttributeFactory factory, TextReader reader, BreakIterator iterator)
             : base(factory, reader)
         {
             offsetAtt = AddAttribute<IOffsetAttribute>();
-            this.iteratorType = iteratorType;
-            this.locale = locale;
-            enumerator = Enumerable.Empty<Boundary>().GetEnumerator();
+            this.iterator = iterator;
         }
 
         public override sealed bool IncrementToken()
@@ -122,7 +102,7 @@ namespace Lucene.Net.Analysis.Util
         {
             base.Reset();
             wrapper.SetText(m_buffer, 0, 0);
-            enumerator = Enumerable.Empty<Boundary>().GetEnumerator();
+            iterator.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
             length = usableLength = m_offset = 0;
         }
 
@@ -193,16 +173,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             wrapper.SetText(m_buffer, 0, Math.Max(0, usableLength));
-
-            var text = new string(wrapper.Text, wrapper.Start, wrapper.Length);
-
-            if (enumerator != null)
-            {
-                enumerator.Dispose();
-                enumerator = null;
-            }
-
-            enumerator = BreakIterator.GetBoundaries(iteratorType, locale, text).ToList().GetEnumerator();
+            iterator.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
         }
 
         // TODO: refactor to a shared readFully somewhere
@@ -240,15 +211,22 @@ namespace Lucene.Net.Analysis.Util
 
             while (true)
             {
-                if (!enumerator.MoveNext())
+                int start = iterator.Current;
+
+                if (start == BreakIterator.DONE)
                 {
-                    return false;
+                    return false; // BreakIterator exhausted
                 }
 
-                var current = enumerator.Current;
+                // find the next set of boundaries
+                int end_Renamed = iterator.Next();
 
-                SetNextSentence(current.Start, current.End);
+                if (end_Renamed == BreakIterator.DONE)
+                {
+                    return false; // BreakIterator exhausted
+                }
 
+                SetNextSentence(start, end_Renamed);
                 if (IncrementWord())
                 {
                     return true;
@@ -256,23 +234,12 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        public override void Dispose()
-        {
-            if (enumerator != null)
-            {
-                enumerator.Dispose();
-                enumerator = null;
-            }
-
-            base.Dispose();
-        }
-
         /// <summary>
         /// Provides the next input sentence for analysis </summary>
-        protected internal abstract void SetNextSentence(int sentenceStart, int sentenceEnd);
+        protected abstract void SetNextSentence(int sentenceStart, int sentenceEnd);
 
         /// <summary>
         /// Returns true if another word is available </summary>
-        protected internal abstract bool IncrementWord();
+        protected abstract bool IncrementWord();
     }
 }
