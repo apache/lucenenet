@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// <summary>
 	/// This tree structure stores the hyphenation patterns in an efficient way for
 	/// fast lookup. It provides the provides the method to hyphenate a word.
-	/// 
+	/// <para/>
 	/// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified. 
 	/// </summary>
 	public class HyphenationTree : TernaryTree, IPatternConsumer
@@ -35,17 +35,17 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// value space: stores the interletter values
         /// </summary>
-        protected internal ByteVector m_vspace;
+        protected ByteVector m_vspace;
 
         /// <summary>
         /// This map stores hyphenation exceptions
         /// </summary>
-        protected internal IDictionary<string, IList<object>> m_stoplist;
+        protected IDictionary<string, IList<object>> m_stoplist;
 
         /// <summary>
         /// This map stores the character classes
         /// </summary>
-        protected internal TernaryTree m_classmap;
+        protected TernaryTree m_classmap;
 
         /// <summary>
         /// Temporary map to store interletter values on pattern loading.
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="values"> a string of digits from '0' to '9' representing the
         ///        interletter values. </param>
         /// <returns> the index into the vspace array where the packed values are stored. </returns>
-        protected internal virtual int PackValues(string values)
+        protected virtual int PackValues(string values)
         {
             int i, n = values.Length;
             int m = (n & 1) == 1 ? (n >> 1) + 2 : (n >> 1) + 1;
@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return offset;
         }
 
-        protected internal virtual string UnpackValues(int k)
+        protected virtual string UnpackValues(int k)
         {
             StringBuilder buf = new StringBuilder();
             byte v = m_vspace[k++];
@@ -128,6 +128,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// Read hyphenation patterns from an XML file.
         /// </summary>
         /// <param name="f"> the filename </param>
+        /// <param name="encoding">The character encoding to use</param>
         /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(string filename, Encoding encoding)
         {
@@ -138,7 +139,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Read hyphenation patterns from an XML file.
         /// </summary>
-        /// <param name="f"> the filename </param>
+        /// <param name="f"> a <see cref="FileInfo"/> object representing the file </param>
         /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(FileInfo f)
         {
@@ -148,7 +149,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Read hyphenation patterns from an XML file.
         /// </summary>
-        /// <param name="f"> the filename </param>
+        /// <param name="f"> a <see cref="FileInfo"/> object representing the file </param>
+        /// <param name="encoding">The character encoding to use</param>
         /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(FileInfo f, Encoding encoding)
         {
@@ -159,7 +161,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Read hyphenation patterns from an XML file.
         /// </summary>
-        /// <param name="source"> the InputSource for the file </param>
+        /// <param name="source"> <see cref="Stream"/> input source for the file </param>
         /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(Stream source)
         {
@@ -169,7 +171,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Read hyphenation patterns from an XML file.
         /// </summary>
-        /// <param name="source"> the InputSource for the file </param>
+        /// <param name="source"> <see cref="Stream"/> input source for the file </param>
+        /// <param name="encoding">The character encoding to use</param>
         /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(Stream source, Encoding encoding)
         {
@@ -190,6 +193,11 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
         }
 
+        /// <summary>
+        /// Read hyphenation patterns from an <see cref="XmlReader"/>.
+        /// </summary>
+        /// <param name="source"> <see cref="XmlReader"/> input source for the file </param>
+        /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(XmlReader source)
         {
             PatternParser pp = new PatternParser(this);
@@ -220,7 +228,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// String compare, returns 0 if equal or t is a substring of s
         /// </summary>
-        protected internal virtual int HStrCmp(char[] s, int si, char[] t, int ti)
+        protected virtual int HStrCmp(char[] s, int si, char[] t, int ti)
         {
             for (; s[si] == t[ti]; si++, ti++)
             {
@@ -236,7 +244,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return s[si] - t[ti];
         }
 
-        protected internal virtual byte[] GetValues(int k)
+        protected virtual byte[] GetValues(int k)
         {
             StringBuilder buf = new StringBuilder();
             byte v = m_vspace[k++];
@@ -267,9 +275,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// interletter values. In other words, it does something like:
         /// </para>
         /// <code>
-        /// for(i=0; i&lt;patterns.length; i++) {
-        /// if ( word.substring(index).startsWidth(patterns[i]) )
-        /// update_interletter_values(patterns[i]);
+        /// for (i=0; i&lt;patterns.Length; i++) 
+        /// {
+        ///     if (word.Substring(index).StartsWith(patterns[i]))
+        ///         update_interletter_values(patterns[i]);
         /// }
         /// </code>
         /// <para>
@@ -286,7 +295,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="word"> null terminated word to match </param>
         /// <param name="index"> start index from word </param>
         /// <param name="il"> interletter values array to update </param>
-        protected internal virtual void SearchPatterns(char[] word, int index, byte[] il)
+        protected virtual void SearchPatterns(char[] word, int index, byte[] il)
         {
             byte[] values;
             int i = index;
@@ -365,14 +374,14 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         }
 
         /// <summary>
-        /// Hyphenate word and return a Hyphenation object.
+        /// Hyphenate word and return a <see cref="Hyphenation"/> object.
         /// </summary>
         /// <param name="word"> the word to be hyphenated </param>
         /// <param name="remainCharCount"> Minimum number of characters allowed before the
         ///        hyphenation point. </param>
         /// <param name="pushCharCount"> Minimum number of characters allowed after the
         ///        hyphenation point. </param>
-        /// <returns> a <seealso cref="Hyphenation Hyphenation"/> object representing the
+        /// <returns> a <see cref="Hyphenation"/> object representing the
         ///         hyphenated word or null if word is not hyphenated. </returns>
         public virtual Hyphenation Hyphenate(string word, int remainCharCount, int pushCharCount)
         {
@@ -380,7 +389,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return Hyphenate(w, 0, w.Length, remainCharCount, pushCharCount);
         }
 
+
+
         /// <summary>
+        /// Hyphenate word and return an array of hyphenation points.
+        /// </summary>
+        /// <remarks>
         /// w = "****nnllllllnnn*****", where n is a non-letter, l is a letter, all n
         /// may be absent, the first n is at offset, the first l is at offset +
         /// iIgnoreAtBeginning; word = ".llllll.'\0'***", where all l in w are copied
@@ -392,11 +406,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// index(word) - 1 (see first loop). It follows that: index(w) - index(word) =
         /// offset - 1 + iIgnoreAtBeginning index(w) = letterindex(word) + offset +
         /// iIgnoreAtBeginning
-        /// </summary>
-
-        /// <summary>
-        /// Hyphenate word and return an array of hyphenation points.
-        /// </summary>
+        /// </remarks>
         /// <param name="w"> char array that contains the word </param>
         /// <param name="offset"> Offset to first character in word </param>
         /// <param name="len"> Length of word </param>
@@ -404,7 +414,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         ///        hyphenation point. </param>
         /// <param name="pushCharCount"> Minimum number of characters allowed after the
         ///        hyphenation point. </param>
-        /// <returns> a <seealso cref="Hyphenation Hyphenation"/> object representing the
+        /// <returns> a <see cref="Hyphenation"/> object representing the
         ///         hyphenated word or null if word is not hyphenated. </returns>
         public virtual Hyphenation Hyphenate(char[] w, int offset, int len, int remainCharCount, int pushCharCount)
         {
@@ -522,7 +532,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         /// <summary>
         /// Add a character class to the tree. It is used by
-        /// <seealso cref="PatternParser PatternParser"/> as callback to add character classes.
+        /// <see cref="PatternParser"/> as callback to add character classes.
         /// Character classes define the valid word characters for hyphenation. If a
         /// word contains a character not defined in any of the classes, it is not
         /// hyphenated. It also defines a way to normalize the characters in order to
@@ -547,12 +557,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         /// <summary>
         /// Add an exception to the tree. It is used by
-        /// <seealso cref="PatternParser PatternParser"/> class as callback to store the
+        /// <see cref="PatternParser"/> class as callback to store the
         /// hyphenation exceptions.
         /// </summary>
         /// <param name="word"> normalized word </param>
         /// <param name="hyphenatedword"> a vector of alternating strings and
-        ///        <seealso cref="Hyphen hyphen"/> objects. </param>
+        ///        <see cref="Hyphen"/> objects. </param>
         public virtual void AddException(string word, IList<object> hyphenatedword)
         {
             m_stoplist[word] = hyphenatedword;
@@ -560,7 +570,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         /// <summary>
         /// Add a pattern to the tree. Mainly, to be used by
-        /// <seealso cref="PatternParser PatternParser"/> class as callback to add a pattern to
+        /// <see cref="PatternParser"/> class as callback to add a pattern to
         /// the tree.
         /// </summary>
         /// <param name="pattern"> the hyphenation pattern </param>

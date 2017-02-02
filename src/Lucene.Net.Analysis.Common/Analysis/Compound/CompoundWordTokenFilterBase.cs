@@ -26,18 +26,15 @@ namespace Lucene.Net.Analysis.Compound
 
     /// <summary>
     /// Base class for decomposition token filters.
-    /// <para>
-    /// 
-    /// <a name="version"></a>
-    /// You must specify the required <seealso cref="LuceneVersion"/> compatibility when creating
-    /// CompoundWordTokenFilterBase:
-    /// <ul>
-    /// <li>As of 3.1, CompoundWordTokenFilterBase correctly handles Unicode 4.0
-    /// supplementary characters in strings and char arrays provided as compound word
-    /// dictionaries.
-    /// <li>As of 4.4, <seealso cref="CompoundWordTokenFilterBase"/> doesn't update offsets.
-    /// </ul>
-    /// </para>
+    /// <para/>
+    /// You must specify the required <see cref="LuceneVersion"/> compatibility when creating
+    /// <see cref="CompoundWordTokenFilterBase"/>:
+    /// <list type="bullet">
+    ///     <item>As of 3.1, CompoundWordTokenFilterBase correctly handles Unicode 4.0
+    ///     supplementary characters in strings and char arrays provided as compound word
+    ///     dictionaries.</item>
+    ///     <item>As of 4.4, <see cref="CompoundWordTokenFilterBase"/> doesn't update offsets.</item>
+    /// </list>
     /// </summary>
     public abstract class CompoundWordTokenFilterBase : TokenFilter
     {
@@ -56,16 +53,16 @@ namespace Lucene.Net.Analysis.Compound
         /// </summary>
         public const int DEFAULT_MAX_SUBWORD_SIZE = 15;
 
-        protected internal readonly LuceneVersion m_matchVersion;
-        protected internal readonly CharArraySet m_dictionary;
-        protected internal readonly LinkedList<CompoundToken> m_tokens;
-        protected internal readonly int m_minWordSize;
-        protected internal readonly int m_minSubwordSize;
-        protected internal readonly int m_maxSubwordSize;
-        protected internal readonly bool m_onlyLongestMatch;
+        protected readonly LuceneVersion m_matchVersion;
+        protected readonly CharArraySet m_dictionary;
+        protected readonly LinkedList<CompoundToken> m_tokens;
+        protected readonly int m_minWordSize;
+        protected readonly int m_minSubwordSize;
+        protected readonly int m_maxSubwordSize;
+        protected readonly bool m_onlyLongestMatch;
 
-        protected internal readonly ICharTermAttribute m_termAtt;
-        protected internal readonly IOffsetAttribute m_offsetAtt;
+        protected readonly ICharTermAttribute m_termAtt;
+        protected readonly IOffsetAttribute m_offsetAtt;
         private readonly IPositionIncrementAttribute posIncAtt;
 
         private AttributeSource.State current;
@@ -144,7 +141,7 @@ namespace Lucene.Net.Analysis.Compound
         }
 
         /// <summary>
-        /// Decomposes the current <seealso cref="#termAtt"/> and places <seealso cref="CompoundToken"/> instances in the <seealso cref="#tokens"/> list.
+        /// Decomposes the current <see cref="m_termAtt"/> and places <see cref="CompoundToken"/> instances in the <see cref="m_tokens"/> list.
         /// The original token may not be placed in the list, as it is automatically passed through this filter.
         /// </summary>
         protected abstract void Decompose();
@@ -159,7 +156,7 @@ namespace Lucene.Net.Analysis.Compound
         /// <summary>
         /// Helper class to hold decompounded token information
         /// </summary>
-        protected internal class CompoundToken
+        protected class CompoundToken
         {
             private readonly ICharSequence txt;
             private readonly int startOffset, endOffset;
@@ -180,7 +177,7 @@ namespace Lucene.Net.Analysis.Compound
             }
 
             /// <summary>
-            /// Construct the compound token based on a slice of the current <seealso cref="CompoundWordTokenFilterBase#termAtt"/>. </summary>
+            /// Construct the compound token based on a slice of the current <see cref="CompoundWordTokenFilterBase.m_termAtt"/>. </summary>
             public CompoundToken(CompoundWordTokenFilterBase outerInstance, int offset, int length)
             {
                 this.txt = outerInstance.m_termAtt.SubSequence(offset, offset + length);

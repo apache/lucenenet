@@ -25,34 +25,33 @@ namespace Lucene.Net.Analysis.Compound
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="HyphenationCompoundWordTokenFilter"/>.
-    /// <para>
+    /// Factory for <see cref="HyphenationCompoundWordTokenFilter"/>.
+    /// <para/>
     /// This factory accepts the following parameters:
-    /// <ul>
-    ///  <li><code>hyphenator</code> (mandatory): path to the FOP xml hyphenation pattern. 
-    ///  See <a href="http://offo.sourceforge.net/hyphenation/">http://offo.sourceforge.net/hyphenation/</a>.
-    ///  <li><code>encoding</code> (optional): encoding of the xml hyphenation file. defaults to UTF-8.
-    ///  <li><code>dictionary</code> (optional): dictionary of words. defaults to no dictionary.
-    ///  <li><code>minWordSize</code> (optional): minimal word length that gets decomposed. defaults to 5.
-    ///  <li><code>minSubwordSize</code> (optional): minimum length of subwords. defaults to 2.
-    ///  <li><code>maxSubwordSize</code> (optional): maximum length of subwords. defaults to 15.
-    ///  <li><code>onlyLongestMatch</code> (optional): if true, adds only the longest matching subword 
-    ///    to the stream. defaults to false.
-    /// </ul>
-    /// </para>
+    /// <list type="bullet">
+    ///     <item><code>hyphenator</code> (mandatory): path to the FOP xml hyphenation pattern. 
+    ///     See <a href="http://offo.sourceforge.net/hyphenation/">http://offo.sourceforge.net/hyphenation/</a>.</item>
+    ///     <item><code>encoding</code> (optional): encoding of the xml hyphenation file. defaults to UTF-8.</item>
+    ///     <item><code>dictionary</code> (optional): dictionary of words. defaults to no dictionary.</item>
+    ///     <item><code>minWordSize</code> (optional): minimal word length that gets decomposed. defaults to 5.</item>
+    ///     <item><code>minSubwordSize</code> (optional): minimum length of subwords. defaults to 2.</item>
+    ///     <item><code>maxSubwordSize</code> (optional): maximum length of subwords. defaults to 15.</item>
+    ///     <item><code>onlyLongestMatch</code> (optional): if true, adds only the longest matching subword 
+    ///     to the stream. defaults to false.</item>
+    /// </list>
     /// <para>
-    /// <pre class="prettyprint">
+    /// <code>
     /// &lt;fieldType name="text_hyphncomp" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.HyphenationCompoundWordTokenFilterFactory" hyphenator="hyphenator.xml" encoding="UTF-8"
     ///         dictionary="dictionary.txt" minWordSize="5" minSubwordSize="2" maxSubwordSize="15" onlyLongestMatch="false"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
-    /// 
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </para>
     /// </summary>
-    /// <seealso cref= HyphenationCompoundWordTokenFilter </seealso>
+    /// <seealso cref="HyphenationCompoundWordTokenFilter"/>
     public class HyphenationCompoundWordTokenFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
         private CharArraySet dictionary;
@@ -66,13 +65,13 @@ namespace Lucene.Net.Analysis.Compound
         private readonly bool onlyLongestMatch;
 
         /// <summary>
-        /// Creates a new HyphenationCompoundWordTokenFilterFactory </summary>
+        /// Creates a new <see cref="HyphenationCompoundWordTokenFilterFactory"/> </summary>
         public HyphenationCompoundWordTokenFilterFactory(IDictionary<string, string> args) : base(args)
         {
             AssureMatchVersion();
             dictFile = Get(args, "dictionary");
             encoding = Get(args, "encoding");
-            hypFile = Require(args, "hyphenator"); // LUCENENET TODO: Not sure what to do with this
+            hypFile = Require(args, "hyphenator");
             minWordSize = GetInt(args, "minWordSize", CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE);
             minSubwordSize = GetInt(args, "minSubwordSize", CompoundWordTokenFilterBase.DEFAULT_MIN_SUBWORD_SIZE);
             maxSubwordSize = GetInt(args, "maxSubwordSize", CompoundWordTokenFilterBase.DEFAULT_MAX_SUBWORD_SIZE);

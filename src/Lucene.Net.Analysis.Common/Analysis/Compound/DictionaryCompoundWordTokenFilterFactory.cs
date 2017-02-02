@@ -21,15 +21,16 @@ namespace Lucene.Net.Analysis.Compound
      */
 
     /// <summary>
-    /// Factory for <seealso cref="DictionaryCompoundWordTokenFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="DictionaryCompoundWordTokenFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_dictcomp" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.DictionaryCompoundWordTokenFilterFactory" dictionary="dictionary.txt"
     ///         minWordSize="5" minSubwordSize="2" maxSubwordSize="15" onlyLongestMatch="true"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class DictionaryCompoundWordTokenFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Analysis.Compound
         private readonly bool onlyLongestMatch;
 
         /// <summary>
-        /// Creates a new DictionaryCompoundWordTokenFilterFactory </summary>
+        /// Creates a new <see cref="DictionaryCompoundWordTokenFilterFactory"/> </summary>
         public DictionaryCompoundWordTokenFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

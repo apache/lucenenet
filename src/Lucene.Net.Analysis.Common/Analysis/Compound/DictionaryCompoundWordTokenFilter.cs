@@ -21,27 +21,26 @@ namespace Lucene.Net.Analysis.Compound
      */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that decomposes compound words found in many Germanic languages.
+    /// A <see cref="TokenFilter"/> that decomposes compound words found in many Germanic languages.
     /// <para>
     /// "Donaudampfschiff" becomes Donau, dampf, schiff so that you can find
     /// "Donaudampfschiff" even when you only enter "schiff". 
     ///  It uses a brute-force algorithm to achieve this.
     /// </para>
     /// <para>
-    /// You must specify the required <seealso cref="LuceneVersion"/> compatibility when creating
-    /// CompoundWordTokenFilterBase:
-    /// <ul>
-    /// <li>As of 3.1, CompoundWordTokenFilterBase correctly handles Unicode 4.0
-    /// supplementary characters in strings and char arrays provided as compound word
-    /// dictionaries.
-    /// </ul>
+    /// You must specify the required <see cref="LuceneVersion"/> compatibility when creating
+    /// <see cref="CompoundWordTokenFilterBase"/>:
+    /// <list type="bullet">
+    ///     <item>As of 3.1, CompoundWordTokenFilterBase correctly handles Unicode 4.0
+    ///     supplementary characters in strings and char arrays provided as compound word
+    ///     dictionaries.</item>
+    /// </list>
     /// </para>
     /// </summary>
     public class DictionaryCompoundWordTokenFilter : CompoundWordTokenFilterBase
     {
-
         /// <summary>
-        /// Creates a new <seealso cref="DictionaryCompoundWordTokenFilter"/>
+        /// Creates a new <see cref="DictionaryCompoundWordTokenFilter"/>
         /// </summary>
         /// <param name="matchVersion">
         ///          Lucene version to enable correct Unicode 4.0 behavior in the
@@ -49,7 +48,7 @@ namespace Lucene.Net.Analysis.Compound
         ///          href="CompoundWordTokenFilterBase.html#version"
         ///          >CompoundWordTokenFilterBase</a> for details. </param>
         /// <param name="input">
-        ///          the <seealso cref="TokenStream"/> to process </param>
+        ///          the <see cref="TokenStream"/> to process </param>
         /// <param name="dictionary">
         ///          the word dictionary to match against. </param>
         public DictionaryCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary)
@@ -62,7 +61,7 @@ namespace Lucene.Net.Analysis.Compound
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="DictionaryCompoundWordTokenFilter"/>
+        /// Creates a new <see cref="DictionaryCompoundWordTokenFilter"/>
         /// </summary>
         /// <param name="matchVersion">
         ///          Lucene version to enable correct Unicode 4.0 behavior in the
@@ -70,7 +69,7 @@ namespace Lucene.Net.Analysis.Compound
         ///          href="CompoundWordTokenFilterBase.html#version"
         ///          >CompoundWordTokenFilterBase</a> for details. </param>
         /// <param name="input">
-        ///          the <seealso cref="TokenStream"/> to process </param>
+        ///          the <see cref="TokenStream"/> to process </param>
         /// <param name="dictionary">
         ///          the word dictionary to match against. </param>
         /// <param name="minWordSize">

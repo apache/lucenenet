@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// <summary>
     /// A XMLReader document handler to read and parse hyphenation patterns from a XML
     /// file.
-    /// 
+    /// <para/>
     /// LUCENENET: This class has been refactored from its Java counterpart to use XmlReader rather
     /// than a SAX parser.
     /// </summary>
@@ -59,7 +59,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             hyphenChar = '-'; // default
         }
 
-        public PatternParser(IPatternConsumer consumer) : this()
+        public PatternParser(IPatternConsumer consumer) 
+            : this()
         {
             this.consumer = consumer;
         }
@@ -79,14 +80,26 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Parses a hyphenation pattern file.
         /// </summary>
-        /// <param name="filename"> the filename </param>
+        /// <param name="path">The complete file path to be read.</param>
         /// <exception cref="IOException"> In case of an exception while parsing </exception>
-        public virtual void Parse(string filename)
+        public virtual void Parse(string path)
+        {
+            // LUCENENET TODO: Create overloads that allow XmlReaderSettings to be passed in.
+            Parse(path, Encoding.UTF8);
+        }
+
+        /// <summary>
+        /// Parses a hyphenation pattern file.
+        /// </summary>
+        /// <param name="path">The complete file path to be read.</param>
+        /// <param name="encoding">The character encoding to use</param>
+        /// <exception cref="IOException"> In case of an exception while parsing </exception>
+        public virtual void Parse(string path, Encoding encoding)
         {
             var xmlReaderSettings = GetXmlReaderSettings();
 
             // LUCENENET TODO: Create overloads that allow XmlReaderSettings to be passed in.
-            using (var src = XmlReader.Create(filename, xmlReaderSettings))
+            using (var src = XmlReader.Create(new StreamReader(path, encoding), xmlReaderSettings))
             {
                 Parse(src);
             }
@@ -95,7 +108,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Parses a hyphenation pattern file.
         /// </summary>
-        /// <param name="file"> the pattern file </param>
+        /// <param name="file">  a <see cref="FileInfo"/> object representing the file  </param>
+        /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(FileInfo file)
         {
             Parse(file, Encoding.UTF8);
@@ -104,7 +118,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Parses a hyphenation pattern file.
         /// </summary>
-        /// <param name="file"> the pattern file </param>
+        /// <param name="file">  a <see cref="FileInfo"/> object representing the file </param>
+        /// <param name="encoding">The character encoding to use</param>
+        /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(FileInfo file, Encoding encoding)
         {
             var xmlReaderSettings = GetXmlReaderSettings();
@@ -118,7 +134,14 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Parses a hyphenation pattern file.
         /// </summary>
-        /// <param name="file"> the pattern file </param>
+        /// <param name="xmlStream">
+        /// The stream containing the XML data.
+        /// <para/>
+        /// The <see cref="PatternParser"/> scans the first bytes of the stream looking for a byte order mark 
+        /// or other sign of encoding. When encoding is determined, the encoding is used to continue reading 
+        /// the stream, and processing continues parsing the input as a stream of (Unicode) characters.
+        /// </param>
+        /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(Stream xmlStream)
         {
             var xmlReaderSettings = GetXmlReaderSettings();
@@ -132,7 +155,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Parses a hyphenation pattern file.
         /// </summary>
-        /// <param name="source"> the InputSource for the file </param>
+        /// <param name="source"> <see cref="XmlReader"/> input source for the file </param>
         /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(XmlReader source)
         {
@@ -209,7 +232,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return result;
         }
 
-        protected internal virtual string ReadToken(StringBuilder chars)
+        protected virtual string ReadToken(StringBuilder chars)
         {
             string word;
             bool space = false;
@@ -266,7 +289,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return null;
         }
 
-        protected internal static string GetPattern(string word)
+        protected static string GetPattern(string word)
         {
             StringBuilder pat = new StringBuilder();
             int len = word.Length;
@@ -280,7 +303,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return pat.ToString();
         }
 
-        protected internal virtual IList<object> NormalizeException<T1>(IList<T1> ex)
+        protected virtual IList<object> NormalizeException<T1>(IList<T1> ex)
         {
             List<object> res = new List<object>();
             for (int i = 0; i < ex.Count; i++)
@@ -321,7 +344,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return res;
         }
 
-        protected internal virtual string GetExceptionWord<T1>(IList<T1> ex)
+        protected virtual string GetExceptionWord<T1>(IList<T1> ex)
         {
             StringBuilder res = new StringBuilder();
             for (int i = 0; i < ex.Count; i++)
@@ -342,7 +365,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return res.ToString();
         }
 
-        protected internal static string GetInterletterValues(string pat)
+        protected static string GetInterletterValues(string pat)
         {
             StringBuilder il = new StringBuilder();
             string word = pat + "a"; // add dummy letter to serve as sentinel
@@ -388,9 +411,19 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         // ContentHandler methods
         //
 
-        /// <seealso cref= org.xml.sax.ContentHandler#startElement(java.lang.String,
-        ///      java.lang.String, java.lang.String, org.xml.sax.Attributes) </seealso>
-        public void StartElement(string uri, string local, string raw, IDictionary<string, string> attrs)
+        /// <summary>
+        /// Receive notification of the beginning of an element.
+        /// <para/>
+        /// The Parser will invoke this method at the beginning of every element in the XML document; 
+        /// there will be a corresponding <see cref="EndElement"/> event for every <see cref="StartElement"/> event 
+        /// (even when the element is empty). All of the element's content will be reported, 
+        /// in order, before the corresponding endElement event.
+        /// </summary>
+        /// <param name="uri">the Namespace URI, or the empty string if the element has no Namespace URI or if Namespace processing is not being performed</param>
+        /// <param name="local">the local name (without prefix), or the empty string if Namespace processing is not being performed</param>
+        /// <param name="raw"></param>
+        /// <param name="attrs"> the attributes attached to the element. If there are no attributes, it shall be an empty Attributes object. The value of this object after startElement returns is undefined</param>
+        public virtual void StartElement(string uri, string local, string raw, IDictionary<string, string> attrs)
         {
             if (local.Equals("hyphen-char"))
             {
@@ -425,9 +458,17 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             token.Length = 0;
         }
 
-        /// <seealso cref= org.xml.sax.ContentHandler#endElement(java.lang.String,
-        ///      java.lang.String, java.lang.String) </seealso>
-        public void EndElement(string uri, string local, string raw)
+        /// <summary>
+        /// Receive notification of the end of an element.
+        /// <para/>
+        /// The parser will invoke this method at the end of every element in the XML document; 
+        /// there will be a corresponding <see cref="StartElement"/> event for every 
+        /// <see cref="EndElement"/> event (even when the element is empty).
+        /// </summary>
+        /// <param name="uri">the Namespace URI, or the empty string if the element has no Namespace URI or if Namespace processing is not being performed</param>
+        /// <param name="local">the local name (without prefix), or the empty string if Namespace processing is not being performed</param>
+        /// <param name="raw"></param>
+        public virtual void EndElement(string uri, string local, string raw)
         {
             if (token.Length > 0)
             {
@@ -464,8 +505,20 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
         }
 
-        /// <seealso cref= org.xml.sax.ContentHandler#characters(char[], int, int) </seealso>
-        public void Characters(char[] ch, int start, int length)
+        /// <summary>
+        /// Receive notification of character data.
+        /// <para/>
+        /// The Parser will call this method to report each chunk of character data. Parsers may 
+        /// return all contiguous character data in a single chunk, or they may split it into 
+        /// several chunks; however, all of the characters in any single event must come from 
+        /// the same external entity so that the Locator provides useful information.
+        /// <para/>
+        /// The application must not attempt to read from the array outside of the specified range.
+        /// </summary>
+        /// <param name="ch"></param>
+        /// <param name="start"></param>
+        /// <param name="length"></param>
+        public virtual void Characters(char[] ch, int start, int length)
         {
             StringBuilder chars = new StringBuilder(length);
             chars.Append(ch, start, length);

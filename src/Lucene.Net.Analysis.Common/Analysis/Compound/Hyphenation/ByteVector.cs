@@ -27,7 +27,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// </summary>
     public class ByteVector
     {
-
         /// <summary>
         /// Capacity increment size
         /// </summary>
@@ -122,6 +121,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             get { return array.Length; }
         }
 
+        // LUCENENET NOTE: Not needed (replaced with this[])
         //public virtual void Put(int index, sbyte val)
         //{
         //    array[index] = val;

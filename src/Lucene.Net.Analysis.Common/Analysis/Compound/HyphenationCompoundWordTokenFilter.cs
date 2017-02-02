@@ -24,20 +24,20 @@ namespace Lucene.Net.Analysis.Compound
      */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that decomposes compound words found in many Germanic languages.
+    /// A <see cref="TokenFilter"/> that decomposes compound words found in many Germanic languages.
     /// <para>
     /// "Donaudampfschiff" becomes Donau, dampf, schiff so that you can find
     /// "Donaudampfschiff" even when you only enter "schiff". It uses a hyphenation
     /// grammar and a word dictionary to achieve this.
     /// </para>
     /// <para>
-    /// You must specify the required <seealso cref="LuceneVersion"/> compatibility when creating
-    /// CompoundWordTokenFilterBase:
-    /// <ul>
-    /// <li>As of 3.1, CompoundWordTokenFilterBase correctly handles Unicode 4.0
-    /// supplementary characters in strings and char arrays provided as compound word
-    /// dictionaries.
-    /// </ul>
+    /// You must specify the required <see cref="LuceneVersion"/> compatibility when creating
+    /// <see cref="CompoundWordTokenFilterBase"/>:
+    /// <list type="bullet">
+    ///     <item>As of 3.1, CompoundWordTokenFilterBase correctly handles Unicode 4.0
+    ///     supplementary characters in strings and char arrays provided as compound word
+    ///     dictionaries.</item>
+    /// </list>
     /// </para>
     /// </summary>
     public class HyphenationCompoundWordTokenFilter : CompoundWordTokenFilterBase
@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Compound
         private readonly HyphenationTree hyphenator;
 
         /// <summary>
-        /// Creates a new <seealso cref="HyphenationCompoundWordTokenFilter"/> instance. 
+        /// Creates a new <see cref="HyphenationCompoundWordTokenFilter"/> instance. 
         /// </summary>
         /// <param name="matchVersion">
         ///          Lucene version to enable correct Unicode 4.0 behavior in the
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Compound
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="HyphenationCompoundWordTokenFilter"/> instance.
+        /// Creates a new <see cref="HyphenationCompoundWordTokenFilter"/> instance.
         /// </summary>
         /// <param name="matchVersion">
         ///          Lucene version to enable correct Unicode 4.0 behavior in the
@@ -93,16 +93,13 @@ namespace Lucene.Net.Analysis.Compound
             : base(matchVersion, input, dictionary, minWordSize, minSubwordSize, maxSubwordSize, 
                   onlyLongestMatch)
         {
-
             this.hyphenator = hyphenator;
         }
 
         /// <summary>
-        /// Create a HyphenationCompoundWordTokenFilter with no dictionary.
+        /// Create a <see cref="HyphenationCompoundWordTokenFilter"/> with no dictionary.
         /// <para>
-        /// Calls {@link #HyphenationCompoundWordTokenFilter(Version, TokenStream, HyphenationTree, CharArraySet, int, int, int, boolean)
-        /// HyphenationCompoundWordTokenFilter(matchVersion, input, hyphenator,
-        /// null, minWordSize, minSubwordSize, maxSubwordSize }
+        /// Calls <see cref="HyphenationCompoundWordTokenFilter.HyphenationCompoundWordTokenFilter(LuceneVersion, TokenStream, HyphenationTree, CharArraySet, int, int, int, bool)"/>
         /// </para>
         /// </summary>
         public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, 
@@ -114,11 +111,9 @@ namespace Lucene.Net.Analysis.Compound
         }
 
         /// <summary>
-        /// Create a HyphenationCompoundWordTokenFilter with no dictionary.
+        /// Create a <see cref="HyphenationCompoundWordTokenFilter"/> with no dictionary.
         /// <para>
-        /// Calls {@link #HyphenationCompoundWordTokenFilter(Version, TokenStream, HyphenationTree, int, int, int) 
-        /// HyphenationCompoundWordTokenFilter(matchVersion, input, hyphenator, 
-        /// DEFAULT_MIN_WORD_SIZE, DEFAULT_MIN_SUBWORD_SIZE, DEFAULT_MAX_SUBWORD_SIZE }
+        /// Calls <see cref="HyphenationCompoundWordTokenFilter.HyphenationCompoundWordTokenFilter(LuceneVersion, TokenStream, HyphenationTree, int, int, int)"/>
         /// </para>
         /// </summary>
         public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, 
@@ -143,6 +138,7 @@ namespace Lucene.Net.Analysis.Compound
         /// Create a hyphenator tree
         /// </summary>
         /// <param name="hyphenationFilename"> the filename of the XML grammar to load </param>
+        /// <param name="encoding">The character encoding to use</param>
         /// <returns> An object representing the hyphenation patterns </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static HyphenationTree GetHyphenationTree(string hyphenationFilename, Encoding encoding)
@@ -165,6 +161,7 @@ namespace Lucene.Net.Analysis.Compound
         /// Create a hyphenator tree
         /// </summary>
         /// <param name="hyphenationFile"> the file of the XML grammar to load </param>
+        /// <param name="encoding">The character encoding to use</param>
         /// <returns> An object representing the hyphenation patterns </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static HyphenationTree GetHyphenationTree(FileInfo hyphenationFile, Encoding encoding)
@@ -187,6 +184,7 @@ namespace Lucene.Net.Analysis.Compound
         /// Create a hyphenator tree
         /// </summary>
         /// <param name="hyphenationSource"> the InputSource pointing to the XML grammar </param>
+        /// <param name="encoding">The character encoding to use</param>
         /// <returns> An object representing the hyphenation patterns </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static HyphenationTree GetHyphenationTree(Stream hyphenationSource, Encoding encoding)

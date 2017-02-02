@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual object Clone()
         {
-            CharVector cv = new CharVector(array, blockSize);
+            CharVector cv = new CharVector((char[])array.Clone(), blockSize);
             cv.n = this.n;
             return cv;
         }
@@ -117,8 +117,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// LUCENENET indexer for .NET
         /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
         public virtual char this[int index]
         {
             get { return array[index]; }
@@ -128,9 +126,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// return number of items in array
         /// </summary>
-        public virtual int Length()
+        public virtual int Length
         {
-            return n;
+            get { return n; }
         }
 
         /// <summary>
@@ -141,6 +139,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             get { return array.Length; }
         }
 
+        // LUCENENET NOTE: Not needed (replaced with this[])
         //public virtual void Put(int index, char val)
         //{
         //    array[index] = val;

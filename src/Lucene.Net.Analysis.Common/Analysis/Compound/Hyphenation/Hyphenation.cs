@@ -22,29 +22,28 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
     /// <summary>
     /// This class represents a hyphenated word.
-    /// 
+    /// <para/>
     /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified.
     /// </summary>
     public class Hyphenation
     {
-
         private readonly int[] hyphenPoints;
 
         /// <summary>
-        /// rawWord as made of alternating strings and <seealso cref="Hyphen"/> instances
+        /// rawWord as made of alternating strings and <see cref="Hyphen"/> instances
         /// </summary>
         internal Hyphenation(int[] points)
         {
             hyphenPoints = points;
         }
 
-        /// <returns> the number of hyphenation points in the word </returns>
+        /// <summary> the number of hyphenation points in the word </summary>
         public virtual int Length
         {
             get { return hyphenPoints.Length; }
         }
 
-        /// <returns> the hyphenation points </returns>
+        /// <summary> the hyphenation points </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public virtual int[] HyphenationPoints

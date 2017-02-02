@@ -22,33 +22,32 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// <summary>
     /// This interface is used to connect the XML pattern file parser to the
     /// hyphenation tree.
-    /// 
-    /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified.
+    /// <para/>
+    /// This interface has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified.
     /// </summary>
     public interface IPatternConsumer
-	{
+    {
+        /// <summary>
+        /// Add a character class. A character class defines characters that are
+        /// considered equivalent for the purpose of hyphenation (e.g. "aA"). It
+        /// usually means to ignore case.
+        /// </summary>
+        /// <param name="chargroup"> character group </param>
+        void AddClass(string chargroup);
 
-	  /// <summary>
-	  /// Add a character class. A character class defines characters that are
-	  /// considered equivalent for the purpose of hyphenation (e.g. "aA"). It
-	  /// usually means to ignore case.
-	  /// </summary>
-	  /// <param name="chargroup"> character group </param>
-	  void AddClass(string chargroup);
+        /// <summary>
+        /// Add a hyphenation exception. An exception replaces the result obtained by
+        /// the algorithm for cases for which this fails or the user wants to provide
+        /// his own hyphenation. A hyphenatedword is a vector of alternating String's
+        /// and <see cref="Hyphen"/> instances
+        /// </summary>
+        void AddException(string word, IList<object> hyphenatedword);
 
-	  /// <summary>
-	  /// Add a hyphenation exception. An exception replaces the result obtained by
-	  /// the algorithm for cases for which this fails or the user wants to provide
-	  /// his own hyphenation. A hyphenatedword is a vector of alternating String's
-	  /// and <seealso cref="Hyphen"/> instances
-	  /// </summary>
-	  void AddException(string word, IList<object> hyphenatedword);
-
-	  /// <summary>
-	  /// Add hyphenation patterns.
-	  /// </summary>
-	  /// <param name="pattern"> the pattern </param>
-	  /// <param name="values"> interletter values expressed as a string of digit characters. </param>
-	  void AddPattern(string pattern, string values);
-	}
+        /// <summary>
+        /// Add hyphenation patterns.
+        /// </summary>
+        /// <param name="pattern"> the pattern </param>
+        /// <param name="values"> interletter values expressed as a string of digit characters. </param>
+        void AddPattern(string pattern, string values);
+    }
 }

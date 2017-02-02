@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// cases in some languages where words change spelling if they're split across
     /// lines, like german's 'backen' which hyphenates 'bak-ken'. BTW, this comes
     /// from TeX.
-    /// 
+    /// <para/>
     /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified. 
     /// </summary>
     public class Hyphen

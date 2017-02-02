@@ -70,65 +70,63 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         : ICloneable
 #endif
     {
-        /// <summary>
-        /// We use 4 arrays to represent a node. I guess I should have created a proper
-        /// node class, but somehow Knuth's pascal code made me forget we now have a
-        /// portable language with virtual memory management and automatic garbage
-        /// collection! And now is kind of late, furthermore, if it ain't broken, don't
-        /// fix it.
-        /// </summary>
+        // We use 4 arrays to represent a node.I guess I should have created a proper
+        // node class, but somehow Knuth's pascal code made me forget we now have a
+        // portable language with virtual memory management and automatic garbage
+        // collection! And now is kind of late, furthermore, if it ain't broken, don't
+        // fix it.
 
         /// <summary>
         /// Pointer to low branch and to rest of the key when it is stored directly in
         /// this node, we don't have unions in java!
         /// </summary>
-        protected internal char[] m_lo;
+        protected char[] m_lo;
 
         /// <summary>
         /// Pointer to high branch.
         /// </summary>
-        protected internal char[] m_hi;
+        protected char[] m_hi;
 
         /// <summary>
         /// Pointer to equal branch and to data when this node is a string terminator.
         /// </summary>
-        protected internal char[] m_eq;
+        protected char[] m_eq;
 
         /// <summary>
-        /// <P>
+        /// <para>
         /// The character stored in this node: splitchar. Two special values are
         /// reserved:
-        /// </P>
-        /// <ul>
-        /// <li>0x0000 as string terminator</li>
-        /// <li>0xFFFF to indicate that the branch starting at this node is compressed</li>
-        /// </ul>
+        /// </para>
+        /// <list type="bullet">
+        ///     <item>0x0000 as string terminator</item>
+        ///     <item>0xFFFF to indicate that the branch starting at this node is compressed</item>
+        /// </list>
         /// <para>
         /// This shouldn't be a problem if we give the usual semantics to strings since
         /// 0xFFFF is guaranteed not to be an Unicode character.
         /// </para>
         /// </summary>
-        protected internal char[] m_sc;
+        protected char[] m_sc;
 
         /// <summary>
         /// This vector holds the trailing of the keys when the branch is compressed.
         /// </summary>
-        protected internal CharVector m_kv;
+        protected CharVector m_kv;
 
-        protected internal char m_root;
+        protected char m_root;
 
-        protected internal char m_freenode;
+        protected char m_freenode;
 
-        protected internal int m_length; // number of items in tree
+        protected int m_length; // number of items in tree
 
-        protected internal const int BLOCK_SIZE = 2048; // allocation size for arrays
+        protected const int BLOCK_SIZE = 2048; // allocation size for arrays
 
         internal TernaryTree()
         {
             Init();
         }
 
-        protected internal virtual void Init()
+        protected virtual void Init()
         {
             m_root = (char)0;
             m_freenode = (char)1;
@@ -408,7 +406,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             get { return m_length; }
         }
 
-        public object Clone()
+        public virtual object Clone()
         {
             TernaryTree t = new TernaryTree();
             t.m_lo = (char[])this.m_lo.Clone();
@@ -428,7 +426,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// upper halves, and so on in order to get a balanced tree. The array of keys
         /// is assumed to be sorted in ascending order.
         /// </summary>
-        protected internal virtual void InsertBalanced(string[] k, char[] v, int offset, int n)
+        protected virtual void InsertBalanced(string[] k, char[] v, int offset, int n)
         {
             int m;
             if (n < 1)
@@ -555,7 +553,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             /// </summary>
             private string curkey;
 
-            internal class Item
+            private class Item
 #if FEATURE_CLONEABLE
                 : ICloneable
 #endif
@@ -585,12 +583,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             /// <summary>
             /// Node stack
             /// </summary>
-            internal Stack<Item> ns;
+            private Stack<Item> ns;
 
             /// <summary>
-            /// key stack implemented with a StringBuilder
+            /// key stack implemented with a <see cref="StringBuilder"/>
             /// </summary>
-            internal StringBuilder ks;
+            private StringBuilder ks;
 
             private bool isInitialized = false;
 
@@ -626,7 +624,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             /// <summary>
             /// traverse upwards
             /// </summary>
-            internal virtual int Up()
+            private int Up()
             {
                 Item i = new Item();
                 int res = 0;
@@ -690,7 +688,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             /// <summary>
             /// traverse the tree to find next key
             /// </summary>
-            internal virtual int Run()
+            private int Run()
             {
                 if (cur == -1)
                 {
@@ -794,7 +792,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             @out.WriteLine("Number of keys = " + Convert.ToString(m_length));
             @out.WriteLine("Node count = " + Convert.ToString(m_freenode));
             // System.out.println("Array length = " + Integer.toString(eq.length));
-            @out.WriteLine("Key Array length = " + Convert.ToString(m_kv.Length()));
+            @out.WriteLine("Key Array length = " + Convert.ToString(m_kv.Length));
 
             /*
              * for(int i=0; i<kv.length(); i++) if ( kv.get(i) != 0 )
