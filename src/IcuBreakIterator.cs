@@ -50,6 +50,8 @@ namespace Lucene.Net
         /// </summary>
         protected int m_end;
 
+        private bool enableHacks = false;
+
         public IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType type)
             : this(type, CultureInfo.CurrentCulture)
         {
@@ -61,6 +63,13 @@ namespace Lucene.Net
                 throw new ArgumentNullException("locale");
             this.locale = new Icu.Locale(locale.Name);
             this.type = type;
+        }
+
+        
+        public virtual bool EnableHacks
+        {
+            get { return enableHacks; }
+            set { enableHacks = value; }
         }
 
         /// <summary>
@@ -280,20 +289,22 @@ namespace Lucene.Net
 
         private void LoadBoundaries(int start, int end)
         {
-            //boundaries = new List<int>();
-
             IEnumerable<Icu.Boundary> icuBoundaries;
             string offsetText = text.Substring(start, end - start);
 
-
             if (type == Icu.BreakIterator.UBreakIteratorType.WORD)
             {
-                // LUCENENET TODO: HACK - replacing hyphen with "a" so hyphenated words aren't broken
-                icuBoundaries = Icu.BreakIterator.GetWordBoundaries(locale, offsetText.Replace("-", "a"), true);
+                if (enableHacks)
+                {
+                    // LUCENENET TODO: HACK - replacing hyphen with "a" so hyphenated words aren't broken
+                    offsetText = offsetText.Replace("-", "a");
+                }
+                
+                icuBoundaries = Icu.BreakIterator.GetWordBoundaries(locale, offsetText, true);
             }
             else
             {
-                if (type == Icu.BreakIterator.UBreakIteratorType.SENTENCE)
+                if (enableHacks && type == Icu.BreakIterator.UBreakIteratorType.SENTENCE)
                 {
                     // LUCENENET TODO: HACK - newline character causes incorrect sentence breaking.
                     offsetText = offsetText.Replace("\n", " ");

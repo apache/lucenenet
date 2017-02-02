@@ -131,7 +131,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// </summary>
         protected virtual BreakIterator GetBreakIterator(string field)
         {
-            return new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture);
+            return new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture)
+            {
+                EnableHacks = true
+            };
         }
 
         /// <summary>
