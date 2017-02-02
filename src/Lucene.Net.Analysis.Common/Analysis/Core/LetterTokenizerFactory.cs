@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -23,19 +23,19 @@ namespace Lucene.Net.Analysis.Core
      */
 
     /// <summary>
-    /// Factory for <seealso cref="LetterTokenizer"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="LetterTokenizer"/>. 
+    /// <code>
     /// &lt;fieldType name="text_letter" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.LetterTokenizerFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class LetterTokenizerFactory : TokenizerFactory
     {
-
         /// <summary>
-        /// Creates a new LetterTokenizerFactory </summary>
+        /// Creates a new <see cref="LetterTokenizerFactory"/> </summary>
         public LetterTokenizerFactory(IDictionary<string, string> args)
             : base(args)
         {

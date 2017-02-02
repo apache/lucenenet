@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Override this method and return if the current input token should be returned by <seealso cref="#incrementToken"/>. </summary>
-        protected internal abstract bool Accept();
+        protected abstract bool Accept();
 
         public override sealed bool IncrementToken()
         {

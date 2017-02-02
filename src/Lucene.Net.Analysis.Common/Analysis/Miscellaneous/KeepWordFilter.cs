@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             termAtt = AddAttribute<ICharTermAttribute>();
         }
 
-        protected internal override bool Accept()
+        protected override bool Accept()
         {
             return words.Contains(termAtt.Buffer, 0, termAtt.Length);
         }

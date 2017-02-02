@@ -23,15 +23,16 @@ namespace Lucene.Net.Analysis.Core
      */
 
     /// <summary>
-    /// Factory class for <seealso cref="TypeTokenFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory class for <see cref="TypeTokenFilter"/>.
+    /// <code>
     /// &lt;fieldType name="chars" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.TypeTokenFilterFactory" types="stoptypes.txt"
     ///                   useWhitelist="false"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class TypeTokenFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Analysis.Core
         private HashSet<string> stopTypes;
 
         /// <summary>
-        /// Creates a new TypeTokenFilterFactory </summary>
+        /// Creates a new <see cref="TypeTokenFilterFactory"/> </summary>
         public TypeTokenFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
@@ -63,7 +64,7 @@ namespace Lucene.Net.Analysis.Core
                 foreach (string file in files)
                 {
                     IList<string> typesLines = GetLines(loader, file.Trim());
-                    stopTypes.AddAll(typesLines);
+                    stopTypes.UnionWith(typesLines);
                 }
             }
         }
@@ -76,7 +77,7 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        public virtual HashSet<string> StopTypes
+        public virtual ICollection<string> StopTypes
         {
             get
             {

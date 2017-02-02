@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             this.termAtt = AddAttribute<ICharTermAttribute>();
         }
 
-        protected internal override bool Accept()
+        protected override bool Accept()
         {
             int len = termAtt.Length;
             return (len >= min && len <= max);

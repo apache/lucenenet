@@ -1,7 +1,7 @@
-﻿using System.IO;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -23,32 +23,30 @@ namespace Lucene.Net.Analysis.Core
      */
 
     /// <summary>
-    /// A LetterTokenizer is a tokenizer that divides text at non-letters. That's to
+    /// A <see cref="LetterTokenizer"/> is a tokenizer that divides text at non-letters. That's to
     /// say, it defines tokens as maximal strings of adjacent letters, as defined by
-    /// java.lang.Character.isLetter() predicate.
+    /// <see cref="char.IsLetter"/> predicate.
     /// <para>
     /// Note: this does a decent job for most European languages, but does a terrible
     /// job for some Asian languages, where words are not separated by spaces.
     /// </para>
     /// <para>
-    /// <a name="version"/>
-    /// You must specify the required <seealso cref="LuceneVersion"/> compatibility when creating
-    /// <seealso cref="LetterTokenizer"/>:
-    /// <ul>
-    /// <li>As of 3.1, <seealso cref="CharTokenizer"/> uses an int based API to normalize and
-    /// detect token characters. See <seealso cref="CharTokenizer#isTokenChar(int)"/> and
-    /// <seealso cref="CharTokenizer#normalize(int)"/> for details.</li>
-    /// </ul>
+    /// You must specify the required <see cref="LuceneVersion"/> compatibility when creating
+    /// <see cref="LetterTokenizer"/>:
+    /// <list type="bullet">
+    ///     <item>As of 3.1, <see cref="CharTokenizer"/> uses an <see cref="int"/> based API to normalize and
+    ///     detect token characters. See <see cref="CharTokenizer.IsTokenChar(int)"/> and
+    ///     <see cref="CharTokenizer.Normalize(int)"/> for details.</item>
+    /// </list>
     /// </para>
     /// </summary>
     public class LetterTokenizer : CharTokenizer
     {
-
         /// <summary>
-        /// Construct a new LetterTokenizer.
+        /// Construct a new <see cref="LetterTokenizer"/>.
         /// </summary>
         /// <param name="matchVersion">
-        ///          Lucene version to match See <seealso cref="<a href="#version">above</a>"/> </param>
+        ///          <see cref="LuceneVersion"/> to match. </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
         public LetterTokenizer(LuceneVersion matchVersion, TextReader @in)
@@ -57,13 +55,13 @@ namespace Lucene.Net.Analysis.Core
         }
 
         /// <summary>
-        /// Construct a new LetterTokenizer using a given
-        /// <seealso cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/>.
+        /// Construct a new <see cref="LetterTokenizer"/> using a given
+        /// <see cref="AttributeSource.AttributeFactory"/>.
         /// </summary>
         /// <param name="matchVersion">
-        ///          Lucene version to match See <seealso cref="<a href="#version">above</a>"/> </param>
+        ///          <see cref="LuceneVersion"/> to match</param>
         /// <param name="factory">
-        ///          the attribute factory to use for this <seealso cref="Tokenizer"/> </param>
+        ///          the attribute factory to use for this <see cref="Tokenizer"/> </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
         public LetterTokenizer(LuceneVersion matchVersion, AttributeSource.AttributeFactory factory, TextReader @in)
@@ -73,7 +71,7 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// Collects only characters which satisfy
-        /// <seealso cref="Character#isLetter(int)"/>.
+        /// <see cref="Character.IsLetter(int)"/>.
         /// </summary>
         protected override bool IsTokenChar(int c)
         {

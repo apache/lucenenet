@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -51,11 +50,11 @@ namespace Lucene.Net.Analysis.Core
         }
 
         /// <summary>
-        /// Create a new <seealso cref="TypeTokenFilter"/>. </summary>
-        /// <param name="version">      the Lucene match version </param>
-        /// <param name="input">        the <seealso cref="TokenStream"/> to consume </param>
+        /// Create a new <see cref="TypeTokenFilter"/>. </summary>
+        /// <param name="version">      the <see cref="LuceneVersion"/> match version </param>
+        /// <param name="input">        the <see cref="TokenStream"/> to consume </param>
         /// <param name="stopTypes">    the types to filter </param>
-        /// <param name="useWhiteList"> if true, then tokens whose type is in stopTypes will
+        /// <param name="useWhiteList"> if true, then tokens whose type is in <paramref name="stopTypes"/> will
         ///                     be kept, otherwise they will be filtered out </param>
         public TypeTokenFilter(LuceneVersion version, TokenStream input, ICollection<string> stopTypes, bool useWhiteList)
             : base(version, input)
@@ -66,9 +65,9 @@ namespace Lucene.Net.Analysis.Core
         }
 
         /// <summary>
-        /// Create a new <seealso cref="TypeTokenFilter"/> that filters tokens out
+        /// Create a new <see cref="TypeTokenFilter"/> that filters tokens out
         /// (useWhiteList=false). </summary>
-        /// <seealso cref= #TypeTokenFilter(Version, TokenStream, Set, boolean) </seealso>
+        /// <seealso cref="TypeTokenFilter.TypeTokenFilter(LuceneVersion, TokenStream, ICollection{string}, bool)"/>
         public TypeTokenFilter(LuceneVersion version, TokenStream input, ICollection<string> stopTypes)
             : this(version, input, stopTypes, false)
         {
@@ -76,9 +75,9 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// By default accept the token if its type is not a stop type.
-        /// When the useWhiteList parameter is set to true then accept the token if its type is contained in the stopTypes
+        /// When the <see cref="useWhiteList"/> parameter is set to true then accept the token if its type is contained in the <see cref="stopTypes"/>
         /// </summary>
-        protected internal override bool Accept()
+        protected override bool Accept()
         {
             return useWhiteList == stopTypes.Contains(typeAttribute.Type);
         }

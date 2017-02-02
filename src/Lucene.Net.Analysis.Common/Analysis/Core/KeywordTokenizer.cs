@@ -1,7 +1,6 @@
-﻿using System.IO;
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
-using Reader = System.IO.TextReader;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -54,7 +53,7 @@ namespace Lucene.Net.Analysis.Core
             termAtt.ResizeBuffer(bufferSize);
         }
 
-        public KeywordTokenizer(AttributeSource.AttributeFactory factory, Reader input, int bufferSize)
+        public KeywordTokenizer(AttributeSource.AttributeFactory factory, TextReader input, int bufferSize)
             : base(factory, input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
@@ -67,7 +66,7 @@ namespace Lucene.Net.Analysis.Core
             termAtt.ResizeBuffer(bufferSize);
         }
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             if (!done)
             {
@@ -96,7 +95,7 @@ namespace Lucene.Net.Analysis.Core
             return false;
         }
 
-        public override void End()
+        public override sealed void End()
         {
             base.End();
             // set final offset 

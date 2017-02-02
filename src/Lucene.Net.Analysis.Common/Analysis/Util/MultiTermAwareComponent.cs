@@ -30,6 +30,6 @@
         /// Returns an analysis component to handle analysis if multi-term queries.
         /// The returned component must be a TokenizerFactory, TokenFilterFactory or CharFilterFactory.
         /// </summary>
-        AbstractAnalysisFactory MultiTermComponent { get; }
+        AbstractAnalysisFactory MultiTermComponent { get; } // LUCENENET TODO: Change to GetMultiTermComponent() ? Some implementations return new instance.
     }
 }

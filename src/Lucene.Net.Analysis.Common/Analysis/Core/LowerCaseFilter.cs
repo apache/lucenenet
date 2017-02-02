@@ -4,7 +4,6 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Core
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,14 +20,14 @@ namespace Lucene.Net.Analysis.Core
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Normalizes token text to lower case.
-    /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="LuceneVersion"/>
+    /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating LowerCaseFilter:
-    /// <ul>
-    ///   <li> As of 3.1, supplementary characters are properly lowercased.
-    /// </ul>
+    /// <list type="bullet">
+    ///     <item> As of 3.1, supplementary characters are properly lowercased.</item>
+    /// </list>
     /// </para>
     /// </summary>
     public sealed class LowerCaseFilter : TokenFilter
@@ -37,10 +36,10 @@ namespace Lucene.Net.Analysis.Core
         private readonly ICharTermAttribute termAtt;
 
         /// <summary>
-        /// Create a new LowerCaseFilter, that normalizes token text to lower case.
+        /// Create a new <see cref="LowerCaseFilter"/>, that normalizes token text to lower case.
         /// </summary>
-        /// <param name="matchVersion"> See <a href="#version">above</a> </param>
-        /// <param name="in"> TokenStream to filter </param>
+        /// <param name="matchVersion"> See <see cref="LuceneVersion"/> </param>
+        /// <param name="in"> <see cref="TokenStream"/> to filter </param>
         public LowerCaseFilter(LuceneVersion matchVersion, TokenStream @in)
             : base(@in)
         {
@@ -48,7 +47,7 @@ namespace Lucene.Net.Analysis.Core
             charUtils = CharacterUtils.GetInstance(matchVersion);
         }
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             if (m_input.IncrementToken())
             {

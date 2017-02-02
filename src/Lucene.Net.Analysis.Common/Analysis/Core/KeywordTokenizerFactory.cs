@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -23,19 +23,19 @@ namespace Lucene.Net.Analysis.Core
      */
 
     /// <summary>
-    /// Factory for <seealso cref="KeywordTokenizer"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="KeywordTokenizer"/>. 
+    /// <code>
     /// &lt;fieldType name="text_keyword" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.KeywordTokenizerFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre> 
+    /// &lt;/fieldType&gt;
+    /// </code> 
     /// </summary>
     public class KeywordTokenizerFactory : TokenizerFactory
     {
-
         /// <summary>
-        /// Creates a new KeywordTokenizerFactory </summary>
+        /// Creates a new <see cref="KeywordTokenizerFactory"/> </summary>
         public KeywordTokenizerFactory(IDictionary<string, string> args)
             : base(args)
         {

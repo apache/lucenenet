@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -24,21 +24,19 @@ namespace Lucene.Net.Analysis.Core
      */
 
     /// <summary>
-    /// Filters <seealso cref="LetterTokenizer"/> with <seealso cref="LowerCaseFilter"/> and <seealso cref="StopFilter"/>.
-    /// 
-    /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="LuceneVersion"/>
-    /// compatibility when creating StopAnalyzer:
-    /// <ul>
-    ///    <li> As of 3.1, StopFilter correctly handles Unicode 4.0
-    ///         supplementary characters in stopwords
-    ///   <li> As of 2.9, position increments are preserved
-    /// </ul>
+    /// Filters <see cref="LetterTokenizer"/> with <see cref="LowerCaseFilter"/> and <see cref="StopFilter"/>.
+    /// <para>
+    /// You must specify the required <see cref="LuceneVersion"/>
+    /// compatibility when creating <see cref="StopAnalyzer"/>:
+    /// <list type="bullet">
+    ///     <item> As of 3.1, StopFilter correctly handles Unicode 4.0
+    ///         supplementary characters in stopwords</item>
+    ///     <item> As of 2.9, position increments are preserved</item>
+    /// </list>
     /// </para>
     /// </summary>
     public sealed class StopAnalyzer : StopwordAnalyzerBase
     {
-
         /// <summary>
         /// An unmodifiable set containing some common English words that are not usually useful
         /// for searching.
@@ -59,8 +57,8 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// Builds an analyzer which removes words in
-        ///  <seealso cref="#ENGLISH_STOP_WORDS_SET"/>. </summary>
-        /// <param name="matchVersion"> See <a href="#version">above</a> </param>
+        /// <see cref="ENGLISH_STOP_WORDS_SET"/>. </summary>
+        /// <param name="matchVersion"> See <see cref="LuceneVersion"/> </param>
         public StopAnalyzer(LuceneVersion matchVersion)
             : this(matchVersion, ENGLISH_STOP_WORDS_SET)
         {
@@ -68,7 +66,7 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// Builds an analyzer with the stop words from the given set. </summary>
-        /// <param name="matchVersion"> See <a href="#version">above</a> </param>
+        /// <param name="matchVersion"> See <see cref="LuceneVersion"/> </param>
         /// <param name="stopWords"> Set of stop words  </param>
         public StopAnalyzer(LuceneVersion matchVersion, CharArraySet stopWords)
             : base(matchVersion, stopWords)
@@ -77,8 +75,8 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// Builds an analyzer with the stop words from the given file. </summary>
-        /// <seealso cref= WordlistLoader#getWordSet(Reader, Version) </seealso>
-        /// <param name="matchVersion"> See <a href="#version">above</a> </param>
+        /// <seealso cref="WordlistLoader.GetWordSet(TextReader, LuceneVersion)"/>
+        /// <param name="matchVersion"> See <see cref="LuceneVersion"/> </param>
         /// <param name="stopwordsFile"> File to load stop words from  </param>
         public StopAnalyzer(LuceneVersion matchVersion, FileInfo stopwordsFile)
             : this(matchVersion, LoadStopwordSet(stopwordsFile, matchVersion))
@@ -87,9 +85,9 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// Builds an analyzer with the stop words from the given reader. </summary>
-        /// <seealso cref= WordlistLoader#getWordSet(Reader, Version) </seealso>
-        /// <param name="matchVersion"> See <a href="#version">above</a> </param>
-        /// <param name="stopwords"> TextReader to load stop words from  </param>
+        /// <seealso cref="WordlistLoader.GetWordSet(TextReader, LuceneVersion)"/>
+        /// <param name="matchVersion"> See <see cref="LuceneVersion"/> </param>
+        /// <param name="stopwords"> <see cref="TextReader"/> to load stop words from  </param>
         public StopAnalyzer(LuceneVersion matchVersion, TextReader stopwords)
             : this(matchVersion, LoadStopwordSet(stopwords, matchVersion))
         {
@@ -97,12 +95,12 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// Creates
-        /// <seealso cref="Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <seealso cref="TextReader"/>.
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
-        /// <returns> <seealso cref="Analyzer.TokenStreamComponents"/>
-        ///         built from a <seealso cref="LowerCaseTokenizer"/> filtered with
-        ///         <seealso cref="StopFilter"/> </returns>
+        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from a <see cref="LowerCaseTokenizer"/> filtered with
+        ///         <see cref="StopFilter"/> </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new LowerCaseTokenizer(m_matchVersion, reader);

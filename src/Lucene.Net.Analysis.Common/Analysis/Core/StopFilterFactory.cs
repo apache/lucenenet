@@ -24,46 +24,46 @@ namespace Lucene.Net.Analysis.Core
 
 
     /// <summary>
-    /// Factory for <seealso cref="StopFilter"/>.
+    /// Factory for <see cref="StopFilter"/>.
     /// 
-    /// <pre class="prettyprint">
+    /// <code>
     /// &lt;fieldType name="text_stop" class="solr.TextField" positionIncrementGap="100" autoGeneratePhraseQueries="true"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.StopFilterFactory" ignoreCase="true"
     ///             words="stopwords.txt" format="wordset" /&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
-    /// 
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// <para>
     /// All attributes are optional:
     /// </para>
-    /// <ul>
-    ///  <li><code>ignoreCase</code> defaults to <code>false</code></li>
-    ///  <li><code>words</code> should be the name of a stopwords file to parse, if not 
-    ///      specified the factory will use <seealso cref="StopAnalyzer#ENGLISH_STOP_WORDS_SET"/>
-    ///  </li>
-    ///  <li><code>format</code> defines how the <code>words</code> file will be parsed, 
-    ///      and defaults to <code>wordset</code>.  If <code>words</code> is not specified, 
-    ///      then <code>format</code> must not be specified.
-    ///  </li>
-    /// </ul>
+    /// <list type="bullet">
+    ///     <item><c>ignoreCase</c> defaults to <c>false</c></item>
+    ///     <item><c>words</c> should be the name of a stopwords file to parse, if not 
+    ///      specified the factory will use <see cref="StopAnalyzer.ENGLISH_STOP_WORDS_SET"/>
+    ///     </item>
+    ///     <item><c>format</c> defines how the <c>words</c> file will be parsed, 
+    ///      and defaults to <c>wordset</c>.  If <c>words</c> is not specified, 
+    ///      then <c>format</c> must not be specified.
+    ///     </item>
+    /// </list>
     /// <para>
-    /// The valid values for the <code>format</code> option are:
+    /// The valid values for the <c>format</c> option are:
     /// </para>
-    /// <ul>
-    ///  <li><code>wordset</code> - This is the default format, which supports one word per 
+    /// <list type="bullet">
+    ///  <item><c>wordset</c> - This is the default format, which supports one word per 
     ///      line (including any intra-word whitespace) and allows whole line comments 
     ///      begining with the "#" character.  Blank lines are ignored.  See 
-    ///      <seealso cref="WordlistLoader#getLines WordlistLoader.getLines"/> for details.
-    ///  </li>
-    ///  <li><code>snowball</code> - This format allows for multiple words specified on each 
+    ///      <see cref="WordlistLoader.GetLines"/> for details.
+    ///  </item>
+    ///  <item><c>snowball</c> - This format allows for multiple words specified on each 
     ///      line, and trailing comments may be specified using the vertical line ("&#124;"). 
     ///      Blank lines are ignored.  See 
-    ///      <seealso cref="WordlistLoader#getSnowballWordSet WordlistLoader.getSnowballWordSet"/> 
+    ///      <see cref="WordlistLoader.GetSnowballWordSet"/> 
     ///      for details.
-    ///  </li>
-    /// </ul>
+    ///  </item>
+    /// </list>
     /// </summary>
     public class StopFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Core
         private readonly bool enablePositionIncrements;
 
         /// <summary>
-        /// Creates a new StopFilterFactory </summary>
+        /// Creates a new <see cref="StopFilterFactory"/> </summary>
         public StopFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

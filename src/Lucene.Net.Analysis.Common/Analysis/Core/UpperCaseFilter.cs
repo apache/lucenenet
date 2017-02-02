@@ -20,16 +20,16 @@ namespace Lucene.Net.Analysis.Core
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Normalizes token text to UPPER CASE.
-    /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="LuceneVersion"/>
-    /// compatibility when creating UpperCaseFilter
-    /// 
+    /// <para>
+    /// You must specify the required <see cref="LuceneVersion"/>
+    /// compatibility when creating <see cref="UpperCaseFilter"/>
     /// </para>
     /// <para><b>NOTE:</b> In Unicode, this transformation may lose information when the
     /// upper case character represents more than one lower case character. Use this filter
-    /// when you Require uppercase tokens.  Use the <seealso cref="LowerCaseFilter"/> for 
+    /// when you Require uppercase tokens.  Use the <see cref="LowerCaseFilter"/> for 
     /// general search matching
     /// </para>
     /// </summary>
@@ -39,10 +39,10 @@ namespace Lucene.Net.Analysis.Core
         private readonly ICharTermAttribute termAtt;
 
         /// <summary>
-        /// Create a new UpperCaseFilter, that normalizes token text to upper case.
+        /// Create a new <see cref="UpperCaseFilter"/>, that normalizes token text to upper case.
         /// </summary>
-        /// <param name="matchVersion"> See <a href="#version">above</a> </param>
-        /// <param name="in"> TokenStream to filter </param>
+        /// <param name="matchVersion"> See <see cref="LuceneVersion"/> </param>
+        /// <param name="in"> <see cref="TokenStream"/> to filter </param>
         public UpperCaseFilter(LuceneVersion matchVersion, TokenStream @in)
             : base(@in)
         {
@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Core
             charUtils = CharacterUtils.GetInstance(matchVersion);
         }
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             if (m_input.IncrementToken())
             {
@@ -64,5 +64,4 @@ namespace Lucene.Net.Analysis.Core
             }
         }
     }
-
 }

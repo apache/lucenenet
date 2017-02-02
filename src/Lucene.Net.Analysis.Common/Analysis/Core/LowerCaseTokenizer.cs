@@ -1,11 +1,9 @@
-﻿using System.IO;
-using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Core
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,35 +20,34 @@ namespace Lucene.Net.Analysis.Core
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
-    /// LowerCaseTokenizer performs the function of LetterTokenizer
-    /// and LowerCaseFilter together.  It divides text at non-letters and converts
+    /// <see cref="LowerCaseTokenizer"/> performs the function of <see cref="LetterTokenizer"/>
+    /// and <see cref="LowerCaseFilter"/> together.  It divides text at non-letters and converts
     /// them to lower case.  While it is functionally equivalent to the combination
-    /// of LetterTokenizer and LowerCaseFilter, there is a performance advantage
+    /// of <see cref="LetterTokenizer"/> and <see cref="LowerCaseFilter"/>, there is a performance advantage
     /// to doing the two tasks at once, hence this (redundant) implementation.
-    /// <P>
+    /// <para>
     /// Note: this does a decent job for most European languages, but does a terrible
     /// job for some Asian languages, where words are not separated by spaces.
-    /// </p>
+    /// </para>
     /// <para>
-    /// <a name="version"/>
-    /// You must specify the required <seealso cref="LuceneVersion"/> compatibility when creating
-    /// <seealso cref="LowerCaseTokenizer"/>:
-    /// <ul>
-    /// <li>As of 3.1, <seealso cref="CharTokenizer"/> uses an int based API to normalize and
-    /// detect token characters. See <seealso cref="CharTokenizer#isTokenChar(int)"/> and
-    /// <seealso cref="CharTokenizer#normalize(int)"/> for details.</li>
-    /// </ul>
+    /// You must specify the required <see cref="LuceneVersion"/> compatibility when creating
+    /// <see cref="LowerCaseTokenizer"/>:
+    /// <list type="bullet">
+    ///     <item>As of 3.1, <see cref="Util.CharTokenizer"/> uses an int based API to normalize and
+    ///     detect token characters. See <see cref="Util.CharTokenizer.IsTokenChar(int)"/> and
+    ///     <see cref="Util.CharTokenizer.Normalize(int)"/> for details.</item>
+    /// </list>
     /// </para>
     /// </summary>
     public sealed class LowerCaseTokenizer : LetterTokenizer
     {
-
         /// <summary>
-        /// Construct a new LowerCaseTokenizer.
+        /// Construct a new <see cref="LowerCaseTokenizer"/>.
         /// </summary>
         /// <param name="matchVersion">
-        ///          Lucene version to match See <seealso cref="<a href="#version">above</a>"/>
+        ///          <see cref="LuceneVersion"/> to match
         /// </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
@@ -60,13 +57,13 @@ namespace Lucene.Net.Analysis.Core
         }
 
         /// <summary>
-        /// Construct a new LowerCaseTokenizer using a given
-        /// <seealso cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/>.
+        /// Construct a new <see cref="LowerCaseTokenizer"/> using a given
+        /// <see cref="AttributeSource.AttributeFactory"/>.
         /// </summary>
         /// <param name="matchVersion">
-        ///          Lucene version to match See <seealso cref="<a href="#version">above</a>"/> </param>
+        ///          <see cref="LuceneVersion"/> to match </param>
         /// <param name="factory">
-        ///          the attribute factory to use for this <seealso cref="Tokenizer"/> </param>
+        ///          the attribute factory to use for this <see cref="Tokenizer"/> </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
         public LowerCaseTokenizer(LuceneVersion matchVersion, AttributeSource.AttributeFactory factory, TextReader @in)
@@ -76,7 +73,7 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// Converts char to lower case
-        /// <seealso cref="Character#toLowerCase(int)"/>.
+        /// <see cref="Character.ToLowerCase(int)"/>.
         /// </summary>
         protected override int Normalize(int c)
         {

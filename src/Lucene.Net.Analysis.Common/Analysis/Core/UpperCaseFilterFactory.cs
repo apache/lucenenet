@@ -21,26 +21,26 @@ namespace Lucene.Net.Analysis.Core
      */
 
     /// <summary>
-    /// Factory for <seealso cref="UpperCaseFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="UpperCaseFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_uppercase" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.UpperCaseFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// 
     /// <para><b>NOTE:</b> In Unicode, this transformation may lose information when the
     /// upper case character represents more than one lower case character. Use this filter
-    /// when you require uppercase tokens.  Use the <seealso cref="LowerCaseFilterFactory"/> for 
+    /// when you require uppercase tokens.  Use the <see cref="LowerCaseFilterFactory"/> for 
     /// general search matching
     /// </para>
     /// </summary>
     public class UpperCaseFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
-
         /// <summary>
-        /// Creates a new UpperCaseFilterFactory </summary>
+        /// Creates a new <see cref="UpperCaseFilterFactory"/> </summary>
         public UpperCaseFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

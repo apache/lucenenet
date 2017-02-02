@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -23,19 +23,19 @@ namespace Lucene.Net.Analysis.Core
      */
 
     /// <summary>
-    /// Factory for <seealso cref="LowerCaseTokenizer"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="LowerCaseTokenizer"/>. 
+    /// <code>
     /// &lt;fieldType name="text_lwrcase" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.LowerCaseTokenizerFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class LowerCaseTokenizerFactory : TokenizerFactory, IMultiTermAwareComponent
     {
-
         /// <summary>
-        /// Creates a new LowerCaseTokenizerFactory </summary>
+        /// Creates a new <see cref="LowerCaseTokenizerFactory"/> </summary>
         public LowerCaseTokenizerFactory(IDictionary<string, string> args)
             : base(args)
         {

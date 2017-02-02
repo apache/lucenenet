@@ -21,29 +21,26 @@ namespace Lucene.Net.Analysis.Core
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
-    /// An Analyzer that uses <seealso cref="WhitespaceTokenizer"/>.
+    /// An <see cref="Analyzer"/> that uses <see cref="WhitespaceTokenizer"/>.
     /// <para>
-    /// <a name="version">You must specify the required <seealso cref="LuceneVersion"/> compatibility
-    /// when creating <seealso cref="CharTokenizer"/>:
-    /// <ul>
-    /// <li>As of 3.1, <seealso cref="WhitespaceTokenizer"/> uses an int based API to normalize and
-    /// detect token codepoints. See <seealso cref="CharTokenizer#isTokenChar(int)"/> and
-    /// <seealso cref="CharTokenizer#normalize(int)"/> for details.</li>
-    /// </ul>
-    /// </para>
-    /// <para>
-    /// 
+    /// You must specify the required <see cref="LuceneVersion"/> compatibility
+    /// when creating <see cref="CharTokenizer"/>:
+    /// <list type="bullet">
+    ///     <item>As of 3.1, <see cref="WhitespaceTokenizer"/> uses an int based API to normalize and
+    ///     detect token codepoints. See <see cref="Util.CharTokenizer.IsTokenChar(int)"/> and
+    ///     <see cref="Util.CharTokenizer.Normalize(int)"/> for details.</item>
+    /// </list>
     /// </para>
     /// </summary>
     public sealed class WhitespaceAnalyzer : Analyzer
     {
-
         private readonly LuceneVersion matchVersion;
 
         /// <summary>
-        /// Creates a new <seealso cref="WhitespaceAnalyzer"/> </summary>
-        /// <param name="matchVersion"> Lucene version to match See <seealso cref="<a href="#version">above</a>"/> </param>
+        /// Creates a new <see cref="WhitespaceAnalyzer"/> </summary>
+        /// <param name="matchVersion"> <see cref="LuceneVersion"/> to match </param>
         public WhitespaceAnalyzer(LuceneVersion matchVersion)
         {
             this.matchVersion = matchVersion;

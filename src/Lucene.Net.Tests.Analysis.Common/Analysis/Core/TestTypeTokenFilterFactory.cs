@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Core
         public virtual void TestInform()
         {
             TypeTokenFilterFactory factory = (TypeTokenFilterFactory)TokenFilterFactory("Type", "types", "stoptypes-1.txt", "enablePositionIncrements", "true");
-            ISet<string> types = factory.StopTypes;
+            ICollection<string> types = factory.StopTypes;
             assertTrue("types is null and it shouldn't be", types != null);
             assertTrue("types Size: " + types.Count + " is not: " + 2, types.Count == 2);
             assertTrue("enablePositionIncrements was set to true but not correctly parsed", factory.EnablePositionIncrements);
