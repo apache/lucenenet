@@ -25,20 +25,21 @@ namespace Lucene.Net.Analysis.Cjk
 
 
     /// <summary>
-    /// Factory for <seealso cref="CJKTokenizer"/>. 
-    /// <pre class="prettyprint" >
+    /// Factory for <see cref="CJKTokenizer"/>. 
+    /// <code>
     /// &lt;fieldType name="text_cjk" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.CJKTokenizerFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre> </summary>
-    /// @deprecated Use <seealso cref="CJKBigramFilterFactory"/> instead. 
+    /// &lt;/fieldType&gt;
+    /// </code>
+    /// </summary>
+    /// @deprecated Use <see cref="CJKBigramFilterFactory"/> instead. 
     [Obsolete("Use CJKBigramFilterFactory instead.")]
     public class CJKTokenizerFactory : TokenizerFactory
     {
-
         /// <summary>
-        /// Creates a new CJKTokenizerFactory </summary>
+        /// Creates a new <see cref="CJKTokenizerFactory"/> </summary>
         public CJKTokenizerFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

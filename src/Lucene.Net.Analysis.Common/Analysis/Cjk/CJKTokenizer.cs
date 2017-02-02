@@ -32,11 +32,11 @@ namespace Lucene.Net.Analysis.Cjk
     /// Example: "java C1C2C3C4" will be segmented to: "java" "C1C2" "C2C3" "C3C4".
     /// </para>
     /// Additionally, the following is applied to Latin text (such as English):
-    /// <ul>
-    /// <li>Text is converted to lowercase.
-    /// <li>Numeric digits, '+', '#', and '_' are tokenized as letters.
-    /// <li>Full-width forms are converted to half-width forms.
-    /// </ul>
+    /// <list type="bullet">
+    ///     <item>Text is converted to lowercase.</item>
+    ///     <item>Numeric digits, '+', '#', and '_' are tokenized as letters.</item>
+    ///     <item>Full-width forms are converted to half-width forms.</item>
+    /// </list>
     /// For more info on Asian language (Chinese, Japanese, and Korean) text segmentation:
     /// please search  <a
     /// href="http://www.google.com/search?q=word+chinese+segment">google</a>
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// </summary>
         /// <returns> false for end of stream, true otherwise
         /// </returns>
-        /// <exception cref="java.io.IOException"> - throw IOException when read error <br>
+        /// <exception cref="IOException"> when read error
         ///         happened in the InputStream
         ///  </exception>
         public override bool IncrementToken()
@@ -347,7 +347,7 @@ namespace Lucene.Net.Analysis.Cjk
             }
         }
 
-        public override void End()
+        public override sealed void End()
         {
             base.End();
             // set final offset

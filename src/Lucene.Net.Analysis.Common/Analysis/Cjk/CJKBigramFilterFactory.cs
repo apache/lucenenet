@@ -21,8 +21,8 @@ namespace Lucene.Net.Analysis.Cjk
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="CJKBigramFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="CJKBigramFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_cjk" class="solr.TextField"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
@@ -32,15 +32,16 @@ namespace Lucene.Net.Analysis.Cjk
     ///       han="true" hiragana="true" 
     ///       katakana="true" hangul="true" outputUnigrams="false" /&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class CJKBigramFilterFactory : TokenFilterFactory
     {
-        internal readonly int flags;
-        internal readonly bool outputUnigrams;
+        private readonly int flags;
+        private readonly bool outputUnigrams;
 
         /// <summary>
-        /// Creates a new CJKBigramFilterFactory </summary>
+        /// Creates a new <see cref="CJKBigramFilterFactory"/> </summary>
         public CJKBigramFilterFactory(IDictionary<string, string> args)
               : base(args)
         {

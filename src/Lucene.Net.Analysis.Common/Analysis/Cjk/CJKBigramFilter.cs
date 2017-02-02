@@ -23,18 +23,18 @@ namespace Lucene.Net.Analysis.Cjk
 	 */
 
     /// <summary>
-    /// Forms bigrams of CJK terms that are generated from StandardTokenizer
+    /// Forms bigrams of CJK terms that are generated from <see cref="StandardTokenizer"/>
     /// or ICUTokenizer.
     /// <para>
     /// CJK types are set by these tokenizers, but you can also use 
-    /// <seealso cref="#CJKBigramFilter(TokenStream, int)"/> to explicitly control which
+    /// <see cref="CJKBigramFilter(TokenStream, int)"/> to explicitly control which
     /// of the CJK scripts are turned into bigrams.
     /// </para>
     /// <para>
     /// By default, when a CJK character has no adjacent characters to form
     /// a bigram, it is output in unigram form. If you want to always output
     /// both unigrams and bigrams, set the <code>outputUnigrams</code>
-    /// flag in <seealso cref="CJKBigramFilter#CJKBigramFilter(TokenStream, int, boolean)"/>.
+    /// flag in <see cref="CJKBigramFilter.CJKBigramFilter(TokenStream, int, bool)"/>.
     /// This can be used for a combined unigram+bigram approach.
     /// </para>
     /// <para>
@@ -90,22 +90,22 @@ namespace Lucene.Net.Analysis.Cjk
         private readonly IPositionLengthAttribute posLengthAtt;
 
         // buffers containing codepoint and offsets in parallel
-        internal int[] buffer = new int[8];
-        internal int[] startOffset = new int[8];
-        internal int[] endOffset = new int[8];
+        private int[] buffer = new int[8];
+        private int[] startOffset = new int[8];
+        private int[] endOffset = new int[8];
         // length of valid buffer
-        internal int bufferLen;
+        private int bufferLen;
         // current buffer index
-        internal int index;
+        private int index;
 
         // the last end offset, to determine if we should bigram across tokens
-        internal int lastEndOffset;
+        private int lastEndOffset;
 
         private bool exhausted;
 
         /// <summary>
-        /// Calls {@link CJKBigramFilter#CJKBigramFilter(TokenStream, int)
-        ///       CJKBigramFilter(in, HAN | HIRAGANA | KATAKANA | HANGUL)}
+        /// Calls <see cref="CJKBigramFilter.CJKBigramFilter(TokenStream, int)">
+        ///       CJKBigramFilter(in, HAN | HIRAGANA | KATAKANA | HANGUL)</see>
         /// </summary>
         public CJKBigramFilter(TokenStream @in)
               : this(@in, HAN | HIRAGANA | KATAKANA | HANGUL)
@@ -113,8 +113,8 @@ namespace Lucene.Net.Analysis.Cjk
         }
 
         /// <summary>
-        /// Calls {@link CJKBigramFilter#CJKBigramFilter(TokenStream, int, boolean)
-        ///       CJKBigramFilter(in, flags, false)}
+        /// Calls <see cref="CJKBigramFilter.CJKBigramFilter(TokenStream, int, bool)">
+        ///       CJKBigramFilter(in, flags, false)</see>
         /// </summary>
         public CJKBigramFilter(TokenStream @in, int flags)
               : this(@in, flags, false)
@@ -122,10 +122,10 @@ namespace Lucene.Net.Analysis.Cjk
         }
 
         /// <summary>
-        /// Create a new CJKBigramFilter, specifying which writing systems should be bigrammed,
+        /// Create a new <see cref="CJKBigramFilter"/>, specifying which writing systems should be bigrammed,
         /// and whether or not unigrams should also be output. </summary>
-        /// <param name="flags"> OR'ed set from <seealso cref="CJKBigramFilter#HAN"/>, <seealso cref="CJKBigramFilter#HIRAGANA"/>, 
-        ///        <seealso cref="CJKBigramFilter#KATAKANA"/>, <seealso cref="CJKBigramFilter#HANGUL"/> </param>
+        /// <param name="flags"> OR'ed set from <see cref="CJKBigramFilter.HAN"/>, <see cref="CJKBigramFilter.HIRAGANA"/>, 
+        ///        <see cref="CJKBigramFilter.KATAKANA"/>, <see cref="CJKBigramFilter.HANGUL"/> </param>
         /// <param name="outputUnigrams"> true if unigrams for the selected writing systems should also be output.
         ///        when this is false, this is only done when there are no adjacent characters to form
         ///        a bigram. </param>

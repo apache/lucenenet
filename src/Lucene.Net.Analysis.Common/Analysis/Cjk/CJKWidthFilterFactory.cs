@@ -21,8 +21,8 @@ namespace Lucene.Net.Analysis.Cjk
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="CJKWidthFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="CJKWidthFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_cjk" class="solr.TextField"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
@@ -30,13 +30,13 @@ namespace Lucene.Net.Analysis.Cjk
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
     ///     &lt;filter class="solr.CJKBigramFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;
+    /// </code>
     /// </summary>
     public class CJKWidthFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
-
         /// <summary>
-        /// Creates a new CJKWidthFilterFactory </summary>
+        /// Creates a new <see cref="CJKWidthFilterFactory"/> </summary>
         public CJKWidthFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

@@ -25,16 +25,16 @@ namespace Lucene.Net.Analysis.Cjk
 	 */
 
     /// <summary>
-    /// An <seealso cref="Analyzer"/> that tokenizes text with <seealso cref="StandardTokenizer"/>,
-    /// normalizes content with <seealso cref="CJKWidthFilter"/>, folds case with
-    /// <seealso cref="LowerCaseFilter"/>, forms bigrams of CJK with <seealso cref="CJKBigramFilter"/>,
-    /// and filters stopwords with <seealso cref="StopFilter"/>
+    /// An <see cref="Analyzer"/> that tokenizes text with <see cref="StandardTokenizer"/>,
+    /// normalizes content with <see cref="CJKWidthFilter"/>, folds case with
+    /// <see cref="LowerCaseFilter"/>, forms bigrams of CJK with <see cref="CJKBigramFilter"/>,
+    /// and filters stopwords with <see cref="StopFilter"/>
     /// </summary>
     public sealed class CJKAnalyzer : StopwordAnalyzerBase
     {
         /// <summary>
         /// File containing default CJK stopwords.
-        /// <p/>
+        /// <para/>
         /// Currently it contains some common English words that are not usually
         /// useful for searching and some double-byte interpunctions.
         /// </summary>
@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Cjk
         }
 
         /// <summary>
-        /// Builds an analyzer which removes words in <seealso cref="#getDefaultStopSet()"/>.
+        /// Builds an analyzer which removes words in <see cref="DefaultStopSet"/>.
         /// </summary>
         public CJKAnalyzer(LuceneVersion matchVersion)
               : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
