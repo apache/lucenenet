@@ -166,7 +166,7 @@ namespace Lucene.Net.Util
 
         public static LuceneVersion ParseLeniently(string version)
         {
-            string parsedMatchVersion = version.ToUpper(CultureInfo.InvariantCulture);
+            string parsedMatchVersion = version.ToUpperInvariant();
             LuceneVersion result;
             Enum.TryParse(NumericVersion.Replace(parsedMatchVersion, "LUCENE_$1$2", 1), out result);
             return result;
