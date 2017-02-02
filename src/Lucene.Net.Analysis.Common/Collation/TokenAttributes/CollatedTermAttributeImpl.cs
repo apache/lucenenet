@@ -1,5 +1,6 @@
 ﻿using Icu.Collation;
 using Lucene.Net.Analysis.TokenAttributes;
+using System;
 
 namespace Lucene.Net.Collation.TokenAttributes
 {
@@ -20,11 +21,14 @@ namespace Lucene.Net.Collation.TokenAttributes
      * limitations under the License.
      */
 
-	/// <summary>
-	/// Extension of <seealso cref="CharTermAttribute"/> that encodes the term
-	/// text as a binary Unicode collation key instead of as UTF-8 bytes.
-	/// </summary>
-	public class CollatedTermAttributeImpl : CharTermAttribute
+    /// <summary>
+    /// Extension of <seealso cref="CharTermAttribute"/> that encodes the term
+    /// text as a binary Unicode collation key instead of as UTF-8 bytes.
+    /// </summary>
+    // LUCENENET TODO: A better option would be to contribute to the icu.net library and
+    // make it CLS compliant (at least the parts of it we use)
+    [CLSCompliant(false)]
+    public class CollatedTermAttributeImpl : CharTermAttribute
 	{
 		private readonly Collator collator;
 

@@ -70,7 +70,10 @@ namespace Lucene.Net.Collation
 	/// @deprecated Use <seealso cref="CollationAttributeFactory"/> instead, which encodes
 	///  terms directly as bytes. This filter will be removed in Lucene 5.0 
 	[Obsolete("Use <seealso cref=\"CollationAttributeFactory\"/> instead, which encodes")]
-	public sealed class CollationKeyFilter : TokenFilter
+    // LUCENENET TODO: A better option would be to contribute to the icu.net library and
+    // make it CLS compliant (at least the parts of it we use)
+    [CLSCompliant(false)]
+    public sealed class CollationKeyFilter : TokenFilter
 	{
 		private readonly Collator collator;
 		private readonly ICharTermAttribute termAtt;
