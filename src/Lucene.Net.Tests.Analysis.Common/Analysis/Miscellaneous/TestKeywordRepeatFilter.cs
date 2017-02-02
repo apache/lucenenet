@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,31 +20,25 @@
 	 * limitations under the License.
 	 */
 
-	using SnowballFilter = org.apache.lucene.analysis.snowball.SnowballFilter;
+    using SnowballFilter = Lucene.Net.Analysis.Snowball.SnowballFilter;
 
 
-	public class TestKeywordRepeatFilter : BaseTokenStreamTestCase
-	{
+    public class TestKeywordRepeatFilter : BaseTokenStreamTestCase
+    {
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasic() throws java.io.IOException
-	  public virtual void testBasic()
-	  {
-		TokenStream ts = new RemoveDuplicatesTokenFilter(new SnowballFilter(new KeywordRepeatFilter(new MockTokenizer(new StringReader("the birds are flying"), MockTokenizer.WHITESPACE, false)), "English"));
-		assertTokenStreamContents(ts, new string[] {"the", "birds", "bird", "are", "flying", "fli"}, new int[] {1,1,0,1,1,0});
-	  }
-
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testComposition() throws java.io.IOException
-	  public virtual void testComposition()
-	  {
-		TokenStream ts = new RemoveDuplicatesTokenFilter(new SnowballFilter(new KeywordRepeatFilter(new KeywordRepeatFilter(new MockTokenizer(new StringReader("the birds are flying"), MockTokenizer.WHITESPACE, false))), "English"));
-		assertTokenStreamContents(ts, new string[] {"the", "birds", "bird", "are", "flying", "fli"}, new int[] {1,1,0,1,1,0});
-	  }
+        [Test]
+        public virtual void TestBasic()
+        {
+            TokenStream ts = new RemoveDuplicatesTokenFilter(new SnowballFilter(new KeywordRepeatFilter(new MockTokenizer(new StringReader("the birds are flying"), MockTokenizer.WHITESPACE, false)), "English"));
+            AssertTokenStreamContents(ts, new string[] { "the", "birds", "bird", "are", "flying", "fli" }, new int[] { 1, 1, 0, 1, 1, 0 });
+        }
 
 
-
-	}
-
+        [Test]
+        public virtual void TestComposition()
+        {
+            TokenStream ts = new RemoveDuplicatesTokenFilter(new SnowballFilter(new KeywordRepeatFilter(new KeywordRepeatFilter(new MockTokenizer(new StringReader("the birds are flying"), MockTokenizer.WHITESPACE, false))), "English"));
+            AssertTokenStreamContents(ts, new string[] { "the", "birds", "bird", "are", "flying", "fli" }, new int[] { 1, 1, 0, 1, 1, 0 });
+        }
+    }
 }

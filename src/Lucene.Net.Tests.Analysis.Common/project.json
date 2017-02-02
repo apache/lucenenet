@@ -100,8 +100,7 @@
       "excludeFiles": [
         "DateTimeHelperClass.cs",
         "HashMapHelperClass.cs",
-        "StringHelperClass.cs",
-        "Analysis/Miscellaneous/TestKeywordRepeatFilter.cs"
+        "StringHelperClass.cs"
       ]
     }
   },

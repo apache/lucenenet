@@ -195,6 +195,7 @@
     <Compile Include="Analysis\Miscellaneous\TestKeepWordFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestKeywordMarkerFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestKeywordMarkerFilterFactory.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestKeywordRepeatFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestLengthFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestLengthFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\TestLimitTokenCountAnalyzer.cs" />
