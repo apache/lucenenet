@@ -27,19 +27,18 @@ namespace Lucene.Net.Analysis.Hi
     /// </para>
     /// <para>
     /// Implements the Hindi-language specific algorithm specified in:
-    /// <i>Word normalization in Indian languages</i>
+    /// <c>Word normalization in Indian languages</c>
     /// Prasad Pingali and Vasudeva Varma.
     /// http://web2py.iiit.ac.in/publications/default/download/inproceedings.pdf.3fe5b38c-02ee-41ce-9a8f-3e745670be32.pdf
     /// </para>
     /// <para>
-    /// with the following additions from <i>Hindi CLIR in Thirty Days</i>
+    /// with the following additions from <c>Hindi CLIR in Thirty Days</c>
     /// Leah S. Larkey, Margaret E. Connell, and Nasreen AbdulJaleel.
     /// http://maroo.cs.umass.edu/pub/web/getpdf.php?id=454:
-    /// <ul>
-    ///  <li>Internal Zero-width joiner and Zero-width non-joiners are removed
-    ///  <li>In addition to chandrabindu, NA+halant is normalized to anusvara
-    /// </ul>
-    /// 
+    /// <list type="bullet">
+    ///     <item>Internal Zero-width joiner and Zero-width non-joiners are removed</item>
+    ///     <item>In addition to chandrabindu, NA+halant is normalized to anusvara</item>
+    /// </list>
     /// </para>
     /// </summary>
     public class HindiNormalizer
@@ -52,7 +51,6 @@ namespace Lucene.Net.Analysis.Hi
         /// <returns> length of input buffer after normalization </returns>
         public virtual int Normalize(char[] s, int len)
         {
-
             for (int i = 0; i < len; i++)
             {
                 switch (s[i])

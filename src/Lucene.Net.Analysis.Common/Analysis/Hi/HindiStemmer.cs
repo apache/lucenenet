@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Hi
     /// Light Stemmer for Hindi.
     /// <para>
     /// Implements the algorithm specified in:
-    /// <i>A Lightweight Stemmer for Hindi</i>
+    /// <c>A Lightweight Stemmer for Hindi</c>
     /// Ananthakrishnan Ramanathan and Durgesh D Rao.
     /// http://computing.open.ac.uk/Sites/EACLSouthAsia/Papers/p6-Ramanathan.pdf
     /// </para>

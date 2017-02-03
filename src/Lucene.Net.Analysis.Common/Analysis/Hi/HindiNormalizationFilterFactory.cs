@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Lucene.Net.Analysis.Hi
 {
@@ -33,9 +32,8 @@ namespace Lucene.Net.Analysis.Hi
     /// </summary>
     public class HindiNormalizationFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
-
         /// <summary>
-        /// Creates a new HindiNormalizationFilterFactory </summary>
+        /// Creates a new <see cref="HindiNormalizationFilterFactory"/> </summary>
         public HindiNormalizationFilterFactory(IDictionary<string, string> args)
               : base(args)
         {

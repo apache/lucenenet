@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
-using System.IO;
 
 namespace Lucene.Net.Analysis.Hi
 {
@@ -26,13 +25,13 @@ namespace Lucene.Net.Analysis.Hi
     /// <para>
     /// In some cases the normalization may cause unrelated terms to conflate, so
     /// to prevent terms from being normalized use an instance of
-    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
     /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
-    /// </para> </summary>
-    /// <seealso cref= HindiNormalizer </seealso>
+    /// </para> 
+    /// </summary>
+    /// <seealso cref="HindiNormalizer"/>
     public sealed class HindiNormalizationFilter : TokenFilter
     {
-
         private readonly HindiNormalizer normalizer = new HindiNormalizer();
         private readonly ICharTermAttribute termAtt;
         private readonly IKeywordAttribute keywordAtt;

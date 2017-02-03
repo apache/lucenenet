@@ -33,9 +33,8 @@ namespace Lucene.Net.Analysis.Hi
     /// </summary>
     public class HindiStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new HindiStemFilterFactory </summary>
+        /// Creates a new <see cref="HindiStemFilterFactory"/> </summary>
         public HindiStemFilterFactory(IDictionary<string, string> args)
               : base(args)
         {

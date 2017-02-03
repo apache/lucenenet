@@ -28,14 +28,11 @@ namespace Lucene.Net.Analysis.Hi
 
     /// <summary>
     /// Analyzer for Hindi.
-    /// <para>
-    /// <a name="version"/>
-    /// </para>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating HindiAnalyzer:
-    /// <ul>
-    ///   <li> As of 3.6, StandardTokenizer is used for tokenization
-    /// </ul>
+    /// <list type="bullet">
+    ///     <item> As of 3.6, StandardTokenizer is used for tokenization</item>
+    /// </list>
     /// </para>
     /// </summary>
     public sealed class HindiAnalyzer : StopwordAnalyzerBase
@@ -44,7 +41,7 @@ namespace Lucene.Net.Analysis.Hi
 
         /// <summary>
         /// File containing default Hindi stopwords.
-        /// 
+        /// <para/>
         /// Default stopword list is from http://members.unine.ch/jacques.savoy/clef/index.html
         /// The stopword list is BSD-Licensed.
         /// </summary>
@@ -63,7 +60,7 @@ namespace Lucene.Net.Analysis.Hi
         }
 
         /// <summary>
-        /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
         private class DefaultSetHolder
@@ -93,7 +90,7 @@ namespace Lucene.Net.Analysis.Hi
         /// <param name="stopwords"> a stopword set </param>
         /// <param name="stemExclusionSet"> a stemming exclusion set </param>
         public HindiAnalyzer(LuceneVersion version, CharArraySet stopwords, CharArraySet stemExclusionSet)
-              : base(version, stopwords)
+            : base(version, stopwords)
         {
             this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(m_matchVersion, stemExclusionSet));
         }
@@ -104,23 +101,23 @@ namespace Lucene.Net.Analysis.Hi
         /// <param name="version"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public HindiAnalyzer(LuceneVersion version, CharArraySet stopwords)
-              : this(version, stopwords, CharArraySet.EMPTY_SET)
+            : this(version, stopwords, CharArraySet.EMPTY_SET)
         {
         }
 
         /// <summary>
         /// Builds an analyzer with the default stop words:
-        /// <see cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public HindiAnalyzer(LuceneVersion version)
-              : this(version, DefaultSetHolder.DEFAULT_STOP_SET)
+            : this(version, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
         /// <summary>
         /// Creates
         /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <see cref="Reader"/>.
+        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
         ///         built from a <see cref="StandardTokenizer"/> filtered with

@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
-using System.IO;
 
 namespace Lucene.Net.Analysis.Hi
 {
