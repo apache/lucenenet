@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Da
 	 */
 
     /// <summary>
-    /// <seealso cref="Analyzer"/> for Danish.
+    /// <see cref="Analyzer"/> for Danish.
     /// </summary>
     public sealed class DanishAnalyzer : StopwordAnalyzerBase
     {
@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Da
         }
 
         /// <summary>
-        /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
         private class DefaultSetHolder
@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Da
         }
 
         /// <summary>
-        /// Builds an analyzer with the default stop words: <seealso cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public DanishAnalyzer(LuceneVersion matchVersion)
             : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Da
         /// <summary>
         /// Builds an analyzer with the given stop words.
         /// </summary>
-        /// <param name="matchVersion"> lucene compatibility version </param>
+        /// <param name="matchVersion"> <see cref="LuceneVersion"/> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public DanishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
             : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
@@ -98,10 +98,10 @@ namespace Lucene.Net.Analysis.Da
 
         /// <summary>
         /// Builds an analyzer with the given stop words. If a non-empty stem exclusion set is
-        /// provided this analyzer will add a <seealso cref="SetKeywordMarkerFilter"/> before
+        /// provided this analyzer will add a <see cref="SetKeywordMarkerFilter"/> before
         /// stemming.
         /// </summary>
-        /// <param name="matchVersion"> lucene compatibility version </param>
+        /// <param name="matchVersion"> <see cref="LuceneVersion"/> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         /// <param name="stemExclusionSet"> a set of terms not to be stemmed </param>
         public DanishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
@@ -112,15 +112,15 @@ namespace Lucene.Net.Analysis.Da
 
         /// <summary>
         /// Creates a
-        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        /// which tokenizes all the text in the provided <seealso cref="Reader"/>.
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// which tokenizes all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> A
-        ///         <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        ///         built from an <seealso cref="StandardTokenizer"/> filtered with
-        ///         <seealso cref="StandardFilter"/>, <seealso cref="LowerCaseFilter"/>, <seealso cref="StopFilter"/>
-        ///         , <seealso cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
-        ///         provided and <seealso cref="SnowballFilter"/>. </returns>
+        ///         <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from an <see cref="StandardTokenizer"/> filtered with
+        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,
+        ///         <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
+        ///         provided and <see cref="SnowballFilter"/>. </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new StandardTokenizer(m_matchVersion, reader);
