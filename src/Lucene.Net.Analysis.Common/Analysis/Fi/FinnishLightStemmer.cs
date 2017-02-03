@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Analysis.Util;
-using System;
 
 namespace Lucene.Net.Analysis.Fi
 {
@@ -59,13 +58,12 @@ namespace Lucene.Net.Analysis.Fi
     /// Light Stemmer for Finnish.
     /// <para>
     /// This stemmer implements the algorithm described in:
-    /// <i>Report on CLEF-2003 Monolingual Tracks</i>
+    /// <c>Report on CLEF-2003 Monolingual Tracks</c>
     /// Jacques Savoy
     /// </para>
     /// </summary>
     public class FinnishLightStemmer
     {
-
         public virtual int Stem(char[] s, int len)
         {
             if (len < 4)
@@ -87,25 +85,25 @@ namespace Lucene.Net.Analysis.Fi
                 }
             }
 
-            len = step1(s, len);
-            len = step2(s, len);
-            len = step3(s, len);
-            len = norm1(s, len);
-            len = norm2(s, len);
+            len = Step1(s, len);
+            len = Step2(s, len);
+            len = Step3(s, len);
+            len = Norm1(s, len);
+            len = Norm2(s, len);
             return len;
         }
 
-        private int step1(char[] s, int len)
+        private int Step1(char[] s, int len)
         {
             if (len > 8)
             {
                 if (StemmerUtil.EndsWith(s, len, "kin"))
                 {
-                    return step1(s, len - 3);
+                    return Step1(s, len - 3);
                 }
                 if (StemmerUtil.EndsWith(s, len, "ko"))
                 {
-                    return step1(s, len - 2);
+                    return Step1(s, len - 2);
                 }
             }
 
@@ -123,7 +121,7 @@ namespace Lucene.Net.Analysis.Fi
             return len;
         }
 
-        private int step2(char[] s, int len)
+        private int Step2(char[] s, int len)
         {
             if (len > 5)
             {
@@ -146,7 +144,7 @@ namespace Lucene.Net.Analysis.Fi
             return len;
         }
 
-        private int step3(char[] s, int len)
+        private int Step3(char[] s, int len)
         {
             if (len > 8)
             {
@@ -180,7 +178,7 @@ namespace Lucene.Net.Analysis.Fi
                     return len - 4;
                 }
 
-                if (s[len - 3] == 'h' && isVowel(s[len - 2]) && s[len - 1] == 'n')
+                if (s[len - 3] == 'h' && IsVowel(s[len - 2]) && s[len - 1] == 'n')
                 {
                     return len - 3;
                 }
@@ -228,7 +226,7 @@ namespace Lucene.Net.Analysis.Fi
                     return len - 1;
                 }
 
-                if (s[len - 1] == 'n' && isVowel(s[len - 2]))
+                if (s[len - 1] == 'n' && IsVowel(s[len - 2]))
                 {
                     return len - 2;
                 }
@@ -242,7 +240,7 @@ namespace Lucene.Net.Analysis.Fi
             return len;
         }
 
-        private int norm1(char[] s, int len)
+        private int Norm1(char[] s, int len)
         {
             if (len > 5 && StemmerUtil.EndsWith(s, len, "hde"))
             {
@@ -276,7 +274,7 @@ namespace Lucene.Net.Analysis.Fi
             return len;
         }
 
-        private int norm2(char[] s, int len)
+        private int Norm2(char[] s, int len)
         {
             if (len > 8)
             {
@@ -313,7 +311,7 @@ namespace Lucene.Net.Analysis.Fi
             return len;
         }
 
-        private bool isVowel(char ch)
+        private bool IsVowel(char ch)
         {
             switch (ch)
             {

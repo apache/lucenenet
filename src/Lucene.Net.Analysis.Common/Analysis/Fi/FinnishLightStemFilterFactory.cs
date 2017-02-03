@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Fi
 {
@@ -34,9 +33,8 @@ namespace Lucene.Net.Analysis.Fi
     /// </summary>
     public class FinnishLightStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new FinnishLightStemFilterFactory </summary>
+        /// Creates a new <see cref="FinnishLightStemFilterFactory"/> </summary>
         public FinnishLightStemFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)
