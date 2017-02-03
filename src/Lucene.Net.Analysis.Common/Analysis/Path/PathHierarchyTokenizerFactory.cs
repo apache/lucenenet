@@ -26,15 +26,15 @@ namespace Lucene.Net.Analysis.Path
     /// Factory for <see cref="PathHierarchyTokenizer"/>. 
     /// <para>
     /// This factory is typically configured for use only in the <code>index</code> 
-    /// Analyzer (or only in the <code>query</code> Analyzer, but never both).
+    /// Analyzer (or only in the <c>query</c> Analyzer, but never both).
     /// </para>
     /// <para>
     /// For example, in the configuration below a query for 
-    /// <code>Books/NonFic</code> will match documents indexed with values like 
-    /// <code>Books/NonFic</code>, <code>Books/NonFic/Law</code>, 
-    /// <code>Books/NonFic/Science/Physics</code>, etc. But it will not match 
-    /// documents indexed with values like <code>Books</code>, or 
-    /// <code>Books/Fic</code>...
+    /// <c>Books/NonFic</c> will match documents indexed with values like 
+    /// <c>Books/NonFic</c>, <c>Books/NonFic/Law</c>, 
+    /// <c>Books/NonFic/Science/Physics</c>, etc. But it will not match 
+    /// documents indexed with values like <c>Books</c>, or 
+    /// <c>Books/Fic</c>...
     /// </para>
     /// 
     /// <code>
@@ -49,11 +49,11 @@ namespace Lucene.Net.Analysis.Path
     /// </code>
     /// <para>
     /// In this example however we see the oposite configuration, so that a query 
-    /// for <code>Books/NonFic/Science/Physics</code> would match documents 
-    /// containing <code>Books/NonFic</code>, <code>Books/NonFic/Science</code>, 
-    /// or <code>Books/NonFic/Science/Physics</code>, but not 
-    /// <code>Books/NonFic/Science/Physics/Theory</code> or 
-    /// <code>Books/NonFic/Law</code>.
+    /// for <c>Books/NonFic/Science/Physics</c> would match documents 
+    /// containing <c>Books/NonFic</c>, <c>Books/NonFic/Science</c>, 
+    /// or <c>Books/NonFic/Science/Physics</c>, but not 
+    /// <c>Books/NonFic/Science/Physics/Theory</c> or 
+    /// <c>Books/NonFic/Law</c>.
     /// </para>
     /// <code>
     /// &lt;fieldType name="descendent_path" class="solr.TextField"&gt;
@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Path
         private readonly int skip;
 
         /// <summary>
-        /// Creates a new PathHierarchyTokenizerFactory </summary>
+        /// Creates a new <see cref="PathHierarchyTokenizerFactory"/> </summary>
         public PathHierarchyTokenizerFactory(IDictionary<string, string> args)
             : base(args)
         {

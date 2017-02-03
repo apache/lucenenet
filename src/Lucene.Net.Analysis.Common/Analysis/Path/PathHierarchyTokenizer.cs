@@ -26,13 +26,13 @@ namespace Lucene.Net.Analysis.Path
     /// <para>
     /// Take something like:
     /// 
-    /// <pre>
+    /// <code>
     ///  /something/something/else
     /// </code>
     /// 
     /// and make:
     /// 
-    /// <pre>
+    /// <code>
     ///  /something
     ///  /something/something
     ///  /something/something/else
@@ -41,7 +41,6 @@ namespace Lucene.Net.Analysis.Path
     /// </summary>
     public class PathHierarchyTokenizer : Tokenizer
     {
-
         public PathHierarchyTokenizer(TextReader input)
             : this(input, DEFAULT_BUFFER_SIZE, DEFAULT_DELIMITER, DEFAULT_DELIMITER, DEFAULT_SKIP)
         {
@@ -222,7 +221,7 @@ namespace Lucene.Net.Analysis.Path
             return true;
         }
 
-        public override void End()
+        public override sealed void End()
         {
             base.End();
             // set final offset

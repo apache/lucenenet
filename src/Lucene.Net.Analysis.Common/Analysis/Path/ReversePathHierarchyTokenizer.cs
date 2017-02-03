@@ -27,13 +27,13 @@ namespace Lucene.Net.Analysis.Path
     /// <para>
     /// Take something like:
     /// 
-    /// <pre>
+    /// <code>
     /// www.site.co.uk
     /// </code>
     /// 
     /// and make:
     /// 
-    /// <pre>
+    /// <code>
     /// www.site.co.uk
     /// site.co.uk
     /// co.uk
@@ -44,7 +44,6 @@ namespace Lucene.Net.Analysis.Path
     /// </summary>
     public class ReversePathHierarchyTokenizer : Tokenizer
     {
-
         public ReversePathHierarchyTokenizer(TextReader input)
             : this(input, DEFAULT_BUFFER_SIZE, DEFAULT_DELIMITER, DEFAULT_DELIMITER, DEFAULT_SKIP)
         {
@@ -198,7 +197,7 @@ namespace Lucene.Net.Analysis.Path
             return false;
         }
 
-        public override void End()
+        public override sealed void End()
         {
             base.End();
             // set final offset
