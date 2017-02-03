@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Pattern
 	 */
 
     /// <summary>
-    /// CaptureGroup uses Java regexes to emit multiple tokens - one for each capture
+    /// CaptureGroup uses .NET regexes to emit multiple tokens - one for each capture
     /// group in one or more patterns.
     /// 
     /// <para>
@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Pattern
     /// </para>
     /// 
     /// <para>
-    /// <code>"(https?://([a-zA-Z\-_0-9.]+))"</code>
+    /// <c>"(https?://([a-zA-Z\-_0-9.]+))"</c>
     /// </para>
     /// 
     /// <para>
@@ -45,28 +45,27 @@ namespace Lucene.Net.Analysis.Pattern
     /// </para>
     /// <para>
     /// Each pattern is matched as often as it can be, so the pattern
-    /// <code> "(...)"</code>, when matched against <code>"abcdefghi"</code> would
-    /// produce <code>["abc","def","ghi"]</code>
+    /// <c> "(...)"</c>, when matched against <c>"abcdefghi"</c> would
+    /// produce <c>["abc","def","ghi"]</c>
     /// </para>
     /// <para>
     /// A camelCaseFilter could be written as:
     /// </para>
     /// <para>
     /// <code>
-    ///   "([A-Z]{2,})",                                 <br />
-    ///   "(?&lt;![A-Z])([A-Z][a-z]+)",                     <br />
-    ///   "(?:^|\\b|(?&lt;=[0-9_])|(?&lt;=[A-Z]{2}))([a-z]+)", <br />
+    ///   "([A-Z]{2,})",                                 
+    ///   "(?&lt;![A-Z])([A-Z][a-z]+)",                     
+    ///   "(?:^|\\b|(?&lt;=[0-9_])|(?&lt;=[A-Z]{2}))([a-z]+)", 
     ///   "([0-9]+)"
     /// </code>
     /// </para>
     /// <para>
-    /// plus if <see cref="#preserveOriginal"/> is true, it would also return
-    /// <code>"camelCaseFilter</code>
+    /// plus if <see cref="preserveOriginal"/> is true, it would also return
+    /// <c>camelCaseFilter</c>
     /// </para>
     /// </summary>
     public sealed class PatternCaptureGroupTokenFilter : TokenFilter
     {
-
         private readonly ICharTermAttribute charTermAttr;
         private readonly IPositionIncrementAttribute posAttr;
         private State state;
@@ -78,6 +77,9 @@ namespace Lucene.Net.Analysis.Pattern
         private int[] currentGroup;
         private int currentMatcher;
 
+        /// <summary>
+        /// Creates a new <see cref="PatternCaptureGroupTokenFilter"/>
+        /// </summary>
         /// <param name="input">
         ///          the input <see cref="TokenStream"/> </param>
         /// <param name="preserveOriginal">
@@ -85,8 +87,8 @@ namespace Lucene.Net.Analysis.Pattern
         ///          patterns matches </param>
         /// <param name="patterns">
         ///          an array of <see cref="Pattern"/> objects to match against each token </param>
-
-        public PatternCaptureGroupTokenFilter(TokenStream input, bool preserveOriginal, params Regex[] patterns) : base(input)
+        public PatternCaptureGroupTokenFilter(TokenStream input, bool preserveOriginal, params Regex[] patterns) 
+            : base(input)
         {
             this.preserveOriginal = preserveOriginal;
             this.matchers = new Match[patterns.Length];
@@ -150,7 +152,6 @@ namespace Lucene.Net.Analysis.Pattern
 
         public override bool IncrementToken()
         {
-
             if (currentMatcher != -1 && NextCapture())
             {
                 Debug.Assert(state != null);

@@ -27,23 +27,23 @@ namespace Lucene.Net.Analysis.Pattern
     /// Factory for <see cref="PatternTokenizer"/>.
     /// This tokenizer uses regex pattern matching to construct distinct tokens
     /// for the input stream.  It takes two arguments:  "pattern" and "group".
-    /// <p/>
-    /// <ul>
-    /// <li>"pattern" is the regular expression.</li>
-    /// <li>"group" says which group to extract into tokens.</li>
-    ///  </ul>
+    /// <para/>
+    /// <list type="bullet">
+    ///     <item>"pattern" is the regular expression.</item>
+    ///     <item>"group" says which group to extract into tokens.</item>
+    /// </list>
     /// <para>
     /// group=-1 (the default) is equivalent to "split".  In this case, the tokens will
     /// be equivalent to the output from (without empty tokens):
-    /// <see cref="String#split(java.lang.String)"/>
+    /// <see cref="Regex.Replace(string, string)"/>
     /// </para>
     /// <para>
-    /// Using group >= 0 selects the matching group as the token.  For example, if you have:<br/>
-    /// <pre>
-    ///  pattern = \'([^\']+)\'
-    ///  group = 0
-    ///  input = aaa 'bbb' 'ccc'
-    /// </pre>
+    /// Using group &gt;= 0 selects the matching group as the token.  For example, if you have:<br/>
+    /// <code>
+    ///     pattern = \'([^\']+)\'
+    ///     group = 0
+    ///     input = aaa 'bbb' 'ccc'
+    /// </code>
     /// the output will be two tokens: 'bbb' and 'ccc' (including the ' marks).  With the same input
     /// but using group=1, the output would be: bbb and ccc (no ' marks)
     /// </para>
@@ -54,21 +54,23 @@ namespace Lucene.Net.Analysis.Pattern
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.PatternTokenizerFactory" pattern="\'([^\']+)\'" group="1"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre> 
+    /// &lt;/fieldType&gt;</code> 
+    /// 
+    /// @since solr1.2
     /// </summary>
-    /// <seealso cref= PatternTokenizer
-    /// @since solr1.2 </seealso>
+    /// <seealso cref="PatternTokenizer"/>
     public class PatternTokenizerFactory : TokenizerFactory
     {
         public const string PATTERN = "pattern";
         public const string GROUP = "group";
 
-        protected internal readonly Regex m_pattern;
-        protected internal readonly int m_group;
+        protected readonly Regex m_pattern;
+        protected readonly int m_group;
 
         /// <summary>
-        /// Creates a new PatternTokenizerFactory </summary>
-        public PatternTokenizerFactory(IDictionary<string, string> args) : base(args)
+        /// Creates a new <see cref="PatternTokenizerFactory"/> </summary>
+        public PatternTokenizerFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             m_pattern = GetPattern(args, PATTERN);
             m_group = GetInt(args, GROUP, -1);

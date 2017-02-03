@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Pattern
         private readonly string blockDelimiters;
 
         /// <summary>
-        /// Creates a new PatternReplaceCharFilterFactory </summary>
+        /// Creates a new <see cref="PatternReplaceCharFilterFactory"/> </summary>
         public PatternReplaceCharFilterFactory(IDictionary<string, string> args) : base(args)
         {
             pattern = GetPattern(args, "pattern");

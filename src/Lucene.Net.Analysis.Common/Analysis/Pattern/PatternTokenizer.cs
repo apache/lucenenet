@@ -25,19 +25,19 @@ namespace Lucene.Net.Analysis.Pattern
     /// <summary>
     /// This tokenizer uses regex pattern matching to construct distinct tokens
     /// for the input stream.  It takes two arguments:  "pattern" and "group".
-    /// <p/>
-    /// <ul>
-    /// <li>"pattern" is the regular expression.</li>
-    /// <li>"group" says which group to extract into tokens.</li>
-    ///  </ul>
+    /// <para/>
+    /// <list type="bullet">
+    ///     <item>"pattern" is the regular expression.</item>
+    ///     <item>"group" says which group to extract into tokens.</item>
+    /// </list>
     /// <para>
     /// group=-1 (the default) is equivalent to "split".  In this case, the tokens will
     /// be equivalent to the output from (without empty tokens):
-    /// <see cref="String#split(java.lang.String)"/>
+    /// <see cref="Regex.Replace(string, string)"/>
     /// </para>
     /// <para>
     /// Using group >= 0 selects the matching group as the token.  For example, if you have:<br/>
-    /// <pre>
+    /// <code>
     ///  pattern = \'([^\']+)\'
     ///  group = 0
     ///  input = aaa 'bbb' 'ccc'
@@ -45,12 +45,11 @@ namespace Lucene.Net.Analysis.Pattern
     /// the output will be two tokens: 'bbb' and 'ccc' (including the ' marks).  With the same input
     /// but using group=1, the output would be: bbb and ccc (no ' marks)
     /// </para>
-    /// <para>NOTE: This Tokenizer does not output tokens that are of zero length.</para>
+    /// <para>NOTE: This <see cref="Tokenizer"/> does not output tokens that are of zero length.</para>
     /// </summary>
-    /// <seealso cref= Pattern </seealso>
+    /// <seealso cref="Regex"/>
     public sealed class PatternTokenizer : Tokenizer
     {
-
         private readonly ICharTermAttribute termAtt;
         private readonly IOffsetAttribute offsetAtt;
 
@@ -63,16 +62,16 @@ namespace Lucene.Net.Analysis.Pattern
         private readonly Regex pattern;
 
         /// <summary>
-        /// creates a new PatternTokenizer returning tokens from group (-1 for split functionality) </summary>
+        /// creates a new <see cref="PatternTokenizer"/> returning tokens from group (-1 for split functionality) </summary>
         public PatternTokenizer(TextReader input, Regex pattern, int group)
-              : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, input, pattern, group)
+            : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, input, pattern, group)
         {
         }
 
         /// <summary>
-        /// creates a new PatternTokenizer returning tokens from group (-1 for split functionality) </summary>
+        /// creates a new <see cref="PatternTokenizer"/> returning tokens from group (-1 for split functionality) </summary>
         public PatternTokenizer(AttributeFactory factory, TextReader input, Regex pattern, int group)
-              : base(factory, input)
+            : base(factory, input)
         {
             this.termAtt = AddAttribute<ICharTermAttribute>();
             this.offsetAtt = AddAttribute<IOffsetAttribute>();
@@ -198,7 +197,7 @@ namespace Lucene.Net.Analysis.Pattern
 
         // TODO: we should see if we can make this tokenizer work without reading
         // the entire document into RAM, perhaps with Matcher.hitEnd/requireEnd ?
-        internal readonly char[] buffer = new char[8192];
+        private readonly char[] buffer = new char[8192];
 
         private void FillBuffer(StringBuilder sb, TextReader input)
         {

@@ -24,12 +24,12 @@ namespace Lucene.Net.Analysis.Pattern
      */
 
     /// <summary>
-    /// CharFilter that uses a regular expression for the target of replace string.
+    /// <see cref="CharFilter"/> that uses a regular expression for the target of replace string.
     /// The pattern match will be done in each "block" in char stream.
     /// 
     /// <para>
-    /// ex1) source="aa&nbsp;&nbsp;bb&nbsp;aa&nbsp;bb", pattern="(aa)\\s+(bb)" replacement="$1#$2"<br/>
-    /// output="aa#bb&nbsp;aa#bb"
+    /// ex1) source="aa  bb aa bb", pattern="(aa)\\s+(bb)" replacement="$1#$2"
+    /// output="aa#bb aa#bb"
     /// </para>
     /// 
     /// NOTE: If you produce a phrase that has different length to source string
@@ -37,9 +37,9 @@ namespace Lucene.Net.Analysis.Pattern
     /// face a trouble.
     /// 
     /// <para>
-    /// ex2) source="aa123bb", pattern="(aa)\\d+(bb)" replacement="$1&nbsp;$2"<br/>
-    /// output="aa&nbsp;bb"<br/>
-    /// and you want to search bb and highlight it, you will get<br/>
+    /// ex2) source="aa123bb", pattern="(aa)\\d+(bb)" replacement="$1 $2"
+    /// output="aa bb"
+    /// and you want to search bb and highlight it, you will get
     /// highlight snippet="aa1&lt;em&gt;23bb&lt;/em&gt;"
     /// </para>
     /// 
@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Pattern
         private TextReader transformedInput;
 
         public PatternReplaceCharFilter(Regex pattern, string replacement, TextReader @in)
-              : base(@in)
+            : base(@in)
         {
             this.pattern = pattern;
             this.replacement = replacement;
@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Pattern
 
         [Obsolete]
         public PatternReplaceCharFilter(Regex pattern, string replacement, int maxBlockChars, string blockDelimiter, TextReader @in)
-              : this(pattern, replacement, @in)
+            : this(pattern, replacement, @in)
         {
         }
 
@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Pattern
         /// <summary>
         /// Replace pattern in input and mark correction offsets. 
         /// </summary>
-        internal virtual string ProcessPattern(StringBuilder input)
+        private string ProcessPattern(StringBuilder input)
         {
             // LUCENENET TODO: Replacing characters in a StringBuilder is not natively
             // supported in .NET, so this is the approach we are left with.

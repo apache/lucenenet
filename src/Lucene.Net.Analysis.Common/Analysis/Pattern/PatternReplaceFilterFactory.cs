@@ -33,15 +33,15 @@ namespace Lucene.Net.Analysis.Pattern
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
     /// </summary>
-    /// <seealso cref= PatternReplaceFilter </seealso>
+    /// <seealso cref="PatternReplaceFilter"/>
     public class PatternReplaceFilterFactory : TokenFilterFactory
     {
-        internal readonly Regex pattern;
-        internal readonly string replacement;
-        internal readonly bool replaceAll;
+        private readonly Regex pattern;
+        private readonly string replacement;
+        private readonly bool replaceAll;
 
         /// <summary>
-        /// Creates a new PatternReplaceFilterFactory </summary>
+        /// Creates a new <see cref="PatternReplaceFilterFactory"/> </summary>
         public PatternReplaceFilterFactory(IDictionary<string, string> args) : base(args)
         {
             pattern = GetPattern(args, "pattern");

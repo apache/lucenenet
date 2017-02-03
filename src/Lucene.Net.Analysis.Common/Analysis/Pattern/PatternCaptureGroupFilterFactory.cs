@@ -31,17 +31,19 @@ namespace Lucene.Net.Analysis.Pattern
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
     /// </summary>
-    /// <seealso cref= PatternCaptureGroupTokenFilter </seealso>
+    /// <seealso cref="PatternCaptureGroupTokenFilter"/>
     public class PatternCaptureGroupFilterFactory : TokenFilterFactory
     {
         private Regex pattern;
         private bool preserveOriginal = true;
 
-        public PatternCaptureGroupFilterFactory(IDictionary<string, string> args) : base(args)
+        public PatternCaptureGroupFilterFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             pattern = GetPattern(args, "pattern");
             preserveOriginal = args.ContainsKey("preserve_original") ? bool.Parse(args["preserve_original"]) : true;
         }
+
         public override TokenStream Create(TokenStream input)
         {
             return new PatternCaptureGroupTokenFilter(input, preserveOriginal, pattern);

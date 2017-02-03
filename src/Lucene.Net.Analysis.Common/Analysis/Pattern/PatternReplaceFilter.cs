@@ -21,16 +21,16 @@ namespace Lucene.Net.Analysis.Pattern
      */
 
     /// <summary>
-    /// A TokenFilter which applies a Pattern to each token in the stream,
+    /// A TokenFilter which applies a <see cref="Regex"/> to each token in the stream,
     /// replacing match occurances with the specified replacement string.
     /// 
     /// <para>
     /// <b>Note:</b> Depending on the input and the pattern used and the input
-    /// TokenStream, this TokenFilter may produce Tokens whose text is the empty
+    /// <see cref="TokenStream"/>, this <see cref="TokenFilter"/> may produce <see cref="Token"/>s whose text is the empty
     /// string.
     /// </para>
     /// </summary>
-    /// <seealso cref= Pattern </seealso>
+    /// <seealso cref="Regex"/>
     public sealed class PatternReplaceFilter : TokenFilter
     {
         private readonly string replacement;
@@ -41,15 +41,15 @@ namespace Lucene.Net.Analysis.Pattern
         /// <summary>
         /// Constructs an instance to replace either the first, or all occurances
         /// </summary>
-        /// <param name="in"> the TokenStream to process </param>
-        /// <param name="pattern"> the pattern (a <see cref="Regex"/> object) to apply to each Token </param>
-        /// <param name="replacement"> the "replacement string" to substitute, if null a
+        /// <param name="in"> the <see cref="TokenStream"/> to process </param>
+        /// <param name="pattern"> the pattern (a <see cref="Regex"/> object) to apply to each <see cref="Token"/> </param>
+        /// <param name="replacement"> the "replacement string" to substitute, if <c>null</c> a
         ///        blank string will be used. Note that this is not the literal
         ///        string that will be used, '$' and '\' have special meaning. </param>
         /// <param name="all"> if true, all matches will be replaced otherwise just the first match. </param>
-        /// <seealso cref= Matcher#quoteReplacement </seealso>
+        /// <seealso cref="Regex.Replace(string, string)"/>
         public PatternReplaceFilter(TokenStream @in, Regex pattern, string replacement, bool all)
-              : base(@in)
+            : base(@in)
         {
             this.replacement = (null == replacement) ? "" : replacement;
             this.all = all;
