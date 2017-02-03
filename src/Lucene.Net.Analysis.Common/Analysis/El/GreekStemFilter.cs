@@ -24,13 +24,13 @@ namespace Lucene.Net.Analysis.El
     /// words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
     /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para>
     /// <para>
     /// NOTE: Input is expected to be casefolded for Greek (including folding of final
     /// sigma to sigma), and with diacritics removed. This can be achieved by using 
-    /// either <see cref="GreekLowerCaseFilter"/> or ICUFoldingFilter before GreekStemFilter.
+    /// either <see cref="GreekLowerCaseFilter"/> or ICUFoldingFilter before <see cref="GreekStemFilter"/>.
     /// @lucene.experimental
     /// </para>
     /// </summary>

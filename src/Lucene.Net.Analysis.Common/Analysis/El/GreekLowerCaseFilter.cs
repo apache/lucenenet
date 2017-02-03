@@ -25,12 +25,11 @@ namespace Lucene.Net.Analysis.El
     /// <summary>
     /// Normalizes token text to lower case, removes some Greek diacritics,
     /// and standardizes final sigma to sigma. 
-    /// <a name="version"/>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
-    /// compatibility when creating GreekLowerCaseFilter:
-    /// <ul>
-    ///   <li> As of 3.1, supplementary characters are properly lowercased.
-    /// </ul>
+    /// compatibility when creating <see cref="GreekLowerCaseFilter"/>:
+    /// <list type="bullet">
+    ///     <item> As of 3.1, supplementary characters are properly lowercased.</item>
+    /// </list>
     /// </para>
     /// </summary>
     public sealed class GreekLowerCaseFilter : TokenFilter
@@ -39,11 +38,11 @@ namespace Lucene.Net.Analysis.El
         private readonly CharacterUtils charUtils;
 
         /// <summary>
-        /// Create a GreekLowerCaseFilter that normalizes Greek token text.
+        /// Create a <see cref="GreekLowerCaseFilter"/> that normalizes Greek token text.
         /// </summary>
         /// <param name="matchVersion"> Lucene compatibility version, 
-        ///   See <a href="#version">above</a> </param>
-        /// <param name="in"> TokenStream to filter </param>
+        ///   See <see cref="LuceneVersion"/> </param>
+        /// <param name="in"> <see cref="TokenStream"/> to filter </param>
         public GreekLowerCaseFilter(LuceneVersion matchVersion, TokenStream @in)
               : base(@in)
         {

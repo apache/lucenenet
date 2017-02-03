@@ -33,9 +33,8 @@ namespace Lucene.Net.Analysis.El
     /// </summary>
     public class GreekStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new GreekStemFilterFactory </summary>
+        /// Creates a new <see cref="GreekStemFilterFactory"/> </summary>
         public GreekStemFilterFactory(IDictionary<string, string> args) 
             : base(args)
         {

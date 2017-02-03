@@ -32,9 +32,8 @@ namespace Lucene.Net.Analysis.El
     /// </summary>
     public class GreekLowerCaseFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
-
         /// <summary>
-        /// Creates a new GreekLowerCaseFilterFactory </summary>
+        /// Creates a new <see cref="GreekLowerCaseFilterFactory"/> </summary>
         public GreekLowerCaseFilterFactory(IDictionary<string, string> args) : base(args)
         {
             AssureMatchVersion();

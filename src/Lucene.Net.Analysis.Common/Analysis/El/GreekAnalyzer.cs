@@ -31,18 +31,15 @@ namespace Lucene.Net.Analysis.El
     /// that will not be indexed at all).
     /// A default set of stopwords is used unless an alternative list is specified.
     /// </para>
-    /// 
-    /// <a name="version"/>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
-    /// compatibility when creating GreekAnalyzer:
-    /// <ul>
-    ///   <li> As of 3.1, StandardFilter and GreekStemmer are used by default.
-    ///   <li> As of 2.9, StopFilter preserves position
-    ///        increments
-    /// </ul>
-    /// 
+    /// compatibility when creating <see cref="GreekAnalyzer"/>:
+    /// <list type="bullet">
+    ///   <item> As of 3.1, StandardFilter and GreekStemmer are used by default.</item>
+    ///   <item> As of 2.9, StopFilter preserves position
+    ///        increments</item>
+    /// </list>
     /// </para>
-    /// <para><b>NOTE</b>: This class uses the same <see cref="LuceneVersion"/>
+    /// <para><c>NOTE</c>: This class uses the same <see cref="LuceneVersion"/>
     /// dependent settings as <see cref="StandardAnalyzer"/>.</para>
     /// </summary>
     public sealed class GreekAnalyzer : StopwordAnalyzerBase
@@ -85,7 +82,7 @@ namespace Lucene.Net.Analysis.El
         /// <summary>
         /// Builds an analyzer with the default stop words. </summary>
         /// <param name="matchVersion"> Lucene compatibility version,
-        ///   See <a href="#version">above</a> </param>
+        ///   See <see cref="LuceneVersion"/> </param>
         public GreekAnalyzer(LuceneVersion matchVersion)
               : this(matchVersion, DefaultSetHolder.DEFAULT_SET)
         {
@@ -100,7 +97,7 @@ namespace Lucene.Net.Analysis.El
         /// </para>
         /// </summary>
         /// <param name="matchVersion"> Lucene compatibility version,
-        ///   See <a href="#version">above</a> </param>
+        ///   See <see cref="LuceneVersion"/> </param>
         /// <param name="stopwords"> a stopword set </param>
         public GreekAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
               : base(matchVersion, stopwords)
@@ -110,7 +107,7 @@ namespace Lucene.Net.Analysis.El
         /// <summary>
         /// Creates
         /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <see cref="Reader"/>.
+        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
         ///         built from a <see cref="StandardTokenizer"/> filtered with

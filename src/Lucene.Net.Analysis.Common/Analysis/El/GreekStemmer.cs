@@ -22,8 +22,8 @@ namespace Lucene.Net.Analysis.El
 	 */
 
     /// <summary>
-    /// A stemmer for Greek words, according to: <i>Development of a Stemmer for the
-    /// Greek Language.</i> Georgios Ntais
+    /// A stemmer for Greek words, according to: <c>Development of a Stemmer for the
+    /// Greek Language.</c> Georgios Ntais
     /// <para>
     /// NOTE: Input is expected to be casefolded for Greek (including folding of final
     /// sigma to sigma), and with diacritics removed. This can be achieved with 
@@ -33,13 +33,12 @@ namespace Lucene.Net.Analysis.El
     /// </summary>
     public class GreekStemmer
     {
-
         /// <summary>
-        /// Stems a word contained in a leading portion of a char[] array.
+        /// Stems a word contained in a leading portion of a <see cref="char[]"/> array.
         /// The word is passed through a number of rules that modify it's length.
         /// </summary>
-        /// <param name="s"> A char[] array that contains the word to be stemmed. </param>
-        /// <param name="len"> The length of the char[] array. </param>
+        /// <param name="s"> A <see cref="char[]"/> array that contains the word to be stemmed. </param>
+        /// <param name="len"> The length of the <see cref="char[]"/> array. </param>
         /// <returns> The new length of the stemmed word. </returns>
         public virtual int Stem(char[] s, int len)
         {
@@ -77,7 +76,7 @@ namespace Lucene.Net.Analysis.El
                 len = Rule21(s, len);
             }
 
-            return rule22(s, len);
+            return Rule22(s, len);
         }
 
         private int Rule0(char[] s, int len)
@@ -974,7 +973,7 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private int rule22(char[] s, int len)
+        private int Rule22(char[] s, int len)
         {
             if (StemmerUtil.EndsWith(s, len, "εστερ") || 
                 StemmerUtil.EndsWith(s, len, "εστατ"))
@@ -1022,12 +1021,12 @@ namespace Lucene.Net.Analysis.El
         }
 
         /// <summary>
-        /// Checks if the word contained in the leading portion of char[] array , 
+        /// Checks if the word contained in the leading portion of <see cref="char[]"/> array , 
         /// ends with a Greek vowel.
         /// </summary>
-        /// <param name="s"> A char[] array that represents a word. </param>
-        /// <param name="len"> The length of the char[] array. </param>
-        /// <returns> True if the word contained in the leading portion of char[] array , 
+        /// <param name="s"> A <see cref="char[]"/> array that represents a word. </param>
+        /// <param name="len"> The length of the <see cref="char[]"/> array. </param>
+        /// <returns> True if the word contained in the leading portion of <see cref="char[]"/> array , 
         /// ends with a vowel , false otherwise. </returns>
         private bool EndsWithVowel(char[] s, int len)
         {
@@ -1051,12 +1050,12 @@ namespace Lucene.Net.Analysis.El
         }
 
         /// <summary>
-        /// Checks if the word contained in the leading portion of char[] array , 
+        /// Checks if the word contained in the leading portion of <see cref="char[]"/> array , 
         /// ends with a Greek vowel.
         /// </summary>
-        /// <param name="s"> A char[] array that represents a word. </param>
-        /// <param name="len"> The length of the char[] array. </param>
-        /// <returns> True if the word contained in the leading portion of char[] array , 
+        /// <param name="s"> A <see cref="char[]"/> array that represents a word. </param>
+        /// <param name="len"> The length of the <see cref="char[]"/> array. </param>
+        /// <returns> True if the word contained in the leading portion of <see cref="char[]"/> array , 
         /// ends with a vowel , false otherwise. </returns>
         private bool EndsWithVowelNoY(char[] s, int len)
         {
