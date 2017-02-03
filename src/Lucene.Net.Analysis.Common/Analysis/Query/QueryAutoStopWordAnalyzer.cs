@@ -36,7 +36,6 @@ namespace Lucene.Net.Analysis.Query
     /// </summary>
     public sealed class QueryAutoStopWordAnalyzer : AnalyzerWrapper
     {
-
         private readonly Analyzer @delegate;
         private readonly IDictionary<string, HashSet<string>> stopWordsPerField = new Dictionary<string, HashSet<string>>();
         //The default maximum percentage (40%) of index documents which
@@ -45,78 +44,78 @@ namespace Lucene.Net.Analysis.Query
         private readonly LuceneVersion matchVersion;
 
         /// <summary>
-        /// Creates a new QueryAutoStopWordAnalyzer with stopwords calculated for all
+        /// Creates a new <see cref="QueryAutoStopWordAnalyzer"/> with stopwords calculated for all
         /// indexed fields from terms with a document frequency percentage greater than
-        /// <see cref="#defaultMaxDocFreqPercent"/>
+        /// <see cref="defaultMaxDocFreqPercent"/>
         /// </summary>
         /// <param name="matchVersion"> Version to be used in <see cref="StopFilter"/> </param>
-        /// <param name="delegate"> Analyzer whose TokenStream will be filtered </param>
-        /// <param name="indexReader"> IndexReader to identify the stopwords from </param>
-        /// <exception cref="IOException"> Can be thrown while reading from the IndexReader </exception>
+        /// <param name="delegate"> <see cref="Analyzer"/> whose <see cref="TokenStream"/> will be filtered </param>
+        /// <param name="indexReader"> <see cref="IndexReader"/> to identify the stopwords from </param>
+        /// <exception cref="System.IO.IOException"> Can be thrown while reading from the <see cref="IndexReader"/> </exception>
         public QueryAutoStopWordAnalyzer(LuceneVersion matchVersion, Analyzer @delegate, IndexReader indexReader)
             : this(matchVersion, @delegate, indexReader, defaultMaxDocFreqPercent)
         {
         }
 
         /// <summary>
-        /// Creates a new QueryAutoStopWordAnalyzer with stopwords calculated for all
+        /// Creates a new <see cref="QueryAutoStopWordAnalyzer"/> with stopwords calculated for all
         /// indexed fields from terms with a document frequency greater than the given
-        /// maxDocFreq
+        /// <paramref name="maxDocFreq"/>
         /// </summary>
         /// <param name="matchVersion"> Version to be used in <see cref="StopFilter"/> </param>
-        /// <param name="delegate"> Analyzer whose TokenStream will be filtered </param>
-        /// <param name="indexReader"> IndexReader to identify the stopwords from </param>
+        /// <param name="delegate"> <see cref="Analyzer"/> whose <see cref="TokenStream"/> will be filtered </param>
+        /// <param name="indexReader"> <see cref="IndexReader"/> to identify the stopwords from </param>
         /// <param name="maxDocFreq"> Document frequency terms should be above in order to be stopwords </param>
-        /// <exception cref="IOException"> Can be thrown while reading from the IndexReader </exception>
+        /// <exception cref="System.IO.IOException"> Can be thrown while reading from the <see cref="IndexReader"/> </exception>
         public QueryAutoStopWordAnalyzer(LuceneVersion matchVersion, Analyzer @delegate, IndexReader indexReader, int maxDocFreq)
             : this(matchVersion, @delegate, indexReader, MultiFields.GetIndexedFields(indexReader), maxDocFreq)
         {
         }
 
         /// <summary>
-        /// Creates a new QueryAutoStopWordAnalyzer with stopwords calculated for all
+        /// Creates a new <see cref="QueryAutoStopWordAnalyzer"/> with stopwords calculated for all
         /// indexed fields from terms with a document frequency percentage greater than
-        /// the given maxPercentDocs
+        /// the given <paramref name="maxPercentDocs"/>
         /// </summary>
         /// <param name="matchVersion"> Version to be used in <see cref="StopFilter"/> </param>
-        /// <param name="delegate"> Analyzer whose TokenStream will be filtered </param>
-        /// <param name="indexReader"> IndexReader to identify the stopwords from </param>
+        /// <param name="delegate"> <see cref="Analyzer"/> whose <see cref="TokenStream"/> will be filtered </param>
+        /// <param name="indexReader"> <see cref="IndexReader"/> to identify the stopwords from </param>
         /// <param name="maxPercentDocs"> The maximum percentage (between 0.0 and 1.0) of index documents which
         ///                      contain a term, after which the word is considered to be a stop word </param>
-        /// <exception cref="IOException"> Can be thrown while reading from the IndexReader </exception>
+        /// <exception cref="System.IO.IOException"> Can be thrown while reading from the <see cref="IndexReader"/> </exception>
         public QueryAutoStopWordAnalyzer(LuceneVersion matchVersion, Analyzer @delegate, IndexReader indexReader, float maxPercentDocs)
             : this(matchVersion, @delegate, indexReader, MultiFields.GetIndexedFields(indexReader), maxPercentDocs)
         {
         }
 
         /// <summary>
-        /// Creates a new QueryAutoStopWordAnalyzer with stopwords calculated for the
+        /// Creates a new <see cref="QueryAutoStopWordAnalyzer"/> with stopwords calculated for the
         /// given selection of fields from terms with a document frequency percentage
-        /// greater than the given maxPercentDocs
+        /// greater than the given <paramref name="maxPercentDocs"/>
         /// </summary>
         /// <param name="matchVersion"> Version to be used in <see cref="StopFilter"/> </param>
-        /// <param name="delegate"> Analyzer whose TokenStream will be filtered </param>
-        /// <param name="indexReader"> IndexReader to identify the stopwords from </param>
+        /// <param name="delegate"> <see cref="Analyzer"/> whose <see cref="TokenStream"/> will be filtered </param>
+        /// <param name="indexReader"> <see cref="IndexReader"/> to identify the stopwords from </param>
         /// <param name="fields"> Selection of fields to calculate stopwords for </param>
         /// <param name="maxPercentDocs"> The maximum percentage (between 0.0 and 1.0) of index documents which
         ///                      contain a term, after which the word is considered to be a stop word </param>
-        /// <exception cref="IOException"> Can be thrown while reading from the IndexReader </exception>
+        /// <exception cref="System.IO.IOException"> Can be thrown while reading from the <see cref="IndexReader"/> </exception>
         public QueryAutoStopWordAnalyzer(LuceneVersion matchVersion, Analyzer @delegate, IndexReader indexReader, ICollection<string> fields, float maxPercentDocs)
             : this(matchVersion, @delegate, indexReader, fields, (int)(indexReader.NumDocs * maxPercentDocs))
         {
         }
 
         /// <summary>
-        /// Creates a new QueryAutoStopWordAnalyzer with stopwords calculated for the
+        /// Creates a new <see cref="QueryAutoStopWordAnalyzer"/> with stopwords calculated for the
         /// given selection of fields from terms with a document frequency greater than
-        /// the given maxDocFreq
+        /// the given <paramref name="maxDocFreq"/>
         /// </summary>
         /// <param name="matchVersion"> Version to be used in <see cref="StopFilter"/> </param>
         /// <param name="delegate"> Analyzer whose TokenStream will be filtered </param>
-        /// <param name="indexReader"> IndexReader to identify the stopwords from </param>
+        /// <param name="indexReader"> <see cref="IndexReader"/> to identify the stopwords from </param>
         /// <param name="fields"> Selection of fields to calculate stopwords for </param>
         /// <param name="maxDocFreq"> Document frequency terms should be above in order to be stopwords </param>
-        /// <exception cref="IOException"> Can be thrown while reading from the IndexReader </exception>
+        /// <exception cref="System.IO.IOException"> Can be thrown while reading from the <see cref="IndexReader"/> </exception>
         public QueryAutoStopWordAnalyzer(LuceneVersion matchVersion, Analyzer @delegate, IndexReader indexReader, ICollection<string> fields, int maxDocFreq)
             : base(@delegate.Strategy)
         {
