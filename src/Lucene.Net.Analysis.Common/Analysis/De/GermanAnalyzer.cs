@@ -42,16 +42,15 @@ namespace Lucene.Net.Analysis.De
     /// exclusion list is empty by default.
     /// </para>
     /// 
-    /// <a name="version"/>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating GermanAnalyzer:
-    /// <ul>
-    ///   <li> As of 3.6, GermanLightStemFilter is used for less aggressive stemming.
-    ///   <li> As of 3.1, Snowball stemming is done with SnowballFilter, and 
-    ///        Snowball stopwords are used by default.
-    ///   <li> As of 2.9, StopFilter preserves position
-    ///        increments
-    /// </ul>
+    /// <list>
+    ///   <item> As of 3.6, GermanLightStemFilter is used for less aggressive stemming.</item>
+    ///   <item> As of 3.1, Snowball stemming is done with SnowballFilter, and 
+    ///        Snowball stopwords are used by default.</item>
+    ///   <item> As of 2.9, StopFilter preserves position
+    ///        increments</item>
+    /// </list>
     /// 
     /// </para>
     /// <para><b>NOTE</b>: This class uses the same <see cref="LuceneVersion"/>
@@ -59,10 +58,22 @@ namespace Lucene.Net.Analysis.De
     /// </summary>
     public sealed class GermanAnalyzer : StopwordAnalyzerBase
     {
-
         /// @deprecated in 3.1, remove in Lucene 5.0 (index bw compat) 
         [Obsolete("in 3.1, remove in Lucene 5.0 (index bw compat)")]
-        private static readonly string[] GERMAN_STOP_WORDS = new string[] { "einer", "eine", "eines", "einem", "einen", "der", "die", "das", "dass", "daß", "du", "er", "sie", "es", "was", "wer", "wie", "wir", "und", "oder", "ohne", "mit", "am", "im", "in", "aus", "auf", "ist", "sein", "war", "wird", "ihr", "ihre", "ihres", "als", "für", "von", "mit", "dich", "dir", "mich", "mir", "mein", "sein", "kein", "durch", "wegen", "wird" };
+        private static readonly string[] GERMAN_STOP_WORDS = new string[] {
+            "einer", "eine", "eines", "einem", "einen",
+            "der", "die", "das", "dass", "daß",
+            "du", "er", "sie", "es",
+            "was", "wer", "wie", "wir",
+            "und", "oder", "ohne", "mit",
+            "am", "im", "in", "aus", "auf",
+            "ist", "sein", "war", "wird",
+            "ihr", "ihre", "ihres",
+            "als", "für", "von", "mit",
+            "dich", "dir", "mich", "mir",
+            "mein", "sein", "kein",
+            "durch", "wegen", "wird"
+        };
 
         /// <summary>
         /// File containing default German stopwords. </summary>
@@ -105,9 +116,9 @@ namespace Lucene.Net.Analysis.De
             }
         }
 
-        /// <summary>
-        /// Contains the stopwords used with the <see cref="StopFilter"/>.
-        /// </summary>
+        ///// <summary>
+        ///// Contains the stopwords used with the <see cref="StopFilter"/>.
+        ///// </summary>
 
         /// <summary>
         /// Contains words that should be indexed but not stemmed.
@@ -116,7 +127,7 @@ namespace Lucene.Net.Analysis.De
 
         /// <summary>
         /// Builds an analyzer with the default stop words:
-        /// <see cref="#getDefaultStopSet()"/>.
+        /// <see cref="DefaultStopSet"/>.
         /// </summary>
         public GermanAnalyzer(LuceneVersion matchVersion)
 #pragma warning disable 612, 618
@@ -130,7 +141,7 @@ namespace Lucene.Net.Analysis.De
         /// Builds an analyzer with the given stop words 
         /// </summary>
         /// <param name="matchVersion">
-        ///          lucene compatibility version </param>
+        ///          <see cref="LuceneVersion"/> lucene compatibility version </param>
         /// <param name="stopwords">
         ///          a stopword set </param>
         public GermanAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
@@ -142,7 +153,7 @@ namespace Lucene.Net.Analysis.De
         /// Builds an analyzer with the given stop words
         /// </summary>
         /// <param name="matchVersion">
-        ///          lucene compatibility version </param>
+        ///          <see cref="LuceneVersion"/> lucene compatibility version </param>
         /// <param name="stopwords">
         ///          a stopword set </param>
         /// <param name="stemExclusionSet">
@@ -156,12 +167,12 @@ namespace Lucene.Net.Analysis.De
         /// <summary>
         /// Creates
         /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <see cref="Reader"/>.
+        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
         ///         built from a <see cref="StandardTokenizer"/> filtered with
-        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>
-        ///         , <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
+        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,
+        ///         <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
         ///         provided, <see cref="GermanNormalizationFilter"/> and <see cref="GermanLightStemFilter"/> </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {

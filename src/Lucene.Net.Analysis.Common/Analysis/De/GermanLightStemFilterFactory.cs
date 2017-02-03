@@ -33,9 +33,8 @@ namespace Lucene.Net.Analysis.De
     /// </summary>
     public class GermanLightStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new GermanLightStemFilterFactory </summary>
+        /// Creates a new <see cref="GermanLightStemFilterFactory"/> </summary>
         public GermanLightStemFilterFactory(IDictionary<string, string> args)
               : base(args)
         {

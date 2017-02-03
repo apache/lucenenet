@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.De
     {
 
         /// <summary>
-        /// Creates a new GermanMinimalStemFilterFactory </summary>
+        /// Creates a new <see cref="GermanMinimalStemFilterFactory"/> </summary>
         public GermanMinimalStemFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

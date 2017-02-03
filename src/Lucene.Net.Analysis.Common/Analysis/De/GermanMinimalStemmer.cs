@@ -56,13 +56,12 @@
     /// Minimal Stemmer for German.
     /// <para>
     /// This stemmer implements the following algorithm:
-    /// <i>Morphologie et recherche d'information</i>
+    /// <c>Morphologie et recherche d'information</c>
     /// Jacques Savoy.
     /// </para>
     /// </summary>
     public class GermanMinimalStemmer
     {
-
         public virtual int Stem(char[] s, int len)
         {
             if (len < 5)

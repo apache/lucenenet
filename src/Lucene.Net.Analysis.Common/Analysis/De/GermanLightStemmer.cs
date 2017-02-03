@@ -56,13 +56,12 @@
     /// Light Stemmer for German.
     /// <para>
     /// This stemmer implements the "UniNE" algorithm in:
-    /// <i>Light Stemming Approaches for the French, Portuguese, German and Hungarian Languages</i>
+    /// <c>Light Stemming Approaches for the French, Portuguese, German and Hungarian Languages</c>
     /// Jacques Savoy
     /// </para>
     /// </summary>
     public class GermanLightStemmer
     {
-
         public virtual int Stem(char[] s, int len)
         {
             for (int i = 0; i < len; i++)

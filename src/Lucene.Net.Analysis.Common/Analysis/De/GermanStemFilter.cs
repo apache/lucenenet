@@ -28,10 +28,10 @@ namespace Lucene.Net.Analysis.De
     /// </para>
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
     /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para> </summary>
-    /// <seealso cref= SetKeywordMarkerFilter </seealso>
+    /// <seealso cref="Miscellaneous.SetKeywordMarkerFilter"/>
     public sealed class GermanStemFilter : TokenFilter
     {
         /// <summary>

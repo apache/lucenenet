@@ -33,9 +33,8 @@ namespace Lucene.Net.Analysis.De
     /// </summary>
     public class GermanNormalizationFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
-
         /// <summary>
-        /// Creates a new GermanNormalizationFilterFactory </summary>
+        /// Creates a new <see cref="GermanNormalizationFilterFactory"/> </summary>
         public GermanNormalizationFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

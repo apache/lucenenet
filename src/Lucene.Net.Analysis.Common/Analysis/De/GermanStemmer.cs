@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.De
     /// A stemmer for German words. 
     /// <para>
     /// The algorithm is based on the report
-    /// "A Fast and Simple Stemming Algorithm for German Words" by J&ouml;rg
+    /// "A Fast and Simple Stemming Algorithm for German Words" by Jörg
     /// Caumanns (joerg.caumanns at isst.fhg.de).
     /// </para>
     /// </summary>
@@ -38,17 +38,17 @@ namespace Lucene.Net.Analysis.De
         private StringBuilder sb = new StringBuilder();
 
         /// <summary>
-        /// Amount of characters that are removed with <tt>substitute()</tt> while stemming.
+        /// Amount of characters that are removed with <see cref="Substitute"/> while stemming.
         /// </summary>
         private int substCount = 0;
 
         private static readonly CultureInfo locale = new CultureInfo("de-DE");
 
         /// <summary>
-        /// Stemms the given term to an unique <tt>discriminator</tt>.
+        /// Stemms the given term to an unique <c>discriminator</c>.
         /// </summary>
         /// <param name="term">  The term that should be stemmed. </param>
-        /// <returns>      Discriminator for <tt>term</tt> </returns>
+        /// <returns>      Discriminator for <paramref name="term"/> </returns>
         protected internal virtual string Stem(string term)
         {
             // Use lowercase for medium stemming.
@@ -175,12 +175,14 @@ namespace Lucene.Net.Analysis.De
         /// <summary>
         /// Do some substitutions for the term to reduce overstemming:
         /// 
-        /// - Substitute Umlauts with their corresponding vowel: äöü -> aou,
-        ///   "ß" is substituted by "ss"
-        /// - Substitute a second char of a pair of equal characters with
-        ///   an asterisk: ?? -> ?*
-        /// - Substitute some common character combinations with a token:
-        ///   sch/ch/ei/ie/ig/st -> $/§/%/&/#/!
+        /// <list type="bullet">
+        /// <item>Substitute Umlauts with their corresponding vowel: äöü -> aou,
+        ///   "ß" is substituted by "ss"</item>
+        /// <item>Substitute a second char of a pair of equal characters with
+        ///   an asterisk: ?? -> ?*</item>
+        /// <item>Substitute some common character combinations with a token:
+        ///   sch/ch/ei/ie/ig/st -> $/§/%/&amp;/#/!</item>
+        /// </list>
         /// </summary>
         private void Substitute(StringBuilder buffer)
         {
@@ -257,7 +259,7 @@ namespace Lucene.Net.Analysis.De
         }
 
         /// <summary>
-        /// Undoes the changes made by substitute(). That are character pairs and
+        /// Undoes the changes made by <see cref="Substitute"/>. That are character pairs and
         /// character combinations. Umlauts will remain as their corresponding vowel,
         /// as "ß" remains as "ss".
         /// </summary>
