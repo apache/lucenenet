@@ -33,9 +33,8 @@ namespace Lucene.Net.Analysis.Gl
     /// </summary>
     public class GalicianStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new GalicianStemFilterFactory </summary>
+        /// Creates a new <see cref="GalicianStemFilterFactory"/> </summary>
         public GalicianStemFilterFactory(IDictionary<string, string> args)
               : base(args)
         {

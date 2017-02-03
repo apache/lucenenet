@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Gl
     /// Galician words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
     /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para>
     /// </summary>
@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Gl
         private readonly IKeywordAttribute keywordAttr;
 
         public GalicianMinimalStemFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Gl
             {
                 if (!keywordAttr.IsKeyword)
                 {
-                    int newlen = stemmer.stem(termAtt.Buffer, termAtt.Length);
+                    int newlen = stemmer.Stem(termAtt.Buffer, termAtt.Length);
                     termAtt.Length = newlen;
                 }
                 return true;

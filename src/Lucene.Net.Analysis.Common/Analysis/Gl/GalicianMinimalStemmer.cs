@@ -19,8 +19,6 @@ namespace Lucene.Net.Analysis.Gl
 	 * limitations under the License.
 	 */
 
-    //using RSLPStemmerBase = org.apache.lucene.analysis.pt.RSLPStemmerBase;
-
     /// <summary>
     /// Minimal Stemmer for Galician
     /// <para>
@@ -29,13 +27,12 @@ namespace Lucene.Net.Analysis.Gl
     /// "Regras do lematizador para o galego"
     /// </para>
     /// </summary>
-    /// <seealso cref= RSLPStemmerBase </seealso>
+    /// <seealso cref="RSLPStemmerBase"/>
     public class GalicianMinimalStemmer : RSLPStemmerBase
     {
-
         private static readonly Step pluralStep = Parse(typeof(GalicianMinimalStemmer), "galician.rslp")["Plural"];
 
-        public virtual int stem(char[] s, int len)
+        public virtual int Stem(char[] s, int len)
         {
             return pluralStep.Apply(s, len);
         }

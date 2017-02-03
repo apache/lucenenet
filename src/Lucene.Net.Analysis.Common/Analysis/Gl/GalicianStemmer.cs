@@ -24,8 +24,8 @@ namespace Lucene.Net.Analysis.Gl
     /// <summary>
     /// Galician stemmer implementing "Regras do lematizador para o galego".
     /// </summary>
-    /// <seealso cref= RSLPStemmerBase </seealso>
-    /// <seealso cref= <a href="http://bvg.udc.es/recursos_lingua/stemming.jsp">Description of rules</a> </seealso>
+    /// <seealso cref="RSLPStemmerBase"/>
+    /// <a href="http://bvg.udc.es/recursos_lingua/stemming.jsp">Description of rules</a>
     public class GalicianStemmer : RSLPStemmerBase
     {
         private static readonly Step plural, unification, adverb, augmentative, noun, verb, vowel;

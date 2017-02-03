@@ -33,9 +33,8 @@ namespace Lucene.Net.Analysis.Gl
     /// </summary>
     public class GalicianMinimalStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new GalicianMinimalStemFilterFactory </summary>
+        /// Creates a new <see cref="GalicianMinimalStemFilterFactory"/> </summary>
         public GalicianMinimalStemFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)
