@@ -21,7 +21,7 @@
     /// Minimal plural stemmer for English.
     /// <para>
     /// This stemmer implements the "S-Stemmer" from
-    /// <i>How Effective Is Suffixing?</i>
+    /// <c>How Effective Is Suffixing?</c>
     /// Donna Harman.
     /// </para>
     /// </summary>

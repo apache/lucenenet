@@ -19,16 +19,12 @@ namespace Lucene.Net.Analysis.En
 	 * limitations under the License.
 	 */
 
-    //using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-    //using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-    //using KeywordAttribute = org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
-
     /// <summary>
     /// A <see cref="TokenFilter"/> that applies <see cref="EnglishMinimalStemmer"/> to stem 
     /// English words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
     /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para>
     /// </summary>

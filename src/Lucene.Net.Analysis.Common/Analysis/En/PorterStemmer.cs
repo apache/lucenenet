@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.En
 
     /*
 	
-	   Porter stemmer in Java. The original paper is in
+	   Porter stemmer in .NET. The original paper is in
 	
 	       Porter, 1980, An algorithm for suffix stripping, Program, Vol. 14,
 	       no. 3, pp 130-137,
@@ -48,19 +48,13 @@ namespace Lucene.Net.Analysis.En
 	
 	*/
 
-
-
-    //JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-    //	import static org.apache.lucene.util.RamUsageEstimator.NUM_BYTES_CHAR;
-    //using ArrayUtil = org.apache.lucene.util.ArrayUtil;
-
     /// 
     /// <summary>
     /// Stemmer, implementing the Porter Stemming Algorithm
     /// 
     /// The Stemmer class transforms a word into its root form.  The input
-    /// word can be provided a character at time (by calling add()), or at once
-    /// by calling one of the various stem(something) methods.
+    /// word can be provided a character at time (by calling <see cref="Add"/>), or at once
+    /// by calling one of the various <see cref="Stem"/> methods.
     /// </summary>
     internal class PorterStemmer
     {
@@ -76,8 +70,8 @@ namespace Lucene.Net.Analysis.En
         }
 
         /// <summary>
-        /// reset() resets the stemmer so it can stem another word.  If you invoke
-        /// the stemmer by calling add(char) and then stem(), you must call reset()
+        /// <see cref="Reset"/> resets the stemmer so it can stem another word.  If you invoke
+        /// the stemmer by calling <see cref="Add(char)"/> and then <see cref="Stem"/>, you must call <see cref="Reset"/>
         /// before starting another word.
         /// </summary>
         public virtual void Reset()
@@ -88,7 +82,7 @@ namespace Lucene.Net.Analysis.En
 
         /// <summary>
         /// Add a character to the word being stemmed.  When you are finished
-        /// adding characters, you can call stem(void) to process the word.
+        /// adding characters, you can call <see cref="Stem()"/> to process the word.
         /// </summary>
         public virtual void Add(char ch)
         {
@@ -100,9 +94,9 @@ namespace Lucene.Net.Analysis.En
         }
 
         /// <summary>
-        /// After a word has been stemmed, it can be retrieved by toString(),
-        /// or a reference to the internal buffer can be retrieved by getResultBuffer
-        /// and getResultLength (which is generally more efficient.)
+        /// After a word has been stemmed, it can be retrieved by <see cref="ToString"/>,
+        /// or a reference to the internal buffer can be retrieved by <see cref="ResultBuffer"/>
+        /// and <see cref="ResultLength"/> (which is generally more efficient.)
         /// </summary>
         public override string ToString()
         {
@@ -122,7 +116,7 @@ namespace Lucene.Net.Analysis.En
 
         /// <summary>
         /// Returns a reference to a character buffer containing the results of
-        /// the stemming process.  You also need to consult getResultLength()
+        /// the stemming process.  You also need to consult <see cref="ResultLength"/>
         /// to determine the length of the result.
         /// </summary>
         [WritableArray]
@@ -732,7 +726,7 @@ namespace Lucene.Net.Analysis.En
 
 
         /// <summary>
-        /// Stem a word provided as a String.  Returns the result as a String.
+        /// Stem a word provided as a <see cref="string"/>.  Returns the result as a <see cref="string"/>.
         /// </summary>
         public virtual string Stem(string s)
         {
@@ -747,9 +741,9 @@ namespace Lucene.Net.Analysis.En
         }
 
         /// <summary>
-        /// Stem a word contained in a char[].  Returns true if the stemming process
+        /// Stem a word contained in a <see cref="char[]"/>.  Returns true if the stemming process
         /// resulted in a word different from the input.  You can retrieve the
-        /// result with getResultLength()/getResultBuffer() or toString().
+        /// result with <see cref="ResultLength"/>/<see cref="ResultBuffer"/> or <see cref="ToString"/>.
         /// </summary>
         public virtual bool Stem(char[] word)
         {
@@ -757,10 +751,10 @@ namespace Lucene.Net.Analysis.En
         }
 
         /// <summary>
-        /// Stem a word contained in a portion of a char[] array.  Returns
+        /// Stem a word contained in a portion of a <see cref="char[]"/> array.  Returns
         /// true if the stemming process resulted in a word different from
         /// the input.  You can retrieve the result with
-        /// getResultLength()/getResultBuffer() or toString().
+        /// <see cref="ResultLength"/>/<see cref="ResultBuffer"/> or <see cref="ToString"/>.
         /// </summary>
         public virtual bool Stem(char[] wordBuffer, int offset, int wordLen)
         {
@@ -775,10 +769,10 @@ namespace Lucene.Net.Analysis.En
         }
 
         /// <summary>
-        /// Stem a word contained in a leading portion of a char[] array.
+        /// Stem a word contained in a leading portion of a <see cref="char[]"/> array.
         /// Returns true if the stemming process resulted in a word different
         /// from the input.  You can retrieve the result with
-        /// getResultLength()/getResultBuffer() or toString().
+        /// <see cref="ResultLength"/>/<see cref="ResultBuffer"/> or <see cref="ToString"/>.
         /// </summary>
         public virtual bool Stem(char[] word, int wordLen)
         {
@@ -786,10 +780,10 @@ namespace Lucene.Net.Analysis.En
         }
 
         /// <summary>
-        /// Stem the word placed into the Stemmer buffer through calls to add().
+        /// Stem the word placed into the Stemmer buffer through calls to <see cref="Add"/>.
         /// Returns true if the stemming process resulted in a word different
         /// from the input.  You can retrieve the result with
-        /// getResultLength()/getResultBuffer() or toString().
+        /// <see cref="ResultLength"/>/<see cref="ResultBuffer"/> or <see cref="ToString"/>.
         /// </summary>
         public virtual bool Stem()
         {

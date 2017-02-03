@@ -61,20 +61,15 @@ the original shown below)
  */
 namespace Lucene.Net.Analysis.En
 {
-
-    //using org.apache.lucene.analysis.util;
-    //using OpenStringBuilder = org.apache.lucene.analysis.util.OpenStringBuilder;
     /// <summary>
+    /// This class implements the Kstem algorithm
+    /// </summary>
+    /// <remarks>
     /// <para>Title: Kstemmer</para>
     /// <para>Description: This is a java version of Bob Krovetz' kstem stemmer</para>
     /// <para>Copyright: Copyright 2008, Luicid Imagination, Inc. </para>
     /// <para>Copyright: Copyright 2003, CIIR University of Massachusetts Amherst (http://ciir.cs.umass.edu) </para>
-    /// </summary>
-    //using Version = org.apache.lucene.util.Version;
-
-    /// <summary>
-    /// This class implements the Kstem algorithm
-    /// </summary>
+    /// </remarks>
     public class KStemmer
     {
         private const int MaxWordLen = 50;
@@ -345,37 +340,32 @@ namespace Lucene.Net.Analysis.En
 
         private static readonly CharArrayMap<DictEntry> dict_ht = InitializeDictHash();
 
-        /// <summary>
-        ///*
-        /// caching off private int maxCacheSize; private CharArrayMap<String> cache =
-        /// null; private static final String SAME = "SAME"; // use if stemmed form is
-        /// the same
-        /// **
-        /// </summary>
+        // caching off 
+        // 
+        // private int maxCacheSize; private CharArrayMap{String} cache =
+        // null; private static final String SAME = "SAME"; // use if stemmed form is
+        // the same
 
         private readonly OpenStringBuilder word = new OpenStringBuilder();
         private int j; // index of final letter in stem (within word)
-        private int k; /*
-	                  * INDEX of final letter in word. You must add 1 to k to get
-	                  * the current length of word. When you want the length of
-	                  * word, use the method wordLength, which returns (k+1).
-	                  */
-
         /// <summary>
-        ///*
-        /// private void initializeStemHash() { if (maxCacheSize > 0) cache = new
-        /// CharArrayMap<String>(maxCacheSize,false); }
-        /// **
+        /// INDEX of final letter in word. You must add 1 to k to get
+        /// the current length of word. When you want the length of
+        /// word, use the method wordLength, which returns (k+1).
         /// </summary>
+        private int k;
+
+        // private void initializeStemHash() { if (maxCacheSize > 0) cache = new
+        // CharArrayMap<String>(maxCacheSize,false); }
 
         private char FinalChar
         {
-            get { return word.CharAt(k); }
+            get { return word[k]; }
         }
 
         private char PenultChar
         {
-            get { return word.CharAt(k - 1); }
+            get { return word[k - 1]; }
         }
 
         private bool IsVowel(int index)
@@ -589,7 +579,7 @@ namespace Lucene.Net.Analysis.En
             return ch >= 'a' && ch <= 'z'; // terms must be lowercased already
         }
 
-        /* length of stem within word */
+        /// <summary>length of stem within word</summary>
         private int StemLength
         {
             get { return j + 1; }
@@ -660,14 +650,11 @@ namespace Lucene.Net.Analysis.En
 
         private DictEntry WordInDict()
         {
-            /// <summary>
-            ///*
-            /// if (matchedEntry != null) { if (dict_ht.get(word.getArray(), 0,
-            /// word.size()) != matchedEntry) {
-            /// System.out.println("Uh oh... cached entry doesn't match"); } return
-            /// matchedEntry; }
-            /// **
-            /// </summary>
+            // if (matchedEntry != null) { if (dict_ht.get(word.getArray(), 0,
+            // word.size()) != matchedEntry) {
+            // System.out.println("Uh oh... cached entry doesn't match"); } return
+            // matchedEntry; }
+
             if (matchedEntry != null)
             {
                 return matchedEntry;
@@ -681,7 +668,7 @@ namespace Lucene.Net.Analysis.En
             return e;
         }
 
-        /* Convert plurals to singular form, and '-ies' to 'y' */
+        /// <summary>Convert plurals to singular form, and '-ies' to 'y'</summary>
         private void Plural()
         {
             if (word.CharAt(k) == 's')
@@ -764,7 +751,7 @@ namespace Lucene.Net.Analysis.En
             SetSuff(s, s.Length);
         }
 
-        /* replace old suffix with s */
+        /// <summary>replace old suffix with s</summary>
         private void SetSuff(string s, int len)
         {
             word.Length = j + 1;
@@ -783,17 +770,13 @@ namespace Lucene.Net.Analysis.En
 
         private bool Lookup()
         {
-            /// <summary>
-            ///****
-            /// debugging code String thisLookup = word.toString(); boolean added =
-            /// lookups.add(thisLookup); if (!added) {
-            /// System.out.println("######extra lookup:" + thisLookup); // occaasional
-            /// extra lookups aren't necessarily errors... could happen by diff
-            /// manipulations // throw new RuntimeException("######extra lookup:" +
-            /// thisLookup); } else { // System.out.println("new lookup:" + thisLookup);
-            /// }
-            /// *****
-            /// </summary>
+            // debugging code String thisLookup = word.toString(); boolean added =
+            // lookups.add(thisLookup); if (!added) {
+            // System.out.println("######extra lookup:" + thisLookup); // occaasional
+            // extra lookups aren't necessarily errors... could happen by diff
+            // manipulations // throw new RuntimeException("######extra lookup:" +
+            // thisLookup); } else { // System.out.println("new lookup:" + thisLookup);
+            // }
 
             matchedEntry = dict_ht.Get(word.Array, 0, word.Count);
             return matchedEntry != null;
@@ -801,7 +784,7 @@ namespace Lucene.Net.Analysis.En
 
         // Set<String> lookups = new HashSet<>();
 
-        /* convert past tense (-ed) to present, and `-ied' to `y' */
+        /// <summary>convert past tense (-ed) to present, and `-ied' to `y'</summary>
         private void PastTense()
         {
             /*
@@ -901,7 +884,7 @@ namespace Lucene.Net.Analysis.En
             }
         }
 
-        /* return TRUE if word ends with a double consonant */
+        /// <summary>return TRUE if word ends with a double consonant</summary>
         private bool DoubleC(int i)
         {
             if (i < 1)
@@ -928,7 +911,7 @@ namespace Lucene.Net.Analysis.En
             return false;
         }
 
-        /* handle `-ing' endings */
+        /// <summary>handle `-ing' endings</summary>
         private void Aspect()
         {
             /*
@@ -1019,12 +1002,12 @@ namespace Lucene.Net.Analysis.En
             }
         }
 
-        /*
-         * this routine deals with -ity endings. It accepts -ability, -ibility, and
-         * -ality, even without checking the dictionary because they are so
-         * productive. The first two are mapped to -ble, and the -ity is remove for
-         * the latter
-         */
+        /// <summary>
+        /// this routine deals with -ity endings. It accepts -ability, -ibility, and
+        /// -ality, even without checking the dictionary because they are so
+        /// productive. The first two are mapped to -ble, and the -ity is remove for
+        /// the latter
+        /// </summary>
         private void ItyEndings()
         {
             int old_k = k;
@@ -1097,7 +1080,7 @@ namespace Lucene.Net.Analysis.En
             }
         }
 
-        /* handle -ence and -ance */
+        /// <summary>handle -ence and -ance</summary>
         private void NceEndings()
         {
             int old_k = k;
@@ -1134,7 +1117,7 @@ namespace Lucene.Net.Analysis.En
             return;
         }
 
-        /* handle -ness */
+        /// <summary>handle -ness</summary>
         private void NessEndings()
         {
             if (EndsIn('n', 'e', 's', 's'))
@@ -1154,7 +1137,7 @@ namespace Lucene.Net.Analysis.En
             return;
         }
 
-        /* handle -ism */
+        /// <summary>handle -ism</summary>
         private void IsmEndings()
         {
             if (EndsIn('i', 's', 'm'))
@@ -1170,7 +1153,7 @@ namespace Lucene.Net.Analysis.En
             return;
         }
 
-        /* this routine deals with -ment endings. */
+        /// <summary>this routine deals with -ment endings.</summary>
         private void MentEndings()
         {
             int old_k = k;
@@ -1190,7 +1173,7 @@ namespace Lucene.Net.Analysis.En
             return;
         }
 
-        /* this routine deals with -ize endings. */
+        /// <summary>this routine deals with -ize endings.</summary>
         private void IzeEndings()
         {
             int old_k = k;
@@ -1231,7 +1214,7 @@ namespace Lucene.Net.Analysis.En
             return;
         }
 
-        /* handle -ency and -ancy */
+        /// <summary>handle -ency and -ancy</summary>
         private void NcyEndings()
         {
             if (EndsIn('n', 'c', 'y'))
@@ -1257,7 +1240,7 @@ namespace Lucene.Net.Analysis.En
             return;
         }
 
-        /* handle -able and -ible */
+        /// <summary>handle -able and -ible</summary>
         private void BleEndings()
         {
             int old_k = k;
@@ -1311,11 +1294,11 @@ namespace Lucene.Net.Analysis.En
             return;
         }
 
-        /*
-         * handle -ic endings. This is fairly straightforward, but this is also the
-         * only place we try *expanding* an ending, -ic -> -ical. This is to handle
-         * cases like `canonic' -> `canonical'
-         */
+        /// <summary>
+        /// handle -ic endings. This is fairly straightforward, but this is also the
+        /// only place we try *expanding* an ending, -ic -> -ical. This is to handle
+        /// cases like `canonic' -> `canonical'
+        /// </summary>
         private void IcEndings()
         {
             if (EndsIn('i', 'c'))
@@ -1361,10 +1344,11 @@ namespace Lucene.Net.Analysis.En
         private static char[] ication = "ication".ToCharArray();
 
         /* handle some derivational endings */
-        /*
-         * this routine deals with -ion, -ition, -ation, -ization, and -ication. The
-         * -ization ending is always converted to -ize
-         */
+
+        /// <summary>
+        /// this routine deals with -ion, -ition, -ation, -ization, and -ication. The
+        /// -ization ending is always converted to -ize
+        /// </summary>
         private void IonEndings()
         {
             int old_k = k;
@@ -1500,10 +1484,10 @@ namespace Lucene.Net.Analysis.En
             return;
         }
 
-        /*
-         * this routine deals with -er, -or, -ier, and -eer. The -izer ending is
-         * always converted to -ize
-         */
+        /// <summary>
+        /// this routine deals with -er, -or, -ier, and -eer. The -izer ending is
+        /// always converted to -ize
+        /// </summary>
         private void ErAndOrEndings()
         {
             int old_k = k;
@@ -1592,13 +1576,13 @@ namespace Lucene.Net.Analysis.En
 
         }
 
-        /*
-         * this routine deals with -ly endings. The -ally ending is always converted
-         * to -al Sometimes this will temporarily leave us with a non-word (e.g.,
-         * heuristically maps to heuristical), but then the -al is removed in the next
-         * step.
-         */
-        private void lyEndings()
+        /// <summary>
+        /// this routine deals with -ly endings. The -ally ending is always converted
+        /// to -al Sometimes this will temporarily leave us with a non-word (e.g.,
+        /// heuristically maps to heuristical), but then the -al is removed in the next
+        /// step.
+        /// </summary>
+        private void LyEndings()
         {
             int old_k = k;
 
@@ -1674,10 +1658,10 @@ namespace Lucene.Net.Analysis.En
             return;
         }
 
-        /*
-         * this routine deals with -al endings. Some of the endings from the previous
-         * routine are finished up here.
-         */
+        /// <summary>
+        /// this routine deals with -al endings. Some of the endings from the previous
+        /// routine are finished up here.
+        /// </summary>
         private void AlEndings()
         {
             int old_k = k;
@@ -1771,10 +1755,10 @@ namespace Lucene.Net.Analysis.En
             return;
         }
 
-        /*
-         * this routine deals with -ive endings. It normalizes some of the -ative
-         * endings directly, and also maps some -ive endings to -ion.
-         */
+        /// <summary>
+        /// this routine deals with -ive endings. It normalizes some of the -ative
+        /// endings directly, and also maps some -ive endings to -ion.
+        /// </summary>
         private void IveEndings()
         {
             int old_k = k;
@@ -1842,14 +1826,13 @@ namespace Lucene.Net.Analysis.En
             {
                 return term;
             }
-            return ToString();
+            return AsString();
         }
 
         /// <summary>
-        /// Returns the result of the stem (assuming the word was changed) as a String.
+        /// Returns the result of the stem (assuming the word was changed) as a <see cref="string"/>.
         /// </summary>
-        // LUCENENET: This was AsString() in the original. That is bound to cause confusion.
-        public override string ToString()
+        internal virtual string AsString()
         {
             string s = String;
             if (s != null)
@@ -1858,20 +1841,6 @@ namespace Lucene.Net.Analysis.En
             }
             return word.ToString();
         }
-
-
-        ///// <summary>
-        ///// Returns the result of the stem (assuming the word was changed) as a String.
-        ///// </summary>
-        //internal virtual string AsString()
-        //{
-        //    string s = String;
-        //    if (s != null)
-        //    {
-        //        return s;
-        //    }
-        //    return word.ToString();
-        //}
 
         internal virtual ICharSequence AsCharSequence()
         {
@@ -1904,7 +1873,7 @@ namespace Lucene.Net.Analysis.En
 
         internal string result;
 
-        private bool Matched
+        private bool IsMatched
         {
             get
             {
@@ -1989,88 +1958,88 @@ namespace Lucene.Net.Analysis.En
                 // YCS: extra lookup()s were inserted so we don't need to
                 // do an extra wordInDict() here.
                 Plural();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
                 PastTense();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
                 Aspect();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
                 ItyEndings();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
                 NessEndings();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
                 IonEndings();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
                 ErAndOrEndings();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
-                lyEndings();
-                if (Matched)
+                LyEndings();
+                if (IsMatched)
                 {
                     break;
                 }
                 AlEndings();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
                 entry = WordInDict();
                 IveEndings();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
                 IzeEndings();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
                 MentEndings();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
                 BleEndings();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
                 IsmEndings();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
                 IcEndings();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
                 NcyEndings();
-                if (Matched)
+                if (IsMatched)
                 {
                     break;
                 }
                 NceEndings();
-                bool foo = Matched;
+                bool foo = IsMatched;
                 break;
             }
 

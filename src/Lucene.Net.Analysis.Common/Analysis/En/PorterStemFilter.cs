@@ -21,19 +21,19 @@ namespace Lucene.Net.Analysis.En
 
     /// <summary>
     /// Transforms the token stream as per the Porter stemming algorithm.
+    /// <para/>
     ///    Note: the input to the stemming filter must already be in lower case,
     ///    so you will need to use LowerCaseFilter or LowerCaseTokenizer farther
     ///    down the Tokenizer chain in order for this to work properly!
-    ///    <P>
+    ///    <para/>
     ///    To use this filter with other analyzers, you'll want to write an
     ///    Analyzer class that sets up the TokenStream chain as you want it.
     ///    To use this with LowerCaseTokenizer, for example, you'd write an
     ///    analyzer like this:
-    ///    <P>
+    ///    <para/>
     ///    <code>
-    ///    class MyAnalyzer extends Analyzer {
-    ///      {@literal @Override}
-    ///      protected virtual TokenStreamComponents CreateComponents(string fieldName, TextReader reader) {
+    ///    class MyAnalyzer : Analyzer {
+    ///      protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader) {
     ///        Tokenizer source = new LowerCaseTokenizer(version, reader);
     ///        return new TokenStreamComponents(source, new PorterStemFilter(source));
     ///      }
@@ -42,12 +42,12 @@ namespace Lucene.Net.Analysis.En
     ///    <para>
     ///    Note: This filter is aware of the <see cref="KeywordAttribute"/>. To prevent
     ///    certain terms from being passed to the stemmer
-    ///    <see cref="KeywordAttribute#isKeyword()"/> should be set to <code>true</code>
+    ///    <see cref="KeywordAttribute.IsKeyword"/> should be set to <code>true</code>
     ///    in a previous <see cref="TokenStream"/>.
     /// 
     ///    Note: For including the original term as well as the stemmed version, see
-    ///   <see cref="org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilterFactory"/>
-    ///    </para>
+    ///   <see cref="Miscellaneous.KeywordRepeatFilterFactory"/>
+    /// </para>
     /// </summary>
     public sealed class PorterStemFilter : TokenFilter
     {

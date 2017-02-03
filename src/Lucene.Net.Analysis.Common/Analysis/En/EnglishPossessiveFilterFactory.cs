@@ -35,9 +35,8 @@ namespace Lucene.Net.Analysis.En
     /// </summary>
     public class EnglishPossessiveFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new EnglishPossessiveFilterFactory </summary>
+        /// Creates a new <see cref="EnglishPossessiveFilterFactory"/> </summary>
         public EnglishPossessiveFilterFactory(IDictionary<string, string> args) : base(args)
         {
             AssureMatchVersion();

@@ -20,8 +20,6 @@ namespace Lucene.Net.Analysis.En
 	 * limitations under the License.
 	 */
 
-    //using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
-
     /// <summary>
     /// Factory for <see cref="PorterStemFilter"/>.
     /// <code>
@@ -35,9 +33,8 @@ namespace Lucene.Net.Analysis.En
     /// </summary>
     public class PorterStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new PorterStemFilterFactory </summary>
+        /// Creates a new <see cref="PorterStemFilterFactory"/> </summary>
         public PorterStemFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

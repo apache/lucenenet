@@ -31,14 +31,13 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
-/* This is a java version of Bob Krovetz' KStem.
+/* This is a .NET version of Bob Krovetz' KStem.
  *
  * Java version by Sergio Guzman-Lara.
  * CIIR-UMass Amherst http://ciir.cs.umass.edu
  */
 namespace Lucene.Net.Analysis.En
 {
-
     /// <summary>
     /// A list of words used by Kstem
     /// </summary>
@@ -749,6 +748,5 @@ namespace Lucene.Net.Analysis.En
             "pectin","pectoral","peculate","peculiar","peculiarity",
             "peculiarly","pecuniary","pedagogue","pedagogy","pedal",
         };
-
     }
 }

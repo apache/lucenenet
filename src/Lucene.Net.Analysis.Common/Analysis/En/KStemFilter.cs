@@ -21,25 +21,23 @@ namespace Lucene.Net.Analysis.En
 
     /// <summary>
     /// A high-performance kstem filter for english.
-    /// <p/>
+    /// <para/>
     /// See <a href="http://ciir.cs.umass.edu/pubfiles/ir-35.pdf">
     /// "Viewing Morphology as an Inference Process"</a>
     /// (Krovetz, R., Proceedings of the Sixteenth Annual International ACM SIGIR
     /// Conference on Research and Development in Information Retrieval, 191-203, 1993).
-    /// <p/>
+    /// <para/>
     /// All terms must already be lowercased for this filter to work correctly.
     /// 
     /// <para>
     /// Note: This filter is aware of the <see cref="KeywordAttribute"/>. To prevent
     /// certain terms from being passed to the stemmer
-    /// <see cref="KeywordAttribute#isKeyword()"/> should be set to <code>true</code>
+    /// <see cref="KeywordAttribute.IsKeyword"/> should be set to <code>true</code>
     /// in a previous <see cref="TokenStream"/>.
     /// 
     /// Note: For including the original term as well as the stemmed version, see
-    /// <see cref="org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilterFactory"/>
+    /// <see cref="Miscellaneous.KeywordRepeatFilterFactory"/>
     /// </para>
-    /// 
-    /// 
     /// </summary>
     public sealed class KStemFilter : TokenFilter
     {
@@ -47,7 +45,8 @@ namespace Lucene.Net.Analysis.En
         private readonly ICharTermAttribute termAttribute;
         private readonly IKeywordAttribute keywordAtt;
 
-        public KStemFilter(TokenStream @in) : base(@in)
+        public KStemFilter(TokenStream @in) 
+            : base(@in)
         {
             termAttribute = AddAttribute<ICharTermAttribute>();
             keywordAtt = AddAttribute<IKeywordAttribute>();
@@ -56,7 +55,7 @@ namespace Lucene.Net.Analysis.En
         /// <summary>
         /// Returns the next, stemmed, input Token. </summary>
         ///  <returns> The stemmed form of a token. </returns>
-        ///  <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        ///  <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         public override bool IncrementToken()
         {
             if (!m_input.IncrementToken())

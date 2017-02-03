@@ -29,72 +29,72 @@ namespace Lucene.Net.Analysis.En
     /// <see cref="Analyzer"/> for English.
     /// </summary>
     public sealed class EnglishAnalyzer : StopwordAnalyzerBase
-	{
-	  private readonly CharArraySet stemExclusionSet;
+    {
+        private readonly CharArraySet stemExclusionSet;
 
-	  /// <summary>
-	  /// Returns an unmodifiable instance of the default stop words set. </summary>
-	  /// <returns> default stop words set. </returns>
-	  public static CharArraySet DefaultStopSet
-	  {
-		  get
-		  {
-			return DefaultSetHolder.DEFAULT_STOP_SET;
-		  }
-	  }
+        /// <summary>
+        /// Returns an unmodifiable instance of the default stop words set. </summary>
+        /// <returns> default stop words set. </returns>
+        public static CharArraySet DefaultStopSet
+        {
+            get
+            {
+                return DefaultSetHolder.DEFAULT_STOP_SET;
+            }
+        }
 
-	  /// <summary>
-	  /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
-	  /// accesses the static final set the first time.;
-	  /// </summary>
-	  private class DefaultSetHolder
-	  {
-		internal static readonly CharArraySet DEFAULT_STOP_SET = StandardAnalyzer.STOP_WORDS_SET;
-	  }
+        /// <summary>
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
+        /// accesses the static final set the first time.;
+        /// </summary>
+        private class DefaultSetHolder
+        {
+            internal static readonly CharArraySet DEFAULT_STOP_SET = StandardAnalyzer.STOP_WORDS_SET;
+        }
 
-	  /// <summary>
-	  /// Builds an analyzer with the default stop words: <see cref="#getDefaultStopSet"/>.
-	  /// </summary>
-	  public EnglishAnalyzer(LuceneVersion matchVersion) 
-            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
-	  {
-	  }
+        /// <summary>
+        /// Builds an analyzer with the default stop words: <see cref="DefaultStopSet"/>.
+        /// </summary>
+        public EnglishAnalyzer(LuceneVersion matchVersion)
+              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+        {
+        }
 
-	  /// <summary>
-	  /// Builds an analyzer with the given stop words.
-	  /// </summary>
-	  /// <param name="matchVersion"> lucene compatibility version </param>
-	  /// <param name="stopwords"> a stopword set </param>
-	  public EnglishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords) 
-            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
-	  {
-	  }
+        /// <summary>
+        /// Builds an analyzer with the given stop words.
+        /// </summary>
+        /// <param name="matchVersion"> <see cref="LuceneVersion"/> lucene compatibility version </param>
+        /// <param name="stopwords"> a stopword set </param>
+        public EnglishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
+              : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+        {
+        }
 
-	  /// <summary>
-	  /// Builds an analyzer with the given stop words. If a non-empty stem exclusion set is
-	  /// provided this analyzer will add a <see cref="SetKeywordMarkerFilter"/> before
-	  /// stemming.
-	  /// </summary>
-	  /// <param name="matchVersion"> lucene compatibility version </param>
-	  /// <param name="stopwords"> a stopword set </param>
-	  /// <param name="stemExclusionSet"> a set of terms not to be stemmed </param>
-	  public EnglishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet) 
+        /// <summary>
+        /// Builds an analyzer with the given stop words. If a non-empty stem exclusion set is
+        /// provided this analyzer will add a <see cref="SetKeywordMarkerFilter"/> before
+        /// stemming.
+        /// </summary>
+        /// <param name="matchVersion"> <see cref="LuceneVersion"/> lucene compatibility version </param>
+        /// <param name="stopwords"> a stopword set </param>
+        /// <param name="stemExclusionSet"> a set of terms not to be stemmed </param>
+        public EnglishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
             : base(matchVersion, stopwords)
-	  {
-		this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
-	  }
+        {
+            this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
+        }
 
         /// <summary>
         /// Creates a
         /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// which tokenizes all the text in the provided <see cref="Reader"/>.
+        /// which tokenizes all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> A
         ///         <see cref="Analyzer.TokenStreamComponents"/>
         ///         built from an <see cref="StandardTokenizer"/> filtered with
         ///         <see cref="StandardFilter"/>, <see cref="EnglishPossessiveFilter"/>, 
-        ///         <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>
-        ///         , <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
+        ///         <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,
+        ///         <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
         ///         provided and <see cref="PorterStemFilter"/>. </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {

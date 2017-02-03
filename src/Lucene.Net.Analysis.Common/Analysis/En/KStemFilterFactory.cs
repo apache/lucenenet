@@ -21,8 +21,6 @@ namespace Lucene.Net.Analysis.En
 	 * limitations under the License.
 	 */
 
-    //using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
-
     /// <summary>
     /// Factory for <see cref="KStemFilter"/>.
     /// <code>
@@ -36,9 +34,8 @@ namespace Lucene.Net.Analysis.En
     /// </summary>
     public class KStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new KStemFilterFactory </summary>
+        /// Creates a new <see cref="KStemFilterFactory"/> </summary>
         public KStemFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)
