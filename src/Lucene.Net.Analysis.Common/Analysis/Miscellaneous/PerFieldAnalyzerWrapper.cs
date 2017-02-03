@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,31 +19,26 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * limitations under the License.
      */
 
-
-
     /// <summary>
     /// This analyzer is used to facilitate scenarios where different
     /// fields Require different analysis techniques.  Use the Map
-    /// argument in <see cref="#PerFieldAnalyzerWrapper(Analyzer, java.util.Map)"/>
+    /// argument in <see cref="PerFieldAnalyzerWrapper(Analyzer, IDictionary{string, Analyzer})"/>
     /// to add non-default analyzers for fields.
     /// 
     /// <para>Example usage:
     /// 
     /// <code>
-    /// {@code
-    /// Map<String,Analyzer> analyzerPerField = new HashMap<>();
-    /// analyzerPerField.put("firstname", new KeywordAnalyzer());
-    /// analyzerPerField.put("lastname", new KeywordAnalyzer());
+    /// IDictionary&lt;string, Analyzer&gt; analyzerPerField = new Dictionary&lt;string, Analyzer&gt;();
+    /// analyzerPerField["firstname"] = new KeywordAnalyzer();
+    /// analyzerPerField["lastname"] = new KeywordAnalyzer();
     /// 
     /// PerFieldAnalyzerWrapper aWrapper =
     ///   new PerFieldAnalyzerWrapper(new StandardAnalyzer(version), analyzerPerField);
-    /// }
     /// </code>
-    /// 
     /// </para>
-    /// <para>In this example, StandardAnalyzer will be used for all fields except "firstname"
-    /// and "lastname", for which KeywordAnalyzer will be used.
-    /// 
+    /// <para>
+    /// In this example, <see cref="Standard.StandardAnalyzer"/> will be used for all fields except "firstname"
+    /// and "lastname", for which <see cref="Core.KeywordAnalyzer"/> will be used.
     /// </para>
     /// <para>A PerFieldAnalyzerWrapper can be used like any other analyzer, for both indexing
     /// and query parsing.
@@ -71,7 +65,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         /// <param name="defaultAnalyzer"> Any fields not specifically
         /// defined to use a different analyzer will use the one provided here. </param>
-        /// <param name="fieldAnalyzers"> a Map (String field name to the Analyzer) to be 
+        /// <param name="fieldAnalyzers"> a <see cref="IDictionary{TKey, TValue}"/> (String field name to the Analyzer) to be 
         /// used for those fields  </param>
         public PerFieldAnalyzerWrapper(Analyzer defaultAnalyzer, IDictionary<string, Analyzer> fieldAnalyzers)
             : base(PER_FIELD_REUSE_STRATEGY)

@@ -20,23 +20,22 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// This TokenFilter limits its emitted tokens to those with positions that
+    /// This <see cref="TokenFilter"/> limits its emitted tokens to those with positions that
     /// are not greater than the configured limit.
     /// <para>
-    /// By default, this filter ignores any tokens in the wrapped {@code TokenStream}
-    /// once the limit has been exceeded, which can result in {@code reset()} being 
-    /// called prior to {@code incrementToken()} returning {@code false}.  For most 
-    /// {@code TokenStream} implementations this should be acceptable, and faster 
-    /// then consuming the full stream. If you are wrapping a {@code TokenStream}
+    /// By default, this filter ignores any tokens in the wrapped <see cref="TokenStream"/>
+    /// once the limit has been exceeded, which can result in <see cref="Reset"/> being 
+    /// called prior to <see cref="IncrementToken"/> returning <c>false</c>.  For most 
+    /// <see cref="TokenStream"/> implementations this should be acceptable, and faster 
+    /// then consuming the full stream. If you are wrapping a <see cref="TokenStream"/>
     /// which requires that the full stream of tokens be exhausted in order to 
     /// function properly, use the 
-    /// <see cref="#LimitTokenPositionFilter(TokenStream,int,boolean) consumeAllTokens"/>
+    /// <see cref="LimitTokenPositionFilter(TokenStream,int,bool)"/> consumeAllTokens
     /// option.
     /// </para>
     /// </summary>
     public sealed class LimitTokenPositionFilter : TokenFilter
     {
-
         private readonly int maxTokenPosition;
         private readonly bool consumeAllTokens;
         private int tokenPosition = 0;
@@ -45,12 +44,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Build a filter that only accepts tokens up to and including the given maximum position.
-        /// This filter will not consume any tokens with position greater than the maxTokenPosition limit.
+        /// This filter will not consume any tokens with position greater than the <paramref name="maxTokenPosition"/> limit.
         /// </summary>
         /// <param name="in"> the stream to wrap </param>
         /// <param name="maxTokenPosition"> max position of tokens to produce (1st token always has position 1)
         /// </param>
-        /// <seealso cref= #LimitTokenPositionFilter(TokenStream,int,boolean) </seealso>
+        /// <seealso cref="LimitTokenPositionFilter(TokenStream,int,bool)"/>
         public LimitTokenPositionFilter(TokenStream @in, int maxTokenPosition)
             : this(@in, maxTokenPosition, false)
         {

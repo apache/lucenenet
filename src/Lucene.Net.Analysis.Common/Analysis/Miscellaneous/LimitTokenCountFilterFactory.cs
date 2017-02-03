@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -30,20 +30,19 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
     /// <para>
-    /// The {@code consumeAllTokens} property is optional and defaults to {@code false}.  
+    /// The <see cref="consumeAllTokens"/> property is optional and defaults to <c>false</c>.  
     /// See <see cref="LimitTokenCountFilter"/> for an explanation of it's use.
     /// </para>
     /// </summary>
     public class LimitTokenCountFilterFactory : TokenFilterFactory
     {
-
         public const string MAX_TOKEN_COUNT_KEY = "maxTokenCount";
         public const string CONSUME_ALL_TOKENS_KEY = "consumeAllTokens";
-        internal readonly int maxTokenCount;
-        internal readonly bool consumeAllTokens;
+        private readonly int maxTokenCount;
+        private readonly bool consumeAllTokens;
 
         /// <summary>
-        /// Creates a new LimitTokenCountFilterFactory </summary>
+        /// Creates a new <see cref="LimitTokenCountFilterFactory"/> </summary>
         public LimitTokenCountFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

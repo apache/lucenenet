@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private CharArraySet words;
 
         /// <summary>
-        /// Creates a new KeepWordFilterFactory </summary>
+        /// Creates a new <see cref="KeepWordFilterFactory"/> </summary>
         public KeepWordFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly bool preserveOriginal;
 
         /// <summary>
-        /// Creates a new ASCIIFoldingFilterFactory </summary>
+        /// Creates a new <see cref="ASCIIFoldingFilterFactory"/> </summary>
         public ASCIIFoldingFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

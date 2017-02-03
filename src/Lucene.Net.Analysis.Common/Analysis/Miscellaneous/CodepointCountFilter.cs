@@ -38,8 +38,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Create a new <see cref="CodepointCountFilter"/>. This will filter out tokens whose
-        /// <see cref="CharTermAttribute"/> is either too short (<see cref="Character#CodePointCount(char[], int, int)"/>
-        /// &lt; min) or too long (<see cref="Character#codePointCount(char[], int, int)"/> &gt; max). </summary>
+        /// <see cref="CharTermAttribute"/> is either too short (<see cref="Character.CodePointCount(char[], int, int)"/>
+        /// &lt; min) or too long (<see cref="Character.CodePointCount(char[], int, int)"/> &gt; max). </summary>
         /// <param name="version"> the Lucene match version </param>
         /// <param name="in">      the <see cref="TokenStream"/> to consume </param>
         /// <param name="min">     the minimum length </param>
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public CodepointCountFilter(LuceneVersion version, TokenStream @in, int min, int max)
             : base(version, @in)
         {
-            // LUCENENET: The guard clauses were copied here from the version of Lucene.
+            // LUCENENET: The guard clauses were copied here from a later version of Lucene.
             // Apparently, the tests were not ported from 4.8.0 because they expected this and the
             // original tests did not. Adding them anyway because there is no downside to this.
             if (min < 0)

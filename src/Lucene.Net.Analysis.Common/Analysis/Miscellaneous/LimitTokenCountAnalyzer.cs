@@ -18,9 +18,9 @@
      */
 
     /// <summary>
-    /// This Analyzer limits the number of tokens while indexing. It is
-    /// a replacement for the maximum field length setting inside <see cref="org.apache.lucene.index.IndexWriter"/>. </summary>
-    /// <seealso cref= LimitTokenCountFilter </seealso>
+    /// This <see cref="Analyzer"/> limits the number of tokens while indexing. It is
+    /// a replacement for the maximum field length setting inside <see cref="Index.IndexWriter"/>. </summary>
+    /// <seealso cref="LimitTokenCountFilter"/>
     public sealed class LimitTokenCountAnalyzer : AnalyzerWrapper
     {
         private readonly Analyzer @delegate;
@@ -31,11 +31,12 @@
         /// Build an analyzer that limits the maximum number of tokens per field.
         /// This analyzer will not consume any tokens beyond the maxTokenCount limit
         /// </summary>
-        /// <seealso cref= #LimitTokenCountAnalyzer(Analyzer,int,boolean) </seealso>
+        /// <seealso cref="LimitTokenCountAnalyzer(Analyzer,int,bool)"/>
         public LimitTokenCountAnalyzer(Analyzer @delegate, int maxTokenCount)
             : this(@delegate, maxTokenCount, false)
         {
         }
+
         /// <summary>
         /// Build an analyzer that limits the maximum number of tokens per field. </summary>
         /// <param name="delegate"> the analyzer to wrap </param>

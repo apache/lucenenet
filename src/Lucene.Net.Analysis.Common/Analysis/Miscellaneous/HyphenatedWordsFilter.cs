@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using System.Text;
-using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +19,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// When the plain text is extracted from documents, we will often have many words hyphenated and broken into
     /// two lines. This is often the case with documents where narrow text columns are used, such as newsletters.
@@ -48,11 +47,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///  &lt;/analyzer&gt;
     /// &lt;/fieldtype&gt;
     /// </code>
-    /// 
     /// </summary>
     public sealed class HyphenatedWordsFilter : TokenFilter
     {
-
         private readonly ICharTermAttribute termAttribute;
         private readonly IOffsetAttribute offsetAttribute;
 
@@ -62,9 +59,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private int lastEndOffset = 0;
 
         /// <summary>
-        /// Creates a new HyphenatedWordsFilter
+        /// Creates a new <see cref="HyphenatedWordsFilter"/>
         /// </summary>
-        /// <param name="in"> TokenStream that will be filtered </param>
+        /// <param name="in"> <see cref="TokenStream"/> that will be filtered </param>
         public HyphenatedWordsFilter(TokenStream @in)
             : base(@in)
         {
@@ -73,8 +70,28 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// {@inheritDoc}
+        /// Consumers (i.e., <see cref="Index.IndexWriter"/>) use this method to advance the stream to
+        /// the next token. Implementing classes must implement this method and update
+        /// the appropriate <see cref="Lucene.Net.Util.Attribute"/>s with the attributes of the next
+        /// token.
+        /// <para/>
+        /// The producer must make no assumptions about the attributes after the method
+        /// has been returned: the caller may arbitrarily change it. If the producer
+        /// needs to preserve the state for subsequent calls, it can use
+        /// <see cref="Lucene.Net.Util.AttributeSource.CaptureState"/> to create a copy of the current attribute state.
+        /// <para/>
+        /// this method is called for every token of a document, so an efficient
+        /// implementation is crucial for good performance. To avoid calls to
+        /// <see cref="Lucene.Net.Util.AttributeSource.AddAttribute{T}"/> and <see cref="Lucene.Net.Util.AttributeSource.GetAttribute{T}"/>,
+        /// references to all <see cref="Lucene.Net.Util.Attribute"/>s that this stream uses should be
+        /// retrieved during instantiation.
+        /// <para/>
+        /// To ensure that filters and consumers know which attributes are available,
+        /// the attributes must be added during instantiation. Filters and consumers
+        /// are not required to check for availability of attributes in
+        /// <see cref="IncrementToken()"/>.
         /// </summary>
+        /// <returns> false for end of stream; true otherwise </returns>
         public override bool IncrementToken()
         {
             while (!exhausted && m_input.IncrementToken())
@@ -122,8 +139,21 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// {@inheritDoc}
+        /// This method is called by a consumer before it begins consumption using
+        /// <see cref="IncrementToken()"/>.
+        /// <para/>
+        /// Resets this stream to a clean state. Stateful implementations must implement
+        /// this method so that they can be reused, just as if they had been created fresh.
+        /// <para/>
+        /// If you override this method, always call <c>base.Reset()</c>, otherwise
+        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
+        /// throw <see cref="System.InvalidOperationException"/> on further usage).
         /// </summary>
+        /// <remarks>
+        /// <b>NOTE:</b>
+        /// The default implementation chains the call to the input <see cref="TokenStream"/>, so
+        /// be sure to call <c>base.Reset()</c> when overriding this method.
+        /// </remarks>
         public override void Reset()
         {
             base.Reset();

@@ -48,11 +48,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly string wordFiles;
         private readonly string types;
         private readonly int flags;
-        internal byte[] typeTable = null;
+        private byte[] typeTable = null;
         private CharArraySet protectedWords = null;
 
         /// <summary>
-        /// Creates a new WordDelimiterFilterFactory </summary>
+        /// Creates a new <see cref="WordDelimiterFilterFactory"/> </summary>
         public WordDelimiterFilterFactory(IDictionary<string, string> args) 
             : base(args)
         {
@@ -138,7 +138,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         // source => type
-        //private static Pattern typePattern = Pattern.compile("(.*)\\s*=>\\s*(.*)\\s*$");
         private static Regex typePattern = new Regex("(.*)\\s*=>\\s*(.*)\\s*$", RegexOptions.Compiled);
 
         // parses a list of MappingCharFilter style rules into a custom byte[] type table
@@ -147,8 +146,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
             IDictionary<char, byte> typeMap = new SortedDictionary<char, byte>();
             foreach (string rule in rules)
             {
-                //Matcher m = typePattern.matcher(rule);
-                //if (!m.find())
                 Match m = typePattern.Match(rule);
                 if (!m.Success)
                 {

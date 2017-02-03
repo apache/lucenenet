@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -32,14 +32,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// </summary>
     public class LengthFilterFactory : TokenFilterFactory
     {
-        internal readonly int min;
-        internal readonly int max;
-        internal readonly bool enablePositionIncrements;
+        private readonly int min;
+        private readonly int max;
+        private readonly bool enablePositionIncrements;
         public const string MIN_KEY = "min";
         public const string MAX_KEY = "max";
 
         /// <summary>
-        /// Creates a new LengthFilterFactory </summary>
+        /// Creates a new <see cref="LengthFilterFactory"/> </summary>
         public LengthFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

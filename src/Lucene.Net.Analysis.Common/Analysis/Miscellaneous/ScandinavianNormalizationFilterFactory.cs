@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 	 */
 
     /// <summary>
-    /// Factory for <see cref="org.apache.lucene.analysis.miscellaneous.ScandinavianNormalizationFilter"/>.
+    /// Factory for <see cref="ScandinavianNormalizationFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_scandnorm" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -32,7 +32,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// </summary>
     public class ScandinavianNormalizationFilterFactory : TokenFilterFactory
     {
-
+        /// <summary>
+        /// Creates a new <see cref="ScandinavianNormalizationFilterFactory"/> </summary>
         public ScandinavianNormalizationFilterFactory(IDictionary<string, string> args) 
             : base(args)
         {

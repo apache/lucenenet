@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -30,20 +30,19 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
     /// <para>
-    /// The {@code consumeAllTokens} property is optional and defaults to {@code false}.  
+    /// The <see cref="consumeAllTokens"/> property is optional and defaults to <c>false</c>.  
     /// See <see cref="LimitTokenPositionFilter"/> for an explanation of its use.
     /// </para>
     /// </summary>
     public class LimitTokenPositionFilterFactory : TokenFilterFactory
     {
-
         public const string MAX_TOKEN_POSITION_KEY = "maxTokenPosition";
         public const string CONSUME_ALL_TOKENS_KEY = "consumeAllTokens";
-        internal readonly int maxTokenPosition;
-        internal readonly bool consumeAllTokens;
+        private readonly int maxTokenPosition;
+        private readonly bool consumeAllTokens;
 
         /// <summary>
-        /// Creates a new LimitTokenPositionFilterFactory </summary>
+        /// Creates a new <see cref="LimitTokenPositionFilterFactory"/> </summary>
         public LimitTokenPositionFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

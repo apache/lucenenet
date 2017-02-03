@@ -31,9 +31,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private Token singleToken;
         private readonly ICharTermAttribute tokenAtt;
 
-        public SingleTokenTokenStream(Token token) : base(Token.TOKEN_ATTRIBUTE_FACTORY)
+        public SingleTokenTokenStream(Token token) 
+            : base(Token.TOKEN_ATTRIBUTE_FACTORY)
         {
-
             Debug.Assert(token != null);
             this.singleToken = (Token)token.Clone();
 
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             Debug.Assert(tokenAtt is Token);
         }
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             if (exhausted)
             {
@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             exhausted = false;
         }
 
-        public Token Token
+        public Token Token // LUCENENET TODO: Change to GetToken() and SetToken() (conversion)
         {
             get { return (Token)singleToken.Clone(); }
             set { this.singleToken = (Token)value.Clone(); }

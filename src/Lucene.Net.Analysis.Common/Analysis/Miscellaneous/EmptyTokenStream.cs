@@ -1,7 +1,6 @@
 ﻿namespace Lucene.Net.Analysis.Miscellaneous
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,15 +17,14 @@
 	 * limitations under the License.
 	 */
 
-	/// <summary>
-	/// An always exhausted token stream.
-	/// </summary>
-	public sealed class EmptyTokenStream : TokenStream
-	{
-
-	  public override bool IncrementToken()
-	  {
-		return false;
-	  }
-	}
+    /// <summary>
+    /// An always exhausted token stream.
+    /// </summary>
+    public sealed class EmptyTokenStream : TokenStream
+    {
+        public override bool IncrementToken()
+        {
+            return false;
+        }
+    }
 }

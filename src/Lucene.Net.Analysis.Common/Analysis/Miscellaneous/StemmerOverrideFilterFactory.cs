@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly bool ignoreCase;
 
         /// <summary>
-        /// Creates a new StemmerOverrideFilterFactory </summary>
+        /// Creates a new <see cref="StemmerOverrideFilterFactory"/> </summary>
         public StemmerOverrideFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -39,8 +38,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly CharsRef spare = new CharsRef();
 
         /// <summary>
-        /// Create a new StemmerOverrideFilter, performing dictionary-based stemming
-        /// with the provided <code>dictionary</code>.
+        /// Create a new <see cref="StemmerOverrideFilter"/>, performing dictionary-based stemming
+        /// with the provided dictionary (<paramref name="stemmerOverrideMap"/>).
         /// <para>
         /// Any dictionary-stemmed terms will be marked with <see cref="KeywordAttribute"/>
         /// so that they will not be stemmed with stemmers down the chain.
@@ -94,8 +93,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         // TODO maybe we can generalize this and reuse this map somehow?
         public sealed class StemmerOverrideMap
         {
-            internal readonly FST<BytesRef> fst;
-            internal readonly bool ignoreCase;
+            private readonly FST<BytesRef> fst;
+            private readonly bool ignoreCase;
 
             /// <summary>
             /// Creates a new <see cref="StemmerOverrideMap"/> </summary>
@@ -108,9 +107,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
 
             /// <summary>
-            /// Returns a <see cref="BytesReader"/> to pass to the <see cref="#get(char[], int, FST.Arc, FST.BytesReader)"/> method.
+            /// Returns a <see cref="FST.BytesReader"/> to pass to the <see cref="Get(char[], int, FST.Arc{BytesRef}, FST.BytesReader)"/> method.
             /// </summary>
-            public FST.BytesReader BytesReader
+            public FST.BytesReader BytesReader // LUCENENET TODO: Change to GetBytesReader()
             {
                 get
                 {
@@ -150,24 +149,24 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
                 return matchOutput;
             }
-
         }
+
         /// <summary>
         /// This builder builds an <see cref="FST"/> for the <see cref="StemmerOverrideFilter"/>
         /// </summary>
         public class Builder
         {
-            internal readonly BytesRefHash hash = new BytesRefHash();
-            internal readonly BytesRef spare = new BytesRef();
-            internal readonly List<string> outputValues = new List<string>();
-            internal readonly bool ignoreCase;
-            internal readonly CharsRef charsSpare = new CharsRef();
+            private readonly BytesRefHash hash = new BytesRefHash();
+            private readonly BytesRef spare = new BytesRef();
+            private readonly List<string> outputValues = new List<string>();
+            private readonly bool ignoreCase;
+            private readonly CharsRef charsSpare = new CharsRef();
 
             /// <summary>
-            /// Creates a new <see cref="Builder"/> with ignoreCase set to <code>false</code> 
+            /// Creates a new <see cref="Builder"/> with <see cref="ignoreCase"/> set to <c>false</c> 
             /// </summary>
             public Builder()
-                    : this(false)
+                : this(false)
             {
             }
 
@@ -184,7 +183,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /// </summary>
             /// <param name="input"> the input char sequence </param>
             /// <param name="output"> the stemmer override output char sequence </param>
-            /// <returns> <code>false</code> iff the input has already been added to this builder otherwise <code>true</code>. </returns>
+            /// <returns> <c>false</c> if the input has already been added to this builder otherwise <c>true</c>. </returns>
             public virtual bool Add(string input, string output)
             {
                 int length = input.Length;
@@ -212,13 +211,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
 
             /// <summary>
-            /// Returns an <see cref="StemmerOverrideMap"/> to be used with the <see cref="StemmerOverrideFilter"/> </summary>
-            /// <returns> an <see cref="StemmerOverrideMap"/> to be used with the <see cref="StemmerOverrideFilter"/> </returns>
-            /// <exception cref="IOException"> if an <see cref="IOException"/> occurs; </exception>
+            /// Returns a <see cref="StemmerOverrideMap"/> to be used with the <see cref="StemmerOverrideFilter"/> </summary>
+            /// <returns> a <see cref="StemmerOverrideMap"/> to be used with the <see cref="StemmerOverrideFilter"/> </returns>
+            /// <exception cref="System.IO.IOException"> if an <see cref="System.IO.IOException"/> occurs; </exception>
             public virtual StemmerOverrideMap Build()
             {
                 ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
-                Lucene.Net.Util.Fst.Builder<BytesRef> builder = new Lucene.Net.Util.Fst.Builder<BytesRef>(FST.INPUT_TYPE.BYTE4, outputs);
+                Builder<BytesRef> builder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE4, outputs);
                 int[] sort = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
                 IntsRef intsSpare = new IntsRef();
                 int size = hash.Count;
@@ -231,7 +230,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
                 return new StemmerOverrideMap(builder.Finish(), ignoreCase);
             }
-
         }
     }
 }

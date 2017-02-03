@@ -23,19 +23,19 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
     /// <summary>
     /// Factory for <see cref="CapitalizationFilter"/>.
-    /// <p/>
-    /// The factory takes parameters:<br/>
-    /// "onlyFirstWord" - should each word be capitalized or all of the words?<br/>
-    /// "keep" - a keep word list.  Each word that should be kept separated by whitespace.<br/>
-    /// "keepIgnoreCase - true or false.  If true, the keep list will be considered case-insensitive.<br/>
-    /// "forceFirstLetter" - Force the first letter to be capitalized even if it is in the keep list<br/>
+    /// <para/>
+    /// The factory takes parameters:<para/>
+    /// "onlyFirstWord" - should each word be capitalized or all of the words?<para/>
+    /// "keep" - a keep word list.  Each word that should be kept separated by whitespace.<para/>
+    /// "keepIgnoreCase - true or false.  If true, the keep list will be considered case-insensitive.<para/>
+    /// "forceFirstLetter" - Force the first letter to be capitalized even if it is in the keep list<para/>
     /// "okPrefix" - do not change word capitalization if a word begins with something in this list.
     /// for example if "McK" is on the okPrefix list, the word "McKinley" should not be changed to
-    /// "Mckinley"<br/>
+    /// "Mckinley"<para/>
     /// "minWordLength" - how long the word needs to be to get capitalization applied.  If the
-    /// minWordLength is 3, "and" > "And" but "or" stays "or"<br/>
+    /// minWordLength is 3, "and" > "And" but "or" stays "or"<para/>
     /// "maxWordCount" - if the token contains more then maxWordCount words, the capitalization is
-    /// assumed to be correct.<br/>
+    /// assumed to be correct.<para/>
     /// 
     /// <code>
     /// &lt;fieldType name="text_cptlztn" class="solr.TextField" positionIncrementGap="100"&gt;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         internal readonly bool forceFirstLetter; // make sure the first letter is capital even if it is in the keep list
 
         /// <summary>
-        /// Creates a new CapitalizationFilterFactory </summary>
+        /// Creates a new <see cref="CapitalizationFilterFactory"/> </summary>
         public CapitalizationFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

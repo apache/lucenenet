@@ -29,9 +29,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// </summary>
     public sealed class KeywordRepeatFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new KeywordRepeatFilterFactory </summary>
+        /// Creates a new <see cref="KeywordRepeatFilterFactory"/> </summary>
         public KeywordRepeatFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

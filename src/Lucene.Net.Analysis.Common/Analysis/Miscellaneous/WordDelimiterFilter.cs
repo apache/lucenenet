@@ -25,63 +25,57 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-	/// Splits words into subwords and performs optional transformations on subword
-	/// groups. Words are split into subwords with the following rules:
-	/// <ul>
-	/// <li>split on intra-word delimiters (by default, all non alpha-numeric
-	/// characters): <code>"Wi-Fi"</code> &#8594; <code>"Wi", "Fi"</code></li>
-	/// <li>split on case transitions: <code>"PowerShot"</code> &#8594;
-	/// <code>"Power", "Shot"</code></li>
-	/// <li>split on letter-number transitions: <code>"SD500"</code> &#8594;
-	/// <code>"SD", "500"</code></li>
-	/// <li>leading and trailing intra-word delimiters on each subword are ignored:
-	/// <code>"//hello---there, 'dude'"</code> &#8594;
-	/// <code>"hello", "there", "dude"</code></li>
-	/// <li>trailing "'s" are removed for each subword: <code>"O'Neil's"</code>
-	/// &#8594; <code>"O", "Neil"</code>
-	/// <ul>
-	/// <li>Note: this step isn't performed in a separate filter because of possible
-	/// subword combinations.</li>
-	/// </ul>
-	/// </li>
-	/// </ul>
-	/// 
-	/// The <b>combinations</b> parameter affects how subwords are combined:
-	/// <ul>
-	/// <li>combinations="0" causes no subword combinations: <code>"PowerShot"</code>
-	/// &#8594; <code>0:"Power", 1:"Shot"</code> (0 and 1 are the token positions)</li>
-	/// <li>combinations="1" means that in addition to the subwords, maximum runs of
-	/// non-numeric subwords are catenated and produced at the same position of the
-	/// last subword in the run:
-	/// <ul>
-	/// <li><code>"PowerShot"</code> &#8594;
-	/// <code>0:"Power", 1:"Shot" 1:"PowerShot"</code></li>
-	/// <li><code>"A's+B's&C's"</code> -gt; <code>0:"A", 1:"B", 2:"C", 2:"ABC"</code>
-	/// </li>
-	/// <li><code>"Super-Duper-XL500-42-AutoCoder!"</code> &#8594;
-	/// <code>0:"Super", 1:"Duper", 2:"XL", 2:"SuperDuperXL", 3:"500" 4:"42", 5:"Auto", 6:"Coder", 6:"AutoCoder"</code>
-	/// </li>
-	/// </ul>
-	/// </li>
-	/// </ul>
-	/// One use for <see cref="WordDelimiterFilter"/> is to help match words with different
-	/// subword delimiters. For example, if the source text contained "wi-fi" one may
-	/// want "wifi" "WiFi" "wi-fi" "wi+fi" queries to all match. One way of doing so
-	/// is to specify combinations="1" in the analyzer used for indexing, and
-	/// combinations="0" (the default) in the analyzer used for querying. Given that
-	/// the current <see cref="StandardTokenizer"/> immediately removes many intra-word
-	/// delimiters, it is recommended that this filter be used after a tokenizer that
-	/// does not do this (such as <see cref="WhitespaceTokenizer"/>).
-	/// </summary>
-	public sealed class WordDelimiterFilter : TokenFilter
+    /// Splits words into subwords and performs optional transformations on subword
+    /// groups. Words are split into subwords with the following rules:
+    /// <list type="bullet">
+    ///     <item>split on intra-word delimiters (by default, all non alpha-numeric
+    ///         characters): <c>"Wi-Fi"</c> &#8594; <c>"Wi", "Fi"</c></item>
+    ///     <item>split on case transitions: <c>"PowerShot"</c> &#8594;
+    ///         <c>"Power", "Shot"</c></item>
+    ///     <item>split on letter-number transitions: <c>"SD500"</c> &#8594;
+    ///         <c>"SD", "500"</c></item>
+    ///     <item>leading and trailing intra-word delimiters on each subword are ignored:
+    ///         <c>"//hello---there, 'dude'"</c> &#8594;
+    ///         <c>"hello", "there", "dude"</c></item>
+    ///     <item>trailing "'s" are removed for each subword: <c>"O'Neil's"</c>
+    ///         &#8594; <c>"O", "Neil"</c>
+    ///         <ul>
+    ///             <item>Note: this step isn't performed in a separate filter because of possible
+    ///                 subword combinations.</item>
+    ///         </ul>
+    ///     </item>
+    /// </list>
+    /// <para/>
+    /// The <b>combinations</b> parameter affects how subwords are combined:
+    /// <list type="bullet">
+    ///     <item>combinations="0" causes no subword combinations: <code>"PowerShot"</code>
+    ///         &#8594; <c>0:"Power", 1:"Shot"</c> (0 and 1 are the token positions)</item>
+    ///     <item>combinations="1" means that in addition to the subwords, maximum runs of
+    ///         non-numeric subwords are catenated and produced at the same position of the
+    ///         last subword in the run:
+    ///         <ul>
+    ///             <item><c>"PowerShot"</c> &#8594;
+    ///                 <c>0:"Power", 1:"Shot" 1:"PowerShot"</c></item>
+    ///             <item><c>"A's+B's&amp;C's"</c> -gt; <c>0:"A", 1:"B", 2:"C", 2:"ABC"</c>
+    ///             </item>
+    ///             <item><c>"Super-Duper-XL500-42-AutoCoder!"</c> &#8594;
+    ///                 <c>0:"Super", 1:"Duper", 2:"XL", 2:"SuperDuperXL", 3:"500" 4:"42", 5:"Auto", 6:"Coder", 6:"AutoCoder"</c>
+    ///             </item>
+    ///         </ul>
+    ///     </item>
+    /// </list>
+    /// <para/>
+    /// One use for <see cref="WordDelimiterFilter"/> is to help match words with different
+    /// subword delimiters. For example, if the source text contained "wi-fi" one may
+    /// want "wifi" "WiFi" "wi-fi" "wi+fi" queries to all match. One way of doing so
+    /// is to specify combinations="1" in the analyzer used for indexing, and
+    /// combinations="0" (the default) in the analyzer used for querying. Given that
+    /// the current <see cref="Standard.StandardTokenizer"/> immediately removes many intra-word
+    /// delimiters, it is recommended that this filter be used after a tokenizer that
+    /// does not do this (such as <see cref="Core.WhitespaceTokenizer"/>).
+    /// </summary>
+    public sealed class WordDelimiterFilter : TokenFilter
     {
-        private void InitializeInstanceFields()
-        {
-            concat = new WordDelimiterConcatenation(this);
-            concatAll = new WordDelimiterConcatenation(this);
-            sorter = new OffsetSorter(this);
-        }
-
         // LUCENENET: Added as a replacement for null in Java
         internal const int NOT_SET = 0x00;
         public const int LOWER = 0x01;
@@ -161,7 +155,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// If not null is the set of tokens to protect from being delimited
         /// 
         /// </summary>
-        internal readonly CharArraySet protWords;
+        private readonly CharArraySet protWords;
 
         private readonly int flags;
 
@@ -202,14 +196,22 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <summary>
         /// Creates a new WordDelimiterFilter
         /// </summary>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="in"> TokenStream to be filtered </param>
         /// <param name="charTypeTable"> table containing character types </param>
         /// <param name="configurationFlags"> Flags configuring the filter </param>
         /// <param name="protWords"> If not null is the set of tokens to protect from being delimited </param>
         public WordDelimiterFilter(LuceneVersion matchVersion, TokenStream @in, byte[] charTypeTable, int configurationFlags, CharArraySet protWords)
-              : base(@in)
+            : base(@in)
         {
-            InitializeInstanceFields();
+            this.termAttribute = AddAttribute<ICharTermAttribute>();
+            this.offsetAttribute = AddAttribute<IOffsetAttribute>();
+            this.posIncAttribute = AddAttribute<IPositionIncrementAttribute>();
+            this.typeAttribute = AddAttribute<ITypeAttribute>();
+            concat = new WordDelimiterConcatenation(this);
+            concatAll = new WordDelimiterConcatenation(this);
+            sorter = new OffsetSorter(this);
+
             if (!matchVersion.OnOrAfter(LuceneVersion.LUCENE_48))
             {
                 throw new System.ArgumentException("This class only works with Lucene 4.8+. To emulate the old (broken) behavior of WordDelimiterFilter, use Lucene47WordDelimiterFilter");
@@ -217,22 +219,18 @@ namespace Lucene.Net.Analysis.Miscellaneous
             this.flags = configurationFlags;
             this.protWords = protWords;
             this.iterator = new WordDelimiterIterator(charTypeTable, Has(SPLIT_ON_CASE_CHANGE), Has(SPLIT_ON_NUMERICS), Has(STEM_ENGLISH_POSSESSIVE));
-
-            this.termAttribute = AddAttribute<ICharTermAttribute>();
-            this.offsetAttribute = AddAttribute<IOffsetAttribute>();
-            this.posIncAttribute = AddAttribute<IPositionIncrementAttribute>();
-            this.typeAttribute = AddAttribute<ITypeAttribute>();
         }
 
         /// <summary>
-        /// Creates a new WordDelimiterFilter using <see cref="WordDelimiterIterator#DEFAULT_WORD_DELIM_TABLE"/>
+        /// Creates a new WordDelimiterFilter using <see cref="WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE"/>
         /// as its charTypeTable
         /// </summary>
-        /// <param name="in"> TokenStream to be filtered </param>
+        /// <param name="matchVersion"> lucene compatibility version </param>
+        /// <param name="in"> <see cref="TokenStream"/> to be filtered </param>
         /// <param name="configurationFlags"> Flags configuring the filter </param>
         /// <param name="protWords"> If not null is the set of tokens to protect from being delimited </param>
         public WordDelimiterFilter(LuceneVersion matchVersion, TokenStream @in, int configurationFlags, CharArraySet protWords)
-              : this(matchVersion, @in, WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, configurationFlags, protWords)
+            : this(matchVersion, @in, WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, configurationFlags, protWords)
         {
         }
 
@@ -295,22 +293,22 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 // at the end of the string, output any concatenations
                 if (iterator.end == WordDelimiterIterator.DONE)
                 {
-                    if (!concat.Empty)
+                    if (!concat.IsEmpty)
                     {
                         if (FlushConcatenation(concat))
                         {
-                            buffer();
+                            Buffer();
                             continue;
                         }
                     }
 
-                    if (!concatAll.Empty)
+                    if (!concatAll.IsEmpty)
                     {
                         // only if we haven't output this same combo above!
                         if (concatAll.subwordCount > lastConcatCount)
                         {
                             concatAll.WriteAndClear();
-                            buffer();
+                            Buffer();
                             continue;
                         }
                         concatAll.Clear();
@@ -351,12 +349,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 int wordType = iterator.Type;
 
                 // do we already have queued up incompatible concatenations?
-                if (!concat.Empty && (concat.type & wordType) == 0)
+                if (!concat.IsEmpty && (concat.type & wordType) == 0)
                 {
                     if (FlushConcatenation(concat))
                     {
                         hasOutputToken = false;
-                        buffer();
+                        Buffer();
                         continue;
                     }
                     hasOutputToken = false;
@@ -365,7 +363,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 // add subwords depending upon options
                 if (ShouldConcatenate(wordType))
                 {
-                    if (concat.Empty)
+                    if (concat.IsEmpty)
                     {
                         concat.type = wordType;
                     }
@@ -382,7 +380,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 if (ShouldGenerateParts(wordType))
                 {
                     GeneratePart(false);
-                    buffer();
+                    Buffer();
                 }
 
                 iterator.Next();
@@ -409,7 +407,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private int bufferedPos = 0;
         private bool first;
 
-        internal class OffsetSorter : InPlaceMergeSorter
+        internal class OffsetSorter : InPlaceMergeSorter // LUCENENET NOTE: Changed from private to internal because exposed by internal member
         {
             private readonly WordDelimiterFilter outerInstance;
 
@@ -420,12 +418,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             protected override int Compare(int i, int j)
             {
-
-                //int cmp = int.Compare(outerInstance.startOff[i], outerInstance.startOff[j]);
                 int cmp = outerInstance.startOff[i].CompareTo(outerInstance.startOff[j]);
                 if (cmp == 0)
                 {
-                    //cmp = int.compare(outerInstance.posInc[j], outerInstance.posInc[i]);
                     cmp = outerInstance.posInc[j].CompareTo(outerInstance.posInc[i]);
                 }
                 return cmp;
@@ -454,7 +449,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             get { return this.sorter; }
         }
 
-        private void buffer()
+        private void Buffer()
         {
             if (bufferedLen == buffered.Length)
             {
@@ -493,10 +488,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Flushes the given WordDelimiterConcatenation by either writing its concat and then clearing, or just clearing.
+        /// Flushes the given <see cref="WordDelimiterConcatenation"/> by either writing its concat and then clearing, or just clearing.
         /// </summary>
-        /// <param name="concatenation"> WordDelimiterConcatenation that will be flushed </param>
-        /// <returns> {@code true} if the concatenation was written before it was cleared, {@code false} otherwise </returns>
+        /// <param name="concatenation"> <see cref="WordDelimiterConcatenation"/> that will be flushed </param>
+        /// <returns> <c>true</c> if the concatenation was written before it was cleared, <c>false</c> otherwise </returns>
         private bool FlushConcatenation(WordDelimiterConcatenation concatenation)
         {
             lastConcatCount = concatenation.subwordCount;
@@ -513,7 +508,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// Determines whether to concatenate a word or number if the current word is the given type
         /// </summary>
         /// <param name="wordType"> Type of the current word used to determine if it should be concatenated </param>
-        /// <returns> {@code true} if concatenation should occur, {@code false} otherwise </returns>
+        /// <returns> <c>true</c> if concatenation should occur, <c>false</c> otherwise </returns>
         private bool ShouldConcatenate(int wordType)
         {
             return (Has(CATENATE_WORDS) && IsAlpha(wordType)) || (Has(CATENATE_NUMBERS) && IsDigit(wordType));
@@ -523,19 +518,19 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// Determines whether a word/number part should be generated for a word of the given type
         /// </summary>
         /// <param name="wordType"> Type of the word used to determine if a word/number part should be generated </param>
-        /// <returns> {@code true} if a word/number part should be generated, {@code false} otherwise </returns>
+        /// <returns> <c>true</c> if a word/number part should be generated, <c>false</c> otherwise </returns>
         private bool ShouldGenerateParts(int wordType)
         {
             return (Has(GENERATE_WORD_PARTS) && IsAlpha(wordType)) || (Has(GENERATE_NUMBER_PARTS) && IsDigit(wordType));
         }
 
         /// <summary>
-        /// Concatenates the saved buffer to the given WordDelimiterConcatenation
+        /// Concatenates the saved buffer to the given <see cref="WordDelimiterConcatenation"/>
         /// </summary>
-        /// <param name="concatenation"> WordDelimiterConcatenation to concatenate the buffer to </param>
+        /// <param name="concatenation"> <see cref="WordDelimiterConcatenation"/> to concatenate the buffer to </param>
         private void Concatenate(WordDelimiterConcatenation concatenation)
         {
-            if (concatenation.Empty)
+            if (concatenation.IsEmpty)
             {
                 concatenation.startOffset = savedStartOffset + iterator.current;
             }
@@ -546,7 +541,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <summary>
         /// Generates a word/number part, updating the appropriate attributes
         /// </summary>
-        /// <param name="isSingleWord"> {@code true} if the generation is occurring from a single word, {@code false} otherwise </param>
+        /// <param name="isSingleWord"> <c>true</c> if the generation is occurring from a single word, <c>false</c> otherwise </param>
         private void GeneratePart(bool isSingleWord)
         {
             ClearAttributes();
@@ -605,40 +600,40 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Checks if the given word type includes <see cref="#ALPHA"/>
+        /// Checks if the given word type includes <see cref="ALPHA"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
-        /// <returns> {@code true} if the type contains ALPHA, {@code false} otherwise </returns>
+        /// <returns> <c>true</c> if the type contains <see cref="ALPHA"/>, <c>false</c> otherwise </returns>
         internal static bool IsAlpha(int type)
         {
             return (type & ALPHA) != 0;
         }
 
         /// <summary>
-        /// Checks if the given word type includes <see cref="#DIGIT"/>
+        /// Checks if the given word type includes <see cref="DIGIT"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
-        /// <returns> {@code true} if the type contains DIGIT, {@code false} otherwise </returns>
+        /// <returns> <c>true</c> if the type contains <see cref="DIGIT"/>, <c>false</c> otherwise </returns>
         internal static bool IsDigit(int type)
         {
             return (type & DIGIT) != 0;
         }
 
         /// <summary>
-        /// Checks if the given word type includes <see cref="#SUBWORD_DELIM"/>
+        /// Checks if the given word type includes <see cref="SUBWORD_DELIM"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
-        /// <returns> {@code true} if the type contains SUBWORD_DELIM, {@code false} otherwise </returns>
+        /// <returns> <c>true</c> if the type contains <see cref="SUBWORD_DELIM"/>, <c>false</c> otherwise </returns>
         internal static bool IsSubwordDelim(int type)
         {
             return (type & SUBWORD_DELIM) != 0;
         }
 
         /// <summary>
-        /// Checks if the given word type includes <see cref="#UPPER"/>
+        /// Checks if the given word type includes <see cref="UPPER"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
-        /// <returns> {@code true} if the type contains UPPER, {@code false} otherwise </returns>
+        /// <returns> <c>true</c> if the type contains <see cref="UPPER"/>, <c>false</c> otherwise </returns>
         internal static bool IsUpper(int type)
         {
             return (type & UPPER) != 0;
@@ -648,7 +643,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// Determines whether the given flag is set
         /// </summary>
         /// <param name="flag"> Flag to see if set </param>
-        /// <returns> {@code true} if flag is set </returns>
+        /// <returns> <c>true</c> if flag is set </returns>
         private bool Has(int flag)
         {
             return (flags & flag) != 0;
@@ -668,7 +663,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 this.outerInstance = outerInstance;
             }
 
-            internal readonly StringBuilder buffer = new StringBuilder();
+            private readonly StringBuilder buffer = new StringBuilder();
             internal int startOffset;
             internal int endOffset;
             internal int type;
@@ -698,7 +693,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
                 char[] termbuffer = outerInstance.termAttribute.Buffer;
 
-                //buffer.GetChars(0, buffer.Length, termbuffer, 0);
                 buffer.CopyTo(0, termbuffer, 0, buffer.Length);
                 outerInstance.termAttribute.Length = buffer.Length;
 
@@ -718,8 +712,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /// <summary>
             /// Determines if the concatenation is empty
             /// </summary>
-            /// <returns> {@code true} if the concatenation is empty, {@code false} otherwise </returns>
-            internal bool Empty
+            /// <returns> <c>true</c> if the concatenation is empty, <c>false</c> otherwise </returns>
+            internal bool IsEmpty
             {
                 get
                 {

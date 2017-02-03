@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// </summary>
     public sealed class TrimFilter : TokenFilter
     {
-        internal readonly bool updateOffsets;
+        private readonly bool updateOffsets;
         private readonly ICharTermAttribute termAtt;
         private readonly IOffsetAttribute offsetAtt;
 
@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Create a new <see cref="TrimFilter"/> on top of <code>in</code>. </summary>
+        /// Create a new <see cref="TrimFilter"/> on top of <paramref name="in"/>. </summary>
         public TrimFilter(LuceneVersion version, TokenStream @in)
 #pragma warning disable 612, 618
             : this(version, @in, false)

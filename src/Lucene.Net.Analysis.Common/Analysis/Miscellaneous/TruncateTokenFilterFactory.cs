@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 	 */
 
     /// <summary>
-    /// Factory for <see cref="org.apache.lucene.analysis.miscellaneous.TruncateTokenFilter"/>. The following type is recommended for "<i>diacritics-insensitive search</i>" for Turkish.
+    /// Factory for <see cref="TruncateTokenFilter"/>. The following type is recommended for "<i>diacritics-insensitive search</i>" for Turkish.
     /// <code>
     /// &lt;fieldType name="text_tr_ascii_f5" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -37,11 +37,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// </summary>
     public class TruncateTokenFilterFactory : TokenFilterFactory
     {
-
         public const string PREFIX_LENGTH_KEY = "prefixLength";
         private readonly sbyte prefixLength;
 
-        public TruncateTokenFilterFactory(IDictionary<string, string> args) : base(args)
+        /// <summary>
+        /// Creates a new <see cref="TruncateTokenFilterFactory"/> </summary>
+        public TruncateTokenFilterFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             prefixLength = sbyte.Parse(Get(args, PREFIX_LENGTH_KEY, "5"));
             if (prefixLength < 1)

@@ -32,10 +32,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// </summary>
     public class HyphenatedWordsFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new HyphenatedWordsFilterFactory </summary>
-        public HyphenatedWordsFilterFactory(IDictionary<string, string> args) : base(args)
+        /// Creates a new <see cref="HyphenatedWordsFilterFactory"/> </summary>
+        public HyphenatedWordsFilterFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             if (args.Count > 0)
             {

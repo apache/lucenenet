@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -19,15 +18,15 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// This TokenFilter emits each incoming token twice once as keyword and once non-keyword, in other words once with
-    /// <see cref="KeywordAttribute#setKeyword(boolean)"/> set to <code>true</code> and once set to <code>false</code>.
+    /// <see cref="KeywordAttribute.IsKeyword"/> set to <c>true</c> and once set to <c>false</c>.
     /// This is useful if used with a stem filter that respects the <see cref="KeywordAttribute"/> to index the stemmed and the
     /// un-stemmed version of a term into the same field.
     /// </summary>
     public sealed class KeywordRepeatFilter : TokenFilter
     {
-
         private readonly IKeywordAttribute keywordAttribute;
         private readonly IPositionIncrementAttribute posIncAttr;
         private State state;
@@ -67,5 +66,4 @@ namespace Lucene.Net.Analysis.Miscellaneous
             state = null;
         }
     }
-
 }

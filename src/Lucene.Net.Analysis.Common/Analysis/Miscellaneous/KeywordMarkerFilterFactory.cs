@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private CharArraySet protectedWords;
 
         /// <summary>
-        /// Creates a new KeywordMarkerFilterFactory </summary>
+        /// Creates a new <see cref="KeywordMarkerFilterFactory"/> </summary>
         public KeywordMarkerFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

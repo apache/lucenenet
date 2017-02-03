@@ -129,26 +129,26 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Consumers (i.e., <seealso cref="IndexWriter"/>) use this method to advance the stream to
+        /// Consumers (i.e., <see cref="Index.IndexWriter"/>) use this method to advance the stream to
         /// the next token. Implementing classes must implement this method and update
-        /// the appropriate <seealso cref="AttributeImpl"/>s with the attributes of the next
+        /// the appropriate <see cref="Lucene.Net.Util.IAttribute"/>s with the attributes of the next
         /// token.
-        /// <P>
+        /// <para/>
         /// The producer must make no assumptions about the attributes after the method
         /// has been returned: the caller may arbitrarily change it. If the producer
         /// needs to preserve the state for subsequent calls, it can use
-        /// <seealso cref="#captureState"/> to create a copy of the current attribute state.
-        /// <p>
+        /// <see cref="AttributeSource.CaptureState"/> to create a copy of the current attribute state.
+        /// <para/>
         /// this method is called for every token of a document, so an efficient
         /// implementation is crucial for good performance. To avoid calls to
-        /// <seealso cref="#addAttribute(Class)"/> and <seealso cref="#getAttribute(Class)"/>,
-        /// references to all <seealso cref="AttributeImpl"/>s that this stream uses should be
+        /// <see cref="AttributeSource.AddAttribute{T}"/> and <see cref="AttributeSource.GetAttribute{T}"/>,
+        /// references to all <see cref="Lucene.Net.Util.IAttribute"/>s that this stream uses should be
         /// retrieved during instantiation.
-        /// <p>
+        /// <para/>
         /// To ensure that filters and consumers know which attributes are available,
         /// the attributes must be added during instantiation. Filters and consumers
         /// are not required to check for availability of attributes in
-        /// <seealso cref="#IncrementToken()"/>.
+        /// <see cref="IncrementToken()"/>.
         /// </summary>
         /// <returns> false for end of stream; true otherwise </returns>
         public abstract bool IncrementToken();

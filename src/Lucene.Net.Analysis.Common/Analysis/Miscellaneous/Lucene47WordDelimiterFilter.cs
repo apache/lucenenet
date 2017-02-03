@@ -29,13 +29,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
     [Obsolete]
     public sealed class Lucene47WordDelimiterFilter : TokenFilter
     {
-        private void InitializeInstanceFields()
-        {
-            concat = new WordDelimiterConcatenation(this);
-            concatAll = new WordDelimiterConcatenation(this);
-        }
-
-
         public const int LOWER = 0x01;
         public const int UPPER = 0x02;
         public const int DIGIT = 0x04;
@@ -110,7 +103,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// If not null is the set of tokens to protect from being delimited
         /// 
         /// </summary>
-        internal readonly CharArraySet protWords;
+        private readonly CharArraySet protWords;
 
         private readonly int flags;
 
@@ -149,9 +142,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private bool hasOutputFollowingOriginal = false;
 
         /// <summary>
-        /// Creates a new WordDelimiterFilter
+        /// Creates a new <see cref="Lucene47WordDelimiterFilter"/>
         /// </summary>
-        /// <param name="in"> TokenStream to be filtered </param>
+        /// <param name="in"> <see cref="TokenStream"/> to be filtered </param>
         /// <param name="charTypeTable"> table containing character types </param>
         /// <param name="configurationFlags"> Flags configuring the filter </param>
         /// <param name="protWords"> If not null is the set of tokens to protect from being delimited </param>
@@ -162,18 +155,19 @@ namespace Lucene.Net.Analysis.Miscellaneous
             offsetAttribute = AddAttribute<IOffsetAttribute>();
             posIncAttribute = AddAttribute<IPositionIncrementAttribute>();
             typeAttribute = AddAttribute<ITypeAttribute>();
+            concat = new WordDelimiterConcatenation(this);
+            concatAll = new WordDelimiterConcatenation(this);
 
-            InitializeInstanceFields();
             this.flags = configurationFlags;
             this.protWords = protWords;
             this.iterator = new WordDelimiterIterator(charTypeTable, Has(SPLIT_ON_CASE_CHANGE), Has(SPLIT_ON_NUMERICS), Has(STEM_ENGLISH_POSSESSIVE));
         }
 
         /// <summary>
-        /// Creates a new WordDelimiterFilter using <see cref="WordDelimiterIterator#DEFAULT_WORD_DELIM_TABLE"/>
+        /// Creates a new <see cref="Lucene47WordDelimiterFilter"/> using <see cref="WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE"/>
         /// as its charTypeTable
         /// </summary>
-        /// <param name="in"> TokenStream to be filtered </param>
+        /// <param name="in"> <see cref="TokenStream"/> to be filtered </param>
         /// <param name="configurationFlags"> Flags configuring the filter </param>
         /// <param name="protWords"> If not null is the set of tokens to protect from being delimited </param>
         public Lucene47WordDelimiterFilter(TokenStream @in, int configurationFlags, CharArraySet protWords)
@@ -237,7 +231,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 // at the end of the string, output any concatenations
                 if (iterator.end == WordDelimiterIterator.DONE)
                 {
-                    if (!concat.Empty)
+                    if (!concat.IsEmpty)
                     {
                         if (FlushConcatenation(concat))
                         {
@@ -245,7 +239,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                         }
                     }
 
-                    if (!concatAll.Empty)
+                    if (!concatAll.IsEmpty)
                     {
                         // only if we haven't output this same combo above!
                         if (concatAll.subwordCount > lastConcatCount)
@@ -272,7 +266,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 int wordType = iterator.Type;
 
                 // do we already have queued up incompatible concatenations?
-                if (!concat.Empty && (concat.type & wordType) == 0)
+                if (!concat.IsEmpty && (concat.type & wordType) == 0)
                 {
                     if (FlushConcatenation(concat))
                     {
@@ -285,7 +279,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 // add subwords depending upon options
                 if (ShouldConcatenate(wordType))
                 {
-                    if (concat.Empty)
+                    if (concat.IsEmpty)
                     {
                         concat.type = wordType;
                     }
@@ -311,8 +305,21 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// {@inheritDoc}
+        /// This method is called by a consumer before it begins consumption using
+        /// <see cref="IncrementToken()"/>.
+        /// <para/>
+        /// Resets this stream to a clean state. Stateful implementations must implement
+        /// this method so that they can be reused, just as if they had been created fresh.
+        /// <para/>
+        /// If you override this method, always call <c>base.Reset()</c>, otherwise
+        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
+        /// throw <see cref="System.InvalidOperationException"/> on further usage).
         /// </summary>
+        /// <remarks>
+        /// <b>NOTE:</b>
+        /// The default implementation chains the call to the input <see cref="TokenStream"/>, so
+        /// be sure to call <c>base.Reset()</c> when overriding this method.
+        /// </remarks>
         public override void Reset()
         {
             base.Reset();
@@ -348,10 +355,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Flushes the given WordDelimiterConcatenation by either writing its concat and then clearing, or just clearing.
+        /// Flushes the given <see cref="WordDelimiterConcatenation"/> by either writing its concat and then clearing, or just clearing.
         /// </summary>
-        /// <param name="concatenation"> WordDelimiterConcatenation that will be flushed </param>
-        /// <returns> {@code true} if the concatenation was written before it was cleared, {@code false} otherwise </returns>
+        /// <param name="concatenation"> <see cref="WordDelimiterConcatenation"/> that will be flushed </param>
+        /// <returns> <c>true</c> if the concatenation was written before it was cleared, <c>false</c> otherwise </returns>
         private bool FlushConcatenation(WordDelimiterConcatenation concatenation)
         {
             lastConcatCount = concatenation.subwordCount;
@@ -368,7 +375,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// Determines whether to concatenate a word or number if the current word is the given type
         /// </summary>
         /// <param name="wordType"> Type of the current word used to determine if it should be concatenated </param>
-        /// <returns> {@code true} if concatenation should occur, {@code false} otherwise </returns>
+        /// <returns> <c>true</c> if concatenation should occur, <c>false</c> otherwise </returns>
         private bool ShouldConcatenate(int wordType)
         {
             return (Has(CATENATE_WORDS) && IsAlpha(wordType)) || (Has(CATENATE_NUMBERS) && IsDigit(wordType));
@@ -378,7 +385,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// Determines whether a word/number part should be generated for a word of the given type
         /// </summary>
         /// <param name="wordType"> Type of the word used to determine if a word/number part should be generated </param>
-        /// <returns> {@code true} if a word/number part should be generated, {@code false} otherwise </returns>
+        /// <returns> <c>true</c> if a word/number part should be generated, <c>false</c> otherwise </returns>
         private bool ShouldGenerateParts(int wordType)
         {
             return (Has(GENERATE_WORD_PARTS) && IsAlpha(wordType)) || (Has(GENERATE_NUMBER_PARTS) && IsDigit(wordType));
@@ -390,7 +397,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="concatenation"> WordDelimiterConcatenation to concatenate the buffer to </param>
         private void Concatenate(WordDelimiterConcatenation concatenation)
         {
-            if (concatenation.Empty)
+            if (concatenation.IsEmpty)
             {
                 concatenation.startOffset = savedStartOffset + iterator.current;
             }
@@ -401,7 +408,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <summary>
         /// Generates a word/number part, updating the appropriate attributes
         /// </summary>
-        /// <param name="isSingleWord"> {@code true} if the generation is occurring from a single word, {@code false} otherwise </param>
+        /// <param name="isSingleWord"> <c>true</c> if the generation is occurring from a single word, <c>false</c> otherwise </param>
         private void GeneratePart(bool isSingleWord)
         {
             ClearAttributes();
@@ -460,41 +467,41 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Checks if the given word type includes <see cref="#ALPHA"/>
+        /// Checks if the given word type includes <see cref="ALPHA"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
-        /// <returns> {@code true} if the type contains ALPHA, {@code false} otherwise </returns>
-        internal static bool IsAlpha(int type)
+        /// <returns> <c>true</c> if the type contains <see cref="ALPHA"/>, <c>false</c> otherwise </returns>
+        private static bool IsAlpha(int type)
         {
             return (type & ALPHA) != 0;
         }
 
         /// <summary>
-        /// Checks if the given word type includes <see cref="#DIGIT"/>
+        /// Checks if the given word type includes <see cref="DIGIT"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
-        /// <returns> {@code true} if the type contains DIGIT, {@code false} otherwise </returns>
-        internal static bool IsDigit(int type)
+        /// <returns> <c>true</c> if the type contains <see cref="DIGIT"/>, <c>false</c> otherwise </returns>
+        private static bool IsDigit(int type)
         {
             return (type & DIGIT) != 0;
         }
 
         /// <summary>
-        /// Checks if the given word type includes <see cref="#SUBWORD_DELIM"/>
+        /// Checks if the given word type includes <see cref="SUBWORD_DELIM"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
-        /// <returns> {@code true} if the type contains SUBWORD_DELIM, {@code false} otherwise </returns>
-        internal static bool IsSubwordDelim(int type)
+        /// <returns> <c>true</c> if the type contains <see cref="SUBWORD_DELIM"/>, <c>false</c> otherwise </returns>
+        private static bool IsSubwordDelim(int type)
         {
             return (type & SUBWORD_DELIM) != 0;
         }
 
         /// <summary>
-        /// Checks if the given word type includes <see cref="#UPPER"/>
+        /// Checks if the given word type includes <see cref="UPPER"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
-        /// <returns> {@code true} if the type contains UPPER, {@code false} otherwise </returns>
-        internal static bool IsUpper(int type)
+        /// <returns> <c>true</c> if the type contains <see cref="UPPER"/>, <c>false</c> otherwise </returns>
+        private static bool IsUpper(int type)
         {
             return (type & UPPER) != 0;
         }
@@ -503,7 +510,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// Determines whether the given flag is set
         /// </summary>
         /// <param name="flag"> Flag to see if set </param>
-        /// <returns> {@code true} if flag is set </returns>
+        /// <returns> <c>true</c> if flag is set </returns>
         private bool Has(int flag)
         {
             return (flags & flag) != 0;
@@ -573,8 +580,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /// <summary>
             /// Determines if the concatenation is empty
             /// </summary>
-            /// <returns> {@code true} if the concatenation is empty, {@code false} otherwise </returns>
-            internal bool Empty
+            /// <returns> <c>true</c> if the concatenation is empty, <c>false</c> otherwise </returns>
+            internal bool IsEmpty
             {
                 get
                 {

@@ -23,8 +23,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// A TokenFilter that only keeps tokens with text contained in the
-    /// required words.  This filter behaves like the inverse of StopFilter.
+    /// A <see cref="TokenFilter"/> that only keeps tokens with text contained in the
+    /// required words.  This filter behaves like the inverse of <see cref="StopFilter"/>.
     /// 
     /// @since solr 1.3
     /// </summary>
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Create a new <see cref="KeepWordFilter"/>.
-        /// <para><b>NOTE</b>: The words set passed to this constructor will be directly
+        /// <para><c>NOTE</c>: The words set passed to this constructor will be directly
         /// used by this filter and should not be modified.
         /// </para>
         /// </summary>

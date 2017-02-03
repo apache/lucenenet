@@ -23,30 +23,30 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <summary>
     /// This filter folds Scandinavian characters åÅäæÄÆ->a and öÖøØ->o.
     /// It also discriminate against use of double vowels aa, ae, ao, oe and oo, leaving just the first one.
-    /// <p/>
+    /// <para/>
     /// It's is a semantically more destructive solution than <see cref="ScandinavianNormalizationFilter"/> but
     /// can in addition help with matching raksmorgas as räksmörgås.
-    /// <p/>
+    /// <para/>
     /// blåbærsyltetøj == blåbärsyltetöj == blaabaarsyltetoej == blabarsyltetoj
     /// räksmörgås == ræksmørgås == ræksmörgaos == raeksmoergaas == raksmorgas
-    /// <p/>
+    /// <para/>
     /// Background:
     /// Swedish åäö are in fact the same letters as Norwegian and Danish åæø and thus interchangeable
     /// when used between these languages. They are however folded differently when people type
     /// them on a keyboard lacking these characters.
-    /// <p/>
+    /// <para/>
     /// In that situation almost all Swedish people use a, a, o instead of å, ä, ö.
-    /// <p/>
+    /// <para/>
     /// Norwegians and Danes on the other hand usually type aa, ae and oe instead of å, æ and ø.
     /// Some do however use a, a, o, oo, ao and sometimes permutations of everything above.
-    /// <p/>
+    /// <para/>
     /// This filter solves that mismatch problem, but might also cause new.
-    /// <p/> </summary>
-    /// <seealso cref= ScandinavianNormalizationFilter </seealso>
+    /// </summary>
+    /// <seealso cref="ScandinavianNormalizationFilter"/>
     public sealed class ScandinavianFoldingFilter : TokenFilter
     {
-
-        public ScandinavianFoldingFilter(TokenStream input) : base(input)
+        public ScandinavianFoldingFilter(TokenStream input)
+            : base(input)
         {
             charTermAttribute = AddAttribute<ICharTermAttribute>();
         }

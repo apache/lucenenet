@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -19,29 +18,29 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Marks terms as keywords via the <see cref="KeywordAttribute"/>.
     /// </summary>
-    /// <seealso cref= KeywordAttribute </seealso>
+    /// <seealso cref="KeywordAttribute"/>
     public abstract class KeywordMarkerFilter : TokenFilter
     {
-
         private readonly IKeywordAttribute keywordAttr;
 
         /// <summary>
         /// Creates a new <see cref="KeywordMarkerFilter"/> </summary>
         /// <param name="in"> the input stream </param>
-        protected internal KeywordMarkerFilter(TokenStream @in)
+        protected KeywordMarkerFilter(TokenStream @in)
             : base(@in)
         {
             keywordAttr = AddAttribute<IKeywordAttribute>();
         }
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             if (m_input.IncrementToken())
             {
-                if (Keyword)
+                if (IsKeyword)
                 {
                     keywordAttr.IsKeyword = true;
                 }
@@ -53,7 +52,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
         }
 
-        protected internal abstract bool Keyword { get; }
-
+        protected abstract bool IsKeyword { get; } // LUCENENET TODO: Change to IsKeyword() ?
     }
 }

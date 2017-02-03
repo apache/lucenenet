@@ -27,9 +27,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Efficient Lucene analyzer/tokenizer that preferably operates on a String rather than a
-    /// <see cref="TextReader"/>, that can flexibly separate text into terms via a regular expression <see cref="Pattern"/>
-    /// (with behaviour identical to <see cref="String#split(String)"/>),
+    /// Efficient Lucene analyzer/tokenizer that preferably operates on a <see cref="string"/> rather than a
+    /// <see cref="TextReader"/>, that can flexibly separate text into terms via a regular expression <see cref="Regex"/>
+    /// (with behaviour similar to <see cref="string.Split(string)"/>),
     /// and that combines the functionality of
     /// <see cref="LetterTokenizer"/>,
     /// <see cref="LowerCaseTokenizer"/>,
@@ -39,9 +39,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <para>
     /// If you are unsure how exactly a regular expression should look like, consider 
     /// prototyping by simply trying various expressions on some test texts via
-    /// <see cref="String#split(String)"/>. Once you are satisfied, give that regex to 
-    /// PatternAnalyzer. Also see <a target="_blank" 
-    /// href="http://java.sun.com/docs/books/tutorial/extra/regex/">Java Regular Expression Tutorial</a>.
+    /// <see cref="string.Split(string)"/>. Once you are satisfied, give that regex to 
+    /// <see cref="PatternAnalyzer"/>. Also see <a target="_blank" 
+    /// href="http://www.regular-expressions.info/">Regular Expression Tutorial</a>.
     /// </para>
     /// <para>
     /// This class can be considerably faster than the "normal" Lucene tokenizers. 
@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <pre>
     /// PatternAnalyzer pat = ...
     /// TokenStream tokenStream = new SnowballFilter(
-    ///     pat.tokenStream("content", "James is running round in the woods"), 
+    ///     pat.GetTokenStream("content", "James is running round in the woods"), 
     ///     "English"));
     /// </code>
     /// </para>
@@ -60,13 +60,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
     [Obsolete("(4.0) use the pattern-based analysis in the analysis/pattern package instead.")]
     public sealed class PatternAnalyzer : Analyzer
     {
-
         /// <summary>
-        /// <code>"\\W+"</code>; Divides text at non-letters (NOT Character.isLetter(c)) </summary>
+        /// <c>"\\W+"</c>; Divides text at non-letters (NOT Character.isLetter(c)) </summary>
         public static readonly Regex NON_WORD_PATTERN = new Regex("\\W+", RegexOptions.Compiled);
 
         /// <summary>
-        /// <code>"\\s+"</code>; Divides text at whitespaces (Character.isWhitespace(c)) </summary>
+        /// <c>"\\s+"</c>; Divides text at whitespaces (Character.isWhitespace(c)) </summary>
         public static readonly Regex WHITESPACE_PATTERN = new Regex("\\s+", RegexOptions.Compiled);
 
         private static readonly CharArraySet EXTENDED_ENGLISH_STOP_WORDS = 
@@ -124,7 +123,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             LuceneVersion.LUCENE_CURRENT, NON_WORD_PATTERN, true, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
         /// <summary>
-        /// A lower-casing word analyzer with <b>extended </b> English stop words
+        /// A lower-casing word analyzer with <b>extended</b> English stop words
         /// (can be shared freely across threads without harm); global per class
         /// loader. The stop words are borrowed from
         /// http://thomas.loc.gov/home/stopwords.html, see
@@ -220,8 +219,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Creates a token stream that tokenizes all the text in the given SetReader;
-        /// This implementation forwards to <code>tokenStream(String, TextReader, String)</code> and is
-        /// less efficient than <code>tokenStream(String, TextReader, String)</code>.
+        /// This implementation forwards to <see cref="Analyzer.TokenStream(string, TextReader)"/> and is
+        /// less efficient than <see cref="Analyzer.TokenStream(string, TextReader)"/>.
         /// </summary>
         /// <param name="fieldName">
         ///            the name of the field to tokenize (currently ignored). </param>
@@ -586,13 +585,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
         // Nested classes:
         ///////////////////////////////////////////////////////////////////////////////
         /// <summary>
-        /// A StringReader that exposes it's contained string for fast direct access.
-        /// Might make sense to generalize this to CharSequence and make it public?
+        /// A <see cref="StringReader"/> that exposes it's contained string for fast direct access.
+        /// Might make sense to generalize this to ICharSequence and make it public?
         /// </summary>
         internal sealed class FastStringReader : StringReader
         {
-
-            internal readonly string s;
+            private readonly string s;
 
             internal FastStringReader(string s)
                 : base(s)

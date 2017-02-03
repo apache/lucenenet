@@ -18,23 +18,22 @@
      */
 
     /// <summary>
-    /// This TokenFilter limits the number of tokens while indexing. It is
-    /// a replacement for the maximum field length setting inside <see cref="org.apache.lucene.index.IndexWriter"/>.
+    /// This <see cref="TokenFilter"/> limits the number of tokens while indexing. It is
+    /// a replacement for the maximum field length setting inside <see cref="Index.IndexWriter"/>.
     /// <para>
-    /// By default, this filter ignores any tokens in the wrapped {@code TokenStream}
-    /// once the limit has been reached, which can result in {@code reset()} being 
-    /// called prior to {@code incrementToken()} returning {@code false}.  For most 
-    /// {@code TokenStream} implementations this should be acceptable, and faster 
-    /// then consuming the full stream. If you are wrapping a {@code TokenStream} 
+    /// By default, this filter ignores any tokens in the wrapped <see cref="TokenStream"/>
+    /// once the limit has been reached, which can result in <see cref="Reset"/> being 
+    /// called prior to <see cref="IncrementToken"/> returning <c>false</c>.  For most 
+    /// <see cref="TokenStream"/> implementations this should be acceptable, and faster 
+    /// then consuming the full stream. If you are wrapping a <see cref="TokenStream"/> 
     /// which requires that the full stream of tokens be exhausted in order to 
     /// function properly, use the 
-    /// <see cref="#LimitTokenCountFilter(TokenStream,int,boolean) consumeAllTokens"/> 
+    /// <see cref="LimitTokenCountFilter.LimitTokenCountFilter(TokenStream,int,bool)"/> consumeAllTokens
     /// option.
     /// </para>
     /// </summary>
     public sealed class LimitTokenCountFilter : TokenFilter
     {
-
         private readonly int maxTokenCount;
         private readonly bool consumeAllTokens;
         private int tokenCount = 0;
@@ -42,9 +41,11 @@
 
         /// <summary>
         /// Build a filter that only accepts tokens up to a maximum number.
-        /// This filter will not consume any tokens beyond the maxTokenCount limit
+        /// This filter will not consume any tokens beyond the <paramref name="maxTokenCount"/> limit
         /// </summary>
-        /// <seealso cref= #LimitTokenCountFilter(TokenStream,int,boolean) </seealso>
+        /// <param name="in"> the stream to wrap </param>
+        /// <param name="maxTokenCount"> max number of tokens to produce </param>
+        /// <seealso cref="LimitTokenCountFilter(TokenStream,int,bool)"/>
         public LimitTokenCountFilter(TokenStream @in, int maxTokenCount)
             : this(@in, maxTokenCount, false)
         {
@@ -54,7 +55,7 @@
         /// Build an filter that limits the maximum number of tokens per field. </summary>
         /// <param name="in"> the stream to wrap </param>
         /// <param name="maxTokenCount"> max number of tokens to produce </param>
-        /// <param name="consumeAllTokens"> whether all tokens from the input must be consumed even if maxTokenCount is reached. </param>
+        /// <param name="consumeAllTokens"> whether all tokens from the input must be consumed even if <paramref name="maxTokenCount"/> is reached. </param>
         public LimitTokenCountFilter(TokenStream @in, int maxTokenCount, bool consumeAllTokens)
             : base(@in)
         {

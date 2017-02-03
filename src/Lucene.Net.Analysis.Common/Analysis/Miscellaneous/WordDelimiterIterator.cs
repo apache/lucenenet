@@ -20,12 +20,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
 	 */
 
     /// <summary>
-    /// A BreakIterator-like API for iterating over subwords in text, according to WordDelimiterFilter rules.
+    /// A BreakIterator-like API for iterating over subwords in text, according to <see cref="WordDelimiterFilter"/> rules.
     /// @lucene.internal
     /// </summary>
     public sealed class WordDelimiterIterator
     {
-
         /// <summary>
         /// Indicates the end of iteration </summary>
         public const int DONE = -1;
@@ -33,14 +32,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public static readonly byte[] DEFAULT_WORD_DELIM_TABLE;
 
         internal char[] text;
-        internal int length;
+        private int length;
 
         /// <summary>
         /// start position of text, excluding leading delimiters </summary>
-        internal int startBounds;
+        private int startBounds;
         /// <summary>
         /// end position of text, excluding trailing delimiters </summary>
-        internal int endBounds;
+        private int endBounds;
 
         /// <summary>
         /// Beginning of subword </summary>
@@ -49,27 +48,27 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// End of subword </summary>
         internal int end;
 
-        /* does this string end with a possessive such as 's */
+        /// <summary>does this string end with a possessive such as 's</summary>
         private bool hasFinalPossessive = false;
 
         /// <summary>
         /// If false, causes case changes to be ignored (subwords will only be generated
         /// given SUBWORD_DELIM tokens). (Defaults to true)
         /// </summary>
-        internal readonly bool splitOnCaseChange;
+        private readonly bool splitOnCaseChange;
 
         /// <summary>
         /// If false, causes numeric changes to be ignored (subwords will only be generated
         /// given SUBWORD_DELIM tokens). (Defaults to true)
         /// </summary>
-        internal readonly bool splitOnNumerics;
+        private readonly bool splitOnNumerics;
 
         /// <summary>
         /// If true, causes trailing "'s" to be removed for each subword. (Defaults to true)
         /// <p/>
         /// "O'Neil's" => "O", "Neil"
         /// </summary>
-        internal readonly bool stemEnglishPossessive;
+        private readonly bool stemEnglishPossessive;
 
         private readonly byte[] charTypeTable;
 
@@ -107,7 +106,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Create a new WordDelimiterIterator operating with the supplied rules.
+        /// Create a new <see cref="WordDelimiterIterator"/> operating with the supplied rules.
         /// </summary>
         /// <param name="charTypeTable"> table containing character types </param>
         /// <param name="splitOnCaseChange"> if true, causes "PowerShot" to be two tokens; ("Power-Shot" remains two parts regards) </param>
@@ -124,7 +123,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <summary>
         /// Advance to the next subword in the string.
         /// </summary>
-        /// <returns> index of the next subword, or <see cref="#DONE"/> if all subwords have been returned </returns>
+        /// <returns> index of the next subword, or <see cref="DONE"/> if all subwords have been returned </returns>
         internal int Next()
         {
             current = end;
@@ -175,7 +174,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// This currently uses the type of the first character in the subword.
         /// </summary>
         /// <returns> type of the current word </returns>
-        internal int Type
+        internal int Type // LUCENENET TODO: Change to GetType()
         {
             get
             {
@@ -218,7 +217,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         /// <param name="lastType"> Last subword type </param>
         /// <param name="type"> Current subword type </param>
-        /// <returns> {@code true} if the transition indicates a break, {@code false} otherwise </returns>
+        /// <returns> <c>true</c> if the transition indicates a break, <c>false</c> otherwise </returns>
         private bool IsBreak(int lastType, int type)
         {
             if ((type & lastType) != 0)
@@ -248,8 +247,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <summary>
         /// Determines if the current word contains only one subword.  Note, it could be potentially surrounded by delimiters
         /// </summary>
-        /// <returns> {@code true} if the current word contains only one subword, {@code false} otherwise </returns>
-        internal bool SingleWord
+        /// <returns> <c>true</c> if the current word contains only one subword, <c>false</c> otherwise </returns>
+        internal bool SingleWord // LUCENENET TODO: Change to IsSingleWord()
         {
             get
             {
@@ -290,10 +289,15 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// Determines if the text at the given position indicates an English possessive which should be removed
         /// </summary>
         /// <param name="pos"> Position in the text to check if it indicates an English possessive </param>
-        /// <returns> {@code true} if the text at the position indicates an English posessive, {@code false} otherwise </returns>
+        /// <returns> <c>true</c> if the text at the position indicates an English posessive, <c>false</c> otherwise </returns>
         private bool EndsWithPossessive(int pos)
         {
-            return (stemEnglishPossessive && pos > 2 && text[pos - 2] == '\'' && (text[pos - 1] == 's' || text[pos - 1] == 'S') && WordDelimiterFilter.IsAlpha(CharType(text[pos - 3])) && (pos == endBounds || WordDelimiterFilter.IsSubwordDelim(CharType(text[pos]))));
+            return (stemEnglishPossessive && 
+                pos > 2 && 
+                text[pos - 2] == '\'' && 
+                (text[pos - 1] == 's' || text[pos - 1] == 'S') && 
+                WordDelimiterFilter.IsAlpha(CharType(text[pos - 3])) && 
+                (pos == endBounds || WordDelimiterFilter.IsSubwordDelim(CharType(text[pos]))));
         }
 
         /// <summary>

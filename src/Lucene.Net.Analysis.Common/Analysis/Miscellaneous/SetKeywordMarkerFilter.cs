@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <summary>
     /// Marks terms as keywords via the <see cref="KeywordAttribute"/>. Each token
     /// contained in the provided set is marked as a keyword by setting
-    /// <see cref="KeywordAttribute#setKeyword(boolean)"/> to <code>true</code>.
+    /// <see cref="KeywordAttribute.IsKeyword"/> to <c>true</c>.
     /// </summary>
     public sealed class SetKeywordMarkerFilter : KeywordMarkerFilter
     {
@@ -31,12 +31,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly CharArraySet keywordSet;
 
         /// <summary>
-        /// Create a new KeywordSetMarkerFilter, that marks the current token as a
+        /// Create a new <see cref="SetKeywordMarkerFilter"/>, that marks the current token as a
         /// keyword if the tokens term buffer is contained in the given set via the
         /// <see cref="KeywordAttribute"/>.
         /// </summary>
         /// <param name="in">
-        ///          TokenStream to filter </param>
+        ///          <see cref="TokenStream"/> to filter </param>
         /// <param name="keywordSet">
         ///          the keywords set to lookup the current termbuffer </param>
         public SetKeywordMarkerFilter(TokenStream @in, CharArraySet keywordSet)
@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             termAtt = AddAttribute<ICharTermAttribute>();
         }
 
-        protected internal override bool Keyword
+        protected override bool IsKeyword
         {
             get
             {

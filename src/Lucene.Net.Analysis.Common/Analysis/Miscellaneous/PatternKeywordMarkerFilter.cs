@@ -34,10 +34,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <summary>
         /// Create a new <see cref="PatternKeywordMarkerFilter"/>, that marks the current
         /// token as a keyword if the tokens term buffer matches the provided
-        /// <see cref="Pattern"/> via the <see cref="KeywordAttribute"/>.
+        /// <see cref="Regex"/> via the <see cref="KeywordAttribute"/>.
         /// </summary>
         /// <param name="in">
-        ///          TokenStream to filter </param>
+        ///          <see cref="TokenStream"/> to filter </param>
         /// <param name="pattern">
         ///          the pattern to apply to the incoming term buffer
         ///  </param>
@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             this.pattern = pattern;
         }
 
-        protected internal override bool Keyword
+        protected override bool IsKeyword
         {
             get
             {
@@ -58,6 +58,5 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 return matcher.Success;
             }
         }
-
     }
 }

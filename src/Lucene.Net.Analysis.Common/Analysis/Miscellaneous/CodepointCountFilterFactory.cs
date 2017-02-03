@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -32,14 +32,15 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// </summary>
     public class CodepointCountFilterFactory : TokenFilterFactory
     {
-        internal readonly int min;
-        internal readonly int max;
+        private readonly int min;
+        private readonly int max;
         public const string MIN_KEY = "min";
         public const string MAX_KEY = "max";
 
         /// <summary>
-        /// Creates a new CodepointCountFilterFactory </summary>
-        public CodepointCountFilterFactory(IDictionary<string, string> args) : base(args)
+        /// Creates a new <see cref="CodepointCountFilterFactory"/> </summary>
+        public CodepointCountFilterFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             min = RequireInt(args, MIN_KEY);
             max = RequireInt(args, MAX_KEY);

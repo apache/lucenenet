@@ -32,9 +32,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// </summary>
     public class RemoveDuplicatesTokenFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new RemoveDuplicatesTokenFilterFactory </summary>
+        /// Creates a new <see cref="RemoveDuplicatesTokenFilterFactory"/> </summary>
         public RemoveDuplicatesTokenFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

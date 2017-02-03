@@ -33,7 +33,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         private readonly int length;
 
-        public TruncateTokenFilter(TokenStream input, int length) : base(input)
+        public TruncateTokenFilter(TokenStream input, int length) 
+            : base(input)
         {
             if (length < 1)
             {
@@ -44,7 +45,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             this.keywordAttr = AddAttribute<IKeywordAttribute>();
         }
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             if (m_input.IncrementToken())
             {

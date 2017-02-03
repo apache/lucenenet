@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <summary>
     /// A filter to apply normal capitalization rules to Tokens.  It will make the first letter
     /// capital and the rest lower case.
-    /// <p/>
+    /// <para/>
     /// This filter is particularly useful to build nice looking facet parameters.  This filter
     /// is not appropriate if you intend to use a prefix query.
     /// </summary>
@@ -47,10 +47,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly ICharTermAttribute termAtt;
 
         /// <summary>
-        /// Creates a CapitalizationFilter with the default parameters.
+        /// Creates a <see cref="CapitalizationFilter"/> with the default parameters.
         /// <para>
-        /// Calls {@link #CapitalizationFilter(TokenStream, boolean, CharArraySet, boolean, Collection, int, int, int)
-        ///   CapitalizationFilter(in, true, null, true, null, 0, DEFAULT_MAX_WORD_COUNT, DEFAULT_MAX_TOKEN_LENGTH)}
+        /// Calls <see cref="CapitalizationFilter.CapitalizationFilter(TokenStream, bool, CharArraySet, bool, ICollection{char[]}, int, int, int)">
+        ///     CapitalizationFilter(in, true, null, true, null, 0, DEFAULT_MAX_WORD_COUNT, DEFAULT_MAX_TOKEN_LENGTH)
+        /// </see>
         /// </para>
         /// </summary>
         public CapitalizationFilter(TokenStream @in)
@@ -59,21 +60,21 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Creates a CapitalizationFilter with the specified parameters. </summary>
+        /// Creates a <see cref="CapitalizationFilter"/> with the specified parameters. </summary>
         /// <param name="in"> input tokenstream </param>
         /// <param name="onlyFirstWord"> should each word be capitalized or all of the words? </param>
         /// <param name="keep"> a keep word list.  Each word that should be kept separated by whitespace. </param>
         /// <param name="forceFirstLetter"> Force the first letter to be capitalized even if it is in the keep list. </param>
         /// <param name="okPrefix"> do not change word capitalization if a word begins with something in this list. </param>
         /// <param name="minWordLength"> how long the word needs to be to get capitalization applied.  If the
-        ///                      minWordLength is 3, "and" > "And" but "or" stays "or". </param>
+        ///                      minWordLength is 3, "and" &gt; "And" but "or" stays "or". </param>
         /// <param name="maxWordCount"> if the token contains more then maxWordCount words, the capitalization is
         ///                     assumed to be correct. </param>
         /// <param name="maxTokenLength"> ??? </param>
         public CapitalizationFilter(TokenStream @in, bool onlyFirstWord, CharArraySet keep, bool forceFirstLetter, ICollection<char[]> okPrefix, int minWordLength, int maxWordCount, int maxTokenLength)
             : base(@in)
         {
-            // LUCENENET: The guard clauses were copied here from the version of Lucene.
+            // LUCENENET NOTE: The guard clauses were copied here from a later version of Lucene.
             // Apparently, the tests were not ported from 4.8.0 because they expected this and the
             // original tests did not. Adding them anyway because there is no downside to this.
             if (minWordLength < 0)

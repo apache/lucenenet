@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -30,13 +30,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
     /// </summary>
-    /// <seealso cref= TrimFilter </seealso>
+    /// <seealso cref="TrimFilter"/>
     public class TrimFilterFactory : TokenFilterFactory
     {
-        protected internal readonly bool m_updateOffsets;
+        protected readonly bool m_updateOffsets;
 
         /// <summary>
-        /// Creates a new TrimFilterFactory </summary>
+        /// Creates a new <see cref="TrimFilterFactory"/> </summary>
         public TrimFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

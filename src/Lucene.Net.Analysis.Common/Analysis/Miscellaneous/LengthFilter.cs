@@ -30,7 +30,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// </summary>
     public sealed class LengthFilter : FilteringTokenFilter
     {
-
         private readonly int min;
         private readonly int max;
 
@@ -55,8 +54,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Create a new <see cref="LengthFilter"/>. This will filter out tokens whose
-        /// <see cref="CharTermAttribute"/> is either too short (<see cref="CharTermAttribute#length()"/>
-        /// &lt; min) or too long (<see cref="CharTermAttribute#length()"/> &gt; max). </summary>
+        /// <see cref="CharTermAttribute"/> is either too short (<see cref="ICharTermAttribute.Length"/>
+        /// &lt; min) or too long (<see cref="ICharTermAttribute.Length"/> &gt; max). </summary>
         /// <param name="version"> the Lucene match version </param>
         /// <param name="in">      the <see cref="TokenStream"/> to consume </param>
         /// <param name="min">     the minimum length </param>

@@ -19,16 +19,17 @@
 
     /// <summary>
     /// Links two <see cref="PrefixAwareTokenFilter"/>.
-    /// <p/>
-    /// <b>NOTE:</b> This filter might not behave correctly if used with custom Attributes, i.e. Attributes other than
-    /// the ones located in org.apache.lucene.analysis.tokenattributes. 
+    /// <para/>
+    /// <b>NOTE:</b> This filter might not behave correctly if used with custom 
+    /// <see cref="Lucene.Net.Util.IAttribute"/>s, i.e. <see cref="Lucene.Net.Util.IAttribute"/>s other than
+    /// the ones located in Lucene.Net.Analysis.TokenAttributes. 
     /// </summary>
     public class PrefixAndSuffixAwareTokenFilter : TokenStream
     {
-
         private readonly PrefixAwareTokenFilter suffix;
 
-        public PrefixAndSuffixAwareTokenFilter(TokenStream prefix, TokenStream input, TokenStream suffix) : base(suffix)
+        public PrefixAndSuffixAwareTokenFilter(TokenStream prefix, TokenStream input, TokenStream suffix) 
+            : base(suffix)
         {
             prefix = new PrefixAwareTokenFilterAnonymousInnerClassHelper(this, prefix, input);
             this.suffix = new PrefixAwareTokenFilterAnonymousInnerClassHelper2(this, prefix, suffix);
@@ -38,7 +39,8 @@
         {
             private readonly PrefixAndSuffixAwareTokenFilter outerInstance;
 
-            public PrefixAwareTokenFilterAnonymousInnerClassHelper(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream input) : base(prefix, input)
+            public PrefixAwareTokenFilterAnonymousInnerClassHelper(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream input) 
+                : base(prefix, input)
             {
                 this.outerInstance = outerInstance;
             }
@@ -53,7 +55,8 @@
         {
             private readonly PrefixAndSuffixAwareTokenFilter outerInstance;
 
-            public PrefixAwareTokenFilterAnonymousInnerClassHelper2(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream suffix) : base(prefix, suffix)
+            public PrefixAwareTokenFilterAnonymousInnerClassHelper2(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream suffix) 
+                : base(prefix, suffix)
             {
                 this.outerInstance = outerInstance;
             }
@@ -85,7 +88,6 @@
         {
             suffix.Reset();
         }
-
 
         public override void Dispose()
         {
