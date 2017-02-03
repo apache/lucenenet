@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis.Fa
 	 */
 
     /// <summary>
-    /// CharFilter that replaces instances of Zero-width non-joiner with an
+    /// <see cref="CharFilter"/> that replaces instances of Zero-width non-joiner with an
     /// ordinary space.
     /// </summary>
     public class PersianCharFilter : CharFilter

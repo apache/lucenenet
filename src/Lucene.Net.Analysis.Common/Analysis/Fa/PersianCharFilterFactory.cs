@@ -33,10 +33,10 @@ namespace Lucene.Net.Analysis.Fa
     /// </summary>
     public class PersianCharFilterFactory : CharFilterFactory, IMultiTermAwareComponent
     {
-
         /// <summary>
-        /// Creates a new PersianCharFilterFactory </summary>
-        public PersianCharFilterFactory(IDictionary<string, string> args) : base(args)
+        /// Creates a new <see cref="PersianCharFilterFactory"/> </summary>
+        public PersianCharFilterFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             if (args.Count > 0)
             {

@@ -33,9 +33,8 @@ namespace Lucene.Net.Analysis.Fa
     /// </summary>
     public class PersianNormalizationFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
-
         /// <summary>
-        /// Creates a new PersianNormalizationFilterFactory </summary>
+        /// Creates a new <see cref="PersianNormalizationFilterFactory"/> </summary>
         public PersianNormalizationFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

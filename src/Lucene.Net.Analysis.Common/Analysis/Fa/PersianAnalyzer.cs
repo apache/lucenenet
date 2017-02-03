@@ -35,12 +35,11 @@ namespace Lucene.Net.Analysis.Fa
     /// </summary>
     public sealed class PersianAnalyzer : StopwordAnalyzerBase
     {
-
         /// <summary>
         /// File containing default Persian stopwords.
         /// 
         /// Default stopword list is from
-        /// http://members.unine.ch/jacques.savoy/clef/index.html The stopword list is
+        /// http://members.unine.ch/jacques.savoy/clef/index.html. The stopword list is
         /// BSD-Licensed.
         /// 
         /// </summary>
@@ -64,7 +63,7 @@ namespace Lucene.Net.Analysis.Fa
         }
 
         /// <summary>
-        /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
         private class DefaultSetHolder
@@ -89,7 +88,7 @@ namespace Lucene.Net.Analysis.Fa
 
         /// <summary>
         /// Builds an analyzer with the default stop words:
-        /// <see cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public PersianAnalyzer(LuceneVersion matchVersion)
               : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
@@ -100,7 +99,7 @@ namespace Lucene.Net.Analysis.Fa
         /// Builds an analyzer with the given stop words 
         /// </summary>
         /// <param name="matchVersion">
-        ///          lucene compatibility version </param>
+        ///          <see cref="LuceneVersion"/> lucene compatibility version </param>
         /// <param name="stopwords">
         ///          a stopword set </param>
         public PersianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
@@ -111,7 +110,7 @@ namespace Lucene.Net.Analysis.Fa
         /// <summary>
         /// Creates
         /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <see cref="Reader"/>.
+        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
         ///         built from a <see cref="StandardTokenizer"/> filtered with
@@ -144,7 +143,7 @@ namespace Lucene.Net.Analysis.Fa
         }
 
         /// <summary>
-        /// Wraps the TextReader with <see cref="PersianCharFilter"/>
+        /// Wraps the <see cref="TextReader"/> with <see cref="PersianCharFilter"/>
         /// </summary>
         protected override TextReader InitReader(string fieldName, TextReader reader)
         {

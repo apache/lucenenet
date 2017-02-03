@@ -22,7 +22,6 @@ namespace Lucene.Net.Analysis.Fa
     /// <summary>
     /// A <see cref="TokenFilter"/> that applies <see cref="PersianNormalizer"/> to normalize the
     /// orthography.
-    /// 
     /// </summary>
     public sealed class PersianNormalizationFilter : TokenFilter
     {
