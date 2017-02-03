@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Lucene.Net.Analysis.In
 {
@@ -33,9 +32,8 @@ namespace Lucene.Net.Analysis.In
     /// </summary>
     public class IndicNormalizationFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
-
         /// <summary>
-        /// Creates a new IndicNormalizationFilterFactory </summary>
+        /// Creates a new <see cref="IndicNormalizationFilterFactory"/> </summary>
         public IndicNormalizationFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.In
         private readonly IndicNormalizer normalizer = new IndicNormalizer();
 
         public IndicNormalizationFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
         }
