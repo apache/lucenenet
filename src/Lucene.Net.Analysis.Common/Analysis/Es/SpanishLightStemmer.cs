@@ -56,13 +56,12 @@
     /// Light Stemmer for Spanish
     /// <para>
     /// This stemmer implements the algorithm described in:
-    /// <i>Report on CLEF-2001 Experiments</i>
+    /// <c>Report on CLEF-2001 Experiments</c>
     /// Jacques Savoy
     /// </para>
     /// </summary>
     public class SpanishLightStemmer
     {
-
         public virtual int Stem(char[] s, int len)
         {
             if (len < 5)

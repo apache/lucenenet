@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Es
     {
 
         /// <summary>
-        /// Creates a new SpanishLightStemFilterFactory </summary>
+        /// Creates a new <see cref="SpanishLightStemFilterFactory"/> </summary>
         public SpanishLightStemFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

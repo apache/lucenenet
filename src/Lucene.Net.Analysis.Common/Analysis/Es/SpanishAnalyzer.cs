@@ -31,13 +31,12 @@ namespace Lucene.Net.Analysis.Es
     /// <summary>
     /// <see cref="Analyzer"/> for Spanish.
     /// <para>
-    /// <a name="version"/>
     /// </para>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
-    /// compatibility when creating SpanishAnalyzer:
-    /// <ul>
-    ///   <li> As of 3.6, SpanishLightStemFilter is used for less aggressive stemming.
-    /// </ul>
+    /// compatibility when creating <see cref="SpanishAnalyzer"/>:
+    /// <list type="bullet">
+    ///     <item> As of 3.6, <see cref="SpanishLightStemFilter"/> is used for less aggressive stemming.</item>
+    /// </list>
     /// </para>
     /// </summary>
     public sealed class SpanishAnalyzer : StopwordAnalyzerBase
@@ -60,7 +59,7 @@ namespace Lucene.Net.Analysis.Es
         }
 
         /// <summary>
-        /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
         private class DefaultSetHolder
@@ -88,7 +87,7 @@ namespace Lucene.Net.Analysis.Es
         }
 
         /// <summary>
-        /// Builds an analyzer with the default stop words: <see cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public SpanishAnalyzer(LuceneVersion matchVersion)
               : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
@@ -98,7 +97,7 @@ namespace Lucene.Net.Analysis.Es
         /// <summary>
         /// Builds an analyzer with the given stop words.
         /// </summary>
-        /// <param name="matchVersion"> lucene compatibility version </param>
+        /// <param name="matchVersion"> <see cref="LuceneVersion"/> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public SpanishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
               : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
@@ -110,7 +109,7 @@ namespace Lucene.Net.Analysis.Es
         /// provided this analyzer will add a <see cref="SetKeywordMarkerFilter"/> before
         /// stemming.
         /// </summary>
-        /// <param name="matchVersion"> lucene compatibility version </param>
+        /// <param name="matchVersion"> <see cref="LuceneVersion"/> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         /// <param name="stemExclusionSet"> a set of terms not to be stemmed </param>
         public SpanishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
@@ -122,13 +121,13 @@ namespace Lucene.Net.Analysis.Es
         /// <summary>
         /// Creates a
         /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// which tokenizes all the text in the provided <see cref="Reader"/>.
+        /// which tokenizes all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> A
         ///         <see cref="Analyzer.TokenStreamComponents"/>
         ///         built from an <see cref="StandardTokenizer"/> filtered with
-        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>
-        ///         , <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
+        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,
+        ///         <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
         ///         provided and <see cref="SpanishLightStemFilter"/>. </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
