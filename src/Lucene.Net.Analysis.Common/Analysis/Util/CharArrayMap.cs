@@ -29,12 +29,12 @@ namespace Lucene.Net.Analysis.Util
 	 */
 
     /// <summary>
-    /// A simple class that stores key <see cref="string"/>s as <see cref="char[]"/>'s in a
+    /// A simple class that stores key <see cref="string"/>s as <see cref="T:char[]"/>'s in a
     /// hash table. Note that this is not a general purpose
     /// class.  For example, it cannot remove items from the
     /// map, nor does it resize its hash table to be smaller,
     /// etc.  It is designed to be quick to retrieve items
-    /// by <see cref="char[]"/> keys without the necessity of converting
+    /// by <see cref="T:char[]"/> keys without the necessity of converting
     /// to a <see cref="string"/> first.
     /// 
     /// <a name="version"></a>
@@ -249,7 +249,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// <c>true</c> if the entire <see cref="KeySet"/> is the same as the 
-        /// <paramref name="text"/> <see cref="char[]"/> being passed in; 
+        /// <paramref name="text"/> <see cref="T:char[]"/> being passed in; 
         /// otherwise <c>false</c>.
         /// </summary>
         public virtual bool ContainsKey(char[] text)

@@ -393,7 +393,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <summary>
         /// Parses a specific affix rule putting the result into the provided affix map
         /// </summary>
-        /// <param name="affixes"> <see cref="SortedDictionary{string, IList{char?}}"/> where the result of the parsing will be put </param>
+        /// <param name="affixes"> <see cref="SortedDictionary{TKey, TValue}"/> where the result of the parsing will be put </param>
         /// <param name="header"> Header line of the affix rule </param>
         /// <param name="reader"> <see cref="TextReader"/> to read the content of the rule from </param>
         /// <param name="conditionPattern"> <see cref="string.Format(string, object[])"/> pattern to be used to generate the condition regex

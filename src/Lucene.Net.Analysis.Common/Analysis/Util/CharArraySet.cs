@@ -28,11 +28,11 @@ namespace Lucene.Net.Analysis.Util
 	 */
 
     /// <summary>
-    /// A simple class that stores <see cref="string"/>s as <see cref="char[]"/>'s in a
+    /// A simple class that stores <see cref="string"/>s as <see cref="T:char[]"/>'s in a
     /// hash table.  Note that this is not a general purpose
     /// class.  For example, it cannot remove items from the
     /// set, nor does it resize its hash table to be smaller,
-    /// etc.  It is designed to be quick to test if a <see cref="char[]"/>
+    /// etc.  It is designed to be quick to test if a <see cref="T:char[]"/>
     /// is in the set without the necessity of converting it
     /// to a <see cref="string"/> first.
     /// 
@@ -54,9 +54,9 @@ namespace Lucene.Net.Analysis.Util
     /// does not behave like it should in all cases. The generic type is
     /// <see cref="string"/>, because you can add any object to it,
     /// that has a string representation (which is converted to a string). The add methods will use
-    /// <see cref="object.ToString()"/> and store the result using a <see cref="char[]"/>
+    /// <see cref="object.ToString()"/> and store the result using a <see cref="T:char[]"/>
     /// buffer. The same behavior have the <see cref="Contains(string)"/> methods.
-    /// The <see cref="GetEnumerator()"/> returns an <see cref="IEnumerator{Char[]}"/>
+    /// The <see cref="GetEnumerator()"/> returns an <see cref="T:IEnumerator{char[]}"/>
     /// </para>
     /// </summary>
     public class CharArraySet : ISet<string>
@@ -125,7 +125,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="char[]"/>s 
+        /// <c>true</c> if the <see cref="T:char[]"/>s 
         /// are in the set 
         /// </summary>
         public virtual bool Contains(char[] text)
@@ -189,8 +189,8 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Add this <see cref="char[]"/> directly to the set.
-        /// If <see cref="ignoreCase"/> is true for this <see cref="CharArraySet"/>, the text array will be directly modified.
+        /// Add this <see cref="T:char[]"/> directly to the set.
+        /// If <c>ignoreCase</c> is true for this <see cref="CharArraySet"/>, the text array will be directly modified.
         /// The user should never modify this text array after calling this method.
         /// </summary>
         /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
@@ -293,7 +293,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns an <see cref="IEnumerator"/> for <see cref="char[]"/> instances in this set.
+        /// Returns an <see cref="IEnumerator"/> for <see cref="T:char[]"/> instances in this set.
         /// </summary>
         public virtual IEnumerator GetEnumerator()
         {
@@ -327,10 +327,10 @@ namespace Lucene.Net.Analysis.Util
         #region LUCENENET specific members
 
         /// <summary>
-        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="string[]"/> array, 
+        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:string[]"/> array, 
         /// starting at the specified index of the target array.
         /// </summary>
-        /// <param name="array">The one-dimensional <see cref="string[]"/> Array that is the destination of the 
+        /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the 
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
         public void CopyTo(string[] array, int arrayIndex)

@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <summary>
     /// Marks terms as keywords via the <see cref="KeywordAttribute"/>. Each token
     /// that matches the provided pattern is marked as a keyword by setting
-    /// <see cref="KeywordAttribute#setKeyword(boolean)"/> to <code>true</code>.
+    /// <see cref="KeywordAttribute.IsKeyword"/> to <c>true</c>.
     /// </summary>
     public sealed class PatternKeywordMarkerFilter : KeywordMarkerFilter
     {

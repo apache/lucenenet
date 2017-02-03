@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.CharFilters
             /// </summary>
             /// <param name="match"> input String to be replaced </param>
             /// <param name="replacement"> output String </param>
-            /// <exception cref="IllegalArgumentException"> if
+            /// <exception cref="ArgumentException"> if
             /// <code>match</code> is the empty string, or was
             /// already previously added </exception>
             public virtual void Add(string match, string replacement)

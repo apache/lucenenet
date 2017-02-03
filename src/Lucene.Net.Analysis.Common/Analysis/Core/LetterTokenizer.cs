@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Core
     /// <summary>
     /// A <see cref="LetterTokenizer"/> is a tokenizer that divides text at non-letters. That's to
     /// say, it defines tokens as maximal strings of adjacent letters, as defined by
-    /// <see cref="char.IsLetter"/> predicate.
+    /// <see cref="char.IsLetter(char)"/> predicate.
     /// <para>
     /// Note: this does a decent job for most European languages, but does a terrible
     /// job for some Asian languages, where words are not separated by spaces.

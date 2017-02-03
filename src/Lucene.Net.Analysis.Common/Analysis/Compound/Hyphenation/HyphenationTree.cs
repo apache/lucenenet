@@ -117,7 +117,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Read hyphenation patterns from an XML file.
         /// </summary>
-        /// <param name="f"> the filename </param>
+        /// <param name="filename"> the filename </param>
         /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(string filename)
         {
@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Read hyphenation patterns from an XML file.
         /// </summary>
-        /// <param name="f"> the filename </param>
+        /// <param name="filename"> the filename </param>
         /// <param name="encoding">The character encoding to use</param>
         /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(string filename, Encoding encoding)
@@ -359,10 +359,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                         {
                             q = m_lo[q];
 
-                            /// <summary>
-                            /// actually the code should be: q = sc[q] < 0 ? hi[q] : lo[q]; but
-                            /// java chars are unsigned
-                            /// </summary>
+                            // actually the code should be: q = sc[q] < 0 ? hi[q] : lo[q]; but
+                            // java chars are unsigned
                         }
                     }
                 }

@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.En
         private readonly ICharTermAttribute termAtt;
         private LuceneVersion matchVersion;
 
-        /// @deprecated Use <see cref="#EnglishPossessiveFilter(Version, TokenStream)"/> instead. 
+        /// @deprecated Use <see cref="EnglishPossessiveFilter(LuceneVersion, TokenStream)"/> instead. 
         [Obsolete(@"Use <see cref=""#EnglishPossessiveFilter(org.apache.lucene.util.Version, org.apache.lucene.analysis.TokenStream)""/> instead.")]
         public EnglishPossessiveFilter(TokenStream input) 
             : this(LuceneVersion.LUCENE_35, input)

@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Core
     ///  <item><c>snowball</c> - This format allows for multiple words specified on each 
     ///      line, and trailing comments may be specified using the vertical line ("&#124;"). 
     ///      Blank lines are ignored.  See 
-    ///      <see cref="WordlistLoader.GetSnowballWordSet"/> 
+    ///      <see cref="WordlistLoader.GetSnowballWordSet(System.IO.TextReader, Net.Util.LuceneVersion)"/> 
     ///      for details.
     ///  </item>
     /// </list>

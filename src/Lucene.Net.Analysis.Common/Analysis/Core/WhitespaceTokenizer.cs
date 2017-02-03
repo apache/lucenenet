@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// Collects only characters which do not satisfy
-        /// <see cref="char.IsWhitespace(char)"/>.
+        /// <see cref="char.IsWhiteSpace(char)"/>.
         /// </summary>
         protected override bool IsTokenChar(int c)
         {

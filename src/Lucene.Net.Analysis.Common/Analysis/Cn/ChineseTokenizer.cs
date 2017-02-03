@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Cn
     /// </list>
     /// </para>
     /// <para>
-    /// Therefore the index created by <see cref="CJKTokenizer"/> is much larger.
+    /// Therefore the index created by <see cref="Cjk.CJKTokenizer"/> is much larger.
     /// </para>
     /// <para>
     /// The problem is that when searching for C1, C1C2, C1C3,

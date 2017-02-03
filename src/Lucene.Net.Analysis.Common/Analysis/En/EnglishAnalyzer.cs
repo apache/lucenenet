@@ -55,6 +55,7 @@ namespace Lucene.Net.Analysis.En
         /// <summary>
         /// Builds an analyzer with the default stop words: <see cref="DefaultStopSet"/>.
         /// </summary>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         public EnglishAnalyzer(LuceneVersion matchVersion)
               : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {

@@ -31,7 +31,6 @@ namespace Lucene.Net.Analysis.Ar
     /// Handling similar to this is necessary for Indic Scripts, Hebrew, Thaana, etc.
     /// </para>
     /// <para>
-    /// <paramref name="matchVersion"/>
     /// You must specify the required <see cref="LuceneVersion"/> compatibility when creating
     /// <see cref="ArabicLetterTokenizer"/>:
     /// <list type="bullet">
@@ -62,7 +61,7 @@ namespace Lucene.Net.Analysis.Ar
         /// <see cref="AttributeSource.AttributeFactory"/>. 
         /// </summary>
         /// <param name="matchVersion">
-        ///         matchVersion Lucene version to match See
+        ///         Lucene version to match - See
         ///         <see cref="LuceneVersion"/>.
         /// </param>
         /// <param name="factory">

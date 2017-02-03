@@ -69,6 +69,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         /// bigrams with position increment 0 type=gram where one or both of the words
         /// in a potential bigram are in the set of common words .
         /// </summary>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="input"> <see cref="TokenStream"/> input in filter chain </param>
         /// <param name="commonWords"> The set of common words. </param>
         public CommonGramsFilter(LuceneVersion matchVersion, TokenStream input, CharArraySet commonWords)

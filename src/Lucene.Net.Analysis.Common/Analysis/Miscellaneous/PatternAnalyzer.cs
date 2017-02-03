@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <para>
     /// If you are unsure how exactly a regular expression should look like, consider 
     /// prototyping by simply trying various expressions on some test texts via
-    /// <see cref="string.Split(string)"/>. Once you are satisfied, give that regex to 
+    /// <see cref="string.Split(char[])"/>. Once you are satisfied, give that regex to 
     /// <see cref="PatternAnalyzer"/>. Also see <a target="_blank" 
     /// href="http://www.regular-expressions.info/">Regular Expression Tutorial</a>.
     /// </para>
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// It can also serve as a building block in a compound Lucene
     /// <see cref="TokenFilter"/> chain. For example as in this 
     /// stemming example:
-    /// <pre>
+    /// <code>
     /// PatternAnalyzer pat = ...
     /// TokenStream tokenStream = new SnowballFilter(
     ///     pat.GetTokenStream("content", "James is running round in the woods"), 
@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         ///            if non-null, ignores all tokens that are contained in the
         ///            given stop set (after previously having applied toLowerCase()
         ///            if applicable). For example, created via
-        ///            <see cref="StopFilter#makeStopSet(Version, String[])"/>and/or
+        ///            <see cref="StopFilter.MakeStopSet(LuceneVersion, string[])"/>and/or
         ///            <see cref="WordlistLoader"/>as in
         ///            <code>WordlistLoader.getWordSet(new File("samples/fulltext/stopwords.txt")</code>
         ///            or <a href="http://www.unine.ch/info/clef/">other stop words

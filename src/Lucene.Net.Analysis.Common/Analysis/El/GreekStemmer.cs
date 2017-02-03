@@ -34,11 +34,11 @@ namespace Lucene.Net.Analysis.El
     public class GreekStemmer
     {
         /// <summary>
-        /// Stems a word contained in a leading portion of a <see cref="char[]"/> array.
+        /// Stems a word contained in a leading portion of a <see cref="T:char[]"/> array.
         /// The word is passed through a number of rules that modify it's length.
         /// </summary>
-        /// <param name="s"> A <see cref="char[]"/> array that contains the word to be stemmed. </param>
-        /// <param name="len"> The length of the <see cref="char[]"/> array. </param>
+        /// <param name="s"> A <see cref="T:char[]"/> array that contains the word to be stemmed. </param>
+        /// <param name="len"> The length of the <see cref="T:char[]"/> array. </param>
         /// <returns> The new length of the stemmed word. </returns>
         public virtual int Stem(char[] s, int len)
         {
@@ -1021,12 +1021,12 @@ namespace Lucene.Net.Analysis.El
         }
 
         /// <summary>
-        /// Checks if the word contained in the leading portion of <see cref="char[]"/> array , 
+        /// Checks if the word contained in the leading portion of <see cref="T:char[]"/> array , 
         /// ends with a Greek vowel.
         /// </summary>
-        /// <param name="s"> A <see cref="char[]"/> array that represents a word. </param>
-        /// <param name="len"> The length of the <see cref="char[]"/> array. </param>
-        /// <returns> True if the word contained in the leading portion of <see cref="char[]"/> array , 
+        /// <param name="s"> A <see cref="T:char[]"/> array that represents a word. </param>
+        /// <param name="len"> The length of the <see cref="T:char[]"/> array. </param>
+        /// <returns> True if the word contained in the leading portion of <see cref="T:char[]"/> array , 
         /// ends with a vowel , false otherwise. </returns>
         private bool EndsWithVowel(char[] s, int len)
         {
@@ -1050,12 +1050,12 @@ namespace Lucene.Net.Analysis.El
         }
 
         /// <summary>
-        /// Checks if the word contained in the leading portion of <see cref="char[]"/> array , 
+        /// Checks if the word contained in the leading portion of <see cref="T:char[]"/> array , 
         /// ends with a Greek vowel.
         /// </summary>
-        /// <param name="s"> A <see cref="char[]"/> array that represents a word. </param>
-        /// <param name="len"> The length of the <see cref="char[]"/> array. </param>
-        /// <returns> True if the word contained in the leading portion of <see cref="char[]"/> array , 
+        /// <param name="s"> A <see cref="T:char[]"/> array that represents a word. </param>
+        /// <param name="len"> The length of the <see cref="T:char[]"/> array. </param>
+        /// <returns> True if the word contained in the leading portion of <see cref="T:char[]"/> array , 
         /// ends with a vowel , false otherwise. </returns>
         private bool EndsWithVowelNoY(char[] s, int len)
         {

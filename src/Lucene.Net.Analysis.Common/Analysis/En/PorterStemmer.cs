@@ -741,7 +741,7 @@ namespace Lucene.Net.Analysis.En
         }
 
         /// <summary>
-        /// Stem a word contained in a <see cref="char[]"/>.  Returns true if the stemming process
+        /// Stem a word contained in a <see cref="T:char[]"/>.  Returns true if the stemming process
         /// resulted in a word different from the input.  You can retrieve the
         /// result with <see cref="ResultLength"/>/<see cref="ResultBuffer"/> or <see cref="ToString"/>.
         /// </summary>
@@ -751,7 +751,7 @@ namespace Lucene.Net.Analysis.En
         }
 
         /// <summary>
-        /// Stem a word contained in a portion of a <see cref="char[]"/> array.  Returns
+        /// Stem a word contained in a portion of a <see cref="T:char[]"/> array.  Returns
         /// true if the stemming process resulted in a word different from
         /// the input.  You can retrieve the result with
         /// <see cref="ResultLength"/>/<see cref="ResultBuffer"/> or <see cref="ToString"/>.
@@ -769,7 +769,7 @@ namespace Lucene.Net.Analysis.En
         }
 
         /// <summary>
-        /// Stem a word contained in a leading portion of a <see cref="char[]"/> array.
+        /// Stem a word contained in a leading portion of a <see cref="T:char[]"/> array.
         /// Returns true if the stemming process resulted in a word different
         /// from the input.  You can retrieve the result with
         /// <see cref="ResultLength"/>/<see cref="ResultBuffer"/> or <see cref="ToString"/>.

@@ -85,13 +85,13 @@ namespace Lucene.Net.Analysis.Cjk
         private int dataLen = 0;
 
         /// <summary>
-        /// character buffer, store the characters which are used to compose <br>
+        /// character buffer, store the characters which are used to compose 
         /// the returned Token
         /// </summary>
         private readonly char[] buffer = new char[MAX_WORD_LEN];
 
         /// <summary>
-        /// I/O buffer, used to store the content of the input(one of the <br>
+        /// I/O buffer, used to store the content of the input(one of the
         /// members of Tokenizer)
         /// </summary>
         private readonly char[] ioBuffer = new char[IO_BUFFER_SIZE];
@@ -151,22 +151,20 @@ namespace Lucene.Net.Analysis.Cjk
         public override bool IncrementToken()
         {
             ClearAttributes();
-            /// <summary>
-            /// how many character(s) has been stored in buffer </summary>
+
+            // how many character(s) has been stored in buffer 
 
             while (true) // loop until we find a non-empty token
             {
 
                 int length = 0;
 
-                /// <summary>
-                /// the position used to create Token </summary>
+                // the position used to create Token 
                 int start = offset;
 
                 while (true) // loop until we've found a full token
                 {
-                    /// <summary>
-                    /// current character </summary>
+                    // current character
                     char c;
 
                     offset++;

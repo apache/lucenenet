@@ -30659,13 +30659,13 @@ namespace Lucene.Net.Analysis.CharFilters
         private int yycolumn;
 
         /// <summary>
-        /// zzAtBOL == true <=> the scanner is currently at the beginning of a line
+        /// zzAtBOL == true &lt;=&gt; the scanner is currently at the beginning of a line
         /// </summary>
         private bool zzAtBOL = true;
 
 #pragma warning restore 169, 414
 
-        /// <summary>zzAtEOF == true <=> the scanner is at the EOF</summary>
+        /// <summary>zzAtEOF == true &lt;=&gt; the scanner is at the EOF</summary>
         private bool zzAtEOF;
 
         /// <summary>denotes if the user-EOF-code has already been executed</summary>
@@ -31061,7 +31061,7 @@ namespace Lucene.Net.Analysis.CharFilters
         /// <para/>
         /// All internal variables are reset, the old input stream
         /// <b>cannot</b> be reused (internal buffer is discarded and lost).
-        /// Lexical state is set to <see cref="ZZ_INITIAL"/>.
+        /// Lexical state is set to <see cref="YYINITIAL"/>.
         /// <para/>
         /// Internal scan buffer is resized down to its initial length, if it has grown.
         /// </summary>
