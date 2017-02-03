@@ -24,23 +24,21 @@ namespace Lucene.Net.Analysis.Reverse
     /// <summary>
     /// Reverse token string, for example "country" => "yrtnuoc".
     /// <para>
-    /// If <code>marker</code> is supplied, then tokens will be also prepended by
+    /// If <see cref="marker"/> is supplied, then tokens will be also prepended by
     /// that character. For example, with a marker of &#x5C;u0001, "country" =>
     /// "&#x5C;u0001yrtnuoc". This is useful when implementing efficient leading
     /// wildcards search.
     /// </para>
-    /// <a name="version"/>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
-    /// compatibility when creating ReverseStringFilter, or when using any of
+    /// compatibility when creating <see cref="ReverseStringFilter"/>, or when using any of
     /// its static methods:
-    /// <ul>
-    ///   <li> As of 3.1, supplementary characters are handled correctly
-    /// </ul>
+    /// <list type="bullet">
+    ///     <item> As of 3.1, supplementary characters are handled correctly</item>
+    /// </list>
     /// </para>
     /// </summary>
     public sealed class ReverseStringFilter : TokenFilter
     {
-
         private readonly ICharTermAttribute termAtt;
         private readonly char marker;
         private readonly LuceneVersion matchVersion;
@@ -67,30 +65,32 @@ namespace Lucene.Net.Analysis.Reverse
         public const char RTL_DIRECTION_MARKER = '\u200F';
 
         /// <summary>
-        /// Create a new ReverseStringFilter that reverses all tokens in the 
+        /// Create a new <see cref="ReverseStringFilter"/> that reverses all tokens in the 
         /// supplied <see cref="TokenStream"/>.
         /// <para>
         /// The reversed tokens will not be marked. 
         /// </para>
         /// </summary>
-        /// <param name="matchVersion"> See <a href="#version">above</a> </param>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="in"> <see cref="TokenStream"/> to filter </param>
-        public ReverseStringFilter(LuceneVersion matchVersion, TokenStream @in) : this(matchVersion, @in, NOMARKER)
+        public ReverseStringFilter(LuceneVersion matchVersion, TokenStream @in) 
+            : this(matchVersion, @in, NOMARKER)
         {
         }
 
         /// <summary>
-        /// Create a new ReverseStringFilter that reverses and marks all tokens in the
+        /// Create a new <see cref="ReverseStringFilter"/> that reverses and marks all tokens in the
         /// supplied <see cref="TokenStream"/>.
         /// <para>
-        /// The reversed tokens will be prepended (marked) by the <code>marker</code>
+        /// The reversed tokens will be prepended (marked) by the <paramref name="marker"/>
         /// character.
         /// </para>
         /// </summary>
-        /// <param name="matchVersion"> See <a href="#version">above</a> </param>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="in"> <see cref="TokenStream"/> to filter </param>
         /// <param name="marker"> A character used to mark reversed tokens </param>
-        public ReverseStringFilter(LuceneVersion matchVersion, TokenStream @in, char marker) : base(@in)
+        public ReverseStringFilter(LuceneVersion matchVersion, TokenStream @in, char marker) 
+            : base(@in)
         {
             this.matchVersion = matchVersion;
             this.marker = marker;
@@ -121,7 +121,7 @@ namespace Lucene.Net.Analysis.Reverse
         /// <summary>
         /// Reverses the given input string
         /// </summary>
-        /// <param name="matchVersion"> See <a href="#version">above</a> </param>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="input"> the string to reverse </param>
         /// <returns> the given input string in reversed order </returns>
         public static string Reverse(LuceneVersion matchVersion, string input)
@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.Reverse
 
         /// <summary>
         /// Reverses the given input buffer in-place </summary>
-        /// <param name="matchVersion"> See <a href="#version">above</a> </param>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="buffer"> the input char array to reverse </param>
         public static void Reverse(LuceneVersion matchVersion, char[] buffer)
         {
@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.Reverse
         /// <summary>
         /// Partially reverses the given input buffer in-place from offset 0
         /// up to the given length. </summary>
-        /// <param name="matchVersion"> See <a href="#version">above</a> </param>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="buffer"> the input char array to reverse </param>
         /// <param name="len"> the length in the buffer up to where the
         ///        buffer should be reversed </param>
@@ -172,7 +172,7 @@ namespace Lucene.Net.Analysis.Reverse
         /// <summary>
         /// Partially reverses the given input buffer in-place from the given offset
         /// up to the given length. </summary>
-        /// <param name="matchVersion"> See <a href="#version">above</a> </param>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="buffer"> the input char array to reverse </param>
         /// <param name="start"> the offset from where to reverse the buffer </param>
         /// <param name="len"> the length in the buffer up to where the

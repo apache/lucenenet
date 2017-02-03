@@ -34,9 +34,8 @@ namespace Lucene.Net.Analysis.Reverse
     /// </summary>
     public class ReverseStringFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new ReverseStringFilterFactory </summary>
+        /// Creates a new <see cref="ReverseStringFilterFactory"/> </summary>
         public ReverseStringFilterFactory(IDictionary<string, string> args) : base(args)
         {
             AssureMatchVersion();
