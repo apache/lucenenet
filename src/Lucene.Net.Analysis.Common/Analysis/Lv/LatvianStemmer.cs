@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Analysis.Util;
-using System.IO;
 
 namespace Lucene.Net.Analysis.Lv
 {
@@ -24,14 +23,14 @@ namespace Lucene.Net.Analysis.Lv
     /// Light stemmer for Latvian.
     /// <para>
     /// This is a light version of the algorithm in Karlis Kreslin's PhD thesis
-    /// <i>A stemming algorithm for Latvian</i> with the following modifications:
-    /// <ul>
-    ///   <li>Only explicitly stems noun and adjective morphology
-    ///   <li>Stricter length/vowel checks for the resulting stems (verb etc suffix stripping is removed)
-    ///   <li>Removes only the primary inflectional suffixes: case and number for nouns ; 
-    ///       case, number, gender, and definitiveness for adjectives.
-    ///   <li>Palatalization is only handled when a declension II,V,VI noun suffix is removed.
-    /// </ul>
+    /// <c>A stemming algorithm for Latvian</c> with the following modifications:
+    /// <list type="bullet">
+    ///   <item>Only explicitly stems noun and adjective morphology</item>
+    ///   <item>Stricter length/vowel checks for the resulting stems (verb etc suffix stripping is removed)</item>
+    ///   <item>Removes only the primary inflectional suffixes: case and number for nouns ; 
+    ///       case, number, gender, and definitiveness for adjectives.</item>
+    ///   <item>Palatalization is only handled when a declension II,V,VI noun suffix is removed.</item>
+    /// </list>
     /// </para>
     /// </summary>
     public class LatvianStemmer
@@ -94,12 +93,12 @@ namespace Lucene.Net.Analysis.Lv
 
         /// <summary>
         /// Most cases are handled except for the ambiguous ones:
-        /// <ul>
-        ///  <li> s -> š
-        ///  <li> t -> š
-        ///  <li> d -> ž
-        ///  <li> z -> ž
-        /// </ul>
+        /// <list type="bullet">
+        ///     <item> s -> š</item>
+        ///     <item> t -> š</item>
+        ///     <item> d -> ž</item>
+        ///     <item> z -> ž</item>
+        /// </list>
         /// </summary>
         private int Unpalatalize(char[] s, int len)
         {

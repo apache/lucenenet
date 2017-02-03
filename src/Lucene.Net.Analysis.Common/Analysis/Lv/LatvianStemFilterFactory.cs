@@ -34,9 +34,8 @@ namespace Lucene.Net.Analysis.Lv
     /// </summary>
     public class LatvianStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new LatvianStemFilterFactory </summary>
+        /// Creates a new <see cref="LatvianStemFilterFactory"/> </summary>
         public LatvianStemFilterFactory(IDictionary<string, string> args)
               : base(args)
         {
