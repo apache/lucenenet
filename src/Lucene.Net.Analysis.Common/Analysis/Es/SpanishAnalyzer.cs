@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Es
         /// <summary>
         /// Builds an analyzer with the given stop words.
         /// </summary>
-        /// <param name="matchVersion"> <see cref="LuceneVersion"/> lucene compatibility version </param>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public SpanishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
               : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis.Es
         /// provided this analyzer will add a <see cref="SetKeywordMarkerFilter"/> before
         /// stemming.
         /// </summary>
-        /// <param name="matchVersion"> <see cref="LuceneVersion"/> lucene compatibility version </param>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         /// <param name="stemExclusionSet"> a set of terms not to be stemmed </param>
         public SpanishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)

@@ -141,7 +141,7 @@ namespace Lucene.Net.Analysis.De
         /// Builds an analyzer with the given stop words 
         /// </summary>
         /// <param name="matchVersion">
-        ///          <see cref="LuceneVersion"/> lucene compatibility version </param>
+        ///          lucene compatibility version </param>
         /// <param name="stopwords">
         ///          a stopword set </param>
         public GermanAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.De
         /// Builds an analyzer with the given stop words
         /// </summary>
         /// <param name="matchVersion">
-        ///          <see cref="LuceneVersion"/> lucene compatibility version </param>
+        ///          lucene compatibility version </param>
         /// <param name="stopwords">
         ///          a stopword set </param>
         /// <param name="stemExclusionSet">
