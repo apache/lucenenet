@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
-using System.IO;
 
 namespace Lucene.Net.Analysis.No
 {
@@ -25,7 +24,7 @@ namespace Lucene.Net.Analysis.No
     /// words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
     /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para>
     /// </summary>
@@ -36,20 +35,20 @@ namespace Lucene.Net.Analysis.No
         private readonly IKeywordAttribute keywordAttr;
 
         /// <summary>
-        /// Calls {@link #NorwegianMinimalStemFilter(TokenStream, int) 
-        /// NorwegianMinimalStemFilter(input, BOKMAAL)}
+        /// Calls <see cref="NorwegianLightStemFilter.NorwegianLightStemFilter(TokenStream, int)"/> -
+        /// NorwegianMinimalStemFilter(input, BOKMAAL)
         /// </summary>
         public NorwegianMinimalStemFilter(TokenStream input)
-              : this(input, NorwegianLightStemmer.BOKMAAL)
+            : this(input, NorwegianLightStemmer.BOKMAAL)
         {
         }
 
         /// <summary>
-        /// Creates a new NorwegianLightStemFilter </summary>
-        /// <param name="flags"> set to <see cref="NorwegianLightStemmer#BOKMAAL"/>, 
-        ///                     <see cref="NorwegianLightStemmer#NYNORSK"/>, or both. </param>
+        /// Creates a new <see cref="NorwegianLightStemFilter"/> </summary>
+        /// <param name="flags"> set to <see cref="NorwegianLightStemmer.BOKMAAL"/>, 
+        ///                     <see cref="NorwegianLightStemmer.NYNORSK"/>, or both. </param>
         public NorwegianMinimalStemFilter(TokenStream input, int flags)
-              : base(input)
+            : base(input)
         {
             this.stemmer = new NorwegianMinimalStemmer(flags);
             termAtt = AddAttribute<ICharTermAttribute>();

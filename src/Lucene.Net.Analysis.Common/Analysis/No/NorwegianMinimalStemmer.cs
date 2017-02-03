@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Analysis.Util;
-using System.IO;
 
 namespace Lucene.Net.Analysis.No
 {
@@ -63,13 +62,13 @@ namespace Lucene.Net.Analysis.No
     /// </summary>
     public class NorwegianMinimalStemmer
     {
-        internal readonly bool useBokmaal;
-        internal readonly bool useNynorsk;
+        private readonly bool useBokmaal;
+        private readonly bool useNynorsk;
 
         /// <summary>
-        /// Creates a new NorwegianMinimalStemmer </summary>
-        /// <param name="flags"> set to <see cref="NorwegianLightStemmer#BOKMAAL"/>, 
-        ///                     <see cref="NorwegianLightStemmer#NYNORSK"/>, or both. </param>
+        /// Creates a new <see cref="NorwegianMinimalStemmer"/> </summary>
+        /// <param name="flags"> set to <see cref="NorwegianLightStemmer.BOKMAAL"/>, 
+        ///                     <see cref="NorwegianLightStemmer.NYNORSK"/>, or both. </param>
         public NorwegianMinimalStemmer(int flags)
         {
             if (flags <= 0 || flags > NorwegianLightStemmer.BOKMAAL + NorwegianLightStemmer.NYNORSK)

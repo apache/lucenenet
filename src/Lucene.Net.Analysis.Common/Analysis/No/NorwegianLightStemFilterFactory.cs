@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Lucene.Net.Analysis.No
 {
@@ -34,11 +33,10 @@ namespace Lucene.Net.Analysis.No
     /// </summary>
     public class NorwegianLightStemFilterFactory : TokenFilterFactory
     {
-
         private readonly int flags;
 
         /// <summary>
-        /// Creates a new NorwegianLightStemFilterFactory </summary>
+        /// Creates a new <see cref="NorwegianLightStemFilterFactory"/> </summary>
         public NorwegianLightStemFilterFactory(IDictionary<string, string> args)
               : base(args)
         {

@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Lucene.Net.Analysis.No
 {
@@ -34,12 +33,12 @@ namespace Lucene.Net.Analysis.No
     /// </summary>
     public class NorwegianMinimalStemFilterFactory : TokenFilterFactory
     {
-
         private readonly int flags;
 
         /// <summary>
-        /// Creates a new NorwegianMinimalStemFilterFactory </summary>
-        public NorwegianMinimalStemFilterFactory(IDictionary<string, string> args) : base(args)
+        /// Creates a new <see cref="NorwegianMinimalStemFilterFactory"/> </summary>
+        public NorwegianMinimalStemFilterFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             string variant = Get(args, "variant");
             if (variant == null || "nb".Equals(variant))

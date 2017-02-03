@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
-using System.IO;
 
 namespace Lucene.Net.Analysis.No
 {
@@ -25,7 +24,7 @@ namespace Lucene.Net.Analysis.No
     /// words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
     /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para>
     /// </summary>
@@ -36,8 +35,8 @@ namespace Lucene.Net.Analysis.No
         private readonly IKeywordAttribute keywordAttr;
 
         /// <summary>
-        /// Calls {@link #NorwegianLightStemFilter(TokenStream, int) 
-        /// NorwegianLightStemFilter(input, BOKMAAL)}
+        /// Calls <see cref="NorwegianLightStemFilter.NorwegianLightStemFilter(TokenStream, int)"/>
+        /// - NorwegianLightStemFilter(input, BOKMAAL)
         /// </summary>
         public NorwegianLightStemFilter(TokenStream input)
               : this(input, NorwegianLightStemmer.BOKMAAL)
@@ -45,10 +44,11 @@ namespace Lucene.Net.Analysis.No
         }
 
         /// <summary>
-        /// Creates a new NorwegianLightStemFilter </summary>
-        /// <param name="flags"> set to <see cref="NorwegianLightStemmer#BOKMAAL"/>, 
-        ///                     <see cref="NorwegianLightStemmer#NYNORSK"/>, or both. </param>
-        public NorwegianLightStemFilter(TokenStream input, int flags) : base(input)
+        /// Creates a new <see cref="NorwegianLightStemFilter"/> </summary>
+        /// <param name="flags"> set to <see cref="NorwegianLightStemmer.BOKMAAL"/>, 
+        ///                     <see cref="NorwegianLightStemmer.NYNORSK"/>, or both. </param>
+        public NorwegianLightStemFilter(TokenStream input, int flags) 
+            : base(input)
         {
             stemmer = new NorwegianLightStemmer(flags);
             termAtt = AddAttribute<ICharTermAttribute>();

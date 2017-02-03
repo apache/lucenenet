@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Analysis.Util;
-using System.IO;
 
 namespace Lucene.Net.Analysis.No
 {
@@ -58,13 +57,15 @@ namespace Lucene.Net.Analysis.No
     /// <summary>
     /// Light Stemmer for Norwegian.
     /// <para>
-    /// Parts of this stemmer is adapted from SwedishLightStemFilter, except
+    /// Parts of this stemmer is adapted from <see cref="Sv.SwedishLightStemFilter"/>, except
     /// that while the Swedish one has a pre-defined rule set and a corresponding
     /// corpus to validate against whereas the Norwegian one is hand crafted.
     /// </para>
     /// </summary>
     public class NorwegianLightStemmer
     {
+        // LUCENENET TODO: Convert the following into a [Flags] enum
+
         /// <summary>
         /// Constant to remove Bokmål-specific endings </summary>
         public const int BOKMAAL = 1;
@@ -72,12 +73,12 @@ namespace Lucene.Net.Analysis.No
         /// Constant to remove Nynorsk-specific endings </summary>
         public const int NYNORSK = 2;
 
-        internal readonly bool useBokmaal;
-        internal readonly bool useNynorsk;
+        private readonly bool useBokmaal;
+        private readonly bool useNynorsk;
 
         /// <summary>
-        /// Creates a new NorwegianLightStemmer </summary>
-        /// <param name="flags"> set to <see cref="#BOKMAAL"/>, <see cref="#NYNORSK"/>, or both. </param>
+        /// Creates a new <see cref="NorwegianLightStemmer"/> </summary>
+        /// <param name="flags"> set to <see cref="BOKMAAL"/>, <see cref="NYNORSK"/>, or both. </param>
         public NorwegianLightStemmer(int flags)
         {
             if (flags <= 0 || flags > BOKMAAL + NYNORSK)
