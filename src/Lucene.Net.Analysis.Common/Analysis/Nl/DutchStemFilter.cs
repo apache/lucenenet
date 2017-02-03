@@ -31,14 +31,15 @@ namespace Lucene.Net.Analysis.Nl
     /// </para>
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <see cref="KeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// <see cref="Miscellaneous.KeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
     /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
-    /// </para> </summary>
-    /// <seealso cref= KeywordMarkerFilter </seealso>
-    /// @deprecated (3.1) Use <see cref="SnowballFilter"/> with 
-    /// <see cref="org.tartarus.snowball.ext.DutchStemmer"/> instead, which has the
+    /// </para> 
+    /// </summary>
+    /// <seealso cref="Miscellaneous.KeywordMarkerFilter"/>
+    /// @deprecated (3.1) Use <see cref="Snowball.SnowballFilter"/> with 
+    /// <see cref="Tartarus.Snowball.Ext.DutchStemmer"/> instead, which has the
     /// same functionality. This filter will be removed in Lucene 5.0 
-    [Obsolete("(3.1) Use SnowballFilter with DutchStemmer instead, which has the same functionality. This filter will be removed in Lucene 5.0")]
+    [Obsolete("(3.1) Use Snowball.SnowballFilter with Tartarus.Snowball.Ext.DutchStemmer instead, which has the same functionality. This filter will be removed in Lucene 5.0")]
     public sealed class DutchStemFilter : TokenFilter
     {
         /// <summary>
@@ -49,15 +50,16 @@ namespace Lucene.Net.Analysis.Nl
         private readonly ICharTermAttribute termAtt;
         private readonly IKeywordAttribute keywordAttr;
 
-        public DutchStemFilter(TokenStream _in)
-              : base(_in)
+        public DutchStemFilter(TokenStream @in)
+              : base(@in)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();
         }
 
         /// <param name="stemdictionary"> Dictionary of word stem pairs, that overrule the algorithm </param>
-        public DutchStemFilter(TokenStream _in, IDictionary<string, string> stemdictionary) : this(_in)
+        public DutchStemFilter(TokenStream @in, IDictionary<string, string> stemdictionary) 
+            : this(@in)
         {
             stemmer.StemDictionary = stemdictionary;
         }

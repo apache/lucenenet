@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Nl
     /// the <a href="http://snowball.tartarus.org/algorithms/dutch/stemmer.html">dutch stemming</a>
     /// algorithm in Martin Porter's snowball project.
     /// </para> </summary>
-    /// @deprecated (3.1) Use <see cref="org.tartarus.snowball.ext.DutchStemmer"/> instead, 
+    /// @deprecated (3.1) Use <see cref="Tartarus.Snowball.Ext.DutchStemmer"/> instead, 
     /// which has the same functionality. This filter will be removed in Lucene 5.0 
     [Obsolete("(3.1) Use Tartarus.Snowball.Ext.DutchStemmer instead, which has the same functionality. This filter will be removed in Lucene 5.0")]
     public class DutchStemmer
@@ -47,12 +47,12 @@ namespace Lucene.Net.Analysis.Nl
         private int _R2;
 
         //TODO convert to internal
-        /*
-         * Stems the given term to an unique <tt>discriminator</tt>.
-         *
-         * @param term The term that should be stemmed.
-         * @return Discriminator for <tt>term</tt>
-         */
+
+        /// <summary>
+        /// Stems the given term to an unique <c>discriminator</c>.
+        /// </summary>
+        /// <param name="term">The term that should be stemmed.</param>
+        /// <returns>Discriminator for <paramref name="term"/></returns>
         public virtual string Stem(string term)
         {
             term = locale.TextInfo.ToLower(term);

@@ -38,19 +38,18 @@ namespace Lucene.Net.Analysis.Nl
     /// exclusion list is empty by default.
     /// </para>
     /// 
-    /// <a name="version"/>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
-    /// compatibility when creating DutchAnalyzer:
-    /// <ul>
-    ///   <li> As of 3.6, <see cref="#DutchAnalyzer(Version, CharArraySet)"/> and
-    ///        <see cref="#DutchAnalyzer(Version, CharArraySet, CharArraySet)"/> also populate
-    ///        the default entries for the stem override dictionary
-    ///   <li> As of 3.1, Snowball stemming is done with SnowballFilter, 
+    /// compatibility when creating <see cref="DutchAnalyzer"/>:
+    /// <list type="bullet">
+    ///   <item> As of 3.6, <see cref="DutchAnalyzer(LuceneVersion, CharArraySet)"/> and
+    ///        <see cref="DutchAnalyzer(LuceneVersion, CharArraySet, CharArraySet)"/> also populate
+    ///        the default entries for the stem override dictionary</item>
+    ///   <item> As of 3.1, Snowball stemming is done with SnowballFilter, 
     ///        LowerCaseFilter is used prior to StopFilter, and Snowball 
-    ///        stopwords are used by default.
-    ///   <li> As of 2.9, StopFilter preserves position
-    ///        increments
-    /// </ul>
+    ///        stopwords are used by default.</item>
+    ///   <item> As of 2.9, StopFilter preserves position
+    ///        increments</item>
+    /// </list>
     /// 
     /// </para>
     /// <para><b>NOTE</b>: This class uses the same <see cref="LuceneVersion"/>
@@ -58,7 +57,6 @@ namespace Lucene.Net.Analysis.Nl
     /// </summary>
     public sealed class DutchAnalyzer : Analyzer
     {
-
         /// <summary>
         /// File containing default Dutch stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "dutch_stop.txt";
@@ -107,7 +105,7 @@ namespace Lucene.Net.Analysis.Nl
 
 
         /// <summary>
-        /// Contains the stopwords used with the StopFilter.
+        /// Contains the stopwords used with the <see cref="StopFilter"/>.
         /// </summary>
         private readonly CharArraySet stoptable;
 
@@ -123,9 +121,8 @@ namespace Lucene.Net.Analysis.Nl
         private readonly LuceneVersion matchVersion;
 
         /// <summary>
-        /// Builds an analyzer with the default stop words (<see cref="#getDefaultStopSet()"/>) 
+        /// Builds an analyzer with the default stop words (<see cref="DefaultStopSet"/>) 
         /// and a few default entries for the stem exclusion table.
-        /// 
         /// </summary>
         public DutchAnalyzer(LuceneVersion matchVersion)
               : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET, CharArraySet.EMPTY_SET, DefaultSetHolder.DEFAULT_STEM_DICT)
@@ -193,7 +190,7 @@ namespace Lucene.Net.Analysis.Nl
 
         /// <summary>
         /// Returns a (possibly reused) <see cref="TokenStream"/> which tokenizes all the 
-        /// text in the provided <see cref="Reader"/>.
+        /// text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> A <see cref="TokenStream"/> built from a <see cref="StandardTokenizer"/>
         ///   filtered with <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, 
