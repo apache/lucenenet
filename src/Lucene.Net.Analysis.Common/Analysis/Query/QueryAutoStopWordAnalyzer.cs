@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Query
      */
 
     /// <summary>
-    /// An <seealso cref="Analyzer"/> used primarily at query time to wrap another analyzer and provide a layer of protection
+    /// An <see cref="Analyzer"/> used primarily at query time to wrap another analyzer and provide a layer of protection
     /// which prevents very common words from being passed into queries. 
     /// <para>
     /// For very large indexes the cost
@@ -47,9 +47,9 @@ namespace Lucene.Net.Analysis.Query
         /// <summary>
         /// Creates a new QueryAutoStopWordAnalyzer with stopwords calculated for all
         /// indexed fields from terms with a document frequency percentage greater than
-        /// <seealso cref="#defaultMaxDocFreqPercent"/>
+        /// <see cref="#defaultMaxDocFreqPercent"/>
         /// </summary>
-        /// <param name="matchVersion"> Version to be used in <seealso cref="StopFilter"/> </param>
+        /// <param name="matchVersion"> Version to be used in <see cref="StopFilter"/> </param>
         /// <param name="delegate"> Analyzer whose TokenStream will be filtered </param>
         /// <param name="indexReader"> IndexReader to identify the stopwords from </param>
         /// <exception cref="IOException"> Can be thrown while reading from the IndexReader </exception>
@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Query
         /// indexed fields from terms with a document frequency greater than the given
         /// maxDocFreq
         /// </summary>
-        /// <param name="matchVersion"> Version to be used in <seealso cref="StopFilter"/> </param>
+        /// <param name="matchVersion"> Version to be used in <see cref="StopFilter"/> </param>
         /// <param name="delegate"> Analyzer whose TokenStream will be filtered </param>
         /// <param name="indexReader"> IndexReader to identify the stopwords from </param>
         /// <param name="maxDocFreq"> Document frequency terms should be above in order to be stopwords </param>
@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Query
         /// indexed fields from terms with a document frequency percentage greater than
         /// the given maxPercentDocs
         /// </summary>
-        /// <param name="matchVersion"> Version to be used in <seealso cref="StopFilter"/> </param>
+        /// <param name="matchVersion"> Version to be used in <see cref="StopFilter"/> </param>
         /// <param name="delegate"> Analyzer whose TokenStream will be filtered </param>
         /// <param name="indexReader"> IndexReader to identify the stopwords from </param>
         /// <param name="maxPercentDocs"> The maximum percentage (between 0.0 and 1.0) of index documents which
@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.Query
         /// given selection of fields from terms with a document frequency percentage
         /// greater than the given maxPercentDocs
         /// </summary>
-        /// <param name="matchVersion"> Version to be used in <seealso cref="StopFilter"/> </param>
+        /// <param name="matchVersion"> Version to be used in <see cref="StopFilter"/> </param>
         /// <param name="delegate"> Analyzer whose TokenStream will be filtered </param>
         /// <param name="indexReader"> IndexReader to identify the stopwords from </param>
         /// <param name="fields"> Selection of fields to calculate stopwords for </param>
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Query
         /// given selection of fields from terms with a document frequency greater than
         /// the given maxDocFreq
         /// </summary>
-        /// <param name="matchVersion"> Version to be used in <seealso cref="StopFilter"/> </param>
+        /// <param name="matchVersion"> Version to be used in <see cref="StopFilter"/> </param>
         /// <param name="delegate"> Analyzer whose TokenStream will be filtered </param>
         /// <param name="indexReader"> IndexReader to identify the stopwords from </param>
         /// <param name="fields"> Selection of fields to calculate stopwords for </param>

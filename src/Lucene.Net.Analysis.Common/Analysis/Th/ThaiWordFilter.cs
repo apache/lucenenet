@@ -28,10 +28,10 @@ namespace Lucene.Net.Analysis.Th
 	 */
 
     /// <summary>
-    /// <seealso cref="TokenFilter"/> that use <seealso cref="java.text.BreakIterator"/> to break each 
+    /// <see cref="TokenFilter"/> that use <see cref="java.text.BreakIterator"/> to break each 
     /// Token that is Thai into separate Token(s) for each Thai word.
     /// <para>Please note: Since matchVersion 3.1 on, this filter no longer lowercases non-thai text.
-    /// <seealso cref="ThaiAnalyzer"/> will insert a <seealso cref="LowerCaseFilter"/> before this filter
+    /// <see cref="ThaiAnalyzer"/> will insert a <see cref="LowerCaseFilter"/> before this filter
     /// so the behaviour of the Analyzer does not change. With version 3.1, the filter handles
     /// position increments correctly.
     /// </para>
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Th
     ///    which uses an ICU Thai BreakIterator that will always be available.
     /// </para>
     /// </summary>
-    /// @deprecated Use <seealso cref="ThaiTokenizer"/> instead. 
+    /// @deprecated Use <see cref="ThaiTokenizer"/> instead. 
     [Obsolete("Use ThaiTokenizer instead.")]
     public sealed class ThaiWordFilter : TokenFilter
     {

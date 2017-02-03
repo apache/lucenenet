@@ -241,7 +241,7 @@ namespace Lucene.Net.Analysis.Synonym
             }
 
             /// <summary>
-            /// Builds an <seealso cref="SynonymMap"/> and returns it.
+            /// Builds an <see cref="SynonymMap"/> and returns it.
             /// </summary>
             public virtual SynonymMap Build()
             {
@@ -349,13 +349,13 @@ namespace Lucene.Net.Analysis.Synonym
             }
 
             /// <summary>
-            /// Parse the given input, adding synonyms to the inherited <seealso cref="Builder"/>. </summary>
+            /// Parse the given input, adding synonyms to the inherited <see cref="Builder"/>. </summary>
             /// <param name="in"> The input to parse </param>
             public abstract void Parse(TextReader @in);
 
             /// <summary>
             /// Sugar: analyzes the text with the analyzer and
-            ///  separates by <seealso cref="SynonymMap#WORD_SEPARATOR"/>.
+            ///  separates by <see cref="SynonymMap#WORD_SEPARATOR"/>.
             ///  reuse and its chars must not be null. 
             /// </summary>
             public virtual CharsRef Analyze(string text, CharsRef reuse)

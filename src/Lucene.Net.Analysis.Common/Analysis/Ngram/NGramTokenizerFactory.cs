@@ -23,13 +23,13 @@ namespace Lucene.Net.Analysis.Ngram
      */
 
     /// <summary>
-    /// Factory for <seealso cref="NGramTokenizer"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="NGramTokenizer"/>.
+    /// <code>
     /// &lt;fieldType name="text_ngrm" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.NGramTokenizerFactory" minGramSize="1" maxGramSize="2"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class NGramTokenizerFactory : TokenizerFactory
     {
@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Ngram
         }
 
         /// <summary>
-        /// Creates the <seealso cref="TokenStream"/> of n-grams from the given <seealso cref="TextReader"/> and <seealso cref="AttributeSource.AttributeFactory"/>. </summary>
+        /// Creates the <see cref="TokenStream"/> of n-grams from the given <see cref="TextReader"/> and <see cref="AttributeSource.AttributeFactory"/>. </summary>
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
 #pragma warning disable 612, 618

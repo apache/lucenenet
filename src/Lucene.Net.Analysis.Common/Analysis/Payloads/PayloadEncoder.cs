@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Payloads
 
     /// <summary>
     /// Mainly for use with the DelimitedPayloadTokenFilter, converts char buffers to
-    /// <seealso cref="BytesRef"/>.
+    /// <see cref="BytesRef"/>.
     /// <p/>
     /// NOTE: This interface is subject to change 
     /// 
@@ -32,8 +32,8 @@ namespace Lucene.Net.Analysis.Payloads
         BytesRef Encode(char[] buffer);
 
         /// <summary>
-        /// Convert a char array to a <seealso cref="BytesRef"/> </summary>
-        /// <returns> encoded <seealso cref="BytesRef"/> </returns>
+        /// Convert a char array to a <see cref="BytesRef"/> </summary>
+        /// <returns> encoded <see cref="BytesRef"/> </returns>
         BytesRef Encode(char[] buffer, int offset, int length);
     }
 }

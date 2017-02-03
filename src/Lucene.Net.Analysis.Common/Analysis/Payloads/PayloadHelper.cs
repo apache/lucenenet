@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Payloads
         }
 
         /// <summary>
-        /// Decode the payload that was encoded using <seealso cref="#encodeFloat(float)"/>.
+        /// Decode the payload that was encoded using <see cref="#encodeFloat(float)"/>.
         /// NOTE: the length of the array must be at least offset + 4 long. </summary>
         /// <param name="bytes"> The bytes to decode </param>
         /// <param name="offset"> The offset into the array. </param>

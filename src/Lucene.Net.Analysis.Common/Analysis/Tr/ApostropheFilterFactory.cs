@@ -21,15 +21,15 @@ namespace Lucene.Net.Analysis.Tr
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="ApostropheFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="ApostropheFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_tr_lower_apostrophes" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.ApostropheFilterFactory"/&gt;
     ///     &lt;filter class="solr.TurkishLowerCaseFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class ApostropheFilterFactory : TokenFilterFactory
     {

@@ -21,14 +21,14 @@ namespace Lucene.Net.Analysis.Reverse
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="ReverseStringFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="ReverseStringFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_rvsstr" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.ReverseStringFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// 
     /// @since solr 1.4
     /// </summary>

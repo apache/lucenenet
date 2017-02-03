@@ -21,15 +21,15 @@ namespace Lucene.Net.Analysis.El
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="GreekStemFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="GreekStemFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_gstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.GreekLowerCaseFilterFactory"/&gt;
     ///     &lt;filter class="solr.GreekStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class GreekStemFilterFactory : TokenFilterFactory
     {

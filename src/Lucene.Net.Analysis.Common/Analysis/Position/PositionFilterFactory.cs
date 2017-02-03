@@ -23,16 +23,16 @@ namespace Lucene.Net.Analysis.Position
      */
 
     /// <summary>
-    /// Factory for <seealso cref="PositionFilter"/>.
+    /// Factory for <see cref="PositionFilter"/>.
     /// Set the positionIncrement of all tokens to the "positionIncrement", except the first return token which retains its
     /// original positionIncrement value. The default positionIncrement value is zero.
-    /// <pre class="prettyprint">
+    /// <code>
     /// &lt;fieldType name="text_position" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.PositionFilterFactory" positionIncrement="0"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     /// <seealso cref=PositionFilter/>
     [Obsolete("(4.4)")]

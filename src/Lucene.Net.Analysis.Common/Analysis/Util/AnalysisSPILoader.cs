@@ -49,9 +49,9 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Reloads the internal SPI list from the given <seealso cref="ClassLoader"/>.
+        /// Reloads the internal SPI list from the given <see cref="ClassLoader"/>.
         /// Changes to the service list are visible after the method ends, all
-        /// iterators (<seealso cref="#iterator()"/>,...) stay consistent.
+        /// iterators (<see cref="#iterator()"/>,...) stay consistent.
         ///
         /// <p><b>NOTE:</b> Only new service providers are added, existing ones are
         /// never removed or replaced.

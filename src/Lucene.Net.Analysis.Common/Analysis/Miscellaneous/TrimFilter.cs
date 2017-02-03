@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly IOffsetAttribute offsetAtt;
 
         /// <summary>
-        /// Create a new <seealso cref="TrimFilter"/>. </summary>
+        /// Create a new <see cref="TrimFilter"/>. </summary>
         /// <param name="version">       the Lucene match version </param>
         /// <param name="in">            the stream to consume </param>
         /// <param name="updateOffsets"> whether to update offsets </param>
@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Create a new <seealso cref="TrimFilter"/> on top of <code>in</code>. </summary>
+        /// Create a new <see cref="TrimFilter"/> on top of <code>in</code>. </summary>
         public TrimFilter(LuceneVersion version, TokenStream @in)
 #pragma warning disable 612, 618
             : this(version, @in, false)

@@ -27,13 +27,13 @@ namespace Lucene.Net.Analysis.Wikipedia
 	 */
 
 	/// <summary>
-	/// Factory for <seealso cref="WikipediaTokenizer"/>.
-	/// <pre class="prettyprint">
+	/// Factory for <see cref="WikipediaTokenizer"/>.
+	/// <code>
 	/// &lt;fieldType name="text_wiki" class="solr.TextField" positionIncrementGap="100"&gt;
 	///   &lt;analyzer&gt;
 	///     &lt;tokenizer class="solr.WikipediaTokenizerFactory"/&gt;
 	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
+	/// &lt;/fieldType&gt;</code>
 	/// </summary>
 	public class WikipediaTokenizerFactory : TokenizerFactory
 	{

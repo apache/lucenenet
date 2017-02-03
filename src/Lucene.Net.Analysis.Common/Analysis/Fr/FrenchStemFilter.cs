@@ -21,19 +21,19 @@ namespace Lucene.Net.Analysis.Fr
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that stems french words. 
+    /// A <see cref="TokenFilter"/> that stems french words. 
     /// <para>
     /// The used stemmer can be changed at runtime after the
-    /// filter object is created (as long as it is a <seealso cref="FrenchStemmer"/>).
+    /// filter object is created (as long as it is a <see cref="FrenchStemmer"/>).
     /// </para>
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <seealso cref="KeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// <see cref="KeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para> </summary>
     /// <seealso cref= KeywordMarkerFilter </seealso>
-    /// @deprecated (3.1) Use <seealso cref="SnowballFilter"/> with 
-    /// <seealso cref="org.tartarus.snowball.ext.FrenchStemmer"/> instead, which has the
+    /// @deprecated (3.1) Use <see cref="SnowballFilter"/> with 
+    /// <see cref="org.tartarus.snowball.ext.FrenchStemmer"/> instead, which has the
     /// same functionality. This filter will be removed in Lucene 5.0 
     [Obsolete("(3.1) Use SnowballFilter with FrenchStemmer instead, which has the same functionality. This filter will be removed in Lucene 5.0")]
     public sealed class FrenchStemFilter : TokenFilter
@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Fr
             }
         }
         /// <summary>
-        /// Set a alternative/custom <seealso cref="FrenchStemmer"/> for this filter.
+        /// Set a alternative/custom <see cref="FrenchStemmer"/> for this filter.
         /// </summary>
         public FrenchStemmer Stemmer
         {

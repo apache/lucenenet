@@ -21,14 +21,14 @@ namespace Lucene.Net.Analysis.Ngram
      */
 
     /// <summary>
-    /// Creates new instances of <seealso cref="EdgeNGramTokenFilter"/>.
-    /// <pre class="prettyprint">
+    /// Creates new instances of <see cref="EdgeNGramTokenFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_edgngrm" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="1"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class EdgeNGramFilterFactory : TokenFilterFactory
     {

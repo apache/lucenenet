@@ -21,17 +21,17 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <seealso cref="LimitTokenCountFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="LimitTokenCountFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_lngthcnt" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.LimitTokenCountFilterFactory" maxTokenCount="10" consumeAllTokens="false" /&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// <para>
     /// The {@code consumeAllTokens} property is optional and defaults to {@code false}.  
-    /// See <seealso cref="LimitTokenCountFilter"/> for an explanation of it's use.
+    /// See <see cref="LimitTokenCountFilter"/> for an explanation of it's use.
     /// </para>
     /// </summary>
     public class LimitTokenCountFilterFactory : TokenFilterFactory

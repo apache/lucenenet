@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Id
         private readonly CharArraySet stemExclusionSet;
 
         /// <summary>
-        /// Builds an analyzer with the default stop words: <seealso cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// Builds an analyzer with the default stop words: <see cref="#DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public IndonesianAnalyzer(LuceneVersion matchVersion)
               : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
@@ -93,8 +93,8 @@ namespace Lucene.Net.Analysis.Id
 
         /// <summary>
         /// Builds an analyzer with the given stop word. If a none-empty stem exclusion set is
-        /// provided this analyzer will add a <seealso cref="SetKeywordMarkerFilter"/> before
-        /// <seealso cref="IndonesianStemFilter"/>.
+        /// provided this analyzer will add a <see cref="SetKeywordMarkerFilter"/> before
+        /// <see cref="IndonesianStemFilter"/>.
         /// </summary>
         /// <param name="matchVersion">
         ///          lucene compatibility version </param>
@@ -110,14 +110,14 @@ namespace Lucene.Net.Analysis.Id
 
         /// <summary>
         /// Creates
-        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <seealso cref="Reader"/>.
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// used to tokenize all the text in the provided <see cref="Reader"/>.
         /// </summary>
-        /// <returns> <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        ///         built from an <seealso cref="StandardTokenizer"/> filtered with
-        ///         <seealso cref="StandardFilter"/>, <seealso cref="LowerCaseFilter"/>,
-        ///         <seealso cref="StopFilter"/>, <seealso cref="SetKeywordMarkerFilter"/>
-        ///         if a stem exclusion set is provided and <seealso cref="IndonesianStemFilter"/>. </returns>
+        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from an <see cref="StandardTokenizer"/> filtered with
+        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>,
+        ///         <see cref="StopFilter"/>, <see cref="SetKeywordMarkerFilter"/>
+        ///         if a stem exclusion set is provided and <see cref="IndonesianStemFilter"/>. </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new StandardTokenizer(m_matchVersion, reader);

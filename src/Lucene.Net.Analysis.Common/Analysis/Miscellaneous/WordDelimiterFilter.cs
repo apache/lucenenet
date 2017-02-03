@@ -64,14 +64,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
 	/// </ul>
 	/// </li>
 	/// </ul>
-	/// One use for <seealso cref="WordDelimiterFilter"/> is to help match words with different
+	/// One use for <see cref="WordDelimiterFilter"/> is to help match words with different
 	/// subword delimiters. For example, if the source text contained "wi-fi" one may
 	/// want "wifi" "WiFi" "wi-fi" "wi+fi" queries to all match. One way of doing so
 	/// is to specify combinations="1" in the analyzer used for indexing, and
 	/// combinations="0" (the default) in the analyzer used for querying. Given that
-	/// the current <seealso cref="StandardTokenizer"/> immediately removes many intra-word
+	/// the current <see cref="StandardTokenizer"/> immediately removes many intra-word
 	/// delimiters, it is recommended that this filter be used after a tokenizer that
-	/// does not do this (such as <seealso cref="WhitespaceTokenizer"/>).
+	/// does not do this (such as <see cref="WhitespaceTokenizer"/>).
 	/// </summary>
 	public sealed class WordDelimiterFilter : TokenFilter
     {
@@ -225,7 +225,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Creates a new WordDelimiterFilter using <seealso cref="WordDelimiterIterator#DEFAULT_WORD_DELIM_TABLE"/>
+        /// Creates a new WordDelimiterFilter using <see cref="WordDelimiterIterator#DEFAULT_WORD_DELIM_TABLE"/>
         /// as its charTypeTable
         /// </summary>
         /// <param name="in"> TokenStream to be filtered </param>
@@ -605,7 +605,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Checks if the given word type includes <seealso cref="#ALPHA"/>
+        /// Checks if the given word type includes <see cref="#ALPHA"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
         /// <returns> {@code true} if the type contains ALPHA, {@code false} otherwise </returns>
@@ -615,7 +615,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Checks if the given word type includes <seealso cref="#DIGIT"/>
+        /// Checks if the given word type includes <see cref="#DIGIT"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
         /// <returns> {@code true} if the type contains DIGIT, {@code false} otherwise </returns>
@@ -625,7 +625,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Checks if the given word type includes <seealso cref="#SUBWORD_DELIM"/>
+        /// Checks if the given word type includes <see cref="#SUBWORD_DELIM"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
         /// <returns> {@code true} if the type contains SUBWORD_DELIM, {@code false} otherwise </returns>
@@ -635,7 +635,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Checks if the given word type includes <seealso cref="#UPPER"/>
+        /// Checks if the given word type includes <see cref="#UPPER"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
         /// <returns> {@code true} if the type contains UPPER, {@code false} otherwise </returns>

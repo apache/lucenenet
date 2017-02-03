@@ -21,14 +21,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <seealso cref="KeepWordFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="KeepWordFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_keepword" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.KeepWordFilterFactory" words="keepwords.txt" ignoreCase="false"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class KeepWordFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {

@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Util
     ///  characters that haven't been freed yet.  This is like a
     ///  PushbackReader, except you don't have to specify
     ///  up-front the max size of the buffer, but you do have to
-    ///  periodically call <seealso cref="#freeBefore"/>. 
+    ///  periodically call <see cref="#freeBefore"/>. 
     /// </summary>
 
     public sealed class RollingCharBuffer

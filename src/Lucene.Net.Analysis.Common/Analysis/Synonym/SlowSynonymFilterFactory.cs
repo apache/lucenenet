@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Synonym
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="SlowSynonymFilter"/> (only used with luceneMatchVersion < 3.4)
+    /// Factory for <see cref="SlowSynonymFilter"/> (only used with luceneMatchVersion < 3.4)
     /// <pre class="prettyprint" >
     /// &lt;fieldType name="text_synonym" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -38,8 +38,8 @@ namespace Lucene.Net.Analysis.Synonym
     ///     &lt;filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="false"
     ///             expand="true" tokenizerFactory="solr.WhitespaceTokenizerFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre> </summary>
-    /// @deprecated (3.4) use <seealso cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
+    /// &lt;/fieldType&gt;</code> </summary>
+    /// @deprecated (3.4) use <see cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
     [Obsolete("(3.4) use <seealso cref=\"SynonymFilterFactory\"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
     internal sealed class SlowSynonymFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {

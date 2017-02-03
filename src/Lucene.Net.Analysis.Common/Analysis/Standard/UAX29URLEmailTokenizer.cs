@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Standard
     ///   <li>&lt;HIRAGANA&gt;: A single hiragana character</li>
     /// </ul>
     /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="Version"/>
+    /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating UAX29URLEmailTokenizer:
     /// <ul>
     ///   <li> As of 3.4, Hiragana and Han characters are no longer wrongly split
@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Standard
         }
 
         /// <summary>
-        /// Creates a new UAX29URLEmailTokenizer with a given <seealso cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/>
+        /// Creates a new UAX29URLEmailTokenizer with a given <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/>
         /// </summary>
         public UAX29URLEmailTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input)
             : base(factory, input)

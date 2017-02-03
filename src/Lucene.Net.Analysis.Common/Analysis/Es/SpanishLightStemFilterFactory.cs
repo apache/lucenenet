@@ -21,15 +21,15 @@ namespace Lucene.Net.Analysis.Es
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="SpanishLightStemFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="SpanishLightStemFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_eslgtstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
     ///     &lt;filter class="solr.SpanishLightStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class SpanishLightStemFilterFactory : TokenFilterFactory
     {

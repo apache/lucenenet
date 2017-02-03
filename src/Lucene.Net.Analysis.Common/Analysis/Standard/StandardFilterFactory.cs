@@ -22,14 +22,14 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /// <summary>
-    /// Factory for <seealso cref="StandardFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="StandardFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_stndrd" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.StandardFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class StandardFilterFactory : TokenFilterFactory
     {

@@ -21,14 +21,14 @@ namespace Lucene.Net.Analysis.Util
 	 */
 
     /// <summary>
-    /// Simple <seealso cref="ResourceLoader"/> that opens resource files
+    /// Simple <see cref="ResourceLoader"/> that opens resource files
     /// from the local file system, optionally resolving against
     /// a base directory.
     /// 
-    /// <para>This loader wraps a delegate <seealso cref="ResourceLoader"/>
+    /// <para>This loader wraps a delegate <see cref="ResourceLoader"/>
     /// that is used to resolve all files, the current base directory
-    /// does not contain. <seealso cref="#newInstance"/> is always resolved
-    /// against the delegate, as a <seealso cref="ClassLoader"/> is needed.
+    /// does not contain. <see cref="#newInstance"/> is always resolved
+    /// against the delegate, as a <see cref="ClassLoader"/> is needed.
     /// 
     /// </para>
     /// <para>You can chain several {@code FilesystemResourceLoader}s
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Util
         /// Creates a resource loader that resolves resources against the given
         /// base directory (may be {@code null} to refer to CWD).
         /// Files not found in file system and class lookups are delegated
-        /// to the given delegate <seealso cref="ResourceLoader"/>.
+        /// to the given delegate <see cref="ResourceLoader"/>.
         /// </summary>
         public FilesystemResourceLoader(DirectoryInfo baseDirectory, IResourceLoader @delegate)
         {

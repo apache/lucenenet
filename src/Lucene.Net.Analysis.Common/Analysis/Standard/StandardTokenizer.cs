@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Standard
     /// 
     /// <a name="version"/>
     /// </para>
-    /// <para>You must specify the required <seealso cref="Version"/>
+    /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating StandardTokenizer:
     /// <ul>
     ///   <li> As of 3.4, Hiragana and Han characters are no longer wrongly split
@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Standard
     ///   you get the exact broken behavior for backwards compatibility.
     ///   <li> As of 3.1, StandardTokenizer implements Unicode text segmentation.
     ///   If you use a previous version number, you get the exact behavior of
-    ///   <seealso cref="ClassicTokenizer"/> for backwards compatibility.
+    ///   <see cref="ClassicTokenizer"/> for backwards compatibility.
     /// </ul>
     /// </para>
     /// </summary>
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Standard
 
 
         /// <summary>
-        /// Creates a new instance of the <seealso cref="StandardTokenizer"/>.  Attaches
+        /// Creates a new instance of the <see cref="StandardTokenizer"/>.  Attaches
         /// the <code>input</code> to the newly created JFlex scanner.
         /// </summary>
         /// <param name="input"> The input reader
@@ -132,7 +132,7 @@ namespace Lucene.Net.Analysis.Standard
         }
 
         /// <summary>
-        /// Creates a new StandardTokenizer with a given <seealso cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> 
+        /// Creates a new StandardTokenizer with a given <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> 
         /// </summary>
         public StandardTokenizer(Version matchVersion, AttributeFactory factory, Reader input)
             : base(factory, input)

@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Pattern
     /// </code>
     /// </para>
     /// <para>
-    /// plus if <seealso cref="#preserveOriginal"/> is true, it would also return
+    /// plus if <see cref="#preserveOriginal"/> is true, it would also return
     /// <code>"camelCaseFilter</code>
     /// </para>
     /// </summary>
@@ -79,12 +79,12 @@ namespace Lucene.Net.Analysis.Pattern
         private int currentMatcher;
 
         /// <param name="input">
-        ///          the input <seealso cref="TokenStream"/> </param>
+        ///          the input <see cref="TokenStream"/> </param>
         /// <param name="preserveOriginal">
         ///          set to true to return the original token even if one of the
         ///          patterns matches </param>
         /// <param name="patterns">
-        ///          an array of <seealso cref="Pattern"/> objects to match against each token </param>
+        ///          an array of <see cref="Pattern"/> objects to match against each token </param>
 
         public PatternCaptureGroupTokenFilter(TokenStream input, bool preserveOriginal, params Regex[] patterns) : base(input)
         {

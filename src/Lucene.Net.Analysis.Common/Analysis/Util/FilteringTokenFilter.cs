@@ -23,11 +23,11 @@ namespace Lucene.Net.Analysis.Util
 
     /// <summary>
     /// Abstract base class for TokenFilters that may remove tokens.
-    /// You have to implement <seealso cref="#accept"/> and return a boolean if the current
-    /// token should be preserved. <seealso cref="#incrementToken"/> uses this method
+    /// You have to implement <see cref="#accept"/> and return a boolean if the current
+    /// token should be preserved. <see cref="#incrementToken"/> uses this method
     /// to decide if a token should be passed to the caller.
     /// <para><a name="lucene_match_version" />As of Lucene 4.4, an
-    /// <seealso cref="IllegalArgumentException"/> is thrown when trying to disable position
+    /// <see cref="IllegalArgumentException"/> is thrown when trying to disable position
     /// increments when filtering terms.
     /// </para>
     /// </summary>
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Util
         private int skippedPositions;
 
         /// <summary>
-        /// Create a new <seealso cref="FilteringTokenFilter"/>. </summary>
+        /// Create a new <see cref="FilteringTokenFilter"/>. </summary>
         /// <param name="version">                  the <a href="#lucene_match_version">Lucene match version</a> </param>
         /// <param name="enablePositionIncrements"> whether to increment position increments when filtering out terms </param>
         /// <param name="input">                    the input to consume </param>
@@ -66,9 +66,9 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Create a new <seealso cref="FilteringTokenFilter"/>. </summary>
+        /// Create a new <see cref="FilteringTokenFilter"/>. </summary>
         /// <param name="version"> the Lucene match version </param>
-        /// <param name="in">      the <seealso cref="TokenStream"/> to consume </param>
+        /// <param name="in">      the <see cref="TokenStream"/> to consume </param>
         public FilteringTokenFilter(LuceneVersion version, TokenStream @in)
             : base(@in)
         {
@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Override this method and return if the current input token should be returned by <seealso cref="#incrementToken"/>. </summary>
+        /// Override this method and return if the current input token should be returned by <see cref="#incrementToken"/>. </summary>
         protected abstract bool Accept();
 
         public override sealed bool IncrementToken()

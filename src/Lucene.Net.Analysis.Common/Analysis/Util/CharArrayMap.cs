@@ -2017,7 +2017,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Empty <seealso cref="CharArrayMap{V}.UnmodifiableCharArrayMap"/> optimized for speed.
+        /// Empty <see cref="CharArrayMap{V}.UnmodifiableCharArrayMap"/> optimized for speed.
         /// Contains checks will always return <code>false</code> or throw
         /// NPE if necessary.
         /// </summary>

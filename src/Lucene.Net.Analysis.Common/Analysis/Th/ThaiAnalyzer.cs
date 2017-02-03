@@ -25,11 +25,11 @@ namespace Lucene.Net.Analysis.Th
 	 */
 
     /// <summary>
-    /// <seealso cref="Analyzer"/> for Thai language. It uses <seealso cref="java.text.BreakIterator"/> to break words.
+    /// <see cref="Analyzer"/> for Thai language. It uses <see cref="java.text.BreakIterator"/> to break words.
     /// <para>
     /// <a name="version"/>
     /// </para>
-    /// <para>You must specify the required <seealso cref="Version"/>
+    /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating ThaiAnalyzer:
     /// <ul>
     ///   <li> As of 3.6, a set of Thai stopwords is used by default
@@ -108,13 +108,13 @@ namespace Lucene.Net.Analysis.Th
 
         /// <summary>
         /// Creates
-        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <seealso cref="Reader"/>.
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// used to tokenize all the text in the provided <see cref="Reader"/>.
         /// </summary>
-        /// <returns> <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        ///         built from a <seealso cref="StandardTokenizer"/> filtered with
-        ///         <seealso cref="StandardFilter"/>, <seealso cref="LowerCaseFilter"/>, <seealso cref="ThaiWordFilter"/>, and
-        ///         <seealso cref="StopFilter"/> </returns>
+        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from a <see cref="StandardTokenizer"/> filtered with
+        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="ThaiWordFilter"/>, and
+        ///         <see cref="StopFilter"/> </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_48))

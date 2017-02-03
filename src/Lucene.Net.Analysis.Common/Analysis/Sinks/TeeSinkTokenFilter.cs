@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Sinks
     /// It is also useful for doing things like entity extraction or proper noun analysis as
     /// part of the analysis workflow and saving off those tokens for use in another field.
     /// 
-    /// <pre class="prettyprint">
+    /// <code>
     /// TeeSinkTokenFilter source1 = new TeeSinkTokenFilter(new WhitespaceTokenizer(version, reader1));
     /// TeeSinkTokenFilter.SinkTokenStream sink1 = source1.newSinkTokenStream();
     /// TeeSinkTokenFilter.SinkTokenStream sink2 = source1.newSinkTokenStream();
@@ -47,23 +47,23 @@ namespace Lucene.Net.Analysis.Sinks
     /// d.add(new TextField("f2", final2, Field.Store.NO));
     /// d.add(new TextField("f3", final3, Field.Store.NO));
     /// d.add(new TextField("f4", final4, Field.Store.NO));
-    /// </pre>
+    /// </code>
     /// In this example, <code>sink1</code> and <code>sink2</code> will both get tokens from both
     /// <code>reader1</code> and <code>reader2</code> after whitespace tokenizer
     /// and now we can further wrap any of these in extra analysis, and more "sources" can be inserted if desired.
     /// It is important, that tees are consumed before sinks (in the above example, the field names must be
     /// less the sink's field names). If you are not sure, which stream is consumed first, you can simply
-    /// add another sink and then pass all tokens to the sinks at once using <seealso cref="#consumeAllTokens"/>.
+    /// add another sink and then pass all tokens to the sinks at once using <see cref="#consumeAllTokens"/>.
     /// This TokenFilter is exhausted after this. In the above example, change
     /// the example above to:
-    /// <pre class="prettyprint">
+    /// <code>
     /// ...
     /// TokenStream final1 = new LowerCaseFilter(version, source1.newSinkTokenStream());
     /// TokenStream final2 = source2.newSinkTokenStream();
     /// sink1.consumeAllTokens();
     /// sink2.consumeAllTokens();
     /// ...
-    /// </pre>
+    /// </code>
     /// In this case, the fields can be added in any order, because the sources are not used anymore and all sinks are ready.
     /// <para>Note, the EntityDetect and URLDetect TokenStreams are for the example and do not currently exist in Lucene.
     /// </para>
@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Sinks
         }
 
         /// <summary>
-        /// Returns a new <seealso cref="SinkTokenStream"/> that receives all tokens consumed by this stream.
+        /// Returns a new <see cref="SinkTokenStream"/> that receives all tokens consumed by this stream.
         /// </summary>
         public SinkTokenStream NewSinkTokenStream()
         {
@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Sinks
         }
 
         /// <summary>
-        /// Returns a new <seealso cref="SinkTokenStream"/> that receives all tokens consumed by this stream
+        /// Returns a new <see cref="SinkTokenStream"/> that receives all tokens consumed by this stream
         /// that pass the supplied filter. </summary>
         /// <seealso cref= SinkFilter></seealso>
         public SinkTokenStream NewSinkTokenStream(SinkFilter filter)
@@ -100,7 +100,7 @@ namespace Lucene.Net.Analysis.Sinks
         }
 
         /// <summary>
-        /// Adds a <seealso cref="SinkTokenStream"/> created by another <code>TeeSinkTokenFilter</code>
+        /// Adds a <see cref="SinkTokenStream"/> created by another <code>TeeSinkTokenFilter</code>
         /// to this one. The supplied stream will also receive all consumed tokens.
         /// This method can be used to pass tokens from two different tees to one sink.
         /// </summary>
@@ -174,18 +174,18 @@ namespace Lucene.Net.Analysis.Sinks
         }
 
         /// <summary>
-        /// A filter that decides which <seealso cref="AttributeSource"/> states to store in the sink.
+        /// A filter that decides which <see cref="AttributeSource"/> states to store in the sink.
         /// </summary>
         public abstract class SinkFilter
         {
             /// <summary>
-            /// Returns true, iff the current state of the passed-in <seealso cref="AttributeSource"/> shall be stored
+            /// Returns true, iff the current state of the passed-in <see cref="AttributeSource"/> shall be stored
             /// in the sink. 
             /// </summary>
             public abstract bool Accept(AttributeSource source);
 
             /// <summary>
-            /// Called by <seealso cref="SinkTokenStream#reset()"/>. This method does nothing by default
+            /// Called by <see cref="SinkTokenStream#reset()"/>. This method does nothing by default
             /// and can optionally be overridden.
             /// </summary>
             public virtual void Reset()

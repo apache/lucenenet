@@ -21,15 +21,15 @@ namespace Lucene.Net.Analysis.En
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="EnglishMinimalStemFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="EnglishMinimalStemFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_enminstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
     ///     &lt;filter class="solr.EnglishMinimalStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class EnglishMinimalStemFilterFactory : TokenFilterFactory
     {

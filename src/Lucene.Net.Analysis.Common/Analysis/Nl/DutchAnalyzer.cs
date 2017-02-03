@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Nl
 	 */
 
     /// <summary>
-    /// <seealso cref="Analyzer"/> for Dutch language. 
+    /// <see cref="Analyzer"/> for Dutch language. 
     /// <para>
     /// Supports an external list of stopwords (words that
     /// will not be indexed at all), an external list of exclusions (word that will
@@ -39,11 +39,11 @@ namespace Lucene.Net.Analysis.Nl
     /// </para>
     /// 
     /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="Version"/>
+    /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating DutchAnalyzer:
     /// <ul>
-    ///   <li> As of 3.6, <seealso cref="#DutchAnalyzer(Version, CharArraySet)"/> and
-    ///        <seealso cref="#DutchAnalyzer(Version, CharArraySet, CharArraySet)"/> also populate
+    ///   <li> As of 3.6, <see cref="#DutchAnalyzer(Version, CharArraySet)"/> and
+    ///        <see cref="#DutchAnalyzer(Version, CharArraySet, CharArraySet)"/> also populate
     ///        the default entries for the stem override dictionary
     ///   <li> As of 3.1, Snowball stemming is done with SnowballFilter, 
     ///        LowerCaseFilter is used prior to StopFilter, and Snowball 
@@ -53,8 +53,8 @@ namespace Lucene.Net.Analysis.Nl
     /// </ul>
     /// 
     /// </para>
-    /// <para><b>NOTE</b>: This class uses the same <seealso cref="Version"/>
-    /// dependent settings as <seealso cref="StandardAnalyzer"/>.</para>
+    /// <para><b>NOTE</b>: This class uses the same <see cref="LuceneVersion"/>
+    /// dependent settings as <see cref="StandardAnalyzer"/>.</para>
     /// </summary>
     public sealed class DutchAnalyzer : Analyzer
     {
@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis.Nl
         private readonly LuceneVersion matchVersion;
 
         /// <summary>
-        /// Builds an analyzer with the default stop words (<seealso cref="#getDefaultStopSet()"/>) 
+        /// Builds an analyzer with the default stop words (<see cref="#getDefaultStopSet()"/>) 
         /// and a few default entries for the stem exclusion table.
         /// 
         /// </summary>
@@ -192,13 +192,13 @@ namespace Lucene.Net.Analysis.Nl
         }
 
         /// <summary>
-        /// Returns a (possibly reused) <seealso cref="TokenStream"/> which tokenizes all the 
-        /// text in the provided <seealso cref="Reader"/>.
+        /// Returns a (possibly reused) <see cref="TokenStream"/> which tokenizes all the 
+        /// text in the provided <see cref="Reader"/>.
         /// </summary>
-        /// <returns> A <seealso cref="TokenStream"/> built from a <seealso cref="StandardTokenizer"/>
-        ///   filtered with <seealso cref="StandardFilter"/>, <seealso cref="LowerCaseFilter"/>, 
-        ///   <seealso cref="StopFilter"/>, <seealso cref="SetKeywordMarkerFilter"/> if a stem exclusion set is provided,
-        ///   <seealso cref="StemmerOverrideFilter"/>, and <seealso cref="SnowballFilter"/> </returns>
+        /// <returns> A <see cref="TokenStream"/> built from a <see cref="StandardTokenizer"/>
+        ///   filtered with <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, 
+        ///   <see cref="StopFilter"/>, <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is provided,
+        ///   <see cref="StemmerOverrideFilter"/>, and <see cref="SnowballFilter"/> </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader aReader)
         {
 #pragma warning disable 612, 618

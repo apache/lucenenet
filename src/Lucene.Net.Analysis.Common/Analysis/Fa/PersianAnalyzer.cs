@@ -26,9 +26,9 @@ namespace Lucene.Net.Analysis.Fa
 	 */
 
     /// <summary>
-    /// <seealso cref="Analyzer"/> for Persian.
+    /// <see cref="Analyzer"/> for Persian.
     /// <para>
-    /// This Analyzer uses <seealso cref="PersianCharFilter"/> which implies tokenizing around
+    /// This Analyzer uses <see cref="PersianCharFilter"/> which implies tokenizing around
     /// zero-width non-joiner in addition to whitespace. Some persian-specific variant forms (such as farsi
     /// yeh and keheh) are standardized. "Stemming" is accomplished via stopwords.
     /// </para>
@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Fa
 
         /// <summary>
         /// Builds an analyzer with the default stop words:
-        /// <seealso cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// <see cref="#DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public PersianAnalyzer(LuceneVersion matchVersion)
               : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
@@ -110,13 +110,13 @@ namespace Lucene.Net.Analysis.Fa
 
         /// <summary>
         /// Creates
-        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <seealso cref="Reader"/>.
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// used to tokenize all the text in the provided <see cref="Reader"/>.
         /// </summary>
-        /// <returns> <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        ///         built from a <seealso cref="StandardTokenizer"/> filtered with
-        ///         <seealso cref="LowerCaseFilter"/>, <seealso cref="ArabicNormalizationFilter"/>,
-        ///         <seealso cref="PersianNormalizationFilter"/> and Persian Stop words </returns>
+        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from a <see cref="StandardTokenizer"/> filtered with
+        ///         <see cref="LowerCaseFilter"/>, <see cref="ArabicNormalizationFilter"/>,
+        ///         <see cref="PersianNormalizationFilter"/> and Persian Stop words </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source;
@@ -144,7 +144,7 @@ namespace Lucene.Net.Analysis.Fa
         }
 
         /// <summary>
-        /// Wraps the TextReader with <seealso cref="PersianCharFilter"/>
+        /// Wraps the TextReader with <see cref="PersianCharFilter"/>
         /// </summary>
         protected override TextReader InitReader(string fieldName, TextReader reader)
         {

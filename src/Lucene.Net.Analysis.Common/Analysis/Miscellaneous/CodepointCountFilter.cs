@@ -37,11 +37,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly ICharTermAttribute termAtt;
 
         /// <summary>
-        /// Create a new <seealso cref="CodepointCountFilter"/>. This will filter out tokens whose
-        /// <seealso cref="CharTermAttribute"/> is either too short (<seealso cref="Character#CodePointCount(char[], int, int)"/>
-        /// &lt; min) or too long (<seealso cref="Character#codePointCount(char[], int, int)"/> &gt; max). </summary>
+        /// Create a new <see cref="CodepointCountFilter"/>. This will filter out tokens whose
+        /// <see cref="CharTermAttribute"/> is either too short (<see cref="Character#CodePointCount(char[], int, int)"/>
+        /// &lt; min) or too long (<see cref="Character#codePointCount(char[], int, int)"/> &gt; max). </summary>
         /// <param name="version"> the Lucene match version </param>
-        /// <param name="in">      the <seealso cref="TokenStream"/> to consume </param>
+        /// <param name="in">      the <see cref="TokenStream"/> to consume </param>
         /// <param name="min">     the minimum length </param>
         /// <param name="max">     the maximum length </param>
         public CodepointCountFilter(LuceneVersion version, TokenStream @in, int min, int max)

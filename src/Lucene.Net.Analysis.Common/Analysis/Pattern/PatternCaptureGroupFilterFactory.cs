@@ -22,14 +22,14 @@ namespace Lucene.Net.Analysis.Pattern
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="PatternCaptureGroupTokenFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="PatternCaptureGroupTokenFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_ptncapturegroup" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.KeywordTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.PatternCaptureGroupFilterFactory" pattern="([^a-z])" preserve_original="true"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     /// <seealso cref= PatternCaptureGroupTokenFilter </seealso>
     public class PatternCaptureGroupFilterFactory : TokenFilterFactory

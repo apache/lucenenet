@@ -30,7 +30,7 @@ namespace Lucene.Net.Collation
      */
 
 	/// <summary>
-	/// Factory for <seealso cref="CollationKeyFilter"/>.
+	/// Factory for <see cref="CollationKeyFilter"/>.
 	/// <para>
 	/// This factory can be created in two ways: 
 	/// <ul>
@@ -62,15 +62,15 @@ namespace Lucene.Net.Collation
 	///     &lt;tokenizer class="solr.KeywordTokenizerFactory"/&gt;
 	///     &lt;filter class="solr.CollationKeyFilterFactory" language="ja" country="JP"/&gt;
 	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
+	/// &lt;/fieldType&gt;</code>
 	/// 
 	/// </para>
 	/// </summary>
-	/// <seealso cref="Collator"></seealso>
-	/// <seealso cref="CultureInfo"></seealso>
-	/// <seealso cref="RuleBasedCollator">
+	/// <see cref="Collator"></seealso>
+	/// <see cref="CultureInfo"></seealso>
+	/// <see cref="RuleBasedCollator">
 	/// @since solr 3.1 </seealso>
-	/// @deprecated use <seealso cref="CollationKeyAnalyzer"/> instead. 
+	/// @deprecated use <see cref="CollationKeyAnalyzer"/> instead. 
 	[Obsolete("use <seealso cref=\"CollationKeyAnalyzer\"/> instead.")]
 	public class CollationKeyFilterFactory : TokenFilterFactory, IMultiTermAwareComponent, IResourceLoaderAware
 	{

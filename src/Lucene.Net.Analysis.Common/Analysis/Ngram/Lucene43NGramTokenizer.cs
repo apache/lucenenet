@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis.Ngram
      */
 
     /// <summary>
-    /// Old broken version of <seealso cref="NGramTokenizer"/>.
+    /// Old broken version of <see cref="NGramTokenizer"/>.
     /// </summary>
     [Obsolete]
     public sealed class Lucene43NGramTokenizer : Tokenizer
@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Ngram
 
         /// <summary>
         /// Creates NGramTokenizer with given min and max n-grams. </summary>
-        /// <param name="input"> <seealso cref="TextReader"/> holding the input to be tokenized </param>
+        /// <param name="input"> <see cref="TextReader"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         public Lucene43NGramTokenizer(TextReader input, int minGram, int maxGram)
@@ -54,8 +54,8 @@ namespace Lucene.Net.Analysis.Ngram
 
         /// <summary>
         /// Creates NGramTokenizer with given min and max n-grams. </summary>
-        /// <param name="factory"> <seealso cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> to use </param>
-        /// <param name="input"> <seealso cref="Reader"/> holding the input to be tokenized </param>
+        /// <param name="factory"> <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> to use </param>
+        /// <param name="input"> <see cref="Reader"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         public Lucene43NGramTokenizer(AttributeFactory factory, TextReader input, int minGram, int maxGram)
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Ngram
 
         /// <summary>
         /// Creates NGramTokenizer with default min and max n-grams. </summary>
-        /// <param name="input"> <seealso cref="TextReader"/> holding the input to be tokenized </param>
+        /// <param name="input"> <see cref="TextReader"/> holding the input to be tokenized </param>
         public Lucene43NGramTokenizer(TextReader input)
             : this(input, DEFAULT_MIN_NGRAM_SIZE, DEFAULT_MAX_NGRAM_SIZE)
         {

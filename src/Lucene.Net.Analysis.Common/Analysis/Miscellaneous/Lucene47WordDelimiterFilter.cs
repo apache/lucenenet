@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Old Broken version of <seealso cref="WordDelimiterFilter"/>
+    /// Old Broken version of <see cref="WordDelimiterFilter"/>
     /// </summary>
     [Obsolete]
     public sealed class Lucene47WordDelimiterFilter : TokenFilter
@@ -170,7 +170,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Creates a new WordDelimiterFilter using <seealso cref="WordDelimiterIterator#DEFAULT_WORD_DELIM_TABLE"/>
+        /// Creates a new WordDelimiterFilter using <see cref="WordDelimiterIterator#DEFAULT_WORD_DELIM_TABLE"/>
         /// as its charTypeTable
         /// </summary>
         /// <param name="in"> TokenStream to be filtered </param>
@@ -460,7 +460,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Checks if the given word type includes <seealso cref="#ALPHA"/>
+        /// Checks if the given word type includes <see cref="#ALPHA"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
         /// <returns> {@code true} if the type contains ALPHA, {@code false} otherwise </returns>
@@ -470,7 +470,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Checks if the given word type includes <seealso cref="#DIGIT"/>
+        /// Checks if the given word type includes <see cref="#DIGIT"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
         /// <returns> {@code true} if the type contains DIGIT, {@code false} otherwise </returns>
@@ -480,7 +480,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Checks if the given word type includes <seealso cref="#SUBWORD_DELIM"/>
+        /// Checks if the given word type includes <see cref="#SUBWORD_DELIM"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
         /// <returns> {@code true} if the type contains SUBWORD_DELIM, {@code false} otherwise </returns>
@@ -490,7 +490,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Checks if the given word type includes <seealso cref="#UPPER"/>
+        /// Checks if the given word type includes <see cref="#UPPER"/>
         /// </summary>
         /// <param name="type"> Word type to check </param>
         /// <returns> {@code true} if the type contains UPPER, {@code false} otherwise </returns>

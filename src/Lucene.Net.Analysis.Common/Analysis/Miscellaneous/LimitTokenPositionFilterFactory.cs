@@ -21,17 +21,17 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <seealso cref="LimitTokenPositionFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="LimitTokenPositionFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_limit_pos" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.LimitTokenPositionFilterFactory" maxTokenPosition="3" consumeAllTokens="false" /&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// <para>
     /// The {@code consumeAllTokens} property is optional and defaults to {@code false}.  
-    /// See <seealso cref="LimitTokenPositionFilter"/> for an explanation of its use.
+    /// See <see cref="LimitTokenPositionFilter"/> for an explanation of its use.
     /// </para>
     /// </summary>
     public class LimitTokenPositionFilterFactory : TokenFilterFactory

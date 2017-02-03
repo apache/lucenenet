@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         private SynonymMap map;
 
-        [Obsolete(@"(3.4) use <seealso cref=""SynonymFilterFactory"" instead. this is only a backwards compatibility")]
+        [Obsolete(@"(3.4) use <see cref=""SynonymFilterFactory"" instead. this is only a backwards compatibility")]
         public FSTSynonymFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
@@ -122,7 +122,7 @@ namespace Lucene.Net.Analysis.Synonym
         }
 
         /// <summary>
-        /// Load synonyms with the given <seealso cref="SynonymMap.Parser"/> class.
+        /// Load synonyms with the given <see cref="SynonymMap.Parser"/> class.
         /// </summary>
         private SynonymMap LoadSynonyms(IResourceLoader loader, string cname, bool dedup, Analyzer analyzer)
         {

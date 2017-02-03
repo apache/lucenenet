@@ -25,9 +25,9 @@ namespace Lucene.Net.Analysis.Util
      * limitations under the License.
      */
     /// <summary>
-    /// <seealso cref="CharacterUtils"/> provides a unified interface to Character-related
+    /// <see cref="CharacterUtils"/> provides a unified interface to Character-related
     /// operations to implement backwards compatible character operations based on a
-    /// <seealso cref="LuceneVersion"/> instance.
+    /// <see cref="LuceneVersion"/> instance.
     /// 
     /// @lucene.internal
     /// </summary>
@@ -37,13 +37,13 @@ namespace Lucene.Net.Analysis.Util
         private static readonly CharacterUtils JAVA_5 = new Java5CharacterUtils();
 
         /// <summary>
-        /// Returns a <seealso cref="CharacterUtils"/> implementation according to the given
-        /// <seealso cref="LuceneVersion"/> instance.
+        /// Returns a <see cref="CharacterUtils"/> implementation according to the given
+        /// <see cref="LuceneVersion"/> instance.
         /// </summary>
         /// <param name="matchVersion">
         ///          a version instance </param>
-        /// <returns> a <seealso cref="CharacterUtils"/> implementation according to the given
-        ///         <seealso cref="LuceneVersion"/> instance. </returns>
+        /// <returns> a <see cref="CharacterUtils"/> implementation according to the given
+        ///         <see cref="LuceneVersion"/> instance. </returns>
         public static CharacterUtils GetInstance(LuceneVersion matchVersion)
         {
 #pragma warning disable 612, 618
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Return a <seealso cref="CharacterUtils"/> instance compatible with Java 1.4. </summary>
+        /// Return a <see cref="CharacterUtils"/> instance compatible with Java 1.4. </summary>
         public static CharacterUtils Java4Instance
         {
             get
@@ -62,10 +62,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns the code point at the given index of the <seealso cref="CharSequence"/>.
-        /// Depending on the <seealso cref="LuceneVersion"/> passed to
-        /// <seealso cref="CharacterUtils#getInstance(Version)"/> this method mimics the behavior
-        /// of <seealso cref="Character#codePointAt(char[], int)"/> as it would have been
+        /// Returns the code point at the given index of the <see cref="CharSequence"/>.
+        /// Depending on the <see cref="LuceneVersion"/> passed to
+        /// <see cref="CharacterUtils#getInstance(Version)"/> this method mimics the behavior
+        /// of <see cref="Character#codePointAt(char[], int)"/> as it would have been
         /// available on a Java 1.4 JVM or on a later virtual machine version.
         /// </summary>
         /// <param name="seq">
@@ -85,9 +85,9 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Returns the code point at the given index of the char array where only elements
         /// with index less than the limit are used.
-        /// Depending on the <seealso cref="LuceneVersion"/> passed to
-        /// <seealso cref="CharacterUtils#getInstance(Version)"/> this method mimics the behavior
-        /// of <seealso cref="Character#codePointAt(char[], int)"/> as it would have been
+        /// Depending on the <see cref="LuceneVersion"/> passed to
+        /// <see cref="CharacterUtils#getInstance(Version)"/> this method mimics the behavior
+        /// of <see cref="Character#codePointAt(char[], int)"/> as it would have been
         /// available on a Java 1.4 JVM or on a later virtual machine version.
         /// </summary>
         /// <param name="chars">
@@ -110,12 +110,12 @@ namespace Lucene.Net.Analysis.Util
         public abstract int CodePointCount(string seq);
 
         /// <summary>
-        /// Creates a new <seealso cref="CharacterBuffer"/> and allocates a <code>char[]</code>
+        /// Creates a new <see cref="CharacterBuffer"/> and allocates a <code>char[]</code>
         /// of the given bufferSize.
         /// </summary>
         /// <param name="bufferSize">
         ///          the internal char buffer size, must be <code>&gt;= 2</code> </param>
-        /// <returns> a new <seealso cref="CharacterBuffer"/> instance. </returns>
+        /// <returns> a new <see cref="CharacterBuffer"/> instance. </returns>
         public static CharacterBuffer NewCharacterBuffer(int bufferSize)
         {
             if (bufferSize < 2)
@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.Util
 
 
         /// <summary>
-        /// Converts each unicode codepoint to lowerCase via <seealso cref="Character#toLowerCase(int)"/> starting 
+        /// Converts each unicode codepoint to lowerCase via <see cref="Character#toLowerCase(int)"/> starting 
         /// at the given offset. </summary>
         /// <param name="buffer"> the char buffer to lowercase </param>
         /// <param name="offset"> the offset to start at </param>
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Converts each unicode codepoint to UpperCase via <seealso cref="Character#toUpperCase(int)"/> starting 
+        /// Converts each unicode codepoint to UpperCase via <see cref="Character#toUpperCase(int)"/> starting 
         /// at the given offset. </summary>
         /// <param name="buffer"> the char buffer to UPPERCASE </param>
         /// <param name="offset"> the offset to start at </param>
@@ -200,20 +200,20 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Fills the <seealso cref="CharacterBuffer"/> with characters read from the given
-        /// reader <seealso cref="Reader"/>. This method tries to read <code>numChars</code>
-        /// characters into the <seealso cref="CharacterBuffer"/>, each call to fill will start
+        /// Fills the <see cref="CharacterBuffer"/> with characters read from the given
+        /// reader <see cref="Reader"/>. This method tries to read <code>numChars</code>
+        /// characters into the <see cref="CharacterBuffer"/>, each call to fill will start
         /// filling the buffer from offset <code>0</code> up to <code>numChars</code>.
         /// In case code points can span across 2 java characters, this method may
         /// only fill <code>numChars - 1</code> characters in order not to split in
         /// the middle of a surrogate pair, even if there are remaining characters in
-        /// the <seealso cref="Reader"/>.
+        /// the <see cref="Reader"/>.
         /// <para>
-        /// Depending on the <seealso cref="LuceneVersion"/> passed to
-        /// <seealso cref="CharacterUtils#getInstance(Version)"/> this method implements
+        /// Depending on the <see cref="LuceneVersion"/> passed to
+        /// <see cref="CharacterUtils#getInstance(Version)"/> this method implements
         /// supplementary character awareness when filling the given buffer. For all
-        /// <seealso cref="LuceneVersion"/> &gt; 3.0 <seealso cref="#fill(CharacterBuffer, Reader, int)"/> guarantees
-        /// that the given <seealso cref="CharacterBuffer"/> will never contain a high surrogate
+        /// <see cref="LuceneVersion"/> &gt; 3.0 <see cref="#fill(CharacterBuffer, Reader, int)"/> guarantees
+        /// that the given <see cref="CharacterBuffer"/> will never contain a high surrogate
         /// character as the last element in the buffer unless it is the last available
         /// character in the reader. In other words, high and low surrogate pairs will
         /// always be preserved across buffer boarders.
@@ -232,7 +232,7 @@ namespace Lucene.Net.Analysis.Util
         ///          the number of chars to read </param>
         /// <returns> <code>false</code> if and only if reader.read returned -1 while trying to fill the buffer </returns>
         /// <exception cref="IOException">
-        ///           if the reader throws an <seealso cref="IOException"/>. </exception>
+        ///           if the reader throws an <see cref="IOException"/>. </exception>
         public abstract bool Fill(CharacterBuffer buffer, Reader reader, int numChars);
 
         /// <summary>
@@ -384,7 +384,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// A simple IO buffer to use with
-        /// <seealso cref="CharacterUtils#fill(CharacterBuffer, Reader)"/>.
+        /// <see cref="CharacterUtils#fill(CharacterBuffer, Reader)"/>.
         /// </summary>
         public sealed class CharacterBuffer
         {
@@ -431,7 +431,7 @@ namespace Lucene.Net.Analysis.Util
 
             /// <summary>
             /// Return the length of the data in the internal buffer starting at
-            /// <seealso cref="#getOffset()"/>
+            /// <see cref="#getOffset()"/>
             /// </summary>
             /// <returns> the length </returns>
             public int Length

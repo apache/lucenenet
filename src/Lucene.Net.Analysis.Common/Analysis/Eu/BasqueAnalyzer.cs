@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Eu
 	 */
 
     /// <summary>
-    /// <seealso cref="Analyzer"/> for Basque.
+    /// <see cref="Analyzer"/> for Basque.
     /// </summary>
     public sealed class BasqueAnalyzer : StopwordAnalyzerBase
     {
@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Eu
         }
 
         /// <summary>
-        /// Builds an analyzer with the default stop words: <seealso cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// Builds an analyzer with the default stop words: <see cref="#DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public BasqueAnalyzer(LuceneVersion matchVersion)
               : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Eu
 
         /// <summary>
         /// Builds an analyzer with the given stop words. If a non-empty stem exclusion set is
-        /// provided this analyzer will add a <seealso cref="SetKeywordMarkerFilter"/> before
+        /// provided this analyzer will add a <see cref="SetKeywordMarkerFilter"/> before
         /// stemming.
         /// </summary>
         /// <param name="matchVersion"> lucene compatibility version </param>
@@ -107,15 +107,15 @@ namespace Lucene.Net.Analysis.Eu
 
         /// <summary>
         /// Creates a
-        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        /// which tokenizes all the text in the provided <seealso cref="Reader"/>.
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// which tokenizes all the text in the provided <see cref="Reader"/>.
         /// </summary>
         /// <returns> A
-        ///         <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        ///         built from an <seealso cref="StandardTokenizer"/> filtered with
-        ///         <seealso cref="StandardFilter"/>, <seealso cref="LowerCaseFilter"/>, <seealso cref="StopFilter"/>
-        ///         , <seealso cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
-        ///         provided and <seealso cref="SnowballFilter"/>. </returns>
+        ///         <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from an <see cref="StandardTokenizer"/> filtered with
+        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>
+        ///         , <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
+        ///         provided and <see cref="SnowballFilter"/>. </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new StandardTokenizer(m_matchVersion, reader);

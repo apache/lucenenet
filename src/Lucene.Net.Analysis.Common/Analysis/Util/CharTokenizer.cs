@@ -26,37 +26,37 @@ namespace Lucene.Net.Analysis.Util
     /// <summary>
     /// An abstract base class for simple, character-oriented tokenizers. 
     /// <para>
-    /// <a name="version">You must specify the required <seealso cref="LuceneVersion"/> compatibility
-    /// when creating <seealso cref="CharTokenizer"/>:
+    /// <a name="version">You must specify the required <see cref="LuceneVersion"/> compatibility
+    /// when creating <see cref="CharTokenizer"/>:
     /// <ul>
-    /// <li>As of 3.1, <seealso cref="CharTokenizer"/> uses an int based API to normalize and
-    /// detect token codepoints. See <seealso cref="#isTokenChar(int)"/> and
-    /// <seealso cref="#normalize(int)"/> for details.</li>
+    /// <li>As of 3.1, <see cref="CharTokenizer"/> uses an int based API to normalize and
+    /// detect token codepoints. See <see cref="#isTokenChar(int)"/> and
+    /// <see cref="#normalize(int)"/> for details.</li>
     /// </ul>
     /// </para>
     /// <para>
-    /// A new <seealso cref="CharTokenizer"/> API has been introduced with Lucene 3.1. This API
+    /// A new <see cref="CharTokenizer"/> API has been introduced with Lucene 3.1. This API
     /// moved from UTF-16 code units to UTF-32 codepoints to eventually add support
     /// for <a href=
     /// "http://java.sun.com/j2se/1.5.0/docs/api/java/lang/Character.html#supplementary"
     /// >supplementary characters</a>. The old <i>char</i> based API has been
     /// deprecated and should be replaced with the <i>int</i> based methods
-    /// <seealso cref="#isTokenChar(int)"/> and <seealso cref="#normalize(int)"/>.
+    /// <see cref="#isTokenChar(int)"/> and <see cref="#normalize(int)"/>.
     /// </para>
     /// <para>
-    /// As of Lucene 3.1 each <seealso cref="CharTokenizer"/> - constructor expects a
-    /// <seealso cref="LuceneVersion"/> argument. Based on the given <seealso cref="LuceneVersion"/> either the new
+    /// As of Lucene 3.1 each <see cref="CharTokenizer"/> - constructor expects a
+    /// <see cref="LuceneVersion"/> argument. Based on the given <see cref="LuceneVersion"/> either the new
     /// API or a backwards compatibility layer is used at runtime. For
-    /// <seealso cref="LuceneVersion"/> < 3.1 the backwards compatibility layer ensures correct
+    /// <see cref="LuceneVersion"/> < 3.1 the backwards compatibility layer ensures correct
     /// behavior even for indexes build with previous versions of Lucene. If a
-    /// <seealso cref="LuceneVersion"/> >= 3.1 is used <seealso cref="CharTokenizer"/> requires the new API to
+    /// <see cref="LuceneVersion"/> >= 3.1 is used <see cref="CharTokenizer"/> requires the new API to
     /// be implemented by the instantiated class. Yet, the old <i>char</i> based API
     /// is not required anymore even if backwards compatibility must be preserved.
-    /// <seealso cref="CharTokenizer"/> subclasses implementing the new API are fully backwards
-    /// compatible if instantiated with <seealso cref="LuceneVersion"/> < 3.1.
+    /// <see cref="CharTokenizer"/> subclasses implementing the new API are fully backwards
+    /// compatible if instantiated with <see cref="LuceneVersion"/> < 3.1.
     /// </para>
     /// <para>
-    /// <strong>Note:</strong> If you use a subclass of <seealso cref="CharTokenizer"/> with <seealso cref="LuceneVersion"/> >=
+    /// <strong>Note:</strong> If you use a subclass of <see cref="CharTokenizer"/> with <see cref="LuceneVersion"/> >=
     /// 3.1 on an index build with a version < 3.1, created tokens might not be
     /// compatible with the terms in your index.
     /// </para>
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Util
     public abstract class CharTokenizer : Tokenizer
     {
         /// <summary>
-        /// Creates a new <seealso cref="CharTokenizer"/> instance
+        /// Creates a new <see cref="CharTokenizer"/> instance
         /// </summary>
         /// <param name="matchVersion">
         ///          Lucene version to match </param>
@@ -78,12 +78,12 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="CharTokenizer"/> instance
+        /// Creates a new <see cref="CharTokenizer"/> instance
         /// </summary>
         /// <param name="matchVersion">
         ///          Lucene version to match </param>
         /// <param name="factory">
-        ///          the attribute factory to use for this <seealso cref="Tokenizer"/> </param>
+        ///          the attribute factory to use for this <see cref="Tokenizer"/> </param>
         /// <param name="input">
         ///          the input to split up into tokens </param>
         protected CharTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input)

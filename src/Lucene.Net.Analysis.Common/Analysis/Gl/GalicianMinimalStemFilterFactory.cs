@@ -21,15 +21,15 @@ namespace Lucene.Net.Analysis.Gl
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="GalicianMinimalStemFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="GalicianMinimalStemFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_glplural" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
     ///     &lt;filter class="solr.GalicianMinimalStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class GalicianMinimalStemFilterFactory : TokenFilterFactory
     {

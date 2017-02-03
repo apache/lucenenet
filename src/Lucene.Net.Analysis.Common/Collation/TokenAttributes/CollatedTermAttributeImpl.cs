@@ -22,7 +22,7 @@ namespace Lucene.Net.Collation.TokenAttributes
      */
 
     /// <summary>
-    /// Extension of <seealso cref="CharTermAttribute"/> that encodes the term
+    /// Extension of <see cref="CharTermAttribute"/> that encodes the term
     /// text as a binary Unicode collation key instead of as UTF-8 bytes.
     /// </summary>
     // LUCENENET TODO: A better option would be to contribute to the icu.net library and

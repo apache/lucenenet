@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.In
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="IndicNormalizer"/> to normalize text
+    /// A <see cref="TokenFilter"/> that applies <see cref="IndicNormalizer"/> to normalize text
     /// in Indian Languages.
     /// </summary>
     public sealed class IndicNormalizationFilter : TokenFilter

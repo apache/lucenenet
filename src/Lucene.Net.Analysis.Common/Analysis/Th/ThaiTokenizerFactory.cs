@@ -23,13 +23,13 @@ namespace Lucene.Net.Analysis.Th
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="ThaiTokenizer"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="ThaiTokenizer"/>.
+    /// <code>
     /// &lt;fieldType name="text_thai" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.ThaiTokenizerFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class ThaiTokenizerFactory : TokenizerFactory
     {

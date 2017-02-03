@@ -21,14 +21,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="HyphenatedWordsFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="HyphenatedWordsFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_hyphn" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.HyphenatedWordsFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class HyphenatedWordsFilterFactory : TokenFilterFactory
     {

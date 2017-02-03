@@ -25,14 +25,14 @@ namespace Lucene.Net.Collation
 
 	/// <summary>
 	/// <para>
-	///   Converts each token into its <seealso cref="java.text.CollationKey"/>, and then
-	///   encodes the CollationKey with <seealso cref="IndexableBinaryStringTools"/>, to allow 
+	///   Converts each token into its <see cref="java.text.CollationKey"/>, and then
+	///   encodes the CollationKey with <see cref="IndexableBinaryStringTools"/>, to allow 
 	///   it to be stored as an index term.
 	/// </para>
 	/// <para>
 	///   <strong>WARNING:</strong> Make sure you use exactly the same Collator at
 	///   index and query time -- CollationKeys are only comparable when produced by
-	///   the same Collator.  Since <seealso cref="java.text.RuleBasedCollator"/>s are not
+	///   the same Collator.  Since <see cref="java.text.RuleBasedCollator"/>s are not
 	///   independently versioned, it is unsafe to search against stored
 	///   CollationKeys unless the following are exactly the same (best practice is
 	///   to store this information with the index and check that they remain the
@@ -44,10 +44,10 @@ namespace Lucene.Net.Collation
 	///   <li>
 	///     The language (and country and variant, if specified) of the Locale
 	///     used when constructing the collator via
-	///     <seealso cref="Collator#getInstance(CultureInfo)"/>.
+	///     <see cref="Collator#getInstance(CultureInfo)"/>.
 	///   </li>
 	///   <li>
-	///     The collation strength used - see <seealso cref="Collator#setStrength(int)"/>
+	///     The collation strength used - see <see cref="Collator#setStrength(int)"/>
 	///   </li>
 	/// </ol> 
 	/// <para>
@@ -67,7 +67,7 @@ namespace Lucene.Net.Collation
 	///   CollationKeyFilter to generate index terms, do not use
 	///   ICUCollationKeyFilter on the query side, or vice versa.
 	/// </para> </summary>
-	/// @deprecated Use <seealso cref="CollationAttributeFactory"/> instead, which encodes
+	/// @deprecated Use <see cref="CollationAttributeFactory"/> instead, which encodes
 	///  terms directly as bytes. This filter will be removed in Lucene 5.0 
 	[Obsolete("Use <seealso cref=\"CollationAttributeFactory\"/> instead, which encodes")]
     // LUCENENET TODO: A better option would be to contribute to the icu.net library and

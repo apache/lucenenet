@@ -25,8 +25,8 @@ namespace Lucene.Net.Analysis.Ngram
     /// <summary>
     /// Tokenizes the input into n-grams of the given size(s).
     /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="Version"/> compatibility when
-    /// creating a <seealso cref="NGramTokenFilter"/>. As of Lucene 4.4, this token filters:<ul>
+    /// <para>You must specify the required <see cref="LuceneVersion"/> compatibility when
+    /// creating a <see cref="NGramTokenFilter"/>. As of Lucene 4.4, this token filters:<ul>
     /// <li>handles supplementary characters correctly,</li>
     /// <li>emits all n-grams for the same token at the same position,</li>
     /// <li>does not modify offsets,</li>
@@ -35,14 +35,14 @@ namespace Lucene.Net.Analysis.Ngram
     /// "c").</li></ul>
     /// </para>
     /// <para>You can make this filter use the old behavior by providing a version &lt;
-    /// <seealso cref="Version#LUCENE_44"/> in the constructor but this is not recommended as
-    /// it will lead to broken <seealso cref="TokenStream"/>s that will cause highlighting
+    /// <see cref="Version#LUCENE_44"/> in the constructor but this is not recommended as
+    /// it will lead to broken <see cref="TokenStream"/>s that will cause highlighting
     /// bugs.
     /// </para>
-    /// <para>If you were using this <seealso cref="TokenFilter"/> to perform partial highlighting,
+    /// <para>If you were using this <see cref="TokenFilter"/> to perform partial highlighting,
     /// this won't work anymore since this filter doesn't update offsets. You should
-    /// modify your analysis chain to use <seealso cref="NGramTokenizer"/>, and potentially
-    /// override <seealso cref="NGramTokenizer#isTokenChar(int)"/> to perform pre-tokenization.
+    /// modify your analysis chain to use <see cref="NGramTokenizer"/>, and potentially
+    /// override <see cref="NGramTokenizer#isTokenChar(int)"/> to perform pre-tokenization.
     /// </para>
     /// </summary>
     public sealed class NGramTokenFilter : TokenFilter
@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.Ngram
         /// Creates NGramTokenFilter with given min and max n-grams. </summary>
         /// <param name="version"> Lucene version to enable correct position increments.
         ///                See <a href="#version">above</a> for details. </param>
-        /// <param name="input"> <seealso cref="TokenStream"/> holding the input to be tokenized </param>
+        /// <param name="input"> <see cref="TokenStream"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         public NGramTokenFilter(LuceneVersion version, TokenStream input, int minGram, int maxGram)
@@ -157,7 +157,7 @@ namespace Lucene.Net.Analysis.Ngram
         /// Creates NGramTokenFilter with default min and max n-grams. </summary>
         /// <param name="version"> Lucene version to enable correct position increments.
         ///                See <a href="#version">above</a> for details. </param>
-        /// <param name="input"> <seealso cref="TokenStream"/> holding the input to be tokenized </param>
+        /// <param name="input"> <see cref="TokenStream"/> holding the input to be tokenized </param>
         public NGramTokenFilter(LuceneVersion version, TokenStream input)
             : this(version, input, DEFAULT_MIN_NGRAM_SIZE, DEFAULT_MAX_NGRAM_SIZE)
         {

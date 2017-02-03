@@ -21,14 +21,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="ScandinavianFoldingFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="ScandinavianFoldingFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_scandfold" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.ScandinavianFoldingFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class ScandinavianFoldingFilterFactory : TokenFilterFactory
     {

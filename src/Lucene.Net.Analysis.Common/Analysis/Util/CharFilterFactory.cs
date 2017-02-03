@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// Abstract parent class for analysis factories that create <seealso cref="CharFilter"/>
+    /// Abstract parent class for analysis factories that create <see cref="CharFilter"/>
     /// instances.
     /// </summary>
     public abstract class CharFilterFactory : AbstractAnalysisFactory
@@ -52,9 +52,9 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Reloads the factory list from the given <seealso cref="ClassLoader"/>.
+        /// Reloads the factory list from the given <see cref="ClassLoader"/>.
         /// Changes to the factories are visible after the method ends, all
-        /// iterators (<seealso cref="#availableCharFilters()"/>,...) stay consistent. 
+        /// iterators (<see cref="#availableCharFilters()"/>,...) stay consistent. 
         /// 
         /// <para><b>NOTE:</b> Only new factories are added, existing ones are
         /// never removed or replaced.

@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.En
     ///    To use this with LowerCaseTokenizer, for example, you'd write an
     ///    analyzer like this:
     ///    <P>
-    ///    <PRE class="prettyprint">
+    ///    <code>
     ///    class MyAnalyzer extends Analyzer {
     ///      {@literal @Override}
     ///      protected virtual TokenStreamComponents CreateComponents(string fieldName, TextReader reader) {
@@ -38,15 +38,15 @@ namespace Lucene.Net.Analysis.En
     ///        return new TokenStreamComponents(source, new PorterStemFilter(source));
     ///      }
     ///    }
-    ///    </PRE>
+    ///    </code>
     ///    <para>
-    ///    Note: This filter is aware of the <seealso cref="KeywordAttribute"/>. To prevent
+    ///    Note: This filter is aware of the <see cref="KeywordAttribute"/>. To prevent
     ///    certain terms from being passed to the stemmer
-    ///    <seealso cref="KeywordAttribute#isKeyword()"/> should be set to <code>true</code>
-    ///    in a previous <seealso cref="TokenStream"/>.
+    ///    <see cref="KeywordAttribute#isKeyword()"/> should be set to <code>true</code>
+    ///    in a previous <see cref="TokenStream"/>.
     /// 
     ///    Note: For including the original term as well as the stemmed version, see
-    ///   <seealso cref="org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilterFactory"/>
+    ///   <see cref="org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilterFactory"/>
     ///    </para>
     /// </summary>
     public sealed class PorterStemFilter : TokenFilter

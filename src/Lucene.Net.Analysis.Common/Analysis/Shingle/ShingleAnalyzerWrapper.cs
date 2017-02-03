@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis.Shingle
 	 */
 
     /// <summary>
-    /// A ShingleAnalyzerWrapper wraps a <seealso cref="ShingleFilter"/> around another <seealso cref="Analyzer"/>.
+    /// A ShingleAnalyzerWrapper wraps a <see cref="ShingleFilter"/> around another <see cref="Analyzer"/>.
     /// <para>
     /// A shingle is another name for a token based n-gram.
     /// </para>
@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Shingle
         }
 
         /// <summary>
-        /// Wraps <seealso cref="StandardAnalyzer"/>. 
+        /// Wraps <see cref="StandardAnalyzer"/>. 
         /// </summary>
         public ShingleAnalyzerWrapper(LuceneVersion matchVersion)
               : this(matchVersion, ShingleFilter.DEFAULT_MIN_SHINGLE_SIZE, ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE)
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Shingle
         }
 
         /// <summary>
-        /// Wraps <seealso cref="StandardAnalyzer"/>. 
+        /// Wraps <see cref="StandardAnalyzer"/>. 
         /// </summary>
         public ShingleAnalyzerWrapper(LuceneVersion matchVersion, int minShingleSize, int maxShingleSize)
               : this(new StandardAnalyzer(matchVersion), minShingleSize, maxShingleSize)

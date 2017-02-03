@@ -23,12 +23,12 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /// <summary>
-    /// Filters <seealso cref="StandardTokenizer"/> with <seealso cref="StandardFilter"/>, {@link
-    /// LowerCaseFilter} and <seealso cref="StopFilter"/>, using a list of
+    /// Filters <see cref="StandardTokenizer"/> with <see cref="StandardFilter"/>, {@link
+    /// LowerCaseFilter} and <see cref="StopFilter"/>, using a list of
     /// English stop words.
     /// 
     /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="LuceneVersion"/>
+    /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating StandardAnalyzer:
     /// <ul>
     ///   <li> As of 3.4, Hiragana and Han characters are no longer wrongly split
@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Standard
     ///        you get the exact broken behavior for backwards compatibility.
     ///   <li> As of 3.1, StandardTokenizer implements Unicode text segmentation,
     ///        and StopFilter correctly handles Unicode 4.0 supplementary characters
-    ///        in stopwords.  <seealso cref="ClassicTokenizer"/> and <seealso cref="ClassicAnalyzer"/> 
+    ///        in stopwords.  <see cref="ClassicTokenizer"/> and <see cref="ClassicAnalyzer"/> 
     ///        are the pre-3.1 implementations of StandardTokenizer and
     ///        StandardAnalyzer.
     ///   <li> As of 2.9, StopFilter preserves position increments

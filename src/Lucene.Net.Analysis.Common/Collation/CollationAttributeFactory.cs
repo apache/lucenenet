@@ -24,13 +24,13 @@ namespace Lucene.Net.Collation
 
     /// <summary>
     /// <para>
-    ///   Converts each token into its <seealso cref="CollationKey"/>, and then
+    ///   Converts each token into its <see cref="CollationKey"/>, and then
     ///   encodes the bytes as an index term.
     /// </para>
     /// <para>
     ///   <strong>WARNING:</strong> Make sure you use exactly the same Collator at
     ///   index and query time -- CollationKeys are only comparable when produced by
-    ///   the same Collator.  Since <seealso cref="RuleBasedCollator"/>s are not
+    ///   the same Collator.  Since <see cref="RuleBasedCollator"/>s are not
     ///   independently versioned, it is unsafe to search against stored
     ///   CollationKeys unless the following are exactly the same (best practice is
     ///   to store this information with the index and check that they remain the
@@ -42,10 +42,10 @@ namespace Lucene.Net.Collation
     ///   <li>
     ///     The language (and country and variant, if specified) of the Locale
     ///     used when constructing the collator via
-    ///     <seealso cref="Collator#getInstance(Locale)"/>.
+    ///     <see cref="Collator#getInstance(Locale)"/>.
     ///   </li>
     ///   <li>
-    ///     The collation strength used - see <seealso cref="Collator#setStrength(int)"/>
+    ///     The collation strength used - see <see cref="Collator#setStrength(int)"/>
     ///   </li>
     /// </ol> 
     /// <para>
@@ -76,7 +76,7 @@ namespace Lucene.Net.Collation
 
 		/// <summary>
 		/// Create a CollationAttributeFactory, using 
-		/// <seealso cref="AttributeSource.AttributeFactory#DEFAULT_ATTRIBUTE_FACTORY"/> as the
+		/// <see cref="AttributeSource.AttributeFactory#DEFAULT_ATTRIBUTE_FACTORY"/> as the
 		/// factory for all other attributes. </summary>
 		/// <param name="collator"> CollationKey generator </param>
 		public CollationAttributeFactory(Collator collator) : this(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, collator)

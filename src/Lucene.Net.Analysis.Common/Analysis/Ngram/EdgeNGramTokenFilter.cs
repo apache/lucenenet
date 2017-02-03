@@ -25,10 +25,10 @@ namespace Lucene.Net.Analysis.Ngram
     /// <summary>
     /// Tokenizes the given token into n-grams of given size(s).
     /// <para>
-    /// This <seealso cref="TokenFilter"/> create n-grams from the beginning edge or ending edge of a input token.
+    /// This <see cref="TokenFilter"/> create n-grams from the beginning edge or ending edge of a input token.
     /// </para>
     /// <para><a name="version"/>As of Lucene 4.4, this filter does not support
-    /// <seealso cref="Side#BACK"/> (you can use <seealso cref="ReverseStringFilter"/> up-front and
+    /// <see cref="Side#BACK"/> (you can use <see cref="ReverseStringFilter"/> up-front and
     /// afterward to get the same behavior), handles supplementary characters
     /// correctly and does not update offsets anymore.
     /// </para>
@@ -89,8 +89,8 @@ namespace Lucene.Net.Analysis.Ngram
         /// Creates EdgeNGramTokenFilter that can generate n-grams in the sizes of the given range
         /// </summary>
         /// <param name="version"> the <a href="#version">Lucene match version</a> </param>
-        /// <param name="input"> <seealso cref="TokenStream"/> holding the input to be tokenized </param>
-        /// <param name="side"> the <seealso cref="Side"/> from which to chop off an n-gram </param>
+        /// <param name="input"> <see cref="TokenStream"/> holding the input to be tokenized </param>
+        /// <param name="side"> the <see cref="Side"/> from which to chop off an n-gram </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         [Obsolete]
@@ -139,8 +139,8 @@ namespace Lucene.Net.Analysis.Ngram
         /// Creates EdgeNGramTokenFilter that can generate n-grams in the sizes of the given range
         /// </summary>
         /// <param name="version"> the <a href="#version">Lucene match version</a> </param>
-        /// <param name="input"> <seealso cref="TokenStream"/> holding the input to be tokenized </param>
-        /// <param name="sideLabel"> the name of the <seealso cref="Side"/> from which to chop off an n-gram </param>
+        /// <param name="input"> <see cref="TokenStream"/> holding the input to be tokenized </param>
+        /// <param name="sideLabel"> the name of the <see cref="Side"/> from which to chop off an n-gram </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         [Obsolete]
@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.Ngram
         /// Creates EdgeNGramTokenFilter that can generate n-grams in the sizes of the given range
         /// </summary>
         /// <param name="version"> the <a href="#version">Lucene match version</a> </param>
-        /// <param name="input"> <seealso cref="TokenStream"/> holding the input to be tokenized </param>
+        /// <param name="input"> <see cref="TokenStream"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         public EdgeNGramTokenFilter(LuceneVersion version, TokenStream input, int minGram, int maxGram)

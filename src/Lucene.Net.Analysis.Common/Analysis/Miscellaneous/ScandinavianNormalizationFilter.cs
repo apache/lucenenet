@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// This filter normalize use of the interchangeable Scandinavian characters æÆäÄöÖøØ
     /// and folded variants (aa, ao, ae, oe and oo) by transforming them to åÅæÆøØ.
     /// <p/>
-    /// It's a semantically less destructive solution than <seealso cref="ScandinavianFoldingFilter"/>,
+    /// It's a semantically less destructive solution than <see cref="ScandinavianFoldingFilter"/>,
     /// most useful when a person with a Norwegian or Danish keyboard queries a Swedish index
     /// and vice versa. This filter does <b>not</b>  the common Swedish folds of å and ä to a nor ö to o.
     /// <p/>

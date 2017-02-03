@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// This filter folds Scandinavian characters åÅäæÄÆ->a and öÖøØ->o.
     /// It also discriminate against use of double vowels aa, ae, ao, oe and oo, leaving just the first one.
     /// <p/>
-    /// It's is a semantically more destructive solution than <seealso cref="ScandinavianNormalizationFilter"/> but
+    /// It's is a semantically more destructive solution than <see cref="ScandinavianNormalizationFilter"/> but
     /// can in addition help with matching raksmorgas as räksmörgås.
     /// <p/>
     /// blåbærsyltetøj == blåbärsyltetöj == blaabaarsyltetoej == blabarsyltetoj

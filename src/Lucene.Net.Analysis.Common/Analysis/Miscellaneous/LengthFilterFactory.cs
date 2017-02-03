@@ -21,14 +21,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <seealso cref="LengthFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="LengthFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_lngth" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.LengthFilterFactory" min="0" max="1" /&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class LengthFilterFactory : TokenFilterFactory
     {

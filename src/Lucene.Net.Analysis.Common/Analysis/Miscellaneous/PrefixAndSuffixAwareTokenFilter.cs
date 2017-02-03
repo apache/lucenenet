@@ -18,7 +18,7 @@
 	 */
 
     /// <summary>
-    /// Links two <seealso cref="PrefixAwareTokenFilter"/>.
+    /// Links two <see cref="PrefixAwareTokenFilter"/>.
     /// <p/>
     /// <b>NOTE:</b> This filter might not behave correctly if used with custom Attributes, i.e. Attributes other than
     /// the ones located in org.apache.lucene.analysis.tokenattributes. 

@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// then consuming the full stream. If you are wrapping a {@code TokenStream}
     /// which requires that the full stream of tokens be exhausted in order to 
     /// function properly, use the 
-    /// <seealso cref="#LimitTokenPositionFilter(TokenStream,int,boolean) consumeAllTokens"/>
+    /// <see cref="#LimitTokenPositionFilter(TokenStream,int,boolean) consumeAllTokens"/>
     /// option.
     /// </para>
     /// </summary>

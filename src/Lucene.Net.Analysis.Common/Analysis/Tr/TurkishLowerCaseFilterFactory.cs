@@ -21,14 +21,14 @@ namespace Lucene.Net.Analysis.Tr
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="TurkishLowerCaseFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="TurkishLowerCaseFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_trlwr" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.TurkishLowerCaseFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class TurkishLowerCaseFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {

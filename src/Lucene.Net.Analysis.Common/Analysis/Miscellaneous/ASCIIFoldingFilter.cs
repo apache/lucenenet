@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Create a new <seealso cref="ASCIIFoldingFilter"/>.
+        /// Create a new <see cref="ASCIIFoldingFilter"/>.
         /// </summary>
         /// <param name="input">
         ///          TokenStream to filter </param>

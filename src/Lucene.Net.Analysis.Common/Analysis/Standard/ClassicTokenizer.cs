@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Standard
     /// directory to your project and maintaining your own grammar-based tokenizer.
     /// 
     /// ClassicTokenizer was named StandardTokenizer in Lucene versions prior to 3.1.
-    /// As of 3.1, <seealso cref="StandardTokenizer"/> implements Unicode text segmentation,
+    /// As of 3.1, <see cref="StandardTokenizer"/> implements Unicode text segmentation,
     /// as specified by UAX#29.
     /// </para>
     /// </summary>
@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.Standard
 
 
         /// <summary>
-        /// Creates a new instance of the <seealso cref="ClassicTokenizer"/>.  Attaches
+        /// Creates a new instance of the <see cref="ClassicTokenizer"/>.  Attaches
         /// the <code>input</code> to the newly created JFlex scanner.
         /// </summary>
         /// <param name="input"> The input reader
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Standard
         }
 
         /// <summary>
-        /// Creates a new ClassicTokenizer with a given <seealso cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> 
+        /// Creates a new ClassicTokenizer with a given <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> 
         /// </summary>
         public ClassicTokenizer(LuceneVersion matchVersion, AttributeFactory factory, Reader input)
             : base(factory, input)

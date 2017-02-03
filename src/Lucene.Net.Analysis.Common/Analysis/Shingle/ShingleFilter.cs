@@ -165,7 +165,7 @@ namespace Lucene.Net.Analysis.Shingle
 
         /// <summary>
         /// Constructs a ShingleFilter with the specified shingle size from the
-        /// <seealso cref="TokenStream"/> <code>input</code>
+        /// <see cref="TokenStream"/> <code>input</code>
         /// </summary>
         /// <param name="input"> input stream </param>
         /// <param name="minShingleSize"> minimum shingle size produced by the filter. </param>
@@ -184,7 +184,7 @@ namespace Lucene.Net.Analysis.Shingle
 
         /// <summary>
         /// Constructs a ShingleFilter with the specified shingle size from the
-        /// <seealso cref="TokenStream"/> <code>input</code>
+        /// <see cref="TokenStream"/> <code>input</code>
         /// </summary>
         /// <param name="input"> input stream </param>
         /// <param name="maxShingleSize"> maximum shingle size produced by the filter. </param>
@@ -378,7 +378,7 @@ namespace Lucene.Net.Analysis.Shingle
         /// <para>Get the next token from the input stream.
         /// </para>
         /// <para>If the next token has <code>positionIncrement > 1</code>,
-        /// <code>positionIncrement - 1</code> <seealso cref="#fillerToken"/>s are
+        /// <code>positionIncrement - 1</code> <see cref="#fillerToken"/>s are
         /// inserted first.
         /// </para>
         /// </summary>
@@ -496,10 +496,10 @@ namespace Lucene.Net.Analysis.Shingle
         }
 
         /// <summary>
-        /// <para>Fills <seealso cref="#inputWindow"/> with input stream tokens, if available, 
+        /// <para>Fills <see cref="#inputWindow"/> with input stream tokens, if available, 
         /// shifting to the right if the window was previously full.
         /// </para>
-        /// <para>Resets <seealso cref="#gramSize"/> to its minimum value.
+        /// <para>Resets <see cref="#gramSize"/> to its minimum value.
         /// 
         /// </para>
         /// </summary>
@@ -570,13 +570,13 @@ namespace Lucene.Net.Analysis.Shingle
         /// <summary>
         /// <para>An instance of this class is used to maintain the number of input
         /// stream tokens that will be used to compose the next unigram or shingle:
-        /// <seealso cref="#gramSize"/>.
+        /// <see cref="#gramSize"/>.
         /// </para>
         /// <para><code>gramSize</code> will take on values from the circular sequence
-        /// <b>{ [ 1, ] <seealso cref="#minShingleSize"/> [ , ... , <seealso cref="#maxShingleSize"/> ] }</b>.
+        /// <b>{ [ 1, ] <see cref="#minShingleSize"/> [ , ... , <see cref="#maxShingleSize"/> ] }</b>.
         /// </para>
         /// <para>1 is included in the circular sequence only if 
-        /// <seealso cref="#outputUnigrams"/> = true.
+        /// <see cref="#outputUnigrams"/> = true.
         /// </para>
         /// </summary>
         private class CircularSequence
@@ -608,10 +608,10 @@ namespace Lucene.Net.Analysis.Shingle
             /// <para>Increments this circular number's value to the next member in the
             /// circular sequence
             /// <code>gramSize</code> will take on values from the circular sequence
-            /// <b>{ [ 1, ] <seealso cref="#minShingleSize"/> [ , ... , <seealso cref="#maxShingleSize"/> ] }</b>.
+            /// <b>{ [ 1, ] <see cref="#minShingleSize"/> [ , ... , <see cref="#maxShingleSize"/> ] }</b>.
             /// </para>
             /// <para>1 is included in the circular sequence only if 
-            /// <seealso cref="#outputUnigrams"/> = true.
+            /// <see cref="#outputUnigrams"/> = true.
             /// </para>
             /// </summary>
             public virtual void advance()
@@ -636,10 +636,10 @@ namespace Lucene.Net.Analysis.Shingle
             /// circular sequence
             /// </para>
             /// <para><code>gramSize</code> will take on values from the circular sequence
-            /// <b>{ [ 1, ] <seealso cref="#minShingleSize"/> [ , ... , <seealso cref="#maxShingleSize"/> ] }</b>.
+            /// <b>{ [ 1, ] <see cref="#minShingleSize"/> [ , ... , <see cref="#maxShingleSize"/> ] }</b>.
             /// </para>
             /// <para>1 is included in the circular sequence only if 
-            /// <seealso cref="#outputUnigrams"/> = true.
+            /// <see cref="#outputUnigrams"/> = true.
             /// </para>
             /// </summary>
             public virtual void reset()
@@ -651,8 +651,8 @@ namespace Lucene.Net.Analysis.Shingle
             /// <para>Returns true if the current value is the first member of the circular
             /// sequence.
             /// </para>
-            /// <para>If <seealso cref="#outputUnigrams"/> = true, the first member of the circular
-            /// sequence will be 1; otherwise, it will be <seealso cref="#minShingleSize"/>.
+            /// <para>If <see cref="#outputUnigrams"/> = true, the first member of the circular
+            /// sequence will be 1; otherwise, it will be <see cref="#minShingleSize"/>.
             /// 
             /// </para>
             /// </summary>

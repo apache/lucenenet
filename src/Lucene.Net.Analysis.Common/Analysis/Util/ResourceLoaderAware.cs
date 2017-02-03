@@ -19,7 +19,7 @@
 
     /// <summary>
     /// Interface for a component that needs to be initialized by
-    /// an implementation of <seealso cref="ResourceLoader"/>.
+    /// an implementation of <see cref="ResourceLoader"/>.
     /// </summary>
     /// <seealso cref= ResourceLoader </seealso>
     public interface IResourceLoaderAware

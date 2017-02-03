@@ -21,12 +21,12 @@ namespace Lucene.Net.Analysis.Fi
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="FinnishLightStemmer"/> to stem Finnish
+    /// A <see cref="TokenFilter"/> that applies <see cref="FinnishLightStemmer"/> to stem Finnish
     /// words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para>
     /// </summary>
     public sealed class FinnishLightStemFilter : TokenFilter

@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Nl
     /// the <a href="http://snowball.tartarus.org/algorithms/dutch/stemmer.html">dutch stemming</a>
     /// algorithm in Martin Porter's snowball project.
     /// </para> </summary>
-    /// @deprecated (3.1) Use <seealso cref="org.tartarus.snowball.ext.DutchStemmer"/> instead, 
+    /// @deprecated (3.1) Use <see cref="org.tartarus.snowball.ext.DutchStemmer"/> instead, 
     /// which has the same functionality. This filter will be removed in Lucene 5.0 
     [Obsolete("(3.1) Use Tartarus.Snowball.Ext.DutchStemmer instead, which has the same functionality. This filter will be removed in Lucene 5.0")]
     public class DutchStemmer

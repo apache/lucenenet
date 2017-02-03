@@ -24,13 +24,13 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /// <summary>
-    /// Factory for <seealso cref="UAX29URLEmailTokenizer"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="UAX29URLEmailTokenizer"/>. 
+    /// <code>
     /// &lt;fieldType name="text_urlemail" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.UAX29URLEmailTokenizerFactory" maxTokenLength="255"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre> 
+    /// &lt;/fieldType&gt;</code> 
     /// </summary>
     public class UAX29URLEmailTokenizerFactory : TokenizerFactory
     {

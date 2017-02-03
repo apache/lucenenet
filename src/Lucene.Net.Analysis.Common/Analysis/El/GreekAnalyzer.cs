@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.El
 	 */
 
     /// <summary>
-    /// <seealso cref="Analyzer"/> for the Greek language. 
+    /// <see cref="Analyzer"/> for the Greek language. 
     /// <para>
     /// Supports an external list of stopwords (words
     /// that will not be indexed at all).
@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.El
     /// </para>
     /// 
     /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="Version"/>
+    /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating GreekAnalyzer:
     /// <ul>
     ///   <li> As of 3.1, StandardFilter and GreekStemmer are used by default.
@@ -42,8 +42,8 @@ namespace Lucene.Net.Analysis.El
     /// </ul>
     /// 
     /// </para>
-    /// <para><b>NOTE</b>: This class uses the same <seealso cref="Version"/>
-    /// dependent settings as <seealso cref="StandardAnalyzer"/>.</para>
+    /// <para><b>NOTE</b>: This class uses the same <see cref="LuceneVersion"/>
+    /// dependent settings as <see cref="StandardAnalyzer"/>.</para>
     /// </summary>
     public sealed class GreekAnalyzer : StopwordAnalyzerBase
     {
@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.El
         /// Builds an analyzer with the given stop words. 
         /// <para>
         /// <b>NOTE:</b> The stopwords set should be pre-processed with the logic of 
-        /// <seealso cref="GreekLowerCaseFilter"/> for best results.
+        /// <see cref="GreekLowerCaseFilter"/> for best results.
         ///  
         /// </para>
         /// </summary>
@@ -109,13 +109,13 @@ namespace Lucene.Net.Analysis.El
 
         /// <summary>
         /// Creates
-        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <seealso cref="Reader"/>.
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// used to tokenize all the text in the provided <see cref="Reader"/>.
         /// </summary>
-        /// <returns> <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        ///         built from a <seealso cref="StandardTokenizer"/> filtered with
-        ///         <seealso cref="GreekLowerCaseFilter"/>, <seealso cref="StandardFilter"/>,
-        ///         <seealso cref="StopFilter"/>, and <seealso cref="GreekStemFilter"/> </returns>
+        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from a <see cref="StandardTokenizer"/> filtered with
+        ///         <see cref="GreekLowerCaseFilter"/>, <see cref="StandardFilter"/>,
+        ///         <see cref="StopFilter"/>, and <see cref="GreekStemFilter"/> </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new StandardTokenizer(m_matchVersion, reader);

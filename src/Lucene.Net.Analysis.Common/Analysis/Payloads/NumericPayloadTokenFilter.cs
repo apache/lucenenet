@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis.Payloads
 	 */
 
     /// <summary>
-    /// Assigns a payload to a token based on the <seealso cref="org.apache.lucene.analysis.Token#type()"/>
+    /// Assigns a payload to a token based on the <see cref="org.apache.lucene.analysis.Token#type()"/>
     /// 
     /// 
     /// </summary>

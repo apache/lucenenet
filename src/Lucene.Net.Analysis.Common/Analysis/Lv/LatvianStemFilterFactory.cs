@@ -22,15 +22,15 @@ namespace Lucene.Net.Analysis.Lv
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="LatvianStemFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="LatvianStemFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_lvstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
     ///     &lt;filter class="solr.LatvianStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class LatvianStemFilterFactory : TokenFilterFactory
     {

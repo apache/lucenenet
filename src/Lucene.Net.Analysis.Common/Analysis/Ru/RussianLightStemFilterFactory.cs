@@ -21,15 +21,15 @@ namespace Lucene.Net.Analysis.Ru
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="RussianLightStemFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="RussianLightStemFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_rulgtstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
     ///     &lt;filter class="solr.RussianLightStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class RussianLightStemFilterFactory : TokenFilterFactory
     {

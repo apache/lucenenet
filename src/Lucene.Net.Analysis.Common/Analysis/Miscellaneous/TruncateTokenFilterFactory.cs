@@ -21,8 +21,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="org.apache.lucene.analysis.miscellaneous.TruncateTokenFilter"/>. The following type is recommended for "<i>diacritics-insensitive search</i>" for Turkish.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="org.apache.lucene.analysis.miscellaneous.TruncateTokenFilter"/>. The following type is recommended for "<i>diacritics-insensitive search</i>" for Turkish.
+    /// <code>
     /// &lt;fieldType name="text_tr_ascii_f5" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///     &lt;filter class="solr.TruncateTokenFilterFactory" prefixLength="5"/&gt;
     ///     &lt;filter class="solr.RemoveDuplicatesTokenFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class TruncateTokenFilterFactory : TokenFilterFactory
     {

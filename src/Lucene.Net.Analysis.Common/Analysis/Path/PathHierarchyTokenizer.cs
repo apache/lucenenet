@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Path
     /// 
     /// <pre>
     ///  /something/something/else
-    /// </pre>
+    /// </code>
     /// 
     /// and make:
     /// 
@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Path
     ///  /something
     ///  /something/something
     ///  /something/something/else
-    /// </pre>
+    /// </code>
     /// </para>
     /// </summary>
     public class PathHierarchyTokenizer : Tokenizer

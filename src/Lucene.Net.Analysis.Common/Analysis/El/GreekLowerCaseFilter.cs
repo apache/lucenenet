@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.El
     /// Normalizes token text to lower case, removes some Greek diacritics,
     /// and standardizes final sigma to sigma. 
     /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="Version"/>
+    /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating GreekLowerCaseFilter:
     /// <ul>
     ///   <li> As of 3.1, supplementary characters are properly lowercased.

@@ -20,12 +20,12 @@ namespace Lucene.Net.Analysis.Ru
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="RussianLightStemmer"/> to stem Russian
+    /// A <see cref="TokenFilter"/> that applies <see cref="RussianLightStemmer"/> to stem Russian
     /// words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para>
     /// </summary>
     public sealed class RussianLightStemFilter : TokenFilter

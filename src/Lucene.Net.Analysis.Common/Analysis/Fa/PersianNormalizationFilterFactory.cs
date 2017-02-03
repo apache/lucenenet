@@ -21,15 +21,15 @@ namespace Lucene.Net.Analysis.Fa
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="PersianNormalizationFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="PersianNormalizationFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_fanormal" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;charFilter class="solr.PersianCharFilterFactory"/&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.PersianNormalizationFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class PersianNormalizationFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {

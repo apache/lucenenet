@@ -21,9 +21,9 @@ namespace Lucene.Net.Analysis.Payloads
 	 */
 
     /// <summary>
-    /// Makes the <seealso cref="org.apache.lucene.analysis.Token#type()"/> a payload.
+    /// Makes the <see cref="org.apache.lucene.analysis.Token#type()"/> a payload.
     /// 
-    /// Encodes the type using <seealso cref="String#getBytes(String)"/> with "UTF-8" as the encoding
+    /// Encodes the type using <see cref="String#getBytes(String)"/> with "UTF-8" as the encoding
     /// 
     /// 
     /// </summary>

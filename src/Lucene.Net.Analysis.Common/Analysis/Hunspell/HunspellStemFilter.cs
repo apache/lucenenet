@@ -26,13 +26,13 @@ namespace Lucene.Net.Analysis.Hunspell
     /// stems, this filter can emit multiple tokens for each consumed token
     /// 
     /// <para>
-    /// Note: This filter is aware of the <seealso cref="KeywordAttribute"/>. To prevent
+    /// Note: This filter is aware of the <see cref="KeywordAttribute"/>. To prevent
     /// certain terms from being passed to the stemmer
-    /// <seealso cref="KeywordAttribute#isKeyword()"/> should be set to <code>true</code>
-    /// in a previous <seealso cref="TokenStream"/>.
+    /// <see cref="KeywordAttribute#isKeyword()"/> should be set to <code>true</code>
+    /// in a previous <see cref="TokenStream"/>.
     /// 
     /// Note: For including the original term as well as the stemmed version, see
-    /// <seealso cref="org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilterFactory"/>
+    /// <see cref="org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilterFactory"/>
     /// </para>
     /// 
     /// @lucene.experimental
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Hunspell
         private readonly bool longestOnly;
 
         /// <summary>
-        /// Create a <seealso cref="HunspellStemFilter"/> outputting all possible stems. </summary>
+        /// Create a <see cref="HunspellStemFilter"/> outputting all possible stems. </summary>
         ///  <seealso cref= #HunspellStemFilter(TokenStream, Dictionary, boolean)  </seealso>
         public HunspellStemFilter(TokenStream input, Dictionary dictionary)
               : this(input, dictionary, true)
@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Hunspell
         }
 
         /// <summary>
-        /// Create a <seealso cref="HunspellStemFilter"/> outputting all possible stems. </summary>
+        /// Create a <see cref="HunspellStemFilter"/> outputting all possible stems. </summary>
         ///  <seealso cref= #HunspellStemFilter(TokenStream, Dictionary, boolean, boolean)  </seealso>
         public HunspellStemFilter(TokenStream input, Dictionary dictionary, bool dedup)
               : this(input, dictionary, dedup, false)

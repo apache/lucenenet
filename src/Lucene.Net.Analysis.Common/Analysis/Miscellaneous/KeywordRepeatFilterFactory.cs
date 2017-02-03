@@ -21,11 +21,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <seealso cref="KeywordRepeatFilter"/>.
+    /// Factory for <see cref="KeywordRepeatFilter"/>.
     /// 
-    /// Since <seealso cref="KeywordRepeatFilter"/> emits two tokens for every input token, and any tokens that aren't transformed
+    /// Since <see cref="KeywordRepeatFilter"/> emits two tokens for every input token, and any tokens that aren't transformed
     /// later in the analysis chain will be in the document twice. Therefore, consider adding
-    /// <seealso cref="RemoveDuplicatesTokenFilterFactory"/> later in the analysis chain.
+    /// <see cref="RemoveDuplicatesTokenFilterFactory"/> later in the analysis chain.
     /// </summary>
     public sealed class KeywordRepeatFilterFactory : TokenFilterFactory
     {

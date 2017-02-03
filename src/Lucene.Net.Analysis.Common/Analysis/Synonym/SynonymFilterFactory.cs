@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Synonym
      */
 
     /// <summary>
-    /// Factory for <seealso cref="SynonymFilter"/>.
+    /// Factory for <see cref="SynonymFilter"/>.
     /// <pre class="prettyprint" >
     /// &lt;fieldType name="text_synonym" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Synonym
     ///             tokenizerFactory="solr.WhitespaceTokenizerFactory"
     ///             [optional tokenizer factory parameters]/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// 
     /// <para>
     /// An optional param name prefix of "tokenizerFactory." may be used for any 
@@ -44,14 +44,14 @@ namespace Lucene.Net.Analysis.Synonym
     /// </para>
     /// <para>
     /// The optional {@code format} parameter controls how the synonyms will be parsed:
-    /// It supports the short names of {@code solr} for <seealso cref="SolrSynonymParser"/> 
-    /// and {@code wordnet} for and <seealso cref="WordnetSynonymParser"/>, or your own 
+    /// It supports the short names of {@code solr} for <see cref="SolrSynonymParser"/> 
+    /// and {@code wordnet} for and <see cref="WordnetSynonymParser"/>, or your own 
     /// {@code SynonymMap.Parser} class name. The default is {@code solr}.
-    /// A custom <seealso cref="SynonymMap.Parser"/> is expected to have a constructor taking:
+    /// A custom <see cref="SynonymMap.Parser"/> is expected to have a constructor taking:
     /// <ul>
     ///   <li><code>boolean dedup</code> - true if duplicates should be ignored, false otherwise</li>
     ///   <li><code>boolean expand</code> - true if conflation groups should be expanded, false if they are one-directional</li>
-    ///   <li><code><seealso cref="Analyzer"/> analyzer</code> - an analyzer used for each raw synonym</li>
+    ///   <li><code><see cref="Analyzer"/> analyzer</code> - an analyzer used for each raw synonym</li>
     /// </ul>
     /// </para>
     /// </summary>

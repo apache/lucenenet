@@ -28,13 +28,13 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// Abstract parent class for analysis factories <seealso cref="TokenizerFactory"/>,
-    /// <seealso cref="TokenFilterFactory"/> and <seealso cref="CharFilterFactory"/>.
+    /// Abstract parent class for analysis factories <see cref="TokenizerFactory"/>,
+    /// <see cref="TokenFilterFactory"/> and <see cref="CharFilterFactory"/>.
     /// <para>
     /// The typical lifecycle for a factory consumer is:
     /// <ol>
     ///   <li>Create factory via its constructor (or via XXXFactory.forName)</li>
-    ///   <li>(Optional) If the factory uses resources such as files, <seealso cref="ResourceLoaderAware#inform(ResourceLoader)"/> is called to initialize those resources.</li>
+    ///   <li>(Optional) If the factory uses resources such as files, <see cref="ResourceLoaderAware#inform(ResourceLoader)"/> is called to initialize those resources.</li>
     ///   <li>Consumer calls create() to obtain instances.</li>
     /// </ol>
     /// </para>
@@ -75,9 +75,9 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// this method can be called in the <seealso cref="TokenizerFactory#create(java.io.Reader)"/>
-        /// or <seealso cref="TokenFilterFactory#create(org.apache.lucene.analysis.TokenStream)"/> methods,
-        /// to inform user, that for this factory a <seealso cref="#luceneMatchVersion"/> is required 
+        /// this method can be called in the <see cref="TokenizerFactory#create(java.io.Reader)"/>
+        /// or <see cref="TokenFilterFactory#create(org.apache.lucene.analysis.TokenStream)"/> methods,
+        /// to inform user, that for this factory a <see cref="#luceneMatchVersion"/> is required 
         /// </summary>
         protected internal void AssureMatchVersion()
         {
@@ -299,7 +299,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns as <seealso cref="CharArraySet"/> from wordFiles, which
+        /// Returns as <see cref="CharArraySet"/> from wordFiles, which
         /// can be a comma-separated list of filenames
         /// </summary>
         protected internal CharArraySet GetWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)
@@ -330,7 +330,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// same as <seealso cref="#getWordSet(ResourceLoader, String, boolean)"/>,
+        /// same as <see cref="#getWordSet(ResourceLoader, String, boolean)"/>,
         /// except the input is in snowball format. 
         /// </summary>
         protected internal CharArraySet GetSnowballWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)

@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Path
     /// 
     /// <pre>
     /// www.site.co.uk
-    /// </pre>
+    /// </code>
     /// 
     /// and make:
     /// 
@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Path
     /// site.co.uk
     /// co.uk
     /// uk
-    /// </pre>
+    /// </code>
     /// 
     /// </para>
     /// </summary>

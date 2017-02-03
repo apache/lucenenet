@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Creates a CharArraySet from a file resource associated with a class. (See
-        /// <seealso cref="Class#getResourceAsStream(String)"/>).
+        /// <see cref="Class#getResourceAsStream(String)"/>).
         /// </summary>
         /// <param name="ignoreCase">
         ///          <code>true</code> if the set should ignore the case of the
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> a CharArraySet containing the distinct stopwords from the given
         ///         file </returns>
         /// <exception cref="IOException">
-        ///           if loading the stopwords throws an <seealso cref="IOException"/> </exception>
+        ///           if loading the stopwords throws an <see cref="IOException"/> </exception>
         protected internal static CharArraySet LoadStopwordSet(bool ignoreCase, Type aClass, string resource, string comment)
         {
             TextReader reader = null;
@@ -124,7 +124,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> a CharArraySet containing the distinct stopwords from the given
         ///         file </returns>
         /// <exception cref="IOException">
-        ///           if loading the stopwords throws an <seealso cref="IOException"/> </exception>
+        ///           if loading the stopwords throws an <see cref="IOException"/> </exception>
         protected internal static CharArraySet LoadStopwordSet(FileInfo stopwords, LuceneVersion matchVersion)
         {
             TextReader reader = null;
@@ -150,7 +150,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> a CharArraySet containing the distinct stopwords from the given
         ///         reader </returns>
         /// <exception cref="IOException">
-        ///           if loading the stopwords throws an <seealso cref="IOException"/> </exception>
+        ///           if loading the stopwords throws an <see cref="IOException"/> </exception>
         protected internal static CharArraySet LoadStopwordSet(TextReader stopwords, LuceneVersion matchVersion)
         {
             try

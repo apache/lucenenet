@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Synonym
     ///   a -> x
     ///   a b -> y
     ///   b c d -> z
-    /// </pre>
+    /// </code>
     /// 
     /// Then input <code>a b c d e</code> parses to <code>y b c
     /// d</code>, ie the 2nd rule "wins" because it started
@@ -265,9 +265,9 @@ namespace Lucene.Net.Analysis.Synonym
 
         /// <param name="input"> input tokenstream </param>
         /// <param name="synonyms"> synonym map </param>
-        /// <param name="ignoreCase"> case-folds input for matching with <seealso cref="Character#toLowerCase(int)"/>.
+        /// <param name="ignoreCase"> case-folds input for matching with <see cref="Character#toLowerCase(int)"/>.
         ///                   Note, if you set this to true, its your responsibility to lowercase
-        ///                   the input entries when you create the <seealso cref="SynonymMap"/> </param>
+        ///                   the input entries when you create the <see cref="SynonymMap"/> </param>
         public SynonymFilter(TokenStream input, SynonymMap synonyms, bool ignoreCase) : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();

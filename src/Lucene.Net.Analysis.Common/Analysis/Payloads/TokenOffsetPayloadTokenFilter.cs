@@ -22,8 +22,8 @@ namespace Lucene.Net.Analysis.Payloads
 	 */
 
     /// <summary>
-    /// Adds the <seealso cref="OffsetAttribute#startOffset()"/>
-    /// and <seealso cref="OffsetAttribute#endOffset()"/>
+    /// Adds the <see cref="OffsetAttribute#startOffset()"/>
+    /// and <see cref="OffsetAttribute#endOffset()"/>
     /// First 4 bytes are the start
     /// 
     /// 

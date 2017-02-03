@@ -28,32 +28,32 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
     /// <summary>
     /// Efficient Lucene analyzer/tokenizer that preferably operates on a String rather than a
-    /// <seealso cref="TextReader"/>, that can flexibly separate text into terms via a regular expression <seealso cref="Pattern"/>
-    /// (with behaviour identical to <seealso cref="String#split(String)"/>),
+    /// <see cref="TextReader"/>, that can flexibly separate text into terms via a regular expression <see cref="Pattern"/>
+    /// (with behaviour identical to <see cref="String#split(String)"/>),
     /// and that combines the functionality of
-    /// <seealso cref="LetterTokenizer"/>,
-    /// <seealso cref="LowerCaseTokenizer"/>,
-    /// <seealso cref="WhitespaceTokenizer"/>,
-    /// <seealso cref="StopFilter"/> into a single efficient
+    /// <see cref="LetterTokenizer"/>,
+    /// <see cref="LowerCaseTokenizer"/>,
+    /// <see cref="WhitespaceTokenizer"/>,
+    /// <see cref="StopFilter"/> into a single efficient
     /// multi-purpose class.
     /// <para>
     /// If you are unsure how exactly a regular expression should look like, consider 
     /// prototyping by simply trying various expressions on some test texts via
-    /// <seealso cref="String#split(String)"/>. Once you are satisfied, give that regex to 
+    /// <see cref="String#split(String)"/>. Once you are satisfied, give that regex to 
     /// PatternAnalyzer. Also see <a target="_blank" 
     /// href="http://java.sun.com/docs/books/tutorial/extra/regex/">Java Regular Expression Tutorial</a>.
     /// </para>
     /// <para>
     /// This class can be considerably faster than the "normal" Lucene tokenizers. 
     /// It can also serve as a building block in a compound Lucene
-    /// <seealso cref="TokenFilter"/> chain. For example as in this 
+    /// <see cref="TokenFilter"/> chain. For example as in this 
     /// stemming example:
     /// <pre>
     /// PatternAnalyzer pat = ...
     /// TokenStream tokenStream = new SnowballFilter(
     ///     pat.tokenStream("content", "James is running round in the woods"), 
     ///     "English"));
-    /// </pre>
+    /// </code>
     /// </para>
     /// </summary>
     /// @deprecated (4.0) use the pattern-based analysis in the analysis/pattern package instead. 
@@ -152,8 +152,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         ///            if non-null, ignores all tokens that are contained in the
         ///            given stop set (after previously having applied toLowerCase()
         ///            if applicable). For example, created via
-        ///            <seealso cref="StopFilter#makeStopSet(Version, String[])"/>and/or
-        ///            <seealso cref="WordlistLoader"/>as in
+        ///            <see cref="StopFilter#makeStopSet(Version, String[])"/>and/or
+        ///            <see cref="WordlistLoader"/>as in
         ///            <code>WordlistLoader.getWordSet(new File("samples/fulltext/stopwords.txt")</code>
         ///            or <a href="http://www.unine.ch/info/clef/">other stop words
         ///            lists </a>. </param>

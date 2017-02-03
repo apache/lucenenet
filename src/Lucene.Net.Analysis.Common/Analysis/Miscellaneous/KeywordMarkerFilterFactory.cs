@@ -22,14 +22,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <seealso cref="KeywordMarkerFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="KeywordMarkerFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_keyword" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.KeywordMarkerFilterFactory" protected="protectedkeyword.txt" pattern="^.+er$" ignoreCase="false"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class KeywordMarkerFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {

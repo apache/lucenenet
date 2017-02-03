@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /// <summary>
-    /// Normalizes tokens extracted with <seealso cref="StandardTokenizer"/>.
+    /// Normalizes tokens extracted with <see cref="StandardTokenizer"/>.
     /// </summary>
     public class StandardFilter : TokenFilter
     {

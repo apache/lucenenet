@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Synonym
     /// Generated synonyms will start at the same position as the first matched source token.
     /// </para>
     /// </summary>
-    /// @deprecated (3.4) use <seealso cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
+    /// @deprecated (3.4) use <see cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
     [Obsolete("(3.4) use <seealso cref=\"SynonymFilterFactory\"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
     internal sealed class SlowSynonymFilter : TokenFilter
     {

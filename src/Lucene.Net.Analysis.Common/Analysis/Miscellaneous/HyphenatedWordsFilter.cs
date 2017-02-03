@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// In order to increase search efficiency, this filter puts hyphenated words broken into two lines back together.
     /// This filter should be used on indexing time only.
     /// Example field definition in schema.xml:
-    /// <pre class="prettyprint">
+    /// <code>
     /// &lt;fieldtype name="text" class="solr.TextField" positionIncrementGap="100"&gt;
     ///  &lt;analyzer type="index"&gt;
     ///    &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///      &lt;filter class="solr.RemoveDuplicatesTokenFilterFactory"/&gt;
     ///  &lt;/analyzer&gt;
     /// &lt;/fieldtype&gt;
-    /// </pre>
+    /// </code>
     /// 
     /// </summary>
     public sealed class HyphenatedWordsFilter : TokenFilter

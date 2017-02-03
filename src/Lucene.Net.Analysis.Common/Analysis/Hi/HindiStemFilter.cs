@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Hi
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="HindiStemmer"/> to stem Hindi words.
+    /// A <see cref="TokenFilter"/> that applies <see cref="HindiStemmer"/> to stem Hindi words.
     /// </summary>
     public sealed class HindiStemFilter : TokenFilter
     {

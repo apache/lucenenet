@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Fr
 	 */
 
     /// <summary>
-    /// <seealso cref="Analyzer"/> for French language. 
+    /// <see cref="Analyzer"/> for French language. 
     /// <para>
     /// Supports an external list of stopwords (words that
     /// will not be indexed at all) and an external list of exclusions (word that will
@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Fr
     /// </para>
     /// 
     /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="Version"/>
+    /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating FrenchAnalyzer:
     /// <ul>
     ///   <li> As of 3.6, FrenchLightStemFilter is used for less aggressive stemming.
@@ -51,8 +51,8 @@ namespace Lucene.Net.Analysis.Fr
     /// </ul>
     /// 
     /// </para>
-    /// <para><b>NOTE</b>: This class uses the same <seealso cref="Version"/>
-    /// dependent settings as <seealso cref="StandardAnalyzer"/>.</para>
+    /// <para><b>NOTE</b>: This class uses the same <see cref="LuceneVersion"/>
+    /// dependent settings as <see cref="StandardAnalyzer"/>.</para>
     /// </summary>
     public sealed class FrenchAnalyzer : StopwordAnalyzerBase
     {
@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.Fr
         }
 
         /// <summary>
-        /// Builds an analyzer with the default stop words (<seealso cref="#getDefaultStopSet"/>).
+        /// Builds an analyzer with the default stop words (<see cref="#getDefaultStopSet"/>).
         /// </summary>
         public FrenchAnalyzer(LuceneVersion matchVersion)
 #pragma warning disable 612, 618
@@ -157,15 +157,15 @@ namespace Lucene.Net.Analysis.Fr
 
         /// <summary>
         /// Creates
-        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <seealso cref="Reader"/>.
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// used to tokenize all the text in the provided <see cref="Reader"/>.
         /// </summary>
-        /// <returns> <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        ///         built from a <seealso cref="StandardTokenizer"/> filtered with
-        ///         <seealso cref="StandardFilter"/>, <seealso cref="ElisionFilter"/>,
-        ///         <seealso cref="LowerCaseFilter"/>, <seealso cref="StopFilter"/>,
-        ///         <seealso cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
-        ///         provided, and <seealso cref="FrenchLightStemFilter"/> </returns>
+        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from a <see cref="StandardTokenizer"/> filtered with
+        ///         <see cref="StandardFilter"/>, <see cref="ElisionFilter"/>,
+        ///         <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,
+        ///         <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
+        ///         provided, and <see cref="FrenchLightStemFilter"/> </returns>
         ///         
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {

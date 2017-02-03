@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 	 */
 
     /// <summary>
-    /// Provides the ability to override any <seealso cref="KeywordAttribute"/> aware stemmer
+    /// Provides the ability to override any <see cref="KeywordAttribute"/> aware stemmer
     /// with custom dictionary-based stemming.
     /// </summary>
     public sealed class StemmerOverrideFilter : TokenFilter
@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// Create a new StemmerOverrideFilter, performing dictionary-based stemming
         /// with the provided <code>dictionary</code>.
         /// <para>
-        /// Any dictionary-stemmed terms will be marked with <seealso cref="KeywordAttribute"/>
+        /// Any dictionary-stemmed terms will be marked with <see cref="KeywordAttribute"/>
         /// so that they will not be stemmed with stemmers down the chain.
         /// </para>
         /// </summary>
@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// A read-only 4-byte FST backed map that allows fast case-insensitive key
-        /// value lookups for <seealso cref="StemmerOverrideFilter"/>
+        /// value lookups for <see cref="StemmerOverrideFilter"/>
         /// </summary>
         // TODO maybe we can generalize this and reuse this map somehow?
         public sealed class StemmerOverrideMap
@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             internal readonly bool ignoreCase;
 
             /// <summary>
-            /// Creates a new <seealso cref="StemmerOverrideMap"/> </summary>
+            /// Creates a new <see cref="StemmerOverrideMap"/> </summary>
             /// <param name="fst"> the fst to lookup the overrides </param>
             /// <param name="ignoreCase"> if the keys case should be ingored </param>
             public StemmerOverrideMap(FST<BytesRef> fst, bool ignoreCase)
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
 
             /// <summary>
-            /// Returns a <seealso cref="BytesReader"/> to pass to the <seealso cref="#get(char[], int, FST.Arc, FST.BytesReader)"/> method.
+            /// Returns a <see cref="BytesReader"/> to pass to the <see cref="#get(char[], int, FST.Arc, FST.BytesReader)"/> method.
             /// </summary>
             public FST.BytesReader BytesReader
             {
@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         }
         /// <summary>
-        /// This builder builds an <seealso cref="FST"/> for the <seealso cref="StemmerOverrideFilter"/>
+        /// This builder builds an <see cref="FST"/> for the <see cref="StemmerOverrideFilter"/>
         /// </summary>
         public class Builder
         {
@@ -164,7 +164,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             internal readonly CharsRef charsSpare = new CharsRef();
 
             /// <summary>
-            /// Creates a new <seealso cref="Builder"/> with ignoreCase set to <code>false</code> 
+            /// Creates a new <see cref="Builder"/> with ignoreCase set to <code>false</code> 
             /// </summary>
             public Builder()
                     : this(false)
@@ -172,7 +172,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
 
             /// <summary>
-            /// Creates a new <seealso cref="Builder"/> </summary>
+            /// Creates a new <see cref="Builder"/> </summary>
             /// <param name="ignoreCase"> if the input case should be ignored. </param>
             public Builder(bool ignoreCase)
             {
@@ -212,9 +212,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
 
             /// <summary>
-            /// Returns an <seealso cref="StemmerOverrideMap"/> to be used with the <seealso cref="StemmerOverrideFilter"/> </summary>
-            /// <returns> an <seealso cref="StemmerOverrideMap"/> to be used with the <seealso cref="StemmerOverrideFilter"/> </returns>
-            /// <exception cref="IOException"> if an <seealso cref="IOException"/> occurs; </exception>
+            /// Returns an <see cref="StemmerOverrideMap"/> to be used with the <see cref="StemmerOverrideFilter"/> </summary>
+            /// <returns> an <see cref="StemmerOverrideMap"/> to be used with the <see cref="StemmerOverrideFilter"/> </returns>
+            /// <exception cref="IOException"> if an <see cref="IOException"/> occurs; </exception>
             public virtual StemmerOverrideMap Build()
             {
                 ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;

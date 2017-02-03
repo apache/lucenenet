@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Fr
     /// refer to http://snowball.sourceforge.net/french/stemmer.html<br>
     /// (French stemming algorithm) for details
     /// </para> </summary>
-    /// @deprecated Use <seealso cref="org.tartarus.snowball.ext.FrenchStemmer"/> instead, 
+    /// @deprecated Use <see cref="org.tartarus.snowball.ext.FrenchStemmer"/> instead, 
     /// which has the same functionality. This filter will be removed in Lucene 4.0 
     [Obsolete("Use FrenchStemmer instead, which has the same functionality.")]
     public class FrenchStemmer

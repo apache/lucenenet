@@ -21,14 +21,14 @@ namespace Lucene.Net.Analysis.Payloads
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="NumericPayloadTokenFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="NumericPayloadTokenFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_numpayload" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.NumericPayloadTokenFilterFactory" payload="24" typeMatch="word"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class NumericPayloadTokenFilterFactory : TokenFilterFactory
     {

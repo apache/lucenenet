@@ -19,7 +19,7 @@
 
     /// <summary>
     /// This TokenFilter limits the number of tokens while indexing. It is
-    /// a replacement for the maximum field length setting inside <seealso cref="org.apache.lucene.index.IndexWriter"/>.
+    /// a replacement for the maximum field length setting inside <see cref="org.apache.lucene.index.IndexWriter"/>.
     /// <para>
     /// By default, this filter ignores any tokens in the wrapped {@code TokenStream}
     /// once the limit has been reached, which can result in {@code reset()} being 
@@ -28,7 +28,7 @@
     /// then consuming the full stream. If you are wrapping a {@code TokenStream} 
     /// which requires that the full stream of tokens be exhausted in order to 
     /// function properly, use the 
-    /// <seealso cref="#LimitTokenCountFilter(TokenStream,int,boolean) consumeAllTokens"/> 
+    /// <see cref="#LimitTokenCountFilter(TokenStream,int,boolean) consumeAllTokens"/> 
     /// option.
     /// </para>
     /// </summary>

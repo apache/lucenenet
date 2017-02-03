@@ -124,7 +124,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <summary>
         /// Advance to the next subword in the string.
         /// </summary>
-        /// <returns> index of the next subword, or <seealso cref="#DONE"/> if all subwords have been returned </returns>
+        /// <returns> index of the next subword, or <see cref="#DONE"/> if all subwords have been returned </returns>
         internal int Next()
         {
             current = end;

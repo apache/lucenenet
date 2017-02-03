@@ -23,15 +23,15 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /// <summary>
-    /// Filters <seealso cref="org.apache.lucene.analysis.standard.UAX29URLEmailTokenizer"/>
-    /// with <seealso cref="StandardFilter"/>,
-    /// <seealso cref="LowerCaseFilter"/> and
-    /// <seealso cref="StopFilter"/>, using a list of
+    /// Filters <see cref="org.apache.lucene.analysis.standard.UAX29URLEmailTokenizer"/>
+    /// with <see cref="StandardFilter"/>,
+    /// <see cref="LowerCaseFilter"/> and
+    /// <see cref="StopFilter"/>, using a list of
     /// English stop words.
     /// 
     /// <a name="version"/>
     /// <para>
-    ///   You must specify the required <seealso cref="org.apache.lucene.util.Version"/>
+    ///   You must specify the required <see cref="org.apache.lucene.util.Version"/>
     ///   compatibility when creating UAX29URLEmailAnalyzer
     /// </para>
     /// </summary>

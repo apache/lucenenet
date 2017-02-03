@@ -27,17 +27,17 @@ namespace Lucene.Net.Analysis.Snowball
 	 */
 
     /// <summary>
-    /// Filters <seealso cref="StandardTokenizer"/> with <seealso cref="StandardFilter"/>, {@link
-    /// LowerCaseFilter}, <seealso cref="StopFilter"/> and <seealso cref="SnowballFilter"/>.
+    /// Filters <see cref="StandardTokenizer"/> with <see cref="StandardFilter"/>, {@link
+    /// LowerCaseFilter}, <see cref="StopFilter"/> and <see cref="SnowballFilter"/>.
     /// 
     /// Available stemmers are listed in org.tartarus.snowball.ext.  The name of a
     /// stemmer is the part of the class name before "Stemmer", e.g., the stemmer in
-    /// <seealso cref="org.tartarus.snowball.ext.EnglishStemmer"/> is named "English".
+    /// <see cref="org.tartarus.snowball.ext.EnglishStemmer"/> is named "English".
     /// 
-    /// <para><b>NOTE</b>: This class uses the same <seealso cref="Version"/>
-    /// dependent settings as <seealso cref="StandardAnalyzer"/>, with the following addition:
+    /// <para><b>NOTE</b>: This class uses the same <see cref="LuceneVersion"/>
+    /// dependent settings as <see cref="StandardAnalyzer"/>, with the following addition:
     /// <ul>
-    ///   <li> As of 3.1, uses <seealso cref="TurkishLowerCaseFilter"/> for Turkish language.
+    ///   <li> As of 3.1, uses <see cref="TurkishLowerCaseFilter"/> for Turkish language.
     /// </ul>
     /// </para> </summary>
     /// @deprecated (3.1) Use the language-specific analyzer in modules/analysis instead. 
@@ -65,9 +65,9 @@ namespace Lucene.Net.Analysis.Snowball
         }
 
         /// <summary>
-        /// Constructs a <seealso cref="StandardTokenizer"/> filtered by a {@link
-        ///    StandardFilter}, a <seealso cref="LowerCaseFilter"/>, a <seealso cref="StopFilter"/>,
-        ///    and a <seealso cref="SnowballFilter"/> 
+        /// Constructs a <see cref="StandardTokenizer"/> filtered by a {@link
+        ///    StandardFilter}, a <see cref="LowerCaseFilter"/>, a <see cref="StopFilter"/>,
+        ///    and a <see cref="SnowballFilter"/> 
         /// </summary>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {

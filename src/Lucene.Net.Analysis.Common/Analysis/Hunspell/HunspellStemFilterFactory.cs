@@ -24,14 +24,14 @@ namespace Lucene.Net.Analysis.Hunspell
 	 */
 
     /// <summary>
-    /// TokenFilterFactory that creates instances of <seealso cref="HunspellStemFilter"/>.
+    /// TokenFilterFactory that creates instances of <see cref="HunspellStemFilter"/>.
     /// Example config for British English:
-    /// <pre class="prettyprint">
+    /// <code>
     /// &lt;filter class=&quot;solr.HunspellStemFilterFactory&quot;
     ///         dictionary=&quot;en_GB.dic,my_custom.dic&quot;
     ///         affix=&quot;en_GB.aff&quot; 
     ///         ignoreCase=&quot;false&quot;
-    ///         longestOnly=&quot;false&quot; /&gt;</pre>
+    ///         longestOnly=&quot;false&quot; /&gt;</code>
     /// Both parameters dictionary and affix are mandatory.
     /// Dictionaries for many languages are available through the OpenOffice project.
     /// 

@@ -22,15 +22,15 @@ namespace Lucene.Net.Analysis.Shingle
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="ShingleFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="ShingleFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_shingle" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.ShingleFilterFactory" minShingleSize="2" maxShingleSize="2"
     ///             outputUnigrams="true" outputUnigramsIfNoShingles="false" tokenSeparator=" " fillerToken="_"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class ShingleFilterFactory : TokenFilterFactory
     {

@@ -21,13 +21,13 @@ namespace Lucene.Net.Analysis.Hi
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="HindiNormalizer"/> to normalize the
+    /// A <see cref="TokenFilter"/> that applies <see cref="HindiNormalizer"/> to normalize the
     /// orthography.
     /// <para>
     /// In some cases the normalization may cause unrelated terms to conflate, so
     /// to prevent terms from being normalized use an instance of
-    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para> </summary>
     /// <seealso cref= HindiNormalizer </seealso>
     public sealed class HindiNormalizationFilter : TokenFilter

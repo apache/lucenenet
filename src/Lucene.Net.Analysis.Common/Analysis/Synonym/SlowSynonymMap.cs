@@ -27,8 +27,8 @@ namespace Lucene.Net.Analysis.Synonym
      */
 
     /// <summary>
-    /// Mapping rules for use with <seealso cref="SlowSynonymFilter"/> </summary>
-    /// @deprecated (3.4) use <seealso cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
+    /// Mapping rules for use with <see cref="SlowSynonymFilter"/> </summary>
+    /// @deprecated (3.4) use <see cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
     [Obsolete("(3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
     internal class SlowSynonymMap
     {

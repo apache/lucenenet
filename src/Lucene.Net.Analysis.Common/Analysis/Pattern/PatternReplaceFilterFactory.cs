@@ -23,15 +23,15 @@ namespace Lucene.Net.Analysis.Pattern
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="PatternReplaceFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="PatternReplaceFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_ptnreplace" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.KeywordTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.PatternReplaceFilterFactory" pattern="([^a-z])" replacement=""
     ///             replace="all"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     /// <seealso cref= PatternReplaceFilter </seealso>
     public class PatternReplaceFilterFactory : TokenFilterFactory

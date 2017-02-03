@@ -25,22 +25,22 @@ namespace Lucene.Net.Analysis.Snowball
     /// <summary>
     /// A filter that stems words using a Snowball-generated stemmer.
     /// 
-    /// Available stemmers are listed in <seealso cref="org.tartarus.snowball.ext"/>.
+    /// Available stemmers are listed in <see cref="org.tartarus.snowball.ext"/>.
     /// <para><b>NOTE</b>: SnowballFilter expects lowercased text.
     /// <ul>
-    ///  <li>For the Turkish language, see <seealso cref="TurkishLowerCaseFilter"/>.
-    ///  <li>For other languages, see <seealso cref="LowerCaseFilter"/>.
+    ///  <li>For the Turkish language, see <see cref="TurkishLowerCaseFilter"/>.
+    ///  <li>For other languages, see <see cref="LowerCaseFilter"/>.
     /// </ul>
     /// </para>
     /// 
     /// <para>
-    /// Note: This filter is aware of the <seealso cref="KeywordAttribute"/>. To prevent
+    /// Note: This filter is aware of the <see cref="KeywordAttribute"/>. To prevent
     /// certain terms from being passed to the stemmer
-    /// <seealso cref="KeywordAttribute#isKeyword()"/> should be set to <code>true</code>
-    /// in a previous <seealso cref="TokenStream"/>.
+    /// <see cref="KeywordAttribute#isKeyword()"/> should be set to <code>true</code>
+    /// in a previous <see cref="TokenStream"/>.
     /// 
     /// Note: For including the original term as well as the stemmed version, see
-    /// <seealso cref="org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilterFactory"/>
+    /// <see cref="org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilterFactory"/>
     /// </para>
     /// 
     /// 
@@ -64,9 +64,9 @@ namespace Lucene.Net.Analysis.Snowball
         /// <summary>
         /// Construct the named stemming filter.
         /// 
-        /// Available stemmers are listed in <seealso cref="org.tartarus.snowball.ext"/>.
+        /// Available stemmers are listed in <see cref="org.tartarus.snowball.ext"/>.
         /// The name of a stemmer is the part of the class name before "Stemmer",
-        /// e.g., the stemmer in <seealso cref="org.tartarus.snowball.ext.EnglishStemmer"/> is named "English".
+        /// e.g., the stemmer in <see cref="org.tartarus.snowball.ext.EnglishStemmer"/> is named "English".
         /// </summary>
         /// <param name="in"> the input tokens to stem </param>
         /// <param name="name"> the name of a stemmer </param>

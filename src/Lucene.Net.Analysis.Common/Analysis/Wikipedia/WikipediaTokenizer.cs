@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         /// </summary>
         public const int BOTH = 2;
         /// <summary>
-        /// This flag is used to indicate that the produced "Token" would, if <seealso cref="#TOKENS_ONLY"/> was used, produce multiple tokens.
+        /// This flag is used to indicate that the produced "Token" would, if <see cref="#TOKENS_ONLY"/> was used, produce multiple tokens.
         /// </summary>
         public const int UNTOKENIZED_TOKEN_FLAG = 1;
         /// <summary>
@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         private bool first;
 
         /// <summary>
-        /// Creates a new instance of the <seealso cref="WikipediaTokenizer"/>. Attaches the
+        /// Creates a new instance of the <see cref="WikipediaTokenizer"/>. Attaches the
         /// <code>input</code> to a newly created JFlex scanner.
         /// </summary>
         /// <param name="input"> The Input TextReader </param>
@@ -112,11 +112,11 @@ namespace Lucene.Net.Analysis.Wikipedia
         }
 
         /// <summary>
-        /// Creates a new instance of the <seealso cref="org.apache.lucene.analysis.wikipedia.WikipediaTokenizer"/>.  Attaches the
+        /// Creates a new instance of the <see cref="org.apache.lucene.analysis.wikipedia.WikipediaTokenizer"/>.  Attaches the
         /// <code>input</code> to a the newly created JFlex scanner.
         /// </summary>
         /// <param name="input"> The input </param>
-        /// <param name="tokenOutput"> One of <seealso cref="#TOKENS_ONLY"/>, <seealso cref="#UNTOKENIZED_ONLY"/>, <seealso cref="#BOTH"/> </param>
+        /// <param name="tokenOutput"> One of <see cref="#TOKENS_ONLY"/>, <see cref="#UNTOKENIZED_ONLY"/>, <see cref="#BOTH"/> </param>
         public WikipediaTokenizer(TextReader input, int tokenOutput, ICollection<string> untokenizedTypes)
               : base(input)
         {
@@ -125,11 +125,11 @@ namespace Lucene.Net.Analysis.Wikipedia
         }
 
         /// <summary>
-        /// Creates a new instance of the <seealso cref="org.apache.lucene.analysis.wikipedia.WikipediaTokenizer"/>.  Attaches the
-        /// <code>input</code> to a the newly created JFlex scanner. Uses the given <seealso cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/>.
+        /// Creates a new instance of the <see cref="org.apache.lucene.analysis.wikipedia.WikipediaTokenizer"/>.  Attaches the
+        /// <code>input</code> to a the newly created JFlex scanner. Uses the given <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/>.
         /// </summary>
         /// <param name="input"> The input </param>
-        /// <param name="tokenOutput"> One of <seealso cref="#TOKENS_ONLY"/>, <seealso cref="#UNTOKENIZED_ONLY"/>, <seealso cref="#BOTH"/> </param>
+        /// <param name="tokenOutput"> One of <see cref="#TOKENS_ONLY"/>, <see cref="#UNTOKENIZED_ONLY"/>, <see cref="#BOTH"/> </param>
         public WikipediaTokenizer(AttributeFactory factory, TextReader input, int tokenOutput, ICollection<string> untokenizedTypes)
               : base(factory, input)
         {

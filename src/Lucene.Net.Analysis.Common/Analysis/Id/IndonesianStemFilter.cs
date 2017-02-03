@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Id
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="IndonesianStemmer"/> to stem Indonesian words.
+    /// A <see cref="TokenFilter"/> that applies <see cref="IndonesianStemmer"/> to stem Indonesian words.
     /// </summary>
     public sealed class IndonesianStemFilter : TokenFilter
     {
@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Id
         private readonly bool stemDerivational;
 
         /// <summary>
-        /// Calls <seealso cref="#IndonesianStemFilter(TokenStream, boolean) IndonesianStemFilter(input, true)"/>
+        /// Calls <see cref="#IndonesianStemFilter(TokenStream, boolean) IndonesianStemFilter(input, true)"/>
         /// </summary>
         public IndonesianStemFilter(TokenStream input)
               : this(input, true)

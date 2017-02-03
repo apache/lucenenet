@@ -22,14 +22,14 @@ namespace Lucene.Net.Analysis.Hi
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="HindiNormalizationFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="HindiNormalizationFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_hinormal" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.HindiNormalizationFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class HindiNormalizationFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {

@@ -22,14 +22,14 @@ namespace Lucene.Net.Analysis.Fa
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="PersianCharFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="PersianCharFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_fa" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;charFilter class="solr.PersianCharFilterFactory"/&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class PersianCharFilterFactory : CharFilterFactory, IMultiTermAwareComponent
     {

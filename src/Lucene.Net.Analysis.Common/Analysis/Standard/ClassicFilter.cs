@@ -19,7 +19,7 @@ namespace Lucene.Net.Analysis.Standard
      * limitations under the License.
      */
     /// <summary>
-    /// Normalizes tokens extracted with <seealso cref="ClassicTokenizer"/>. </summary>
+    /// Normalizes tokens extracted with <see cref="ClassicTokenizer"/>. </summary>
 
     public class ClassicFilter : TokenFilter
     {

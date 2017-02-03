@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenStream"/> containing a single token.
+    /// A <see cref="TokenStream"/> containing a single token.
     /// </summary>
     public sealed class SingleTokenTokenStream : TokenStream
     {

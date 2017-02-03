@@ -22,15 +22,15 @@ namespace Lucene.Net.Analysis.Hu
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="HungarianLightStemFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="HungarianLightStemFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_hulgtstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
     ///     &lt;filter class="solr.HungarianLightStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class HungarianLightStemFilterFactory : TokenFilterFactory
     {

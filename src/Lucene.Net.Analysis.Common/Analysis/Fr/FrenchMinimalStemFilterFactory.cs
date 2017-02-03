@@ -20,8 +20,8 @@ namespace Lucene.Net.Analysis.Fr
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="FrenchMinimalStemFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="FrenchMinimalStemFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_frminstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Fr
     ///     &lt;filter class="solr.ElisionFilterFactory"/&gt;
     ///     &lt;filter class="solr.FrenchMinimalStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class FrenchMinimalStemFilterFactory : TokenFilterFactory
     {

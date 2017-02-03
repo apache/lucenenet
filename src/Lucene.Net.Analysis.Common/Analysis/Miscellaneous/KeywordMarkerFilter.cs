@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * limitations under the License.
      */
     /// <summary>
-    /// Marks terms as keywords via the <seealso cref="KeywordAttribute"/>.
+    /// Marks terms as keywords via the <see cref="KeywordAttribute"/>.
     /// </summary>
     /// <seealso cref= KeywordAttribute </seealso>
     public abstract class KeywordMarkerFilter : TokenFilter
@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly IKeywordAttribute keywordAttr;
 
         /// <summary>
-        /// Creates a new <seealso cref="KeywordMarkerFilter"/> </summary>
+        /// Creates a new <see cref="KeywordMarkerFilter"/> </summary>
         /// <param name="in"> the input stream </param>
         protected internal KeywordMarkerFilter(TokenStream @in)
             : base(@in)

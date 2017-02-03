@@ -20,16 +20,16 @@ namespace Lucene.Net.Analysis.De
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that stems German words. 
+    /// A <see cref="TokenFilter"/> that stems German words. 
     /// <para>
     /// It supports a table of words that should
     /// not be stemmed at all. The stemmer used can be changed at runtime after the
-    /// filter object is created (as long as it is a <seealso cref="GermanStemmer"/>).
+    /// filter object is created (as long as it is a <see cref="GermanStemmer"/>).
     /// </para>
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para> </summary>
     /// <seealso cref= SetKeywordMarkerFilter </seealso>
     public sealed class GermanStemFilter : TokenFilter
@@ -43,8 +43,8 @@ namespace Lucene.Net.Analysis.De
         private readonly IKeywordAttribute keywordAttr;
 
         /// <summary>
-        /// Creates a <seealso cref="GermanStemFilter"/> instance </summary>
-        /// <param name="in"> the source <seealso cref="TokenStream"/>  </param>
+        /// Creates a <see cref="GermanStemFilter"/> instance </summary>
+        /// <param name="in"> the source <see cref="TokenStream"/>  </param>
         public GermanStemFilter(TokenStream @in)
             : base(@in)
         {
@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.De
         }
 
         /// <summary>
-        /// Set a alternative/custom <seealso cref="GermanStemmer"/> for this filter.
+        /// Set a alternative/custom <see cref="GermanStemmer"/> for this filter.
         /// </summary>
         public GermanStemmer Stemmer
         {

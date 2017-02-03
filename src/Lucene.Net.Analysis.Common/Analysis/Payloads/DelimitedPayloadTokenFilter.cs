@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Payloads
     /// For example, if the delimiter is '|', then for the string "foo|bar", foo is the token
     /// and "bar" is a payload.
     /// <p/>
-    /// Note, you can also include a <seealso cref="org.apache.lucene.analysis.payloads.PayloadEncoder"/> to convert the payload in an appropriate way (from characters to bytes).
+    /// Note, you can also include a <see cref="org.apache.lucene.analysis.payloads.PayloadEncoder"/> to convert the payload in an appropriate way (from characters to bytes).
     /// <p/>
     /// Note make sure your Tokenizer doesn't split on the delimiter, or this won't work
     /// </summary>

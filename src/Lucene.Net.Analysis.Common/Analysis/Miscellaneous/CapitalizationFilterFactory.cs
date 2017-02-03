@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <seealso cref="CapitalizationFilter"/>.
+    /// Factory for <see cref="CapitalizationFilter"/>.
     /// <p/>
     /// The factory takes parameters:<br/>
     /// "onlyFirstWord" - should each word be capitalized or all of the words?<br/>
@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// "maxWordCount" - if the token contains more then maxWordCount words, the capitalization is
     /// assumed to be correct.<br/>
     /// 
-    /// <pre class="prettyprint">
+    /// <code>
     /// &lt;fieldType name="text_cptlztn" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///           keep="java solr lucene" keepIgnoreCase="false"
     ///           okPrefix="McK McD McA"/&gt;   
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// 
     /// @since solr 1.3
     /// </summary>

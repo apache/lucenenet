@@ -21,8 +21,8 @@ namespace Lucene.Net.Analysis.Util
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="ElisionFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="ElisionFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_elsn" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Util
     ///     &lt;filter class="solr.ElisionFilterFactory" 
     ///       articles="stopwordarticles.txt" ignoreCase="true"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class ElisionFilterFactory : TokenFilterFactory, IResourceLoaderAware, IMultiTermAwareComponent
     {

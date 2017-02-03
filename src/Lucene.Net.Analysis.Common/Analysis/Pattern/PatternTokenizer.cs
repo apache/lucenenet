@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Pattern
     /// <para>
     /// group=-1 (the default) is equivalent to "split".  In this case, the tokens will
     /// be equivalent to the output from (without empty tokens):
-    /// <seealso cref="String#split(java.lang.String)"/>
+    /// <see cref="String#split(java.lang.String)"/>
     /// </para>
     /// <para>
     /// Using group >= 0 selects the matching group as the token.  For example, if you have:<br/>
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Pattern
     ///  pattern = \'([^\']+)\'
     ///  group = 0
     ///  input = aaa 'bbb' 'ccc'
-    /// </pre>
+    /// </code>
     /// the output will be two tokens: 'bbb' and 'ccc' (including the ' marks).  With the same input
     /// but using group=1, the output would be: bbb and ccc (no ' marks)
     /// </para>

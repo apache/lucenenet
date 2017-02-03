@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.No
 
         /// <summary>
         /// Creates a new NorwegianLightStemmer </summary>
-        /// <param name="flags"> set to <seealso cref="#BOKMAAL"/>, <seealso cref="#NYNORSK"/>, or both. </param>
+        /// <param name="flags"> set to <see cref="#BOKMAAL"/>, <see cref="#NYNORSK"/>, or both. </param>
         public NorwegianLightStemmer(int flags)
         {
             if (flags <= 0 || flags > BOKMAAL + NYNORSK)

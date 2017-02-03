@@ -43,13 +43,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Create a new <seealso cref="KeepWordFilter"/>.
+        /// Create a new <see cref="KeepWordFilter"/>.
         /// <para><b>NOTE</b>: The words set passed to this constructor will be directly
         /// used by this filter and should not be modified.
         /// </para>
         /// </summary>
         /// <param name="version"> the Lucene match version </param>
-        /// <param name="in">      the <seealso cref="TokenStream"/> to consume </param>
+        /// <param name="in">      the <see cref="TokenStream"/> to consume </param>
         /// <param name="words">   the words to keep </param>
         public KeepWordFilter(LuceneVersion version, TokenStream @in, CharArraySet words)
             : base(version, @in)

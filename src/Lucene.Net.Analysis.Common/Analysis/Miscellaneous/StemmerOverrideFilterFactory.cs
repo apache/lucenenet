@@ -23,14 +23,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <seealso cref="StemmerOverrideFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="StemmerOverrideFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_dicstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.StemmerOverrideFilterFactory" dictionary="dictionary.txt" ignoreCase="false"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class StemmerOverrideFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {

@@ -29,14 +29,14 @@ namespace Lucene.Net.Analysis.Ru
 	 */
 
     /// <summary>
-    /// <seealso cref="Analyzer"/> for Russian language. 
+    /// <see cref="Analyzer"/> for Russian language. 
     /// <para>
     /// Supports an external list of stopwords (words that
     /// will not be indexed at all).
     /// A default set of stopwords is used unless an alternative list is specified.
     /// </para>
     /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="Version"/>
+    /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating RussianAnalyzer:
     /// <ul>
     ///   <li> As of 3.1, StandardTokenizer is used, Snowball stemming is done with
@@ -133,14 +133,14 @@ namespace Lucene.Net.Analysis.Ru
 
         /// <summary>
         /// Creates
-        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <seealso cref="Reader"/>.
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// used to tokenize all the text in the provided <see cref="Reader"/>.
         /// </summary>
-        /// <returns> <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        ///         built from a <seealso cref="StandardTokenizer"/> filtered with
-        ///         <seealso cref="StandardFilter"/>, <seealso cref="LowerCaseFilter"/>, <seealso cref="StopFilter"/>
-        ///         , <seealso cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
-        ///         provided, and <seealso cref="SnowballFilter"/> </returns>
+        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from a <see cref="StandardTokenizer"/> filtered with
+        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>
+        ///         , <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
+        ///         provided, and <see cref="SnowballFilter"/> </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
 #pragma warning disable 612, 618

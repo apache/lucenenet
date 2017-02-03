@@ -21,9 +21,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Marks terms as keywords via the <seealso cref="KeywordAttribute"/>. Each token
+    /// Marks terms as keywords via the <see cref="KeywordAttribute"/>. Each token
     /// that matches the provided pattern is marked as a keyword by setting
-    /// <seealso cref="KeywordAttribute#setKeyword(boolean)"/> to <code>true</code>.
+    /// <see cref="KeywordAttribute#setKeyword(boolean)"/> to <code>true</code>.
     /// </summary>
     public sealed class PatternKeywordMarkerFilter : KeywordMarkerFilter
     {
@@ -32,9 +32,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly Regex pattern;
 
         /// <summary>
-        /// Create a new <seealso cref="PatternKeywordMarkerFilter"/>, that marks the current
+        /// Create a new <see cref="PatternKeywordMarkerFilter"/>, that marks the current
         /// token as a keyword if the tokens term buffer matches the provided
-        /// <seealso cref="Pattern"/> via the <seealso cref="KeywordAttribute"/>.
+        /// <see cref="Pattern"/> via the <see cref="KeywordAttribute"/>.
         /// </summary>
         /// <param name="in">
         ///          TokenStream to filter </param>

@@ -21,9 +21,9 @@ namespace Lucene.Net.Analysis.Payloads
 	 */
 
     /// <summary>
-    ///  Encode a character array Integer as a <seealso cref="BytesRef"/>.
+    ///  Encode a character array Integer as a <see cref="BytesRef"/>.
     /// <p/>
-    /// See <seealso cref="org.apache.lucene.analysis.payloads.PayloadHelper#encodeInt(int, byte[], int)"/>.
+    /// See <see cref="org.apache.lucene.analysis.payloads.PayloadHelper#encodeInt(int, byte[], int)"/>.
     /// 
     /// 
     /// </summary>

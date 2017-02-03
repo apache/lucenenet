@@ -23,12 +23,12 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /// <summary>
-    /// Filters <seealso cref="ClassicTokenizer"/> with <seealso cref="ClassicFilter"/>, {@link
-    /// LowerCaseFilter} and <seealso cref="StopFilter"/>, using a list of
+    /// Filters <see cref="ClassicTokenizer"/> with <see cref="ClassicFilter"/>, {@link
+    /// LowerCaseFilter} and <see cref="StopFilter"/>, using a list of
     /// English stop words.
     /// 
     /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="LuceneVersion"/>
+    /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating ClassicAnalyzer:
     /// <ul>
     ///   <li> As of 3.1, StopFilter correctly handles Unicode 4.0
@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Standard
     /// </ul>
     /// 
     /// ClassicAnalyzer was named StandardAnalyzer in Lucene versions prior to 3.1. 
-    /// As of 3.1, <seealso cref="StandardAnalyzer"/> implements Unicode text segmentation,
+    /// As of 3.1, <see cref="StandardAnalyzer"/> implements Unicode text segmentation,
     /// as specified by UAX#29.
     /// </para>
     /// </summary>

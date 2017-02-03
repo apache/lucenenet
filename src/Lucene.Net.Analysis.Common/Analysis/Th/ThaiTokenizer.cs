@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Th
 	 */
 
     /// <summary>
-    /// Tokenizer that use <seealso cref="BreakIterator"/> to tokenize Thai text.
+    /// Tokenizer that use <see cref="BreakIterator"/> to tokenize Thai text.
     /// <para>WARNING: this tokenizer may not be supported by all JREs.
     ///    It is known to work with Sun/Oracle and Harmony JREs.
     ///    If your application needs to be fully portable, consider using ICUTokenizer instead,

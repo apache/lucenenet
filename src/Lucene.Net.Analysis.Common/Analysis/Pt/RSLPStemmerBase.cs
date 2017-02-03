@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Pt
     /// <para>
     /// Since this time a plural-only modification (RSLP-S) as well as a modification
     /// for the Galician language have been implemented. This class parses a configuration
-    /// file that describes <seealso cref="Step"/>s, where each Step contains a set of <seealso cref="Rule"/>s.
+    /// file that describes <see cref="Step"/>s, where each Step contains a set of <see cref="Rule"/>s.
     /// </para>
     /// <para>
     /// The general rule format is: 

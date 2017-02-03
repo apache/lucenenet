@@ -21,14 +21,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <seealso cref="TrimFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="TrimFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_trm" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.NGramTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.TrimFilterFactory" /&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     /// <seealso cref= TrimFilter </seealso>
     public class TrimFilterFactory : TokenFilterFactory

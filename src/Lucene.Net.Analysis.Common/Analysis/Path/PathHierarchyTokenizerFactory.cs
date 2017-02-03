@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Path
      */
 
     /// <summary>
-    /// Factory for <seealso cref="PathHierarchyTokenizer"/>. 
+    /// Factory for <see cref="PathHierarchyTokenizer"/>. 
     /// <para>
     /// This factory is typically configured for use only in the <code>index</code> 
     /// Analyzer (or only in the <code>query</code> Analyzer, but never both).
@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Path
     /// <code>Books/Fic</code>...
     /// </para>
     /// 
-    /// <pre class="prettyprint">
+    /// <code>
     /// &lt;fieldType name="descendent_path" class="solr.TextField"&gt;
     ///   &lt;analyzer type="index"&gt;
     ///     &lt;tokenizer class="solr.PathHierarchyTokenizerFactory" delimiter="/" /&gt;
@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Path
     ///     &lt;tokenizer class="solr.KeywordTokenizerFactory" /&gt;
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;
-    /// </pre>
+    /// </code>
     /// <para>
     /// In this example however we see the oposite configuration, so that a query 
     /// for <code>Books/NonFic/Science/Physics</code> would match documents 
@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Path
     /// <code>Books/NonFic/Science/Physics/Theory</code> or 
     /// <code>Books/NonFic/Law</code>.
     /// </para>
-    /// <pre class="prettyprint">
+    /// <code>
     /// &lt;fieldType name="descendent_path" class="solr.TextField"&gt;
     ///   &lt;analyzer type="index"&gt;
     ///     &lt;tokenizer class="solr.KeywordTokenizerFactory" /&gt;
@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Path
     ///     &lt;tokenizer class="solr.PathHierarchyTokenizerFactory" delimiter="/" /&gt;
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;
-    /// </pre>
+    /// </code>
     /// </summary>
     public class PathHierarchyTokenizerFactory : TokenizerFactory
     {

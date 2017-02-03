@@ -21,8 +21,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
     /// <summary>
     /// This TokenFilter emits each incoming token twice once as keyword and once non-keyword, in other words once with
-    /// <seealso cref="KeywordAttribute#setKeyword(boolean)"/> set to <code>true</code> and once set to <code>false</code>.
-    /// This is useful if used with a stem filter that respects the <seealso cref="KeywordAttribute"/> to index the stemmed and the
+    /// <see cref="KeywordAttribute#setKeyword(boolean)"/> set to <code>true</code> and once set to <code>false</code>.
+    /// This is useful if used with a stem filter that respects the <see cref="KeywordAttribute"/> to index the stemmed and the
     /// un-stemmed version of a term into the same field.
     /// </summary>
     public sealed class KeywordRepeatFilter : TokenFilter

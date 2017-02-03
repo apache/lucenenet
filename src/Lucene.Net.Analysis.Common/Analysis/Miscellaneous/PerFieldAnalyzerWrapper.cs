@@ -25,12 +25,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <summary>
     /// This analyzer is used to facilitate scenarios where different
     /// fields Require different analysis techniques.  Use the Map
-    /// argument in <seealso cref="#PerFieldAnalyzerWrapper(Analyzer, java.util.Map)"/>
+    /// argument in <see cref="#PerFieldAnalyzerWrapper(Analyzer, java.util.Map)"/>
     /// to add non-default analyzers for fields.
     /// 
     /// <para>Example usage:
     /// 
-    /// <pre class="prettyprint">
+    /// <code>
     /// {@code
     /// Map<String,Analyzer> analyzerPerField = new HashMap<>();
     /// analyzerPerField.put("firstname", new KeywordAnalyzer());
@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// PerFieldAnalyzerWrapper aWrapper =
     ///   new PerFieldAnalyzerWrapper(new StandardAnalyzer(version), analyzerPerField);
     /// }
-    /// </pre>
+    /// </code>
     /// 
     /// </para>
     /// <para>In this example, StandardAnalyzer will be used for all fields except "firstname"

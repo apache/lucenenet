@@ -21,14 +21,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <seealso cref="ASCIIFoldingFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="ASCIIFoldingFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_ascii" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.ASCIIFoldingFilterFactory" preserveOriginal="false"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class ASCIIFoldingFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {

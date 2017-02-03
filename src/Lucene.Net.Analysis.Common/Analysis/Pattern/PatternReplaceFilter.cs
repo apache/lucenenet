@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Pattern
         /// Constructs an instance to replace either the first, or all occurances
         /// </summary>
         /// <param name="in"> the TokenStream to process </param>
-        /// <param name="pattern"> the pattern (a <seealso cref="Regex"/> object) to apply to each Token </param>
+        /// <param name="pattern"> the pattern (a <see cref="Regex"/> object) to apply to each Token </param>
         /// <param name="replacement"> the "replacement string" to substitute, if null a
         ///        blank string will be used. Note that this is not the literal
         ///        string that will be used, '$' and '\' have special meaning. </param>

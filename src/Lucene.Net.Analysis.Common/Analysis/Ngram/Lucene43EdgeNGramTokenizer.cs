@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Ngram
      */
 
     /// <summary>
-    /// Old version of <seealso cref="EdgeNGramTokenizer"/> which doesn't handle correctly
+    /// Old version of <see cref="EdgeNGramTokenizer"/> which doesn't handle correctly
     /// supplementary characters.
     /// </summary>
     [Obsolete]
@@ -76,8 +76,8 @@ namespace Lucene.Net.Analysis.Ngram
         /// Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
         /// </summary>
         /// <param name="version"> the <a href="#version">Lucene match version</a> </param>
-        /// <param name="input"> <seealso cref="Reader"/> holding the input to be tokenized </param>
-        /// <param name="side"> the <seealso cref="Side"/> from which to chop off an n-gram </param>
+        /// <param name="input"> <see cref="Reader"/> holding the input to be tokenized </param>
+        /// <param name="side"> the <see cref="Side"/> from which to chop off an n-gram </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         [Obsolete]
@@ -91,9 +91,9 @@ namespace Lucene.Net.Analysis.Ngram
         /// Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
         /// </summary>
         /// <param name="version"> the <a href="#version">Lucene match version</a> </param>
-        /// <param name="factory"> <seealso cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> to use </param>
-        /// <param name="input"> <seealso cref="Reader"/> holding the input to be tokenized </param>
-        /// <param name="side"> the <seealso cref="Side"/> from which to chop off an n-gram </param>
+        /// <param name="factory"> <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> to use </param>
+        /// <param name="input"> <see cref="Reader"/> holding the input to be tokenized </param>
+        /// <param name="side"> the <see cref="Side"/> from which to chop off an n-gram </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         [Obsolete]
@@ -107,8 +107,8 @@ namespace Lucene.Net.Analysis.Ngram
         /// Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
         /// </summary>
         /// <param name="version"> the <a href="#version">Lucene match version</a> </param>
-        /// <param name="input"> <seealso cref="Reader"/> holding the input to be tokenized </param>
-        /// <param name="sideLabel"> the name of the <seealso cref="Side"/> from which to chop off an n-gram </param>
+        /// <param name="input"> <see cref="Reader"/> holding the input to be tokenized </param>
+        /// <param name="sideLabel"> the name of the <see cref="Side"/> from which to chop off an n-gram </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         [Obsolete]
@@ -121,9 +121,9 @@ namespace Lucene.Net.Analysis.Ngram
         /// Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
         /// </summary>
         /// <param name="version"> the <a href="#version">Lucene match version</a> </param>
-        /// <param name="factory"> <seealso cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> to use </param>
-        /// <param name="input"> <seealso cref="Reader"/> holding the input to be tokenized </param>
-        /// <param name="sideLabel"> the name of the <seealso cref="Side"/> from which to chop off an n-gram </param>
+        /// <param name="factory"> <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> to use </param>
+        /// <param name="input"> <see cref="Reader"/> holding the input to be tokenized </param>
+        /// <param name="sideLabel"> the name of the <see cref="Side"/> from which to chop off an n-gram </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         [Obsolete]
@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis.Ngram
         /// Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
         /// </summary>
         /// <param name="version"> the <a href="#version">Lucene match version</a> </param>
-        /// <param name="input"> <seealso cref="Reader"/> holding the input to be tokenized </param>
+        /// <param name="input"> <see cref="Reader"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         public Lucene43EdgeNGramTokenizer(LuceneVersion version, TextReader input, int minGram, int maxGram)
@@ -148,8 +148,8 @@ namespace Lucene.Net.Analysis.Ngram
         /// Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
         /// </summary>
         /// <param name="version"> the <a href="#version">Lucene match version</a> </param>
-        /// <param name="factory"> <seealso cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> to use </param>
-        /// <param name="input"> <seealso cref="Reader"/> holding the input to be tokenized </param>
+        /// <param name="factory"> <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> to use </param>
+        /// <param name="input"> <see cref="Reader"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         public Lucene43EdgeNGramTokenizer(LuceneVersion version, AttributeFactory factory, TextReader input, int minGram, int maxGram)

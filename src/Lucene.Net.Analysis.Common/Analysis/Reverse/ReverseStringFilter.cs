@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Reverse
     /// wildcards search.
     /// </para>
     /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="Version"/>
+    /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating ReverseStringFilter, or when using any of
     /// its static methods:
     /// <ul>
@@ -68,27 +68,27 @@ namespace Lucene.Net.Analysis.Reverse
 
         /// <summary>
         /// Create a new ReverseStringFilter that reverses all tokens in the 
-        /// supplied <seealso cref="TokenStream"/>.
+        /// supplied <see cref="TokenStream"/>.
         /// <para>
         /// The reversed tokens will not be marked. 
         /// </para>
         /// </summary>
         /// <param name="matchVersion"> See <a href="#version">above</a> </param>
-        /// <param name="in"> <seealso cref="TokenStream"/> to filter </param>
+        /// <param name="in"> <see cref="TokenStream"/> to filter </param>
         public ReverseStringFilter(LuceneVersion matchVersion, TokenStream @in) : this(matchVersion, @in, NOMARKER)
         {
         }
 
         /// <summary>
         /// Create a new ReverseStringFilter that reverses and marks all tokens in the
-        /// supplied <seealso cref="TokenStream"/>.
+        /// supplied <see cref="TokenStream"/>.
         /// <para>
         /// The reversed tokens will be prepended (marked) by the <code>marker</code>
         /// character.
         /// </para>
         /// </summary>
         /// <param name="matchVersion"> See <a href="#version">above</a> </param>
-        /// <param name="in"> <seealso cref="TokenStream"/> to filter </param>
+        /// <param name="in"> <see cref="TokenStream"/> to filter </param>
         /// <param name="marker"> A character used to mark reversed tokens </param>
         public ReverseStringFilter(LuceneVersion matchVersion, TokenStream @in, char marker) : base(@in)
         {

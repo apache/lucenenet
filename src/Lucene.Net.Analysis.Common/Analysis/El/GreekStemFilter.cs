@@ -20,17 +20,17 @@ namespace Lucene.Net.Analysis.El
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="GreekStemmer"/> to stem Greek
+    /// A <see cref="TokenFilter"/> that applies <see cref="GreekStemmer"/> to stem Greek
     /// words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para>
     /// <para>
     /// NOTE: Input is expected to be casefolded for Greek (including folding of final
     /// sigma to sigma), and with diacritics removed. This can be achieved by using 
-    /// either <seealso cref="GreekLowerCaseFilter"/> or ICUFoldingFilter before GreekStemFilter.
+    /// either <see cref="GreekLowerCaseFilter"/> or ICUFoldingFilter before GreekStemFilter.
     /// @lucene.experimental
     /// </para>
     /// </summary>

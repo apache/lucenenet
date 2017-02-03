@@ -23,13 +23,13 @@ namespace Lucene.Net.Analysis.Standard
     */
 
     /// <summary>
-    /// Factory for <seealso cref="ClassicTokenizer"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="ClassicTokenizer"/>.
+    /// <code>
     /// &lt;fieldType name="text_clssc" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.ClassicTokenizerFactory" maxTokenLength="120"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class ClassicTokenizerFactory : TokenizerFactory
     {

@@ -22,14 +22,14 @@ namespace Lucene.Net.Analysis.In
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="IndicNormalizationFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="IndicNormalizationFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_innormal" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.IndicNormalizationFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class IndicNormalizationFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {

@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Payloads
 	 */
 
     /// <summary>
-    ///  Encode a character array Float as a <seealso cref="BytesRef"/>.
+    ///  Encode a character array Float as a <see cref="BytesRef"/>.
     /// <p/> </summary>
     /// <seealso cref= org.apache.lucene.analysis.payloads.PayloadHelper#encodeFloat(float, byte[], int)
     /// 

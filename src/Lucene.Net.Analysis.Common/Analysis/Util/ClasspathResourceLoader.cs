@@ -23,8 +23,8 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// Simple <seealso cref="ResourceLoader"/> that uses <seealso cref="ClassLoader#getResourceAsStream(String)"/>
-    /// and <seealso cref="Class#forName(String,boolean,ClassLoader)"/> to open resources and
+    /// Simple <see cref="ResourceLoader"/> that uses <see cref="ClassLoader#getResourceAsStream(String)"/>
+    /// and <see cref="Class#forName(String,boolean,ClassLoader)"/> to open resources and
     /// classes, respectively.
     /// </summary>
     public sealed class ClasspathResourceLoader : IResourceLoader

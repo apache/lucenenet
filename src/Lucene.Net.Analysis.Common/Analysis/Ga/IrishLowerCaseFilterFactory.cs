@@ -21,14 +21,14 @@ namespace Lucene.Net.Analysis.Ga
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="IrishLowerCaseFilter"/>. 
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="IrishLowerCaseFilter"/>. 
+    /// <code>
     /// &lt;fieldType name="text_ga" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.IrishLowerCaseFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class IrishLowerCaseFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {

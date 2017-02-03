@@ -21,12 +21,12 @@ namespace Lucene.Net.Analysis.No
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="NorwegianMinimalStemmer"/> to stem Norwegian
+    /// A <see cref="TokenFilter"/> that applies <see cref="NorwegianMinimalStemmer"/> to stem Norwegian
     /// words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para>
     /// </summary>
     public sealed class NorwegianMinimalStemFilter : TokenFilter
@@ -46,8 +46,8 @@ namespace Lucene.Net.Analysis.No
 
         /// <summary>
         /// Creates a new NorwegianLightStemFilter </summary>
-        /// <param name="flags"> set to <seealso cref="NorwegianLightStemmer#BOKMAAL"/>, 
-        ///                     <seealso cref="NorwegianLightStemmer#NYNORSK"/>, or both. </param>
+        /// <param name="flags"> set to <see cref="NorwegianLightStemmer#BOKMAAL"/>, 
+        ///                     <see cref="NorwegianLightStemmer#NYNORSK"/>, or both. </param>
         public NorwegianMinimalStemFilter(TokenStream input, int flags)
               : base(input)
         {

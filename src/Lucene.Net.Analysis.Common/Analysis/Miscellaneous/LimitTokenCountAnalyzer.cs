@@ -19,7 +19,7 @@
 
     /// <summary>
     /// This Analyzer limits the number of tokens while indexing. It is
-    /// a replacement for the maximum field length setting inside <seealso cref="org.apache.lucene.index.IndexWriter"/>. </summary>
+    /// a replacement for the maximum field length setting inside <see cref="org.apache.lucene.index.IndexWriter"/>. </summary>
     /// <seealso cref= LimitTokenCountFilter </seealso>
     public sealed class LimitTokenCountAnalyzer : AnalyzerWrapper
     {

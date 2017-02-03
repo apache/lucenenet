@@ -396,7 +396,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <param name="affixes"> Map where the result of the parsing will be put </param>
         /// <param name="header"> Header line of the affix rule </param>
         /// <param name="reader"> BufferedReader to read the content of the rule from </param>
-        /// <param name="conditionPattern"> <seealso cref="String#format(String, Object...)"/> pattern to be used to generate the condition regex
+        /// <param name="conditionPattern"> <see cref="String#format(String, Object...)"/> pattern to be used to generate the condition regex
         ///                         pattern </param>
         /// <param name="seenPatterns"> map from condition -> index of patterns, for deduplication. </param>
         /// <exception cref="IOException"> Can be thrown while reading the rule </exception>
@@ -675,7 +675,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
 
         /// <summary>
-        /// Determines the appropriate <seealso cref="FlagParsingStrategy"/> based on the FLAG definition line taken from the affix file
+        /// Determines the appropriate <see cref="FlagParsingStrategy"/> based on the FLAG definition line taken from the affix file
         /// </summary>
         /// <param name="flagLine"> Line containing the flag information </param>
         /// <returns> FlagParsingStrategy that handles parsing flags in the way specified in the FLAG definition </returns>
@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Analysis.Hunspell
         }
 
         /// <summary>
-        /// Simple implementation of <seealso cref="FlagParsingStrategy"/> that treats the chars in each String as a individual flags.
+        /// Simple implementation of <see cref="FlagParsingStrategy"/> that treats the chars in each String as a individual flags.
         /// Can be used with both the ASCII and UTF-8 flag types.
         /// </summary>
         private class SimpleFlagParsingStrategy : FlagParsingStrategy
@@ -1048,7 +1048,7 @@ namespace Lucene.Net.Analysis.Hunspell
         }
 
         /// <summary>
-        /// Implementation of <seealso cref="FlagParsingStrategy"/> that assumes each flag is encoded in its numerical form.  In the case
+        /// Implementation of <see cref="FlagParsingStrategy"/> that assumes each flag is encoded in its numerical form.  In the case
         /// of multiple flags, each number is separated by a comma.
         /// </summary>
         private class NumFlagParsingStrategy : FlagParsingStrategy
@@ -1080,7 +1080,7 @@ namespace Lucene.Net.Analysis.Hunspell
         }
 
         /// <summary>
-        /// Implementation of <seealso cref="FlagParsingStrategy"/> that assumes each flag is encoded as two ASCII characters whose codes
+        /// Implementation of <see cref="FlagParsingStrategy"/> that assumes each flag is encoded as two ASCII characters whose codes
         /// must be combined into a single character.
         /// 
         /// TODO (rmuir) test

@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.En
     /// <summary>
     /// TokenFilter that removes possessives (trailing 's) from words.
     /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="Version"/>
+    /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating EnglishPossessiveFilter:
     /// <ul>
     ///    <li> As of 3.6, U+2019 RIGHT SINGLE QUOTATION MARK and 
@@ -38,8 +38,8 @@ namespace Lucene.Net.Analysis.En
         private readonly ICharTermAttribute termAtt;
         private LuceneVersion matchVersion;
 
-        /// @deprecated Use <seealso cref="#EnglishPossessiveFilter(Version, TokenStream)"/> instead. 
-        [Obsolete(@"Use <seealso cref=""#EnglishPossessiveFilter(org.apache.lucene.util.Version, org.apache.lucene.analysis.TokenStream)""/> instead.")]
+        /// @deprecated Use <see cref="#EnglishPossessiveFilter(Version, TokenStream)"/> instead. 
+        [Obsolete(@"Use <see cref=""#EnglishPossessiveFilter(org.apache.lucene.util.Version, org.apache.lucene.analysis.TokenStream)""/> instead.")]
         public EnglishPossessiveFilter(TokenStream input) : this(LuceneVersion.LUCENE_35, input)
         {
         }

@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Hi
     /// <para>
     /// <a name="version"/>
     /// </para>
-    /// <para>You must specify the required <seealso cref="Version"/>
+    /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating HindiAnalyzer:
     /// <ul>
     ///   <li> As of 3.6, StandardTokenizer is used for tokenization
@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Hi
 
         /// <summary>
         /// Builds an analyzer with the default stop words:
-        /// <seealso cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// <see cref="#DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public HindiAnalyzer(LuceneVersion version)
               : this(version, DefaultSetHolder.DEFAULT_STOP_SET)
@@ -119,14 +119,14 @@ namespace Lucene.Net.Analysis.Hi
 
         /// <summary>
         /// Creates
-        /// <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <seealso cref="Reader"/>.
+        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// used to tokenize all the text in the provided <see cref="Reader"/>.
         /// </summary>
-        /// <returns> <seealso cref="org.apache.lucene.analysis.Analyzer.TokenStreamComponents"/>
-        ///         built from a <seealso cref="StandardTokenizer"/> filtered with
-        ///         <seealso cref="LowerCaseFilter"/>, <seealso cref="IndicNormalizationFilter"/>,
-        ///         <seealso cref="HindiNormalizationFilter"/>, <seealso cref="SetKeywordMarkerFilter"/>
-        ///         if a stem exclusion set is provided, <seealso cref="HindiStemFilter"/>, and
+        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        ///         built from a <see cref="StandardTokenizer"/> filtered with
+        ///         <see cref="LowerCaseFilter"/>, <see cref="IndicNormalizationFilter"/>,
+        ///         <see cref="HindiNormalizationFilter"/>, <see cref="SetKeywordMarkerFilter"/>
+        ///         if a stem exclusion set is provided, <see cref="HindiStemFilter"/>, and
         ///         Hindi Stop words </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {

@@ -21,9 +21,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Marks terms as keywords via the <seealso cref="KeywordAttribute"/>. Each token
+    /// Marks terms as keywords via the <see cref="KeywordAttribute"/>. Each token
     /// contained in the provided set is marked as a keyword by setting
-    /// <seealso cref="KeywordAttribute#setKeyword(boolean)"/> to <code>true</code>.
+    /// <see cref="KeywordAttribute#setKeyword(boolean)"/> to <code>true</code>.
     /// </summary>
     public sealed class SetKeywordMarkerFilter : KeywordMarkerFilter
     {
@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <summary>
         /// Create a new KeywordSetMarkerFilter, that marks the current token as a
         /// keyword if the tokens term buffer is contained in the given set via the
-        /// <seealso cref="KeywordAttribute"/>.
+        /// <see cref="KeywordAttribute"/>.
         /// </summary>
         /// <param name="in">
         ///          TokenStream to filter </param>

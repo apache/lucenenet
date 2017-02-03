@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Standard
         /// Resumes scanning until the next regular expression is matched,
         /// the end of input is encountered or an I/O-Error occurs.
         /// </summary>
-        /// <returns>      the next token, <seealso cref="#YYEOF"/> on end of stream </returns>
+        /// <returns>      the next token, <see cref="#YYEOF"/> on end of stream </returns>
         /// <exception cref="IOException">  if any I/O-Error occurs </exception>
         int GetNextToken();
 

@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Util
     /// <summary>
     /// Loader for text files that represent a list of stopwords.
     /// </summary>
-    /// <seealso cref= IOUtils to obtain <seealso cref="Reader"/> instances
+    /// <seealso cref= IOUtils to obtain <see cref="Reader"/> instances
     /// @lucene.internal </seealso>
     public class WordlistLoader
     {
@@ -49,8 +49,8 @@ namespace Lucene.Net.Analysis.Util
         /// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
         /// </summary>
         /// <param name="reader"> TextReader containing the wordlist </param>
-        /// <param name="result"> the <seealso cref="CharArraySet"/> to fill with the readers words </param>
-        /// <returns> the given <seealso cref="CharArraySet"/> with the reader's words </returns>
+        /// <param name="result"> the <see cref="CharArraySet"/> to fill with the readers words </param>
+        /// <returns> the given <see cref="CharArraySet"/> with the reader's words </returns>
         public static CharArraySet GetWordSet(TextReader reader, CharArraySet result)
         {
             try
@@ -76,8 +76,8 @@ namespace Lucene.Net.Analysis.Util
         /// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
         /// </summary>
         /// <param name="reader"> TextReader containing the wordlist </param>
-        /// <param name="matchVersion"> the <seealso cref="LuceneVersion"/> </param>
-        /// <returns> A <seealso cref="CharArraySet"/> with the reader's words </returns>
+        /// <param name="matchVersion"> the <see cref="LuceneVersion"/> </param>
+        /// <returns> A <see cref="CharArraySet"/> with the reader's words </returns>
         public static CharArraySet GetWordSet(TextReader reader, LuceneVersion matchVersion)
         {
             return GetWordSet(reader, new CharArraySet(matchVersion, INITIAL_CAPACITY, false));
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="reader"> TextReader containing the wordlist </param>
         /// <param name="comment"> The string representing a comment. </param>
-        /// <param name="matchVersion"> the <seealso cref="LuceneVersion"/> </param>
+        /// <param name="matchVersion"> the <see cref="LuceneVersion"/> </param>
         /// <returns> A CharArraySet with the reader's words </returns>
         public static CharArraySet GetWordSet(TextReader reader, string comment, LuceneVersion matchVersion)
         {
@@ -106,8 +106,8 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="reader"> TextReader containing the wordlist </param>
         /// <param name="comment"> The string representing a comment. </param>
-        /// <param name="result"> the <seealso cref="CharArraySet"/> to fill with the readers words </param>
-        /// <returns> the given <seealso cref="CharArraySet"/> with the reader's words </returns>
+        /// <param name="result"> the <see cref="CharArraySet"/> to fill with the readers words </param>
+        /// <returns> the given <see cref="CharArraySet"/> with the reader's words </returns>
         public static CharArraySet GetWordSet(TextReader reader, string comment, CharArraySet result)
         {
             try
@@ -141,8 +141,8 @@ namespace Lucene.Net.Analysis.Util
         /// </para>
         /// </summary>
         /// <param name="reader"> TextReader containing a Snowball stopword list </param>
-        /// <param name="result"> the <seealso cref="CharArraySet"/> to fill with the readers words </param>
-        /// <returns> the given <seealso cref="CharArraySet"/> with the reader's words </returns>
+        /// <param name="result"> the <see cref="CharArraySet"/> to fill with the readers words </param>
+        /// <returns> the given <see cref="CharArraySet"/> with the reader's words </returns>
         public static CharArraySet GetSnowballWordSet(TextReader reader, CharArraySet result)
         {
             try
@@ -184,8 +184,8 @@ namespace Lucene.Net.Analysis.Util
         /// </para>
         /// </summary>
         /// <param name="reader"> TextReader containing a Snowball stopword list </param>
-        /// <param name="matchVersion"> the Lucene <seealso cref="Version"/> </param>
-        /// <returns> A <seealso cref="CharArraySet"/> with the reader's words </returns>
+        /// <param name="matchVersion"> the Lucene <see cref="LuceneVersion"/> </param>
+        /// <returns> A <see cref="CharArraySet"/> with the reader's words </returns>
         public static CharArraySet GetSnowballWordSet(TextReader reader, LuceneVersion matchVersion)
         {
             return GetSnowballWordSet(reader, new CharArraySet(matchVersion, INITIAL_CAPACITY, false));
@@ -194,7 +194,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Reads a stem dictionary. Each line contains:
-        /// <pre>word<b>\t</b>stem</pre>
+        /// <pre>word<b>\t</b>stem</code>
         /// (i.e. two tab separated words)
         /// </summary>
         /// <returns> stem dictionary that overrules the stemming algorithm </returns>

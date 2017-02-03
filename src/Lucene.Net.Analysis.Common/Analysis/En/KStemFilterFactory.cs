@@ -24,15 +24,15 @@ namespace Lucene.Net.Analysis.En
     //using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
 
     /// <summary>
-    /// Factory for <seealso cref="KStemFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="KStemFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_kstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
     ///     &lt;filter class="solr.KStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class KStemFilterFactory : TokenFilterFactory
     {

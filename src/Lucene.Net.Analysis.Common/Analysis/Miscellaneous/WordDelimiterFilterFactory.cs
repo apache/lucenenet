@@ -27,8 +27,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="WordDelimiterFilter"/>.
-    /// <pre class="prettyprint">
+    /// Factory for <see cref="WordDelimiterFilter"/>.
+    /// <code>
     /// &lt;fieldType name="text_wd" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///             generateWordParts="1" generateNumberParts="1" stemEnglishPossessive="1"
     ///             types="wdfftypes.txt" /&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</pre>
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class WordDelimiterFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {

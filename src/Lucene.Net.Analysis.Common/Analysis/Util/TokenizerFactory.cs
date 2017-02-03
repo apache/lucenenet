@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// Abstract parent class for analysis factories that create <seealso cref="Tokenizer"/>
+    /// Abstract parent class for analysis factories that create <see cref="Tokenizer"/>
     /// instances.
     /// </summary>
     public abstract class TokenizerFactory : AbstractAnalysisFactory
@@ -53,9 +53,9 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Reloads the factory list from the given <seealso cref="ClassLoader"/>.
+        /// Reloads the factory list from the given <see cref="ClassLoader"/>.
         /// Changes to the factories are visible after the method ends, all
-        /// iterators (<seealso cref="#availableTokenizers()"/>,...) stay consistent. 
+        /// iterators (<see cref="#availableTokenizers()"/>,...) stay consistent. 
         /// 
         /// <para><b>NOTE:</b> Only new factories are added, existing ones are
         /// never removed or replaced.

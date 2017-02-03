@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// A CharacterIterator used internally for use with <seealso cref="BreakIterator"/>
+    /// A CharacterIterator used internally for use with <see cref="BreakIterator"/>
     /// @lucene.internal
     /// </summary>
     public abstract class CharArrayIterator : CharacterIterator
@@ -170,7 +170,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Create a new CharArrayIterator that works around JRE bugs
-        /// in a manner suitable for <seealso cref="BreakIterator#getSentenceInstance()"/>
+        /// in a manner suitable for <see cref="BreakIterator#getSentenceInstance()"/>
         /// </summary>
         public static CharArrayIterator NewSentenceInstance()
         {
@@ -188,7 +188,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Create a new CharArrayIterator that works around JRE bugs
-        /// in a manner suitable for <seealso cref="BreakIterator#getWordInstance()"/>
+        /// in a manner suitable for <see cref="BreakIterator#getWordInstance()"/>
         /// </summary>
         public static CharArrayIterator NewWordInstance()
         {

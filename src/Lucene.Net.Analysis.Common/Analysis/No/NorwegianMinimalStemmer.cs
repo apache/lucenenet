@@ -68,8 +68,8 @@ namespace Lucene.Net.Analysis.No
 
         /// <summary>
         /// Creates a new NorwegianMinimalStemmer </summary>
-        /// <param name="flags"> set to <seealso cref="NorwegianLightStemmer#BOKMAAL"/>, 
-        ///                     <seealso cref="NorwegianLightStemmer#NYNORSK"/>, or both. </param>
+        /// <param name="flags"> set to <see cref="NorwegianLightStemmer#BOKMAAL"/>, 
+        ///                     <see cref="NorwegianLightStemmer#NYNORSK"/>, or both. </param>
         public NorwegianMinimalStemmer(int flags)
         {
             if (flags <= 0 || flags > NorwegianLightStemmer.BOKMAAL + NorwegianLightStemmer.NYNORSK)

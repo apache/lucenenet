@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis.Fa
 	 */
 
     /// <summary>
-    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="PersianNormalizer"/> to normalize the
+    /// A <see cref="TokenFilter"/> that applies <see cref="PersianNormalizer"/> to normalize the
     /// orthography.
     /// 
     /// </summary>

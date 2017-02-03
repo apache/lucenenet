@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Pattern
 	 */
 
     /// <summary>
-    /// Factory for <seealso cref="PatternTokenizer"/>.
+    /// Factory for <see cref="PatternTokenizer"/>.
     /// This tokenizer uses regex pattern matching to construct distinct tokens
     /// for the input stream.  It takes two arguments:  "pattern" and "group".
     /// <p/>
@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Pattern
     /// <para>
     /// group=-1 (the default) is equivalent to "split".  In this case, the tokens will
     /// be equivalent to the output from (without empty tokens):
-    /// <seealso cref="String#split(java.lang.String)"/>
+    /// <see cref="String#split(java.lang.String)"/>
     /// </para>
     /// <para>
     /// Using group >= 0 selects the matching group as the token.  For example, if you have:<br/>
@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Pattern
     /// </para>
     /// <para>NOTE: This Tokenizer does not output tokens that are of zero length.</para>
     /// 
-    /// <pre class="prettyprint">
+    /// <code>
     /// &lt;fieldType name="text_ptn" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.PatternTokenizerFactory" pattern="\'([^\']+)\'" group="1"/&gt;
