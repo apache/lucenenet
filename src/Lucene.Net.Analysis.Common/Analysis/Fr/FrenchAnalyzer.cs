@@ -37,18 +37,16 @@ namespace Lucene.Net.Analysis.Fr
     /// A default set of stopwords is used unless an alternative list is specified, but the
     /// exclusion list is empty by default.
     /// </para>
-    /// 
-    /// <a name="version"/>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating FrenchAnalyzer:
-    /// <ul>
-    ///   <li> As of 3.6, FrenchLightStemFilter is used for less aggressive stemming.
-    ///   <li> As of 3.1, Snowball stemming is done with SnowballFilter, 
-    ///        LowerCaseFilter is used prior to StopFilter, and ElisionFilter and 
-    ///        Snowball stopwords are used by default.
-    ///   <li> As of 2.9, StopFilter preserves position
-    ///        increments
-    /// </ul>
+    /// <list type="bullet">
+    ///   <item> As of 3.6, <see cref="FrenchLightStemFilter"/> is used for less aggressive stemming.</item>
+    ///   <item> As of 3.1, Snowball stemming is done with <see cref="SnowballFilter"/>, 
+    ///        <see cref="LowerCaseFilter"/> is used prior to <see cref="StopFilter"/>, and <see cref="ElisionFilter"/> and 
+    ///        Snowball stopwords are used by default.</item>
+    ///   <item> As of 2.9, <see cref="StopFilter"/> preserves position
+    ///        increments</item>
+    /// </list>
     /// 
     /// </para>
     /// <para><b>NOTE</b>: This class uses the same <see cref="LuceneVersion"/>
@@ -56,19 +54,41 @@ namespace Lucene.Net.Analysis.Fr
     /// </summary>
     public sealed class FrenchAnalyzer : StopwordAnalyzerBase
     {
-
         /// <summary>
         /// Extended list of typical French stopwords. </summary>
         /// @deprecated (3.1) remove in Lucene 5.0 (index bw compat) 
         [Obsolete("(3.1) remove in Lucene 5.0 (index bw compat)")]
-        private static readonly string[] FRENCH_STOP_WORDS = new string[] { "a", "afin", "ai", "ainsi", "après", "attendu", "au", "aujourd", "auquel", "aussi", "autre", "autres", "aux", "auxquelles", "auxquels", "avait", "avant", "avec", "avoir", "c", "car", "ce", "ceci", "cela", "celle", "celles", "celui", "cependant", "certain", "certaine", "certaines", "certains", "ces", "cet", "cette", "ceux", "chez", "ci", "combien", "comme", "comment", "concernant", "contre", "d", "dans", "de", "debout", "dedans", "dehors", "delà", "depuis", "derrière", "des", "désormais", "desquelles", "desquels", "dessous", "dessus", "devant", "devers", "devra", "divers", "diverse", "diverses", "doit", "donc", "dont", "du", "duquel", "durant", "dès", "elle", "elles", "en", "entre", "environ", "est", "et", "etc", "etre", "eu", "eux", "excepté", "hormis", "hors", "hélas", "hui", "il", "ils", "j", "je", "jusqu", "jusque", "l", "la", "laquelle", "le", "lequel", "les", "lesquelles", "lesquels", "leur", "leurs", "lorsque", "lui", "là", "ma", "mais", "malgré", "me", "merci", "mes", "mien", "mienne", "miennes", "miens", "moi", "moins", "mon", "moyennant", "même", "mêmes", "n", "ne", "ni", "non", "nos", "notre", "nous", "néanmoins", "nôtre", "nôtres", "on", "ont", "ou", "outre", "où", "par", "parmi", "partant", "pas", "passé", "pendant", "plein", "plus", "plusieurs", "pour", "pourquoi", "proche", "près", "puisque", "qu", "quand", "que", "quel", "quelle", "quelles", "quels", "qui", "quoi", "quoique", "revoici", "revoilà", "s", "sa", "sans", "sauf", "se", "selon", "seront", "ses", "si", "sien", "sienne", "siennes", "siens", "sinon", "soi", "soit", "son", "sont", "sous", "suivant", "sur", "ta", "te", "tes", "tien", "tienne", "tiennes", "tiens", "toi", "ton", "tous", "tout", "toute", "toutes", "tu", "un", "une", "va", "vers", "voici", "voilà", "vos", "votre", "vous", "vu", "vôtre", "vôtres", "y", "à", "ça", "ès", "été", "être", "ô" };
+        private static readonly string[] FRENCH_STOP_WORDS = new string[] {
+            "a", "afin", "ai", "ainsi", "après", "attendu", "au", "aujourd", "auquel", "aussi",
+            "autre", "autres", "aux", "auxquelles", "auxquels", "avait", "avant", "avec", "avoir",
+            "c", "car", "ce", "ceci", "cela", "celle", "celles", "celui", "cependant", "certain",
+            "certaine", "certaines", "certains", "ces", "cet", "cette", "ceux", "chez", "ci",
+            "combien", "comme", "comment", "concernant", "contre", "d", "dans", "de", "debout",
+            "dedans", "dehors", "delà", "depuis", "derrière", "des", "désormais", "desquelles",
+            "desquels", "dessous", "dessus", "devant", "devers", "devra", "divers", "diverse",
+            "diverses", "doit", "donc", "dont", "du", "duquel", "durant", "dès", "elle", "elles",
+            "en", "entre", "environ", "est", "et", "etc", "etre", "eu", "eux", "excepté", "hormis",
+            "hors", "hélas", "hui", "il", "ils", "j", "je", "jusqu", "jusque", "l", "la", "laquelle",
+            "le", "lequel", "les", "lesquelles", "lesquels", "leur", "leurs", "lorsque", "lui", "là",
+            "ma", "mais", "malgré", "me", "merci", "mes", "mien", "mienne", "miennes", "miens", "moi",
+            "moins", "mon", "moyennant", "même", "mêmes", "n", "ne", "ni", "non", "nos", "notre",
+            "nous", "néanmoins", "nôtre", "nôtres", "on", "ont", "ou", "outre", "où", "par", "parmi",
+            "partant", "pas", "passé", "pendant", "plein", "plus", "plusieurs", "pour", "pourquoi",
+            "proche", "près", "puisque", "qu", "quand", "que", "quel", "quelle", "quelles", "quels",
+            "qui", "quoi", "quoique", "revoici", "revoilà", "s", "sa", "sans", "sauf", "se", "selon",
+            "seront", "ses", "si", "sien", "sienne", "siennes", "siens", "sinon", "soi", "soit",
+            "son", "sont", "sous", "suivant", "sur", "ta", "te", "tes", "tien", "tienne", "tiennes",
+            "tiens", "toi", "ton", "tous", "tout", "toute", "toutes", "tu", "un", "une", "va", "vers",
+            "voici", "voilà", "vos", "votre", "vous", "vu", "vôtre", "vôtres", "y", "à", "ça", "ès",
+            "été", "être", "ô"
+        };
 
         /// <summary>
         /// File containing default French stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "french_stop.txt";
 
         /// <summary>
-        /// Default set of articles for ElisionFilter </summary>
+        /// Default set of articles for <see cref="ElisionFilter"/> </summary>
         public static readonly CharArraySet DEFAULT_ARTICLES = CharArraySet.UnmodifiableSet(new CharArraySet(
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
@@ -118,7 +138,7 @@ namespace Lucene.Net.Analysis.Fr
         }
 
         /// <summary>
-        /// Builds an analyzer with the default stop words (<see cref="#getDefaultStopSet"/>).
+        /// Builds an analyzer with the default stop words (<see cref="DefaultStopSet"/>).
         /// </summary>
         public FrenchAnalyzer(LuceneVersion matchVersion)
 #pragma warning disable 612, 618
@@ -132,7 +152,7 @@ namespace Lucene.Net.Analysis.Fr
         /// Builds an analyzer with the given stop words
         /// </summary>
         /// <param name="matchVersion">
-        ///          lucene compatibility version </param>
+        ///          <see cref="LuceneVersion"/> lucene compatibility version </param>
         /// <param name="stopwords">
         ///          a stopword set </param>
         public FrenchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
@@ -144,7 +164,7 @@ namespace Lucene.Net.Analysis.Fr
         /// Builds an analyzer with the given stop words
         /// </summary>
         /// <param name="matchVersion">
-        ///          lucene compatibility version </param>
+        ///          <see cref="LuceneVersion"/> lucene compatibility version </param>
         /// <param name="stopwords">
         ///          a stopword set </param>
         /// <param name="stemExclutionSet">
@@ -158,7 +178,7 @@ namespace Lucene.Net.Analysis.Fr
         /// <summary>
         /// Creates
         /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <see cref="Reader"/>.
+        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
         ///         built from a <see cref="StandardTokenizer"/> filtered with

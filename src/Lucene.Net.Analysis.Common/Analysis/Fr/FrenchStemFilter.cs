@@ -28,17 +28,16 @@ namespace Lucene.Net.Analysis.Fr
     /// </para>
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <see cref="KeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// <see cref="Miscellaneous.KeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
     /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para> </summary>
-    /// <seealso cref= KeywordMarkerFilter </seealso>
-    /// @deprecated (3.1) Use <see cref="SnowballFilter"/> with 
-    /// <see cref="org.tartarus.snowball.ext.FrenchStemmer"/> instead, which has the
+    /// <seealso cref="Miscellaneous.KeywordMarkerFilter"/>
+    /// @deprecated (3.1) Use <see cref="Snowball.SnowballFilter"/> with 
+    /// <see cref="Tartarus.Snowball.Ext.FrenchStemmer"/> instead, which has the
     /// same functionality. This filter will be removed in Lucene 5.0 
     [Obsolete("(3.1) Use SnowballFilter with FrenchStemmer instead, which has the same functionality. This filter will be removed in Lucene 5.0")]
     public sealed class FrenchStemFilter : TokenFilter
     {
-
         /// <summary>
         /// The actual token in the input stream.
         /// </summary>

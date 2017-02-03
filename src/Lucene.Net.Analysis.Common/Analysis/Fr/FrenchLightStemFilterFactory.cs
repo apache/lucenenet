@@ -34,9 +34,8 @@ namespace Lucene.Net.Analysis.Fr
     /// </summary>
     public class FrenchLightStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new FrenchLightStemFilterFactory </summary>
+        /// Creates a new <see cref="FrenchLightStemFilterFactory"/> </summary>
         public FrenchLightStemFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

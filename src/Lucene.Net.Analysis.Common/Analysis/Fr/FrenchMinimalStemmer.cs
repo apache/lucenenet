@@ -56,7 +56,7 @@
     /// Light Stemmer for French.
     /// <para>
     /// This stemmer implements the following algorithm:
-    /// <i>A Stemming procedure and stopword list for general French corpora.</i>
+    /// <c>A Stemming procedure and stopword list for general French corpora.</c>
     /// Jacques Savoy.
     /// </para>
     /// </summary>

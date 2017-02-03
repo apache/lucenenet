@@ -33,9 +33,8 @@ namespace Lucene.Net.Analysis.Fr
     /// </summary>
     public class FrenchMinimalStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new FrenchMinimalStemFilterFactory </summary>
+        /// Creates a new <see cref="FrenchMinimalStemFilterFactory"/> </summary>
         public FrenchMinimalStemFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

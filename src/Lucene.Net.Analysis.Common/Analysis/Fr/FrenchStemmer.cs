@@ -23,19 +23,18 @@ namespace Lucene.Net.Analysis.Fr
 
     /// <summary>
     /// A stemmer for French words. 
-    /// <para>
+    /// <para/>
     /// The algorithm is based on the work of
-    /// Dr Martin Porter on his snowball project<br>
-    /// refer to http://snowball.sourceforge.net/french/stemmer.html<br>
+    /// Dr Martin Porter on his snowball project<para/>
+    /// refer to http://snowball.sourceforge.net/french/stemmer.html
     /// (French stemming algorithm) for details
-    /// </para> </summary>
-    /// @deprecated Use <see cref="org.tartarus.snowball.ext.FrenchStemmer"/> instead, 
-    /// which has the same functionality. This filter will be removed in Lucene 4.0 
+    /// </summary>
+    /// @deprecated Use <see cref="Tartarus.Snowball.Ext.FrenchStemmer"/> instead, 
+    /// which has the same functionality. This filter will be removed in Lucene 4.0
     [Obsolete("Use FrenchStemmer instead, which has the same functionality.")]
     public class FrenchStemmer
     {
         private static readonly CultureInfo locale = new CultureInfo("fr-FR");
-
 
         /// <summary>
         /// Buffer for the terms while stemming them.
@@ -87,10 +86,10 @@ namespace Lucene.Net.Analysis.Fr
 
 
         /// <summary>
-        /// Stems the given term to a unique <tt>discriminator</tt>.
+        /// Stems the given term to a unique <c>discriminator</c>.
         /// </summary>
-        /// <param name="term">  java.langString The term that should be stemmed </param>
-        /// <returns> java.lang.String  Discriminator for <tt>term</tt> </returns>
+        /// <param name="term"> The term that should be stemmed </param>
+        /// <returns> Discriminator for <paramref name="term"/> </returns>
         protected internal virtual string Stem(string term)
         {
             if (!IsStemmable(term))
@@ -144,7 +143,7 @@ namespace Lucene.Net.Analysis.Fr
         }
 
         /// <summary>
-        /// Sets the search region Strings<br>
+        /// Sets the search region strings
         /// it needs to be done each time the buffer was modified
         /// </summary>
         private void SetStrings()
@@ -166,7 +165,7 @@ namespace Lucene.Net.Analysis.Fr
         }
 
         /// <summary>
-        /// First step of the Porter Algorithm<br>
+        /// First step of the Porter Algorithm<para/>
         /// refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
         /// </summary>
         private void Step1()
@@ -227,12 +226,12 @@ namespace Lucene.Net.Analysis.Fr
         }
 
         /// <summary>
-        /// Second step (A) of the Porter Algorithm<br>
+        /// Second step (A) of the Porter Algorithm<para/>
         /// Will be performed if nothing changed from the first step
-        /// or changed were done in the amment, emment, ments or ment suffixes<br>
+        /// or changed were done in the amment, emment, ments or ment suffixes<para/>
         /// refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
         /// </summary>
-        /// <returns> boolean - true if something changed in the StringBuilder </returns>
+        /// <returns> true if something changed in the <see cref="StringBuilder"/> </returns>
         private bool Step2a()
         {
             string[] search = new string[] { "îmes", "îtes", "iraIent", "irait", "irais", "irai", "iras", "ira", "irent", "iriez", "irez", "irions", "irons", "iront", "issaIent", "issais", "issantes", "issante", "issants", "issant", "issait", "issais", "issions", "issons", "issiez", "issez", "issent", "isses", "isse", "ir", "is", "ît", "it", "ies", "ie", "i" };
@@ -240,8 +239,8 @@ namespace Lucene.Net.Analysis.Fr
         }
 
         /// <summary>
-        /// Second step (B) of the Porter Algorithm<br>
-        /// Will be performed if step 2 A was performed unsuccessfully<br>
+        /// Second step (B) of the Porter Algorithm<para/>
+        /// Will be performed if step 2 A was performed unsuccessfully<para/>
         /// refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
         /// </summary>
         private void Step2b()
@@ -256,7 +255,7 @@ namespace Lucene.Net.Analysis.Fr
         }
 
         /// <summary>
-        /// Third step of the Porter Algorithm<br>
+        /// Third step of the Porter Algorithm<para/>
         /// refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
         /// </summary>
         private void Step3()
@@ -278,7 +277,7 @@ namespace Lucene.Net.Analysis.Fr
         }
 
         /// <summary>
-        /// Fourth step of the Porter Algorithm<br>
+        /// Fourth step of the Porter Algorithm<para/>
         /// refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
         /// </summary>
         private void Step4()
@@ -308,7 +307,7 @@ namespace Lucene.Net.Analysis.Fr
         }
 
         /// <summary>
-        /// Fifth step of the Porter Algorithm<br>
+        /// Fifth step of the Porter Algorithm<para/>
         /// refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
         /// </summary>
         private void Step5()
@@ -324,7 +323,7 @@ namespace Lucene.Net.Analysis.Fr
         }
 
         /// <summary>
-        /// Sixth (and last!) step of the Porter Algorithm<br>
+        /// Sixth (and last!) step of the Porter Algorithm<para/>
         /// refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
         /// </summary>
         private void Step6()
@@ -371,11 +370,11 @@ namespace Lucene.Net.Analysis.Fr
         /// <summary>
         /// Delete a suffix searched in zone "source" if zone "from" contains prefix + search string
         /// </summary>
-        /// <param name="source"> java.lang.String - the primary source zone for search </param>
-        /// <param name="search"> java.lang.String[] - the strings to search for suppression </param>
-        /// <param name="from"> java.lang.String - the secondary source zone for search </param>
-        /// <param name="prefix"> java.lang.String - the prefix to add to the search string to test </param>
-        /// <returns> boolean - true if modified </returns>
+        /// <param name="source"> the primary source zone for search </param>
+        /// <param name="search"> the strings to search for suppression </param>
+        /// <param name="from"> the secondary source zone for search </param>
+        /// <param name="prefix"> the prefix to add to the search string to test </param>
+        /// <returns> true if modified </returns>
         private bool DeleteFromIfPrecededIn(string source, string[] search, string from, string prefix)
         {
             bool found = false;
@@ -401,11 +400,11 @@ namespace Lucene.Net.Analysis.Fr
         /// <summary>
         /// Delete a suffix searched in zone "source" if the preceding letter is (or isn't) a vowel
         /// </summary>
-        /// <param name="source"> java.lang.String - the primary source zone for search </param>
-        /// <param name="search"> java.lang.String[] - the strings to search for suppression </param>
-        /// <param name="vowel"> boolean - true if we need a vowel before the search string </param>
-        /// <param name="from"> java.lang.String - the secondary source zone for search (where vowel could be) </param>
-        /// <returns> boolean - true if modified </returns>
+        /// <param name="source"> the primary source zone for search </param>
+        /// <param name="search"> the strings to search for suppression </param>
+        /// <param name="vowel"> true if we need a vowel before the search string </param>
+        /// <param name="from"> the secondary source zone for search (where vowel could be) </param>
+        /// <returns> true if modified </returns>
         private bool DeleteFromIfTestVowelBeforeIn(string source, string[] search, bool vowel, string from)
         {
             bool found = false;
@@ -436,10 +435,10 @@ namespace Lucene.Net.Analysis.Fr
         /// <summary>
         /// Delete a suffix searched in zone "source" if preceded by the prefix
         /// </summary>
-        /// <param name="source"> java.lang.String - the primary source zone for search </param>
-        /// <param name="search"> java.lang.String[] - the strings to search for suppression </param>
-        /// <param name="prefix"> java.lang.String - the prefix to add to the search string to test </param>
-        /// <param name="without"> boolean - true if it will be deleted even without prefix found </param>
+        /// <param name="source"> the primary source zone for search </param>
+        /// <param name="search"> the strings to search for suppression </param>
+        /// <param name="prefix"> the prefix to add to the search string to test </param>
+        /// <param name="without"> true if it will be deleted even without prefix found </param>
         private void DeleteButSuffixFrom(string source, string[] search, string prefix, bool without)
         {
             if (source != null)
@@ -465,14 +464,14 @@ namespace Lucene.Net.Analysis.Fr
         }
 
         /// <summary>
-        /// Delete a suffix searched in zone "source" if preceded by prefix<br>
-        /// or replace it with the replace string if preceded by the prefix in the zone "from"<br>
+        /// Delete a suffix searched in zone "source" if preceded by prefix<para/>
+        /// or replace it with the replace string if preceded by the prefix in the zone "from"<para/>
         /// or delete the suffix if specified
         /// </summary>
-        /// <param name="source"> java.lang.String - the primary source zone for search </param>
-        /// <param name="search"> java.lang.String[] - the strings to search for suppression </param>
-        /// <param name="prefix"> java.lang.String - the prefix to add to the search string to test </param>
-        /// <param name="without"> boolean - true if it will be deleted even without prefix found </param>
+        /// <param name="source"> the primary source zone for search </param>
+        /// <param name="search"> the strings to search for suppression </param>
+        /// <param name="prefix"> the prefix to add to the search string to test </param>
+        /// <param name="without"> true if it will be deleted even without prefix found </param>
         private void DeleteButSuffixFromElseReplace(string source, string[] search, string prefix, bool without, string from, string replace)
         {
             if (source != null)
@@ -507,9 +506,9 @@ namespace Lucene.Net.Analysis.Fr
         /// <summary>
         /// Replace a search string with another within the source zone
         /// </summary>
-        /// <param name="source"> java.lang.String - the source zone for search </param>
-        /// <param name="search"> java.lang.String[] - the strings to search for replacement </param>
-        /// <param name="replace"> java.lang.String - the replacement string </param>
+        /// <param name="source"> the source zone for search </param>
+        /// <param name="search"> the strings to search for replacement </param>
+        /// <param name="replace"> the replacement string </param>
         private bool ReplaceFrom(string source, string[] search, string replace)
         {
             bool found = false;
@@ -556,7 +555,7 @@ namespace Lucene.Net.Analysis.Fr
         /// Test if a char is a french vowel, including accentuated ones
         /// </summary>
         /// <param name="ch"> the char to test </param>
-        /// <returns> boolean - true if the char is a vowel </returns>
+        /// <returns> true if the char is a vowel </returns>
         private bool IsVowel(char ch)
         {
             switch (ch)
@@ -586,11 +585,11 @@ namespace Lucene.Net.Analysis.Fr
         }
 
         /// <summary>
-        /// Retrieve the "R zone" (1 or 2 depending on the buffer) and return the corresponding string<br>
+        /// Retrieve the "R zone" (1 or 2 depending on the buffer) and return the corresponding string<para/>
         /// "R is the region after the first non-vowel following a vowel
-        /// or is the null region at the end of the word if there is no such non-vowel"<br> </summary>
-        /// <param name="buffer"> java.lang.StringBuilder - the in buffer </param>
-        /// <returns> java.lang.String - the resulting string </returns>
+        /// or is the null region at the end of the word if there is no such non-vowel" </summary>
+        /// <param name="buffer"> the in buffer </param>
+        /// <returns> the resulting string </returns>
         private string RetrieveR(StringBuilder buffer)
         {
             int len = buffer.Length;
@@ -631,12 +630,12 @@ namespace Lucene.Net.Analysis.Fr
         }
 
         /// <summary>
-        /// Retrieve the "RV zone" from a buffer an return the corresponding string<br>
+        /// Retrieve the "RV zone" from a buffer an return the corresponding string<para/>
         /// "If the word begins with two vowels, RV is the region after the third letter,
         /// otherwise the region after the first vowel not at the beginning of the word,
-        /// or the end of the word if these positions cannot be found."<br> </summary>
-        /// <param name="buffer"> java.lang.StringBuilder - the in buffer </param>
-        /// <returns> java.lang.String - the resulting string </returns>
+        /// or the end of the word if these positions cannot be found." </summary>
+        /// <param name="buffer"> the in buffer </param>
+        /// <returns> the resulting string </returns>
         private string RetrieveRV(StringBuilder buffer)
         {
             int len = buffer.Length;
@@ -660,7 +659,6 @@ namespace Lucene.Net.Analysis.Fr
                     if (pos + 1 < len)
                     {
                         return buffer.ToString(pos + 1, len - (pos + 1));
-                        //return StringHelperClass.SubstringSpecial(buffer, pos + 1, len);
                     }
                     else
                     {
@@ -677,12 +675,12 @@ namespace Lucene.Net.Analysis.Fr
 
 
         /// <summary>
-        /// Turns u and i preceded AND followed by a vowel to UpperCase<br>
-        /// Turns y preceded OR followed by a vowel to UpperCase<br>
-        /// Turns u preceded by q to UpperCase<br>
+        /// Turns u and i preceded AND followed by a vowel to UpperCase<para/>
+        /// Turns y preceded OR followed by a vowel to UpperCase<para/>
+        /// Turns u preceded by q to UpperCase
         /// </summary>
-        /// <param name="buffer"> java.util.StringBuilder - the buffer to treat </param>
-        /// <returns> java.util.StringBuilder - the treated buffer </returns>
+        /// <param name="buffer"> the buffer to treat </param>
+        /// <returns> the treated buffer </returns>
         private StringBuilder TreatVowels(StringBuilder buffer)
         {
             for (int c = 0; c < buffer.Length; c++)
@@ -746,7 +744,7 @@ namespace Lucene.Net.Analysis.Fr
         /// <summary>
         /// Checks a term if it can be processed correctly.
         /// </summary>
-        /// <returns> boolean - true if, and only if, the given term consists in letters. </returns>
+        /// <returns> true if, and only if, the given term consists in letters. </returns>
         private bool IsStemmable(string term)
         {
             bool upper = false;
