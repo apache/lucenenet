@@ -22,8 +22,6 @@ namespace Lucene.Net.Analysis.Payloads
 
     /// <summary>
     ///  Does nothing other than convert the char array to a byte array using the specified encoding.
-    /// 
-    /// 
     /// </summary>
     public class IdentityEncoder : AbstractEncoder, IPayloadEncoder
     {

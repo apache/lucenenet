@@ -22,24 +22,22 @@ namespace Lucene.Net.Analysis.Payloads
 	 */
 
     /// <summary>
-    /// Assigns a payload to a token based on the <see cref="org.apache.lucene.analysis.Token#type()"/>
-    /// 
-    /// 
+    /// Assigns a payload to a token based on the <see cref="Token.Type"/>
     /// </summary>
     public class NumericPayloadTokenFilter : TokenFilter
     {
-
         private string typeMatch;
         private BytesRef thePayload;
 
         private readonly IPayloadAttribute payloadAtt;
         private readonly ITypeAttribute typeAtt;
 
-        public NumericPayloadTokenFilter(TokenStream input, float payload, string typeMatch) : base(input)
+        public NumericPayloadTokenFilter(TokenStream input, float payload, string typeMatch) 
+            : base(input)
         {
             if (typeMatch == null)
             {
-                throw new System.ArgumentException("typeMatch cannot be null");
+                throw new ArgumentException("typeMatch cannot be null");
             }
             //Need to encode the payload
             thePayload = new BytesRef(PayloadHelper.EncodeFloat(payload));

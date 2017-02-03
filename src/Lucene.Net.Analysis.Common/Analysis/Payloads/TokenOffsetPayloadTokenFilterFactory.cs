@@ -32,11 +32,10 @@ namespace Lucene.Net.Analysis.Payloads
     /// </summary>
     public class TokenOffsetPayloadTokenFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new TokenOffsetPayloadTokenFilterFactory </summary>
+        /// Creates a new <see cref="TokenOffsetPayloadTokenFilterFactory"/> </summary>
         public TokenOffsetPayloadTokenFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {

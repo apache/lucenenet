@@ -21,15 +21,12 @@ namespace Lucene.Net.Analysis.Payloads
 	 */
 
     /// <summary>
-    ///  Encode a character array Integer as a <see cref="BytesRef"/>.
-    /// <p/>
-    /// See <see cref="org.apache.lucene.analysis.payloads.PayloadHelper#encodeInt(int, byte[], int)"/>.
-    /// 
-    /// 
+    /// Encode a character array <see cref="int"/> as a <see cref="BytesRef"/>.
+    /// <para/>
+    /// See <see cref="PayloadHelper.EncodeInt(int, byte[], int)"/>.
     /// </summary>
     public class IntegerEncoder : AbstractEncoder, IPayloadEncoder
     {
-
         public override BytesRef Encode(char[] buffer, int offset, int length)
         {
             int payload = ArrayUtil.ParseInt(buffer, offset, length); //TODO: improve this so that we don't have to new Strings

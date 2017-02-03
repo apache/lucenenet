@@ -32,11 +32,10 @@ namespace Lucene.Net.Analysis.Payloads
     /// </summary>
     public class TypeAsPayloadTokenFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new TypeAsPayloadTokenFilterFactory </summary>
+        /// Creates a new <see cref="TypeAsPayloadTokenFilterFactory"/> </summary>
         public TypeAsPayloadTokenFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {

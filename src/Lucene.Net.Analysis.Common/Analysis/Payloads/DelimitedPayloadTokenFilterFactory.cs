@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Payloads
         private IPayloadEncoder encoder;
 
         /// <summary>
-        /// Creates a new DelimitedPayloadTokenFilterFactory </summary>
+        /// Creates a new <see cref="DelimitedPayloadTokenFilterFactory"/> </summary>
         public DelimitedPayloadTokenFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

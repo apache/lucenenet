@@ -21,15 +21,15 @@ namespace Lucene.Net.Analysis.Payloads
 
     /// <summary>
     /// Characters before the delimiter are the "token", those after are the payload.
-    /// <p/>
+    /// <para/>
     /// For example, if the delimiter is '|', then for the string "foo|bar", foo is the token
     /// and "bar" is a payload.
-    /// <p/>
-    /// Note, you can also include a <see cref="org.apache.lucene.analysis.payloads.PayloadEncoder"/> to convert the payload in an appropriate way (from characters to bytes).
-    /// <p/>
-    /// Note make sure your Tokenizer doesn't split on the delimiter, or this won't work
+    /// <para/>
+    /// Note, you can also include a <see cref="IPayloadEncoder"/> to convert the payload in an appropriate way (from characters to bytes).
+    /// <para/>
+    /// Note make sure your <see cref="Tokenizer"/> doesn't split on the delimiter, or this won't work
     /// </summary>
-    /// <seealso cref= PayloadEncoder </seealso>
+    /// <seealso cref="IPayloadEncoder"/>
     public sealed class DelimitedPayloadTokenFilter : TokenFilter
     {
         public const char DEFAULT_DELIMITER = '|';

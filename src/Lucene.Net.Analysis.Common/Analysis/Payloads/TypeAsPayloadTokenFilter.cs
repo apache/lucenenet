@@ -21,11 +21,9 @@ namespace Lucene.Net.Analysis.Payloads
 	 */
 
     /// <summary>
-    /// Makes the <see cref="org.apache.lucene.analysis.Token#type()"/> a payload.
-    /// 
-    /// Encodes the type using <see cref="String#getBytes(String)"/> with "UTF-8" as the encoding
-    /// 
-    /// 
+    /// Makes the <see cref="Token.Type"/> a payload.
+    /// <para/>
+    /// Encodes the type using System.Text.Encoding.UTF8.GetBytes(string)
     /// </summary>
     public class TypeAsPayloadTokenFilter : TokenFilter
     {
@@ -33,7 +31,7 @@ namespace Lucene.Net.Analysis.Payloads
         private readonly ITypeAttribute typeAtt;
 
         public TypeAsPayloadTokenFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             payloadAtt = AddAttribute<IPayloadAttribute>();
             typeAtt = AddAttribute<ITypeAttribute>();

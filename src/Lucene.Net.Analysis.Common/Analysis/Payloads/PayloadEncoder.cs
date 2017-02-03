@@ -20,12 +20,10 @@ namespace Lucene.Net.Analysis.Payloads
 	 */
 
     /// <summary>
-    /// Mainly for use with the DelimitedPayloadTokenFilter, converts char buffers to
+    /// Mainly for use with the <see cref="DelimitedPayloadTokenFilter"/>, converts char buffers to
     /// <see cref="BytesRef"/>.
-    /// <p/>
+    /// <para/>
     /// NOTE: This interface is subject to change 
-    /// 
-    /// 
     /// </summary>
     public interface IPayloadEncoder
     {

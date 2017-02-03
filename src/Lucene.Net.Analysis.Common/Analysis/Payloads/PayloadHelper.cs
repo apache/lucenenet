@@ -21,12 +21,9 @@ namespace Lucene.Net.Analysis.Payloads
 
     /// <summary>
     /// Utility methods for encoding payloads.
-    /// 
-    /// 
     /// </summary>
     public class PayloadHelper
     {
-
         public static byte[] EncodeFloat(float payload)
         {
             return EncodeFloat(payload, new byte[4], 0);
@@ -51,8 +48,8 @@ namespace Lucene.Net.Analysis.Payloads
             return data;
         }
 
-        /// <seealso cref= #decodeFloat(byte[], int) </seealso>
-        /// <seealso cref= #encodeFloat(float) </seealso>
+        /// <seealso cref="DecodeFloat(byte[], int)"/>
+        /// <seealso cref="EncodeFloat(float)"/>
         /// <returns> the decoded float </returns>
         public static float DecodeFloat(byte[] bytes)
         {
@@ -60,13 +57,13 @@ namespace Lucene.Net.Analysis.Payloads
         }
 
         /// <summary>
-        /// Decode the payload that was encoded using <see cref="#encodeFloat(float)"/>.
+        /// Decode the payload that was encoded using <see cref="EncodeFloat(float)"/>.
         /// NOTE: the length of the array must be at least offset + 4 long. </summary>
         /// <param name="bytes"> The bytes to decode </param>
         /// <param name="offset"> The offset into the array. </param>
         /// <returns> The float that was encoded
         /// </returns>
-        /// <seealso cref= #encodeFloat(float) </seealso>
+        /// <seealso cref="EncodeFloat(float)"/>
         public static float DecodeFloat(byte[] bytes, int offset)
         {
 

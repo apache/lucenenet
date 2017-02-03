@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
-using System;
 
 namespace Lucene.Net.Analysis.Payloads
 {
@@ -22,11 +21,9 @@ namespace Lucene.Net.Analysis.Payloads
 	 */
 
     /// <summary>
-    /// Adds the <see cref="OffsetAttribute#startOffset()"/>
-    /// and <see cref="OffsetAttribute#endOffset()"/>
+    /// Adds the <see cref="OffsetAttribute.StartOffset"/>
+    /// and <see cref="OffsetAttribute.EndOffset"/>
     /// First 4 bytes are the start
-    /// 
-    /// 
     /// </summary>
     public class TokenOffsetPayloadTokenFilter : TokenFilter
     {
@@ -34,7 +31,7 @@ namespace Lucene.Net.Analysis.Payloads
         private readonly IPayloadAttribute payAtt;
 
         public TokenOffsetPayloadTokenFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             offsetAtt = AddAttribute<IOffsetAttribute>();
             payAtt = AddAttribute<IPayloadAttribute>();
