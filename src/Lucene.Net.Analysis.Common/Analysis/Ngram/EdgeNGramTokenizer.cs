@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Util;
 using System.IO;
 
-namespace Lucene.Net.Analysis.Ngram
+namespace Lucene.Net.Analysis.Ngram // LUCENENET TODO: Change namespace, directory, and Git to NGram
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -25,14 +25,15 @@ namespace Lucene.Net.Analysis.Ngram
     /// <para>
     /// This <see cref="Tokenizer"/> create n-grams from the beginning edge or ending edge of a input token.
     /// </para>
-    /// <para><a name="version" /> As of Lucene 4.4, this tokenizer<ul>
-    /// <li>can handle <code>maxGram</code> larger than 1024 chars, but beware that this will result in increased memory usage
-    /// <li>doesn't trim the input,
-    /// <li>sets position increments equal to 1 instead of 1 for the first token and 0 for all other ones
-    /// <li>doesn't support backward n-grams anymore.
-    /// <li>supports <see cref="#isTokenChar(int) pre-tokenization"/>,
-    /// <li>correctly handles supplementary characters.
-    /// </ul>
+    /// <para>As of Lucene 4.4, this tokenizer
+    /// <list type="bullet">
+    ///     <item>can handle <code>maxGram</code> larger than 1024 chars, but beware that this will result in increased memory usage</item>
+    ///     <item>doesn't trim the input,</item>
+    ///     <item>sets position increments equal to 1 instead of 1 for the first token and 0 for all other ones</item>
+    ///     <item>doesn't support backward n-grams anymore.</item>
+    ///     <item>supports <see cref="Util.CharTokenizer.IsTokenChar(int)"/> pre-tokenization,</item>
+    ///     <item>correctly handles supplementary characters.</item>
+    /// </list>
     /// </para>
     /// <para>Although <b style="color:red">highly</b> discouraged, it is still possible
     /// to use the old behavior through <see cref="Lucene43EdgeNGramTokenizer"/>.
@@ -44,10 +45,10 @@ namespace Lucene.Net.Analysis.Ngram
         public const int DEFAULT_MIN_GRAM_SIZE = 1;
 
         /// <summary>
-        /// Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
+        /// Creates <see cref="EdgeNGramTokenizer"/> that can generate n-grams in the sizes of the given range
         /// </summary>
-        /// <param name="version"> the <a href="#version">Lucene match version</a> </param>
-        /// <param name="input"> <see cref="Reader"/> holding the input to be tokenized </param>
+        /// <param name="version"> the Lucene match version - See <see cref="LuceneVersion"/> </param>
+        /// <param name="input"> <see cref="TextReader"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         public EdgeNGramTokenizer(LuceneVersion version, TextReader input, int minGram, int maxGram)
@@ -58,9 +59,9 @@ namespace Lucene.Net.Analysis.Ngram
         /// <summary>
         /// Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
         /// </summary>
-        /// <param name="version"> the <a href="#version">Lucene match version</a> </param>
-        /// <param name="factory"> <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> to use </param>
-        /// <param name="input"> <see cref="Reader"/> holding the input to be tokenized </param>
+        /// <param name="version"> the Lucene match version - See <see cref="LuceneVersion"/> </param>
+        /// <param name="factory"> <see cref="AttributeSource.AttributeFactory"/> to use </param>
+        /// <param name="input"> <see cref="TextReader"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         public EdgeNGramTokenizer(LuceneVersion version, AttributeSource.AttributeFactory factory, TextReader input, int minGram, int maxGram)

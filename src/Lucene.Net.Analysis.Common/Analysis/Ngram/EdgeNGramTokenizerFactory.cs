@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Lucene.Net.Analysis.Ngram
+namespace Lucene.Net.Analysis.Ngram // LUCENENET TODO: Change namespace, directory, and Git to NGram
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Ngram
         private readonly string side;
 
         /// <summary>
-        /// Creates a new EdgeNGramTokenizerFactory </summary>
+        /// Creates a new <see cref="EdgeNGramTokenizerFactory"/> </summary>
         public EdgeNGramTokenizerFactory(IDictionary<string, string> args) : base(args)
         {
             minGramSize = GetInt(args, "minGramSize", EdgeNGramTokenizer.DEFAULT_MIN_GRAM_SIZE);

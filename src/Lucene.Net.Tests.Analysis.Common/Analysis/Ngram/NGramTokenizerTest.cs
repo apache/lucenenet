@@ -233,7 +233,7 @@ namespace Lucene.Net.Analysis.Ngram
                 this.nonTokenChars = nonTokenChars;
             }
 
-            protected internal override bool IsTokenChar(int chr)
+            protected override bool IsTokenChar(int chr)
             {
                 return nonTokenChars.IndexOf((char)chr) < 0;
             }

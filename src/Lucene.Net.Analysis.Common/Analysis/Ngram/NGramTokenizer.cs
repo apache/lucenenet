@@ -6,7 +6,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace Lucene.Net.Analysis.Ngram
+namespace Lucene.Net.Analysis.Ngram // LUCENENET TODO: Change namespace, directory, and Git to NGram
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -32,21 +32,66 @@ namespace Lucene.Net.Analysis.Ngram
     /// the same as the term chars.
     /// </para>
     /// <para>For example, "abcde" would be tokenized as (minGram=2, maxGram=3):
-    /// <table>
-    /// <tr><th>Term</th><td>ab</td><td>abc</td><td>bc</td><td>bcd</td><td>cd</td><td>cde</td><td>de</td></tr>
-    /// <tr><th>Position increment</th><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-    /// <tr><th>Position length</th><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-    /// <tr><th>Offsets</th><td>[0,2[</td><td>[0,3[</td><td>[1,3[</td><td>[1,4[</td><td>[2,4[</td><td>[2,5[</td><td>[3,5[</td></tr>
-    /// </table>
-    /// <a name="version"/>
+    /// <list type="table">
+    ///     <listheader>
+    ///         <term>Term</term>
+    ///         <term>Position increment</term>
+    ///         <term>Position length</term>
+    ///         <term>Offsets</term>
+    ///     </listheader>
+    ///     <item>
+    ///         <term>ab</term>
+    ///         <term>1</term>
+    ///         <term>1</term>
+    ///         <term>[0,2[</term>
+    ///     </item>
+    ///     <item>
+    ///         <term>abc</term>
+    ///         <term>1</term>
+    ///         <term>1</term>
+    ///         <term>[0,3[</term>
+    ///     </item>
+    ///     <item>
+    ///         <term>bc</term>
+    ///         <term>1</term>
+    ///         <term>1</term>
+    ///         <term>[1,3[</term>
+    ///     </item>
+    ///     <item>
+    ///         <term>bcd</term>
+    ///         <term>1</term>
+    ///         <term>1</term>
+    ///         <term>[1,4[</term>
+    ///     </item>
+    ///     <item>
+    ///         <term>cd</term>
+    ///         <term>1</term>
+    ///         <term>1</term>
+    ///         <term>[2,4[</term>
+    ///     </item>
+    ///     <item>
+    ///         <term>cde</term>
+    ///         <term>1</term>
+    ///         <term>1</term>
+    ///         <term>[2,5[</term>
+    ///     </item>
+    ///     <item>
+    ///         <term>de</term>
+    ///         <term>1</term>
+    ///         <term>1</term>
+    ///         <term>[3,5[</term>
+    ///     </item>
+    /// </list>
     /// </para>
-    /// <para>This tokenizer changed a lot in Lucene 4.4 in order to:<ul>
-    /// <li>tokenize in a streaming fashion to support streams which are larger
-    /// than 1024 chars (limit of the previous version),
-    /// <li>count grams based on unicode code points instead of java chars (and
-    /// never split in the middle of surrogate pairs),
-    /// <li>give the ability to <see cref="#isTokenChar(int) pre-tokenize"/> the stream
-    /// before computing n-grams.</ul>
+    /// <para>This tokenizer changed a lot in Lucene 4.4 in order to:
+    /// <list type="bullet">
+    ///     <item>tokenize in a streaming fashion to support streams which are larger
+    ///         than 1024 chars (limit of the previous version),</item>
+    ///     <item>count grams based on unicode code points instead of java chars (and
+    ///         never split in the middle of surrogate pairs),</item>
+    ///     <item>give the ability to pre-tokenize the stream (<see cref="IsTokenChar(int)"/>)
+    ///         before computing n-grams.</item>
+    /// </list>
     /// </para>
     /// <para>Additionally, this class doesn't trim trailing whitespaces and emits
     /// tokens in a different order, tokens are now emitted by increasing start
@@ -57,7 +102,7 @@ namespace Lucene.Net.Analysis.Ngram
     /// to use the old behavior through <see cref="Lucene43NGramTokenizer"/>.
     /// </para>
     /// </summary>
-    // non-final to allow for overriding isTokenChar, but all other methods should be final
+    // non-sealed to allow for overriding IsTokenChar, but all other methods should be sealed
     public class NGramTokenizer : Tokenizer
     {
         public const int DEFAULT_MIN_NGRAM_SIZE = 1;
@@ -87,8 +132,8 @@ namespace Lucene.Net.Analysis.Ngram
         }
 
         /// <summary>
-        /// Creates NGramTokenizer with given min and max n-grams. </summary>
-        /// <param name="version"> the lucene compatibility <a href="#version">version</a> </param>
+        /// Creates <see cref="NGramTokenizer"/> with given min and max n-grams. </summary>
+        /// <param name="version"> the lucene compatibility version </param>
         /// <param name="input"> <see cref="TextReader"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
@@ -104,10 +149,10 @@ namespace Lucene.Net.Analysis.Ngram
         }
 
         /// <summary>
-        /// Creates NGramTokenizer with given min and max n-grams. </summary>
-        /// <param name="version"> the lucene compatibility <a href="#version">version</a> </param>
-        /// <param name="factory"> <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> to use </param>
-        /// <param name="input"> <see cref="Reader"/> holding the input to be tokenized </param>
+        /// Creates <see cref="NGramTokenizer"/> with given min and max n-grams. </summary>
+        /// <param name="version"> the lucene compatibility version </param>
+        /// <param name="factory"> <see cref="AttributeSource.AttributeFactory"/> to use </param>
+        /// <param name="input"> <see cref="TextReader"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         public NGramTokenizer(LuceneVersion version, AttributeFactory factory, TextReader input, int minGram, int maxGram)
@@ -116,8 +161,8 @@ namespace Lucene.Net.Analysis.Ngram
         }
 
         /// <summary>
-        /// Creates NGramTokenizer with default min and max n-grams. </summary>
-        /// <param name="version"> the lucene compatibility <a href="#version">version</a> </param>
+        /// Creates <see cref="NGramTokenizer"/> with default min and max n-grams. </summary>
+        /// <param name="version"> the lucene compatibility version </param>
         /// <param name="input"> <see cref="TextReader"/> holding the input to be tokenized </param>
         public NGramTokenizer(LuceneVersion version, TextReader input)
               : this(version, input, DEFAULT_MIN_NGRAM_SIZE, DEFAULT_MAX_NGRAM_SIZE)
@@ -154,8 +199,6 @@ namespace Lucene.Net.Analysis.Ngram
             charBuffer = CharacterUtils.NewCharacterBuffer(2 * maxGram + 1024); // 2 * maxGram in case all code points require 2 chars and + 1024 for buffering to not keep polling the Reader
             buffer = new int[charBuffer.Buffer.Length];
 
-
-
             // Make the term att large enough
             termAtt.ResizeBuffer(2 * maxGram);
         }
@@ -191,7 +234,7 @@ namespace Lucene.Net.Analysis.Ngram
                         Debug.Assert(exhausted);
                         return false;
                     }
-                    consume();
+                    Consume();
                     gramSize = minGram;
                 }
 
@@ -202,7 +245,7 @@ namespace Lucene.Net.Analysis.Ngram
                 bool isEdgeAndPreviousCharIsTokenChar = edgesOnly && lastNonTokenChar != bufferStart - 1;
                 if (termContainsNonTokenChar || isEdgeAndPreviousCharIsTokenChar)
                 {
-                    consume();
+                    Consume();
                     gramSize = minGram;
                     continue;
                 }
@@ -236,19 +279,19 @@ namespace Lucene.Net.Analysis.Ngram
 
         /// <summary>
         /// Consume one code point. </summary>
-        private void consume()
+        private void Consume()
         {
             offset += Character.CharCount(buffer[bufferStart++]);
         }
 
         /// <summary>
         /// Only collect characters which satisfy this condition. </summary>
-        protected internal virtual bool IsTokenChar(int chr)
+        protected virtual bool IsTokenChar(int chr)
         {
             return true;
         }
 
-        public override void End()
+        public override sealed void End()
         {
             base.End();
             Debug.Assert(bufferStart <= bufferEnd);
@@ -262,7 +305,7 @@ namespace Lucene.Net.Analysis.Ngram
             offsetAtt.SetOffset(endOffset, endOffset);
         }
 
-        public override void Reset()
+        public override sealed void Reset()
         {
             base.Reset();
             bufferStart = bufferEnd = buffer.Length;

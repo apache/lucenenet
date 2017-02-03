@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Analysis.Util;
 using System.Collections.Generic;
 
-namespace Lucene.Net.Analysis.Ngram
+namespace Lucene.Net.Analysis.Ngram // LUCENENET TODO: Change namespace, directory, and Git to NGram
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Ngram
         private readonly string side;
 
         /// <summary>
-        /// Creates a new EdgeNGramFilterFactory </summary>
+        /// Creates a new <see cref="EdgeNGramFilterFactory"/> </summary>
         public EdgeNGramFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

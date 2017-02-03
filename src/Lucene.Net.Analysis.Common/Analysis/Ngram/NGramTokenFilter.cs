@@ -3,7 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 
-namespace Lucene.Net.Analysis.Ngram
+namespace Lucene.Net.Analysis.Ngram // LUCENENET TODO: Change namespace, directory, and Git to NGram
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -24,25 +24,26 @@ namespace Lucene.Net.Analysis.Ngram
 
     /// <summary>
     /// Tokenizes the input into n-grams of the given size(s).
-    /// <a name="version"/>
     /// <para>You must specify the required <see cref="LuceneVersion"/> compatibility when
-    /// creating a <see cref="NGramTokenFilter"/>. As of Lucene 4.4, this token filters:<ul>
-    /// <li>handles supplementary characters correctly,</li>
-    /// <li>emits all n-grams for the same token at the same position,</li>
-    /// <li>does not modify offsets,</li>
-    /// <li>sorts n-grams by their offset in the original token first, then
-    /// increasing length (meaning that "abc" will give "a", "ab", "abc", "b", "bc",
-    /// "c").</li></ul>
+    /// creating a <see cref="NGramTokenFilter"/>. As of Lucene 4.4, this token filters:
+    /// <list type="bullet">
+    ///     <item>handles supplementary characters correctly,</item>
+    ///     <item>emits all n-grams for the same token at the same position,</item>
+    ///     <item>does not modify offsets,</item>
+    ///     <item>sorts n-grams by their offset in the original token first, then
+    ///         increasing length (meaning that "abc" will give "a", "ab", "abc", "b", "bc",
+    ///         "c").</item>
+    /// </list>
     /// </para>
     /// <para>You can make this filter use the old behavior by providing a version &lt;
-    /// <see cref="Version#LUCENE_44"/> in the constructor but this is not recommended as
+    /// <see cref="LuceneVersion.LUCENE_44"/> in the constructor but this is not recommended as
     /// it will lead to broken <see cref="TokenStream"/>s that will cause highlighting
     /// bugs.
     /// </para>
     /// <para>If you were using this <see cref="TokenFilter"/> to perform partial highlighting,
     /// this won't work anymore since this filter doesn't update offsets. You should
     /// modify your analysis chain to use <see cref="NGramTokenizer"/>, and potentially
-    /// override <see cref="NGramTokenizer#isTokenChar(int)"/> to perform pre-tokenization.
+    /// override <see cref="NGramTokenizer.IsTokenChar(int)"/> to perform pre-tokenization.
     /// </para>
     /// </summary>
     public sealed class NGramTokenFilter : TokenFilter
@@ -70,9 +71,9 @@ namespace Lucene.Net.Analysis.Ngram
         private readonly IOffsetAttribute offsetAtt;
 
         /// <summary>
-        /// Creates NGramTokenFilter with given min and max n-grams. </summary>
+        /// Creates <see cref="NGramTokenFilter"/> with given min and max n-grams. </summary>
         /// <param name="version"> Lucene version to enable correct position increments.
-        ///                See <a href="#version">above</a> for details. </param>
+        ///                See <see cref="NGramTokenFilter"/> for details. </param>
         /// <param name="input"> <see cref="TokenStream"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
@@ -154,9 +155,9 @@ namespace Lucene.Net.Analysis.Ngram
         }
 
         /// <summary>
-        /// Creates NGramTokenFilter with default min and max n-grams. </summary>
+        /// Creates <see cref="NGramTokenFilter"/> with default min and max n-grams. </summary>
         /// <param name="version"> Lucene version to enable correct position increments.
-        ///                See <a href="#version">above</a> for details. </param>
+        ///                See <see cref="NGramTokenFilter"/> for details. </param>
         /// <param name="input"> <see cref="TokenStream"/> holding the input to be tokenized </param>
         public NGramTokenFilter(LuceneVersion version, TokenStream input)
             : this(version, input, DEFAULT_MIN_NGRAM_SIZE, DEFAULT_MAX_NGRAM_SIZE)
@@ -166,7 +167,7 @@ namespace Lucene.Net.Analysis.Ngram
         /// <summary>
         /// Returns the next token in the stream, or null at EOS.
         /// </summary>
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             while (true)
             {
