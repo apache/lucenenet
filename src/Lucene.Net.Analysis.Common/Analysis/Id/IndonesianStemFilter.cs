@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Id
         private readonly bool stemDerivational;
 
         /// <summary>
-        /// Calls <see cref="#IndonesianStemFilter(TokenStream, boolean) IndonesianStemFilter(input, true)"/>
+        /// Calls <see cref="IndonesianStemFilter(TokenStream, bool)">IndonesianStemFilter(input, true)</see>
         /// </summary>
         public IndonesianStemFilter(TokenStream input)
               : this(input, true)
@@ -39,9 +39,9 @@ namespace Lucene.Net.Analysis.Id
         }
 
         /// <summary>
-        /// Create a new IndonesianStemFilter.
+        /// Create a new <see cref="IndonesianStemFilter"/>.
         /// <para>
-        /// If <code>stemDerivational</code> is false, 
+        /// If <paramref name="stemDerivational"/> is false, 
         /// only inflectional suffixes (particles and possessive pronouns) are stemmed.
         /// </para>
         /// </summary>
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Id
             {
                 if (!keywordAtt.IsKeyword)
                 {
-                    int newlen = stemmer.stem(termAtt.Buffer, termAtt.Length, stemDerivational);
+                    int newlen = stemmer.Stem(termAtt.Buffer, termAtt.Length, stemDerivational);
                     termAtt.Length = newlen;
                 }
                 return true;

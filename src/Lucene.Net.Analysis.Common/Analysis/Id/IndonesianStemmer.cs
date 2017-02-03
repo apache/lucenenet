@@ -24,8 +24,8 @@ namespace Lucene.Net.Analysis.Id
     /// Stemmer for Indonesian.
     /// <para>
     /// Stems Indonesian words with the algorithm presented in:
-    /// <i>A Study of Stemming Effects on Information Retrieval in 
-    /// Bahasa Indonesia</i>, Fadillah Z Tala.
+    /// <c>A Study of Stemming Effects on Information Retrieval in 
+    /// Bahasa Indonesia</c>, Fadillah Z Tala.
     /// http://www.illc.uva.nl/Publications/ResearchReports/MoL-2003-02.text.pdf
     /// </para>
     /// </summary>
@@ -44,17 +44,17 @@ namespace Lucene.Net.Analysis.Id
         /// <summary>
         /// Stem a term (returning its new length).
         /// <para>
-        /// Use <code>stemDerivational</code> to control whether full stemming
+        /// Use <paramref name="stemDerivational"/> to control whether full stemming
         /// or only light inflectional stemming is done.
         /// </para>
         /// </summary>
-        public virtual int stem(char[] text, int length, bool stemDerivational)
+        public virtual int Stem(char[] text, int length, bool stemDerivational)
         {
             flags = 0;
             numSyllables = 0;
             for (int i = 0; i < length; i++)
             {
-                if (isVowel(text[i]))
+                if (IsVowel(text[i]))
                 {
                     numSyllables++;
                 }
@@ -62,11 +62,11 @@ namespace Lucene.Net.Analysis.Id
 
             if (numSyllables > 2)
             {
-                length = removeParticle(text, length);
+                length = RemoveParticle(text, length);
             }
             if (numSyllables > 2)
             {
-                length = removePossessivePronoun(text, length);
+                length = RemovePossessivePronoun(text, length);
             }
 
             if (stemDerivational)
@@ -81,20 +81,20 @@ namespace Lucene.Net.Analysis.Id
             int oldLength = length;
             if (numSyllables > 2)
             {
-                length = removeFirstOrderPrefix(text, length);
+                length = RemoveFirstOrderPrefix(text, length);
             }
             if (oldLength != length) // a rule is fired
             {
                 oldLength = length;
                 if (numSyllables > 2)
                 {
-                    length = removeSuffix(text, length);
+                    length = RemoveSuffix(text, length);
                 }
                 if (oldLength != length) // a rule is fired
                 {
                     if (numSyllables > 2)
                     {
-                        length = removeSecondOrderPrefix(text, length);
+                        length = RemoveSecondOrderPrefix(text, length);
                     }
                 }
             } // fail
@@ -102,17 +102,17 @@ namespace Lucene.Net.Analysis.Id
             {
                 if (numSyllables > 2)
                 {
-                    length = removeSecondOrderPrefix(text, length);
+                    length = RemoveSecondOrderPrefix(text, length);
                 }
                 if (numSyllables > 2)
                 {
-                    length = removeSuffix(text, length);
+                    length = RemoveSuffix(text, length);
                 }
             }
             return length;
         }
 
-        private bool isVowel(char ch)
+        private bool IsVowel(char ch)
         {
             switch (ch)
             {
@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.Id
             }
         }
 
-        private int removeParticle(char[] text, int length)
+        private int RemoveParticle(char[] text, int length)
         {
             if (StemmerUtil.EndsWith(text, length, "kah") || StemmerUtil.EndsWith(text, length, "lah") || StemmerUtil.EndsWith(text, length, "pun"))
             {
@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis.Id
             return length;
         }
 
-        private int removePossessivePronoun(char[] text, int length)
+        private int RemovePossessivePronoun(char[] text, int length)
         {
             if (StemmerUtil.EndsWith(text, length, "ku") || StemmerUtil.EndsWith(text, length, "mu"))
             {
@@ -155,7 +155,7 @@ namespace Lucene.Net.Analysis.Id
             return length;
         }
 
-        private int removeFirstOrderPrefix(char[] text, int length)
+        private int RemoveFirstOrderPrefix(char[] text, int length)
         {
             if (StemmerUtil.StartsWith(text, length, "meng"))
             {
@@ -164,7 +164,7 @@ namespace Lucene.Net.Analysis.Id
                 return StemmerUtil.DeleteN(text, 0, length, 4);
             }
 
-            if (StemmerUtil.StartsWith(text, length, "meny") && length > 4 && isVowel(text[4]))
+            if (StemmerUtil.StartsWith(text, length, "meny") && length > 4 && IsVowel(text[4]))
             {
                 flags |= REMOVED_MENG;
                 text[3] = 's';
@@ -200,7 +200,7 @@ namespace Lucene.Net.Analysis.Id
                 return StemmerUtil.DeleteN(text, 0, length, 4);
             }
 
-            if (StemmerUtil.StartsWith(text, length, "peny") && length > 4 && isVowel(text[4]))
+            if (StemmerUtil.StartsWith(text, length, "peny") && length > 4 && IsVowel(text[4]))
             {
                 flags |= REMOVED_PENG;
                 text[3] = 's';
@@ -215,7 +215,7 @@ namespace Lucene.Net.Analysis.Id
                 return StemmerUtil.DeleteN(text, 0, length, 4);
             }
 
-            if (StemmerUtil.StartsWith(text, length, "pen") && length > 3 && isVowel(text[3]))
+            if (StemmerUtil.StartsWith(text, length, "pen") && length > 3 && IsVowel(text[3]))
             {
                 flags |= REMOVED_PENG;
                 text[2] = 't';
@@ -261,7 +261,7 @@ namespace Lucene.Net.Analysis.Id
             return length;
         }
 
-        private int removeSecondOrderPrefix(char[] text, int length)
+        private int RemoveSecondOrderPrefix(char[] text, int length)
         {
             if (StemmerUtil.StartsWith(text, length, "ber"))
             {
@@ -277,7 +277,7 @@ namespace Lucene.Net.Analysis.Id
                 return StemmerUtil.DeleteN(text, 0, length, 3);
             }
 
-            if (StemmerUtil.StartsWith(text, length, "be") && length > 4 && !isVowel(text[2]) && text[3] == 'e' && text[4] == 'r')
+            if (StemmerUtil.StartsWith(text, length, "be") && length > 4 && !IsVowel(text[2]) && text[3] == 'e' && text[4] == 'r')
             {
                 flags |= REMOVED_BER;
                 numSyllables--;
@@ -306,7 +306,7 @@ namespace Lucene.Net.Analysis.Id
             return length;
         }
 
-        private int removeSuffix(char[] text, int length)
+        private int RemoveSuffix(char[] text, int length)
         {
             if (StemmerUtil.EndsWith(text, length, "kan") && (flags & REMOVED_KE) == 0 && (flags & REMOVED_PENG) == 0 && (flags & REMOVED_PE) == 0)
             {

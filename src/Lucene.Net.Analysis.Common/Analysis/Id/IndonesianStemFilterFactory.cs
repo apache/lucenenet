@@ -37,9 +37,9 @@ namespace Lucene.Net.Analysis.Id
         private readonly bool stemDerivational;
 
         /// <summary>
-        /// Creates a new IndonesianStemFilterFactory </summary>
+        /// Creates a new <see cref="IndonesianStemFilterFactory"/> </summary>
         public IndonesianStemFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             stemDerivational = GetBoolean(args, "stemDerivational", true);
             if (args.Count > 0)

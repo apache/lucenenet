@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Id
 	 */
 
     /// <summary>
-    /// Analyzer for Indonesian (Bahasa)
+    /// <see cref="Analyzer"/> for Indonesian (Bahasa)
     /// </summary>
     public sealed class IndonesianAnalyzer : StopwordAnalyzerBase
     {
@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Id
         }
 
         /// <summary>
-        /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
         private class DefaultSetHolder
@@ -72,10 +72,10 @@ namespace Lucene.Net.Analysis.Id
         private readonly CharArraySet stemExclusionSet;
 
         /// <summary>
-        /// Builds an analyzer with the default stop words: <see cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public IndonesianAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Id
         /// <param name="stopwords">
         ///          a stopword set </param>
         public IndonesianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
         {
         }
 
@@ -103,7 +103,7 @@ namespace Lucene.Net.Analysis.Id
         /// <param name="stemExclusionSet">
         ///          a set of terms not to be stemmed </param>
         public IndonesianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
             this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
         }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Id
         /// <summary>
         /// Creates
         /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <see cref="Reader"/>.
+        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
         ///         built from an <see cref="StandardTokenizer"/> filtered with
