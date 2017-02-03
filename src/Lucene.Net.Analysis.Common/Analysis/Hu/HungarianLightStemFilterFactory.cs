@@ -34,11 +34,10 @@ namespace Lucene.Net.Analysis.Hu
     /// </summary>
     public class HungarianLightStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new HungarianLightStemFilterFactory </summary>
+        /// Creates a new <see cref="HungarianLightStemFilterFactory"/> </summary>
         public HungarianLightStemFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {

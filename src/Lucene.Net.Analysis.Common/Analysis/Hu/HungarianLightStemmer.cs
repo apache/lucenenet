@@ -59,13 +59,13 @@ namespace Lucene.Net.Analysis.Hu
     /// Light Stemmer for Hungarian.
     /// <para>
     /// This stemmer implements the "UniNE" algorithm in:
-    /// <i>Light Stemming Approaches for the French, Portuguese, German and Hungarian Languages</i>
+    /// <c>Light Stemming Approaches for the French, Portuguese, German and Hungarian Languages</c>
     /// Jacques Savoy
     /// </para>
     /// </summary>
     public class HungarianLightStemmer
     {
-        public virtual int stem(char[] s, int len)
+        public virtual int Stem(char[] s, int len)
         {
             for (int i = 0; i < len; i++)
             {
@@ -97,13 +97,13 @@ namespace Lucene.Net.Analysis.Hu
                 }
             }
 
-            len = removeCase(s, len);
-            len = removePossessive(s, len);
-            len = removePlural(s, len);
-            return normalize(s, len);
+            len = RemoveCase(s, len);
+            len = RemovePossessive(s, len);
+            len = RemovePlural(s, len);
+            return Normalize(s, len);
         }
 
-        private int removeCase(char[] s, int len)
+        private int RemoveCase(char[] s, int len)
         {
             if (len > 6 && StemmerUtil.EndsWith(s, len, "kent"))
             {
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Hu
 
                 if (StemmerUtil.EndsWith(s, len, "al") || StemmerUtil.EndsWith(s, len, "el"))
                 {
-                    if (!isVowel(s[len - 3]) && s[len - 3] == s[len - 4])
+                    if (!IsVowel(s[len - 3]) && s[len - 3] == s[len - 4])
                     {
                         return len - 3;
                     }
@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.Hu
                     return len - 2;
                 }
 
-                if ((StemmerUtil.EndsWith(s, len, "on") || StemmerUtil.EndsWith(s, len, "en")) && !isVowel(s[len - 3]))
+                if ((StemmerUtil.EndsWith(s, len, "on") || StemmerUtil.EndsWith(s, len, "en")) && !IsVowel(s[len - 3]))
                 {
                     return len - 2;
                 }
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Hu
                         return len - 1;
                     case 'a':
                     case 'e':
-                        if (s[len - 2] == s[len - 3] && !isVowel(s[len - 2]))
+                        if (s[len - 2] == s[len - 3] && !IsVowel(s[len - 2]))
                         {
                             return len - 2;
                         }
@@ -156,11 +156,11 @@ namespace Lucene.Net.Analysis.Hu
             return len;
         }
 
-        private int removePossessive(char[] s, int len)
+        private int RemovePossessive(char[] s, int len)
         {
             if (len > 6)
             {
-                if (!isVowel(s[len - 5]) && (StemmerUtil.EndsWith(s, len, "atok") || StemmerUtil.EndsWith(s, len, "otok") || StemmerUtil.EndsWith(s, len, "etek")))
+                if (!IsVowel(s[len - 5]) && (StemmerUtil.EndsWith(s, len, "atok") || StemmerUtil.EndsWith(s, len, "otok") || StemmerUtil.EndsWith(s, len, "etek")))
                 {
                     return len - 4;
                 }
@@ -173,12 +173,12 @@ namespace Lucene.Net.Analysis.Hu
 
             if (len > 5)
             {
-                if (!isVowel(s[len - 4]) && (StemmerUtil.EndsWith(s, len, "unk") || StemmerUtil.EndsWith(s, len, "tok") || StemmerUtil.EndsWith(s, len, "tek")))
+                if (!IsVowel(s[len - 4]) && (StemmerUtil.EndsWith(s, len, "unk") || StemmerUtil.EndsWith(s, len, "tok") || StemmerUtil.EndsWith(s, len, "tek")))
                 {
                     return len - 3;
                 }
 
-                if (isVowel(s[len - 4]) && StemmerUtil.EndsWith(s, len, "juk"))
+                if (IsVowel(s[len - 4]) && StemmerUtil.EndsWith(s, len, "juk"))
                 {
                     return len - 3;
                 }
@@ -191,12 +191,12 @@ namespace Lucene.Net.Analysis.Hu
 
             if (len > 4)
             {
-                if (!isVowel(s[len - 3]) && (StemmerUtil.EndsWith(s, len, "am") || StemmerUtil.EndsWith(s, len, "em") || StemmerUtil.EndsWith(s, len, "om") || StemmerUtil.EndsWith(s, len, "ad") || StemmerUtil.EndsWith(s, len, "ed") || StemmerUtil.EndsWith(s, len, "od") || StemmerUtil.EndsWith(s, len, "uk")))
+                if (!IsVowel(s[len - 3]) && (StemmerUtil.EndsWith(s, len, "am") || StemmerUtil.EndsWith(s, len, "em") || StemmerUtil.EndsWith(s, len, "om") || StemmerUtil.EndsWith(s, len, "ad") || StemmerUtil.EndsWith(s, len, "ed") || StemmerUtil.EndsWith(s, len, "od") || StemmerUtil.EndsWith(s, len, "uk")))
                 {
                     return len - 2;
                 }
 
-                if (isVowel(s[len - 3]) && (StemmerUtil.EndsWith(s, len, "nk") || StemmerUtil.EndsWith(s, len, "ja") || StemmerUtil.EndsWith(s, len, "je")))
+                if (IsVowel(s[len - 3]) && (StemmerUtil.EndsWith(s, len, "nk") || StemmerUtil.EndsWith(s, len, "ja") || StemmerUtil.EndsWith(s, len, "je")))
                 {
                     return len - 2;
                 }
@@ -213,14 +213,14 @@ namespace Lucene.Net.Analysis.Hu
                 {
                     case 'a':
                     case 'e':
-                        if (!isVowel(s[len - 2]))
+                        if (!IsVowel(s[len - 2]))
                         {
                             return len - 1;
                         }
                         break;
                     case 'm':
                     case 'd':
-                        if (isVowel(s[len - 2]))
+                        if (IsVowel(s[len - 2]))
                         {
                             return len - 1;
                         }
@@ -233,7 +233,7 @@ namespace Lucene.Net.Analysis.Hu
             return len;
         }
 
-        private int removePlural(char[] s, int len)
+        private int RemovePlural(char[] s, int len)
         {
             if (len > 3 && s[len - 1] == 'k')
             {
@@ -254,7 +254,7 @@ namespace Lucene.Net.Analysis.Hu
             return len;
         }
 
-        private int normalize(char[] s, int len)
+        private int Normalize(char[] s, int len)
         {
             if (len > 3)
             {
@@ -270,7 +270,7 @@ namespace Lucene.Net.Analysis.Hu
             return len;
         }
 
-        private bool isVowel(char ch)
+        private bool IsVowel(char ch)
         {
             switch (ch)
             {
