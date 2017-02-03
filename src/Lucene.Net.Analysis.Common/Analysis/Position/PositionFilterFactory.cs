@@ -34,14 +34,14 @@ namespace Lucene.Net.Analysis.Position
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
     /// </summary>
-    /// <seealso cref=PositionFilter/>
+    /// <seealso cref="PositionFilter"/>
     [Obsolete("(4.4)")]
     public class PositionFilterFactory : TokenFilterFactory
     {
         private readonly int positionIncrement;
 
         /// <summary>
-        /// Creates a new PositionFilterFactory </summary>
+        /// Creates a new <see cref="PositionFilterFactory"/> </summary>
         public PositionFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

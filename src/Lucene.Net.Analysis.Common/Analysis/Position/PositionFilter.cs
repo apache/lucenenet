@@ -24,16 +24,15 @@ namespace Lucene.Net.Analysis.Position
     /// Set the positionIncrement of all tokens to the "positionIncrement",
     /// except the first return token which retains its original positionIncrement value.
     /// The default positionIncrement value is zero. </summary>
-    /// @deprecated (4.4) PositionFilter makes <see cref="TokenStream"/> graphs inconsistent
+    /// @deprecated (4.4) <see cref="PositionFilter"/> makes <see cref="TokenStream"/> graphs inconsistent
     ///             which can cause highlighting bugs. Its main use-case being to make
-    ///             <a href="{@docRoot}/../queryparser/overview-summary.html">QueryParser</a>
+    ///             QueryParser
     ///             generate boolean queries instead of phrase queries, it is now advised to use
-    ///             {@code QueryParser.setAutoGeneratePhraseQueries(boolean)}
-    ///             (for simple cases) or to override {@code QueryParser.newFieldQuery}. 
-    [Obsolete("(4.4) PositionFilter makes <seealso cref=\"TokenStream\"/> graphs inconsistent")]
+    ///             <c>QueryParser.AutoGeneratePhraseQueries = true</c>
+    ///             (for simple cases) or to override <c>QueryParser.NewFieldQuery</c>. 
+    [Obsolete("(4.4) PositionFilter makes TokenStream graphs inconsistent")]
     public sealed class PositionFilter : TokenFilter
     {
-
         /// <summary>
         /// Position increment to assign to all but the first token - default = 0 </summary>
         private readonly int positionIncrement;
@@ -45,7 +44,7 @@ namespace Lucene.Net.Analysis.Position
         private readonly IPositionIncrementAttribute posIncrAtt;
 
         /// <summary>
-        /// Constructs a PositionFilter that assigns a position increment of zero to
+        /// Constructs a <see cref="PositionFilter"/> that assigns a position increment of zero to
         /// all but the first token from the given input stream.
         /// </summary>
         /// <param name="input"> the input stream </param>
@@ -55,7 +54,7 @@ namespace Lucene.Net.Analysis.Position
         }
 
         /// <summary>
-        /// Constructs a PositionFilter that assigns the given position increment to
+        /// Constructs a <see cref="PositionFilter"/> that assigns the given position increment to
         /// all but the first token from the given input stream.
         /// </summary>
         /// <param name="input"> the input stream </param>
