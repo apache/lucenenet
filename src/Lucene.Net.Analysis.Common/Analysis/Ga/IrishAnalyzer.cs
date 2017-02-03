@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Ga
         }
 
         /// <summary>
-        /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
         private class DefaultSetHolder
@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.Ga
         }
 
         /// <summary>
-        /// Builds an analyzer with the default stop words: <see cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public IrishAnalyzer(LuceneVersion matchVersion)
               : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
@@ -126,13 +126,13 @@ namespace Lucene.Net.Analysis.Ga
         /// <summary>
         /// Creates a
         /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// which tokenizes all the text in the provided <see cref="Reader"/>.
+        /// which tokenizes all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> A
         ///         <see cref="Analyzer.TokenStreamComponents"/>
         ///         built from an <see cref="StandardTokenizer"/> filtered with
-        ///         <see cref="StandardFilter"/>, <see cref="IrishLowerCaseFilter"/>, <see cref="StopFilter"/>
-        ///         , <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
+        ///         <see cref="StandardFilter"/>, <see cref="IrishLowerCaseFilter"/>, <see cref="StopFilter"/>,
+        ///         <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
         ///         provided and <see cref="SnowballFilter"/>. </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {

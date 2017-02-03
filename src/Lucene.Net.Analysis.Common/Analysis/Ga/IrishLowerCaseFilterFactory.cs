@@ -32,9 +32,8 @@ namespace Lucene.Net.Analysis.Ga
     /// </summary>
     public class IrishLowerCaseFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
-
         /// <summary>
-        /// Creates a new IrishLowerCaseFilterFactory </summary>
+        /// Creates a new <see cref="IrishLowerCaseFilterFactory"/> </summary>
         public IrishLowerCaseFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)

@@ -29,10 +29,10 @@ namespace Lucene.Net.Analysis.Ga
         private readonly ICharTermAttribute termAtt;
 
         /// <summary>
-        /// Create an IrishLowerCaseFilter that normalises Irish token text.
+        /// Create an <see cref="IrishLowerCaseFilter"/> that normalises Irish token text.
         /// </summary>
         public IrishLowerCaseFilter(TokenStream @in)
-              : base(@in)
+            : base(@in)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
         }
