@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Lucene.Net.Analysis.It
 {
@@ -34,11 +33,10 @@ namespace Lucene.Net.Analysis.It
     /// </summary>
     public class ItalianLightStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new ItalianLightStemFilterFactory </summary>
+        /// Creates a new <see cref="ItalianLightStemFilterFactory"/> </summary>
         public ItalianLightStemFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {
