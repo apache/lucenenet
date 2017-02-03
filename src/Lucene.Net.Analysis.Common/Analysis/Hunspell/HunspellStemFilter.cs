@@ -22,24 +22,24 @@ namespace Lucene.Net.Analysis.Hunspell
 	 */
 
     /// <summary>
-    /// TokenFilter that uses hunspell affix rules and words to stem tokens.  Since hunspell supports a word having multiple
-    /// stems, this filter can emit multiple tokens for each consumed token
+    /// <see cref="TokenFilter"/> that uses hunspell affix rules and words to stem tokens.  
+    /// Since hunspell supports a word having multiple stems, this filter can emit 
+    /// multiple tokens for each consumed token
     /// 
     /// <para>
     /// Note: This filter is aware of the <see cref="KeywordAttribute"/>. To prevent
     /// certain terms from being passed to the stemmer
-    /// <see cref="KeywordAttribute#isKeyword()"/> should be set to <code>true</code>
+    /// <see cref="KeywordAttribute.IsKeyword"/> should be set to <c>true</c>
     /// in a previous <see cref="TokenStream"/>.
     /// 
     /// Note: For including the original term as well as the stemmed version, see
-    /// <see cref="org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilterFactory"/>
+    /// <see cref="Miscellaneous.KeywordRepeatFilterFactory"/>
     /// </para>
     /// 
     /// @lucene.experimental
     /// </summary>
     public sealed class HunspellStemFilter : TokenFilter
     {
-
         private readonly ICharTermAttribute termAtt;
         private readonly IPositionIncrementAttribute posIncAtt;
         private readonly IKeywordAttribute keywordAtt;
@@ -53,29 +53,29 @@ namespace Lucene.Net.Analysis.Hunspell
 
         /// <summary>
         /// Create a <see cref="HunspellStemFilter"/> outputting all possible stems. </summary>
-        ///  <seealso cref= #HunspellStemFilter(TokenStream, Dictionary, boolean)  </seealso>
+        /// <seealso cref="HunspellStemFilter(TokenStream, Dictionary, bool)"/>
         public HunspellStemFilter(TokenStream input, Dictionary dictionary)
-              : this(input, dictionary, true)
+            : this(input, dictionary, true)
         {
         }
 
         /// <summary>
         /// Create a <see cref="HunspellStemFilter"/> outputting all possible stems. </summary>
-        ///  <seealso cref= #HunspellStemFilter(TokenStream, Dictionary, boolean, boolean)  </seealso>
+        /// <seealso cref="HunspellStemFilter(TokenStream, Dictionary, bool, bool)"/>
         public HunspellStemFilter(TokenStream input, Dictionary dictionary, bool dedup)
-              : this(input, dictionary, dedup, false)
+            : this(input, dictionary, dedup, false)
         {
         }
 
         /// <summary>
-        /// Creates a new HunspellStemFilter that will stem tokens from the given TokenStream using affix rules in the provided
+        /// Creates a new HunspellStemFilter that will stem tokens from the given <see cref="TokenStream"/> using affix rules in the provided
         /// Dictionary
         /// </summary>
-        /// <param name="input"> TokenStream whose tokens will be stemmed </param>
-        /// <param name="dictionary"> HunspellDictionary containing the affix rules and words that will be used to stem the tokens </param>
+        /// <param name="input"> <see cref="TokenStream"/> whose tokens will be stemmed </param>
+        /// <param name="dictionary"> Hunspell <see cref="Dictionary"/> containing the affix rules and words that will be used to stem the tokens </param>
         /// <param name="longestOnly"> true if only the longest term should be output. </param>
-        public HunspellStemFilter(TokenStream input, Dictionary dictionary, bool dedup, bool longestOnly) :
-              base(input)
+        public HunspellStemFilter(TokenStream input, Dictionary dictionary, bool dedup, bool longestOnly) 
+            : base(input)
         {
             this.dedup = dedup && longestOnly == false; // don't waste time deduping if longestOnly is set
             this.stemmer = new Stemmer(dictionary);

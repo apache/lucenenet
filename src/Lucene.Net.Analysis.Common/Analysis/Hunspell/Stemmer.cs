@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using System;
@@ -29,7 +28,7 @@ namespace Lucene.Net.Analysis.Hunspell
 	 */
 
     /// <summary>
-    /// Stemmer uses the affix rules declared in the Dictionary to generate one or more stems for a word.  It
+    /// Stemmer uses the affix rules declared in the <see cref="Dictionary"/> to generate one or more stems for a word.  It
     /// conforms to the algorithm in the original hunspell algorithm, including recursive suffix stripping.
     /// </summary>
     internal sealed class Stemmer
@@ -44,9 +43,9 @@ namespace Lucene.Net.Analysis.Hunspell
         private char[] scratchBuffer = new char[32];
 
         /// <summary>
-        /// Constructs a new Stemmer which will use the provided Dictionary to create its stems.
+        /// Constructs a new Stemmer which will use the provided <see cref="Dictionary"/> to create its stems.
         /// </summary>
-        /// <param name="dictionary"> Dictionary that will be used to create the stems </param>
+        /// <param name="dictionary"> <see cref="Dictionary"/> that will be used to create the stems </param>
         public Stemmer(Dictionary dictionary)
         {
             this.dictionary = dictionary;
@@ -57,7 +56,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// Find the stem(s) of the provided word.
         /// </summary>
         /// <param name="word"> Word to find the stems for </param>
-        /// <returns> List of stems for the word </returns>
+        /// <returns> <see cref="IList{CharsRef}"/> of stems for the word </returns>
         public IList<CharsRef> Stem(string word)
         {
             return Stem(word.ToCharArray(), word.Length);
@@ -67,7 +66,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// Find the stem(s) of the provided word
         /// </summary>
         /// <param name="word"> Word to find the stems for </param>
-        /// <returns> List of stems for the word </returns>
+        /// <returns> <see cref="IList{CharsRef}"/> of stems for the word </returns>
         public IList<CharsRef> Stem(char[] word, int length)
         {
 
@@ -101,7 +100,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// Find the unique stem(s) of the provided word
         /// </summary>
         /// <param name="word"> Word to find the stems for </param>
-        /// <returns> List of stems for the word </returns>
+        /// <returns> <see cref="IList{CharsRef}"/> of stems for the word </returns>
         public IList<CharsRef> UniqueStems(char[] word, int length)
         {
             IList<CharsRef> stems = Stem(word, length);
@@ -166,7 +165,7 @@ namespace Lucene.Net.Analysis.Hunspell
         ///        but two prefixes (COMPLEXPREFIXES) or two suffixes must have continuation requirements to recurse. </param>
         /// <param name="circumfix"> true if the previous prefix removal was signed as a circumfix
         ///        this means inner most suffix must also contain circumfix flag. </param>
-        /// <returns> List of stems, or empty list if no stems are found </returns>
+        /// <returns> <see cref="IList{CharsRef}"/> of stems, or empty list if no stems are found </returns>
         private IList<CharsRef> Stem(char[] word, int length, int previous, int prevFlag, int prefixFlag, int recursionDepth, bool doPrefix, bool doSuffix, bool previousWasPrefix, bool circumfix)
         {
 
@@ -355,7 +354,7 @@ namespace Lucene.Net.Analysis.Hunspell
         ///                   so we must check dictionary form against both to add it as a stem! </param>
         /// <param name="recursionDepth"> current recursion depth </param>
         /// <param name="prefix"> true if we are removing a prefix (false if its a suffix) </param>
-        /// <returns> List of stems for the word, or an empty list if none are found </returns>
+        /// <returns> <see cref="IList{CharsRef}"/> of stems for the word, or an empty list if none are found </returns>
         internal IList<CharsRef> ApplyAffix(char[] strippedWord, int length, int affix, int prefixFlag, int recursionDepth, bool prefix, bool circumfix)
         {
             // TODO: just pass this in from before, no need to decode it twice
@@ -458,8 +457,8 @@ namespace Lucene.Net.Analysis.Hunspell
         /// Checks if the given flag cross checks with the given array of flags
         /// </summary>
         /// <param name="flag"> Flag to cross check with the array of flags </param>
-        /// <param name="flags"> Array of flags to cross check against.  Can be {@code null} </param>
-        /// <returns> {@code true} if the flag is found in the array or the array is {@code null}, {@code false} otherwise </returns>
+        /// <param name="flags"> Array of flags to cross check against.  Can be <c>null</c> </param>
+        /// <returns> <c>true</c> if the flag is found in the array or the array is <c>null</c>, <c>false</c> otherwise </returns>
         private bool HasCrossCheckedFlag(char flag, char[] flags, bool matchEmpty)
         {
             return (flags.Length == 0 && matchEmpty) || Array.BinarySearch(flags, flag) >= 0;

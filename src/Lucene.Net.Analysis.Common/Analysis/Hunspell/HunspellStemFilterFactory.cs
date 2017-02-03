@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Hunspell
 	 */
 
     /// <summary>
-    /// TokenFilterFactory that creates instances of <see cref="HunspellStemFilter"/>.
+    /// <see cref="TokenFilterFactory"/> that creates instances of <see cref="HunspellStemFilter"/>.
     /// Example config for British English:
     /// <code>
     /// &lt;filter class=&quot;solr.HunspellStemFilterFactory&quot;
@@ -53,8 +53,9 @@ namespace Lucene.Net.Analysis.Hunspell
         private Dictionary dictionary;
 
         /// <summary>
-        /// Creates a new HunspellStemFilterFactory </summary>
-        public HunspellStemFilterFactory(IDictionary<string, string> args) : base(args)
+        /// Creates a new <see cref="HunspellStemFilterFactory"/> </summary>
+        public HunspellStemFilterFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             dictionaryFiles = Require(args, PARAM_DICTIONARY);
             affixFile = Get(args, PARAM_AFFIX);

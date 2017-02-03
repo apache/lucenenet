@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Hunspell
     /// </summary>
     public class Dictionary
     {
-        internal static readonly char[] NOFLAGS = new char[0];
+        private static readonly char[] NOFLAGS = new char[0];
 
         private const string ALIAS_KEY = "AF";
         private const string PREFIX_KEY = "PFX";
@@ -105,28 +105,28 @@ namespace Lucene.Net.Analysis.Hunspell
         private static Regex whitespacePattern = new Regex("\\s+", RegexOptions.Compiled);
 
         /// <summary>
-        /// Creates a new Dictionary containing the information read from the provided InputStreams to hunspell affix
+        /// Creates a new <see cref="Dictionary"/> containing the information read from the provided <see cref="Stream"/>s to hunspell affix
         /// and dictionary files.
-        /// You have to close the provided InputStreams yourself.
+        /// You have to dispose the provided <see cref="Stream"/>s yourself.
         /// </summary>
-        /// <param name="affix"> InputStream for reading the hunspell affix file (won't be closed). </param>
-        /// <param name="dictionary"> InputStream for reading the hunspell dictionary file (won't be closed). </param>
-        /// <exception cref="IOException"> Can be thrown while reading from the InputStreams </exception>
-        /// <exception cref="ParseException"> Can be thrown if the content of the files does not meet expected formats </exception>
+        /// <param name="affix"> <see cref="Stream"/> for reading the hunspell affix file (won't be disposed). </param>
+        /// <param name="dictionary"> <see cref="Stream"/> for reading the hunspell dictionary file (won't be disposed). </param>
+        /// <exception cref="IOException"> Can be thrown while reading from the <see cref="Stream"/>s </exception>
+        /// <exception cref="Exception"> Can be thrown if the content of the files does not meet expected formats </exception>
         public Dictionary(Stream affix, Stream dictionary) 
             : this(affix, new List<Stream>() { dictionary }, false)
         {
         }
 
         /// <summary>
-        /// Creates a new Dictionary containing the information read from the provided InputStreams to hunspell affix
+        /// Creates a new <see cref="Dictionary"/> containing the information read from the provided <see cref="Stream"/>s to hunspell affix
         /// and dictionary files.
-        /// You have to close the provided InputStreams yourself.
+        /// You have to dispose the provided <see cref="Stream"/>s yourself.
         /// </summary>
-        /// <param name="affix"> InputStream for reading the hunspell affix file (won't be closed). </param>
-        /// <param name="dictionaries"> InputStream for reading the hunspell dictionary files (won't be closed). </param>
-        /// <exception cref="IOException"> Can be thrown while reading from the InputStreams </exception>
-        /// <exception cref="ParseException"> Can be thrown if the content of the files does not meet expected formats </exception>
+        /// <param name="affix"> <see cref="Stream"/> for reading the hunspell affix file (won't be disposed). </param>
+        /// <param name="dictionaries"> <see cref="Stream"/> for reading the hunspell dictionary files (won't be disposed). </param>
+        /// <exception cref="IOException"> Can be thrown while reading from the <see cref="Stream"/>s </exception>
+        /// <exception cref="Exception"> Can be thrown if the content of the files does not meet expected formats </exception>
         public Dictionary(Stream affix, IList<Stream> dictionaries, bool ignoreCase)
         {
             this.ignoreCase = ignoreCase;
@@ -181,24 +181,24 @@ namespace Lucene.Net.Analysis.Hunspell
         }
 
         /// <summary>
-        /// Looks up HunspellAffix prefixes that have an append that matches the String created from the given char array, offset and length
+        /// Looks up HunspellAffix prefixes that have an append that matches the <see cref="string"/> created from the given <see cref="char"/> array, offset and length
         /// </summary>
-        /// <param name="word"> Char array to generate the String from </param>
-        /// <param name="offset"> Offset in the char array that the String starts at </param>
-        /// <param name="length"> Length from the offset that the String is </param>
-        /// <returns> List of HunspellAffix prefixes with an append that matches the String, or {@code null} if none are found </returns>
+        /// <param name="word"> <see cref="char"/> array to generate the <see cref="string"/> from </param>
+        /// <param name="offset"> Offset in the <see cref="char"/> array that the <see cref="string"/> starts at </param>
+        /// <param name="length"> Length from the offset that the <see cref="string"/> is </param>
+        /// <returns> List of HunspellAffix prefixes with an append that matches the <see cref="string"/>, or <c>null</c> if none are found </returns>
         internal virtual IntsRef LookupPrefix(char[] word, int offset, int length)
         {
             return Lookup(prefixes, word, offset, length);
         }
 
         /// <summary>
-        /// Looks up HunspellAffix suffixes that have an append that matches the String created from the given char array, offset and length
+        /// Looks up HunspellAffix suffixes that have an append that matches the <see cref="string"/> created from the given <see cref="char"/> array, offset and length
         /// </summary>
-        /// <param name="word"> Char array to generate the String from </param>
-        /// <param name="offset"> Offset in the char array that the String starts at </param>
-        /// <param name="length"> Length from the offset that the String is </param>
-        /// <returns> List of HunspellAffix suffixes with an append that matches the String, or {@code null} if none are found </returns>
+        /// <param name="word"> <see cref="char"/> array to generate the <see cref="string"/> from </param>
+        /// <param name="offset"> Offset in the char array that the <see cref="string"/> starts at </param>
+        /// <param name="length"> Length from the offset that the <see cref="string"/> is </param>
+        /// <returns> List of HunspellAffix suffixes with an append that matches the <see cref="string"/>, or <c>null</c> if none are found </returns>
         internal virtual IntsRef LookupSuffix(char[] word, int offset, int length)
         {
             return Lookup(suffixes, word, offset, length);
@@ -253,10 +253,10 @@ namespace Lucene.Net.Analysis.Hunspell
         }
 
         /// <summary>
-        /// Reads the affix file through the provided InputStream, building up the prefix and suffix maps
+        /// Reads the affix file through the provided <see cref="Stream"/>, building up the prefix and suffix maps
         /// </summary>
-        /// <param name="affixStream"> InputStream to read the content of the affix file from </param>
-        /// <param name="decoder"> CharsetDecoder to decode the content of the file </param>
+        /// <param name="affixStream"> <see cref="Stream"/> to read the content of the affix file from </param>
+        /// <param name="decoder"> <see cref="Encoding"/> to decode the content of the file </param>
         /// <exception cref="IOException"> Can be thrown while reading from the InputStream </exception>
         private void ReadAffixFile(Stream affixStream, Encoding decoder)
         {
@@ -393,16 +393,15 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <summary>
         /// Parses a specific affix rule putting the result into the provided affix map
         /// </summary>
-        /// <param name="affixes"> Map where the result of the parsing will be put </param>
+        /// <param name="affixes"> <see cref="SortedDictionary{string, IList{char?}}"/> where the result of the parsing will be put </param>
         /// <param name="header"> Header line of the affix rule </param>
-        /// <param name="reader"> BufferedReader to read the content of the rule from </param>
-        /// <param name="conditionPattern"> <see cref="String#format(String, Object...)"/> pattern to be used to generate the condition regex
+        /// <param name="reader"> <see cref="TextReader"/> to read the content of the rule from </param>
+        /// <param name="conditionPattern"> <see cref="string.Format(string, object[])"/> pattern to be used to generate the condition regex
         ///                         pattern </param>
         /// <param name="seenPatterns"> map from condition -> index of patterns, for deduplication. </param>
         /// <exception cref="IOException"> Can be thrown while reading the rule </exception>
         private void ParseAffix(SortedDictionary<string, IList<char?>> affixes, string header, TextReader reader, string conditionPattern, IDictionary<string, int?> seenPatterns, IDictionary<string, int?> seenStrips)
         {
-
             BytesRef scratch = new BytesRef();
             StringBuilder sb = new StringBuilder();
             string[] args = whitespacePattern.Split(header);
@@ -580,12 +579,12 @@ namespace Lucene.Net.Analysis.Hunspell
         internal static readonly Regex ENCODING_PATTERN = new Regex("^(\u00EF\u00BB\u00BF)?SET\\s+", RegexOptions.Compiled);
 
         /// <summary>
-        /// Parses the encoding specified in the affix file readable through the provided InputStream
+        /// Parses the encoding specified in the affix file readable through the provided <see cref="Stream"/>
         /// </summary>
-        /// <param name="affix"> InputStream for reading the affix file </param>
+        /// <param name="affix"> <see cref="Stream"/> for reading the affix file </param>
         /// <returns> Encoding specified in the affix file </returns>
-        /// <exception cref="IOException"> Can be thrown while reading from the InputStream </exception>
-        /// <exception cref="ParseException"> Thrown if the first non-empty non-comment line read from the file does not adhere to the format {@code SET <encoding>} </exception>
+        /// <exception cref="IOException"> Can be thrown while reading from the <see cref="Stream"/> </exception>
+        /// <exception cref="Exception"> Thrown if the first non-empty non-comment line read from the file does not adhere to the format <c>SET &lt;encoding&gt;</c></exception>
         internal static string GetDictionaryEncoding(Stream affix)
         {
             StringBuilder encoding = new StringBuilder();
@@ -632,11 +631,11 @@ namespace Lucene.Net.Analysis.Hunspell
         }
 
         /// <summary>
-        /// Retrieves the CharsetDecoder for the given encoding.  Note, This isn't perfect as I think ISCII-DEVANAGARI and
+        /// Retrieves the <see cref="Encoding"/> for the given encoding.  Note, This isn't perfect as I think ISCII-DEVANAGARI and
         /// MICROSOFT-CP1251 etc are allowed...
         /// </summary>
-        /// <param name="encoding"> Encoding to retrieve the CharsetDecoder for </param>
-        /// <returns> CharSetDecoder for the given encoding </returns>
+        /// <param name="encoding"> Encoding to retrieve the <see cref="Encoding"/> instance for </param>
+        /// <returns> <see cref="Encoding"/> for the given encoding <see cref="string"/> </returns>
         // LUCENENET NOTE: This was getJavaEncoding in the original
         private Encoding GetSystemEncoding(string encoding)
         {
@@ -678,7 +677,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// Determines the appropriate <see cref="FlagParsingStrategy"/> based on the FLAG definition line taken from the affix file
         /// </summary>
         /// <param name="flagLine"> Line containing the flag information </param>
-        /// <returns> FlagParsingStrategy that handles parsing flags in the way specified in the FLAG definition </returns>
+        /// <returns> <see cref="FlagParsingStrategy"/> that handles parsing flags in the way specified in the FLAG definition </returns>
         internal static FlagParsingStrategy GetFlagParsingStrategy(string flagLine)
         {
             string[] parts = whitespacePattern.Split(flagLine);
@@ -730,10 +729,10 @@ namespace Lucene.Net.Analysis.Hunspell
         }
 
         /// <summary>
-        /// Reads the dictionary file through the provided InputStreams, building up the words map
+        /// Reads the dictionary file through the provided <see cref="Stream"/>s, building up the words map
         /// </summary>
-        /// <param name="dictionaries"> InputStreams to read the dictionary file through </param>
-        /// <param name="decoder"> CharsetDecoder used to decode the contents of the file </param>
+        /// <param name="dictionaries"> <see cref="Stream"/>s to read the dictionary file through </param>
+        /// <param name="decoder"> <see cref="Encoding"/> used to decode the contents of the file </param>
         /// <exception cref="IOException"> Can be thrown while reading from the file </exception>
         private void ReadDictionaryFiles(IList<Stream> dictionaries, Encoding decoder, Builder<IntsRef> words)
         {
@@ -1011,11 +1010,10 @@ namespace Lucene.Net.Analysis.Hunspell
         /// </summary>
         internal abstract class FlagParsingStrategy
         {
-
             /// <summary>
-            /// Parses the given String into a single flag
+            /// Parses the given <see cref="string"/> into a single flag
             /// </summary>
-            /// <param name="rawFlag"> String to parse into a flag </param>
+            /// <param name="rawFlag"> <see cref="string"/> to parse into a flag </param>
             /// <returns> Parsed flag </returns>
             internal virtual char ParseFlag(string rawFlag)
             {
@@ -1028,15 +1026,15 @@ namespace Lucene.Net.Analysis.Hunspell
             }
 
             /// <summary>
-            /// Parses the given String into multiple flags
+            /// Parses the given <see cref="string"/> into multiple flags
             /// </summary>
-            /// <param name="rawFlags"> String to parse into flags </param>
+            /// <param name="rawFlags"> <see cref="string"/> to parse into flags </param>
             /// <returns> Parsed flags </returns>
             internal abstract char[] ParseFlags(string rawFlags);
         }
 
         /// <summary>
-        /// Simple implementation of <see cref="FlagParsingStrategy"/> that treats the chars in each String as a individual flags.
+        /// Simple implementation of <see cref="FlagParsingStrategy"/> that treats the chars in each <see cref="string"/> as a individual flags.
         /// Can be used with both the ASCII and UTF-8 flag types.
         /// </summary>
         private class SimpleFlagParsingStrategy : FlagParsingStrategy
