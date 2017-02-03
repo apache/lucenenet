@@ -58,13 +58,12 @@ namespace Lucene.Net.Analysis.Ru
     /// Light Stemmer for Russian.
     /// <para>
     /// This stemmer implements the following algorithm:
-    /// <i>Indexing and Searching Strategies for the Russian Language.</i>
+    /// <c>Indexing and Searching Strategies for the Russian Language.</c>
     /// Ljiljana Dolamic and Jacques Savoy.
     /// </para>
     /// </summary>
     public class RussianLightStemmer
     {
-
         public virtual int Stem(char[] s, int len)
         {
             len = RemoveCase(s, len);

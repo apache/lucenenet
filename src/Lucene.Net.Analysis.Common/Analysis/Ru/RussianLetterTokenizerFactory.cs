@@ -23,14 +23,13 @@ namespace Lucene.Net.Analysis.Ru
 	 * limitations under the License.
 	 */
 
-    /// @deprecated Use <see cref="org.apache.lucene.analysis.standard.StandardTokenizerFactory"/> instead.
+    /// @deprecated Use <see cref="Standard.StandardTokenizerFactory"/> instead.
     ///  This tokenizer has no Russian-specific functionality. 
-    [Obsolete("Use StandardTokenizerFactory instead.")]
+    [Obsolete("Use Standard.StandardTokenizerFactory instead.")]
     public class RussianLetterTokenizerFactory : TokenizerFactory
     {
-
         /// <summary>
-        /// Creates a new RussianLetterTokenizerFactory </summary>
+        /// Creates a new <see cref="RussianLetterTokenizerFactory"/> </summary>
         public RussianLetterTokenizerFactory(IDictionary<string, string> args) : base(args)
         {
             AssureMatchVersion();

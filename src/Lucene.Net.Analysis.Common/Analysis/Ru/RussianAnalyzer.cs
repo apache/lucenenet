@@ -35,13 +35,12 @@ namespace Lucene.Net.Analysis.Ru
     /// will not be indexed at all).
     /// A default set of stopwords is used unless an alternative list is specified.
     /// </para>
-    /// <a name="version"/>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
-    /// compatibility when creating RussianAnalyzer:
-    /// <ul>
-    ///   <li> As of 3.1, StandardTokenizer is used, Snowball stemming is done with
-    ///        SnowballFilter, and Snowball stopwords are used by default.
-    /// </ul>
+    /// compatibility when creating <see cref="RussianAnalyzer"/>:
+    /// <list type="bullet">
+    ///     <item> As of 3.1, <see cref="StandardTokenizer"/> is used, Snowball stemming is done with
+    ///        <see cref="SnowballFilter"/>, and Snowball stopwords are used by default.</item>
+    /// </list>
     /// </para>
     /// </summary>
     public sealed class RussianAnalyzer : StopwordAnalyzerBase
@@ -50,7 +49,18 @@ namespace Lucene.Net.Analysis.Ru
         /// List of typical Russian stopwords. (for backwards compatibility) </summary>
         /// @deprecated (3.1) Remove this for LUCENE 5.0 
         [Obsolete("(3.1) Remove this for LUCENE 5.0")]
-        private static readonly string[] RUSSIAN_STOP_WORDS_30 = new string[] { "а", "без", "более", "бы", "был", "была", "были", "было", "быть", "в", "вам", "вас", "весь", "во", "вот", "все", "всего", "всех", "вы", "где", "да", "даже", "для", "до", "его", "ее", "ей", "ею", "если", "есть", "еще", "же", "за", "здесь", "и", "из", "или", "им", "их", "к", "как", "ко", "когда", "кто", "ли", "либо", "мне", "может", "мы", "на", "надо", "наш", "не", "него", "нее", "нет", "ни", "них", "но", "ну", "о", "об", "однако", "он", "она", "они", "оно", "от", "очень", "по", "под", "при", "с", "со", "так", "также", "такой", "там", "те", "тем", "то", "того", "тоже", "той", "только", "том", "ты", "у", "уже", "хотя", "чего", "чей", "чем", "что", "чтобы", "чье", "чья", "эта", "эти", "это", "я" };
+        private static readonly string[] RUSSIAN_STOP_WORDS_30 = new string[] {
+            "а", "без", "более", "бы", "был", "была", "были", "было", "быть", "в",
+            "вам", "вас", "весь", "во", "вот", "все", "всего", "всех", "вы", "где",
+            "да", "даже", "для", "до", "его", "ее", "ей", "ею", "если", "есть",
+            "еще", "же", "за", "здесь", "и", "из", "или", "им", "их", "к", "как",
+            "ко", "когда", "кто", "ли", "либо", "мне", "может", "мы", "на", "надо",
+            "наш", "не", "него", "нее", "нет", "ни", "них", "но", "ну", "о", "об",
+            "однако", "он", "она", "они", "оно", "от", "очень", "по", "под", "при",
+            "с", "со", "так", "также", "такой", "там", "те", "тем", "то", "того",
+            "тоже", "той", "только", "том", "ты", "у", "уже", "хотя", "чего", "чей",
+            "чем", "что", "чтобы", "чье", "чья", "эта", "эти", "это", "я"
+        };
 
         /// <summary>
         /// File containing default Russian stopwords. </summary>
@@ -134,7 +144,7 @@ namespace Lucene.Net.Analysis.Ru
         /// <summary>
         /// Creates
         /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <see cref="Reader"/>.
+        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
         ///         built from a <see cref="StandardTokenizer"/> filtered with

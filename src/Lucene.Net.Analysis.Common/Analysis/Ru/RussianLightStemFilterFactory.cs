@@ -33,10 +33,10 @@ namespace Lucene.Net.Analysis.Ru
     /// </summary>
     public class RussianLightStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new RussianLightStemFilterFactory </summary>
-        public RussianLightStemFilterFactory(IDictionary<string, string> args) : base(args)
+        /// Creates a new <see cref="RussianLightStemFilterFactory"/> </summary>
+        public RussianLightStemFilterFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             if (args.Count > 0)
             {

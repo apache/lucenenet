@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Ru
 	 */
 
     /// <summary>
-    /// A RussianLetterTokenizer is a <see cref="Tokenizer"/> that extends <see cref="LetterTokenizer"/>
+    /// A <see cref="RussianLetterTokenizer"/> is a <see cref="Tokenizer"/> that extends <see cref="Core.LetterTokenizer"/>
     /// by also allowing the basic Latin digits 0-9.
     /// <para>
     /// <a name="version"/>
@@ -32,12 +32,12 @@ namespace Lucene.Net.Analysis.Ru
     /// <see cref="RussianLetterTokenizer"/>:
     /// <ul>
     /// <li>As of 3.1, <see cref="CharTokenizer"/> uses an int based API to normalize and
-    /// detect token characters. See <see cref="CharTokenizer#isTokenChar(int)"/> and
-    /// <see cref="CharTokenizer#normalize(int)"/> for details.</li>
+    /// detect token characters. See <see cref="CharTokenizer.IsTokenChar(int)"/> and
+    /// <see cref="CharTokenizer.Normalize(int)"/> for details.</li>
     /// </ul>
     /// </para>
     /// </summary>
-    /// @deprecated (3.1) Use <see cref="StandardTokenizer"/> instead, which has the same functionality.
+    /// @deprecated (3.1) Use <see cref="Standard.StandardTokenizer"/> instead, which has the same functionality.
     /// This filter will be removed in Lucene 5.0  
     [Obsolete("(3.1) Use StandardTokenizer instead, which has the same functionality.")]
     public class RussianLetterTokenizer : CharTokenizer
@@ -45,9 +45,10 @@ namespace Lucene.Net.Analysis.Ru
         private const int DIGIT_0 = '0';
         private const int DIGIT_9 = '9';
 
-        /// Construct a new RussianLetterTokenizer. * <param name="matchVersion"> Lucene version
-        /// to match See <see cref="<a href="#version">above</a>"/>
-        /// </param>
+        /// <summary>
+        /// Construct a new <see cref="RussianLetterTokenizer"/>.
+        /// </summary>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
         public RussianLetterTokenizer(LuceneVersion matchVersion, TextReader @in)
@@ -57,10 +58,9 @@ namespace Lucene.Net.Analysis.Ru
 
         /// <summary>
         /// Construct a new RussianLetterTokenizer using a given
-        /// <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/>. * @param
-        /// matchVersion Lucene version to match See
-        /// <see cref="<a href="#version">above</a>"/>
+        /// <see cref="AttributeSource.AttributeFactory"/>.
         /// </summary>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="factory">
         ///          the attribute factory to use for this <see cref="Tokenizer"/> </param>
         /// <param name="in">
@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Ru
 
         /// <summary>
         /// Collects only characters which satisfy
-        /// <see cref="Character#isLetter(int)"/>.
+        /// <see cref="Character.IsLetter(int)"/>.
         /// </summary>
         protected override bool IsTokenChar(int c)
         {
