@@ -1,13 +1,12 @@
-﻿using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
-using Lucene.Net.Util;
+﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Text;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Pt
 {
@@ -33,27 +32,27 @@ namespace Lucene.Net.Analysis.Pt
     /// <para>
     /// RSLP (Removedor de Sufixos da Lingua Portuguesa) is an algorithm designed
     /// originally for stemming the Portuguese language, described in the paper
-    /// <i>A Stemming Algorithm for the Portuguese Language</i>, Orengo et. al.
+    /// <c>A Stemming Algorithm for the Portuguese Language</c>, Orengo et. al.
     /// </para>
     /// <para>
     /// Since this time a plural-only modification (RSLP-S) as well as a modification
     /// for the Galician language have been implemented. This class parses a configuration
-    /// file that describes <see cref="Step"/>s, where each Step contains a set of <see cref="Rule"/>s.
+    /// file that describes <see cref="Step"/>s, where each <see cref="Step"/> contains a set of <see cref="Rule"/>s.
     /// </para>
     /// <para>
     /// The general rule format is: 
-    /// <blockquote>{ "suffix", N, "replacement", { "exception1", "exception2", ...}}</blockquote>
+    /// <code>{ "suffix", N, "replacement", { "exception1", "exception2", ...}}</code>
     /// where:
-    /// <ul>
-    ///   <li><code>suffix</code> is the suffix to be removed (such as "inho").
-    ///   <li><code>N</code> is the min stem size, where stem is defined as the candidate stem 
-    ///       after removing the suffix (but before appending the replacement!)
-    ///   <li><code>replacement</code> is an optimal string to append after removing the suffix.
-    ///       This can be the empty string.
-    ///   <li><code>exceptions</code> is an optional list of exceptions, patterns that should 
+    /// <list type="bullet">
+    ///   <item><c>suffix</c> is the suffix to be removed (such as "inho").</item>
+    ///   <item><c>N</c> is the min stem size, where stem is defined as the candidate stem 
+    ///       after removing the suffix (but before appending the replacement!)</item>
+    ///   <item><c>replacement</c> is an optimal string to append after removing the suffix.
+    ///       This can be the empty string.</item>
+    ///   <item><c>exceptions</c> is an optional list of exceptions, patterns that should 
     ///       not be stemmed. These patterns can be specified as whole word or suffix (ends-with) 
-    ///       patterns, depending upon the exceptions format flag in the step header.
-    /// </ul>
+    ///       patterns, depending upon the exceptions format flag in the step header.</item>
+    /// </list>
     /// </para>
     /// <para>
     /// A step is an ordered list of rules, with a structure in this format:
@@ -61,35 +60,32 @@ namespace Lucene.Net.Analysis.Pt
     ///               ... rules ... };
     /// </blockquote>
     /// where:
-    /// <ul>
-    ///   <li><code>name</code> is a name for the step (such as "Plural").
-    ///   <li><code>N</code> is the min word size. Words that are less than this length bypass
+    /// <list type="bullet">
+    ///   <item><c>name</c> is a name for the step (such as "Plural").</item>
+    ///   <item><c>N</c> is the min word size. Words that are less than this length bypass
     ///       the step completely, as an optimization. Note: N can be zero, in this case this 
     ///       implementation will automatically calculate the appropriate value from the underlying 
-    ///       rules.
-    ///   <li><code>B</code> is a "boolean" flag specifying how exceptions in the rules are matched.
+    ///       rules.</item>
+    ///   <item><c>B</c> is a "boolean" flag specifying how exceptions in the rules are matched.
     ///       A value of 1 indicates whole-word pattern matching, a value of 0 indicates that 
-    ///       exceptions are actually suffixes and should be matched with ends-with.
-    ///   <li><code>conds</code> are an optional list of conditions to enter the step at all. If
+    ///       exceptions are actually suffixes and should be matched with ends-with.</item>
+    ///   <item><c>conds</c> are an optional list of conditions to enter the step at all. If
     ///       the list is non-empty, then a word must end with one of these conditions or it will
-    ///       bypass the step completely as an optimization.
-    /// </ul>
+    ///       bypass the step completely as an optimization.</item>
+    /// </list>
     /// </para>
-    /// <para>
-    /// </para>
+    /// <a href="http://www.inf.ufrgs.br/~viviane/rslp/index.htm">RSLP description</a>
+    /// @lucene.internal
     /// </summary>
-    /// <seealso cref= <a href="http://www.inf.ufrgs.br/~viviane/rslp/index.htm">RSLP description</a>
-    /// @lucene.internal </seealso>
     public abstract class RSLPStemmerBase
     {
-
         /// <summary>
         /// A basic rule, with no exceptions.
         /// </summary>
-        protected internal class Rule
+        protected class Rule
         {
             protected internal readonly char[] m_suffix;
-            protected internal readonly char[] m_replacement;
+            protected readonly char[] m_replacement;
             protected internal readonly int m_min;
 
             /// <summary>
@@ -124,9 +120,9 @@ namespace Lucene.Net.Analysis.Pt
         /// <summary>
         /// A rule with a set of whole-word exceptions.
         /// </summary>
-        protected internal class RuleWithSetExceptions : Rule
+        protected class RuleWithSetExceptions : Rule
         {
-            protected internal readonly CharArraySet m_exceptions;
+            protected readonly CharArraySet m_exceptions;
 
             public RuleWithSetExceptions(string suffix, int min, string replacement, string[] exceptions) : base(suffix, min, replacement)
             {
@@ -153,10 +149,10 @@ namespace Lucene.Net.Analysis.Pt
         /// <summary>
         /// A rule with a set of exceptional suffixes.
         /// </summary>
-        protected internal class RuleWithSuffixExceptions : Rule
+        protected class RuleWithSuffixExceptions : Rule
         {
             // TODO: use a more efficient datastructure: automaton?
-            protected internal readonly char[][] m_exceptions;
+            protected readonly char[][] m_exceptions;
 
             public RuleWithSuffixExceptions(string suffix, int min, string replacement, string[] exceptions) : base(suffix, min, replacement)
             {
@@ -196,12 +192,12 @@ namespace Lucene.Net.Analysis.Pt
         /// <summary>
         /// A step containing a list of rules.
         /// </summary>
-        protected internal class Step
+        protected class Step
         {
             protected internal readonly string m_name;
-            protected internal readonly Rule[] m_rules;
-            protected internal readonly int m_min;
-            protected internal readonly char[][] m_suffixes;
+            protected readonly Rule[] m_rules;
+            protected readonly int m_min;
+            protected readonly char[][] m_suffixes;
 
             /// <summary>
             /// Create a new step </summary>
@@ -278,8 +274,8 @@ namespace Lucene.Net.Analysis.Pt
 
         /// <summary>
         /// Parse a resource file into an RSLP stemmer description. </summary>
-        /// <returns> a Map containing the named Steps in this description. </returns>
-        protected internal static IDictionary<string, Step> Parse(Type clazz, string resource)
+        /// <returns> a Map containing the named <see cref="Step"/>s in this description. </returns>
+        protected static IDictionary<string, Step> Parse(Type clazz, string resource)
         {
             IDictionary<string, Step> steps = new Dictionary<string, Step>();
 
@@ -378,7 +374,7 @@ namespace Lucene.Net.Analysis.Pt
 
         private static string ParseString(string s)
         {
-            return s.Substring(1, s.Length - 1 - 1);
+            return s.Substring(1, (s.Length - 1) - 1);
         }
 
         private static string ReadLine(TextReader r)

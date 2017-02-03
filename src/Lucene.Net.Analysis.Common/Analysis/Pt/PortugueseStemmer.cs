@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Pt
     /// Portuguese stemmer implementing the RSLP (Removedor de Sufixos da Lingua Portuguesa)
     /// algorithm. This is sometimes also referred to as the Orengo stemmer.
     /// </summary>
-    /// <seealso cref= RSLPStemmerBase </seealso>
+    /// <seealso cref="RSLPStemmerBase"/>
     public class PortugueseStemmer : RSLPStemmerBase
     {
         private static readonly Step plural, feminine, adverb, augmentative, noun, verb, vowel;

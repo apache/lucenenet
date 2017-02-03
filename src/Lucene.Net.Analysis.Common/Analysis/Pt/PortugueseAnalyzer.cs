@@ -29,14 +29,11 @@ namespace Lucene.Net.Analysis.Pt
 
     /// <summary>
     /// <see cref="Analyzer"/> for Portuguese.
-    /// <para>
-    /// <a name="version"/>
-    /// </para>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
-    /// compatibility when creating PortugueseAnalyzer:
-    /// <ul>
-    ///   <li> As of 3.6, PortugueseLightStemFilter is used for less aggressive stemming.
-    /// </ul>
+    /// compatibility when creating <see cref="PortugueseAnalyzer"/>:
+    /// <list type="bullet">
+    ///     <item> As of 3.6, PortugueseLightStemFilter is used for less aggressive stemming.</item>
+    /// </list>
     /// </para>
     /// </summary>
     public sealed class PortugueseAnalyzer : StopwordAnalyzerBase
@@ -59,7 +56,7 @@ namespace Lucene.Net.Analysis.Pt
         }
 
         /// <summary>
-        /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
         private class DefaultSetHolder
@@ -87,10 +84,10 @@ namespace Lucene.Net.Analysis.Pt
         }
 
         /// <summary>
-        /// Builds an analyzer with the default stop words: <see cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public PortugueseAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
@@ -100,7 +97,7 @@ namespace Lucene.Net.Analysis.Pt
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public PortugueseAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
         {
         }
 
@@ -113,7 +110,7 @@ namespace Lucene.Net.Analysis.Pt
         /// <param name="stopwords"> a stopword set </param>
         /// <param name="stemExclusionSet"> a set of terms not to be stemmed </param>
         public PortugueseAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
             this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
         }
@@ -121,7 +118,7 @@ namespace Lucene.Net.Analysis.Pt
         /// <summary>
         /// Creates a
         /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// which tokenizes all the text in the provided <see cref="Reader"/>.
+        /// which tokenizes all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> A
         ///         <see cref="Analyzer.TokenStreamComponents"/>

@@ -21,17 +21,16 @@
     /// Minimal Stemmer for Portuguese
     /// <para>
     /// This follows the "RSLP-S" algorithm presented in:
-    /// <i>A study on the Use of Stemming for Monolingual Ad-Hoc Portuguese
-    /// Information Retrieval</i> (Orengo, et al)
+    /// <c>A study on the Use of Stemming for Monolingual Ad-Hoc Portuguese
+    /// Information Retrieval</c> (Orengo, et al)
     /// which is just the plural reduction step of the RSLP
-    /// algorithm from <i>A Stemming Algorithm for the Portuguese Language</i>,
+    /// algorithm from <c>A Stemming Algorithm for the Portuguese Language</c>,
     /// Orengo et al.
     /// </para>
     /// </summary>
-    /// <seealso cref= RSLPStemmerBase </seealso>
+    /// <seealso cref="RSLPStemmerBase"/>
     public class PortugueseMinimalStemmer : RSLPStemmerBase
     {
-
         private static readonly Step pluralStep = Parse(typeof(PortugueseMinimalStemmer), "portuguese.rslp")["Plural"];
 
         public virtual int Stem(char[] s, int len)

@@ -33,11 +33,10 @@ namespace Lucene.Net.Analysis.Pt
     /// </summary>
     public class PortugueseMinimalStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new PortugueseMinimalStemFilterFactory </summary>
+        /// Creates a new <see cref="PortugueseMinimalStemFilterFactory"/> </summary>
         public PortugueseMinimalStemFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {
