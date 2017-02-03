@@ -47,8 +47,8 @@ namespace Lucene.Net.Analysis.Ar
     {
         /// <summary>
         /// Construct a new ArabicLetterTokenizer. </summary>
-        /// <param name="matchVersion"> Lucene version
-        /// to match See <seealso cref="<a href="#version">above</a>"/>
+        /// <param name="matchVersion"> <see cref="LuceneVersion"/>
+        /// to match 
         /// </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.Ar
 
         /// <summary>
         /// Allows for Letter category or NonspacingMark category </summary>
-        /// <seealso cref="LetterTokenizer.IsTokenChar(int)"/>
+        /// <see cref="LetterTokenizer.IsTokenChar(int)"/>
         protected override bool IsTokenChar(int c)
         {
             return base.IsTokenChar(c) || Character.GetType(c) == UnicodeCategory.NonSpacingMark;

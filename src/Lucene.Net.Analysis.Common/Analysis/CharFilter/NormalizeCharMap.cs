@@ -108,8 +108,8 @@ namespace Lucene.Net.Analysis.CharFilters
             }
 
             /// <summary>
-            /// Builds the NormalizeCharMap; call this once you
-            ///  are done calling <seealso cref="#add"/>. 
+            /// Builds the <see cref="NormalizeCharMap"/>; call this once you
+            /// are done calling <see cref="Add"/>. 
             /// </summary>
             public virtual NormalizeCharMap Build()
             {

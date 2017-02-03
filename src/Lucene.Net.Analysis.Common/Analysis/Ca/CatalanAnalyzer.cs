@@ -125,7 +125,7 @@ namespace Lucene.Net.Analysis.Ca
         /// </summary>
         /// <returns> A
         ///         <see cref="Analyzer.TokenStreamComponents"/>
-        ///         built from an <seealso cref="StandardTokenizer"/> filtered with
+        ///         built from an <see cref="StandardTokenizer"/> filtered with
         ///         <see cref="StandardFilter"/>, <see cref="ElisionFilter"/>, <see cref="LowerCaseFilter"/>, 
         ///         <see cref="StopFilter"/>, <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
         ///         provided and <see cref="SnowballFilter"/>. </returns>

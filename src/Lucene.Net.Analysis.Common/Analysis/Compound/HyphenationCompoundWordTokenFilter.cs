@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Compound
         ///          href="CompoundWordTokenFilterBase.html#version"
         ///          >CompoundWordTokenFilterBase</a> for details. </param>
         /// <param name="input">
-        ///          the <seealso cref="TokenStream"/> to process </param>
+        ///          the <see cref="TokenStream"/> to process </param>
         /// <param name="hyphenator">
         ///          the hyphenation pattern tree to use for hyphenation </param>
         /// <param name="dictionary">
@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Compound
         ///          href="CompoundWordTokenFilterBase.html#version"
         ///          >CompoundWordTokenFilterBase</a> for details. </param>
         /// <param name="input">
-        ///          the <seealso cref="TokenStream"/> to process </param>
+        ///          the <see cref="TokenStream"/> to process </param>
         /// <param name="hyphenator">
         ///          the hyphenation pattern tree to use for hyphenation </param>
         /// <param name="dictionary">
