@@ -1,15 +1,11 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Wikipedia;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
+using System.Collections.Generic;
 using System.IO;
-using System;
-using System.Linq;
 
 namespace Lucene.Net.Analysis.Wikipedia
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -26,28 +22,27 @@ namespace Lucene.Net.Analysis.Wikipedia
 	 * limitations under the License.
 	 */
 
-	/// <summary>
-	/// Factory for <see cref="WikipediaTokenizer"/>.
-	/// <code>
-	/// &lt;fieldType name="text_wiki" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.WikipediaTokenizerFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</code>
-	/// </summary>
-	public class WikipediaTokenizerFactory : TokenizerFactory
-	{
-
-	  /// <summary>
-	  /// Creates a new WikipediaTokenizerFactory </summary>
-	  public WikipediaTokenizerFactory(IDictionary<string, string> args) 
-            : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
+    /// <summary>
+    /// Factory for <see cref="WikipediaTokenizer"/>.
+    /// <code>
+    /// &lt;fieldType name="text_wiki" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.WikipediaTokenizerFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</code>
+    /// </summary>
+    public class WikipediaTokenizerFactory : TokenizerFactory
+    {
+        /// <summary>
+        /// Creates a new <see cref="WikipediaTokenizerFactory"/> </summary>
+        public WikipediaTokenizerFactory(IDictionary<string, string> args)
+              : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
         // TODO: add support for WikipediaTokenizer's advanced options.
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)

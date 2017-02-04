@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Text;
 
 namespace Lucene.Net.Analysis.Wikipedia
 {
@@ -25,10 +24,9 @@ namespace Lucene.Net.Analysis.Wikipedia
      */
 
     /// <summary>
-	/// Extension of StandardTokenizer that is aware of Wikipedia syntax.  It is based off of the
+	/// Extension of <see cref="Standard.StandardTokenizer"/> that is aware of Wikipedia syntax.  It is based off of the
 	/// Wikipedia tutorial available at http://en.wikipedia.org/wiki/Wikipedia:Tutorial, but it may not be complete.
-	/// <p/>
-	/// <p/>
+	/// <para/>
 	/// @lucene.experimental
 	/// </summary>
 	public sealed class WikipediaTokenizer : Tokenizer
@@ -66,7 +64,26 @@ namespace Lucene.Net.Analysis.Wikipedia
 
         /// <summary>
         /// String token types that correspond to token type int constants </summary>
-        public static readonly string[] TOKEN_TYPES = new string[] { "<ALPHANUM>", "<APOSTROPHE>", "<ACRONYM>", "<COMPANY>", "<EMAIL>", "<HOST>", "<NUM>", "<CJ>", INTERNAL_LINK, EXTERNAL_LINK, CITATION, CATEGORY, BOLD, ITALICS, BOLD_ITALICS, HEADING, SUB_HEADING, EXTERNAL_LINK_URL };
+        public static readonly string[] TOKEN_TYPES = new string[] {
+            "<ALPHANUM>",
+            "<APOSTROPHE>",
+            "<ACRONYM>",
+            "<COMPANY>",
+            "<EMAIL>",
+            "<HOST>",
+            "<NUM>",
+            "<CJ>",
+            INTERNAL_LINK,
+            EXTERNAL_LINK,
+            CITATION,
+            CATEGORY,
+            BOLD,
+            ITALICS,
+            BOLD_ITALICS,
+            HEADING,
+            SUB_HEADING,
+            EXTERNAL_LINK_URL
+        };
 
         /// <summary>
         /// Only output tokens
@@ -81,7 +98,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         /// </summary>
         public const int BOTH = 2;
         /// <summary>
-        /// This flag is used to indicate that the produced "Token" would, if <see cref="#TOKENS_ONLY"/> was used, produce multiple tokens.
+        /// This flag is used to indicate that the produced "Token" would, if <see cref="TOKENS_ONLY"/> was used, produce multiple tokens.
         /// </summary>
         public const int UNTOKENIZED_TOKEN_FLAG = 1;
         /// <summary>
@@ -103,33 +120,36 @@ namespace Lucene.Net.Analysis.Wikipedia
 
         /// <summary>
         /// Creates a new instance of the <see cref="WikipediaTokenizer"/>. Attaches the
-        /// <code>input</code> to a newly created JFlex scanner.
+        /// <paramref name="input"/> to a newly created JFlex scanner.
         /// </summary>
-        /// <param name="input"> The Input TextReader </param>
+        /// <param name="input"> The Input <see cref="TextReader"/> </param>
         public WikipediaTokenizer(TextReader input)
-              : this(input, TOKENS_ONLY, Collections.EmptyList<string>())
+            : this(input, TOKENS_ONLY, Collections.EmptyList<string>())
         {
         }
 
         /// <summary>
-        /// Creates a new instance of the <see cref="org.apache.lucene.analysis.wikipedia.WikipediaTokenizer"/>.  Attaches the
-        /// <code>input</code> to a the newly created JFlex scanner.
+        /// Creates a new instance of the <see cref="WikipediaTokenizer"/>.  Attaches the
+        /// <paramref name="input"/> to a the newly created JFlex scanner.
         /// </summary>
         /// <param name="input"> The input </param>
-        /// <param name="tokenOutput"> One of <see cref="#TOKENS_ONLY"/>, <see cref="#UNTOKENIZED_ONLY"/>, <see cref="#BOTH"/> </param>
+        /// <param name="tokenOutput"> One of <see cref="TOKENS_ONLY"/>, <see cref="UNTOKENIZED_ONLY"/>, <see cref="BOTH"/> </param>
+        /// <param name="untokenizedTypes"> Untokenized types </param>
         public WikipediaTokenizer(TextReader input, int tokenOutput, ICollection<string> untokenizedTypes)
-              : base(input)
+            : base(input)
         {
             this.scanner = new WikipediaTokenizerImpl(this.m_input);
             Init(tokenOutput, untokenizedTypes);
         }
 
         /// <summary>
-        /// Creates a new instance of the <see cref="org.apache.lucene.analysis.wikipedia.WikipediaTokenizer"/>.  Attaches the
-        /// <code>input</code> to a the newly created JFlex scanner. Uses the given <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/>.
+        /// Creates a new instance of the <see cref="WikipediaTokenizer"/>.  Attaches the
+        /// <paramref name="input"/> to a the newly created JFlex scanner. Uses the given <see cref="AttributeSource.AttributeFactory"/>.
         /// </summary>
+        /// <param name="factory"> The <see cref="AttributeSource.AttributeFactory"/> </param>
         /// <param name="input"> The input </param>
-        /// <param name="tokenOutput"> One of <see cref="#TOKENS_ONLY"/>, <see cref="#UNTOKENIZED_ONLY"/>, <see cref="#BOTH"/> </param>
+        /// <param name="tokenOutput"> One of <see cref="TOKENS_ONLY"/>, <see cref="UNTOKENIZED_ONLY"/>, <see cref="BOTH"/> </param>
+        /// <param name="untokenizedTypes"> Untokenized types </param>
         public WikipediaTokenizer(AttributeFactory factory, TextReader input, int tokenOutput, ICollection<string> untokenizedTypes)
               : base(factory, input)
         {
@@ -153,12 +173,10 @@ namespace Lucene.Net.Analysis.Wikipedia
             flagsAtt = AddAttribute<IFlagsAttribute>();
         }
 
-        /*
-        * (non-Javadoc)
-        *
-        * @see org.apache.lucene.analysis.TokenStream#next()
-        */
-        public override bool IncrementToken()
+        /// <summary>
+        /// <see cref="TokenStream.IncrementToken"/>
+        /// </summary>
+        public override sealed bool IncrementToken()
         {
             if (tokens != null && tokens.MoveNext())
             {
@@ -176,18 +194,18 @@ namespace Lucene.Net.Analysis.Wikipedia
             string type = WikipediaTokenizerImpl.TOKEN_TYPES[tokenType];
             if (tokenOutput == TOKENS_ONLY || untokenizedTypes.Contains(type) == false)
             {
-                setupToken();
+                SetupToken();
             }
             else if (tokenOutput == UNTOKENIZED_ONLY && untokenizedTypes.Contains(type) == true)
             {
-                collapseTokens(tokenType);
+                CollapseTokens(tokenType);
 
             }
             else if (tokenOutput == BOTH)
             {
                 //collapse into a single token, add it to tokens AND output the individual tokens
                 //output the untokenized Token first
-                collapseAndSaveTokens(tokenType, type);
+                CollapseAndSaveTokens(tokenType, type);
             }
             int posinc = scanner.PositionIncrement;
             if (first && posinc == 0)
@@ -200,7 +218,7 @@ namespace Lucene.Net.Analysis.Wikipedia
             return true;
         }
 
-        private void collapseAndSaveTokens(int tokenType, string type)
+        private void CollapseAndSaveTokens(int tokenType, string type)
         {
             //collapse
             StringBuilder buffer = new StringBuilder(32);
@@ -211,7 +229,7 @@ namespace Lucene.Net.Analysis.Wikipedia
             int tmpTokType;
             int numSeen = 0;
             IList<AttributeSource.State> tmp = new List<AttributeSource.State>();
-            setupSavedToken(0, type);
+            SetupSavedToken(0, type);
             tmp.Add(CaptureState());
             //while we can get a token and that token is the same type and we have not transitioned to a new wiki-item of the same type
             while ((tmpTokType = scanner.GetNextToken()) != WikipediaTokenizerImpl.YYEOF && tmpTokType == tokenType && scanner.NumWikiTokensSeen > numSeen)
@@ -223,7 +241,7 @@ namespace Lucene.Net.Analysis.Wikipedia
                     buffer.Append(' ');
                 }
                 numAdded = scanner.SetText(buffer);
-                setupSavedToken(scanner.PositionIncrement, type);
+                SetupSavedToken(scanner.PositionIncrement, type);
                 tmp.Add(CaptureState());
                 numSeen++;
                 lastPos = currPos + numAdded;
@@ -242,14 +260,14 @@ namespace Lucene.Net.Analysis.Wikipedia
             tokens = tmp.GetEnumerator();
         }
 
-        private void setupSavedToken(int positionInc, string type)
+        private void SetupSavedToken(int positionInc, string type)
         {
-            setupToken();
+            SetupToken();
             posIncrAtt.PositionIncrement = positionInc;
             typeAtt.Type = type;
         }
 
-        private void collapseTokens(int tokenType)
+        private void CollapseTokens(int tokenType)
         {
             //collapse
             StringBuilder buffer = new StringBuilder(32);
@@ -289,7 +307,7 @@ namespace Lucene.Net.Analysis.Wikipedia
             }
         }
 
-        private void setupToken()
+        private void SetupToken()
         {
             scanner.GetText(termAtt);
             int start = scanner.YyChar;
@@ -302,17 +320,15 @@ namespace Lucene.Net.Analysis.Wikipedia
             scanner.YyReset(m_input);
         }
 
-        /*
-        * (non-Javadoc)
-        *
-        * @see org.apache.lucene.analysis.TokenStream#reset()
-        */
+        /// <summary>
+        /// <see cref="TokenStream.Reset"/>
+        /// </summary>
         public override void Reset()
         {
             base.Reset();
             scanner.YyReset(m_input);
             tokens = null;
-            scanner.reset();
+            scanner.Reset();
             first = true;
         }
 
