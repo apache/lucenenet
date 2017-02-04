@@ -32,17 +32,17 @@ namespace Lucene.Net.Analysis.Sinks
     /// </summary>
     public class DateRecognizerSinkFilter : TeeSinkTokenFilter.SinkFilter
     {
-        protected internal DateTimeStyles m_style;
-        protected internal ICharTermAttribute m_termAtt;
-        protected internal IFormatProvider m_culture;
-        protected internal string[] m_formats;
+        protected DateTimeStyles m_style;
+        protected ICharTermAttribute m_termAtt;
+        protected IFormatProvider m_culture;
+        protected string[] m_formats;
 
         /// <summary>
         /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/> using the current culture and <see cref="DateTimeStyles.None"/>.
         /// Loosely matches standard DateTime formats using <see cref="DateTime.TryParse(string, IFormatProvider, DateTimeStyles, out DateTime)"/>.
         /// </summary>
         public DateRecognizerSinkFilter()
-              : this((string[])null, DateTimeFormatInfo.CurrentInfo, DateTimeStyles.None)
+            : this((string[])null, DateTimeFormatInfo.CurrentInfo, DateTimeStyles.None)
         { }
 
         /// <summary>
@@ -78,12 +78,11 @@ namespace Lucene.Net.Analysis.Sinks
         /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/>  using the supplied culture and <see cref="DateTimeStyles"/>.
         /// Loosely matches standard DateTime formats using <see cref="DateTime.TryParse(string, IFormatProvider, DateTimeStyles, out DateTime)"/>.
         /// </summary>
-        /// If supplied, one of them must match the format of the date exactly to get a match.</param>
         /// <param name="culture">An object that supplies culture-specific format information</param>
         /// <param name="style">A bitwise combination of enumeration values that indicates the permitted format of s. 
         /// A typical value to specify is <see cref="DateTimeStyles.None"/></param>
         public DateRecognizerSinkFilter(IFormatProvider culture, DateTimeStyles style)
-            :this((string[])null, culture, style)
+            : this((string[])null, culture, style)
         { }
 
         /// <summary>

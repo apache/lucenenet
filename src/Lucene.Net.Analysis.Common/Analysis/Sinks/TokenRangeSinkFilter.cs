@@ -21,8 +21,6 @@ namespace Lucene.Net.Analysis.Sinks
 
     /// <summary>
     /// Counts the tokens as they go by and saves to the internal list those between the range of lower and upper, exclusive of upper
-    /// 
-    /// 
     /// </summary>
     public class TokenRangeSinkFilter : TeeSinkTokenFilter.SinkFilter
     {

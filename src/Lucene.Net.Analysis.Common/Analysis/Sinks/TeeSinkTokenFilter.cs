@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Sinks
 {
@@ -25,43 +25,43 @@ namespace Lucene.Net.Analysis.Sinks
     /// This TokenFilter provides the ability to set aside attribute states
     /// that have already been analyzed.  This is useful in situations where multiple fields share
     /// many common analysis steps and then go their separate ways.
-    /// <p/>
+    /// <para/>
     /// It is also useful for doing things like entity extraction or proper noun analysis as
     /// part of the analysis workflow and saving off those tokens for use in another field.
-    /// 
+    /// <para/>
     /// <code>
     /// TeeSinkTokenFilter source1 = new TeeSinkTokenFilter(new WhitespaceTokenizer(version, reader1));
-    /// TeeSinkTokenFilter.SinkTokenStream sink1 = source1.newSinkTokenStream();
-    /// TeeSinkTokenFilter.SinkTokenStream sink2 = source1.newSinkTokenStream();
+    /// TeeSinkTokenFilter.SinkTokenStream sink1 = source1.NewSinkTokenStream();
+    /// TeeSinkTokenFilter.SinkTokenStream sink2 = source1.NewSinkTokenStream();
     /// 
     /// TeeSinkTokenFilter source2 = new TeeSinkTokenFilter(new WhitespaceTokenizer(version, reader2));
-    /// source2.addSinkTokenStream(sink1);
-    /// source2.addSinkTokenStream(sink2);
+    /// source2.AddSinkTokenStream(sink1);
+    /// source2.AddSinkTokenStream(sink2);
     /// 
     /// TokenStream final1 = new LowerCaseFilter(version, source1);
     /// TokenStream final2 = source2;
     /// TokenStream final3 = new EntityDetect(sink1);
     /// TokenStream final4 = new URLDetect(sink2);
     /// 
-    /// d.add(new TextField("f1", final1, Field.Store.NO));
-    /// d.add(new TextField("f2", final2, Field.Store.NO));
-    /// d.add(new TextField("f3", final3, Field.Store.NO));
-    /// d.add(new TextField("f4", final4, Field.Store.NO));
+    /// d.Add(new TextField("f1", final1, Field.Store.NO));
+    /// d.Add(new TextField("f2", final2, Field.Store.NO));
+    /// d.Add(new TextField("f3", final3, Field.Store.NO));
+    /// d.Add(new TextField("f4", final4, Field.Store.NO));
     /// </code>
-    /// In this example, <code>sink1</code> and <code>sink2</code> will both get tokens from both
-    /// <code>reader1</code> and <code>reader2</code> after whitespace tokenizer
+    /// In this example, <c>sink1</c> and <c>sink2</c> will both get tokens from both
+    /// <c>reader1</c> and <c>reader2</c> after whitespace tokenizer
     /// and now we can further wrap any of these in extra analysis, and more "sources" can be inserted if desired.
     /// It is important, that tees are consumed before sinks (in the above example, the field names must be
     /// less the sink's field names). If you are not sure, which stream is consumed first, you can simply
-    /// add another sink and then pass all tokens to the sinks at once using <see cref="#consumeAllTokens"/>.
-    /// This TokenFilter is exhausted after this. In the above example, change
+    /// add another sink and then pass all tokens to the sinks at once using <see cref="ConsumeAllTokens"/>.
+    /// This <see cref="TokenFilter"/> is exhausted after this. In the above example, change
     /// the example above to:
     /// <code>
     /// ...
-    /// TokenStream final1 = new LowerCaseFilter(version, source1.newSinkTokenStream());
-    /// TokenStream final2 = source2.newSinkTokenStream();
-    /// sink1.consumeAllTokens();
-    /// sink2.consumeAllTokens();
+    /// TokenStream final1 = new LowerCaseFilter(version, source1.NewSinkTokenStream());
+    /// TokenStream final2 = source2.NewSinkTokenStream();
+    /// sink1.ConsumeAllTokens();
+    /// sink2.ConsumeAllTokens();
     /// ...
     /// </code>
     /// In this case, the fields can be added in any order, because the sources are not used anymore and all sinks are ready.
@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.Sinks
         private readonly ICollection<WeakReference<SinkTokenStream>> sinks = new LinkedList<WeakReference<SinkTokenStream>>();
 
         /// <summary>
-        /// Instantiates a new TeeSinkTokenFilter.
+        /// Instantiates a new <see cref="TeeSinkTokenFilter"/>.
         /// </summary>
         public TeeSinkTokenFilter(TokenStream input)
             : base(input)
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Sinks
         /// <summary>
         /// Returns a new <see cref="SinkTokenStream"/> that receives all tokens consumed by this stream
         /// that pass the supplied filter. </summary>
-        /// <seealso cref= SinkFilter></seealso>
+        /// <seealso cref="SinkFilter"/>
         public SinkTokenStream NewSinkTokenStream(SinkFilter filter)
         {
             var sink = new SinkTokenStream(CloneAttributes(), filter);
@@ -100,7 +100,7 @@ namespace Lucene.Net.Analysis.Sinks
         }
 
         /// <summary>
-        /// Adds a <see cref="SinkTokenStream"/> created by another <code>TeeSinkTokenFilter</code>
+        /// Adds a <see cref="SinkTokenStream"/> created by another <see cref="TeeSinkTokenFilter"/>
         /// to this one. The supplied stream will also receive all consumed tokens.
         /// This method can be used to pass tokens from two different tees to one sink.
         /// </summary>
@@ -120,7 +120,7 @@ namespace Lucene.Net.Analysis.Sinks
         }
 
         /// <summary>
-        /// <code>TeeSinkTokenFilter</code> passes all tokens to the added sinks
+        /// <see cref="TeeSinkTokenFilter"/> passes all tokens to the added sinks
         /// when itself is consumed. To be sure, that all tokens from the input
         /// stream are passed to the sinks, you can call this methods.
         /// This instance is exhausted after this, but all sinks are instant available.
@@ -159,7 +159,7 @@ namespace Lucene.Net.Analysis.Sinks
             return false;
         }
 
-        public override void End()
+        public override sealed void End()
         {
             base.End();
             AttributeSource.State finalState = CaptureState();
@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis.Sinks
             public abstract bool Accept(AttributeSource source);
 
             /// <summary>
-            /// Called by <see cref="SinkTokenStream#reset()"/>. This method does nothing by default
+            /// Called by <see cref="SinkTokenStream.Reset()"/>. This method does nothing by default
             /// and can optionally be overridden.
             /// </summary>
             public virtual void Reset()
@@ -195,14 +195,14 @@ namespace Lucene.Net.Analysis.Sinks
         }
 
         /// <summary>
-        /// TokenStream output from a tee with optional filtering.
+        /// <see cref="TokenStream"/> output from a tee with optional filtering.
         /// </summary>
         public sealed class SinkTokenStream : TokenStream
         {
-            internal readonly IList<AttributeSource.State> cachedStates = new List<AttributeSource.State>();
-            internal AttributeSource.State finalState;
-            internal IEnumerator<AttributeSource.State> it = null;
-            internal SinkFilter filter;
+            private readonly IList<AttributeSource.State> cachedStates = new List<AttributeSource.State>();
+            private AttributeSource.State finalState;
+            private IEnumerator<AttributeSource.State> it = null;
+            private SinkFilter filter;
 
             internal SinkTokenStream(AttributeSource source, SinkFilter filter)
                 : base(source)
@@ -229,7 +229,7 @@ namespace Lucene.Net.Analysis.Sinks
                 this.finalState = finalState;
             }
 
-            public override bool IncrementToken()
+            public override sealed bool IncrementToken()
             {
                 // lazy init the iterator
                 if (it == null)
@@ -245,7 +245,7 @@ namespace Lucene.Net.Analysis.Sinks
                 return true;
             }
 
-            public override void End()
+            public override sealed void End()
             {
                 if (finalState != null)
                 {
@@ -253,7 +253,7 @@ namespace Lucene.Net.Analysis.Sinks
                 }
             }
 
-            public override void Reset()
+            public override sealed void Reset()
             {
                 it = cachedStates.GetEnumerator();
             }
