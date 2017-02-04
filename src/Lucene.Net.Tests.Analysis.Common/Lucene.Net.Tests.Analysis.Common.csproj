@@ -221,11 +221,11 @@
     <Compile Include="Analysis\Miscellaneous\TestTruncateTokenFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestTruncateTokenFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\TestWordDelimiterFilter.cs" />
-    <Compile Include="Analysis\Ngram\EdgeNGramTokenFilterTest.cs" />
-    <Compile Include="Analysis\Ngram\EdgeNGramTokenizerTest.cs" />
-    <Compile Include="Analysis\Ngram\NGramTokenFilterTest.cs" />
-    <Compile Include="Analysis\Ngram\NGramTokenizerTest.cs" />
-    <Compile Include="Analysis\Ngram\TestNGramFilters.cs" />
+    <Compile Include="Analysis\NGram\EdgeNGramTokenFilterTest.cs" />
+    <Compile Include="Analysis\NGram\EdgeNGramTokenizerTest.cs" />
+    <Compile Include="Analysis\NGram\NGramTokenFilterTest.cs" />
+    <Compile Include="Analysis\NGram\NGramTokenizerTest.cs" />
+    <Compile Include="Analysis\NGram\TestNGramFilters.cs" />
     <Compile Include="Analysis\Nl\TestDutchStemmer.cs" />
     <Compile Include="Analysis\No\TestNorwegianAnalyzer.cs" />
     <Compile Include="Analysis\No\TestNorwegianLightStemFilter.cs" />

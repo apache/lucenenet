@@ -8,7 +8,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 
-namespace Lucene.Net.Analysis.Ngram
+namespace Lucene.Net.Analysis.NGram
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more

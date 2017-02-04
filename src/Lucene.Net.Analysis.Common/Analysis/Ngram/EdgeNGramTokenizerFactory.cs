@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Lucene.Net.Analysis.Ngram // LUCENENET TODO: Change namespace, directory, and Git to NGram
+namespace Lucene.Net.Analysis.NGram
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more

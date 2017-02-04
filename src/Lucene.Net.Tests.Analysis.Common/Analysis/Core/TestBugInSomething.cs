@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Analysis.CommonGrams;
 using Lucene.Net.Analysis.Miscellaneous;
-using Lucene.Net.Analysis.Ngram;
+using Lucene.Net.Analysis.NGram;
 using Lucene.Net.Analysis.Shingle;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Analysis.Wikipedia;

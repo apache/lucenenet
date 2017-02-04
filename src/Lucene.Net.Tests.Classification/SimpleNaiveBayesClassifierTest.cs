@@ -1,6 +1,6 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
-using Lucene.Net.Analysis.Ngram;
+using Lucene.Net.Analysis.NGram;
 using Lucene.Net.Analysis.Reverse;
 using Lucene.Net.Index;
 using Lucene.Net.Search;

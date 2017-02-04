@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using NUnit.Framework;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Analysis.Ngram;
+using Lucene.Net.Analysis.NGram;
 
 namespace Lucene.Net.Analysis.Synonym
 {

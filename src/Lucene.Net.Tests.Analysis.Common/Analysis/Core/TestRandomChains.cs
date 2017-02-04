@@ -5,7 +5,7 @@ using Lucene.Net.Analysis.Compound;
 using Lucene.Net.Analysis.Compound.Hyphenation;
 using Lucene.Net.Analysis.Hunspell;
 using Lucene.Net.Analysis.Miscellaneous;
-using Lucene.Net.Analysis.Ngram;
+using Lucene.Net.Analysis.NGram;
 using Lucene.Net.Analysis.Path;
 using Lucene.Net.Analysis.Payloads;
 using Lucene.Net.Analysis.Snowball;

@@ -5,7 +5,7 @@ using System.IO;
 using Reader = System.IO.TextReader;
 using Version = Lucene.Net.Util.LuceneVersion;
 
-namespace Lucene.Net.Analysis.Ngram
+namespace Lucene.Net.Analysis.NGram
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
