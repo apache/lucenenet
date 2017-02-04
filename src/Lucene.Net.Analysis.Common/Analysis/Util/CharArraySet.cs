@@ -70,8 +70,7 @@ namespace Lucene.Net.Analysis.Util
         /// Create set with enough capacity to hold <paramref name="startSize"/> terms
         /// </summary>
         /// <param name="matchVersion">
-        ///          compatibility match version see <a href="#version">Version
-        ///          note</a> above for details. </param>
+        ///          compatibility match version see <see cref="CharArraySet"/> for details. </param>
         /// <param name="startSize">
         ///          the initial capacity </param>
         /// <param name="ignoreCase">
@@ -86,8 +85,7 @@ namespace Lucene.Net.Analysis.Util
         /// Creates a set from a collection of objects. 
         /// </summary>
         /// <param name="matchVersion">
-        ///          compatibility match version see <a href="#version">Version
-        ///          note</a> above for details. </param>
+        ///          compatibility match version see <see cref="CharArraySet"/> for details. </param>
         /// <param name="c">
         ///          a collection whose elements to be placed into the set </param>
         /// <param name="ignoreCase">
@@ -108,7 +106,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Clears all entries in this set. This method is supported for reusing, but not <see cref="ICollection{Object}.Remove(string)"/>.
+        /// Clears all entries in this set. This method is supported for reusing, but not <see cref="M:ICollection{string}.Remove(string)"/>.
         /// </summary>
         public virtual void Clear()
         {
@@ -173,7 +171,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add this <see cref="ICharSequence"/> into the set
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         public virtual bool Add(ICharSequence text)
         {
             return map.Put(text);
@@ -182,7 +180,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add this <see cref="string"/> into the set
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         public virtual bool Add(string text)
         {
             return map.Put(text);
@@ -193,7 +191,7 @@ namespace Lucene.Net.Analysis.Util
         /// If <c>ignoreCase</c> is true for this <see cref="CharArraySet"/>, the text array will be directly modified.
         /// The user should never modify this text array after calling this method.
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         public virtual bool Add(char[] text)
         {
             return map.Put(text);
@@ -252,14 +250,13 @@ namespace Lucene.Net.Analysis.Util
         /// <para>
         /// <b>Note:</b> If you intend to create a copy of another <see cref="CharArraySet"/> where
         /// the <see cref="LuceneVersion"/> of the source set differs from its copy
-        /// <see cref="CharArraySet(LuceneVersion, IEnumerable{string}, bool)"/> should be used instead.
-        /// The <see cref="Copy{T}(LuceneVersion, IEnumerable{T})"/> will preserve the <see cref="LuceneVersion"/> of the
+        /// <see cref="CharArraySet.CharArraySet(LuceneVersion, ICollection{string}, bool)"/> should be used instead.
+        /// The <see cref="Copy{T}(LuceneVersion, ICollection{T})"/> will preserve the <see cref="LuceneVersion"/> of the
         /// source set it is an instance of <see cref="CharArraySet"/>.
         /// </para>
         /// </summary>
         /// <param name="matchVersion">
-        ///          compatibility match version see <a href="#version">Version
-        ///          note</a> above for details. This argument will be ignored if the
+        ///          compatibility match version. This argument will be ignored if the
         ///          given set is a <see cref="CharArraySet"/>. </param>
         /// <param name="set">
         ///          a set to copy </param>
@@ -529,7 +526,7 @@ namespace Lucene.Net.Analysis.Util
         /// Determines whether a <see cref="CharArraySet"/> object is a subset of the specified collection.
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if the <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsSubsetOf(IEnumerable<string> other)
         {
             if (other == null)
@@ -561,7 +558,7 @@ namespace Lucene.Net.Analysis.Util
         /// Determines whether a <see cref="CharArraySet"/> object is a subset of the specified collection.
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if the <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsSubsetOf<T>(IEnumerable<T> other)
         {
             if (other == null)
@@ -584,7 +581,7 @@ namespace Lucene.Net.Analysis.Util
         /// Determines whether a <see cref="CharArraySet"/> object is a superset of the specified collection.
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if the HashSet<T> object is a superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsSupersetOf(IEnumerable<string> other)
         {
             if (other == null)
@@ -611,7 +608,7 @@ namespace Lucene.Net.Analysis.Util
         /// Determines whether a <see cref="CharArraySet"/> object is a superset of the specified collection.
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if the HashSet<T> object is a superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsSupersetOf<T>(IEnumerable<T> other)
         {
             if (other == null)
@@ -630,7 +627,7 @@ namespace Lucene.Net.Analysis.Util
         /// Determines whether a <see cref="CharArraySet"/> object is a proper subset of the specified collection.
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if the <see cref="CharArraySet"/> object is a proper subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsProperSubsetOf(IEnumerable<string> other)
         {
             if (other == null)
@@ -666,7 +663,7 @@ namespace Lucene.Net.Analysis.Util
         /// Determines whether a <see cref="CharArraySet"/> object is a proper subset of the specified collection.
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if the <see cref="CharArraySet"/> object is a proper subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsProperSubsetOf<T>(IEnumerable<T> other)
         {
             if (other == null)
@@ -690,7 +687,7 @@ namespace Lucene.Net.Analysis.Util
         /// Determines whether a <see cref="CharArraySet"/> object is a proper superset of the specified collection.
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if the HashSet<T> object is a proper superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsProperSupersetOf(IEnumerable<string> other)
         {
             if (other == null)
@@ -727,7 +724,7 @@ namespace Lucene.Net.Analysis.Util
         /// Determines whether a <see cref="CharArraySet"/> object is a proper superset of the specified collection.
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if the HashSet<T> object is a proper superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsProperSupersetOf<T>(IEnumerable<T> other)
         {
             if (other == null)
@@ -752,7 +749,7 @@ namespace Lucene.Net.Analysis.Util
         /// Determines whether the current <see cref="CharArraySet"/> object and a specified collection share common elements.
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if the HashSet<T> object and <paramref name="other"/> share at least one common element; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="CharArraySet"/> object and <paramref name="other"/> share at least one common element; otherwise, <c>false</c>.</returns>
         public virtual bool Overlaps(IEnumerable<string> other)
         {
             if (other == null)
@@ -776,7 +773,7 @@ namespace Lucene.Net.Analysis.Util
         /// Determines whether the current <see cref="CharArraySet"/> object and a specified collection share common elements.
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if the HashSet<T> object and <paramref name="other"/> share at least one common element; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object and <paramref name="other"/> share at least one common element; otherwise, <c>false</c>.</returns>
         public virtual bool Overlaps<T>(IEnumerable<T> other)
         {
             if (other == null)
@@ -801,7 +798,7 @@ namespace Lucene.Net.Analysis.Util
         /// in the specified collection.
         /// </summary>
         /// <param name="other">collection to be checked for containment in this collection</param>
-        /// <returns><c>true</c> if this collection contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
         public virtual bool ContainsAll(IEnumerable<string> other)
         {
             foreach (var local in other)
@@ -819,7 +816,7 @@ namespace Lucene.Net.Analysis.Util
         /// in the specified collection.
         /// </summary>
         /// <param name="other">collection to be checked for containment in this collection</param>
-        /// <returns><c>true</c> if this collection contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
         public virtual bool ContainsAll<T>(IEnumerable<T> other)
         {
             foreach (var local in other)
@@ -874,7 +871,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add this <see cref="bool"/> into the set
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         public static bool Add(this CharArraySet set, bool text)
         {
             return set.map.Put(text.ToString());
@@ -883,7 +880,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add this <see cref="byte"/> into the set
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         public static bool Add(this CharArraySet set, byte text)
         {
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
@@ -892,7 +889,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add this <see cref="char"/> into the set
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         public static bool Add(this CharArraySet set, char text)
         {
             return set.map.Put("" + text);
@@ -901,7 +898,7 @@ namespace Lucene.Net.Analysis.Util
         ///// <summary>
         ///// Add this <see cref="decimal"/> into the set
         ///// </summary>
-        ///// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        ///// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         //public static bool Add(this CharArraySet set, decimal text)
         //{
         //    return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
@@ -910,7 +907,7 @@ namespace Lucene.Net.Analysis.Util
         ///// <summary>
         ///// Add this <see cref="double"/> into the set
         ///// </summary>
-        ///// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        ///// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         //public static bool Add(this CharArraySet set, double text)
         //{
         //    return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
@@ -919,7 +916,7 @@ namespace Lucene.Net.Analysis.Util
         ///// <summary>
         ///// Add this <see cref="float"/> into the set
         ///// </summary>
-        ///// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        ///// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         //public static bool Add(this CharArraySet set, float text)
         //{
         //    return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
@@ -928,7 +925,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add this <see cref="int"/> into the set
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         public static bool Add(this CharArraySet set, int text)
         {
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
@@ -937,7 +934,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add this <see cref="long"/> into the set
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         public static bool Add(this CharArraySet set, long text)
         {
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
@@ -946,7 +943,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add this <see cref="sbyte"/> into the set
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         [CLSCompliant(false)]
         public static bool Add(this CharArraySet set, sbyte text)
         {
@@ -956,7 +953,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add this <see cref="short"/> into the set
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         public static bool Add(this CharArraySet set, short text)
         {
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
@@ -965,7 +962,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add this <see cref="uint"/> into the set
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         [CLSCompliant(false)]
         public static bool Add(this CharArraySet set, uint text)
         {
@@ -975,7 +972,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add this <see cref="ulong"/> into the set
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         [CLSCompliant(false)]
         public static bool Add(this CharArraySet set, ulong text)
         {
@@ -985,7 +982,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add this <see cref="ushort"/> into the set
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
         [CLSCompliant(false)]
         public static bool Add(this CharArraySet set, ushort text)
         {
@@ -1112,6 +1109,7 @@ namespace Lucene.Net.Analysis.Util
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
         /// </summary>
+        /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         public static bool UnionWith(this CharArraySet set, IEnumerable<byte> other)
@@ -1139,6 +1137,7 @@ namespace Lucene.Net.Analysis.Util
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
         /// </summary>
+        /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         public static bool UnionWith(this CharArraySet set, IEnumerable<char> other)
@@ -1166,6 +1165,7 @@ namespace Lucene.Net.Analysis.Util
         ///// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         ///// in itself, the specified collection, or both.
         ///// </summary>
+        ///// <param name="set">this <see cref="CharArraySet"/></param>
         ///// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         //public static bool UnionWith(this CharArraySet set, IEnumerable<decimal> other)
@@ -1193,6 +1193,7 @@ namespace Lucene.Net.Analysis.Util
         ///// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         ///// in itself, the specified collection, or both.
         ///// </summary>
+        ///// <param name="set">this <see cref="CharArraySet"/></param>
         ///// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         //public static bool UnionWith(this CharArraySet set, IEnumerable<double> other)
@@ -1220,6 +1221,7 @@ namespace Lucene.Net.Analysis.Util
         ///// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         ///// in itself, the specified collection, or both.
         ///// </summary>
+        ///// <param name="set">this <see cref="CharArraySet"/></param>
         ///// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         //public static bool UnionWith(this CharArraySet set, IEnumerable<float> other)
@@ -1247,6 +1249,7 @@ namespace Lucene.Net.Analysis.Util
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
         /// </summary>
+        /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         public static bool UnionWith(this CharArraySet set, IEnumerable<int> other)
@@ -1274,6 +1277,7 @@ namespace Lucene.Net.Analysis.Util
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
         /// </summary>
+        /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         public static bool UnionWith(this CharArraySet set, IEnumerable<long> other)
@@ -1301,6 +1305,7 @@ namespace Lucene.Net.Analysis.Util
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
         /// </summary>
+        /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         [CLSCompliant(false)]
@@ -1329,6 +1334,7 @@ namespace Lucene.Net.Analysis.Util
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
         /// </summary>
+        /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         public static bool UnionWith(this CharArraySet set, IEnumerable<short> other)
@@ -1356,6 +1362,7 @@ namespace Lucene.Net.Analysis.Util
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
         /// </summary>
+        /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         [CLSCompliant(false)]
@@ -1384,6 +1391,7 @@ namespace Lucene.Net.Analysis.Util
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
         /// </summary>
+        /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         [CLSCompliant(false)]
@@ -1412,6 +1420,7 @@ namespace Lucene.Net.Analysis.Util
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
         /// </summary>
+        /// <param name="set">this <see cref="CharArraySet"/></param>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         [CLSCompliant(false)]

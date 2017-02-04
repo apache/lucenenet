@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Support;
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Icu;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -26,7 +25,7 @@ namespace Lucene.Net.Analysis.Util
     /// A CharacterIterator used internally for use with <see cref="BreakIterator"/>
     /// @lucene.internal
     /// </summary>
-    public abstract class CharArrayIterator : CharacterIterator
+    public abstract class CharArrayIterator : CharacterIterator // LUCENENET TODO: Since the only purpose of this class is to work around Java bugs, is this class really needed?
     {
         private char[] array;
         private int start;
@@ -83,7 +82,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        protected internal abstract char JreBugWorkaround(char ch);
+        protected abstract char JreBugWorkaround(char ch);
  
 
         public override char First()
@@ -170,7 +169,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Create a new CharArrayIterator that works around JRE bugs
-        /// in a manner suitable for <see cref="BreakIterator#getSentenceInstance()"/>
+        /// in a manner suitable for <c>BreakIterator#getSentenceInstance()</c>
         /// </summary>
         public static CharArrayIterator NewSentenceInstance()
         {
@@ -180,7 +179,7 @@ namespace Lucene.Net.Analysis.Util
         private class CharArrayIteratorAnonymousInnerClassHelper2 : CharArrayIterator
         {
             // no bugs
-            protected internal override char JreBugWorkaround(char ch)
+            protected override char JreBugWorkaround(char ch)
             {
                 return ch;
             }
@@ -188,7 +187,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Create a new CharArrayIterator that works around JRE bugs
-        /// in a manner suitable for <see cref="BreakIterator#getWordInstance()"/>
+        /// in a manner suitable for <c>BreakIterator#getWordInstance()</c>
         /// </summary>
         public static CharArrayIterator NewWordInstance()
         {
@@ -198,7 +197,7 @@ namespace Lucene.Net.Analysis.Util
         private class CharArrayIteratorAnonymousInnerClassHelper4 : CharArrayIterator
         {
             // no bugs
-            protected internal override char JreBugWorkaround(char ch)
+            protected override char JreBugWorkaround(char ch)
             {
                 return ch;
             }
