@@ -59,13 +59,12 @@ namespace Lucene.Net.Analysis.Sv
     /// Light Stemmer for Swedish.
     /// <para>
     /// This stemmer implements the algorithm described in:
-    /// <i>Report on CLEF-2003 Monolingual Tracks</i>
+    /// <c>Report on CLEF-2003 Monolingual Tracks</c>
     /// Jacques Savoy
     /// </para>
     /// </summary>
     public class SwedishLightStemmer
     {
-
         public virtual int Stem(char[] s, int len)
         {
             if (len > 4 && s[len - 1] == 's')

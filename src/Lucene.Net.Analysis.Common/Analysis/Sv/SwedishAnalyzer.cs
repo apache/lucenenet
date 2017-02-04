@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Sv
         }
 
         /// <summary>
-        /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
         private class DefaultSetHolder
@@ -79,10 +79,11 @@ namespace Lucene.Net.Analysis.Sv
         }
 
         /// <summary>
-        /// Builds an analyzer with the default stop words: <see cref="#DEFAULT_STOPWORD_FILE"/>.
+        /// Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         public SwedishAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
@@ -92,7 +93,7 @@ namespace Lucene.Net.Analysis.Sv
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public SwedishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
         {
         }
 
@@ -105,7 +106,7 @@ namespace Lucene.Net.Analysis.Sv
         /// <param name="stopwords"> a stopword set </param>
         /// <param name="stemExclusionSet"> a set of terms not to be stemmed </param>
         public SwedishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
             this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
         }
@@ -113,13 +114,13 @@ namespace Lucene.Net.Analysis.Sv
         /// <summary>
         /// Creates a
         /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// which tokenizes all the text in the provided <see cref="Reader"/>.
+        /// which tokenizes all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> A
         ///         <see cref="Analyzer.TokenStreamComponents"/>
         ///         built from an <see cref="StandardTokenizer"/> filtered with
-        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>
-        ///         , <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
+        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,
+        ///         <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
         ///         provided and <see cref="SnowballFilter"/>. </returns>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {

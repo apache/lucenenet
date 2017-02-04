@@ -34,10 +34,10 @@ namespace Lucene.Net.Analysis.Sv
     /// </summary>
     public class SwedishLightStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new SwedishLightStemFilterFactory </summary>
-        public SwedishLightStemFilterFactory(IDictionary<string, string> args) : base(args)
+        /// Creates a new <see cref="SwedishLightStemFilterFactory"/> </summary>
+        public SwedishLightStemFilterFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             if (args.Count > 0)
             {

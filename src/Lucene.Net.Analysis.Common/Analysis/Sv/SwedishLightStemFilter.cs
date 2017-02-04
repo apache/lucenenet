@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Sv
     /// words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of
-    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
     /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para>
     /// </summary>
@@ -35,7 +35,8 @@ namespace Lucene.Net.Analysis.Sv
         private readonly ICharTermAttribute termAtt;
         private readonly IKeywordAttribute keywordAttr;
 
-        public SwedishLightStemFilter(TokenStream input) : base(input)
+        public SwedishLightStemFilter(TokenStream input) 
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();
