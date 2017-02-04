@@ -377,7 +377,7 @@ namespace Lucene.Net.Analysis.En
         {
             char ch;
 
-            ch = word.CharAt(index);
+            ch = word[index];
 
             if ((ch == 'a') || (ch == 'e') || (ch == 'i') || (ch == 'o') || (ch == 'u'))
             {
@@ -596,7 +596,7 @@ namespace Lucene.Net.Analysis.En
             j = k;
             for (int r1 = r, i = 0; i < s.Length; i++, r1++)
             {
-                if (s[i] != word.CharAt(r1))
+                if (s[i] != word[r1])
                 {
                     return false;
                 }
@@ -612,7 +612,7 @@ namespace Lucene.Net.Analysis.En
                 return false;
             }
             // check left to right since the endings have often already matched
-            if (word.CharAt(k - 1) == a && word.CharAt(k) == b)
+            if (word[k - 1] == a && word[k] == b)
             {
                 j = k - 2;
                 return true;
@@ -626,7 +626,7 @@ namespace Lucene.Net.Analysis.En
             {
                 return false;
             }
-            if (word.CharAt(k - 2) == a && word.CharAt(k - 1) == b && word.CharAt(k) == c)
+            if (word[k - 2] == a && word[k - 1] == b && word[k] == c)
             {
                 j = k - 3;
                 return true;
@@ -640,7 +640,7 @@ namespace Lucene.Net.Analysis.En
             {
                 return false;
             }
-            if (word.CharAt(k - 3) == a && word.CharAt(k - 2) == b && word.CharAt(k - 1) == c && word.CharAt(k) == d)
+            if (word[k - 3] == a && word[k - 2] == b && word[k - 1] == c && word[k] == d)
             {
                 j = k - 4;
                 return true;
@@ -671,7 +671,7 @@ namespace Lucene.Net.Analysis.En
         /// <summary>Convert plurals to singular form, and '-ies' to 'y'</summary>
         private void Plural()
         {
-            if (word.CharAt(k) == 's')
+            if (word[k] == 's')
             {
                 if (EndsIn('i', 'e', 's'))
                 {
@@ -707,7 +707,7 @@ namespace Lucene.Net.Analysis.En
                     // !((word.CharAt(j) == 's') && (word.CharAt(j-1) == 's'))) return;
                     // ****
 
-                    bool tryE = j > 0 && !((word.CharAt(j) == 's') && (word.CharAt(j - 1) == 's'));
+                    bool tryE = j > 0 && !((word[j] == 's') && (word[j - 1] == 's'));
                     if (tryE && Lookup())
                     {
                         return;
@@ -852,7 +852,7 @@ namespace Lucene.Net.Analysis.En
                     {
                         return;
                     }
-                    word.UnsafeWrite(word.CharAt(k));
+                    word.UnsafeWrite(word[k]);
                     k++;
                     Lookup();
                     return;
@@ -862,7 +862,7 @@ namespace Lucene.Net.Analysis.En
                 /* (this will sometimes screw up with `under-', but we */
                 /* will take care of that later) */
 
-                if ((word.CharAt(0) == 'u') && (word.CharAt(1) == 'n'))
+                if ((word[0] == 'u') && (word[1] == 'n'))
                 {
                     word.UnsafeWrite('e');
                     word.UnsafeWrite('d');
@@ -892,7 +892,7 @@ namespace Lucene.Net.Analysis.En
                 return false;
             }
 
-            if (word.CharAt(i) != word.CharAt(i - 1))
+            if (word[i] != word[i - 1])
             {
                 return false;
             }
@@ -931,7 +931,7 @@ namespace Lucene.Net.Analysis.En
             {
 
                 /* try adding an `e' to the stem and check against the dictionary */
-                word.SetCharAt(j + 1, 'e');
+                word[j + 1] = 'e';
                 word.Length = j + 2;
                 k = j + 1;
 
@@ -962,7 +962,7 @@ namespace Lucene.Net.Analysis.En
                     {
                         return;
                     }
-                    word.UnsafeWrite(word.CharAt(k)); // restore the doubled consonant
+                    word.UnsafeWrite(word[k]); // restore the doubled consonant
 
                     /* the default is to leave the consonant doubled */
                     /* (e.g.,`fingerspelling' -> `fingerspell'). Unfortunately */
@@ -1026,14 +1026,14 @@ namespace Lucene.Net.Analysis.En
                 {
                     return;
                 }
-                word.SetCharAt(j + 1, 'i');
+                word[j + 1] = 'i';
                 word.Append("ty");
                 k = old_k;
                 /*
                  * the -ability and -ibility endings are highly productive, so just accept
                  * them
                  */
-                if ((j > 0) && (word.CharAt(j - 1) == 'i') && (word.CharAt(j) == 'l'))
+                if ((j > 0) && (word[j - 1] == 'i') && (word[j] == 'l'))
                 {
                     word.Length = j - 1;
                     word.Append("le"); // convert to -ble
@@ -1043,7 +1043,7 @@ namespace Lucene.Net.Analysis.En
                 }
 
                 /* ditto for -ivity */
-                if ((j > 0) && (word.CharAt(j - 1) == 'i') && (word.CharAt(j) == 'v'))
+                if ((j > 0) && (word[j - 1] == 'i') && (word[j] == 'v'))
                 {
                     word.Length = j + 1;
                     word.UnsafeWrite('e'); // convert to -ive
@@ -1052,7 +1052,7 @@ namespace Lucene.Net.Analysis.En
                     return;
                 }
                 /* ditto for -ality */
-                if ((j > 0) && (word.CharAt(j - 1) == 'a') && (word.CharAt(j) == 'l'))
+                if ((j > 0) && (word[j - 1] == 'a') && (word[j] == 'l'))
                 {
                     word.Length = j + 1;
                     k = j;
@@ -1088,7 +1088,7 @@ namespace Lucene.Net.Analysis.En
 
             if (EndsIn('n', 'c', 'e'))
             {
-                word_char = word.CharAt(j);
+                word_char = word[j];
                 if (!((word_char == 'e') || (word_char == 'a')))
                 {
                     return;
@@ -1128,9 +1128,9 @@ namespace Lucene.Net.Analysis.En
                                                    */
                 word.Length = j + 1;
                 k = j;
-                if (word.CharAt(j) == 'i')
+                if (word[j] == 'i')
                 {
-                    word.SetCharAt(j, 'y');
+                    word[j] = 'y';
                 }
                 Lookup();
             }
@@ -1196,7 +1196,7 @@ namespace Lucene.Net.Analysis.En
                     {
                         return;
                     }
-                    word.UnsafeWrite(word.CharAt(j - 1));
+                    word.UnsafeWrite(word[j - 1]);
                 }
 
                 word.Length = j + 1;
@@ -1219,11 +1219,11 @@ namespace Lucene.Net.Analysis.En
         {
             if (EndsIn('n', 'c', 'y'))
             {
-                if (!((word.CharAt(j) == 'e') || (word.CharAt(j) == 'a')))
+                if (!((word[j] == 'e') || (word[j] == 'a')))
                 {
                     return;
                 }
-                word.SetCharAt(j + 2, 't'); // try converting -ncy to -nt
+                word[j + 2] = 't'; // try converting -ncy to -nt
                 word.Length = j + 3;
                 k = j + 2;
 
@@ -1232,7 +1232,7 @@ namespace Lucene.Net.Analysis.En
                     return;
                 }
 
-                word.SetCharAt(j + 2, 'c'); // the default is to convert it to -nce
+                word[j + 2] = 'c'; // the default is to convert it to -nce
                 word.UnsafeWrite('e');
                 k = j + 3;
                 Lookup();
@@ -1248,11 +1248,11 @@ namespace Lucene.Net.Analysis.En
 
             if (EndsIn('b', 'l', 'e'))
             {
-                if (!((word.CharAt(j) == 'a') || (word.CharAt(j) == 'i')))
+                if (!((word[j] == 'a') || (word[j] == 'i')))
                 {
                     return;
                 }
-                word_char = word.CharAt(j);
+                word_char = word[j];
                 word.Length = j; // try just removing the ending
                 k = j - 1;
                 if (Lookup())
@@ -1268,7 +1268,7 @@ namespace Lucene.Net.Analysis.En
                         return;
                     }
                     k++;
-                    word.UnsafeWrite(word.CharAt(k - 1));
+                    word.UnsafeWrite(word[k - 1]);
                 }
                 word.Length = j;
                 word.UnsafeWrite('e'); // try removing -a/ible and adding -e
@@ -1311,7 +1311,7 @@ namespace Lucene.Net.Analysis.En
                     return;
                 }
 
-                word.SetCharAt(j + 1, 'y'); // try converting -ic to -y
+                word[j + 1] = 'y'; // try converting -ic to -y
                 word.Length = j + 2;
                 k = j + 1;
                 if (Lookup())
@@ -1319,7 +1319,7 @@ namespace Lucene.Net.Analysis.En
                     return;
                 }
 
-                word.SetCharAt(j + 1, 'e'); // try converting -ic to -e
+                word[j + 1] = 'e'; // try converting -ic to -e
                 if (Lookup())
                 {
                     return;
@@ -1492,7 +1492,7 @@ namespace Lucene.Net.Analysis.En
         {
             int old_k = k;
 
-            if (word.CharAt(k) != 'r') // YCS
+            if (word[k] != 'r') // YCS
             {
                 return;
             }
@@ -1513,7 +1513,7 @@ namespace Lucene.Net.Analysis.En
 
             if (EndsIn('e', 'r') || EndsIn('o', 'r'))
             {
-                word_char = word.CharAt(j + 1);
+                word_char = word[j + 1];
                 if (DoubleC(j))
                 {
                     word.Length = j;
@@ -1522,23 +1522,23 @@ namespace Lucene.Net.Analysis.En
                     {
                         return;
                     }
-                    word.UnsafeWrite(word.CharAt(j - 1)); // restore the doubled consonant
+                    word.UnsafeWrite(word[j - 1]); // restore the doubled consonant
                 }
 
-                if (word.CharAt(j) == 'i') // do we have a -ier ending?
+                if (word[j] == 'i') // do we have a -ier ending?
                 {
-                    word.SetCharAt(j, 'y');
+                    word[j] = 'y';
                     word.Length = j + 1;
                     k = j;
                     if (Lookup()) // yes, so check against the dictionary
                     {
                         return;
                     }
-                    word.SetCharAt(j, 'i'); // restore the endings
+                    word[j] = 'i'; // restore the endings
                     word.UnsafeWrite('e');
                 }
 
-                if (word.CharAt(j) == 'e') // handle -eer
+                if (word[j] == 'e') // handle -eer
                 {
                     word.Length = j;
                     k = j - 1;
@@ -1589,13 +1589,13 @@ namespace Lucene.Net.Analysis.En
             if (EndsIn('l', 'y'))
             {
 
-                word.SetCharAt(j + 2, 'e'); // try converting -ly to -le
+                word[j + 2] = 'e'; // try converting -ly to -le
 
                 if (Lookup())
                 {
                     return;
                 }
-                word.SetCharAt(j + 2, 'y');
+                word[j + 2] = 'y';
 
                 word.Length = j + 1; // try just removing the -ly
                 k = j;
@@ -1605,7 +1605,7 @@ namespace Lucene.Net.Analysis.En
                     return;
                 }
 
-                if ((j > 0) && (word.CharAt(j - 1) == 'a') && (word.CharAt(j) == 'l')) /*
+                if ((j > 0) && (word[j - 1] == 'a') && (word[j] == 'l')) /*
 	                                                                              * always
 	                                                                              * convert
 	                                                                              * -
@@ -1620,7 +1620,7 @@ namespace Lucene.Net.Analysis.En
                 word.Append("ly");
                 k = old_k;
 
-                if ((j > 0) && (word.CharAt(j - 1) == 'a') && (word.CharAt(j) == 'b'))
+                if ((j > 0) && (word[j - 1] == 'a') && (word[j] == 'b'))
                 {
                     /*
                                                                                               * always
@@ -1631,12 +1631,12 @@ namespace Lucene.Net.Analysis.En
                                                                                               * -
                                                                                               * able
                                                                                               */
-                    word.SetCharAt(j + 2, 'e');
+                    word[j + 2] = 'e';
                     k = j + 2;
                     return;
                 }
 
-                if (word.CharAt(j) == 'i') // e.g., militarily -> military
+                if (word[j] == 'i') // e.g., militarily -> military
                 {
                     word.Length = j;
                     word.UnsafeWrite('y');
@@ -1687,7 +1687,7 @@ namespace Lucene.Net.Analysis.En
                     {
                         return;
                     }
-                    word.UnsafeWrite(word.CharAt(j - 1));
+                    word.UnsafeWrite(word[j - 1]);
                 }
 
                 word.Length = j + 1;
@@ -1711,7 +1711,7 @@ namespace Lucene.Net.Analysis.En
                 word.Append("al"); // restore the ending to the way it was
                 k = old_k;
 
-                if ((j > 0) && (word.CharAt(j - 1) == 'i') && (word.CharAt(j) == 'c'))
+                if ((j > 0) && (word[j - 1] == 'i') && (word[j] == 'c'))
                 {
                     word.Length = j - 1; // try removing -ical
                     k = j - 2;
@@ -1738,7 +1738,7 @@ namespace Lucene.Net.Analysis.En
                     return;
                 }
 
-                if (word.CharAt(j) == 'i') // sometimes -ial endings should be removed
+                if (word[j] == 'i') // sometimes -ial endings should be removed
                 {
                     word.Length = j; // (sometimes it gets turned into -y, but we
                     k = j - 1; // aren't dealing with that case for now)
@@ -1780,9 +1780,9 @@ namespace Lucene.Net.Analysis.En
                 }
                 word.Length = j + 1;
                 word.Append("ive");
-                if ((j > 0) && (word.CharAt(j - 1) == 'a') && (word.CharAt(j) == 't'))
+                if ((j > 0) && (word[j - 1] == 'a') && (word[j] == 't'))
                 {
-                    word.SetCharAt(j - 1, 'e'); // try removing -ative and adding -e
+                    word[j - 1] = 'e'; // try removing -ative and adding -e
                     word.Length = j; // (e.g., determinative -> determine)
                     k = j - 1;
                     if (Lookup())
@@ -1800,15 +1800,15 @@ namespace Lucene.Net.Analysis.En
                 }
 
                 /* try mapping -ive to -ion (e.g., injunctive/injunction) */
-                word.SetCharAt(j + 2, 'o');
-                word.SetCharAt(j + 3, 'n');
+                word[j + 2] = 'o';
+                word[j + 3] = 'n';
                 if (Lookup())
                 {
                     return;
                 }
 
-                word.SetCharAt(j + 2, 'v'); // restore the original values
-                word.SetCharAt(j + 3, 'e');
+                word[j + 2] = 'v'; // restore the original values
+                word[j + 3] = 'e';
                 k = old_k;
                 // nolookup()
             }

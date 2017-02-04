@@ -102,15 +102,17 @@ namespace Lucene.Net.Analysis.Util
             return this;
         }
 
-        public virtual char CharAt(int index) // LUCENENET TODO: Remove (replaced with this[])
-        {
-            return m_buf[index];
-        }
+        // LUCENENET specific - removed (replaced with this[])
+        //public virtual char CharAt(int index)
+        //{
+        //    return m_buf[index];
+        //}
 
-        public virtual void SetCharAt(int index, char ch) // LUCENENET TODO: Remove (replaced with this[])
-        {
-            m_buf[index] = ch;
-        }
+        // LUCENENET specific - removed (replaced with this[])
+        //public virtual void SetCharAt(int index, char ch)
+        //{
+        //    m_buf[index] = ch;
+        //}
 
         // LUCENENET specific - added to .NETify
         public virtual char this[int index]
