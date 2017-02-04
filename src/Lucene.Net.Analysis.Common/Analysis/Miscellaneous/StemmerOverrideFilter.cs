@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
               : base(input)
         {
             this.stemmerOverrideMap = stemmerOverrideMap;
-            fstReader = stemmerOverrideMap.BytesReader;
+            fstReader = stemmerOverrideMap.GetBytesReader();
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAtt = AddAttribute<IKeywordAttribute>();
         }
@@ -109,18 +109,15 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /// <summary>
             /// Returns a <see cref="FST.BytesReader"/> to pass to the <see cref="Get(char[], int, FST.Arc{BytesRef}, FST.BytesReader)"/> method.
             /// </summary>
-            public FST.BytesReader BytesReader // LUCENENET TODO: Change to GetBytesReader()
+            public FST.BytesReader GetBytesReader()
             {
-                get
+                if (fst == null)
                 {
-                    if (fst == null)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        return fst.GetBytesReader();
-                    }
+                    return null;
+                }
+                else
+                {
+                    return fst.GetBytesReader();
                 }
             }
 
