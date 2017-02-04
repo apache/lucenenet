@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Util
 
         public virtual OpenStringBuilder Append(ICharSequence csq, int start, int end)
         {
-            Reserve(end - start);
+            EnsureCapacity(end - start);
             for (int i = start; i < end; i++)
             {
                 UnsafeWrite(csq[i]);
@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific - overload for string (more common in .NET than ICharSequence)
         public virtual OpenStringBuilder Append(string csq, int start, int end)
         {
-            Reserve(end - start);
+            EnsureCapacity(end - start);
             for (int i = start; i < end; i++)
             {
                 UnsafeWrite(csq[i]);
@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific - overload for StringBuilder
         public virtual OpenStringBuilder Append(StringBuilder csq, int start, int end)
         {
-            Reserve(end - start);
+            EnsureCapacity(end - start);
             for (int i = start; i < end; i++)
             {
                 UnsafeWrite(csq[i]);
@@ -191,11 +191,11 @@ namespace Lucene.Net.Analysis.Util
             m_buf = newbuf;
         }
 
-        public virtual void Reserve(int num)
+        public virtual void EnsureCapacity(int capacity) // LUCENENET NOTE: renamed from reserve() in Lucene to match .NET StringBuilder
         {
-            if (m_len + num > m_buf.Length)
+            if (m_len + capacity > m_buf.Length)
             {
-                Resize(m_len + num);
+                Resize(m_len + capacity);
             }
         }
 
@@ -220,7 +220,7 @@ namespace Lucene.Net.Analysis.Util
 
         public virtual void Write(char[] b, int off, int len)
         {
-            Reserve(len);
+            EnsureCapacity(len);
             UnsafeWrite(b, off, len);
         }
 
@@ -232,13 +232,13 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific overload for StringBuilder
         public void Write(StringBuilder arr)
         {
-            Reserve(arr.Length);
+            EnsureCapacity(arr.Length);
             UnsafeWrite(arr, 0, arr.Length);
         }
 
         public virtual void Write(string s)
         {
-            Reserve(s.Length);
+            EnsureCapacity(s.Length);
             s.CopyTo(0, m_buf, m_len, s.Length - 0);
             m_len += s.Length;
         }

@@ -1926,7 +1926,7 @@ namespace Lucene.Net.Analysis.En
 
             word.Reset();
             // allocate enough space so that an expansion is never needed
-            word.Reserve(len + 10);
+            word.EnsureCapacity(len + 10);
             for (int i = 0; i < len; i++)
             {
                 char ch = term[i];
