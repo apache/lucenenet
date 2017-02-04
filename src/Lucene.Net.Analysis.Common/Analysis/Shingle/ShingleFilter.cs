@@ -509,7 +509,7 @@ namespace Lucene.Net.Analysis.Shingle
             if (inputWindow.Count > 0)
             {
                 firstToken = inputWindow.First.Value;
-                inputWindow.RemoveFirst(); // LUCENENET TODO: Safer if we remove the .First.Value from the previous line (do this across the solution) - extension method?
+                inputWindow.Remove(firstToken);
             }
             while (inputWindow.Count < maxShingleSize)
             {

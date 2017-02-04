@@ -407,7 +407,7 @@ namespace Lucene.Net.Util.Automaton
             while (worklist.Count > 0)
             {
                 p = worklist.First.Value;
-                worklist.RemoveFirst();
+                worklist.Remove(p);
                 p.s.accept = p.S1.accept && p.S2.accept;
                 Transition[] t1 = transitions1[p.S1.number];
                 Transition[] t2 = transitions2[p.S2.number];
@@ -958,7 +958,7 @@ namespace Lucene.Net.Util.Automaton
             while (worklist.Count > 0)
             {
                 StatePair p = worklist.First.Value;
-                worklist.RemoveFirst();
+                worklist.Remove(p);
                 workset.Remove(p);
                 HashSet<State> to;
                 HashSet<State> from;

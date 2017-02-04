@@ -264,7 +264,7 @@ namespace Lucene.Net.Util.Automaton
                 while (q.Count > 0)
                 {
                     State s = q.First.Value;
-                    q.RemoveFirst();
+                    q.Remove(s);
                     IList<ArrivingTransition> arriving;
                     allArriving.TryGetValue(s, out arriving);
                     if (arriving != null)
@@ -478,7 +478,7 @@ namespace Lucene.Net.Util.Automaton
             while (worklist.Count > 0)
             {
                 ISet<State> s = worklist.First.Value;
-                worklist.RemoveFirst();
+                worklist.Remove(s);
                 State r = newstate[s];
                 foreach (State q in s)
                 {

@@ -142,7 +142,7 @@ namespace Lucene.Net.Util.Automaton
             while (pending.Count > 0)
             {
                 IntPair ip = pending.First.Value;
-                pending.RemoveFirst();
+                pending.Remove(ip);
                 int p = ip.N1;
                 int x = ip.N2;
                 pending2.SafeSet(x * statesLen + p, false);

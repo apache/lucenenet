@@ -2463,7 +2463,7 @@ namespace Lucene.Net.Index
                 {
                     // Advance the merge from pending to running
                     MergePolicy.OneMerge merge = pendingMerges.First.Value;
-                    pendingMerges.RemoveFirst();
+                    pendingMerges.Remove(merge);
                     runningMerges.Add(merge);
                     return merge;
                 }

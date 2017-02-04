@@ -110,7 +110,8 @@ namespace Lucene.Net.Analysis.Compound
             if (m_tokens.Count > 0)
             {
                 Debug.Assert(current != null);
-                CompoundToken token = m_tokens.First.Value; m_tokens.RemoveFirst();
+                CompoundToken token = m_tokens.First.Value;
+                m_tokens.Remove(token);
                 RestoreState(current); // keep all other attributes untouched
                 m_termAtt.SetEmpty().Append(token.Text);
                 m_offsetAtt.SetOffset(token.StartOffset, token.EndOffset);

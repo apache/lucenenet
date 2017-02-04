@@ -457,11 +457,11 @@ namespace Lucene.Net.Search
                 Debug.Assert(rangeBounds.Count % 2 == 0);
 
                 currentLowerBound = rangeBounds.First.Value;
-                rangeBounds.RemoveFirst();
+                rangeBounds.Remove(currentLowerBound);
                 Debug.Assert(currentUpperBound == null || termComp.Compare(currentUpperBound, currentLowerBound) <= 0, "The current upper bound must be <= the new lower bound");
 
                 currentUpperBound = rangeBounds.First.Value;
-                rangeBounds.RemoveFirst();
+                rangeBounds.Remove(currentUpperBound);
             }
 
             protected override sealed BytesRef NextSeekTerm(BytesRef term)

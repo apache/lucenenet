@@ -291,7 +291,7 @@ namespace Lucene.Net.Util.Automaton
                 while (worklist.Count > 0)
                 {
                     State s = worklist.First.Value;
-                    worklist.RemoveFirst();
+                    worklist.Remove(s);
                     for (int i = 0; i < s.numTransitions; i++)
                     {
                         Transition t = s.TransitionsArray[i];
@@ -364,7 +364,7 @@ namespace Lucene.Net.Util.Automaton
             while (worklist.Count > 0)
             {
                 State s = worklist.First.Value;
-                worklist.RemoveFirst();
+                worklist.Remove(s);
                 if (s.accept)
                 {
                     accepts.Add(s);
@@ -502,7 +502,7 @@ namespace Lucene.Net.Util.Automaton
             while (worklist.Count > 0)
             {
                 State s = worklist.First.Value;
-                worklist.RemoveFirst();
+                worklist.Remove(s);
                 foreach (State p in map[s.number])
                 {
                     if (!live.Contains(p))

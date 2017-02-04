@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis.Synonym
                         else
                         {
                             origTok = matched.First.Value;
-                            matched.RemoveFirst();
+                            matched.Remove(origTok);
                         }
                         if (origTok != null)
                         {
@@ -195,7 +195,7 @@ namespace Lucene.Net.Analysis.Synonym
                     else
                     {
                         origTok = matched.First.Value;
-                        matched.RemoveFirst();
+                        matched.Remove(origTok);
                     }
                     if (origTok != null)
                     {
@@ -230,9 +230,8 @@ namespace Lucene.Net.Analysis.Synonym
             if (buffer != null && buffer.Count > 0)
             {
                 var first = buffer.First.Value;
-                buffer.RemoveFirst();
+                buffer.Remove(first);
                 return first;
-
             }
             else
             {

@@ -80,7 +80,7 @@ namespace Lucene.Net.Support
 
                             // Get the next item from the queue
                             item = _tasks.First.Value;
-                            _tasks.RemoveFirst();
+                            _tasks.Remove(item);
                         }
 
                         // Execute the task we pulled out of the queue

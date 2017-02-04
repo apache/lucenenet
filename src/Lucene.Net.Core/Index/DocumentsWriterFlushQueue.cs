@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
                         {
                             // finally remove the published ticket from the queue
                             FlushTicket poll = queue.First.Value;
-                            queue.RemoveFirst();
+                            queue.Remove(poll);
                             ticketCount.DecrementAndGet();
                             Debug.Assert(poll == head);
                         }
