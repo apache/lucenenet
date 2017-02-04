@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             var xmlReaderSettings = GetXmlReaderSettings();
 
             // LUCENENET TODO: Create overloads that allow XmlReaderSettings to be passed in.
-            using (var src = XmlReader.Create(new StreamReader(path, encoding), xmlReaderSettings))
+            using (var src = XmlReader.Create(new StreamReader(new FileStream(path, FileMode.Open), encoding), xmlReaderSettings))
             {
                 Parse(src);
             }
