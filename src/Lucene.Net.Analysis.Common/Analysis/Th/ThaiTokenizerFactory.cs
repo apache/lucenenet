@@ -33,10 +33,10 @@ namespace Lucene.Net.Analysis.Th
     /// </summary>
     public class ThaiTokenizerFactory : TokenizerFactory
     {
-
         /// <summary>
-        /// Creates a new ThaiTokenizerFactory </summary>
-        public ThaiTokenizerFactory(IDictionary<string, string> args) : base(args)
+        /// Creates a new <see cref="ThaiTokenizerFactory"/> </summary>
+        public ThaiTokenizerFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             if (args.Count > 0)
             {

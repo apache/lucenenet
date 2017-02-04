@@ -27,14 +27,17 @@ namespace Lucene.Net.Analysis.Th
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
+    
+    // LUCENENET NOTE: Removing this notice from the doc comment because it is not relevant for our purposes.
+
+    // <para>WARNING: this tokenizer may not be supported by all JREs.
+    //    It is known to work with Sun/Oracle and Harmony JREs.
+    //    If your application needs to be fully portable, consider using ICUTokenizer instead,
+    //    which uses an ICU Thai BreakIterator that will always be available.
+    // </para>
 
     /// <summary>
     /// Tokenizer that use <see cref="BreakIterator"/> to tokenize Thai text.
-    /// <para>WARNING: this tokenizer may not be supported by all JREs.
-    ///    It is known to work with Sun/Oracle and Harmony JREs.
-    ///    If your application needs to be fully portable, consider using ICUTokenizer instead,
-    ///    which uses an ICU Thai BreakIterator that will always be available.
-    /// </para>
     /// </summary>
     public class ThaiTokenizer : SegmentingTokenizerBase
     {
@@ -54,23 +57,23 @@ namespace Lucene.Net.Analysis.Th
         private readonly ThaiWordBreaker wordBreaker;
         private readonly CharArrayIterator wrapper = CharArrayIterator.NewWordInstance();
 
-        internal int sentenceStart;
-        internal int sentenceEnd;
+        private int sentenceStart;
+        private int sentenceEnd;
 
         private readonly ICharTermAttribute termAtt;
         private readonly IOffsetAttribute offsetAtt;
 
         /// <summary>
-        /// Creates a new ThaiTokenizer </summary>
+        /// Creates a new <see cref="ThaiTokenizer"/> </summary>
         public ThaiTokenizer(TextReader reader)
-              : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader)
+            : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader)
         {
         }
 
         /// <summary>
-        /// Creates a new ThaiTokenizer, supplying the AttributeFactory </summary>
+        /// Creates a new <see cref="ThaiTokenizer"/>, supplying the <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/> </summary>
         public ThaiTokenizer(AttributeFactory factory, TextReader reader)
-              : base(factory, reader, new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, new CultureInfo("th")))
+            : base(factory, reader, new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, new CultureInfo("th")))
         {
             if (!DBBI_AVAILABLE)
             {

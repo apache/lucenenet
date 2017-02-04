@@ -29,14 +29,14 @@ namespace Lucene.Net.Analysis.Th
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.ThaiWordFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</code> </summary>
+    /// &lt;/fieldType&gt;</code> 
+    /// </summary>
     /// @deprecated Use <see cref="ThaiTokenizerFactory"/> instead 
     [Obsolete("Use ThaiTokenizerFactory instead")]
     public class ThaiWordFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new ThaiWordFilterFactory </summary>
+        /// Creates a new <see cref="ThaiWordFilterFactory"/> </summary>
         public ThaiWordFilterFactory(IDictionary<string, string> args) : base(args)
         {
             AssureMatchVersion();

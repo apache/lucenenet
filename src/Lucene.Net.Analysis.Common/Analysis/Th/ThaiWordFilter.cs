@@ -27,18 +27,21 @@ namespace Lucene.Net.Analysis.Th
 	 * limitations under the License.
 	 */
 
+    // LUCENENET NOTE: Removing this notice from the doc comment because it is not relevant for our purposes.
+
+    //<para>WARNING: this filter may not be supported by all JREs.
+    //    It is known to work with Sun/Oracle and Harmony JREs.
+    //    If your application needs to be fully portable, consider using ICUTokenizer instead,
+    //    which uses an ICU Thai BreakIterator that will always be available.
+    // </para>
+
     /// <summary>
-    /// <see cref="TokenFilter"/> that use <see cref="java.text.BreakIterator"/> to break each 
+    /// <see cref="TokenFilter"/> that use <see cref="Support.BreakIterator"/> to break each 
     /// Token that is Thai into separate Token(s) for each Thai word.
     /// <para>Please note: Since matchVersion 3.1 on, this filter no longer lowercases non-thai text.
     /// <see cref="ThaiAnalyzer"/> will insert a <see cref="LowerCaseFilter"/> before this filter
     /// so the behaviour of the Analyzer does not change. With version 3.1, the filter handles
     /// position increments correctly.
-    /// </para>
-    /// <para>WARNING: this filter may not be supported by all JREs.
-    ///    It is known to work with Sun/Oracle and Harmony JREs.
-    ///    If your application needs to be fully portable, consider using ICUTokenizer instead,
-    ///    which uses an ICU Thai BreakIterator that will always be available.
     /// </para>
     /// </summary>
     /// @deprecated Use <see cref="ThaiTokenizer"/> instead. 
@@ -66,7 +69,7 @@ namespace Lucene.Net.Analysis.Th
         private bool hasIllegalOffsets = false; // only if the length changed before this filter
 
         /// <summary>
-        /// Creates a new ThaiWordFilter with the specified match version. </summary>
+        /// Creates a new <see cref="ThaiWordFilter"/> with the specified match version. </summary>
         public ThaiWordFilter(LuceneVersion matchVersion, TokenStream input)
               : base(matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? input : new LowerCaseFilter(matchVersion, input))
         {

@@ -25,20 +25,16 @@ namespace Lucene.Net.Analysis.Th
 	 */
 
     /// <summary>
-    /// <see cref="Analyzer"/> for Thai language. It uses <see cref="java.text.BreakIterator"/> to break words.
-    /// <para>
-    /// <a name="version"/>
-    /// </para>
+    /// <see cref="Analyzer"/> for Thai language. It uses <see cref="Support.BreakIterator"/> to break words.
     /// <para>You must specify the required <see cref="LuceneVersion"/>
-    /// compatibility when creating ThaiAnalyzer:
-    /// <ul>
-    ///   <li> As of 3.6, a set of Thai stopwords is used by default
-    /// </ul>
+    /// compatibility when creating <see cref="ThaiAnalyzer"/>:
+    /// <list type="bullet">
+    ///     <item> As of 3.6, a set of Thai stopwords is used by default</item>
+    /// </list>
     /// </para>
     /// </summary>
     public sealed class ThaiAnalyzer : StopwordAnalyzerBase
     {
-
         /// <summary>
         /// File containing default Thai stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
@@ -60,7 +56,7 @@ namespace Lucene.Net.Analysis.Th
         }
 
         /// <summary>
-        /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
         private class DefaultSetHolder
@@ -88,7 +84,7 @@ namespace Lucene.Net.Analysis.Th
         /// </summary>
         /// <param name="matchVersion"> lucene compatibility version </param>
         public ThaiAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion,
+            : this(matchVersion,
 #pragma warning disable 612, 618
                     matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
 #pragma warning restore 612, 618
@@ -102,14 +98,14 @@ namespace Lucene.Net.Analysis.Th
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public ThaiAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
         }
 
         /// <summary>
         /// Creates
         /// <see cref="Analyzer.TokenStreamComponents"/>
-        /// used to tokenize all the text in the provided <see cref="Reader"/>.
+        /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
         ///         built from a <see cref="StandardTokenizer"/> filtered with
