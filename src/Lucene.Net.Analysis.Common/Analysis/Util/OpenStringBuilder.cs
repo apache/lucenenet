@@ -69,11 +69,12 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        // LUCENENE TODO: Change to Length (StringBuilder uses Length in .NET)
-        public virtual int Count // LUCENENET NOTE: This was size() in Lucene.
-        {
-            get{ return m_len; }
-        }
+        // LUCENENE NOTE: This is essentially a duplicate of Length (except that property can be set).
+        // .NET uses Length for StringBuilder anyway, so that property is preferable to this one.
+        //public virtual int Count // LUCENENET NOTE: This was size() in Lucene.
+        //{
+        //    get{ return m_len; }
+        //}
 
         public virtual int Capacity
         {
@@ -142,7 +143,7 @@ namespace Lucene.Net.Analysis.Util
         protected virtual void Resize(int len)
         {
             char[] newbuf = new char[Math.Max(m_buf.Length << 1, len)];
-            System.Array.Copy(m_buf, 0, newbuf, 0, Count);
+            System.Array.Copy(m_buf, 0, newbuf, 0, Length);
             m_buf = newbuf;
         }
 
@@ -202,14 +203,14 @@ namespace Lucene.Net.Analysis.Util
 
         public virtual char[] ToCharArray()
         {
-            char[] newbuf = new char[Count];
-            System.Array.Copy(m_buf, 0, newbuf, 0, Count);
+            char[] newbuf = new char[Length];
+            System.Array.Copy(m_buf, 0, newbuf, 0, Length);
             return newbuf;
         }
 
         public override string ToString()
         {
-            return new string(m_buf, 0, Count);
+            return new string(m_buf, 0, Length);
         }
     }
 }

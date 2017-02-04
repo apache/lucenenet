@@ -778,7 +778,7 @@ namespace Lucene.Net.Analysis.En
             // thisLookup); } else { // System.out.println("new lookup:" + thisLookup);
             // }
 
-            matchedEntry = dict_ht.Get(word.Array, 0, word.Count);
+            matchedEntry = dict_ht.Get(word.Array, 0, word.Length);
             return matchedEntry != null;
         }
 
