@@ -4220,7 +4220,7 @@ namespace Lucene.Net.Analysis.Standard.Std36
                         {
                             zzAtEOF = true;
                             {
-                                return StandardTokenizerInterface_Fields.YYEOF;
+                                return StandardTokenizerInterface.YYEOF;
                             }
                         }
                         else

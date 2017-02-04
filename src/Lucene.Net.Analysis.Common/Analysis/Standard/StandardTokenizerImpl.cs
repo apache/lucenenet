@@ -1292,7 +1292,7 @@ namespace Lucene.Net.Analysis.Standard
                         }
                         else if (zzAtEOF)
                         {
-                            zzInput = StandardTokenizerInterface_Fields.YYEOF;
+                            zzInput = StandardTokenizerInterface.YYEOF;
                             goto zzForActionBreak;
                         }
                         else
@@ -1308,7 +1308,7 @@ namespace Lucene.Net.Analysis.Standard
                             zzEndReadL = zzEndRead;
                             if (eof)
                             {
-                                zzInput = StandardTokenizerInterface_Fields.YYEOF;
+                                zzInput = StandardTokenizerInterface.YYEOF;
                                 goto zzForActionBreak;
                             }
                             else
@@ -1393,11 +1393,11 @@ namespace Lucene.Net.Analysis.Standard
                     case 16:
                         break;
                     default:
-                        if (zzInput == StandardTokenizerInterface_Fields.YYEOF && zzStartRead == zzCurrentPos)
+                        if (zzInput == StandardTokenizerInterface.YYEOF && zzStartRead == zzCurrentPos)
                         {
                             zzAtEOF = true;
                             {
-                                return StandardTokenizerInterface_Fields.YYEOF;
+                                return StandardTokenizerInterface.YYEOF;
                             }
                         }
                         else

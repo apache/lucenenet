@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.Standard
             {
                 int tokenType = scanner.GetNextToken();
 
-                if (tokenType == StandardTokenizerInterface_Fields.YYEOF)
+                if (tokenType == StandardTokenizerInterface.YYEOF)
                 {
                     return false;
                 }

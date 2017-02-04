@@ -9572,12 +9572,12 @@ namespace Lucene.Net.Analysis.Standard
                             {
                                 case YYINITIAL:
                                     {
-                                        return StandardTokenizerInterface_Fields.YYEOF;
+                                        return StandardTokenizerInterface.YYEOF;
                                     }
                                 case 3117: break;
                                 case AVOID_BAD_URL:
                                     {
-                                        return StandardTokenizerInterface_Fields.YYEOF;
+                                        return StandardTokenizerInterface.YYEOF;
                                     }
                                 case 3118: break;
                                 default:

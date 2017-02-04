@@ -56,12 +56,12 @@ namespace Lucene.Net.Analysis.Standard
         /// Resumes scanning until the next regular expression is matched,
         /// the end of input is encountered or an I/O-Error occurs.
         /// </summary>
-        /// <returns>      the next token, <see cref="StandardTokenizerInterface_Fields.YYEOF"/> on end of stream </returns>
+        /// <returns>      the next token, <see cref="StandardTokenizerInterface.YYEOF"/> on end of stream </returns>
         /// <exception cref="IOException">  if any I/O-Error occurs </exception>
         int GetNextToken();
     }
 
-    public static class StandardTokenizerInterface_Fields // LUCENENET TODO: Rename StandardTokenizerInterface (no longer collides with interface name)
+    public static class StandardTokenizerInterface
     {
         /// <summary>
         /// This character denotes the end of file </summary>
