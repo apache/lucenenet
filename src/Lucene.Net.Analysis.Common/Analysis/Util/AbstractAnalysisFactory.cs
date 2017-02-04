@@ -390,20 +390,17 @@ namespace Lucene.Net.Analysis.Util
 
         /// <returns> the string used to specify the concrete class name in a serialized representation: the class arg.  
         ///         If the concrete class name was not specified via a class arg, returns <c>GetType().Name</c>. </returns>
-        public virtual string ClassArg // LUCENENET TODO: Change to GetClassArg()
+        public virtual string GetClassArg()
         {
-            get
+            if (null != originalArgs)
             {
-                if (null != originalArgs)
+                string className = originalArgs[CLASS_NAME];
+                if (null != className)
                 {
-                    string className = originalArgs[CLASS_NAME];
-                    if (null != className)
-                    {
-                        return className;
-                    }
+                    return className;
                 }
-                return this.GetType().Name;
             }
+            return this.GetType().Name;
         }
 
         public virtual bool IsExplicitLuceneMatchVersion { get; set; }
