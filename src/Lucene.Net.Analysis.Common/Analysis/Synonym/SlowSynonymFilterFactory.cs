@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.Util;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using Lucene.Net.Analysis.Util;
-using Lucene.Net.Analysis.TokenAttributes;
-using System.Reflection;
-using System.Globalization;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -30,17 +26,18 @@ namespace Lucene.Net.Analysis.Synonym
 	 */
 
     /// <summary>
-    /// Factory for <see cref="SlowSynonymFilter"/> (only used with luceneMatchVersion < 3.4)
-    /// <pre class="prettyprint" >
+    /// Factory for <see cref="SlowSynonymFilter"/> (only used with luceneMatchVersion &lt; 3.4)
+    /// <code>
     /// &lt;fieldType name="text_synonym" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="false"
     ///             expand="true" tokenizerFactory="solr.WhitespaceTokenizerFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</code> </summary>
-    /// @deprecated (3.4) use <see cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
-    [Obsolete("(3.4) use <seealso cref=\"SynonymFilterFactory\"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
+    /// &lt;/fieldType&gt;</code>
+    /// </summary>
+    /// @deprecated (3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
+    [Obsolete("(3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
     internal sealed class SlowSynonymFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
         private readonly string synonyms;
@@ -49,7 +46,8 @@ namespace Lucene.Net.Analysis.Synonym
         private readonly string tf;
         private readonly IDictionary<string, string> tokArgs = new Dictionary<string, string>();
 
-        public SlowSynonymFilterFactory(IDictionary<string, string> args) : base(args)
+        public SlowSynonymFilterFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             synonyms = Require(args, "synonyms");
             ignoreCase = GetBoolean(args, "ignoreCase", false);
@@ -89,7 +87,7 @@ namespace Lucene.Net.Analysis.Synonym
         }
 
         /// <returns> a list of all rules </returns>
-        internal IEnumerable<string> LoadRules(string synonyms, IResourceLoader loader)
+        private IEnumerable<string> LoadRules(string synonyms, IResourceLoader loader)
         {
             List<string> wlist = null;
             if (File.Exists(synonyms))
@@ -303,12 +301,10 @@ namespace Lucene.Net.Analysis.Synonym
 
         /// <summary>
         /// Splits a backslash escaped string on the separator.
-        /// <para>
+        /// <para/>
         /// Current backslash escaping supported:
-        /// <br> \n \t \r \b \f are escaped the same as a Java String
-        /// <br> Other characters following a backslash are produced verbatim (\c => c)
-        /// 
-        /// </para>
+        /// <para/> \n \t \r \b \f are escaped the same as a .NET string
+        /// <para/> Other characters following a backslash are produced verbatim (\c => c)
         /// </summary>
         /// <param name="s">  the string to split </param>
         /// <param name="separator"> the separator to split on </param>

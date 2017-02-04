@@ -25,36 +25,39 @@ namespace Lucene.Net.Analysis.Synonym
 
     /// <summary>
     /// Parser for the Solr synonyms format.
-    /// <ol>
-    ///   <li> Blank lines and lines starting with '#' are comments.
-    ///   <li> Explicit mappings match any token sequence on the LHS of "=>"
-    ///        and replace with all alternatives on the RHS.  These types of mappings
-    ///        ignore the expand parameter in the constructor.
-    ///        Example:
-    ///        <blockquote>i-pod, i pod => ipod</blockquote>
-    ///   <li> Equivalent synonyms may be separated with commas and give
-    ///        no explicit mapping.  In this case the mapping behavior will
-    ///        be taken from the expand parameter in the constructor.  This allows
-    ///        the same synonym file to be used in different synonym handling strategies.
-    ///        Example:
-    ///        <blockquote>ipod, i-pod, i pod</blockquote>
-    /// 
-    ///   <li> Multiple synonym mapping entries are merged.
-    ///        Example:
-    ///        <blockquote>
-    ///         foo => foo bar<br>
-    ///         foo => baz<br><br>
-    ///         is equivalent to<br><br>
-    ///         foo => foo bar, baz
-    ///        </blockquote>
-    ///  </ol>
+    /// <list type="bullet">
+    ///     <item> Blank lines and lines starting with '#' are comments.</item>
+    ///     <item> Explicit mappings match any token sequence on the LHS of "=>"
+    ///         and replace with all alternatives on the RHS.  These types of mappings
+    ///         ignore the expand parameter in the constructor.
+    ///         Example:
+    ///         <code>i-pod, i pod => ipod</code>
+    ///     </item>
+    ///     <item> Equivalent synonyms may be separated with commas and give
+    ///         no explicit mapping.  In this case the mapping behavior will
+    ///         be taken from the expand parameter in the constructor.  This allows
+    ///         the same synonym file to be used in different synonym handling strategies.
+    ///         Example:
+    ///         <code>ipod, i-pod, i pod</code>
+    ///     </item>
+    ///     <item> Multiple synonym mapping entries are merged.
+    ///         Example:
+    ///         <code>
+    ///             foo => foo bar
+    ///             foo => baz
+    ///             is equivalent to
+    ///             foo => foo bar, baz
+    ///         </code>
+    ///     </item>
+    /// </list>
     /// @lucene.experimental
     /// </summary>
     public class SolrSynonymParser : SynonymMap.Parser
     {
         private readonly bool expand;
 
-        public SolrSynonymParser(bool dedup, bool expand, Analyzer analyzer) : base(dedup, analyzer)
+        public SolrSynonymParser(bool dedup, bool expand, Analyzer analyzer) 
+            : base(dedup, analyzer)
         {
             this.expand = expand;
         }

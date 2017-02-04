@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using System;
 using System.IO;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -33,7 +33,8 @@ namespace Lucene.Net.Analysis.Synonym
     {
         private readonly bool expand;
 
-        public WordnetSynonymParser(bool dedup, bool expand, Analyzer analyzer) : base(dedup, analyzer)
+        public WordnetSynonymParser(bool dedup, bool expand, Analyzer analyzer) 
+            : base(dedup, analyzer)
         {
             this.expand = expand;
         }

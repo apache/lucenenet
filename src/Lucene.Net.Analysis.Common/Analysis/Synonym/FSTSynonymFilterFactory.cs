@@ -3,9 +3,7 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -29,7 +27,7 @@ namespace Lucene.Net.Analysis.Synonym
      */
     internal sealed class FSTSynonymFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
-        internal readonly bool ignoreCase;
+        private readonly bool ignoreCase;
         private readonly string tokenizerFactory;
         private readonly string synonyms;
         private readonly string format;
@@ -38,7 +36,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         private SynonymMap map;
 
-        [Obsolete(@"(3.4) use <see cref=""SynonymFilterFactory"" instead. this is only a backwards compatibility")]
+        [Obsolete(@"(3.4) use SynonymFilterFactory instead. this is only a backwards compatibility")]
         public FSTSynonymFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

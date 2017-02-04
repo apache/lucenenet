@@ -27,7 +27,8 @@ namespace Lucene.Net.Analysis.Synonym
      */
 
     /// <summary>
-    /// Mapping rules for use with <see cref="SlowSynonymFilter"/> </summary>
+    /// Mapping rules for use with <see cref="SlowSynonymFilter"/>
+    /// </summary>
     /// @deprecated (3.4) use <see cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
     [Obsolete("(3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
     internal class SlowSynonymMap
@@ -40,6 +41,7 @@ namespace Lucene.Net.Analysis.Synonym
             set { submap = value; }
         }
         private CharArrayMap<SlowSynonymMap> submap;
+
         /// <summary>
         /// @lucene.internal </summary>
         [WritableArray]
@@ -58,6 +60,7 @@ namespace Lucene.Net.Analysis.Synonym
         public SlowSynonymMap()
         {
         }
+
         public SlowSynonymMap(bool ignoreCase)
         {
             if (ignoreCase)
@@ -70,9 +73,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             get
             {
-                {
-                    return (flags & INCLUDE_ORIG) != 0;
-                }
+                return (flags & INCLUDE_ORIG) != 0;
             }
         }
 
@@ -80,14 +81,12 @@ namespace Lucene.Net.Analysis.Synonym
         {
             get
             {
-                {
-                    return (flags & IGNORE_CASE) != 0;
-                }
+                return (flags & IGNORE_CASE) != 0;
             }
         }
 
-        /// <param name="singleMatch">  List<String>, the sequence of strings to match </param>
-        /// <param name="replacement">  List<Token> the list of tokens to use on a match </param>
+        /// <param name="singleMatch">  <see cref="IList{String}"/>, the sequence of strings to match </param>
+        /// <param name="replacement">  <see cref="IList{Token}"/> the list of tokens to use on a match </param>
         /// <param name="includeOrig">  sets a flag on this mapping signaling the generation of matched tokens in addition to the replacement tokens </param>
         /// <param name="mergeExisting"> merge the replacement tokens with any other mappings that exist </param>
         public virtual void Add(IList<string> singleMatch, IList<Token> replacement, bool includeOrig, bool mergeExisting)
@@ -125,7 +124,6 @@ namespace Lucene.Net.Analysis.Synonym
             }
         }
 
-
         public override string ToString()
         {
             var sb = new StringBuilder("<");
@@ -151,10 +149,9 @@ namespace Lucene.Net.Analysis.Synonym
             return sb.ToString();
         }
 
-
-
         /// <summary>
-        /// Produces a List<Token> from a List<String> </summary>
+        /// Produces a <see cref="IList{Token}"/> from a <see cref="IList{String}"/>
+        /// </summary>
         public static IList<Token> MakeTokens(IList<string> strings)
         {
             IList<Token> ret = new List<Token>(strings.Count);
@@ -174,7 +171,6 @@ namespace Lucene.Net.Analysis.Synonym
         /// 
         /// Example:  [a b] merged with [c d] produces [a/b c/d]  ('/' denotes tokens in the same position)
         /// Example:  [a,5 b,2] merged with [c d,4 e,4] produces [c a,5/d b,2 e,2]  (a,n means a has posInc=n)
-        /// 
         /// </summary>
         public static IList<Token> MergeTokens(IList<Token> lst1, IList<Token> lst2)
         {

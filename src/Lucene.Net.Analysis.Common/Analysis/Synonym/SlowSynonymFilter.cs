@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Synonym
 	 */
 
     /// <summary>
-    /// SynonymFilter handles multi-token synonyms with variable position increment offsets.
+    /// <see cref="SynonymFilter"/> handles multi-token synonyms with variable position increment offsets.
     /// <para>
     /// The matched tokens from the input stream may be optionally passed through (includeOrig=true)
     /// or discarded.  If the original tokens are included, the position increments may be modified
@@ -33,15 +33,15 @@ namespace Lucene.Net.Analysis.Synonym
     /// Generated synonyms will start at the same position as the first matched source token.
     /// </para>
     /// </summary>
-    /// @deprecated (3.4) use <see cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
-    [Obsolete("(3.4) use <seealso cref=\"SynonymFilterFactory\"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
+    /// @deprecated (3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
+    [Obsolete("(3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
     internal sealed class SlowSynonymFilter : TokenFilter
     {
-
         private readonly SlowSynonymMap map; // Map<String, SynonymMap>
         private IEnumerator<AttributeSource> replacement; // iterator over generated tokens
 
-        public SlowSynonymFilter(TokenStream @in, SlowSynonymMap map) : base(@in)
+        public SlowSynonymFilter(TokenStream @in, SlowSynonymMap map) 
+            : base(@in)
         {
             if (map == null)
             {

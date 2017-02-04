@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Synonym
         /// <summary>
         /// Builds an FSTSynonymMap.
         /// <para>
-        /// Call add() until you have added all the mappings, then call build() to get an FSTSynonymMap
+        /// Call <see cref="Add(CharsRef, CharsRef, bool)"/> until you have added all the mappings, then call <see cref="Build"/> to get an FSTSynonymMap
         /// @lucene.experimental
         /// </para>
         /// </summary>
@@ -100,9 +100,9 @@ namespace Lucene.Net.Analysis.Synonym
             }
 
             /// <summary>
-            /// Sugar: just joins the provided terms with {@link
-            ///  SynonymMap#WORD_SEPARATOR}.  reuse and its chars
-            ///  must not be null. 
+            /// Sugar: just joins the provided terms with 
+            /// <see cref="SynonymMap.WORD_SEPARATOR"/>. reuse and its chars
+            /// must not be null. 
             /// </summary>
             public static CharsRef Join(string[] words, CharsRef reuse)
             {
@@ -339,8 +339,7 @@ namespace Lucene.Net.Analysis.Synonym
         /// </summary>
         public abstract class Parser : Builder
         {
-
-            internal readonly Analyzer analyzer;
+            private readonly Analyzer analyzer;
 
             public Parser(bool dedup, Analyzer analyzer) 
                 : base(dedup)
@@ -355,8 +354,8 @@ namespace Lucene.Net.Analysis.Synonym
 
             /// <summary>
             /// Sugar: analyzes the text with the analyzer and
-            ///  separates by <see cref="SynonymMap#WORD_SEPARATOR"/>.
-            ///  reuse and its chars must not be null. 
+            /// separates by <see cref="SynonymMap.WORD_SEPARATOR"/>.
+            /// reuse and its chars must not be null. 
             /// </summary>
             public virtual CharsRef Analyze(string text, CharsRef reuse)
             {

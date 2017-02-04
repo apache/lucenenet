@@ -1,10 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
+using System;
+using System.Diagnostics;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -36,14 +36,14 @@ namespace Lucene.Net.Analysis.Synonym
     /// starting the earliest and parsing the most tokens wins.
     /// For example if you have these rules:
     ///      
-    /// <pre>
+    /// <code>
     ///   a -> x
     ///   a b -> y
     ///   b c d -> z
     /// </code>
     /// 
-    /// Then input <code>a b c d e</code> parses to <code>y b c
-    /// d</code>, ie the 2nd rule "wins" because it started
+    /// Then input <c>a b c d e</c> parses to <c>y b c
+    /// d</c>, ie the 2nd rule "wins" because it started
     /// earliest and matched the most input tokens of other rules
     /// starting at that point.</para>
     /// 
@@ -56,14 +56,14 @@ namespace Lucene.Net.Analysis.Synonym
     /// <para><b>NOTE</b>: when a match occurs, the output tokens
     /// associated with the matching rule are "stacked" on top of
     /// the input stream (if the rule had
-    /// <code>keepOrig=true</code>) and also on top of another
+    /// <c>keepOrig=true</c>) and also on top of another
     /// matched rule's output tokens.  This is not a correct
     /// solution, as really the output should be an arbitrary
     /// graph/lattice.  For example, with the above match, you
-    /// would expect an exact <code>PhraseQuery</code> <code>"y b
-    /// c"</code> to match the parsed tokens, but it will fail to
+    /// would expect an exact <see cref="Search.PhraseQuery"/> <c>"y b
+    /// c"</c> to match the parsed tokens, but it will fail to
     /// do so.  This limitation is necessary because Lucene's
-    /// TokenStream (and index) cannot yet represent an arbitrary
+    /// <see cref="TokenStream"/> (and index) cannot yet represent an arbitrary
     /// graph.</para>
     /// 
     /// <para><b>NOTE</b>: If multiple incoming tokens arrive on the
@@ -95,7 +95,6 @@ namespace Lucene.Net.Analysis.Synonym
 
     public sealed class SynonymFilter : TokenFilter
     {
-
         public const string TYPE_SYNONYM = "SYNONYM";
 
         private readonly SynonymMap synonyms;
@@ -265,10 +264,11 @@ namespace Lucene.Net.Analysis.Synonym
 
         /// <param name="input"> input tokenstream </param>
         /// <param name="synonyms"> synonym map </param>
-        /// <param name="ignoreCase"> case-folds input for matching with <see cref="Character#toLowerCase(int)"/>.
+        /// <param name="ignoreCase"> case-folds input for matching with <see cref="Character.ToLowerCase(int)"/>.
         ///                   Note, if you set this to true, its your responsibility to lowercase
         ///                   the input entries when you create the <see cref="SynonymMap"/> </param>
-        public SynonymFilter(TokenStream input, SynonymMap synonyms, bool ignoreCase) : base(input)
+        public SynonymFilter(TokenStream input, SynonymMap synonyms, bool ignoreCase) 
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
