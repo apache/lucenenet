@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <summary>
     /// Efficient Lucene analyzer/tokenizer that preferably operates on a <see cref="string"/> rather than a
     /// <see cref="TextReader"/>, that can flexibly separate text into terms via a regular expression <see cref="Regex"/>
-    /// (with behaviour similar to <see cref="string.Split(string)"/>),
+    /// (with behaviour similar to <see cref="string.Split(string[], StringSplitOptions)"/>),
     /// and that combines the functionality of
     /// <see cref="LetterTokenizer"/>,
     /// <see cref="LowerCaseTokenizer"/>,
@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <para>
     /// If you are unsure how exactly a regular expression should look like, consider 
     /// prototyping by simply trying various expressions on some test texts via
-    /// <see cref="string.Split(char[])"/>. Once you are satisfied, give that regex to 
+    /// <see cref="string.Split(string[], StringSplitOptions)"/>. Once you are satisfied, give that regex to 
     /// <see cref="PatternAnalyzer"/>. Also see <a target="_blank" 
     /// href="http://www.regular-expressions.info/">Regular Expression Tutorial</a>.
     /// </para>

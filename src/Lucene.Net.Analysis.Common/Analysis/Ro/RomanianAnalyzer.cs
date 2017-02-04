@@ -81,6 +81,7 @@ namespace Lucene.Net.Analysis.Ro
         /// <summary>
         /// Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         public RomanianAnalyzer(LuceneVersion matchVersion)
             : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {

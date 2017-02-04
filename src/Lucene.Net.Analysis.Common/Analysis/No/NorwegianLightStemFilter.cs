@@ -38,13 +38,15 @@ namespace Lucene.Net.Analysis.No
         /// Calls <see cref="NorwegianLightStemFilter.NorwegianLightStemFilter(TokenStream, int)"/>
         /// - NorwegianLightStemFilter(input, BOKMAAL)
         /// </summary>
+        /// <param name="input"> the source <see cref="TokenStream"/> to filter </param>
         public NorwegianLightStemFilter(TokenStream input)
-              : this(input, NorwegianLightStemmer.BOKMAAL)
+            : this(input, NorwegianLightStemmer.BOKMAAL)
         {
         }
 
         /// <summary>
         /// Creates a new <see cref="NorwegianLightStemFilter"/> </summary>
+        /// <param name="input"> the source <see cref="TokenStream"/> to filter </param>
         /// <param name="flags"> set to <see cref="NorwegianLightStemmer.BOKMAAL"/>, 
         ///                     <see cref="NorwegianLightStemmer.NYNORSK"/>, or both. </param>
         public NorwegianLightStemFilter(TokenStream input, int flags) 

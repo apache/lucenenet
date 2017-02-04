@@ -73,6 +73,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// </summary>
         /// <param name="input"> <see cref="TokenStream"/> whose tokens will be stemmed </param>
         /// <param name="dictionary"> Hunspell <see cref="Dictionary"/> containing the affix rules and words that will be used to stem the tokens </param>
+        /// <param name="dedup"> remove duplicates </param>
         /// <param name="longestOnly"> true if only the longest term should be output. </param>
         public HunspellStemFilter(TokenStream input, Dictionary dictionary, bool dedup, bool longestOnly) 
             : base(input)

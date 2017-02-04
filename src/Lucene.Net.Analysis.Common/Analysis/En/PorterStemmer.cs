@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.En
     /// 
     /// The Stemmer class transforms a word into its root form.  The input
     /// word can be provided a character at time (by calling <see cref="Add"/>), or at once
-    /// by calling one of the various <see cref="Stem"/> methods.
+    /// by calling one of the various Stem methods, such as <see cref="Stem(string)"/>.
     /// </summary>
     internal class PorterStemmer
     {
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.En
 
         /// <summary>
         /// <see cref="Reset"/> resets the stemmer so it can stem another word.  If you invoke
-        /// the stemmer by calling <see cref="Add(char)"/> and then <see cref="Stem"/>, you must call <see cref="Reset"/>
+        /// the stemmer by calling <see cref="Add(char)"/> and then <see cref="Stem()"/>, you must call <see cref="Reset"/>
         /// before starting another word.
         /// </summary>
         public virtual void Reset()

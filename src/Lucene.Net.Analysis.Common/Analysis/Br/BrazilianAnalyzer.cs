@@ -112,6 +112,7 @@ namespace Lucene.Net.Analysis.Br
         ///          lucene compatibility version </param>
         /// <param name="stopwords">
         ///          a stopword set </param>
+        /// <param name="stemExclusionSet"> a set of terms not to be stemmed </param>
         public BrazilianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
               : this(matchVersion, stopwords)
         {

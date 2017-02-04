@@ -107,6 +107,8 @@ namespace Lucene.Net.Analysis.Cjk
         /// Calls <see cref="CJKBigramFilter.CJKBigramFilter(TokenStream, int)">
         ///       CJKBigramFilter(in, HAN | HIRAGANA | KATAKANA | HANGUL)</see>
         /// </summary>
+        /// <param name="in">
+        ///          Input <see cref="TokenStream"/> </param>
         public CJKBigramFilter(TokenStream @in)
               : this(@in, HAN | HIRAGANA | KATAKANA | HANGUL)
         {
@@ -116,6 +118,10 @@ namespace Lucene.Net.Analysis.Cjk
         /// Calls <see cref="CJKBigramFilter.CJKBigramFilter(TokenStream, int, bool)">
         ///       CJKBigramFilter(in, flags, false)</see>
         /// </summary>
+        /// <param name="in">
+        ///          Input <see cref="TokenStream"/> </param>
+        /// <param name="flags"> OR'ed set from <see cref="CJKBigramFilter.HAN"/>, <see cref="CJKBigramFilter.HIRAGANA"/>, 
+        ///        <see cref="CJKBigramFilter.KATAKANA"/>, <see cref="CJKBigramFilter.HANGUL"/> </param>
         public CJKBigramFilter(TokenStream @in, int flags)
               : this(@in, flags, false)
         {
@@ -124,6 +130,8 @@ namespace Lucene.Net.Analysis.Cjk
         /// <summary>
         /// Create a new <see cref="CJKBigramFilter"/>, specifying which writing systems should be bigrammed,
         /// and whether or not unigrams should also be output. </summary>
+        /// <param name="in">
+        ///          Input <see cref="TokenStream"/> </param>
         /// <param name="flags"> OR'ed set from <see cref="CJKBigramFilter.HAN"/>, <see cref="CJKBigramFilter.HIRAGANA"/>, 
         ///        <see cref="CJKBigramFilter.KATAKANA"/>, <see cref="CJKBigramFilter.HANGUL"/> </param>
         /// <param name="outputUnigrams"> true if unigrams for the selected writing systems should also be output.

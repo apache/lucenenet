@@ -1000,7 +1000,7 @@ namespace Lucene.Net.Analysis.El
         /// </summary>
         /// <param name="s"> A char[] array that represents a word. </param>
         /// <param name="len"> The length of the char[] array. </param>
-        /// <param name="suffix"> A <see cref="String"/> object to check if the word given ends with these characters. </param>
+        /// <param name="suffix"> A <see cref="string"/> object to check if the word given ends with these characters. </param>
         /// <returns> True if the word ends with the suffix given , false otherwise. </returns>
         private bool EndsWith(char[] s, int len, string suffix)
         {

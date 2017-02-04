@@ -125,6 +125,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// </summary>
         /// <param name="affix"> <see cref="Stream"/> for reading the hunspell affix file (won't be disposed). </param>
         /// <param name="dictionaries"> <see cref="Stream"/> for reading the hunspell dictionary files (won't be disposed). </param>
+        /// <param name="ignoreCase"> ignore case? </param>
         /// <exception cref="IOException"> Can be thrown while reading from the <see cref="Stream"/>s </exception>
         /// <exception cref="Exception"> Can be thrown if the content of the files does not meet expected formats </exception>
         public Dictionary(Stream affix, IList<Stream> dictionaries, bool ignoreCase)
@@ -399,6 +400,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <param name="conditionPattern"> <see cref="string.Format(string, object[])"/> pattern to be used to generate the condition regex
         ///                         pattern </param>
         /// <param name="seenPatterns"> map from condition -> index of patterns, for deduplication. </param>
+        /// <param name="seenStrips"></param>
         /// <exception cref="IOException"> Can be thrown while reading the rule </exception>
         private void ParseAffix(SortedDictionary<string, IList<char?>> affixes, string header, TextReader reader, string conditionPattern, IDictionary<string, int?> seenPatterns, IDictionary<string, int?> seenStrips)
         {
@@ -733,6 +735,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// </summary>
         /// <param name="dictionaries"> <see cref="Stream"/>s to read the dictionary file through </param>
         /// <param name="decoder"> <see cref="Encoding"/> used to decode the contents of the file </param>
+        /// <param name="words"></param>
         /// <exception cref="IOException"> Can be thrown while reading from the file </exception>
         private void ReadDictionaryFiles(IList<Stream> dictionaries, Encoding decoder, Builder<IntsRef> words)
         {

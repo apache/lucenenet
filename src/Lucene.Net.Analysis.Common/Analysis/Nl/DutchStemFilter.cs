@@ -50,13 +50,15 @@ namespace Lucene.Net.Analysis.Nl
         private readonly ICharTermAttribute termAtt;
         private readonly IKeywordAttribute keywordAttr;
 
+        /// <param name="in"> Input <see cref="TokenStream"/> </param>
         public DutchStemFilter(TokenStream @in)
-              : base(@in)
+            : base(@in)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();
         }
 
+        /// <param name="in"> Input <see cref="TokenStream"/> </param>
         /// <param name="stemdictionary"> Dictionary of word stem pairs, that overrule the algorithm </param>
         public DutchStemFilter(TokenStream @in, IDictionary<string, string> stemdictionary) 
             : this(@in)

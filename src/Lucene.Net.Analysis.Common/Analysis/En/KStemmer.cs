@@ -700,13 +700,13 @@ namespace Lucene.Net.Analysis.En
                      * common
                      */
 
-                    /// <summary>
-                    ///**
-                    /// YCS: this was the one place where lookup was not followed by return.
-                    /// So restructure it. if ((j>0)&&(lookup(word.toString())) &&
-                    /// !((word.CharAt(j) == 's') && (word.CharAt(j-1) == 's'))) return;
-                    /// ****
-                    /// </summary>
+
+                    //**
+                    // YCS: this was the one place where lookup was not followed by return.
+                    // So restructure it. if ((j>0)&&(lookup(word.toString())) &&
+                    // !((word.CharAt(j) == 's') && (word.CharAt(j-1) == 's'))) return;
+                    // ****
+
                     bool tryE = j > 0 && !((word.CharAt(j) == 's') && (word.CharAt(j - 1) == 's'));
                     if (tryE && Lookup())
                     {
@@ -1877,13 +1877,13 @@ namespace Lucene.Net.Analysis.En
         {
             get
             {
-                /// <summary>
-                ///*
-                /// if (!lookups.contains(word.toString())) { throw new
-                /// RuntimeException("didn't look up "+word.toString()+" prev="+prevLookup);
-                /// }
-                /// **
-                /// </summary>
+
+                //*
+                // if (!lookups.contains(word.toString())) { throw new
+                // RuntimeException("didn't look up "+word.toString()+" prev="+prevLookup);
+                // }
+                // **
+
                 // lookup();
                 return matchedEntry != null;
             }
@@ -1916,15 +1916,13 @@ namespace Lucene.Net.Analysis.En
                 return false;
             }
 
-            /// <summary>
-            ///*
-            /// caching off is normally faster if (cache == null) initializeStemHash();
-            /// 
-            /// // now check the cache, before we copy chars to "word" if (cache != null)
-            /// { String val = cache.get(term, 0, len); if (val != null) { if (val !=
-            /// SAME) { result = val; return true; } return false; } }
-            /// **
-            /// </summary>
+            //*
+            // caching off is normally faster if (cache == null) initializeStemHash();
+            // 
+            // // now check the cache, before we copy chars to "word" if (cache != null)
+            // { String val = cache.get(term, 0, len); if (val != null) { if (val !=
+            // SAME) { result = val; return true; } return false; } }
+            // **
 
             word.Reset();
             // allocate enough space so that an expansion is never needed
@@ -1942,11 +1940,11 @@ namespace Lucene.Net.Analysis.En
             }
 
             matchedEntry = null;
-            /// <summary>
-            ///*
-            /// lookups.clear(); lookups.add(word.toString());
-            /// **
-            /// </summary>
+
+            //*
+            // lookups.clear(); lookups.add(word.toString());
+            // **
+
 
             /*
              * This while loop will never be executed more than one time; it is here
@@ -2053,24 +2051,20 @@ namespace Lucene.Net.Analysis.En
                 result = entry.root; // may be null, which means that "word" is the stem
             }
 
-            /// <summary>
-            ///*
-            /// caching off is normally faster if (cache != null && cache.size() <
-            /// maxCacheSize) { char[] key = new char[len]; System.arraycopy(term, 0,
-            /// key, 0, len); if (result != null) { cache.put(key, result); } else {
-            /// cache.put(key, word.toString()); } }
-            /// **
-            /// </summary>
+            //*
+            // caching off is normally faster if (cache != null && cache.size() <
+            // maxCacheSize) { char[] key = new char[len]; System.arraycopy(term, 0,
+            // key, 0, len); if (result != null) { cache.put(key, result); } else {
+            // cache.put(key, word.toString()); } }
+            // **
 
-            /// <summary>
-            ///*
-            /// if (entry == null) { if (!word.toString().equals(new String(term,0,len)))
-            /// { System.out.println("CASE:" + word.toString() + "," + new
-            /// String(term,0,len));
-            /// 
-            /// } }
-            /// **
-            /// </summary>
+            //*
+            // if (entry == null) { if (!word.toString().equals(new String(term,0,len)))
+            // { System.out.println("CASE:" + word.toString() + "," + new
+            // String(term,0,len));
+            // 
+            // } }
+            // **
 
             // no entry matched means result is "word"
             return true;

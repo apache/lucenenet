@@ -223,7 +223,7 @@ namespace Lucene.Net.Analysis.Ngram // LUCENENET TODO: Change namespace, directo
                     // fill in remaining space
                     exhausted = !charUtils.Fill(charBuffer, m_input, buffer.Length - bufferEnd);
                     // convert to code points
-                    bufferEnd += charUtils.toCodePoints(charBuffer.Buffer, 0, charBuffer.Length, buffer, bufferEnd);
+                    bufferEnd += charUtils.ToCodePoints(charBuffer.Buffer, 0, charBuffer.Length, buffer, bufferEnd);
                 }
 
                 // should we go to the next offset?
@@ -250,7 +250,7 @@ namespace Lucene.Net.Analysis.Ngram // LUCENENET TODO: Change namespace, directo
                     continue;
                 }
 
-                int length = charUtils.toChars(buffer, bufferStart, gramSize, termAtt.Buffer, 0);
+                int length = charUtils.ToChars(buffer, bufferStart, gramSize, termAtt.Buffer, 0);
                 termAtt.Length = length;
                 posIncAtt.PositionIncrement = 1;
                 posLenAtt.PositionLength = 1;

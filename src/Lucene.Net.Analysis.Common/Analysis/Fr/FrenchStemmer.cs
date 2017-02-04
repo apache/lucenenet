@@ -472,6 +472,8 @@ namespace Lucene.Net.Analysis.Fr
         /// <param name="search"> the strings to search for suppression </param>
         /// <param name="prefix"> the prefix to add to the search string to test </param>
         /// <param name="without"> true if it will be deleted even without prefix found </param>
+        /// <param name="from"> the secondary source zone for search </param>
+        /// <param name="replace"> the replacement string </param>
         private void DeleteButSuffixFromElseReplace(string source, string[] search, string prefix, bool without, string from, string replace)
         {
             if (source != null)
