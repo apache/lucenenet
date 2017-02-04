@@ -243,9 +243,9 @@ namespace Lucene.Net.Analysis.Util
             m_len += s.Length;
         }
 
-        public virtual void Flush()
-        {
-        }
+        //public virtual void Flush() // LUCENENET specific - removed because this doesn't make much sense on a StringBuilder in .NET, and it is not used
+        //{
+        //}
 
         public void Reset()
         {
