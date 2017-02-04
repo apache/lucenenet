@@ -61,10 +61,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
             exhausted = false;
         }
 
-        public Token Token // LUCENENET TODO: Change to GetToken() and SetToken() (conversion)
+        public Token GetToken() // LUCENENET NOTE: These remain methods because they make a conversion of the value
         {
-            get { return (Token)singleToken.Clone(); }
-            set { this.singleToken = (Token)value.Clone(); }
+            return (Token)singleToken.Clone();
+        }
+
+        public void SetToken(Token token)
+        {
+            this.singleToken = (Token)token.Clone();
         }
     }
 }

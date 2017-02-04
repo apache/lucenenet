@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             assertFalse(ts.IncrementToken());
 
             token = new Token("hallo", 10, 20, "someType");
-            ts.Token = token;
+            ts.SetToken(token);
             ts.Reset();
 
             assertTrue(ts.IncrementToken());
