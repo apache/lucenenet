@@ -39,29 +39,23 @@ namespace Lucene.Net.Analysis.Tr
         private const int LATIN_SMALL_LETTER_I = '\u0069';
         private const int LATIN_SMALL_LETTER_DOTLESS_I = '\u0131';
         private const int COMBINING_DOT_ABOVE = '\u0307';
-
         private readonly ICharTermAttribute termAtt;
 
         /// <summary>
-        /// Create a new TurkishLowerCaseFilter, that normalizes Turkish token text 
+        /// Create a new <see cref="TurkishLowerCaseFilter"/>, that normalizes Turkish token text 
         /// to lower case.
         /// </summary>
-        /// <param name="in"> TokenStream to filter </param>
+        /// <param name="in"> <see cref="TokenStream"/> to filter </param>
         public TurkishLowerCaseFilter(TokenStream @in)
-              : base(@in)
+            : base(@in)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
         }
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             bool iOrAfter = false;
-            var cultureInfo = new CultureInfo("tr");
-#if NET451
-            Thread.CurrentThread.CurrentUICulture = cultureInfo;
-#else
-            CultureInfo.CurrentUICulture = cultureInfo;
-#endif
+
             if (m_input.IncrementToken())
             {
                 char[] buffer = termAtt.Buffer;
@@ -99,7 +93,7 @@ namespace Lucene.Net.Analysis.Tr
                         }
                     }
 
-                    using (var culture = new CultureContext("tr-TR"))
+                    using (var culture = new CultureContext("tr"))
                     {
                         switch (ch)
                         {
@@ -162,7 +156,7 @@ namespace Lucene.Net.Analysis.Tr
 
         /// <summary>
         /// delete a character in-place.
-        /// rarely happens, only if COMBINING_DOT_ABOVE is found after an i
+        /// rarely happens, only if <see cref="COMBINING_DOT_ABOVE"/> is found after an i
         /// </summary>
         private int Delete(char[] s, int pos, int len)
         {

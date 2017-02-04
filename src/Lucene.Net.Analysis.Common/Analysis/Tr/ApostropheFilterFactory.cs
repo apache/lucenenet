@@ -33,8 +33,10 @@ namespace Lucene.Net.Analysis.Tr
     /// </summary>
     public class ApostropheFilterFactory : TokenFilterFactory
     {
-
-        public ApostropheFilterFactory(IDictionary<string, string> args) : base(args)
+        /// <summary>
+        /// Creates a new <see cref="ApostropheFilterFactory"/> </summary>
+        public ApostropheFilterFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             if (args.Count > 0)
             {

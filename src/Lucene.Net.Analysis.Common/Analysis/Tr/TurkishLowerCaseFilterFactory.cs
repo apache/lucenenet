@@ -32,10 +32,10 @@ namespace Lucene.Net.Analysis.Tr
     /// </summary>
     public class TurkishLowerCaseFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
-
         /// <summary>
-        /// Creates a new TurkishLowerCaseFilterFactory </summary>
-        public TurkishLowerCaseFilterFactory(IDictionary<string, string> args) : base(args)
+        /// Creates a new <see cref="TurkishLowerCaseFilterFactory"/> </summary>
+        public TurkishLowerCaseFilterFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             if (args.Count > 0)
             {

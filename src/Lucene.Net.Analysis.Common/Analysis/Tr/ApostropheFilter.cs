@@ -31,16 +31,15 @@ namespace Lucene.Net.Analysis.Tr
     /// </summary>
     public sealed class ApostropheFilter : TokenFilter
     {
-
         private readonly ICharTermAttribute termAtt;
 
         public ApostropheFilter(TokenStream @in)
-              : base(@in)
+            : base(@in)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
         }
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             if (!m_input.IncrementToken())
             {
