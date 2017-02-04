@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -81,12 +82,46 @@ namespace Lucene.Net.Analysis.Util
             get { return m_buf.Length; }
         }
 
-        public virtual OpenStringBuilder Append(string csq) // LUCENENET TODO: Add overloads for ICharSequence and StringBuilder
+        public virtual OpenStringBuilder Append(ICharSequence csq) 
         {
             return Append(csq, 0, csq.Length);
         }
 
-        public virtual OpenStringBuilder Append(string csq, int start, int end) // LUCENENET TODO: Add overloads for ICharSequence and StringBuilder
+        public virtual OpenStringBuilder Append(ICharSequence csq, int start, int end)
+        {
+            Reserve(end - start);
+            for (int i = start; i < end; i++)
+            {
+                UnsafeWrite(csq[i]);
+            }
+            return this;
+        }
+
+        // LUCENENET specific - overload for string (more common in .NET than ICharSequence)
+        public virtual OpenStringBuilder Append(string csq)
+        {
+            return Append(csq, 0, csq.Length);
+        }
+
+        // LUCENENET specific - overload for string (more common in .NET than ICharSequence)
+        public virtual OpenStringBuilder Append(string csq, int start, int end)
+        {
+            Reserve(end - start);
+            for (int i = start; i < end; i++)
+            {
+                UnsafeWrite(csq[i]);
+            }
+            return this;
+        }
+
+        // LUCENENET specific - overload for StringBuilder
+        public virtual OpenStringBuilder Append(StringBuilder csq)
+        {
+            return Append(csq, 0, csq.Length);
+        }
+
+        // LUCENENET specific - overload for StringBuilder
+        public virtual OpenStringBuilder Append(StringBuilder csq, int start, int end)
         {
             Reserve(end - start);
             for (int i = start; i < end; i++)
