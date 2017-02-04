@@ -1,13 +1,12 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using Lucene.Net.Util;
-using Reader = System.IO.TextReader;
-using Version = Lucene.Net.Util.LuceneVersion;
+using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,6 +23,7 @@ namespace Lucene.Net.Analysis.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// <see cref="CharacterUtils"/> provides a unified interface to Character-related
     /// operations to implement backwards compatible character operations based on a
@@ -62,10 +62,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns the code point at the given index of the <see cref="CharSequence"/>.
+        /// Returns the code point at the given index of the <see cref="ICharSequence"/>.
         /// Depending on the <see cref="LuceneVersion"/> passed to
-        /// <see cref="CharacterUtils#getInstance(Version)"/> this method mimics the behavior
-        /// of <see cref="Character#codePointAt(char[], int)"/> as it would have been
+        /// <see cref="CharacterUtils.GetInstance(LuceneVersion)"/> this method mimics the behavior
+        /// of <c>Character.CodePointAt(char[], int)</c> as it would have been
         /// available on a Java 1.4 JVM or on a later virtual machine version.
         /// </summary>
         /// <param name="seq">
@@ -74,20 +74,21 @@ namespace Lucene.Net.Analysis.Util
         ///          the offset to the char values in the chars array to be converted
         /// </param>
         /// <returns> the Unicode code point at the given index </returns>
-        /// <exception cref="NullPointerException">
+        /// <exception cref="NullReferenceException">
         ///           - if the sequence is null. </exception>
-        /// <exception cref="IndexOutOfBoundsException">
+        /// <exception cref="IndexOutOfRangeException">
         ///           - if the value offset is negative or not less than the length of
         ///           the character sequence. </exception>
         public abstract int CodePointAt(string seq, int offset);
+
         public abstract int CodePointAt(ICharSequence seq, int offset);
 
         /// <summary>
         /// Returns the code point at the given index of the char array where only elements
         /// with index less than the limit are used.
         /// Depending on the <see cref="LuceneVersion"/> passed to
-        /// <see cref="CharacterUtils#getInstance(Version)"/> this method mimics the behavior
-        /// of <see cref="Character#codePointAt(char[], int)"/> as it would have been
+        /// <see cref="CharacterUtils.GetInstance(LuceneVersion)"/> this method mimics the behavior
+        /// of <c>Character.CodePointAt(char[], int)</c> as it would have been
         /// available on a Java 1.4 JVM or on a later virtual machine version.
         /// </summary>
         /// <param name="chars">
@@ -98,23 +99,23 @@ namespace Lucene.Net.Analysis.Util
         ///        codepoint.  
         /// </param>
         /// <returns> the Unicode code point at the given index </returns>
-        /// <exception cref="NullPointerException">
+        /// <exception cref="NullReferenceException">
         ///           - if the array is null. </exception>
-        /// <exception cref="IndexOutOfBoundsException">
+        /// <exception cref="IndexOutOfRangeException">
         ///           - if the value offset is negative or not less than the length of
         ///           the char array. </exception>
         public abstract int CodePointAt(char[] chars, int offset, int limit);
 
         /// <summary>
-        /// Return the number of characters in <code>seq</code>. </summary>
+        /// Return the number of characters in <paramref name="seq"/>. </summary>
         public abstract int CodePointCount(string seq);
 
         /// <summary>
-        /// Creates a new <see cref="CharacterBuffer"/> and allocates a <code>char[]</code>
+        /// Creates a new <see cref="CharacterBuffer"/> and allocates a <see cref="T:char[]"/>
         /// of the given bufferSize.
         /// </summary>
         /// <param name="bufferSize">
-        ///          the internal char buffer size, must be <code>&gt;= 2</code> </param>
+        ///          the internal char buffer size, must be <c>&gt;= 2</c> </param>
         /// <returns> a new <see cref="CharacterBuffer"/> instance. </returns>
         public static CharacterBuffer NewCharacterBuffer(int bufferSize)
         {
@@ -127,7 +128,7 @@ namespace Lucene.Net.Analysis.Util
 
 
         /// <summary>
-        /// Converts each unicode codepoint to lowerCase via <see cref="Character#toLowerCase(int)"/> starting 
+        /// Converts each unicode codepoint to lowerCase via <see cref="Character.ToLowerCase(int)"/> starting 
         /// at the given offset. </summary>
         /// <param name="buffer"> the char buffer to lowercase </param>
         /// <param name="offset"> the offset to start at </param>
@@ -145,7 +146,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Converts each unicode codepoint to UpperCase via <see cref="Character#toUpperCase(int)"/> starting 
+        /// Converts each unicode codepoint to UpperCase via <see cref="Character.ToUpperCase(int)"/> starting 
         /// at the given offset. </summary>
         /// <param name="buffer"> the char buffer to UPPERCASE </param>
         /// <param name="offset"> the offset to start at </param>
@@ -163,9 +164,9 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Converts a sequence of Java characters to a sequence of unicode code points. </summary>
+        /// Converts a sequence of .NET characters to a sequence of unicode code points. </summary>
         ///  <returns> the number of code points written to the destination buffer  </returns>
-        public int toCodePoints(char[] src, int srcOff, int srcLen, int[] dest, int destOff)
+        public int ToCodePoints(char[] src, int srcOff, int srcLen, int[] dest, int destOff)
         {
             if (srcLen < 0)
             {
@@ -183,9 +184,9 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Converts a sequence of unicode code points to a sequence of Java characters. </summary>
+        /// Converts a sequence of unicode code points to a sequence of .NET characters. </summary>
         ///  <returns> the number of chars written to the destination buffer  </returns>
-        public int toChars(int[] src, int srcOff, int srcLen, char[] dest, int destOff)
+        public int ToChars(int[] src, int srcOff, int srcLen, char[] dest, int destOff)
         {
             if (srcLen < 0)
             {
@@ -201,27 +202,27 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Fills the <see cref="CharacterBuffer"/> with characters read from the given
-        /// reader <see cref="Reader"/>. This method tries to read <code>numChars</code>
+        /// reader <see cref="TextReader"/>. This method tries to read <code>numChars</code>
         /// characters into the <see cref="CharacterBuffer"/>, each call to fill will start
-        /// filling the buffer from offset <code>0</code> up to <code>numChars</code>.
+        /// filling the buffer from offset <c>0</c> up to <paramref name="numChars"/>.
         /// In case code points can span across 2 java characters, this method may
-        /// only fill <code>numChars - 1</code> characters in order not to split in
+        /// only fill <c>numChars - 1</c> characters in order not to split in
         /// the middle of a surrogate pair, even if there are remaining characters in
-        /// the <see cref="Reader"/>.
+        /// the <see cref="TextReader"/>.
         /// <para>
         /// Depending on the <see cref="LuceneVersion"/> passed to
-        /// <see cref="CharacterUtils#getInstance(Version)"/> this method implements
+        /// <see cref="CharacterUtils.GetInstance(LuceneVersion)"/> this method implements
         /// supplementary character awareness when filling the given buffer. For all
-        /// <see cref="LuceneVersion"/> &gt; 3.0 <see cref="#fill(CharacterBuffer, Reader, int)"/> guarantees
+        /// <see cref="LuceneVersion"/> &gt; 3.0 <see cref="Fill(CharacterBuffer, TextReader, int)"/> guarantees
         /// that the given <see cref="CharacterBuffer"/> will never contain a high surrogate
         /// character as the last element in the buffer unless it is the last available
         /// character in the reader. In other words, high and low surrogate pairs will
         /// always be preserved across buffer boarders.
         /// </para>
         /// <para>
-        /// A return value of <code>false</code> means that this method call exhausted
+        /// A return value of <c>false</c> means that this method call exhausted
         /// the reader, but there may be some bytes which have been read, which can be
-        /// verified by checking whether <code>buffer.getLength() &gt; 0</code>.
+        /// verified by checking whether <c>buffer.Length &gt; 0</c>.
         /// </para>
         /// </summary>
         /// <param name="buffer">
@@ -233,22 +234,22 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> <code>false</code> if and only if reader.read returned -1 while trying to fill the buffer </returns>
         /// <exception cref="IOException">
         ///           if the reader throws an <see cref="IOException"/>. </exception>
-        public abstract bool Fill(CharacterBuffer buffer, Reader reader, int numChars);
+        public abstract bool Fill(CharacterBuffer buffer, TextReader reader, int numChars);
 
         /// <summary>
-        /// Convenience method which calls <code>fill(buffer, reader, buffer.buffer.length)</code>. </summary>
-        public virtual bool Fill(CharacterBuffer buffer, Reader reader)
+        /// Convenience method which calls <c>Fill(buffer, reader, buffer.Buffer.Length)</c>. </summary>
+        public virtual bool Fill(CharacterBuffer buffer, TextReader reader)
         {
-            return Fill(buffer, reader, buffer.buffer.Length);
+            return Fill(buffer, reader, buffer.Buffer.Length);
         }
 
         /// <summary>
-        /// Return the index within <code>buf[start:start+count]</code> which is by <code>offset</code>
-        ///  code points from <code>index</code>. 
+        /// Return the index within <c>buf[start:start+count]</c> which is by <paramref name="offset"/>
+        /// code points from <paramref name="index"/>. 
         /// </summary>
         public abstract int OffsetByCodePoints(char[] buf, int start, int count, int index, int offset);
 
-        internal static int ReadFully(Reader reader, char[] dest, int offset, int len)
+        private static int ReadFully(TextReader reader, char[] dest, int offset, int len)
         {
             int read = 0;
             while (read < len)
@@ -276,17 +277,17 @@ namespace Lucene.Net.Analysis.Util
 
             public override int CodePointAt(char[] chars, int offset, int limit)
             {
-                return Character.CodePointAt(chars, offset, limit);
+                return Character.CodePointAt(chars, offset, limit); // LUCENENET TODO: This will throw a NullReferenceException if chars is null. Should this be an ArgumentNullException in .NET?
             }
 
-            public override bool Fill(CharacterBuffer buffer, Reader reader, int numChars)
+            public override bool Fill(CharacterBuffer buffer, TextReader reader, int numChars)
             {
-                Debug.Assert(buffer.buffer.Length >= 2);
-                if (numChars < 2 || numChars > buffer.buffer.Length)
+                Debug.Assert(buffer.Buffer.Length >= 2);
+                if (numChars < 2 || numChars > buffer.Buffer.Length)
                 {
                     throw new System.ArgumentException("numChars must be >= 2 and <= the buffer size");
                 }
-                char[] charBuffer = buffer.buffer;
+                char[] charBuffer = buffer.Buffer;
                 buffer.offset = 0;
                 int offset;
 
@@ -337,6 +338,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return seq[offset];
             }
+
             public override int CodePointAt(ICharSequence seq, int offset)
             {
                 return seq[offset];
@@ -348,18 +350,18 @@ namespace Lucene.Net.Analysis.Util
                 {
                     throw new System.IndexOutOfRangeException("offset must be less than limit");
                 }
-                return chars[offset];
+                return chars[offset]; // LUCENENET TODO: This will throw a NullReferenceException if chars is null. Should this be an ArgumentNullException in .NET?
             }
 
-            public override bool Fill(CharacterBuffer buffer, Reader reader, int numChars)
+            public override bool Fill(CharacterBuffer buffer, TextReader reader, int numChars)
             {
-                Debug.Assert(buffer.buffer.Length >= 1);
-                if (numChars < 1 || numChars > buffer.buffer.Length)
+                Debug.Assert(buffer.Buffer.Length >= 1);
+                if (numChars < 1 || numChars > buffer.Buffer.Length)
                 {
                     throw new System.ArgumentException("numChars must be >= 1 and <= the buffer size");
                 }
                 buffer.offset = 0;
-                int read = ReadFully(reader, buffer.buffer, 0, numChars);
+                int read = ReadFully(reader, buffer.Buffer, 0, numChars);
                 buffer.length = read;
                 buffer.lastTrailingHighSurrogate = (char)0;
                 return read == numChars;
@@ -379,17 +381,15 @@ namespace Lucene.Net.Analysis.Util
                 }
                 return result;
             }
-
         }
 
         /// <summary>
         /// A simple IO buffer to use with
-        /// <see cref="CharacterUtils#fill(CharacterBuffer, Reader)"/>.
+        /// <see cref="CharacterUtils.Fill(CharacterBuffer, TextReader)"/>.
         /// </summary>
         public sealed class CharacterBuffer
         {
-
-            internal readonly char[] buffer;
+            private readonly char[] buffer;
             internal int offset;
             internal int length;
             // NOTE: not private so outer class can access without
@@ -431,7 +431,7 @@ namespace Lucene.Net.Analysis.Util
 
             /// <summary>
             /// Return the length of the data in the internal buffer starting at
-            /// <see cref="#getOffset()"/>
+            /// <see cref="Offset"/>
             /// </summary>
             /// <returns> the length </returns>
             public int Length

@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Analysis.Core;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -32,11 +31,12 @@ namespace Lucene.Net.Analysis.Util
     /// <see cref="TokenFilterFactory"/> and <see cref="CharFilterFactory"/>.
     /// <para>
     /// The typical lifecycle for a factory consumer is:
-    /// <ol>
-    ///   <li>Create factory via its constructor (or via XXXFactory.forName)</li>
-    ///   <li>(Optional) If the factory uses resources such as files, <see cref="ResourceLoaderAware#inform(ResourceLoader)"/> is called to initialize those resources.</li>
-    ///   <li>Consumer calls create() to obtain instances.</li>
-    /// </ol>
+    /// <list type="bullet">
+    ///     <item>Create factory via its constructor (or via XXXFactory.ForName)</item>
+    ///     <item>(Optional) If the factory uses resources such as files, 
+    ///         <see cref="IResourceLoaderAware.Inform(IResourceLoader)"/> is called to initialize those resources.</item>
+    ///     <item>Consumer calls create() to obtain instances.</item>
+    /// </list>
     /// </para>
     /// </summary>
     public abstract class AbstractAnalysisFactory
@@ -49,14 +49,14 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// the luceneVersion arg </summary>
-        protected internal readonly LuceneVersion m_luceneMatchVersion;
+        protected readonly LuceneVersion m_luceneMatchVersion;
 
         /// <summary>
         /// Initialize this factory via a set of key-value pairs.
         /// </summary>
-        protected internal AbstractAnalysisFactory(IDictionary<string, string> args)
+        protected AbstractAnalysisFactory(IDictionary<string, string> args)
         {
-            ExplicitLuceneMatchVersion = false;
+            IsExplicitLuceneMatchVersion = false;
             originalArgs = Collections.UnmodifiableMap(args);
             string version = Get(args, LUCENE_MATCH_VERSION_PARAM);
             // LUCENENET TODO: What should we do if the version is null?
@@ -75,11 +75,11 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// this method can be called in the <see cref="TokenizerFactory#create(java.io.Reader)"/>
-        /// or <see cref="TokenFilterFactory#create(org.apache.lucene.analysis.TokenStream)"/> methods,
-        /// to inform user, that for this factory a <see cref="#luceneMatchVersion"/> is required 
+        /// this method can be called in the <see cref="TokenizerFactory.Create(TextReader)"/>
+        /// or <see cref="TokenFilterFactory.Create(TokenStream)"/> methods,
+        /// to inform user, that for this factory a <see cref="m_luceneMatchVersion"/> is required 
         /// </summary>
-        protected internal void AssureMatchVersion()
+        protected void AssureMatchVersion() // LUCENENET TODO: Remove this method (not used anyway in .NET)
         {
             // LUCENENET NOTE: since luceneMatchVersion can never be null in .NET,
             // this method effectively does nothing. However, leaving it in place because
@@ -148,14 +148,17 @@ namespace Lucene.Net.Analysis.Util
                 args.Remove(name);
             return s ?? defaultVal;
         }
+
         public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues)
         {
             return Get(args, name, allowedValues, null); // defaultVal = null
         }
+
         public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal)
         {
             return Get(args, name, allowedValues, defaultVal, true);
         }
+
         public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal, bool caseSensitive)
         {
             string s = null;
@@ -188,11 +191,12 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        protected internal int RequireInt(IDictionary<string, string> args, string name)
+        protected int RequireInt(IDictionary<string, string> args, string name)
         {
             return int.Parse(Require(args, name));
         }
-        protected internal int GetInt(IDictionary<string, string> args, string name, int defaultVal)
+
+        protected int GetInt(IDictionary<string, string> args, string name, int defaultVal)
         {
             string s;
             if (args.TryGetValue(name, out s))
@@ -203,11 +207,12 @@ namespace Lucene.Net.Analysis.Util
             return defaultVal;
         }
 
-        protected internal bool RequireBoolean(IDictionary<string, string> args, string name)
+        protected bool RequireBoolean(IDictionary<string, string> args, string name)
         {
             return bool.Parse(Require(args, name));
         }
-        protected internal bool GetBoolean(IDictionary<string, string> args, string name, bool defaultVal)
+
+        protected bool GetBoolean(IDictionary<string, string> args, string name, bool defaultVal)
         {
             string s;
             if (args.TryGetValue(name, out s))
@@ -218,11 +223,12 @@ namespace Lucene.Net.Analysis.Util
             return defaultVal;
         }
 
-        protected internal float RequireFloat(IDictionary<string, string> args, string name)
+        protected float RequireFloat(IDictionary<string, string> args, string name)
         {
             return float.Parse(Require(args, name));
         }
-        protected internal float GetFloat(IDictionary<string, string> args, string name, float defaultVal)
+
+        protected float GetFloat(IDictionary<string, string> args, string name, float defaultVal)
         {
             string s;
             if (args.TryGetValue(name, out s))
@@ -237,6 +243,7 @@ namespace Lucene.Net.Analysis.Util
         {
             return Require(args, name)[0];
         }
+
         public virtual char GetChar(IDictionary<string, string> args, string name, char defaultVal)
         {
             string s;
@@ -284,9 +291,9 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Compiles a pattern for the value of the specified argument key <code>name</code> 
+        /// Compiles a pattern for the value of the specified argument key <paramref name="name"/> 
         /// </summary>
-        protected internal Regex GetPattern(IDictionary<string, string> args, string name)
+        protected Regex GetPattern(IDictionary<string, string> args, string name)
         {
             try
             {
@@ -302,7 +309,7 @@ namespace Lucene.Net.Analysis.Util
         /// Returns as <see cref="CharArraySet"/> from wordFiles, which
         /// can be a comma-separated list of filenames
         /// </summary>
-        protected internal CharArraySet GetWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)
+        protected CharArraySet GetWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)
         {
             AssureMatchVersion();
             IList<string> files = SplitFileNames(wordFiles);
@@ -324,16 +331,16 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Returns the resource's lines (with content treated as UTF-8)
         /// </summary>
-        protected internal IList<string> GetLines(IResourceLoader loader, string resource)
+        protected IList<string> GetLines(IResourceLoader loader, string resource)
         {
             return WordlistLoader.GetLines(loader.OpenResource(resource), Encoding.UTF8);
         }
 
         /// <summary>
-        /// same as <see cref="#getWordSet(ResourceLoader, String, boolean)"/>,
+        /// Same as <see cref="GetWordSet(IResourceLoader, string, bool)"/>,
         /// except the input is in snowball format. 
         /// </summary>
-        protected internal CharArraySet GetSnowballWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)
+        protected CharArraySet GetSnowballWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)
         {
             AssureMatchVersion();
             IList<string> files = SplitFileNames(wordFiles);
@@ -363,7 +370,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="fileNames"> the string containing file names </param>
         /// <returns> a list of file names with the escaping backslashed removed </returns>
-        protected internal IList<string> SplitFileNames(string fileNames)
+        protected IList<string> SplitFileNames(string fileNames)
         {
             if (fileNames == null)
             {
@@ -382,8 +389,8 @@ namespace Lucene.Net.Analysis.Util
         private const string CLASS_NAME = "class";
 
         /// <returns> the string used to specify the concrete class name in a serialized representation: the class arg.  
-        ///         If the concrete class name was not specified via a class arg, returns {@code getClass().getName()}. </returns>
-        public virtual string ClassArg
+        ///         If the concrete class name was not specified via a class arg, returns <c>GetType().Name</c>. </returns>
+        public virtual string ClassArg // LUCENENET TODO: Change to GetClassArg()
         {
             get
             {
@@ -399,6 +406,6 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        public virtual bool ExplicitLuceneMatchVersion { get; set; }
+        public virtual bool IsExplicitLuceneMatchVersion { get; set; }
     }
 }

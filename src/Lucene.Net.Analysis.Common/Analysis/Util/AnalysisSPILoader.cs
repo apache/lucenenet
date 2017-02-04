@@ -1,10 +1,7 @@
 ﻿using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Reflection;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -31,7 +28,6 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     internal sealed class AnalysisSPILoader<S> where S : AbstractAnalysisFactory
     {
-
         private volatile IDictionary<string, Type> services = Collections.EmptyMap<string, Type>();
         private readonly Type clazz = typeof(S);
         private readonly string[] suffixes;
@@ -49,14 +45,14 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Reloads the internal SPI list from the given <see cref="ClassLoader"/>.
+        /// Reloads the internal SPI list.
         /// Changes to the service list are visible after the method ends, all
-        /// iterators (<see cref="#iterator()"/>,...) stay consistent.
+        /// iterators (e.g, from <see cref="AvailableServices"/>,...) stay consistent.
         ///
-        /// <p><b>NOTE:</b> Only new service providers are added, existing ones are
+        /// <para/><b>NOTE:</b> Only new service providers are added, existing ones are
         /// never removed or replaced.
         ///
-        /// <p><em>this method is expensive and should only be called for discovery
+        /// <para/><em>this method is expensive and should only be called for discovery
         /// of new service providers on the given classpath/classloader!</em>
         /// </summary>
         public void Reload()

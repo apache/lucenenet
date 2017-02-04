@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Util
         private static int defaultExpectedLineLength = 80;
 
         /// <summary>
-        /// LUCENENET specific to throw an exception if the user calls Close() instead of Dispose()
+        /// LUCENENET specific to throw an exception if the user calls <see cref="Close()"/> instead of <see cref="TextReader.Dispose()"/>
         /// </summary>
         private bool isDisposing = false;
 

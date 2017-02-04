@@ -159,8 +159,8 @@ namespace Lucene.Net.Analysis.Util
             var o1 = TestUtil.NextInt(Random(), 0, Math.Min(5, orig.Length));
             var o2 = TestUtil.NextInt(Random(), 0, o1);
             var o3 = TestUtil.NextInt(Random(), 0, o1);
-            var codePointCount = charUtils.toCodePoints(orig, o1, orig.Length - o1, buf, o2);
-            var charCount = charUtils.toChars(buf, o2, codePointCount, restored, o3);
+            var codePointCount = charUtils.ToCodePoints(orig, o1, orig.Length - o1, buf, o2);
+            var charCount = charUtils.ToChars(buf, o2, codePointCount, restored, o3);
             assertEquals(orig.Length - o1, charCount);
             assertArrayEquals(Arrays.CopyOfRange(orig, o1, o1 + charCount), Arrays.CopyOfRange(restored, o3, o3 + charCount));
         }
