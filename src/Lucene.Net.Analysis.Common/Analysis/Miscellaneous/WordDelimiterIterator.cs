@@ -174,7 +174,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// This currently uses the type of the first character in the subword.
         /// </summary>
         /// <returns> type of the current word </returns>
-        internal int Type // LUCENENET TODO: Change to GetType()
+        internal int Type
         {
             get
             {
@@ -248,18 +248,15 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// Determines if the current word contains only one subword.  Note, it could be potentially surrounded by delimiters
         /// </summary>
         /// <returns> <c>true</c> if the current word contains only one subword, <c>false</c> otherwise </returns>
-        internal bool SingleWord // LUCENENET TODO: Change to IsSingleWord()
+        internal bool IsSingleWord() 
         {
-            get
+            if (hasFinalPossessive)
             {
-                if (hasFinalPossessive)
-                {
-                    return current == startBounds && end == endBounds - 2;
-                }
-                else
-                {
-                    return current == startBounds && end == endBounds;
-                }
+                return current == startBounds && end == endBounds - 2;
+            }
+            else
+            {
+                return current == startBounds && end == endBounds;
             }
         }
 

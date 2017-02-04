@@ -256,7 +256,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
 
                 // word surrounded by delimiters: always output
-                if (iterator.SingleWord)
+                if (iterator.IsSingleWord())
                 {
                     GeneratePart(true);
                     iterator.Next();
