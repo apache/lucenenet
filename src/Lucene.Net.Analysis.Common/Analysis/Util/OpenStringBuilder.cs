@@ -177,6 +177,13 @@ namespace Lucene.Net.Analysis.Util
             this.m_len += len;
         }
 
+        // LUCENENET specific overload for StringBuilder
+        public virtual void UnsafeWrite(StringBuilder b, int off, int len)
+        {
+            b.CopyTo(off, m_buf, this.m_len, len);
+            this.m_len += len;
+        }
+
         protected virtual void Resize(int len)
         {
             char[] newbuf = new char[Math.Max(m_buf.Length << 1, len)];
@@ -217,9 +224,16 @@ namespace Lucene.Net.Analysis.Util
             UnsafeWrite(b, off, len);
         }
 
-        public void Write(OpenStringBuilder arr) // LUCENENET TODO: Add overload for StringBuilder
+        public void Write(OpenStringBuilder arr)
         {
-            Write(arr.m_buf, 0, m_len);
+            Write(arr.m_buf, 0, arr.Length); // LUCENENET specific - changed to arr.m_len (original was just len - appears to be a bug)
+        }
+
+        // LUCENENET specific overload for StringBuilder
+        public void Write(StringBuilder arr)
+        {
+            Reserve(arr.Length);
+            UnsafeWrite(arr, 0, arr.Length);
         }
 
         public virtual void Write(string s)
