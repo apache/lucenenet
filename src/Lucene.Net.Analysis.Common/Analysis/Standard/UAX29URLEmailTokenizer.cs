@@ -1,11 +1,10 @@
-﻿using Lucene.Net.Analysis.Standard;
-using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Util;
-using System.IO;
-using Lucene.Net.Analysis.Standard.Std31;
+﻿using Lucene.Net.Analysis.Standard.Std31;
 using Lucene.Net.Analysis.Standard.Std34;
 using Lucene.Net.Analysis.Standard.Std36;
 using Lucene.Net.Analysis.Standard.Std40;
+using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Standard
 {
@@ -31,26 +30,25 @@ namespace Lucene.Net.Analysis.Standard
     /// algorithm, as specified in                 `
     /// <a href="http://unicode.org/reports/tr29/">Unicode Standard Annex #29</a> 
     /// URLs and email addresses are also tokenized according to the relevant RFCs.
-    /// <p/>
+    /// <para/>
     /// Tokens produced are of the following types:
-    /// <ul>
-    ///   <li>&lt;ALPHANUM&gt;: A sequence of alphabetic and numeric characters</li>
-    ///   <li>&lt;NUM&gt;: A number</li>
-    ///   <li>&lt;URL&gt;: A URL</li>
-    ///   <li>&lt;EMAIL&gt;: An email address</li>
-    ///   <li>&lt;SOUTHEAST_ASIAN&gt;: A sequence of characters from South and Southeast
-    ///       Asian languages, including Thai, Lao, Myanmar, and Khmer</li>
-    ///   <li>&lt;IDEOGRAPHIC&gt;: A single CJKV ideographic character</li>
-    ///   <li>&lt;HIRAGANA&gt;: A single hiragana character</li>
-    /// </ul>
-    /// <a name="version"/>
+    /// <list type="bullet">
+    ///     <item>&lt;ALPHANUM&gt;: A sequence of alphabetic and numeric characters</item>
+    ///     <item>&lt;NUM&gt;: A number</item>
+    ///     <item>&lt;URL&gt;: A URL</item>
+    ///     <item>&lt;EMAIL&gt;: An email address</item>
+    ///     <item>&lt;SOUTHEAST_ASIAN&gt;: A sequence of characters from South and Southeast
+    ///         Asian languages, including Thai, Lao, Myanmar, and Khmer</item>
+    ///     <item>&lt;IDEOGRAPHIC&gt;: A single CJKV ideographic character</item>
+    ///     <item>&lt;HIRAGANA&gt;: A single hiragana character</item>
+    /// </list>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
-    /// compatibility when creating UAX29URLEmailTokenizer:
-    /// <ul>
-    ///   <li> As of 3.4, Hiragana and Han characters are no longer wrongly split
-    ///   from their combining characters. If you use a previous version number,
-    ///   you get the exact broken behavior for backwards compatibility.
-    /// </ul>
+    /// compatibility when creating <see cref="UAX29URLEmailTokenizer"/>:
+    /// <list type="bullet">
+    ///     <item> As of 3.4, Hiragana and Han characters are no longer wrongly split
+    ///         from their combining characters. If you use a previous version number,
+    ///         you get the exact broken behavior for backwards compatibility.</item>
+    /// </list>
     /// </para>
     /// </summary>
     public sealed class UAX29URLEmailTokenizer : Tokenizer
@@ -71,7 +69,17 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// String token types that correspond to token type int constants </summary>
-        public static readonly string[] TOKEN_TYPES = new string[] { StandardTokenizer.TOKEN_TYPES[StandardTokenizer.ALPHANUM], StandardTokenizer.TOKEN_TYPES[StandardTokenizer.NUM], StandardTokenizer.TOKEN_TYPES[StandardTokenizer.SOUTHEAST_ASIAN], StandardTokenizer.TOKEN_TYPES[StandardTokenizer.IDEOGRAPHIC], StandardTokenizer.TOKEN_TYPES[StandardTokenizer.HIRAGANA], StandardTokenizer.TOKEN_TYPES[StandardTokenizer.KATAKANA], StandardTokenizer.TOKEN_TYPES[StandardTokenizer.HANGUL], "<URL>", "<EMAIL>" };
+        public static readonly string[] TOKEN_TYPES = new string[] {
+            StandardTokenizer.TOKEN_TYPES[StandardTokenizer.ALPHANUM],
+            StandardTokenizer.TOKEN_TYPES[StandardTokenizer.NUM],
+            StandardTokenizer.TOKEN_TYPES[StandardTokenizer.SOUTHEAST_ASIAN],
+            StandardTokenizer.TOKEN_TYPES[StandardTokenizer.IDEOGRAPHIC],
+            StandardTokenizer.TOKEN_TYPES[StandardTokenizer.HIRAGANA],
+            StandardTokenizer.TOKEN_TYPES[StandardTokenizer.KATAKANA],
+            StandardTokenizer.TOKEN_TYPES[StandardTokenizer.HANGUL],
+            "<URL>",
+            "<EMAIL>"
+        };
 
         private int skippedPositions;
 
@@ -99,9 +107,10 @@ namespace Lucene.Net.Analysis.Standard
 
 
         /// <summary>
-        /// Creates a new instance of the UAX29URLEmailTokenizer.  Attaches
-        /// the <code>input</code> to the newly created JFlex scanner.
+        /// Creates a new instance of the <see cref="UAX29URLEmailTokenizer"/>.  Attaches
+        /// the <paramref name="input"/> to the newly created JFlex scanner.
         /// </summary>
+        /// <param name="matchVersion"> Lucene compatibility version </param>
         /// <param name="input"> The input reader </param>
         public UAX29URLEmailTokenizer(LuceneVersion matchVersion, TextReader input)
             : base(input)
@@ -110,7 +119,7 @@ namespace Lucene.Net.Analysis.Standard
         }
 
         /// <summary>
-        /// Creates a new UAX29URLEmailTokenizer with a given <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/>
+        /// Creates a new <see cref="UAX29URLEmailTokenizer"/> with a given <see cref="AttributeSource.AttributeFactory"/>
         /// </summary>
         public UAX29URLEmailTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input)
             : base(factory, input)
@@ -119,7 +128,7 @@ namespace Lucene.Net.Analysis.Standard
         }
 
         /// <summary>
-        /// LUCENENET: This method was added in .NET to prevent having to repeat code in the constructors.
+        /// LUCENENET specific: This method was added in .NET to prevent having to repeat code in the constructors.
         /// </summary>
         /// <param name="matchVersion"></param>
         private void Init(LuceneVersion matchVersion)
@@ -165,7 +174,7 @@ namespace Lucene.Net.Analysis.Standard
         private IPositionIncrementAttribute posIncrAtt;
         private ITypeAttribute typeAtt;
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             ClearAttributes();
             skippedPositions = 0;
@@ -197,7 +206,7 @@ namespace Lucene.Net.Analysis.Standard
             }
         }
 
-        public override void End()
+        public override sealed void End()
         {
             base.End();
             // set final offset

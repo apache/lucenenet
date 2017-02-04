@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Standard
 {
@@ -32,9 +32,8 @@ namespace Lucene.Net.Analysis.Standard
     /// </summary>
     public class ClassicFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
-        /// Creates a new ClassicFilterFactory </summary>
+        /// Creates a new <see cref="ClassicFilterFactory"/> </summary>
         public ClassicFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

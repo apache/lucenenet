@@ -31,27 +31,27 @@ namespace Lucene.Net.Analysis.Standard.Std31
     [Obsolete("This class is only for exact backwards compatibility")]
     public sealed class StandardTokenizerImpl31 : IStandardTokenizerInterface
     {
-        /** This character denotes the end of file */
+        /// <summary>This character denotes the end of file</summary>
         public static readonly int YYEOF = -1;
 
-        /** initial size of the lookahead buffer */
+        /// <summary>initial size of the lookahead buffer</summary>
         private static readonly int ZZ_BUFFERSIZE = 4096;
 
-        /** lexical states */
+        /// <summary>lexical states</summary>
         public const int YYINITIAL = 0;
 
-        /**
-         * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
-         * ZZ_LEXSTATE[l+1] is the state in the DFA for the lexical state l
-         *                  at the beginning of a line
-         * l is of the form l = 2*k, k a non negative integer
-         */
+        /// <summary>
+        /// ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
+        /// ZZ_LEXSTATE[l+1] is the state in the DFA for the lexical state l
+        ///     at the beginning of a line
+        /// l is of the form l = 2*k, k a non negative integer
+        /// </summary>
         private static readonly int[] ZZ_LEXSTATE = { 0, 0 };
 
 
-        /** 
-         * Translates characters to character classes
-         */
+        /// <summary>
+        /// Translates characters to character classes
+        /// </summary>
         private const string ZZ_CMAP_PACKED =
             "\x0027\x0000\x0001\x0060\x0004\x0000\x0001\x005F\x0001\x0000\x0001\x0060\x0001\x0000\x000A\x005C\x0001\x005E\x0001\x005F" +
             "\x0005\x0000\x001A\x005A\x0004\x0000\x0001\x0061\x0001\x0000\x001A\x005A\x002F\x0000\x0001\x005A\x0002\x0000\x0001\x005B" +
@@ -187,14 +187,14 @@ namespace Lucene.Net.Analysis.Standard.Std31
             "\x000B\x0000\x0038\x005D\x0002\x005B\x001F\x0066\x0003\x0000\x0006\x0066\x0002\x0000\x0006\x0066\x0002\x0000\x0006\x0066" +
             "\x0002\x0000\x0003\x0066\x001C\x0000\x0003\x005B\x0004\x0000";
 
-        /** 
-         * Translates characters to character classes
-         */
+        /// <summary>
+        /// Translates characters to character classes
+        /// </summary>
         private static readonly char[] ZZ_CMAP = ZzUnpackCMap(ZZ_CMAP_PACKED);
 
-        /** 
-         * Translates DFA states to action switch labels.
-         */
+        /// <summary>
+        /// Translates DFA states to action switch labels.
+        /// </summary>
         private static readonly int[] ZZ_ACTION = ZzUnpackAction();
 
         private const string ZZ_ACTION_PACKED_0 =
@@ -225,9 +225,9 @@ namespace Lucene.Net.Analysis.Standard.Std31
         }
 
 
-        /** 
-         * Translates a state to a row index in the transition table
-         */
+        /// <summary>
+        /// Translates a state to a row index in the transition table
+        /// </summary>
         private static readonly int[] ZZ_ROWMAP = ZzUnpackRowMap();
 
         private const string ZZ_ROWMAP_PACKED_0 =
@@ -268,9 +268,9 @@ namespace Lucene.Net.Analysis.Standard.Std31
             return j;
         }
 
-        /** 
-         * The transition table of the DFA
-         */
+        /// <summary>
+        /// The transition table of the DFA
+        /// </summary>
         private static readonly int[] ZZ_TRANS = ZzUnpackTrans();
 
         private const string ZZ_TRANS_PACKED_0 =
@@ -615,9 +615,9 @@ namespace Lucene.Net.Analysis.Standard.Std31
             "Error: pushback value was too large"
         };
 
-        /**
-         * ZZ_ATTRIBUTE[aState] contains the attributes of state <code>aState</code>
-         */
+        /// <summary>
+        /// ZZ_ATTRIBUTE[aState] contains the attributes of state <c>aState</c>
+        /// </summary>
         private static readonly int[] ZZ_ATTRIBUTE = ZzUnpackAttribute();
 
         private const string ZZ_ATTRIBUTE_PACKED_0 =
@@ -646,73 +646,76 @@ namespace Lucene.Net.Analysis.Standard.Std31
             return j;
         }
 
-        /** the input device */
+        /// <summary>the input device</summary>
         private TextReader zzReader;
 
-        /** the current state of the DFA */
+        /// <summary>the current state of the DFA</summary>
         private int zzState;
 
-        /** the current lexical state */
+        /// <summary>the current lexical state</summary>
         private int zzLexicalState = YYINITIAL;
 
-        /** this buffer contains the current text to be matched and is
-            the source of the YyText() string */
+        /// <summary>
+        /// this buffer contains the current text to be matched and is
+        /// the source of the YyText() string
+        /// </summary>
         private char[] zzBuffer = new char[ZZ_BUFFERSIZE];
 
-        /** the textposition at the last accepting state */
+        /// <summary>the textposition at the last accepting state</summary>
         private int zzMarkedPos;
 
-        /** the current text position in the buffer */
+        /// <summary>the current text position in the buffer</summary>
         private int zzCurrentPos;
 
-        /** startRead marks the beginning of the YyText() string in the buffer */
+        /// <summary>startRead marks the beginning of the YyText string in the buffer</summary>
         private int zzStartRead;
 
-        /** endRead marks the last character in the buffer, that has been read
-            from input */
+        /// <summary>
+        /// endRead marks the last character in the buffer, that has been read
+        /// from input
+        /// </summary>
         private int zzEndRead;
 
-        /** number of newlines encountered up to the start of the matched text */
+        /// <summary>number of newlines encountered up to the start of the matched text</summary>
         private int yyline;
 
-        /** the number of characters up to the start of the matched text */
+        /// <summary>the number of characters up to the start of the matched text</summary>
         private int yyChar;
 
 #pragma warning disable 169, 414
-        /**
-         * the number of characters from the last newline up to the start of the 
-         * matched text
-         */
+
+        /// <summary>
+        /// the number of characters from the last newline up to the start of the 
+        /// matched text
+        /// </summary>
         private int yycolumn;
 
-        /** 
-         * zzAtBOL == true <=> the scanner is currently at the beginning of a line
-         */
+        /// <summary>zzAtBOL == true &lt;=&gt; the scanner is currently at the beginning of a line</summary>
         private bool zzAtBOL = true;
 
-        /** zzAtEOF == true <=> the scanner is at the EOF */
+        /// <summary>zzAtEOF == true &lt;=&gt; the scanner is at the EOF</summary>
         private bool zzAtEOF;
 
-        /** denotes if the user-EOF-code has already been executed */
+        /// <summary>denotes if the user-EOF-code has already been executed</summary>
         private bool zzEOFDone;
 
 #pragma warning disable 169, 414
 
         /* user code: */
-        /** Alphanumeric sequences */
+        /// <summary>Alphanumeric sequences</summary>
         public static readonly int WORD_TYPE = StandardTokenizer.ALPHANUM;
 
-        /** Numbers */
+        /// <summary>Numbers</summary>
         public static readonly int NUMERIC_TYPE = StandardTokenizer.NUM;
 
-        /**
-         * Chars in class \p{Line_Break = Complex_Context} are from South East Asian
-         * scripts (Thai, Lao, Myanmar, Khmer, etc.).  Sequences of these are kept 
-         * together as as a single token rather than broken up, because the logic
-         * required to break them at word boundaries is too complex for UAX#29.
-         * <p>
-         * See Unicode Line Breaking Algorithm: http://www.unicode.org/reports/tr14/#SA
-         */
+        /// <summary>
+        /// Chars in class \p{Line_Break = Complex_Context} are from South East Asian
+        /// scripts (Thai, Lao, Myanmar, Khmer, etc.).  Sequences of these are kept 
+        /// together as as a single token rather than broken up, because the logic
+        /// required to break them at word boundaries is too complex for UAX#29.
+        /// <para/>
+        /// See Unicode Line Breaking Algorithm: http://www.unicode.org/reports/tr14/#SA
+        /// </summary>
         public static readonly int SOUTH_EAST_ASIAN_TYPE = StandardTokenizer.SOUTHEAST_ASIAN;
 
         public static readonly int IDEOGRAPHIC_TYPE = StandardTokenizer.IDEOGRAPHIC;
@@ -728,32 +731,26 @@ namespace Lucene.Net.Analysis.Standard.Std31
             get { return yyChar; }
         }
 
-        /**
-         * Fills CharTermAttribute with the current token text.
-         */
+        /// <summary>Fills ICharTermAttribute with the current token text.</summary>
         public void GetText(ICharTermAttribute t)
         {
             t.CopyBuffer(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
         }
 
-
-        /**
-         * Creates a new scanner
-         *
-         * @param   in  the TextReader to read input from.
-         */
+        /// <summary>
+        /// Creates a new scanner
+        /// </summary>
+        /// <param name="in">the TextReader to read input from.</param>
         public StandardTokenizerImpl31(TextReader @in)
         {
             this.zzReader = @in;
         }
 
-
-        /** 
-         * Unpacks the compressed character translation table.
-         *
-         * @param packed   the packed character translation table
-         * @return         the unpacked character translation table
-         */
+        /// <summary>
+        /// Unpacks the compressed character translation table.
+        /// </summary>
+        /// <param name="packed">the packed character translation table</param>
+        /// <returns>the unpacked character translation table</returns>
         private static char[] ZzUnpackCMap(string packed)
         {
             char[] map = new char[0x10000];
@@ -768,14 +765,11 @@ namespace Lucene.Net.Analysis.Standard.Std31
             return map;
         }
 
-
-        /**
-         * Refills the input buffer.
-         *
-         * @return      <code>false</code>, iff there was new input.
-         * 
-         * @exception   java.io.IOException  if any I/O-Error occurs
-         */
+        /// <summary>
+        /// Refills the input buffer.
+        /// </summary>
+        /// <returns><c>false</c>, iff there was new input.</returns>
+        /// <exception cref="IOException">if any I/O-Error occurs</exception>
         private bool ZzRefill()
         {
 
@@ -831,9 +825,9 @@ namespace Lucene.Net.Analysis.Standard.Std31
         }
 
 
-        /**
-         * Closes the input stream.
-         */
+        /// <summary>
+        /// Disposes the input stream.
+        /// </summary>
         public void YyClose()
         {
             zzAtEOF = true;            /* indicate end of file */
@@ -843,19 +837,16 @@ namespace Lucene.Net.Analysis.Standard.Std31
                 zzReader.Dispose();
         }
 
-
-        /**
-         * Resets the scanner to read from a new input stream.
-         * Does not close the old reader.
-         *
-         * All internal variables are reset, the old input stream 
-         * <b>cannot</b> be reused (internal buffer is discarded and lost).
-         * Lexical state is set to <tt>ZZ_INITIAL</tt>.
-         *
-         * Internal scan buffer is resized down to its initial length, if it has grown.
-         *
-         * @param reader   the new input stream 
-         */
+        /// <summary>
+        /// Resets the scanner to read from a new input stream.
+        /// Does not close the old reader.
+        /// <para/>
+        /// All internal variables are reset, the old input stream 
+        /// <b>cannot</b> be reused (internal buffer is discarded and lost).
+        /// Lexical state is set to <see cref="YYINITIAL"/>.
+        /// Internal scan buffer is resized down to its initial length, if it has grown.
+        /// </summary>
+        /// <param name="reader">the new input stream </param>
         public void YyReset(TextReader reader)
         {
             zzReader = reader;
@@ -871,75 +862,69 @@ namespace Lucene.Net.Analysis.Standard.Std31
         }
 
 
-        /**
-         * Returns the current lexical state.
-         */
+        /// <summary>
+        /// Returns the current lexical state.
+        /// </summary>
         public int YyState
         {
             get { return zzLexicalState; }
         }
 
-
-        /**
-         * Enters a new lexical state
-         *
-         * @param newState the new lexical state
-         */
+        /// <summary>
+        /// Enters a new lexical state
+        /// </summary>
+        /// <param name="newState">the new lexical state</param>
         public void YyBegin(int newState)
         {
             zzLexicalState = newState;
         }
 
 
-        /**
-         * Returns the text matched by the current regular expression.
-         */
+        /// <summary>
+        /// Returns the text matched by the current regular expression.
+        /// </summary>
         public string YyText
         {
             get { return new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead); }
         }
 
-
-        /**
-         * Returns the character at position <tt>pos</tt> from the 
-         * matched text. 
-         * 
-         * It is equivalent to YyText().charAt(pos), but faster
-         *
-         * @param pos the position of the character to fetch. 
-         *            A value from 0 to YyLength()-1.
-         *
-         * @return the character at position pos
-         */
+        /// <summary>
+        /// Returns the character at position <paramref name="pos"/> from the 
+        /// matched text.
+        /// <para/>
+        /// It is equivalent to YyText[pos], but faster
+        /// </summary>
+        /// <param name="pos">
+        /// the position of the character to fetch.
+        /// A value from 0 to YyLength-1.
+        /// </param>
+        /// <returns>the character at position pos</returns>
         public char YyCharAt(int pos)
         {
             return zzBuffer[zzStartRead + pos];
         }
 
 
-        /**
-         * Returns the length of the matched text region.
-         */
+        /// <summary>
+        /// Returns the length of the matched text region.
+        /// </summary>
         public int YyLength
         {
             get { return zzMarkedPos - zzStartRead; }
         }
 
-
-        /**
-         * Reports an error that occured while scanning.
-         *
-         * In a wellformed scanner (no or only correct usage of 
-         * YyPushBack(int) and a match-all fallback rule) this method 
-         * will only be called with things that "Can't Possibly Happen".
-         * If this method is called, something is seriously wrong
-         * (e.g. a JFlex bug producing a faulty scanner etc.).
-         *
-         * Usual syntax/scanner level error handling should be done
-         * in error fallback rules.
-         *
-         * @param   errorCode  the code of the errormessage to display
-         */
+        /// <summary>
+        /// Reports an error that occured while scanning.
+        /// <para/>
+        /// In a wellformed scanner (no or only correct usage of 
+        /// YyPushBack(int) and a match-all fallback rule) this method 
+        /// will only be called with things that "Can't Possibly Happen".
+        /// If this method is called, something is seriously wrong
+        /// (e.g. a JFlex bug producing a faulty scanner etc.).
+        /// Usual syntax/scanner level error handling should be done
+        /// in error fallback rules.
+        /// </summary>
+        /// <param name="errorCode">the code of the errormessage to display</param>
         private void ZzScanError(int errorCode)
         {
             string message;
@@ -955,15 +940,15 @@ namespace Lucene.Net.Analysis.Standard.Std31
             throw new Exception(message);
         }
 
-
-        /**
-         * Pushes the specified amount of characters back into the input stream.
-         *
-         * They will be read again by then next call of the scanning method
-         *
-         * @param number  the number of characters to be read again.
-         *                This number must not be greater than YyLength()!
-         */
+        /// <summary>
+        /// Pushes the specified amount of characters back into the input stream.
+        /// <para/>
+        /// They will be read again by then next call of the scanning method
+        /// </summary>
+        /// <param name="number">
+        /// the number of characters to be read again.
+        /// This number must not be greater than YyLength!
+        /// </param>
         public void YyPushBack(int number)
         {
             if (number > YyLength)
@@ -972,14 +957,12 @@ namespace Lucene.Net.Analysis.Standard.Std31
             zzMarkedPos -= number;
         }
 
-
-        /**
-         * Resumes scanning until the next regular expression is matched,
-         * the end of input is encountered or an I/O-Error occurs.
-         *
-         * @return      the next token
-         * @exception   java.io.IOException  if any I/O-Error occurs
-         */
+        /// <summary>
+        /// Resumes scanning until the next regular expression is matched,
+        /// the end of input is encountered or an I/O-Error occurs.
+        /// </summary>
+        /// <returns>the next token</returns>
+        /// <exception cref="IOException">if any I/O-Error occurs</exception>
         public int GetNextToken()
         {
             int zzInput;

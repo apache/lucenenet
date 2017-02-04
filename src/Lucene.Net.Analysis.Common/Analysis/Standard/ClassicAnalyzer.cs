@@ -23,23 +23,22 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /// <summary>
-    /// Filters <see cref="ClassicTokenizer"/> with <see cref="ClassicFilter"/>, {@link
-    /// LowerCaseFilter} and <see cref="StopFilter"/>, using a list of
+    /// Filters <see cref="ClassicTokenizer"/> with <see cref="ClassicFilter"/>, 
+    /// <see cref="LowerCaseFilter"/> and <see cref="StopFilter"/>, using a list of
     /// English stop words.
     /// 
-    /// <a name="version"/>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
-    /// compatibility when creating ClassicAnalyzer:
-    /// <ul>
-    ///   <li> As of 3.1, StopFilter correctly handles Unicode 4.0
-    ///         supplementary characters in stopwords
-    ///   <li> As of 2.9, StopFilter preserves position
-    ///        increments
-    ///   <li> As of 2.4, Tokens incorrectly identified as acronyms
-    ///        are corrected (see <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1068</a>)
-    /// </ul>
+    /// compatibility when creating <see cref="ClassicAnalyzer"/>:
+    /// <list type="bullet">
+    ///     <item> As of 3.1, <see cref="StopFilter"/> correctly handles Unicode 4.0
+    ///         supplementary characters in stopwords</item>
+    ///     <item> As of 2.9, <see cref="StopFilter"/> preserves position
+    ///        increments</item>
+    ///     <item> As of 2.4, <see cref="Token"/>s incorrectly identified as acronyms
+    ///        are corrected (see <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1068</a>)</item>
+    /// </list>
     /// 
-    /// ClassicAnalyzer was named StandardAnalyzer in Lucene versions prior to 3.1. 
+    /// <see cref="ClassicAnalyzer"/> was named <see cref="StandardAnalyzer"/> in Lucene versions prior to 3.1. 
     /// As of 3.1, <see cref="StandardAnalyzer"/> implements Unicode text segmentation,
     /// as specified by UAX#29.
     /// </para>
@@ -60,8 +59,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// Builds an analyzer with the given stop words. </summary>
-        /// <param name="matchVersion"> Lucene version to match See {@link
-        /// <a href="#version">above</a>} </param>
+        /// <param name="matchVersion"> Lucene compatibility version - See <see cref="ClassicAnalyzer"/> </param>
         /// <param name="stopWords"> stop words  </param>
         public ClassicAnalyzer(LuceneVersion matchVersion, CharArraySet stopWords)
             : base(matchVersion, stopWords)
@@ -69,10 +67,9 @@ namespace Lucene.Net.Analysis.Standard
         }
 
         /// <summary>
-        /// Builds an analyzer with the default stop words ({@link
-        /// #STOP_WORDS_SET}). </summary>
-        /// <param name="matchVersion"> Lucene version to match See {@link
-        /// <a href="#version">above</a>} </param>
+        /// Builds an analyzer with the default stop words (<see cref="STOP_WORDS_SET"/>).
+        /// </summary>
+        /// <param name="matchVersion"> Lucene compatibility version - See <see cref="ClassicAnalyzer"/> </param>
         public ClassicAnalyzer(LuceneVersion matchVersion)
             : this(matchVersion, STOP_WORDS_SET)
         {
@@ -80,17 +77,16 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// Builds an analyzer with the stop words from the given reader. </summary>
-        /// <seealso cref= WordlistLoader#getWordSet(TextReader, Version) </seealso>
-        /// <param name="matchVersion"> Lucene version to match See {@link
-        /// <a href="#version">above</a>} </param>
-        /// <param name="stopwords"> TextReader to read stop words from  </param>
+        /// <seealso cref="WordlistLoader.GetWordSet(TextReader, LuceneVersion)"/>
+        /// <param name="matchVersion"> Lucene compatibility version - See <see cref="ClassicAnalyzer"/> </param>
+        /// <param name="stopwords"> <see cref="TextReader"/> to read stop words from  </param>
         public ClassicAnalyzer(LuceneVersion matchVersion, TextReader stopwords)
             : this(matchVersion, LoadStopwordSet(stopwords, matchVersion))
         {
         }
 
         /// <summary>
-        /// Set maximum allowed token length.  If a token is seen
+        /// Gets or sets maximum allowed token length.  If a token is seen
         /// that exceeds this length then it is discarded.  This
         /// setting only takes effect the next time tokenStream or
         /// tokenStream is called.
@@ -100,7 +96,6 @@ namespace Lucene.Net.Analysis.Standard
             set { maxTokenLength = value; }
             get { return maxTokenLength; }
         }
-
 
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {

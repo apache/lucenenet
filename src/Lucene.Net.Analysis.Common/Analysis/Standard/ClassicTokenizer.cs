@@ -22,29 +22,28 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /// <summary>
-    /// A grammar-based tokenizer constructed with JFlex
+    /// A grammar-based tokenizer constructed with JFlex (and then ported to .NET)
     /// 
     /// <para> This should be a good tokenizer for most European-language documents:
     /// 
-    /// <ul>
-    ///   <li>Splits words at punctuation characters, removing punctuation. However, a 
-    ///     dot that's not followed by whitespace is considered part of a token.
-    ///   <li>Splits words at hyphens, unless there's a number in the token, in which case
-    ///     the whole token is interpreted as a product number and is not split.
-    ///   <li>Recognizes email addresses and internet hostnames as one token.
-    /// </ul>
+    /// <list type="bullet">
+    ///     <item>Splits words at punctuation characters, removing punctuation. However, a 
+    ///         dot that's not followed by whitespace is considered part of a token.</item>
+    ///     <item>Splits words at hyphens, unless there's a number in the token, in which case
+    ///         the whole token is interpreted as a product number and is not split.</item>
+    ///     <item>Recognizes email addresses and internet hostnames as one token.</item>
+    /// </list>
     /// 
     /// </para>
     /// <para>Many applications have specific tokenizer needs.  If this tokenizer does
     /// not suit your application, please consider copying this source code
     /// directory to your project and maintaining your own grammar-based tokenizer.
     /// 
-    /// ClassicTokenizer was named StandardTokenizer in Lucene versions prior to 3.1.
+    /// <see cref="ClassicTokenizer"/> was named <see cref="StandardTokenizer"/> in Lucene versions prior to 3.1.
     /// As of 3.1, <see cref="StandardTokenizer"/> implements Unicode text segmentation,
     /// as specified by UAX#29.
     /// </para>
     /// </summary>
-
     public sealed class ClassicTokenizer : Tokenizer
     {
         /// <summary>
@@ -64,7 +63,17 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// String token types that correspond to token type int constants </summary>
-        public static readonly string[] TOKEN_TYPES = new string[] { "<ALPHANUM>", "<APOSTROPHE>", "<ACRONYM>", "<COMPANY>", "<EMAIL>", "<HOST>", "<NUM>", "<CJ>", "<ACRONYM_DEP>" };
+        public static readonly string[] TOKEN_TYPES = new string[] {
+            "<ALPHANUM>",
+            "<APOSTROPHE>",
+            "<ACRONYM>",
+            "<COMPANY>",
+            "<EMAIL>",
+            "<HOST>",
+            "<NUM>",
+            "<CJ>",
+            "<ACRONYM_DEP>"
+        };
 
         private int skippedPositions;
 
@@ -93,8 +102,9 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// Creates a new instance of the <see cref="ClassicTokenizer"/>.  Attaches
-        /// the <code>input</code> to the newly created JFlex scanner.
+        /// the <paramref name="input"/> to the newly created JFlex scanner.
         /// </summary>
+        /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="input"> The input reader
         /// 
         /// See http://issues.apache.org/jira/browse/LUCENE-1068 </param>
@@ -105,7 +115,7 @@ namespace Lucene.Net.Analysis.Standard
         }
 
         /// <summary>
-        /// Creates a new ClassicTokenizer with a given <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> 
+        /// Creates a new <see cref="ClassicTokenizer"/> with a given <see cref="AttributeSource.AttributeFactory"/> 
         /// </summary>
         public ClassicTokenizer(LuceneVersion matchVersion, AttributeFactory factory, Reader input)
             : base(factory, input)
@@ -128,12 +138,13 @@ namespace Lucene.Net.Analysis.Standard
         private IOffsetAttribute offsetAtt;
         private IPositionIncrementAttribute posIncrAtt;
         private ITypeAttribute typeAtt;
+        
         /*
          * (non-Javadoc)
          *
          * @see org.apache.lucene.analysis.TokenStream#next()
          */
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             ClearAttributes();
             skippedPositions = 0;
@@ -175,7 +186,7 @@ namespace Lucene.Net.Analysis.Standard
             }
         }
 
-        public override void End()
+        public override sealed void End()
         {
             base.End();
             // set final offset

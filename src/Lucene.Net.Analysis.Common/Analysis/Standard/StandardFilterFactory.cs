@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Standard
     public class StandardFilterFactory : TokenFilterFactory
     {
         /// <summary>
-        /// Creates a new StandardFilterFactory </summary>
+        /// Creates a new <see cref="StandardFilterFactory"/> </summary>
         public StandardFilterFactory(IDictionary<string, string> args)
             : base(args)
         {

@@ -23,21 +23,19 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /// <summary>
-    /// Filters <see cref="org.apache.lucene.analysis.standard.UAX29URLEmailTokenizer"/>
+    /// Filters <see cref="UAX29URLEmailTokenizer"/>
     /// with <see cref="StandardFilter"/>,
     /// <see cref="LowerCaseFilter"/> and
     /// <see cref="StopFilter"/>, using a list of
     /// English stop words.
     /// 
-    /// <a name="version"/>
     /// <para>
-    ///   You must specify the required <see cref="org.apache.lucene.util.Version"/>
-    ///   compatibility when creating UAX29URLEmailAnalyzer
+    ///   You must specify the required <see cref="LuceneVersion"/>
+    ///   compatibility when creating <see cref="UAX29URLEmailAnalyzer"/>
     /// </para>
     /// </summary>
     public sealed class UAX29URLEmailAnalyzer : StopwordAnalyzerBase
     {
-
         /// <summary>
         /// Default maximum allowed token length </summary>
         public const int DEFAULT_MAX_TOKEN_LENGTH = StandardAnalyzer.DEFAULT_MAX_TOKEN_LENGTH;
@@ -52,8 +50,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// Builds an analyzer with the given stop words. </summary>
-        /// <param name="matchVersion"> Lucene version to match See {@link
-        /// <a href="#version">above</a>} </param>
+        /// <param name="matchVersion"> Lucene version to match - See <see cref="UAX29URLEmailAnalyzer"/> </param>
         /// <param name="stopWords"> stop words  </param>
         public UAX29URLEmailAnalyzer(LuceneVersion matchVersion, CharArraySet stopWords)
             : base(matchVersion, stopWords)
@@ -61,10 +58,9 @@ namespace Lucene.Net.Analysis.Standard
         }
 
         /// <summary>
-        /// Builds an analyzer with the default stop words ({@link
-        /// #STOP_WORDS_SET}). </summary>
-        /// <param name="matchVersion"> Lucene version to match See {@link
-        /// <a href="#version">above</a>} </param>
+        /// Builds an analyzer with the default stop words (<see cref="STOP_WORDS_SET"/>.
+        /// </summary>
+        /// <param name="matchVersion"> Lucene version to match - See <see cref="UAX29URLEmailAnalyzer"/> </param>
         public UAX29URLEmailAnalyzer(LuceneVersion matchVersion)
             : this(matchVersion, STOP_WORDS_SET)
         {
@@ -72,10 +68,9 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// Builds an analyzer with the stop words from the given reader. </summary>
-        /// <seealso cref= org.apache.lucene.analysis.util.WordlistLoader#getWordSet(java.io.Reader, org.apache.lucene.util.Version) </seealso>
-        /// <param name="matchVersion"> Lucene version to match See {@link
-        /// <a href="#version">above</a>} </param>
-        /// <param name="stopwords"> TextReader to read stop words from  </param>
+        /// <seealso cref="WordlistLoader.GetWordSet(TextReader, LuceneVersion)"/>
+        /// <param name="matchVersion"> Lucene version to match - See <see cref="UAX29URLEmailAnalyzer"/> </param>
+        /// <param name="stopwords"> <see cref="TextReader"/> to read stop words from  </param>
         public UAX29URLEmailAnalyzer(LuceneVersion matchVersion, TextReader stopwords)
             : this(matchVersion, LoadStopwordSet(stopwords, matchVersion))
         {
@@ -92,7 +87,6 @@ namespace Lucene.Net.Analysis.Standard
             set { maxTokenLength = value; }
             get { return maxTokenLength; }
         }
-
 
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {

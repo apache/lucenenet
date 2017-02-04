@@ -29,12 +29,11 @@ namespace Lucene.Net.Analysis.Standard
 	
     */
     /// <summary>
-    /// This class implements the classic lucene StandardTokenizer up until 3.0 
+    /// This class implements the classic lucene <see cref="StandardTokenizer"/> up until 3.0 
     /// </summary>
 
     internal class ClassicTokenizerImpl : IStandardTokenizerInterface
     {
-
         /// <summary>
         /// This character denotes the end of file </summary>
         public static readonly int YYEOF = -1;
@@ -280,7 +279,7 @@ namespace Lucene.Net.Analysis.Standard
         };
 
         /// <summary>
-        /// ZZ_ATTRIBUTE[aState] contains the attributes of state <code>aState</code>
+        /// ZZ_ATTRIBUTE[aState] contains the attributes of state <c>aState</c>
         /// </summary>
         private static readonly int[] ZZ_ATTRIBUTE = ZzUnpackAttribute();
 
@@ -327,7 +326,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// this buffer contains the current text to be matched and is
-        ///    the source of the YyText() string 
+        ///    the source of the YyText string 
         /// </summary>
         private char[] zzBuffer = new char[ZZ_BUFFERSIZE];
 
@@ -340,7 +339,7 @@ namespace Lucene.Net.Analysis.Standard
         private int zzCurrentPos;
 
         /// <summary>
-        /// startRead marks the beginning of the YyText() string in the buffer </summary>
+        /// startRead marks the beginning of the YyText string in the buffer </summary>
         private int zzStartRead;
 
         /// <summary>
@@ -365,12 +364,12 @@ namespace Lucene.Net.Analysis.Standard
         private int yycolumn;
 
         /// <summary>
-        /// zzAtBOL == true <=> the scanner is currently at the beginning of a line
+        /// zzAtBOL == true &lt;=&gt; the scanner is currently at the beginning of a line
         /// </summary>
         private bool zzAtBOL = true;
 
         /// <summary>
-        /// zzAtEOF == true <=> the scanner is at the EOF </summary>
+        /// zzAtEOF == true &lt;=&gt; the scanner is at the EOF </summary>
         private bool zzAtEOF;
 
         /// <summary>
@@ -401,7 +400,7 @@ namespace Lucene.Net.Analysis.Standard
         }
 
         /// <summary>
-        /// Fills CharTermAttribute with the current token text.
+        /// Fills ICharTermAttribute with the current token text.
         /// </summary>
         public void GetText(ICharTermAttribute t)
         {
@@ -446,9 +445,9 @@ namespace Lucene.Net.Analysis.Standard
         /// <summary>
         /// Refills the input buffer.
         /// </summary>
-        /// <returns>      <code>false</code>, iff there was new input.
+        /// <returns>      <c>false</c>, iff there was new input.
         /// </returns>
-        /// <exception cref="java.io.IOException">  if any I/O-Error occurs </exception>
+        /// <exception cref="IOException">  if any I/O-Error occurs </exception>
         private bool ZzRefill()
         {
 
@@ -502,7 +501,7 @@ namespace Lucene.Net.Analysis.Standard
 
 
         /// <summary>
-        /// Closes the input stream.
+        /// Disposes the input stream.
         /// </summary>
         public void YyClose()
         {
@@ -519,11 +518,11 @@ namespace Lucene.Net.Analysis.Standard
         /// <summary>
         /// Resets the scanner to read from a new input stream.
         /// Does not close the old reader.
-        /// 
+        /// <para/>
         /// All internal variables are reset, the old input stream 
         /// <b>cannot</b> be reused (internal buffer is discarded and lost).
-        /// Lexical state is set to <tt>ZZ_INITIAL</tt>.
-        /// 
+        /// Lexical state is set to <see cref="YYINITIAL"/>.
+        /// <para/>
         /// Internal scan buffer is resized down to its initial length, if it has grown.
         /// </summary>
         /// <param name="reader">   the new input stream  </param>
@@ -576,10 +575,10 @@ namespace Lucene.Net.Analysis.Standard
         /// Returns the character at position <tt>pos</tt> from the 
         /// matched text. 
         /// 
-        /// It is equivalent to YyText().charAt(pos), but faster
+        /// It is equivalent to YyText[pos], but faster
         /// </summary>
         /// <param name="pos"> the position of the character to fetch. 
-        ///            A value from 0 to YyLength()-1.
+        ///            A value from 0 to YyLength-1.
         /// </param>
         /// <returns> the character at position pos </returns>
         public char YyCharAt(int pos)
@@ -599,13 +598,13 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// Reports an error that occured while scanning.
-        /// 
+        /// <para/>
         /// In a wellformed scanner (no or only correct usage of 
         /// YyPushBack(int) and a match-all fallback rule) this method 
         /// will only be called with things that "Can't Possibly Happen".
         /// If this method is called, something is seriously wrong
         /// (e.g. a JFlex bug producing a faulty scanner etc.).
-        /// 
+        /// <para/>
         /// Usual syntax/scanner level error handling should be done
         /// in error fallback rules.
         /// </summary>
@@ -632,7 +631,7 @@ namespace Lucene.Net.Analysis.Standard
         /// They will be read again by then next call of the scanning method
         /// </summary>
         /// <param name="number">  the number of characters to be read again.
-        ///                This number must not be greater than YyLength()! </param>
+        ///                This number must not be greater than YyLength! </param>
         public virtual void YyPushBack(int number)
         {
             if (number > YyLength)
@@ -649,7 +648,7 @@ namespace Lucene.Net.Analysis.Standard
         /// the end of input is encountered or an I/O-Error occurs.
         /// </summary>
         /// <returns>      the next token </returns>
-        /// <exception cref="java.io.IOException">  if any I/O-Error occurs </exception>
+        /// <exception cref="IOException">  if any I/O-Error occurs </exception>
         public virtual int GetNextToken()
         {
             int zzInput;

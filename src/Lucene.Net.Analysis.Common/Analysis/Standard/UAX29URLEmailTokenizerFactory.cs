@@ -1,8 +1,7 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.IO;
-using TokenizerFactory = Lucene.Net.Analysis.Util.TokenizerFactory;
-using System;
 
 namespace Lucene.Net.Analysis.Standard
 {
@@ -37,7 +36,7 @@ namespace Lucene.Net.Analysis.Standard
         private readonly int maxTokenLength;
 
         /// <summary>
-        /// Creates a new UAX29URLEmailTokenizerFactory </summary>
+        /// Creates a new <see cref="UAX29URLEmailTokenizerFactory"/> </summary>
         public UAX29URLEmailTokenizerFactory(IDictionary<string, string> args)
             : base(args)
         {

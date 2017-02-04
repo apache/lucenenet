@@ -26,23 +26,21 @@ namespace Lucene.Net.Analysis.Standard
     /// This class implements Word Break rules from the Unicode Text Segmentation 
     /// algorithm, as specified in 
     /// <a href="http://unicode.org/reports/tr29/">Unicode Standard Annex #29</a>. 
-    /// <p/>
+    /// <para/>
     /// Tokens produced are of the following types:
-    /// <ul>
-    ///   <li>&lt;ALPHANUM&gt;: A sequence of alphabetic and numeric characters</li>
-    ///   <li>&lt;NUM&gt;: A number</li>
-    ///   <li>&lt;SOUTHEAST_ASIAN&gt;: A sequence of characters from South and Southeast
-    ///       Asian languages, including Thai, Lao, Myanmar, and Khmer</li>
-    ///   <li>&lt;IDEOGRAPHIC&gt;: A single CJKV ideographic character</li>
-    ///   <li>&lt;HIRAGANA&gt;: A single hiragana character</li>
-    ///   <li>&lt;KATAKANA&gt;: A sequence of katakana characters</li>
-    ///   <li>&lt;HANGUL&gt;: A sequence of Hangul characters</li>
-    /// </ul>
+    /// <list type="bullet">
+    ///     <item>&lt;ALPHANUM&gt;: A sequence of alphabetic and numeric characters</item>
+    ///     <item>&lt;NUM&gt;: A number</item>
+    ///     <item>&lt;SOUTHEAST_ASIAN&gt;: A sequence of characters from South and Southeast
+    ///         Asian languages, including Thai, Lao, Myanmar, and Khmer</item>
+    ///     <item>&lt;IDEOGRAPHIC&gt;: A single CJKV ideographic character</item>
+    ///     <item>&lt;HIRAGANA&gt;: A single hiragana character</item>
+    ///     <item>&lt;KATAKANA&gt;: A sequence of katakana characters</item>
+    ///     <item>&lt;HANGUL&gt;: A sequence of Hangul characters</item>
+    /// </list>
     /// </summary>
-
     public sealed class StandardTokenizerImpl : IStandardTokenizerInterface
     {
-
         /// <summary>
         /// This character denotes the end of file </summary>
         public static readonly int YYEOF = -1;
@@ -952,12 +950,12 @@ namespace Lucene.Net.Analysis.Standard
         private int yycolumn;
 
         /// <summary>
-        /// zzAtBOL == true <=> the scanner is currently at the beginning of a line
+        /// zzAtBOL == true &lt;=&gt; the scanner is currently at the beginning of a line
         /// </summary>
         private bool zzAtBOL = true;
 
         /// <summary>
-        /// zzAtEOF == true <=> the scanner is at the EOF </summary>
+        /// zzAtEOF == true &lt;=&gt; the scanner is at the EOF </summary>
         private bool zzAtEOF;
 
         /// <summary>
@@ -1046,7 +1044,7 @@ namespace Lucene.Net.Analysis.Standard
         /// </summary>
         /// <returns>      <code>false</code>, iff there was new input.
         /// </returns>
-        /// <exception cref="java.io.IOException">  if any I/O-Error occurs </exception>
+        /// <exception cref="IOException">  if any I/O-Error occurs </exception>
         private bool ZzRefill()
         {
 
@@ -1100,7 +1098,7 @@ namespace Lucene.Net.Analysis.Standard
 
 
         /// <summary>
-        /// Closes the input stream.
+        /// Disposes the input stream.
         /// </summary>
         public void YyClose()
         {
@@ -1120,7 +1118,7 @@ namespace Lucene.Net.Analysis.Standard
         /// 
         /// All internal variables are reset, the old input stream 
         /// <b>cannot</b> be reused (internal buffer is discarded and lost).
-        /// Lexical state is set to <tt>ZZ_INITIAL</tt>.
+        /// Lexical state is set to <see cref="YYINITIAL"/>.
         /// 
         /// Internal scan buffer is resized down to its initial length, if it has grown.
         /// </summary>
@@ -1171,13 +1169,13 @@ namespace Lucene.Net.Analysis.Standard
 
 
         /// <summary>
-        /// Returns the character at position <tt>pos</tt> from the 
+        /// Returns the character at position <paramref name="pos"/> from the 
         /// matched text. 
         /// 
-        /// It is equivalent to YyText().charAt(pos), but faster
+        /// It is equivalent to YyText[pos], but faster
         /// </summary>
         /// <param name="pos"> the position of the character to fetch. 
-        ///            A value from 0 to YyLength()-1.
+        ///            A value from 0 to YyLength-1.
         /// </param>
         /// <returns> the character at position pos </returns>
         public char YyCharAt(int pos)
@@ -1197,13 +1195,13 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// Reports an error that occured while scanning.
-        /// 
+        /// <para/>
         /// In a wellformed scanner (no or only correct usage of 
         /// YyPushBack(int) and a match-all fallback rule) this method 
         /// will only be called with things that "Can't Possibly Happen".
         /// If this method is called, something is seriously wrong
         /// (e.g. a JFlex bug producing a faulty scanner etc.).
-        /// 
+        /// <para/>
         /// Usual syntax/scanner level error handling should be done
         /// in error fallback rules.
         /// </summary>
@@ -1230,7 +1228,7 @@ namespace Lucene.Net.Analysis.Standard
         /// They will be read again by then next call of the scanning method
         /// </summary>
         /// <param name="number">  the number of characters to be read again.
-        ///                This number must not be greater than YyLength()! </param>
+        ///                This number must not be greater than YyLength! </param>
         public void YyPushBack(int number)
         {
             if (number > YyLength)
@@ -1247,7 +1245,7 @@ namespace Lucene.Net.Analysis.Standard
         /// the end of input is encountered or an I/O-Error occurs.
         /// </summary>
         /// <returns>      the next token </returns>
-        /// <exception cref="java.io.IOException">  if any I/O-Error occurs </exception>
+        /// <exception cref="IOException">  if any I/O-Error occurs </exception>
         public int GetNextToken()
         {
             int zzInput;

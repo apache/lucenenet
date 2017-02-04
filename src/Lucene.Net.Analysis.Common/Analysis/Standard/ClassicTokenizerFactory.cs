@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Standard
         private readonly int maxTokenLength;
 
         /// <summary>
-        /// Creates a new ClassicTokenizerFactory </summary>
+        /// Creates a new <see cref="ClassicTokenizerFactory"/> </summary>
         public ClassicTokenizerFactory(IDictionary<string, string> args)
             : base(args)
         {

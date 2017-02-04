@@ -1,5 +1,5 @@
-﻿using System.IO;
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Standard
 {
@@ -26,12 +26,8 @@ namespace Lucene.Net.Analysis.Standard
     /// </summary>
     public interface IStandardTokenizerInterface
     {
-
         /// <summary>
-        /// This character denotes the end of file </summary>
-
-        /// <summary>
-        /// Copies the matched text into the CharTermAttribute
+        /// Copies the matched text into the <see cref="ICharTermAttribute"/>
         /// </summary>
         void GetText(ICharTermAttribute t);
 
@@ -43,10 +39,10 @@ namespace Lucene.Net.Analysis.Standard
         /// <summary>
         /// Resets the scanner to read from a new input stream.
         /// Does not close the old reader.
-        /// 
+        /// <para/>
         /// All internal variables are reset, the old input stream 
         /// <b>cannot</b> be reused (internal buffer is discarded and lost).
-        /// Lexical state is set to <tt>ZZ_INITIAL</tt>.
+        /// Lexical state is set to <c>YYINITIAL</c>.
         /// </summary>
         /// <param name="reader">   the new input stream  </param>
         void YyReset(TextReader reader);
@@ -60,15 +56,15 @@ namespace Lucene.Net.Analysis.Standard
         /// Resumes scanning until the next regular expression is matched,
         /// the end of input is encountered or an I/O-Error occurs.
         /// </summary>
-        /// <returns>      the next token, <see cref="#YYEOF"/> on end of stream </returns>
+        /// <returns>      the next token, <see cref="StandardTokenizerInterface_Fields.YYEOF"/> on end of stream </returns>
         /// <exception cref="IOException">  if any I/O-Error occurs </exception>
         int GetNextToken();
-
     }
 
-    public static class StandardTokenizerInterface_Fields
+    public static class StandardTokenizerInterface_Fields // LUCENENET TODO: Rename StandardTokenizerInterface (no longer collides with interface name)
     {
+        /// <summary>
+        /// This character denotes the end of file </summary>
         public const int YYEOF = -1;
     }
-
 }

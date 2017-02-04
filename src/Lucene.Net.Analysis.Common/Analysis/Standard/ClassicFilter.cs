@@ -18,14 +18,13 @@ namespace Lucene.Net.Analysis.Standard
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Normalizes tokens extracted with <see cref="ClassicTokenizer"/>. </summary>
-
     public class ClassicFilter : TokenFilter
     {
-
         /// <summary>
-        /// Construct filtering <i>in</i>. </summary>
+        /// Construct filtering <paramref name="in"/>. </summary>
         public ClassicFilter(TokenStream @in)
             : base(@in)
         {
@@ -42,7 +41,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// Returns the next token in the stream, or null at EOS.
-        /// <para>Removes <tt>'s</tt> from the end of words.
+        /// <para>Removes <c>'s</c> from the end of words.
         /// </para>
         /// <para>Removes dots from acronyms.
         /// </para>

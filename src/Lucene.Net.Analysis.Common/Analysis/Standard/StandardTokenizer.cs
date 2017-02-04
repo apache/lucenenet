@@ -1,12 +1,10 @@
 ﻿using Lucene.Net.Analysis.Standard.Std31;
 using Lucene.Net.Analysis.Standard.Std34;
-using Lucene.Net.Analysis.Standard.Std36;
 using Lucene.Net.Analysis.Standard.Std40;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
-using Reader = System.IO.TextReader;
-using Version = Lucene.Net.Util.LuceneVersion;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Standard
 {
@@ -39,21 +37,19 @@ namespace Lucene.Net.Analysis.Standard
     /// not suit your application, please consider copying this source code
     /// directory to your project and maintaining your own grammar-based tokenizer.
     /// 
-    /// <a name="version"/>
     /// </para>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
-    /// compatibility when creating StandardTokenizer:
-    /// <ul>
-    ///   <li> As of 3.4, Hiragana and Han characters are no longer wrongly split
-    ///   from their combining characters. If you use a previous version number,
-    ///   you get the exact broken behavior for backwards compatibility.
-    ///   <li> As of 3.1, StandardTokenizer implements Unicode text segmentation.
-    ///   If you use a previous version number, you get the exact behavior of
-    ///   <see cref="ClassicTokenizer"/> for backwards compatibility.
-    /// </ul>
+    /// compatibility when creating <see cref="StandardTokenizer"/>:
+    /// <list type="bullet">
+    ///     <item> As of 3.4, Hiragana and Han characters are no longer wrongly split
+    ///         from their combining characters. If you use a previous version number,
+    ///         you get the exact broken behavior for backwards compatibility.</item>
+    ///     <item> As of 3.1, StandardTokenizer implements Unicode text segmentation.
+    ///         If you use a previous version number, you get the exact behavior of
+    ///         <see cref="ClassicTokenizer"/> for backwards compatibility.</item>
+    /// </list>
     /// </para>
     /// </summary>
-
     public sealed class StandardTokenizer : Tokenizer
     {
         /// <summary>
@@ -91,7 +87,22 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// String token types that correspond to token type int constants </summary>
-        public static readonly string[] TOKEN_TYPES = { "<ALPHANUM>", "<APOSTROPHE>", "<ACRONYM>", "<COMPANY>", "<EMAIL>", "<HOST>", "<NUM>", "<CJ>", "<ACRONYM_DEP>", "<SOUTHEAST_ASIAN>", "<IDEOGRAPHIC>", "<HIRAGANA>", "<KATAKANA>", "<HANGUL>" };
+        public static readonly string[] TOKEN_TYPES = {
+            "<ALPHANUM>",
+            "<APOSTROPHE>",
+            "<ACRONYM>",
+            "<COMPANY>",
+            "<EMAIL>",
+            "<HOST>",
+            "<NUM>",
+            "<CJ>",
+            "<ACRONYM_DEP>",
+            "<SOUTHEAST_ASIAN>",
+            "<IDEOGRAPHIC>",
+            "<HIRAGANA>",
+            "<KATAKANA>",
+            "<HANGUL>"
+        };
 
         private int skippedPositions;
 
@@ -120,42 +131,43 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// Creates a new instance of the <see cref="StandardTokenizer"/>.  Attaches
-        /// the <code>input</code> to the newly created JFlex scanner.
+        /// the <paramref name="input"/> to the newly created JFlex-generated (then ported to .NET) scanner.
         /// </summary>
+        /// <param name="matchVersion"> Lucene compatibility version - See <see cref="StandardTokenizer"/> </param>
         /// <param name="input"> The input reader
         /// 
         /// See http://issues.apache.org/jira/browse/LUCENE-1068 </param>
-        public StandardTokenizer(Version matchVersion, Reader input)
+        public StandardTokenizer(LuceneVersion matchVersion, TextReader input)
             : base(input)
         {
             Init(matchVersion);
         }
 
         /// <summary>
-        /// Creates a new StandardTokenizer with a given <see cref="org.apache.lucene.util.AttributeSource.AttributeFactory"/> 
+        /// Creates a new <see cref="StandardTokenizer"/> with a given <see cref="AttributeSource.AttributeFactory"/> 
         /// </summary>
-        public StandardTokenizer(Version matchVersion, AttributeFactory factory, Reader input)
+        public StandardTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input)
             : base(factory, input)
         {
             Init(matchVersion);
         }
 
-        private void Init(Version matchVersion)
+        private void Init(LuceneVersion matchVersion)
         {
 #pragma warning disable 612, 618
-            if (matchVersion.OnOrAfter(Version.LUCENE_47))
+            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_47))
             {
                 this.scanner = new StandardTokenizerImpl(m_input);
             }
-            else if (matchVersion.OnOrAfter(Version.LUCENE_40))
+            else if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_40))
             {
                 this.scanner = new StandardTokenizerImpl40(m_input);
             }
-            else if (matchVersion.OnOrAfter(Version.LUCENE_34))
+            else if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_34))
             {
                 this.scanner = new StandardTokenizerImpl34(m_input);
             }
-            else if (matchVersion.OnOrAfter(Version.LUCENE_31))
+            else if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
             {
                 this.scanner = new StandardTokenizerImpl31(m_input);
             }
@@ -183,7 +195,7 @@ namespace Lucene.Net.Analysis.Standard
          *
          * @see org.apache.lucene.analysis.TokenStream#next()
          */
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             ClearAttributes();
             skippedPositions = 0;
@@ -201,8 +213,6 @@ namespace Lucene.Net.Analysis.Standard
                 {
                     posIncrAtt.PositionIncrement = skippedPositions + 1;
                     scanner.GetText(termAtt);
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int start = scanner.YyChar();
                     int start = scanner.YyChar;
                     offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(start + termAtt.Length));
                     // This 'if' should be removed in the next release. For now, it converts
@@ -230,7 +240,7 @@ namespace Lucene.Net.Analysis.Standard
             }
         }
 
-        public override void End()
+        public override sealed void End()
         {
             base.End();
             // set final offset

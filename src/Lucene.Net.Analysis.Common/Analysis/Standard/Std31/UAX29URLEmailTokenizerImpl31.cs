@@ -3160,7 +3160,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
             "Error: pushback value was too large"
         };
 
-        /// <summary>ZZ_ATTRIBUTE[aState] contains the attributes of state <code>aState</code></summary>
+        /// <summary>ZZ_ATTRIBUTE[aState] contains the attributes of state <c>aState</c></summary>
         private static readonly int[] ZZ_ATTRIBUTE = ZzUnpackAttribute();
 
         private const string ZZ_ATTRIBUTE_PACKED_0 =
@@ -3204,70 +3204,73 @@ namespace Lucene.Net.Analysis.Standard.Std31
         /// <summary>the input device</summary>
         private TextReader zzReader;
 
-        /** the current state of the DFA */
+        /// <summary>the current state of the DFA</summary>
         private int zzState;
 
-        /** the current lexical state */
+        /// <summary>the current lexical state</summary>
         private int zzLexicalState = YYINITIAL;
 
-        /** this buffer contains the current text to be matched and is
-            the source of the YyText() string */
+        /// <summary>
+        /// this buffer contains the current text to be matched and is
+        /// the source of the YyText string
+        /// </summary>
         private char[] zzBuffer = new char[ZZ_BUFFERSIZE];
 
-        /** the textposition at the last accepting state */
+        /// <summary>the textposition at the last accepting state</summary>
         private int zzMarkedPos;
 
-        /** the current text position in the buffer */
+        /// <summary>the current text position in the buffer</summary>
         private int zzCurrentPos;
 
-        /** startRead marks the beginning of the YyText() string in the buffer */
+        /// <summary>startRead marks the beginning of the YyText string in the buffer</summary>
         private int zzStartRead;
 
-        /** endRead marks the last character in the buffer, that has been read
-            from input */
+        /// <summary>
+        /// endRead marks the last character in the buffer, that has been read
+        /// from input
+        /// </summary>
         private int zzEndRead;
 
-        /** number of newlines encountered up to the start of the matched text */
+        /// <summary>number of newlines encountered up to the start of the matched text</summary>
         private int yyline;
 
-        /** the number of characters up to the start of the matched text */
+        /// <summary>the number of characters up to the start of the matched text</summary>
         private int yychar;
 
 #pragma warning disable 169, 414
-        /**
-         * the number of characters from the last newline up to the start of the 
-         * matched text
-         */
+
+        /// <summary>
+        /// the number of characters from the last newline up to the start of the 
+        /// matched text
+        /// </summary>
         private int yycolumn;
 
-        /** 
-         * zzAtBOL == true <=> the scanner is currently at the beginning of a line
-         */
+        /// <summary>zzAtBOL == true &lt;=&gt; the scanner is currently at the beginning of a line</summary>
         private bool zzAtBOL = true;
 
-        /** zzAtEOF == true <=> the scanner is at the EOF */
+        /// <summary>zzAtEOF == true &lt;=&gt; the scanner is at the EOF</summary>
         private bool zzAtEOF;
 
-        /** denotes if the user-EOF-code has already been executed */
+        /// <summary>denotes if the user-EOF-code has already been executed</summary>
         private bool zzEOFDone;
 
 #pragma warning restore 169, 414
 
         /* user code: */
-        /** Alphanumeric sequences */
+        /// <summary>Alphanumeric sequences</summary>
         public static readonly int WORD_TYPE = UAX29URLEmailTokenizer.ALPHANUM;
 
-        /** Numbers */
+        /// <summary>Numbers</summary>
         public static readonly int NUMERIC_TYPE = UAX29URLEmailTokenizer.NUM;
 
-        /**
-         * Chars in class \p{Line_Break = Complex_Context} are from South East Asian
-         * scripts (Thai, Lao, Myanmar, Khmer, etc.).  Sequences of these are kept 
-         * together as as a single token rather than broken up, because the logic
-         * required to break them at word boundaries is too complex for UAX#29.
-         * <p>
-         * See Unicode Line Breaking Algorithm: http://www.unicode.org/reports/tr14/#SA
-         */
+        /// <summary>
+        /// Chars in class \p{Line_Break = Complex_Context} are from South East Asian
+        /// scripts (Thai, Lao, Myanmar, Khmer, etc.).  Sequences of these are kept 
+        /// together as as a single token rather than broken up, because the logic
+        /// required to break them at word boundaries is too complex for UAX#29.
+        /// <para/>
+        /// See Unicode Line Breaking Algorithm: http://www.unicode.org/reports/tr14/#SA
+        /// </summary>
         public static readonly int SOUTH_EAST_ASIAN_TYPE = UAX29URLEmailTokenizer.SOUTHEAST_ASIAN;
 
         public static readonly int IDEOGRAPHIC_TYPE = UAX29URLEmailTokenizer.IDEOGRAPHIC;
@@ -3399,7 +3402,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
         /// 
         /// All internal variables are reset, the old input stream 
         /// <b>cannot</b> be reused (internal buffer is discarded and lost).
-        /// Lexical state is set to <tt>ZZ_INITIAL</tt>.
+        /// Lexical state is set to <see cref="YYINITIAL"/>.
         /// 
         /// Internal scan buffer is resized down to its initial length, if it has grown.
         /// </summary>
@@ -3447,10 +3450,10 @@ namespace Lucene.Net.Analysis.Standard.Std31
         /// Returns the character at position <tt>pos</tt> from the 
         /// matched text. 
         /// 
-        /// It is equivalent to YyText().charAt(pos), but faster
+        /// It is equivalent to YyText[pos], but faster
         /// </summary>
         /// <param name="pos">the position of the character to fetch. 
-        /// A value from 0 to YyLength()-1.</param>
+        /// A value from 0 to YyLength-1.</param>
         /// <returns>the character at position pos</returns>
         public char YyCharAt(int pos)
         {
@@ -3498,7 +3501,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
         /// They will be read again by then next call of the scanning method
         /// </summary>
         /// <param name="number">the number of characters to be read again.
-        /// This number must not be greater than YyLength()!</param>
+        /// This number must not be greater than YyLength!</param>
         public void YyPushBack(int number)
         {
             if (number > YyLength)
@@ -3513,7 +3516,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
         /// the end of input is encountered or an I/O-Error occurs.
         /// </summary>
         /// <returns>      the next token </returns>
-        /// <exception cref="java.io.IOException">  if any I/O-Error occurs </exception>
+        /// <exception cref="IOException">  if any I/O-Error occurs </exception>
         public int GetNextToken()
         {
             int zzInput;
