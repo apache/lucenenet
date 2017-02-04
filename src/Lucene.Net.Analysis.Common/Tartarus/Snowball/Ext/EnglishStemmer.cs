@@ -166,7 +166,7 @@
             B_Y_found = other.B_Y_found;
             I_p2 = other.I_p2;
             I_p1 = other.I_p1;
-            base.copy_from(other);
+            base.CopyFrom(other);
         }
 
         private bool r_prelude()
@@ -188,14 +188,14 @@
                 // [, line 27
                 m_bra = m_cursor;
                 // literal, line 27
-                if (!(eq_s(1, "'")))
+                if (!(Eq_S(1, "'")))
                 {
                     goto lab0;
                 }
                 // ], line 27
                 m_ket = m_cursor;
                 // delete, line 27
-                slice_del();
+                SliceDel();
             } while (false);
             lab0:
             m_cursor = v_1;
@@ -208,14 +208,14 @@
                 // [, line 28
                 m_bra = m_cursor;
                 // literal, line 28
-                if (!(eq_s(1, "y")))
+                if (!(Eq_S(1, "y")))
                 {
                     goto lab1;
                 }
                 // ], line 28
                 m_ket = m_cursor;
                 // <-, line 28
-                slice_from("Y");
+                SliceFrom("Y");
                 // set Y_found, line 28
                 B_Y_found = true;
             } while (false);
@@ -244,14 +244,14 @@
                             do
                             {
                                 // (, line 29
-                                if (!(in_grouping(g_v, 97, 121)))
+                                if (!(InGrouping(g_v, 97, 121)))
                                 {
                                     goto lab6;
                                 }
                                 // [, line 29
                                 m_bra = m_cursor;
                                 // literal, line 29
-                                if (!(eq_s(1, "y")))
+                                if (!(Eq_S(1, "y")))
                                 {
                                     goto lab6;
                                 }
@@ -270,7 +270,7 @@
                         }
                         golab5:
                         // <-, line 29
-                        slice_from("Y");
+                        SliceFrom("Y");
                         // set Y_found, line 29
                         B_Y_found = true;
 
@@ -318,7 +318,7 @@
                     do
                     {
                         // among, line 36
-                        if (find_among(a_0, 3) == 0)
+                        if (FindAmong(a_0, 3) == 0)
                         {
                             goto lab2;
                         }
@@ -334,7 +334,7 @@
 
                         do
                         {
-                            if (!(in_grouping(g_v, 97, 121)))
+                            if (!(InGrouping(g_v, 97, 121)))
                             {
                                 goto lab4;
                             }
@@ -355,7 +355,7 @@
 
                         do
                         {
-                            if (!(out_grouping(g_v, 97, 121)))
+                            if (!(OutGrouping(g_v, 97, 121)))
                             {
                                 goto lab6;
                             }
@@ -380,7 +380,7 @@
 
                     do
                     {
-                        if (!(in_grouping(g_v, 97, 121)))
+                        if (!(InGrouping(g_v, 97, 121)))
                         {
                             goto lab8;
                         }
@@ -401,7 +401,7 @@
 
                     do
                     {
-                        if (!(out_grouping(g_v, 97, 121)))
+                        if (!(OutGrouping(g_v, 97, 121)))
                         {
                             goto lab10;
                         }
@@ -436,15 +436,15 @@
                 do
                 {
                     // (, line 50
-                    if (!(out_grouping_b(g_v_WXY, 89, 121)))
+                    if (!(OutGroupingB(g_v_WXY, 89, 121)))
                     {
                         goto lab1;
                     }
-                    if (!(in_grouping_b(g_v, 97, 121)))
+                    if (!(InGroupingB(g_v, 97, 121)))
                     {
                         goto lab1;
                     }
-                    if (!(out_grouping_b(g_v, 97, 121)))
+                    if (!(OutGroupingB(g_v, 97, 121)))
                     {
                         goto lab1;
                     }
@@ -453,11 +453,11 @@
                 lab1:
                 m_cursor = m_limit - v_1;
                 // (, line 52
-                if (!(out_grouping_b(g_v, 97, 121)))
+                if (!(OutGroupingB(g_v, 97, 121)))
                 {
                     return false;
                 }
-                if (!(in_grouping_b(g_v, 97, 121)))
+                if (!(InGroupingB(g_v, 97, 121)))
                 {
                     return false;
                 }
@@ -504,7 +504,7 @@
                 // [, line 60
                 m_ket = m_cursor;
                 // substring, line 60
-                among_var = find_among_b(a_1, 3);
+                among_var = FindAmongB(a_1, 3);
                 if (among_var == 0)
                 {
                     m_cursor = m_limit - v_1;
@@ -520,7 +520,7 @@
                     case 1:
                         // (, line 62
                         // delete, line 62
-                        slice_del();
+                        SliceDel();
                         break;
                 }
             } while (false);
@@ -528,7 +528,7 @@
             // [, line 65
             m_ket = m_cursor;
             // substring, line 65
-            among_var = find_among_b(a_2, 6);
+            among_var = FindAmongB(a_2, 6);
             if (among_var == 0)
             {
                 return false;
@@ -542,7 +542,7 @@
                 case 1:
                     // (, line 66
                     // <-, line 66
-                    slice_from("ss");
+                    SliceFrom("ss");
                     break;
                 case 2:
                     // (, line 68
@@ -565,13 +565,13 @@
                                 m_cursor = c;
                             }
                             // <-, line 68
-                            slice_from("i");
+                            SliceFrom("i");
                             goto lab1;
                         } while (false);
                         lab2:
                         m_cursor = m_limit - v_2;
                         // <-, line 68
-                        slice_from("ie");
+                        SliceFrom("ie");
                     } while (false);
                     lab1:
                     break;
@@ -590,7 +590,7 @@
 
                         do
                         {
-                            if (!(in_grouping_b(g_v, 97, 121)))
+                            if (!(InGroupingB(g_v, 97, 121)))
                             {
                                 goto lab4;
                             }
@@ -605,7 +605,7 @@
                     }
                     golab3:
                     // delete, line 69
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -621,7 +621,7 @@
             // [, line 75
             m_ket = m_cursor;
             // substring, line 75
-            among_var = find_among_b(a_4, 6);
+            among_var = FindAmongB(a_4, 6);
             if (among_var == 0)
             {
                 return false;
@@ -640,7 +640,7 @@
                         return false;
                     }
                     // <-, line 77
-                    slice_from("ee");
+                    SliceFrom("ee");
                     break;
                 case 2:
                     // (, line 79
@@ -653,7 +653,7 @@
 
                         do
                         {
-                            if (!(in_grouping_b(g_v, 97, 121)))
+                            if (!(InGroupingB(g_v, 97, 121)))
                             {
                                 goto lab1;
                             }
@@ -669,11 +669,11 @@
                     golab0:
                     m_cursor = m_limit - v_1;
                     // delete, line 80
-                    slice_del();
+                    SliceDel();
                     // test, line 81
                     v_3 = m_limit - m_cursor;
                     // substring, line 81
-                    among_var = find_among_b(a_3, 13);
+                    among_var = FindAmongB(a_3, 13);
                     if (among_var == 0)
                     {
                         return false;
@@ -688,7 +688,7 @@
                             // <+, line 83
                             {
                                 int c = m_cursor;
-                                insert(m_cursor, m_cursor, "e");
+                                Insert(m_cursor, m_cursor, "e");
                                 m_cursor = c;
                             }
                             break;
@@ -705,7 +705,7 @@
                             // ], line 86
                             m_bra = m_cursor;
                             // delete, line 86
-                            slice_del();
+                            SliceDel();
                             break;
                         case 3:
                             // (, line 87
@@ -725,7 +725,7 @@
                             // <+, line 87
                             {
                                 int c = m_cursor;
-                                insert(m_cursor, m_cursor, "e");
+                                Insert(m_cursor, m_cursor, "e");
                                 m_cursor = c;
                             }
                             break;
@@ -751,7 +751,7 @@
                 do
                 {
                     // literal, line 94
-                    if (!(eq_s_b(1, "y")))
+                    if (!(Eq_S_B(1, "y")))
                     {
                         goto lab1;
                     }
@@ -760,7 +760,7 @@
                 lab1:
                 m_cursor = m_limit - v_1;
                 // literal, line 94
-                if (!(eq_s_b(1, "Y")))
+                if (!(Eq_S_B(1, "Y")))
                 {
                     return false;
                 }
@@ -768,7 +768,7 @@
             lab0:
             // ], line 94
             m_bra = m_cursor;
-            if (!(out_grouping_b(g_v, 97, 121)))
+            if (!(OutGroupingB(g_v, 97, 121)))
             {
                 return false;
             }
@@ -789,7 +789,7 @@
                 m_cursor = m_limit - v_2;
             }
             // <-, line 96
-            slice_from("i");
+            SliceFrom("i");
             return true;
         }
 
@@ -800,7 +800,7 @@
             // [, line 100
             m_ket = m_cursor;
             // substring, line 100
-            among_var = find_among_b(a_5, 24);
+            among_var = FindAmongB(a_5, 24);
             if (among_var == 0)
             {
                 return false;
@@ -819,91 +819,91 @@
                 case 1:
                     // (, line 101
                     // <-, line 101
-                    slice_from("tion");
+                    SliceFrom("tion");
                     break;
                 case 2:
                     // (, line 102
                     // <-, line 102
-                    slice_from("ence");
+                    SliceFrom("ence");
                     break;
                 case 3:
                     // (, line 103
                     // <-, line 103
-                    slice_from("ance");
+                    SliceFrom("ance");
                     break;
                 case 4:
                     // (, line 104
                     // <-, line 104
-                    slice_from("able");
+                    SliceFrom("able");
                     break;
                 case 5:
                     // (, line 105
                     // <-, line 105
-                    slice_from("ent");
+                    SliceFrom("ent");
                     break;
                 case 6:
                     // (, line 107
                     // <-, line 107
-                    slice_from("ize");
+                    SliceFrom("ize");
                     break;
                 case 7:
                     // (, line 109
                     // <-, line 109
-                    slice_from("ate");
+                    SliceFrom("ate");
                     break;
                 case 8:
                     // (, line 111
                     // <-, line 111
-                    slice_from("al");
+                    SliceFrom("al");
                     break;
                 case 9:
                     // (, line 112
                     // <-, line 112
-                    slice_from("ful");
+                    SliceFrom("ful");
                     break;
                 case 10:
                     // (, line 114
                     // <-, line 114
-                    slice_from("ous");
+                    SliceFrom("ous");
                     break;
                 case 11:
                     // (, line 116
                     // <-, line 116
-                    slice_from("ive");
+                    SliceFrom("ive");
                     break;
                 case 12:
                     // (, line 118
                     // <-, line 118
-                    slice_from("ble");
+                    SliceFrom("ble");
                     break;
                 case 13:
                     // (, line 119
                     // literal, line 119
-                    if (!(eq_s_b(1, "l")))
+                    if (!(Eq_S_B(1, "l")))
                     {
                         return false;
                     }
                     // <-, line 119
-                    slice_from("og");
+                    SliceFrom("og");
                     break;
                 case 14:
                     // (, line 120
                     // <-, line 120
-                    slice_from("ful");
+                    SliceFrom("ful");
                     break;
                 case 15:
                     // (, line 121
                     // <-, line 121
-                    slice_from("less");
+                    SliceFrom("less");
                     break;
                 case 16:
                     // (, line 122
-                    if (!(in_grouping_b(g_valid_LI, 99, 116)))
+                    if (!(InGroupingB(g_valid_LI, 99, 116)))
                     {
                         return false;
                     }
                     // delete, line 122
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -916,7 +916,7 @@
             // [, line 127
             m_ket = m_cursor;
             // substring, line 127
-            among_var = find_among_b(a_6, 9);
+            among_var = FindAmongB(a_6, 9);
             if (among_var == 0)
             {
                 return false;
@@ -935,27 +935,27 @@
                 case 1:
                     // (, line 128
                     // <-, line 128
-                    slice_from("tion");
+                    SliceFrom("tion");
                     break;
                 case 2:
                     // (, line 129
                     // <-, line 129
-                    slice_from("ate");
+                    SliceFrom("ate");
                     break;
                 case 3:
                     // (, line 130
                     // <-, line 130
-                    slice_from("al");
+                    SliceFrom("al");
                     break;
                 case 4:
                     // (, line 132
                     // <-, line 132
-                    slice_from("ic");
+                    SliceFrom("ic");
                     break;
                 case 5:
                     // (, line 134
                     // delete, line 134
-                    slice_del();
+                    SliceDel();
                     break;
                 case 6:
                     // (, line 136
@@ -965,7 +965,7 @@
                         return false;
                     }
                     // delete, line 136
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -979,7 +979,7 @@
             // [, line 141
             m_ket = m_cursor;
             // substring, line 141
-            among_var = find_among_b(a_7, 18);
+            among_var = FindAmongB(a_7, 18);
             if (among_var == 0)
             {
                 return false;
@@ -998,7 +998,7 @@
                 case 1:
                     // (, line 144
                     // delete, line 144
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 145
@@ -1011,7 +1011,7 @@
                         do
                         {
                             // literal, line 145
-                            if (!(eq_s_b(1, "s")))
+                            if (!(Eq_S_B(1, "s")))
                             {
                                 goto lab1;
                             }
@@ -1020,14 +1020,14 @@
                         lab1:
                         m_cursor = m_limit - v_1;
                         // literal, line 145
-                        if (!(eq_s_b(1, "t")))
+                        if (!(Eq_S_B(1, "t")))
                         {
                             return false;
                         }
                     } while (false);
                     lab0:
                     // delete, line 145
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -1042,7 +1042,7 @@
             // [, line 150
             m_ket = m_cursor;
             // substring, line 150
-            among_var = find_among_b(a_8, 2);
+            among_var = FindAmongB(a_8, 2);
             if (among_var == 0)
             {
                 return false;
@@ -1097,7 +1097,7 @@
                     } while (false);
                     lab0:
                     // delete, line 151
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 152
@@ -1107,12 +1107,12 @@
                         return false;
                     }
                     // literal, line 152
-                    if (!(eq_s_b(1, "l")))
+                    if (!(Eq_S_B(1, "l")))
                     {
                         return false;
                     }
                     // delete, line 152
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -1124,7 +1124,7 @@
             // [, line 158
             m_ket = m_cursor;
             // substring, line 158
-            if (find_among_b(a_9, 8) == 0)
+            if (FindAmongB(a_9, 8) == 0)
             {
                 return false;
             }
@@ -1145,7 +1145,7 @@
             // [, line 170
             m_bra = m_cursor;
             // substring, line 170
-            among_var = find_among(a_10, 18);
+            among_var = FindAmong(a_10, 18);
             if (among_var == 0)
             {
                 return false;
@@ -1164,57 +1164,57 @@
                 case 1:
                     // (, line 174
                     // <-, line 174
-                    slice_from("ski");
+                    SliceFrom("ski");
                     break;
                 case 2:
                     // (, line 175
                     // <-, line 175
-                    slice_from("sky");
+                    SliceFrom("sky");
                     break;
                 case 3:
                     // (, line 176
                     // <-, line 176
-                    slice_from("die");
+                    SliceFrom("die");
                     break;
                 case 4:
                     // (, line 177
                     // <-, line 177
-                    slice_from("lie");
+                    SliceFrom("lie");
                     break;
                 case 5:
                     // (, line 178
                     // <-, line 178
-                    slice_from("tie");
+                    SliceFrom("tie");
                     break;
                 case 6:
                     // (, line 182
                     // <-, line 182
-                    slice_from("idl");
+                    SliceFrom("idl");
                     break;
                 case 7:
                     // (, line 183
                     // <-, line 183
-                    slice_from("gentl");
+                    SliceFrom("gentl");
                     break;
                 case 8:
                     // (, line 184
                     // <-, line 184
-                    slice_from("ugli");
+                    SliceFrom("ugli");
                     break;
                 case 9:
                     // (, line 185
                     // <-, line 185
-                    slice_from("earli");
+                    SliceFrom("earli");
                     break;
                 case 10:
                     // (, line 186
                     // <-, line 186
-                    slice_from("onli");
+                    SliceFrom("onli");
                     break;
                 case 11:
                     // (, line 187
                     // <-, line 187
-                    slice_from("singl");
+                    SliceFrom("singl");
                     break;
             }
             return true;
@@ -1251,7 +1251,7 @@
                             // [, line 203
                             m_bra = m_cursor;
                             // literal, line 203
-                            if (!(eq_s(1, "Y")))
+                            if (!(Eq_S(1, "Y")))
                             {
                                 goto lab3;
                             }
@@ -1270,7 +1270,7 @@
                     }
                     golab2:
                     // <-, line 203
-                    slice_from("y");
+                    SliceFrom("y");
                     // LUCENENET NOTE: continue label is not supported directly in .NET,
                     // so we just need to add another goto to get to the end of the outer loop.
                     // See: http://stackoverflow.com/a/359449/181087

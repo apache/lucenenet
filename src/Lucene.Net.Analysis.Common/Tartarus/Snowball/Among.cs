@@ -50,7 +50,7 @@ namespace Lucene.Net.Tartarus.Snowball
         private readonly Type[] EMPTY_PARAMS = new Type[0];
 
         public Among(string s, int substring_i, int result,
-               string methodname, SnowballProgram methodobject)
+            string methodname, SnowballProgram methodobject)
         {
             this.s_size = s.Length;
             this.s = s.ToCharArray();

@@ -370,7 +370,7 @@
 
         private void copy_from(LovinsStemmer other)
         {
-            base.copy_from(other);
+            base.CopyFrom(other);
         }
 
         private bool r_A()
@@ -456,7 +456,7 @@
                 do
                 {
                     // literal, line 25
-                    if (!(eq_s_b(1, "e")))
+                    if (!(Eq_S_B(1, "e")))
                     {
                         goto lab0;
                     }
@@ -491,7 +491,7 @@
                 do
                 {
                     // literal, line 26
-                    if (!(eq_s_b(1, "e")))
+                    if (!(Eq_S_B(1, "e")))
                     {
                         goto lab0;
                     }
@@ -520,7 +520,7 @@
             }
             m_cursor = m_limit - v_1;
             // literal, line 27
-            if (!(eq_s_b(1, "f")))
+            if (!(Eq_S_B(1, "f")))
             {
                 return false;
             }
@@ -551,7 +551,7 @@
                 do
                 {
                     // literal, line 28
-                    if (!(eq_s_b(1, "t")))
+                    if (!(Eq_S_B(1, "t")))
                     {
                         goto lab1;
                     }
@@ -560,7 +560,7 @@
                 lab1:
                 m_cursor = m_limit - v_2;
                 // literal, line 28
-                if (!(eq_s_b(2, "ll")))
+                if (!(Eq_S_B(2, "ll")))
                 {
                     return false;
                 }
@@ -593,7 +593,7 @@
                 do
                 {
                     // literal, line 29
-                    if (!(eq_s_b(1, "o")))
+                    if (!(Eq_S_B(1, "o")))
                     {
                         goto lab0;
                     }
@@ -608,7 +608,7 @@
                 do
                 {
                     // literal, line 29
-                    if (!(eq_s_b(1, "e")))
+                    if (!(Eq_S_B(1, "e")))
                     {
                         goto lab1;
                     }
@@ -644,7 +644,7 @@
                 do
                 {
                     // literal, line 30
-                    if (!(eq_s_b(1, "a")))
+                    if (!(Eq_S_B(1, "a")))
                     {
                         goto lab0;
                     }
@@ -659,7 +659,7 @@
                 do
                 {
                     // literal, line 30
-                    if (!(eq_s_b(1, "e")))
+                    if (!(Eq_S_B(1, "e")))
                     {
                         goto lab1;
                     }
@@ -695,7 +695,7 @@
                 do
                 {
                     // literal, line 31
-                    if (!(eq_s_b(1, "l")))
+                    if (!(Eq_S_B(1, "l")))
                     {
                         goto lab1;
                     }
@@ -706,7 +706,7 @@
                 do
                 {
                     // literal, line 31
-                    if (!(eq_s_b(1, "i")))
+                    if (!(Eq_S_B(1, "i")))
                     {
                         goto lab2;
                     }
@@ -716,7 +716,7 @@
                 m_cursor = m_limit - v_2;
                 // (, line 31
                 // literal, line 31
-                if (!(eq_s_b(1, "e")))
+                if (!(Eq_S_B(1, "e")))
                 {
                     return false;
                 }
@@ -727,7 +727,7 @@
                 }
                 m_cursor--;
                 // literal, line 31
-                if (!(eq_s_b(1, "u")))
+                if (!(Eq_S_B(1, "u")))
                 {
                     return false;
                 }
@@ -762,7 +762,7 @@
                 do
                 {
                     // literal, line 32
-                    if (!(eq_s_b(1, "u")))
+                    if (!(Eq_S_B(1, "u")))
                     {
                         goto lab0;
                     }
@@ -777,7 +777,7 @@
                 do
                 {
                     // literal, line 32
-                    if (!(eq_s_b(1, "x")))
+                    if (!(Eq_S_B(1, "x")))
                     {
                         goto lab1;
                     }
@@ -793,7 +793,7 @@
                 {
                     // (, line 32
                     // literal, line 32
-                    if (!(eq_s_b(1, "s")))
+                    if (!(Eq_S_B(1, "s")))
                     {
                         goto lab2;
                     }
@@ -803,7 +803,7 @@
                         do
                         {
                             // literal, line 32
-                            if (!(eq_s_b(1, "o")))
+                            if (!(Eq_S_B(1, "o")))
                             {
                                 goto lab3;
                             }
@@ -846,7 +846,7 @@
                 do
                 {
                     // literal, line 33
-                    if (!(eq_s_b(1, "a")))
+                    if (!(Eq_S_B(1, "a")))
                     {
                         goto lab0;
                     }
@@ -861,7 +861,7 @@
                 do
                 {
                     // literal, line 33
-                    if (!(eq_s_b(1, "c")))
+                    if (!(Eq_S_B(1, "c")))
                     {
                         goto lab1;
                     }
@@ -876,7 +876,7 @@
                 do
                 {
                     // literal, line 33
-                    if (!(eq_s_b(1, "e")))
+                    if (!(Eq_S_B(1, "e")))
                     {
                         goto lab2;
                     }
@@ -891,7 +891,7 @@
                 do
                 {
                     // literal, line 33
-                    if (!(eq_s_b(1, "m")))
+                    if (!(Eq_S_B(1, "m")))
                     {
                         goto lab3;
                     }
@@ -943,7 +943,7 @@
                         do
                         {
                             // literal, line 34
-                            if (!(eq_s_b(1, "s")))
+                            if (!(Eq_S_B(1, "s")))
                             {
                                 goto lab2;
                             }
@@ -994,7 +994,7 @@
                 do
                 {
                     // literal, line 35
-                    if (!(eq_s_b(1, "l")))
+                    if (!(Eq_S_B(1, "l")))
                     {
                         goto lab1;
                     }
@@ -1003,7 +1003,7 @@
                 lab1:
                 m_cursor = m_limit - v_2;
                 // literal, line 35
-                if (!(eq_s_b(1, "i")))
+                if (!(Eq_S_B(1, "i")))
                 {
                     return false;
                 }
@@ -1035,7 +1035,7 @@
                 do
                 {
                     // literal, line 36
-                    if (!(eq_s_b(1, "c")))
+                    if (!(Eq_S_B(1, "c")))
                     {
                         goto lab0;
                     }
@@ -1084,7 +1084,7 @@
                 do
                 {
                     // literal, line 37
-                    if (!(eq_s_b(1, "l")))
+                    if (!(Eq_S_B(1, "l")))
                     {
                         goto lab0;
                     }
@@ -1099,7 +1099,7 @@
                 do
                 {
                     // literal, line 37
-                    if (!(eq_s_b(1, "n")))
+                    if (!(Eq_S_B(1, "n")))
                     {
                         goto lab1;
                     }
@@ -1135,7 +1135,7 @@
                 do
                 {
                     // literal, line 38
-                    if (!(eq_s_b(1, "n")))
+                    if (!(Eq_S_B(1, "n")))
                     {
                         goto lab1;
                     }
@@ -1144,7 +1144,7 @@
                 lab1:
                 m_cursor = m_limit - v_2;
                 // literal, line 38
-                if (!(eq_s_b(1, "r")))
+                if (!(Eq_S_B(1, "r")))
                 {
                     return false;
                 }
@@ -1178,7 +1178,7 @@
                 do
                 {
                     // literal, line 39
-                    if (!(eq_s_b(2, "dr")))
+                    if (!(Eq_S_B(2, "dr")))
                     {
                         goto lab1;
                     }
@@ -1188,7 +1188,7 @@
                 m_cursor = m_limit - v_2;
                 // (, line 39
                 // literal, line 39
-                if (!(eq_s_b(1, "t")))
+                if (!(Eq_S_B(1, "t")))
                 {
                     return false;
                 }
@@ -1198,7 +1198,7 @@
                     do
                     {
                         // literal, line 39
-                        if (!(eq_s_b(1, "t")))
+                        if (!(Eq_S_B(1, "t")))
                         {
                             goto lab2;
                         }
@@ -1237,7 +1237,7 @@
                 do
                 {
                     // literal, line 40
-                    if (!(eq_s_b(1, "s")))
+                    if (!(Eq_S_B(1, "s")))
                     {
                         goto lab1;
                     }
@@ -1247,7 +1247,7 @@
                 m_cursor = m_limit - v_2;
                 // (, line 40
                 // literal, line 40
-                if (!(eq_s_b(1, "t")))
+                if (!(Eq_S_B(1, "t")))
                 {
                     return false;
                 }
@@ -1257,7 +1257,7 @@
                     do
                     {
                         // literal, line 40
-                        if (!(eq_s_b(1, "o")))
+                        if (!(Eq_S_B(1, "o")))
                         {
                             goto lab2;
                         }
@@ -1295,7 +1295,7 @@
                 do
                 {
                     // literal, line 41
-                    if (!(eq_s_b(1, "l")))
+                    if (!(Eq_S_B(1, "l")))
                     {
                         goto lab1;
                     }
@@ -1306,7 +1306,7 @@
                 do
                 {
                     // literal, line 41
-                    if (!(eq_s_b(1, "m")))
+                    if (!(Eq_S_B(1, "m")))
                     {
                         goto lab2;
                     }
@@ -1317,7 +1317,7 @@
                 do
                 {
                     // literal, line 41
-                    if (!(eq_s_b(1, "n")))
+                    if (!(Eq_S_B(1, "n")))
                     {
                         goto lab3;
                     }
@@ -1326,7 +1326,7 @@
                 lab3:
                 m_cursor = m_limit - v_2;
                 // literal, line 41
-                if (!(eq_s_b(1, "r")))
+                if (!(Eq_S_B(1, "r")))
                 {
                     return false;
                 }
@@ -1352,7 +1352,7 @@
             }
             m_cursor = m_limit - v_1;
             // literal, line 42
-            if (!(eq_s_b(1, "c")))
+            if (!(Eq_S_B(1, "c")))
             {
                 return false;
             }
@@ -1383,7 +1383,7 @@
                 do
                 {
                     // literal, line 43
-                    if (!(eq_s_b(1, "s")))
+                    if (!(Eq_S_B(1, "s")))
                     {
                         goto lab0;
                     }
@@ -1398,7 +1398,7 @@
                 do
                 {
                     // literal, line 43
-                    if (!(eq_s_b(1, "u")))
+                    if (!(Eq_S_B(1, "u")))
                     {
                         goto lab1;
                     }
@@ -1434,7 +1434,7 @@
                 do
                 {
                     // literal, line 44
-                    if (!(eq_s_b(1, "l")))
+                    if (!(Eq_S_B(1, "l")))
                     {
                         goto lab1;
                     }
@@ -1445,7 +1445,7 @@
                 do
                 {
                     // literal, line 44
-                    if (!(eq_s_b(1, "i")))
+                    if (!(Eq_S_B(1, "i")))
                     {
                         goto lab2;
                     }
@@ -1455,7 +1455,7 @@
                 m_cursor = m_limit - v_2;
                 // (, line 44
                 // literal, line 44
-                if (!(eq_s_b(1, "e")))
+                if (!(Eq_S_B(1, "e")))
                 {
                     return false;
                 }
@@ -1466,7 +1466,7 @@
                 }
                 m_cursor--;
                 // literal, line 44
-                if (!(eq_s_b(1, "u")))
+                if (!(Eq_S_B(1, "u")))
                 {
                     return false;
                 }
@@ -1492,7 +1492,7 @@
             }
             m_cursor = m_limit - v_1;
             // literal, line 45
-            if (!(eq_s_b(2, "in")))
+            if (!(Eq_S_B(2, "in")))
             {
                 return false;
             }
@@ -1522,7 +1522,7 @@
                 do
                 {
                     // literal, line 46
-                    if (!(eq_s_b(1, "f")))
+                    if (!(Eq_S_B(1, "f")))
                     {
                         goto lab0;
                     }
@@ -1551,7 +1551,7 @@
             }
             m_cursor = m_limit - v_1;
             // among, line 47
-            if (find_among_b(a_0, 9) == 0)
+            if (FindAmongB(a_0, 9) == 0)
             {
                 return false;
             }
@@ -1582,7 +1582,7 @@
                 do
                 {
                     // literal, line 49
-                    if (!(eq_s_b(3, "met")))
+                    if (!(Eq_S_B(3, "met")))
                     {
                         goto lab0;
                     }
@@ -1597,7 +1597,7 @@
                 do
                 {
                     // literal, line 49
-                    if (!(eq_s_b(4, "ryst")))
+                    if (!(Eq_S_B(4, "ryst")))
                     {
                         goto lab1;
                     }
@@ -1626,7 +1626,7 @@
             }
             m_cursor = m_limit - v_1;
             // literal, line 50
-            if (!(eq_s_b(1, "l")))
+            if (!(Eq_S_B(1, "l")))
             {
                 return false;
             }
@@ -1640,7 +1640,7 @@
             // [, line 56
             m_ket = m_cursor;
             // substring, line 56
-            among_var = find_among_b(a_1, 294);
+            among_var = FindAmongB(a_1, 294);
             if (among_var == 0)
             {
                 return false;
@@ -1654,7 +1654,7 @@
                 case 1:
                     // (, line 145
                     // delete, line 145
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -1667,7 +1667,7 @@
             // test, line 152
             v_1 = m_limit - m_cursor;
             // substring, line 152
-            if (find_among_b(a_2, 10) == 0)
+            if (FindAmongB(a_2, 10) == 0)
             {
                 return false;
             }
@@ -1683,7 +1683,7 @@
             // ], line 154
             m_bra = m_cursor;
             // delete, line 154
-            slice_del();
+            SliceDel();
             return true;
         }
 
@@ -1702,7 +1702,7 @@
             // [, line 160
             m_ket = m_cursor;
             // substring, line 160
-            among_var = find_among_b(a_3, 34);
+            among_var = FindAmongB(a_3, 34);
             if (among_var == 0)
             {
                 return false;
@@ -1716,42 +1716,42 @@
                 case 1:
                     // (, line 161
                     // <-, line 161
-                    slice_from("ief");
+                    SliceFrom("ief");
                     break;
                 case 2:
                     // (, line 162
                     // <-, line 162
-                    slice_from("uc");
+                    SliceFrom("uc");
                     break;
                 case 3:
                     // (, line 163
                     // <-, line 163
-                    slice_from("um");
+                    SliceFrom("um");
                     break;
                 case 4:
                     // (, line 164
                     // <-, line 164
-                    slice_from("rb");
+                    SliceFrom("rb");
                     break;
                 case 5:
                     // (, line 165
                     // <-, line 165
-                    slice_from("ur");
+                    SliceFrom("ur");
                     break;
                 case 6:
                     // (, line 166
                     // <-, line 166
-                    slice_from("ister");
+                    SliceFrom("ister");
                     break;
                 case 7:
                     // (, line 167
                     // <-, line 167
-                    slice_from("meter");
+                    SliceFrom("meter");
                     break;
                 case 8:
                     // (, line 168
                     // <-, line 168
-                    slice_from("olut");
+                    SliceFrom("olut");
                     break;
                 case 9:
                     // (, line 169
@@ -1761,7 +1761,7 @@
                         do
                         {
                             // literal, line 169
-                            if (!(eq_s_b(1, "a")))
+                            if (!(Eq_S_B(1, "a")))
                             {
                                 goto lab0;
                             }
@@ -1776,7 +1776,7 @@
                         do
                         {
                             // literal, line 169
-                            if (!(eq_s_b(1, "i")))
+                            if (!(Eq_S_B(1, "i")))
                             {
                                 goto lab1;
                             }
@@ -1791,7 +1791,7 @@
                         do
                         {
                             // literal, line 169
-                            if (!(eq_s_b(1, "o")))
+                            if (!(Eq_S_B(1, "o")))
                             {
                                 goto lab2;
                             }
@@ -1801,77 +1801,77 @@
                         m_cursor = m_limit - v_3;
                     }
                     // <-, line 169
-                    slice_from("l");
+                    SliceFrom("l");
                     break;
                 case 10:
                     // (, line 170
                     // <-, line 170
-                    slice_from("bic");
+                    SliceFrom("bic");
                     break;
                 case 11:
                     // (, line 171
                     // <-, line 171
-                    slice_from("dic");
+                    SliceFrom("dic");
                     break;
                 case 12:
                     // (, line 172
                     // <-, line 172
-                    slice_from("pic");
+                    SliceFrom("pic");
                     break;
                 case 13:
                     // (, line 173
                     // <-, line 173
-                    slice_from("tic");
+                    SliceFrom("tic");
                     break;
                 case 14:
                     // (, line 174
                     // <-, line 174
-                    slice_from("ac");
+                    SliceFrom("ac");
                     break;
                 case 15:
                     // (, line 175
                     // <-, line 175
-                    slice_from("ec");
+                    SliceFrom("ec");
                     break;
                 case 16:
                     // (, line 176
                     // <-, line 176
-                    slice_from("ic");
+                    SliceFrom("ic");
                     break;
                 case 17:
                     // (, line 177
                     // <-, line 177
-                    slice_from("luc");
+                    SliceFrom("luc");
                     break;
                 case 18:
                     // (, line 178
                     // <-, line 178
-                    slice_from("uas");
+                    SliceFrom("uas");
                     break;
                 case 19:
                     // (, line 179
                     // <-, line 179
-                    slice_from("vas");
+                    SliceFrom("vas");
                     break;
                 case 20:
                     // (, line 180
                     // <-, line 180
-                    slice_from("cis");
+                    SliceFrom("cis");
                     break;
                 case 21:
                     // (, line 181
                     // <-, line 181
-                    slice_from("lis");
+                    SliceFrom("lis");
                     break;
                 case 22:
                     // (, line 182
                     // <-, line 182
-                    slice_from("eris");
+                    SliceFrom("eris");
                     break;
                 case 23:
                     // (, line 183
                     // <-, line 183
-                    slice_from("pans");
+                    SliceFrom("pans");
                     break;
                 case 24:
                     // (, line 184
@@ -1881,7 +1881,7 @@
                         do
                         {
                             // literal, line 184
-                            if (!(eq_s_b(1, "s")))
+                            if (!(Eq_S_B(1, "s")))
                             {
                                 goto lab3;
                             }
@@ -1891,22 +1891,22 @@
                         m_cursor = m_limit - v_4;
                     }
                     // <-, line 184
-                    slice_from("ens");
+                    SliceFrom("ens");
                     break;
                 case 25:
                     // (, line 185
                     // <-, line 185
-                    slice_from("ons");
+                    SliceFrom("ons");
                     break;
                 case 26:
                     // (, line 186
                     // <-, line 186
-                    slice_from("lus");
+                    SliceFrom("lus");
                     break;
                 case 27:
                     // (, line 187
                     // <-, line 187
-                    slice_from("rus");
+                    SliceFrom("rus");
                     break;
                 case 28:
                     // (, line 188
@@ -1916,7 +1916,7 @@
                         do
                         {
                             // literal, line 188
-                            if (!(eq_s_b(1, "p")))
+                            if (!(Eq_S_B(1, "p")))
                             {
                                 goto lab4;
                             }
@@ -1931,7 +1931,7 @@
                         do
                         {
                             // literal, line 188
-                            if (!(eq_s_b(1, "t")))
+                            if (!(Eq_S_B(1, "t")))
                             {
                                 goto lab5;
                             }
@@ -1941,12 +1941,12 @@
                         m_cursor = m_limit - v_6;
                     }
                     // <-, line 188
-                    slice_from("hes");
+                    SliceFrom("hes");
                     break;
                 case 29:
                     // (, line 189
                     // <-, line 189
-                    slice_from("mis");
+                    SliceFrom("mis");
                     break;
                 case 30:
                     // (, line 190
@@ -1956,7 +1956,7 @@
                         do
                         {
                             // literal, line 190
-                            if (!(eq_s_b(1, "m")))
+                            if (!(Eq_S_B(1, "m")))
                             {
                                 goto lab6;
                             }
@@ -1966,12 +1966,12 @@
                         m_cursor = m_limit - v_7;
                     }
                     // <-, line 190
-                    slice_from("ens");
+                    SliceFrom("ens");
                     break;
                 case 31:
                     // (, line 192
                     // <-, line 192
-                    slice_from("ers");
+                    SliceFrom("ers");
                     break;
                 case 32:
                     // (, line 193
@@ -1981,7 +1981,7 @@
                         do
                         {
                             // literal, line 193
-                            if (!(eq_s_b(1, "n")))
+                            if (!(Eq_S_B(1, "n")))
                             {
                                 goto lab7;
                             }
@@ -1991,17 +1991,17 @@
                         m_cursor = m_limit - v_8;
                     }
                     // <-, line 193
-                    slice_from("es");
+                    SliceFrom("es");
                     break;
                 case 33:
                     // (, line 194
                     // <-, line 194
-                    slice_from("ys");
+                    SliceFrom("ys");
                     break;
                 case 34:
                     // (, line 195
                     // <-, line 195
-                    slice_from("ys");
+                    SliceFrom("ys");
                     break;
             }
             return true;

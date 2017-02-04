@@ -70,7 +70,7 @@
         {
             I_x = other.I_x;
             I_p1 = other.I_p1;
-            base.copy_from(other);
+            base.CopyFrom(other);
         }
 
         private bool r_mark_regions()
@@ -100,7 +100,7 @@
                 v_2 = m_cursor;
                 do
                 {
-                    if (!(in_grouping(g_v, 97, 248)))
+                    if (!(InGrouping(g_v, 97, 248)))
                     {
                         goto lab1;
                     }
@@ -121,7 +121,7 @@
             {
                 do
                 {
-                    if (!(out_grouping(g_v, 97, 248)))
+                    if (!(OutGrouping(g_v, 97, 248)))
                     {
                         goto lab3;
                     }
@@ -173,7 +173,7 @@
             // [, line 38
             m_ket = m_cursor;
             // substring, line 38
-            among_var = find_among_b(a_0, 29);
+            among_var = FindAmongB(a_0, 29);
             if (among_var == 0)
             {
                 m_limit_backward = v_2;
@@ -189,7 +189,7 @@
                 case 1:
                     // (, line 44
                     // delete, line 44
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 46
@@ -199,7 +199,7 @@
                         v_3 = m_limit - m_cursor;
                         do
                         {
-                            if (!(in_grouping_b(g_s_ending, 98, 122)))
+                            if (!(InGroupingB(g_s_ending, 98, 122)))
                             {
                                 goto lab1;
                             }
@@ -209,23 +209,23 @@
                         m_cursor = m_limit - v_3;
                         // (, line 46
                         // literal, line 46
-                        if (!(eq_s_b(1, "k")))
+                        if (!(Eq_S_B(1, "k")))
                         {
                             return false;
                         }
-                        if (!(out_grouping_b(g_v, 97, 248)))
+                        if (!(OutGroupingB(g_v, 97, 248)))
                         {
                             return false;
                         }
                     } while (false);
                     lab0:
                     // delete, line 46
-                    slice_del();
+                    SliceDel();
                     break;
                 case 3:
                     // (, line 48
                     // <-, line 48
-                    slice_from("er");
+                    SliceFrom("er");
                     break;
             }
             return true;
@@ -255,7 +255,7 @@
             // [, line 54
             m_ket = m_cursor;
             // substring, line 54
-            if (find_among_b(a_1, 2) == 0)
+            if (FindAmongB(a_1, 2) == 0)
             {
                 m_limit_backward = v_3;
                 return false;
@@ -273,7 +273,7 @@
             // ], line 59
             m_bra = m_cursor;
             // delete, line 59
-            slice_del();
+            SliceDel();
             return true;
         }
 
@@ -298,7 +298,7 @@
             // [, line 63
             m_ket = m_cursor;
             // substring, line 63
-            among_var = find_among_b(a_2, 11);
+            among_var = FindAmongB(a_2, 11);
             if (among_var == 0)
             {
                 m_limit_backward = v_2;
@@ -314,7 +314,7 @@
                 case 1:
                     // (, line 67
                     // delete, line 67
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;

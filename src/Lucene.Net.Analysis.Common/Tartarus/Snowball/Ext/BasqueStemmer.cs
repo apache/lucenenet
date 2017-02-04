@@ -451,7 +451,7 @@
             I_p2 = other.I_p2;
             I_p1 = other.I_p1;
             I_pV = other.I_pV;
-            base.copy_from(other);
+            base.CopyFrom(other);
         }
 
         private bool r_mark_regions()
@@ -480,7 +480,7 @@
                     do
                     {
                         // (, line 32
-                        if (!(in_grouping(g_v, 97, 117)))
+                        if (!(InGrouping(g_v, 97, 117)))
                         {
                             goto lab2;
                         }
@@ -493,7 +493,7 @@
                             do
                             {
                                 // (, line 32
-                                if (!(out_grouping(g_v, 97, 117)))
+                                if (!(OutGrouping(g_v, 97, 117)))
                                 {
                                     goto lab4;
                                 }
@@ -504,7 +504,7 @@
 
                                     do
                                     {
-                                        if (!(in_grouping(g_v, 97, 117)))
+                                        if (!(InGrouping(g_v, 97, 117)))
                                         {
                                             goto lab6;
                                         }
@@ -523,7 +523,7 @@
                             lab4:
                             m_cursor = v_3;
                             // (, line 32
-                            if (!(in_grouping(g_v, 97, 117)))
+                            if (!(InGrouping(g_v, 97, 117)))
                             {
                                 goto lab2;
                             }
@@ -534,7 +534,7 @@
 
                                 do
                                 {
-                                    if (!(out_grouping(g_v, 97, 117)))
+                                    if (!(OutGrouping(g_v, 97, 117)))
                                     {
                                         goto lab8;
                                     }
@@ -555,7 +555,7 @@
                     lab2:
                     m_cursor = v_2;
                     // (, line 34
-                    if (!(out_grouping(g_v, 97, 117)))
+                    if (!(OutGrouping(g_v, 97, 117)))
                     {
                         goto lab0;
                     }
@@ -568,7 +568,7 @@
                         do
                         {
                             // (, line 34
-                            if (!(out_grouping(g_v, 97, 117)))
+                            if (!(OutGrouping(g_v, 97, 117)))
                             {
                                 goto lab10;
                             }
@@ -579,7 +579,7 @@
 
                                 do
                                 {
-                                    if (!(in_grouping(g_v, 97, 117)))
+                                    if (!(InGrouping(g_v, 97, 117)))
                                     {
                                         goto lab12;
                                     }
@@ -598,7 +598,7 @@
                         lab10:
                         m_cursor = v_6;
                         // (, line 34
-                        if (!(in_grouping(g_v, 97, 117)))
+                        if (!(InGrouping(g_v, 97, 117)))
                         {
                             goto lab0;
                         }
@@ -630,7 +630,7 @@
 
                     do
                     {
-                        if (!(in_grouping(g_v, 97, 117)))
+                        if (!(InGrouping(g_v, 97, 117)))
                         {
                             goto lab15;
                         }
@@ -651,7 +651,7 @@
 
                     do
                     {
-                        if (!(out_grouping(g_v, 97, 117)))
+                        if (!(OutGrouping(g_v, 97, 117)))
                         {
                             goto lab17;
                         }
@@ -674,7 +674,7 @@
 
                     do
                     {
-                        if (!(in_grouping(g_v, 97, 117)))
+                        if (!(InGrouping(g_v, 97, 117)))
                         {
                             goto lab19;
                         }
@@ -695,7 +695,7 @@
 
                     do
                     {
-                        if (!(out_grouping(g_v, 97, 117)))
+                        if (!(OutGrouping(g_v, 97, 117)))
                         {
                             goto lab21;
                         }
@@ -751,7 +751,7 @@
             // [, line 50
             m_ket = m_cursor;
             // substring, line 50
-            among_var = find_among_b(a_0, 109);
+            among_var = FindAmongB(a_0, 109);
             if (among_var == 0)
             {
                 return false;
@@ -770,7 +770,7 @@
                         return false;
                     }
                     // delete, line 61
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 63
@@ -780,22 +780,22 @@
                         return false;
                     }
                     // delete, line 63
-                    slice_del();
+                    SliceDel();
                     break;
                 case 3:
                     // (, line 65
                     // <-, line 65
-                    slice_from("atseden");
+                    SliceFrom("atseden");
                     break;
                 case 4:
                     // (, line 67
                     // <-, line 67
-                    slice_from("arabera");
+                    SliceFrom("arabera");
                     break;
                 case 5:
                     // (, line 69
                     // <-, line 69
-                    slice_from("baditu");
+                    SliceFrom("baditu");
                     break;
             }
             return true;
@@ -808,7 +808,7 @@
             // [, line 75
             m_ket = m_cursor;
             // substring, line 75
-            among_var = find_among_b(a_1, 295);
+            among_var = FindAmongB(a_1, 295);
             if (among_var == 0)
             {
                 return false;
@@ -827,7 +827,7 @@
                         return false;
                     }
                     // delete, line 105
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 107
@@ -837,12 +837,12 @@
                         return false;
                     }
                     // delete, line 107
-                    slice_del();
+                    SliceDel();
                     break;
                 case 3:
                     // (, line 109
                     // <-, line 109
-                    slice_from("jok");
+                    SliceFrom("jok");
                     break;
                 case 4:
                     // (, line 111
@@ -852,37 +852,37 @@
                         return false;
                     }
                     // delete, line 111
-                    slice_del();
+                    SliceDel();
                     break;
                 case 5:
                     // (, line 113
                     // <-, line 113
-                    slice_from("tra");
+                    SliceFrom("tra");
                     break;
                 case 6:
                     // (, line 115
                     // <-, line 115
-                    slice_from("minutu");
+                    SliceFrom("minutu");
                     break;
                 case 7:
                     // (, line 117
                     // <-, line 117
-                    slice_from("zehar");
+                    SliceFrom("zehar");
                     break;
                 case 8:
                     // (, line 119
                     // <-, line 119
-                    slice_from("geldi");
+                    SliceFrom("geldi");
                     break;
                 case 9:
                     // (, line 121
                     // <-, line 121
-                    slice_from("igaro");
+                    SliceFrom("igaro");
                     break;
                 case 10:
                     // (, line 123
                     // <-, line 123
-                    slice_from("aurka");
+                    SliceFrom("aurka");
                     break;
             }
             return true;
@@ -895,7 +895,7 @@
             // [, line 128
             m_ket = m_cursor;
             // substring, line 128
-            among_var = find_among_b(a_2, 19);
+            among_var = FindAmongB(a_2, 19);
             if (among_var == 0)
             {
                 return false;
@@ -914,12 +914,12 @@
                         return false;
                     }
                     // delete, line 131
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 133
                     // <-, line 133
-                    slice_from("z");
+                    SliceFrom("z");
                     break;
             }
             return true;

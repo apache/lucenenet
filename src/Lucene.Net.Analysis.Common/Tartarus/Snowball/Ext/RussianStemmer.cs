@@ -174,7 +174,7 @@
         {
             I_p2 = other.I_p2;
             I_pV = other.I_pV;
-            base.copy_from(other);
+            base.CopyFrom(other);
         }
 
         private bool r_mark_regions()
@@ -193,7 +193,7 @@
                 {
                     do
                     {
-                        if (!(in_grouping(g_v, 1072, 1103)))
+                        if (!(InGrouping(g_v, 1072, 1103)))
                         {
                             goto lab2;
                         }
@@ -214,7 +214,7 @@
                 {
                     do
                     {
-                        if (!(out_grouping(g_v, 1072, 1103)))
+                        if (!(OutGrouping(g_v, 1072, 1103)))
                         {
                             goto lab4;
                         }
@@ -233,7 +233,7 @@
                 {
                     do
                     {
-                        if (!(in_grouping(g_v, 1072, 1103)))
+                        if (!(InGrouping(g_v, 1072, 1103)))
                         {
                             goto lab6;
                         }
@@ -252,7 +252,7 @@
                 {
                     do
                     {
-                        if (!(out_grouping(g_v, 1072, 1103)))
+                        if (!(OutGrouping(g_v, 1072, 1103)))
                         {
                             goto lab8;
                         }
@@ -291,7 +291,7 @@
             // [, line 72
             m_ket = m_cursor;
             // substring, line 72
-            among_var = find_among_b(a_0, 9);
+            among_var = FindAmongB(a_0, 9);
             if (among_var == 0)
             {
                 return false;
@@ -311,7 +311,7 @@
                         do
                         {
                             // literal, line 76
-                            if (!(eq_s_b(1, "\u0430")))
+                            if (!(Eq_S_B(1, "\u0430")))
                             {
                                 goto lab1;
                             }
@@ -320,19 +320,19 @@
                         lab1:
                         m_cursor = m_limit - v_1;
                         // literal, line 76
-                        if (!(eq_s_b(1, "\u044F")))
+                        if (!(Eq_S_B(1, "\u044F")))
                         {
                             return false;
                         }
                     } while (false);
                     lab0:
                     // delete, line 76
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 83
                     // delete, line 83
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -345,7 +345,7 @@
             // [, line 88
             m_ket = m_cursor;
             // substring, line 88
-            among_var = find_among_b(a_1, 26);
+            among_var = FindAmongB(a_1, 26);
             if (among_var == 0)
             {
                 return false;
@@ -359,7 +359,7 @@
                 case 1:
                     // (, line 97
                     // delete, line 97
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -384,7 +384,7 @@
                 // [, line 110
                 m_ket = m_cursor;
                 // substring, line 110
-                among_var = find_among_b(a_2, 8);
+                among_var = FindAmongB(a_2, 8);
                 if (among_var == 0)
                 {
                     m_cursor = m_limit - v_1;
@@ -406,7 +406,7 @@
                             do
                             {
                                 // literal, line 115
-                                if (!(eq_s_b(1, "\u0430")))
+                                if (!(Eq_S_B(1, "\u0430")))
                                 {
                                     goto lab2;
                                 }
@@ -415,7 +415,7 @@
                             lab2:
                             m_cursor = m_limit - v_2;
                             // literal, line 115
-                            if (!(eq_s_b(1, "\u044F")))
+                            if (!(Eq_S_B(1, "\u044F")))
                             {
                                 m_cursor = m_limit - v_1;
                                 goto lab0;
@@ -423,12 +423,12 @@
                         } while (false);
                         lab1:
                         // delete, line 115
-                        slice_del();
+                        SliceDel();
                         break;
                     case 2:
                         // (, line 122
                         // delete, line 122
-                        slice_del();
+                        SliceDel();
                         break;
                 }
             } while (false);
@@ -443,7 +443,7 @@
             // [, line 129
             m_ket = m_cursor;
             // substring, line 129
-            among_var = find_among_b(a_3, 2);
+            among_var = FindAmongB(a_3, 2);
             if (among_var == 0)
             {
                 return false;
@@ -457,7 +457,7 @@
                 case 1:
                     // (, line 132
                     // delete, line 132
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -471,7 +471,7 @@
             // [, line 137
             m_ket = m_cursor;
             // substring, line 137
-            among_var = find_among_b(a_4, 46);
+            among_var = FindAmongB(a_4, 46);
             if (among_var == 0)
             {
                 return false;
@@ -491,7 +491,7 @@
                         do
                         {
                             // literal, line 143
-                            if (!(eq_s_b(1, "\u0430")))
+                            if (!(Eq_S_B(1, "\u0430")))
                             {
                                 goto lab1;
                             }
@@ -500,19 +500,19 @@
                         lab1:
                         m_cursor = m_limit - v_1;
                         // literal, line 143
-                        if (!(eq_s_b(1, "\u044F")))
+                        if (!(Eq_S_B(1, "\u044F")))
                         {
                             return false;
                         }
                     } while (false);
                     lab0:
                     // delete, line 143
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 151
                     // delete, line 151
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -525,7 +525,7 @@
             // [, line 160
             m_ket = m_cursor;
             // substring, line 160
-            among_var = find_among_b(a_5, 36);
+            among_var = FindAmongB(a_5, 36);
             if (among_var == 0)
             {
                 return false;
@@ -539,7 +539,7 @@
                 case 1:
                     // (, line 167
                     // delete, line 167
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -552,7 +552,7 @@
             // [, line 176
             m_ket = m_cursor;
             // substring, line 176
-            among_var = find_among_b(a_6, 2);
+            among_var = FindAmongB(a_6, 2);
             if (among_var == 0)
             {
                 return false;
@@ -571,7 +571,7 @@
                 case 1:
                     // (, line 179
                     // delete, line 179
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -584,7 +584,7 @@
             // [, line 184
             m_ket = m_cursor;
             // substring, line 184
-            among_var = find_among_b(a_7, 4);
+            among_var = FindAmongB(a_7, 4);
             if (among_var == 0)
             {
                 return false;
@@ -598,38 +598,38 @@
                 case 1:
                     // (, line 188
                     // delete, line 188
-                    slice_del();
+                    SliceDel();
                     // [, line 189
                     m_ket = m_cursor;
                     // literal, line 189
-                    if (!(eq_s_b(1, "\u043D")))
+                    if (!(Eq_S_B(1, "\u043D")))
                     {
                         return false;
                     }
                     // ], line 189
                     m_bra = m_cursor;
                     // literal, line 189
-                    if (!(eq_s_b(1, "\u043D")))
+                    if (!(Eq_S_B(1, "\u043D")))
                     {
                         return false;
                     }
                     // delete, line 189
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 192
                     // literal, line 192
-                    if (!(eq_s_b(1, "\u043D")))
+                    if (!(Eq_S_B(1, "\u043D")))
                     {
                         return false;
                     }
                     // delete, line 192
-                    slice_del();
+                    SliceDel();
                     break;
                 case 3:
                     // (, line 194
                     // delete, line 194
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -754,7 +754,7 @@
                 // [, line 209
                 m_ket = m_cursor;
                 // literal, line 209
-                if (!(eq_s_b(1, "\u0438")))
+                if (!(Eq_S_B(1, "\u0438")))
                 {
                     m_cursor = m_limit - v_8;
                     goto lab8;
@@ -762,7 +762,7 @@
                 // ], line 209
                 m_bra = m_cursor;
                 // delete, line 209
-                slice_del();
+                SliceDel();
             } while (false);
             lab8:
             // do, line 212

@@ -147,7 +147,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             S_x = other.S_x;
             I_p2 = other.I_p2;
             I_p1 = other.I_p1;
-            base.copy_from(other);
+            base.CopyFrom(other);
         }
 
         private bool r_mark_regions()
@@ -165,7 +165,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
 
                 do
                 {
-                    if (!(in_grouping(g_V1, 97, 246)))
+                    if (!(InGrouping(g_V1, 97, 246)))
                     {
                         goto lab1;
                     }
@@ -188,7 +188,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
 
                 do
                 {
-                    if (!(out_grouping(g_V1, 97, 246)))
+                    if (!(OutGrouping(g_V1, 97, 246)))
                     {
                         goto lab3;
                     }
@@ -212,7 +212,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
 
                 do
                 {
-                    if (!(in_grouping(g_V1, 97, 246)))
+                    if (!(InGrouping(g_V1, 97, 246)))
                     {
                         goto lab5;
                     }
@@ -235,7 +235,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
 
                 do
                 {
-                    if (!(out_grouping(g_V1, 97, 246)))
+                    if (!(OutGrouping(g_V1, 97, 246)))
                     {
                         goto lab7;
                     }
@@ -284,7 +284,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             // [, line 55
             m_ket = m_cursor;
             // substring, line 55
-            among_var = find_among_b(a_0, 10);
+            among_var = FindAmongB(a_0, 10);
             if (among_var == 0)
             {
                 m_limit_backward = v_2;
@@ -299,7 +299,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     return false;
                 case 1:
                     // (, line 62
-                    if (!(in_grouping_b(g_particle_end, 97, 246)))
+                    if (!(InGroupingB(g_particle_end, 97, 246)))
                     {
                         return false;
                     }
@@ -314,7 +314,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     break;
             }
             // delete, line 66
-            slice_del();
+            SliceDel();
             return true;
         }
 
@@ -340,7 +340,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             // [, line 69
             m_ket = m_cursor;
             // substring, line 69
-            among_var = find_among_b(a_4, 9);
+            among_var = FindAmongB(a_4, 9);
             if (among_var == 0)
             {
                 m_limit_backward = v_2;
@@ -362,7 +362,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         do
                         {
                             // literal, line 72
-                            if (!(eq_s_b(1, "k")))
+                            if (!(Eq_S_B(1, "k")))
                             {
                                 goto lab0;
                             }
@@ -372,58 +372,58 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         m_cursor = m_limit - v_3;
                     }
                     // delete, line 72
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 74
                     // delete, line 74
-                    slice_del();
+                    SliceDel();
                     // [, line 74
                     m_ket = m_cursor;
                     // literal, line 74
-                    if (!(eq_s_b(3, "kse")))
+                    if (!(Eq_S_B(3, "kse")))
                     {
                         return false;
                     }
                     // ], line 74
                     m_bra = m_cursor;
                     // <-, line 74
-                    slice_from("ksi");
+                    SliceFrom("ksi");
                     break;
                 case 3:
                     // (, line 78
                     // delete, line 78
-                    slice_del();
+                    SliceDel();
                     break;
                 case 4:
                     // (, line 81
                     // among, line 81
-                    if (find_among_b(a_1, 6) == 0)
+                    if (FindAmongB(a_1, 6) == 0)
                     {
                         return false;
                     }
                     // delete, line 81
-                    slice_del();
+                    SliceDel();
                     break;
                 case 5:
                     // (, line 83
                     // among, line 83
-                    if (find_among_b(a_2, 6) == 0)
+                    if (FindAmongB(a_2, 6) == 0)
                     {
                         return false;
                     }
                     // delete, line 84
-                    slice_del();
+                    SliceDel();
                     break;
                 case 6:
                     // (, line 86
                     // among, line 86
-                    if (find_among_b(a_3, 2) == 0)
+                    if (FindAmongB(a_3, 2) == 0)
                     {
                         return false;
                     }
                     // delete, line 86
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -432,7 +432,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
         private bool r_LONG()
         {
             // among, line 91
-            if (find_among_b(a_5, 7) == 0)
+            if (FindAmongB(a_5, 7) == 0)
             {
                 return false;
             }
@@ -443,11 +443,11 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
         {
             // (, line 93
             // literal, line 93
-            if (!(eq_s_b(1, "i")))
+            if (!(Eq_S_B(1, "i")))
             {
                 return false;
             }
-            if (!(in_grouping_b(g_V2, 97, 246)))
+            if (!(InGroupingB(g_V2, 97, 246)))
             {
                 return false;
             }
@@ -478,7 +478,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             // [, line 96
             m_ket = m_cursor;
             // substring, line 96
-            among_var = find_among_b(a_6, 30);
+            among_var = FindAmongB(a_6, 30);
             if (among_var == 0)
             {
                 m_limit_backward = v_2;
@@ -494,7 +494,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 case 1:
                     // (, line 98
                     // literal, line 98
-                    if (!(eq_s_b(1, "a")))
+                    if (!(Eq_S_B(1, "a")))
                     {
                         return false;
                     }
@@ -502,7 +502,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 case 2:
                     // (, line 99
                     // literal, line 99
-                    if (!(eq_s_b(1, "e")))
+                    if (!(Eq_S_B(1, "e")))
                     {
                         return false;
                     }
@@ -510,7 +510,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 case 3:
                     // (, line 100
                     // literal, line 100
-                    if (!(eq_s_b(1, "i")))
+                    if (!(Eq_S_B(1, "i")))
                     {
                         return false;
                     }
@@ -518,7 +518,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 case 4:
                     // (, line 101
                     // literal, line 101
-                    if (!(eq_s_b(1, "o")))
+                    if (!(Eq_S_B(1, "o")))
                     {
                         return false;
                     }
@@ -526,7 +526,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 case 5:
                     // (, line 102
                     // literal, line 102
-                    if (!(eq_s_b(1, "\u00E4")))
+                    if (!(Eq_S_B(1, "\u00E4")))
                     {
                         return false;
                     }
@@ -534,7 +534,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 case 6:
                     // (, line 103
                     // literal, line 103
-                    if (!(eq_s_b(1, "\u00F6")))
+                    if (!(Eq_S_B(1, "\u00F6")))
                     {
                         return false;
                     }
@@ -567,7 +567,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                             lab2:
                             m_cursor = m_limit - v_5;
                             // literal, line 112
-                            if (!(eq_s_b(2, "ie")))
+                            if (!(Eq_S_B(2, "ie")))
                             {
                                 m_cursor = m_limit - v_3;
                                 goto lab0;
@@ -589,11 +589,11 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     break;
                 case 8:
                     // (, line 119
-                    if (!(in_grouping_b(g_V1, 97, 246)))
+                    if (!(InGroupingB(g_V1, 97, 246)))
                     {
                         return false;
                     }
-                    if (!(out_grouping_b(g_V1, 97, 246)))
+                    if (!(OutGroupingB(g_V1, 97, 246)))
                     {
                         return false;
                     }
@@ -601,14 +601,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 case 9:
                     // (, line 121
                     // literal, line 121
-                    if (!(eq_s_b(1, "e")))
+                    if (!(Eq_S_B(1, "e")))
                     {
                         return false;
                     }
                     break;
             }
             // delete, line 138
-            slice_del();
+            SliceDel();
             // set ending_removed, line 139
             B_ending_removed = true;
             return true;
@@ -636,7 +636,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             // [, line 142
             m_ket = m_cursor;
             // substring, line 142
-            among_var = find_among_b(a_7, 14);
+            among_var = FindAmongB(a_7, 14);
             if (among_var == 0)
             {
                 m_limit_backward = v_2;
@@ -658,7 +658,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         do
                         {
                             // literal, line 146
-                            if (!(eq_s_b(2, "po")))
+                            if (!(Eq_S_B(2, "po")))
                             {
                                 goto lab0;
                             }
@@ -670,7 +670,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     break;
             }
             // delete, line 151
-            slice_del();
+            SliceDel();
             return true;
         }
 
@@ -694,7 +694,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             // [, line 154
             m_ket = m_cursor;
             // substring, line 154
-            if (find_among_b(a_8, 2) == 0)
+            if (FindAmongB(a_8, 2) == 0)
             {
                 m_limit_backward = v_2;
                 return false;
@@ -703,7 +703,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             m_bra = m_cursor;
             m_limit_backward = v_2;
             // delete, line 158
-            slice_del();
+            SliceDel();
             return true;
         }
 
@@ -732,7 +732,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             // [, line 162
             m_ket = m_cursor;
             // literal, line 162
-            if (!(eq_s_b(1, "t")))
+            if (!(Eq_S_B(1, "t")))
             {
                 m_limit_backward = v_2;
                 return false;
@@ -741,14 +741,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             m_bra = m_cursor;
             // test, line 162
             v_3 = m_limit - m_cursor;
-            if (!(in_grouping_b(g_V1, 97, 246)))
+            if (!(InGroupingB(g_V1, 97, 246)))
             {
                 m_limit_backward = v_2;
                 return false;
             }
             m_cursor = m_limit - v_3;
             // delete, line 163
-            slice_del();
+            SliceDel();
             m_limit_backward = v_2;
             // setlimit, line 165
             v_4 = m_limit - m_cursor;
@@ -765,7 +765,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             // [, line 165
             m_ket = m_cursor;
             // substring, line 165
-            among_var = find_among_b(a_9, 2);
+            among_var = FindAmongB(a_9, 2);
             if (among_var == 0)
             {
                 m_limit_backward = v_5;
@@ -787,7 +787,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         do
                         {
                             // literal, line 167
-                            if (!(eq_s_b(2, "po")))
+                            if (!(Eq_S_B(2, "po")))
                             {
                                 goto lab0;
                             }
@@ -799,7 +799,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     break;
             }
             // delete, line 170
-            slice_del();
+            SliceDel();
             return true;
         }
 
@@ -853,7 +853,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 // ], line 174
                 m_bra = m_cursor;
                 // delete, line 174
-                slice_del();
+                SliceDel();
             } while (false);
             lab0:
             m_cursor = m_limit - v_3;
@@ -865,18 +865,18 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 // (, line 175
                 // [, line 175
                 m_ket = m_cursor;
-                if (!(in_grouping_b(g_AEI, 97, 228)))
+                if (!(InGroupingB(g_AEI, 97, 228)))
                 {
                     goto lab1;
                 }
                 // ], line 175
                 m_bra = m_cursor;
-                if (!(out_grouping_b(g_V1, 97, 246)))
+                if (!(OutGroupingB(g_V1, 97, 246)))
                 {
                     goto lab1;
                 }
                 // delete, line 175
-                slice_del();
+                SliceDel();
             } while (false);
             lab1:
             m_cursor = m_limit - v_5;
@@ -889,7 +889,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 // [, line 176
                 m_ket = m_cursor;
                 // literal, line 176
-                if (!(eq_s_b(1, "j")))
+                if (!(Eq_S_B(1, "j")))
                 {
                     goto lab2;
                 }
@@ -904,7 +904,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     do
                     {
                         // literal, line 176
-                        if (!(eq_s_b(1, "o")))
+                        if (!(Eq_S_B(1, "o")))
                         {
                             goto lab4;
                         }
@@ -913,14 +913,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     lab4:
                     m_cursor = m_limit - v_7;
                     // literal, line 176
-                    if (!(eq_s_b(1, "u")))
+                    if (!(Eq_S_B(1, "u")))
                     {
                         goto lab2;
                     }
                 } while (false);
                 lab3:
                 // delete, line 176
-                slice_del();
+                SliceDel();
             } while (false);
             lab2:
             m_cursor = m_limit - v_6;
@@ -933,19 +933,19 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 // [, line 177
                 m_ket = m_cursor;
                 // literal, line 177
-                if (!(eq_s_b(1, "o")))
+                if (!(Eq_S_B(1, "o")))
                 {
                     goto lab5;
                 }
                 // ], line 177
                 m_bra = m_cursor;
                 // literal, line 177
-                if (!(eq_s_b(1, "j")))
+                if (!(Eq_S_B(1, "j")))
                 {
                     goto lab5;
                 }
                 // delete, line 177
-                slice_del();
+                SliceDel();
             } while (false);
             lab5:
             m_cursor = m_limit - v_8;
@@ -958,7 +958,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
 
                 do
                 {
-                    if (!(out_grouping_b(g_V1, 97, 246)))
+                    if (!(OutGroupingB(g_V1, 97, 246)))
                     {
                         goto lab7;
                     }
@@ -985,14 +985,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             // ], line 179
             m_bra = m_cursor;
             // -> x, line 179
-            S_x = slice_to(S_x);
+            S_x = SliceTo(S_x);
             // name x, line 179
-            if (!(eq_v_b(S_x.ToString())))
+            if (!(Eq_V_B(S_x.ToString())))
             {
                 return false;
             }
             // delete, line 179
-            slice_del();
+            SliceDel();
             return true;
         }
 

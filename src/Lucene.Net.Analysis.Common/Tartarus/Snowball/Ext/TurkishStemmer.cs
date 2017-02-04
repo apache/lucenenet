@@ -223,7 +223,7 @@
         {
             B_continue_stemming_noun_suffixes = other.B_continue_stemming_noun_suffixes;
             I_strlen = other.I_strlen;
-            base.copy_from(other);
+            base.CopyFrom(other);
         }
 
         private bool r_check_vowel_harmony()
@@ -251,7 +251,7 @@
                 v_2 = m_limit - m_cursor;
                 do
                 {
-                    if (!(in_grouping_b(g_vowel, 97, 305)))
+                    if (!(InGroupingB(g_vowel, 97, 305)))
                     {
                         goto lab1;
                     }
@@ -276,7 +276,7 @@
                 {
                     // (, line 116
                     // literal, line 116
-                    if (!(eq_s_b(1, "a")))
+                    if (!(Eq_S_B(1, "a")))
                     {
                         goto lab3;
                     }
@@ -286,7 +286,7 @@
                         v_4 = m_limit - m_cursor;
                         do
                         {
-                            if (!(in_grouping_b(g_vowel1, 97, 305)))
+                            if (!(InGroupingB(g_vowel1, 97, 305)))
                             {
                                 goto lab5;
                             }
@@ -310,7 +310,7 @@
                 {
                     // (, line 117
                     // literal, line 117
-                    if (!(eq_s_b(1, "e")))
+                    if (!(Eq_S_B(1, "e")))
                     {
                         goto lab6;
                     }
@@ -322,7 +322,7 @@
 
                         do
                         {
-                            if (!(in_grouping_b(g_vowel2, 101, 252)))
+                            if (!(InGroupingB(g_vowel2, 101, 252)))
                             {
                                 goto lab8;
                             }
@@ -347,7 +347,7 @@
                 {
                     // (, line 118
                     // literal, line 118
-                    if (!(eq_s_b(1, "\u0131")))
+                    if (!(Eq_S_B(1, "\u0131")))
                     {
                         goto lab9;
                     }
@@ -359,7 +359,7 @@
 
                         do
                         {
-                            if (!(in_grouping_b(g_vowel3, 97, 305)))
+                            if (!(InGroupingB(g_vowel3, 97, 305)))
                             {
                                 goto lab11;
                             }
@@ -384,7 +384,7 @@
                 {
                     // (, line 119
                     // literal, line 119
-                    if (!(eq_s_b(1, "i")))
+                    if (!(Eq_S_B(1, "i")))
                     {
                         goto lab12;
                     }
@@ -396,7 +396,7 @@
 
                         do
                         {
-                            if (!(in_grouping_b(g_vowel4, 101, 105)))
+                            if (!(InGroupingB(g_vowel4, 101, 105)))
                             {
                                 goto lab14;
                             }
@@ -420,7 +420,7 @@
                 {
                     // (, line 120
                     // literal, line 120
-                    if (!(eq_s_b(1, "o")))
+                    if (!(Eq_S_B(1, "o")))
                     {
                         goto lab15;
                     }
@@ -432,7 +432,7 @@
 
                         do
                         {
-                            if (!(in_grouping_b(g_vowel5, 111, 117)))
+                            if (!(InGroupingB(g_vowel5, 111, 117)))
                             {
                                 goto lab17;
                             }
@@ -456,7 +456,7 @@
                 {
                     // (, line 121
                     // literal, line 121
-                    if (!(eq_s_b(1, "\u00F6")))
+                    if (!(Eq_S_B(1, "\u00F6")))
                     {
                         goto lab18;
                     }
@@ -468,7 +468,7 @@
 
                         do
                         {
-                            if (!(in_grouping_b(g_vowel6, 246, 252)))
+                            if (!(InGroupingB(g_vowel6, 246, 252)))
                             {
                                 goto lab20;
                             }
@@ -492,7 +492,7 @@
                 {
                     // (, line 122
                     // literal, line 122
-                    if (!(eq_s_b(1, "u")))
+                    if (!(Eq_S_B(1, "u")))
                     {
                         goto lab21;
                     }
@@ -504,7 +504,7 @@
 
                         do
                         {
-                            if (!(in_grouping_b(g_vowel5, 111, 117)))
+                            if (!(InGroupingB(g_vowel5, 111, 117)))
                             {
                                 goto lab23;
                             }
@@ -526,7 +526,7 @@
                 m_cursor = m_limit - v_3;
                 // (, line 123
                 // literal, line 123
-                if (!(eq_s_b(1, "\u00FC")))
+                if (!(Eq_S_B(1, "\u00FC")))
                 {
                     return false;
                 }
@@ -538,7 +538,7 @@
 
                     do
                     {
-                        if (!(in_grouping_b(g_vowel6, 246, 252)))
+                        if (!(InGroupingB(g_vowel6, 246, 252)))
                         {
                             goto lab25;
                         }
@@ -582,7 +582,7 @@
                     // test, line 133
                     v_2 = m_limit - m_cursor;
                     // literal, line 133
-                    if (!(eq_s_b(1, "n")))
+                    if (!(Eq_S_B(1, "n")))
                     {
                         goto lab1;
                     }
@@ -596,7 +596,7 @@
                     // (, line 133
                     // test, line 133
                     v_3 = m_limit - m_cursor;
-                    if (!(in_grouping_b(g_vowel, 97, 305)))
+                    if (!(InGroupingB(g_vowel, 97, 305)))
                     {
                         goto lab1;
                     }
@@ -617,7 +617,7 @@
                         // test, line 135
                         v_5 = m_limit - m_cursor;
                         // literal, line 135
-                        if (!(eq_s_b(1, "n")))
+                        if (!(Eq_S_B(1, "n")))
                         {
                             goto lab2;
                         }
@@ -639,7 +639,7 @@
                 // (, line 135
                 // test, line 135
                 v_7 = m_limit - m_cursor;
-                if (!(in_grouping_b(g_vowel, 97, 305)))
+                if (!(InGroupingB(g_vowel, 97, 305)))
                 {
                     return false;
                 }
@@ -673,7 +673,7 @@
                     // test, line 144
                     v_2 = m_limit - m_cursor;
                     // literal, line 144
-                    if (!(eq_s_b(1, "s")))
+                    if (!(Eq_S_B(1, "s")))
                     {
                         goto lab1;
                     }
@@ -687,7 +687,7 @@
                     // (, line 144
                     // test, line 144
                     v_3 = m_limit - m_cursor;
-                    if (!(in_grouping_b(g_vowel, 97, 305)))
+                    if (!(InGroupingB(g_vowel, 97, 305)))
                     {
                         goto lab1;
                     }
@@ -708,7 +708,7 @@
                         // test, line 146
                         v_5 = m_limit - m_cursor;
                         // literal, line 146
-                        if (!(eq_s_b(1, "s")))
+                        if (!(Eq_S_B(1, "s")))
                         {
                             goto lab2;
                         }
@@ -730,7 +730,7 @@
                 // (, line 146
                 // test, line 146
                 v_7 = m_limit - m_cursor;
-                if (!(in_grouping_b(g_vowel, 97, 305)))
+                if (!(InGroupingB(g_vowel, 97, 305)))
                 {
                     return false;
                 }
@@ -764,7 +764,7 @@
                     // test, line 154
                     v_2 = m_limit - m_cursor;
                     // literal, line 154
-                    if (!(eq_s_b(1, "y")))
+                    if (!(Eq_S_B(1, "y")))
                     {
                         goto lab1;
                     }
@@ -778,7 +778,7 @@
                     // (, line 154
                     // test, line 154
                     v_3 = m_limit - m_cursor;
-                    if (!(in_grouping_b(g_vowel, 97, 305)))
+                    if (!(InGroupingB(g_vowel, 97, 305)))
                     {
                         goto lab1;
                     }
@@ -799,7 +799,7 @@
                         // test, line 156
                         v_5 = m_limit - m_cursor;
                         // literal, line 156
-                        if (!(eq_s_b(1, "y")))
+                        if (!(Eq_S_B(1, "y")))
                         {
                             goto lab2;
                         }
@@ -821,7 +821,7 @@
                 // (, line 156
                 // test, line 156
                 v_7 = m_limit - m_cursor;
-                if (!(in_grouping_b(g_vowel, 97, 305)))
+                if (!(InGroupingB(g_vowel, 97, 305)))
                 {
                     return false;
                 }
@@ -852,7 +852,7 @@
                     // (, line 160
                     // test, line 160
                     v_2 = m_limit - m_cursor;
-                    if (!(in_grouping_b(g_U, 105, 305)))
+                    if (!(InGroupingB(g_U, 105, 305)))
                     {
                         goto lab1;
                     }
@@ -866,7 +866,7 @@
                     // (, line 160
                     // test, line 160
                     v_3 = m_limit - m_cursor;
-                    if (!(out_grouping_b(g_vowel, 97, 305)))
+                    if (!(OutGroupingB(g_vowel, 97, 305)))
                     {
                         goto lab1;
                     }
@@ -886,7 +886,7 @@
                         // (, line 162
                         // test, line 162
                         v_5 = m_limit - m_cursor;
-                        if (!(in_grouping_b(g_U, 105, 305)))
+                        if (!(InGroupingB(g_U, 105, 305)))
                         {
                             goto lab2;
                         }
@@ -908,7 +908,7 @@
                 // (, line 162
                 // test, line 162
                 v_7 = m_limit - m_cursor;
-                if (!(out_grouping_b(g_vowel, 97, 305)))
+                if (!(OutGroupingB(g_vowel, 97, 305)))
                 {
                     return false;
                 }
@@ -923,7 +923,7 @@
         {
             // (, line 166
             // among, line 167
-            if (find_among_b(a_0, 10) == 0)
+            if (FindAmongB(a_0, 10) == 0)
             {
                 return false;
             }
@@ -944,7 +944,7 @@
             {
                 return false;
             }
-            if (!(in_grouping_b(g_U, 105, 305)))
+            if (!(InGroupingB(g_U, 105, 305)))
             {
                 return false;
             }
@@ -961,7 +961,7 @@
         {
             // (, line 178
             // among, line 179
-            if (find_among_b(a_1, 2) == 0)
+            if (FindAmongB(a_1, 2) == 0)
             {
                 return false;
             }
@@ -976,7 +976,7 @@
             {
                 return false;
             }
-            if (!(in_grouping_b(g_U, 105, 305)))
+            if (!(InGroupingB(g_U, 105, 305)))
             {
                 return false;
             }
@@ -998,7 +998,7 @@
                 return false;
             }
             // among, line 190
-            if (find_among_b(a_2, 4) == 0)
+            if (FindAmongB(a_2, 4) == 0)
             {
                 return false;
             }
@@ -1014,7 +1014,7 @@
                 return false;
             }
             // among, line 195
-            if (find_among_b(a_3, 4) == 0)
+            if (FindAmongB(a_3, 4) == 0)
             {
                 return false;
             }
@@ -1036,7 +1036,7 @@
                 return false;
             }
             // among, line 201
-            if (find_among_b(a_4, 2) == 0)
+            if (FindAmongB(a_4, 2) == 0)
             {
                 return false;
             }
@@ -1058,7 +1058,7 @@
                 return false;
             }
             // among, line 207
-            if (find_among_b(a_5, 2) == 0)
+            if (FindAmongB(a_5, 2) == 0)
             {
                 return false;
             }
@@ -1074,7 +1074,7 @@
                 return false;
             }
             // among, line 212
-            if (find_among_b(a_6, 4) == 0)
+            if (FindAmongB(a_6, 4) == 0)
             {
                 return false;
             }
@@ -1090,7 +1090,7 @@
                 return false;
             }
             // among, line 217
-            if (find_among_b(a_7, 2) == 0)
+            if (FindAmongB(a_7, 2) == 0)
             {
                 return false;
             }
@@ -1106,7 +1106,7 @@
                 return false;
             }
             // among, line 222
-            if (find_among_b(a_8, 4) == 0)
+            if (FindAmongB(a_8, 4) == 0)
             {
                 return false;
             }
@@ -1122,7 +1122,7 @@
                 return false;
             }
             // among, line 227
-            if (find_among_b(a_9, 2) == 0)
+            if (FindAmongB(a_9, 2) == 0)
             {
                 return false;
             }
@@ -1138,7 +1138,7 @@
                 return false;
             }
             // among, line 232
-            if (find_among_b(a_10, 2) == 0)
+            if (FindAmongB(a_10, 2) == 0)
             {
                 return false;
             }
@@ -1155,7 +1155,7 @@
         {
             // (, line 236
             // literal, line 237
-            if (!(eq_s_b(2, "ki")))
+            if (!(Eq_S_B(2, "ki")))
             {
                 return false;
             }
@@ -1171,7 +1171,7 @@
                 return false;
             }
             // among, line 242
-            if (find_among_b(a_11, 2) == 0)
+            if (FindAmongB(a_11, 2) == 0)
             {
                 return false;
             }
@@ -1193,7 +1193,7 @@
                 return false;
             }
             // among, line 248
-            if (find_among_b(a_12, 4) == 0)
+            if (FindAmongB(a_12, 4) == 0)
             {
                 return false;
             }
@@ -1215,7 +1215,7 @@
                 return false;
             }
             // among, line 254
-            if (find_among_b(a_13, 4) == 0)
+            if (FindAmongB(a_13, 4) == 0)
             {
                 return false;
             }
@@ -1231,7 +1231,7 @@
                 return false;
             }
             // among, line 259
-            if (find_among_b(a_14, 4) == 0)
+            if (FindAmongB(a_14, 4) == 0)
             {
                 return false;
             }
@@ -1248,7 +1248,7 @@
         {
             // (, line 263
             // among, line 264
-            if (find_among_b(a_15, 4) == 0)
+            if (FindAmongB(a_15, 4) == 0)
             {
                 return false;
             }
@@ -1264,7 +1264,7 @@
                 return false;
             }
             // among, line 269
-            if (find_among_b(a_16, 2) == 0)
+            if (FindAmongB(a_16, 2) == 0)
             {
                 return false;
             }
@@ -1280,7 +1280,7 @@
                 return false;
             }
             // among, line 274
-            if (find_among_b(a_17, 4) == 0)
+            if (FindAmongB(a_17, 4) == 0)
             {
                 return false;
             }
@@ -1296,7 +1296,7 @@
                 return false;
             }
             // among, line 279
-            if (find_among_b(a_18, 8) == 0)
+            if (FindAmongB(a_18, 8) == 0)
             {
                 return false;
             }
@@ -1307,7 +1307,7 @@
         {
             // (, line 282
             // among, line 283
-            if (find_among_b(a_19, 2) == 0)
+            if (FindAmongB(a_19, 2) == 0)
             {
                 return false;
             }
@@ -1323,7 +1323,7 @@
                 return false;
             }
             // among, line 288
-            if (find_among_b(a_20, 32) == 0)
+            if (FindAmongB(a_20, 32) == 0)
             {
                 return false;
             }
@@ -1340,7 +1340,7 @@
         {
             // (, line 296
             // among, line 297
-            if (find_among_b(a_21, 8) == 0)
+            if (FindAmongB(a_21, 8) == 0)
             {
                 return false;
             }
@@ -1362,7 +1362,7 @@
                 return false;
             }
             // among, line 303
-            if (find_among_b(a_22, 4) == 0)
+            if (FindAmongB(a_22, 4) == 0)
             {
                 return false;
             }
@@ -1379,7 +1379,7 @@
         {
             // (, line 307
             // literal, line 308
-            if (!(eq_s_b(3, "ken")))
+            if (!(Eq_S_B(3, "ken")))
             {
                 return false;
             }
@@ -1568,7 +1568,7 @@
                     // ], line 319
                     m_bra = m_cursor;
                     // delete, line 319
-                    slice_del();
+                    SliceDel();
                     // try, line 319
                     v_4 = m_limit - m_cursor;
 
@@ -1729,7 +1729,7 @@
                     // ], line 325
                     m_bra = m_cursor;
                     // delete, line 325
-                    slice_del();
+                    SliceDel();
                     // try, line 325
                     v_8 = m_limit - m_cursor;
 
@@ -1759,7 +1759,7 @@
                 // ], line 327
                 m_bra = m_cursor;
                 // delete, line 327
-                slice_del();
+                SliceDel();
                 // try, line 327
                 v_9 = m_limit - m_cursor;
 
@@ -1849,7 +1849,7 @@
             // ], line 328
             m_bra = m_cursor;
             // delete, line 328
-            slice_del();
+            SliceDel();
             return true;
         }
 
@@ -1892,7 +1892,7 @@
                     // ], line 336
                     m_bra = m_cursor;
                     // delete, line 336
-                    slice_del();
+                    SliceDel();
                     // try, line 336
                     v_2 = m_limit - m_cursor;
 
@@ -1918,7 +1918,7 @@
                                 // ], line 337
                                 m_bra = m_cursor;
                                 // delete, line 337
-                                slice_del();
+                                SliceDel();
                                 // try, line 337
                                 v_4 = m_limit - m_cursor;
 
@@ -1947,7 +1947,7 @@
                             // ], line 339
                             m_bra = m_cursor;
                             // delete, line 339
-                            slice_del();
+                            SliceDel();
                             // try, line 339
                             v_5 = m_limit - m_cursor;
 
@@ -1965,7 +1965,7 @@
                                 // ], line 339
                                 m_bra = m_cursor;
                                 // delete, line 339
-                                slice_del();
+                                SliceDel();
                                 // call stem_suffix_chain_before_ki, line 339
                                 if (!r_stem_suffix_chain_before_ki())
                                 {
@@ -1994,7 +1994,7 @@
                     // ], line 343
                     m_bra = m_cursor;
                     // delete, line 343
-                    slice_del();
+                    SliceDel();
                     // try, line 343
                     v_6 = m_limit - m_cursor;
 
@@ -2020,7 +2020,7 @@
                                 // ], line 344
                                 m_bra = m_cursor;
                                 // delete, line 344
-                                slice_del();
+                                SliceDel();
                                 goto lab9;
                             } while (false);
                             lab10:
@@ -2058,7 +2058,7 @@
                                 // ], line 346
                                 m_bra = m_cursor;
                                 // delete, line 346
-                                slice_del();
+                                SliceDel();
                                 // try, line 346
                                 v_9 = m_limit - m_cursor;
 
@@ -2076,7 +2076,7 @@
                                     // ], line 346
                                     m_bra = m_cursor;
                                     // delete, line 346
-                                    slice_del();
+                                    SliceDel();
                                     // call stem_suffix_chain_before_ki, line 346
                                     if (!r_stem_suffix_chain_before_ki())
                                     {
@@ -2128,7 +2128,7 @@
                         // ], line 352
                         m_bra = m_cursor;
                         // delete, line 352
-                        slice_del();
+                        SliceDel();
                         goto lab15;
                     } while (false);
                     lab16:
@@ -2146,7 +2146,7 @@
                         // ], line 354
                         m_bra = m_cursor;
                         // delete, line 354
-                        slice_del();
+                        SliceDel();
                         // try, line 354
                         v_11 = m_limit - m_cursor;
 
@@ -2164,7 +2164,7 @@
                             // ], line 354
                             m_bra = m_cursor;
                             // delete, line 354
-                            slice_del();
+                            SliceDel();
                             // call stem_suffix_chain_before_ki, line 354
                             if (!r_stem_suffix_chain_before_ki())
                             {
@@ -2239,7 +2239,7 @@
                     // ], line 362
                     m_bra = m_cursor;
                     // delete, line 362
-                    slice_del();
+                    SliceDel();
                     // try, line 362
                     v_2 = m_limit - m_cursor;
 
@@ -2272,7 +2272,7 @@
                     // ], line 364
                     m_bra = m_cursor;
                     // delete, line 364
-                    slice_del();
+                    SliceDel();
                     // try, line 365
                     v_3 = m_limit - m_cursor;
 
@@ -2298,7 +2298,7 @@
                                 // ], line 366
                                 m_bra = m_cursor;
                                 // delete, line 366
-                                slice_del();
+                                SliceDel();
                                 goto lab5;
                             } while (false);
                             lab6:
@@ -2336,7 +2336,7 @@
                                 // ], line 368
                                 m_bra = m_cursor;
                                 // delete, line 368
-                                slice_del();
+                                SliceDel();
                                 // try, line 368
                                 v_6 = m_limit - m_cursor;
 
@@ -2354,7 +2354,7 @@
                                     // ], line 368
                                     m_bra = m_cursor;
                                     // delete, line 368
-                                    slice_del();
+                                    SliceDel();
                                     // call stem_suffix_chain_before_ki, line 368
                                     if (!r_stem_suffix_chain_before_ki())
                                     {
@@ -2379,7 +2379,7 @@
                             // ], line 370
                             m_bra = m_cursor;
                             // delete, line 370
-                            slice_del();
+                            SliceDel();
                             // call stem_suffix_chain_before_ki, line 370
                             if (!r_stem_suffix_chain_before_ki())
                             {
@@ -2443,7 +2443,7 @@
                             // ], line 376
                             m_bra = m_cursor;
                             // delete, line 376
-                            slice_del();
+                            SliceDel();
                             goto lab14;
                         } while (false);
                         lab15:
@@ -2460,7 +2460,7 @@
                             // ], line 378
                             m_bra = m_cursor;
                             // delete, line 378
-                            slice_del();
+                            SliceDel();
                             // try, line 378
                             v_9 = m_limit - m_cursor;
 
@@ -2478,7 +2478,7 @@
                                 // ], line 378
                                 m_bra = m_cursor;
                                 // delete, line 378
-                                slice_del();
+                                SliceDel();
                                 // call stem_suffix_chain_before_ki, line 378
                                 if (!r_stem_suffix_chain_before_ki())
                                 {
@@ -2552,7 +2552,7 @@
                             // ], line 384
                             m_bra = m_cursor;
                             // delete, line 384
-                            slice_del();
+                            SliceDel();
                             // try, line 384
                             v_12 = m_limit - m_cursor;
 
@@ -2570,7 +2570,7 @@
                                 // ], line 384
                                 m_bra = m_cursor;
                                 // delete, line 384
-                                slice_del();
+                                SliceDel();
                                 // call stem_suffix_chain_before_ki, line 384
                                 if (!r_stem_suffix_chain_before_ki())
                                 {
@@ -2609,7 +2609,7 @@
                     // ], line 386
                     m_bra = m_cursor;
                     // delete, line 386
-                    slice_del();
+                    SliceDel();
                     // try, line 386
                     v_13 = m_limit - m_cursor;
 
@@ -2636,7 +2636,7 @@
                                 // ], line 388
                                 m_bra = m_cursor;
                                 // delete, line 388
-                                slice_del();
+                                SliceDel();
                                 // try, line 388
                                 v_15 = m_limit - m_cursor;
 
@@ -2654,7 +2654,7 @@
                                     // ], line 388
                                     m_bra = m_cursor;
                                     // delete, line 388
-                                    slice_del();
+                                    SliceDel();
                                     // call stem_suffix_chain_before_ki, line 388
                                     if (!r_stem_suffix_chain_before_ki())
                                     {
@@ -2679,7 +2679,7 @@
                                 // ], line 390
                                 m_bra = m_cursor;
                                 // delete, line 390
-                                slice_del();
+                                SliceDel();
                                 // try, line 390
                                 v_16 = m_limit - m_cursor;
 
@@ -2746,7 +2746,7 @@
                     // ], line 396
                     m_bra = m_cursor;
                     // delete, line 396
-                    slice_del();
+                    SliceDel();
                     // try, line 397
                     v_18 = m_limit - m_cursor;
 
@@ -2772,7 +2772,7 @@
                                 // ], line 398
                                 m_bra = m_cursor;
                                 // delete, line 398
-                                slice_del();
+                                SliceDel();
                                 // call stem_suffix_chain_before_ki, line 398
                                 if (!r_stem_suffix_chain_before_ki())
                                 {
@@ -2815,7 +2815,7 @@
                                 // ], line 400
                                 m_bra = m_cursor;
                                 // delete, line 400
-                                slice_del();
+                                SliceDel();
                                 // try, line 400
                                 v_21 = m_limit - m_cursor;
 
@@ -2833,7 +2833,7 @@
                                     // ], line 400
                                     m_bra = m_cursor;
                                     // delete, line 400
-                                    slice_del();
+                                    SliceDel();
                                     // call stem_suffix_chain_before_ki, line 400
                                     if (!r_stem_suffix_chain_before_ki())
                                     {
@@ -2874,7 +2874,7 @@
                     // ], line 406
                     m_bra = m_cursor;
                     // delete, line 406
-                    slice_del();
+                    SliceDel();
                     goto lab0;
                 } while (false);
                 lab41:
@@ -2937,7 +2937,7 @@
                     // ], line 410
                     m_bra = m_cursor;
                     // delete, line 410
-                    slice_del();
+                    SliceDel();
                     // try, line 410
                     v_23 = m_limit - m_cursor;
 
@@ -2964,7 +2964,7 @@
                                 // ], line 410
                                 m_bra = m_cursor;
                                 // delete, line 410
-                                slice_del();
+                                SliceDel();
                                 // try, line 410
                                 v_25 = m_limit - m_cursor;
 
@@ -2996,7 +2996,7 @@
                         // ], line 410
                         m_bra = m_cursor;
                         // delete, line 410
-                        slice_del();
+                        SliceDel();
                         // [, line 410
                         m_ket = m_cursor;
                         // call stem_suffix_chain_before_ki, line 410
@@ -3041,7 +3041,7 @@
                 // ], line 412
                 m_bra = m_cursor;
                 // delete, line 412
-                slice_del();
+                SliceDel();
                 // try, line 412
                 v_27 = m_limit - m_cursor;
 
@@ -3059,7 +3059,7 @@
                     // ], line 412
                     m_bra = m_cursor;
                     // delete, line 412
-                    slice_del();
+                    SliceDel();
                     // call stem_suffix_chain_before_ki, line 412
                     if (!r_stem_suffix_chain_before_ki())
                     {
@@ -3080,7 +3080,7 @@
             // [, line 416
             m_ket = m_cursor;
             // substring, line 416
-            among_var = find_among_b(a_23, 4);
+            among_var = FindAmongB(a_23, 4);
             if (among_var == 0)
             {
                 return false;
@@ -3094,22 +3094,22 @@
                 case 1:
                     // (, line 417
                     // <-, line 417
-                    slice_from("p");
+                    SliceFrom("p");
                     break;
                 case 2:
                     // (, line 418
                     // <-, line 418
-                    slice_from("\u00E7");
+                    SliceFrom("\u00E7");
                     break;
                 case 3:
                     // (, line 419
                     // <-, line 419
-                    slice_from("t");
+                    SliceFrom("t");
                     break;
                 case 4:
                     // (, line 420
                     // <-, line 420
-                    slice_from("k");
+                    SliceFrom("k");
                     break;
             }
             return true;
@@ -3145,7 +3145,7 @@
                 do
                 {
                     // literal, line 431
-                    if (!(eq_s_b(1, "d")))
+                    if (!(Eq_S_B(1, "d")))
                     {
                         goto lab1;
                     }
@@ -3154,7 +3154,7 @@
                 lab1:
                 m_cursor = m_limit - v_2;
                 // literal, line 431
-                if (!(eq_s_b(1, "g")))
+                if (!(Eq_S_B(1, "g")))
                 {
                     return false;
                 }
@@ -3182,7 +3182,7 @@
 
                         do
                         {
-                            if (!(in_grouping_b(g_vowel, 97, 305)))
+                            if (!(InGroupingB(g_vowel, 97, 305)))
                             {
                                 goto lab5;
                             }
@@ -3207,7 +3207,7 @@
                         do
                         {
                             // literal, line 432
-                            if (!(eq_s_b(1, "a")))
+                            if (!(Eq_S_B(1, "a")))
                             {
                                 goto lab7;
                             }
@@ -3216,7 +3216,7 @@
                         lab7:
                         m_cursor = m_limit - v_6;
                         // literal, line 432
-                        if (!(eq_s_b(1, "\u0131")))
+                        if (!(Eq_S_B(1, "\u0131")))
                         {
                             goto lab3;
                         }
@@ -3226,7 +3226,7 @@
                     // <+, line 432
                     {
                         int c = m_cursor;
-                        insert(m_cursor, m_cursor, "\u0131");
+                        Insert(m_cursor, m_cursor, "\u0131");
                         m_cursor = c;
                     }
                     goto lab2;
@@ -3249,7 +3249,7 @@
 
                         do
                         {
-                            if (!(in_grouping_b(g_vowel, 97, 305)))
+                            if (!(InGroupingB(g_vowel, 97, 305)))
                             {
                                 goto lab10;
                             }
@@ -3274,7 +3274,7 @@
                         do
                         {
                             // literal, line 434
-                            if (!(eq_s_b(1, "e")))
+                            if (!(Eq_S_B(1, "e")))
                             {
                                 goto lab12;
                             }
@@ -3283,7 +3283,7 @@
                         lab12:
                         m_cursor = m_limit - v_9;
                         // literal, line 434
-                        if (!(eq_s_b(1, "i")))
+                        if (!(Eq_S_B(1, "i")))
                         {
                             goto lab8;
                         }
@@ -3293,7 +3293,7 @@
                     // <+, line 434
                     {
                         int c = m_cursor;
-                        insert(m_cursor, m_cursor, "i");
+                        Insert(m_cursor, m_cursor, "i");
                         m_cursor = c;
                     }
                     goto lab2;
@@ -3316,7 +3316,7 @@
 
                         do
                         {
-                            if (!(in_grouping_b(g_vowel, 97, 305)))
+                            if (!(InGroupingB(g_vowel, 97, 305)))
                             {
                                 goto lab15;
                             }
@@ -3341,7 +3341,7 @@
                         do
                         {
                             // literal, line 436
-                            if (!(eq_s_b(1, "o")))
+                            if (!(Eq_S_B(1, "o")))
                             {
                                 goto lab17;
                             }
@@ -3350,7 +3350,7 @@
                         lab17:
                         m_cursor = m_limit - v_12;
                         // literal, line 436
-                        if (!(eq_s_b(1, "u")))
+                        if (!(Eq_S_B(1, "u")))
                         {
                             goto lab13;
                         }
@@ -3360,7 +3360,7 @@
                     // <+, line 436
                     {
                         int c = m_cursor;
-                        insert(m_cursor, m_cursor, "u");
+                        Insert(m_cursor, m_cursor, "u");
                         m_cursor = c;
                     }
                     goto lab2;
@@ -3380,7 +3380,7 @@
 
                     do
                     {
-                        if (!(in_grouping_b(g_vowel, 97, 305)))
+                        if (!(InGroupingB(g_vowel, 97, 305)))
                         {
                             goto lab19;
                         }
@@ -3405,7 +3405,7 @@
                     do
                     {
                         // literal, line 438
-                        if (!(eq_s_b(1, "\u00F6")))
+                        if (!(Eq_S_B(1, "\u00F6")))
                         {
                             goto lab21;
                         }
@@ -3414,7 +3414,7 @@
                     lab21:
                     m_cursor = m_limit - v_15;
                     // literal, line 438
-                    if (!(eq_s_b(1, "\u00FC")))
+                    if (!(Eq_S_B(1, "\u00FC")))
                     {
                         return false;
                     }
@@ -3424,7 +3424,7 @@
                 // <+, line 438
                 {
                     int c = m_cursor;
-                    insert(m_cursor, m_cursor, "\u00FC");
+                    Insert(m_cursor, m_cursor, "\u00FC");
                     m_cursor = c;
                 }
             } while (false);
@@ -3459,7 +3459,7 @@
 
                             do
                             {
-                                if (!(in_grouping(g_vowel, 97, 305)))
+                                if (!(InGrouping(g_vowel, 97, 305)))
                                 {
                                     goto lab3;
                                 }
@@ -3523,7 +3523,7 @@
                         do
                         {
                             // literal, line 450
-                            if (!(eq_s(2, "ad")))
+                            if (!(Eq_S(2, "ad")))
                             {
                                 goto lab3;
                             }
@@ -3560,7 +3560,7 @@
                     do
                     {
                         // literal, line 452
-                        if (!(eq_s(5, "soyad")))
+                        if (!(Eq_S(5, "soyad")))
                         {
                             goto lab5;
                         }

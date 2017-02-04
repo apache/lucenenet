@@ -65,7 +65,7 @@
             I_x = other.I_x;
             I_p2 = other.I_p2;
             I_p1 = other.I_p1;
-            base.copy_from(other);
+            base.CopyFrom(other);
         }
 
         private bool r_prelude()
@@ -100,14 +100,14 @@
                             // [, line 32
                             m_bra = m_cursor;
                             // literal, line 32
-                            if (!(eq_s(1, "\u00DF")))
+                            if (!(Eq_S(1, "\u00DF")))
                             {
                                 goto lab3;
                             }
                             // ], line 32
                             m_ket = m_cursor;
                             // <-, line 32
-                            slice_from("ss");
+                            SliceFrom("ss");
                             goto lab2;
                         } while (false);
                         lab3:
@@ -154,7 +154,7 @@
                         do
                         {
                             // (, line 36
-                            if (!(in_grouping(g_v, 97, 252)))
+                            if (!(InGrouping(g_v, 97, 252)))
                             {
                                 goto lab7;
                             }
@@ -170,36 +170,36 @@
                                 {
                                     // (, line 37
                                     // literal, line 37
-                                    if (!(eq_s(1, "u")))
+                                    if (!(Eq_S(1, "u")))
                                     {
                                         goto lab9;
                                     }
                                     // ], line 37
                                     m_ket = m_cursor;
-                                    if (!(in_grouping(g_v, 97, 252)))
+                                    if (!(InGrouping(g_v, 97, 252)))
                                     {
                                         goto lab9;
                                     }
                                     // <-, line 37
-                                    slice_from("U");
+                                    SliceFrom("U");
                                     goto lab8;
                                 } while (false);
                                 lab9:
                                 m_cursor = v_6;
                                 // (, line 38
                                 // literal, line 38
-                                if (!(eq_s(1, "y")))
+                                if (!(Eq_S(1, "y")))
                                 {
                                     goto lab7;
                                 }
                                 // ], line 38
                                 m_ket = m_cursor;
-                                if (!(in_grouping(g_v, 97, 252)))
+                                if (!(InGrouping(g_v, 97, 252)))
                                 {
                                     goto lab7;
                                 }
                                 // <-, line 38
-                                slice_from("Y");
+                                SliceFrom("Y");
                             } while (false);
                             lab8:
                             m_cursor = v_5;
@@ -261,7 +261,7 @@
                 
                 do
                 {
-                    if (!(in_grouping(g_v, 97, 252)))
+                    if (!(InGrouping(g_v, 97, 252)))
                     {
                         goto lab1;
                     }
@@ -282,7 +282,7 @@
                 
                 do
                 {
-                    if (!(out_grouping(g_v, 97, 252)))
+                    if (!(OutGrouping(g_v, 97, 252)))
                     {
                         goto lab3;
                     }
@@ -316,7 +316,7 @@
             {
                 do
                 {
-                    if (!(in_grouping(g_v, 97, 252)))
+                    if (!(InGrouping(g_v, 97, 252)))
                     {
                         goto lab6;
                     }
@@ -337,7 +337,7 @@
                 
                 do
                 {
-                    if (!(out_grouping(g_v, 97, 252)))
+                    if (!(OutGrouping(g_v, 97, 252)))
                     {
                         goto lab8;
                     }
@@ -372,7 +372,7 @@
                     // [, line 57
                     m_bra = m_cursor;
                     // substring, line 57
-                    among_var = find_among(a_0, 6);
+                    among_var = FindAmong(a_0, 6);
                     if (among_var == 0)
                     {
                         goto lab1;
@@ -386,27 +386,27 @@
                         case 1:
                             // (, line 58
                             // <-, line 58
-                            slice_from("y");
+                            SliceFrom("y");
                             break;
                         case 2:
                             // (, line 59
                             // <-, line 59
-                            slice_from("u");
+                            SliceFrom("u");
                             break;
                         case 3:
                             // (, line 60
                             // <-, line 60
-                            slice_from("a");
+                            SliceFrom("a");
                             break;
                         case 4:
                             // (, line 61
                             // <-, line 61
-                            slice_from("o");
+                            SliceFrom("o");
                             break;
                         case 5:
                             // (, line 62
                             // <-, line 62
-                            slice_from("u");
+                            SliceFrom("u");
                             break;
                         case 6:
                             // (, line 63
@@ -476,7 +476,7 @@
                 // [, line 75
                 m_ket = m_cursor;
                 // substring, line 75
-                among_var = find_among_b(a_1, 7);
+                among_var = FindAmongB(a_1, 7);
                 if (among_var == 0)
                 {
                     goto lab0;
@@ -495,16 +495,16 @@
                     case 1:
                         // (, line 77
                         // delete, line 77
-                        slice_del();
+                        SliceDel();
                         break;
                     case 2:
                         // (, line 80
-                        if (!(in_grouping_b(g_s_ending, 98, 116)))
+                        if (!(InGroupingB(g_s_ending, 98, 116)))
                         {
                             goto lab0;
                         }
                         // delete, line 80
-                        slice_del();
+                        SliceDel();
                         break;
                 }
             } while (false);
@@ -518,7 +518,7 @@
                 // [, line 85
                 m_ket = m_cursor;
                 // substring, line 85
-                among_var = find_among_b(a_2, 4);
+                among_var = FindAmongB(a_2, 4);
                 if (among_var == 0)
                 {
                     goto lab1;
@@ -537,11 +537,11 @@
                     case 1:
                         // (, line 87
                         // delete, line 87
-                        slice_del();
+                        SliceDel();
                         break;
                     case 2:
                         // (, line 90
-                        if (!(in_grouping_b(g_st_ending, 98, 116)))
+                        if (!(InGroupingB(g_st_ending, 98, 116)))
                         {
                             goto lab1;
                         }
@@ -555,7 +555,7 @@
                             m_cursor = c;
                         }
                         // delete, line 90
-                        slice_del();
+                        SliceDel();
                         break;
                 }
             } while (false);
@@ -569,7 +569,7 @@
                 // [, line 95
                 m_ket = m_cursor;
                 // substring, line 95
-                among_var = find_among_b(a_4, 8);
+                among_var = FindAmongB(a_4, 8);
                 if (among_var == 0)
                 {
                     goto lab2;
@@ -588,7 +588,7 @@
                     case 1:
                         // (, line 97
                         // delete, line 97
-                        slice_del();
+                        SliceDel();
                         // try, line 98
                         v_4 = m_limit - m_cursor;
                         do
@@ -597,7 +597,7 @@
                             // [, line 98
                             m_ket = m_cursor;
                             // literal, line 98
-                            if (!(eq_s_b(2, "ig")))
+                            if (!(Eq_S_B(2, "ig")))
                             {
                                 m_cursor = m_limit - v_4;
                                 goto lab3;
@@ -610,7 +610,7 @@
                                 do
                                 {
                                     // literal, line 98
-                                    if (!(eq_s_b(1, "e")))
+                                    if (!(Eq_S_B(1, "e")))
                                     {
                                         goto lab4;
                                     }
@@ -627,7 +627,7 @@
                                 goto lab3;
                             }
                             // delete, line 98
-                            slice_del();
+                            SliceDel();
                         } while (false);
                         lab3:
                         break;
@@ -639,7 +639,7 @@
                             do
                             {
                                 // literal, line 101
-                                if (!(eq_s_b(1, "e")))
+                                if (!(Eq_S_B(1, "e")))
                                 {
                                     goto lab5;
                                 }
@@ -649,12 +649,12 @@
                             m_cursor = m_limit - v_6;
                         }
                         // delete, line 101
-                        slice_del();
+                        SliceDel();
                         break;
                     case 3:
                         // (, line 104
                         // delete, line 104
-                        slice_del();
+                        SliceDel();
                         // try, line 105
                         v_7 = m_limit - m_cursor;
                         do
@@ -669,7 +669,7 @@
                                 do
                                 {
                                     // literal, line 106
-                                    if (!(eq_s_b(2, "er")))
+                                    if (!(Eq_S_B(2, "er")))
                                     {
                                         goto lab8;
                                     }
@@ -678,7 +678,7 @@
                                 lab8:
                                 m_cursor = m_limit - v_8;
                                 // literal, line 106
-                                if (!(eq_s_b(2, "en")))
+                                if (!(Eq_S_B(2, "en")))
                                 {
                                     m_cursor = m_limit - v_7;
                                     goto lab6;
@@ -694,14 +694,14 @@
                                 goto lab6;
                             }
                             // delete, line 106
-                            slice_del();
+                            SliceDel();
                         } while (false);
                         lab6:
                         break;
                     case 4:
                         // (, line 110
                         // delete, line 110
-                        slice_del();
+                        SliceDel();
                         // try, line 111
                         v_9 = m_limit - m_cursor;
                         do
@@ -710,7 +710,7 @@
                             // [, line 112
                             m_ket = m_cursor;
                             // substring, line 112
-                            among_var = find_among_b(a_3, 2);
+                            among_var = FindAmongB(a_3, 2);
                             if (among_var == 0)
                             {
                                 m_cursor = m_limit - v_9;
@@ -732,7 +732,7 @@
                                 case 1:
                                     // (, line 114
                                     // delete, line 114
-                                    slice_del();
+                                    SliceDel();
                                     break;
                             }
                         } while (false);

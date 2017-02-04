@@ -589,7 +589,7 @@
         {
             I_p2 = other.I_p2;
             I_p1 = other.I_p1;
-            base.copy_from(other);
+            base.CopyFrom(other);
         }
 
         private bool r_mark_regions()
@@ -611,7 +611,7 @@
 
                     do
                     {
-                        if (!(in_grouping(g_v, 97, 252)))
+                        if (!(InGrouping(g_v, 97, 252)))
                         {
                             goto lab2;
                         }
@@ -632,7 +632,7 @@
 
                     do
                     {
-                        if (!(out_grouping(g_v, 97, 252)))
+                        if (!(OutGrouping(g_v, 97, 252)))
                         {
                             goto lab4;
                         }
@@ -655,7 +655,7 @@
 
                     do
                     {
-                        if (!(in_grouping(g_v, 97, 252)))
+                        if (!(InGrouping(g_v, 97, 252)))
                         {
                             goto lab6;
                         }
@@ -676,7 +676,7 @@
 
                     do
                     {
-                        if (!(out_grouping(g_v, 97, 252)))
+                        if (!(OutGrouping(g_v, 97, 252)))
                         {
                             goto lab8;
                         }
@@ -714,7 +714,7 @@
                     // [, line 53
                     m_bra = m_cursor;
                     // substring, line 53
-                    among_var = find_among(a_0, 13);
+                    among_var = FindAmong(a_0, 13);
                     if (among_var == 0)
                     {
                         goto lab1;
@@ -728,62 +728,62 @@
                         case 1:
                             // (, line 54
                             // <-, line 54
-                            slice_from("a");
+                            SliceFrom("a");
                             break;
                         case 2:
                             // (, line 55
                             // <-, line 55
-                            slice_from("a");
+                            SliceFrom("a");
                             break;
                         case 3:
                             // (, line 56
                             // <-, line 56
-                            slice_from("e");
+                            SliceFrom("e");
                             break;
                         case 4:
                             // (, line 57
                             // <-, line 57
-                            slice_from("e");
+                            SliceFrom("e");
                             break;
                         case 5:
                             // (, line 58
                             // <-, line 58
-                            slice_from("i");
+                            SliceFrom("i");
                             break;
                         case 6:
                             // (, line 59
                             // <-, line 59
-                            slice_from("i");
+                            SliceFrom("i");
                             break;
                         case 7:
                             // (, line 60
                             // <-, line 60
-                            slice_from("o");
+                            SliceFrom("o");
                             break;
                         case 8:
                             // (, line 61
                             // <-, line 61
-                            slice_from("o");
+                            SliceFrom("o");
                             break;
                         case 9:
                             // (, line 62
                             // <-, line 62
-                            slice_from("u");
+                            SliceFrom("u");
                             break;
                         case 10:
                             // (, line 63
                             // <-, line 63
-                            slice_from("u");
+                            SliceFrom("u");
                             break;
                         case 11:
                             // (, line 64
                             // <-, line 64
-                            slice_from("i");
+                            SliceFrom("i");
                             break;
                         case 12:
                             // (, line 65
                             // <-, line 65
-                            slice_from(".");
+                            SliceFrom(".");
                             break;
                         case 13:
                             // (, line 66
@@ -839,7 +839,7 @@
             // [, line 76
             m_ket = m_cursor;
             // substring, line 76
-            among_var = find_among_b(a_1, 39);
+            among_var = FindAmongB(a_1, 39);
             if (among_var == 0)
             {
                 return false;
@@ -858,7 +858,7 @@
                         return false;
                     }
                     // delete, line 86
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -871,7 +871,7 @@
             // [, line 91
             m_ket = m_cursor;
             // substring, line 91
-            among_var = find_among_b(a_2, 200);
+            among_var = FindAmongB(a_2, 200);
             if (among_var == 0)
             {
                 return false;
@@ -890,7 +890,7 @@
                         return false;
                     }
                     // delete, line 115
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 117
@@ -900,7 +900,7 @@
                         return false;
                     }
                     // delete, line 117
-                    slice_del();
+                    SliceDel();
                     break;
                 case 3:
                     // (, line 119
@@ -910,7 +910,7 @@
                         return false;
                     }
                     // <-, line 119
-                    slice_from("log");
+                    SliceFrom("log");
                     break;
                 case 4:
                     // (, line 121
@@ -920,7 +920,7 @@
                         return false;
                     }
                     // <-, line 121
-                    slice_from("ic");
+                    SliceFrom("ic");
                     break;
                 case 5:
                     // (, line 123
@@ -930,7 +930,7 @@
                         return false;
                     }
                     // <-, line 123
-                    slice_from("c");
+                    SliceFrom("c");
                     break;
             }
             return true;
@@ -943,7 +943,7 @@
             // [, line 128
             m_ket = m_cursor;
             // substring, line 128
-            among_var = find_among_b(a_3, 283);
+            among_var = FindAmongB(a_3, 283);
             if (among_var == 0)
             {
                 return false;
@@ -962,7 +962,7 @@
                         return false;
                     }
                     // delete, line 173
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 175
@@ -972,7 +972,7 @@
                         return false;
                     }
                     // delete, line 175
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -985,7 +985,7 @@
             // [, line 180
             m_ket = m_cursor;
             // substring, line 180
-            among_var = find_among_b(a_4, 22);
+            among_var = FindAmongB(a_4, 22);
             if (among_var == 0)
             {
                 return false;
@@ -1004,7 +1004,7 @@
                         return false;
                     }
                     // delete, line 183
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 185
@@ -1014,7 +1014,7 @@
                         return false;
                     }
                     // <-, line 185
-                    slice_from("ic");
+                    SliceFrom("ic");
                     break;
             }
             return true;

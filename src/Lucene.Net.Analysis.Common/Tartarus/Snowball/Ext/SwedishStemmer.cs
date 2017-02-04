@@ -77,7 +77,7 @@
         {
             I_x = other.I_x;
             I_p1 = other.I_p1;
-            base.copy_from(other);
+            base.CopyFrom(other);
         }
 
         private bool r_mark_regions()
@@ -107,7 +107,7 @@
                 v_2 = m_cursor;
                 do
                 {
-                    if (!(in_grouping(g_v, 97, 246)))
+                    if (!(InGrouping(g_v, 97, 246)))
                     {
                         goto lab1;
                     }
@@ -128,7 +128,7 @@
             {
                 do
                 {
-                    if (!(out_grouping(g_v, 97, 246)))
+                    if (!(OutGrouping(g_v, 97, 246)))
                     {
                         goto lab3;
                     }
@@ -179,7 +179,7 @@
             // [, line 37
             m_ket = m_cursor;
             // substring, line 37
-            among_var = find_among_b(a_0, 37);
+            among_var = FindAmongB(a_0, 37);
             if (among_var == 0)
             {
                 m_limit_backward = v_2;
@@ -195,16 +195,16 @@
                 case 1:
                     // (, line 44
                     // delete, line 44
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 46
-                    if (!(in_grouping_b(g_s_ending, 98, 121)))
+                    if (!(InGroupingB(g_s_ending, 98, 121)))
                     {
                         return false;
                     }
                     // delete, line 46
-                    slice_del();
+                    SliceDel();
                     break;
             }
             return true;
@@ -230,7 +230,7 @@
             // and, line 52
             v_3 = m_limit - m_cursor;
             // among, line 51
-            if (find_among_b(a_1, 7) == 0)
+            if (FindAmongB(a_1, 7) == 0)
             {
                 m_limit_backward = v_2;
                 return false;
@@ -249,7 +249,7 @@
             // ], line 52
             m_bra = m_cursor;
             // delete, line 52
-            slice_del();
+            SliceDel();
             m_limit_backward = v_2;
             return true;
         }
@@ -274,7 +274,7 @@
             // [, line 56
             m_ket = m_cursor;
             // substring, line 56
-            among_var = find_among_b(a_2, 5);
+            among_var = FindAmongB(a_2, 5);
             if (among_var == 0)
             {
                 m_limit_backward = v_2;
@@ -290,17 +290,17 @@
                 case 1:
                     // (, line 57
                     // delete, line 57
-                    slice_del();
+                    SliceDel();
                     break;
                 case 2:
                     // (, line 58
                     // <-, line 58
-                    slice_from("l\u00F6s");
+                    SliceFrom("l\u00F6s");
                     break;
                 case 3:
                     // (, line 59
                     // <-, line 59
-                    slice_from("full");
+                    SliceFrom("full");
                     break;
             }
             m_limit_backward = v_2;

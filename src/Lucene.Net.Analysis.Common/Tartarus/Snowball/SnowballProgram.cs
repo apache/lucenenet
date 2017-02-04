@@ -51,7 +51,7 @@ namespace Lucene.Net.Tartarus.Snowball
     {
         private static readonly object[] EMPTY_ARGS = new object[0];
 
-    protected SnowballProgram()
+        protected SnowballProgram()
         {
             m_current = new char[8];
             SetCurrent("");
@@ -59,10 +59,10 @@ namespace Lucene.Net.Tartarus.Snowball
 
         public abstract bool Stem();
 
-        /**
-         * Set the current string.
-         */
-        public void SetCurrent(string value)
+        /// <summary>
+        /// Set the current string.
+        /// </summary>
+        public virtual void SetCurrent(string value)
         {
             m_current = value.ToCharArray();
             m_cursor = 0;
@@ -72,20 +72,20 @@ namespace Lucene.Net.Tartarus.Snowball
             m_ket = m_limit;
         }
 
-        /**
-         * Get the current string.
-         */
-        public string Current
+        /// <summary>
+        /// Get the current string.
+        /// </summary>
+        public virtual string Current
         {
             get { return new string(m_current, 0, m_limit); }
         }
 
-        /**
-         * Set the current string.
-         * @param text character array containing input
-         * @param length valid length of text.
-         */
-        public void SetCurrent(char[] text, int length)
+        /// <summary>
+        /// Set the current string.
+        /// </summary>
+        /// <param name="text">character array containing input</param>
+        /// <param name="length">valid length of text.</param>
+        public virtual void SetCurrent(char[] text, int length)
         {
             m_current = text;
             m_cursor = 0;
@@ -95,33 +95,29 @@ namespace Lucene.Net.Tartarus.Snowball
             m_ket = m_limit;
         }
 
-        /**
-         * Get the current buffer containing the stem.
-         * <p>
-         * NOTE: this may be a reference to a different character array than the
-         * one originally provided with setCurrent, in the exceptional case that 
-         * stemming produced a longer intermediate or result string. 
-         * </p>
-         * <p>
-         * It is necessary to use {@link #getCurrentBufferLength()} to determine
-         * the valid length of the returned buffer. For example, many words are
-         * stemmed simply by subtracting from the length to remove suffixes.
-         * </p>
-         * @see #getCurrentBufferLength()
-         */
+        /// <summary>
+        /// Get the current buffer containing the stem.
+        /// <para/>
+        /// NOTE: this may be a reference to a different character array than the
+        /// one originally provided with setCurrent, in the exceptional case that 
+        /// stemming produced a longer intermediate or result string.
+        /// <para/>
+        /// It is necessary to use <see cref="CurrentBufferLength"/> to determine
+        /// the valid length of the returned buffer. For example, many words are
+        /// stemmed simply by subtracting from the length to remove suffixes.
+        /// </summary>
+        /// <seealso cref="CurrentBufferLength"/>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public char[] CurrentBuffer
+        public virtual char[] CurrentBuffer
         {
             get { return m_current; }
         }
 
-        /**
-         * Get the valid length of the character array in 
-         * {@link #getCurrentBuffer()}. 
-         * @return valid length of the array.
-         */
-        public int CurrentBufferLength
+        /// <summary>
+        /// Get the valid length of the character array in <seealso cref="CurrentBuffer"/>
+        /// </summary>
+        public virtual int CurrentBufferLength
         {
             get { return m_limit; }
         }
@@ -135,7 +131,7 @@ namespace Lucene.Net.Tartarus.Snowball
         protected int m_bra;
         protected int m_ket;
 
-        protected void copy_from(SnowballProgram other)
+        protected virtual void CopyFrom(SnowballProgram other)
         {
             m_current = other.m_current;
             m_cursor = other.m_cursor;
@@ -145,7 +141,7 @@ namespace Lucene.Net.Tartarus.Snowball
             m_ket = other.m_ket;
         }
 
-        protected bool in_grouping(char[] s, int min, int max)
+        protected virtual bool InGrouping(char[] s, int min, int max)
         {
             if (m_cursor >= m_limit) return false;
             char ch = m_current[m_cursor];
@@ -156,7 +152,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return true;
         }
 
-        protected bool in_grouping_b(char[] s, int min, int max)
+        protected virtual bool InGroupingB(char[] s, int min, int max)
         {
             if (m_cursor <= m_limit_backward) return false;
             char ch = m_current[m_cursor - 1];
@@ -167,7 +163,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return true;
         }
 
-        protected bool out_grouping(char[] s, int min, int max)
+        protected virtual bool OutGrouping(char[] s, int min, int max)
         {
             if (m_cursor >= m_limit) return false;
             char ch = m_current[m_cursor];
@@ -185,7 +181,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return false;
         }
 
-        protected bool out_grouping_b(char[] s, int min, int max)
+        protected virtual bool OutGroupingB(char[] s, int min, int max)
         {
             if (m_cursor <= m_limit_backward) return false;
             char ch = m_current[m_cursor - 1];
@@ -203,7 +199,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return false;
         }
 
-        protected bool in_range(int min, int max)
+        protected virtual bool InRange(int min, int max)
         {
             if (m_cursor >= m_limit) return false;
             char ch = m_current[m_cursor];
@@ -212,7 +208,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return true;
         }
 
-        protected bool in_range_b(int min, int max)
+        protected virtual bool InRangeB(int min, int max)
         {
             if (m_cursor <= m_limit_backward) return false;
             char ch = m_current[m_cursor - 1];
@@ -221,7 +217,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return true;
         }
 
-        protected bool out_range(int min, int max)
+        protected virtual bool OutRange(int min, int max)
         {
             if (m_cursor >= m_limit) return false;
             char ch = m_current[m_cursor];
@@ -230,7 +226,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return true;
         }
 
-        protected bool out_range_b(int min, int max)
+        protected virtual bool OutRangeB(int min, int max)
         {
             if (m_cursor <= m_limit_backward) return false;
             char ch = m_current[m_cursor - 1];
@@ -239,7 +235,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return true;
         }
 
-        protected bool eq_s(int s_size, string s)
+        protected virtual bool Eq_S(int s_size, string s)
         {
             if (m_limit - m_cursor < s_size) return false;
             int i;
@@ -251,7 +247,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return true;
         }
 
-        protected bool eq_s_b(int s_size, string s)
+        protected virtual bool Eq_S_B(int s_size, string s)
         {
             if (m_cursor - m_limit_backward < s_size) return false;
             int i;
@@ -263,17 +259,17 @@ namespace Lucene.Net.Tartarus.Snowball
             return true;
         }
 
-        protected bool eq_v(string s)
+        protected virtual bool Eq_V(string s)
         {
-            return eq_s(s.Length, s);
+            return Eq_S(s.Length, s);
         }
 
-        protected bool eq_v_b(string s)
+        protected virtual bool Eq_V_B(string s)
         {
-            return eq_s_b(s.Length, s);
+            return Eq_S_B(s.Length, s);
         }
 
-        protected int find_among(Among[] v, int v_size)
+        protected virtual int FindAmong(Among[] v, int v_size)
         {
             int i = 0;
             int j = v_size;
@@ -359,7 +355,7 @@ namespace Lucene.Net.Tartarus.Snowball
         }
 
         // find_among_b is for backwards processing. Same comments apply
-        protected int find_among_b(Among[] v, int v_size)
+        protected virtual int FindAmongB(Among[] v, int v_size)
         {
             int i = 0;
             int j = v_size;
@@ -440,10 +436,11 @@ namespace Lucene.Net.Tartarus.Snowball
             }
         }
 
-        /* to replace chars between c_bra and c_ket in current by the
-           * chars in s.
-           */
-        protected int replace_s(int c_bra, int c_ket, string s)
+        /// <summary>
+        /// to replace chars between <paramref name="c_bra"/> and <paramref name="c_ket"/> in current by the
+        /// chars in <paramref name="s"/>.
+        /// </summary>
+        protected virtual int ReplaceS(int c_bra, int c_ket, string s)
         {
             int adjustment = s.Length - (c_ket - c_bra);
             int newLength = m_limit + adjustment;
@@ -473,7 +470,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return adjustment;
         }
 
-        protected void slice_check()
+        protected virtual void SliceCheck()
         {
             if (m_bra < 0 ||
                 m_bra > m_ket ||
@@ -489,35 +486,37 @@ namespace Lucene.Net.Tartarus.Snowball
             }
         }
 
-        protected void slice_from(string s)
+        protected virtual void SliceFrom(string s)
         {
-            slice_check();
-            replace_s(m_bra, m_ket, s);
+            SliceCheck();
+            ReplaceS(m_bra, m_ket, s);
         }
 
-        protected void slice_del()
+        protected virtual void SliceDel()
         {
-            slice_from("");
+            SliceFrom("");
         }
 
-        protected void insert(int c_bra, int c_ket, string s)
+        protected virtual void Insert(int c_bra, int c_ket, string s)
         {
-            int adjustment = replace_s(c_bra, c_ket, s);
+            int adjustment = ReplaceS(c_bra, c_ket, s);
             if (c_bra <= m_bra) m_bra += adjustment;
             if (c_bra <= m_ket) m_ket += adjustment;
         }
 
-        /* Copy the slice into the supplied StringBuffer */
-        protected StringBuilder slice_to(StringBuilder s)
+        /// <summary>
+        /// Copy the slice into the supplied <see cref="StringBuilder"/>
+        /// </summary>
+        protected virtual StringBuilder SliceTo(StringBuilder s)
         {
-            slice_check();
+            SliceCheck();
             int len = m_ket - m_bra;
             s.Length = 0;
             s.Append(m_current, m_bra, len);
             return s;
         }
 
-        protected StringBuilder assign_to(StringBuilder s)
+        protected virtual StringBuilder AssignTo(StringBuilder s)
         {
             s.Length = 0;
             s.Append(m_current, 0, m_limit);
