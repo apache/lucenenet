@@ -29,7 +29,6 @@ namespace Lucene.Net.Analysis.Shingle
     /// </summary>
     public sealed class ShingleAnalyzerWrapper : AnalyzerWrapper
     {
-
         private readonly Analyzer @delegate;
         private readonly int maxShingleSize;
         private readonly int minShingleSize;
@@ -39,24 +38,24 @@ namespace Lucene.Net.Analysis.Shingle
         private readonly string fillerToken;
 
         public ShingleAnalyzerWrapper(Analyzer defaultAnalyzer)
-              : this(defaultAnalyzer, ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE)
+            : this(defaultAnalyzer, ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE)
         {
         }
 
         public ShingleAnalyzerWrapper(Analyzer defaultAnalyzer, int maxShingleSize)
-              : this(defaultAnalyzer, ShingleFilter.DEFAULT_MIN_SHINGLE_SIZE, maxShingleSize)
+            : this(defaultAnalyzer, ShingleFilter.DEFAULT_MIN_SHINGLE_SIZE, maxShingleSize)
         {
         }
 
         public ShingleAnalyzerWrapper(Analyzer defaultAnalyzer, int minShingleSize, int maxShingleSize)
-              : this(defaultAnalyzer, minShingleSize, maxShingleSize, ShingleFilter.DEFAULT_TOKEN_SEPARATOR, true, false, ShingleFilter.DEFAULT_FILLER_TOKEN)
+            : this(defaultAnalyzer, minShingleSize, maxShingleSize, ShingleFilter.DEFAULT_TOKEN_SEPARATOR, true, false, ShingleFilter.DEFAULT_FILLER_TOKEN)
         {
         }
 
         /// <summary>
-        /// Creates a new ShingleAnalyzerWrapper
+        /// Creates a new <see cref="ShingleAnalyzerWrapper"/>
         /// </summary>
-        /// <param name="delegate"> Analyzer whose TokenStream is to be filtered </param>
+        /// <param name="delegate"> <see cref="Analyzer"/> whose <see cref="TokenStream"/> is to be filtered </param>
         /// <param name="minShingleSize"> Min shingle (token ngram) size </param>
         /// <param name="maxShingleSize"> Max shingle size </param>
         /// <param name="tokenSeparator"> Used to separate input stream tokens in output shingles </param>
@@ -168,7 +167,7 @@ namespace Lucene.Net.Analysis.Shingle
             }
         }
 
-        protected override Analyzer GetWrappedAnalyzer(string fieldName)
+        protected override sealed Analyzer GetWrappedAnalyzer(string fieldName)
         {
             return @delegate;
         }

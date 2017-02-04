@@ -42,8 +42,9 @@ namespace Lucene.Net.Analysis.Shingle
         private readonly string fillerToken;
 
         /// <summary>
-        /// Creates a new ShingleFilterFactory </summary>
-        public ShingleFilterFactory(IDictionary<string, string> args) : base(args)
+        /// Creates a new <see cref="ShingleFilterFactory"/> </summary>
+        public ShingleFilterFactory(IDictionary<string, string> args) 
+            : base(args)
         {
             maxShingleSize = GetInt(args, "maxShingleSize", ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE);
             if (maxShingleSize < 2)
