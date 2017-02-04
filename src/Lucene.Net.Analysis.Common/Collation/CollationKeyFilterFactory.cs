@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Collation
@@ -29,49 +28,49 @@ namespace Lucene.Net.Collation
      * limitations under the License.
      */
 
-	/// <summary>
-	/// Factory for <see cref="CollationKeyFilter"/>.
-	/// <para>
-	/// This factory can be created in two ways: 
-	/// <ul>
-	///  <li>Based upon a system collator associated with a Locale.</li>
-	///  <li>Based upon a tailored ruleset.</li>
-	/// </ul>
-	/// </para>
-	/// <para>
-	/// Using a System collator:
-	/// <ul>
-	///  <li>language: ISO-639 language code (mandatory)</li>
-	///  <li>country: ISO-3166 country code (optional)</li>
-	///  <li>variant: vendor or browser-specific code (optional)</li>
-	///  <li>strength: 'primary','secondary','tertiary', or 'identical' (optional)</li>
-	///  <li>decomposition: 'no','canonical', or 'full' (optional)</li>
-	/// </ul>
-	/// </para>
-	/// <para>
-	/// Using a Tailored ruleset:
-	/// <ul>
-	///  <li>custom: UTF-8 text file containing rules supported by RuleBasedCollator (mandatory)</li>
-	///  <li>strength: 'primary','secondary','tertiary', or 'identical' (optional)</li>
-	///  <li>decomposition: 'no','canonical', or 'full' (optional)</li>
-	/// </ul>
-	/// 
-	/// <pre class="prettyprint" >
-	/// &lt;fieldType name="text_clltnky" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.KeywordTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.CollationKeyFilterFactory" language="ja" country="JP"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</code>
-	/// 
-	/// </para>
-	/// </summary>
-	/// <see cref="Collator"></seealso>
-	/// <see cref="CultureInfo"></seealso>
-	/// <see cref="RuleBasedCollator">
-	/// @since solr 3.1 </seealso>
-	/// @deprecated use <see cref="CollationKeyAnalyzer"/> instead. 
-	[Obsolete("use <seealso cref=\"CollationKeyAnalyzer\"/> instead.")]
+    /// <summary>
+    /// Factory for <see cref="CollationKeyFilter"/>.
+    /// <para>
+    /// This factory can be created in two ways: 
+    /// <list type="bullet">
+    ///  <item>Based upon a system collator associated with a <see cref="System.Globalization.CultureInfo"/>.</item>
+    ///  <item>Based upon a tailored ruleset.</item>
+    /// </list>
+    /// </para>
+    /// <para>
+    /// Using a System collator:
+    /// <list type="bullet">
+    ///  <item>language: ISO-639 language code (mandatory)</item>
+    ///  <item>country: ISO-3166 country code (optional)</item>
+    ///  <item>variant: vendor or browser-specific code (optional)</item>
+    ///  <item>strength: 'primary','secondary','tertiary', or 'identical' (optional)</item>
+    ///  <item>decomposition: 'no','canonical', or 'full' (optional)</item>
+    /// </list>
+    /// </para>
+    /// <para>
+    /// Using a Tailored ruleset:
+    /// <list type="bullet">
+    ///  <item>custom: UTF-8 text file containing rules supported by RuleBasedCollator (mandatory)</item>
+    ///  <item>strength: 'primary','secondary','tertiary', or 'identical' (optional)</item>
+    ///  <item>decomposition: 'no','canonical', or 'full' (optional)</item>
+    /// </list>
+    /// 
+    /// <code>
+    /// &lt;fieldType name="text_clltnky" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.KeywordTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.CollationKeyFilterFactory" language="ja" country="JP"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</code>
+    /// 
+    /// </para>
+    /// </summary>
+    /// <seealso cref="Collator"/>
+    /// <seealso cref="CultureInfo"/>
+    /// <seealso cref="RuleBasedCollator"/>
+    /// @since solr 3.1
+    /// @deprecated use <see cref="CollationKeyAnalyzer"/> instead. 
+    [Obsolete("use <seealso cref=\"CollationKeyAnalyzer\"/> instead.")]
 	public class CollationKeyFilterFactory : TokenFilterFactory, IMultiTermAwareComponent, IResourceLoaderAware
 	{
 		private Collator collator;

@@ -33,13 +33,13 @@ namespace Lucene.Net.Collation.TokenAttributes
 		private readonly Collator collator;
 
 		/// <summary>
-		/// Create a new CollatedTermAttributeImpl </summary>
+		/// Create a new <see cref="CollatedTermAttributeImpl"/> </summary>
 		/// <param name="collator"> Collation key generator </param>
 		public CollatedTermAttributeImpl(Collator collator)
 		{
-			// clone in case JRE doesn't properly sync,
-			// or to reduce contention in case they do
-			this.collator = collator;
+            // clone in case JRE doesn't properly sync,
+            // or to reduce contention in case they do
+            this.collator = (Collator)collator.Clone();
 		}
 
 		public override void FillBytesRef()
