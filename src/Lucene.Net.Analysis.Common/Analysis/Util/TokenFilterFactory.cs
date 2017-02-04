@@ -26,33 +26,34 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public abstract class TokenFilterFactory : AbstractAnalysisFactory
     {
-        private static readonly AnalysisSPILoader<TokenFilterFactory> loader = new AnalysisSPILoader<TokenFilterFactory>(new string[] { "TokenFilterFactory", "FilterFactory" });
+        private static readonly AnalysisSPILoader<TokenFilterFactory> loader = 
+            new AnalysisSPILoader<TokenFilterFactory>(new string[] { "TokenFilterFactory", "FilterFactory" });
 
         /// <summary>
-        /// looks up a tokenfilter by name from context classpath </summary>
+        /// looks up a tokenfilter by name from the host project's referenced assemblies </summary>
         public static TokenFilterFactory ForName(string name, IDictionary<string, string> args)
         {
             return loader.NewInstance(name, args);
         }
 
         /// <summary>
-        /// looks up a tokenfilter class by name from context classpath </summary>
+        /// looks up a tokenfilter class by name from  the host project's referenced assemblies </summary>
         public static Type LookupClass(string name)
         {
             return loader.LookupClass(name);
         }
 
         /// <summary>
-        /// returns a list of all available tokenfilter names from context classpath </summary>
+        /// returns a list of all available tokenfilter names from the host project's referenced assemblies </summary>
         public static ICollection<string> AvailableTokenFilters
         {
             get { return loader.AvailableServices; }
         }
 
         /// <summary>
-        /// Reloads the factory list from the given <see cref="ClassLoader"/>.
+        /// Reloads the factory list.
         /// Changes to the factories are visible after the method ends, all
-        /// iterators (<see cref="#availableTokenFilters()"/>,...) stay consistent. 
+        /// iterators (<see cref="AvailableTokenFilters"/>,...) stay consistent. 
         /// 
         /// <para><b>NOTE:</b> Only new factories are added, existing ones are
         /// never removed or replaced.
@@ -70,13 +71,13 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Initialize this factory via a set of key-value pairs.
         /// </summary>
-        protected internal TokenFilterFactory(IDictionary<string, string> args)
+        protected TokenFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
         }
 
         /// <summary>
-        /// Transform the specified input TokenStream </summary>
+        /// Transform the specified input <see cref="TokenStream"/> </summary>
         public abstract TokenStream Create(TokenStream input);
     }
 }

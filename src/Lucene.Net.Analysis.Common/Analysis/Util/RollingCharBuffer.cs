@@ -5,7 +5,6 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,19 +21,18 @@ namespace Lucene.Net.Analysis.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    /// <summary>
-    /// Acts like a forever growing char[] as you read
-    ///  characters into it from the provided reader, but
-    ///  internally it uses a circular buffer to only hold the
-    ///  characters that haven't been freed yet.  This is like a
-    ///  PushbackReader, except you don't have to specify
-    ///  up-front the max size of the buffer, but you do have to
-    ///  periodically call <see cref="#freeBefore"/>. 
-    /// </summary>
 
+    /// <summary>
+    /// Acts like a forever growing <see cref="T:char[]"/> as you read
+    /// characters into it from the provided reader, but
+    /// internally it uses a circular buffer to only hold the
+    /// characters that haven't been freed yet.  This is like a
+    /// PushbackReader, except you don't have to specify
+    /// up-front the max size of the buffer, but you do have to
+    /// periodically call <see cref="FreeBefore"/>. 
+    /// </summary>
     public sealed class RollingCharBuffer
     {
-
         private TextReader reader;
 
         private char[] buffer = new char[512];
@@ -62,11 +60,13 @@ namespace Lucene.Net.Analysis.Util
             end = false;
         }
 
-        /* Absolute position read.  NOTE: pos must not jump
-         * ahead by more than 1!  Ie, it's OK to read arbitarily
-         * far back (just not prior to the last {@link
-         * #freeBefore}), but NOT ok to read arbitrarily far
-         * ahead.  Returns -1 if you hit EOF. */
+        /// <summary>
+        /// Absolute position read.  NOTE: pos must not jump
+        /// ahead by more than 1!  Ie, it's OK to read arbitarily
+        /// far back (just not prior to the last <see cref="FreeBefore(int)"/>, 
+        /// but NOT ok to read arbitrarily far
+        /// ahead.  Returns -1 if you hit EOF.
+        /// </summary>
         public int Get(int pos)
         {
             //System.out.println("    Get pos=" + pos + " nextPos=" + nextPos + " count=" + count);
@@ -161,7 +161,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Call this to notify us that no chars before this
-        ///  absolute position are needed anymore. 
+        /// absolute position are needed anymore. 
         /// </summary>
         public void FreeBefore(int pos)
         {

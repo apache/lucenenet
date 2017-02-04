@@ -19,14 +19,14 @@
 
     /// <summary>
     /// Interface for a component that needs to be initialized by
-    /// an implementation of <see cref="ResourceLoader"/>.
+    /// an implementation of <see cref="IResourceLoader"/>.
     /// </summary>
-    /// <seealso cref= ResourceLoader </seealso>
+    /// <seealso cref="IResourceLoader"/>
     public interface IResourceLoaderAware
     {
         /// <summary>
-        /// Initializes this component with the provided ResourceLoader
-        /// (used for loading classes, files, etc).
+        /// Initializes this component with the provided <see cref="IResourceLoader"/>
+        /// (used for loading types, embedded resources, files, etc).
         /// </summary>
         void Inform(IResourceLoader loader);
     }

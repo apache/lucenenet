@@ -27,18 +27,17 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public abstract class CharFilterFactory : AbstractAnalysisFactory
     {
-
         private static readonly AnalysisSPILoader<CharFilterFactory> loader = new AnalysisSPILoader<CharFilterFactory>();
 
         /// <summary>
-        /// looks up a charfilter by name from context classpath </summary>
+        /// looks up a charfilter by name from the host project's dependent assemblies </summary>
         public static CharFilterFactory ForName(string name, IDictionary<string, string> args)
         {
             return loader.NewInstance(name, args);
         }
 
         /// <summary>
-        /// looks up a charfilter class by name from context classpath </summary>
+        /// looks up a charfilter class by name from the host project's dependent assemblies </summary>
         public static Type LookupClass(string name)
         {
             return loader.LookupClass(name);
@@ -52,9 +51,9 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Reloads the factory list from the given <see cref="ClassLoader"/>.
+        /// Reloads the factory list.
         /// Changes to the factories are visible after the method ends, all
-        /// iterators (<see cref="#availableCharFilters()"/>,...) stay consistent. 
+        /// iterators (<see cref="AvailableCharFilters"/>,...) stay consistent. 
         /// 
         /// <para><b>NOTE:</b> Only new factories are added, existing ones are
         /// never removed or replaced.
@@ -72,13 +71,13 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Initialize this factory via a set of key-value pairs.
         /// </summary>
-        protected internal CharFilterFactory(IDictionary<string, string> args)
+        protected CharFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
         }
 
         /// <summary>
-        /// Wraps the given TextReader with a CharFilter. </summary>
+        /// Wraps the given <see cref="TextReader"/> with a <see cref="CharFilter"/>. </summary>
         public abstract TextReader Create(TextReader input);
     }
 }

@@ -26,13 +26,13 @@ namespace Lucene.Net.Analysis.Util
     /// <summary>
     /// An abstract base class for simple, character-oriented tokenizers. 
     /// <para>
-    /// <a name="version">You must specify the required <see cref="LuceneVersion"/> compatibility
+    /// You must specify the required <see cref="LuceneVersion"/> compatibility
     /// when creating <see cref="CharTokenizer"/>:
-    /// <ul>
-    /// <li>As of 3.1, <see cref="CharTokenizer"/> uses an int based API to normalize and
-    /// detect token codepoints. See <see cref="#isTokenChar(int)"/> and
-    /// <see cref="#normalize(int)"/> for details.</li>
-    /// </ul>
+    /// <list type="bullet">
+    ///     <item>As of 3.1, <see cref="CharTokenizer"/> uses an int based API to normalize and
+    ///         detect token codepoints. See <see cref="IsTokenChar(int)"/> and
+    ///         <see cref="Normalize(int)"/> for details.</item>
+    /// </list>
     /// </para>
     /// <para>
     /// A new <see cref="CharTokenizer"/> API has been introduced with Lucene 3.1. This API
@@ -41,26 +41,25 @@ namespace Lucene.Net.Analysis.Util
     /// "http://java.sun.com/j2se/1.5.0/docs/api/java/lang/Character.html#supplementary"
     /// >supplementary characters</a>. The old <i>char</i> based API has been
     /// deprecated and should be replaced with the <i>int</i> based methods
-    /// <see cref="#isTokenChar(int)"/> and <see cref="#normalize(int)"/>.
+    /// <see cref="IsTokenChar(int)"/> and <see cref="Normalize(int)"/>.
     /// </para>
     /// <para>
     /// As of Lucene 3.1 each <see cref="CharTokenizer"/> - constructor expects a
     /// <see cref="LuceneVersion"/> argument. Based on the given <see cref="LuceneVersion"/> either the new
     /// API or a backwards compatibility layer is used at runtime. For
-    /// <see cref="LuceneVersion"/> < 3.1 the backwards compatibility layer ensures correct
+    /// <see cref="LuceneVersion"/> &lt; 3.1 the backwards compatibility layer ensures correct
     /// behavior even for indexes build with previous versions of Lucene. If a
     /// <see cref="LuceneVersion"/> >= 3.1 is used <see cref="CharTokenizer"/> requires the new API to
     /// be implemented by the instantiated class. Yet, the old <i>char</i> based API
     /// is not required anymore even if backwards compatibility must be preserved.
     /// <see cref="CharTokenizer"/> subclasses implementing the new API are fully backwards
-    /// compatible if instantiated with <see cref="LuceneVersion"/> < 3.1.
+    /// compatible if instantiated with <see cref="LuceneVersion"/> &lt; 3.1.
     /// </para>
     /// <para>
     /// <strong>Note:</strong> If you use a subclass of <see cref="CharTokenizer"/> with <see cref="LuceneVersion"/> >=
-    /// 3.1 on an index build with a version < 3.1, created tokens might not be
+    /// 3.1 on an index build with a version &lt; 3.1, created tokens might not be
     /// compatible with the terms in your index.
     /// </para>
-    /// 
     /// </summary>
     public abstract class CharTokenizer : Tokenizer
     {
@@ -71,7 +70,7 @@ namespace Lucene.Net.Analysis.Util
         ///          Lucene version to match </param>
         /// <param name="input">
         ///          the input to split up into tokens </param>
-        protected CharTokenizer(LuceneVersion matchVersion, TextReader input)
+        public CharTokenizer(LuceneVersion matchVersion, TextReader input)
             : base(input)
         {
             Init(matchVersion);
@@ -86,14 +85,14 @@ namespace Lucene.Net.Analysis.Util
         ///          the attribute factory to use for this <see cref="Tokenizer"/> </param>
         /// <param name="input">
         ///          the input to split up into tokens </param>
-        protected CharTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input)
+        public CharTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input)
             : base(factory, input)
         {
             Init(matchVersion);
         }
 
         /// <summary>
-        /// LUCENENET Added in the .NET version to assist with setting the attributes
+        /// LUCENENET specific - Added in the .NET version to assist with setting the attributes
         /// from multiple constructors.
         /// </summary>
         /// <param name="matchVersion"></param>

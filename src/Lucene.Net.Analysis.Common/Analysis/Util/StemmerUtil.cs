@@ -3,7 +3,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -35,12 +34,12 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns true if the character array starts with the suffix.
+        /// Returns true if the character array starts with the prefix.
         /// </summary>
         /// <param name="s"> Input Buffer </param>
         /// <param name="len"> length of input buffer </param>
         /// <param name="prefix"> Prefix string to test </param>
-        /// <returns> true if <code>s</code> starts with <code>prefix</code> </returns>
+        /// <returns> <c>true</c> if <paramref name="s"/> starts with <paramref name="prefix"/> </returns>
         public static bool StartsWith(char[] s, int len, string prefix)
         {
             int prefixLen = prefix.Length;
@@ -64,7 +63,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="s"> Input Buffer </param>
         /// <param name="len"> length of input buffer </param>
         /// <param name="suffix"> Suffix string to test </param>
-        /// <returns> true if <code>s</code> ends with <code>suffix</code> </returns>
+        /// <returns> <c>true</c> if <paramref name="s"/> ends with <paramref name="suffix"/> </returns>
         public static bool EndsWith(char[] s, int len, string suffix)
         {
             int suffixLen = suffix.Length;
@@ -89,7 +88,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="s"> Input Buffer </param>
         /// <param name="len"> length of input buffer </param>
         /// <param name="suffix"> Suffix string to test </param>
-        /// <returns> true if <code>s</code> ends with <code>suffix</code> </returns>
+        /// <returns> <c>true</c> if <paramref name="s"/> ends with <paramref name="suffix"/> </returns>
         public static bool EndsWith(char[] s, int len, char[] suffix)
         {
             int suffixLen = suffix.Length;

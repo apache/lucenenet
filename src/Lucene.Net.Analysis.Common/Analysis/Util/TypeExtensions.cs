@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Reflection;
 
 namespace Lucene.Net.Analysis.Util
 {
     internal static class TypeExtensions
     {
+        // LUCENENET TODO: Try to eliminate this class by using Assembly.GetManifestResourceStream(Type, string), if possible.
+        // If not possible, perhaps we should move this and BufferedCharFilter into a Support namespace here in Analysis.Common ?
+
         /// <summary>
         /// LUCENENET specific:
         /// In .NET Core, resources are embedded with the namespace based on

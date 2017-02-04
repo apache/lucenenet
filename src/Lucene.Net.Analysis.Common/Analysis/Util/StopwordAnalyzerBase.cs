@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using System;
 using System.IO;
-using System.Text;
-using Lucene.Net.Util;
 using System.Reflection;
+using System.Text;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -24,18 +24,16 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// Base class for Analyzers that need to make use of stopword sets. 
-    /// 
+    /// Base class for <see cref="Analyzer"/>s that need to make use of stopword sets. 
     /// </summary>
     public abstract class StopwordAnalyzerBase : Analyzer
     {
-
         /// <summary>
         /// An immutable stopword set
         /// </summary>
-        protected internal readonly CharArraySet m_stopwords;
+        protected readonly CharArraySet m_stopwords;
 
-        protected internal readonly LuceneVersion m_matchVersion;
+        protected readonly LuceneVersion m_matchVersion;
 
         /// <summary>
         /// Returns the analyzer's stopword set or an empty set if the analyzer has no
@@ -58,7 +56,7 @@ namespace Lucene.Net.Analysis.Util
         ///          the Lucene version for cross version compatibility </param>
         /// <param name="stopwords">
         ///          the analyzer's stopword set </param>
-        protected internal StopwordAnalyzerBase(LuceneVersion version, CharArraySet stopwords)
+        protected StopwordAnalyzerBase(LuceneVersion version, CharArraySet stopwords)
         {
             m_matchVersion = version;
             // analyzers should use char array set for stopwords!
@@ -66,40 +64,40 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Creates a new Analyzer with an empty stopword set
+        /// Creates a new <see cref="Analyzer"/> with an empty stopword set
         /// </summary>
         /// <param name="version">
         ///          the Lucene version for cross version compatibility </param>
-        protected internal StopwordAnalyzerBase(LuceneVersion version)
+        protected StopwordAnalyzerBase(LuceneVersion version)
             : this(version, null)
         {
         }
 
-        // LUCENENET TODO: If this works, need to update the documentation for the .NET version of the story.
-
         /// <summary>
-        /// Creates a CharArraySet from a file resource associated with a class. (See
-        /// <see cref="Class#getResourceAsStream(String)"/>).
+        /// Creates a <see cref="CharArraySet"/> from an embedded resource associated with a class. (See
+        /// <see cref="Assembly.GetManifestResourceStream(string)"/>).
         /// </summary>
         /// <param name="ignoreCase">
-        ///          <code>true</code> if the set should ignore the case of the
-        ///          stopwords, otherwise <code>false</code> </param>
+        ///          <c>true</c> if the set should ignore the case of the
+        ///          stopwords, otherwise <c>false</c> </param>
         /// <param name="aClass">
         ///          a class that is associated with the given stopwordResource </param>
         /// <param name="resource">
         ///          name of the resource file associated with the given class </param>
         /// <param name="comment">
         ///          comment string to ignore in the stopword file </param>
-        /// <returns> a CharArraySet containing the distinct stopwords from the given
+        /// <returns> a <see cref="CharArraySet"/> containing the distinct stopwords from the given
         ///         file </returns>
         /// <exception cref="IOException">
         ///           if loading the stopwords throws an <see cref="IOException"/> </exception>
-        protected internal static CharArraySet LoadStopwordSet(bool ignoreCase, Type aClass, string resource, string comment)
+        protected static CharArraySet LoadStopwordSet(bool ignoreCase, Type aClass, string resource, string comment)
         {
             TextReader reader = null;
             try
             {
-                var resourceNames = aClass.GetTypeInfo().Assembly.GetManifestResourceNames();
+                //var resourceNames = aClass.GetTypeInfo().Assembly.GetManifestResourceNames();
+                // LUCENENET TODO: Maybe it would make more sense to use this overload?
+                //var resourceStream = aClass.GetTypeInfo().Assembly.GetManifestResourceStream(aClass, resource);
                 var resourceStream = aClass.GetTypeInfo().Assembly.GetManifestResourceStream(resource);
                 reader = IOUtils.GetDecodingReader(resourceStream, Encoding.UTF8);
                 return WordlistLoader.GetWordSet(reader, comment, new CharArraySet(
@@ -114,18 +112,18 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Creates a CharArraySet from a file.
+        /// Creates a <see cref="CharArraySet"/> from a file.
         /// </summary>
         /// <param name="stopwords">
         ///          the stopwords file to load
         /// </param>
         /// <param name="matchVersion">
         ///          the Lucene version for cross version compatibility </param>
-        /// <returns> a CharArraySet containing the distinct stopwords from the given
+        /// <returns> a <see cref="CharArraySet"/> containing the distinct stopwords from the given
         ///         file </returns>
         /// <exception cref="IOException">
         ///           if loading the stopwords throws an <see cref="IOException"/> </exception>
-        protected internal static CharArraySet LoadStopwordSet(FileInfo stopwords, LuceneVersion matchVersion)
+        protected static CharArraySet LoadStopwordSet(FileInfo stopwords, LuceneVersion matchVersion)
         {
             TextReader reader = null;
             try
@@ -140,18 +138,18 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Creates a CharArraySet from a file.
+        /// Creates a <see cref="CharArraySet"/> from a file.
         /// </summary>
         /// <param name="stopwords">
         ///          the stopwords reader to load
         /// </param>
         /// <param name="matchVersion">
         ///          the Lucene version for cross version compatibility </param>
-        /// <returns> a CharArraySet containing the distinct stopwords from the given
+        /// <returns> a <see cref="CharArraySet"/> containing the distinct stopwords from the given
         ///         reader </returns>
         /// <exception cref="IOException">
         ///           if loading the stopwords throws an <see cref="IOException"/> </exception>
-        protected internal static CharArraySet LoadStopwordSet(TextReader stopwords, LuceneVersion matchVersion)
+        protected static CharArraySet LoadStopwordSet(TextReader stopwords, LuceneVersion matchVersion)
         {
             try
             {

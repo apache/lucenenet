@@ -22,15 +22,16 @@ namespace Lucene.Net.Analysis.Util
     /// <summary>
     /// Removes elisions from a <see cref="TokenStream"/>. For example, "l'avion" (the plane) will be
     /// tokenized as "avion" (plane).
+    /// <para/>
+    /// <a href="http://fr.wikipedia.org/wiki/%C3%89lision">Elision in Wikipedia</a>
     /// </summary>
-    /// <seealso cref= <a href="http://fr.wikipedia.org/wiki/%C3%89lision">Elision in Wikipedia</a> </seealso>
     public sealed class ElisionFilter : TokenFilter
     {
         private readonly CharArraySet articles;
         private readonly ICharTermAttribute termAtt;
 
         /// <summary>
-        /// Constructs an elision filter with a Set of stop words </summary>
+        /// Constructs an elision filter with a <see cref="CharArraySet"/> of stop words </summary>
         /// <param name="input"> the source <see cref="TokenStream"/> </param>
         /// <param name="articles"> a set of stopword articles </param>
         public ElisionFilter(TokenStream input, CharArraySet articles)
@@ -43,7 +44,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Increments the <see cref="TokenStream"/> with a <see cref="CharTermAttribute"/> without elisioned start
         /// </summary>
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             if (m_input.IncrementToken())
             {

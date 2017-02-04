@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Util
         private CharArraySet articles;
 
         /// <summary>
-        /// Creates a new ElisionFilterFactory </summary>
+        /// Creates a new <see cref="ElisionFilterFactory"/> </summary>
         public ElisionFilterFactory(IDictionary<string, string> args) : base(args)
         {
             articlesFile = Get(args, "articles");

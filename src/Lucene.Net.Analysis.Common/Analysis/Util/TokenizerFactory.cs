@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -28,34 +28,33 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public abstract class TokenizerFactory : AbstractAnalysisFactory
     {
-
         private static readonly AnalysisSPILoader<TokenizerFactory> loader = new AnalysisSPILoader<TokenizerFactory>();
 
         /// <summary>
-        /// looks up a tokenizer by name from context classpath </summary>
+        /// looks up a tokenizer by name from the host project's referenced assemblies </summary>
         public static TokenizerFactory ForName(string name, IDictionary<string, string> args)
         {
             return loader.NewInstance(name, args);
         }
 
         /// <summary>
-        /// looks up a tokenizer class by name from context classpath </summary>
+        /// looks up a tokenizer class by name from the host project's referenced assemblies </summary>
         public static Type LookupClass(string name)
         {
             return loader.LookupClass(name);
         }
 
         /// <summary>
-        /// returns a list of all available tokenizer names from context classpath </summary>
+        /// returns a list of all available tokenizer names from the host project's referenced assemblies </summary>
         public static ICollection<string> AvailableTokenizers
         {
             get { return loader.AvailableServices; }
         }
 
         /// <summary>
-        /// Reloads the factory list from the given <see cref="ClassLoader"/>.
+        /// Reloads the factory list.
         /// Changes to the factories are visible after the method ends, all
-        /// iterators (<see cref="#availableTokenizers()"/>,...) stay consistent. 
+        /// iterators (<see cref="AvailableTokenizers"/>,...) stay consistent. 
         /// 
         /// <para><b>NOTE:</b> Only new factories are added, existing ones are
         /// never removed or replaced.
@@ -73,20 +72,20 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Initialize this factory via a set of key-value pairs.
         /// </summary>
-        protected internal TokenizerFactory(IDictionary<string, string> args)
+        protected TokenizerFactory(IDictionary<string, string> args)
             : base(args)
         {
         }
 
         /// <summary>
-        /// Creates a TokenStream of the specified input using the default attribute factory. </summary>
+        /// Creates a <see cref="TokenStream"/> of the specified input using the default attribute factory. </summary>
         public Tokenizer Create(TextReader input)
         {
             return Create(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, input);
         }
 
         /// <summary>
-        /// Creates a TokenStream of the specified input using the given AttributeFactory </summary>
+        /// Creates a <see cref="TokenStream"/> of the specified input using the given <see cref="AttributeSource.AttributeFactory"/> </summary>
         public abstract Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input);
     }
 }

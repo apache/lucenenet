@@ -23,9 +23,9 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// Simple <see cref="ResourceLoader"/> that uses <see cref="ClassLoader#getResourceAsStream(String)"/>
-    /// and <see cref="Class#forName(String,boolean,ClassLoader)"/> to open resources and
-    /// classes, respectively.
+    /// Simple <see cref="IResourceLoader"/> that uses <see cref="Assembly.GetManifestResourceStream(string)"/>
+    /// and <see cref="Assembly.GetType(string)"/> to open resources and
+    /// <see cref="Type"/>s, respectively.
     /// </summary>
     public sealed class ClasspathResourceLoader : IResourceLoader
     {
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Util
         /// Resource names are relative to the resourcePrefix.
         /// </summary>
         /// <param name="clazz">The class type</param>
-        /// <param name="namespacePrefixToExclude">Removes the part of the namespace of the class that matches the regex. 
+        /// <param name="namespaceExcludeRegex">Removes the part of the namespace of the class that matches the regex. 
         /// This is useful to get to the resource if the assembly name and namespace name don't happen to match.
         /// If provided, the assembly name will be concatnated with the namespace name (excluding the part tha matches the regex)
         /// to provide the complete path to the embedded resource in the assembly. Note you can view the entire path to all of 
@@ -110,8 +110,12 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="resource"></param>
         /// <returns></returns>
-        private string GetQualifiedResourceName(string resource)
+        private string GetQualifiedResourceName(string resource) 
         {
+            // LUCENENET TODO: Need to ensure this works in .NET Core (and perhaps refactor to make it more reliable).
+            // Perhaps it would make more sense to use Assembly.GetManifestResourceStream(Type, string), which allows
+            // you to filter by the namespace of a Type.
+
             var namespaceName = this.clazz.Namespace;
             var assemblyName = clazz.GetTypeInfo().Assembly.GetName().Name;
             if (string.IsNullOrEmpty(this.namespaceExcludeRegex) && (assemblyName.Equals(namespaceName, StringComparison.OrdinalIgnoreCase)))

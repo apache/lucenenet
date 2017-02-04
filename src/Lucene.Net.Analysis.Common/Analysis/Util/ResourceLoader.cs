@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Finds class of the name
         /// </summary>
-        Type FindClass(string cname);
+        Type FindClass(string cname); // LUCENENET TODO: Rename FindType ?
 
         /// <summary>
         /// Creates an instance of the name and expected type

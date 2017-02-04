@@ -59,22 +59,22 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Construct a new SegmenterBase, using
-        /// the provided BreakIterator for sentence segmentation.
+        /// the provided <see cref="BreakIterator"/> for sentence segmentation.
         /// <para>
-        /// Note that you should never share BreakIterators across different
-        /// TokenStreams, instead a newly created or cloned one should always
+        /// Note that you should never share <see cref="BreakIterator"/>s across different
+        /// <see cref="TokenStream"/>s, instead a newly created or cloned one should always
         /// be provided to this constructor.
         /// </para>
         /// </summary>
-        protected SegmentingTokenizerBase(TextReader reader, BreakIterator iterator)
+        public SegmentingTokenizerBase(TextReader reader, BreakIterator iterator)
             : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader, iterator)
         {
         }
 
         /// <summary>
-        /// Construct a new SegmenterBase, also supplying the AttributeFactory
+        /// Construct a new SegmenterBase, also supplying the <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/>
         /// </summary>
-        protected SegmentingTokenizerBase(AttributeFactory factory, TextReader reader, BreakIterator iterator)
+        public SegmentingTokenizerBase(AttributeFactory factory, TextReader reader, BreakIterator iterator)
             : base(factory, reader)
         {
             offsetAtt = AddAttribute<IOffsetAttribute>();
@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Util
             length = usableLength = m_offset = 0;
         }
 
-        public override void End()
+        public override sealed void End()
         {
             base.End();
             int finalOffset = CorrectOffset(length < 0 ? m_offset : m_offset + length);
@@ -129,7 +129,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// For sentence tokenization, these are the unambiguous break positions. </summary>
-        protected internal virtual bool IsSafeEnd(char ch)
+        protected virtual bool IsSafeEnd(char ch)
         {
             switch ((int)ch)
             {

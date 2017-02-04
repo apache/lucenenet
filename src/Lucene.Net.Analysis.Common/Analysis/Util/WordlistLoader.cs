@@ -26,12 +26,12 @@ namespace Lucene.Net.Analysis.Util
 
     /// <summary>
     /// Loader for text files that represent a list of stopwords.
+    /// <para/>
+    /// <see cref="IOUtils"/> to obtain <see cref="TextReader"/> instances.
+    /// @lucene.internal
     /// </summary>
-    /// <seealso cref= IOUtils to obtain <see cref="Reader"/> instances
-    /// @lucene.internal </seealso>
     public class WordlistLoader
     {
-
         private const int INITIAL_CAPACITY = 16;
 
         /// <summary>
@@ -43,12 +43,12 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET TODO: Add .NET overloads that accept a file name? Or at least a FileInfo object as was done in 3.0.3?
 
         /// <summary>
-        /// Reads lines from a TextReader and adds every line as an entry to a CharArraySet (omitting
-        /// leading and trailing whitespace). Every line of the TextReader should contain only
+        /// Reads lines from a <see cref="TextReader"/> and adds every line as an entry to a <see cref="CharArraySet"/> (omitting
+        /// leading and trailing whitespace). Every line of the <see cref="TextReader"/> should contain only
         /// one word. The words need to be in lowercase if you make use of an
-        /// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
+        /// <see cref="Analyzer"/> which uses <see cref="Core.LowerCaseFilter"/> (like <see cref="Standard.StandardAnalyzer"/>).
         /// </summary>
-        /// <param name="reader"> TextReader containing the wordlist </param>
+        /// <param name="reader"> <see cref="TextReader"/> containing the wordlist </param>
         /// <param name="result"> the <see cref="CharArraySet"/> to fill with the readers words </param>
         /// <returns> the given <see cref="CharArraySet"/> with the reader's words </returns>
         public static CharArraySet GetWordSet(TextReader reader, CharArraySet result)
@@ -70,12 +70,12 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Reads lines from a TextReader and adds every line as an entry to a CharArraySet (omitting
-        /// leading and trailing whitespace). Every line of the TextReader should contain only
+        /// Reads lines from a <see cref="TextReader"/> and adds every line as an entry to a <see cref="CharArraySet"/> (omitting
+        /// leading and trailing whitespace). Every line of the <see cref="TextReader"/> should contain only
         /// one word. The words need to be in lowercase if you make use of an
-        /// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
+        /// <see cref="Analyzer"/> which uses <see cref="Core.LowerCaseFilter"/> (like <see cref="Standard.StandardAnalyzer"/>).
         /// </summary>
-        /// <param name="reader"> TextReader containing the wordlist </param>
+        /// <param name="reader"> <see cref="TextReader"/> containing the wordlist </param>
         /// <param name="matchVersion"> the <see cref="LuceneVersion"/> </param>
         /// <returns> A <see cref="CharArraySet"/> with the reader's words </returns>
         public static CharArraySet GetWordSet(TextReader reader, LuceneVersion matchVersion)
@@ -84,12 +84,12 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Reads lines from a TextReader and adds every non-comment line as an entry to a CharArraySet (omitting
-        /// leading and trailing whitespace). Every line of the TextReader should contain only
+        /// Reads lines from a <see cref="TextReader"/> and adds every non-comment line as an entry to a <see cref="CharArraySet"/> (omitting
+        /// leading and trailing whitespace). Every line of the <see cref="TextReader"/> should contain only
         /// one word. The words need to be in lowercase if you make use of an
-        /// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
+        /// <see cref="Analyzer"/> which uses <see cref="Core.LowerCaseFilter"/> (like <see cref="Standard.StandardAnalyzer"/>).
         /// </summary>
-        /// <param name="reader"> TextReader containing the wordlist </param>
+        /// <param name="reader"> <see cref="TextReader"/> containing the wordlist </param>
         /// <param name="comment"> The string representing a comment. </param>
         /// <param name="matchVersion"> the <see cref="LuceneVersion"/> </param>
         /// <returns> A CharArraySet with the reader's words </returns>
@@ -99,12 +99,12 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Reads lines from a TextReader and adds every non-comment line as an entry to a CharArraySet (omitting
-        /// leading and trailing whitespace). Every line of the TextReader should contain only
+        /// Reads lines from a <see cref="TextReader"/> and adds every non-comment line as an entry to a <see cref="CharArraySet"/> (omitting
+        /// leading and trailing whitespace). Every line of the <see cref="TextReader"/> should contain only
         /// one word. The words need to be in lowercase if you make use of an
-        /// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
+        /// <see cref="Analyzer"/> which uses <see cref="Core.LowerCaseFilter"/> (like <see cref="Standard.StandardAnalyzer"/>).
         /// </summary>
-        /// <param name="reader"> TextReader containing the wordlist </param>
+        /// <param name="reader"> <see cref="TextReader"/> containing the wordlist </param>
         /// <param name="comment"> The string representing a comment. </param>
         /// <param name="result"> the <see cref="CharArraySet"/> to fill with the readers words </param>
         /// <returns> the given <see cref="CharArraySet"/> with the reader's words </returns>
@@ -133,14 +133,14 @@ namespace Lucene.Net.Analysis.Util
         /// Reads stopwords from a stopword list in Snowball format.
         /// <para>
         /// The snowball format is the following:
-        /// <ul>
-        /// <li>Lines may contain multiple words separated by whitespace.
-        /// <li>The comment character is the vertical line (&#124;).
-        /// <li>Lines may contain trailing comments.
-        /// </ul>
+        /// <list type="bullet">
+        ///     <item>Lines may contain multiple words separated by whitespace.</item>
+        ///     <item>The comment character is the vertical line (&#124;).</item>
+        ///     <item>Lines may contain trailing comments.</item>
+        /// </list>
         /// </para>
         /// </summary>
-        /// <param name="reader"> TextReader containing a Snowball stopword list </param>
+        /// <param name="reader"> <see cref="TextReader"/> containing a Snowball stopword list </param>
         /// <param name="result"> the <see cref="CharArraySet"/> to fill with the readers words </param>
         /// <returns> the given <see cref="CharArraySet"/> with the reader's words </returns>
         public static CharArraySet GetSnowballWordSet(TextReader reader, CharArraySet result)
@@ -176,14 +176,14 @@ namespace Lucene.Net.Analysis.Util
         /// Reads stopwords from a stopword list in Snowball format.
         /// <para>
         /// The snowball format is the following:
-        /// <ul>
-        /// <li>Lines may contain multiple words separated by whitespace.
-        /// <li>The comment character is the vertical line (&#124;).
-        /// <li>Lines may contain trailing comments.
-        /// </ul>
+        /// <list type="bullet">
+        ///     <item>Lines may contain multiple words separated by whitespace.</item>
+        ///     <item>The comment character is the vertical line (&#124;).</item>
+        ///     <item>Lines may contain trailing comments.</item>
+        /// </list>
         /// </para>
         /// </summary>
-        /// <param name="reader"> TextReader containing a Snowball stopword list </param>
+        /// <param name="reader"> <see cref="TextReader"/> containing a Snowball stopword list </param>
         /// <param name="matchVersion"> the Lucene <see cref="LuceneVersion"/> </param>
         /// <returns> A <see cref="CharArraySet"/> with the reader's words </returns>
         public static CharArraySet GetSnowballWordSet(TextReader reader, LuceneVersion matchVersion)
@@ -194,7 +194,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Reads a stem dictionary. Each line contains:
-        /// <pre>word<b>\t</b>stem</code>
+        /// <code>word<b>\t</b>stem</code>
         /// (i.e. two tab separated words)
         /// </summary>
         /// <returns> stem dictionary that overrules the stemming algorithm </returns>
@@ -220,7 +220,6 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Accesses a resource by name and returns the (non comment) lines containing
         /// data using the given character encoding.
-        /// 
         /// <para>
         /// A comment line is any line that starts with the character "#"
         /// </para>

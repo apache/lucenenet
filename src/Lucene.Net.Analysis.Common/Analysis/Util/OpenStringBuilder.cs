@@ -26,8 +26,8 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public class OpenStringBuilder : ICharSequence
     {
-        protected internal char[] m_buf;
-        protected internal int m_len;
+        protected char[] m_buf;
+        protected int m_len;
 
         public OpenStringBuilder() 
             : this(32)
@@ -68,6 +68,8 @@ namespace Lucene.Net.Analysis.Util
                 return m_buf;
             }
         }
+
+        // LUCENENE TODO: Change to Length (StringBuilder uses Length in .NET)
         public virtual int Count // LUCENENET NOTE: This was size() in Lucene.
         {
             get{ return m_len; }
@@ -78,12 +80,12 @@ namespace Lucene.Net.Analysis.Util
             get { return m_buf.Length; }
         }
 
-        public virtual OpenStringBuilder Append(string csq)
+        public virtual OpenStringBuilder Append(string csq) // LUCENENET TODO: Add overloads for ICharSequence and StringBuilder
         {
             return Append(csq, 0, csq.Length);
         }
 
-        public virtual OpenStringBuilder Append(string csq, int start, int end)
+        public virtual OpenStringBuilder Append(string csq, int start, int end) // LUCENENET TODO: Add overloads for ICharSequence and StringBuilder
         {
             Reserve(end - start);
             for (int i = start; i < end; i++)
@@ -137,7 +139,7 @@ namespace Lucene.Net.Analysis.Util
             this.m_len += len;
         }
 
-        protected internal virtual void Resize(int len)
+        protected virtual void Resize(int len)
         {
             char[] newbuf = new char[Math.Max(m_buf.Length << 1, len)];
             System.Array.Copy(m_buf, 0, newbuf, 0, Count);
@@ -177,7 +179,7 @@ namespace Lucene.Net.Analysis.Util
             UnsafeWrite(b, off, len);
         }
 
-        public void Write(OpenStringBuilder arr)
+        public void Write(OpenStringBuilder arr) // LUCENENET TODO: Add overload for StringBuilder
         {
             Write(arr.m_buf, 0, m_len);
         }

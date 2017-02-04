@@ -21,17 +21,17 @@ namespace Lucene.Net.Analysis.Util
 	 */
 
     /// <summary>
-    /// Simple <see cref="ResourceLoader"/> that opens resource files
+    /// Simple <see cref="IResourceLoader"/> that opens resource files
     /// from the local file system, optionally resolving against
     /// a base directory.
     /// 
-    /// <para>This loader wraps a delegate <see cref="ResourceLoader"/>
+    /// <para>This loader wraps a delegate <see cref="IResourceLoader"/>
     /// that is used to resolve all files, the current base directory
-    /// does not contain. <see cref="#newInstance"/> is always resolved
-    /// against the delegate, as a <see cref="ClassLoader"/> is needed.
+    /// does not contain. <see cref="NewInstance"/> is always resolved
+    /// against the delegate, as an <see cref="T:System.Assembly"/> is needed.
     /// 
     /// </para>
-    /// <para>You can chain several {@code FilesystemResourceLoader}s
+    /// <para>You can chain several <see cref="FilesystemResourceLoader"/>s
     /// to allow lookup of files in more than one base directory.
     /// </para>
     /// </summary>
@@ -46,26 +46,26 @@ namespace Lucene.Net.Analysis.Util
         /// are delegated to context classloader.
         /// </summary>
         public FilesystemResourceLoader()
-              : this((DirectoryInfo)null)
+            : this((DirectoryInfo)null)
         {
         }
 
         /// <summary>
         /// Creates a resource loader that resolves resources against the given
-        /// base directory (may be {@code null} to refer to CWD).
+        /// base directory (may be <c>null</c> to refer to CWD).
         /// Files not found in file system and class lookups are delegated to context
         /// classloader.
         /// </summary>
         public FilesystemResourceLoader(DirectoryInfo baseDirectory)
-              : this(baseDirectory, new ClasspathResourceLoader(typeof(FilesystemResourceLoader)))
+            : this(baseDirectory, new ClasspathResourceLoader(typeof(FilesystemResourceLoader)))
         {
         }
 
         /// <summary>
         /// Creates a resource loader that resolves resources against the given
-        /// base directory (may be {@code null} to refer to CWD).
+        /// base directory (may be <c>null</c> to refer to CWD).
         /// Files not found in file system and class lookups are delegated
-        /// to the given delegate <see cref="ResourceLoader"/>.
+        /// to the given delegate <see cref="IResourceLoader"/>.
         /// </summary>
         public FilesystemResourceLoader(DirectoryInfo baseDirectory, IResourceLoader @delegate)
         {

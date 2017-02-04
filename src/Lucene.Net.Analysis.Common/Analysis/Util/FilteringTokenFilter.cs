@@ -23,17 +23,17 @@ namespace Lucene.Net.Analysis.Util
 
     /// <summary>
     /// Abstract base class for TokenFilters that may remove tokens.
-    /// You have to implement <see cref="#accept"/> and return a boolean if the current
-    /// token should be preserved. <see cref="#incrementToken"/> uses this method
+    /// You have to implement <see cref="Accept"/> and return a boolean if the current
+    /// token should be preserved. <see cref="IncrementToken"/> uses this method
     /// to decide if a token should be passed to the caller.
-    /// <para><a name="lucene_match_version" />As of Lucene 4.4, an
-    /// <see cref="IllegalArgumentException"/> is thrown when trying to disable position
+    /// <para>
+    /// As of Lucene 4.4, an
+    /// <see cref="ArgumentException"/> is thrown when trying to disable position
     /// increments when filtering terms.
     /// </para>
     /// </summary>
     public abstract class FilteringTokenFilter : TokenFilter
     {
-
         private static void CheckPositionIncrement(LuceneVersion version, bool enablePositionIncrements)
         {
             if (!enablePositionIncrements &&
@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        protected internal readonly LuceneVersion m_version;
+        protected readonly LuceneVersion m_version;
         private readonly IPositionIncrementAttribute posIncrAtt;
         private bool enablePositionIncrements; // no init needed, as ctor enforces setting value!
         private bool first = true;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Override this method and return if the current input token should be returned by <see cref="#incrementToken"/>. </summary>
+        /// Override this method and return if the current input token should be returned by <see cref="IncrementToken"/>. </summary>
         protected abstract bool Accept();
 
         public override sealed bool IncrementToken()
@@ -129,7 +129,6 @@ namespace Lucene.Net.Analysis.Util
             skippedPositions = 0;
         }
 
-        /// <seealso cref= #setEnablePositionIncrements(boolean) </seealso>
         public virtual bool EnablePositionIncrements
         {
             get
@@ -139,7 +138,7 @@ namespace Lucene.Net.Analysis.Util
             // LUCENENET TODO:
             // deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4
             // There doesn't appear to be a way to apply [Obsolete] on a property setter only. The only way
-            // to make it show the obsolete warning is to change this back to separate Get and Set methods.
+            // to make it show the obsolete warning is to change this back to a separate Set method.
             set
             {
                 CheckPositionIncrement(m_version, value);
