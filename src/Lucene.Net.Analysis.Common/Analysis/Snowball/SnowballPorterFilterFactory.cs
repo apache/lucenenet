@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Snowball
         private CharArraySet protectedWords = null;
 
         /// <summary>
-        /// Creates a new SnowballPorterFilterFactory </summary>
+        /// Creates a new <see cref="SnowballPorterFilterFactory"/> </summary>
         public SnowballPorterFilterFactory(IDictionary<string, string> args) : base(args)
         {
             language = Get(args, "language", "English");
@@ -61,8 +61,6 @@ namespace Lucene.Net.Analysis.Snowball
 
         public virtual void Inform(IResourceLoader loader)
         {
-            // LUCENENET TODO: There should probably be a way to make this an extesibility point so
-            // custom extensions can be loaded.
             string className = typeof(SnowballProgram).Namespace + ".Ext." + 
                 language + "Stemmer, " + this.GetType().GetTypeInfo().Assembly.GetName().Name;
             stemClass = Type.GetType(className);

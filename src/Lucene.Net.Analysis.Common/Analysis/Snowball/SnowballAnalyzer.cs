@@ -27,22 +27,22 @@ namespace Lucene.Net.Analysis.Snowball
 	 */
 
     /// <summary>
-    /// Filters <see cref="StandardTokenizer"/> with <see cref="StandardFilter"/>, {@link
-    /// LowerCaseFilter}, <see cref="StopFilter"/> and <see cref="SnowballFilter"/>.
+    /// Filters <see cref="StandardTokenizer"/> with <see cref="StandardFilter"/>, 
+    /// <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/> and <see cref="SnowballFilter"/>.
     /// 
     /// Available stemmers are listed in org.tartarus.snowball.ext.  The name of a
     /// stemmer is the part of the class name before "Stemmer", e.g., the stemmer in
-    /// <see cref="org.tartarus.snowball.ext.EnglishStemmer"/> is named "English".
+    /// <see cref="Tartarus.Snowball.Ext.EnglishStemmer"/> is named "English".
     /// 
     /// <para><b>NOTE</b>: This class uses the same <see cref="LuceneVersion"/>
     /// dependent settings as <see cref="StandardAnalyzer"/>, with the following addition:
-    /// <ul>
-    ///   <li> As of 3.1, uses <see cref="TurkishLowerCaseFilter"/> for Turkish language.
-    /// </ul>
+    /// <list type="bullet">
+    ///   <item> As of 3.1, uses <see cref="TurkishLowerCaseFilter"/> for Turkish language.</item>
+    /// </list>
     /// </para> </summary>
     /// @deprecated (3.1) Use the language-specific analyzer in modules/analysis instead. 
     /// This analyzer will be removed in Lucene 5.0 
-    [Obsolete("(3.1) Use the language-specific analyzer in modules/analysis instead.")]
+    [Obsolete("(3.1) Use the language-specific analyzer in modules/analysis instead. This analyzer will be removed in Lucene 5.0.")]
     public sealed class SnowballAnalyzer : Analyzer
     {
         private string name;
@@ -65,8 +65,8 @@ namespace Lucene.Net.Analysis.Snowball
         }
 
         /// <summary>
-        /// Constructs a <see cref="StandardTokenizer"/> filtered by a {@link
-        ///    StandardFilter}, a <see cref="LowerCaseFilter"/>, a <see cref="StopFilter"/>,
+        /// Constructs a <see cref="StandardTokenizer"/> filtered by a 
+        ///    <see cref="StandardFilter"/>, a <see cref="LowerCaseFilter"/>, a <see cref="StopFilter"/>,
         ///    and a <see cref="SnowballFilter"/> 
         /// </summary>
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)

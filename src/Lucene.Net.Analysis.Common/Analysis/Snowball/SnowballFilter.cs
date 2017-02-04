@@ -25,29 +25,26 @@ namespace Lucene.Net.Analysis.Snowball
     /// <summary>
     /// A filter that stems words using a Snowball-generated stemmer.
     /// 
-    /// Available stemmers are listed in <see cref="org.tartarus.snowball.ext"/>.
-    /// <para><b>NOTE</b>: SnowballFilter expects lowercased text.
-    /// <ul>
-    ///  <li>For the Turkish language, see <see cref="TurkishLowerCaseFilter"/>.
-    ///  <li>For other languages, see <see cref="LowerCaseFilter"/>.
-    /// </ul>
+    /// Available stemmers are listed in Lucene.Net.Tartarus.Snowball.Ext.
+    /// <para><b>NOTE</b>: <see cref="SnowballFilter"/> expects lowercased text.
+    /// <list type="bullet">
+    ///     <item>For the Turkish language, see <see cref="Tr.TurkishLowerCaseFilter"/>.</item>
+    ///     <item>For other languages, see <see cref="Core.LowerCaseFilter"/>.</item>
+    /// </list>
     /// </para>
     /// 
     /// <para>
     /// Note: This filter is aware of the <see cref="KeywordAttribute"/>. To prevent
     /// certain terms from being passed to the stemmer
-    /// <see cref="KeywordAttribute#isKeyword()"/> should be set to <code>true</code>
+    /// <see cref="KeywordAttribute.IsKeyword"/> should be set to <c>true</c>
     /// in a previous <see cref="TokenStream"/>.
     /// 
     /// Note: For including the original term as well as the stemmed version, see
-    /// <see cref="org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilterFactory"/>
+    /// <see cref="Miscellaneous.KeywordRepeatFilterFactory"/>
     /// </para>
-    /// 
-    /// 
     /// </summary>
     public sealed class SnowballFilter : TokenFilter
     {
-
         private readonly SnowballProgram stemmer;
 
         private readonly ICharTermAttribute termAtt;
@@ -64,19 +61,17 @@ namespace Lucene.Net.Analysis.Snowball
         /// <summary>
         /// Construct the named stemming filter.
         /// 
-        /// Available stemmers are listed in <see cref="org.tartarus.snowball.ext"/>.
+        /// Available stemmers are listed in Lucene.Net.Tartarus.Snowball.Ext.
         /// The name of a stemmer is the part of the class name before "Stemmer",
-        /// e.g., the stemmer in <see cref="org.tartarus.snowball.ext.EnglishStemmer"/> is named "English".
+        /// e.g., the stemmer in <see cref="Tartarus.Snowball.Ext.EnglishStemmer"/> is named "English".
         /// </summary>
         /// <param name="in"> the input tokens to stem </param>
         /// <param name="name"> the name of a stemmer </param>
         public SnowballFilter(TokenStream @in, string name)
-              : base(@in)
+            : base(@in)
         {
             try
             {
-                // LUCENENET TODO: There should probably be a way to make this an extesibility point so
-                // custom extensions can be loaded.
                 string className = typeof(SnowballProgram).Namespace + ".Ext." +
                     name + "Stemmer, " + this.GetType().GetTypeInfo().Assembly.GetName().Name;
                 Type stemClass = Type.GetType(className);
@@ -93,8 +88,8 @@ namespace Lucene.Net.Analysis.Snowball
         }
 
         /// <summary>
-        /// Returns the next input Token, after being stemmed </summary>
-        public override bool IncrementToken()
+        /// Returns the next input <see cref="Token"/>, after being stemmed </summary>
+        public override sealed bool IncrementToken()
         {
             if (m_input.IncrementToken())
             {
