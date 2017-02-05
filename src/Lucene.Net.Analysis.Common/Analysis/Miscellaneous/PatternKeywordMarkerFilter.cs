@@ -50,13 +50,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
             this.pattern = pattern;
         }
 
-        protected override bool IsKeyword
+        protected override bool IsKeyword()
         {
-            get
-            {
-                matcher = pattern.Match(termAtt.ToString()); 
-                return matcher.Success;
-            }
+            matcher = pattern.Match(termAtt.ToString()); 
+            return matcher.Success;
         }
     }
 }

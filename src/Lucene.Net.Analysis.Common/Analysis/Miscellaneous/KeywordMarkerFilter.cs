@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             if (m_input.IncrementToken())
             {
-                if (IsKeyword)
+                if (IsKeyword())
                 {
                     keywordAttr.IsKeyword = true;
                 }
@@ -52,6 +52,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
         }
 
-        protected abstract bool IsKeyword { get; } // LUCENENET TODO: Change to IsKeyword() ?
+        protected abstract bool IsKeyword();
     }
 }

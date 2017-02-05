@@ -46,12 +46,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
             termAtt = AddAttribute<ICharTermAttribute>();
         }
 
-        protected override bool IsKeyword
+        protected override bool IsKeyword()
         {
-            get
-            {
-                return keywordSet.Contains(termAtt.Buffer, 0, termAtt.Length);
-            }
+            return keywordSet.Contains(termAtt.Buffer, 0, termAtt.Length);
         }
     }
 }
