@@ -2,7 +2,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -322,18 +322,22 @@ namespace Lucene.Net.Util
         /// </summary>
         private sealed class ReaderField
         {
-            public object ReaderKey { get; private set; }
+            public object ReaderKey
+            {
+                get { return readerKey; }
+            }
+            private readonly object readerKey;
             public string FieldName { get; private set; }
 
             public ReaderField(object readerKey, string fieldName)
             {
-                this.ReaderKey = readerKey;
+                this.readerKey = readerKey;
                 this.FieldName = fieldName;
             }
 
             public override int GetHashCode()
             {
-                return ReaderKey.GetHashCode() * FieldName.GetHashCode(); // LUCENENET TODO: IdentityHashCode
+                return RuntimeHelpers.GetHashCode(readerKey) * FieldName.GetHashCode();
             }
 
             public override bool Equals(object that)
@@ -344,12 +348,12 @@ namespace Lucene.Net.Util
                 }
 
                 ReaderField other = (ReaderField)that;
-                return (this.ReaderKey == other.ReaderKey && this.FieldName.Equals(other.FieldName));
+                return (this.readerKey == other.readerKey && this.FieldName.Equals(other.FieldName));
             }
 
             public override string ToString()
             {
-                return ReaderKey.ToString() + "+" + FieldName;
+                return readerKey.ToString() + "+" + FieldName;
             }
         }
 
