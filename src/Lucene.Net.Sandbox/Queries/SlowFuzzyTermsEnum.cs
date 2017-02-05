@@ -83,7 +83,7 @@ namespace Lucene.Net.Sandbox.Queries
             /// After calling the constructor the enumeration is already pointing to the first 
             /// valid term if such a term exists.
             /// </summary>
-            /// <exception cref="IOException">If there is a low-level I/O error.</exception>
+            /// <exception cref="System.IO.IOException">If there is a low-level I/O error.</exception>
             public LinearFuzzyTermsEnum(SlowFuzzyTermsEnum outerInstance)
                 : base(outerInstance.m_terms.GetIterator(null))
             {

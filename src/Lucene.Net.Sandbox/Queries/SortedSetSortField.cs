@@ -35,7 +35,7 @@ namespace Lucene.Net.Sandbox.Queries
     /// (see below) to ensure that all selections happen in constant-time for performance.
     /// <para/>
     /// Like sorting by string, this also supports sorting missing values as first or last,
-    /// via <see cref="SetMissingValue(object)"/>.
+    /// via <see cref="MissingValue"/>.
     /// <para/>
     /// Limitations:
     /// <list type="bullet">
