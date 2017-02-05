@@ -92,7 +92,7 @@ namespace Lucene.Net.Misc
         }
 
         /// <summary>
-        /// Returns <see cref="TermStats[]"/> ordered by the specified comparer
+        /// Returns <see cref="T:TermStats[]"/> ordered by the specified comparer
         /// </summary>
         public static TermStats[] GetHighFreqTerms(IndexReader reader, int numTerms, string field, IComparer<TermStats> comparer)
         {

@@ -34,7 +34,7 @@ namespace Lucene.Net.Index.Sorter
     /// </para>
     /// <para>
     /// <b>NOTE</b>: If you wrap a <see cref="Search.TopDocsCollector{T}"/> that sorts in the same
-    /// order as the index order, the returned <see cref="TopDocsCollector{T}.TopDocs">TopDocs</see>
+    /// order as the index order, the returned <see cref="TopDocsCollector{T}.GetTopDocs()">TopDocs</see>
     /// will be correct. However the total of <see cref="TopDocsCollector{T}.TotalHits"/>
     /// hit count will be underestimated since not all matching documents will have
     /// been collected.

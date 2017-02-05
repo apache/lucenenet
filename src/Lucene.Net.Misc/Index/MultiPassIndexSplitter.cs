@@ -49,6 +49,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Split source index into multiple parts. </summary>
+        /// <param name="version">lucene compatibility version</param>
         /// <param name="in"> source index, can have deletions, can have
         /// multiple segments (or multiple readers). </param>
         /// <param name="outputs"> list of directories where the output parts will be stored. </param>

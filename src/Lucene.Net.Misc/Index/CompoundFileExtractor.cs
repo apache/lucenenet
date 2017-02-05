@@ -23,18 +23,16 @@ namespace Lucene.Net.Index
 	 */
 
     /// <summary>
-    /// Prints the filename and size of each file within a given compound file.
-    /// Add the -extract flag to extract files to the current working directory.
-    /// In order to make the extracted version of the index work, you have to copy
-    /// the segments file from the compound index into the directory where the extracted files are stored. </summary>
-    /// <param name="args"> Usage: org.apache.lucene.index.IndexReader [-extract] &lt;cfsfile&gt; </param>
-
-    /// <summary>
     /// Command-line tool for extracting sub-files out of a compound file.
     /// </summary>
     public class CompoundFileExtractor
     {
-
+        /// <summary>
+        /// Prints the filename and size of each file within a given compound file.
+        /// Add the -extract flag to extract files to the current working directory.
+        /// In order to make the extracted version of the index work, you have to copy
+        /// the segments file from the compound index into the directory where the extracted files are stored. </summary>
+        /// <param name="args"> Usage: org.apache.lucene.index.IndexReader [-extract] &lt;cfsfile&gt; </param>
         public static void Main(string[] args)
         {
             string filename = null;

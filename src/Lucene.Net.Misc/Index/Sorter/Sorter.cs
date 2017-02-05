@@ -317,7 +317,7 @@ namespace Lucene.Net.Index.Sorter
         /// <para>This identifier is similar to <see cref="object.GetHashCode()"/> and should be
         /// chosen so that two instances of this class that sort documents likewise
         /// will have the same identifier. On the contrary, this identifier should be
-        /// different on different <see cref="Sort">sorts</see>.
+        /// different on different <see cref="Search.Sort">sorts</see>.
         /// </para>
         /// </summary>
         public string ID
