@@ -361,22 +361,6 @@ namespace Lucene.Net.Support
             return a == 0 ? 0 : (int)(a / Math.Abs(a));
         }
 
-        public static int Signum(long a, long b)
-        {
-            if (a < b)
-            {
-                return -1;
-            }
-            else if (a > b)
-            {
-                return 1;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
         // Returns the number of 1-bits in the number
         public static int BitCount(int num)
         {

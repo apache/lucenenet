@@ -374,8 +374,8 @@ namespace Lucene.Net.Search
 
             public override int Compare(int slot1, int slot2)
             {
-                //LUCENE TO-DO
-                return Number.Signum(values[slot1], values[slot2]);
+                // LUCENENET NOTE: Same logic as the Byte.compare() method in Java
+                return values[slot1].CompareTo(values[slot2]);
             }
 
             public override int CompareBottom(int doc)
@@ -387,8 +387,8 @@ namespace Lucene.Net.Search
                 {
                     v2 = m_missingValue.GetValueOrDefault();
                 }
-                //LUCENE TO-DO
-                return Number.Signum(bottom, v2);
+                // LUCENENET NOTE: Same logic as the Byte.compare() method in Java
+                return bottom.CompareTo(v2);
             }
 
             public override void Copy(int slot, int doc)
@@ -435,8 +435,8 @@ namespace Lucene.Net.Search
                 {
                     docValue = m_missingValue.GetValueOrDefault();
                 }
-                //LUCENE TO-DO
-                return Number.Signum(topValue, docValue);
+                // LUCENENET NOTE: Same logic as the Byte.compare() method in Java
+                return topValue.CompareTo(docValue);
             }
         }
 
@@ -637,8 +637,8 @@ namespace Lucene.Net.Search
 
             public override int Compare(int slot1, int slot2)
             {
-                //LUCENE TO-DO
-                return Number.Signum(values[slot1], values[slot2]);
+                // LUCENENET NOTE: Same logic as the Byte.compare() method in Java
+                return values[slot1].CompareTo(values[slot2]);
             }
 
             public override int CompareBottom(int doc)
@@ -651,8 +651,8 @@ namespace Lucene.Net.Search
                     v2 = m_missingValue.GetValueOrDefault();
                 }
 
-                //LUCENE TO-DO
-                return Number.Signum(bottom, v2);
+                // LUCENENET NOTE: Same logic as the Byte.compare() method in Java
+                return bottom.CompareTo(v2);
             }
 
             public override void Copy(int slot, int doc)
@@ -812,7 +812,8 @@ namespace Lucene.Net.Search
 
             public override int Compare(int slot1, int slot2)
             {
-                return Number.Signum(values[slot1], values[slot2]);
+                // LUCENENET NOTE: Same logic as the Long.compare() method in Java
+                return values[slot1].CompareTo(values[slot2]);
             }
 
             public override int CompareBottom(int doc)
@@ -827,7 +828,8 @@ namespace Lucene.Net.Search
                     v2 = m_missingValue.GetValueOrDefault();
                 }
 
-                return Number.Signum(bottom, v2);
+                // LUCENENET NOTE: Same logic as the Long.compare() method in Java
+                return bottom.CompareTo(v2);
             }
 
             public override void Copy(int slot, int doc)
@@ -1026,7 +1028,8 @@ namespace Lucene.Net.Search
             public override int CompareTop(int doc)
             {
                 int docValue = docBase + doc;
-                return Number.Signum(topValue, docValue);
+                // LUCENENET NOTE: Same logic as the Integer.compare() method in Java
+                return topValue.CompareTo(docValue);
             }
         }
 
