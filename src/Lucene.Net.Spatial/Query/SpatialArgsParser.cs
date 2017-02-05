@@ -29,7 +29,7 @@ namespace Lucene.Net.Spatial.Queries
     /// <summary>
     /// Parses a string that usually looks like "OPERATION(SHAPE)" into a <see cref="SpatialArgs"/>
     /// object. The set of operations supported are defined in <see cref="SpatialOperation"/>, such
-    /// as "Intersects" being a common one. The shape portion is defined by WKT <see cref="Spatial4n.Core.Io.WktShapeParser"/>,
+    /// as "Intersects" being a common one. The shape portion is defined by WKT <see cref="Spatial4n.Core.IO.WktShapeParser"/>,
     /// but it can be overridden/customized via <see cref="ParseShape(string, SpatialContext)"/>.
     /// There are some optional name-value pair parameters that follow the closing parenthesis.  Example:
     /// <code>

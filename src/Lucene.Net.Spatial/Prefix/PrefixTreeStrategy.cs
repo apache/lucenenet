@@ -69,7 +69,7 @@ namespace Lucene.Net.Spatial.Prefix
     /// does most of the work, for example returning
     /// a list of terms representing grids of various sizes for a supplied shape.
     /// An important
-    /// configuration item is <see cref="SetDistErrPct(double)"/> which balances
+    /// configuration item is <see cref="DistErrPct"/> which balances
     /// shape precision against scalability.  See those docs.
     /// 
     /// @lucene.internal
@@ -114,7 +114,7 @@ namespace Lucene.Net.Spatial.Prefix
         /// maximum precision (<see cref="Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree.MaxLevels"/>);
         /// this applies to all other shapes. Specific shapes at index and query time
         /// can use something different than this default value.  If you don't set a
-        /// default then the default is <see cref="SpatialArgs.DefaultDisterrpct"/> --
+        /// default then the default is <see cref="SpatialArgs.DEFAULT_DISTERRPCT"/> --
         /// 2.5%.
         /// </remarks>
         /// <seealso cref="Lucene.Net.Spatial.Queries.SpatialArgs.DistErrPct"/>

@@ -28,7 +28,7 @@ namespace Lucene.Net.Spatial.Prefix
      */
 
     /// <summary>
-    /// Traverses a <see cref="SpatialPrefixTree">SpatialPrefixTree</see> indexed field, using the template &
+    /// Traverses a <see cref="SpatialPrefixTree">SpatialPrefixTree</see> indexed field, using the template &amp;
     /// visitor design patterns for subclasses to guide the traversal and collect
     /// matching documents.
     /// <para/>
@@ -299,7 +299,7 @@ namespace Lucene.Net.Spatial.Prefix
             }
 
             /// <summary>
-            /// Called when doing a divide & conquer to find the next intersecting cells
+            /// Called when doing a divide &amp; conquer to find the next intersecting cells
             /// of the query shape that are beneath <paramref name="cell"/>. <paramref name="cell"/> is
             /// guaranteed to have an intersection and thus this must return some number
             /// of nodes.

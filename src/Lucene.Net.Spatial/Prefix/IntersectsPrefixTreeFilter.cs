@@ -25,7 +25,7 @@ namespace Lucene.Net.Spatial.Prefix
      */
 
     /// <summary>
-    /// A Filter matching documents that have an <see cref="SpatialRelation.Intersects"/>
+    /// A Filter matching documents that have an <see cref="SpatialRelation.INTERSECTS"/>
     /// (i.e. not DISTINCT) relationship with a provided query shape.
     /// 
     /// @lucene.internal

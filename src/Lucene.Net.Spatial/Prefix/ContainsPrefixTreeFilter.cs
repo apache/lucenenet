@@ -27,7 +27,7 @@ namespace Lucene.Net.Spatial.Prefix
      */
 
     /// <summary>
-    /// Finds docs where its indexed shape <see cref="Queries.SpatialOperation.CONTAINS"/>
+    /// Finds docs where its indexed shape <see cref="Queries.SpatialOperation.Contains"/>
     /// the query shape. For use on <see cref="RecursivePrefixTreeStrategy"/>.
     /// 
     /// @lucene.experimental

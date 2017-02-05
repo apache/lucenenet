@@ -41,7 +41,7 @@ namespace Lucene.Net.Spatial.Vector
     /// 
     /// <h4>Implementation:</h4>
     /// This is a simple Strategy.  Search works with <see cref="NumericRangeQuery"/>s on
-    /// an x & y pair of fields.  A Circle query does the same bbox query but adds a
+    /// an x &amp; y pair of fields.  A Circle query does the same bbox query but adds a
     /// ValueSource filter on <see cref="SpatialStrategy.MakeDistanceValueSource(IPoint)"/>.
     /// <para/>
     /// One performance shortcoming with this strategy is that a scenario involving

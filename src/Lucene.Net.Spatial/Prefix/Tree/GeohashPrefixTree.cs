@@ -69,7 +69,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
         }
 
-        /// <summary>Any more than this and there's no point (double lat & lon are the same).</summary>
+        /// <summary>Any more than this and there's no point (double lat &amp; lon are the same).</summary>
         public static int MaxLevelsPossible
         {
             get { return GeohashUtils.MAX_PRECISION; }

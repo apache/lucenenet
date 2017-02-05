@@ -172,7 +172,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// leaf and none of its children are added.
         /// <para/>
         /// This implementation checks if shape is a <see cref="IPoint"/> and if so returns
-        /// <see cref="GetCells(Point, int, bool)"/>.
+        /// <see cref="GetCells(IPoint, int, bool)"/>.
         /// </remarks>
         /// <param name="shape">the shape; non-null</param>
         /// <param name="detailLevel">the maximum detail level to get cells for</param>
@@ -260,7 +260,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         /// <summary>
         /// A Point-optimized implementation of
-        /// <see cref="GetCells(Shape, int, bool, bool)"/>. That
+        /// <see cref="GetCells(IShape, int, bool, bool)"/>. That
         /// method in facts calls this for points.
         /// <para/>
         /// This implementation depends on <see cref="GetCell(string)"/> being fast, as its

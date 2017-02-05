@@ -43,7 +43,7 @@ namespace Lucene.Net.Spatial
         /// <param name="args">Used in spatial intersection</param>
         /// <param name="field">
         /// This field is used to determine which docs have spatial data via
-        /// <see cref="FieldCache.GetDocsWithField(AtomicReader, string)"/>.
+        /// <see cref="IFieldCache.GetDocsWithField(AtomicReader, string)"/>.
         /// Passing null will assume all docs have spatial data.
         /// </param>
         public DisjointSpatialFilter(SpatialStrategy strategy, SpatialArgs args, string field)
