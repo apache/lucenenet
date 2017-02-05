@@ -89,7 +89,7 @@ namespace Lucene.Net.Util
         /// Integers are stored at lower precision by shifting off lower bits. The shift count is
         /// stored as <code>SHIFT_START_INT+shift</code> in the first byte
         /// </summary>
-        public const sbyte SHIFT_START_INT = 0x60;
+        public const byte SHIFT_START_INT = 0x60;
 
         /// <summary>
         /// The maximum term length (used for <code>byte[]</code> buffer size)
