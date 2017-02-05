@@ -231,13 +231,13 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <param name="searcher">searcher that was previously used to execute the query.</param>
         /// <param name="topDocs">TopDocs containing the summary result documents to highlight.</param>
         /// <returns>
-        /// <see cref="IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets 
+        /// <see cref="T:IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets 
         /// corresponding to the documents in <paramref name="topDocs"/>.
         /// If no highlights were found for a document, the
         /// first sentence from the field will be returned.
         /// </returns>
         /// <exception cref="IOException">if an I/O error occurred during processing</exception>
-        /// <exception cref="ArgumentException">if <paramref name="field"/> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
+        /// <exception cref="ArgumentException">if <c>field</c> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
         public virtual IDictionary<string, string[]> HighlightFields(string[] fields, Query query, IndexSearcher searcher, TopDocs topDocs)
         {
             int[] maxPassages = new int[fields.Length];
@@ -264,14 +264,14 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <param name="topDocs">TopDocs containing the summary result documents to highlight.</param>
         /// <param name="maxPassages">The maximum number of top-N ranked passages per-field used to form the highlighted snippets.</param>
         /// <returns>
-        /// <see cref="IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets
+        /// <see cref="T:IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets
         /// corresponding to the documents in <paramref name="topDocs"/>.
         /// If no highlights were found for a document, the
         /// first <paramref name="maxPassages"/> sentences from the
         /// field will be returned.
         /// </returns>
         /// <exception cref="IOException">if an I/O error occurred during processing</exception>
-        /// <exception cref="ArgumentException">if <paramref name="field"/> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
+        /// <exception cref="ArgumentException">if <c>field</c> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
         public virtual IDictionary<string, string[]> HighlightFields(string[] fields, Query query, IndexSearcher searcher, TopDocs topDocs, int[] maxPassages)
         {
             ScoreDoc[] scoreDocs = topDocs.ScoreDocs;
@@ -294,14 +294,14 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <param name="docidsIn">containing the document IDs to highlight.</param>
         /// <param name="maxPassagesIn">The maximum number of top-N ranked passages per-field used to form the highlighted snippets.</param>
         /// <returns>
-        /// <see cref="IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets 
+        /// <see cref="F:IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets 
         /// corresponding to the documents in <paramref name="docidsIn"/>.
         /// If no highlights were found for a document, the
-        /// first <paramref name="maxPassages"/> from the field will
+        /// first <c>maxPassages</c> from the field will
         /// be returned.
         /// </returns>
         /// <exception cref="IOException">if an I/O error occurred during processing</exception>
-        /// <exception cref="ArgumentException">if <paramref name="field"/> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
+        /// <exception cref="ArgumentException">if <c>field</c> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
         public virtual IDictionary<string, string[]> HighlightFields(string[] fieldsIn, Query query, IndexSearcher searcher, int[] docidsIn, int[] maxPassagesIn)
         {
             IDictionary<string, string[]> snippets = new Dictionary<string, string[]>();
@@ -361,14 +361,14 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <param name="docidsIn">containing the document IDs to highlight.</param>
         /// <param name="maxPassagesIn">The maximum number of top-N ranked passages per-field used to form the highlighted snippets.</param>
         /// <returns>
-        /// <see cref="IDictionary{string, object[]}"/> keyed on field name, containing the array of formatted snippets
+        /// <see cref="T:IDictionary{string, object[]}"/> keyed on field name, containing the array of formatted snippets
         /// corresponding to the documents in <paramref name="docidsIn"/>.
         /// If no highlights were found for a document, the
         /// first <paramref name="maxPassagesIn"/> from the field will
         /// be returned.
         /// </returns>
         /// <exception cref="IOException">if an I/O error occurred during processing</exception>
-        /// <exception cref="ArgumentException">if <paramref name="field"/> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
+        /// <exception cref="ArgumentException">if <c>field</c> was indexed without <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/></exception>
         protected internal virtual IDictionary<string, object[]> HighlightFieldsAsObjects(string[] fieldsIn, Query query, IndexSearcher searcher, int[] docidsIn, int[] maxPassagesIn)
         {
             if (fieldsIn.Length < 1)

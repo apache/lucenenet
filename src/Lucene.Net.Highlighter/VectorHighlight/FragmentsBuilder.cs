@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <param name="fieldName">field of the document to be highlighted</param>
         /// <param name="fieldFragList"><see cref="FieldFragList"/> object</param>
         /// <returns>a created fragment or null when no fragment created</returns>
-        /// <exception cref="IOException">If there is a low-level I/O error</exception>
+        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
         string CreateFragment(IndexReader reader, int docId, string fieldName,
             FieldFragList fieldFragList);
 
@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// created fragments or null when no fragments created.
         /// size of the array can be less than <paramref name="maxNumFragments"/>
         /// </returns>
-        /// <exception cref="IOException">If there is a low-level I/O error</exception>
+        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
         string[] CreateFragments(IndexReader reader, int docId, string fieldName,
             FieldFragList fieldFragList, int maxNumFragments);
 
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <param name="postTags">post-tags to be used to highlight terms</param>
         /// <param name="encoder">an encoder that generates encoded text</param>
         /// <returns>a created fragment or null when no fragment created</returns>
-        /// <exception cref="IOException">If there is a low-level I/O error</exception>
+        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
         string CreateFragment(IndexReader reader, int docId, string fieldName,
             FieldFragList fieldFragList, string[] preTags, string[] postTags,
             IEncoder encoder);
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// created fragments or null when no fragments created.
         /// size of the array can be less than <paramref name="maxNumFragments"/>
         /// </returns>
-        /// <exception cref="IOException">If there is a low-level I/O error</exception>
+        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
         string[] CreateFragments(IndexReader reader, int docId, string fieldName,
             FieldFragList fieldFragList, int maxNumFragments, string[] preTags, string[] postTags,
             IEncoder encoder);

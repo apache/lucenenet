@@ -56,7 +56,7 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <summary>
-        /// Fills a <see cref="IDictionary{string, WeightedSpanTerm}"/> with <see cref="WeightedSpanTerm"/>s using the terms from the supplied <paramref name="query"/>.
+        /// Fills a <see cref="T:IDictionary{string, WeightedSpanTerm}"/> with <see cref="WeightedSpanTerm"/>s using the terms from the supplied <paramref name="query"/>.
         /// </summary>
         /// <param name="query"><see cref="Query"/> to extract Terms from</param>
         /// <param name="terms">Map to place created <see cref="WeightedSpanTerm"/>s in</param>
@@ -237,9 +237,9 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <summary>
-        /// Fills a <see cref="IDictionary{string, WeightedSpanTerm}"/> with <see cref="WeightedSpanTerm"/>s using the terms from the supplied <see cref="SpanQuery"/>.
+        /// Fills a <see cref="T:IDictionary{string, WeightedSpanTerm}"/> with <see cref="WeightedSpanTerm"/>s using the terms from the supplied <see cref="SpanQuery"/>.
         /// </summary>
-        /// <param name="terms"><see cref="IDictionary{string, WeightedSpanTerm}"/> to place created <see cref="WeightedSpanTerm"/>s in</param>
+        /// <param name="terms"><see cref="T:IDictionary{string, WeightedSpanTerm}"/> to place created <see cref="WeightedSpanTerm"/>s in</param>
         /// <param name="spanQuery"><see cref="SpanQuery"/> to extract Terms from</param>
         /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
         protected virtual void ExtractWeightedSpanTerms(IDictionary<string, WeightedSpanTerm> terms, SpanQuery spanQuery)
@@ -335,10 +335,10 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <summary>
-        /// Fills a <see cref="IDictionary{string, WeightedSpanTerm}"/> with <see cref="WeightedSpanTerm"/>s using the terms from 
+        /// Fills a <see cref="T:IDictionary{string, WeightedSpanTerm}"/> with <see cref="WeightedSpanTerm"/>s using the terms from 
         /// the supplied <see cref="Search.Spans.SpanQuery"/>.
         /// </summary>
-        /// <param name="terms"><see cref="IDictionary{string, WeightedSpanTerm}"/> to place created <see cref="WeightedSpanTerm"/>s in</param>
+        /// <param name="terms"><see cref="T:IDictionary{string, WeightedSpanTerm}"/> to place created <see cref="WeightedSpanTerm"/>s in</param>
         /// <param name="query"><see cref="Query"/> to extract Terms from</param>
         /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
         protected virtual void ExtractWeightedTerms(IDictionary<string, WeightedSpanTerm> terms, Query query)
@@ -462,7 +462,7 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <summary>
-        /// Creates an <see cref="IDictionary{string, WeightedSpanTerm}"/> from the given <see cref="Query"/> and <see cref="Analysis.TokenStream"/>.
+        /// Creates an <see cref="T:IDictionary{string, WeightedSpanTerm}"/> from the given <see cref="Query"/> and <see cref="Analysis.TokenStream"/>.
         /// </summary>
         /// <param name="query"><see cref="Query"/> that caused hit</param>
         /// <param name="tokenStream"><see cref="Analysis.TokenStream"/> of text to be highlighted</param>
@@ -475,7 +475,7 @@ namespace Lucene.Net.Search.Highlight
 
 
         /// <summary>
-        /// Creates an <see cref="IDictionary{string, WeightedSpanTerm}"/> from the given <see cref="Query"/> and <see cref="Analysis.TokenStream"/>.
+        /// Creates an <see cref="T:IDictionary{string, WeightedSpanTerm}"/> from the given <see cref="Query"/> and <see cref="Analysis.TokenStream"/>.
         /// </summary>
         /// <param name="query"><see cref="Query"/> that caused hit</param>
         /// <param name="tokenStream"><see cref="Analysis.TokenStream"/> of text to be highlighted</param>
@@ -509,7 +509,7 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <summary>
-        /// Creates an <see cref="IDictionary{string, WeightedSpanTerm}"/> from the given <see cref="Query"/> and <see cref="Analysis.TokenStream"/>. Uses a supplied
+        /// Creates an <see cref="T:IDictionary{string, WeightedSpanTerm}"/> from the given <see cref="Query"/> and <see cref="Analysis.TokenStream"/>. Uses a supplied
         /// <see cref="IndexReader"/> to properly Weight terms (for gradient highlighting).
         /// </summary>
         /// <param name="query"><see cref="Query"/> that caused hit</param>

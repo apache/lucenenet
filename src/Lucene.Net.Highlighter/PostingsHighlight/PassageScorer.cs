@@ -23,7 +23,7 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// Ranks passages found by <see cref="PostingsHighlighter"/>.
     /// <para/>
     /// Each passage is scored as a miniature document within the document.
-    /// The final score is computed as <c>norm</c> * &sum; (<c>weight</c> * <c>tf</c>).
+    /// The final score is computed as <c>norm</c> * ∑ (<c>weight</c> * <c>tf</c>).
     /// The default implementation is <c>norm</c> * BM25.
     /// 
     /// @lucene.experimental
@@ -42,9 +42,9 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <summary>
         /// Creates <see cref="PassageScorer"/> with these default values:
         /// <list type="bullet">
-        ///     <item><paramref name="k1"/> = 1.2</item>
-        ///     <item><paramref name="b"/> = 0.75</item>
-        ///     <item><paramref name="pivot"/> = 87</item>
+        ///     <item><c>k1 = 1.2</c></item>
+        ///     <item><c>b = 0.75</c></item>
+        ///     <item><c>pivot = 87</c></item>
         /// </list>
         /// </summary>
         public PassageScorer()

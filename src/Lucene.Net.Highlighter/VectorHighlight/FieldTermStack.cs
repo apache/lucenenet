@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <param name="docId">document id to be highlighted</param>
         /// <param name="fieldName">field of the document to be highlighted</param>
         /// <param name="fieldQuery"><see cref="FieldQuery"/> object</param>
-        /// <exception cref="IOException">If there is a low-level I/O error</exception>
+        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
         public FieldTermStack(IndexReader reader, int docId, string fieldName, FieldQuery fieldQuery)
         {
             this.fieldName = fieldName;
