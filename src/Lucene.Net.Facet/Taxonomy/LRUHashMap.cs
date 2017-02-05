@@ -23,15 +23,15 @@ namespace Lucene.Net.Facet.Taxonomy
      */
 
     /// <summary>
-    /// <see cref="LRUHashMap{TKey, TValue}"/> is similar to of Java's HashMap, which has a bounded <see cref="Capacity"/>;
-    /// When it reaches that <see cref="Capacity"/>, each time a new element is added, the least
+    /// <see cref="LRUHashMap{TKey, TValue}"/> is similar to of Java's HashMap, which has a bounded <see cref="Limit"/>;
+    /// When it reaches that <see cref="Limit"/>, each time a new element is added, the least
     /// recently used (LRU) entry is removed.
     /// <para>
     /// Unlike the Java Lucene implementation, this one is thread safe because it is backed by the <see cref="LurchTable{TKey, TValue}"/>.
     /// Do note that every time an element is read from <see cref="LRUHashMap{TKey, TValue}"/>,
     /// a write operation also takes place to update the element's last access time.
     /// This is because the LRU order needs to be remembered to determine which element
-    /// to evict when the <see cref="Capacity"/> is exceeded. 
+    /// to evict when the <see cref="Limit"/> is exceeded. 
     /// </para>
     /// <para>
     /// 

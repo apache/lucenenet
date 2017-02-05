@@ -33,7 +33,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
     /// <summary>
     /// A per-segment cache of documents' facet ordinals. Every
-    /// <see cref="CachedOrds"/> holds the ordinals in a raw <see cref="int[]"/>, 
+    /// <see cref="CachedOrds"/> holds the ordinals in a raw <see cref="T:int[]"/>, 
     /// and therefore consumes as much RAM as the total
     /// number of ordinals found in the segment, but saves the
     /// CPU cost of decoding ordinals during facet counting.
@@ -123,7 +123,7 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Holds the cached ordinals in two parallel <see cref="int[]"/> arrays.
+        /// Holds the cached ordinals in two parallel <see cref="T:int[]"/> arrays.
         /// </summary>
         public sealed class CachedOrds : IAccountable
         {

@@ -24,7 +24,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
     /// <summary>
     /// Base class for all taxonomy-based facets that aggregate
-    /// to a per-ords <see cref="int[]"/>. 
+    /// to a per-ords <see cref="T:int[]"/>. 
     /// </summary>
 
     public abstract class IntTaxonomyFacets : TaxonomyFacets

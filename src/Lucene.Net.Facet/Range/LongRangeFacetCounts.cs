@@ -31,7 +31,7 @@ namespace Lucene.Net.Facet.Range
     /// <summary>
     /// <see cref="Facets"/> implementation that computes counts for
     /// dynamic long ranges from a provided <see cref="ValueSource"/>,
-    /// using <see cref="FunctionValues.LongVal"/>.  Use
+    /// using <see cref="FunctionValues.LongVal(int)"/> or <see cref="FunctionValues.LongVal(int, long[])"/>.  Use
     /// this for dimensions that change in real-time (e.g. a
     /// relative time based dimension like "Past day", "Past 2
     /// days", etc.) or that change for each request (e.g. 
@@ -66,7 +66,7 @@ namespace Lucene.Net.Facet.Range
         /// <see cref="ValueSource"/>, and using the provided Filter as
         /// a fastmatch: only documents passing the filter are
         /// checked for the matching ranges.  The filter must be
-        /// random access (implement <see cref="DocIdSet.GetBits"/>). 
+        /// random access (implement <see cref="DocIdSet.Bits"/>). 
         /// </summary>
         public LongRangeFacetCounts(string field, ValueSource valueSource, 
             FacetsCollector hits, Filter fastMatchFilter, params LongRange[] ranges)

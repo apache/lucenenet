@@ -25,7 +25,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
     /// <summary>
     /// Base class for all taxonomy-based facets that aggregate
-    /// to a per-ords <see cref="float[]"/>. 
+    /// to a per-ords <see cref="T:float[]"/>. 
     /// </summary>
     public abstract class FloatTaxonomyFacets : TaxonomyFacets
     {

@@ -34,7 +34,7 @@ namespace Lucene.Net.Facet.Taxonomy
     using Weight = Lucene.Net.Search.Weight;
 
     /// <summary>
-    /// Aggregates sum of values from <see cref="FunctionValues.DoubleVal"/>, 
+    /// Aggregates sum of values from <see cref="FunctionValues.DoubleVal(int)"/> and <see cref="FunctionValues.DoubleVal(int, double[])"/>, 
     /// for each facet label.
     /// 
     ///  @lucene.experimental 

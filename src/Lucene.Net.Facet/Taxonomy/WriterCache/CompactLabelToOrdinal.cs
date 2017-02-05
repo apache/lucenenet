@@ -31,13 +31,12 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// </para>
     /// <para>
     /// This data structure grows by adding a new HashArray whenever the number of
-    /// collisions in the <see cref="CollisionMap"/> exceeds <see cref="loadFactor"/> * 
-    /// <see cref="GetMaxOrdinal()"/>. Growing also includes reinserting all colliding
+    /// collisions in the <see cref="CollisionMap"/> exceeds <see cref="loadFactor"/>
+    /// <c>GetMaxOrdinal().</c> Growing also includes reinserting all colliding
     /// labels into the <see cref="HashArray"/>s to possibly reduce the number of collisions.
     /// 
     /// For setting the <see cref="loadFactor"/> see 
     /// <see cref="CompactLabelToOrdinal(int, float, int)"/>. 
-    /// 
     /// </para>
     /// <para>
     /// This data structure has a much lower memory footprint (~30%) compared to a
@@ -396,12 +395,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// </summary>
         internal static CompactLabelToOrdinal Open(FileInfo file, float loadFactor, int numHashArrays)
         {
-            /// <summary>
-            /// Part of the file is the labelRepository, which needs to be rehashed
-            /// and label offsets re-added to the object. I am unsure as to why we
-            /// can't just store these off in the file as well, but in keeping with
-            /// the spirit of the original code, I did it this way. (ssuppe)
-            /// </summary>
+            // Part of the file is the labelRepository, which needs to be rehashed
+            // and label offsets re-added to the object. I am unsure as to why we
+            // can't just store these off in the file as well, but in keeping with
+            // the spirit of the original code, I did it this way. (ssuppe)
             CompactLabelToOrdinal l2o = new CompactLabelToOrdinal();
             l2o.loadFactor = loadFactor;
             l2o.hashArrays = new HashArray[numHashArrays];

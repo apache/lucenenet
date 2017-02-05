@@ -29,7 +29,7 @@ namespace Lucene.Net.Facet
     /// Collects hits for subsequent faceting.  Once you've run
     /// a search and collect hits into this, instantiate one of
     /// the <see cref="ICollector"/> subclasses to do the facet
-    /// counting.  Use the <see cref="Search"/> utility methods to
+    /// counting.  Use the Search utility methods (such as <see cref="Search(IndexSearcher, Query, int, ICollector)"/>) to
     /// perform an "ordinary" search but also collect into a
     /// <see cref="Facets"/>. 
     /// </summary>
@@ -115,7 +115,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Create this; if <paramref name="keepScores"/> is <c>true</c> then a
-        /// <see cref="float[]"/> is allocated to hold score of all hits. 
+        /// <see cref="T:float[]"/> is allocated to hold score of all hits. 
         /// </summary>
         public FacetsCollector(bool keepScores)
         {

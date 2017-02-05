@@ -273,7 +273,7 @@ namespace Lucene.Net.Facet
         public class DrillSidewaysResult
         {
             /// <summary>
-            /// Combined drill down & sideways results.
+            /// Combined drill down &amp; sideways results.
             /// </summary>
             public Facets Facets { get; private set; }
 

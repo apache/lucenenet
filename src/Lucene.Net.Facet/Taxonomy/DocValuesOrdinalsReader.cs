@@ -89,7 +89,7 @@
         }
 
         /// <summary>
-        /// Subclass & override if you change the encoding.
+        /// Subclass &amp; override if you change the encoding.
         /// </summary>
         protected virtual void Decode(BytesRef buf, IntsRef ordinals)
         {

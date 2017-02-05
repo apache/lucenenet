@@ -156,11 +156,11 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Implements the actual opening of a new <see cref="TaxonomyReader"/> instance if
         /// the taxonomy has changed.
         /// </summary>
-        /// <see cref= #openIfChanged(TaxonomyReader) </seealso>
+        /// <seealso cref="OpenIfChanged{T}(T)"/>
         protected abstract TaxonomyReader DoOpenIfChanged();
 
         /// <summary>
-        /// Throws <see cref="AlreadyClosedException"/> if this <see cref="IndexReader"/> is disposed
+        /// Throws <see cref="AlreadyClosedException"/> if this <see cref="Index.IndexReader"/> is disposed
         /// </summary>
         protected void EnsureOpen()
         {

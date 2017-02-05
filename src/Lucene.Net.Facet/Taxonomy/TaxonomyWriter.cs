@@ -60,7 +60,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <see cref="AddCategory"/> adds a category with a given path name to the taxonomy,
         /// and returns its ordinal. If the category was already present in
         /// the taxonomy, its existing ordinal is returned.
-        /// <P>
+        /// <para/>
         /// Before adding a category, <see cref="AddCategory"/> makes sure that all its
         /// ancestor categories exist in the taxonomy as well. As result, the
         /// ordinal of a category is guaranteed to be smaller then the ordinal of
@@ -100,10 +100,10 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// <see cref="Count"/> returns the number of categories in the taxonomy.
-        /// <P>
+        /// <para/>
         /// Because categories are numbered consecutively starting with 0, it
         /// means the taxonomy contains ordinals 0 through <see cref="Count"/>-1.
-        /// <P>
+        /// <para/>
         /// Note that the number returned by <see cref="Count"/> is often slightly higher
         /// than the number of categories inserted into the taxonomy; This is
         /// because when a category is added to the taxonomy, its ancestors

@@ -132,11 +132,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// Forcibly unlocks the taxonomy in the named directory.
-        /// <P>
+        /// <para/>
         /// Caution: this should only be used by failure recovery code, when it is
         /// known that no other process nor thread is in fact currently accessing
         /// this taxonomy.
-        /// <P>
+        /// <para/>
         /// This method is unnecessary if your <see cref="Store.Directory"/> uses a
         /// <see cref="NativeFSLockFactory"/> instead of the default
         /// <see cref="SimpleFSLockFactory"/>. When the "native" lock is used, a lock
@@ -250,16 +250,16 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// Open internal index writer, which contains the taxonomy data.
-        /// <para>
+        /// <para/>
         /// Extensions may provide their own <see cref="IndexWriter"/> implementation or instance. 
-        /// <br><b>NOTE:</b> the instance this method returns will be disposed upon calling
+        /// <para/>
+        /// <b>NOTE:</b> the instance this method returns will be disposed upon calling
         /// to <see cref="Dispose()"/>.
-        /// <br><b>NOTE:</b> the merge policy in effect must not merge none adjacent segments. See
-        /// comment in <see cref="CreateIndexWriterConfig(IndexWriterConfig.OpenMode)"/> for the logic behind this.
-        ///  
-        /// </para>
+        /// <para/>
+        /// <b>NOTE:</b> the merge policy in effect must not merge none adjacent segments. See
+        /// comment in <see cref="CreateIndexWriterConfig(OpenMode)"/> for the logic behind this.
         /// </summary>
-        /// <seealso cref="CreateIndexWriterConfig(IndexWriterConfig.OpenMode)"/>
+        /// <seealso cref="CreateIndexWriterConfig(OpenMode)"/>
         /// <param name="directory">
         ///          the <see cref="Store.Directory"/> on top of which an <see cref="IndexWriter"/>
         ///          should be opened. </param>
@@ -272,11 +272,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// Create the <see cref="IndexWriterConfig"/> that would be used for opening the internal index writer.
-        /// <br>Extensions can configure the <see cref="IndexWriter"/> as they see fit,
+        /// <para/>
+        /// Extensions can configure the <see cref="IndexWriter"/> as they see fit,
         /// including setting a <see cref="Index.MergeScheduler"/>, or
         /// <see cref="Index.IndexDeletionPolicy"/>, different RAM size
-        /// etc.<br>
-        /// <br><b>NOTE:</b> internal docids of the configured index must not be altered.
+        /// etc.
+        /// <para/>
+        /// <b>NOTE:</b> internal docids of the configured index must not be altered.
         /// For that, categories are never deleted from the taxonomy index.
         /// In addition, merge policy in effect must not merge none adjacent segments.
         /// </summary>
@@ -937,12 +939,12 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Mapping from old ordinal to new ordinals, used when merging indexes 
         /// wit separate taxonomies.
-        /// <para> 
+        /// <para/> 
         /// <see cref="AddMapping"/> merges one or more taxonomies into the given taxonomy
         /// (this). An <see cref="IOrdinalMap"/> is filled for each of the added taxonomies,
         /// containing the new ordinal (in the merged taxonomy) of each of the
         /// categories in the old taxonomy.
-        /// <P>  
+        /// <para/>  
         /// There exist two implementations of <see cref="IOrdinalMap"/>: <see cref="MemoryOrdinalMap"/> and
         /// <see cref="DiskOrdinalMap"/>. As their names suggest, the former keeps the map in
         /// memory and the latter in a temporary disk file. Because these maps will
@@ -950,14 +952,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// same time, it is recommended to put the first taxonomy's map in memory,
         /// and all the rest on disk (later to be automatically read into memory one
         /// by one, when needed).
-        /// </para>
         /// </summary>
         public interface IOrdinalMap
         {
             /// <summary>
             /// Set the size of the map. This MUST be called before <see cref="AddMapping"/>.
             /// It is assumed (but not verified) that <see cref="AddMapping"/> will then be
-            /// called exactly 'size' times, with different <paramref name="origOrdinals"/> between 0
+            /// called exactly 'size' times, with different <c>origOrdinals</c> between 0
             /// and size - 1.  
             /// </summary>
             void SetSize(int taxonomySize);

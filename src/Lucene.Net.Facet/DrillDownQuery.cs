@@ -42,7 +42,7 @@ namespace Lucene.Net.Facet
     /// <para>
     /// <b>NOTE:</b> if you choose to create your own <see cref="Query"/> by calling
     /// <see cref="Term"/>, it is recommended to wrap it with <see cref="ConstantScoreQuery"/>
-    /// and set the <see cref="ConstantScoreQuery.Boost">boost</see> to <c>0.0f</c>,
+    /// and set the <see cref="Query.Boost">boost</see> to <c>0.0f</c>,
     /// so that it does not affect the scores of the documents.
     /// 
     /// @lucene.experimental

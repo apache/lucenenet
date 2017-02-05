@@ -173,7 +173,7 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Copies the path components to the given <see cref="char[]"/>, starting at index
+        /// Copies the path components to the given <see cref="T:char[]"/>, starting at index
         /// <paramref name="start"/>. <paramref name="delimiter"/> is copied between the path components.
         /// Returns the number of chars copied.
         /// 
@@ -287,7 +287,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Returns a string representation of the path, separating components with
         /// '/'.
         /// </summary>
-        /// <see cref= #toString(char) </seealso>
+        /// <seealso cref="ToString(char)"/>
         public override string ToString()
         {
             return ToString('/');

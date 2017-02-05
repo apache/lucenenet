@@ -32,7 +32,7 @@ namespace Lucene.Net.Facet.Range
     /// <summary>
     /// <see cref="Facets"/> implementation that computes counts for
     ///  dynamic double ranges from a provided <see cref="ValueSource"/>, 
-    ///  using <see cref="FunctionValues.DoubleVal"/>.  Use
+    ///  using <see cref="FunctionValues.DoubleVal(int)"/> or <see cref="FunctionValues.DoubleVal(int, double[])"/>.  Use
     ///  this for dimensions that change in real-time (e.g. a
     ///  relative time based dimension like "Past day", "Past 2
     ///  days", etc.) or that change for each request (e.g.
@@ -74,7 +74,7 @@ namespace Lucene.Net.Facet.Range
         /// <see cref="ValueSource"/>, and using the provided Filter as
         /// a fastmatch: only documents passing the filter are
         /// checked for the matching ranges.  The filter must be
-        /// random access (implement <see cref="DocIdSet.GetBits()"/>). 
+        /// random access (implement <see cref="DocIdSet.Bits"/>). 
         /// </summary>
         public DoubleRangeFacetCounts(string field, ValueSource valueSource, FacetsCollector hits, Filter fastMatchFilter, DoubleRange[] ranges)
             : base(field, ranges, fastMatchFilter)

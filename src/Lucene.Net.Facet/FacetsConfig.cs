@@ -669,8 +669,8 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Turns an encoded string (from a previous call to <see cref="PathToString"/>) 
-        /// back into the original <see cref="string[]"/>. 
+        /// Turns an encoded string (from a previous call to <see cref="PathToString(string[])"/>) 
+        /// back into the original <see cref="T:string[]"/>. 
         /// </summary>
         public static string[] StringToPath(string s)
         {

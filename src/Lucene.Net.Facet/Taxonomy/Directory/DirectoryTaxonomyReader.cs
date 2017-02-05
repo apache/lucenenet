@@ -36,7 +36,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// <summary>
     /// A <see cref="TaxonomyReader"/> which retrieves stored taxonomy information from a
     /// <see cref="Directory"/>.
-    /// <P>
+    /// <para/>
     /// Reading from the on-disk index on every method call is too slow, so this
     /// implementation employs caching: Some methods cache recent requests and their
     /// results, while other methods prefetch all the data into memory and then
@@ -156,7 +156,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// any issues, unless the two instances continue to live. The reader
         /// guarantees that the two instances cannot affect each other in terms of
         /// correctness of the caches, however if the size of the cache is changed
-        /// through <see cref="CacheSize"/>, it will affect both reader instances.
+        /// through <see cref="SetCacheSize(int)"/>, it will affect both reader instances.
         /// </para>
         /// </summary>
         protected override TaxonomyReader DoOpenIfChanged()
@@ -378,11 +378,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// <see cref="SetCacheSize"/> controls the maximum allowed size of each of the caches
         /// used by <see cref="GetPath(int)"/> and <see cref="GetOrdinal(FacetLabel)"/>.
-        /// <P>
+        /// <para/>
         /// Currently, if the given size is smaller than the current size of
         /// a cache, it will not shrink, and rather we be limited to its current
         /// size. </summary>
-        /// <param name="value"> the new maximum cache size, in number of entries. </param>
+        /// <param name="size"> the new maximum cache size, in number of entries. </param>
         public virtual void SetCacheSize(int size)
         {
             EnsureOpen();

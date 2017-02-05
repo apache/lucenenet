@@ -92,7 +92,7 @@
         bool IsFull { get; }
 
         /// <summary>
-        /// Clears the content of the cache. Unlike <see cref="Dispose()"/>, the caller can
+        /// Clears the content of the cache. Unlike <see cref="IDisposable.Dispose()"/>, the caller can
         /// assume that the cache is still operable after this method returns.
         /// </summary>
         void Clear();

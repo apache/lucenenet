@@ -96,7 +96,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// 
         /// <para>
         /// <b>NOTE:</b> you should only use this constructor if you commit and call
-        /// <see cref="Index.ReaderManager.MaybeRefresh()"/> in the same thread. Otherwise it could lead to an
+        /// <see cref="Search.ReferenceManager{G}.MaybeRefresh()"/> (on the <see cref="Index.ReaderManager"/>) in the same thread. Otherwise it could lead to an
         /// unsync'd <see cref="IndexSearcher"/> and <see cref="TaxonomyReader"/> pair.
         /// </para>
         /// </summary>
