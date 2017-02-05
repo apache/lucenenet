@@ -343,7 +343,6 @@ namespace Lucene.Net.Search.Spans
             var possibleMatchPayloads = new HashSet<byte[]>();
             if (subSpans[subSpans.Length - 1].IsPayloadAvailable)
             {
-                //LUCENE TO-DO UnionWith or AddAll(Set<>, IEnumerable<>)
                 possibleMatchPayloads.UnionWith(subSpans[subSpans.Length - 1].GetPayload());
             }
 

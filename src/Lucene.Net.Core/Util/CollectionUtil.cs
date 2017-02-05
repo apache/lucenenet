@@ -44,11 +44,12 @@ namespace Lucene.Net.Util
             internal ListIntroSorter(IList<T> list, IComparer<T> comp)
                 : base()
             {
-                /* LUCENE TO-DO I believe all ILists are RA
-                if (!(list is RandomAccess))
-                {
-                  throw new System.ArgumentException("CollectionUtil can only sort random access lists in-place.");
-                }*/
+                // LUCENENET NOTE: All ILists in .NET are random access (only IEnumerable is forward-only)
+                //if (!(list is RandomAccess))
+                //{
+                //  throw new System.ArgumentException("CollectionUtil can only sort random access lists in-place.");
+                //}
+                
                 this.list = list;
                 this.comp = comp;
             }
@@ -83,11 +84,11 @@ namespace Lucene.Net.Util
             internal ListTimSorter(IList<T> list, IComparer<T> comp, int maxTempSlots)
                 : base(maxTempSlots)
             {
-                /* LUCENE TO-DO I believe all ILists are RA
-                if (!(list is RandomAccess))
-                {
-                  throw new System.ArgumentException("CollectionUtil can only sort random access lists in-place.");
-                }*/
+                // LUCENENET NOTE: All ILists in .NET are random access (only IEnumerable is forward-only)
+                //if (!(list is RandomAccess))
+                //{
+                //  throw new System.ArgumentException("CollectionUtil can only sort random access lists in-place.");
+                //}
                 this.list = list;
                 this.comp = comp;
                 if (maxTempSlots > 0)

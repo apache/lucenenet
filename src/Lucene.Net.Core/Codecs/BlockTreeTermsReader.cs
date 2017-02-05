@@ -492,16 +492,6 @@ namespace Lucene.Net.Codecs
             {
                 StringBuilder @out = new StringBuilder();
 
-                /* LUCENE TO-DO I don't think this is neccesary
-                try
-                {
-                  @out = new PrintStream(bos, false, IOUtils.UTF_8);
-                }
-                catch (UnsupportedEncodingException bogus)
-                {
-                  throw new Exception(bogus);
-                }*/
-
                 @out.AppendLine("  index FST:");
                 @out.AppendLine("    " + IndexNodeCount + " nodes");
                 @out.AppendLine("    " + IndexArcCount + " arcs");
@@ -536,15 +526,6 @@ namespace Lucene.Net.Codecs
                     Debug.Assert(TotalBlockCount == total);
                 }
                 return @out.ToString();
-                /* LUCENE TO-DO I dont think this is neccesary
-                try
-                {
-                  return bos.ToString(IOUtils.UTF_8);
-                }
-                catch (UnsupportedEncodingException bogus)
-                {
-                  throw new Exception(bogus);
-                }*/
             }
         }
 
@@ -2416,69 +2397,70 @@ namespace Lucene.Net.Codecs
                     }
                 }
 
-                /*LUCENE TO-DO Not in use
-                private void PrintSeekState(PrintStream @out)
-                {
-                  if (CurrentFrame == StaticFrame)
-                  {
-                    @out.println("  no prior seek");
-                  }
-                  else
-                  {
-                    @out.println("  prior seek state:");
-                    int ord = 0;
-                    bool isSeekFrame = true;
-                    while (true)
-                    {
-                      Frame f = GetFrame(ord);
-                      Debug.Assert(f != null);
-                      BytesRef prefix = new BytesRef(Term_Renamed.Bytes, 0, f.Prefix);
-                      if (f.NextEnt == -1)
-                      {
-                        @out.println("    frame " + (isSeekFrame ? "(seek)" : "(next)") + " ord=" + ord + " fp=" + f.Fp + (f.IsFloor ? (" (fpOrig=" + f.FpOrig + ")") : "") + " prefixLen=" + f.Prefix + " prefix=" + prefix + (f.NextEnt == -1 ? "" : (" (of " + f.EntCount + ")")) + " hasTerms=" + f.HasTerms + " isFloor=" + f.IsFloor + " code=" + ((f.Fp << BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS) + (f.HasTerms ? BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS:0) + (f.IsFloor ? BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR:0)) + " isLastInFloor=" + f.IsLastInFloor + " mdUpto=" + f.MetaDataUpto + " tbOrd=" + f.TermBlockOrd);
-                      }
-                      else
-                      {
-                        @out.println("    frame " + (isSeekFrame ? "(seek, loaded)" : "(next, loaded)") + " ord=" + ord + " fp=" + f.Fp + (f.IsFloor ? (" (fpOrig=" + f.FpOrig + ")") : "") + " prefixLen=" + f.Prefix + " prefix=" + prefix + " nextEnt=" + f.NextEnt + (f.NextEnt == -1 ? "" : (" (of " + f.EntCount + ")")) + " hasTerms=" + f.HasTerms + " isFloor=" + f.IsFloor + " code=" + ((f.Fp << BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS) + (f.HasTerms ? BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS:0) + (f.IsFloor ? BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR:0)) + " lastSubFP=" + f.LastSubFP + " isLastInFloor=" + f.IsLastInFloor + " mdUpto=" + f.MetaDataUpto + " tbOrd=" + f.TermBlockOrd);
-                      }
-                      if (OuterInstance.Index != null)
-                      {
-                        Debug.Assert(!isSeekFrame || f.Arc != null, "isSeekFrame=" + isSeekFrame + " f.arc=" + f.Arc);
-                        if (f.Prefix > 0 && isSeekFrame && f.Arc.Label != (Term_Renamed.Bytes[f.Prefix - 1] & 0xFF))
-                        {
-                          @out.println("      broken seek state: arc.label=" + (char) f.Arc.Label + " vs term byte=" + (char)(Term_Renamed.Bytes[f.Prefix - 1] & 0xFF));
-                          throw new Exception("seek state is broken");
-                        }
-                        BytesRef output = Util.Get(OuterInstance.Index, prefix);
-                        if (output == null)
-                        {
-                          @out.println("      broken seek state: prefix is not final in index");
-                          throw new Exception("seek state is broken");
-                        }
-                        else if (isSeekFrame && !f.IsFloor)
-                        {
-                          ByteArrayDataInput reader = new ByteArrayDataInput(output.Bytes, output.Offset, output.Length);
-                          long codeOrig = reader.ReadVLong();
-                          long code = (f.Fp << BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS) | (f.HasTerms ? BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS:0) | (f.IsFloor ? BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR:0);
-                          if (codeOrig != code)
-                          {
-                            @out.println("      broken seek state: output code=" + codeOrig + " doesn't match frame code=" + code);
-                            throw new Exception("seek state is broken");
-                          }
-                        }
-                      }
-                      if (f == CurrentFrame)
-                      {
-                        break;
-                      }
-                      if (f.Prefix == ValidIndexPrefix)
-                      {
-                        isSeekFrame = false;
-                      }
-                      ord++;
-                    }
-                  }
-                }*/
+                // LUCENENET NOTE: Not in use
+
+                //private void PrintSeekState(PrintStream @out)
+                //{
+                //    if (CurrentFrame == StaticFrame)
+                //    {
+                //        @out.println("  no prior seek");
+                //    }
+                //    else
+                //    {
+                //        @out.println("  prior seek state:");
+                //        int ord = 0;
+                //        bool isSeekFrame = true;
+                //        while (true)
+                //        {
+                //            Frame f = GetFrame(ord);
+                //            Debug.Assert(f != null);
+                //            BytesRef prefix = new BytesRef(Term_Renamed.Bytes, 0, f.Prefix);
+                //            if (f.NextEnt == -1)
+                //            {
+                //                @out.println("    frame " + (isSeekFrame ? "(seek)" : "(next)") + " ord=" + ord + " fp=" + f.Fp + (f.IsFloor ? (" (fpOrig=" + f.FpOrig + ")") : "") + " prefixLen=" + f.Prefix + " prefix=" + prefix + (f.NextEnt == -1 ? "" : (" (of " + f.EntCount + ")")) + " hasTerms=" + f.HasTerms + " isFloor=" + f.IsFloor + " code=" + ((f.Fp << BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS) + (f.HasTerms ? BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS : 0) + (f.IsFloor ? BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR : 0)) + " isLastInFloor=" + f.IsLastInFloor + " mdUpto=" + f.MetaDataUpto + " tbOrd=" + f.TermBlockOrd);
+                //            }
+                //            else
+                //            {
+                //                @out.println("    frame " + (isSeekFrame ? "(seek, loaded)" : "(next, loaded)") + " ord=" + ord + " fp=" + f.Fp + (f.IsFloor ? (" (fpOrig=" + f.FpOrig + ")") : "") + " prefixLen=" + f.Prefix + " prefix=" + prefix + " nextEnt=" + f.NextEnt + (f.NextEnt == -1 ? "" : (" (of " + f.EntCount + ")")) + " hasTerms=" + f.HasTerms + " isFloor=" + f.IsFloor + " code=" + ((f.Fp << BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS) + (f.HasTerms ? BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS : 0) + (f.IsFloor ? BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR : 0)) + " lastSubFP=" + f.LastSubFP + " isLastInFloor=" + f.IsLastInFloor + " mdUpto=" + f.MetaDataUpto + " tbOrd=" + f.TermBlockOrd);
+                //            }
+                //            if (OuterInstance.Index != null)
+                //            {
+                //                Debug.Assert(!isSeekFrame || f.Arc != null, "isSeekFrame=" + isSeekFrame + " f.arc=" + f.Arc);
+                //                if (f.Prefix > 0 && isSeekFrame && f.Arc.Label != (Term_Renamed.Bytes[f.Prefix - 1] & 0xFF))
+                //                {
+                //                    @out.println("      broken seek state: arc.label=" + (char)f.Arc.Label + " vs term byte=" + (char)(Term_Renamed.Bytes[f.Prefix - 1] & 0xFF));
+                //                    throw new Exception("seek state is broken");
+                //                }
+                //                BytesRef output = Util.Get(OuterInstance.Index, prefix);
+                //                if (output == null)
+                //                {
+                //                    @out.println("      broken seek state: prefix is not final in index");
+                //                    throw new Exception("seek state is broken");
+                //                }
+                //                else if (isSeekFrame && !f.IsFloor)
+                //                {
+                //                    ByteArrayDataInput reader = new ByteArrayDataInput(output.Bytes, output.Offset, output.Length);
+                //                    long codeOrig = reader.ReadVLong();
+                //                    long code = (f.Fp << BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS) | (f.HasTerms ? BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS : 0) | (f.IsFloor ? BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR : 0);
+                //                    if (codeOrig != code)
+                //                    {
+                //                        @out.println("      broken seek state: output code=" + codeOrig + " doesn't match frame code=" + code);
+                //                        throw new Exception("seek state is broken");
+                //                    }
+                //                }
+                //            }
+                //            if (f == CurrentFrame)
+                //            {
+                //                break;
+                //            }
+                //            if (f.Prefix == ValidIndexPrefix)
+                //            {
+                //                isSeekFrame = false;
+                //            }
+                //            ord++;
+                //        }
+                //    }
+                //}
 
                 /* Decodes only the term bytes of the next term.  If caller then asks for
                    metadata, ie docFreq, totalTermFreq or pulls a D/&PEnum, we then (lazily)

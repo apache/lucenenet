@@ -78,9 +78,7 @@ namespace Lucene.Net.Search
 
         public override ICollection<ChildScorer> GetChildren()
         {
-            //LUCENE TO-DO
             return new[] { new ChildScorer(scorer, "CACHED") };
-            //return Collections.singleton(new ChildScorer(Scorer, "CACHED"));
         }
 
         public override long GetCost()

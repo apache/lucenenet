@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
             this.Ord = leafOrd;
             this.DocBase = leafDocBase;
             this.reader = reader;
-            this.leaves = IsTopLevel ? new[] { this } : null; //LUCENE TO-DO suspicous
+            this.leaves = IsTopLevel ? new[] { this } : null;
         }
 
         internal AtomicReaderContext(AtomicReader atomicReader)

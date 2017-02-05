@@ -122,9 +122,7 @@ namespace Lucene.Net.Search
 
         public override ICollection<ChildScorer> GetChildren()
         {
-            //LUCENE TO-DO
             return new[] { new ChildScorer(reqScorer, "FILTERED") };
-            //return Collections.singleton(new ChildScorer(ReqScorer, "FILTERED"));
         }
 
         public override int Advance(int target)

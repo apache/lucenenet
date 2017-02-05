@@ -126,9 +126,7 @@ namespace Lucene.Net.Search.Spans
             {
                 bytes = null;
             }
-            //LUCENE TO-DO
             return new[] { bytes };
-            //return Collections.singletonList(bytes);
         }
 
         // TODO: Remove warning after API has been finalized

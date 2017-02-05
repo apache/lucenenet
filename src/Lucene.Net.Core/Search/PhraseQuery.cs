@@ -431,7 +431,6 @@ namespace Lucene.Net.Search
         /// <seealso cref= Lucene.Net.Search.Query#extractTerms(Set) </seealso>
         public override void ExtractTerms(ISet<Term> queryTerms)
         {
-            //LUCENE TO-DO Normal conundrum
             queryTerms.UnionWith(terms);
         }
 

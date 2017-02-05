@@ -63,8 +63,6 @@ namespace Lucene.Net.Util
     public sealed class WeakIdentityMap<TKey, TValue>
         where TKey : class
     {
-        // LUCENENET TODO: Make this class internal as it isn't required anywhere; need to have it exposed to tests though
-
         //private readonly ReferenceQueue<object> queue = new ReferenceQueue<object>();
         private readonly IDictionary<IdentityWeakReference, TValue> backingStore;
 

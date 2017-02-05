@@ -91,20 +91,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public static string ToString(BytesRef termText)
         {
-            // LUCENENET TODO
-            /*// the term might not be text, but usually is. so we make a best effort
-            CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT);
             try
             {
-              return decoder.decode(ByteBuffer.wrap(termText.Bytes, termText.Offset, termText.Length)).ToString();
-            }
-            catch (CharacterCodingException e)
-            {
-              return termText.ToString();
-            }*/
-            try
-            {
-                // .Net port: termText already has this handy UTF8ToString method, so we're using that instead
+                // LUCENENET specific: termText already has this handy UTF8ToString method, so we're using that instead of Encoding.UTF8.GetBytes()
                 return termText.Utf8ToString();
             }
             catch

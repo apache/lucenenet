@@ -3820,12 +3820,12 @@ namespace Lucene.Net.Index
         // at a time:
         private readonly object fullFlushLock = new object();
 
-        //LUCENE TO-DO Not possible in .NET
-        /*// for assert
-        internal virtual bool HoldsFullFlushLock()
-        {
-          return Thread.holdsLock(FullFlushLock);
-        }*/
+        // LUCENENET NOTE: Not possible in .NET
+        //// for assert
+        //internal virtual bool HoldsFullFlushLock()
+        //{
+        //  return Thread.holdsLock(FullFlushLock);
+        //}
 
         /// <summary>
         /// Flush all in-memory buffered updates (adds and deletes)
