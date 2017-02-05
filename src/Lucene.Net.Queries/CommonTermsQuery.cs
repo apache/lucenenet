@@ -31,12 +31,12 @@ namespace Lucene.Net.Queries
     /// <summary>
     /// A query that executes high-frequency terms in a optional sub-query to prevent
     /// slow queries due to "common" terms like stopwords. This query
-    /// builds 2 queries off the <see cref="Add(Term) added"/> terms: low-frequency
+    /// builds 2 queries off the <see cref="Add(Term)"/> added terms: low-frequency
     /// terms are added to a required boolean clause and high-frequency terms are
     /// added to an optional boolean clause. The optional clause is only executed if
     /// the required "low-frequency" clause matches. Scores produced by this query
     /// will be slightly different than plain <see cref="BooleanQuery"/> scorer mainly due to
-    /// differences in the <see cref="Search.Similarities.Similarity.Coord(int,int) number of leaf queries"/>
+    /// differences in the <see cref="Search.Similarities.Similarity.Coord(int,int)"/> number of leaf queries
     /// in the required boolean clause. In most cases, high-frequency terms are
     /// unlikely to significantly contribute to the document score unless at least
     /// one of the low-frequency terms are matched.  This query can improve
@@ -336,8 +336,6 @@ namespace Lucene.Net.Queries
         /// clauses is required.
         /// </para>
         /// </summary>
-        /// <param name="min">
-        ///          the number of optional clauses that must match </param>
         public virtual float HighFreqMinimumNumberShouldMatch
         {
             get { return m_highFreqMinNrShouldMatch; }

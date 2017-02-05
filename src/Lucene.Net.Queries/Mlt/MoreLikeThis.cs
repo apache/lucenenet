@@ -373,7 +373,7 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <summary>
-        /// Create the More like query from a <see cref="Util.PriorityQueue{Object[]}"/>
+        /// Create the More like query from a <see cref="T:Util.PriorityQueue{object[]}"/>
         /// </summary>
         private Query CreateQuery(Util.PriorityQueue<object[]> q)
         {
@@ -418,7 +418,7 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <summary>
-        /// Create a <see cref="Util.PriorityQueue{Object[]}"/> from a word->tf map.
+        /// Create a <see cref="T:Util.PriorityQueue{object[]}"/> from a word-&gt;tf map.
         /// </summary>
         /// <param name="words"> a map of words keyed on the word(<see cref="string"/>) with <see cref="Int"/> objects as the values. </param>
         /// <exception cref="IOException"/>
@@ -538,9 +538,9 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <summary>
-        /// Adds terms and frequencies found in vector into the <see cref="IDictionary{string, Int}"/> <paramref name="termFreqMap"/>
+        /// Adds terms and frequencies found in vector into the <see cref="T:IDictionary{string, Int}"/> <paramref name="termFreqMap"/>
         /// </summary>
-        /// <param name="termFreqMap"> a <see cref="IDictionary{string, Int}"/> of terms and their frequencies </param>
+        /// <param name="termFreqMap"> a <see cref="T:IDictionary{string, Int}"/> of terms and their frequencies </param>
         /// <param name="vector"> List of terms and their frequencies for a doc/field </param>
         private void AddTermFrequencies(IDictionary<string, Int> termFreqMap, Terms vector)
         {
@@ -573,10 +573,10 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <summary>
-        /// Adds term frequencies found by tokenizing text from reader into the <see cref="IDictionary{string, Int}"/> words
+        /// Adds term frequencies found by tokenizing text from reader into the <see cref="T:IDictionary{string, Int}"/> words
         /// </summary>
         /// <param name="r"> a source of text to be tokenized </param>
-        /// <param name="termFreqMap"> a <see cref="IDictionary{string, Int}"/> of terms and their frequencies </param>
+        /// <param name="termFreqMap"> a <see cref="T:IDictionary{string, Int}"/> of terms and their frequencies </param>
         /// <param name="fieldName"> Used by analyzer for any special per-field analysis </param>
         private void AddTermFrequencies(TextReader r, IDictionary<string, Int> termFreqMap, string fieldName)
         {
@@ -714,7 +714,7 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <summary>
-        /// <see cref="Util.PriorityQueue{object[]}"/> that orders words by score.
+        /// <see cref="T:Util.PriorityQueue{object[]}"/> that orders words by score.
         /// </summary>
         private class FreqQ : Util.PriorityQueue<object[]>
         {

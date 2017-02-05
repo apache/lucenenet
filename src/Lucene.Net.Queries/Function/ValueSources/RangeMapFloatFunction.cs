@@ -25,7 +25,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
     /// <summary>
     /// <see cref="RangeMapFloatFunction"/> implements a map function over
-    /// another <see cref="ValueSource"/> whose values fall within <paramref name="min"/> and <paramref name="max"/> inclusive to <paramref name="target"/>.
+    /// another <see cref="ValueSource"/> whose values fall within <c>min</c> and <c>max</c> inclusive to <c>target</c>.
     /// <para/>
     /// Normally used as an argument to a <see cref="FunctionQuery"/>
     /// </summary>

@@ -24,7 +24,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Scales values to be between <paramref name="min"/> and <paramref name="max"/>.
+    /// Scales values to be between <c>min</c> and <c>max</c>.
     /// <para/>This implementation currently traverses all of the source values to obtain
     /// their min and max.
     /// <para/>This implementation currently cannot distinguish when documents have been

@@ -152,6 +152,7 @@ namespace Lucene.Net.Queries
         /// </summary>
         /// <param name="context"> AtomicReaderContext </param>
         /// <param name="logic"> Logical operation </param>
+        /// <param name="index"></param>
         /// <returns> DocIdSet </returns>
         private DocIdSet GetDocIdSet(AtomicReaderContext context, int logic, int[] index)
         {
@@ -169,6 +170,7 @@ namespace Lucene.Net.Queries
         /// </summary>
         /// <param name="context"> AtomicReaderContext </param>
         /// <param name="logic"> Logical operation </param>
+        /// <param name="index"></param>
         /// <returns> DocIdSet </returns>
         private DocIdSet GetDocIdSet(AtomicReaderContext context, int[] logic, int[] index)
         {
