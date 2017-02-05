@@ -33,7 +33,7 @@ namespace Lucene.Net.Index.Memory
     /// <h4>Overview</h4>
     /// 
     /// This class is a replacement/substitute for a large subset of
-    /// <see cref="RAMDirectory"/> functionality. It is designed to
+    /// <see cref="Store.RAMDirectory"/> functionality. It is designed to
     /// enable maximum efficiency for on-the-fly matchmaking combining structured and 
     /// fuzzy fulltext search in realtime streaming applications such as Nux XQuery based XML 
     /// message queues, publish-subscribe systems for Blogs/newsfeeds, text chat, data acquisition and 
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index.Memory
     /// <a target="_blank" 
     /// href="http://bobwyman.pubsub.com/main/2005/05/mary_hodder_poi.html">Prospective Search</a>, 
     /// Jim Gray's
-    /// <a target="_blank" href="http://www.acmqueue.org/modules.php?name=Content&pa=showpage&pid=293&page=4">
+    /// <a target="_blank" href="http://www.acmqueue.org/modules.php?name=Content&amp;pa=showpage&amp;pid=293&amp;page=4">
     /// A Call to Arms - Custom subscriptions</a>, and Tim Bray's
     /// <a target="_blank" 
     /// href="http://www.tbray.org/ongoing/When/200x/2003/07/30/OnSearchTOC">On Search, the Series</a>.
@@ -337,12 +337,12 @@ namespace Lucene.Net.Index.Memory
         /// Equivalent to adding a tokenized, indexed, termVectorStored, unstored,
         /// Lucene <see cref="Documents.Field"/>.
         /// Finally closes the token stream. Note that untokenized keywords can be added with this method via 
-        /// <see cref="KeywordTokenStream{T}(ICollection{T}"/>)"/>, the Lucene <c>KeywordTokenizer</c> or similar utilities.
+        /// <see cref="T:KeywordTokenStream{T}(ICollection{T}"/>)"/>, the Lucene <c>KeywordTokenizer</c> or similar utilities.
         /// </summary>
         /// <param name="fieldName"> a name to be associated with the text </param>
         /// <param name="stream"> the token stream to retrieve tokens from. </param>
         /// <param name="boost"> the boost factor for hits for this field </param>
-        /// <seealso cref="Documents.Field.Boost(float)"/>
+        /// <seealso cref="Documents.Field.Boost"/>
         public virtual void AddField(string fieldName, TokenStream stream, float boost)
         {
             AddField(fieldName, stream, boost, 0);
@@ -354,7 +354,7 @@ namespace Lucene.Net.Index.Memory
         /// Equivalent to adding a tokenized, indexed, termVectorStored, unstored,
         /// Lucene <see cref="Documents.Field"/>.
         /// Finally closes the token stream. Note that untokenized keywords can be added with this method via
-        /// <see cref="KeywordTokenStream{T}(ICollection{T}"/>)"/>, the Lucene <c>KeywordTokenizer</c> or similar utilities.
+        /// <see cref="T:KeywordTokenStream{T}(ICollection{T}"/>)"/>, the Lucene <c>KeywordTokenizer</c> or similar utilities.
         /// </summary>
         /// <param name="fieldName"> a name to be associated with the text </param>
         /// <param name="stream"> the token stream to retrieve tokens from. </param>
@@ -362,7 +362,7 @@ namespace Lucene.Net.Index.Memory
         /// <param name="positionIncrementGap"> 
         /// the position increment gap if fields with the same name are added more than once
         /// </param>
-        /// <seealso cref="Documents.Field.Boost(float)"/>
+        /// <seealso cref="Documents.Field.Boost"/>
         public virtual void AddField(string fieldName, TokenStream stream, float boost, int positionIncrementGap)
         {
             AddField(fieldName, stream, boost, positionIncrementGap, 1);
@@ -373,7 +373,7 @@ namespace Lucene.Net.Index.Memory
         /// Equivalent to adding a tokenized, indexed, termVectorStored, unstored,
         /// Lucene <see cref="Documents.Field"/>.
         /// Finally closes the token stream. Note that untokenized keywords can be added with this method via 
-        /// <see cref="KeywordTokenStream{T}(ICollection{T}"/>)"/>, the Lucene <c>KeywordTokenizer</c> or similar utilities.
+        /// <see cref="T:KeywordTokenStream{T}(ICollection{T}"/>)"/>, the Lucene <c>KeywordTokenizer</c> or similar utilities.
         /// 
         /// </summary>
         /// <param name="fieldName"> a name to be associated with the text </param>
@@ -381,7 +381,7 @@ namespace Lucene.Net.Index.Memory
         /// <param name="boost"> the boost factor for hits for this field </param>
         /// <param name="positionIncrementGap"> the position increment gap if fields with the same name are added more than once </param>
         /// <param name="offsetGap"> the offset gap if fields with the same name are added more than once </param>
-        /// <seealso cref="Documents.Field.Boost(float)"/>
+        /// <seealso cref="Documents.Field.Boost"/>
         public virtual void AddField(string fieldName, TokenStream stream, float boost, int positionIncrementGap, int offsetGap)
         {
             try
