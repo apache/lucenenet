@@ -306,7 +306,7 @@ namespace Lucene.Net.Index
                 {
                     while (true)
                     {
-                        MergePolicy.OneMerge merge = writer.GetNextMerge();
+                        MergePolicy.OneMerge merge = writer.NextMerge();
                         if (merge == null)
                         {
                             break;

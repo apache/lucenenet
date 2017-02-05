@@ -2451,7 +2451,7 @@ namespace Lucene.Net.Index
         ///
         /// @lucene.experimental
         /// </summary>
-        public virtual MergePolicy.OneMerge GetNextMerge() // LUCENENET TODO: Rename NextMerge() (consistency with iterator.Next())
+        public virtual MergePolicy.OneMerge NextMerge()
         {
             lock (this)
             {

@@ -473,7 +473,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    MergePolicy.OneMerge merge = writer.GetNextMerge();
+                    MergePolicy.OneMerge merge = writer.NextMerge();
                     if (merge == null)
                     {
                         if (IsVerbose)
@@ -651,7 +651,7 @@ namespace Lucene.Net.Index
 
                         // Subsequent times through the loop we do any new
                         // merge that writer says is necessary:
-                        merge = tWriter.GetNextMerge();
+                        merge = tWriter.NextMerge();
 
                         // Notify here in case any threads were stalled;
                         // they will notice that the pending merge has
