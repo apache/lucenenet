@@ -366,15 +366,11 @@ namespace Lucene.Net.Search
             {
                 if (outerInstance.m_query != null)
                 {
-                    //LUCENE TO-DO
-                    //return Collections.singletonList(new ChildScorer((Scorer)DocIdSetIterator, "constant"));
                     return new[] { new ChildScorer((Scorer)docIdSetIterator, "constant") };
                 }
                 else
                 {
-                    //LUCENE TO-DO
-                    return new List<ChildScorer>();
-                    //return Collections.emptyList();
+                    return Collections.EmptyList<ChildScorer>();
                 }
             }
         }
