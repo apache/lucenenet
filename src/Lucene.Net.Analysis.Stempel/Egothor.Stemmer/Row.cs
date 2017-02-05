@@ -73,7 +73,7 @@ namespace Egothor.Stemmer
         /// <summary>
         /// Construct a <see cref="Row"/> object from input carried in via the given input stream.
         /// </summary>
-        /// <param name="@is">the input stream</param>
+        /// <param name="is">the input stream</param>
         /// <exception cref="IOException">if an I/O error occurs</exception>
         public Row(IDataInput @is)
         {

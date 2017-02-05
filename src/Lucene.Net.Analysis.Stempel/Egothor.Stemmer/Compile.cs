@@ -73,16 +73,15 @@ namespace Egothor.Stemmer
         /// </summary>
         private Compile() { }
 
-        /**
-         * Entry point to the Compile application.
-         * <p>
-         * This program takes any number of arguments: the first is the name of the
-         * desired stemming algorithm to use (a list is available in the package
-         * description) , all of the rest should be the path or paths to a file or
-         * files containing a stemmer table to compile.
-         * 
-         * @param args the command line arguments
-         */
+        /// <summary>
+        /// Entry point to the Compile application.
+        /// <para/>
+        /// This program takes any number of arguments: the first is the name of the
+        /// desired stemming algorithm to use (a list is available in the package
+        /// description) , all of the rest should be the path or paths to a file or
+        /// files containing a stemmer table to compile.
+        /// </summary>
+        /// <param name="args">the command line arguments</param>
         public static void Main(string[] args)
         {
             if (args.Length < 1)
