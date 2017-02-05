@@ -414,7 +414,8 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static sbyte[] Grow(sbyte[] array, int minSize) // LUCENENET TODO: remove this overload, mark it non-CLS compliant, or mark internal
+        [CLSCompliant(false)]
+        public static sbyte[] Grow(sbyte[] array, int minSize)
         {
             Debug.Assert(minSize >= 0, "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
@@ -537,7 +538,8 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static int[][] Grow(int[][] array, int minSize) // LUCENENET TODO: CLS compliance issue
+        [CLSCompliant(false)]
+        public static int[][] Grow(int[][] array, int minSize)
         {
             Debug.Assert(minSize >= 0, "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
@@ -552,12 +554,14 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static int[][] Grow(int[][] array) // LUCENENET TODO: CLS compliance issue
+        [CLSCompliant(false)]
+        public static int[][] Grow(int[][] array)
         {
             return Grow(array, 1 + array.Length);
         }
 
-        public static int[][] Shrink(int[][] array, int targetSize) // LUCENENET TODO: CLS compliance issue
+        [CLSCompliant(false)]
+        public static int[][] Shrink(int[][] array, int targetSize)
         {
             Debug.Assert(targetSize >= 0, "size must be positive (got " + targetSize + "): likely integer overflow?");
             int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
@@ -573,7 +577,8 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static float[][] Grow(float[][] array, int minSize) // LUCENENET TODO: CLS compliance issue
+        [CLSCompliant(false)]
+        public static float[][] Grow(float[][] array, int minSize)
         {
             Debug.Assert(minSize >= 0, "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
@@ -588,12 +593,14 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static float[][] Grow(float[][] array) // LUCENENET TODO: CLS compliance issue
+        [CLSCompliant(false)]
+        public static float[][] Grow(float[][] array)
         {
             return Grow(array, 1 + array.Length);
         }
 
-        public static float[][] Shrink(float[][] array, int targetSize) // LUCENENET TODO: CLS compliance issue
+        [CLSCompliant(false)]
+        public static float[][] Shrink(float[][] array, int targetSize)
         {
             Debug.Assert(targetSize >= 0, "size must be positive (got " + targetSize + "): likely integer overflow?");
             int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
@@ -627,7 +634,7 @@ namespace Lucene.Net.Util
         /// Returns hash of bytes in range start (inclusive) to
         /// end (inclusive)
         /// </summary>
-        public static int GetHashCode(sbyte[] array, int start, int end) // LUCENENET TODO: chnage to byte ?
+        public static int GetHashCode(byte[] array, int start, int end)
         {
             int code = 0;
             for (int i = end - 1; i >= start; i--)
