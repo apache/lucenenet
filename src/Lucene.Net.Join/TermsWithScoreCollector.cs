@@ -85,7 +85,7 @@ namespace Lucene.Net.Join
         /// Called before collecting from each <see cref="AtomicReaderContext"/>. All doc ids in
         /// <see cref="Collect(int)"/> will correspond to <see cref="Index.IndexReaderContext.Reader"/>.
         ///
-        /// Add <see cref="AtomicReaderContext#docBase"/> to the current <see cref="Index.IndexReaderContext.Reader"/>'s
+        /// Add <see cref="AtomicReaderContext.DocBase"/> to the current <see cref="Index.IndexReaderContext.Reader"/>'s
         /// internal document id to re-base ids in <see cref="Collect(int)"/>.
         /// </summary>
         /// <param name="context">next atomic reader context </param>
@@ -102,6 +102,7 @@ namespace Lucene.Net.Join
         /// </summary>
         /// <param name="field">The field to collect terms for.</param>
         /// <param name="multipleValuesPerDocument">Whether the field to collect terms for has multiple values per document.</param>
+        /// <param name="scoreMode">See <see cref="ScoreMode"/></param>
         /// <returns>A <see cref="TermsWithScoreCollector"/> instance</returns>
         internal static TermsWithScoreCollector Create(string field, bool multipleValuesPerDocument, ScoreMode scoreMode)
         {

@@ -68,7 +68,7 @@ namespace Lucene.Net.Join
     /// join.  The <see cref="TopGroups{T}"/> of the nested joins will not be
     /// correct.</para>
     /// 
-    /// See <see cref="org.apache.lucene.search.join"/> for a code
+    /// See <a href="http://lucene.apache.org/core/4_8_0/join/">http://lucene.apache.org/core/4_8_0/join/</a> for a code
     /// sample.
     /// 
     /// @lucene.experimental

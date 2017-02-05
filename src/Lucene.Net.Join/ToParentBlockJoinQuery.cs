@@ -61,14 +61,13 @@ namespace Lucene.Net.Join
     /// from <see cref="ToParentBlockJoinCollector"/> will not contain every
     /// child for parents that had matched.</para>
     /// 
-    /// <para>See <see cref="org.apache.lucene.search.join"/> for an
+    /// <para>See <a href="http://lucene.apache.org/core/4_8_0/join/">http://lucene.apache.org/core/4_8_0/join/</a> for an
     /// overview. </para>
     /// 
     /// @lucene.experimental
     /// </summary>
     public class ToParentBlockJoinQuery : Query
     {
-
         private readonly Filter _parentsFilter;
         private readonly Query _childQuery;
 
