@@ -180,12 +180,12 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Gets or sets the minimal threshold of documents a term must appear for a match.
-        /// <p>
+        /// <para/>
         /// This can improve quality by only suggesting high-frequency terms. Note that
         /// very high values might decrease performance slightly, by forcing the spellchecker
         /// to draw more candidates from the term dictionary, but a practical value such
-        /// as <code>1</code> can be very useful towards improving quality.
-        /// <p>
+        /// as <c>1</c> can be very useful towards improving quality.
+        /// <para/>
         /// This can be specified as a relative percentage of documents such as 0.5f,
         /// or it can be specified as an absolute whole document frequency, such as 4f.
         /// Absolute document frequencies may not be fractional.
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Gets or sets the minimum length of a query term (default: 4) needed to return suggestions.
-        /// <p>
+        /// <para/>
         /// Very short query terms will often cause only bad suggestions with any distance
         /// metric.
         /// </summary>
@@ -229,11 +229,11 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// Gets or sets the maximum threshold (default: 0.01f) of documents a query term can 
         /// appear in order to provide suggestions.
-        /// <p>
+        /// <para/>
         /// Very high-frequency terms are typically spelled correctly. Additionally,
         /// this can increase performance as it will do no work for the common case
         /// of correctly-spelled input terms.
-        /// <p>
+        /// <para/>
         /// This can be specified as a relative percentage of documents such as 0.5f,
         /// or it can be specified as an absolute whole document frequency, such as 4f.
         /// Absolute document frequencies may not be fractional.
@@ -257,12 +257,12 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// True if the spellchecker should lowercase terms (default: true)
-        /// <p>
+        /// <para/>
         /// This is a convenience method, if your index field has more complicated
         /// analysis (such as StandardTokenizer removing punctuation), its probably
         /// better to turn this off, and instead run your query terms through your
         /// Analyzer first.
-        /// <p>
+        /// <para/>
         /// If this option is not on, case differences count as an edit!
         /// </summary>
         public virtual bool LowerCaseTerms
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// Gets or sets the string distance metric.
         /// The default is <see cref="INTERNAL_LEVENSHTEIN"/>.
-        /// <p>
+        /// <para/>
         /// Note: because this spellchecker draws its candidates from the term
         /// dictionary using Damerau-Levenshtein, it works best with an edit-distance-like
         /// string metric. If you use a different metric than the default,

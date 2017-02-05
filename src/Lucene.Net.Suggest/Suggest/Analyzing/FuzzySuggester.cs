@@ -29,12 +29,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// Implements a fuzzy <see cref="AnalyzingSuggester"/>. The similarity measurement is
     /// based on the Damerau-Levenshtein (optimal string alignment) algorithm, though
     /// you can explicitly choose classic Levenshtein by passing <c>false</c>
-    /// for the <paramref name="transpositions"/> parameter.
+    /// for the <see cref="transpositions"/> parameter.
     /// <para>
     /// At most, this query will match terms up to <see cref="LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE"/>
     /// edits. Higher distances are not supported.  Note that the
     /// fuzzy distance is measured in "byte space" on the bytes
-    /// returned by the <see cref="TokenStream"/>'s <see cref="Analysis.Tokenattributes.ITermToBytesRefAttribute"/>, 
+    /// returned by the <see cref="TokenStream"/>'s <see cref="Analysis.TokenAttributes.ITermToBytesRefAttribute"/>, 
     /// usually UTF8.  By default
     /// the analyzed bytes must be at least 3 <see cref="DEFAULT_MIN_FUZZY_LENGTH"/>
     /// bytes before any edits are
@@ -42,7 +42,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// byte is not allowed to be
     /// edited.  We allow up to 1 <see cref="DEFAULT_MAX_EDITS"/>
     /// edit.
-    /// If <paramref name="unicodeAware"/> parameter in the constructor is set to true, maxEdits,
+    /// If <see cref="unicodeAware"/> parameter in the constructor is set to true, maxEdits,
     /// minFuzzyLength, transpositions and nonFuzzyPrefix are measured in Unicode code 
     /// points (actual letters) instead of bytes. 
     /// 
@@ -71,8 +71,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private readonly bool unicodeAware;
 
         /// <summary>
-        /// Measure <paramref name="maxEdits"/>, <paramref name="minFuzzyLength"/>, 
-        /// <paramref name="transpositions"/>, and <paramref name="nonFuzzyPrefix"/> 
+        /// Measure <see cref="maxEdits"/>, <see cref="minFuzzyLength"/>, 
+        /// <see cref="transpositions"/>, and <see cref="nonFuzzyPrefix"/> 
         /// parameters in Unicode code points (actual letters)
         /// instead of bytes.
         /// </summary>
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         /// <summary>
-        /// Creates a <see cref="FuzzySuggester"/> instance with an index & a query analyzer initialized with default values.
+        /// Creates a <see cref="FuzzySuggester"/> instance with an index &amp; a query analyzer initialized with default values.
         /// </summary>
         /// <param name="indexAnalyzer">
         ///           <see cref="Analyzer"/> that will be used for analyzing suggestions while building the index. </param>

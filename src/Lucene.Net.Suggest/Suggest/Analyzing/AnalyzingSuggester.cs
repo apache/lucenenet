@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// suggestion "The Ghost of Christmas Past". Note that
     /// position increments MUST NOT be preserved for this example
     /// to work, so you should call the constructor with 
-    /// <paramref name="preservePositionIncrements"/> parameter set to 
+    /// <see cref="preservePositionIncrements"/> parameter set to 
     /// false
     /// 
     /// </para>
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private long count = 0;
 
         /// <summary>
-        /// Calls <see cref="AnalyzingSuggester(Analyzer,Analyzer,Options,int,int,bool)">
+        /// Calls <see cref="AnalyzingSuggester(Analyzer, Analyzer, SuggesterOptions, int, int, bool)">
         /// AnalyzingSuggester(analyzer, analyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true)
         /// </see>
         /// </summary>
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         /// <summary>
-        /// Calls <see cref="AnalyzingSuggester(Analyzer,Analyzer,Options,int,int,bool)">
+        /// Calls <see cref="AnalyzingSuggester(Analyzer,Analyzer,SuggesterOptions,int,int,bool)">
         /// AnalyzingSuggester(indexAnalyzer, queryAnalyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true)
         /// </see>
         /// </summary>

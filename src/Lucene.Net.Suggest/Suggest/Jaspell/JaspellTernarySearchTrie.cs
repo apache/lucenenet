@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
     /// Implementation of a Ternary Search Trie, a data structure for storing
     /// <see cref="string"/>s that combines the compact size of a binary search
     /// tree with the speed of a digital search trie, and is therefore ideal for
-    /// practical use in sorting and searching data.</p>
+    /// practical use in sorting and searching data.
     /// <para>
     /// 
     /// This data structure is faster than hashing for many typical search problems,
@@ -87,6 +87,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             /// <summary>
             /// Constructor method.
             /// </summary>
+            /// <param name="outerInstance">The containing <see cref="JaspellTernarySearchTrie"/></param>
             /// <param name="splitchar">
             ///          The char used in the split. </param>
             /// <param name="parent">
@@ -174,7 +175,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         /// <summary>
         /// the number of differences allowed in a call to the <see cref="MatchAlmost"/>
-        /// <paramref cref="key"/>.
+        /// <c>key</c>.
         /// </summary>
         private int matchAlmostDiff;
 
@@ -497,12 +498,11 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         }
 
         /// <summary>
-        /// Retrieve the <see cref="System.Nullable{float}"/> indexed by key, increment it by one unit
-        /// and store the new <see cref="System.Nullable{float}"/>.
+        /// Retrieve the <see cref="T:float?"/> indexed by key, increment it by one unit
+        /// and store the new <see cref="T:float?"/>.
         /// </summary>
         /// <param name="key"> A <see cref="string"/> index. </param>
-        /// <param name="culture">The culture used for lowercasing.</param>
-        /// <returns> The <see cref="System.Nullable{float}"/> retrieved from the Ternary Search Trie. </returns>
+        /// <returns> The <see cref="T:float?"/> retrieved from the Ternary Search Trie. </returns>
         public virtual float? GetAndIncrement(string key)
         {
             string key2 = culture.TextInfo.ToLower(key.Trim());
@@ -906,9 +906,6 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// 
         /// </para>
         /// </summary>
-        /// <param name="diff">
-        ///          The number of characters by which words can differ from target
-        ///          word. </param>
         public virtual int MatchAlmostDiff
         {
             get // LUCENENET NOTE: Added property get per MSDN guidelines
@@ -942,8 +939,6 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// case this value is temporarily overridden.
         /// </para>
         /// </summary>
-        /// <param name="num"> The number of values that will be returned when calling the
-        ///          methods above. </param>
         public virtual int NumReturnValues
         {
             get // LUCENENET NOTE: Added property get per MSDN guidelines

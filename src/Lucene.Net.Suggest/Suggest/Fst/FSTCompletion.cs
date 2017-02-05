@@ -64,7 +64,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 return Utf8.Utf8ToString() + "/" + Bucket.ToString("0.0", CultureInfo.InvariantCulture);
             }
 
-            /// <seealso cref="BytesRef.CompareTo(BytesRef)"></seealso>
+            /// <seealso cref="BytesRef.CompareTo(object)"></seealso>
             public int CompareTo(Completion o)
             {
                 return this.Utf8.CompareTo(o.Utf8);
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         public const int DEFAULT_BUCKETS = 10;
 
         /// <summary>
-        /// An empty result. Keep this an <see cref="List"/> to keep all the returned
+        /// An empty result. Keep this an <see cref="List{T}"/> to keep all the returned
         /// lists of single type (monomorphic calls).
         /// </summary>
         private static readonly List<Completion> EMPTY_RESULT = new List<Completion>();
@@ -94,10 +94,10 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// </summary>
         private readonly FST.Arc<object>[] rootArcs;
 
-        /// <seealso cref="FSTCompletion(FST, bool, bool)" />
+        /// <seealso cref="FSTCompletion(FST{object}, bool, bool)" />
         private readonly bool exactFirst;
 
-        /// <seealso cref="FSTCompletion(FST, bool, bool)" />
+        /// <seealso cref="FSTCompletion(FST{object}, bool, bool)" />
         private readonly bool higherWeightsFirst;
 
         // LUCENENET SPECIFIC: We need some thread safety to execute atomic list operations
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// Constructs an FSTCompletion, specifying higherWeightsFirst and exactFirst. </summary>
         /// <param name="automaton">
         ///          Automaton with completions. See <see cref="FSTCompletionBuilder"/>. </param>
-        /// <param name="exactFirst">
+        /// <param name="higherWeightsFirst">
         ///          Return most popular suggestions first. This is the default
         ///          behavior for this implementation. Setting it to <c>false</c>
         ///          has no effect (use constant term weights to sort alphabetically
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         /// <summary>
         /// Defaults to higher weights first and exact first. </summary>
-        /// <seealso cref="FSTCompletion(FST, bool, bool)"/>
+        /// <seealso cref="FSTCompletion(FST{object}, bool, bool)"/>
         public FSTCompletion(FST<object> automaton)
             : this(automaton, true, true)
         {
@@ -339,7 +339,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// position.
         /// </summary>
         /// <returns> 
-        /// Returns <c>true<c> if and only if <paramref name="list"/> contained
+        /// Returns <c>true</c> if and only if <paramref name="list"/> contained
         /// <paramref name="key"/>.
         /// </returns>
         private bool CheckExistingAndReorder(IList<Completion> list, BytesRef key)
@@ -376,7 +376,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <param name="utf8">
         ///          The term to descend along. </param>
         /// <returns> If <c>true</c>, <paramref name="arc"/> will be set to the arc
-        ///         matching last byte of <paramref name="term"/>. <c>false</c> is
+        ///         matching last byte of <c>term</c>. <c>false</c> is
         ///         returned if no such prefix exists. </returns>
         private bool DescendWithPrefix(FST.Arc<object> arc, BytesRef utf8)
         {

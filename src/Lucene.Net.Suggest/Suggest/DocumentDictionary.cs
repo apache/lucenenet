@@ -87,7 +87,7 @@ namespace Lucene.Net.Search.Suggest
         /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
         /// for the terms, <paramref name="weightField"/> for the weights that will be used for the 
         /// the corresponding terms, <paramref name="payloadField"/> for the corresponding payloads
-        /// for the entry and <paramref name="contextsFeild"/> for associated contexts.
+        /// for the entry and <paramref name="contextsField"/> for associated contexts.
         /// </summary>
         public DocumentDictionary(IndexReader reader, string field, string weightField, string payloadField, string contextsField)
         {

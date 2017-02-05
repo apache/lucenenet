@@ -60,7 +60,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// An invalid bucket count if we're creating an object
         /// of this class from an existing FST.
         /// </summary>
-        /// <seealso cref="FSTCompletionLookup(FSTCompletion, bool)"/> </seealso>
+        /// <seealso cref="FSTCompletionLookup(FSTCompletion, bool)"/>
         private static int INVALID_BUCKETS_COUNT = -1;
 
         /// <summary>

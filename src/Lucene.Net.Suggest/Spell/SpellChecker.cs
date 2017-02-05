@@ -226,7 +226,7 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         /// <param name="word"> the word you want a spell check done on </param>
         /// <param name="numSug"> the number of suggested words </param>
-        /// <exception cref="System.IO.IOException"> if the underlying index throws an <see cref="IOException"/> </exception>
+        /// <exception cref="System.IO.IOException"> if the underlying index throws an <see cref="System.IO.IOException"/> </exception>
         /// <exception cref="AlreadyClosedException"> if the Spellchecker is already disposed </exception>
         /// <returns>string[] the sorted list of the suggest words with these 2 criteria:
         /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
@@ -253,7 +253,7 @@ namespace Lucene.Net.Search.Spell
         /// <param name="word"> the word you want a spell check done on </param>
         /// <param name="numSug"> the number of suggested words </param>
         /// <param name="accuracy"> The minimum score a suggestion must have in order to qualify for inclusion in the results </param>
-        /// <exception cref="System.IO.IOException"> if the underlying index throws an <see cref="IOException"/> </exception>
+        /// <exception cref="System.IO.IOException"> if the underlying index throws an <see cref="System.IO.IOException"/> </exception>
         /// <exception cref="AlreadyClosedException"> if the Spellchecker is already disposed </exception>
         /// <returns>string[] the sorted list of the suggest words with these 2 criteria:
         /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
@@ -295,8 +295,8 @@ namespace Lucene.Net.Search.Spell
         /// <param name="suggestMode"> 
         /// (NOTE: if indexReader==null and/or field==null, then this is overridden with SuggestMode.SUGGEST_ALWAYS) </param>
         /// <param name="accuracy"> The minimum score a suggestion must have in order to qualify for inclusion in the results </param>
-        /// <exception cref="System.IO.IOException"> if the underlying index throws an <see cref="IOException"/> </exception>
-        /// <exception cref="AlreadyClosedException"> if the <see cref="Spellchecker"/> is already disposed </exception>
+        /// <exception cref="System.IO.IOException"> if the underlying index throws an <see cref="System.IO.IOException"/> </exception>
+        /// <exception cref="AlreadyClosedException"> if the <see cref="SpellChecker"/> is already disposed </exception>
         /// <returns> string[] the sorted list of the suggest words with these 2 criteria:
         /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
         /// of the suggest words in the field of the user index
@@ -475,7 +475,7 @@ namespace Lucene.Net.Search.Spell
         /// Check whether the word exists in the index. </summary>
         /// <param name="word"> word to check </param>
         /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
-        /// <exception cref="AlreadyClosedException"> if the <see cref="Spellchecker"/> is already disposed </exception>
+        /// <exception cref="AlreadyClosedException"> if the <see cref="SpellChecker"/> is already disposed </exception>
         /// <returns> true if the word exists in the index </returns>
         public virtual bool Exist(string word)
         {
@@ -498,7 +498,7 @@ namespace Lucene.Net.Search.Spell
         /// <param name="dict"> Dictionary to index </param>
         /// <param name="config"> <see cref="IndexWriterConfig"/> to use </param>
         /// <param name="fullMerge"> whether or not the spellcheck index should be fully merged </param>
-        /// <exception cref="AlreadyClosedException"> if the <see cref="Spellchecker"/> is already disposed </exception>
+        /// <exception cref="AlreadyClosedException"> if the <see cref="SpellChecker"/> is already disposed </exception>
         /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         public void IndexDictionary(IDictionary dict, IndexWriterConfig config, bool fullMerge)
         {
@@ -674,7 +674,7 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Dispose the underlying IndexSearcher used by this SpellChecker </summary>
-        /// <exception cref="System.IO.IOException"> if the close operation causes an <see cref="IOException"/> </exception>
+        /// <exception cref="System.IO.IOException"> if the close operation causes an <see cref="System.IO.IOException"/> </exception>
         /// <exception cref="AlreadyClosedException"> if the <see cref="SpellChecker"/> is already disposed </exception>
         public void Dispose()
         {

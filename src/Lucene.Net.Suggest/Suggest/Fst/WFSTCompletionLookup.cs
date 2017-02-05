@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.Suggest.Fst
     {
 
         /// <summary>
-        /// FST<Long>, weights are encoded as costs: (Integer.MAX_VALUE-weight)
+        /// FST{long?}, weights are encoded as costs: (int.MaxValue-weight)
         /// </summary>
         // NOTE: like FSTSuggester, this is really a WFSA, if you want to
         // customize the code to add some output you should use PairOutputs.

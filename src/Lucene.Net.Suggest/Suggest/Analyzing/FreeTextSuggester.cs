@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// point, cast to long).  Divide by <see cref="long.MaxValue"/> to get
     /// the score back, which ranges from 0.0 to 1.0.
     /// 
-    /// <paramref name="onlyMorePopular"/> is unused.
+    /// <c>onlyMorePopular</c> is unused.
     /// 
     /// @lucene.experimental
     /// </para>
@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Instantiate, using the provided indexing and lookup
         /// analyzers, and specified model (2 = bigram, 3 =
-        /// trigram ,etc.).  The separator is passed to <see cref="ShingleFilter.TokenSeparator"/>
+        /// trigram ,etc.).  The <paramref name="separator"/> is passed to <see cref="ShingleFilter.SetTokenSeparator(string)"/>
         /// to join multiple
         /// tokens into a single ngram token; it must be an ascii
         /// (7-bit-clean) byte.  No input tokens should have this
