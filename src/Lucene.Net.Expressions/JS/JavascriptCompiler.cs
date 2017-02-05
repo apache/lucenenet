@@ -164,6 +164,7 @@ namespace Lucene.Net.Expressions.JS
 
         /// <summary>Constructs a compiler for expressions with specific set of functions</summary>
         /// <param name="sourceText">The expression to compile</param>
+        /// <param name="functions">The set of functions to compile with</param>
         private JavascriptCompiler(string sourceText, IDictionary<string, MethodInfo> functions)
         {
             if (sourceText == null)

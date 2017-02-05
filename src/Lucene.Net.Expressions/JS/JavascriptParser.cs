@@ -398,7 +398,7 @@ namespace Lucene.Net.Expressions.JS
 
         // $ANTLR start "conditional"
         // src/java/org/apache/lucene/expressions/js/Javascript.g:254:1: conditional : logical_or ( AT_COND_QUE ^ conditional AT_COLON ! conditional )? ;
-        /// <exception cref="Org.Antlr.Runtime.RecognitionException"></exception>
+        /// <exception cref="Antlr.Runtime.RecognitionException"></exception>
         public AstParserRuleReturnScope<ITree, IToken> Conditional()
         {
             var retval = new AstParserRuleReturnScope<ITree, IToken> { Start = input.LT(1) };
