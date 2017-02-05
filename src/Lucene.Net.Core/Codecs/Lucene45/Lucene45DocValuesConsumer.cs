@@ -236,7 +236,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     break;
 
                 case TABLE_COMPRESSED:
-                    long[] decode = uniqueValues.ToArray();//LUCENE TO-DO Hadd oparamerter before
+                    // LUCENENET NOTE: diming an array and then using .CopyTo() for better efficiency than LINQ .ToArray()
+                    long[] decode = new long[uniqueValues.Count];
+                    uniqueValues.CopyTo(decode, 0);
                     Dictionary<long, int> encode = new Dictionary<long, int>();
                     meta.WriteVInt(decode.Length);
                     for (int i = 0; i < decode.Length; i++)
