@@ -299,12 +299,9 @@ namespace Lucene.Net.Index
                 get { return EndOffset_Renamed; }
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
-                {
-                    return Payload_Renamed.Length == 0 ? null : Payload_Renamed;
-                }
+                return Payload_Renamed.Length == 0 ? null : Payload_Renamed;
             }
 
             public override int Advance(int target)
@@ -601,7 +598,7 @@ namespace Lucene.Net.Index
                             for (int posUpto = 0; posUpto < freq; posUpto++)
                             {
                                 int pos = postings.NextPosition();
-                                BytesRef payload = postings.Payload;
+                                BytesRef payload = postings.GetPayload();
 
                                 if (VERBOSE)
                                 {
@@ -978,7 +975,7 @@ namespace Lucene.Net.Index
 
                         if (doCheckPayloads)
                         {
-                            BytesRef expectedPayload = expected.Payload;
+                            BytesRef expectedPayload = expected.GetPayload();
                             if (Random().NextDouble() <= payloadCheckChance)
                             {
                                 if (VERBOSE)
@@ -987,11 +984,11 @@ namespace Lucene.Net.Index
                                 }
                                 if (expectedPayload == null || expectedPayload.Length == 0)
                                 {
-                                    Assert.IsNull(docsAndPositionsEnum.Payload, "should not have payload");
+                                    Assert.IsNull(docsAndPositionsEnum.GetPayload(), "should not have payload");
                                 }
                                 else
                                 {
-                                    BytesRef payload = docsAndPositionsEnum.Payload;
+                                    BytesRef payload = docsAndPositionsEnum.GetPayload();
                                     Assert.IsNotNull(payload, "should have payload but doesn't");
 
                                     Assert.AreEqual(expectedPayload.Length, payload.Length, "payload length is wrong");
@@ -1002,7 +999,7 @@ namespace Lucene.Net.Index
 
                                     // make a deep copy
                                     payload = BytesRef.DeepCopyOf(payload);
-                                    Assert.AreEqual(payload, docsAndPositionsEnum.Payload, "2nd call to getPayload returns something different!");
+                                    Assert.AreEqual(payload, docsAndPositionsEnum.GetPayload(), "2nd call to getPayload returns something different!");
                                 }
                             }
                             else

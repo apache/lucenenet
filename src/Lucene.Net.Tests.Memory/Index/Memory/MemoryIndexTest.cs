@@ -575,7 +575,7 @@ namespace Lucene.Net.Index.Memory
                     assertEquals("Position test failed" + failDesc, memPos, pos);
                     assertEquals("Start offset test failed" + failDesc, memDocsPosEnum.StartOffset, docsPosEnum.StartOffset);
                     assertEquals("End offset test failed" + failDesc, memDocsPosEnum.EndOffset, docsPosEnum.EndOffset);
-                    assertEquals("Missing payload test failed" + failDesc, docsPosEnum.Payload, null);
+                    assertEquals("Missing payload test failed" + failDesc, docsPosEnum.GetPayload(), null);
                 }
             }
             assertNull("Still some tokens not processed", memTermEnum.Next());

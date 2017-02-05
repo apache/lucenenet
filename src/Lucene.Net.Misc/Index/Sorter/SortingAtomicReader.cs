@@ -688,7 +688,7 @@ namespace Lucene.Net.Index.Sorter
                 for (int i = 0; i < freq; i++)
                 {
                     int pos = @in.NextPosition();
-                    BytesRef payload = @in.Payload;
+                    BytesRef payload = @in.GetPayload();
                     // The low-order bit of token is set only if there is a payload, the
                     // previous bits are the delta-encoded position. 
                     int token = (pos - previousPosition) << 1 | (payload == null ? 0 : 1);
@@ -732,12 +732,9 @@ namespace Lucene.Net.Index.Sorter
                 get { return currFreq; }
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
-                {
-                    return payload.Length == 0 ? null : payload;
-                }
+                return payload.Length == 0 ? null : payload;
             }
 
             public override int NextDoc()

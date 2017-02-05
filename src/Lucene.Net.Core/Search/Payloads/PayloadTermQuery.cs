@@ -125,7 +125,7 @@ namespace Lucene.Net.Search.Payloads
                     if (termSpans.IsPayloadAvailable)
                     {
                         DocsAndPositionsEnum postings = termSpans.Postings;
-                        m_payload = postings.Payload;
+                        m_payload = postings.GetPayload();
                         if (m_payload != null)
                         {
                             m_payloadScore = outerInstance.outerInstance.m_function.CurrentScore(m_doc, outerInstance.outerInstance.Term.Field, m_spans.Start, m_spans.End, m_payloadsSeen, m_payloadScore, m_docScorer.ComputePayloadFactor(m_doc, m_spans.Start, m_spans.End, m_payload));

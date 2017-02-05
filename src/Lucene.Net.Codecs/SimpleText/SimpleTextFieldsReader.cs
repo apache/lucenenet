@@ -547,9 +547,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 get { return _endOffset; }
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get { return _payload; }
+                return _payload;
             }
 
             public override long GetCost()

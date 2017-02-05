@@ -466,17 +466,14 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
-                {
-                    Debug.Assert(State != DocsEnumState.START, "getPayload() called before nextDoc()/advance()");
-                    Debug.Assert(State != DocsEnumState.FINISHED, "getPayload() called after NO_MORE_DOCS");
-                    Debug.Assert(PositionCount > 0, "getPayload() called before nextPosition()!");
-                    BytesRef payload = base.Payload;
-                    Debug.Assert(payload == null || payload.IsValid() && payload.Length > 0, "getPayload() returned payload with invalid length!");
-                    return payload;
-                }
+                Debug.Assert(State != DocsEnumState.START, "getPayload() called before nextDoc()/advance()");
+                Debug.Assert(State != DocsEnumState.FINISHED, "getPayload() called after NO_MORE_DOCS");
+                Debug.Assert(PositionCount > 0, "getPayload() called before nextPosition()!");
+                BytesRef payload = base.GetPayload();
+                Debug.Assert(payload == null || payload.IsValid() && payload.Length > 0, "getPayload() returned payload with invalid length!");
+                return payload;
             }
         }
 

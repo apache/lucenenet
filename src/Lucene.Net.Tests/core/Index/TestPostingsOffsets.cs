@@ -184,8 +184,8 @@ namespace Lucene.Net.Index
                         if (withPayloads)
                         {
                             // check that we have a payload and it starts with "pos"
-                            Assert.IsNotNull(dp.Payload);
-                            BytesRef payload = dp.Payload;
+                            Assert.IsNotNull(dp.GetPayload());
+                            BytesRef payload = dp.GetPayload();
                             Assert.IsTrue(payload.Utf8ToString().StartsWith("pos:"));
                         } // note: withPayloads=false doesnt necessarily mean we dont have them from MockAnalyzer!
                     }
@@ -215,8 +215,8 @@ namespace Lucene.Net.Index
                     if (withPayloads)
                     {
                         // check that we have a payload and it starts with "pos"
-                        Assert.IsNotNull(dp.Payload);
-                        BytesRef payload = dp.Payload;
+                        Assert.IsNotNull(dp.GetPayload());
+                        BytesRef payload = dp.GetPayload();
                         Assert.IsTrue(payload.Utf8ToString().StartsWith("pos:"));
                     } // note: withPayloads=false doesnt necessarily mean we dont have them from MockAnalyzer!
                 }

@@ -621,7 +621,7 @@ namespace Lucene.Net.Index
                                 bool foundPayload = false;
                                 foreach (int index in indexes)
                                 {
-                                    if (tk.TermBytes[index].Equals(termsEnum.Term) && Equals(tk.Payloads[index], docsAndPositionsEnum.Payload))
+                                    if (tk.TermBytes[index].Equals(termsEnum.Term) && Equals(tk.Payloads[index], docsAndPositionsEnum.GetPayload()))
                                     {
                                         foundPayload = true;
                                         break;

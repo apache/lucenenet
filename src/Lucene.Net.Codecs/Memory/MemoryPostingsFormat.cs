@@ -713,12 +713,9 @@ namespace Lucene.Net.Codecs.Memory
                 get { return startOffset_Renamed + offsetLength; }
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
-                {
-                    return payload.Length > 0 ? payload : null;
-                }
+                return payload.Length > 0 ? payload : null;
             }
 
             public override int DocID

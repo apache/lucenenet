@@ -714,41 +714,38 @@ namespace Lucene.Net.Codecs.Sep
 
             private BytesRef _payload;
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
+                if (!_payloadPending)
                 {
-                    if (!_payloadPending)
-                    {
-                        return null;
-                    }
+                    return null;
+                }
 
-                    if (_pendingPayloadBytes == 0)
-                    {
-                        return _payload;
-                    }
-
-                    Debug.Assert(_pendingPayloadBytes >= _payloadLength);
-
-                    if (_pendingPayloadBytes > _payloadLength)
-                    {
-                        _payloadIn.Seek(_payloadIn.FilePointer + (_pendingPayloadBytes - _payloadLength));
-                    }
-
-                    if (_payload == null)
-                    {
-                        _payload = new BytesRef {Bytes = new byte[_payloadLength]};
-                    }
-                    else if (_payload.Bytes.Length < _payloadLength)
-                    {
-                        _payload.Grow(_payloadLength);
-                    }
-
-                    _payloadIn.ReadBytes(_payload.Bytes, 0, _payloadLength);
-                    _payload.Length = _payloadLength;
-                    _pendingPayloadBytes = 0;
+                if (_pendingPayloadBytes == 0)
+                {
                     return _payload;
                 }
+
+                Debug.Assert(_pendingPayloadBytes >= _payloadLength);
+
+                if (_pendingPayloadBytes > _payloadLength)
+                {
+                    _payloadIn.Seek(_payloadIn.FilePointer + (_pendingPayloadBytes - _payloadLength));
+                }
+
+                if (_payload == null)
+                {
+                    _payload = new BytesRef {Bytes = new byte[_payloadLength]};
+                }
+                else if (_payload.Bytes.Length < _payloadLength)
+                {
+                    _payload.Grow(_payloadLength);
+                }
+
+                _payloadIn.ReadBytes(_payload.Bytes, 0, _payloadLength);
+                _payload.Length = _payloadLength;
+                _pendingPayloadBytes = 0;
+                return _payload;
             }
 
             public override long GetCost()

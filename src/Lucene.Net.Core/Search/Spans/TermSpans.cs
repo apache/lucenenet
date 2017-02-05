@@ -114,7 +114,7 @@ namespace Lucene.Net.Search.Spans
         // TODO: Remove warning after API has been finalized
         public override ICollection<byte[]> GetPayload()
         {
-            var payload = m_postings.Payload;
+            var payload = m_postings.GetPayload();
             m_readPayload = true;
             byte[] bytes;
             if (payload != null)
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return m_readPayload == false && m_postings.Payload != null;
+                return m_readPayload == false && m_postings.GetPayload() != null;
             }
         }
 

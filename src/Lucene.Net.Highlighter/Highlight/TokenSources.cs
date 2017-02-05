@@ -241,7 +241,7 @@ namespace Lucene.Net.Search.Highlight
                         // Must make a deep copy of the returned payload,
                         // since D&PEnum API is allowed to re-use on every
                         // call:
-                        token.Payload = BytesRef.DeepCopyOf(dpEnum.Payload);
+                        token.Payload = BytesRef.DeepCopyOf(dpEnum.GetPayload());
                     }
 
                     if (tokenPositionsGuaranteedContiguous && pos != -1)

@@ -1046,12 +1046,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 get { return -1; }
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
-                {
-                    return null;
-                }
+                return null;
             }
 
             public override long GetCost()
@@ -1697,21 +1694,18 @@ namespace Lucene.Net.Codecs.Lucene41
                 get { return endOffset; }
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
+                // if (DEBUG) {
+                //   System.out.println("    FPR.getPayload payloadLength=" + payloadLength + " payloadByteUpto=" + payloadByteUpto);
+                // }
+                if (payloadLength == 0)
                 {
-                    // if (DEBUG) {
-                    //   System.out.println("    FPR.getPayload payloadLength=" + payloadLength + " payloadByteUpto=" + payloadByteUpto);
-                    // }
-                    if (payloadLength == 0)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        return payload;
-                    }
+                    return null;
+                }
+                else
+                {
+                    return payload;
                 }
             }
 

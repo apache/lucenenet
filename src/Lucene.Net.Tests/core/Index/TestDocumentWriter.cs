@@ -178,11 +178,11 @@ namespace Lucene.Net.Index
             int freq = termPositions.Freq;
             Assert.AreEqual(3, freq);
             Assert.AreEqual(0, termPositions.NextPosition());
-            Assert.IsNotNull(termPositions.Payload);
+            Assert.IsNotNull(termPositions.GetPayload());
             Assert.AreEqual(6, termPositions.NextPosition());
-            Assert.IsNull(termPositions.Payload);
+            Assert.IsNull(termPositions.GetPayload());
             Assert.AreEqual(7, termPositions.NextPosition());
-            Assert.IsNull(termPositions.Payload);
+            Assert.IsNull(termPositions.GetPayload());
             reader.Dispose();
         }
 

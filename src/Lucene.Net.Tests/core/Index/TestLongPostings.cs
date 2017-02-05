@@ -251,10 +251,10 @@ namespace Lucene.Net.Index
                                 Assert.AreEqual(pos, postings.NextPosition());
                                 if (Random().NextBoolean())
                                 {
-                                    var dummy = postings.Payload;
+                                    var dummy = postings.GetPayload();
                                     if (Random().NextBoolean())
                                     {
-                                        dummy = postings.Payload; // get it again
+                                        dummy = postings.GetPayload(); // get it again
                                     }
                                 }
                             }
@@ -314,10 +314,10 @@ namespace Lucene.Net.Index
                                 Assert.AreEqual(pos, postings.NextPosition());
                                 if (Random().NextBoolean())
                                 {
-                                    var dummy = postings.Payload;
+                                    var dummy = postings.GetPayload();
                                     if (Random().NextBoolean())
                                     {
-                                        dummy = postings.Payload; // get it again
+                                        dummy = postings.GetPayload(); // get it again
                                     }
                                 }
                             }

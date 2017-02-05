@@ -212,7 +212,7 @@ namespace Lucene.Net.Index
                     for (int j = 0; j < numTerms; j++)
                     {
                         tps[j].NextPosition();
-                        BytesRef br = tps[j].Payload;
+                        BytesRef br = tps[j].GetPayload();
                         if (br != null)
                         {
                             Array.Copy(br.Bytes, br.Offset, verifyPayloadData, offset, br.Length);
@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
             tp.NextDoc();
             // now we don't read this payload
             tp.NextPosition();
-            BytesRef payload = tp.Payload;
+            BytesRef payload = tp.GetPayload();
             Assert.AreEqual(1, payload.Length, "Wrong payload length.");
             Assert.AreEqual(payload.Bytes[payload.Offset], payloadData[numTerms]);
             tp.NextDoc();
@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
             // we don't read this payload and skip to a different document
             tp.Advance(5);
             tp.NextPosition();
-            payload = tp.Payload;
+            payload = tp.GetPayload();
             Assert.AreEqual(1, payload.Length, "Wrong payload length.");
             Assert.AreEqual(payload.Bytes[payload.Offset], payloadData[5 * numTerms]);
 
@@ -254,16 +254,16 @@ namespace Lucene.Net.Index
             tp = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), terms[1].Field, new BytesRef(terms[1].Text()));
             tp.NextDoc();
             tp.NextPosition();
-            Assert.AreEqual(1, tp.Payload.Length, "Wrong payload length.");
+            Assert.AreEqual(1, tp.GetPayload().Length, "Wrong payload length.");
             tp.Advance(skipInterval - 1);
             tp.NextPosition();
-            Assert.AreEqual(1, tp.Payload.Length, "Wrong payload length.");
+            Assert.AreEqual(1, tp.GetPayload().Length, "Wrong payload length.");
             tp.Advance(2 * skipInterval - 1);
             tp.NextPosition();
-            Assert.AreEqual(1, tp.Payload.Length, "Wrong payload length.");
+            Assert.AreEqual(1, tp.GetPayload().Length, "Wrong payload length.");
             tp.Advance(3 * skipInterval - 1);
             tp.NextPosition();
-            Assert.AreEqual(3 * skipInterval - 2 * numDocs - 1, tp.Payload.Length, "Wrong payload length.");
+            Assert.AreEqual(3 * skipInterval - 2 * numDocs - 1, tp.GetPayload().Length, "Wrong payload length.");
 
             reader.Dispose();
 
@@ -288,7 +288,7 @@ namespace Lucene.Net.Index
             tp.NextDoc();
             tp.NextPosition();
 
-            BytesRef bref = tp.Payload;
+            BytesRef bref = tp.GetPayload();
             verifyPayloadData = new byte[bref.Length];
             var portion = new byte[1500];
             Array.Copy(payloadData, 100, portion, 0, 1500);
@@ -506,7 +506,7 @@ namespace Lucene.Net.Index
                     for (int i = 0; i < freq; i++)
                     {
                         tp.NextPosition();
-                        BytesRef payload = tp.Payload;
+                        BytesRef payload = tp.GetPayload();
                         Assert.AreEqual(termText, payload.Utf8ToString());
                     }
                 }
@@ -692,7 +692,7 @@ namespace Lucene.Net.Index
             DocsAndPositionsEnum de = sr.TermPositionsEnum(new Term("field", "withPayload"));
             de.NextDoc();
             de.NextPosition();
-            Assert.AreEqual(new BytesRef("test"), de.Payload);
+            Assert.AreEqual(new BytesRef("test"), de.GetPayload());
             writer.Dispose();
             reader.Dispose();
             dir.Dispose();
@@ -729,7 +729,7 @@ namespace Lucene.Net.Index
             DocsAndPositionsEnum de = sr.TermPositionsEnum(new Term("field", "withPayload"));
             de.NextDoc();
             de.NextPosition();
-            Assert.AreEqual(new BytesRef("test"), de.Payload);
+            Assert.AreEqual(new BytesRef("test"), de.GetPayload());
             writer.Dispose();
             reader.Dispose();
             dir.Dispose();

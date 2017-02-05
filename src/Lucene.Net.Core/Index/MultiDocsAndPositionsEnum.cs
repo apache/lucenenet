@@ -193,12 +193,9 @@ namespace Lucene.Net.Index
             get { return current.EndOffset; }
         }
 
-        public override BytesRef Payload
+        public override BytesRef GetPayload()
         {
-            get
-            {
-                return current.Payload;
-            }
+            return current.GetPayload();
         }
 
         // TODO: implement bulk read more efficiently than super

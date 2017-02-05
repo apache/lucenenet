@@ -139,7 +139,7 @@ namespace Lucene.Net.Codecs
                     for (int i = 0; i < freq; i++)
                     {
                         int position = postingsEnum.NextPosition();
-                        BytesRef payload = postingsEnum.Payload;
+                        BytesRef payload = postingsEnum.GetPayload();
                         this.AddPosition(position, payload, -1, -1);
                     }
                     this.FinishDoc();
@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs
                     for (int i = 0; i < freq; i++)
                     {
                         int position = postingsEnum.NextPosition();
-                        BytesRef payload = postingsEnum.Payload;
+                        BytesRef payload = postingsEnum.GetPayload();
                         this.AddPosition(position, payload, postingsEnum.StartOffset, postingsEnum.EndOffset);
                     }
                     this.FinishDoc();

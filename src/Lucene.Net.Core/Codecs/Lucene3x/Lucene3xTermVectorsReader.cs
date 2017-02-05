@@ -808,12 +808,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                 nextPos = 0;
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
-                {
-                    return null;
-                }
+                return null;
             }
 
             public override int NextPosition()

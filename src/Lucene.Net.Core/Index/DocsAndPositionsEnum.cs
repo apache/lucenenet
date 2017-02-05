@@ -72,6 +72,6 @@ namespace Lucene.Net.Index
         ///  (neither members of the returned BytesRef nor bytes
         ///  in the byte[]).
         /// </summary>
-        public abstract BytesRef Payload { get; } // LUCENENET TODO: Change to GetPayload() ?
+        public abstract BytesRef GetPayload();
     }
 }

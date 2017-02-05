@@ -783,27 +783,24 @@ namespace Lucene.Net.Codecs.Lucene40
                 nextPos = 0;
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
+                if (payloadOffsets == null)
                 {
-                    if (payloadOffsets == null)
+                    return null;
+                }
+                else
+                {
+                    int off = payloadOffsets[nextPos - 1];
+                    int end = nextPos == payloadOffsets.Length ? payloadBytes.Length : payloadOffsets[nextPos];
+                    if (end - off == 0)
                     {
                         return null;
                     }
-                    else
-                    {
-                        int off = payloadOffsets[nextPos - 1];
-                        int end = nextPos == payloadOffsets.Length ? payloadBytes.Length : payloadOffsets[nextPos];
-                        if (end - off == 0)
-                        {
-                            return null;
-                        }
-                        payload.Bytes = payloadBytes;
-                        payload.Offset = off;
-                        payload.Length = end - off;
-                        return payload;
-                    }
+                    payload.Bytes = payloadBytes;
+                    payload.Offset = off;
+                    payload.Length = end - off;
+                    return payload;
                 }
             }
 

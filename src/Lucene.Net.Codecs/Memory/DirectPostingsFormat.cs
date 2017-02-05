@@ -478,7 +478,7 @@ namespace Lucene.Net.Codecs.Memory
                                         }
                                         if (hasPayloads_Renamed)
                                         {
-                                            BytesRef payload = docsAndPositionsEnum.Payload;
+                                            BytesRef payload = docsAndPositionsEnum.GetPayload();
                                             if (payload != null)
                                             {
                                                 scratch.Add(payload.Length);
@@ -578,7 +578,7 @@ namespace Lucene.Net.Codecs.Memory
                                         positions[upto][posUpto] = docsAndPositionsEnum.NextPosition();
                                         if (hasPayloads_Renamed)
                                         {
-                                            BytesRef payload = docsAndPositionsEnum.Payload;
+                                            BytesRef payload = docsAndPositionsEnum.GetPayload();
                                             if (payload != null)
                                             {
                                                 var payloadBytes = new byte[payload.Length];
@@ -2288,21 +2288,18 @@ namespace Lucene.Net.Codecs.Memory
                 return SlowAdvance(target);
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
+                if (payloadLength > 0)
                 {
-                    if (payloadLength > 0)
-                    {
-                        payload.Bytes = payloadBytes;
-                        payload.Offset = lastPayloadOffset;
-                        payload.Length = payloadLength;
-                        return payload;
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    payload.Bytes = payloadBytes;
+                    payload.Offset = lastPayloadOffset;
+                    payload.Length = payloadLength;
+                    return payload;
+                }
+                else
+                {
+                    return null;
                 }
             }
 
@@ -2729,23 +2726,20 @@ namespace Lucene.Net.Codecs.Memory
 
             private readonly BytesRef _payload = new BytesRef();
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
-                {
-                    if (payloads == null)
-                        return null;
+                if (payloads == null)
+                    return null;
                 
-                    var payloadBytes = payloads[upto][posUpto/(hasOffsets ? 3 : 1)];
-                    if (payloadBytes == null)
-                    {
-                        return null;
-                    }
-                    _payload.Bytes = payloadBytes;
-                    _payload.Length = payloadBytes.Length;
-                    _payload.Offset = 0;
-                    return _payload;
+                var payloadBytes = payloads[upto][posUpto/(hasOffsets ? 3 : 1)];
+                if (payloadBytes == null)
+                {
+                    return null;
                 }
+                _payload.Bytes = payloadBytes;
+                _payload.Length = payloadBytes.Length;
+                _payload.Offset = 0;
+                return _payload;
             }
 
             public override long GetCost()

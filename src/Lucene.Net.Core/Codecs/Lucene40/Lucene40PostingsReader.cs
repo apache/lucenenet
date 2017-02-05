@@ -960,12 +960,9 @@ namespace Lucene.Net.Codecs.Lucene40
             /// Returns the payload at this position, or null if no
             ///  payload was indexed.
             /// </summary>
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
-                {
-                    return null;
-                }
+                return null;
             }
 
             public override long GetCost()
@@ -1268,37 +1265,34 @@ namespace Lucene.Net.Codecs.Lucene40
             /// Returns the payload at this position, or null if no
             ///  payload was indexed.
             /// </summary>
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
+                if (storePayloads)
                 {
-                    if (storePayloads)
-                    {
-                        if (payloadLength <= 0)
-                        {
-                            return null;
-                        }
-                        Debug.Assert(lazyProxPointer == -1);
-                        Debug.Assert(posPendingCount < freq);
-
-                        if (payloadPending)
-                        {
-                            if (payloadLength > payload.Bytes.Length)
-                            {
-                                payload.Grow(payloadLength);
-                            }
-
-                            proxIn.ReadBytes(payload.Bytes, 0, payloadLength);
-                            payload.Length = payloadLength;
-                            payloadPending = false;
-                        }
-
-                        return payload;
-                    }
-                    else
+                    if (payloadLength <= 0)
                     {
                         return null;
                     }
+                    Debug.Assert(lazyProxPointer == -1);
+                    Debug.Assert(posPendingCount < freq);
+
+                    if (payloadPending)
+                    {
+                        if (payloadLength > payload.Bytes.Length)
+                        {
+                            payload.Grow(payloadLength);
+                        }
+
+                        proxIn.ReadBytes(payload.Bytes, 0, payloadLength);
+                        payload.Length = payloadLength;
+                        payloadPending = false;
+                    }
+
+                    return payload;
+                }
+                else
+                {
+                    return null;
                 }
             }
 

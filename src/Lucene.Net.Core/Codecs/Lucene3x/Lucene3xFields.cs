@@ -1268,12 +1268,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                 get { return -1; }
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
-                {
-                    return pos.Payload;
-                }
+                return pos.GetPayload();
             }
 
             public override long GetCost()

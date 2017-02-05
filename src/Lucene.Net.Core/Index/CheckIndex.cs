@@ -1236,7 +1236,7 @@ namespace Lucene.Net.Index
                                     throw new Exception("term " + term + ": doc " + doc + ": pos " + pos + " < lastPos " + lastPos);
                                 }
                                 lastPos = pos;
-                                BytesRef payload = postings.Payload;
+                                BytesRef payload = postings.GetPayload();
                                 if (payload != null)
                                 {
                                     Debug.Assert(payload.IsValid());
@@ -2264,7 +2264,7 @@ namespace Lucene.Net.Index
                                                     }
                                                 }
 
-                                                BytesRef payload = postings.Payload;
+                                                BytesRef payload = postings.GetPayload();
 
                                                 if (payload != null)
                                                 {
@@ -2279,20 +2279,20 @@ namespace Lucene.Net.Index
                                                     {
                                                         // we have payloads, but not at this position.
                                                         // postings has payloads too, it should not have one at this position
-                                                        if (postingsPostings.Payload != null)
+                                                        if (postingsPostings.GetPayload() != null)
                                                         {
-                                                            throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + " has no payload but postings does: " + postingsPostings.Payload);
+                                                            throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + " has no payload but postings does: " + postingsPostings.GetPayload());
                                                         }
                                                     }
                                                     else
                                                     {
                                                         // we have payloads, and one at this position
                                                         // postings should also have one at this position, with the same bytes.
-                                                        if (postingsPostings.Payload == null)
+                                                        if (postingsPostings.GetPayload() == null)
                                                         {
                                                             throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + " has payload=" + payload + " but postings does not.");
                                                         }
-                                                        BytesRef postingsPayload = postingsPostings.Payload;
+                                                        BytesRef postingsPayload = postingsPostings.GetPayload();
                                                         if (!payload.Equals(postingsPayload))
                                                         {
                                                             throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + " has payload=" + payload + " but differs from postings payload=" + postingsPayload);

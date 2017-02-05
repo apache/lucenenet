@@ -609,17 +609,17 @@ namespace Lucene.Net.Index
                     Assert.AreEqual(positions[i].Pos, pos);
                     if (positions[i].Payload != null)
                     {
-                        Assert.IsNotNull(posEnum.Payload);
+                        Assert.IsNotNull(posEnum.GetPayload());
                         if (Random().Next(3) < 2)
                         {
                             // Verify the payload bytes
-                            BytesRef otherPayload = posEnum.Payload;
+                            BytesRef otherPayload = posEnum.GetPayload();
                             Assert.IsTrue(positions[i].Payload.Equals(otherPayload), "expected=" + positions[i].Payload.ToString() + " got=" + otherPayload.ToString());
                         }
                     }
                     else
                     {
-                        Assert.IsNull(posEnum.Payload);
+                        Assert.IsNull(posEnum.GetPayload());
                     }
                 }
             }

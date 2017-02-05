@@ -726,7 +726,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                     if (term == null)
                     {
                         // multitermquery match, pull from payload
-                        term = off.dp.Payload;
+                        term = off.dp.GetPayload();
                         Debug.Assert(term != null);
                     }
                     current.AddMatch(start, end, term);
@@ -843,9 +843,9 @@ namespace Lucene.Net.Search.PostingsHighlight
                 get { return int.MaxValue; }
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get { return null; }
+                return null;
             }
 
             public override int Freq

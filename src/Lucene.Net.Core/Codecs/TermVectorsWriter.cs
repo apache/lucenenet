@@ -333,7 +333,7 @@ namespace Lucene.Net.Codecs
                             int startOffset = docsAndPositionsEnum.StartOffset;
                             int endOffset = docsAndPositionsEnum.EndOffset;
 
-                            BytesRef payload = docsAndPositionsEnum.Payload;
+                            BytesRef payload = docsAndPositionsEnum.GetPayload();
 
                             Debug.Assert(!hasPositions || pos >= 0);
                             AddPosition(pos, startOffset, endOffset, payload);

@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
             DocsAndPositionsEnum de = termsEnum.DocsAndPositions(null, null);
             Assert.AreEqual(0, de.NextDoc());
             Assert.AreEqual(0, de.NextPosition());
-            Assert.AreEqual(new BytesRef("test"), de.Payload);
+            Assert.AreEqual(new BytesRef("test"), de.GetPayload());
             writer.Dispose();
             reader.Dispose();
             dir.Dispose();
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
             DocsAndPositionsEnum de = termsEnum.DocsAndPositions(null, null);
             Assert.AreEqual(0, de.NextDoc());
             Assert.AreEqual(3, de.NextPosition());
-            Assert.AreEqual(new BytesRef("test"), de.Payload);
+            Assert.AreEqual(new BytesRef("test"), de.GetPayload());
             writer.Dispose();
             reader.Dispose();
             dir.Dispose();

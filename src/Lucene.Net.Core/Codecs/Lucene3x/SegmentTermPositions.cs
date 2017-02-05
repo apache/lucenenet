@@ -228,33 +228,30 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public BytesRef Payload
+        public BytesRef GetPayload()
         {
-            get
+            if (payloadLength <= 0)
             {
-                if (payloadLength <= 0)
-                {
-                    return null; // no payload
-                }
-
-                if (needToLoadPayload)
-                {
-                    // read payloads lazily
-                    if (payload == null)
-                    {
-                        payload = new BytesRef(payloadLength);
-                    }
-                    else
-                    {
-                        payload.Grow(payloadLength);
-                    }
-
-                    proxStream.ReadBytes(payload.Bytes, payload.Offset, payloadLength);
-                    payload.Length = payloadLength;
-                    needToLoadPayload = false;
-                }
-                return payload;
+                return null; // no payload
             }
+
+            if (needToLoadPayload)
+            {
+                // read payloads lazily
+                if (payload == null)
+                {
+                    payload = new BytesRef(payloadLength);
+                }
+                else
+                {
+                    payload.Grow(payloadLength);
+                }
+
+                proxStream.ReadBytes(payload.Bytes, payload.Offset, payloadLength);
+                payload.Length = payloadLength;
+                needToLoadPayload = false;
+            }
+            return payload;
         }
 
         public bool IsPayloadAvailable

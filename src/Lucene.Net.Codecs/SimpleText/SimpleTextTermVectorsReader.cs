@@ -575,9 +575,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 _nextPos = 0;
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get { return _payloads == null ? null : _payloads[_nextPos - 1]; }
+                return _payloads == null ? null : _payloads[_nextPos - 1];
             }
 
             public override int NextPosition()

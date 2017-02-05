@@ -354,12 +354,9 @@ namespace Lucene.Net.Index
                 get { return m_input.EndOffset; }
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
-                {
-                    return m_input.Payload;
-                }
+                return m_input.GetPayload();
             }
 
             public override long GetCost()

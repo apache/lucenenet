@@ -313,16 +313,13 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
 
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
+                if (matchDescriptions[currentMatch] == null)
                 {
-                    if (matchDescriptions[currentMatch] == null)
-                    {
-                        matchDescriptions[currentMatch] = new BytesRef(matchers[currentMatch].ToString());
-                    }
-                    return matchDescriptions[currentMatch];
+                    matchDescriptions[currentMatch] = new BytesRef(matchers[currentMatch].ToString());
                 }
+                return matchDescriptions[currentMatch];
             }
 
             public override int DocID

@@ -2064,7 +2064,7 @@ namespace Lucene.Net.Util
                 for (int i = 0; i < freq; i++)
                 {
                     Assert.AreEqual(leftDocs.NextPosition(), rightDocs.NextPosition(), info);
-                    Assert.AreEqual(leftDocs.Payload, rightDocs.Payload, info);
+                    Assert.AreEqual(leftDocs.GetPayload(), rightDocs.GetPayload(), info);
                     Assert.AreEqual(leftDocs.StartOffset, rightDocs.StartOffset, info);
                     Assert.AreEqual(leftDocs.EndOffset, rightDocs.EndOffset, info);
                 }
@@ -2178,7 +2178,7 @@ namespace Lucene.Net.Util
                 for (int i = 0; i < freq; i++)
                 {
                     Assert.AreEqual(leftDocs.NextPosition(), rightDocs.NextPosition(), info);
-                    Assert.AreEqual(leftDocs.Payload, rightDocs.Payload, info);
+                    Assert.AreEqual(leftDocs.GetPayload(), rightDocs.GetPayload(), info);
                 }
             }
         }

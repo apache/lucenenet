@@ -608,31 +608,28 @@ namespace Lucene.Net.Codecs.Pulsing
                 }
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
+                if (_payloadRetrieved)
+                    return _payload;
+
+                if (_storePayloads && _payloadLength > 0)
                 {
-                    if (_payloadRetrieved)
-                        return _payload;
-
-                    if (_storePayloads && _payloadLength > 0)
+                    _payloadRetrieved = true;
+                    if (_payload == null)
                     {
-                        _payloadRetrieved = true;
-                        if (_payload == null)
-                        {
-                            _payload = new BytesRef(_payloadLength);
-                        }
-                        else
-                        {
-                            _payload.Grow(_payloadLength);
-                        }
-                        _postings.ReadBytes(_payload.Bytes, 0, _payloadLength);
-                        _payload.Length = _payloadLength;
-                        return _payload;
+                        _payload = new BytesRef(_payloadLength);
                     }
-
-                    return null;
+                    else
+                    {
+                        _payload.Grow(_payloadLength);
+                    }
+                    _postings.ReadBytes(_payload.Bytes, 0, _payloadLength);
+                    _payload.Length = _payloadLength;
+                    return _payload;
                 }
+
+                return null;
             }
 
             public override long GetCost()

@@ -118,7 +118,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(target, tp.DocID, "Wrong document " + tp.DocID + " after skipTo target " + target);
             Assert.AreEqual(1, tp.Freq, "Frequency is not 1: " + tp.Freq);
             tp.NextPosition();
-            BytesRef b = tp.Payload;
+            BytesRef b = tp.GetPayload();
             Assert.AreEqual(1, b.Length);
             Assert.AreEqual((sbyte)target, (sbyte)b.Bytes[b.Offset], "Wrong payload for the target " + target + ": " + (sbyte)b.Bytes[b.Offset]);
         }

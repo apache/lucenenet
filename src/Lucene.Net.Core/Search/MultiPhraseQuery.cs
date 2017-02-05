@@ -665,12 +665,9 @@ namespace Lucene.Net.Search
             get { return -1; }
         }
 
-        public override BytesRef Payload
+        public override BytesRef GetPayload()
         {
-            get
-            {
-                return null;
-            }
+            return null;
         }
 
         public override sealed int Advance(int target)

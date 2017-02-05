@@ -161,12 +161,9 @@ namespace Lucene.Net.Codecs
             get { return current.EndOffset; }
         }
 
-        public override BytesRef Payload
+        public override BytesRef GetPayload()
         {
-            get
-            {
-                return current.Payload;
-            }
+            return current.GetPayload();
         }
 
         public override long GetCost()

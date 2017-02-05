@@ -1149,19 +1149,16 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
+                CheckPosition();
+                if (payloadIndex == null || payload.Length == 0)
                 {
-                    CheckPosition();
-                    if (payloadIndex == null || payload.Length == 0)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        return payload;
-                    }
+                    return null;
+                }
+                else
+                {
+                    return payload;
                 }
             }
 

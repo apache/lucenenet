@@ -630,18 +630,15 @@ namespace Lucene.Net.Codecs.ramonly
                 get { return -1; }
             }
 
-            public override BytesRef Payload
+            public override BytesRef GetPayload()
             {
-                get
+                if (Current.Payloads != null && Current.Payloads[PosUpto - 1] != null)
                 {
-                    if (Current.Payloads != null && Current.Payloads[PosUpto - 1] != null)
-                    {
-                        return new BytesRef(Current.Payloads[PosUpto - 1]);
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    return new BytesRef(Current.Payloads[PosUpto - 1]);
+                }
+                else
+                {
+                    return null;
                 }
             }
 

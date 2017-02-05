@@ -554,12 +554,9 @@ namespace Lucene.Net.Index.Memory
                     get { return endOffset_Renamed; }
                 }
 
-                public override BytesRef Payload
+                public override BytesRef GetPayload()
                 {
-                    get
-                    {
-                        return null;
-                    }
+                    return null;
                 }
 
                 public override long GetCost()
