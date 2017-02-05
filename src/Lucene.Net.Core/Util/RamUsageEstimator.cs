@@ -272,7 +272,16 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the size in bytes of the byte[] object. </summary>
-        public static long SizeOf(sbyte[] arr) // LUCENENET TODO: can we change to byte ? it doesn't use the values in the array anyway
+        // LUCENENET specific overload for CLS compliance
+        public static long SizeOf(byte[] arr)
+        {
+            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + arr.Length);
+        }
+
+        /// <summary>
+        /// Returns the size in bytes of the sbyte[] object. </summary>
+        [CLSCompliant(false)]
+        public static long SizeOf(sbyte[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + arr.Length);
         }
