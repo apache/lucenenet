@@ -69,7 +69,22 @@ namespace Lucene.Net.Util
         /// <param name="inputOffset"> initial offset into inputArray </param>
         /// <param name="inputLength"> number of bytes in inputArray </param>
         /// <returns> The number of chars required to encode the number of bytes. </returns>
-        public static int GetEncodedLength(sbyte[] inputArray, int inputOffset, int inputLength) // LUCENENET TODO: CLS compliance
+        // LUCENENET specific overload for CLS compliance
+        public static int GetEncodedLength(byte[] inputArray, int inputOffset, int inputLength)
+        {
+            // Use long for intermediaries to protect against overflow
+            return (int)((8L * inputLength + 14L) / 15L) + 1;
+        }
+
+        /// <summary>
+        /// Returns the number of chars required to encode the given sbytes.
+        /// </summary>
+        /// <param name="inputArray"> sbyte sequence to be encoded </param>
+        /// <param name="inputOffset"> initial offset into inputArray </param>
+        /// <param name="inputLength"> number of sbytes in inputArray </param>
+        /// <returns> The number of chars required to encode the number of sbytes. </returns>
+        [CLSCompliant(false)]
+        public static int GetEncodedLength(sbyte[] inputArray, int inputOffset, int inputLength)
         {
             // Use long for intermediaries to protect against overflow
             return (int)((8L * inputLength + 14L) / 15L) + 1;
@@ -99,17 +114,35 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Encodes the input byte sequence into the output char sequence.  Before
+        /// Encodes the input sbyte sequence into the output char sequence.  Before
         /// calling this method, ensure that the output array has sufficient
         /// capacity by calling <seealso cref="#getEncodedLength(byte[], int, int)"/>.
         /// </summary>
-        /// <param name="inputArray"> byte sequence to be encoded </param>
+        /// <param name="inputArray"> sbyte sequence to be encoded </param>
         /// <param name="inputOffset"> initial offset into inputArray </param>
         /// <param name="inputLength"> number of bytes in inputArray </param>
         /// <param name="outputArray"> char sequence to store encoded result </param>
         /// <param name="outputOffset"> initial offset into outputArray </param>
         /// <param name="outputLength"> length of output, must be getEncodedLength </param>
-        public static void Encode(sbyte[] inputArray, int inputOffset, int inputLength, char[] outputArray, int outputOffset, int outputLength) // LUCENENET TODO: CLS compliance
+        // LUCENENET specific overload for CLS compliance
+        public static void Encode(byte[] inputArray, int inputOffset, int inputLength, char[] outputArray, int outputOffset, int outputLength)
+        {
+            Encode((sbyte[])(Array)inputArray, inputOffset, inputLength, outputArray, outputOffset, outputLength);
+        }
+
+        /// <summary>
+        /// Encodes the input sbyte sequence into the output char sequence.  Before
+        /// calling this method, ensure that the output array has sufficient
+        /// capacity by calling <seealso cref="#getEncodedLength(byte[], int, int)"/>.
+        /// </summary>
+        /// <param name="inputArray"> sbyte sequence to be encoded </param>
+        /// <param name="inputOffset"> initial offset into inputArray </param>
+        /// <param name="inputLength"> number of bytes in inputArray </param>
+        /// <param name="outputArray"> char sequence to store encoded result </param>
+        /// <param name="outputOffset"> initial offset into outputArray </param>
+        /// <param name="outputLength"> length of output, must be getEncodedLength </param>
+        [CLSCompliant(false)]
+        public static void Encode(sbyte[] inputArray, int inputOffset, int inputLength, char[] outputArray, int outputOffset, int outputLength)
         {
             Debug.Assert(outputLength == GetEncodedLength(inputArray, inputOffset, inputLength));
             if (inputLength > 0)
@@ -170,6 +203,25 @@ namespace Lucene.Net.Util
         /// <param name="outputOffset"> initial offset into outputArray </param>
         /// <param name="outputLength"> length of output, must be
         ///        getDecodedLength(inputArray, inputOffset, inputLength) </param>
+        // LUCENENET specific overload for CLS compliance
+        public static void Decode(char[] inputArray, int inputOffset, int inputLength, byte[] outputArray, int outputOffset, int outputLength)
+        {
+            Decode(inputArray, inputOffset, inputLength, (sbyte[])(Array)outputArray, outputOffset, outputLength);
+        }
+
+        /// <summary>
+        /// Decodes the input char sequence into the output sbyte sequence. Before
+        /// calling this method, ensure that the output array has sufficient capacity
+        /// by calling <seealso cref="#getDecodedLength(char[], int, int)"/>.
+        /// </summary>
+        /// <param name="inputArray"> char sequence to be decoded </param>
+        /// <param name="inputOffset"> initial offset into inputArray </param>
+        /// <param name="inputLength"> number of chars in inputArray </param>
+        /// <param name="outputArray"> byte sequence to store encoded result </param>
+        /// <param name="outputOffset"> initial offset into outputArray </param>
+        /// <param name="outputLength"> length of output, must be
+        ///        getDecodedLength(inputArray, inputOffset, inputLength) </param>
+        [CLSCompliant(false)]
         public static void Decode(char[] inputArray, int inputOffset, int inputLength, sbyte[] outputArray, int outputOffset, int outputLength)
         {
             Debug.Assert(outputLength == GetDecodedLength(inputArray, inputOffset, inputLength));
