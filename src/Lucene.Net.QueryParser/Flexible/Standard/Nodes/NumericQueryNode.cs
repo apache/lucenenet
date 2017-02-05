@@ -27,7 +27,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     /// similar to <see cref="FieldQueryNode"/>, however the <see cref="Value"/> returns an
     /// <see cref="object"/> representing a .NET numeric type.
     /// </summary>
-    /// <seealso cref="NumericConfig"/>
+    /// <seealso cref="Standard.Config.NumericConfig"/>
     public class NumericQueryNode : QueryNode, IFieldValuePairQueryNode<object> // LUCENENET TODO: Can we use Decimal??
     {
         private NumberFormat numberFormat;
@@ -65,7 +65,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
         /// <summary>
         /// This method is used to get the value converted to <see cref="string"/> and
-        /// escaped using the given <see cref="IEscapeQuerySyntax"/.
+        /// escaped using the given <see cref="IEscapeQuerySyntax"/>.
         /// </summary>
         /// <param name="escaper">The <see cref="IEscapeQuerySyntax"/> used to escape the value <see cref="string"/></param>
         /// <returns>The value converted to <see cref="string"/> and escaped</returns>

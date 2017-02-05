@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
     /// <summary>
     /// This <see cref="NumberFormat"/> parses <see cref="long"/> into date strings and vice-versa. It
-    /// uses the given <paramref name="dateFormat"/> and <see cref="CultureInfo">locale</see> to parse and format dates, but before, it
+    /// uses the given <c>dateFormat</c> and <see cref="CultureInfo">locale</see> to parse and format dates, but before, it
     /// converts <see cref="long"/> to <see cref="DateTime"/> objects or vice-versa.
     /// <para/>
     /// Note that the <see cref="long"/> value the dates are parsed into and out of represent the number of milliseconds

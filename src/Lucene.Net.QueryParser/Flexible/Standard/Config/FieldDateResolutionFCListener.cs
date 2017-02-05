@@ -27,8 +27,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     /// on a defined map: fieldName -> <see cref="DateTools.Resolution"/> stored in
     /// <see cref="ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP"/>.
     /// </summary>
-    /// <seealso cref="ConfigurationKeys#DATE_RESOLUTION"/>
-    /// <seealso cref="ConfigurationKeys#FIELD_DATE_RESOLUTION_MAP"/>
+    /// <seealso cref="ConfigurationKeys.DATE_RESOLUTION"/>
+    /// <seealso cref="ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP"/>
     /// <seealso cref="FieldConfig"/>
     /// <seealso cref="IFieldConfigListener"/>
     public class FieldDateResolutionFCListener : IFieldConfigListener

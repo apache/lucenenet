@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
     /// <para/>
     /// <b>Warning:</b> This class should only be used with analyzers that do not use stopwords
     /// or that add tokens. Also, several stemming analyzers are inappropriate: for example, <see cref="Analysis.De.GermanAnalyzer"/>  
-    /// will turn <c>H&auml;user</c> into <c>hau</c>, but <c>H?user</c> will 
+    /// will turn <c>Häuser</c> into <c>hau</c>, but <c>H?user</c> will 
     /// become <c>h?user</c> when using this parser and thus no match would be found (i.e.
     /// using this parser will be no improvement over QueryParser in such cases). 
     /// </summary>

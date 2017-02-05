@@ -104,7 +104,7 @@ namespace Lucene.Net.QueryParsers.Simple
         [Flags]
         public enum Operator : int
         {
-            /// <summary>Enables <c><AND/c> operator (+)</summary>
+            /// <summary>Enables <c>AND</c> operator (+)</summary>
             AND_OPERATOR = 1 << 0,
             /// <summary>Enables <c>NOT</c> operator (-)</summary>
             NOT_OPERATOR = 1 << 1,

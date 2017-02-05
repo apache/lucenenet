@@ -63,7 +63,7 @@ namespace Lucene.Net.QueryParsers.Classic
     /// In <see cref="TermRangeQuery" />s, QueryParser tries to detect date values, e.g.
     /// <tt>date:[6/1/2005 TO 6/4/2005]</tt> produces a range query that searches
     /// for "date" fields between 2005-06-01 and 2005-06-04. Note that the format
-    /// of the accepted input depends on the <see cref="Locale" />.
+    /// of the accepted input depends on the <see cref="System.Globalization.CultureInfo" />.
     /// A <see cref="Documents.DateTools.Resolution" /> has to be set,
     /// if you want to use <see cref="Documents.DateTools"/> for date conversion.<p/>
     /// </para>
@@ -99,7 +99,7 @@ namespace Lucene.Net.QueryParsers.Classic
     {
         // NOTE: This was moved into the QueryParserBase class.
 
-        ///* The default operator_Renamed for parsing queries. 
+        // * The default operator_Renamed for parsing queries. 
         // * Use {@link QueryParser#setDefaultOperator} to change it.
         // */
 

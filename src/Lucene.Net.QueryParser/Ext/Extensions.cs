@@ -100,7 +100,7 @@ namespace Lucene.Net.QueryParsers.Ext
 
         /// <summary>
         /// Splits a extension field and returns the field / extension part as a
-        /// <see cref="Tuple{string,string}"/>. This method tries to split on the first occurrence of the
+        /// <see cref="T:Tuple{string,string}"/>. This method tries to split on the first occurrence of the
         /// extension field delimiter, if the delimiter is not present in the string
         /// the result will contain a <code>null</code> value for the extension key and
         /// the given field string as the field value. If the given extension field
@@ -109,8 +109,8 @@ namespace Lucene.Net.QueryParsers.Ext
         /// </summary>
         /// <param name="defaultField">the default query field</param>
         /// <param name="field">the extension field string</param>
-        /// <returns>a {<see cref="Tuple{string,string}"/> with the field name as the <see cref="Tuple{string,string}.Item1"/> and the
-        /// extension key as the <see cref="Tuple{string,string}.Item2"/></returns>
+        /// <returns>a {<see cref="Tuple{T1, T2}"/> with the field name as the <see cref="Tuple{T1, T2}.Item1"/> and the
+        /// extension key as the <see cref="Tuple{T1, T2}.Item2"/></returns>
         public virtual Tuple<string, string> SplitExtensionField(string defaultField, string field)
         {
             int indexOf = field.IndexOf(this.extensionFieldDelimiter);

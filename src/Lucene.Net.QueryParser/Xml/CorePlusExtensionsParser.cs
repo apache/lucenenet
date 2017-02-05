@@ -22,7 +22,7 @@ namespace Lucene.Net.QueryParsers.Xml
      */
 
     /// <summary>
-    /// Assembles a <see cref="QueryBuilder"/> which uses <see cref="Query"/> objects from
+    /// Assembles a <see cref="Util.QueryBuilder"/> which uses <see cref="Search.Query"/> objects from
     /// Lucene's <c>sandbox</c> and <c>queries</c>
     /// modules in addition to core queries.
     /// </summary>

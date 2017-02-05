@@ -22,7 +22,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
 
     /// <summary>
     /// A <see cref="QueryNodeProcessorPipeline"/> class removes every instance of
-    /// <see cref=""/> from a query node tree. If the resulting root node
+    /// <see cref="DeletedQueryNode"/> from a query node tree. If the resulting root node
     /// is a <see cref="DeletedQueryNode"/>, <see cref="MatchNoDocsQueryNode"/> is returned.
     /// </summary>
     public class RemoveDeletedQueryNodesProcessor : QueryNodeProcessor

@@ -31,7 +31,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <summary>
     /// This processors process <see cref="TermRangeQueryNode"/>s. It reads the lower and
     /// upper bounds value from the <see cref="TermRangeQueryNode"/> object and try
-    /// to parse their values using a <paramref name="dateFormat"/>. If the values cannot be
+    /// to parse their values using a <c>dateFormat</c>. If the values cannot be
     /// parsed to a date value, it will only create the <see cref="TermRangeQueryNode"/>
     /// using the non-parsed values.
     /// <para/>

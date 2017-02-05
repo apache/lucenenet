@@ -43,7 +43,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// TO 1]</b>.
     /// <para/>
     /// Note that <see cref="FieldQueryNode"/>s children of a
-    /// <see cref="RangeQueryNode"/> are ignored.
+    /// <see cref="IRangeQueryNode"/> are ignored.
     /// </summary>
     /// <seealso cref="ConfigurationKeys.NUMERIC_CONFIG"/>
     /// <seealso cref="FieldQueryNode"/>

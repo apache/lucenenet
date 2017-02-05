@@ -533,11 +533,11 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             }
         }
 
-        /** Token literal values. */
-        //public static readonly string[] jjstrLiteralImages = {
-        //    "", null, null, null, null, null, null, null, null, null, null, null, null, 
-        //    "\50", "\51", "\54", "\72", "\136", null, null, null, null, null, null 
-        //};
+        ////** Token literal values. */
+        ////public static readonly string[] jjstrLiteralImages = {
+        ////    "", null, null, null, null, null, null, null, null, null, null, null, null, 
+        ////    "\50", "\51", "\54", "\72", "\136", null, null, null, null, null, null 
+        ////};
 
         /// <summary>Token literal values.</summary>
         public static readonly string[] jjstrLiteralImages = {

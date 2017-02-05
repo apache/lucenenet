@@ -453,7 +453,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         /// <summary>
-        /// Gets or Sets the field to <see cref="DateTools.Resolution?"/> map used to normalize each date field.
+        /// Gets or Sets the field to <see cref="T:DateTools.Resolution?"/> map used to normalize each date field.
         /// </summary>
         public virtual IDictionary<string, DateTools.Resolution?> DateResolutionMap
         {

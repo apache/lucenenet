@@ -111,7 +111,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// Whether or not to analyze range terms when constructing RangeQuerys
         /// (For example, analyzing terms into collation keys for locale-sensitive RangeQuery)
         /// </summary>
-        //bool analyzeRangeTerms = false;
+        bool analyzeRangeTerms = false;
 
         /// <summary>
         /// So the generated QueryParser(CharStream) won't error out
@@ -132,8 +132,6 @@ namespace Lucene.Net.QueryParsers.Classic
             FuzzyPrefixLength = FuzzyQuery.DefaultPrefixLength;
             Locale = CultureInfo.CurrentCulture;
             TimeZone = TimeZoneInfo.Local;
-            
-            AnalyzeRangeTerms = false;
         }
 
         /// <summary>
@@ -204,7 +202,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// when the analyzer returns more than one term from whitespace
         /// delimited text.
         /// NOTE: this behavior may not be suitable for all languages.
-        /// <p>
+        /// <para/>
         /// Set to false if phrase queries should only be generated when
         /// surrounded by double quotes.
         /// </summary>
@@ -254,7 +252,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         /// <summary>
         /// Whether terms of wildcard, prefix, fuzzy and range queries are to be automatically
-        //  lower-cased or not.  Default is <c>true</c>.
+        /// lower-cased or not.  Default is <c>true</c>.
         /// </summary>
         public virtual bool LowercaseExpandedTerms { get; set; }
 
@@ -341,7 +339,11 @@ namespace Lucene.Net.QueryParsers.Classic
         /// For example, setting this to true can enable analyzing terms into 
         /// collation keys for locale-sensitive <see cref="TermRangeQuery"/>.
         /// </summary>
-        public virtual bool AnalyzeRangeTerms { get; set; }
+        public virtual bool AnalyzeRangeTerms
+        {
+            get { return analyzeRangeTerms; }
+            set { analyzeRangeTerms = value; }
+        }
 
         protected internal virtual void AddClause(IList<BooleanClause> clauses, int conj, int mods, Query q)
         {
@@ -605,7 +607,7 @@ namespace Lucene.Net.QueryParsers.Classic
             }
             else
             {
-                start = AnalyzeRangeTerms ? AnalyzeMultitermTerm(field, part1) : new BytesRef(part1);
+                start = analyzeRangeTerms ? AnalyzeMultitermTerm(field, part1) : new BytesRef(part1);
             }
 
             if (part2 == null)
@@ -614,7 +616,7 @@ namespace Lucene.Net.QueryParsers.Classic
             }
             else
             {
-                end = AnalyzeRangeTerms ? AnalyzeMultitermTerm(field, part2) : new BytesRef(part2);
+                end = analyzeRangeTerms ? AnalyzeMultitermTerm(field, part2) : new BytesRef(part2);
             }
 
             TermRangeQuery query = new TermRangeQuery(field, start, end, startInclusive, endInclusive);

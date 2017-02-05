@@ -194,15 +194,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// <para/>
         /// In this method the three phases are executed:
         /// <para/>
-        /// &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1st - the query string is parsed using the
-        /// text parser returned by <see cref="SyntaxParser"/>, the result is a query
-        /// node tree
-        /// <para/>
-        /// &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2nd - the query node tree is processed by the
-        /// processor returned by <see cref="QueryNodeProcessor"/>
-        /// <para/>
-        /// &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3th - a object is built from the query node
-        /// tree using the builder returned by <see cref="QueryBuilder"/>
+        /// <list type="number">
+        ///     <item>
+        ///     the query string is parsed using the
+        ///     text parser returned by <see cref="SyntaxParser"/>, the result is a query
+        ///     node tree.
+        ///     </item>
+        ///     <item>
+        ///     the query node tree is processed by the
+        ///     processor returned by <see cref="QueryNodeProcessor"/>.
+        ///     </item>
+        ///     <item>
+        ///     a object is built from the query node
+        ///     tree using the builder returned by <see cref="QueryBuilder"/>.
+        ///     </item>
+        /// </list>
         /// </summary>
         /// <param name="query">the query string</param>
         /// <param name="defaultField">the default field used by the text parser</param>

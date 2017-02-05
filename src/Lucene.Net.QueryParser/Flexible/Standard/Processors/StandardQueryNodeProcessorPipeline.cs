@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// This processor pipeline was designed to work with
     /// <see cref="Config.StandardQueryConfigHandler"/>.
     /// <para/>
-    /// The result query node tree can be used to build a <see cref="Query"/> object using
+    /// The result query node tree can be used to build a <see cref="Search.Query"/> object using
     /// <see cref="Builders.StandardQueryTreeBuilder"/>.
     /// </summary>
     /// <seealso cref="Builders.StandardQueryTreeBuilder"/>
