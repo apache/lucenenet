@@ -57,7 +57,7 @@ namespace Lucene.Net.Search.Grouping
         /// are sorted lexicographically in ascending order.
         /// </param>
         /// <returns>grouped facet results</returns>
-        /// <exception cref="IOException">If I/O related errors occur during merging segment grouped facet counts.</exception>
+        /// <exception cref="System.IO.IOException">If I/O related errors occur during merging segment grouped facet counts.</exception>
         public virtual GroupedFacetResult MergeSegmentResults(int size, int minCount, bool orderByCount)
         {
             if (m_segmentFacetCounts != null)
@@ -344,7 +344,7 @@ namespace Lucene.Net.Search.Grouping
             /// <summary>
             /// Go to next term in this <see cref="AbstractSegmentResult"/> in order to retrieve the grouped facet counts.
             /// </summary>
-            /// <exception cref="IOException">If I/O related errors occur</exception>
+            /// <exception cref="System.IO.IOException">If I/O related errors occur</exception>
             protected internal abstract void NextTerm();
 
         }

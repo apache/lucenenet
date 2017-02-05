@@ -50,7 +50,7 @@ namespace Lucene.Net.Search.Grouping.Function
         /// <see cref="Sort.RELEVANCE"/>.
         /// </param>
         /// <param name="topNGroups">How many top groups to keep.</param>
-        /// <exception cref="IOException">When I/O related errors occur</exception>
+        /// <exception cref="System.IO.IOException">When I/O related errors occur</exception>
         public FunctionFirstPassGroupingCollector(ValueSource groupByVS, IDictionary /* Map<?, ?> */ vsContext, Sort groupSort, int topNGroups)
             : base(groupSort, topNGroups)
         {

@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Grouping.Terms
 	 */
 
     /// <summary>
-    /// A term based implementation of <see cref="AbstractDistinctValuesCollector{TermDistinctValuesCollector.GroupCount}"/> that relies
+    /// A term based implementation of <see cref="T:AbstractDistinctValuesCollector{TermDistinctValuesCollector.GroupCount}"/> that relies
     /// on <see cref="SortedDocValues"/> to count the distinct values per group.
     /// 
     /// @lucene.experimental

@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         /// <param name="doc">The specified doc</param>
         /// <returns>the group the specified doc belongs to or <c>null</c> if no group could be retrieved</returns>
-        /// <exception cref="IOException">If an I/O related error occurred</exception>
+        /// <exception cref="System.IO.IOException">If an I/O related error occurred</exception>
         protected abstract AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue> RetrieveGroup(int doc);
 
         public virtual void SetNextReader(AtomicReaderContext context)

@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Grouping
         /// <summary>
         /// Returns the group values
         /// <para>
-        /// This is an unordered collections of group values. For each group that matched the query there is a <see cref="BytesRef"/>
+        /// This is an unordered collections of group values. For each group that matched the query there is a <see cref="Util.BytesRef"/>
         /// representing a group value.
         /// </para>
         /// </summary>
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search.Grouping
         /// Called before collecting from each <see cref="AtomicReaderContext"/>. All doc ids in
         /// <see cref="Collect(int)"/> will correspond to <see cref="Index.IndexReaderContext.Reader"/>.
         ///
-        /// Add <see cref="AtomicReaderContext#docBase"/> to the current <see cref="Index.IndexReaderContext.Reader"/>'s
+        /// Add <see cref="AtomicReaderContext.DocBase"/> to the current <see cref="Index.IndexReaderContext.Reader"/>'s
         /// internal document id to re-base ids in <see cref="Collect(int)"/>.
         /// </summary>
         /// <param name="context">next atomic reader context </param>
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search.Grouping
         /// <summary>
         /// Returns the group values
         /// <para>
-        /// This is an unordered collections of group values. For each group that matched the query there is a <see cref="BytesRef"/>
+        /// This is an unordered collections of group values. For each group that matched the query there is a <see cref="Util.BytesRef"/>
         /// representing a group value.
         /// </para>
         /// </summary>

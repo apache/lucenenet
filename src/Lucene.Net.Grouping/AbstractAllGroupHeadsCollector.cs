@@ -99,7 +99,7 @@ namespace Lucene.Net.Search.Grouping
         /// </para>
         /// </summary>
         /// <param name="doc">The document to retrieve the group head for.</param>
-        /// <exception cref="IOException">If I/O related errors occur</exception>
+        /// <exception cref="System.IO.IOException">If I/O related errors occur</exception>
         protected override abstract void RetrieveGroupHeadAndAddIfNotExist(int doc);
 
         /// <summary>
@@ -194,14 +194,14 @@ namespace Lucene.Net.Search.Grouping
         /// -1 if the specified document wasn't competitive against the current most relevant document, 1 if the
         /// specified document was competitive against the current most relevant document. Otherwise 0.
         /// </returns>
-        /// <exception cref="IOException">If I/O related errors occur</exception>
+        /// <exception cref="System.IO.IOException">If I/O related errors occur</exception>
         public abstract int Compare(int compIDX, int doc);
 
         /// <summary>
         /// Updates the current most relevant document with the specified document.
         /// </summary>
         /// <param name="doc">The specified document</param>
-        /// <exception cref="IOException">If I/O related errors occur</exception>
+        /// <exception cref="System.IO.IOException">If I/O related errors occur</exception>
         public abstract void UpdateDocHead(int doc);
     }
 
@@ -233,15 +233,15 @@ namespace Lucene.Net.Search.Grouping
         public abstract int GroupHeadsCount { get; }
 
         /// <summary>
-        /// Returns the group head and puts it into <see cref="TemporalResult"/>.
+        /// Returns the group head and puts it into <see cref="AbstractAllGroupHeadsCollector{GH}.TemporalResult"/>.
         /// If the group head wasn't encountered before then it will be added to the collected group heads.
         /// <para>
-        /// The <see cref="TemporalResult.stop"/> property will be <c>true</c> if the group head wasn't encountered before
+        /// The <see cref="AbstractAllGroupHeadsCollector{GH}.TemporalResult.Stop"/> property will be <c>true</c> if the group head wasn't encountered before
         /// otherwise <c>false</c>.
         /// </para>
         /// </summary>
         /// <param name="doc">The document to retrieve the group head for.</param>
-        /// <exception cref="IOException">If I/O related errors occur</exception>
+        /// <exception cref="System.IO.IOException">If I/O related errors occur</exception>
         protected abstract void RetrieveGroupHeadAndAddIfNotExist(int doc);
 
 
@@ -274,7 +274,7 @@ namespace Lucene.Net.Search.Grouping
         /// Called before collecting from each <see cref="AtomicReaderContext"/>. All doc ids in
         /// <see cref="Collect(int)"/> will correspond to <see cref="Index.IndexReaderContext.Reader"/>.
         ///
-        /// Add <see cref="AtomicReaderContext#docBase"/> to the current <see cref="Index.IndexReaderContext.Reader"/>'s
+        /// Add <see cref="AtomicReaderContext.DocBase"/> to the current <see cref="Index.IndexReaderContext.Reader"/>'s
         /// internal document id to re-base ids in <see cref="Collect(int)"/>.
         /// </summary>
         /// <param name="context">next atomic reader context </param>

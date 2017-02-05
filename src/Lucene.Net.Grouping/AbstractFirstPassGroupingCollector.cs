@@ -64,7 +64,7 @@ namespace Lucene.Net.Search.Grouping
         /// Sort.RELEVANCE.
         /// </param>
         /// <param name="topNGroups">How many top groups to keep.</param>
-        /// <exception cref="IOException">If I/O related errors occur</exception>
+        /// <exception cref="System.IO.IOException">If I/O related errors occur</exception>
         public AbstractFirstPassGroupingCollector(Sort groupSort, int topNGroups)
         {
             if (topNGroups < 1)
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search.Grouping
         /// number of unique groups collected is &lt;= offset.
         /// </summary>
         /// <param name="groupOffset">The offset in the collected groups</param>
-        /// <param name="fillFields">Whether to fill to <see cref="SearchGroup.sortValues"/></param>
+        /// <param name="fillFields">Whether to fill to <see cref="SearchGroup{TGroupValue}.SortValues"/></param>
         /// <returns>top groups, starting from offset</returns>
         public virtual IEnumerable<ISearchGroup<TGroupValue>> GetTopGroups(int groupOffset, bool fillFields)
         {
@@ -427,7 +427,7 @@ namespace Lucene.Net.Search.Grouping
         /// number of unique groups collected is &lt;= offset.
         /// </summary>
         /// <param name="groupOffset">The offset in the collected groups</param>
-        /// <param name="fillFields">Whether to fill to <see cref="SearchGroup.sortValues"/></param>
+        /// <param name="fillFields">Whether to fill to <see cref="SearchGroup{TGroupValue}.SortValues"/></param>
         /// <returns>top groups, starting from offset</returns>
         /// <remarks>
         /// LUCENENET NOTE: We must use <see cref="IEnumerable{TGroupValue}"/> rather than 

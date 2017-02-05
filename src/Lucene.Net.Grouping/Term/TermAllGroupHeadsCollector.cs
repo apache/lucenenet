@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         private TermAllGroupHeadsCollector() { }
 
         /// <summary>
-        /// Creates an <see cref=AbstractAllGroupHeadsCollector""/> instance based on the supplied arguments.
+        /// Creates an <see cref="AbstractAllGroupHeadsCollector"/> instance based on the supplied arguments.
         /// This factory method decides with implementation is best suited.
         /// <para>
         /// Delegates to <see cref="Create(string, Sort, int)"/> with an initialSize of 128.

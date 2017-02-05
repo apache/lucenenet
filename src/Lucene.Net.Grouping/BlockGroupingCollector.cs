@@ -369,7 +369,7 @@ namespace Lucene.Net.Search.Grouping
         /// </para>
         /// </summary>
         /// <typeparam name="TGroupValue">The expected return type for group value</typeparam>
-        /// <<param name="withinGroupSort">
+        /// <param name="withinGroupSort">
         /// The <see cref="Sort"/> used to sort
         /// documents within each group.  Passing null is
         /// allowed, to sort by relevance.
