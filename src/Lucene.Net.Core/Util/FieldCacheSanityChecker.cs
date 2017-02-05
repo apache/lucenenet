@@ -190,7 +190,7 @@ namespace Lucene.Net.Util
                     }
 
                     FieldCache.CacheEntry[] badness = new FieldCache.CacheEntry[badEntries.Count];
-                    badness = badEntries.ToArray(); //LUCENE TO-DO had param of badness before
+                    badEntries.CopyTo(badness, 0);
 
                     insanity.Add(new Insanity(InsanityType.VALUEMISMATCH, "Multiple distinct value objects for " + rf.ToString(), badness));
                 }
