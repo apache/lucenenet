@@ -60,7 +60,7 @@ namespace Lucene.Net.Util
         /// returns true if messages are enabled and should be posted to <seealso cref="#message"/>. </summary>
         public abstract bool IsEnabled(string component);
 
-        private static InfoStream DefaultInfoStream = NO_OUTPUT;
+        private static InfoStream defaultInfoStream = NO_OUTPUT;
 
         /// <summary>
         /// The default {@code InfoStream} used by a newly instantiated classes. </summary>
@@ -71,7 +71,7 @@ namespace Lucene.Net.Util
             {
                 lock (typeof(InfoStream))
                 {
-                    return DefaultInfoStream;
+                    return defaultInfoStream;
                 }
             }
             set
@@ -82,7 +82,7 @@ namespace Lucene.Net.Util
                     {
                         throw new System.ArgumentException("Cannot set InfoStream default implementation to null. " + "To disable logging use InfoStream.NO_OUTPUT");
                     }
-                    DefaultInfoStream = value;
+                    defaultInfoStream = value;
                 }
             }
         }

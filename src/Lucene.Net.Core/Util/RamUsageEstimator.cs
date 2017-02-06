@@ -91,19 +91,20 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Sizes of primitive classes.
         /// </summary>
-        private static readonly IDictionary<Type, int> PrimitiveSizes;
+        private static readonly IDictionary<Type, int> primitiveSizes;
 
         static RamUsageEstimator()
         {
-            PrimitiveSizes = new HashMap<Type, int>(8);
-            PrimitiveSizes[typeof(bool)] = Convert.ToInt32(NUM_BYTES_BOOLEAN);
-            PrimitiveSizes[typeof(sbyte)] = Convert.ToInt32(NUM_BYTES_BYTE);
-            PrimitiveSizes[typeof(char)] = Convert.ToInt32(NUM_BYTES_CHAR);
-            PrimitiveSizes[typeof(short)] = Convert.ToInt32(NUM_BYTES_SHORT);
-            PrimitiveSizes[typeof(int)] = Convert.ToInt32(NUM_BYTES_INT);
-            PrimitiveSizes[typeof(float)] = Convert.ToInt32(NUM_BYTES_FLOAT);
-            PrimitiveSizes[typeof(double)] = Convert.ToInt32(NUM_BYTES_DOUBLE);
-            PrimitiveSizes[typeof(long)] = Convert.ToInt32(NUM_BYTES_LONG);
+            // LUCENENET TODO: Add sizes for the other primitive types
+            primitiveSizes = new HashMap<Type, int>(8);
+            primitiveSizes[typeof(bool)] = Convert.ToInt32(NUM_BYTES_BOOLEAN);
+            primitiveSizes[typeof(sbyte)] = Convert.ToInt32(NUM_BYTES_BYTE);
+            primitiveSizes[typeof(char)] = Convert.ToInt32(NUM_BYTES_CHAR);
+            primitiveSizes[typeof(short)] = Convert.ToInt32(NUM_BYTES_SHORT);
+            primitiveSizes[typeof(int)] = Convert.ToInt32(NUM_BYTES_INT);
+            primitiveSizes[typeof(float)] = Convert.ToInt32(NUM_BYTES_FLOAT);
+            primitiveSizes[typeof(double)] = Convert.ToInt32(NUM_BYTES_DOUBLE);
+            primitiveSizes[typeof(long)] = Convert.ToInt32(NUM_BYTES_LONG);
 
             // Initialize empirically measured defaults. We'll modify them to the current
             // JVM settings later on if possible.
@@ -388,7 +389,7 @@ namespace Lucene.Net.Util
             }
             if (clazz.GetTypeInfo().IsPrimitive)
             {
-                return PrimitiveSizes[clazz];
+                return primitiveSizes[clazz];
             }
 
             long size = NUM_BYTES_OBJECT_HEADER;
@@ -425,7 +426,7 @@ namespace Lucene.Net.Util
                 Type arrayElementClazz = array.GetType().GetElementType();
                 if (arrayElementClazz.GetTypeInfo().IsPrimitive)
                 {
-                    size += (long)len * PrimitiveSizes[arrayElementClazz];
+                    size += (long)len * primitiveSizes[arrayElementClazz];
                 }
                 else
                 {
@@ -478,7 +479,7 @@ namespace Lucene.Net.Util
                         Type componentClazz = obClazz.GetElementType();
                         if (componentClazz.GetTypeInfo().IsPrimitive)
                         {
-                            size += (long)len * PrimitiveSizes[componentClazz];
+                            size += (long)len * primitiveSizes[componentClazz];
                         }
                         else
                         {
@@ -584,7 +585,7 @@ namespace Lucene.Net.Util
         private static long AdjustForField(long sizeSoFar, FieldInfo f)
         {
             Type type = f.FieldType;
-            int fsize = type.GetTypeInfo().IsPrimitive ? PrimitiveSizes[type] : NUM_BYTES_OBJECT_REF;
+            int fsize = type.GetTypeInfo().IsPrimitive ? primitiveSizes[type] : NUM_BYTES_OBJECT_REF;
             /* LUCENE-TODO I dont think this will ever not be null
             if (ObjectFieldOffsetMethod != null)
             {

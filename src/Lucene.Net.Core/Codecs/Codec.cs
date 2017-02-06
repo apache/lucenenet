@@ -37,14 +37,14 @@ namespace Lucene.Net.Codecs
     /// <seealso cref= ServiceLoader </seealso>
     public abstract class Codec : NamedSPILoader.INamedSPI
     {
-        private static readonly NamedSPILoader<Codec> Loader;
+        private static readonly NamedSPILoader<Codec> loader;
 
         private readonly string name;
 
         static Codec()
         {
-            Loader = new NamedSPILoader<Codec>(typeof(Codec));
-            DefaultCodec = Codec.ForName("Lucene46");
+            loader = new NamedSPILoader<Codec>(typeof(Codec));
+            defaultCodec = Codec.ForName("Lucene46");
         }
 
         /// <summary>
@@ -106,23 +106,23 @@ namespace Lucene.Net.Codecs
         /// looks up a codec by name </summary>
         public static Codec ForName(string name)
         {
-            if (Loader == null)
+            if (loader == null)
             {
                 throw new InvalidOperationException("You called Codec.forName() before all Codecs could be initialized. " + "this likely happens if you call it from a Codec's ctor.");
             }
-            return Loader.Lookup(name);
+            return loader.Lookup(name);
         }
 
         /// <summary>
         /// returns a list of all available codec names </summary>
         public static ISet<string> AvailableCodecs()
         {
-            if (Loader == null)
+            if (loader == null)
             {
                 throw new InvalidOperationException("You called Codec.AvailableCodecs() before all Codecs could be initialized. " + 
                     "this likely happens if you call it from a Codec's ctor.");
             }
-            return Loader.AvailableServices();
+            return loader.AvailableServices();
         }
 
         /// <summary>
@@ -138,10 +138,10 @@ namespace Lucene.Net.Codecs
         /// </summary>
         public static void ReloadCodecs()
         {
-            Loader.Reload();
+            loader.Reload();
         }
 
-        private static Codec DefaultCodec;
+        private static Codec defaultCodec;
 
         /// <summary>
         /// expert: returns the default codec used for newly created
@@ -152,11 +152,11 @@ namespace Lucene.Net.Codecs
         {
             get
             {
-                return DefaultCodec;
+                return defaultCodec;
             }
             set
             {
-                DefaultCodec = value;
+                defaultCodec = value;
             }
         }
 

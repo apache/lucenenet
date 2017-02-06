@@ -51,7 +51,7 @@ namespace Lucene.Net.Util.Packed
 
         public abstract int LongBlockCount { get; } // LUCENENET TODO: Rename Int64BlockCount ?
 
-        private static readonly BulkOperation[] PackedBulkOps = new BulkOperation[] {
+        private static readonly BulkOperation[] packedBulkOps = new BulkOperation[] {
             new BulkOperationPacked1(),
             new BulkOperationPacked2(),
             new BulkOperationPacked3(),
@@ -119,7 +119,7 @@ namespace Lucene.Net.Util.Packed
         };
 
         // NOTE: this is sparse (some entries are null):
-        private static readonly BulkOperation[] PackedSingleBlockBulkOps = new BulkOperation[] {
+        private static readonly BulkOperation[] packedSingleBlockBulkOps = new BulkOperation[] {
             new BulkOperationPackedSingleBlock(1),
             new BulkOperationPackedSingleBlock(2),
             new BulkOperationPackedSingleBlock(3),
@@ -158,13 +158,13 @@ namespace Lucene.Net.Util.Packed
         {
             if (format == PackedInts.Format.PACKED)
             {
-                Debug.Assert(PackedBulkOps[bitsPerValue - 1] != null);
-                return PackedBulkOps[bitsPerValue - 1];
+                Debug.Assert(packedBulkOps[bitsPerValue - 1] != null);
+                return packedBulkOps[bitsPerValue - 1];
             }
             else if (format == PackedInts.Format.PACKED_SINGLE_BLOCK)
             {
-                Debug.Assert(PackedSingleBlockBulkOps[bitsPerValue - 1] != null);
-                return PackedSingleBlockBulkOps[bitsPerValue - 1];
+                Debug.Assert(packedSingleBlockBulkOps[bitsPerValue - 1] != null);
+                return packedSingleBlockBulkOps[bitsPerValue - 1];
             }
             else
             {

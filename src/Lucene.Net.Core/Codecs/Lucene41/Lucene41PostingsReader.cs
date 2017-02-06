@@ -505,7 +505,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     if (skipper == null)
                     {
                         // Lazy init: first time this enum has ever been used for skipping
-                        skipper = new Lucene41SkipReader((IndexInput)docIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, indexHasPos, indexHasOffsets, indexHasPayloads);
+                        skipper = new Lucene41SkipReader((IndexInput)docIn.Clone(), Lucene41PostingsWriter.maxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, indexHasPos, indexHasOffsets, indexHasPayloads);
                     }
 
                     if (!skipped)
@@ -873,7 +873,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("    create skipper");
                         // }
-                        skipper = new Lucene41SkipReader((IndexInput)docIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, indexHasOffsets, indexHasPayloads);
+                        skipper = new Lucene41SkipReader((IndexInput)docIn.Clone(), Lucene41PostingsWriter.maxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, indexHasOffsets, indexHasPayloads);
                     }
 
                     if (!skipped)
@@ -1458,7 +1458,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("    create skipper");
                         // }
-                        skipper = new Lucene41SkipReader((IndexInput)docIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, indexHasOffsets, indexHasPayloads);
+                        skipper = new Lucene41SkipReader((IndexInput)docIn.Clone(), Lucene41PostingsWriter.maxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, indexHasOffsets, indexHasPayloads);
                     }
 
                     if (!skipped)

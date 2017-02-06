@@ -44,8 +44,8 @@ namespace Lucene.Net.Util.Automaton
                 if (state < 2)
                 {
                     int loc = vector * 2 + state;
-                    offset += Unpack(OffsetIncrs0, loc, 1);
-                    state = Unpack(ToStates0, loc, 2) - 1;
+                    offset += Unpack(offsetIncrs0, loc, 1);
+                    state = Unpack(toStates0, loc, 2) - 1;
                 }
             }
             else if (position == m_w - 1)
@@ -53,8 +53,8 @@ namespace Lucene.Net.Util.Automaton
                 if (state < 3)
                 {
                     int loc = vector * 3 + state;
-                    offset += Unpack(OffsetIncrs1, loc, 1);
-                    state = Unpack(ToStates1, loc, 2) - 1;
+                    offset += Unpack(offsetIncrs1, loc, 1);
+                    state = Unpack(toStates1, loc, 2) - 1;
                 }
             }
             else if (position == m_w - 2)
@@ -62,8 +62,8 @@ namespace Lucene.Net.Util.Automaton
                 if (state < 5)
                 {
                     int loc = vector * 5 + state;
-                    offset += Unpack(OffsetIncrs2, loc, 2);
-                    state = Unpack(ToStates2, loc, 3) - 1;
+                    offset += Unpack(offsetIncrs2, loc, 2);
+                    state = Unpack(toStates2, loc, 3) - 1;
                 }
             }
             else
@@ -71,8 +71,8 @@ namespace Lucene.Net.Util.Automaton
                 if (state < 5)
                 {
                     int loc = vector * 5 + state;
-                    offset += Unpack(OffsetIncrs3, loc, 2);
-                    state = Unpack(ToStates3, loc, 3) - 1;
+                    offset += Unpack(offsetIncrs3, loc, 2);
+                    state = Unpack(toStates3, loc, 3) - 1;
                 }
             }
 
@@ -89,24 +89,24 @@ namespace Lucene.Net.Util.Automaton
         }
 
         // 1 vectors; 2 states per vector; array length = 2
-        private static readonly long[] ToStates0 = new long[] { 0x2L }; //2 bits per value
+        private static readonly long[] toStates0 = new long[] { 0x2L }; //2 bits per value
 
-        private static readonly long[] OffsetIncrs0 = new long[] { 0x0L }; //1 bits per value
+        private static readonly long[] offsetIncrs0 = new long[] { 0x0L }; //1 bits per value
 
         // 2 vectors; 3 states per vector; array length = 6
-        private static readonly long[] ToStates1 = new long[] { 0xa43L }; //2 bits per value
+        private static readonly long[] toStates1 = new long[] { 0xa43L }; //2 bits per value
 
-        private static readonly long[] OffsetIncrs1 = new long[] { 0x38L }; //1 bits per value
+        private static readonly long[] offsetIncrs1 = new long[] { 0x38L }; //1 bits per value
 
         // 4 vectors; 5 states per vector; array length = 20
-        private static readonly long[] ToStates2 = new long[] { 0x69a292450428003L }; //3 bits per value
+        private static readonly long[] toStates2 = new long[] { 0x69a292450428003L }; //3 bits per value
 
-        private static readonly long[] OffsetIncrs2 = new long[] { 0x5555588000L }; //2 bits per value
+        private static readonly long[] offsetIncrs2 = new long[] { 0x5555588000L }; //2 bits per value
 
         // 8 vectors; 5 states per vector; array length = 40
-        private static readonly long[] ToStates3 = new long[] { 0x1690a82152018003L, 0xb1a2d346448a49L }; //3 bits per value
+        private static readonly long[] toStates3 = new long[] { 0x1690a82152018003L, 0xb1a2d346448a49L }; //3 bits per value
 
-        private static readonly long[] OffsetIncrs3 = new long[] { 0x555555b8220f0000L, 0x5555L }; //2 bits per value
+        private static readonly long[] offsetIncrs3 = new long[] { 0x555555b8220f0000L, 0x5555L }; //2 bits per value
 
         // state map
         //   0 -> [(0, 0)]

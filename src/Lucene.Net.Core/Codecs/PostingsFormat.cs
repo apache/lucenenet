@@ -41,7 +41,7 @@ namespace Lucene.Net.Codecs
     /// @lucene.experimental  </seealso>
     public abstract class PostingsFormat : NamedSPILoader.INamedSPI
     {
-        private static readonly NamedSPILoader<PostingsFormat> Loader = new NamedSPILoader<PostingsFormat>(typeof(PostingsFormat));
+        private static readonly NamedSPILoader<PostingsFormat> loader = new NamedSPILoader<PostingsFormat>(typeof(PostingsFormat));
 
         /// <summary>
         /// Zero-length {@code PostingsFormat} array. </summary>
@@ -103,22 +103,22 @@ namespace Lucene.Net.Codecs
         /// looks up a format by name </summary>
         public static PostingsFormat ForName(string name)
         {
-            if (Loader == null)
+            if (loader == null)
             {
                 throw new InvalidOperationException("You called PostingsFormat.forName() before all formats could be initialized. " + "this likely happens if you call it from a PostingsFormat's ctor.");
             }
-            return Loader.Lookup(name);
+            return loader.Lookup(name);
         }
 
         /// <summary>
         /// returns a list of all available format names </summary>
         public static ISet<string> AvailablePostingsFormats()
         {
-            if (Loader == null)
+            if (loader == null)
             {
                 throw new InvalidOperationException("You called PostingsFormat.availablePostingsFormats() before all formats could be initialized. " + "this likely happens if you call it from a PostingsFormat's ctor.");
             }
-            return Loader.AvailableServices();
+            return loader.AvailableServices();
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs
         /// </summary>
         public static void ReloadPostingsFormats()
         {
-            Loader.Reload();
+            loader.Reload();
         }
     }
 }

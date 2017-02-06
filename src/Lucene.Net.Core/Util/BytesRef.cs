@@ -297,16 +297,16 @@ namespace Lucene.Net.Util
         {
             BytesRef br = other as BytesRef;
             Debug.Assert(br != null);
-            return Utf8SortedAsUnicodeSortOrder.Compare(this, br);
+            return utf8SortedAsUnicodeSortOrder.Compare(this, br);
         }
 
-        private static readonly IComparer<BytesRef> Utf8SortedAsUnicodeSortOrder = Utf8SortedAsUnicodeComparer.Instance;
+        private static readonly IComparer<BytesRef> utf8SortedAsUnicodeSortOrder = Utf8SortedAsUnicodeComparer.Instance;
 
         public static IComparer<BytesRef> UTF8SortedAsUnicodeComparer
         {
             get
             {
-                return Utf8SortedAsUnicodeSortOrder;
+                return utf8SortedAsUnicodeSortOrder;
             }
         }
 
@@ -314,7 +314,7 @@ namespace Lucene.Net.Util
 
         /// @deprecated this comparer is only a transition mechanism
         [Obsolete("this comparer is only a transition mechanism")]
-        private static readonly IComparer<BytesRef> Utf8SortedAsUTF16SortOrder = new Utf8SortedAsUtf16Comparer();
+        private static readonly IComparer<BytesRef> utf8SortedAsUTF16SortOrder = new Utf8SortedAsUtf16Comparer();
 
         /// @deprecated this comparer is only a transition mechanism
         [Obsolete("this comparer is only a transition mechanism")]
@@ -322,7 +322,7 @@ namespace Lucene.Net.Util
         {
             get
             {
-                return Utf8SortedAsUTF16SortOrder;
+                return utf8SortedAsUTF16SortOrder;
             }
         }
 

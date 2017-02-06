@@ -162,13 +162,13 @@ namespace Lucene.Net.Util
             return other <= instance;
         }
 
-        private static Regex NumericVersion = new Regex("^(\\d)\\.(\\d)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static Regex NUMERIC_VERSION = new Regex("^(\\d)\\.(\\d)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         public static LuceneVersion ParseLeniently(string version)
         {
             string parsedMatchVersion = version.ToUpperInvariant();
             LuceneVersion result;
-            Enum.TryParse(NumericVersion.Replace(parsedMatchVersion, "LUCENE_$1$2", 1), out result);
+            Enum.TryParse(NUMERIC_VERSION.Replace(parsedMatchVersion, "LUCENE_$1$2", 1), out result);
             return result;
         }
     }

@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// Expert: The maximum number of skip levels. Smaller values result in
         /// slightly smaller indexes, but slower skipping in big posting lists.
         /// </summary>
-        internal const int MaxSkipLevels = 10;
+        internal const int maxSkipLevels = 10;
 
         internal const string TERMS_CODEC = "Lucene41PostingsWriterTerms";
         internal const string DOC_CODEC = "Lucene41PostingsWriterDoc";
@@ -181,7 +181,7 @@ namespace Lucene.Net.Codecs.Lucene41
             freqBuffer = new int[ForUtil.MAX_DATA_SIZE];
 
             // TODO: should we try skipping every 2/4 blocks...?
-            skipWriter = new Lucene41SkipWriter(MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, state.SegmentInfo.DocCount, docOut, posOut, payOut);
+            skipWriter = new Lucene41SkipWriter(maxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, state.SegmentInfo.DocCount, docOut, posOut, payOut);
 
             encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
         }

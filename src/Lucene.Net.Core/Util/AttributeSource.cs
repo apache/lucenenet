@@ -56,8 +56,8 @@ namespace Lucene.Net.Util
             private sealed class DefaultAttributeFactory : AttributeFactory
             {
                 //LUCENE TO-DO
-                //internal static readonly WeakIdentityMap<Type, WeakReference> AttClassImplMap = new WeakIdentityMap<Type, WeakReference>();
-                internal static readonly WeakDictionary<Type, WeakReference> AttClassImplMap = new WeakDictionary<Type, WeakReference>();
+                //internal static readonly WeakIdentityMap<Type, WeakReference> attClassImplMap = new WeakIdentityMap<Type, WeakReference>();
+                internal static readonly WeakDictionary<Type, WeakReference> attClassImplMap = new WeakDictionary<Type, WeakReference>();
 
                 internal DefaultAttributeFactory()
                 {
@@ -79,7 +79,7 @@ namespace Lucene.Net.Util
                 {
                     var attClass = typeof(T);
                     WeakReference @ref;
-                    AttClassImplMap.TryGetValue(attClass, out @ref);
+                    attClassImplMap.TryGetValue(attClass, out @ref);
                     Type clazz = (@ref == null) ? null : (Type)@ref.Target;
                     if (clazz == null)
                     {
@@ -87,7 +87,7 @@ namespace Lucene.Net.Util
                         try
                         {
                             string name = attClass.FullName.Replace(attClass.Name, attClass.Name.Substring(1)) + ", " + attClass.GetTypeInfo().Assembly.FullName;
-                            AttClassImplMap.Add(attClass, new WeakReference(clazz = Type.GetType(name, true)));
+                            attClassImplMap.Add(attClass, new WeakReference(clazz = Type.GetType(name, true)));
                         }
                         catch (Exception)
                         {
@@ -257,14 +257,14 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// a cache that stores all interfaces for known implementation classes for performance (slow reflection) </summary>
-        private static readonly WeakDictionary<Type, LinkedList<WeakReference>> KnownImplClasses = new WeakDictionary<Type, LinkedList<WeakReference>>();
+        private static readonly WeakDictionary<Type, LinkedList<WeakReference>> knownImplClasses = new WeakDictionary<Type, LinkedList<WeakReference>>();
 
         internal static LinkedList<WeakReference> GetAttributeInterfaces(Type clazz)
         {
             LinkedList<WeakReference> foundInterfaces;
-            lock (KnownImplClasses)
+            lock (knownImplClasses)
             {
-                KnownImplClasses.TryGetValue(clazz, out foundInterfaces);
+                knownImplClasses.TryGetValue(clazz, out foundInterfaces);
                 if (foundInterfaces == null)
                 {
                     // we have the slight chance that another thread may do the same, but who cares?
@@ -283,7 +283,7 @@ namespace Lucene.Net.Util
                         }
                         actClazz = actClazz.GetTypeInfo().BaseType;
                     } while (actClazz != null);
-                    KnownImplClasses[clazz] = foundInterfaces;
+                    knownImplClasses[clazz] = foundInterfaces;
                 }
             }
             return foundInterfaces;

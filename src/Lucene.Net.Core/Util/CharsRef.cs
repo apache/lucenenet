@@ -295,7 +295,7 @@ namespace Lucene.Net.Util
 
         /// @deprecated this comparer is only a transition mechanism
         [Obsolete("this comparer is only a transition mechanism")]
-        private static readonly IComparer<CharsRef> Utf16SortedAsUTF8SortOrder = new Utf16SortedAsUTF8Comparer();
+        private static readonly IComparer<CharsRef> utf16SortedAsUTF8SortOrder = new Utf16SortedAsUTF8Comparer();
 
         /// @deprecated this comparer is only a transition mechanism
         [Obsolete("this comparer is only a transition mechanism")]
@@ -303,7 +303,7 @@ namespace Lucene.Net.Util
         {
             get
             {
-                return Utf16SortedAsUTF8SortOrder;
+                return utf16SortedAsUTF8SortOrder;
             }
         }
 

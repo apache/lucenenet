@@ -86,8 +86,8 @@ namespace Lucene.Net.Util
             // Making sure index is within tables range.
             // Last value of each table is the same than first, so we ignore it (tabs size minus one) for modulo.
             index &= (SIN_COS_TABS_SIZE - 2); // index % (SIN_COS_TABS_SIZE-1)
-            double indexCos = CosTab[index];
-            double indexSin = SinTab[index];
+            double indexCos = cosTab[index];
+            double indexSin = sinTab[index];
             return indexCos + delta * (-indexSin + delta * (-indexCos * ONE_DIV_F2 + delta * (indexSin * ONE_DIV_F3 + delta * indexCos * ONE_DIV_F4)));
         }
 
@@ -124,7 +124,7 @@ namespace Lucene.Net.Util
             {
                 int index = (int)(a * ASIN_INDEXER + 0.5);
                 double delta = a - index * ASIN_DELTA;
-                double result = AsinTab[index] + delta * (AsinDer1DivF1Tab[index] + delta * (AsinDer2DivF2Tab[index] + delta * (AsinDer3DivF3Tab[index] + delta * AsinDer4DivF4Tab[index])));
+                double result = asinTab[index] + delta * (asinDer1DivF1Tab[index] + delta * (asinDer2DivF2Tab[index] + delta * (asinDer3DivF3Tab[index] + delta * asinDer4DivF4Tab[index])));
                 return negateResult ? -result : result;
             } // value > ASIN_MAX_VALUE_FOR_TABS, or value is NaN
             else
@@ -160,8 +160,8 @@ namespace Lucene.Net.Util
         {
             if(double.IsNaN(latitude)) 
                 return double.NaN;
-            int index = (int)(Math.Abs(latitude) * RADIUS_INDEXER + 0.5) % EarthDiameterPerLatitude.Length;
-            return EarthDiameterPerLatitude[index];
+            int index = (int)(Math.Abs(latitude) * RADIUS_INDEXER + 0.5) % earthDiameterPerLatitude.Length;
+            return earthDiameterPerLatitude[index];
         }
 
         // haversin
@@ -181,8 +181,8 @@ namespace Lucene.Net.Util
         private static readonly double SIN_COS_DELTA_HI = TWOPI_HI / (SIN_COS_TABS_SIZE - 1);
         private static readonly double SIN_COS_DELTA_LO = TWOPI_LO / (SIN_COS_TABS_SIZE - 1);
         private static readonly double SIN_COS_INDEXER = 1 / (SIN_COS_DELTA_HI + SIN_COS_DELTA_LO);
-        private static readonly double[] SinTab = new double[SIN_COS_TABS_SIZE];
-        private static readonly double[] CosTab = new double[SIN_COS_TABS_SIZE];
+        private static readonly double[] sinTab = new double[SIN_COS_TABS_SIZE];
+        private static readonly double[] cosTab = new double[SIN_COS_TABS_SIZE];
 
         // Max abs value for fast modulo, above which we use regular angle normalization.
         // this value must be < (Integer.MAX_VALUE / SIN_COS_INDEXER), to stay in range of int type.
@@ -197,11 +197,11 @@ namespace Lucene.Net.Util
         private static readonly int ASIN_TABS_SIZE = (1 << 13) + 1;
         private static readonly double ASIN_DELTA = ASIN_MAX_VALUE_FOR_TABS / (ASIN_TABS_SIZE - 1);
         private static readonly double ASIN_INDEXER = 1 / ASIN_DELTA;
-        private static readonly double[] AsinTab = new double[ASIN_TABS_SIZE];
-        private static readonly double[] AsinDer1DivF1Tab = new double[ASIN_TABS_SIZE];
-        private static readonly double[] AsinDer2DivF2Tab = new double[ASIN_TABS_SIZE];
-        private static readonly double[] AsinDer3DivF3Tab = new double[ASIN_TABS_SIZE];
-        private static readonly double[] AsinDer4DivF4Tab = new double[ASIN_TABS_SIZE];
+        private static readonly double[] asinTab = new double[ASIN_TABS_SIZE];
+        private static readonly double[] asinDer1DivF1Tab = new double[ASIN_TABS_SIZE];
+        private static readonly double[] asinDer2DivF2Tab = new double[ASIN_TABS_SIZE];
+        private static readonly double[] asinDer3DivF3Tab = new double[ASIN_TABS_SIZE];
+        private static readonly double[] asinDer4DivF4Tab = new double[ASIN_TABS_SIZE];
 
         private static readonly double ASIN_PIO2_HI = BitConverter.Int64BitsToDouble(0x3FF921FB54442D18L); // 1.57079632679489655800e+00
         private static readonly double ASIN_PIO2_LO = BitConverter.Int64BitsToDouble(0x3C91A62633145C07L); // 6.12323399573676603587e-17
@@ -219,7 +219,7 @@ namespace Lucene.Net.Util
         private static readonly int RADIUS_TABS_SIZE = (1 << 10) + 1;
         private static readonly double RADIUS_DELTA = (Math.PI / 2d) / (RADIUS_TABS_SIZE - 1);
         private static readonly double RADIUS_INDEXER = 1d / RADIUS_DELTA;
-        private static readonly double[] EarthDiameterPerLatitude = new double[RADIUS_TABS_SIZE];
+        private static readonly double[] earthDiameterPerLatitude = new double[RADIUS_TABS_SIZE];
 
         /// <summary>
         /// Initializes look-up tables. </summary>
@@ -254,8 +254,8 @@ namespace Lucene.Net.Util
                 {
                     cosAngle = 0.0;
                 }
-                SinTab[i] = sinAngle;
-                CosTab[i] = cosAngle;
+                sinTab[i] = sinAngle;
+                cosTab[i] = cosAngle;
             }
 
             // asin
@@ -263,16 +263,16 @@ namespace Lucene.Net.Util
             {
                 // x: in [0,ASIN_MAX_VALUE_FOR_TABS].
                 double x = i * ASIN_DELTA;
-                AsinTab[i] = Math.Asin(x);
+                asinTab[i] = Math.Asin(x);
                 double oneMinusXSqInv = 1.0 / (1 - x * x);
                 double oneMinusXSqInv0_5 = Math.Sqrt(oneMinusXSqInv);
                 double oneMinusXSqInv1_5 = oneMinusXSqInv0_5 * oneMinusXSqInv;
                 double oneMinusXSqInv2_5 = oneMinusXSqInv1_5 * oneMinusXSqInv;
                 double oneMinusXSqInv3_5 = oneMinusXSqInv2_5 * oneMinusXSqInv;
-                AsinDer1DivF1Tab[i] = oneMinusXSqInv0_5;
-                AsinDer2DivF2Tab[i] = (x * oneMinusXSqInv1_5) * ONE_DIV_F2;
-                AsinDer3DivF3Tab[i] = ((1 + 2 * x * x) * oneMinusXSqInv2_5) * ONE_DIV_F3;
-                AsinDer4DivF4Tab[i] = ((5 + 2 * x * (2 + x * (5 - 2 * x))) * oneMinusXSqInv3_5) * ONE_DIV_F4;
+                asinDer1DivF1Tab[i] = oneMinusXSqInv0_5;
+                asinDer2DivF2Tab[i] = (x * oneMinusXSqInv1_5) * ONE_DIV_F2;
+                asinDer3DivF3Tab[i] = ((1 + 2 * x * x) * oneMinusXSqInv2_5) * ONE_DIV_F3;
+                asinDer4DivF4Tab[i] = ((5 + 2 * x * (2 + x * (5 - 2 * x))) * oneMinusXSqInv3_5) * ONE_DIV_F4;
             }
 
             // WGS84 earth-ellipsoid major (a) and minor (b) radius
@@ -281,8 +281,8 @@ namespace Lucene.Net.Util
             double a2 = a * a;
             double b2 = b * b;
 
-            EarthDiameterPerLatitude[0] = 2 * a / 1000d;
-            EarthDiameterPerLatitude[RADIUS_TABS_SIZE - 1] = 2 * b / 1000d;
+            earthDiameterPerLatitude[0] = 2 * a / 1000d;
+            earthDiameterPerLatitude[RADIUS_TABS_SIZE - 1] = 2 * b / 1000d;
             // earth radius
             for (int i = 1; i < RADIUS_TABS_SIZE - 1; i++)
             {
@@ -293,7 +293,7 @@ namespace Lucene.Net.Util
                 double four = Math.Pow(b * Math.Sin(lat), 2);
 
                 double radius = Math.Sqrt((one + two) / (three + four));
-                EarthDiameterPerLatitude[i] = 2 * radius / 1000d;
+                earthDiameterPerLatitude[i] = 2 * radius / 1000d;
             }
         }
     }

@@ -181,7 +181,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static string MainVersionWithoutAlphaBeta()
         {
-            string[] parts = MainVersionWithoutAlphaBetaRegex.Split(LUCENE_MAIN_VERSION);
+            string[] parts = MAIN_VERSION_WITHOUT_ALPHA_BETA.Split(LUCENE_MAIN_VERSION);
             if (parts.Length == 4 && "0".Equals(parts[2]))
             {
                 return parts[0] + "." + parts[1];
@@ -189,7 +189,7 @@ namespace Lucene.Net.Util
             return LUCENE_MAIN_VERSION;
         }
 
-        private static Regex MainVersionWithoutAlphaBetaRegex = new Regex("\\.", RegexOptions.Compiled);
+        private static Regex MAIN_VERSION_WITHOUT_ALPHA_BETA = new Regex("\\.", RegexOptions.Compiled);
 
         #region MEDIUM-TRUST Support
 
