@@ -263,12 +263,9 @@ namespace Lucene.Net.Collation
 			}
 		}
 
-		public virtual AbstractAnalysisFactory MultiTermComponent
-		{
-			get
-			{
-				return this;
-			}
+		public virtual AbstractAnalysisFactory GetMultiTermComponent()
+        {
+			return this;
 		}
 
 		private static string ToUTF8String(Stream @in)

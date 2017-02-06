@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Core
                 // if it implements MultiTermAware, sanity check its impl
                 if (factory is IMultiTermAwareComponent)
                 {
-                    AbstractAnalysisFactory mtc = ((IMultiTermAwareComponent)factory).MultiTermComponent;
+                    AbstractAnalysisFactory mtc = ((IMultiTermAwareComponent)factory).GetMultiTermComponent();
                     assertNotNull(mtc);
                     // its not ok to return e.g. a charfilter here: but a tokenizer could wrap a filter around it
                     assertFalse(mtc is CharFilterFactory);
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Core
                 // if it implements MultiTermAware, sanity check its impl
                 if (factory is IMultiTermAwareComponent)
                 {
-                    AbstractAnalysisFactory mtc = ((IMultiTermAwareComponent)factory).MultiTermComponent;
+                    AbstractAnalysisFactory mtc = ((IMultiTermAwareComponent)factory).GetMultiTermComponent();
                     assertNotNull(mtc);
                     // its not ok to return a charfilter or tokenizer here, this makes no sense
                     assertTrue(mtc is TokenFilterFactory);
@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis.Core
                 // if it implements MultiTermAware, sanity check its impl
                 if (factory is IMultiTermAwareComponent)
                 {
-                    AbstractAnalysisFactory mtc = ((IMultiTermAwareComponent)factory).MultiTermComponent;
+                    AbstractAnalysisFactory mtc = ((IMultiTermAwareComponent)factory).GetMultiTermComponent();
                     assertNotNull(mtc);
                     // its not ok to return a tokenizer or tokenfilter here, this makes no sense
                     assertTrue(mtc is CharFilterFactory);

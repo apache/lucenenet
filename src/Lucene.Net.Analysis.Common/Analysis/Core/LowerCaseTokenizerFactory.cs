@@ -51,12 +51,9 @@ namespace Lucene.Net.Analysis.Core
             return new LowerCaseTokenizer(m_luceneMatchVersion, factory, input);
         }
 
-        public virtual AbstractAnalysisFactory MultiTermComponent
+        public virtual AbstractAnalysisFactory GetMultiTermComponent()
         {
-            get
-            {
-                return new LowerCaseFilterFactory(new Dictionary<string, string>(OriginalArgs));
-            }
+            return new LowerCaseFilterFactory(new Dictionary<string, string>(OriginalArgs));
         }
     }
 }

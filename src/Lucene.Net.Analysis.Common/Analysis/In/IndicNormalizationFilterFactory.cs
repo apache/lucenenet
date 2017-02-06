@@ -47,12 +47,9 @@ namespace Lucene.Net.Analysis.In
             return new IndicNormalizationFilter(input);
         }
 
-        public virtual AbstractAnalysisFactory MultiTermComponent
+        public virtual AbstractAnalysisFactory GetMultiTermComponent()
         {
-            get
-            {
-                return this;
-            }
+            return this;
         }
     }
 }

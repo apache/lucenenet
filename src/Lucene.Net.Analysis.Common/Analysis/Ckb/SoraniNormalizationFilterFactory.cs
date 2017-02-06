@@ -49,12 +49,9 @@ namespace Lucene.Net.Analysis.Ckb
             return new SoraniNormalizationFilter(input);
         }
 
-        public virtual AbstractAnalysisFactory MultiTermComponent
+        public virtual AbstractAnalysisFactory GetMultiTermComponent()
         {
-            get
-            {
-                return this;
-            }
+            return this;
         }
     }
 }

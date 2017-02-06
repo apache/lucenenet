@@ -163,12 +163,9 @@ namespace Lucene.Net.Analysis.CharFilters
             return new string(@out, 0, writePos);
         }
 
-        public virtual AbstractAnalysisFactory MultiTermComponent
+        public virtual AbstractAnalysisFactory GetMultiTermComponent()
         {
-            get
-            {
-                return this;
-            }
+            return this;
         }
     }
 }

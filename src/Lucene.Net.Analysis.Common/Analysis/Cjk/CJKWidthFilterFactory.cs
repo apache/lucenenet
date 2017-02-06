@@ -50,12 +50,9 @@ namespace Lucene.Net.Analysis.Cjk
             return new CJKWidthFilter(input);
         }
 
-        public virtual AbstractAnalysisFactory MultiTermComponent
+        public virtual AbstractAnalysisFactory GetMultiTermComponent()
         {
-            get
-            {
-                return this;
-            }
+            return this;
         }
     }
 }

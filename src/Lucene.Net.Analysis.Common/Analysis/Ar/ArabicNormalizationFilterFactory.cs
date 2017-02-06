@@ -50,12 +50,9 @@ namespace Lucene.Net.Analysis.Ar
             return new ArabicNormalizationFilter(input);
         }
 
-        public virtual AbstractAnalysisFactory MultiTermComponent
+        public virtual AbstractAnalysisFactory GetMultiTermComponent()
         {
-            get
-            {
-                return this;
-            }
+            return this;
         }
     }
 }

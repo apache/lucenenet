@@ -48,12 +48,9 @@ namespace Lucene.Net.Analysis.Ga
         }
 
         // this will 'mostly work', except for special cases, just like most other filters
-        public virtual AbstractAnalysisFactory MultiTermComponent
+        public virtual AbstractAnalysisFactory GetMultiTermComponent()
         {
-            get
-            {
-                return this;
-            }
+            return this;
         }
     }
 }

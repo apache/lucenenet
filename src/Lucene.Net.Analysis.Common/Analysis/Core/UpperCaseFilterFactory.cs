@@ -56,12 +56,9 @@ namespace Lucene.Net.Analysis.Core
             return new UpperCaseFilter(m_luceneMatchVersion, input);
         }
 
-        public virtual AbstractAnalysisFactory MultiTermComponent
+        public virtual AbstractAnalysisFactory GetMultiTermComponent()
         {
-            get
-            {
-                return this;
-            }
+            return this;
         }
     }
 }

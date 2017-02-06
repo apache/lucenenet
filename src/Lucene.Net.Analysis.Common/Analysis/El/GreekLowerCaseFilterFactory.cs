@@ -48,12 +48,9 @@ namespace Lucene.Net.Analysis.El
             return new GreekLowerCaseFilter(m_luceneMatchVersion, @in);
         }
 
-        public virtual AbstractAnalysisFactory MultiTermComponent
+        public virtual AbstractAnalysisFactory GetMultiTermComponent()
         {
-            get
-            {
-                return this;
-            }
+            return this;
         }
     }
 }

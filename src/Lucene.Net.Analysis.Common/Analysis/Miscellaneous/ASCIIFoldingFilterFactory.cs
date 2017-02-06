@@ -51,9 +51,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
             return new ASCIIFoldingFilter(input, preserveOriginal);
         }
 
-        public virtual AbstractAnalysisFactory MultiTermComponent
+        public virtual AbstractAnalysisFactory GetMultiTermComponent()
         {
-            get { return this; }
+            return this;
         }
     }
 }

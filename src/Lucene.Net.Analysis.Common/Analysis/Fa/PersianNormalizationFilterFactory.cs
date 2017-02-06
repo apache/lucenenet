@@ -48,12 +48,9 @@ namespace Lucene.Net.Analysis.Fa
             return new PersianNormalizationFilter(input);
         }
 
-        public virtual AbstractAnalysisFactory MultiTermComponent
+        public virtual AbstractAnalysisFactory GetMultiTermComponent()
         {
-            get
-            {
-                return this;
-            }
+            return this;
         }
     }
 }
