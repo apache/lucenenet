@@ -21,7 +21,7 @@ namespace Lucene.Net
         [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
         public override void TestPrivateFieldNames(Type typeFromTargetAssembly)
         {
-            base.TestPrivateFieldNames(typeFromTargetAssembly);
+            base.TestPrivateFieldNames(typeFromTargetAssembly, @"^Lucene\.Net\.Support\.(?:LurchTable|HashUtilities|ThreadClass\.This|C5)");
         }
 
         [Test, LuceneNetSpecific]
