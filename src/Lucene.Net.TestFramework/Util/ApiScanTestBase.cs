@@ -348,7 +348,7 @@ namespace Lucene.Net.Util
 
             foreach (var c in classes)
             {
-                var fields = c.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                var fields = c.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
 
                 foreach (var field in fields)
                 {
@@ -365,7 +365,8 @@ namespace Lucene.Net.Util
                     if ((field.IsPrivate || field.IsAssembly) && !PrivateFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
                         var name = string.Concat(c.FullName, ".", field.Name);
-                        if (!string.IsNullOrWhiteSpace(exceptionRegex) && !Regex.IsMatch(name, exceptionRegex))
+                        bool hasExceptions = !string.IsNullOrWhiteSpace(exceptionRegex);
+                        if (!hasExceptions || (hasExceptions && !Regex.IsMatch(name, exceptionRegex)))
                         {
                             result.Add(name);
                         }
