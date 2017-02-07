@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 SimpleTextUtil.ReadLine(input, scratch);
                 Debug.Assert(StringHelper.StartsWith(scratch, SIZE));
-                var size = ParseIntAt(scratch, SIZE.Length, scratchUtf16);
+                var size = ParseInt32At(scratch, SIZE.Length, scratchUtf16);
 
                 var bits = new BitArray(size);
 
@@ -89,7 +89,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 while (!scratch.Equals(END))
                 {
                     Debug.Assert(StringHelper.StartsWith(scratch, DOC));
-                    var docid = ParseIntAt(scratch, DOC.Length, scratchUtf16);
+                    var docid = ParseInt32At(scratch, DOC.Length, scratchUtf16);
                     bits.SafeSet(docid, true);
                     SimpleTextUtil.ReadLine(input, scratch);
                 }
@@ -112,7 +112,10 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private int ParseIntAt(BytesRef bytes, int offset, CharsRef scratch) // LUCENENET TODO: Rename ParseInt32At ?
+        /// <summary>
+        /// NOTE: This was parseIntAt() in Lucene
+        /// </summary>
+        private int ParseInt32At(BytesRef bytes, int offset, CharsRef scratch)
         {
             UnicodeUtil.UTF8toUTF16(bytes.Bytes, bytes.Offset + offset, bytes.Length - offset, scratch);
             return ArrayUtil.ParseInt32(scratch.Chars, 0, scratch.Length);

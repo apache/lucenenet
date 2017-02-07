@@ -97,9 +97,13 @@ namespace Lucene.Net.Codecs.Pulsing
         internal class PulsingTermState : BlockTermState
         {
             internal bool Absolute { get; set; }
+
+            /// <summary>
+            /// NOTE: This was longs (field) in Lucene
+            /// </summary>
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-            internal long[] Longs { get; set; }
+            internal long[] Int64s { get; set; }
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             internal byte[] Postings { get; set; }
@@ -120,10 +124,10 @@ namespace Lucene.Net.Codecs.Pulsing
                     clone.WrappedTermState = (BlockTermState)WrappedTermState.Clone();
                     clone.Absolute = Absolute;
 
-                    if (Longs == null) return clone;
+                    if (Int64s == null) return clone;
 
-                    clone.Longs = new long[Longs.Length];
-                    Array.Copy(Longs, 0, clone.Longs, 0, Longs.Length);
+                    clone.Int64s = new long[Int64s.Length];
+                    Array.Copy(Int64s, 0, clone.Int64s, 0, Int64s.Length);
                 }
                 return clone;
             }
@@ -196,18 +200,18 @@ namespace Lucene.Net.Codecs.Pulsing
             else
             {
                 var longsSize = _fields == null ? 0 : _fields[fieldInfo.Number];
-                if (termState2.Longs == null)
+                if (termState2.Int64s == null)
                 {
-                    termState2.Longs = new long[longsSize];
+                    termState2.Int64s = new long[longsSize];
                 }
                 for (var i = 0; i < longsSize; i++)
                 {
-                    termState2.Longs[i] = input.ReadVInt64();
+                    termState2.Int64s[i] = input.ReadVInt64();
                 }
                 termState2.PostingsSize = -1;
                 termState2.WrappedTermState.DocFreq = termState2.DocFreq;
                 termState2.WrappedTermState.TotalTermFreq = termState2.TotalTermFreq;
-                _wrappedPostingsReader.DecodeTerm(termState2.Longs, input, fieldInfo,
+                _wrappedPostingsReader.DecodeTerm(termState2.Int64s, input, fieldInfo,
                     termState2.WrappedTermState,
                     termState2.Absolute);
                 termState2.Absolute = false;

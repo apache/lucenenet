@@ -94,12 +94,16 @@ namespace Lucene.Net.Codecs.Pulsing
         private class FieldMetaData
         {
             internal int FieldNumber { get; private set; }
-            internal int LongsSize { get; private set; }
+
+            /// <summary>
+            /// NOTE: This was longsSize (field) in Lucene
+            /// </summary>
+            internal int Int64sSize { get; private set; }
 
             public FieldMetaData(int number, int size)
             {
                 FieldNumber = number;
-                LongsSize = size;
+                Int64sSize = size;
             }
         }
 
@@ -456,7 +460,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 foreach (var field in _fields)
                 {
                     output.WriteVInt32(field.FieldNumber);
-                    output.WriteVInt32(field.LongsSize);
+                    output.WriteVInt32(field.Int64sSize);
                 }
                 output.Dispose();
             }

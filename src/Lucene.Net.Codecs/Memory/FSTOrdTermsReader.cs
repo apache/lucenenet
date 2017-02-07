@@ -348,7 +348,7 @@ namespace Lucene.Net.Codecs.Memory
                     this.metaLongsReader.Reset(outerInstance.metaLongsBlock);
                     this.metaBytesReader.Reset(outerInstance.metaBytesBlock);
 
-                    this.longs = RectangularArrays.ReturnRectangularLongArray(INTERVAL, outerInstance.longsSize);
+                    this.longs = RectangularArrays.ReturnRectangularInt64Array(INTERVAL, outerInstance.longsSize);
                     this.bytesStart = new int[INTERVAL];
                     this.bytesLength = new int[INTERVAL];
                     this.docFreq_Renamed = new int[INTERVAL];

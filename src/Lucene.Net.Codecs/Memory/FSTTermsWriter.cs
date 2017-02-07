@@ -185,7 +185,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     _output.WriteVInt64(field.SumDocFreq);
                     _output.WriteVInt32(field.DocCount);
-                    _output.WriteVInt32(field.LongsSize);
+                    _output.WriteVInt32(field.Int64sSize);
                     field.Dict.Save(_output);
                 }
                 WriteTrailer(_output, dirStart);
@@ -209,7 +209,10 @@ namespace Lucene.Net.Codecs.Memory
             public long SumTotalTermFreq { get; private set; }
             public long SumDocFreq { get; private set; }
             public int DocCount { get; private set; }
-            public int LongsSize { get; private set; }
+            /// <summary>
+            /// NOTE: This was longsSize (field) in Lucene
+            /// </summary>
+            public int Int64sSize { get; private set; }
             public FST<FSTTermOutputs.TermData> Dict { get; private set; }
 
             public FieldMetaData(FieldInfo fieldInfo, long numTerms, long sumTotalTermFreq, long sumDocFreq,
@@ -220,7 +223,7 @@ namespace Lucene.Net.Codecs.Memory
                 SumTotalTermFreq = sumTotalTermFreq;
                 SumDocFreq = sumDocFreq;
                 DocCount = docCount;
-                LongsSize = longsSize;
+                Int64sSize = longsSize;
                 Dict = fst;
             }
         }

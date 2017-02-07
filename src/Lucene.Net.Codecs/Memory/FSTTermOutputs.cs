@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs.Memory
                     return false;
                 
                 var _other = (TermData) other;
-                return StatsEqual(this, _other) && LongsEqual(this, _other) && BytesEqual(this, _other);
+                return StatsEqual(this, _other) && Int64sEqual(this, _other) && BytesEqual(this, _other);
             }
         }
 
@@ -370,7 +370,10 @@ namespace Lucene.Net.Codecs.Memory
             return t1.bytes != null && t2.bytes != null && Arrays.Equals(t1.bytes, t2.bytes);
         }
 
-        private static bool LongsEqual(TermData t1, TermData t2)
+        /// <summary>
+        /// NOTE: This was longsEqual() in Lucene
+        /// </summary>
+        private static bool Int64sEqual(TermData t1, TermData t2)
         {
             if (t1.longs == null && t2.longs == null)
             {

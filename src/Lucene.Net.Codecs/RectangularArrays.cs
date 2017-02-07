@@ -7,7 +7,7 @@
 //----------------------------------------------------------------------------------------
 internal static partial class RectangularArrays // LUCENENET TODO: Move to Support ?
 {
-    internal static long[][] ReturnRectangularLongArray(int size1, int size2)
+    internal static long[][] ReturnRectangularInt64Array(int size1, int size2)
     {
         long[][] Array;
         if (size1 > -1)

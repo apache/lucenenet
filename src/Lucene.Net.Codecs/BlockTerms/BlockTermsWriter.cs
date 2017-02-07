@@ -62,7 +62,10 @@ namespace Lucene.Net.Codecs.BlockTerms
             public long SumTotalTermFreq { get; private set; }
             public long SumDocFreq { get; private set; }
             public int DocCount { get; private set; }
-            public int LongsSize { get; private set; }
+            /// <summary>
+            /// NOTE: This was longsSize (field) in Lucene
+            /// </summary>
+            public int Int64sSize { get; private set; }
 
             public FieldMetaData(FieldInfo fieldInfo, long numTerms, long termsStartPointer, long sumTotalTermFreq,
                 long sumDocFreq, int docCount, int longsSize)
@@ -75,7 +78,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 SumTotalTermFreq = sumTotalTermFreq;
                 SumDocFreq = sumDocFreq;
                 DocCount = docCount;
-                LongsSize = longsSize;
+                Int64sSize = longsSize;
             }
         }
 
@@ -146,7 +149,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     m_output.WriteVInt32(field.DocCount);
                     if (VERSION_CURRENT >= VERSION_META_ARRAY)
                     {
-                        m_output.WriteVInt32(field.LongsSize);
+                        m_output.WriteVInt32(field.Int64sSize);
                     }
 
                 }

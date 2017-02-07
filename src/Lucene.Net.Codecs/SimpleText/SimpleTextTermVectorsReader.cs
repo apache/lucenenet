@@ -119,7 +119,7 @@ namespace Lucene.Net.Codecs.SimpleText
             _input.Seek(_offsets[doc]);
             ReadLine();
             Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.NUMFIELDS));
-            var numFields = ParseIntAt(SimpleTextTermVectorsWriter.NUMFIELDS.Length);
+            var numFields = ParseInt32At(SimpleTextTermVectorsWriter.NUMFIELDS.Length);
             if (numFields == 0)
             {
                 return null; // no vectors for this doc
@@ -129,7 +129,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 ReadLine();
                 Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELD));
                 // skip fieldNumber:
-                ParseIntAt(SimpleTextTermVectorsWriter.FIELD.Length);
+                ParseInt32At(SimpleTextTermVectorsWriter.FIELD.Length);
 
                 ReadLine();
                 Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDNAME));
@@ -149,7 +149,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 ReadLine();
                 Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDTERMCOUNT));
-                var termCount = ParseIntAt(SimpleTextTermVectorsWriter.FIELDTERMCOUNT.Length);
+                var termCount = ParseInt32At(SimpleTextTermVectorsWriter.FIELDTERMCOUNT.Length);
 
                 var terms = new SimpleTVTerms(offsets, positions, payloads);
                 fields.Add(fieldName, terms);
@@ -169,7 +169,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                     ReadLine();
                     Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.TERMFREQ));
-                    postings.freq = ParseIntAt(SimpleTextTermVectorsWriter.TERMFREQ.Length);
+                    postings.freq = ParseInt32At(SimpleTextTermVectorsWriter.TERMFREQ.Length);
 
                     if (!positions && !offsets) continue;
 
@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs.SimpleText
                         {
                             ReadLine();
                             Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.POSITION));
-                            postings.positions[k] = ParseIntAt(SimpleTextTermVectorsWriter.POSITION.Length);
+                            postings.positions[k] = ParseInt32At(SimpleTextTermVectorsWriter.POSITION.Length);
                             if (payloads)
                             {
                                 ReadLine();
@@ -217,11 +217,11 @@ namespace Lucene.Net.Codecs.SimpleText
 
                         ReadLine();
                         Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.STARTOFFSET));
-                        postings.startOffsets[k] = ParseIntAt(SimpleTextTermVectorsWriter.STARTOFFSET.Length);
+                        postings.startOffsets[k] = ParseInt32At(SimpleTextTermVectorsWriter.STARTOFFSET.Length);
 
                         ReadLine();
                         Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.ENDOFFSET));
-                        postings.endOffsets[k] = ParseIntAt(SimpleTextTermVectorsWriter.ENDOFFSET.Length);
+                        postings.endOffsets[k] = ParseInt32At(SimpleTextTermVectorsWriter.ENDOFFSET.Length);
                     }
                 }
             }
@@ -257,7 +257,10 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.ReadLine(_input, _scratch);
         }
 
-        private int ParseIntAt(int offset) // LUCENENET TODO: Rename ParseInt32At ?
+        /// <summary>
+        /// NOTE: This was parseIntAt() in Lucene
+        /// </summary>
+        private int ParseInt32At(int offset)
         {
             UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + offset, _scratch.Length - offset, _scratchUtf16);
             return ArrayUtil.ParseInt32(_scratchUtf16.Chars, 0, _scratchUtf16.Length);

@@ -206,14 +206,14 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     blockOut.WriteVInt64(field.SumDocFreq);
                     blockOut.WriteVInt32(field.DocCount);
-                    blockOut.WriteVInt32(field.LongsSize);
+                    blockOut.WriteVInt32(field.Int64sSize);
                     blockOut.WriteVInt64(field.StatsOut.FilePointer);
-                    blockOut.WriteVInt64(field.MetaLongsOut.FilePointer);
+                    blockOut.WriteVInt64(field.MetaInt64sOut.FilePointer);
                     blockOut.WriteVInt64(field.MetaBytesOut.FilePointer);
 
                     field.SkipOut.WriteTo(blockOut);
                     field.StatsOut.WriteTo(blockOut);
-                    field.MetaLongsOut.WriteTo(blockOut);
+                    field.MetaInt64sOut.WriteTo(blockOut);
                     field.MetaBytesOut.WriteTo(blockOut);
                     field.Dict.Save(indexOut);
                 }
@@ -249,7 +249,10 @@ namespace Lucene.Net.Codecs.Memory
             public long SumTotalTermFreq { get; set; }
             public long SumDocFreq { get; set; }
             public int DocCount { get; set; }
-            public int LongsSize { get; set; }
+            /// <summary>
+            /// NOTE: This was longsSize (field) in Lucene
+            /// </summary>
+            public int Int64sSize { get; set; }
             public FST<long?> Dict { get; set; }
 
             // TODO: block encode each part 
@@ -259,7 +262,10 @@ namespace Lucene.Net.Codecs.Memory
             // vint encode df, (ttf-df)
             public RAMOutputStream StatsOut { get; set; }
             // vint encode monotonic long[] and length for corresponding byte[]
-            public RAMOutputStream MetaLongsOut { get; set; }
+            /// <summary>
+            /// NOTE: This was metaLongsOut (field) in Lucene
+            /// </summary>
+            public RAMOutputStream MetaInt64sOut { get; set; }
             // generic byte[]
             public RAMOutputStream MetaBytesOut { get; set; }
         }
@@ -373,10 +379,10 @@ namespace Lucene.Net.Codecs.Memory
                     SumTotalTermFreq = sumTotalTermFreq,
                     SumDocFreq = sumDocFreq,
                     DocCount = docCount,
-                    LongsSize = _longsSize,
+                    Int64sSize = _longsSize,
                     SkipOut = _skipOut,
                     StatsOut = _statsOut,
-                    MetaLongsOut = _metaLongsOut,
+                    MetaInt64sOut = _metaLongsOut,
                     MetaBytesOut = _metaBytesOut,
                     Dict = _builder.Finish()
                 };

@@ -120,13 +120,13 @@ namespace Lucene.Net.Codecs.SimpleText
             _input.Seek(_offsets[n]);
             ReadLine();
             Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.NUM));
-            var numFields = ParseIntAt(SimpleTextStoredFieldsWriter.NUM.Length);
+            var numFields = ParseInt32At(SimpleTextStoredFieldsWriter.NUM.Length);
 
             for (var i = 0; i < numFields; i++)
             {
                 ReadLine();
                 Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.FIELD));
-                int fieldNumber = ParseIntAt(SimpleTextStoredFieldsWriter.FIELD.Length);
+                int fieldNumber = ParseInt32At(SimpleTextStoredFieldsWriter.FIELD.Length);
                 FieldInfo fieldInfo = _fieldInfos.FieldInfo(fieldNumber);
                 ReadLine();
                 Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.NAME));
@@ -249,7 +249,10 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.ReadLine(_input, _scratch);
         }
 
-        private int ParseIntAt(int offset) // LUCENENET TODO: Rename ParseInt32At
+        /// <summary>
+        /// NOTE: This was parseIntAt() in Lucene
+        /// </summary>
+        private int ParseInt32At(int offset)
         {
             UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + offset, _scratch.Length - offset, _scratchUtf16);
             return ArrayUtil.ParseInt32(_scratchUtf16.Chars, 0, _scratchUtf16.Length);
