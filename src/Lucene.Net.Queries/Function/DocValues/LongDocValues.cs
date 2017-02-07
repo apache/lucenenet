@@ -23,7 +23,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
     /// <summary>
     /// Abstract <see cref="FunctionValues"/> implementation which supports retrieving <see cref="long"/> values.
-    /// Implementations can control how the <see cref="long"/> values are loaded through <see cref="LongVal(int)"/>
+    /// Implementations can control how the <see cref="long"/> values are loaded through <see cref="Int64Val(int)"/>
     /// </summary>
     public abstract class LongDocValues : FunctionValues
     {
@@ -36,44 +36,53 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override byte ByteVal(int doc)
         {
-            return (byte)LongVal(doc);
+            return (byte)Int64Val(doc);
         }
 
-        public override short ShortVal(int doc)
+        /// <summary>
+        /// NOTE: This was shortVal() in Lucene
+        /// </summary>
+        public override short Int16Val(int doc)
         {
-            return (short)LongVal(doc);
+            return (short)Int64Val(doc);
         }
 
-        public override float FloatVal(int doc)
+        /// <summary>
+        /// NOTE: This was floatVal() in Lucene
+        /// </summary>
+        public override float SingleVal(int doc)
         {
-            return (float)LongVal(doc);
+            return (float)Int64Val(doc);
         }
 
-        public override int IntVal(int doc)
+        /// <summary>
+        /// NOTE: This was intVal() in Lucene
+        /// </summary>
+        public override int Int32Val(int doc)
         {
-            return (int)LongVal(doc);
+            return (int)Int64Val(doc);
         }
 
-        public override abstract long LongVal(int doc);
+        public override abstract long Int64Val(int doc);
 
         public override double DoubleVal(int doc)
         {
-            return (double)LongVal(doc);
+            return (double)Int64Val(doc);
         }
 
         public override bool BoolVal(int doc)
         {
-            return LongVal(doc) != 0;
+            return Int64Val(doc) != 0;
         }
 
         public override string StrVal(int doc)
         {
-            return Convert.ToString(LongVal(doc));
+            return Convert.ToString(Int64Val(doc));
         }
 
         public override object ObjectVal(int doc)
         {
-            return Exists(doc) ? LongVal(doc) : (long?)null;
+            return Exists(doc) ? Int64Val(doc) : (long?)null;
         }
 
         public override string ToString(int doc)
@@ -81,7 +90,10 @@ namespace Lucene.Net.Queries.Function.DocValues
             return m_vs.GetDescription() + '=' + StrVal(doc);
         }
 
-        protected virtual long ExternalToLong(string extVal)
+        /// <summary>
+        /// NOTE: This was externalToLong() in Lucene
+        /// </summary>
+        protected virtual long ExternalToInt64(string extVal)
         {
             return Convert.ToInt64(extVal);
         }
@@ -98,7 +110,7 @@ namespace Lucene.Net.Queries.Function.DocValues
             }
             else
             {
-                lower = ExternalToLong(lowerVal);
+                lower = ExternalToInt64(lowerVal);
                 if (!includeLower && lower < long.MaxValue)
                 {
                     lower++;
@@ -111,7 +123,7 @@ namespace Lucene.Net.Queries.Function.DocValues
             }
             else
             {
-                upper = ExternalToLong(upperVal);
+                upper = ExternalToInt64(upperVal);
                 if (!includeUpper && upper > long.MinValue)
                 {
                     upper--;
@@ -141,7 +153,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
             public override bool MatchesValue(int doc)
             {
-                long val = outerInstance.LongVal(doc);
+                long val = outerInstance.Int64Val(doc);
                 // only check for deleted if it's the default value
                 // if (val==0 && reader.isDeleted(doc)) return false;
                 return val >= ll && val <= uu;
@@ -175,7 +187,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
             public override void FillValue(int doc)
             {
-                mval.Value = outerInstance.LongVal(doc);
+                mval.Value = outerInstance.Int64Val(doc);
                 mval.Exists = outerInstance.Exists(doc);
             }
         }

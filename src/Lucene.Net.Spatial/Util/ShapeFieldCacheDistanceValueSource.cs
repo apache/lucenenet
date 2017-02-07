@@ -77,7 +77,10 @@ namespace Lucene.Net.Spatial.Util
                 nullValue = (enclosingInstance.ctx.IsGeo ? 180 * enclosingInstance.multiplier : double.MaxValue);
             }
 
-            public override float FloatVal(int doc)
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override float SingleVal(int doc)
             {
                 return (float)DoubleVal(doc);
             }
@@ -99,7 +102,7 @@ namespace Lucene.Net.Spatial.Util
 
             public override string ToString(int doc)
             {
-                return enclosingInstance.GetDescription() + "=" + FloatVal(doc);
+                return enclosingInstance.GetDescription() + "=" + SingleVal(doc);
             }
         }
 

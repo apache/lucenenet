@@ -108,7 +108,7 @@ namespace Lucene.Net.Tests.Queries.Function
                         throw new InvalidOperationException();
                     }
 
-                    object expected = vals[ids.IntVal(i)];
+                    object expected = vals[ids.Int32Val(i)];
                     switch (type)
                     {
                         case DocValuesType.SORTED:
@@ -124,7 +124,7 @@ namespace Lucene.Net.Tests.Queries.Function
                             assertEquals(new BytesRef((string)expected), bytes);
                             break;
                         case DocValuesType.NUMERIC:
-                            assertEquals(Convert.ToInt64(expected, CultureInfo.InvariantCulture), values.LongVal(i));
+                            assertEquals(Convert.ToInt64(expected, CultureInfo.InvariantCulture), values.Int64Val(i));
                             break;
                     }
                 }

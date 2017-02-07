@@ -49,19 +49,28 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return "long(" + m_field + ')';
         }
 
-        public virtual long ExternalToLong(string extVal)
+        /// <summary>
+        /// NOTE: This was externalToLong() in Lucene
+        /// </summary>
+        public virtual long ExternalToInt64(string extVal)
         {
             return Convert.ToInt64(extVal);
         }
 
-        public virtual object LongToObject(long val)
+        /// <summary>
+        /// NOTE: This was longToObject() in Lucene
+        /// </summary>
+        public virtual object Int64ToObject(long val)
         {
             return val;
         }
 
-        public virtual string LongToString(long val)
+        /// <summary>
+        /// NOTE: This was longToString() in Lucene
+        /// </summary>
+        public virtual string Int64ToString(long val)
         {
-            return LongToObject(val).ToString();
+            return Int64ToObject(val).ToString();
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
@@ -86,7 +95,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.valid = valid;
             }
 
-            public override long LongVal(int doc)
+            /// <summary>
+            /// NOTE: This was longVal() in Lucene
+            /// </summary>
+            public override long Int64Val(int doc)
             {
                 return arr.Get(doc);
             }
@@ -98,17 +110,20 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override object ObjectVal(int doc)
             {
-                return valid.Get(doc) ? outerInstance.LongToObject(arr.Get(doc)) : null;
+                return valid.Get(doc) ? outerInstance.Int64ToObject(arr.Get(doc)) : null;
             }
 
             public override string StrVal(int doc)
             {
-                return valid.Get(doc) ? outerInstance.LongToString(arr.Get(doc)) : null;
+                return valid.Get(doc) ? outerInstance.Int64ToString(arr.Get(doc)) : null;
             }
 
-            protected override long ExternalToLong(string extVal)
+            /// <summary>
+            /// NOTE: This was externalToLong() in Lucene
+            /// </summary>
+            protected override long ExternalToInt64(string extVal)
             {
-                return outerInstance.ExternalToLong(extVal);
+                return outerInstance.ExternalToInt64(extVal);
             }
 
             public override ValueFiller GetValueFiller()
@@ -123,7 +138,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 public ValueFillerAnonymousInnerClassHelper(LongDocValuesAnonymousInnerClassHelper outerInstance)
                 {
                     this.outerInstance = outerInstance;
-                    mval = outerInstance.outerInstance.NewMutableValueLong();
+                    mval = outerInstance.outerInstance.NewMutableValueInt64();
                 }
 
                 private readonly MutableValueLong mval;
@@ -144,7 +159,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
         }
 
-        protected virtual MutableValueLong NewMutableValueLong()
+        /// <summary>
+        /// NOTE: This was longToString() in Lucene
+        /// </summary>
+        protected virtual MutableValueLong NewMutableValueInt64()
         {
             return new MutableValueLong();
         }

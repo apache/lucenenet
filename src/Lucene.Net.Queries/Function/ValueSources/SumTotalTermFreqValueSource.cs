@@ -96,7 +96,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.ttf = ttf;
             }
 
-            public override long LongVal(int doc)
+            /// <summary>
+            /// NOTE: This was longVal() in Lucene
+            /// </summary>
+            public override long Int64Val(int doc)
             {
                 return ttf;
             }

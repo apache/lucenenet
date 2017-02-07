@@ -91,7 +91,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.end = end;
             }
 
-            public override int IntVal(int doc)
+            /// <summary>
+            /// NOTE: This was intVal() in Lucene
+            /// </summary>
+            public override int Int32Val(int doc)
             {
                 return (end - sindex.GetOrd(doc + off) - 1);
             }

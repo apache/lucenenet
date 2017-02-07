@@ -40,22 +40,34 @@ namespace Lucene.Net.Queries.Function.DocValues
             return BoolVal(doc) ? (byte)1 : (byte)0;
         }
 
-        public override short ShortVal(int doc)
+        /// <summary>
+        /// NOTE: This was shortVal() in Lucene
+        /// </summary>
+        public override short Int16Val(int doc)
         {
             return BoolVal(doc) ? (short)1 : (short)0;
         }
 
-        public override float FloatVal(int doc)
+        /// <summary>
+        /// NOTE: This was floatVal() in Lucene
+        /// </summary>
+        public override float SingleVal(int doc)
         {
             return BoolVal(doc) ? 1f : 0f;
         }
 
-        public override int IntVal(int doc)
+        /// <summary>
+        /// NOTE: This was intVal() in Lucene
+        /// </summary>
+        public override int Int32Val(int doc)
         {
             return BoolVal(doc) ? 1 : 0;
         }
 
-        public override long LongVal(int doc)
+        /// <summary>
+        /// NOTE: This was longVal() in Lucene
+        /// </summary>
+        public override long Int64Val(int doc)
         {
             return BoolVal(doc) ? 1 : 0;
         }

@@ -90,7 +90,10 @@ namespace Lucene.Net.Spatial.Vector
                 nullValue = (outerInstance.strategy.SpatialContext.IsGeo ? 180 * outerInstance.multiplier : double.MaxValue);
             }
 
-            public override float FloatVal(int doc)
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override float SingleVal(int doc)
             {
                 return (float)DoubleVal(doc);
             }
@@ -108,7 +111,7 @@ namespace Lucene.Net.Spatial.Vector
 
             public override string ToString(int doc)
             {
-                return outerInstance.GetDescription() + "=" + FloatVal(doc);
+                return outerInstance.GetDescription() + "=" + SingleVal(doc);
             }
         }
 

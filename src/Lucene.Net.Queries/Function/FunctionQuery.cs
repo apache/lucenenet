@@ -166,7 +166,7 @@ namespace Lucene.Net.Queries.Function
 
             public override float GetScore()
             {
-                float score = qWeight * vals.FloatVal(doc);
+                float score = qWeight * vals.SingleVal(doc);
 
                 // Current Lucene priority queues can't handle NaN and -Infinity, so
                 // map to -Float.MAX_VALUE. This conditional handles both -infinity
@@ -186,7 +186,7 @@ namespace Lucene.Net.Queries.Function
 
             public virtual Explanation Explain(int d)
             {
-                float sc = qWeight * vals.FloatVal(d);
+                float sc = qWeight * vals.SingleVal(d);
 
                 Explanation result = new ComplexExplanation(true, sc, "FunctionQuery(" + outerInstance.func + "), product of:");
 

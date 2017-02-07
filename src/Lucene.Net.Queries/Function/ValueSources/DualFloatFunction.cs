@@ -69,7 +69,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.bVals = bVals;
             }
 
-            public override float FloatVal(int doc)
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override float SingleVal(int doc)
             {
                 return outerInstance.Func(doc, aVals, bVals);
             }

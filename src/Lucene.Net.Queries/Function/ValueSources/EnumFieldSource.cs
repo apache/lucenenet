@@ -48,7 +48,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.enumStringToIntMap = enumStringToIntMap;
         }
 
-        private static int? TryParseInt(string valueStr) // LUCENENET TODO: Rename TryParseInt32 ?
+        /// <summary>
+        /// NOTE: This was tryParseInt() in Lucene
+        /// </summary>
+        private static int? TryParseInt32(string valueStr) 
         {
             int? intValue = null;
             try
@@ -61,7 +64,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return intValue;
         }
 
-        private string IntValueToStringValue(int? intVal) // LUCENENET TODO: Rename Int32ToStringValue ?
+        /// <summary>
+        /// NOTE: This was intValueToStringValue() in Lucene
+        /// </summary>
+        private string Int32ValueToStringValue(int? intVal)
         {
             if (intVal == null)
             {
@@ -77,7 +83,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return DEFAULT_VALUE.ToString(CultureInfo.InvariantCulture);
         }
 
-        private int? StringValueToIntValue(string stringVal) // LUCENENET TODO: Rename StringValueToInt32Value ?
+        /// <summary>
+        /// NOTE: This was stringValueToIntValue() in Lucene
+        /// </summary>
+        private int? StringValueToInt32Value(string stringVal)
         {
             if (stringVal == null)
             {
@@ -92,7 +101,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
 
             //enum int not found for str
-            intValue = TryParseInt(stringVal);
+            intValue = TryParseInt32(stringVal);
             if (intValue == null) //not Integer
             {
                 intValue = DEFAULT_VALUE;
@@ -138,17 +147,26 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             private readonly MutableValueInt val;
 
-            public override float FloatVal(int doc)
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override float SingleVal(int doc)
             {
                 return (float)arr.Get(doc);
             }
 
-            public override int IntVal(int doc)
+            /// <summary>
+            /// NOTE: This was intVal() in Lucene
+            /// </summary>
+            public override int Int32Val(int doc)
             {
                 return arr.Get(doc);
             }
 
-            public override long LongVal(int doc)
+            /// <summary>
+            /// NOTE: This was longVal() in Lucene
+            /// </summary>
+            public override long Int64Val(int doc)
             {
                 return (long)arr.Get(doc);
             }
@@ -161,7 +179,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             public override string StrVal(int doc)
             {
                 int? intValue = arr.Get(doc);
-                return outerInstance.IntValueToStringValue(intValue);
+                return outerInstance.Int32ValueToStringValue(intValue);
             }
 
             public override object ObjectVal(int doc)
@@ -182,8 +200,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
             {
-                int? lower = outerInstance.StringValueToIntValue(lowerVal);
-                int? upper = outerInstance.StringValueToIntValue(upperVal);
+                int? lower = outerInstance.StringValueToInt32Value(lowerVal);
+                int? upper = outerInstance.StringValueToInt32Value(upperVal);
 
                 // instead of using separate comparison functions, adjust the endpoints.
 

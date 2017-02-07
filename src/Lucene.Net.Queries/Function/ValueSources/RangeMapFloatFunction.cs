@@ -81,10 +81,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.defaults = defaults;
             }
 
-            public override float FloatVal(int doc)
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override float SingleVal(int doc)
             {
-                float val = vals.FloatVal(doc);
-                return (val >= outerInstance.m_min && val <= outerInstance.m_max) ? targets.FloatVal(doc) : (outerInstance.m_defaultVal == null ? val : defaults.FloatVal(doc));
+                float val = vals.SingleVal(doc);
+                return (val >= outerInstance.m_min && val <= outerInstance.m_max) ? targets.SingleVal(doc) : (outerInstance.m_defaultVal == null ? val : defaults.SingleVal(doc));
             }
             public override string ToString(int doc)
             {

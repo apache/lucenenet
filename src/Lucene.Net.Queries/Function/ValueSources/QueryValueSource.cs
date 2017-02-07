@@ -139,7 +139,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             weight = w;
         }
 
-        public override float FloatVal(int doc)
+        /// <summary>
+        /// NOTE: This was floatVal() in Lucene
+        /// </summary>
+        public override float SingleVal(int doc)
         {
             try
             {
@@ -311,7 +314,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override string ToString(int doc)
         {
-            return "query(" + q + ",def=" + defVal + ")=" + FloatVal(doc);
+            return "query(" + q + ",def=" + defVal + ")=" + SingleVal(doc);
         }
     }
 }

@@ -75,17 +75,26 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             private readonly MutableValueInt val;
 
-            public override float FloatVal(int doc)
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override float SingleVal(int doc)
             {
                 return (float)arr.Get(doc);
             }
 
-            public override int IntVal(int doc)
+            /// <summary>
+            /// NOTE: This was intVal() in Lucene
+            /// </summary>
+            public override int Int32Val(int doc)
             {
                 return arr.Get(doc);
             }
 
-            public override long LongVal(int doc)
+            /// <summary>
+            /// NOTE: This was longVal() in Lucene
+            /// </summary>
+            public override long Int64Val(int doc)
             {
                 return (long)arr.Get(doc);
             }
@@ -112,7 +121,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override string ToString(int doc)
             {
-                return outerInstance.GetDescription() + '=' + IntVal(doc);
+                return outerInstance.GetDescription() + '=' + Int32Val(doc);
             }
 
             public override ValueFiller GetValueFiller()

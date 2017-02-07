@@ -41,22 +41,34 @@ namespace Lucene.Net.Queries.Function
             throw new System.NotSupportedException();
         }
 
-        public virtual short ShortVal(int doc) // LUCENENET TODO: Rename Int16Val ?
+        /// <summary>
+        /// NOTE: This was shortVal() in Lucene
+        /// </summary>
+        public virtual short Int16Val(int doc) 
         {
             throw new System.NotSupportedException();
         }
 
-        public virtual float FloatVal(int doc) // LUCENENET TODO: Rename SingleVal ?
+        /// <summary>
+        /// NOTE: This was floatVal() in Lucene
+        /// </summary>
+        public virtual float SingleVal(int doc)
         {
             throw new System.NotSupportedException();
         }
 
-        public virtual int IntVal(int doc) // LUCENENET TODO: Rename Int32Val ?
+        /// <summary>
+        /// NOTE: This was intVal() in Lucene
+        /// </summary>
+        public virtual int Int32Val(int doc)
         {
             throw new System.NotSupportedException();
         }
 
-        public virtual long LongVal(int doc) // LUCENENET TODO: Rename Int64Val ?
+        /// <summary>
+        /// NOTE: This was longVal() in Lucene
+        /// </summary>
+        public virtual long Int64Val(int doc)
         {
             throw new System.NotSupportedException();
         }
@@ -74,7 +86,7 @@ namespace Lucene.Net.Queries.Function
 
         public virtual bool BoolVal(int doc)
         {
-            return IntVal(doc) != 0;
+            return Int32Val(doc) != 0;
         }
 
         /// <summary>
@@ -96,7 +108,7 @@ namespace Lucene.Net.Queries.Function
         public virtual object ObjectVal(int doc)
         {
             // most FunctionValues are functions, so by default return a Float()
-            return FloatVal(doc);
+            return SingleVal(doc);
         }
 
         /// <summary>
@@ -167,7 +179,7 @@ namespace Lucene.Net.Queries.Function
 
             public override void FillValue(int doc)
             {
-                mval.Value = outerInstance.FloatVal(doc);
+                mval.Value = outerInstance.SingleVal(doc);
             }
         }
 
@@ -177,22 +189,34 @@ namespace Lucene.Net.Queries.Function
             throw new System.NotSupportedException();
         }
 
-        public virtual void ShortVal(int doc, short[] vals) // LUCENENET TODO: Rename Int16Val ?
+        /// <summary>
+        /// NOTE: This was shortVal() in Lucene
+        /// </summary>
+        public virtual void Int16Val(int doc, short[] vals)
         {
             throw new System.NotSupportedException();
         }
 
-        public virtual void FloatVal(int doc, float[] vals) // LUCENENET TODO: Rename SingleVal ?
+        /// <summary>
+        /// NOTE: This was floatVal() in Lucene
+        /// </summary>
+        public virtual void SingleVal(int doc, float[] vals)
         {
             throw new System.NotSupportedException();
         }
 
-        public virtual void IntVal(int doc, int[] vals) // LUCENENET TODO: Rename Int32Val ?
+        /// <summary>
+        /// NOTE: This was intVal() in Lucene
+        /// </summary>
+        public virtual void Int32Val(int doc, int[] vals)
         {
             throw new System.NotSupportedException();
         }
 
-        public virtual void LongVal(int doc, long[] vals) // LUCENENET TODO: Rename Int64Val ?
+        /// <summary>
+        /// NOTE: This was longVal() in Lucene
+        /// </summary>
+        public virtual void Int64Val(int doc, long[] vals)
         {
             throw new System.NotSupportedException();
         }
@@ -210,7 +234,7 @@ namespace Lucene.Net.Queries.Function
 
         public virtual Explanation Explain(int doc)
         {
-            return new Explanation(FloatVal(doc), ToString(doc));
+            return new Explanation(SingleVal(doc), ToString(doc));
         }
 
         public virtual ValueSourceScorer GetScorer(IndexReader reader)
@@ -284,7 +308,7 @@ namespace Lucene.Net.Queries.Function
 
             public override bool MatchesValue(int doc)
             {
-                float docVal = outerInstance.FloatVal(doc);
+                float docVal = outerInstance.SingleVal(doc);
                 return docVal >= l && docVal <= u;
             }
         }
@@ -307,7 +331,7 @@ namespace Lucene.Net.Queries.Function
 
             public override bool MatchesValue(int doc)
             {
-                float docVal = outerInstance.FloatVal(doc);
+                float docVal = outerInstance.SingleVal(doc);
                 return docVal >= l && docVal < u;
             }
         }
@@ -330,7 +354,7 @@ namespace Lucene.Net.Queries.Function
 
             public override bool MatchesValue(int doc)
             {
-                float docVal = outerInstance.FloatVal(doc);
+                float docVal = outerInstance.SingleVal(doc);
                 return docVal > l && docVal <= u;
             }
         }
@@ -353,7 +377,7 @@ namespace Lucene.Net.Queries.Function
 
             public override bool MatchesValue(int doc)
             {
-                float docVal = outerInstance.FloatVal(doc);
+                float docVal = outerInstance.SingleVal(doc);
                 return docVal > l && docVal < u;
             }
         }

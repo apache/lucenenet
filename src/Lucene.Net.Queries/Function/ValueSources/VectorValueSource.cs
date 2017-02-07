@@ -96,25 +96,40 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 vals[1] = y.ByteVal(doc);
             }
 
-            public override void ShortVal(int doc, short[] vals)
+            /// <summary>
+            /// NOTE: This was shortVal() in Lucene
+            /// </summary>
+            public override void Int16Val(int doc, short[] vals)
             {
-                vals[0] = x.ShortVal(doc);
-                vals[1] = y.ShortVal(doc);
+                vals[0] = x.Int16Val(doc);
+                vals[1] = y.Int16Val(doc);
             }
-            public override void IntVal(int doc, int[] vals)
+
+            /// <summary>
+            /// NOTE: This was intVal() in Lucene
+            /// </summary>
+            public override void Int32Val(int doc, int[] vals)
             {
-                vals[0] = x.IntVal(doc);
-                vals[1] = y.IntVal(doc);
+                vals[0] = x.Int32Val(doc);
+                vals[1] = y.Int32Val(doc);
             }
-            public override void LongVal(int doc, long[] vals)
+
+            /// <summary>
+            /// NOTE: This was longVal() in Lucene
+            /// </summary>
+            public override void Int64Val(int doc, long[] vals)
             {
-                vals[0] = x.LongVal(doc);
-                vals[1] = y.LongVal(doc);
+                vals[0] = x.Int64Val(doc);
+                vals[1] = y.Int64Val(doc);
             }
-            public override void FloatVal(int doc, float[] vals)
+
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override void SingleVal(int doc, float[] vals)
             {
-                vals[0] = x.FloatVal(doc);
-                vals[1] = y.FloatVal(doc);
+                vals[0] = x.SingleVal(doc);
+                vals[1] = y.SingleVal(doc);
             }
             public override void DoubleVal(int doc, double[] vals)
             {
@@ -151,35 +166,47 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 }
             }
 
-            public override void ShortVal(int doc, short[] vals)
+            /// <summary>
+            /// NOTE: This was shortVal() in Lucene
+            /// </summary>
+            public override void Int16Val(int doc, short[] vals)
             {
                 for (int i = 0; i < valsArr.Length; i++)
                 {
-                    vals[i] = valsArr[i].ShortVal(doc);
+                    vals[i] = valsArr[i].Int16Val(doc);
                 }
             }
 
-            public override void FloatVal(int doc, float[] vals)
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override void SingleVal(int doc, float[] vals)
             {
                 for (int i = 0; i < valsArr.Length; i++)
                 {
-                    vals[i] = valsArr[i].FloatVal(doc);
+                    vals[i] = valsArr[i].SingleVal(doc);
                 }
             }
 
-            public override void IntVal(int doc, int[] vals)
+            /// <summary>
+            /// NOTE: This was intVal() in Lucene
+            /// </summary>
+            public override void Int32Val(int doc, int[] vals)
             {
                 for (int i = 0; i < valsArr.Length; i++)
                 {
-                    vals[i] = valsArr[i].IntVal(doc);
+                    vals[i] = valsArr[i].Int32Val(doc);
                 }
             }
 
-            public override void LongVal(int doc, long[] vals)
+            /// <summary>
+            /// NOTE: This was longVal() in Lucene
+            /// </summary>
+            public override void Int64Val(int doc, long[] vals)
             {
                 for (int i = 0; i < valsArr.Length; i++)
                 {
-                    vals[i] = valsArr[i].LongVal(doc);
+                    vals[i] = valsArr[i].Int64Val(doc);
                 }
             }
 

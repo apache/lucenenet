@@ -72,7 +72,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 for (int i = 0; i < maxDoc; i++)
                 {
 
-                    float val = vals.FloatVal(i);
+                    float val = vals.SingleVal(i);
                     if ((Number.SingleToRawInt32Bits(val) & (0xff << 23)) == 0xff << 23)
                     {
                         // if the exponent in the float is all ones, then this is +Inf, -Inf or NaN
@@ -137,9 +137,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.vals = vals;
             }
 
-            public override float FloatVal(int doc)
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override float SingleVal(int doc)
             {
-                return (vals.FloatVal(doc) - minSource) * scale + outerInstance.m_min;
+                return (vals.SingleVal(doc) - minSource) * scale + outerInstance.m_min;
             }
             public override string ToString(int doc)
             {

@@ -31,7 +31,7 @@ namespace Lucene.Net.Facet.Range
     /// <summary>
     /// <see cref="Facets"/> implementation that computes counts for
     /// dynamic long ranges from a provided <see cref="ValueSource"/>,
-    /// using <see cref="FunctionValues.LongVal(int)"/> or <see cref="FunctionValues.LongVal(int, long[])"/>.  Use
+    /// using <see cref="FunctionValues.Int64Val(int)"/> or <see cref="FunctionValues.Int64Val(int, long[])"/>.  Use
     /// this for dimensions that change in real-time (e.g. a
     /// relative time based dimension like "Past day", "Past 2
     /// days", etc.) or that change for each request (e.g. 
@@ -120,7 +120,7 @@ namespace Lucene.Net.Facet.Range
                     // Skip missing docs:
                     if (fv.Exists(doc))
                     {
-                        counter.Add(fv.LongVal(doc));
+                        counter.Add(fv.Int64Val(doc));
                     }
                     else
                     {

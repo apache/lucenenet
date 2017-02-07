@@ -134,7 +134,7 @@ namespace Lucene.Net.Queries.Function
                     return subQueryExpl;
                 }
                 FunctionValues vals = outerInstance.boostVal.GetValues(fcontext, readerContext);
-                float sc = subQueryExpl.Value * vals.FloatVal(doc);
+                float sc = subQueryExpl.Value * vals.SingleVal(doc);
                 Explanation res = new ComplexExplanation(true, sc, outerInstance.ToString() + ", product of:");
                 res.AddDetail(subQueryExpl);
                 res.AddDetail(vals.Explain(doc));
@@ -180,7 +180,7 @@ namespace Lucene.Net.Queries.Function
 
             public override float GetScore()
             {
-                float score = qWeight * scorer.GetScore() * vals.FloatVal(scorer.DocID);
+                float score = qWeight * scorer.GetScore() * vals.SingleVal(scorer.DocID);
 
                 // Current Lucene priority queues can't handle NaN and -Infinity, so
                 // map to -Float.MAX_VALUE. This conditional handles both -infinity
@@ -205,7 +205,7 @@ namespace Lucene.Net.Queries.Function
                 {
                     return subQueryExpl;
                 }
-                float sc = subQueryExpl.Value * vals.FloatVal(doc);
+                float sc = subQueryExpl.Value * vals.SingleVal(doc);
                 Explanation res = new ComplexExplanation(true, sc, outerInstance.ToString() + ", product of:");
                 res.AddDetail(subQueryExpl);
                 res.AddDetail(vals.Explain(doc));

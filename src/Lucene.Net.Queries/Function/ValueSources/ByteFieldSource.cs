@@ -71,22 +71,34 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return (byte)arr.Get(doc);
             }
 
-            public override short ShortVal(int doc)
+            /// <summary>
+            /// NOTE: This was shortVal() in Lucene
+            /// </summary>
+            public override short Int16Val(int doc)
             {
                 return (short)arr.Get(doc);
             }
 
-            public override float FloatVal(int doc)
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override float SingleVal(int doc)
             {
                 return (float)arr.Get(doc);
             }
 
-            public override int IntVal(int doc)
+            /// <summary>
+            /// NOTE: This was intVal() in Lucene
+            /// </summary>
+            public override int Int32Val(int doc)
             {
                 return (int)arr.Get(doc);
             }
 
-            public override long LongVal(int doc)
+            /// <summary>
+            /// NOTE: This was longVal() in Lucene
+            /// </summary>
+            public override long Int64Val(int doc)
             {
                 return (long)arr.Get(doc);
             }

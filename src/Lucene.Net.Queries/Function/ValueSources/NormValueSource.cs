@@ -88,7 +88,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.norms = norms;
             }
 
-            public override float FloatVal(int doc)
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override float SingleVal(int doc)
             {
                 return similarity.DecodeNormValue(norms.Get(doc));
             }

@@ -22,7 +22,7 @@ namespace Lucene.Net.Queries.Function
      */
     
     /// <summary>
-    /// <see cref="Scorer"/> which returns the result of <see cref="FunctionValues.FloatVal(int)"/> as
+    /// <see cref="Scorer"/> which returns the result of <see cref="FunctionValues.SingleVal(int)"/> as
     /// the score for a document.
     /// </summary>
     public class ValueSourceScorer : Scorer
@@ -97,7 +97,7 @@ namespace Lucene.Net.Queries.Function
 
         public override float GetScore()
         {
-            return m_values.FloatVal(doc);
+            return m_values.SingleVal(doc);
         }
 
         public override int Freq

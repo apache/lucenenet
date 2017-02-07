@@ -44,15 +44,26 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.parent = parent;
         }
 
-        public override float FloatVal(int doc)
+        /// <summary>
+        /// NOTE: This was floatVal() in Lucene
+        /// </summary>
+        public override float SingleVal(int doc)
         {
             return fval;
         }
-        public override int IntVal(int doc)
+
+        /// <summary>
+        /// NOTE: This was intVal() in Lucene
+        /// </summary>
+        public override int Int32Val(int doc)
         {
             return ival;
         }
-        public override long LongVal(int doc)
+
+        /// <summary>
+        /// NOTE: This was longVal() in Lucene
+        /// </summary>
+        public override long Int64Val(int doc)
         {
             return lval;
         }
@@ -90,15 +101,26 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.parent = parent;
         }
 
-        public override float FloatVal(int doc)
+        /// <summary>
+        /// NOTE: This was floatVal() in Lucene
+        /// </summary>
+        public override float SingleVal(int doc)
         {
             return fval;
         }
-        public override int IntVal(int doc)
+
+        /// <summary>
+        /// NOTE: This was intVal() in Lucene
+        /// </summary>
+        public override int Int32Val(int doc)
         {
             return ival;
         }
-        public override long LongVal(int doc)
+
+        /// <summary>
+        /// NOTE: This was longVal() in Lucene
+        /// </summary>
+        public override long Int64Val(int doc)
         {
             return lval;
         }

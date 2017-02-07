@@ -214,7 +214,7 @@ namespace Lucene.Net.Facet.Range
                         {
                             return false;
                         }
-                        return outerInstance.outerInstance.outerInstance.Accept(outerInstance.values.LongVal(docID));
+                        return outerInstance.outerInstance.outerInstance.Accept(outerInstance.values.Int64Val(docID));
                     }
 
 

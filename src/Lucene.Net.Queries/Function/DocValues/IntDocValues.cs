@@ -23,7 +23,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
     /// <summary>
     /// Abstract <see cref="FunctionValues"/> implementation which supports retrieving <see cref="int"/> values.
-    /// Implementations can control how the <see cref="int"/> values are loaded through <see cref="IntVal(int)"/>
+    /// Implementations can control how the <see cref="int"/> values are loaded through <see cref="Int32Val(int)"/>
     /// </summary>
     public abstract class IntDocValues : FunctionValues
     {
@@ -36,39 +36,51 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override byte ByteVal(int doc)
         {
-            return (byte)IntVal(doc);
+            return (byte)Int32Val(doc);
         }
 
-        public override short ShortVal(int doc)
+        /// <summary>
+        /// NOTE: This was shortVal() in Lucene
+        /// </summary>
+        public override short Int16Val(int doc)
         {
-            return (short)IntVal(doc);
+            return (short)Int32Val(doc);
         }
 
-        public override float FloatVal(int doc)
+        /// <summary>
+        /// NOTE: This was floatVal() in Lucene
+        /// </summary>
+        public override float SingleVal(int doc)
         {
-            return (float)IntVal(doc);
+            return (float)Int32Val(doc);
         }
 
-        public override abstract int IntVal(int doc);
+        /// <summary>
+        /// NOTE: This was intVal() in Lucene
+        /// </summary>
+        public override abstract int Int32Val(int doc);
 
-        public override long LongVal(int doc)
+        /// <summary>
+        /// NOTE: This was longVal() in Lucene
+        /// </summary>
+        public override long Int64Val(int doc)
         {
-            return (long)IntVal(doc);
+            return (long)Int32Val(doc);
         }
 
         public override double DoubleVal(int doc)
         {
-            return (double)IntVal(doc);
+            return (double)Int32Val(doc);
         }
 
         public override string StrVal(int doc)
         {
-            return Convert.ToString(IntVal(doc));
+            return Convert.ToString(Int32Val(doc));
         }
 
         public override object ObjectVal(int doc)
         {
-            return Exists(doc) ? IntVal(doc) : (int?)null;
+            return Exists(doc) ? Int32Val(doc) : (int?)null;
         }
 
         public override string ToString(int doc)
@@ -131,7 +143,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
             public override bool MatchesValue(int doc)
             {
-                int val = outerInstance.IntVal(doc);
+                int val = outerInstance.Int32Val(doc);
                 // only check for deleted if it's the default value
                 // if (val==0 && reader.isDeleted(doc)) return false;
                 return val >= ll && val <= uu;
@@ -165,7 +177,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
             public override void FillValue(int doc)
             {
-                mval.Value = outerInstance.IntVal(doc);
+                mval.Value = outerInstance.Int32Val(doc);
                 mval.Exists = outerInstance.Exists(doc);
             }
         }

@@ -158,7 +158,7 @@ namespace Lucene.Net.Search.Suggest
                         throw new Exception();
                     }
                 }
-                return currentWeightValues.LongVal(docId - starts[subIndex]);
+                return currentWeightValues.Int64Val(docId - starts[subIndex]);
             }
         }
     }

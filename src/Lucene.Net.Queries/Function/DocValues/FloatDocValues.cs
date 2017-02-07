@@ -22,7 +22,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
     /// <summary>
     /// Abstract <see cref="FunctionValues"/> implementation which supports retrieving <see cref="float"/> values.
-    /// Implementations can control how the <see cref="float"/> values are loaded through <see cref="FloatVal(int)"/>
+    /// Implementations can control how the <see cref="float"/> values are loaded through <see cref="SingleVal(int)"/>
     /// </summary>
     public abstract class FloatDocValues : FunctionValues
     {
@@ -35,39 +35,51 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override byte ByteVal(int doc)
         {
-            return (byte)FloatVal(doc);
+            return (byte)SingleVal(doc);
         }
 
-        public override short ShortVal(int doc)
+        /// <summary>
+        /// NOTE: This was shortVal() in Lucene
+        /// </summary>
+        public override short Int16Val(int doc)
         {
-            return (short)FloatVal(doc);
+            return (short)SingleVal(doc);
         }
 
-        public override abstract float FloatVal(int doc);
+        /// <summary>
+        /// NOTE: This was floatVal() in Lucene
+        /// </summary>
+        public override abstract float SingleVal(int doc);
 
-        public override int IntVal(int doc)
+        /// <summary>
+        /// NOTE: This was intVal() in Lucene
+        /// </summary>
+        public override int Int32Val(int doc)
         {
-            return (int)FloatVal(doc);
+            return (int)SingleVal(doc);
         }
 
-        public override long LongVal(int doc)
+        /// <summary>
+        /// NOTE: This was longVal() in Lucene
+        /// </summary>
+        public override long Int64Val(int doc)
         {
-            return (long)FloatVal(doc);
+            return (long)SingleVal(doc);
         }
 
         public override double DoubleVal(int doc)
         {
-            return (double)FloatVal(doc);
+            return (double)SingleVal(doc);
         }
 
         public override string StrVal(int doc)
         {
-            return Convert.ToString(FloatVal(doc));
+            return Convert.ToString(SingleVal(doc));
         }
 
         public override object ObjectVal(int doc)
         {
-            return Exists(doc) ? FloatVal(doc) : (float?)null;
+            return Exists(doc) ? SingleVal(doc) : (float?)null;
         }
 
         public override string ToString(int doc)
@@ -102,7 +114,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
             public override void FillValue(int doc)
             {
-                mval.Value = outerInstance.FloatVal(doc);
+                mval.Value = outerInstance.SingleVal(doc);
                 mval.Exists = outerInstance.Exists(doc);
             }
         }

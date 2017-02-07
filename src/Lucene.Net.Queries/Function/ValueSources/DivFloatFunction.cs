@@ -36,7 +36,7 @@
 
         protected override float Func(int doc, FunctionValues aVals, FunctionValues bVals)
         {
-            return aVals.FloatVal(doc) / bVals.FloatVal(doc);
+            return aVals.SingleVal(doc) / bVals.SingleVal(doc);
         }
     }
 }

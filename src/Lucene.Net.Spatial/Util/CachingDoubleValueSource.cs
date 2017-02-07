@@ -78,7 +78,10 @@ namespace Lucene.Net.Spatial.Util
                 return v;
             }
 
-            public override float FloatVal(int doc)
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override float SingleVal(int doc)
             {
                 return (float)DoubleVal(doc);
             }

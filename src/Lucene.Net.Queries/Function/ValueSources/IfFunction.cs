@@ -66,24 +66,36 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return ifVals.BoolVal(doc) ? trueVals.ByteVal(doc) : falseVals.ByteVal(doc);
             }
 
-            public override short ShortVal(int doc)
+            /// <summary>
+            /// NOTE: This was shortVal() in Lucene
+            /// </summary>
+            public override short Int16Val(int doc)
             {
-                return ifVals.BoolVal(doc) ? trueVals.ShortVal(doc) : falseVals.ShortVal(doc);
+                return ifVals.BoolVal(doc) ? trueVals.Int16Val(doc) : falseVals.Int16Val(doc);
             }
 
-            public override float FloatVal(int doc)
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override float SingleVal(int doc)
             {
-                return ifVals.BoolVal(doc) ? trueVals.FloatVal(doc) : falseVals.FloatVal(doc);
+                return ifVals.BoolVal(doc) ? trueVals.SingleVal(doc) : falseVals.SingleVal(doc);
             }
 
-            public override int IntVal(int doc)
+            /// <summary>
+            /// NOTE: This was intVal() in Lucene
+            /// </summary>
+            public override int Int32Val(int doc)
             {
-                return ifVals.BoolVal(doc) ? trueVals.IntVal(doc) : falseVals.IntVal(doc);
+                return ifVals.BoolVal(doc) ? trueVals.Int32Val(doc) : falseVals.Int32Val(doc);
             }
 
-            public override long LongVal(int doc)
+            /// <summary>
+            /// NOTE: This was longVal() in Lucene
+            /// </summary>
+            public override long Int64Val(int doc)
             {
-                return ifVals.BoolVal(doc) ? trueVals.LongVal(doc) : falseVals.LongVal(doc);
+                return ifVals.BoolVal(doc) ? trueVals.Int64Val(doc) : falseVals.Int64Val(doc);
             }
 
             public override double DoubleVal(int doc)

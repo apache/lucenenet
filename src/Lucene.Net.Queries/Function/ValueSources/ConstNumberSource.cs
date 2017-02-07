@@ -22,9 +22,20 @@
     /// </summary>
     public abstract class ConstNumberSource : ValueSource
     {
-        public abstract int Int { get; } // LUCENENET TODO: Rename Int32?
-        public abstract long Long { get; } // LUCENENET TODO: Rename Int64?
-        public abstract float Float { get; } // LUCENENET TODO: Rename Single?
+        /// <summary>
+        /// NOTE: This was getInt() in Lucene
+        /// </summary>
+        public abstract int Int32 { get; }
+
+        /// <summary>
+        /// NOTE: This was getLong() in Lucene
+        /// </summary>
+        public abstract long Int64 { get; }
+
+        /// <summary>
+        /// NOTE: This was getFloat() in Lucene
+        /// </summary>
+        public abstract float Single { get; }
         public abstract double Double { get; }
         //public abstract Number Number { get; }
         public abstract bool Bool { get; }

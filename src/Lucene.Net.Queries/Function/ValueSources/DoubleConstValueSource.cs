@@ -58,17 +58,26 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.outerInstance = outerInstance;
             }
 
-            public override float FloatVal(int doc)
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override float SingleVal(int doc)
             {
                 return outerInstance.fv;
             }
 
-            public override int IntVal(int doc)
+            /// <summary>
+            /// NOTE: This was intVal() in Lucene
+            /// </summary>
+            public override int Int32Val(int doc)
             {
                 return (int)outerInstance.lv;
             }
 
-            public override long LongVal(int doc)
+            /// <summary>
+            /// NOTE: This was longVal() in Lucene
+            /// </summary>
+            public override long Int64Val(int doc)
             {
                 return outerInstance.lv;
             }
@@ -110,7 +119,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return this.constant == other.constant;
         }
 
-        public override int Int
+        /// <summary>
+        /// NOTE: This was getInt() in Lucene
+        /// </summary>
+        public override int Int32
         {
             get
             {
@@ -118,7 +130,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
         }
 
-        public override long Long
+        /// <summary>
+        /// NOTE: This was getLong() in Lucene
+        /// </summary>
+        public override long Int64
         {
             get
             {
@@ -126,7 +141,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
         }
 
-        public override float Float
+        /// <summary>
+        /// NOTE: This was getFloat() in Lucene
+        /// </summary>
+        public override float Single
         {
             get
             {

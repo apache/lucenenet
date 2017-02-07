@@ -40,7 +40,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return 0.0f;
             }
-            return valsArr.Select(vals => vals.FloatVal(doc)).Concat(new[] {float.PositiveInfinity}).Min();
+            return valsArr.Select(vals => vals.SingleVal(doc)).Concat(new[] {float.PositiveInfinity}).Min();
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         protected override float Func(int doc, FunctionValues[] valsArr)
         {
-            return valsArr.Aggregate(1.0f, (current, vals) => current * vals.FloatVal(doc));
+            return valsArr.Aggregate(1.0f, (current, vals) => current * vals.SingleVal(doc));
         }
     }
 }

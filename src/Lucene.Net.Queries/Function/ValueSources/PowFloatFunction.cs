@@ -38,7 +38,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         protected override float Func(int doc, FunctionValues aVals, FunctionValues bVals)
         {
-            return (float)Math.Pow(aVals.FloatVal(doc), bVals.FloatVal(doc));
+            return (float)Math.Pow(aVals.SingleVal(doc), bVals.SingleVal(doc));
         }
     }
 }

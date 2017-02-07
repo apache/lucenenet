@@ -65,9 +65,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.vals = vals;
             }
 
-            public override float FloatVal(int doc)
+            /// <summary>
+            /// NOTE: This was floatVal() in Lucene
+            /// </summary>
+            public override float SingleVal(int doc)
             {
-                return vals.FloatVal(doc) * outerInstance.m_slope + outerInstance.m_intercept;
+                return vals.SingleVal(doc) * outerInstance.m_slope + outerInstance.m_intercept;
             }
             public override string ToString(int doc)
             {
