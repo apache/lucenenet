@@ -34,7 +34,7 @@ namespace Lucene.Net.Util.Fst
     /// <para>NOTE: the only way to create a TwoLongs output is to
     /// add the same input to the FST twice in a row.  This is
     /// how the FST maps a single input to two outputs (e.g. you
-    /// cannot pass a <see cref="TwoLongs"/> to <see cref="Builder{T}.Add(Int32sRef, T)"/>.  If you
+    /// cannot pass a <see cref="TwoInt64s"/> to <see cref="Builder{T}.Add(Int32sRef, T)"/>.  If you
     /// need more than two then use <see cref="ListOfOutputs{T}"/>, but if
     /// you only have at most 2 then this implementation will
     /// require fewer bytes as it steals one bit from each long
@@ -43,16 +43,20 @@ namespace Lucene.Net.Util.Fst
     /// </para>
     /// <para>NOTE: the resulting FST is not guaranteed to be minimal!
     /// See <see cref="Builder{T}"/>.
-    /// 
-    /// @lucene.experimental
     /// </para>
+    /// <para>
+    /// NOTE: This was UpToTwoPositiveIntOutputs in Lucene - the data type (int) was wrong there - it should have been long
+    /// </para>
+    /// @lucene.experimental
     /// </summary>
-    public sealed class UpToTwoPositiveIntOutputs : Outputs<object>
+    public sealed class UpToTwoPositiveInt64Outputs : Outputs<object>
     {
-
         /// <summary>
-        /// Holds two long outputs. </summary>
-        public sealed class TwoLongs
+        /// Holds two long outputs.
+        /// <para/>
+        /// NOTE: This was TwoLongs in Lucene
+        /// </summary>
+        public sealed class TwoInt64s
         {
             public long First
             {
@@ -66,7 +70,7 @@ namespace Lucene.Net.Util.Fst
             }
             private readonly long second;
 
-            public TwoLongs(long first, long second)
+            public TwoInt64s(long first, long second)
             {
                 this.first = first;
                 this.second = second;
@@ -81,9 +85,9 @@ namespace Lucene.Net.Util.Fst
 
             public override bool Equals(object other)
             {
-                if (other is TwoLongs)
+                if (other is TwoInt64s)
                 {
-                    TwoLongs other2 = (TwoLongs)other;
+                    TwoInt64s other2 = (TwoInt64s)other;
                     return first == other2.first && second == other2.second;
                 }
                 else
@@ -102,15 +106,15 @@ namespace Lucene.Net.Util.Fst
 
         private readonly bool doShare;
 
-        private static readonly UpToTwoPositiveIntOutputs singletonShare = new UpToTwoPositiveIntOutputs(true);
-        private static readonly UpToTwoPositiveIntOutputs singletonNoShare = new UpToTwoPositiveIntOutputs(false);
+        private static readonly UpToTwoPositiveInt64Outputs singletonShare = new UpToTwoPositiveInt64Outputs(true);
+        private static readonly UpToTwoPositiveInt64Outputs singletonNoShare = new UpToTwoPositiveInt64Outputs(false);
 
-        private UpToTwoPositiveIntOutputs(bool doShare)
+        private UpToTwoPositiveInt64Outputs(bool doShare)
         {
             this.doShare = doShare;
         }
 
-        public static UpToTwoPositiveIntOutputs GetSingleton(bool doShare)
+        public static UpToTwoPositiveInt64Outputs GetSingleton(bool doShare)
         {
             return doShare ? singletonShare : singletonNoShare;
         }
@@ -127,9 +131,9 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public TwoLongs Get(long first, long second)
+        public TwoInt64s Get(long first, long second)
         {
-            return new TwoLongs(first, second);
+            return new TwoInt64s(first, second);
         }
 
         public override object Common(object output1, object output2)
@@ -203,9 +207,9 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                TwoLongs output3 = (TwoLongs)output;
+                TwoInt64s output3 = (TwoInt64s)output;
                 long v = prefix2.Value;
-                return new TwoLongs(output3.First + v, output3.Second + v);
+                return new TwoInt64s(output3.First + v, output3.Second + v);
             }
         }
 
@@ -219,7 +223,7 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                TwoLongs output3 = (TwoLongs)output;
+                TwoInt64s output3 = (TwoInt64s)output;
                 @out.WriteVInt64((output3.First << 1) | 1);
                 @out.WriteVInt64(output3.Second);
             }
@@ -246,7 +250,7 @@ namespace Lucene.Net.Util.Fst
                 // two longs
                 long first = (long)((ulong)code >> 1);
                 long second = @in.ReadVInt64();
-                return new TwoLongs(first, second);
+                return new TwoInt64s(first, second);
             }
         }
 
@@ -266,7 +270,7 @@ namespace Lucene.Net.Util.Fst
                 Debug.Assert(o is long?);
                 return Valid((long?)o);
             }
-            else if (o is TwoLongs)
+            else if (o is TwoInt64s)
             {
                 return true;
             }
@@ -293,7 +297,7 @@ namespace Lucene.Net.Util.Fst
         {
             Debug.Assert(Valid(first, false));
             Debug.Assert(Valid(second, false));
-            return new TwoLongs(((long?)first).GetValueOrDefault(), ((long?)second).GetValueOrDefault());
+            return new TwoInt64s(((long?)first).GetValueOrDefault(), ((long?)second).GetValueOrDefault());
         }
     }
 }

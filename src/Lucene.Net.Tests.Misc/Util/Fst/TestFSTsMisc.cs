@@ -67,7 +67,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     Console.WriteLine("TEST: now test UpToTwoPositiveIntOutputs");
                 }
-                UpToTwoPositiveIntOutputs outputs = UpToTwoPositiveIntOutputs.GetSingleton(true);
+                UpToTwoPositiveInt64Outputs outputs = UpToTwoPositiveInt64Outputs.GetSingleton(true);
                 List<Lucene.Net.Util.Fst.FSTTester<object>.InputOutput<object>> pairs = new List<Lucene.Net.Util.Fst.FSTTester<object>.InputOutput<object>>(terms.Length);
                 long lastOutput = 0;
                 for (int idx = 0; idx < terms.Length; idx++)
@@ -153,16 +153,16 @@ namespace Lucene.Net.Util.Fst
 
             protected internal override bool OutputsEqual(T output1, T output2)
             {
-                if (output1 is UpToTwoPositiveIntOutputs.TwoLongs && output2 is IEnumerable<long>)
+                if (output1 is UpToTwoPositiveInt64Outputs.TwoInt64s && output2 is IEnumerable<long>)
                 {
-                    UpToTwoPositiveIntOutputs.TwoLongs twoLongs1 = output1 as UpToTwoPositiveIntOutputs.TwoLongs;
+                    UpToTwoPositiveInt64Outputs.TwoInt64s twoLongs1 = output1 as UpToTwoPositiveInt64Outputs.TwoInt64s;
                     long[] list2 = (output2 as IEnumerable<long>).ToArray();
                     return (new long[] { twoLongs1.First, twoLongs1.Second }).SequenceEqual(list2);
                 }
-                else if (output2 is UpToTwoPositiveIntOutputs.TwoLongs && output1 is IEnumerable<long>)
+                else if (output2 is UpToTwoPositiveInt64Outputs.TwoInt64s && output1 is IEnumerable<long>)
                 {
                     long[] list1 = (output1 as IEnumerable<long>).ToArray();
-                    UpToTwoPositiveIntOutputs.TwoLongs twoLongs2 = output2 as UpToTwoPositiveIntOutputs.TwoLongs;
+                    UpToTwoPositiveInt64Outputs.TwoInt64s twoLongs2 = output2 as UpToTwoPositiveInt64Outputs.TwoInt64s;
                     return (new long[] { twoLongs2.First, twoLongs2.Second }).SequenceEqual(list1);
                 }
 

@@ -42,7 +42,7 @@ namespace Lucene.Net.Util.Fst
     /// how the FST maps a single input to multiple outputs (e.g. you
     /// cannot pass a List&lt;Object&gt; to <see cref="Builder{T}.Add(Int32sRef, T)"/>).  If
     /// your outputs are longs, and you need at most 2, then use
-    /// <see cref="UpToTwoPositiveIntOutputs"/> instead since it stores
+    /// <see cref="UpToTwoPositiveInt64Outputs"/> instead since it stores
     /// the outputs more compactly (by stealing a bit from each
     /// long value).
     /// 
