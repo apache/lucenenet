@@ -24,12 +24,14 @@ namespace Lucene.Net.Queries.Function.DocValues
     /// <summary>
     /// Abstract <see cref="FunctionValues"/> implementation which supports retrieving <see cref="long"/> values.
     /// Implementations can control how the <see cref="long"/> values are loaded through <see cref="Int64Val(int)"/>
+    /// <para/>
+    /// NOTE: This was LongDocValues in Lucene
     /// </summary>
-    public abstract class LongDocValues : FunctionValues
+    public abstract class Int64DocValues : FunctionValues
     {
         protected readonly ValueSource m_vs;
 
-        public LongDocValues(ValueSource vs)
+        public Int64DocValues(ValueSource vs)
         {
             this.m_vs = vs;
         }
@@ -138,12 +140,12 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         private class ValueSourceScorerAnonymousInnerClassHelper : ValueSourceScorer
         {
-            private readonly LongDocValues outerInstance;
+            private readonly Int64DocValues outerInstance;
 
             private readonly long ll;
             private readonly long uu;
 
-            public ValueSourceScorerAnonymousInnerClassHelper(LongDocValues outerInstance, IndexReader reader, LongDocValues @this, long ll, long uu)
+            public ValueSourceScorerAnonymousInnerClassHelper(Int64DocValues outerInstance, IndexReader reader, Int64DocValues @this, long ll, long uu)
                 : base(reader, @this)
             {
                 this.outerInstance = outerInstance;
@@ -167,9 +169,9 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         private class ValueFillerAnonymousInnerClassHelper : ValueFiller
         {
-            private readonly LongDocValues outerInstance;
+            private readonly Int64DocValues outerInstance;
 
-            public ValueFillerAnonymousInnerClassHelper(LongDocValues outerInstance)
+            public ValueFillerAnonymousInnerClassHelper(Int64DocValues outerInstance)
             {
                 this.outerInstance = outerInstance;
                 mval = new MutableValueInt64();

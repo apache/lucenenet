@@ -21,7 +21,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// A function with a single argument.
+    /// A function with a single (one) argument.
     /// <para/>
     /// NOTE: This was SingleFunction in Lucene, changed to avoid conusion with operations on the datatype <see cref="System.Single"/>.
     /// </summary>

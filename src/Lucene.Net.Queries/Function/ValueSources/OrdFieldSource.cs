@@ -65,17 +65,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
             IndexReader topReader = ReaderUtil.GetTopLevelContext(readerContext).Reader;
             AtomicReader r = SlowCompositeReaderWrapper.Wrap(topReader);
             SortedDocValues sindex = FieldCache.DEFAULT.GetTermsIndex(r, m_field);
-            return new IntDocValuesAnonymousInnerClassHelper(this, this, off, sindex);
+            return new Int32DocValuesAnonymousInnerClassHelper(this, this, off, sindex);
         }
 
-        private sealed class IntDocValuesAnonymousInnerClassHelper : IntDocValues
+        private sealed class Int32DocValuesAnonymousInnerClassHelper : Int32DocValues
         {
             private readonly OrdFieldSource outerInstance;
 
             private readonly int off;
             private readonly SortedDocValues sindex;
 
-            public IntDocValuesAnonymousInnerClassHelper(OrdFieldSource outerInstance, OrdFieldSource @this, int off, SortedDocValues sindex)
+            public Int32DocValuesAnonymousInnerClassHelper(OrdFieldSource outerInstance, OrdFieldSource @this, int off, SortedDocValues sindex)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -116,9 +116,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             private class ValueFillerAnonymousInnerClassHelper : ValueFiller
             {
-                private readonly IntDocValuesAnonymousInnerClassHelper outerInstance;
+                private readonly Int32DocValuesAnonymousInnerClassHelper outerInstance;
 
-                public ValueFillerAnonymousInnerClassHelper(IntDocValuesAnonymousInnerClassHelper outerInstance)
+                public ValueFillerAnonymousInnerClassHelper(Int32DocValuesAnonymousInnerClassHelper outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     mval = new MutableValueInt32();

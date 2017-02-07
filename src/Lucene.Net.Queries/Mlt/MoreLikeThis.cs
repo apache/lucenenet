@@ -420,9 +420,9 @@ namespace Lucene.Net.Queries.Mlt
         /// <summary>
         /// Create a <see cref="T:Util.PriorityQueue{object[]}"/> from a word-&gt;tf map.
         /// </summary>
-        /// <param name="words"> a map of words keyed on the word(<see cref="string"/>) with <see cref="Int"/> objects as the values. </param>
+        /// <param name="words"> a map of words keyed on the word(<see cref="string"/>) with <see cref="Int32"/> objects as the values. </param>
         /// <exception cref="IOException"/>
-        private Util.PriorityQueue<object[]> CreateQueue(IDictionary<string, Int> words)
+        private Util.PriorityQueue<object[]> CreateQueue(IDictionary<string, Int32> words)
         {
             // have collected all words in doc and their freqs
             int numDocs = ir.NumDocs;
@@ -500,7 +500,7 @@ namespace Lucene.Net.Queries.Mlt
         /// <exception cref="IOException"/>
         public Util.PriorityQueue<object[]> RetrieveTerms(int docNum)
         {
-            IDictionary<string, Int> termFreqMap = new Dictionary<string, Int>();
+            IDictionary<string, Int32> termFreqMap = new Dictionary<string, Int32>();
             foreach (string fieldName in FieldNames)
             {
                 Fields vectors = ir.GetTermVectors(docNum);
@@ -542,7 +542,7 @@ namespace Lucene.Net.Queries.Mlt
         /// </summary>
         /// <param name="termFreqMap"> a <see cref="T:IDictionary{string, Int}"/> of terms and their frequencies </param>
         /// <param name="vector"> List of terms and their frequencies for a doc/field </param>
-        private void AddTermFrequencies(IDictionary<string, Int> termFreqMap, Terms vector)
+        private void AddTermFrequencies(IDictionary<string, Int32> termFreqMap, Terms vector)
         {
             var termsEnum = vector.GetIterator(null);
             var spare = new CharsRef();
@@ -558,10 +558,10 @@ namespace Lucene.Net.Queries.Mlt
                 var freq = (int)termsEnum.TotalTermFreq;
 
                 // increment frequency
-                Int cnt;
+                Int32 cnt;
                 if (!termFreqMap.TryGetValue(term, out cnt))
                 {
-                    cnt = new Int();
+                    cnt = new Int32();
                     termFreqMap[term] = cnt;
                     cnt.x = freq;
                 }
@@ -578,7 +578,7 @@ namespace Lucene.Net.Queries.Mlt
         /// <param name="r"> a source of text to be tokenized </param>
         /// <param name="termFreqMap"> a <see cref="T:IDictionary{string, Int}"/> of terms and their frequencies </param>
         /// <param name="fieldName"> Used by analyzer for any special per-field analysis </param>
-        private void AddTermFrequencies(TextReader r, IDictionary<string, Int> termFreqMap, string fieldName)
+        private void AddTermFrequencies(TextReader r, IDictionary<string, Int32> termFreqMap, string fieldName)
         {
             if (Analyzer == null)
             {
@@ -605,10 +605,10 @@ namespace Lucene.Net.Queries.Mlt
                     }
 
                     // increment frequency
-                    Int cnt;
+                    Int32 cnt;
                     if (!termFreqMap.TryGetValue(word, out cnt))
                     {
-                        termFreqMap[word] = new Int();
+                        termFreqMap[word] = new Int32();
                     }
                     else
                     {
@@ -668,7 +668,7 @@ namespace Lucene.Net.Queries.Mlt
         /// <seealso cref="RetrieveInterestingTerms"/>
         public Util.PriorityQueue<object[]> RetrieveTerms(TextReader r, string fieldName)
         {
-            IDictionary<string, Int> words = new Dictionary<string, Int>();
+            IDictionary<string, Int32> words = new Dictionary<string, Int32>();
             AddTermFrequencies(r, words, fieldName);
             return CreateQueue(words);
         }
@@ -733,12 +733,14 @@ namespace Lucene.Net.Queries.Mlt
 
         /// <summary>
         /// Use for frequencies and to avoid renewing <see cref="int"/>s.
+        /// <para/>
+        /// NOTE: This was Int in Lucene
         /// </summary>
-        private class Int
+        private class Int32
         {
             internal int x;
 
-            internal Int()
+            internal Int32()
             {
                 x = 1;
             }

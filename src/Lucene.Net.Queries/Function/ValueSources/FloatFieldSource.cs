@@ -27,17 +27,19 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <summary>
     /// Obtains <see cref="float"/> field values from <see cref="IFieldCache.GetFloats"/> and makes those
     /// values available as other numeric types, casting as needed.
+    /// <para/>
+    /// NOTE: This was FloatFieldSource in Lucene
     /// </summary>
-    public class FloatFieldSource : FieldCacheSource
+    public class SingleFieldSource : FieldCacheSource
     {
         protected readonly FieldCache.ISingleParser m_parser;
 
-        public FloatFieldSource(string field)
+        public SingleFieldSource(string field)
             : this(field, null)
         {
         }
 
-        public FloatFieldSource(string field, FieldCache.ISingleParser parser)
+        public SingleFieldSource(string field, FieldCache.ISingleParser parser)
             : base(field)
         {
             this.m_parser = parser;
@@ -52,15 +54,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             var arr = m_cache.GetSingles(readerContext.AtomicReader, m_field, m_parser, true);
             var valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
-            return new FloatDocValuesAnonymousInnerClassHelper(this, arr, valid);
+            return new SingleDocValuesAnonymousInnerClassHelper(this, arr, valid);
         }
 
-        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
         {
             private readonly FieldCache.Singles arr;
             private readonly IBits valid;
 
-            public FloatDocValuesAnonymousInnerClassHelper(FloatFieldSource @this, FieldCache.Singles arr, IBits valid)
+            public SingleDocValuesAnonymousInnerClassHelper(SingleFieldSource @this, FieldCache.Singles arr, IBits valid)
                 : base(@this)
             {
                 this.arr = arr;
@@ -92,9 +94,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             private class ValueFillerAnonymousInnerClassHelper : ValueFiller
             {
-                private readonly FloatDocValuesAnonymousInnerClassHelper outerInstance;
+                private readonly SingleDocValuesAnonymousInnerClassHelper outerInstance;
 
-                public ValueFillerAnonymousInnerClassHelper(FloatDocValuesAnonymousInnerClassHelper outerInstance)
+                public ValueFillerAnonymousInnerClassHelper(SingleDocValuesAnonymousInnerClassHelper outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     mval = new MutableValueSingle();
@@ -120,7 +122,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as FloatFieldSource;
+            var other = o as SingleFieldSource;
             if (other == null)
                 return false;
             return base.Equals(other) && (this.m_parser == null ? other.m_parser == null : this.m_parser.GetType() == other.m_parser.GetType());

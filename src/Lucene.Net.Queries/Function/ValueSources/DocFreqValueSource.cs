@@ -24,7 +24,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
      * limitations under the License.
      */
 
-    internal class ConstIntDocValues : IntDocValues
+    /// <summary>
+    /// NOTE: This was ConstIntDocValues in Lucene
+    /// </summary>
+    internal class ConstInt32DocValues : Int32DocValues
     {
         internal readonly int ival;
         internal readonly float fval;
@@ -33,7 +36,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         internal readonly string sval;
         internal readonly ValueSource parent;
 
-        internal ConstIntDocValues(int val, ValueSource parent)
+        internal ConstInt32DocValues(int val, ValueSource parent)
             : base(parent)
         {
             ival = val;
@@ -172,7 +175,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             var searcher = (IndexSearcher)context["searcher"];
             int docfreq = searcher.IndexReader.DocFreq(new Term(m_indexedField, m_indexedBytes));
-            return new ConstIntDocValues(docfreq, this);
+            return new ConstInt32DocValues(docfreq, this);
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)

@@ -40,7 +40,7 @@ namespace Lucene.Net.Tests.Queries.Function
             IndexSearcher searcher = NewSearcher(reader);
 
             // Get ValueSource from FieldCache
-            IntFieldSource src = new IntFieldSource("value");
+            Int32FieldSource src = new Int32FieldSource("value");
             // ...and make it a sort criterion
             SortField sf = src.GetSortField(false).Rewrite(searcher);
             Sort orderBy = new Sort(sf);

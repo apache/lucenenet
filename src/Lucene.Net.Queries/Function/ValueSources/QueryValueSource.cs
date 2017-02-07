@@ -90,7 +90,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     }
 
 
-    internal class QueryDocValues : FloatDocValues
+    internal class QueryDocValues : SingleDocValues
     {
         internal readonly AtomicReaderContext readerContext;
         internal readonly IBits acceptDocs;

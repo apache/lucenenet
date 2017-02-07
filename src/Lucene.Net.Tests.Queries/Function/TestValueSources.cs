@@ -108,7 +108,7 @@ namespace Lucene.Net.Tests.Queries.Function
         [Test]
         public void TestDiv()
         {
-            AssertHits(new FunctionQuery(new DivFloatFunction(new ConstValueSource(10f), new ConstValueSource(5f))), new[] { 2f, 2f });
+            AssertHits(new FunctionQuery(new DivSingleFunction(new ConstValueSource(10f), new ConstValueSource(5f))), new[] { 2f, 2f });
         }
 
         [Test]
@@ -132,7 +132,7 @@ namespace Lucene.Net.Tests.Queries.Function
         [Test]
         public void TestFloat()
         {
-            AssertHits(new FunctionQuery(new FloatFieldSource("float")), new[] { 5.2f, 9.3f });
+            AssertHits(new FunctionQuery(new SingleFieldSource("float")), new[] { 5.2f, 9.3f });
         }
 
         [Test]
@@ -163,7 +163,7 @@ namespace Lucene.Net.Tests.Queries.Function
         [Test]
         public void TestInt()
         {
-            AssertHits(new FunctionQuery(new IntFieldSource("int")), new[] { 35f, 54f });
+            AssertHits(new FunctionQuery(new Int32FieldSource("int")), new[] { 35f, 54f });
         }
 
         [Test]
@@ -175,13 +175,13 @@ namespace Lucene.Net.Tests.Queries.Function
         [Test]
         public void TestLinearFloat()
         {
-            AssertHits(new FunctionQuery(new LinearFloatFunction(new ConstValueSource(2.0f), 3, 1)), new[] { 7f, 7f });
+            AssertHits(new FunctionQuery(new LinearSingleFunction(new ConstValueSource(2.0f), 3, 1)), new[] { 7f, 7f });
         }
 
         [Test]
         public void TestLong()
         {
-            AssertHits(new FunctionQuery(new LongFieldSource("long")), new[] { 4343f, 1954f });
+            AssertHits(new FunctionQuery(new Int64FieldSource("long")), new[] { 4343f, 1954f });
         }
 
         [Test]
@@ -193,13 +193,13 @@ namespace Lucene.Net.Tests.Queries.Function
         [Test]
         public void TestMaxFloat()
         {
-            AssertHits(new FunctionQuery(new MaxFloatFunction(new ValueSource[] { new ConstValueSource(1f), new ConstValueSource(2f) })), new[] { 2f, 2f });
+            AssertHits(new FunctionQuery(new MaxSingleFunction(new ValueSource[] { new ConstValueSource(1f), new ConstValueSource(2f) })), new[] { 2f, 2f });
         }
 
         [Test]
         public void TestMinFloat()
         {
-            AssertHits(new FunctionQuery(new MinFloatFunction(new ValueSource[] { new ConstValueSource(1f), new ConstValueSource(2f) })), new[] { 1f, 1f });
+            AssertHits(new FunctionQuery(new MinSingleFunction(new ValueSource[] { new ConstValueSource(1f), new ConstValueSource(2f) })), new[] { 1f, 1f });
         }
 
         [Test]
@@ -227,13 +227,13 @@ namespace Lucene.Net.Tests.Queries.Function
         [Test]
         public void TestPow()
         {
-            AssertHits(new FunctionQuery(new PowFloatFunction(new ConstValueSource(2f), new ConstValueSource(3f))), new[] { 8f, 8f });
+            AssertHits(new FunctionQuery(new PowSingleFunction(new ConstValueSource(2f), new ConstValueSource(3f))), new[] { 8f, 8f });
         }
 
         [Test]
         public void TestProduct()
         {
-            AssertHits(new FunctionQuery(new ProductFloatFunction(new ValueSource[] { new ConstValueSource(2f), new ConstValueSource(3f) })), new[] { 6f, 6f });
+            AssertHits(new FunctionQuery(new ProductSingleFunction(new ValueSource[] { new ConstValueSource(2f), new ConstValueSource(3f) })), new[] { 6f, 6f });
         }
 
         [Test]
@@ -245,34 +245,34 @@ namespace Lucene.Net.Tests.Queries.Function
         [Test]
         public void TestRangeMap()
         {
-            AssertHits(new FunctionQuery(new RangeMapFloatFunction(new FloatFieldSource("float"), 5, 6, 1, 0f)), new[] { 1f, 0f });
-            AssertHits(new FunctionQuery(new RangeMapFloatFunction(new FloatFieldSource("float"), 5, 6, new SumFloatFunction(new ValueSource[] { new ConstValueSource(1f), new ConstValueSource(2f) }), new ConstValueSource(11f))), new[] { 3f, 11f });
+            AssertHits(new FunctionQuery(new RangeMapSingleFunction(new SingleFieldSource("float"), 5, 6, 1, 0f)), new[] { 1f, 0f });
+            AssertHits(new FunctionQuery(new RangeMapSingleFunction(new SingleFieldSource("float"), 5, 6, new SumSingleFunction(new ValueSource[] { new ConstValueSource(1f), new ConstValueSource(2f) }), new ConstValueSource(11f))), new[] { 3f, 11f });
         }
 
         [Test]
         public void TestReciprocal()
         {
-            AssertHits(new FunctionQuery(new ReciprocalFloatFunction(new ConstValueSource(2f), 3, 1, 4)), new[] { 0.1f, 0.1f });
+            AssertHits(new FunctionQuery(new ReciprocalSingleFunction(new ConstValueSource(2f), 3, 1, 4)), new[] { 0.1f, 0.1f });
         }
 
         [Test]
         public void TestScale()
         {
-            AssertHits(new FunctionQuery(new ScaleFloatFunction(new IntFieldSource("int"), 0, 1)), new[] { 0.0f, 1.0f });
+            AssertHits(new FunctionQuery(new ScaleSingleFunction(new Int32FieldSource("int"), 0, 1)), new[] { 0.0f, 1.0f });
         }
 
         [Test]
         public void TestShort()
         {
 #pragma warning disable 612, 618
-            AssertHits(new FunctionQuery(new ShortFieldSource("short")), new[] { 945f, 123f });
+            AssertHits(new FunctionQuery(new Int16FieldSource("short")), new[] { 945f, 123f });
 #pragma warning restore 612, 618
         }
 
         [Test]
         public void TestSumFloat()
         {
-            AssertHits(new FunctionQuery(new SumFloatFunction(new ValueSource[] { new ConstValueSource(1f), new ConstValueSource(2f) })), new[] { 3f, 3f });
+            AssertHits(new FunctionQuery(new SumSingleFunction(new ValueSource[] { new ConstValueSource(1f), new ConstValueSource(2f) })), new[] { 3f, 3f });
         }
 
         [Test]

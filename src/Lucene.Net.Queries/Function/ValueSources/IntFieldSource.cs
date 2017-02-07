@@ -28,17 +28,19 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <summary>
     /// Obtains <see cref="int"/> field values from <see cref="IFieldCache.GetInt32s"/> and makes those
     /// values available as other numeric types, casting as needed.
+    /// <para/>
+    /// NOTE: This was IntFieldSource in Lucene
     /// </summary>
-    public class IntFieldSource : FieldCacheSource
+    public class Int32FieldSource : FieldCacheSource
     {
         private readonly FieldCache.IInt32Parser parser;
 
-        public IntFieldSource(string field)
+        public Int32FieldSource(string field)
             : this(field, null)
         {
         }
 
-        public IntFieldSource(string field, FieldCache.IInt32Parser parser)
+        public Int32FieldSource(string field, FieldCache.IInt32Parser parser)
             : base(field)
         {
             this.parser = parser;
@@ -54,17 +56,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
             FieldCache.Int32s arr = m_cache.GetInt32s(readerContext.AtomicReader, m_field, parser, true);
             IBits valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
 
-            return new IntDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
+            return new Int32DocValuesAnonymousInnerClassHelper(this, this, arr, valid);
         }
 
-        private class IntDocValuesAnonymousInnerClassHelper : IntDocValues
+        private class Int32DocValuesAnonymousInnerClassHelper : Int32DocValues
         {
-            private readonly IntFieldSource outerInstance;
+            private readonly Int32FieldSource outerInstance;
 
             private readonly FieldCache.Int32s arr;
             private readonly IBits valid;
 
-            public IntDocValuesAnonymousInnerClassHelper(IntFieldSource outerInstance, IntFieldSource @this, FieldCache.Int32s arr, IBits valid)
+            public Int32DocValuesAnonymousInnerClassHelper(Int32FieldSource outerInstance, Int32FieldSource @this, FieldCache.Int32s arr, IBits valid)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -131,9 +133,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             private class ValueFillerAnonymousInnerClassHelper : ValueFiller
             {
-                private readonly IntDocValuesAnonymousInnerClassHelper outerInstance;
+                private readonly Int32DocValuesAnonymousInnerClassHelper outerInstance;
 
-                public ValueFillerAnonymousInnerClassHelper(IntDocValuesAnonymousInnerClassHelper outerInstance)
+                public ValueFillerAnonymousInnerClassHelper(Int32DocValuesAnonymousInnerClassHelper outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     mval = new MutableValueInt32();
@@ -159,7 +161,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as IntFieldSource;
+            var other = o as Int32FieldSource;
             if (other == null)
                 return false;
             return base.Equals(other) && (this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType());

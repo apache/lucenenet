@@ -70,17 +70,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return new ConstDoubleDocValues(0.0, this);
             }
 
-            return new FloatDocValuesAnonymousInnerClassHelper(this, this, similarity, norms);
+            return new SingleDocValuesAnonymousInnerClassHelper(this, this, similarity, norms);
         }
 
-        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
         {
             private readonly NormValueSource outerInstance;
 
             private readonly TFIDFSimilarity similarity;
             private readonly NumericDocValues norms;
 
-            public FloatDocValuesAnonymousInnerClassHelper(NormValueSource outerInstance, NormValueSource @this, TFIDFSimilarity similarity, NumericDocValues norms)
+            public SingleDocValuesAnonymousInnerClassHelper(NormValueSource outerInstance, NormValueSource @this, TFIDFSimilarity similarity, NumericDocValues norms)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

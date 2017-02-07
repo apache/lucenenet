@@ -28,17 +28,19 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <summary>
     /// Obtains <see cref="long"/> field values from <see cref="IFieldCache.GetInt64s"/> and makes those
     /// values available as other numeric types, casting as needed.
+    /// <para/>
+    /// NOTE: This was LongFieldSource in Lucene
     /// </summary>
-    public class LongFieldSource : FieldCacheSource
+    public class Int64FieldSource : FieldCacheSource
     {
         protected readonly FieldCache.IInt64Parser m_parser;
 
-        public LongFieldSource(string field)
+        public Int64FieldSource(string field)
             : this(field, null)
         {
         }
 
-        public LongFieldSource(string field, FieldCache.IInt64Parser parser)
+        public Int64FieldSource(string field, FieldCache.IInt64Parser parser)
             : base(field)
         {
             this.m_parser = parser;
@@ -77,17 +79,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             var arr = m_cache.GetInt64s(readerContext.AtomicReader, m_field, m_parser, true);
             var valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
-            return new LongDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
+            return new Int64DocValuesAnonymousInnerClassHelper(this, this, arr, valid);
         }
 
-        private class LongDocValuesAnonymousInnerClassHelper : LongDocValues
+        private class Int64DocValuesAnonymousInnerClassHelper : Int64DocValues
         {
-            private readonly LongFieldSource outerInstance;
+            private readonly Int64FieldSource outerInstance;
 
             private readonly FieldCache.Int64s arr;
             private readonly IBits valid;
 
-            public LongDocValuesAnonymousInnerClassHelper(LongFieldSource outerInstance, LongFieldSource @this, FieldCache.Int64s arr, IBits valid)
+            public Int64DocValuesAnonymousInnerClassHelper(Int64FieldSource outerInstance, Int64FieldSource @this, FieldCache.Int64s arr, IBits valid)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -133,9 +135,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             private class ValueFillerAnonymousInnerClassHelper : ValueFiller
             {
-                private readonly LongDocValuesAnonymousInnerClassHelper outerInstance;
+                private readonly Int64DocValuesAnonymousInnerClassHelper outerInstance;
 
-                public ValueFillerAnonymousInnerClassHelper(LongDocValuesAnonymousInnerClassHelper outerInstance)
+                public ValueFillerAnonymousInnerClassHelper(Int64DocValuesAnonymousInnerClassHelper outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     mval = outerInstance.outerInstance.NewMutableValueInt64();
@@ -173,7 +175,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return false;
             }
-            var other = o as LongFieldSource;
+            var other = o as Int64FieldSource;
             if (other == null)
                 return false;
             return base.Equals(other) && (this.m_parser == null ? other.m_parser == null : this.m_parser.GetType() == other.m_parser.GetType());

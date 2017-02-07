@@ -158,7 +158,7 @@ namespace Lucene.Net.Spatial
                 m_ctx.MakePoint(bbox.MinX, bbox.MinY), bbox.MaxX, bbox.MaxY);
             double distToEdge = diagonalDist * 0.5;
             float c = (float)distToEdge * 0.1f; //one tenth
-            return new ReciprocalFloatFunction(MakeDistanceValueSource(queryShape.Center, 1.0), 1f, c, c);
+            return new ReciprocalSingleFunction(MakeDistanceValueSource(queryShape.Center, 1.0), 1f, c, c);
         }
 
         public override string ToString()

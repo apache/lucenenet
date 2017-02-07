@@ -33,14 +33,16 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// still end up with 0.0 as the min value to map from.  In these cases, an
     /// appropriate map() function could be used as a workaround to change 0.0
     /// to a value in the real range.
+    /// <para/>
+    /// NOTE: This was ScaleFloatFunction in Lucene
     /// </summary>
-    public class ScaleFloatFunction : ValueSource
+    public class ScaleSingleFunction : ValueSource
     {
         protected readonly ValueSource m_source;
         protected readonly float m_min;
         protected readonly float m_max;
 
-        public ScaleFloatFunction(ValueSource source, float min, float max)
+        public ScaleSingleFunction(ValueSource source, float min, float max)
         {
             this.m_source = source;
             this.m_min = min;
@@ -115,19 +117,19 @@ namespace Lucene.Net.Queries.Function.ValueSources
             float maxSource = scaleInfo.MaxVal;
 
             var vals = m_source.GetValues(context, readerContext);
-            return new FloatDocValuesAnonymousInnerClassHelper(this, this, scale, minSource, maxSource, vals);
+            return new SingleDocValuesAnonymousInnerClassHelper(this, this, scale, minSource, maxSource, vals);
         }
 
-        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
         {
-            private readonly ScaleFloatFunction outerInstance;
+            private readonly ScaleSingleFunction outerInstance;
 
             private readonly float scale;
             private readonly float minSource;
             private readonly float maxSource;
             private readonly FunctionValues vals;
 
-            public FloatDocValuesAnonymousInnerClassHelper(ScaleFloatFunction outerInstance, ScaleFloatFunction @this, float scale, float minSource, float maxSource, FunctionValues vals)
+            public SingleDocValuesAnonymousInnerClassHelper(ScaleSingleFunction outerInstance, ScaleSingleFunction @this, float scale, float minSource, float maxSource, FunctionValues vals)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -167,7 +169,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as ScaleFloatFunction;
+            var other = o as ScaleSingleFunction;
             if (other == null)
                 return false;
             return this.m_min == other.m_min 

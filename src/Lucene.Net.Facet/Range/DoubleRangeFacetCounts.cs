@@ -40,7 +40,7 @@ namespace Lucene.Net.Facet.Range
     ///  etc.).
     /// 
     ///  <para> If you had indexed your field using <see cref="Documents.SingleDocValuesField"/> 
-    ///  then pass <see cref="Queries.Function.ValueSources.FloatFieldSource"/>
+    ///  then pass <see cref="Queries.Function.ValueSources.SingleFieldSource"/>
     ///  as the <see cref="ValueSource"/>; if you used 
     ///  <see cref="Documents.DoubleDocValuesField"/> then pass 
     ///  <see cref="DoubleFieldSource"/> (this is the default used when you

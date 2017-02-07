@@ -50,8 +50,8 @@ namespace Lucene.Net.Facet.Range
     using ValueSource = Lucene.Net.Queries.Function.ValueSource;
     using DoubleDocValues = Lucene.Net.Queries.Function.DocValues.DoubleDocValues;
     using DoubleFieldSource = Lucene.Net.Queries.Function.ValueSources.DoubleFieldSource;
-    using FloatFieldSource = Lucene.Net.Queries.Function.ValueSources.FloatFieldSource;
-    using LongFieldSource = Lucene.Net.Queries.Function.ValueSources.LongFieldSource;
+    using SingleFieldSource = Lucene.Net.Queries.Function.ValueSources.SingleFieldSource;
+    using Int64FieldSource = Lucene.Net.Queries.Function.ValueSources.Int64FieldSource;
     using CachingWrapperFilter = Lucene.Net.Search.CachingWrapperFilter;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -373,7 +373,7 @@ namespace Lucene.Net.Facet.Range
             IndexSearcher s = NewSearcher(r);
             s.Search(new MatchAllDocsQuery(), fc);
 
-            Facets facets = new DoubleRangeFacetCounts("field", new FloatFieldSource("field"), fc, new DoubleRange("less than 10", 0.0f, true, 10.0f, false), new DoubleRange("less than or equal to 10", 0.0f, true, 10.0f, true), new DoubleRange("over 90", 90.0f, false, 100.0f, false), new DoubleRange("90 or above", 90.0f, true, 100.0f, false), new DoubleRange("over 1000", 1000.0f, false, double.PositiveInfinity, false));
+            Facets facets = new DoubleRangeFacetCounts("field", new SingleFieldSource("field"), fc, new DoubleRange("less than 10", 0.0f, true, 10.0f, false), new DoubleRange("less than or equal to 10", 0.0f, true, 10.0f, true), new DoubleRange("over 90", 90.0f, false, 100.0f, false), new DoubleRange("90 or above", 90.0f, true, 100.0f, false), new DoubleRange("over 1000", 1000.0f, false, double.PositiveInfinity, false));
 
             Assert.AreEqual("dim=field path=[] value=21 childCount=5\n  less than 10 (10)\n  less than or equal to 10 (11)\n  over 90 (9)\n  90 or above (10)\n  over 1000 (0)\n", facets.GetTopChildren(10, "field").ToString());
 
@@ -533,7 +533,7 @@ namespace Lucene.Net.Facet.Range
                 {
                     fastMatchFilter = null;
                 }
-                ValueSource vs = new LongFieldSource("field");
+                ValueSource vs = new Int64FieldSource("field");
                 Facets facets = new Int64RangeFacetCounts("field", vs, sfc, fastMatchFilter, ranges);
                 FacetResult result = facets.GetTopChildren(10, "field");
                 Assert.AreEqual(numRange, result.LabelValues.Length);
@@ -738,7 +738,7 @@ namespace Lucene.Net.Facet.Range
                 {
                     fastMatchFilter = null;
                 }
-                ValueSource vs = new FloatFieldSource("field");
+                ValueSource vs = new SingleFieldSource("field");
                 Facets facets = new DoubleRangeFacetCounts("field", vs, sfc, fastMatchFilter, ranges);
                 FacetResult result = facets.GetTopChildren(10, "field");
                 Assert.AreEqual(numRange, result.LabelValues.Length);

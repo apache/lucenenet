@@ -24,20 +24,22 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
     /// <summary>
     /// Obtains <see cref="short"/> field values from the <see cref="FieldCache"/>
-    /// using <see cref="IFieldCache.GetShorts"/>
+    /// using <see cref="IFieldCache.GetInt16s"/>
     /// and makes those values available as other numeric types, casting as needed.
+    /// <para/>
+    /// NOTE: This was ShortFieldSource in Lucene
     /// </summary>
     [Obsolete]
-    public class ShortFieldSource : FieldCacheSource
+    public class Int16FieldSource : FieldCacheSource
     {
         private readonly FieldCache.IInt16Parser parser;
 
-        public ShortFieldSource(string field)
+        public Int16FieldSource(string field)
             : this(field, null)
         {
         }
 
-        public ShortFieldSource(string field, FieldCache.IInt16Parser parser)
+        public Int16FieldSource(string field, FieldCache.IInt16Parser parser)
             : base(field)
         {
             this.parser = parser;
@@ -56,10 +58,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         private class FunctionValuesAnonymousInnerClassHelper : FunctionValues
         {
-            private readonly ShortFieldSource outerInstance;
+            private readonly Int16FieldSource outerInstance;
             private readonly FieldCache.Int16s arr;
 
-            public FunctionValuesAnonymousInnerClassHelper(ShortFieldSource outerInstance, FieldCache.Int16s arr)
+            public FunctionValuesAnonymousInnerClassHelper(Int16FieldSource outerInstance, FieldCache.Int16s arr)
             {
                 this.outerInstance = outerInstance;
                 this.arr = arr;
@@ -120,7 +122,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as ShortFieldSource;
+            var other = o as Int16FieldSource;
             if (other == null)
                 return false;
             return base.Equals(other) 

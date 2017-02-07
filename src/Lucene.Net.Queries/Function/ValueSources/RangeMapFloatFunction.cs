@@ -24,12 +24,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <see cref="RangeMapFloatFunction"/> implements a map function over
+    /// <see cref="RangeMapSingleFunction"/> implements a map function over
     /// another <see cref="ValueSource"/> whose values fall within <c>min</c> and <c>max</c> inclusive to <c>target</c>.
     /// <para/>
     /// Normally used as an argument to a <see cref="FunctionQuery"/>
+    /// <para/>
+    /// NOTE: This was RangeMapFloatFunction in Lucene
     /// </summary>
-    public class RangeMapFloatFunction : ValueSource
+    public class RangeMapSingleFunction : ValueSource
     {
         protected readonly ValueSource m_source;
         protected readonly float m_min;
@@ -37,12 +39,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
         protected readonly ValueSource m_target;
         protected readonly ValueSource m_defaultVal;
 
-        public RangeMapFloatFunction(ValueSource source, float min, float max, float target, float? def)
+        public RangeMapSingleFunction(ValueSource source, float min, float max, float target, float? def)
             : this(source, min, max, new ConstValueSource(target), def == null ? null : new ConstValueSource(def.Value))
         {
         }
 
-        public RangeMapFloatFunction(ValueSource source, float min, float max, ValueSource target, ValueSource def)
+        public RangeMapSingleFunction(ValueSource source, float min, float max, ValueSource target, ValueSource def)
         {
             this.m_source = source;
             this.m_min = min;
@@ -61,18 +63,18 @@ namespace Lucene.Net.Queries.Function.ValueSources
             FunctionValues vals = m_source.GetValues(context, readerContext);
             FunctionValues targets = m_target.GetValues(context, readerContext);
             FunctionValues defaults = (this.m_defaultVal == null) ? null : m_defaultVal.GetValues(context, readerContext);
-            return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals, targets, defaults);
+            return new SingleDocValuesAnonymousInnerClassHelper(this, this, vals, targets, defaults);
         }
 
-        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
         {
-            private readonly RangeMapFloatFunction outerInstance;
+            private readonly RangeMapSingleFunction outerInstance;
 
             private readonly FunctionValues vals;
             private readonly FunctionValues targets;
             private readonly FunctionValues defaults;
 
-            public FloatDocValuesAnonymousInnerClassHelper(RangeMapFloatFunction outerInstance, RangeMapFloatFunction @this, FunctionValues vals, FunctionValues targets, FunctionValues defaults)
+            public SingleDocValuesAnonymousInnerClassHelper(RangeMapSingleFunction outerInstance, RangeMapSingleFunction @this, FunctionValues vals, FunctionValues targets, FunctionValues defaults)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -117,11 +119,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (typeof(RangeMapFloatFunction) != o.GetType())
+            if (typeof(RangeMapSingleFunction) != o.GetType())
             {
                 return false;
             }
-            var other = o as RangeMapFloatFunction;
+            var other = o as RangeMapSingleFunction;
             if (other == null)
                 return false;
             return this.m_min == other.m_min 

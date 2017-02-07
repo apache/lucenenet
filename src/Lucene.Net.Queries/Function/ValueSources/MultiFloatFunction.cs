@@ -27,12 +27,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <summary>
     /// Abstract <see cref="ValueSource"/> implementation which wraps multiple <see cref="ValueSource"/>s
     /// and applies an extendible <see cref="float"/> function to their values.
+    /// <para/>
+    /// NOTE: This was MultiFloatFunction in Lucene
     /// </summary>
-    public abstract class MultiFloatFunction : ValueSource
+    public abstract class MultiSingleFunction : ValueSource
     {
         protected readonly ValueSource[] m_sources;
 
-        public MultiFloatFunction(ValueSource[] sources)
+        public MultiSingleFunction(ValueSource[] sources)
         {
             this.m_sources = sources;
         }
@@ -70,16 +72,16 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 valsArr[i] = m_sources[i].GetValues(context, readerContext);
             }
 
-            return new FloatDocValuesAnonymousInnerClassHelper(this, this, valsArr);
+            return new SingleDocValuesAnonymousInnerClassHelper(this, this, valsArr);
         }
 
-        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
         {
-            private readonly MultiFloatFunction outerInstance;
+            private readonly MultiSingleFunction outerInstance;
 
             private readonly FunctionValues[] valsArr;
 
-            public FloatDocValuesAnonymousInnerClassHelper(MultiFloatFunction outerInstance, MultiFloatFunction @this, FunctionValues[] valsArr)
+            public SingleDocValuesAnonymousInnerClassHelper(MultiSingleFunction outerInstance, MultiSingleFunction @this, FunctionValues[] valsArr)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -134,7 +136,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return false;
             }
-            var other = o as MultiFloatFunction;
+            var other = o as MultiSingleFunction;
             if (other == null)
                 return false;
             return Name.Equals(other.Name) && Arrays.Equals(this.m_sources, other.m_sources);

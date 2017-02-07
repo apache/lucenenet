@@ -62,17 +62,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 throw new System.NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
             }
 
-            return new FloatDocValuesAnonymousInnerClassHelper(this, this, terms, similarity);
+            return new SingleDocValuesAnonymousInnerClassHelper(this, this, terms, similarity);
         }
 
-        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
         {
             private readonly TFValueSource outerInstance;
 
             private readonly Terms terms;
             private readonly TFIDFSimilarity similarity;
 
-            public FloatDocValuesAnonymousInnerClassHelper(TFValueSource outerInstance, TFValueSource @this, Terms terms, TFIDFSimilarity similarity)
+            public SingleDocValuesAnonymousInnerClassHelper(TFValueSource outerInstance, TFValueSource @this, Terms terms, TFIDFSimilarity similarity)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -116,9 +116,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             private class DocsEnumAnonymousInnerClassHelper : DocsEnum
             {
-                private readonly FloatDocValuesAnonymousInnerClassHelper outerInstance;
+                private readonly SingleDocValuesAnonymousInnerClassHelper outerInstance;
 
-                public DocsEnumAnonymousInnerClassHelper(FloatDocValuesAnonymousInnerClassHelper outerInstance)
+                public DocsEnumAnonymousInnerClassHelper(SingleDocValuesAnonymousInnerClassHelper outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }

@@ -46,9 +46,9 @@ namespace Lucene.Net.Facet.Taxonomy
     using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
     using ValueSource = Lucene.Net.Queries.Function.ValueSource;
     using DoubleDocValues = Lucene.Net.Queries.Function.DocValues.DoubleDocValues;
-    using FloatFieldSource = Lucene.Net.Queries.Function.ValueSources.FloatFieldSource;
-    using IntFieldSource = Lucene.Net.Queries.Function.ValueSources.IntFieldSource;
-    using LongFieldSource = Lucene.Net.Queries.Function.ValueSources.LongFieldSource;
+    using SingleFieldSource = Lucene.Net.Queries.Function.ValueSources.SingleFieldSource;
+    using Int32FieldSource = Lucene.Net.Queries.Function.ValueSources.Int32FieldSource;
+    using Int64FieldSource = Lucene.Net.Queries.Function.ValueSources.Int64FieldSource;
     using ConstantScoreQuery = Lucene.Net.Search.ConstantScoreQuery;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
@@ -123,7 +123,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // Facets.search utility methods:
             searcher.Search(new MatchAllDocsQuery(), c);
 
-            TaxonomyFacetSumValueSource facets = new TaxonomyFacetSumValueSource(taxoReader, new FacetsConfig(), c, new IntFieldSource("num"));
+            TaxonomyFacetSumValueSource facets = new TaxonomyFacetSumValueSource(taxoReader, new FacetsConfig(), c, new Int32FieldSource("num"));
 
             // Retrieve & verify results:
             Assert.AreEqual("dim=Author path=[] value=145.0 childCount=4\n  Lisa (50.0)\n  Frank (45.0)\n  Susan (40.0)\n  Bob (10.0)\n", facets.GetTopChildren(10, "Author").ToString());
@@ -187,7 +187,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsCollector c = new FacetsCollector();
             searcher.Search(new MatchAllDocsQuery(), c);
 
-            TaxonomyFacetSumValueSource facets = new TaxonomyFacetSumValueSource(taxoReader, new FacetsConfig(), c, new IntFieldSource("num"));
+            TaxonomyFacetSumValueSource facets = new TaxonomyFacetSumValueSource(taxoReader, new FacetsConfig(), c, new Int32FieldSource("num"));
 
             // Ask for top 10 labels for any dims that have counts:
             IList<FacetResult> results = facets.GetAllDims(10);
@@ -232,7 +232,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsCollector c = new FacetsCollector();
             searcher.Search(new MatchAllDocsQuery(), c);
 
-            TaxonomyFacetSumValueSource facets = new TaxonomyFacetSumValueSource(taxoReader, config, c, new IntFieldSource("num"));
+            TaxonomyFacetSumValueSource facets = new TaxonomyFacetSumValueSource(taxoReader, config, c, new Int32FieldSource("num"));
 
             // Ask for top 10 labels for any dims that have counts:
             IList<FacetResult> results = facets.GetAllDims(10);
@@ -322,7 +322,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             FacetsCollector sfc = new FacetsCollector();
             NewSearcher(r).Search(new MatchAllDocsQuery(), sfc);
-            Facets facets = new TaxonomyFacetSumValueSource(taxoReader, config, sfc, new LongFieldSource("price"));
+            Facets facets = new TaxonomyFacetSumValueSource(taxoReader, config, sfc, new Int64FieldSource("price"));
             Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString());
 
             IOUtils.Close(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
@@ -353,7 +353,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             FacetsCollector fc = new FacetsCollector(true);
             // score documents by their 'price' field - makes asserting the correct counts for the categories easier
-            Query q = new FunctionQuery(new LongFieldSource("price"));
+            Query q = new FunctionQuery(new Int64FieldSource("price"));
             FacetsCollector.Search(NewSearcher(r), q, 10, fc);
             Facets facets = new TaxonomyFacetSumValueSource(taxoReader, config, fc, valueSource);
 
@@ -444,7 +444,7 @@ namespace Lucene.Net.Facet.Taxonomy
             DirectoryReader r = DirectoryReader.Open(iw, true);
             DirectoryTaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoWriter);
 
-            ValueSource valueSource = new LongFieldSource("price");
+            ValueSource valueSource = new Int64FieldSource("price");
             FacetsCollector sfc = new FacetsCollector();
             NewSearcher(r).Search(new MatchAllDocsQuery(), sfc);
             Facets facets = new TaxonomyFacetSumValueSource(taxoReader, config, sfc, valueSource);
@@ -523,7 +523,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // NRT open
             var tr = new DirectoryTaxonomyReader(tw);
 
-            ValueSource values = new FloatFieldSource("value");
+            ValueSource values = new SingleFieldSource("value");
 
             int iters = AtLeast(100);
             for (int iter = 0; iter < iters; iter++)

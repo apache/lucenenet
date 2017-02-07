@@ -24,7 +24,7 @@ namespace Lucene.Net.Facet.Range
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Filter = Lucene.Net.Search.Filter;
     using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
-    using LongFieldSource = Lucene.Net.Queries.Function.ValueSources.LongFieldSource;
+    using Int64FieldSource = Lucene.Net.Queries.Function.ValueSources.Int64FieldSource;
     using MatchingDocs = FacetsCollector.MatchingDocs;
     using ValueSource = Lucene.Net.Queries.Function.ValueSource;
 
@@ -46,10 +46,10 @@ namespace Lucene.Net.Facet.Range
     {
         /// <summary>
         /// Create <see cref="Int64RangeFacetCounts"/>, using
-        /// <see cref="LongFieldSource"/> from the specified field. 
+        /// <see cref="Int64FieldSource"/> from the specified field. 
         /// </summary>
         public Int64RangeFacetCounts(string field, FacetsCollector hits, params Int64Range[] ranges)
-            : this(field, new LongFieldSource(field), hits, ranges)
+            : this(field, new Int64FieldSource(field), hits, ranges)
         {
         }
 

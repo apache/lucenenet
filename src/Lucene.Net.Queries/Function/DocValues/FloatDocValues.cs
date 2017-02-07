@@ -23,12 +23,14 @@ namespace Lucene.Net.Queries.Function.DocValues
     /// <summary>
     /// Abstract <see cref="FunctionValues"/> implementation which supports retrieving <see cref="float"/> values.
     /// Implementations can control how the <see cref="float"/> values are loaded through <see cref="SingleVal(int)"/>
+    /// <para/>
+    /// NOTE: This was FloatDocValues in Lucene
     /// </summary>
-    public abstract class FloatDocValues : FunctionValues
+    public abstract class SingleDocValues : FunctionValues
     {
         protected readonly ValueSource m_vs;
 
-        public FloatDocValues(ValueSource vs)
+        public SingleDocValues(ValueSource vs)
         {
             this.m_vs = vs;
         }
@@ -94,9 +96,9 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         private class ValueFillerAnonymousInnerClassHelper : ValueFiller
         {
-            private readonly FloatDocValues outerInstance;
+            private readonly SingleDocValues outerInstance;
 
-            public ValueFillerAnonymousInnerClassHelper(FloatDocValues outerInstance)
+            public ValueFillerAnonymousInnerClassHelper(SingleDocValues outerInstance)
             {
                 this.outerInstance = outerInstance;
                 mval = new MutableValueSingle();

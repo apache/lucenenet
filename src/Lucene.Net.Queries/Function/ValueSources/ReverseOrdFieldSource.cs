@@ -71,10 +71,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var sindex = FieldCache.DEFAULT.GetTermsIndex(r, field);
             var end = sindex.ValueCount;
 
-            return new IntDocValuesAnonymousInnerClassHelper(this, this, off, sindex, end);
+            return new Int32DocValuesAnonymousInnerClassHelper(this, this, off, sindex, end);
         }
 
-        private class IntDocValuesAnonymousInnerClassHelper : IntDocValues
+        private class Int32DocValuesAnonymousInnerClassHelper : Int32DocValues
         {
             private readonly ReverseOrdFieldSource outerInstance;
 
@@ -82,7 +82,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             private readonly SortedDocValues sindex;
             private readonly int end;
 
-            public IntDocValuesAnonymousInnerClassHelper(ReverseOrdFieldSource outerInstance, ReverseOrdFieldSource @this, int off, SortedDocValues sindex, int end)
+            public Int32DocValuesAnonymousInnerClassHelper(ReverseOrdFieldSource outerInstance, ReverseOrdFieldSource @this, int off, SortedDocValues sindex, int end)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

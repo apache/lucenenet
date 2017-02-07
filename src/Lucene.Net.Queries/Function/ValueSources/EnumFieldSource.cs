@@ -126,17 +126,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var arr = m_cache.GetInt32s(readerContext.AtomicReader, m_field, parser, true);
             var valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
 
-            return new IntDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
+            return new Int32DocValuesAnonymousInnerClassHelper(this, this, arr, valid);
         }
 
-        private class IntDocValuesAnonymousInnerClassHelper : IntDocValues
+        private class Int32DocValuesAnonymousInnerClassHelper : Int32DocValues
         {
             private readonly EnumFieldSource outerInstance;
 
             private readonly FieldCache.Int32s arr;
             private readonly IBits valid;
 
-            public IntDocValuesAnonymousInnerClassHelper(EnumFieldSource outerInstance, EnumFieldSource @this, FieldCache.Int32s arr, IBits valid)
+            public Int32DocValuesAnonymousInnerClassHelper(EnumFieldSource outerInstance, EnumFieldSource @this, FieldCache.Int32s arr, IBits valid)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -237,12 +237,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             private class ValueSourceScorerAnonymousInnerClassHelper : ValueSourceScorer
             {
-                private readonly IntDocValuesAnonymousInnerClassHelper outerInstance;
+                private readonly Int32DocValuesAnonymousInnerClassHelper outerInstance;
 
                 private readonly int ll;
                 private readonly int uu;
 
-                public ValueSourceScorerAnonymousInnerClassHelper(IntDocValuesAnonymousInnerClassHelper outerInstance, IndexReader reader, EnumFieldSource @this, int ll, int uu)
+                public ValueSourceScorerAnonymousInnerClassHelper(Int32DocValuesAnonymousInnerClassHelper outerInstance, IndexReader reader, EnumFieldSource @this, int ll, int uu)
                     : base(reader, outerInstance)
                 {
                     this.outerInstance = outerInstance;
@@ -266,9 +266,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             private class ValueFillerAnonymousInnerClassHelper : ValueFiller
             {
-                private readonly IntDocValuesAnonymousInnerClassHelper outerInstance;
+                private readonly Int32DocValuesAnonymousInnerClassHelper outerInstance;
 
-                public ValueFillerAnonymousInnerClassHelper(IntDocValuesAnonymousInnerClassHelper outerInstance)
+                public ValueFillerAnonymousInnerClassHelper(Int32DocValuesAnonymousInnerClassHelper outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     mval = new MutableValueInt32();

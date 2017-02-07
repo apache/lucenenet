@@ -25,7 +25,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <see cref="ReciprocalFloatFunction"/> implements a reciprocal function <c>f(x) = a/(mx+b)</c>, based on
+    /// <see cref="ReciprocalSingleFunction"/> implements a reciprocal function <c>f(x) = a/(mx+b)</c>, based on
     /// the <see cref="float"/> value of a field or function as exported by <see cref="ValueSource"/>.
     /// <para/>
     /// When a and b are equal, and <c>x&gt;=0</c>, this function has a maximum value of 1 that drops as x increases.
@@ -36,9 +36,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// per year).  Thus, a very recent date will yield a value close to 1/(0+1) or 1,
     /// a date a year in the past will get a multiplier of about 1/(1+1) or 1/2,
     /// and date two years old will yield 1/(2+1) or 1/3.
+    /// <para/>
+    /// NOTE: This was ReciprocalFloatFunction in Lucene
     /// </summary>
     /// <seealso cref="FunctionQuery"/>
-    public class ReciprocalFloatFunction : ValueSource
+    public class ReciprocalSingleFunction : ValueSource
     {
         protected readonly ValueSource m_source;
         protected readonly float m_m;
@@ -48,7 +50,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         /// <summary>
         ///  f(source) = a/(m*float(source)+b)
         /// </summary>
-        public ReciprocalFloatFunction(ValueSource source, float m, float a, float b)
+        public ReciprocalSingleFunction(ValueSource source, float m, float a, float b)
         {
             this.m_source = source;
             this.m_m = m;
@@ -59,15 +61,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             var vals = m_source.GetValues(context, readerContext);
-            return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals);
+            return new SingleDocValuesAnonymousInnerClassHelper(this, this, vals);
         }
 
-        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
         {
-            private readonly ReciprocalFloatFunction outerInstance;
+            private readonly ReciprocalSingleFunction outerInstance;
             private readonly FunctionValues vals;
 
-            public FloatDocValuesAnonymousInnerClassHelper(ReciprocalFloatFunction outerInstance, ReciprocalFloatFunction @this, FunctionValues vals)
+            public SingleDocValuesAnonymousInnerClassHelper(ReciprocalSingleFunction outerInstance, ReciprocalSingleFunction @this, FunctionValues vals)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -106,11 +108,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (typeof(ReciprocalFloatFunction) != o.GetType())
+            if (typeof(ReciprocalSingleFunction) != o.GetType())
             {
                 return false;
             }
-            var other = o as ReciprocalFloatFunction;
+            var other = o as ReciprocalSingleFunction;
             if (other == null)
                 return false;
             return this.m_m == other.m_m && this.m_a == other.m_a && this.m_b == other.m_b && this.m_source.Equals(other.m_source);

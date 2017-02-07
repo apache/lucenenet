@@ -20,11 +20,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <see cref="ProductFloatFunction"/> returns the product of it's components.
+    /// <see cref="ProductSingleFunction"/> returns the product of it's components.
+    /// <para/>
+    /// NOTE: This was ProductFloatFunction in Lucene
     /// </summary>
-    public class ProductFloatFunction : MultiFloatFunction
+    public class ProductSingleFunction : MultiSingleFunction
     {
-        public ProductFloatFunction(ValueSource[] sources)
+        public ProductSingleFunction(ValueSource[] sources)
             : base(sources)
         {
         }

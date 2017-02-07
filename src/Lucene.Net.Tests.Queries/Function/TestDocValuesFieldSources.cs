@@ -75,7 +75,7 @@ namespace Lucene.Net.Tests.Queries.Function
             DirectoryReader rd = DirectoryReader.Open(d);
             foreach (AtomicReaderContext leave in rd.Leaves)
             {
-                FunctionValues ids = (new LongFieldSource("id")).GetValues(null, leave);
+                FunctionValues ids = (new Int64FieldSource("id")).GetValues(null, leave);
                 ValueSource vs;
                 switch (type)
                 {
@@ -84,7 +84,7 @@ namespace Lucene.Net.Tests.Queries.Function
                         vs = new BytesRefFieldSource("dv");
                         break;
                     case DocValuesType.NUMERIC:
-                        vs = new LongFieldSource("dv");
+                        vs = new Int64FieldSource("dv");
                         break;
                     default:
                         throw new InvalidOperationException();
@@ -98,7 +98,7 @@ namespace Lucene.Net.Tests.Queries.Function
                     {
                         assertTrue(values.ObjectVal(i) is string);
                     }
-                    else if (vs is LongFieldSource)
+                    else if (vs is Int64FieldSource)
                     {
                         assertTrue(values.ObjectVal(i) is long?);
                         assertTrue(values.BytesVal(i, bytes));

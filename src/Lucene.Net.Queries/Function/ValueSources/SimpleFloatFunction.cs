@@ -23,10 +23,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
     /// <summary>
     /// A simple <see cref="float"/> function with a single argument
+    /// <para/>
+    /// NOTE: This was SimpleFloatFunction in Lucene
     /// </summary>
-    public abstract class SimpleFloatFunction : SingularFunction
+    public abstract class SimpleSingleFunction : SingularFunction
     {
-        public SimpleFloatFunction(ValueSource source)
+        public SimpleSingleFunction(ValueSource source)
             : base(source)
         {
         }
@@ -36,15 +38,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             FunctionValues vals = m_source.GetValues(context, readerContext);
-            return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals);
+            return new SingleDocValuesAnonymousInnerClassHelper(this, this, vals);
         }
 
-        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
         {
-            private readonly SimpleFloatFunction outerInstance;
+            private readonly SimpleSingleFunction outerInstance;
             private readonly FunctionValues vals;
 
-            public FloatDocValuesAnonymousInnerClassHelper(SimpleFloatFunction outerInstance, SimpleFloatFunction @this, FunctionValues vals)
+            public SingleDocValuesAnonymousInnerClassHelper(SimpleSingleFunction outerInstance, SimpleSingleFunction @this, FunctionValues vals)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

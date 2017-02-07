@@ -20,11 +20,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <see cref="SumFloatFunction"/> returns the sum of its components.
+    /// <see cref="SumSingleFunction"/> returns the sum of its components.
+    /// <para/>
+    /// NOTE: This was SumFloatFunction in Lucene
     /// </summary>
-    public class SumFloatFunction : MultiFloatFunction
+    public class SumSingleFunction : MultiSingleFunction
     {
-        public SumFloatFunction(ValueSource[] sources)
+        public SumSingleFunction(ValueSource[] sources)
             : base(sources)
         {
         }

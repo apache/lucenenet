@@ -21,12 +21,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
     /// <summary>
     /// Function to raise the base "a" to the power "b"
+    /// <para/>
+    /// NOTE: This was PowFloatFunction in Lucene
     /// </summary>
-    public class PowFloatFunction : DualFloatFunction
+    public class PowSingleFunction : DualSingleFunction
     {
         /// <param name="a">  the base. </param>
         /// <param name="b">  the exponent. </param>
-        public PowFloatFunction(ValueSource a, ValueSource b)
+        public PowSingleFunction(ValueSource a, ValueSource b)
             : base(a, b)
         {
         }

@@ -40,7 +40,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             // Searcher has no numdocs so we must use the reader instead
-            return new ConstIntDocValues(ReaderUtil.GetTopLevelContext(readerContext).Reader.NumDocs, this);
+            return new ConstInt32DocValues(ReaderUtil.GetTopLevelContext(readerContext).Reader.NumDocs, this);
         }
 
         public override bool Equals(object o)

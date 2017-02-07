@@ -31,11 +31,11 @@ namespace Lucene.Net.Tests.Queries.Function
 
 #pragma warning disable 612, 618
         protected internal ValueSource BYTE_VALUESOURCE = new ByteFieldSource(INT_FIELD);
-        protected internal ValueSource SHORT_VALUESOURCE = new ShortFieldSource(INT_FIELD);
+        protected internal ValueSource SHORT_VALUESOURCE = new Int16FieldSource(INT_FIELD);
 #pragma warning restore 612, 618
-        protected internal ValueSource INT_VALUESOURCE = new IntFieldSource(INT_FIELD);
-        protected internal ValueSource INT_AS_FLOAT_VALUESOURCE = new FloatFieldSource(INT_FIELD);
-        protected internal ValueSource FLOAT_VALUESOURCE = new FloatFieldSource(FLOAT_FIELD);
+        protected internal ValueSource INT_VALUESOURCE = new Int32FieldSource(INT_FIELD);
+        protected internal ValueSource INT_AS_FLOAT_VALUESOURCE = new SingleFieldSource(INT_FIELD);
+        protected internal ValueSource FLOAT_VALUESOURCE = new SingleFieldSource(FLOAT_FIELD);
 
         private static readonly string[] DOC_TEXT_LINES =
         {

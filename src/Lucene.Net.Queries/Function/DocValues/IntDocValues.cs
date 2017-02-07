@@ -24,12 +24,14 @@ namespace Lucene.Net.Queries.Function.DocValues
     /// <summary>
     /// Abstract <see cref="FunctionValues"/> implementation which supports retrieving <see cref="int"/> values.
     /// Implementations can control how the <see cref="int"/> values are loaded through <see cref="Int32Val(int)"/>
+    /// <para/>
+    /// NOTE: This was IntDocValues in Lucene
     /// </summary>
-    public abstract class IntDocValues : FunctionValues
+    public abstract class Int32DocValues : FunctionValues
     {
         protected readonly ValueSource m_vs;
 
-        public IntDocValues(ValueSource vs)
+        public Int32DocValues(ValueSource vs)
         {
             this.m_vs = vs;
         }
@@ -128,12 +130,12 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         private class ValueSourceScorerAnonymousInnerClassHelper : ValueSourceScorer
         {
-            private readonly IntDocValues outerInstance;
+            private readonly Int32DocValues outerInstance;
 
             private int ll;
             private int uu;
 
-            public ValueSourceScorerAnonymousInnerClassHelper(IntDocValues outerInstance, IndexReader reader, IntDocValues @this, int ll, int uu)
+            public ValueSourceScorerAnonymousInnerClassHelper(Int32DocValues outerInstance, IndexReader reader, Int32DocValues @this, int ll, int uu)
                 : base(reader, @this)
             {
                 this.outerInstance = outerInstance;
@@ -157,9 +159,9 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         private class ValueFillerAnonymousInnerClassHelper : ValueFiller
         {
-            private readonly IntDocValues outerInstance;
+            private readonly Int32DocValues outerInstance;
 
-            public ValueFillerAnonymousInnerClassHelper(IntDocValues outerInstance)
+            public ValueFillerAnonymousInnerClassHelper(Int32DocValues outerInstance)
             {
                 this.outerInstance = outerInstance;
                 mval = new MutableValueInt32();

@@ -24,18 +24,20 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <see cref="LinearFloatFunction"/> implements a linear function over
+    /// <see cref="LinearSingleFunction"/> implements a linear function over
     /// another <see cref="ValueSource"/>.
     /// <para/>
     /// Normally Used as an argument to a <see cref="FunctionQuery"/>
+    /// <para/>
+    /// NOTE: This was LinearFloatFunction in Lucene
     /// </summary>
-    public class LinearFloatFunction : ValueSource
+    public class LinearSingleFunction : ValueSource
     {
         protected readonly ValueSource m_source;
         protected readonly float m_slope;
         protected readonly float m_intercept;
 
-        public LinearFloatFunction(ValueSource source, float slope, float intercept)
+        public LinearSingleFunction(ValueSource source, float slope, float intercept)
         {
             this.m_source = source;
             this.m_slope = slope;
@@ -50,15 +52,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             FunctionValues vals = m_source.GetValues(context, readerContext);
-            return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals);
+            return new SingleDocValuesAnonymousInnerClassHelper(this, this, vals);
         }
 
-        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
         {
-            private readonly LinearFloatFunction outerInstance;
+            private readonly LinearSingleFunction outerInstance;
             private readonly FunctionValues vals;
 
-            public FloatDocValuesAnonymousInnerClassHelper(LinearFloatFunction outerInstance, LinearFloatFunction @this, FunctionValues vals)
+            public SingleDocValuesAnonymousInnerClassHelper(LinearSingleFunction outerInstance, LinearSingleFunction @this, FunctionValues vals)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -94,7 +96,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as LinearFloatFunction;
+            var other = o as LinearSingleFunction;
             if (other == null)
                 return false;
             return this.m_slope == other.m_slope && this.m_intercept == other.m_intercept && this.m_source.Equals(other.m_source);

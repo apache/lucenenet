@@ -43,14 +43,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            return new FloatDocValuesAnonymousInnerClassHelper(this, this);
+            return new SingleDocValuesAnonymousInnerClassHelper(this, this);
         }
 
-        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
         {
             private readonly ConstValueSource outerInstance;
 
-            public FloatDocValuesAnonymousInnerClassHelper(ConstValueSource outerInstance, ConstValueSource @this)
+            public SingleDocValuesAnonymousInnerClassHelper(ConstValueSource outerInstance, ConstValueSource @this)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;

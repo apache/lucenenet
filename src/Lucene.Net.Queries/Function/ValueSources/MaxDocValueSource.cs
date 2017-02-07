@@ -46,7 +46,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             var searcher = (IndexSearcher)context["searcher"];
-            return new ConstIntDocValues(searcher.IndexReader.MaxDoc, this);
+            return new ConstInt32DocValues(searcher.IndexReader.MaxDoc, this);
         }
 
         public override bool Equals(object o)

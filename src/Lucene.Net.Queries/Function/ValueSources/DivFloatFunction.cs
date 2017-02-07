@@ -19,12 +19,14 @@
 
     /// <summary>
     /// Function to divide "a" by "b"
+    /// <para/>
+    /// NOTE: This was DivFloatFunction in Lucene
     /// </summary>
-    public class DivFloatFunction : DualFloatFunction
+    public class DivSingleFunction : DualSingleFunction
     {
         /// <param name="a">  the numerator. </param>
         /// <param name="b">  the denominator. </param>
-        public DivFloatFunction(ValueSource a, ValueSource b)
+        public DivSingleFunction(ValueSource a, ValueSource b)
             : base(a, b)
         {
         }

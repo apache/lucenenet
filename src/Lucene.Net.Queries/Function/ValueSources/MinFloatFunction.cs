@@ -20,11 +20,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <see cref="MinFloatFunction"/> returns the min of it's components.
+    /// <see cref="MinSingleFunction"/> returns the min of it's components.
+    /// <para/>
+    /// NOTE: This was MinFloatFunction in Lucene
     /// </summary>
-    public class MinFloatFunction : MultiFloatFunction
+    public class MinSingleFunction : MultiSingleFunction
     {
-        public MinFloatFunction(ValueSource[] sources)
+        public MinSingleFunction(ValueSource[] sources)
             : base(sources)
         {
         }

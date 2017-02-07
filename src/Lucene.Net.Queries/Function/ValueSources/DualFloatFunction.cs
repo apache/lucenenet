@@ -25,15 +25,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <summary>
     /// Abstract <see cref="ValueSource"/> implementation which wraps two <see cref="ValueSource"/>s
     /// and applies an extendible <see cref="float"/> function to their values.
+    /// <para/>
+    /// NOTE: This was DualFloatFunction in Lucene
     /// </summary>
-    public abstract class DualFloatFunction : ValueSource
+    public abstract class DualSingleFunction : ValueSource
     {
         protected readonly ValueSource m_a;
         protected readonly ValueSource m_b;
 
         /// <param name="a">  the base. </param>
         /// <param name="b">  the exponent. </param>
-        public DualFloatFunction(ValueSource a, ValueSource b)
+        public DualSingleFunction(ValueSource a, ValueSource b)
         {
             this.m_a = a;
             this.m_b = b;
@@ -51,17 +53,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             FunctionValues aVals = m_a.GetValues(context, readerContext);
             FunctionValues bVals = m_b.GetValues(context, readerContext);
-            return new FloatDocValuesAnonymousInnerClassHelper(this, this, aVals, bVals);
+            return new SingleDocValuesAnonymousInnerClassHelper(this, this, aVals, bVals);
         }
 
-        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        private class SingleDocValuesAnonymousInnerClassHelper : SingleDocValues
         {
-            private readonly DualFloatFunction outerInstance;
+            private readonly DualSingleFunction outerInstance;
 
             private readonly FunctionValues aVals;
             private readonly FunctionValues bVals;
 
-            public FloatDocValuesAnonymousInnerClassHelper(DualFloatFunction outerInstance, DualFloatFunction @this, FunctionValues aVals, FunctionValues bVals)
+            public SingleDocValuesAnonymousInnerClassHelper(DualSingleFunction outerInstance, DualSingleFunction @this, FunctionValues aVals, FunctionValues bVals)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -101,7 +103,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as DualFloatFunction;
+            var other = o as DualSingleFunction;
             if (other == null)
             {
                 return false;
