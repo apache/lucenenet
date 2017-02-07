@@ -96,6 +96,13 @@ namespace Lucene.Net.Join
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Join.FakeScorer))]
+        public override void TestForTypesContainingNonNetNumeric(Type typeFromTargetAssembly)
+        {
+            base.TestForTypesContainingNonNetNumeric(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Join.FakeScorer))]
         public override void TestForPublicMembersWithNullableEnum(Type typeFromTargetAssembly)
         {
             base.TestForPublicMembersWithNullableEnum(typeFromTargetAssembly);

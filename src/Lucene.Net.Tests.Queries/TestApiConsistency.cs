@@ -100,6 +100,13 @@ namespace Lucene.Net.Tests.Queries
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Queries.BooleanFilter))]
+        public override void TestForTypesContainingNonNetNumeric(Type typeFromTargetAssembly)
+        {
+            base.TestForTypesContainingNonNetNumeric(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Queries.BooleanFilter))]
         public override void TestForPublicMembersWithNullableEnum(Type typeFromTargetAssembly)
         {
             base.TestForPublicMembersWithNullableEnum(typeFromTargetAssembly);

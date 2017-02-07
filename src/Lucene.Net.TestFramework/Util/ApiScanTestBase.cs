@@ -288,6 +288,25 @@ namespace Lucene.Net.Util
         }
 
         //[Test, LuceneNetSpecific]
+        public virtual void TestForTypesContainingNonNetNumeric(Type typeFromTargetAssembly)
+        {
+            var names = GetTypesContainingNonNetNumeric(typeFromTargetAssembly.Assembly);
+
+            //if (VERBOSE)
+            //{
+            foreach (var name in names)
+            {
+                Console.WriteLine(name);
+            }
+            //}
+
+            Assert.IsFalse(names.Any(), names.Count() + " member names containing the word 'Int' not followed " +
+                "by 16, 32, or 64, 'Long', 'Short', or 'Float' detected. " +
+                "In .NET, we need to change to 'Short' to 'Int16', 'Int' to 'Int32', 'Long' to 'Int64', and 'Float' to 'Short'." +
+                "\n\nIMPORTANT: Before making changes, make sure to rename any types with ambiguous use of the word `Single` (meaning 'singular' rather than `System.Single`) to avoid confusion.");
+        }
+
+        //[Test, LuceneNetSpecific]
         public virtual void TestForPublicMembersWithNullableEnum(Type typeFromTargetAssembly)
         {
             var names = GetPublicNullableEnumMembers(typeFromTargetAssembly.Assembly);
@@ -736,6 +755,23 @@ namespace Lucene.Net.Util
                             result.Add(string.Concat(t.FullName, ".", member.Name, " (event)"));
                         }
                     }
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        private static IEnumerable<string> GetTypesContainingNonNetNumeric(Assembly assembly)
+        {
+            var result = new List<string>();
+
+            var types = assembly.GetTypes();
+
+            foreach (var t in types)
+            {
+                if (ContainsNonNetNumeric.IsMatch(t.Name))
+                {
+                    result.Add(t.FullName);
                 }
             }
 

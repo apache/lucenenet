@@ -96,6 +96,13 @@ namespace Lucene.Net.Analysis.Stempel
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Analysis.Stempel.StempelFilter))]
+        public override void TestForTypesContainingNonNetNumeric(Type typeFromTargetAssembly)
+        {
+            base.TestForTypesContainingNonNetNumeric(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Analysis.Stempel.StempelFilter))]
         public override void TestForPublicMembersWithNullableEnum(Type typeFromTargetAssembly)
         {
             base.TestForPublicMembersWithNullableEnum(typeFromTargetAssembly);

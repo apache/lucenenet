@@ -96,6 +96,13 @@ namespace Lucene.Net.Tests.Memory
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Index.Memory.MemoryIndex))]
+        public override void TestForTypesContainingNonNetNumeric(Type typeFromTargetAssembly)
+        {
+            base.TestForTypesContainingNonNetNumeric(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Index.Memory.MemoryIndex))]
         public override void TestForPublicMembersWithNullableEnum(Type typeFromTargetAssembly)
         {
             base.TestForPublicMembersWithNullableEnum(typeFromTargetAssembly);

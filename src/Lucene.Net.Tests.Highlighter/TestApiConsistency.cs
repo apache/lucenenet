@@ -96,6 +96,13 @@ namespace Lucene.Net.Search
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Search.Highlight.DefaultEncoder))]
+        public override void TestForTypesContainingNonNetNumeric(Type typeFromTargetAssembly)
+        {
+            base.TestForTypesContainingNonNetNumeric(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Search.Highlight.DefaultEncoder))]
         public override void TestForPublicMembersWithNullableEnum(Type typeFromTargetAssembly)
         {
             base.TestForPublicMembersWithNullableEnum(typeFromTargetAssembly);

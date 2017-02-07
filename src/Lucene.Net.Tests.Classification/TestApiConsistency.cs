@@ -92,6 +92,13 @@ namespace Lucene.Net.Classification
         public override void TestForPublicMembersContainingNonNetNumeric(Type typeFromTargetAssembly)
         {
             base.TestForPublicMembersContainingNonNetNumeric(typeFromTargetAssembly);
+        }        
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Classification.KNearestNeighborClassifier))]
+        public override void TestForTypesContainingNonNetNumeric(Type typeFromTargetAssembly)
+        {
+            base.TestForTypesContainingNonNetNumeric(typeFromTargetAssembly);
         }
 
         [Test, LuceneNetSpecific]

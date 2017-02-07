@@ -96,6 +96,13 @@ namespace Lucene.Net.Sandbox
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Sandbox.Queries.DuplicateFilter))]
+        public override void TestForTypesContainingNonNetNumeric(Type typeFromTargetAssembly)
+        {
+            base.TestForTypesContainingNonNetNumeric(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Sandbox.Queries.DuplicateFilter))]
         public override void TestForPublicMembersWithNullableEnum(Type typeFromTargetAssembly)
         {
             base.TestForPublicMembersWithNullableEnum(typeFromTargetAssembly);

@@ -96,6 +96,13 @@ namespace Lucene.Net.Tests.Facet
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Facet.Facets))]
+        public override void TestForTypesContainingNonNetNumeric(Type typeFromTargetAssembly)
+        {
+            base.TestForTypesContainingNonNetNumeric(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Facet.Facets))]
         public override void TestForPublicMembersWithNullableEnum(Type typeFromTargetAssembly)
         {
             base.TestForPublicMembersWithNullableEnum(typeFromTargetAssembly);

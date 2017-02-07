@@ -96,6 +96,13 @@ namespace Lucene.Net.Tests.Spatial
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Spatial.DisjointSpatialFilter))]
+        public override void TestForTypesContainingNonNetNumeric(Type typeFromTargetAssembly)
+        {
+            base.TestForTypesContainingNonNetNumeric(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Spatial.DisjointSpatialFilter))]
         public override void TestForPublicMembersWithNullableEnum(Type typeFromTargetAssembly)
         {
             base.TestForPublicMembersWithNullableEnum(typeFromTargetAssembly);

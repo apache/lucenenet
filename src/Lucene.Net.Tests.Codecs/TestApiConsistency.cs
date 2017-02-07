@@ -100,6 +100,13 @@ namespace Lucene.Net.Codecs.Tests
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Codecs.BlockTerms.BlockTermsReader))]
+        public override void TestForTypesContainingNonNetNumeric(Type typeFromTargetAssembly)
+        {
+            base.TestForTypesContainingNonNetNumeric(typeFromTargetAssembly);
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase(typeof(Lucene.Net.Codecs.BlockTerms.BlockTermsReader))]
         public override void TestForPublicMembersWithNullableEnum(Type typeFromTargetAssembly)
         {
             base.TestForPublicMembersWithNullableEnum(typeFromTargetAssembly);
