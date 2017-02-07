@@ -92,14 +92,14 @@ namespace Lucene.Net.Facet.SortedSet
 
         private FacetResult GetDim(string dim, OrdRange ordRange, int topN)
         {
-            TopOrdAndIntQueue q = null;
+            TopOrdAndInt32Queue q = null;
 
             int bottomCount = 0;
 
             int dimCount = 0;
             int childCount = 0;
 
-            TopOrdAndIntQueue.OrdAndValue reuse = null;
+            TopOrdAndInt32Queue.OrdAndValue reuse = null;
             //System.out.println("getDim : " + ordRange.start + " - " + ordRange.end);
             for (int ord = ordRange.Start; ord <= ordRange.End; ord++)
             {
@@ -112,7 +112,7 @@ namespace Lucene.Net.Facet.SortedSet
                     {
                         if (reuse == null)
                         {
-                            reuse = new TopOrdAndIntQueue.OrdAndValue();
+                            reuse = new TopOrdAndInt32Queue.OrdAndValue();
                         }
                         reuse.Ord = ord;
                         reuse.Value = counts[ord];
@@ -120,7 +120,7 @@ namespace Lucene.Net.Facet.SortedSet
                         {
                             // Lazy init, so we don't create this for the
                             // sparse case unnecessarily
-                            q = new TopOrdAndIntQueue(topN);
+                            q = new TopOrdAndInt32Queue(topN);
                         }
                         reuse = q.InsertWithOverflow(reuse);
                         if (q.Count == topN)
@@ -139,7 +139,7 @@ namespace Lucene.Net.Facet.SortedSet
             LabelAndValue[] labelValues = new LabelAndValue[q.Count];
             for (int i = labelValues.Length - 1; i >= 0; i--)
             {
-                TopOrdAndIntQueue.OrdAndValue ordAndValue = q.Pop();
+                TopOrdAndInt32Queue.OrdAndValue ordAndValue = q.Pop();
                 var term = new BytesRef();
                 dv.LookupOrd(ordAndValue.Ord, term);
                 string[] parts = FacetsConfig.StringToPath(term.Utf8ToString());

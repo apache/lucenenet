@@ -26,28 +26,30 @@ namespace Lucene.Net.Facet.Taxonomy
     using MatchingDocs = FacetsCollector.MatchingDocs;
 
     /// <summary>
-    /// Aggregates sum of int values previously indexed with
-    /// <see cref="FloatAssociationFacetField"/>, assuming the default
+    /// Aggregates sum of <see cref="float"/> values previously indexed with
+    /// <see cref="SingleAssociationFacetField"/>, assuming the default
     /// encoding.
+    /// <para/>
+    /// NOTE: This was TaxonomyFacetSumFloatAssociations in Lucene
     /// 
     ///  @lucene.experimental 
     /// </summary>
-    public class TaxonomyFacetSumFloatAssociations : FloatTaxonomyFacets
+    public class TaxonomyFacetSumSingleAssociations : SingleTaxonomyFacets
     {
         /// <summary>
-        /// Create <see cref="TaxonomyFacetSumFloatAssociations"/> against
+        /// Create <see cref="TaxonomyFacetSumSingleAssociations"/> against
         /// the default index field. 
         /// </summary>
-        public TaxonomyFacetSumFloatAssociations(TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
+        public TaxonomyFacetSumSingleAssociations(TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : this(FacetsConfig.DEFAULT_INDEX_FIELD_NAME, taxoReader, config, fc)
         {
         }
 
         /// <summary>
-        /// Create <see cref="TaxonomyFacetSumFloatAssociations"/> against
+        /// Create <see cref="TaxonomyFacetSumSingleAssociations"/> against
         /// the specified index field. 
         /// </summary>
-        public TaxonomyFacetSumFloatAssociations(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
+        public TaxonomyFacetSumSingleAssociations(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : base(indexFieldName, taxoReader, config)
         {
             SumValues(fc.GetMatchingDocs());

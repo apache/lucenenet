@@ -203,7 +203,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
                 try
                 {
-                    new IntAssociationFacetField(17, "dim", components);
+                    new Int32AssociationFacetField(17, "dim", components);
                     Fail("empty or null components should not be allowed: " + Arrays.ToString(components));
                 }
                 catch (System.ArgumentException)
@@ -212,7 +212,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
                 try
                 {
-                    new FloatAssociationFacetField(17.0f, "dim", components);
+                    new SingleAssociationFacetField(17.0f, "dim", components);
                     Fail("empty or null components should not be allowed: " + Arrays.ToString(components));
                 }
                 catch (System.ArgumentException)
@@ -240,7 +240,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             try
             {
-                new IntAssociationFacetField(17, null, new string[] { "abc" });
+                new Int32AssociationFacetField(17, null, new string[] { "abc" });
                 Fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
@@ -249,7 +249,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             try
             {
-                new IntAssociationFacetField(17, "", new string[] { "abc" });
+                new Int32AssociationFacetField(17, "", new string[] { "abc" });
                 Fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
@@ -258,7 +258,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             try
             {
-                new FloatAssociationFacetField(17.0f, null, new string[] { "abc" });
+                new SingleAssociationFacetField(17.0f, null, new string[] { "abc" });
                 Fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
@@ -267,7 +267,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             try
             {
-                new FloatAssociationFacetField(17.0f, "", new string[] { "abc" });
+                new SingleAssociationFacetField(17.0f, "", new string[] { "abc" });
                 Fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)

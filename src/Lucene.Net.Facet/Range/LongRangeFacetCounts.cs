@@ -36,40 +36,41 @@ namespace Lucene.Net.Facet.Range
     /// relative time based dimension like "Past day", "Past 2
     /// days", etc.) or that change for each request (e.g. 
     /// distance from the user's location, "&lt; 1 km", "&lt; 2 km",
-    ///  etc.).
+    /// etc.).
+    /// <para/>
+    /// NOTE: This was LongRangeFacetCounts in Lucene
     /// 
     ///  @lucene.experimental 
     /// </summary>
-    public class LongRangeFacetCounts : RangeFacetCounts
+    public class Int64RangeFacetCounts : RangeFacetCounts
     {
-
         /// <summary>
-        /// Create <see cref="LongRangeFacetCounts"/>, using
+        /// Create <see cref="Int64RangeFacetCounts"/>, using
         /// <see cref="LongFieldSource"/> from the specified field. 
         /// </summary>
-        public LongRangeFacetCounts(string field, FacetsCollector hits, params LongRange[] ranges)
+        public Int64RangeFacetCounts(string field, FacetsCollector hits, params Int64Range[] ranges)
             : this(field, new LongFieldSource(field), hits, ranges)
         {
         }
 
         /// <summary>
-        /// Create <see cref="RangeFacetCounts"/>, using the provided
+        /// Create <see cref="Int64RangeFacetCounts"/>, using the provided
         /// <see cref="ValueSource"/>. 
         /// </summary>
-        public LongRangeFacetCounts(string field, ValueSource valueSource, FacetsCollector hits, params LongRange[] ranges)
+        public Int64RangeFacetCounts(string field, ValueSource valueSource, FacetsCollector hits, params Int64Range[] ranges)
             : this(field, valueSource, hits, null, ranges)
         {
         }
 
         /// <summary>
-        /// Create <see cref="RangeFacetCounts"/>, using the provided
+        /// Create <see cref="Int64RangeFacetCounts"/>, using the provided
         /// <see cref="ValueSource"/>, and using the provided Filter as
         /// a fastmatch: only documents passing the filter are
         /// checked for the matching ranges.  The filter must be
         /// random access (implement <see cref="DocIdSet.Bits"/>). 
         /// </summary>
-        public LongRangeFacetCounts(string field, ValueSource valueSource, 
-            FacetsCollector hits, Filter fastMatchFilter, params LongRange[] ranges)
+        public Int64RangeFacetCounts(string field, ValueSource valueSource, 
+            FacetsCollector hits, Filter fastMatchFilter, params Int64Range[] ranges)
             : base(field, ranges, fastMatchFilter)
         {
             Count(valueSource, hits.GetMatchingDocs());
@@ -78,9 +79,9 @@ namespace Lucene.Net.Facet.Range
         private void Count(ValueSource valueSource, IList<MatchingDocs> matchingDocs)
         {
 
-            LongRange[] ranges = (LongRange[])this.m_ranges;
+            Int64Range[] ranges = (Int64Range[])this.m_ranges;
 
-            LongRangeCounter counter = new LongRangeCounter(ranges);
+            Int64RangeCounter counter = new Int64RangeCounter(ranges);
 
             int missingCount = 0;
             foreach (MatchingDocs hits in matchingDocs)

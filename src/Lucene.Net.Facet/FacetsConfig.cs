@@ -32,10 +32,10 @@ namespace Lucene.Net.Facet
     using Document = Lucene.Net.Documents.Document;
     using FacetLabel = Lucene.Net.Facet.Taxonomy.FacetLabel;
     using Field = Lucene.Net.Documents.Field;
-    using FloatAssociationFacetField = Lucene.Net.Facet.Taxonomy.FloatAssociationFacetField;
+    using SingleAssociationFacetField = Lucene.Net.Facet.Taxonomy.SingleAssociationFacetField;
     using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IIndexableFieldType = Lucene.Net.Index.IIndexableFieldType;
-    using IntAssociationFacetField = Lucene.Net.Facet.Taxonomy.IntAssociationFacetField;
+    using Int32AssociationFacetField = Lucene.Net.Facet.Taxonomy.Int32AssociationFacetField;
     using Int32sRef = Lucene.Net.Util.Int32sRef;
     using SortedSetDocValuesFacetField = Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField;
     using SortedSetDocValuesField = Lucene.Net.Documents.SortedSetDocValuesField;
@@ -357,11 +357,11 @@ namespace Lucene.Net.Facet
                     // Best effort: detect mis-matched types in same
                     // indexed field:
                     string type;
-                    if (facetField is IntAssociationFacetField)
+                    if (facetField is Int32AssociationFacetField)
                     {
                         type = "int";
                     }
-                    else if (facetField is FloatAssociationFacetField)
+                    else if (facetField is SingleAssociationFacetField)
                     {
                         type = "float";
                     }

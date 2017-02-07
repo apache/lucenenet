@@ -30,7 +30,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// 
     /// @lucene.experimental 
     /// </summary>
-    public class TaxonomyFacetCounts : IntTaxonomyFacets
+    public class TaxonomyFacetCounts : Int32TaxonomyFacets
     {
         private readonly OrdinalsReader ordinalsReader;
 

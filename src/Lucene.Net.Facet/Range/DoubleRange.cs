@@ -108,9 +108,9 @@ namespace Lucene.Net.Facet.Range
         /// <summary>
         /// NOTE: This was toLongRange() in Lucene
         /// </summary>
-        internal LongRange ToInt64Range()
+        internal Int64Range ToInt64Range()
         {
-            return new LongRange(Label, NumericUtils.DoubleToSortableInt64(minIncl), true, NumericUtils.DoubleToSortableInt64(maxIncl), true);
+            return new Int64Range(Label, NumericUtils.DoubleToSortableInt64(minIncl), true, NumericUtils.DoubleToSortableInt64(maxIncl), true);
         }
 
         public override string ToString()

@@ -24,10 +24,11 @@ namespace Lucene.Net.Facet.Taxonomy
 
     /// <summary>
     /// Base class for all taxonomy-based facets that aggregate
-    /// to a per-ords <see cref="T:int[]"/>. 
+    /// to a per-ords <see cref="T:int[]"/>.
+    /// <para/>
+    /// NOTE: This was IntTaxonomyFacets in Lucene
     /// </summary>
-
-    public abstract class IntTaxonomyFacets : TaxonomyFacets
+    public abstract class Int32TaxonomyFacets : TaxonomyFacets
     {
         /// <summary>
         /// Per-ordinal value. </summary>
@@ -36,7 +37,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Sole constructor.
         /// </summary>
-        protected IntTaxonomyFacets(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config)
+        protected Int32TaxonomyFacets(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config)
             : base(indexFieldName, taxoReader, config)
         {
             m_values = new int[taxoReader.Count];
@@ -118,7 +119,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 return null;
             }
 
-            TopOrdAndIntQueue q = new TopOrdAndIntQueue(Math.Min(m_taxoReader.Count, topN));
+            TopOrdAndInt32Queue q = new TopOrdAndInt32Queue(Math.Min(m_taxoReader.Count, topN));
 
             int bottomValue = 0;
 
@@ -126,7 +127,7 @@ namespace Lucene.Net.Facet.Taxonomy
             int totValue = 0;
             int childCount = 0;
 
-            TopOrdAndIntQueue.OrdAndValue reuse = null;
+            TopOrdAndInt32Queue.OrdAndValue reuse = null;
             while (ord != TaxonomyReader.INVALID_ORDINAL)
             {
                 if (m_values[ord] > 0)
@@ -137,7 +138,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     {
                         if (reuse == null)
                         {
-                            reuse = new TopOrdAndIntQueue.OrdAndValue();
+                            reuse = new TopOrdAndInt32Queue.OrdAndValue();
                         }
                         reuse.Ord = ord;
                         reuse.Value = m_values[ord];
@@ -177,7 +178,7 @@ namespace Lucene.Net.Facet.Taxonomy
             LabelAndValue[] labelValues = new LabelAndValue[q.Count];
             for (int i = labelValues.Length - 1; i >= 0; i--)
             {
-                TopOrdAndIntQueue.OrdAndValue ordAndValue = q.Pop();
+                TopOrdAndInt32Queue.OrdAndValue ordAndValue = q.Pop();
                 FacetLabel child = m_taxoReader.GetPath(ordAndValue.Ord);
                 labelValues[i] = new LabelAndValue(child.Components[cp.Length], ordAndValue.Value);
             }

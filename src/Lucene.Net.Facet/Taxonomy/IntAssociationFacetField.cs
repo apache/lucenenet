@@ -24,18 +24,20 @@ namespace Lucene.Net.Facet.Taxonomy
 
     /// <summary>
     /// Add an instance of this to your <see cref="Document"/> to add
-    /// a facet label associated with an int.  Use <see cref="TaxonomyFacetSumIntAssociations"/>
+    /// a facet label associated with an <see cref="int"/>.  Use <see cref="TaxonomyFacetSumInt32Associations"/>
     /// to aggregate int values per facet label at search time.
+    /// <para/>
+    /// NOTE: This was IntAssociationFacetField in Lucene
     /// 
     ///  @lucene.experimental 
     /// </summary>
-    public class IntAssociationFacetField : AssociationFacetField
+    public class Int32AssociationFacetField : AssociationFacetField
     {
         /// <summary>
         /// Creates this from <paramref name="dim"/> and <paramref name="path"/> and an
         /// int association 
         /// </summary>
-        public IntAssociationFacetField(int assoc, string dim, params string[] path)
+        public Int32AssociationFacetField(int assoc, string dim, params string[] path)
             : base(Int32ToBytesRef(assoc), dim, path)
         {
         }

@@ -20,10 +20,12 @@ namespace Lucene.Net.Facet
      */
 
     /// <summary>
-    /// Keeps highest results, first by largest int value,
-    /// then tie break by smallest ord. 
+    /// Keeps highest results, first by largest <see cref="int"/> value,
+    /// then tie break by smallest ord.
+    /// <para/>
+    /// NOTE: This was TopOrdAndIntQueue in Lucene
     /// </summary>
-    public class TopOrdAndIntQueue : PriorityQueue<TopOrdAndIntQueue.OrdAndValue>
+    public class TopOrdAndInt32Queue : PriorityQueue<TopOrdAndInt32Queue.OrdAndValue>
     {
         /// <summary>
         /// Holds a single entry.
@@ -49,7 +51,7 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Sole constructor.
         /// </summary>
-        public TopOrdAndIntQueue(int topN)
+        public TopOrdAndInt32Queue(int topN)
             : base(topN, false)
         {
         }

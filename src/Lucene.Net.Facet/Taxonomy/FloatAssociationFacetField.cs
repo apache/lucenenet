@@ -25,18 +25,20 @@ namespace Lucene.Net.Facet.Taxonomy
 
     /// <summary>
     /// Add an instance of this to your <see cref="Document"/> to add
-    /// a facet label associated with a float.  Use <see cref="TaxonomyFacetSumFloatAssociations"/>
-    /// to aggregate float values per facet label at search time.
+    /// a facet label associated with a <see cref="float"/>.  Use <see cref="TaxonomyFacetSumSingleAssociations"/>
+    /// to aggregate <see cref="float"/> values per facet label at search time.
+    /// <para/>
+    /// NOTE: This was FloatAssociationFacetField in Lucene
     /// 
     ///  @lucene.experimental 
     /// </summary>
-    public class FloatAssociationFacetField : AssociationFacetField
+    public class SingleAssociationFacetField : AssociationFacetField
     {
         /// <summary>
         /// Creates this from <paramref name="dim"/> and <paramref name="path"/> and a
-        /// float association 
+        /// <see cref="float"/> association 
         /// </summary>
-        public FloatAssociationFacetField(float assoc, string dim, params string[] path) 
+        public SingleAssociationFacetField(float assoc, string dim, params string[] path) 
             : base(SingleToBytesRef(assoc), dim, path)
         {
         }
@@ -48,7 +50,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public static BytesRef SingleToBytesRef(float v)
         {
-            return IntAssociationFacetField.Int32ToBytesRef(Number.SingleToInt32Bits(v));
+            return Int32AssociationFacetField.Int32ToBytesRef(Number.SingleToInt32Bits(v));
         }
 
         /// <summary>
@@ -58,7 +60,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public static float BytesRefToSingle(BytesRef b)
         {
-            return Number.Int32BitsToSingle(IntAssociationFacetField.BytesRefToInt32(b));
+            return Number.Int32BitsToSingle(Int32AssociationFacetField.BytesRefToInt32(b));
         }
 
         public override string ToString()

@@ -28,11 +28,13 @@ namespace Lucene.Net.Facet.Range
     using ValueSource = Lucene.Net.Queries.Function.ValueSource;
 
     /// <summary>
-    /// Represents a range over long values.
+    /// Represents a range over <see cref="long"/> values.
+    /// <para/>
+    /// NOTE: This was LongRange in Lucene
     /// 
     /// @lucene.experimental 
     /// </summary>
-    public sealed class LongRange : Range
+    public sealed class Int64Range : Range
     {
         internal readonly long minIncl;
         internal readonly long maxIncl;
@@ -57,8 +59,8 @@ namespace Lucene.Net.Facet.Range
         // Double/FloatRange too)
 
         /// <summary>
-        /// Create a LongRange. </summary>
-        public LongRange(string label, long minIn, bool minInclusive, long maxIn, bool maxInclusive)
+        /// Create a <see cref="Int64Range"/>. </summary>
+        public Int64Range(string label, long minIn, bool minInclusive, long maxIn, bool maxInclusive)
             : base(label)
         {
             this.Min = minIn;
@@ -118,12 +120,12 @@ namespace Lucene.Net.Facet.Range
 
         private class FilterAnonymousInnerClassHelper : Filter
         {
-            private readonly LongRange outerInstance;
+            private readonly Int64Range outerInstance;
 
             private readonly Filter fastMatchFilter;
             private readonly ValueSource valueSource;
 
-            public FilterAnonymousInnerClassHelper(LongRange outerInstance, Filter fastMatchFilter, ValueSource valueSource)
+            public FilterAnonymousInnerClassHelper(Int64Range outerInstance, Filter fastMatchFilter, ValueSource valueSource)
             {
                 this.outerInstance = outerInstance;
                 this.fastMatchFilter = fastMatchFilter;

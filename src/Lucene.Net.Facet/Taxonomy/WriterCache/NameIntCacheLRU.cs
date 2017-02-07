@@ -24,6 +24,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// <summary>
     /// An an LRU cache of mapping from name to int.
     /// Used to cache Ordinals of category paths.
+    /// <para/>
+    /// NOTE: This was NameIntCacheLRU in Lucene
     /// 
     /// @lucene.experimental
     /// </summary>
@@ -31,14 +33,14 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// Note: Nothing in this class is synchronized. The caller is assumed to be
     /// synchronized so that no two methods of this class are called concurrently.
     /// </remarks>
-    public class NameIntCacheLRU
+    public class NameInt32CacheLRU
     {
         private IDictionary<object, int> cache;
         internal long nMisses = 0; // for debug
         internal long nHits = 0; // for debug
         private int capacity;
 
-        internal NameIntCacheLRU(int capacity)
+        internal NameInt32CacheLRU(int capacity)
         {
             this.capacity = capacity;
             CreateCache(capacity);

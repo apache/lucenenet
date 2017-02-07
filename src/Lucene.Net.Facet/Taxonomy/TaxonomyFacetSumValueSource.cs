@@ -39,7 +39,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// 
     ///  @lucene.experimental 
     /// </summary>
-    public class TaxonomyFacetSumValueSource : FloatTaxonomyFacets
+    public class TaxonomyFacetSumValueSource : SingleTaxonomyFacets
     {
         private readonly OrdinalsReader ordinalsReader;
 

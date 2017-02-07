@@ -87,14 +87,14 @@ namespace Lucene.Net.Facet.Range
 
             DoubleRange[] ranges = (DoubleRange[])this.m_ranges;
 
-            LongRange[] longRanges = new LongRange[ranges.Length];
+            Int64Range[] longRanges = new Int64Range[ranges.Length];
             for (int i = 0; i < ranges.Length; i++)
             {
                 DoubleRange range = ranges[i];
-                longRanges[i] = new LongRange(range.Label, NumericUtils.DoubleToSortableInt64(range.minIncl), true, NumericUtils.DoubleToSortableInt64(range.maxIncl), true);
+                longRanges[i] = new Int64Range(range.Label, NumericUtils.DoubleToSortableInt64(range.minIncl), true, NumericUtils.DoubleToSortableInt64(range.maxIncl), true);
             }
 
-            LongRangeCounter counter = new LongRangeCounter(longRanges);
+            Int64RangeCounter counter = new Int64RangeCounter(longRanges);
 
             int missingCount = 0;
             foreach (MatchingDocs hits in matchingDocs)

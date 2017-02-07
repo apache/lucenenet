@@ -75,12 +75,12 @@ namespace Lucene.Net.Facet.Taxonomy
                 // aggregators to go into an infinite loop
                 if (i % 11 != 0)
                 {
-                    doc.Add(new IntAssociationFacetField(2, "int", "a"));
-                    doc.Add(new FloatAssociationFacetField(0.5f, "float", "a"));
+                    doc.Add(new Int32AssociationFacetField(2, "int", "a"));
+                    doc.Add(new SingleAssociationFacetField(0.5f, "float", "a"));
                     if (i % 2 == 0) // 50
                     {
-                        doc.Add(new IntAssociationFacetField(3, "int", "b"));
-                        doc.Add(new FloatAssociationFacetField(0.2f, "float", "b"));
+                        doc.Add(new Int32AssociationFacetField(3, "int", "b"));
+                        doc.Add(new SingleAssociationFacetField(0.2f, "float", "b"));
                     }
                 }
                 writer.AddDocument(config.Build(taxoWriter, doc));
@@ -114,7 +114,7 @@ namespace Lucene.Net.Facet.Taxonomy
             IndexSearcher searcher = NewSearcher(reader);
             searcher.Search(new MatchAllDocsQuery(), fc);
 
-            Facets facets = new TaxonomyFacetSumIntAssociations("$facets.int", taxoReader, config, fc);
+            Facets facets = new TaxonomyFacetSumInt32Associations("$facets.int", taxoReader, config, fc);
             Assert.AreEqual("dim=int path=[] value=-1 childCount=2\n  a (200)\n  b (150)\n", facets.GetTopChildren(10, "int").ToString());
             Assert.AreEqual(200, (int)facets.GetSpecificValue("int", "a"), "Wrong count for category 'a'!");
             Assert.AreEqual(150, (int)facets.GetSpecificValue("int", "b"), "Wrong count for category 'b'!");
@@ -128,7 +128,7 @@ namespace Lucene.Net.Facet.Taxonomy
             IndexSearcher searcher = NewSearcher(reader);
             searcher.Search(new MatchAllDocsQuery(), fc);
 
-            Facets facets = new TaxonomyFacetSumFloatAssociations("$facets.float", taxoReader, config, fc);
+            Facets facets = new TaxonomyFacetSumSingleAssociations("$facets.float", taxoReader, config, fc);
             Assert.AreEqual("dim=float path=[] value=-1.0 childCount=2\n  a (50.0)\n  b (9.999995)\n", facets.GetTopChildren(10, "float").ToString());
             Assert.AreEqual(50f, (float)facets.GetSpecificValue("float", "a"), 0.00001, "Wrong count for category 'a'!");
             Assert.AreEqual(10f, (float)facets.GetSpecificValue("float", "b"), 0.00001, "Wrong count for category 'b'!");
@@ -146,11 +146,11 @@ namespace Lucene.Net.Facet.Taxonomy
             IndexSearcher searcher = NewSearcher(reader);
             searcher.Search(new MatchAllDocsQuery(), fc);
 
-            Facets facets = new TaxonomyFacetSumFloatAssociations("$facets.float", taxoReader, config, fc);
+            Facets facets = new TaxonomyFacetSumSingleAssociations("$facets.float", taxoReader, config, fc);
             Assert.AreEqual(50f, (float)facets.GetSpecificValue("float", "a"), 0.00001, "Wrong count for category 'a'!");
             Assert.AreEqual(10f, (float)facets.GetSpecificValue("float", "b"), 0.00001, "Wrong count for category 'b'!");
 
-            facets = new TaxonomyFacetSumIntAssociations("$facets.int", taxoReader, config, fc);
+            facets = new TaxonomyFacetSumInt32Associations("$facets.int", taxoReader, config, fc);
             Assert.AreEqual(200, (int)facets.GetSpecificValue("int", "a"), "Wrong count for category 'a'!");
             Assert.AreEqual(150, (int)facets.GetSpecificValue("int", "b"), "Wrong count for category 'b'!");
         }
@@ -163,7 +163,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             IndexSearcher searcher = NewSearcher(reader);
             searcher.Search(new MatchAllDocsQuery(), fc);
-            Facets facets = new TaxonomyFacetSumFloatAssociations(taxoReader, config, fc);
+            Facets facets = new TaxonomyFacetSumSingleAssociations(taxoReader, config, fc);
             try
             {
                 facets.GetSpecificValue("float");
@@ -196,8 +196,8 @@ namespace Lucene.Net.Facet.Taxonomy
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Document doc = new Document();
-            doc.Add(new IntAssociationFacetField(14, "a", "x"));
-            doc.Add(new FloatAssociationFacetField(55.0f, "b", "y"));
+            doc.Add(new Int32AssociationFacetField(14, "a", "x"));
+            doc.Add(new SingleAssociationFacetField(55.0f, "b", "y"));
             try
             {
                 writer.AddDocument(config.Build(taxoWriter, doc));
@@ -222,7 +222,7 @@ namespace Lucene.Net.Facet.Taxonomy
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Document doc = new Document();
-            doc.Add(new IntAssociationFacetField(14, "a", "x"));
+            doc.Add(new Int32AssociationFacetField(14, "a", "x"));
             try
             {
                 writer.AddDocument(config.Build(taxoWriter, doc));
@@ -247,7 +247,7 @@ namespace Lucene.Net.Facet.Taxonomy
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Document doc = new Document();
-            doc.Add(new IntAssociationFacetField(14, "a", "x"));
+            doc.Add(new Int32AssociationFacetField(14, "a", "x"));
             try
             {
                 writer.AddDocument(config.Build(taxoWriter, doc));
@@ -270,7 +270,7 @@ namespace Lucene.Net.Facet.Taxonomy
             q.Add("int", "b");
             searcher.Search(q, fc);
 
-            Facets facets = new TaxonomyFacetSumIntAssociations("$facets.int", taxoReader, config, fc);
+            Facets facets = new TaxonomyFacetSumInt32Associations("$facets.int", taxoReader, config, fc);
             Assert.AreEqual("dim=int path=[] value=-1 childCount=2\n  b (150)\n  a (100)\n", facets.GetTopChildren(10, "int").ToString());
             Assert.AreEqual(100, (int)facets.GetSpecificValue("int", "a"), "Wrong count for category 'a'!");
             Assert.AreEqual(150, (int)facets.GetSpecificValue("int", "b"), "Wrong count for category 'b'!");

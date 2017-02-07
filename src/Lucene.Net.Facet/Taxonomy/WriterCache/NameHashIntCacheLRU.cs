@@ -22,13 +22,15 @@
     /// Used to cache Ordinals of category paths.
     /// It uses as key, hash of the path instead of the path.
     /// This way the cache takes less RAM, but correctness depends on
-    /// assuming no collisions. 
+    /// assuming no collisions.
+    /// <para/>
+    /// NOTE: this was NameHashIntCacheLRU in Lucene
     /// 
     /// @lucene.experimental
     /// </summary>
-    public class NameHashIntCacheLRU : NameIntCacheLRU
+    public class NameHashInt32CacheLRU : NameInt32CacheLRU
     {
-        internal NameHashIntCacheLRU(int maxCacheSize)
+        internal NameHashInt32CacheLRU(int maxCacheSize)
             : base(maxCacheSize)
         {
         }

@@ -25,11 +25,13 @@ namespace Lucene.Net.Facet.Range
     /// Counts how many times each range was seen;
     /// per-hit it's just a binary search (<see cref="Add"/>)
     /// against the elementary intervals, and in the end we
-    /// rollup back to the original ranges. 
+    /// rollup back to the original ranges.
+    /// <para/>
+    /// NOTE: This was LongRangeCounter in Lucene
     /// </summary>
-    internal sealed class LongRangeCounter
+    internal sealed class Int64RangeCounter
     {
-        internal readonly LongRangeNode root;
+        internal readonly Int64RangeNode root;
         internal readonly long[] boundaries;
         internal readonly int[] leafCounts;
 
@@ -37,7 +39,7 @@ namespace Lucene.Net.Facet.Range
         private int leafUpto;
         private int missingCount;
 
-        public LongRangeCounter(LongRange[] ranges)
+        public Int64RangeCounter(Int64Range[] ranges)
         {
             // Maps all range inclusive endpoints to int flags; 1
             // = start of interval, 2 = end of interval.  We need to
@@ -49,7 +51,7 @@ namespace Lucene.Net.Facet.Range
             endsMap[long.MinValue] = 1;
             endsMap[long.MaxValue] = 2;
 
-            foreach (LongRange range in ranges)
+            foreach (Int64Range range in ranges)
             {
                 int? cur;
                 if (!endsMap.TryGetValue(range.minIncl, out cur))
@@ -216,7 +218,7 @@ namespace Lucene.Net.Facet.Range
             return missingCount;
         }
 
-        private int Rollup(LongRangeNode node, int[] counts, bool sawOutputs)
+        private int Rollup(Int64RangeNode node, int[] counts, bool sawOutputs)
         {
             int count;
             sawOutputs |= node.outputs != null;
@@ -248,20 +250,20 @@ namespace Lucene.Net.Facet.Range
             return count;
         }
 
-        private static LongRangeNode Split(int start, int end, IList<InclusiveRange> elementaryIntervals)
+        private static Int64RangeNode Split(int start, int end, IList<InclusiveRange> elementaryIntervals)
         {
             if (start == end - 1)
             {
                 // leaf
                 InclusiveRange range = elementaryIntervals[start];
-                return new LongRangeNode(range.Start, range.End, null, null, start);
+                return new Int64RangeNode(range.Start, range.End, null, null, start);
             }
             else
             {
                 int mid = (int)((uint)(start + end) >> 1);
-                LongRangeNode left = Split(start, mid, elementaryIntervals);
-                LongRangeNode right = Split(mid, end, elementaryIntervals);
-                return new LongRangeNode(left.start, right.end, left, right, -1);
+                Int64RangeNode left = Split(start, mid, elementaryIntervals);
+                Int64RangeNode right = Split(mid, end, elementaryIntervals);
+                return new Int64RangeNode(left.start, right.end, left, right, -1);
             }
         }
 
@@ -285,11 +287,13 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// Holds one node of the segment tree.
+        /// <para/>
+        /// NOTE: This was LongRangeNode in Lucene
         /// </summary>
-        public sealed class LongRangeNode
+        public sealed class Int64RangeNode
         {
-            internal readonly LongRangeNode left;
-            internal readonly LongRangeNode right;
+            internal readonly Int64RangeNode left;
+            internal readonly Int64RangeNode right;
 
             // Our range, inclusive:
             internal readonly long start;
@@ -303,7 +307,7 @@ namespace Lucene.Net.Facet.Range
             // through this node:
             internal IList<int?> outputs;
 
-            public LongRangeNode(long start, long end, LongRangeNode left, LongRangeNode right, int leafIndex)
+            public Int64RangeNode(long start, long end, Int64RangeNode left, Int64RangeNode right, int leafIndex)
             {
                 this.start = start;
                 this.end = end;
@@ -330,7 +334,7 @@ namespace Lucene.Net.Facet.Range
             /// <summary>
             /// Recursively assigns range outputs to each node.
             /// </summary>
-            internal void AddOutputs(int index, LongRange range)
+            internal void AddOutputs(int index, Int64Range range)
             {
                 if (start >= range.minIncl && end <= range.maxIncl)
                 {

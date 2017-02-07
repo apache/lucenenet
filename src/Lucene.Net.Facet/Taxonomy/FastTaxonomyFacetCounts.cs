@@ -30,7 +30,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// 
     /// @lucene.experimental 
     /// </summary>
-    public class FastTaxonomyFacetCounts : IntTaxonomyFacets
+    public class FastTaxonomyFacetCounts : Int32TaxonomyFacets
     {
         /// <summary>
         /// Create <see cref="FastTaxonomyFacetCounts"/>, which also

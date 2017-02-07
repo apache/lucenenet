@@ -44,7 +44,7 @@
             LRU_STRING
         }
 
-        private NameIntCacheLRU cache;
+        private NameInt32CacheLRU cache;
 
         /// <summary>
         /// Creates this with <see cref="LRUType.LRU_HASHED"/> method.
@@ -73,11 +73,11 @@
             // mapped to the same ordinal...
             if (lruType == LRUType.LRU_HASHED)
             {
-                this.cache = new NameHashIntCacheLRU(cacheSize);
+                this.cache = new NameHashInt32CacheLRU(cacheSize);
             }
             else
             {
-                this.cache = new NameIntCacheLRU(cacheSize);
+                this.cache = new NameInt32CacheLRU(cacheSize);
             }
         }
 
