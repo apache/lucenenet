@@ -73,13 +73,13 @@ namespace Lucene.Net.Search.Highlight
                     throw new ArgumentException("minForegroundColor is not 7 bytes long eg a hex " 
                         + "RGB value such as #FFFFFF");
                 }
-                m_fgRMin = HexToInt(minForegroundColor.Substring(1, 3 - 1));
-                m_fgGMin = HexToInt(minForegroundColor.Substring(3, 5 - 3));
-                m_fgBMin = HexToInt(minForegroundColor.Substring(5, 7 - 5));
+                m_fgRMin = HexToInt32(minForegroundColor.Substring(1, 3 - 1));
+                m_fgGMin = HexToInt32(minForegroundColor.Substring(3, 5 - 3));
+                m_fgBMin = HexToInt32(minForegroundColor.Substring(5, 7 - 5));
 
-                m_fgRMax = HexToInt(maxForegroundColor.Substring(1, 3 - 1));
-                m_fgGMax = HexToInt(maxForegroundColor.Substring(3, 5 - 3));
-                m_fgBMax = HexToInt(maxForegroundColor.Substring(5, 7 - 5));
+                m_fgRMax = HexToInt32(maxForegroundColor.Substring(1, 3 - 1));
+                m_fgGMax = HexToInt32(maxForegroundColor.Substring(3, 5 - 3));
+                m_fgBMax = HexToInt32(maxForegroundColor.Substring(5, 7 - 5));
             }
 
             m_highlightBackground = (minBackgroundColor != null) 
@@ -96,13 +96,13 @@ namespace Lucene.Net.Search.Highlight
                     throw new ArgumentException("minBackgroundColor is not 7 bytes long eg a hex " 
                         + "RGB value such as #FFFFFF");
                 }
-                m_bgRMin = HexToInt(minBackgroundColor.Substring(1, 3 - 1));
-                m_bgGMin = HexToInt(minBackgroundColor.Substring(3, 5 - 3));
-                m_bgBMin = HexToInt(minBackgroundColor.Substring(5, 7 - 5));
+                m_bgRMin = HexToInt32(minBackgroundColor.Substring(1, 3 - 1));
+                m_bgGMin = HexToInt32(minBackgroundColor.Substring(3, 5 - 3));
+                m_bgBMin = HexToInt32(minBackgroundColor.Substring(5, 7 - 5));
 
-                m_bgRMax = HexToInt(maxBackgroundColor.Substring(1, 3 - 1));
-                m_bgGMax = HexToInt(maxBackgroundColor.Substring(3, 5 - 3));
-                m_bgBMax = HexToInt(maxBackgroundColor.Substring(5, 7 - 5));
+                m_bgRMax = HexToInt32(maxBackgroundColor.Substring(1, 3 - 1));
+                m_bgGMax = HexToInt32(maxBackgroundColor.Substring(3, 5 - 3));
+                m_bgBMax = HexToInt32(maxBackgroundColor.Substring(5, 7 - 5));
             }
             //        this.corpusReader = corpusReader;
             this.maxScore = maxScore;
@@ -146,9 +146,9 @@ namespace Lucene.Net.Search.Highlight
             int bVal = GetColorVal(m_fgBMin, m_fgBMax, score);
             var sb = new StringBuilder();
             sb.Append("#");
-            sb.Append(IntToHex(rVal));
-            sb.Append(IntToHex(gVal));
-            sb.Append(IntToHex(bVal));
+            sb.Append(Int32ToHex(rVal));
+            sb.Append(Int32ToHex(gVal));
+            sb.Append(Int32ToHex(bVal));
             return sb.ToString();
         }
 
@@ -159,9 +159,9 @@ namespace Lucene.Net.Search.Highlight
             int bVal = GetColorVal(m_bgBMin, m_bgBMax, score);
             var sb = new StringBuilder();
             sb.Append("#");
-            sb.Append(IntToHex(rVal));
-            sb.Append(IntToHex(gVal));
-            sb.Append(IntToHex(bVal));
+            sb.Append(Int32ToHex(rVal));
+            sb.Append(Int32ToHex(gVal));
+            sb.Append(Int32ToHex(bVal));
             return sb.ToString();
         }
 
@@ -180,13 +180,18 @@ namespace Lucene.Net.Search.Highlight
         private static char[] hexDigits = new char[] { '0', '1', '2', '3', '4', '5', '6', '7',
             '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-        private static string IntToHex(int i)
+        /// <summary>
+        /// NOTE: This was intToHex() in Lucene
+        /// </summary>
+        private static string Int32ToHex(int i)
         {
             return "" + hexDigits[(i & 0xF0) >> 4] + hexDigits[i & 0x0F];
         }
 
         /// <summary> 
-        /// Converts a hex string into an <see cref="int"/>. 
+        /// Converts a hex string into an <see cref="int"/>.
+        /// <para/>
+        /// NOTE: This was hexToInt() in Lucene
         /// </summary>
         /// <param name="hex">
         /// A string in capital or lower case hex, of no more then 16
@@ -194,7 +199,7 @@ namespace Lucene.Net.Search.Highlight
         /// </param>
         /// <exception cref="FormatException">if the string is more than 16 characters long, or if any
         /// character is not in the set [0-9a-fA-f]</exception>
-        public static int HexToInt(string hex)
+        public static int HexToInt32(string hex)
         {
             int len = hex.Length;
             if (len > 16)

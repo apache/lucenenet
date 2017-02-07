@@ -2026,7 +2026,7 @@ namespace Lucene.Net.Search.Highlight
         [Test, LuceneNetSpecific]
         public void TestGradientHighlighterHexToInt()
         {
-            int result = GradientFormatter.HexToInt("#CFFFFF".Substring(1, 3 - 1));
+            int result = GradientFormatter.HexToInt32("#CFFFFF".Substring(1, 3 - 1));
 
             assertEquals(207, result);
         }
