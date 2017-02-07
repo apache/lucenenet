@@ -42,8 +42,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public CodepointCountFilterFactory(IDictionary<string, string> args) 
             : base(args)
         {
-            min = RequireInt(args, MIN_KEY);
-            max = RequireInt(args, MAX_KEY);
+            min = RequireInt32(args, MIN_KEY);
+            max = RequireInt32(args, MAX_KEY);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);

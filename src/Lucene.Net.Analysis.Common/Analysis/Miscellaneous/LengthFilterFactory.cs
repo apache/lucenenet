@@ -43,8 +43,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public LengthFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            min = RequireInt(args, MIN_KEY);
-            max = RequireInt(args, MAX_KEY);
+            min = RequireInt32(args, MIN_KEY);
+            max = RequireInt32(args, MAX_KEY);
             enablePositionIncrements = GetBoolean(args, "enablePositionIncrements", true);
             if (args.Count > 0)
             {

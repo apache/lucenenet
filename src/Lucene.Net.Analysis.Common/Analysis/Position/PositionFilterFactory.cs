@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Position
         public PositionFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            positionIncrement = GetInt(args, "positionIncrement", 0);
+            positionIncrement = GetInt32(args, "positionIncrement", 0);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);

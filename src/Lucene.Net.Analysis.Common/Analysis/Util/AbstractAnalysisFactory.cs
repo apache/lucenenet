@@ -191,12 +191,18 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        protected int RequireInt(IDictionary<string, string> args, string name)
+        /// <summary>
+        /// NOTE: This was requireInt() in Lucene
+        /// </summary>
+        protected int RequireInt32(IDictionary<string, string> args, string name)
         {
             return int.Parse(Require(args, name));
         }
 
-        protected int GetInt(IDictionary<string, string> args, string name, int defaultVal)
+        /// <summary>
+        /// NOTE: This was getInt() in Lucene
+        /// </summary>
+        protected int GetInt32(IDictionary<string, string> args, string name, int defaultVal)
         {
             string s;
             if (args.TryGetValue(name, out s))
@@ -223,12 +229,18 @@ namespace Lucene.Net.Analysis.Util
             return defaultVal;
         }
 
-        protected float RequireFloat(IDictionary<string, string> args, string name)
+        /// <summary>
+        /// NOTE: This was requireFloat() in Lucene
+        /// </summary>
+        protected float RequireSingle(IDictionary<string, string> args, string name)
         {
             return float.Parse(Require(args, name));
         }
 
-        protected float GetFloat(IDictionary<string, string> args, string name, float defaultVal)
+        /// <summary>
+        /// NOTE: This was getFloat() in Lucene
+        /// </summary>
+        protected float GetSingle(IDictionary<string, string> args, string name, float defaultVal)
         {
             string s;
             if (args.TryGetValue(name, out s))

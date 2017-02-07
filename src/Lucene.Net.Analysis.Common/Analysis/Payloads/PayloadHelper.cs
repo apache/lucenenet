@@ -24,22 +24,34 @@ namespace Lucene.Net.Analysis.Payloads
     /// </summary>
     public class PayloadHelper
     {
-        public static byte[] EncodeFloat(float payload)
+        /// <summary>
+        /// NOTE: This was encodeFloat() in Lucene
+        /// </summary>
+        public static byte[] EncodeSingle(float payload)
         {
-            return EncodeFloat(payload, new byte[4], 0);
+            return EncodeSingle(payload, new byte[4], 0);
         }
 
-        public static byte[] EncodeFloat(float payload, byte[] data, int offset)
+        /// <summary>
+        /// NOTE: This was encodeFloat() in Lucene
+        /// </summary>
+        public static byte[] EncodeSingle(float payload, byte[] data, int offset)
         {
-            return EncodeInt(Number.SingleToInt32Bits(payload), data, offset);
+            return EncodeInt32(Number.SingleToInt32Bits(payload), data, offset);
         }
 
-        public static byte[] EncodeInt(int payload)
+        /// <summary>
+        /// NOTE: This was encodeInt() in Lucene
+        /// </summary>
+        public static byte[] EncodeInt32(int payload)
         {
-            return EncodeInt(payload, new byte[4], 0);
+            return EncodeInt32(payload, new byte[4], 0);
         }
 
-        public static byte[] EncodeInt(int payload, byte[] data, int offset)
+        /// <summary>
+        /// NOTE: This was encodeInt() in Lucene
+        /// </summary>
+        public static byte[] EncodeInt32(int payload, byte[] data, int offset)
         {
             data[offset] = (byte)(payload >> 24);
             data[offset + 1] = (byte)(payload >> 16);
@@ -48,29 +60,38 @@ namespace Lucene.Net.Analysis.Payloads
             return data;
         }
 
-        /// <seealso cref="DecodeFloat(byte[], int)"/>
-        /// <seealso cref="EncodeFloat(float)"/>
+        /// <summary>
+        /// NOTE: This was decodeFloat() in Lucene
+        /// </summary>
+        /// <seealso cref="DecodeSingle(byte[], int)"/>
+        /// <seealso cref="EncodeSingle(float)"/>
         /// <returns> the decoded float </returns>
-        public static float DecodeFloat(byte[] bytes)
+        public static float DecodeSingle(byte[] bytes)
         {
-            return DecodeFloat(bytes, 0);
+            return DecodeSingle(bytes, 0);
         }
 
         /// <summary>
-        /// Decode the payload that was encoded using <see cref="EncodeFloat(float)"/>.
-        /// NOTE: the length of the array must be at least offset + 4 long. </summary>
+        /// Decode the payload that was encoded using <see cref="EncodeSingle(float)"/>.
+        /// NOTE: the length of the array must be at least offset + 4 long. 
+        /// <para/>
+        /// NOTE: This was decodeFloat() in Lucene
+        /// </summary>
         /// <param name="bytes"> The bytes to decode </param>
         /// <param name="offset"> The offset into the array. </param>
         /// <returns> The float that was encoded
         /// </returns>
-        /// <seealso cref="EncodeFloat(float)"/>
-        public static float DecodeFloat(byte[] bytes, int offset)
+        /// <seealso cref="EncodeSingle(float)"/>
+        public static float DecodeSingle(byte[] bytes, int offset)
         {
 
-            return Number.Int32BitsToSingle(DecodeInt(bytes, offset));
+            return Number.Int32BitsToSingle(DecodeInt32(bytes, offset));
         }
 
-        public static int DecodeInt(byte[] bytes, int offset)
+        /// <summary>
+        /// NOTE: This was decodeInt() in Lucene
+        /// </summary>
+        public static int DecodeInt32(byte[] bytes, int offset)
         {
             return ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
         }

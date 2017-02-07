@@ -46,12 +46,12 @@ namespace Lucene.Net.Analysis.Shingle
         public ShingleFilterFactory(IDictionary<string, string> args) 
             : base(args)
         {
-            maxShingleSize = GetInt(args, "maxShingleSize", ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE);
+            maxShingleSize = GetInt32(args, "maxShingleSize", ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE);
             if (maxShingleSize < 2)
             {
                 throw new ArgumentOutOfRangeException("Invalid maxShingleSize (" + maxShingleSize + ") - must be at least 2");
             }
-            minShingleSize = GetInt(args, "minShingleSize", ShingleFilter.DEFAULT_MIN_SHINGLE_SIZE);
+            minShingleSize = GetInt32(args, "minShingleSize", ShingleFilter.DEFAULT_MIN_SHINGLE_SIZE);
             if (minShingleSize < 2)
             {
                 throw new ArgumentOutOfRangeException("Invalid minShingleSize (" + minShingleSize + ") - must be at least 2");

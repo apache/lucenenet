@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Payloads
                 throw new ArgumentException("typeMatch cannot be null");
             }
             //Need to encode the payload
-            thePayload = new BytesRef(PayloadHelper.EncodeFloat(payload));
+            thePayload = new BytesRef(PayloadHelper.EncodeSingle(payload));
             this.typeMatch = typeMatch;
             this.payloadAtt = AddAttribute<IPayloadAttribute>();
             this.typeAtt = AddAttribute<ITypeAttribute>();

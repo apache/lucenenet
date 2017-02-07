@@ -94,9 +94,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
             }
 
-            minWordLength = GetInt(args, MIN_WORD_LENGTH, 0);
-            maxWordCount = GetInt(args, MAX_WORD_COUNT, CapitalizationFilter.DEFAULT_MAX_WORD_COUNT);
-            maxTokenLength = GetInt(args, MAX_TOKEN_LENGTH, CapitalizationFilter.DEFAULT_MAX_TOKEN_LENGTH);
+            minWordLength = GetInt32(args, MIN_WORD_LENGTH, 0);
+            maxWordCount = GetInt32(args, MAX_WORD_COUNT, CapitalizationFilter.DEFAULT_MAX_WORD_COUNT);
+            maxTokenLength = GetInt32(args, MAX_TOKEN_LENGTH, CapitalizationFilter.DEFAULT_MAX_TOKEN_LENGTH);
             onlyFirstWord = GetBoolean(args, ONLY_FIRST_WORD, true);
             forceFirstLetter = GetBoolean(args, FORCE_FIRST_LETTER, true);
             if (args.Count > 0)

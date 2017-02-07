@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.Pattern
             : base(args)
         {
             m_pattern = GetPattern(args, PATTERN);
-            m_group = GetInt(args, GROUP, -1);
+            m_group = GetInt32(args, GROUP, -1);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);

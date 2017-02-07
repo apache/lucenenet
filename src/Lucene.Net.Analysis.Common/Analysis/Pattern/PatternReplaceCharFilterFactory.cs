@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Pattern
             pattern = GetPattern(args, "pattern");
             replacement = Get(args, "replacement", "");
             // TODO: warn if you set maxBlockChars or blockDelimiters ?
-            maxBlockChars = GetInt(args, "maxBlockChars",
+            maxBlockChars = GetInt32(args, "maxBlockChars",
 #pragma warning disable 612, 618
                 PatternReplaceCharFilter.DEFAULT_MAX_BLOCK_CHARS);
 #pragma warning restore 612, 618

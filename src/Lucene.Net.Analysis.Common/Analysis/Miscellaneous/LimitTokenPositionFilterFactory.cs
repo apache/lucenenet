@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public LimitTokenPositionFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            maxTokenPosition = RequireInt(args, MAX_TOKEN_POSITION_KEY);
+            maxTokenPosition = RequireInt32(args, MAX_TOKEN_POSITION_KEY);
             consumeAllTokens = GetBoolean(args, CONSUME_ALL_TOKENS_KEY, false);
             if (args.Count > 0)
             {

@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Payloads
                 assertNotNull(payAttr);
                 byte[] payData = payAttr.Payload.Bytes;
                 assertNotNull(payData);
-                float payFloat = PayloadHelper.DecodeFloat(payData);
+                float payFloat = PayloadHelper.DecodeSingle(payData);
                 assertEquals(0.1f, payFloat, 0.0f);
             }
             stream.End();
@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Payloads
                 assertNotNull(payAttr);
                 byte[] payData = payAttr.Payload.Bytes;
                 assertNotNull(payData);
-                float payFloat = PayloadHelper.DecodeFloat(payData);
+                float payFloat = PayloadHelper.DecodeSingle(payData);
                 assertEquals(0.1f, payFloat, 0.0f);
             }
             stream.End();

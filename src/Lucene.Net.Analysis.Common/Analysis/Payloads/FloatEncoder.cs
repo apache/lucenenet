@@ -23,13 +23,13 @@ namespace Lucene.Net.Analysis.Payloads
     /// <summary>
     /// Encode a character array <see cref="float"/> as a <see cref="BytesRef"/>.
     /// </summary>
-    /// <seealso cref="PayloadHelper.EncodeFloat(float, byte[], int)"/>
+    /// <seealso cref="PayloadHelper.EncodeSingle(float, byte[], int)"/>
     public class FloatEncoder : AbstractEncoder, IPayloadEncoder
     {
         public override BytesRef Encode(char[] buffer, int offset, int length)
         {
             float payload = float.Parse(new string(buffer, offset, length)); //TODO: improve this so that we don't have to new Strings
-            byte[] bytes = PayloadHelper.EncodeFloat(payload);
+            byte[] bytes = PayloadHelper.EncodeSingle(payload);
             BytesRef result = new BytesRef(bytes);
             return result;
         }

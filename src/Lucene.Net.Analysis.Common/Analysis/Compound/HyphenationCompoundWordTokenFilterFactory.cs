@@ -72,9 +72,9 @@ namespace Lucene.Net.Analysis.Compound
             dictFile = Get(args, "dictionary");
             encoding = Get(args, "encoding");
             hypFile = Require(args, "hyphenator");
-            minWordSize = GetInt(args, "minWordSize", CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE);
-            minSubwordSize = GetInt(args, "minSubwordSize", CompoundWordTokenFilterBase.DEFAULT_MIN_SUBWORD_SIZE);
-            maxSubwordSize = GetInt(args, "maxSubwordSize", CompoundWordTokenFilterBase.DEFAULT_MAX_SUBWORD_SIZE);
+            minWordSize = GetInt32(args, "minWordSize", CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE);
+            minSubwordSize = GetInt32(args, "minSubwordSize", CompoundWordTokenFilterBase.DEFAULT_MIN_SUBWORD_SIZE);
+            maxSubwordSize = GetInt32(args, "maxSubwordSize", CompoundWordTokenFilterBase.DEFAULT_MAX_SUBWORD_SIZE);
             onlyLongestMatch = GetBoolean(args, "onlyLongestMatch", false);
             if (args.Count > 0)
             {

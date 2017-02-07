@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Hunspell
             // this isn't necessary: multi-stage stripping is fixed and 
             // flags like COMPLEXPREFIXES in the data itself control this.
             // but recognize and ignore for back compat
-            GetInt(args, "recursionCap", 0);
+            GetInt32(args, "recursionCap", 0);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);

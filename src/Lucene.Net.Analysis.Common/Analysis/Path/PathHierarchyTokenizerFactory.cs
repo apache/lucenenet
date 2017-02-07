@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Path
             delimiter = GetChar(args, "delimiter", PathHierarchyTokenizer.DEFAULT_DELIMITER);
             replacement = GetChar(args, "replace", delimiter);
             reverse = GetBoolean(args, "reverse", false);
-            skip = GetInt(args, "skip", PathHierarchyTokenizer.DEFAULT_SKIP);
+            skip = GetInt32(args, "skip", PathHierarchyTokenizer.DEFAULT_SKIP);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);

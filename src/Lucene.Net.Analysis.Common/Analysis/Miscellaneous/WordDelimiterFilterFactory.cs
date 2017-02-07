@@ -58,39 +58,39 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             AssureMatchVersion();
             int flags = 0;
-            if (GetInt(args, "generateWordParts", 1) != 0)
+            if (GetInt32(args, "generateWordParts", 1) != 0)
             {
                 flags |= WordDelimiterFilter.GENERATE_WORD_PARTS;
             }
-            if (GetInt(args, "generateNumberParts", 1) != 0)
+            if (GetInt32(args, "generateNumberParts", 1) != 0)
             {
                 flags |= WordDelimiterFilter.GENERATE_NUMBER_PARTS;
             }
-            if (GetInt(args, "catenateWords", 0) != 0)
+            if (GetInt32(args, "catenateWords", 0) != 0)
             {
                 flags |= WordDelimiterFilter.CATENATE_WORDS;
             }
-            if (GetInt(args, "catenateNumbers", 0) != 0)
+            if (GetInt32(args, "catenateNumbers", 0) != 0)
             {
                 flags |= WordDelimiterFilter.CATENATE_NUMBERS;
             }
-            if (GetInt(args, "catenateAll", 0) != 0)
+            if (GetInt32(args, "catenateAll", 0) != 0)
             {
                 flags |= WordDelimiterFilter.CATENATE_ALL;
             }
-            if (GetInt(args, "splitOnCaseChange", 1) != 0)
+            if (GetInt32(args, "splitOnCaseChange", 1) != 0)
             {
                 flags |= WordDelimiterFilter.SPLIT_ON_CASE_CHANGE;
             }
-            if (GetInt(args, "splitOnNumerics", 1) != 0)
+            if (GetInt32(args, "splitOnNumerics", 1) != 0)
             {
                 flags |= WordDelimiterFilter.SPLIT_ON_NUMERICS;
             }
-            if (GetInt(args, "preserveOriginal", 0) != 0)
+            if (GetInt32(args, "preserveOriginal", 0) != 0)
             {
                 flags |= WordDelimiterFilter.PRESERVE_ORIGINAL;
             }
-            if (GetInt(args, "stemEnglishPossessive", 1) != 0)
+            if (GetInt32(args, "stemEnglishPossessive", 1) != 0)
             {
                 flags |= WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE;
             }

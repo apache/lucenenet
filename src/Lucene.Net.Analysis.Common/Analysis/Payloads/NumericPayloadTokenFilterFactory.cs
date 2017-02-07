@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Payloads
         /// Creates a new <see cref="NumericPayloadTokenFilterFactory"/> </summary>
         public NumericPayloadTokenFilterFactory(IDictionary<string, string> args) : base(args)
         {
-            payload = RequireFloat(args, "payload");
+            payload = RequireSingle(args, "payload");
             typeMatch = Require(args, "typeMatch");
             if (args.Count > 0)
             {

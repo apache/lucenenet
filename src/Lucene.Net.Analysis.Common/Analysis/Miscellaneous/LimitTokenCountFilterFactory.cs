@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public LimitTokenCountFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            maxTokenCount = RequireInt(args, MAX_TOKEN_COUNT_KEY);
+            maxTokenCount = RequireInt32(args, MAX_TOKEN_COUNT_KEY);
             consumeAllTokens = GetBoolean(args, CONSUME_ALL_TOKENS_KEY, false);
             if (args.Count > 0)
             {

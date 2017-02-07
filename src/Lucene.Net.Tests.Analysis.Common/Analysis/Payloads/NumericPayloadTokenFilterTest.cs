@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Payloads
                     byte[] bytes = payloadAtt.Payload.Bytes; //safe here to just use the bytes, otherwise we should use offset, length
                     assertTrue(bytes.Length + " does not equal: " + payloadAtt.Payload.Length, bytes.Length == payloadAtt.Payload.Length);
                     assertTrue(payloadAtt.Payload.Offset + " does not equal: " + 0, payloadAtt.Payload.Offset == 0);
-                    float pay = PayloadHelper.DecodeFloat(bytes);
+                    float pay = PayloadHelper.DecodeSingle(bytes);
                     assertTrue(pay + " does not equal: " + 3, pay == 3);
                 }
                 else

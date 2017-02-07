@@ -40,8 +40,8 @@ namespace Lucene.Net.Analysis.NGram
         public NGramFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            minGramSize = GetInt(args, "minGramSize", NGramTokenFilter.DEFAULT_MIN_NGRAM_SIZE);
-            maxGramSize = GetInt(args, "maxGramSize", NGramTokenFilter.DEFAULT_MAX_NGRAM_SIZE);
+            minGramSize = GetInt32(args, "minGramSize", NGramTokenFilter.DEFAULT_MIN_NGRAM_SIZE);
+            maxGramSize = GetInt32(args, "maxGramSize", NGramTokenFilter.DEFAULT_MAX_NGRAM_SIZE);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);

@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Standard
             : base(args)
         {
             AssureMatchVersion();
-            maxTokenLength = GetInt(args, "maxTokenLength", StandardAnalyzer.DEFAULT_MAX_TOKEN_LENGTH);
+            maxTokenLength = GetInt32(args, "maxTokenLength", StandardAnalyzer.DEFAULT_MAX_TOKEN_LENGTH);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
