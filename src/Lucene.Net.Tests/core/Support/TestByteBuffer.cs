@@ -181,7 +181,7 @@ namespace Lucene.Net.Support
             //checkBytes(b, new byte[] { 0, 0, 0, (byte)ic(0) });
             //checkInvalidMarkException(ib);
 
-            LongBuffer lb = b.AsInt64Buffer();
+            Int64Buffer lb = b.AsInt64Buffer();
             TestLongBuffer.test(level, lb, direct);
             checkBytes(b, new byte[] { 0, 0, 0, 0, 0, 0, 0, (byte)Ic(0) });
             checkInvalidMarkException(lb);

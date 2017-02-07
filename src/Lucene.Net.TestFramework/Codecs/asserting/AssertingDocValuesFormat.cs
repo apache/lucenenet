@@ -11,7 +11,7 @@ namespace Lucene.Net.Codecs.asserting
     using DocValuesType = Lucene.Net.Index.DocValuesType;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-    using LongBitSet = Lucene.Net.Util.LongBitSet;
+    using Int64BitSet = Lucene.Net.Util.Int64BitSet;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -157,7 +157,7 @@ namespace Lucene.Net.Codecs.asserting
 
                 int docCount = 0;
                 long ordCount = 0;
-                LongBitSet seenOrds = new LongBitSet(valueCount);
+                Int64BitSet seenOrds = new Int64BitSet(valueCount);
                 IEnumerator<long?> ordIterator = ords.GetEnumerator();
                 foreach (long? v in docToOrdCount)
                 {

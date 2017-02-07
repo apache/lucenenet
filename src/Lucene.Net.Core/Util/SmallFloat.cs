@@ -21,14 +21,16 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Floating point numbers smaller than 32 bits.
+    /// <para/>
+    /// NOTE: This was SmallFloat in Lucene
     ///
     /// @lucene.internal
     /// </summary>
-    public class SmallFloat
+    public class SmallSingle
     {
         /// <summary>
         /// No instance </summary>
-        private SmallFloat()
+        private SmallSingle()
         {
         }
 

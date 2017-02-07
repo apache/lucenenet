@@ -192,9 +192,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                 // write primary terms dict offsets
                 packedIndexStart = outerInstance.m_output.FilePointer;
 
-                PackedInts.Writer w = PackedInts.GetWriter(outerInstance.m_output, numIndexTerms,
-                    PackedInts.BitsRequired(termsFilePointer),
-                    PackedInts.DEFAULT);
+                PackedInt32s.Writer w = PackedInt32s.GetWriter(outerInstance.m_output, numIndexTerms,
+                    PackedInt32s.BitsRequired(termsFilePointer),
+                    PackedInt32s.DEFAULT);
 
                 // relative to our indexStart
                 long upto = 0;
@@ -208,8 +208,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                 packedOffsetsStart = outerInstance.m_output.FilePointer;
 
                 // write offsets into the byte[] terms
-                w = PackedInts.GetWriter(outerInstance.m_output, 1 + numIndexTerms, PackedInts.BitsRequired(totTermLength),
-                    PackedInts.DEFAULT);
+                w = PackedInt32s.GetWriter(outerInstance.m_output, 1 + numIndexTerms, PackedInt32s.BitsRequired(totTermLength),
+                    PackedInt32s.DEFAULT);
                 upto = 0;
                 for (int i = 0; i < numIndexTerms; i++)
                 {

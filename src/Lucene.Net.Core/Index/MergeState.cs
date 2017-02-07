@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
     using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;
     using InfoStream = Lucene.Net.Util.InfoStream;
-    using MonotonicAppendingLongBuffer = Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer;
+    using MonotonicAppendingInt64Buffer = Lucene.Net.Util.Packed.MonotonicAppendingInt64Buffer;
 
     /// <summary>
     /// Holds common state used during segment merging.
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
             internal static DocMap Build(int maxDoc, IBits liveDocs)
             {
                 Debug.Assert(liveDocs != null);
-                MonotonicAppendingLongBuffer docMap = new MonotonicAppendingLongBuffer();
+                MonotonicAppendingInt64Buffer docMap = new MonotonicAppendingInt64Buffer();
                 int del = 0;
                 for (int i = 0; i < maxDoc; ++i)
                 {
@@ -109,10 +109,10 @@ namespace Lucene.Net.Index
             {
                 private int maxDoc;
                 private IBits liveDocs;
-                private MonotonicAppendingLongBuffer docMap;
+                private MonotonicAppendingInt64Buffer docMap;
                 private int numDeletedDocs;
 
-                public DocMapAnonymousInnerClassHelper(int maxDoc, IBits liveDocs, MonotonicAppendingLongBuffer docMap, int numDeletedDocs)
+                public DocMapAnonymousInnerClassHelper(int maxDoc, IBits liveDocs, MonotonicAppendingInt64Buffer docMap, int numDeletedDocs)
                 {
                     this.maxDoc = maxDoc;
                     this.liveDocs = liveDocs;

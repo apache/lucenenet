@@ -249,11 +249,11 @@ namespace Lucene.Net.Search.Suggest.Fst
             // Build the automaton.
             Outputs<object> outputs = NoOutputs.Singleton;
             object empty = outputs.NoOutput;
-            Builder<object> builder = new Builder<object>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, shareMaxTailLength, outputs, null, false, PackedInts.DEFAULT, true, 15);
+            Builder<object> builder = new Builder<object>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, shareMaxTailLength, outputs, null, false, PackedInt32s.DEFAULT, true, 15);
 
             BytesRef scratch = new BytesRef();
             BytesRef entry;
-            IntsRef scratchIntsRef = new IntsRef();
+            Int32sRef scratchIntsRef = new Int32sRef();
             int count = 0;
             IBytesRefIterator iter = sorter.GetEnumerator();
             while ((entry = iter.Next()) != null)

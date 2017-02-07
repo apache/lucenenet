@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 {
                     Outputs<CharsRef> outputs = CharSequenceOutputs.Singleton;
                     Builder<CharsRef> builder = new Builder<CharsRef>(FST.INPUT_TYPE.BYTE2, outputs);
-                    IntsRef scratch = new IntsRef();
+                    Int32sRef scratch = new Int32sRef();
                     foreach (var ent in pendingPairs)
                     {
                         builder.Add(Lucene.Net.Util.Fst.Util.ToUTF16(ent.Key, scratch), new CharsRef(ent.Value));

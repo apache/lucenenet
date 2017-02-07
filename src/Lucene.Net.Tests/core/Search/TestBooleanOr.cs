@@ -199,7 +199,7 @@ namespace Lucene.Net.Search
             BulkScorer scorer = w.GetBulkScorer(s.IndexReader.Leaves[0], false, null);
 
             FixedBitSet hits = new FixedBitSet(docCount);
-            AtomicInteger end = new AtomicInteger();
+            AtomicInt32 end = new AtomicInt32();
             ICollector c = new CollectorAnonymousInnerClassHelper(this, scorer, hits, end);
 
             while (end.Get() < docCount)
@@ -220,9 +220,9 @@ namespace Lucene.Net.Search
 
             private BulkScorer scorer;
             private FixedBitSet Hits;
-            private AtomicInteger End;
+            private AtomicInt32 End;
 
-            public CollectorAnonymousInnerClassHelper(TestBooleanOr outerInstance, BulkScorer scorer, FixedBitSet hits, AtomicInteger end)
+            public CollectorAnonymousInnerClassHelper(TestBooleanOr outerInstance, BulkScorer scorer, FixedBitSet hits, AtomicInt32 end)
             {
                 this.OuterInstance = outerInstance;
                 this.scorer = scorer;

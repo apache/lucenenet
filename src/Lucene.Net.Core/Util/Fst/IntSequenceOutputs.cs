@@ -24,21 +24,23 @@ namespace Lucene.Net.Util.Fst
     using DataOutput = Lucene.Net.Store.DataOutput;
 
     /// <summary>
-    /// An FST <seealso cref="Outputs"/> implementation where each output
+    /// An FST <see cref="Outputs{T}"/> implementation where each output
     /// is a sequence of ints.
+    /// <para/>
+    /// NOTE: This was IntSequenceOutputs in Lucene
     ///
     /// @lucene.experimental
     /// </summary>
-    public sealed class IntSequenceOutputs : Outputs<IntsRef>
+    public sealed class Int32SequenceOutputs : Outputs<Int32sRef>
     {
-        private static readonly IntsRef NO_OUTPUT = new IntsRef();
-        private static readonly IntSequenceOutputs singleton = new IntSequenceOutputs();
+        private static readonly Int32sRef NO_OUTPUT = new Int32sRef();
+        private static readonly Int32SequenceOutputs singleton = new Int32SequenceOutputs();
 
-        private IntSequenceOutputs()
+        private Int32SequenceOutputs()
         {
         }
 
-        public static IntSequenceOutputs Singleton
+        public static Int32SequenceOutputs Singleton
         {
             get
             {
@@ -46,7 +48,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override IntsRef Common(IntsRef output1, IntsRef output2)
+        public override Int32sRef Common(Int32sRef output1, Int32sRef output2)
         {
             Debug.Assert(output1 != null);
             Debug.Assert(output2 != null);
@@ -81,11 +83,11 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                return new IntsRef(output1.Int32s, output1.Offset, pos1 - output1.Offset);
+                return new Int32sRef(output1.Int32s, output1.Offset, pos1 - output1.Offset);
             }
         }
 
-        public override IntsRef Subtract(IntsRef output, IntsRef inc)
+        public override Int32sRef Subtract(Int32sRef output, Int32sRef inc)
         {
             Debug.Assert(output != null);
             Debug.Assert(inc != null);
@@ -103,11 +105,11 @@ namespace Lucene.Net.Util.Fst
             {
                 Debug.Assert(inc.Length < output.Length, "inc.length=" + inc.Length + " vs output.length=" + output.Length);
                 Debug.Assert(inc.Length > 0);
-                return new IntsRef(output.Int32s, output.Offset + inc.Length, output.Length - inc.Length);
+                return new Int32sRef(output.Int32s, output.Offset + inc.Length, output.Length - inc.Length);
             }
         }
 
-        public override IntsRef Add(IntsRef prefix, IntsRef output)
+        public override Int32sRef Add(Int32sRef prefix, Int32sRef output)
         {
             Debug.Assert(prefix != null);
             Debug.Assert(output != null);
@@ -123,7 +125,7 @@ namespace Lucene.Net.Util.Fst
             {
                 Debug.Assert(prefix.Length > 0);
                 Debug.Assert(output.Length > 0);
-                IntsRef result = new IntsRef(prefix.Length + output.Length);
+                Int32sRef result = new Int32sRef(prefix.Length + output.Length);
                 Array.Copy(prefix.Int32s, prefix.Offset, result.Int32s, 0, prefix.Length);
                 Array.Copy(output.Int32s, output.Offset, result.Int32s, prefix.Length, output.Length);
                 result.Length = prefix.Length + output.Length;
@@ -131,7 +133,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override void Write(IntsRef prefix, DataOutput @out)
+        public override void Write(Int32sRef prefix, DataOutput @out)
         {
             Debug.Assert(prefix != null);
             @out.WriteVInt32(prefix.Length);
@@ -141,7 +143,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override IntsRef Read(DataInput @in)
+        public override Int32sRef Read(DataInput @in)
         {
             int len = @in.ReadVInt32();
             if (len == 0)
@@ -150,7 +152,7 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                IntsRef output = new IntsRef(len);
+                Int32sRef output = new Int32sRef(len);
                 for (int idx = 0; idx < len; idx++)
                 {
                     output.Int32s[idx] = @in.ReadVInt32();
@@ -160,7 +162,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override IntsRef NoOutput
+        public override Int32sRef NoOutput
         {
             get
             {
@@ -168,7 +170,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override string OutputToString(IntsRef output)
+        public override string OutputToString(Int32sRef output)
         {
             return output.ToString();
         }

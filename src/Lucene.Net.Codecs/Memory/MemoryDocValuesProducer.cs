@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs.Memory
         private readonly IDictionary<int?, IBits> docsWithFieldInstances = new Dictionary<int?, IBits>();
 
         private readonly int maxDoc;
-        private readonly AtomicLong ramBytesUsed;
+        private readonly AtomicInt64 ramBytesUsed;
         private readonly int version;
 
         internal const byte NUMBER = 0;
@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.Memory
                     CodecUtil.CheckEOF(@in);
 #pragma warning restore 612, 618
                 }
-                ramBytesUsed = new AtomicLong(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
+                ramBytesUsed = new AtomicInt64(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
                 success = true;
             }
             finally
@@ -251,7 +251,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     int formatID = data.ReadVInt32();
                     int bitsPerValue = data.ReadVInt32();
-                    var ordsReader = PackedInts.GetReaderNoHeader(data, PackedInts.Format.ById(formatID),
+                    var ordsReader = PackedInt32s.GetReaderNoHeader(data, PackedInt32s.Format.ById(formatID),
                         entry.packedIntsVersion, maxDoc, bitsPerValue);
                     ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(decode) + ordsReader.RamBytesUsed());
                     return new NumericDocValuesAnonymousInnerClassHelper(this, decode, ordsReader);
@@ -285,10 +285,10 @@ namespace Lucene.Net.Codecs.Memory
             private readonly MemoryDocValuesProducer outerInstance;
 
             private readonly long[] decode;
-            private readonly PackedInts.Reader ordsReader;
+            private readonly PackedInt32s.Reader ordsReader;
 
             public NumericDocValuesAnonymousInnerClassHelper(MemoryDocValuesProducer outerInstance, long[] decode,
-                PackedInts.Reader ordsReader)
+                PackedInt32s.Reader ordsReader)
             {
                 this.outerInstance = outerInstance;
                 this.decode = decode;
@@ -429,7 +429,7 @@ namespace Lucene.Net.Codecs.Memory
                 if (!fstInstances.TryGetValue(field.Number, out instance))
                 {
                     data.Seek(entry.offset);
-                    instance = new FST<long?>(data, PositiveIntOutputs.Singleton);
+                    instance = new FST<long?>(data, PositiveInt32Outputs.Singleton);
                     ramBytesUsed.AddAndGet(instance.SizeInBytes());
                     fstInstances[field.Number] = instance;
                 }
@@ -441,7 +441,7 @@ namespace Lucene.Net.Codecs.Memory
             var @in = fst.GetBytesReader();
             var firstArc = new FST.Arc<long?>();
             var scratchArc = new FST.Arc<long?>();
-            var scratchInts = new IntsRef();
+            var scratchInts = new Int32sRef();
             var fstEnum = new BytesRefFSTEnum<long?>(fst);
 
             return new SortedDocValuesAnonymousInnerClassHelper(entry, docToOrd, fst, @in, firstArc, scratchArc,
@@ -456,12 +456,12 @@ namespace Lucene.Net.Codecs.Memory
             private readonly FST.BytesReader @in;
             private readonly FST.Arc<long?> firstArc;
             private readonly FST.Arc<long?> scratchArc;
-            private readonly IntsRef scratchInts;
+            private readonly Int32sRef scratchInts;
             private readonly BytesRefFSTEnum<long?> fstEnum;
 
             public SortedDocValuesAnonymousInnerClassHelper(FSTEntry fstEntry,
                 NumericDocValues numericDocValues, FST<long?> fst1, FST.BytesReader @in, FST.Arc<long?> arc, FST.Arc<long?> scratchArc1,
-                IntsRef intsRef, BytesRefFSTEnum<long?> bytesRefFstEnum)
+                Int32sRef intsRef, BytesRefFSTEnum<long?> bytesRefFstEnum)
             {
                 entry = fstEntry;
                 docToOrd = numericDocValues;
@@ -484,7 +484,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     @in.Position = 0;
                     fst.GetFirstArc(firstArc);
-                    IntsRef output = Util.GetByOutput(fst, ord, @in, firstArc, scratchArc, scratchInts);
+                    Int32sRef output = Util.GetByOutput(fst, ord, @in, firstArc, scratchArc, scratchInts);
                     result.Bytes = new byte[output.Length];
                     result.Offset = 0;
                     result.Length = 0;
@@ -544,7 +544,7 @@ namespace Lucene.Net.Codecs.Memory
                 if (!fstInstances.TryGetValue(field.Number, out instance))
                 {
                     data.Seek(entry.offset);
-                    instance = new FST<long?>(data, PositiveIntOutputs.Singleton);
+                    instance = new FST<long?>(data, PositiveInt32Outputs.Singleton);
                     ramBytesUsed.AddAndGet(instance.SizeInBytes());
                     fstInstances[field.Number] = instance;
                 }
@@ -556,7 +556,7 @@ namespace Lucene.Net.Codecs.Memory
             var @in = fst.GetBytesReader();
             var firstArc = new FST.Arc<long?>();
             var scratchArc = new FST.Arc<long?>();
-            var scratchInts = new IntsRef();
+            var scratchInts = new Int32sRef();
             var fstEnum = new BytesRefFSTEnum<long?>(fst);
             var @ref = new BytesRef();
             var input = new ByteArrayDataInput();
@@ -572,7 +572,7 @@ namespace Lucene.Net.Codecs.Memory
             private readonly FST.BytesReader @in;
             private readonly FST.Arc<long?> firstArc;
             private readonly FST.Arc<long?> scratchArc;
-            private readonly IntsRef scratchInts;
+            private readonly Int32sRef scratchInts;
             private readonly BytesRefFSTEnum<long?> fstEnum;
             private readonly BytesRef @ref;
             private readonly ByteArrayDataInput input;
@@ -580,7 +580,7 @@ namespace Lucene.Net.Codecs.Memory
             private long currentOrd;
 
             public SortedSetDocValuesAnonymousInnerClassHelper(FSTEntry fstEntry, BinaryDocValues binaryDocValues, FST<long?> fst1,
-                FST.BytesReader @in, FST.Arc<long?> arc, FST.Arc<long?> scratchArc1, IntsRef intsRef, BytesRefFSTEnum<long?> bytesRefFstEnum,
+                FST.BytesReader @in, FST.Arc<long?> arc, FST.Arc<long?> scratchArc1, Int32sRef intsRef, BytesRefFSTEnum<long?> bytesRefFstEnum,
                 BytesRef @ref, ByteArrayDataInput byteArrayDataInput)
             {
                 entry = fstEntry;
@@ -621,7 +621,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     @in.Position = 0;
                     fst.GetFirstArc(firstArc);
-                    IntsRef output = Util.GetByOutput(fst, ord, @in, firstArc, scratchArc, scratchInts);
+                    Int32sRef output = Util.GetByOutput(fst, ord, @in, firstArc, scratchArc, scratchInts);
                     result.Bytes = new byte[output.Length];
                     result.Offset = 0;
                     result.Length = 0;
@@ -762,7 +762,7 @@ namespace Lucene.Net.Codecs.Memory
             private readonly FST.BytesReader bytesReader;
             private readonly FST.Arc<long?> firstArc = new FST.Arc<long?>();
             private readonly FST.Arc<long?> scratchArc = new FST.Arc<long?>();
-            private readonly IntsRef scratchInts = new IntsRef();
+            private readonly Int32sRef scratchInts = new Int32sRef();
             private readonly BytesRef scratchBytes = new BytesRef();
 
             internal FSTTermsEnum(FST<long?> fst)
@@ -812,7 +812,7 @@ namespace Lucene.Net.Codecs.Memory
                 // but we dont want to introduce a bug that corrupts our enum state!
                 bytesReader.Position = 0;
                 fst.GetFirstArc(firstArc);
-                IntsRef output = Util.GetByOutput(fst, ord, bytesReader, firstArc, scratchArc, scratchInts);
+                Int32sRef output = Util.GetByOutput(fst, ord, bytesReader, firstArc, scratchArc, scratchInts);
                 scratchBytes.Bytes = new byte[output.Length];
                 scratchBytes.Offset = 0;
                 scratchBytes.Length = 0;

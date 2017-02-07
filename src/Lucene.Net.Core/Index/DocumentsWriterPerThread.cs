@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
     using DirectTrackingAllocator = Lucene.Net.Util.ByteBlockPool.DirectTrackingAllocator;
     using FlushInfo = Lucene.Net.Store.FlushInfo;
     using InfoStream = Lucene.Net.Util.InfoStream;
-    using IntBlockPool = Lucene.Net.Util.IntBlockPool;
+    using Int32BlockPool = Lucene.Net.Util.Int32BlockPool;
     using IOContext = Lucene.Net.Store.IOContext;
     using IMutableBits = Lucene.Net.Util.IMutableBits;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
         private readonly DeleteSlice deleteSlice;
         private readonly NumberFormatInfo nf = CultureInfo.InvariantCulture.NumberFormat;
         internal readonly Allocator byteBlockAllocator;
-        internal readonly IntBlockPool.Allocator intBlockAllocator;
+        internal readonly Int32BlockPool.Allocator intBlockAllocator;
         private readonly LiveIndexWriterConfig indexWriterConfig;
 
         public DocumentsWriterPerThread(string segmentName, Directory directory, LiveIndexWriterConfig indexWriterConfig, InfoStream infoStream, DocumentsWriterDeleteQueue deleteQueue, FieldInfos.Builder fieldInfos)
@@ -234,7 +234,7 @@ namespace Lucene.Net.Index
             bytesUsed = Counter.NewCounter();
             byteBlockAllocator = new DirectTrackingAllocator(bytesUsed);
             pendingUpdates = new BufferedUpdates();
-            intBlockAllocator = new IntBlockAllocator(bytesUsed);
+            intBlockAllocator = new Int32BlockAllocator(bytesUsed);
             this.deleteQueue = deleteQueue;
             Debug.Assert(numDocsInRAM == 0, "num docs " + numDocsInRAM);
             pendingUpdates.Clear();
@@ -705,12 +705,15 @@ namespace Lucene.Net.Index
          * getTerms/getTermsIndex requires <= 32768 */
         internal static readonly int MAX_TERM_LENGTH_UTF8 = ByteBlockPool.BYTE_BLOCK_SIZE - 2;
 
-        private class IntBlockAllocator : IntBlockPool.Allocator
+        /// <summary>
+        /// NOTE: This was IntBlockAllocator in Lucene
+        /// </summary>
+        private class Int32BlockAllocator : Int32BlockPool.Allocator
         {
             private readonly Counter bytesUsed;
 
-            public IntBlockAllocator(Counter bytesUsed)
-                : base(IntBlockPool.INT_BLOCK_SIZE)
+            public Int32BlockAllocator(Counter bytesUsed)
+                : base(Int32BlockPool.INT_BLOCK_SIZE)
             {
                 this.bytesUsed = bytesUsed;
             }
@@ -719,14 +722,14 @@ namespace Lucene.Net.Index
 
             public override int[] GetInt32Block()
             {
-                int[] b = new int[IntBlockPool.INT_BLOCK_SIZE];
-                bytesUsed.AddAndGet(IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT);
+                int[] b = new int[Int32BlockPool.INT_BLOCK_SIZE];
+                bytesUsed.AddAndGet(Int32BlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT);
                 return b;
             }
 
             public override void RecycleInt32Blocks(int[][] blocks, int offset, int length)
             {
-                bytesUsed.AddAndGet(-(length * (IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT)));
+                bytesUsed.AddAndGet(-(length * (Int32BlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT)));
             }
         }
 

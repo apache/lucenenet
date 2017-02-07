@@ -17,12 +17,12 @@ namespace Lucene.Net.Util.Packed
      * limitations under the License.
      */
 
-    using Mutable = Lucene.Net.Util.Packed.PackedInts.Mutable;
+    using Mutable = Lucene.Net.Util.Packed.PackedInt32s.Mutable;
 
     /// <summary>
     /// A <seealso cref="PagedGrowableWriter"/>. this class slices data into fixed-size blocks
     /// which have independent numbers of bits per value and grow on-demand.
-    /// <p>You should use this class instead of the <seealso cref="AbstractAppendingLongBuffer"/> related ones only when
+    /// <p>You should use this class instead of the <seealso cref="AbstractAppendingInt64Buffer"/> related ones only when
     /// you need random write-access. Otherwise this class will likely be slower and
     /// less memory-efficient.
     /// @lucene.internal

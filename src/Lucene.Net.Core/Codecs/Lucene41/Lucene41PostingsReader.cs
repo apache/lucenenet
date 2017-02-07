@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public override BlockTermState NewTermState()
         {
-            return new Lucene41PostingsWriter.IntBlockTermState();
+            return new Lucene41PostingsWriter.Int32BlockTermState();
         }
 
         protected override void Dispose(bool disposing)
@@ -137,7 +137,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public override void DecodeTerm(long[] longs, DataInput @in, FieldInfo fieldInfo, BlockTermState termState, bool absolute)
         {
-            Lucene41PostingsWriter.IntBlockTermState termState2 = (Lucene41PostingsWriter.IntBlockTermState)termState;
+            Lucene41PostingsWriter.Int32BlockTermState termState2 = (Lucene41PostingsWriter.Int32BlockTermState)termState;
             bool fieldHasPositions = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             bool fieldHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             bool fieldHasPayloads = fieldInfo.HasPayloads;
@@ -191,7 +191,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
-        private void DecodeTerm(DataInput @in, FieldInfo fieldInfo, Lucene41PostingsWriter.IntBlockTermState termState)
+        private void DecodeTerm(DataInput @in, FieldInfo fieldInfo, Lucene41PostingsWriter.Int32BlockTermState termState)
         {
             bool fieldHasPositions = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             bool fieldHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
@@ -246,7 +246,7 @@ namespace Lucene.Net.Codecs.Lucene41
             {
                 docsEnum = new BlockDocsEnum(this, fieldInfo);
             }
-            return docsEnum.Reset(liveDocs, (Lucene41PostingsWriter.IntBlockTermState)termState, flags);
+            return docsEnum.Reset(liveDocs, (Lucene41PostingsWriter.Int32BlockTermState)termState, flags);
         }
 
         // TODO: specialize to liveDocs vs not
@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     docsAndPositionsEnum = new BlockDocsAndPositionsEnum(this, fieldInfo);
                 }
-                return docsAndPositionsEnum.Reset(liveDocs, (Lucene41PostingsWriter.IntBlockTermState)termState);
+                return docsAndPositionsEnum.Reset(liveDocs, (Lucene41PostingsWriter.Int32BlockTermState)termState);
             }
             else
             {
@@ -288,7 +288,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     everythingEnum = new EverythingEnum(this, fieldInfo);
                 }
-                return everythingEnum.Reset(liveDocs, (Lucene41PostingsWriter.IntBlockTermState)termState, flags);
+                return everythingEnum.Reset(liveDocs, (Lucene41PostingsWriter.Int32BlockTermState)termState, flags);
             }
         }
 
@@ -355,7 +355,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 return docIn == startDocIn && indexHasFreq == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS) && indexHasPos == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) && indexHasPayloads == fieldInfo.HasPayloads;
             }
 
-            public DocsEnum Reset(IBits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState, int flags)
+            public DocsEnum Reset(IBits liveDocs, Lucene41PostingsWriter.Int32BlockTermState termState, int flags)
             {
                 this.liveDocs = liveDocs;
                 // if (DEBUG) {
@@ -677,7 +677,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 return docIn == startDocIn && indexHasOffsets == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && indexHasPayloads == fieldInfo.HasPayloads;
             }
 
-            public DocsAndPositionsEnum Reset(IBits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState)
+            public DocsAndPositionsEnum Reset(IBits liveDocs, Lucene41PostingsWriter.Int32BlockTermState termState)
             {
                 this.liveDocs = liveDocs;
                 // if (DEBUG) {
@@ -1188,7 +1188,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 return docIn == startDocIn && indexHasOffsets == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && indexHasPayloads == fieldInfo.HasPayloads;
             }
 
-            public EverythingEnum Reset(IBits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState, int flags)
+            public EverythingEnum Reset(IBits liveDocs, Lucene41PostingsWriter.Int32BlockTermState termState, int flags)
             {
                 this.liveDocs = liveDocs;
                 // if (DEBUG) {

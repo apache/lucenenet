@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
     using ByteRunAutomaton = Lucene.Net.Util.Automaton.ByteRunAutomaton;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
-    using IntsRef = Lucene.Net.Util.IntsRef;
+    using Int32sRef = Lucene.Net.Util.Int32sRef;
     using StringHelper = Lucene.Net.Util.StringHelper;
     using Transition = Lucene.Net.Util.Automaton.Transition;
 
@@ -192,7 +192,7 @@ namespace Lucene.Net.Index
             linear = true;
         }
 
-        private readonly IntsRef savedStates = new IntsRef(10);
+        private readonly Int32sRef savedStates = new Int32sRef(10);
 
         /// <summary>
         /// Increments the byte buffer to the next String in binary order after s that will not put

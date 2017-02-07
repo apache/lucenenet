@@ -47,7 +47,7 @@ namespace Lucene.Net.Util.Packed
     ///     all values perfectly match the result of the function. Otherwise, these
     ///     are the
     ///     <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">zigzag-encoded</a>
-    ///     <seealso cref="PackedInts packed"/> deltas from the expected value (computed from
+    ///     <seealso cref="PackedInt32s packed"/> deltas from the expected value (computed from
     ///     the function) using exaclty BitsPerValue bits per value
     /// </ul> </summary>
     /// <seealso cref= MonotonicBlockPackedReader
@@ -91,7 +91,7 @@ namespace Lucene.Net.Util.Packed
             }
             else
             {
-                int bitsRequired = PackedInts.BitsRequired(maxZigZagDelta);
+                int bitsRequired = PackedInt32s.BitsRequired(maxZigZagDelta);
                 m_out.WriteVInt32(bitsRequired);
                 WriteValues(bitsRequired);
             }

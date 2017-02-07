@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
     /// BitSet of fixed length (numBits), backed by accessible (<seealso cref="#getBits"/>)
     /// long[], accessed with an int index, implementing <seealso cref="GetBits"/> and
     /// <seealso cref="DocIdSet"/>. If you need to manage more than 2.1B bits, use
-    /// <seealso cref="LongBitSet"/>.
+    /// <seealso cref="Int64BitSet"/>.
     ///
     /// @lucene.internal
     /// </summary>

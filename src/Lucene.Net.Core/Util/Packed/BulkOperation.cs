@@ -25,7 +25,7 @@ namespace Lucene.Net.Util.Packed
     /// <summary>
     /// Efficient sequential read/write of packed integers.
     /// </summary>
-    internal abstract class BulkOperation : PackedInts.IDecoder, PackedInts.IEncoder
+    internal abstract class BulkOperation : PackedInt32s.IDecoder, PackedInt32s.IEncoder
     {
         public abstract void Encode(int[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations);
 
@@ -160,14 +160,14 @@ namespace Lucene.Net.Util.Packed
             new BulkOperationPackedSingleBlock(32)
         };
 
-        public static BulkOperation Of(PackedInts.Format format, int bitsPerValue)
+        public static BulkOperation Of(PackedInt32s.Format format, int bitsPerValue)
         {
-            if (format == PackedInts.Format.PACKED)
+            if (format == PackedInt32s.Format.PACKED)
             {
                 Debug.Assert(packedBulkOps[bitsPerValue - 1] != null);
                 return packedBulkOps[bitsPerValue - 1];
             }
-            else if (format == PackedInts.Format.PACKED_SINGLE_BLOCK)
+            else if (format == PackedInt32s.Format.PACKED_SINGLE_BLOCK)
             {
                 Debug.Assert(packedSingleBlockBulkOps[bitsPerValue - 1] != null);
                 return packedSingleBlockBulkOps[bitsPerValue - 1];

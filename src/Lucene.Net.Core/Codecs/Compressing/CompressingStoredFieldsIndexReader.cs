@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Compressing
 
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
     using IndexInput = Lucene.Net.Store.IndexInput;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
@@ -42,8 +42,8 @@ namespace Lucene.Net.Codecs.Compressing
         internal readonly long[] startPointers;
         internal readonly int[] avgChunkDocs;
         internal readonly long[] avgChunkSizes;
-        internal readonly PackedInts.Reader[] docBasesDeltas; // delta from the avg
-        internal readonly PackedInts.Reader[] startPointersDeltas; // delta from the avg
+        internal readonly PackedInt32s.Reader[] docBasesDeltas; // delta from the avg
+        internal readonly PackedInt32s.Reader[] startPointersDeltas; // delta from the avg
 
         // It is the responsibility of the caller to close fieldsIndexIn after this constructor
         // has been called
@@ -54,8 +54,8 @@ namespace Lucene.Net.Codecs.Compressing
             long[] startPointers = new long[16];
             int[] avgChunkDocs = new int[16];
             long[] avgChunkSizes = new long[16];
-            PackedInts.Reader[] docBasesDeltas = new PackedInts.Reader[16];
-            PackedInts.Reader[] startPointersDeltas = new PackedInts.Reader[16];
+            PackedInt32s.Reader[] docBasesDeltas = new PackedInt32s.Reader[16];
+            PackedInt32s.Reader[] startPointersDeltas = new PackedInt32s.Reader[16];
 
             int packedIntsVersion = fieldsIndexIn.ReadVInt32();
 
@@ -87,7 +87,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     throw new CorruptIndexException("Corrupted bitsPerDocBase (resource=" + fieldsIndexIn + ")");
                 }
-                docBasesDeltas[blockCount] = PackedInts.GetReaderNoHeader(fieldsIndexIn, PackedInts.Format.PACKED, packedIntsVersion, numChunks, bitsPerDocBase);
+                docBasesDeltas[blockCount] = PackedInt32s.GetReaderNoHeader(fieldsIndexIn, PackedInt32s.Format.PACKED, packedIntsVersion, numChunks, bitsPerDocBase);
 
                 // start pointers
                 startPointers[blockCount] = fieldsIndexIn.ReadVInt64();
@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     throw new CorruptIndexException("Corrupted bitsPerStartPointer (resource=" + fieldsIndexIn + ")");
                 }
-                startPointersDeltas[blockCount] = PackedInts.GetReaderNoHeader(fieldsIndexIn, PackedInts.Format.PACKED, packedIntsVersion, numChunks, bitsPerStartPointer);
+                startPointersDeltas[blockCount] = PackedInt32s.GetReaderNoHeader(fieldsIndexIn, PackedInt32s.Format.PACKED, packedIntsVersion, numChunks, bitsPerStartPointer);
 
                 ++blockCount;
             }
@@ -190,11 +190,11 @@ namespace Lucene.Net.Codecs.Compressing
         {
             long res = 0;
 
-            foreach (PackedInts.Reader r in docBasesDeltas)
+            foreach (PackedInt32s.Reader r in docBasesDeltas)
             {
                 res += r.RamBytesUsed();
             }
-            foreach (PackedInts.Reader r in startPointersDeltas)
+            foreach (PackedInt32s.Reader r in startPointersDeltas)
             {
                 res += r.RamBytesUsed();
             }

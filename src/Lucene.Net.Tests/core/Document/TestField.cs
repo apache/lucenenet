@@ -80,7 +80,7 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestFloatDocValuesField()
         {
-            FloatDocValuesField field = new FloatDocValuesField("foo", 5f);
+            SingleDocValuesField field = new SingleDocValuesField("foo", 5f);
 
             TrySetBoost(field);
             TrySetByteValue(field);
@@ -101,7 +101,7 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestFloatField()
         {
-            Field[] fields = new Field[] { new FloatField("foo", 5f, Field.Store.NO), new FloatField("foo", 5f, Field.Store.YES) };
+            Field[] fields = new Field[] { new SingleField("foo", 5f, Field.Store.NO), new SingleField("foo", 5f, Field.Store.YES) };
 
             foreach (Field field in fields)
             {
@@ -125,7 +125,7 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestIntField()
         {
-            Field[] fields = new Field[] { new IntField("foo", 5, Field.Store.NO), new IntField("foo", 5, Field.Store.YES) };
+            Field[] fields = new Field[] { new Int32Field("foo", 5, Field.Store.NO), new Int32Field("foo", 5, Field.Store.YES) };
 
             foreach (Field field in fields)
             {
@@ -170,7 +170,7 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestLongField()
         {
-            Field[] fields = new Field[] { new LongField("foo", 5L, Field.Store.NO), new LongField("foo", 5L, Field.Store.YES) };
+            Field[] fields = new Field[] { new Int64Field("foo", 5L, Field.Store.NO), new Int64Field("foo", 5L, Field.Store.YES) };
 
             foreach (Field field in fields)
             {

@@ -64,9 +64,9 @@ namespace Lucene.Net.Index
     public abstract class ThreadedIndexingAndSearchingTestCase : LuceneTestCase
     {
         protected internal readonly AtomicBoolean Failed = new AtomicBoolean();
-        protected internal readonly AtomicInteger AddCount = new AtomicInteger();
-        protected internal readonly AtomicInteger DelCount = new AtomicInteger();
-        protected internal readonly AtomicInteger PackCount = new AtomicInteger();
+        protected internal readonly AtomicInt32 AddCount = new AtomicInt32();
+        protected internal readonly AtomicInt32 DelCount = new AtomicInt32();
+        protected internal readonly AtomicInt32 PackCount = new AtomicInt32();
 
         protected internal Directory Dir;
         protected internal IndexWriter Writer;
@@ -396,10 +396,10 @@ namespace Lucene.Net.Index
         {
             int numThreads = TestUtil.NextInt(Random(), 1, 5);
             ThreadClass[] searchThreads = new ThreadClass[numThreads];
-            AtomicInteger totHits = new AtomicInteger();
+            AtomicInt32 totHits = new AtomicInt32();
 
             // silly starting guess:
-            AtomicInteger totTermCount = new AtomicInteger(100);
+            AtomicInt32 totTermCount = new AtomicInt32(100);
 
             // TODO: we should enrich this to do more interesting searches
             for (int thread = 0; thread < searchThreads.Length; thread++)
@@ -425,10 +425,10 @@ namespace Lucene.Net.Index
             private readonly ThreadedIndexingAndSearchingTestCase OuterInstance;
 
             private DateTime StopTime;
-            private AtomicInteger TotHits;
-            private AtomicInteger TotTermCount;
+            private AtomicInt32 TotHits;
+            private AtomicInt32 TotTermCount;
 
-            public ThreadAnonymousInnerClassHelper2(ThreadedIndexingAndSearchingTestCase outerInstance, DateTime stopTime, AtomicInteger totHits, AtomicInteger totTermCount)
+            public ThreadAnonymousInnerClassHelper2(ThreadedIndexingAndSearchingTestCase outerInstance, DateTime stopTime, AtomicInt32 totHits, AtomicInt32 totTermCount)
             {
                 this.OuterInstance = outerInstance;
                 this.StopTime = stopTime;

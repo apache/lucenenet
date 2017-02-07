@@ -285,17 +285,17 @@ namespace Lucene.Net.Util.Automaton
         /// strings are accepted, the first limit strings found are returned. If <code>limit</code>&lt;0, then
         /// the limit is infinite.
         /// </summary>
-        public static ISet<IntsRef> GetFiniteStrings(Automaton a, int limit)
+        public static ISet<Int32sRef> GetFiniteStrings(Automaton a, int limit)
         {
-            HashSet<IntsRef> strings = new HashSet<IntsRef>();
+            HashSet<Int32sRef> strings = new HashSet<Int32sRef>();
             if (a.IsSingleton)
             {
                 if (limit > 0)
                 {
-                    strings.Add(Util.ToUTF32(a.Singleton, new IntsRef()));
+                    strings.Add(Util.ToUTF32(a.Singleton, new Int32sRef()));
                 }
             }
-            else if (!GetFiniteStrings(a.initial, new HashSet<State>(), strings, new IntsRef(), limit))
+            else if (!GetFiniteStrings(a.initial, new HashSet<State>(), strings, new Int32sRef(), limit))
             {
                 return strings;
             }
@@ -307,7 +307,7 @@ namespace Lucene.Net.Util.Automaton
         /// false if more than <code>limit</code> strings are found.
         /// <code>limit</code>&lt;0 means "infinite".
         /// </summary>
-        private static bool GetFiniteStrings(State s, HashSet<State> pathstates, HashSet<IntsRef> strings, IntsRef path, int limit)
+        private static bool GetFiniteStrings(State s, HashSet<State> pathstates, HashSet<Int32sRef> strings, Int32sRef path, int limit)
         {
             pathstates.Add(s);
             foreach (Transition t in s.GetTransitions())
@@ -323,7 +323,7 @@ namespace Lucene.Net.Util.Automaton
                     path.Length++;
                     if (t.to.accept)
                     {
-                        strings.Add(IntsRef.DeepCopyOf(path));
+                        strings.Add(Int32sRef.DeepCopyOf(path));
                         if (limit >= 0 && strings.Count > limit)
                         {
                             return false;

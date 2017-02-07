@@ -29,16 +29,16 @@ namespace Lucene.Net.Codecs.Memory
     using ByteArrayDataOutput = Store.ByteArrayDataOutput;
     using BytesRef = Util.BytesRef;
     using FieldInfo = Index.FieldInfo;
-    using FormatAndBits = Util.Packed.PackedInts.FormatAndBits;
+    using FormatAndBits = Util.Packed.PackedInt32s.FormatAndBits;
     using IndexFileNames = Index.IndexFileNames;
     using IndexOutput = Store.IndexOutput;
     using INPUT_TYPE = Util.Fst.FST.INPUT_TYPE;
-    using IntsRef = Util.IntsRef;
+    using Int32sRef = Util.Int32sRef;
     using IOUtils = Util.IOUtils;
     using MathUtil = Util.MathUtil;
     using MonotonicBlockPackedWriter = Util.Packed.MonotonicBlockPackedWriter;
-    using PackedInts = Util.Packed.PackedInts;
-    using PositiveIntOutputs = Util.Fst.PositiveIntOutputs;
+    using PackedInt32s = Util.Packed.PackedInt32s;
+    using PositiveInt32Outputs = Util.Fst.PositiveInt32Outputs;
     using SegmentWriteState = Index.SegmentWriteState;
     using Util = Util.Fst.Util;
 
@@ -161,8 +161,8 @@ namespace Lucene.Net.Codecs.Memory
             {
                 // small number of unique values
 
-                int bitsPerValue = PackedInts.BitsRequired(uniqueValues.Count - 1);
-                FormatAndBits formatAndBits = PackedInts.FastestFormatAndBits(maxDoc, bitsPerValue,
+                int bitsPerValue = PackedInt32s.BitsRequired(uniqueValues.Count - 1);
+                FormatAndBits formatAndBits = PackedInt32s.FastestFormatAndBits(maxDoc, bitsPerValue,
                     acceptableOverheadRatio);
                 if (formatAndBits.BitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
                 {
@@ -185,12 +185,12 @@ namespace Lucene.Net.Codecs.Memory
                         encode[decode[i]] = i;
                     }
 
-                    meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                    meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
                     data.WriteVInt32(formatAndBits.Format.Id);
                     data.WriteVInt32(formatAndBits.BitsPerValue);
 
-                    PackedInts.Writer writer = PackedInts.GetWriterNoHeader(data, formatAndBits.Format, maxDoc,
-                        formatAndBits.BitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
+                    PackedInt32s.Writer writer = PackedInt32s.GetWriterNoHeader(data, formatAndBits.Format, maxDoc,
+                        formatAndBits.BitsPerValue, PackedInt32s.DEFAULT_BUFFER_SIZE);
                     foreach (var nv in values)
                     {
                         var v = encode[nv.HasValue ? nv.Value : 0];
@@ -203,7 +203,7 @@ namespace Lucene.Net.Codecs.Memory
             else if (gcd != 0 && gcd != 1)
             {
                 meta.WriteByte(MemoryDocValuesProducer.GCD_COMPRESSED);
-                meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
                 data.WriteInt64(minValue);
                 data.WriteInt64(gcd);
                 data.WriteVInt32(MemoryDocValuesProducer.BLOCK_SIZE);
@@ -219,7 +219,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 meta.WriteByte(MemoryDocValuesProducer.DELTA_COMPRESSED); // delta-compressed
 
-                meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
                 data.WriteVInt32(MemoryDocValuesProducer.BLOCK_SIZE);
 
                 var writer = new BlockPackedWriter(data, MemoryDocValuesProducer.BLOCK_SIZE);
@@ -317,7 +317,7 @@ namespace Lucene.Net.Codecs.Memory
             // otherwise, we need to record the length fields...
             if (minLength != maxLength)
             {
-                meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
                 meta.WriteVInt32(MemoryDocValuesProducer.BLOCK_SIZE);
 
 
@@ -340,9 +340,9 @@ namespace Lucene.Net.Codecs.Memory
             meta.WriteVInt32(field.Number);
             meta.WriteByte(MemoryDocValuesProducer.FST);
             meta.WriteInt64(data.FilePointer);
-            PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
+            PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
             var builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
-            var scratch = new IntsRef();
+            var scratch = new Int32sRef();
             long ord = 0;
             foreach (BytesRef v in values)
             {

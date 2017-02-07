@@ -228,7 +228,7 @@ namespace Lucene.Net.Documents
         /// Returns an array of values of the field specified as the method parameter.
         /// this method returns an empty array when there are no
         /// matching fields.  It never returns null.
-        /// For <seealso cref="IntField"/>, <seealso cref="LongField"/>, {@link
+        /// For <seealso cref="Int32Field"/>, <seealso cref="Int64Field"/>, {@link
         /// FloatField} and <seealso cref="DoubleField"/> it returns the string value of the number. If you want
         /// the actual numeric field instances back, use <seealso cref="#getFields"/>. </summary>
         /// <param name="name"> the name of the field </param>
@@ -257,7 +257,7 @@ namespace Lucene.Net.Documents
         /// this document, or null.  If multiple fields exist with this name, this
         /// method returns the first value added. If only binary fields with this name
         /// exist, returns null.
-        /// For <seealso cref="IntField"/>, <seealso cref="LongField"/>, {@link
+        /// For <seealso cref="Int32Field"/>, <seealso cref="Int64Field"/>, {@link
         /// FloatField} and <seealso cref="DoubleField"/> it returns the string value of the number. If you want
         /// the actual numeric field instance back, use <seealso cref="#getField"/>.
         /// </summary>

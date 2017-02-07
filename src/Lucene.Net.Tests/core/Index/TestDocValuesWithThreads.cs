@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     //NumericDocValues ndv = ar.GetNumericDocValues("number");
-                    FieldCache.Longs ndv = FieldCache.DEFAULT.GetInt64s(Ar, "number", false);
+                    FieldCache.Int64s ndv = FieldCache.DEFAULT.GetInt64s(Ar, "number", false);
                     //BinaryDocValues bdv = ar.GetBinaryDocValues("bytes");
                     BinaryDocValues bdv = FieldCache.DEFAULT.GetTerms(Ar, "bytes", false);
                     SortedDocValues sdv = FieldCache.DEFAULT.GetTermsIndex(Ar, "sorted");

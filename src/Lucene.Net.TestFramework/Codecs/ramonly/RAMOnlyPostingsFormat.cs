@@ -651,7 +651,7 @@ namespace Lucene.Net.Codecs.ramonly
         // Holds all indexes created, keyed by the ID assigned in fieldsConsumer
         private readonly IDictionary<int?, RAMPostings> State = new Dictionary<int?, RAMPostings>();
 
-        private readonly AtomicLong NextID = new AtomicLong();
+        private readonly AtomicInt64 NextID = new AtomicInt64();
 
         private readonly string RAM_ONLY_NAME = "RAMOnly";
         private const int VERSION_START = 0;

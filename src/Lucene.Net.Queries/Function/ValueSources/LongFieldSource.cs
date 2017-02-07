@@ -31,14 +31,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class LongFieldSource : FieldCacheSource
     {
-        protected readonly FieldCache.ILongParser m_parser;
+        protected readonly FieldCache.IInt64Parser m_parser;
 
         public LongFieldSource(string field)
             : this(field, null)
         {
         }
 
-        public LongFieldSource(string field, FieldCache.ILongParser parser)
+        public LongFieldSource(string field, FieldCache.IInt64Parser parser)
             : base(field)
         {
             this.m_parser = parser;
@@ -84,10 +84,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             private readonly LongFieldSource outerInstance;
 
-            private readonly FieldCache.Longs arr;
+            private readonly FieldCache.Int64s arr;
             private readonly IBits valid;
 
-            public LongDocValuesAnonymousInnerClassHelper(LongFieldSource outerInstance, LongFieldSource @this, FieldCache.Longs arr, IBits valid)
+            public LongDocValuesAnonymousInnerClassHelper(LongFieldSource outerInstance, LongFieldSource @this, FieldCache.Int64s arr, IBits valid)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
@@ -141,7 +141,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     mval = outerInstance.outerInstance.NewMutableValueInt64();
                 }
 
-                private readonly MutableValueLong mval;
+                private readonly MutableValueInt64 mval;
 
                 public override MutableValue Value
                 {
@@ -162,9 +162,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         /// <summary>
         /// NOTE: This was longToString() in Lucene
         /// </summary>
-        protected virtual MutableValueLong NewMutableValueInt64()
+        protected virtual MutableValueInt64 NewMutableValueInt64()
         {
-            return new MutableValueLong();
+            return new MutableValueInt64();
         }
 
         public override bool Equals(object o)

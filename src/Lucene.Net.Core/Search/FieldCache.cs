@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
         /// <exception cref="IOException">  If any error occurs. </exception>
         /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead.
         [Obsolete("(4.4) Index as a numeric field using Int32Field and then use GetInt32s(AtomicReader, string, bool) instead.")]
-        FieldCache.Shorts GetInt16s(AtomicReader reader, string field, bool setDocsWithField);
+        FieldCache.Int16s GetInt16s(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none is found,
@@ -117,19 +117,19 @@ namespace Lucene.Net.Search
         /// <exception cref="IOException">  If any error occurs. </exception>
         /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead.
         [Obsolete("(4.4) Index as a numeric field using Int32Field and then use GetInt32s(AtomicReader, string, bool) instead.")]
-        FieldCache.Shorts GetInt16s(AtomicReader reader, string field, FieldCache.IShortParser parser, bool setDocsWithField);
+        FieldCache.Int16s GetInt16s(AtomicReader reader, string field, FieldCache.IInt16Parser parser, bool setDocsWithField);
 
         /// <summary>
-        /// Returns an <seealso cref="FieldCache.Ints"/> over the values found in documents in the given
+        /// Returns an <seealso cref="FieldCache.Int32s"/> over the values found in documents in the given
         /// field.
         /// <para/>
         /// NOTE: this was getInts() in Lucene
         /// </summary>
         /// <seealso cref= #getInts(AtomicReader, String, IntParser, boolean) </seealso>
-        FieldCache.Ints GetInt32s(AtomicReader reader, string field, bool setDocsWithField);
+        FieldCache.Int32s GetInt32s(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
-        /// Returns an <seealso cref="FieldCache.Ints"/> over the values found in documents in the given
+        /// Returns an <seealso cref="FieldCache.Int32s"/> over the values found in documents in the given
         /// field. If the field was indexed as <seealso cref="NumericDocValuesField"/>, it simply
         /// uses <seealso cref="AtomicReader#getNumericDocValues(String)"/> to read the values.
         /// Otherwise, it checks the internal cache for an appropriate entry, and if
@@ -153,7 +153,7 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">
         ///           If any error occurs. </exception>
-        FieldCache.Ints GetInt32s(AtomicReader reader, string field, FieldCache.IIntParser parser, bool setDocsWithField);
+        FieldCache.Int32s GetInt32s(AtomicReader reader, string field, FieldCache.IInt32Parser parser, bool setDocsWithField);
 
         /// <summary>
         /// Returns a <seealso cref="Floats"/> over the values found in documents in the given
@@ -162,7 +162,7 @@ namespace Lucene.Net.Search
         /// NOTE: this was getFloats() in Lucene
         /// </summary>
         /// <seealso cref= #getFloats(AtomicReader, String, FloatParser, boolean) </seealso>
-        FieldCache.Floats GetSingles(AtomicReader reader, string field, bool setDocsWithField);
+        FieldCache.Singles GetSingles(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
         /// Returns a <seealso cref="Floats"/> over the values found in documents in the given
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">
         ///           If any error occurs. </exception>
-        FieldCache.Floats GetSingles(AtomicReader reader, string field, FieldCache.IFloatParser parser, bool setDocsWithField);
+        FieldCache.Singles GetSingles(AtomicReader reader, string field, FieldCache.ISingleParser parser, bool setDocsWithField);
 
         /// <summary>
         /// Returns a <seealso cref="Longs"/> over the values found in documents in the given
@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
         /// NOTE: this was getLongs() in Lucene
         /// </summary>
         /// <seealso cref= #getLongs(AtomicReader, String, LongParser, boolean) </seealso>
-        FieldCache.Longs GetInt64s(AtomicReader reader, string field, bool setDocsWithField);
+        FieldCache.Int64s GetInt64s(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
         /// Returns a <seealso cref="Longs"/> over the values found in documents in the given
@@ -225,7 +225,7 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">
         ///           If any error occurs. </exception>
-        FieldCache.Longs GetInt64s(AtomicReader reader, string field, FieldCache.ILongParser parser, bool setDocsWithField);
+        FieldCache.Int64s GetInt64s(AtomicReader reader, string field, FieldCache.IInt64Parser parser, bool setDocsWithField);
 
         /// <summary>
         /// Returns a <seealso cref="Doubles"/> over the values found in documents in the given
@@ -383,13 +383,19 @@ namespace Lucene.Net.Search
             }
         }
 
-        public abstract class Shorts // LUCENENET TODO: Rename Int16s
+        /// <summary>
+        /// NOTE: This was Shorts in Lucene
+        /// </summary>
+        public abstract class Int16s
         {
             public abstract short Get(int docID);
 
-            public static readonly Shorts EMPTY = new EmptyShorts();
+            public static readonly Int16s EMPTY = new EmptyInt16s();
 
-            public sealed class EmptyShorts : Shorts // LUCENENET TODO: Rename EmptyInt16s
+            /// <summary>
+            /// NOTE: This was EmptyShorts in Lucene
+            /// </summary>
+            public sealed class EmptyInt16s : Int16s
             {
                 public override short Get(int docID)
                 {
@@ -398,13 +404,19 @@ namespace Lucene.Net.Search
             }
         }
 
-        public abstract class Ints // LUCENENET TODO: Rename Int32s
+        /// <summary>
+        /// NOTE: This was Ints in Lucene
+        /// </summary>
+        public abstract class Int32s
         {
             public abstract int Get(int docID);
 
-            public static readonly Ints EMPTY = new EmptyInts();
+            public static readonly Int32s EMPTY = new EmptyInt32s();
 
-            public sealed class EmptyInts : Ints // LUCENENET TODO: Rename EmptyInt32s
+            /// <summary>
+            /// NOTE: This was EmptyInts in Lucene
+            /// </summary>
+            public sealed class EmptyInt32s : Int32s
             {
                 public override int Get(int docID)
                 {
@@ -413,13 +425,19 @@ namespace Lucene.Net.Search
             }
         }
 
-        public abstract class Longs // LUCENENET TODO: Rename Int64s
+        /// <summary>
+        /// NOTE: This was Longs in Lucene
+        /// </summary>
+        public abstract class Int64s
         {
             public abstract long Get(int docID);
 
-            public static readonly Longs EMPTY = new EmptyLongs();
+            public static readonly Int64s EMPTY = new EmptyInt64s();
 
-            public sealed class EmptyLongs : Longs // LUCENENET TODO: Rename EmptyInt64s
+            /// <summary>
+            /// NOTE: This was EmptyLongs in Lucene
+            /// </summary>
+            public sealed class EmptyInt64s : Int64s
             {
                 public override long Get(int docID)
                 {
@@ -428,13 +446,19 @@ namespace Lucene.Net.Search
             }
         }
 
-        public abstract class Floats // LUCENENET TODO: Rename Singles
+        /// <summary>
+        /// NOTE: This was Floats in Lucene
+        /// </summary>
+        public abstract class Singles
         {
             public abstract float Get(int docID);
 
-            public static readonly Floats EMPTY = new EmptyFloats();
+            public static readonly Singles EMPTY = new EmptySingles();
 
-            public sealed class EmptyFloats : Floats // LUCENENET TODO: Rename EmptySingles
+            /// <summary>
+            /// NOTE: This was EmptySingles in Lucene
+            /// </summary>
+            public sealed class EmptySingles : Singles
             {
                 public override float Get(int docID)
                 {
@@ -473,7 +497,10 @@ namespace Lucene.Net.Search
             sbyte ParseByte(BytesRef term); // LUCENENET TODO: can this be byte?
         }
 
-        public interface IShortParser : IParser // LUCENENET TODO: Rename IInt16Parser
+        /// <summary>
+        /// NOTE: This was ShortParser in Lucene
+        /// </summary>
+        public interface IInt16Parser : IParser
         {
             /// <summary>
             /// NOTE: This was parseShort() in Lucene
@@ -481,7 +508,10 @@ namespace Lucene.Net.Search
             short ParseInt16(BytesRef term);
         }
 
-        public interface IIntParser : IParser // LUCENENET TODO: Rename IInt32Parser
+        /// <summary>
+        /// NOTE: This was IntParser in Lucene
+        /// </summary>
+        public interface IInt32Parser : IParser
         {
             /// <summary>
             /// NOTE: This was parseInt() in Lucene
@@ -489,7 +519,10 @@ namespace Lucene.Net.Search
             int ParseInt32(BytesRef term);
         }
 
-        public interface IFloatParser : IParser // LUCENENET TODO: Rename ISingleParser
+        /// <summary>
+        /// NOTE: This was FloatParser in Lucene
+        /// </summary>
+        public interface ISingleParser : IParser
         {
             /// <summary>
             /// NOTE: This was parseFloat() in Lucene
@@ -497,7 +530,10 @@ namespace Lucene.Net.Search
             float ParseSingle(BytesRef term);
         }
 
-        public interface ILongParser : IParser // LUCENENET TODO: Rename IInt64Parser
+        /// <summary>
+        /// NOTE: This was LongParser in Lucene
+        /// </summary>
+        public interface IInt64Parser : IParser
         {
             /// <summary>
             /// NOTE: This was parseLong() in Lucene
@@ -536,9 +572,10 @@ namespace Lucene.Net.Search
             }
         }
 
-        public static readonly IShortParser DEFAULT_SHORT_PARSER = new AnonymousShortParser(); // LUCENENET TODO: Rename DEFAULT_INT16_PARSER
+        public static readonly IInt16Parser DEFAULT_SHORT_PARSER = new AnonymousInt16Parser(); // LUCENENET TODO: Rename DEFAULT_INT16_PARSER
 
-        private sealed class AnonymousShortParser : IShortParser
+
+        private sealed class AnonymousInt16Parser : IInt16Parser
         {
             /// <summary>
             /// NOTE: This was parseShort() in Lucene
@@ -563,9 +600,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        public static readonly IIntParser DEFAULT_INT_PARSER = new AnonymousIntParser(); // LUCENENET TODO: Rename DEFAULT_INT32_PARSER
+        public static readonly IInt32Parser DEFAULT_INT_PARSER = new AnonymousInt32Parser(); // LUCENENET TODO: Rename DEFAULT_INT32_PARSER
 
-        private sealed class AnonymousIntParser : IIntParser
+        private sealed class AnonymousInt32Parser : IInt32Parser
         {
             /// <summary>
             /// NOTE: This was parseInt() in Lucene
@@ -590,9 +627,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        public static readonly IFloatParser DEFAULT_FLOAT_PARSER = new AnonymousFloatParser();  // LUCENENET TODO: Rename DEFAULT_SINGLE_PARSER
+        public static readonly ISingleParser DEFAULT_FLOAT_PARSER = new AnonymousSingleParser();  // LUCENENET TODO: Rename DEFAULT_SINGLE_PARSER
 
-        private sealed class AnonymousFloatParser : IFloatParser
+        private sealed class AnonymousSingleParser : ISingleParser
         {
             /// <summary>
             /// NOTE: This was parseFloat() in Lucene
@@ -621,9 +658,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        public static readonly ILongParser DEFAULT_LONG_PARSER = new AnonymousLongParser(); // LUCENENET TODO: Rename DEFAULT_INT64_PARSER
+        public static readonly IInt64Parser DEFAULT_LONG_PARSER = new AnonymousInt64Parser(); // LUCENENET TODO: Rename DEFAULT_INT64_PARSER
 
-        private sealed class AnonymousLongParser : ILongParser
+        private sealed class AnonymousInt64Parser : IInt64Parser
         {
             /// <summary>
             /// NOTE: This was parseLong() in Lucene
@@ -672,9 +709,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        public static readonly IIntParser NUMERIC_UTILS_INT_PARSER = new AnonymousNumericUtilsIntParser();
+        public static readonly IInt32Parser NUMERIC_UTILS_INT_PARSER = new AnonymousNumericUtilsInt32Parser(); // LUCENENET TODO: Rename NUMERIC_UTILS_INT32_PARSER
 
-        private sealed class AnonymousNumericUtilsIntParser : IIntParser
+        private sealed class AnonymousNumericUtilsInt32Parser : IInt32Parser
         {
             /// <summary>
             /// NOTE: This was parseInt() in Lucene
@@ -695,9 +732,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        public static readonly IFloatParser NUMERIC_UTILS_FLOAT_PARSER = new AnonymousNumericUtilsFloatParser();
+        public static readonly ISingleParser NUMERIC_UTILS_FLOAT_PARSER = new AnonymousNumericUtilsSingleParser(); // LUCENENET TODO: Rename NUMERIC_UTILS_SINGLE_PARSER
 
-        private sealed class AnonymousNumericUtilsFloatParser : IFloatParser
+        private sealed class AnonymousNumericUtilsSingleParser : ISingleParser
         {
             /// <summary>
             /// NOTE: This was parseFloat() in Lucene
@@ -718,9 +755,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        public static readonly ILongParser NUMERIC_UTILS_LONG_PARSER = new AnonymousNumericUtilsLongParser();
+        public static readonly IInt64Parser NUMERIC_UTILS_LONG_PARSER = new AnonymousNumericUtilsInt64Parser(); // LUCENENET TODO: Rename NUMERIC_UTILS_INT64_PARSER
 
-        private sealed class AnonymousNumericUtilsLongParser : ILongParser
+        private sealed class AnonymousNumericUtilsInt64Parser : IInt64Parser
         {
             /// <summary>
             /// NOTE: This was parseLong() in Lucene

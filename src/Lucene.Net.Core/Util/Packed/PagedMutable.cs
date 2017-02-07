@@ -19,17 +19,17 @@ namespace Lucene.Net.Util.Packed
      * limitations under the License.
      */
 
-    using Mutable = Lucene.Net.Util.Packed.PackedInts.Mutable;
+    using Mutable = Lucene.Net.Util.Packed.PackedInt32s.Mutable;
 
     /// <summary>
     /// A <seealso cref="PagedMutable"/>. this class slices data into fixed-size blocks
     /// which have the same number of bits per value. It can be a useful replacement
-    /// for <seealso cref="PackedInts.Mutable"/> to store more than 2B values.
+    /// for <seealso cref="PackedInt32s.Mutable"/> to store more than 2B values.
     /// @lucene.internal
     /// </summary>
     public sealed class PagedMutable : AbstractPagedMutable<PagedMutable>
     {
-        internal readonly PackedInts.Format format;
+        internal readonly PackedInt32s.Format format;
 
         /// <summary>
         /// Create a new <seealso cref="PagedMutable"/> instance.
@@ -39,17 +39,17 @@ namespace Lucene.Net.Util.Packed
         /// <param name="bitsPerValue"> the number of bits per value </param>
         /// <param name="acceptableOverheadRatio"> an acceptable overhead ratio </param>
         public PagedMutable(long size, int pageSize, int bitsPerValue, float acceptableOverheadRatio)
-            : this(size, pageSize, PackedInts.FastestFormatAndBits(pageSize, bitsPerValue, acceptableOverheadRatio))
+            : this(size, pageSize, PackedInt32s.FastestFormatAndBits(pageSize, bitsPerValue, acceptableOverheadRatio))
         {
             FillPages();
         }
 
-        internal PagedMutable(long size, int pageSize, PackedInts.FormatAndBits formatAndBits)
+        internal PagedMutable(long size, int pageSize, PackedInt32s.FormatAndBits formatAndBits)
             : this(size, pageSize, formatAndBits.BitsPerValue, formatAndBits.Format)
         {
         }
 
-        internal PagedMutable(long size, int pageSize, int bitsPerValue, PackedInts.Format format)
+        internal PagedMutable(long size, int pageSize, int bitsPerValue, PackedInt32s.Format format)
             : base(bitsPerValue, size, pageSize)
         {
             this.format = format;
@@ -58,7 +58,7 @@ namespace Lucene.Net.Util.Packed
         protected override Mutable NewMutable(int valueCount, int bitsPerValue)
         {
             Debug.Assert(this.bitsPerValue >= bitsPerValue);
-            return PackedInts.GetMutable(valueCount, this.bitsPerValue, format);
+            return PackedInt32s.GetMutable(valueCount, this.bitsPerValue, format);
         }
 
         protected override PagedMutable NewUnfilledCopy(long newSize)

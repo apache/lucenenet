@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// </summary>
     public class VariableGapTermsIndexReader : TermsIndexReaderBase
     {
-        private readonly PositiveIntOutputs _fstOutputs = PositiveIntOutputs.Singleton;
+        private readonly PositiveInt32Outputs _fstOutputs = PositiveInt32Outputs.Singleton;
         private readonly int _indexDivisor;
 
         private readonly IndexInput _input;       // Closed if indexLoaded is true:
@@ -207,8 +207,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                 if (outerInstance._indexDivisor > 1)
                 {
                     // subsample
-                    var scratchIntsRef = new IntsRef();
-                    var outputs = PositiveIntOutputs.Singleton;
+                    var scratchIntsRef = new Int32sRef();
+                    var outputs = PositiveInt32Outputs.Singleton;
                     var builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
                     var fstEnum = new BytesRefFSTEnum<long?>(fst);
                     var count = outerInstance._indexDivisor;

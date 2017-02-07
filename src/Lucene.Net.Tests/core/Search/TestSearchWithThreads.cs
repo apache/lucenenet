@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
             IndexSearcher s = NewSearcher(r);
 
             AtomicBoolean failed = new AtomicBoolean();
-            AtomicLong netSearch = new AtomicLong();
+            AtomicInt64 netSearch = new AtomicInt64();
 
             ThreadClass[] threads = new ThreadClass[NUM_SEARCH_THREADS];
             for (int threadID = 0; threadID < NUM_SEARCH_THREADS; threadID++)
@@ -121,9 +121,9 @@ namespace Lucene.Net.Search
 
             private IndexSearcher s;
             private AtomicBoolean Failed;
-            private AtomicLong NetSearch;
+            private AtomicInt64 NetSearch;
 
-            public ThreadAnonymousInnerClassHelper(TestSearchWithThreads outerInstance, IndexSearcher s, AtomicBoolean failed, AtomicLong netSearch)
+            public ThreadAnonymousInnerClassHelper(TestSearchWithThreads outerInstance, IndexSearcher s, AtomicBoolean failed, AtomicInt64 netSearch)
             {
                 this.OuterInstance = outerInstance;
                 this.s = s;

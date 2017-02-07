@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs.Compressing
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
     using StoredFieldVisitor = Lucene.Net.Index.StoredFieldVisitor;
 
@@ -282,9 +282,9 @@ namespace Lucene.Net.Codecs.Compressing
                 else
                 {
                     long filePointer = fieldsStream.FilePointer;
-                    PackedInts.Reader reader = PackedInts.GetDirectReaderNoHeader(fieldsStream, PackedInts.Format.PACKED, packedIntsVersion, chunkDocs, bitsPerStoredFields);
+                    PackedInt32s.Reader reader = PackedInt32s.GetDirectReaderNoHeader(fieldsStream, PackedInt32s.Format.PACKED, packedIntsVersion, chunkDocs, bitsPerStoredFields);
                     numStoredFields = (int)(reader.Get(docID - docBase));
-                    fieldsStream.Seek(filePointer + PackedInts.Format.PACKED.ByteCount(packedIntsVersion, chunkDocs, bitsPerStoredFields));
+                    fieldsStream.Seek(filePointer + PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, chunkDocs, bitsPerStoredFields));
                 }
 
                 int bitsPerLength = fieldsStream.ReadVInt32();
@@ -300,7 +300,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
                 else
                 {
-                    PackedInts.IReaderIterator it = PackedInts.GetReaderIteratorNoHeader(fieldsStream, PackedInts.Format.PACKED, packedIntsVersion, chunkDocs, bitsPerLength, 1);
+                    PackedInt32s.IReaderIterator it = PackedInt32s.GetReaderIteratorNoHeader(fieldsStream, PackedInt32s.Format.PACKED, packedIntsVersion, chunkDocs, bitsPerLength, 1);
                     int off = 0;
                     for (int i = 0; i < docID - docBase; ++i)
                     {
@@ -541,7 +541,7 @@ namespace Lucene.Net.Codecs.Compressing
                     }
                     else
                     {
-                        PackedInts.IReaderIterator it = PackedInts.GetReaderIteratorNoHeader(fieldsStream, PackedInts.Format.PACKED, outerInstance.packedIntsVersion, chunkDocs, bitsPerStoredFields, 1);
+                        PackedInt32s.IReaderIterator it = PackedInt32s.GetReaderIteratorNoHeader(fieldsStream, PackedInt32s.Format.PACKED, outerInstance.packedIntsVersion, chunkDocs, bitsPerStoredFields, 1);
                         for (int i = 0; i < chunkDocs; ++i)
                         {
                             numStoredFields[i] = (int)it.Next();
@@ -559,7 +559,7 @@ namespace Lucene.Net.Codecs.Compressing
                     }
                     else
                     {
-                        PackedInts.IReaderIterator it = PackedInts.GetReaderIteratorNoHeader(fieldsStream, PackedInts.Format.PACKED, outerInstance.packedIntsVersion, chunkDocs, bitsPerLength, 1);
+                        PackedInt32s.IReaderIterator it = PackedInt32s.GetReaderIteratorNoHeader(fieldsStream, PackedInt32s.Format.PACKED, outerInstance.packedIntsVersion, chunkDocs, bitsPerLength, 1);
                         for (int i = 0; i < chunkDocs; ++i)
                         {
                             lengths[i] = (int)it.Next();

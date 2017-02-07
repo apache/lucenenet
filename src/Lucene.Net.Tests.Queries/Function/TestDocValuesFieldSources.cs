@@ -60,7 +60,7 @@ namespace Lucene.Net.Tests.Queries.Function
                         break;
                     case DocValuesType.NUMERIC:
                         int bitsPerValue = Random().NextIntBetween(1, 31); // keep it an int
-                        vals[i] = (long)Random().Next((int)PackedInts.MaxValue(bitsPerValue));
+                        vals[i] = (long)Random().Next((int)PackedInt32s.MaxValue(bitsPerValue));
                         f.SetInt64Value((long) vals[i]);
                         break;
                 }

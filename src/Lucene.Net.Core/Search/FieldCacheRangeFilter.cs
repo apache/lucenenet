@@ -312,15 +312,15 @@ namespace Lucene.Net.Search
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private class AnonymousShortFieldCacheRangeFilter : FieldCacheRangeFilter<short?>
+        private class AnonymousInt16FieldCacheRangeFilter : FieldCacheRangeFilter<short?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
             {
-                private FieldCache.Shorts values;
+                private FieldCache.Int16s values;
                 private short inclusiveLowerPoint;
                 private short inclusiveUpperPoint;
 
-                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Shorts values, short inclusiveLowerPoint, short inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
+                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Int16s values, short inclusiveLowerPoint, short inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
                     : base(maxDoc, acceptDocs)
                 {
                     this.values = values;
@@ -335,7 +335,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            internal AnonymousShortFieldCacheRangeFilter(string field, FieldCache.IParser parser, short? lowerVal, short? upperVal, bool includeLower, bool includeUpper)
+            internal AnonymousInt16FieldCacheRangeFilter(string field, FieldCache.IParser parser, short? lowerVal, short? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
@@ -371,7 +371,7 @@ namespace Lucene.Net.Search
                     return null;
 
 #pragma warning disable 612, 618
-                FieldCache.Shorts values = FieldCache.DEFAULT.GetInt16s(context.AtomicReader, field, (FieldCache.IShortParser)parser, false);
+                FieldCache.Int16s values = FieldCache.DEFAULT.GetInt16s(context.AtomicReader, field, (FieldCache.IInt16Parser)parser, false);
 #pragma warning restore 612, 618
 
                 // we only request the usage of termDocs, if the range contains 0
@@ -382,15 +382,15 @@ namespace Lucene.Net.Search
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private class AnonymousIntFieldCacheRangeFilter : FieldCacheRangeFilter<int?>
+        private class AnonymousInt32FieldCacheRangeFilter : FieldCacheRangeFilter<int?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
             {
-                private FieldCache.Ints values;
+                private FieldCache.Int32s values;
                 private int inclusiveLowerPoint;
                 private int inclusiveUpperPoint;
 
-                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Ints values, int inclusiveLowerPoint, int inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
+                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Int32s values, int inclusiveLowerPoint, int inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
                     : base(maxDoc, acceptDocs)
                 {
                     this.values = values;
@@ -405,7 +405,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            internal AnonymousIntFieldCacheRangeFilter(string field, FieldCache.IParser parser, int? lowerVal, int? upperVal, bool includeLower, bool includeUpper)
+            internal AnonymousInt32FieldCacheRangeFilter(string field, FieldCache.IParser parser, int? lowerVal, int? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
@@ -440,7 +440,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache.Ints values = FieldCache.DEFAULT.GetInt32s(context.AtomicReader, field, (FieldCache.IIntParser)parser, false);
+                FieldCache.Int32s values = FieldCache.DEFAULT.GetInt32s(context.AtomicReader, field, (FieldCache.IInt32Parser)parser, false);
                 // we only request the usage of termDocs, if the range contains 0
                 return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
@@ -449,15 +449,15 @@ namespace Lucene.Net.Search
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private class AnonymousLongFieldCacheRangeFilter : FieldCacheRangeFilter<long?>
+        private class AnonymousInt64FieldCacheRangeFilter : FieldCacheRangeFilter<long?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
             {
-                private FieldCache.Longs values;
+                private FieldCache.Int64s values;
                 private long inclusiveLowerPoint;
                 private long inclusiveUpperPoint;
 
-                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Longs values, long inclusiveLowerPoint, long inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
+                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Int64s values, long inclusiveLowerPoint, long inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
                     : base(maxDoc, acceptDocs)
                 {
                     this.values = values;
@@ -472,7 +472,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            internal AnonymousLongFieldCacheRangeFilter(string field, FieldCache.IParser parser, long? lowerVal, long? upperVal, bool includeLower, bool includeUpper)
+            internal AnonymousInt64FieldCacheRangeFilter(string field, FieldCache.IParser parser, long? lowerVal, long? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
@@ -507,7 +507,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache.Longs values = FieldCache.DEFAULT.GetInt64s(context.AtomicReader, field, (FieldCache.ILongParser)parser, false);
+                FieldCache.Int64s values = FieldCache.DEFAULT.GetInt64s(context.AtomicReader, field, (FieldCache.IInt64Parser)parser, false);
                 // we only request the usage of termDocs, if the range contains 0
                 return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
@@ -516,15 +516,15 @@ namespace Lucene.Net.Search
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private class AnonymousFloatFieldCacheRangeFilter : FieldCacheRangeFilter<float?>
+        private class AnonymousSingleFieldCacheRangeFilter : FieldCacheRangeFilter<float?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
             {
-                private FieldCache.Floats values;
+                private FieldCache.Singles values;
                 private float inclusiveLowerPoint;
                 private float inclusiveUpperPoint;
 
-                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Floats values, float inclusiveLowerPoint, float inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
+                internal AnonymousClassFieldCacheDocIdSet(FieldCache.Singles values, float inclusiveLowerPoint, float inclusiveUpperPoint, int maxDoc, IBits acceptDocs)
                     : base(maxDoc, acceptDocs)
                 {
                     this.values = values;
@@ -539,7 +539,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            internal AnonymousFloatFieldCacheRangeFilter(string field, FieldCache.IParser parser, float? lowerVal, float? upperVal, bool includeLower, bool includeUpper)
+            internal AnonymousSingleFieldCacheRangeFilter(string field, FieldCache.IParser parser, float? lowerVal, float? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
@@ -578,7 +578,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache.Floats values = FieldCache.DEFAULT.GetSingles(context.AtomicReader, field, (FieldCache.IFloatParser)parser, false);
+                FieldCache.Singles values = FieldCache.DEFAULT.GetSingles(context.AtomicReader, field, (FieldCache.ISingleParser)parser, false);
 
                 // we only request the usage of termDocs, if the range contains 0
                 return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
@@ -723,9 +723,9 @@ namespace Lucene.Net.Search
         /// NOTE: this was newShortRange() in Lucene
         /// </summary>
         [Obsolete]
-        public static FieldCacheRangeFilter<short?> NewInt16Range(string field, FieldCache.IShortParser parser, short? lowerVal, short? upperVal, bool includeLower, bool includeUpper)
+        public static FieldCacheRangeFilter<short?> NewInt16Range(string field, FieldCache.IInt16Parser parser, short? lowerVal, short? upperVal, bool includeLower, bool includeUpper)
         {
-            return new AnonymousShortFieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
+            return new AnonymousInt16FieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>
@@ -747,9 +747,9 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: this was newIntRange() in Lucene
         /// </summary>
-        public static FieldCacheRangeFilter<int?> NewInt32Range(string field, FieldCache.IIntParser parser, int? lowerVal, int? upperVal, bool includeLower, bool includeUpper)
+        public static FieldCacheRangeFilter<int?> NewInt32Range(string field, FieldCache.IInt32Parser parser, int? lowerVal, int? upperVal, bool includeLower, bool includeUpper)
         {
-            return new AnonymousIntFieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
+            return new AnonymousInt32FieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>
@@ -770,9 +770,9 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: this was newLongRange() in Lucene
         /// </summary>
-        public static FieldCacheRangeFilter<long?> NewInt64Range(string field, FieldCache.ILongParser parser, long? lowerVal, long? upperVal, bool includeLower, bool includeUpper)
+        public static FieldCacheRangeFilter<long?> NewInt64Range(string field, FieldCache.IInt64Parser parser, long? lowerVal, long? upperVal, bool includeLower, bool includeUpper)
         {
-            return new AnonymousLongFieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
+            return new AnonymousInt64FieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>
@@ -794,9 +794,9 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: this was newFloatRange() in Lucene
         /// </summary>
-        public static FieldCacheRangeFilter<float?> NewSingleRange(string field, FieldCache.IFloatParser parser, float? lowerVal, float? upperVal, bool includeLower, bool includeUpper)
+        public static FieldCacheRangeFilter<float?> NewSingleRange(string field, FieldCache.ISingleParser parser, float? lowerVal, float? upperVal, bool includeLower, bool includeUpper)
         {
-            return new AnonymousFloatFieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
+            return new AnonymousSingleFieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>

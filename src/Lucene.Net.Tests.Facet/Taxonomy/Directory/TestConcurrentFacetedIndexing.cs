@@ -106,7 +106,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         [Test]
         public virtual void TestConcurrency()
         {
-            AtomicInteger numDocs = new AtomicInteger(AtLeast(10000));
+            AtomicInt32 numDocs = new AtomicInt32(AtLeast(10000));
             Directory indexDir = NewDirectory();
             Directory taxoDir = NewDirectory();
             ConcurrentDictionary<string, string> values = new ConcurrentDictionary<string, string>();
@@ -172,13 +172,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         {
             private readonly TestConcurrentFacetedIndexing outerInstance;
 
-            private AtomicInteger numDocs;
+            private AtomicInt32 numDocs;
             private ConcurrentDictionary<string, string> values;
             private IndexWriter iw;
             private Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter tw;
             private FacetsConfig config;
 
-            public ThreadAnonymousInnerClassHelper(TestConcurrentFacetedIndexing outerInstance, AtomicInteger numDocs, ConcurrentDictionary<string, string> values, IndexWriter iw, Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter tw, FacetsConfig config)
+            public ThreadAnonymousInnerClassHelper(TestConcurrentFacetedIndexing outerInstance, AtomicInt32 numDocs, ConcurrentDictionary<string, string> values, IndexWriter iw, Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter tw, FacetsConfig config)
             {
                 this.outerInstance = outerInstance;
                 this.numDocs = numDocs;

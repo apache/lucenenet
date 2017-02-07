@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestLongBitSet : LuceneTestCase
     {
-        internal virtual void DoGet(BitArray a, LongBitSet b)
+        internal virtual void DoGet(BitArray a, Int64BitSet b)
         {
             long max = b.Length;
             for (int i = 0; i < max; i++)
@@ -39,7 +39,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        internal virtual void DoNextSetBit(BitArray a, LongBitSet b)
+        internal virtual void DoNextSetBit(BitArray a, Int64BitSet b)
         {
             int aa = -1;
             long bb = -1;
@@ -51,7 +51,7 @@ namespace Lucene.Net.Util
             } while (aa >= 0);
         }
 
-        internal virtual void DoPrevSetBit(BitArray a, LongBitSet b)
+        internal virtual void DoPrevSetBit(BitArray a, Int64BitSet b)
         {
             int aa = a.Length + Random().Next(100);
             long bb = aa;
@@ -86,13 +86,13 @@ namespace Lucene.Net.Util
         internal virtual void DoRandomSets(int maxSize, int iter, int mode)
         {
             BitArray a0 = null;
-            LongBitSet b0 = null;
+            Int64BitSet b0 = null;
 
             for (int i = 0; i < iter; i++)
             {
                 int sz = TestUtil.NextInt(Random(), 2, maxSize);
                 BitArray a = new BitArray(sz);
-                LongBitSet b = new LongBitSet(sz);
+                Int64BitSet b = new Int64BitSet(sz);
 
                 // test the various ways of setting bits
                 if (sz > 0)
@@ -140,7 +140,7 @@ namespace Lucene.Net.Util
                 toIndex = fromIndex + Random().Next(sz - fromIndex);
                 BitArray aa =  new BitArray(a);
                 aa.Flip(fromIndex, toIndex);
-                LongBitSet bb = b.Clone();
+                Int64BitSet bb = b.Clone();
                 bb.Flip(fromIndex, toIndex);
 
                 fromIndex = Random().Next(sz / 2);
@@ -178,14 +178,14 @@ namespace Lucene.Net.Util
                     BitArray a_andn = new BitArray(a);
                     a_andn.AndNot(a0);
 
-                    LongBitSet b_and = b.Clone();
+                    Int64BitSet b_and = b.Clone();
                     Assert.AreEqual(b, b_and);
                     b_and.And(b0);
-                    LongBitSet b_or = b.Clone();
+                    Int64BitSet b_or = b.Clone();
                     b_or.Or(b0);
-                    LongBitSet b_xor = b.Clone();
+                    Int64BitSet b_xor = b.Clone();
                     b_xor.Xor(b0);
-                    LongBitSet b_andn = b.Clone();
+                    Int64BitSet b_andn = b.Clone();
                     b_andn.AndNot(b0);
 
                     Assert.AreEqual(a0.Cardinality(), b0.Cardinality());
@@ -214,7 +214,7 @@ namespace Lucene.Net.Util
         [Test, LuceneNetSpecific]
         public void TestClearSmall()
         {
-            LongBitSet a = new LongBitSet(30);   // 0110010111001000101101001001110...0
+            Int64BitSet a = new Int64BitSet(30);   // 0110010111001000101101001001110...0
             int[] onesA = { 1, 2, 5, 7, 8, 9, 12, 16, 18, 19, 21, 24, 27, 28, 29 };
 
             for (int i = 0; i < onesA.size(); i++)
@@ -222,7 +222,7 @@ namespace Lucene.Net.Util
                 a.Set(onesA[i]);
             }
 
-            LongBitSet b = new LongBitSet(30);   // 0110000001001000101101001001110...0
+            Int64BitSet b = new Int64BitSet(30);   // 0110000001001000101101001001110...0
             int[] onesB = { 1, 2, 9, 12, 16, 18, 19, 21, 24, 27, 28, 29 };
 
             for (int i = 0; i < onesB.size(); i++)
@@ -248,8 +248,8 @@ namespace Lucene.Net.Util
             {
                 Random random = new Random();
                 int sz = AtLeast(1200);
-                LongBitSet a = new LongBitSet(sz);
-                LongBitSet b = new LongBitSet(sz);
+                Int64BitSet a = new Int64BitSet(sz);
+                Int64BitSet b = new Int64BitSet(sz);
                 int from = random.Next(sz - 1);
                 int to = random.Next(from, sz);
 
@@ -282,8 +282,8 @@ namespace Lucene.Net.Util
         {
             // this test can't handle numBits==0:
             int numBits = Random().Next(2000) + 1;
-            LongBitSet b1 = new LongBitSet(numBits);
-            LongBitSet b2 = new LongBitSet(numBits);
+            Int64BitSet b1 = new Int64BitSet(numBits);
+            Int64BitSet b2 = new Int64BitSet(numBits);
             Assert.IsTrue(b1.Equals(b2));
             Assert.IsTrue(b2.Equals(b1));
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
@@ -309,8 +309,8 @@ namespace Lucene.Net.Util
         {
             // this test can't handle numBits==0:
             int numBits = Random().Next(2000) + 1;
-            LongBitSet b1 = new LongBitSet(numBits);
-            LongBitSet b2 = new LongBitSet(numBits);
+            Int64BitSet b1 = new Int64BitSet(numBits);
+            Int64BitSet b2 = new Int64BitSet(numBits);
             Assert.IsTrue(b1.Equals(b2));
             Assert.IsTrue(b2.Equals(b1));
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
@@ -334,8 +334,8 @@ namespace Lucene.Net.Util
             // Make sure size 0-10 bit sets are OK:
             for (int numBits = 0; numBits < 10; numBits++)
             {
-                LongBitSet b1 = new LongBitSet(numBits);
-                LongBitSet b2 = new LongBitSet(numBits);
+                Int64BitSet b1 = new Int64BitSet(numBits);
+                Int64BitSet b2 = new Int64BitSet(numBits);
                 Assert.IsTrue(b1.Equals(b2));
                 Assert.AreEqual(b1.GetHashCode(), b2.GetHashCode());
                 Assert.AreEqual(0, b1.Cardinality());
@@ -349,22 +349,22 @@ namespace Lucene.Net.Util
             }
         }
 
-        private LongBitSet MakeLongFixedBitSet(int[] a, int numBits)
+        private Int64BitSet MakeLongFixedBitSet(int[] a, int numBits)
         {
-            LongBitSet bs;
+            Int64BitSet bs;
             if (Random().NextBoolean())
             {
-                int bits2words = LongBitSet.Bits2words(numBits);
+                int bits2words = Int64BitSet.Bits2words(numBits);
                 long[] words = new long[bits2words + Random().Next(100)];
                 for (int i = bits2words; i < words.Length; i++)
                 {
                     words[i] = Random().NextLong();
                 }
-                bs = new LongBitSet(words, numBits);
+                bs = new Int64BitSet(words, numBits);
             }
             else
             {
-                bs = new LongBitSet(numBits);
+                bs = new Int64BitSet(numBits);
             }
             foreach (int e in a)
             {
@@ -385,7 +385,7 @@ namespace Lucene.Net.Util
 
         private void CheckPrevSetBitArray(int[] a, int numBits)
         {
-            LongBitSet obs = MakeLongFixedBitSet(a, numBits);
+            Int64BitSet obs = MakeLongFixedBitSet(a, numBits);
             BitArray bs = MakeBitSet(a);
             DoPrevSetBit(bs, obs);
         }
@@ -400,7 +400,7 @@ namespace Lucene.Net.Util
 
         private void CheckNextSetBitArray(int[] a, int numBits)
         {
-            LongBitSet obs = MakeLongFixedBitSet(a, numBits);
+            Int64BitSet obs = MakeLongFixedBitSet(a, numBits);
             BitArray bs = MakeBitSet(a);
             DoNextSetBit(bs, obs);
         }
@@ -421,11 +421,11 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestEnsureCapacity()
         {
-            LongBitSet bits = new LongBitSet(5);
+            Int64BitSet bits = new Int64BitSet(5);
             bits.Set(1);
             bits.Set(4);
 
-            LongBitSet newBits = LongBitSet.EnsureCapacity(bits, 8); // grow within the word
+            Int64BitSet newBits = Int64BitSet.EnsureCapacity(bits, 8); // grow within the word
             Assert.IsTrue(newBits.Get(1));
             Assert.IsTrue(newBits.Get(4));
             newBits.Clear(1);
@@ -434,11 +434,11 @@ namespace Lucene.Net.Util
             Assert.IsFalse(newBits.Get(1));
 
             newBits.Set(1);
-            newBits = LongBitSet.EnsureCapacity(newBits, newBits.Length - 2); // reuse
+            newBits = Int64BitSet.EnsureCapacity(newBits, newBits.Length - 2); // reuse
             Assert.IsTrue(newBits.Get(1));
 
             bits.Set(1);
-            newBits = LongBitSet.EnsureCapacity(bits, 72); // grow beyond one word
+            newBits = Int64BitSet.EnsureCapacity(bits, 72); // grow beyond one word
             Assert.IsTrue(newBits.Get(1));
             Assert.IsTrue(newBits.Get(4));
             newBits.Clear(1);

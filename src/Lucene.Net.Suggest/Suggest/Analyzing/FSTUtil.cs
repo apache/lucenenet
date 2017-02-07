@@ -54,11 +54,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             /// <summary>
             /// Input of the path so far: </summary>
-            public IntsRef Input { get; private set; }
+            public Int32sRef Input { get; private set; }
 
             /// <summary>
             /// Sole constructor. </summary>
-            public Path(State state, FST.Arc<T> fstNode, T output, IntsRef input)
+            public Path(State state, FST.Arc<T> fstNode, T output, Int32sRef input)
             {
                 this.State = state;
                 this.FstNode = fstNode;
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             Debug.Assert(a.IsDeterministic);
             IList<Path<T>> queue = new List<Path<T>>();
             List<Path<T>> endNodes = new List<Path<T>>();
-            queue.Add(new Path<T>(a.GetInitialState(), fst.GetFirstArc(new FST.Arc<T>()), fst.Outputs.NoOutput, new IntsRef()));
+            queue.Add(new Path<T>(a.GetInitialState(), fst.GetFirstArc(new FST.Arc<T>()), fst.Outputs.NoOutput, new Int32sRef()));
 
             FST.Arc<T> scratchArc = new FST.Arc<T>();
             FST.BytesReader fstReader = fst.GetBytesReader();
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     continue;
                 }
 
-                IntsRef currentInput = path.Input;
+                Int32sRef currentInput = path.Input;
                 foreach (Transition t in path.State.GetTransitions())
                 {
                     int min = t.Min;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         FST.Arc<T> nextArc = fst.FindTargetArc(t.Min, path.FstNode, scratchArc, fstReader);
                         if (nextArc != null)
                         {
-                            IntsRef newInput = new IntsRef(currentInput.Length + 1);
+                            Int32sRef newInput = new Int32sRef(currentInput.Length + 1);
                             newInput.CopyInt32s(currentInput);
                             newInput.Int32s[currentInput.Length] = t.Min;
                             newInput.Length = currentInput.Length + 1;
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         {
                             Debug.Assert(nextArc.Label <= max);
                             Debug.Assert(nextArc.Label >= min, nextArc.Label + " " + min);
-                            IntsRef newInput = new IntsRef(currentInput.Length + 1);
+                            Int32sRef newInput = new Int32sRef(currentInput.Length + 1);
                             newInput.CopyInt32s(currentInput);
                             newInput.Int32s[currentInput.Length] = nextArc.Label;
                             newInput.Length = currentInput.Length + 1;

@@ -29,9 +29,9 @@ namespace Lucene.Net.Codecs.Memory
     using IndexFileNames = Index.IndexFileNames;
     using IndexOptions = Index.IndexOptions;
     using IndexOutput = Store.IndexOutput;
-    using IntsRef = Util.IntsRef;
+    using Int32sRef = Util.Int32sRef;
     using IOUtils = Util.IOUtils;
-    using PositiveIntOutputs = Util.Fst.PositiveIntOutputs;
+    using PositiveInt32Outputs = Util.Fst.PositiveInt32Outputs;
     using RAMOutputStream = Store.RAMOutputStream;
     using SegmentWriteState = Index.SegmentWriteState;
     using Util = Util.Fst.Util;
@@ -275,12 +275,12 @@ namespace Lucene.Net.Codecs.Memory
             private readonly FSTOrdTermsWriter _outerInstance;
 
             private readonly Builder<long?> _builder;
-            private readonly PositiveIntOutputs _outputs;
+            private readonly PositiveInt32Outputs _outputs;
             private readonly FieldInfo _fieldInfo;
             private readonly int _longsSize;
             private long _numTerms;
 
-            private readonly IntsRef _scratchTerm = new IntsRef();
+            private readonly Int32sRef _scratchTerm = new Int32sRef();
             private readonly RAMOutputStream _statsOut = new RAMOutputStream();
             private readonly RAMOutputStream _metaLongsOut = new RAMOutputStream();
             private readonly RAMOutputStream _metaBytesOut = new RAMOutputStream();
@@ -300,7 +300,7 @@ namespace Lucene.Net.Codecs.Memory
                 _numTerms = 0;
                 _fieldInfo = fieldInfo;
                 _longsSize = outerInstance.postingsWriter.SetField(fieldInfo);
-                _outputs = PositiveIntOutputs.Singleton;
+                _outputs = PositiveInt32Outputs.Singleton;
                 _builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, _outputs);
 
                 _lastBlockStatsFp = 0;

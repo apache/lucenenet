@@ -27,7 +27,7 @@ namespace Lucene.Net.Facet.Taxonomy
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using DoubleDocValues = Lucene.Net.Queries.Function.DocValues.DoubleDocValues;
     using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
-    using IntsRef = Lucene.Net.Util.IntsRef;
+    using Int32sRef = Lucene.Net.Util.Int32sRef;
     using MatchingDocs = FacetsCollector.MatchingDocs;
     using Scorer = Lucene.Net.Search.Scorer;
     using ValueSource = Lucene.Net.Queries.Function.ValueSource;
@@ -123,7 +123,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 context["scorer"] = scorer;
             }
-            IntsRef scratch = new IntsRef();
+            Int32sRef scratch = new Int32sRef();
             foreach (MatchingDocs hits in matchingDocs)
             {
                 OrdinalsReader.OrdinalsSegmentReader ords = ordinalsReader.GetReader(hits.Context);

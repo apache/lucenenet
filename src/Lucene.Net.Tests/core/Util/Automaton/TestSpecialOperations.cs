@@ -48,12 +48,12 @@ namespace Lucene.Net.Util.Automaton
         {
             Automaton a = BasicOperations.Union(BasicAutomata.MakeString("dog"), BasicAutomata.MakeString("duck"));
             MinimizationOperations.Minimize(a);
-            ISet<IntsRef> strings = SpecialOperations.GetFiniteStrings(a, -1);
+            ISet<Int32sRef> strings = SpecialOperations.GetFiniteStrings(a, -1);
             Assert.AreEqual(2, strings.Count);
-            IntsRef dog = new IntsRef();
+            Int32sRef dog = new Int32sRef();
             Util.ToInt32sRef(new BytesRef("dog"), dog);
             Assert.IsTrue(strings.Contains(dog));
-            IntsRef duck = new IntsRef();
+            Int32sRef duck = new Int32sRef();
             Util.ToInt32sRef(new BytesRef("duck"), duck);
             Assert.IsTrue(strings.Contains(duck));
         }

@@ -476,7 +476,7 @@ namespace Lucene.Net.Index.Memory
                 internal bool hasNext;
                 internal IBits liveDocs;
                 internal int doc = -1;
-                internal IntBlockPool.SliceReader sliceReader;
+                internal Int32BlockPool.SliceReader sliceReader;
                 internal int freq_Renamed;
                 internal int startOffset_Renamed;
                 internal int endOffset_Renamed;
@@ -484,7 +484,7 @@ namespace Lucene.Net.Index.Memory
                 public MemoryDocsAndPositionsEnum(MemoryIndex.MemoryIndexReader outerInstance)
                 {
                     this.outerInstance = outerInstance;
-                    this.sliceReader = new IntBlockPool.SliceReader(outerInstance.outerInstance.intBlockPool);
+                    this.sliceReader = new Int32BlockPool.SliceReader(outerInstance.outerInstance.intBlockPool);
                 }
 
                 public virtual DocsAndPositionsEnum Reset(IBits liveDocs, int start, int end, int freq)

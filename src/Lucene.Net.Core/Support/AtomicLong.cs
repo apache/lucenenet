@@ -2,16 +2,19 @@
 
 namespace Lucene.Net.Support
 {
-    public class AtomicLong
+    /// <summary>
+    /// NOTE: This was AtomicLong in the JDK
+    /// </summary>
+    public class AtomicInt64
     {
         private long value;
 
-        public AtomicLong()
+        public AtomicInt64()
             : this(0)
         {
         }
 
-        public AtomicLong(long value)
+        public AtomicInt64(long value)
         {
             Interlocked.Exchange(ref this.value, value);
         }

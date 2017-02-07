@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using InPlaceMergeSorter = Lucene.Net.Util.InPlaceMergeSorter;
     using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using PagedGrowableWriter = Lucene.Net.Util.Packed.PagedGrowableWriter;
     using PagedMutable = Lucene.Net.Util.Packed.PagedMutable;
 
@@ -107,8 +107,8 @@ namespace Lucene.Net.Index
             : base(field, DocValuesFieldUpdates.Type.NUMERIC)
         {
             docsWithField = new FixedBitSet(64);
-            docs = new PagedMutable(1, 1024, PackedInts.BitsRequired(maxDoc - 1), PackedInts.COMPACT);
-            values = new PagedGrowableWriter(1, 1024, 1, PackedInts.FAST);
+            docs = new PagedMutable(1, 1024, PackedInt32s.BitsRequired(maxDoc - 1), PackedInt32s.COMPACT);
+            values = new PagedGrowableWriter(1, 1024, 1, PackedInt32s.FAST);
             size = 0;
         }
 

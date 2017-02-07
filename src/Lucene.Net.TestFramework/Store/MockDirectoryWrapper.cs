@@ -80,7 +80,7 @@ namespace Lucene.Net.Store
         private Throttling_e throttling = Throttling_e.SOMETIMES;
         protected internal LockFactory LockFactory_Renamed;
 
-        internal readonly AtomicLong InputCloneCount_Renamed = new AtomicLong();
+        internal readonly AtomicInt64 InputCloneCount_Renamed = new AtomicInt64();
 
         // use this for tracking files for crash.
         // additionally: provides debugging information in case you leave one open

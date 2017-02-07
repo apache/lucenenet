@@ -20,10 +20,11 @@ namespace Lucene.Net.Util.Mutable
      */
 
     /// <summary>
-    /// <seealso cref="MutableValue"/> implementation of type
-    /// <code>float</code>.
+    /// <see cref="MutableValue"/> implementation of type <see cref="float"/>.
+    /// <para/>
+    /// NOTE: This was MutableValueFloat in Lucene
     /// </summary>
-    public class MutableValueFloat : MutableValue
+    public class MutableValueSingle : MutableValue
     {
         public float Value { get; set; }
 
@@ -34,14 +35,14 @@ namespace Lucene.Net.Util.Mutable
 
         public override void Copy(MutableValue source)
         {
-            MutableValueFloat s = (MutableValueFloat)source;
+            MutableValueSingle s = (MutableValueSingle)source;
             Value = s.Value;
             Exists = s.Exists;
         }
 
         public override MutableValue Duplicate()
         {
-            MutableValueFloat v = new MutableValueFloat();
+            MutableValueSingle v = new MutableValueSingle();
             v.Value = this.Value;
             v.Exists = this.Exists;
             return v;
@@ -49,13 +50,13 @@ namespace Lucene.Net.Util.Mutable
 
         public override bool EqualsSameType(object other)
         {
-            MutableValueFloat b = (MutableValueFloat)other;
+            MutableValueSingle b = (MutableValueSingle)other;
             return Value == b.Value && Exists == b.Exists;
         }
 
         public override int CompareSameType(object other)
         {
-            MutableValueFloat b = (MutableValueFloat)other;
+            MutableValueSingle b = (MutableValueSingle)other;
             int c = Value.CompareTo(b.Value);
             if (c != 0)
             {

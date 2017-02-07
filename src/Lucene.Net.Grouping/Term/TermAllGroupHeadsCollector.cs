@@ -269,7 +269,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// </summary>
     internal class OrdScoreAllGroupHeadsCollector : TermAllGroupHeadsCollector<OrdScoreAllGroupHeadsCollector.GroupHead>
     {
-        private readonly SentinelIntSet ordSet;
+        private readonly SentinelInt32Set ordSet;
         private readonly IList<GroupHead> collectedGroups;
         private readonly SortField[] fields;
 
@@ -280,7 +280,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         internal OrdScoreAllGroupHeadsCollector(string groupField, Sort sortWithinGroup, int initialSize)
             : base(groupField, sortWithinGroup.GetSort().Length)
         {
-            ordSet = new SentinelIntSet(initialSize, -2);
+            ordSet = new SentinelInt32Set(initialSize, -2);
             collectedGroups = new List<GroupHead>(initialSize);
 
             SortField[] sortFields = sortWithinGroup.GetSort();
@@ -500,7 +500,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// </summary>
     internal class OrdAllGroupHeadsCollector : TermAllGroupHeadsCollector<OrdAllGroupHeadsCollector.GroupHead>
     {
-        private readonly SentinelIntSet ordSet;
+        private readonly SentinelInt32Set ordSet;
         private readonly IList<GroupHead> collectedGroups;
         private readonly SortField[] fields;
 
@@ -510,7 +510,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         internal OrdAllGroupHeadsCollector(string groupField, Sort sortWithinGroup, int initialSize)
                     : base(groupField, sortWithinGroup.GetSort().Length)
         {
-            ordSet = new SentinelIntSet(initialSize, -2);
+            ordSet = new SentinelInt32Set(initialSize, -2);
             collectedGroups = new List<GroupHead>(initialSize);
 
             SortField[] sortFields = sortWithinGroup.GetSort();
@@ -688,7 +688,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// </summary>
     internal class ScoreAllGroupHeadsCollector : TermAllGroupHeadsCollector<ScoreAllGroupHeadsCollector.GroupHead>
     {
-        private readonly SentinelIntSet ordSet;
+        private readonly SentinelInt32Set ordSet;
         private readonly IList<GroupHead> collectedGroups;
         private readonly SortField[] fields;
 
@@ -698,7 +698,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         internal ScoreAllGroupHeadsCollector(string groupField, Sort sortWithinGroup, int initialSize)
                     : base(groupField, sortWithinGroup.GetSort().Length)
         {
-            ordSet = new SentinelIntSet(initialSize, -2);
+            ordSet = new SentinelInt32Set(initialSize, -2);
             collectedGroups = new List<GroupHead>(initialSize);
 
             SortField[] sortFields = sortWithinGroup.GetSort();

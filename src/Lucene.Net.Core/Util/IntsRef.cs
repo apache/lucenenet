@@ -25,12 +25,14 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Represents int[], as a slice (offset + length) into an
-    ///  existing int[].  The <seealso cref="#ints"/> member should never be null; use
-    ///  <seealso cref="#EMPTY_INTS"/> if necessary.
-    ///
+    /// existing int[].  The <seealso cref="#ints"/> member should never be null; use
+    /// <seealso cref="#EMPTY_INTS"/> if necessary.
+    /// <para/>
+    /// NOTE: This was IntsRef in Lucene
+    /// 
     ///  @lucene.internal
     /// </summary>
-    public sealed class IntsRef : IComparable<IntsRef> // LUCENENET TODO: Rename Int32sRef ?
+    public sealed class Int32sRef : IComparable<Int32sRef>
     {
         /// <summary>
         /// An empty integer array for convenience </summary>
@@ -67,7 +69,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Create a IntsRef with <seealso cref="#EMPTY_INTS"/> </summary>
-        public IntsRef()
+        public Int32sRef()
         {
             ints = EMPTY_INTS;
         }
@@ -76,7 +78,7 @@ namespace Lucene.Net.Util
         /// Create a IntsRef pointing to a new array of size <code>capacity</code>.
         /// Offset and length will both be zero.
         /// </summary>
-        public IntsRef(int capacity)
+        public Int32sRef(int capacity)
         {
             ints = new int[capacity];
         }
@@ -85,7 +87,7 @@ namespace Lucene.Net.Util
         /// this instance will directly reference ints w/o making a copy.
         /// ints should not be null.
         /// </summary>
-        public IntsRef(int[] ints, int offset, int length)
+        public Int32sRef(int[] ints, int offset, int length)
         {
             this.ints = ints;
             this.Offset = offset;
@@ -101,7 +103,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= #deepCopyOf </seealso>
         public object Clone()
         {
-            return new IntsRef(ints, Offset, Length);
+            return new Int32sRef(ints, Offset, Length);
         }
 
         public override int GetHashCode()
@@ -122,9 +124,9 @@ namespace Lucene.Net.Util
             {
                 return false;
             }
-            if (other is IntsRef)
+            if (other is Int32sRef)
             {
-                return this.Int32sEquals((IntsRef)other);
+                return this.Int32sEquals((Int32sRef)other);
             }
             return false;
         }
@@ -132,7 +134,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// NOTE: This was intsEquals() in Lucene
         /// </summary>
-        public bool Int32sEquals(IntsRef other)
+        public bool Int32sEquals(Int32sRef other)
         {
             if (Length == other.Length)
             {
@@ -156,7 +158,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Signed int order comparison </summary>
-        public int CompareTo(IntsRef other)
+        public int CompareTo(Int32sRef other)
         {
             if (this == other)
             {
@@ -191,7 +193,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// NOTE: This was copyInts() in Lucene
         /// </summary>
-        public void CopyInt32s(IntsRef other)
+        public void CopyInt32s(Int32sRef other)
         {
             if (ints.Length - Offset < other.Length)
             {
@@ -241,9 +243,9 @@ namespace Lucene.Net.Util
         /// The returned IntsRef will have a length of other.length
         /// and an offset of zero.
         /// </summary>
-        public static IntsRef DeepCopyOf(IntsRef other)
+        public static Int32sRef DeepCopyOf(Int32sRef other)
         {
-            IntsRef clone = new IntsRef();
+            Int32sRef clone = new Int32sRef();
             clone.CopyInt32s(other);
             return clone;
         }

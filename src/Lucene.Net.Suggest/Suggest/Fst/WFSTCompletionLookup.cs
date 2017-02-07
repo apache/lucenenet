@@ -89,9 +89,9 @@ namespace Lucene.Net.Search.Suggest.Fst
             count = 0;
             var scratch = new BytesRef();
             IInputIterator iter = new WFSTInputIterator(this, iterator);
-            var scratchInts = new IntsRef();
+            var scratchInts = new Int32sRef();
             BytesRef previous = null;
-            var outputs = PositiveIntOutputs.Singleton;
+            var outputs = PositiveInt32Outputs.Singleton;
             var builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
             while ((scratch = iter.Next()) != null)
             {
@@ -128,7 +128,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         public override bool Load(DataInput input)
         {
             count = input.ReadVInt64();
-            this.fst = new FST<long?>(input, PositiveIntOutputs.Singleton);
+            this.fst = new FST<long?>(input, PositiveInt32Outputs.Singleton);
             return true;
         }
 

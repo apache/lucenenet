@@ -28,7 +28,7 @@ namespace Lucene.Net.Documents
     /// <summary>
     /// Expert: directly create a field for a document.  Most
     /// users should use one of the sugar subclasses: {@link
-    /// IntField}, <seealso cref="LongField"/>, <seealso cref="FloatField"/>, {@link
+    /// IntField}, <seealso cref="Int64Field"/>, <seealso cref="SingleField"/>, {@link
     /// DoubleField}, <seealso cref="BinaryDocValuesField"/>, {@link
     /// NumericDocValuesField}, <seealso cref="SortedDocValuesField"/>, {@link
     /// StringField}, <seealso cref="TextField"/>, <seealso cref="StoredField"/>.

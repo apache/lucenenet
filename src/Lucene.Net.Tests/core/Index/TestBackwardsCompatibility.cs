@@ -34,9 +34,9 @@ namespace Lucene.Net.Index
     using DoubleDocValuesField = Lucene.Net.Documents.DoubleDocValuesField;
     using Field = Lucene.Net.Documents.Field;
     using FieldType = Lucene.Net.Documents.FieldType;
-    using FloatDocValuesField = Lucene.Net.Documents.FloatDocValuesField;
-    using IntField = Lucene.Net.Documents.IntField;
-    using LongField = Lucene.Net.Documents.LongField;
+    using SingleDocValuesField = Lucene.Net.Documents.SingleDocValuesField;
+    using Int32Field = Lucene.Net.Documents.Int32Field;
+    using Int64Field = Lucene.Net.Documents.Int64Field;
     using NumericDocValuesField = Lucene.Net.Documents.NumericDocValuesField;
     using SortedDocValuesField = Lucene.Net.Documents.SortedDocValuesField;
     using SortedSetDocValuesField = Lucene.Net.Documents.SortedSetDocValuesField;
@@ -715,8 +715,8 @@ namespace Lucene.Net.Index
             doc.Add(new Field("content2", "here is more content with aaa aaa aaa", customType2));
             doc.Add(new Field("fie\u2C77ld", "field with non-ascii name", customType2));
             // add numeric fields, to test if flex preserves encoding
-            doc.Add(new IntField("trieInt", id, Field.Store.NO));
-            doc.Add(new LongField("trieLong", (long)id, Field.Store.NO));
+            doc.Add(new Int32Field("trieInt", id, Field.Store.NO));
+            doc.Add(new Int64Field("trieLong", (long)id, Field.Store.NO));
             // add docvalues fields
             doc.Add(new NumericDocValuesField("dvByte", (sbyte)id));
             sbyte[] bytes = new sbyte[] { (sbyte)((int)((uint)id >> 24)), (sbyte)((int)((uint)id >> 16)), (sbyte)((int)((uint)id >> 8)), (sbyte)id };
@@ -728,7 +728,7 @@ namespace Lucene.Net.Index
             doc.Add(new BinaryDocValuesField("dvBytesStraightFixed", @ref));
             doc.Add(new BinaryDocValuesField("dvBytesStraightVar", @ref));
             doc.Add(new DoubleDocValuesField("dvDouble", (double)id));
-            doc.Add(new FloatDocValuesField("dvFloat", (float)id));
+            doc.Add(new SingleDocValuesField("dvFloat", (float)id));
             doc.Add(new NumericDocValuesField("dvInt", id));
             doc.Add(new NumericDocValuesField("dvLong", id));
             doc.Add(new NumericDocValuesField("dvPacked", id));
@@ -888,7 +888,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(34, hits_.Length, "wrong number of hits");
 
                 // check decoding into field cache
-                FieldCache.Ints fci = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(searcher.IndexReader), "trieInt", false);
+                FieldCache.Int32s fci = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(searcher.IndexReader), "trieInt", false);
                 int maxDoc = searcher.IndexReader.MaxDoc;
                 for (int doc = 0; doc < maxDoc; doc++)
                 {
@@ -896,7 +896,7 @@ namespace Lucene.Net.Index
                     Assert.IsTrue(val >= 0 && val < 35, "value in id bounds");
                 }
 
-                FieldCache.Longs fcl = FieldCache.DEFAULT.GetInt64s(SlowCompositeReaderWrapper.Wrap(searcher.IndexReader), "trieLong", false);
+                FieldCache.Int64s fcl = FieldCache.DEFAULT.GetInt64s(SlowCompositeReaderWrapper.Wrap(searcher.IndexReader), "trieLong", false);
                 for (int doc = 0; doc < maxDoc; doc++)
                 {
                     long val = fcl.Get(doc);

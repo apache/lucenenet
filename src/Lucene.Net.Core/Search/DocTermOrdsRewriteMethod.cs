@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using LongBitSet = Lucene.Net.Util.LongBitSet;
+    using Int64BitSet = Lucene.Net.Util.Int64BitSet;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
             {
                 SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds((context.AtomicReader), m_query.m_field);
                 // Cannot use FixedBitSet because we require long index (ord):
-                LongBitSet termSet = new LongBitSet(docTermOrds.ValueCount);
+                Int64BitSet termSet = new Int64BitSet(docTermOrds.ValueCount);
                 TermsEnum termsEnum = m_query.GetTermsEnum(new TermsAnonymousInnerClassHelper(this, docTermOrds));
 
                 Debug.Assert(termsEnum != null);
@@ -202,9 +202,9 @@ namespace Lucene.Net.Search
                 private readonly MultiTermQueryDocTermOrdsWrapperFilter outerInstance;
 
                 private SortedSetDocValues docTermOrds;
-                private LongBitSet termSet;
+                private Int64BitSet termSet;
 
-                public FieldCacheDocIdSetAnonymousInnerClassHelper(MultiTermQueryDocTermOrdsWrapperFilter outerInstance, int maxDoc, IBits acceptDocs, SortedSetDocValues docTermOrds, LongBitSet termSet)
+                public FieldCacheDocIdSetAnonymousInnerClassHelper(MultiTermQueryDocTermOrdsWrapperFilter outerInstance, int maxDoc, IBits acceptDocs, SortedSetDocValues docTermOrds, Int64BitSet termSet)
                     : base(maxDoc, acceptDocs)
                 {
                     this.outerInstance = outerInstance;

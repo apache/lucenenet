@@ -49,7 +49,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            BinaryDocValues terms = m_cache.GetTerms(readerContext.AtomicReader, m_field, false, PackedInts.FAST);
+            BinaryDocValues terms = m_cache.GetTerms(readerContext.AtomicReader, m_field, false, PackedInt32s.FAST);
             IndexReader top = ReaderUtil.GetTopLevelContext(readerContext).Reader;
             Terms t = MultiFields.GetTerms(top, m_qfield);
             TermsEnum termsEnum = t == null ? TermsEnum.EMPTY : t.GetIterator(null);

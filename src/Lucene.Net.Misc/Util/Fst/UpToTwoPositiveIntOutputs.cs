@@ -34,7 +34,7 @@ namespace Lucene.Net.Util.Fst
     /// <para>NOTE: the only way to create a TwoLongs output is to
     /// add the same input to the FST twice in a row.  This is
     /// how the FST maps a single input to two outputs (e.g. you
-    /// cannot pass a <see cref="TwoLongs"/> to <see cref="Builder{T}.Add(IntsRef, T)"/>.  If you
+    /// cannot pass a <see cref="TwoLongs"/> to <see cref="Builder{T}.Add(Int32sRef, T)"/>.  If you
     /// need more than two then use <see cref="ListOfOutputs{T}"/>, but if
     /// you only have at most 2 then this implementation will
     /// require fewer bytes as it steals one bit from each long

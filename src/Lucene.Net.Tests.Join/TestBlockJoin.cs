@@ -51,7 +51,7 @@ namespace Lucene.Net.Tests.Join
         {
             Document job = new Document();
             job.Add(NewStringField("skill", skill, Field.Store.YES));
-            job.Add(new IntField("year", year, Field.Store.NO));
+            job.Add(new Int32Field("year", year, Field.Store.NO));
             job.Add(new StoredField("year", year));
             return job;
         }
@@ -61,7 +61,7 @@ namespace Lucene.Net.Tests.Join
         {
             Document job = new Document();
             job.Add(NewStringField("qualification", qualification, Field.Store.YES));
-            job.Add(new IntField("year", year, Field.Store.NO));
+            job.Add(new Int32Field("year", year, Field.Store.NO));
             return job;
         }
 

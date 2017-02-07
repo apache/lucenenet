@@ -268,7 +268,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         {
             int ncats = AtLeast(100000); // add many categories
             int range = ncats * 3; // affects the categories selection
-            AtomicInteger numCats = new AtomicInteger(ncats);
+            AtomicInt32 numCats = new AtomicInt32(ncats);
             Directory dir = NewDirectory();
             var values = new ConcurrentDictionary<string, string>();
             double d = Random().NextDouble();
@@ -350,11 +350,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             private readonly TestDirectoryTaxonomyWriter outerInstance;
 
             private int range;
-            private AtomicInteger numCats;
+            private AtomicInt32 numCats;
             private ConcurrentDictionary<string, string> values;
             private Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter tw;
 
-            public ThreadAnonymousInnerClassHelper(TestDirectoryTaxonomyWriter outerInstance, int range, AtomicInteger numCats, ConcurrentDictionary<string, string> values, Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter tw)
+            public ThreadAnonymousInnerClassHelper(TestDirectoryTaxonomyWriter outerInstance, int range, AtomicInt32 numCats, ConcurrentDictionary<string, string> values, Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter tw)
             {
                 this.outerInstance = outerInstance;
                 this.range = range;

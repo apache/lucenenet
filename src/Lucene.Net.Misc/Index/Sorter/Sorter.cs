@@ -189,7 +189,7 @@ namespace Lucene.Net.Index.Sorter
             // The reason why we use MonotonicAppendingLongBuffer here is that it
             // wastes very little memory if the index is in random order but can save
             // a lot of memory if the index is already "almost" sorted
-            MonotonicAppendingLongBuffer newToOld = new MonotonicAppendingLongBuffer();
+            MonotonicAppendingInt64Buffer newToOld = new MonotonicAppendingInt64Buffer();
             for (int i = 0; i < maxDoc; ++i)
             {
                 newToOld.Add(docs[i]);
@@ -201,7 +201,7 @@ namespace Lucene.Net.Index.Sorter
                 docs[(int)newToOld.Get(i)] = i;
             } // docs is now the oldToNew mapping
 
-            MonotonicAppendingLongBuffer oldToNew = new MonotonicAppendingLongBuffer();
+            MonotonicAppendingInt64Buffer oldToNew = new MonotonicAppendingInt64Buffer();
             for (int i = 0; i < maxDoc; ++i)
             {
                 oldToNew.Add(docs[i]);
@@ -214,10 +214,10 @@ namespace Lucene.Net.Index.Sorter
         private class DocMapAnonymousInnerClassHelper : Sorter.DocMap
         {
             private int maxDoc;
-            private MonotonicAppendingLongBuffer newToOld;
-            private MonotonicAppendingLongBuffer oldToNew;
+            private MonotonicAppendingInt64Buffer newToOld;
+            private MonotonicAppendingInt64Buffer oldToNew;
 
-            public DocMapAnonymousInnerClassHelper(int maxDoc, MonotonicAppendingLongBuffer newToOld, MonotonicAppendingLongBuffer oldToNew)
+            public DocMapAnonymousInnerClassHelper(int maxDoc, MonotonicAppendingInt64Buffer newToOld, MonotonicAppendingInt64Buffer oldToNew)
             {
                 this.maxDoc = maxDoc;
                 this.newToOld = newToOld;

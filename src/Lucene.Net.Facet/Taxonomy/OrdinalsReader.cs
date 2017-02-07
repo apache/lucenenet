@@ -18,7 +18,7 @@
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IntsRef = Lucene.Net.Util.IntsRef;
+    using Int32sRef = Lucene.Net.Util.Int32sRef;
 
     /// <summary>
     /// Provides per-document ordinals. 
@@ -31,10 +31,10 @@
         public abstract class OrdinalsSegmentReader
         {
             /// <summary>
-            /// Get the ordinals for this document. The <paramref name="ordinals"/>.<see cref="IntsRef.Offset"/>
+            /// Get the ordinals for this document. The <paramref name="ordinals"/>.<see cref="Int32sRef.Offset"/>
             /// must always be 0! 
             /// </summary>
-            public abstract void Get(int doc, IntsRef ordinals);
+            public abstract void Get(int doc, Int32sRef ordinals);
 
             /// <summary>
             /// Default constructor. 

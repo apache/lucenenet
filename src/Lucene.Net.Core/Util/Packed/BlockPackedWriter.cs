@@ -48,7 +48,7 @@ namespace Lucene.Net.Util.Packed
     ///     values
     /// <li>Ints: If the number of bits per value is <tt>0</tt>, then there is
     ///     nothing to decode and all ints are equal to MinValue. Otherwise: BlockSize
-    ///     <seealso cref="PackedInts packed ints"/> encoded on exactly <tt>bitsPerValue</tt>
+    ///     <seealso cref="PackedInt32s packed ints"/> encoded on exactly <tt>bitsPerValue</tt>
     ///     bits per value. They are the subtraction of the original values and
     ///     MinValue
     /// </ul> </summary>
@@ -76,7 +76,7 @@ namespace Lucene.Net.Util.Packed
             }
 
             long delta = max - min;
-            int bitsRequired = delta < 0 ? 64 : delta == 0L ? 0 : PackedInts.BitsRequired(delta);
+            int bitsRequired = delta < 0 ? 64 : delta == 0L ? 0 : PackedInt32s.BitsRequired(delta);
             if (bitsRequired == 64)
             {
                 // no need to delta-encode
@@ -85,7 +85,7 @@ namespace Lucene.Net.Util.Packed
             else if (min > 0L)
             {
                 // make min as small as possible so that writeVLong requires fewer bytes
-                min = Math.Max(0L, max - PackedInts.MaxValue(bitsRequired));
+                min = Math.Max(0L, max - PackedInt32s.MaxValue(bitsRequired));
             }
 
             int token = (bitsRequired << BPV_SHIFT) | (min == 0 ? MIN_VALUE_EQUALS_0 : 0);

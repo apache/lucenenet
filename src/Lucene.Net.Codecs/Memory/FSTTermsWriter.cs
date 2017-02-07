@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.Memory
     using IndexFileNames = Index.IndexFileNames;
     using IndexOptions = Index.IndexOptions;
     using IndexOutput = Store.IndexOutput;
-    using IntsRef = Util.IntsRef;
+    using Int32sRef = Util.Int32sRef;
     using IOUtils = Util.IOUtils;
     using RAMOutputStream = Store.RAMOutputStream;
     using SegmentWriteState = Index.SegmentWriteState;
@@ -238,7 +238,7 @@ namespace Lucene.Net.Codecs.Memory
             private readonly int _longsSize;
             private long _numTerms;
 
-            private readonly IntsRef _scratchTerm = new IntsRef();
+            private readonly Int32sRef _scratchTerm = new Int32sRef();
             private readonly RAMOutputStream _statsWriter = new RAMOutputStream();
             private readonly RAMOutputStream _metaWriter = new RAMOutputStream();
 

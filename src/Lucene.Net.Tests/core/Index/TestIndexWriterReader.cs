@@ -473,8 +473,8 @@ namespace Lucene.Net.Index
             internal readonly IList<Exception> Failures = new List<Exception>();
             internal IndexReader[] Readers;
             internal bool DidClose = false;
-            internal AtomicInteger Count = new AtomicInteger(0);
-            internal AtomicInteger NumaddIndexes = new AtomicInteger(0);
+            internal AtomicInt32 Count = new AtomicInt32(0);
+            internal AtomicInt32 NumaddIndexes = new AtomicInt32(0);
 
             public AddDirectoriesThreads(TestIndexWriterReader outerInstance, int numDirs, IndexWriter mainWriter)
             {

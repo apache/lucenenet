@@ -22,35 +22,37 @@ namespace Lucene.Net.Util.Packed
     /// <summary>
     /// Utility class to buffer a list of signed longs in memory. this class only
     /// supports appending and is optimized for non-negative numbers with a uniform distribution over a fixed (limited) range
-    ///
+    /// <para/>
+    /// NOTE: This was AppendingPackedLongBuffer in Lucene
+    /// 
     /// @lucene.internal
     /// </summary>
-    public sealed class AppendingPackedLongBuffer : AbstractAppendingLongBuffer
+    public sealed class AppendingPackedInt64Buffer : AbstractAppendingInt64Buffer
     {
         /// <summary>
-        ///<seealso cref="AppendingPackedLongBuffer"/> </summary>
+        ///<seealso cref="AppendingPackedInt64Buffer"/> </summary>
         /// <param name="initialPageCount">        the initial number of pages </param>
         /// <param name="pageSize">                the size of a single page </param>
         /// <param name="acceptableOverheadRatio"> an acceptable overhead ratio per value </param>
-        public AppendingPackedLongBuffer(int initialPageCount, int pageSize, float acceptableOverheadRatio)
+        public AppendingPackedInt64Buffer(int initialPageCount, int pageSize, float acceptableOverheadRatio)
             : base(initialPageCount, pageSize, acceptableOverheadRatio)
         {
         }
 
         /// <summary>
-        /// Create an <seealso cref="AppendingPackedLongBuffer"/> with initialPageCount=16,
-        /// pageSize=1024 and acceptableOverheadRatio=<seealso cref="PackedInts#DEFAULT"/>
+        /// Create an <seealso cref="AppendingPackedInt64Buffer"/> with initialPageCount=16,
+        /// pageSize=1024 and acceptableOverheadRatio=<seealso cref="PackedInt32s#DEFAULT"/>
         /// </summary>
-        public AppendingPackedLongBuffer()
-            : this(16, 1024, PackedInts.DEFAULT)
+        public AppendingPackedInt64Buffer()
+            : this(16, 1024, PackedInt32s.DEFAULT)
         {
         }
 
         /// <summary>
-        /// Create an <seealso cref="AppendingPackedLongBuffer"/> with initialPageCount=16,
+        /// Create an <seealso cref="AppendingPackedInt64Buffer"/> with initialPageCount=16,
         /// pageSize=1024
         /// </summary>
-        public AppendingPackedLongBuffer(float acceptableOverheadRatio)
+        public AppendingPackedInt64Buffer(float acceptableOverheadRatio)
             : this(16, 1024, acceptableOverheadRatio)
         {
         }
@@ -94,8 +96,8 @@ namespace Lucene.Net.Util.Packed
             }
 
             // build a new packed reader
-            int bitsRequired = minValue < 0 ? 64 : PackedInts.BitsRequired(maxValue);
-            PackedInts.Mutable mutable = PackedInts.GetMutable(pendingOff, bitsRequired, acceptableOverheadRatio);
+            int bitsRequired = minValue < 0 ? 64 : PackedInt32s.BitsRequired(maxValue);
+            PackedInt32s.Mutable mutable = PackedInt32s.GetMutable(pendingOff, bitsRequired, acceptableOverheadRatio);
             for (int i = 0; i < pendingOff; )
             {
                 i += mutable.Set(i, pending, i, pendingOff - i);

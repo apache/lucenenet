@@ -21,7 +21,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using IntsRef = Lucene.Net.Util.IntsRef;
+    using Int32sRef = Lucene.Net.Util.Int32sRef;
     using MatchingDocs = FacetsCollector.MatchingDocs;
 
     /// <summary>
@@ -48,7 +48,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private void Count(IList<FacetsCollector.MatchingDocs> matchingDocs)
         {
-            IntsRef scratch = new IntsRef();
+            Int32sRef scratch = new Int32sRef();
             foreach (FacetsCollector.MatchingDocs hits in matchingDocs)
             {
                 OrdinalsReader.OrdinalsSegmentReader ords = ordinalsReader.GetReader(hits.Context);

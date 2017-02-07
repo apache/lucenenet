@@ -24,22 +24,24 @@ namespace Lucene.Net.Util.Fst
     using DataOutput = Lucene.Net.Store.DataOutput;
 
     /// <summary>
-    /// An FST <seealso cref="Outputs"/> implementation where each output
+    /// An FST <seealso cref="Outputs{T}"/> implementation where each output
     /// is a non-negative long value.
+    /// <para/>
+    /// NOTE: This was PositiveIntOutputs in Lucene
     ///
     /// @lucene.experimental
     /// </summary>
-    public sealed class PositiveIntOutputs : Outputs<long?>
+    public sealed class PositiveInt32Outputs : Outputs<long?>
     {
         private static readonly long NO_OUTPUT = new long();
 
-        private static readonly PositiveIntOutputs singleton = new PositiveIntOutputs();
+        private static readonly PositiveInt32Outputs singleton = new PositiveInt32Outputs();
 
-        private PositiveIntOutputs()
+        private PositiveInt32Outputs()
         {
         }
 
-        public static PositiveIntOutputs Singleton
+        public static PositiveInt32Outputs Singleton
         {
             get
             {

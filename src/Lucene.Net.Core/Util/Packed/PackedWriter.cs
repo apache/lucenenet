@@ -25,10 +25,10 @@ namespace Lucene.Net.Util.Packed
     // Packs high order byte first, to match
     // IndexOutput.writeInt/Long/Short byte order
 
-    internal sealed class PackedWriter : PackedInts.Writer
+    internal sealed class PackedWriter : PackedInt32s.Writer
     {
         internal bool finished;
-        internal readonly PackedInts.Format format;
+        internal readonly PackedInt32s.Format format;
         internal readonly BulkOperation encoder;
         internal readonly byte[] nextBlocks;
         internal readonly long[] nextValues;
@@ -36,7 +36,7 @@ namespace Lucene.Net.Util.Packed
         internal int off;
         internal int written;
 
-        internal PackedWriter(PackedInts.Format format, DataOutput @out, int valueCount, int bitsPerValue, int mem)
+        internal PackedWriter(PackedInt32s.Format format, DataOutput @out, int valueCount, int bitsPerValue, int mem)
             : base(@out, valueCount, bitsPerValue)
         {
             this.format = format;
@@ -49,7 +49,7 @@ namespace Lucene.Net.Util.Packed
             finished = false;
         }
 
-        protected internal override PackedInts.Format Format
+        protected internal override PackedInt32s.Format Format
         {
             get
             {
@@ -59,7 +59,7 @@ namespace Lucene.Net.Util.Packed
 
         public override void Add(long v)
         {
-            Debug.Assert(m_bitsPerValue == 64 || (v >= 0 && v <= PackedInts.MaxValue(m_bitsPerValue)), m_bitsPerValue.ToString());
+            Debug.Assert(m_bitsPerValue == 64 || (v >= 0 && v <= PackedInt32s.MaxValue(m_bitsPerValue)), m_bitsPerValue.ToString());
             Debug.Assert(!finished);
             if (m_valueCount != -1 && written >= m_valueCount)
             {
@@ -90,7 +90,7 @@ namespace Lucene.Net.Util.Packed
         private void Flush()
         {
             encoder.Encode(nextValues, 0, nextBlocks, 0, iterations);
-            int blockCount = (int)format.ByteCount(PackedInts.VERSION_CURRENT, off, m_bitsPerValue);
+            int blockCount = (int)format.ByteCount(PackedInt32s.VERSION_CURRENT, off, m_bitsPerValue);
             m_out.WriteBytes(nextBlocks, blockCount);
             Arrays.Fill(nextValues, 0L);
             off = 0;

@@ -31,7 +31,7 @@ namespace Lucene.Net.Codecs.Lucene40
          */
 
     using LegacyDocValuesType = Lucene.Net.Codecs.Lucene40.Lucene40FieldInfosReader.LegacyDocValuesType;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
 #pragma warning disable 612, 618
@@ -67,17 +67,17 @@ namespace Lucene.Net.Codecs.Lucene40
             bool success = false;
             try
             {
-                if (minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue && PackedInts.BitsRequired(maxValue - minValue) > 4)
+                if (minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue && PackedInt32s.BitsRequired(maxValue - minValue) > 4)
                 {
                     // fits in a byte[], would be more than 4bpv, just write byte[]
                     AddBytesField(field, data, values);
                 }
-                else if (minValue >= short.MinValue && maxValue <= short.MaxValue && PackedInts.BitsRequired(maxValue - minValue) > 8)
+                else if (minValue >= short.MinValue && maxValue <= short.MaxValue && PackedInt32s.BitsRequired(maxValue - minValue) > 8)
                 {
                     // fits in a short[], would be more than 8bpv, just write short[]
                     AddShortsField(field, data, values);
                 }
-                else if (minValue >= int.MinValue && maxValue <= int.MaxValue && PackedInts.BitsRequired(maxValue - minValue) > 16)
+                else if (minValue >= int.MinValue && maxValue <= int.MaxValue && PackedInt32s.BitsRequired(maxValue - minValue) > 16)
                 {
                     // fits in a int[], would be more than 16bpv, just write int[]
                     AddIntsField(field, data, values);
@@ -157,7 +157,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 output.WriteByte((byte)Lucene40DocValuesFormat.VAR_INTS_PACKED);
                 output.WriteInt64(minValue);
                 output.WriteInt64(0 - minValue); // default value (representation of 0)
-                PackedInts.Writer writer = PackedInts.GetWriter(output, State.SegmentInfo.DocCount, PackedInts.BitsRequired(delta), PackedInts.DEFAULT);
+                PackedInt32s.Writer writer = PackedInt32s.GetWriter(output, State.SegmentInfo.DocCount, PackedInt32s.BitsRequired(delta), PackedInt32s.DEFAULT);
                 foreach (long? n in values)
                 {
                     long v = n == null ? 0 : (long)n;
@@ -341,7 +341,7 @@ namespace Lucene.Net.Codecs.Lucene40
             int maxDoc = State.SegmentInfo.DocCount;
             Debug.Assert(maxDoc != int.MaxValue); // unsupported by the 4.0 impl
 
-            PackedInts.Writer w = PackedInts.GetWriter(index, maxDoc + 1, PackedInts.BitsRequired(maxAddress), PackedInts.DEFAULT);
+            PackedInt32s.Writer w = PackedInt32s.GetWriter(index, maxDoc + 1, PackedInt32s.BitsRequired(maxAddress), PackedInt32s.DEFAULT);
             long currentPosition = 0;
             foreach (BytesRef v in values)
             {
@@ -384,7 +384,7 @@ namespace Lucene.Net.Codecs.Lucene40
             Debug.Assert(valueCount > 0);
             index.WriteInt32(valueCount);
             int maxDoc = State.SegmentInfo.DocCount;
-            PackedInts.Writer w = PackedInts.GetWriter(index, maxDoc, PackedInts.BitsRequired(valueCount - 1), PackedInts.DEFAULT);
+            PackedInt32s.Writer w = PackedInt32s.GetWriter(index, maxDoc, PackedInt32s.BitsRequired(valueCount - 1), PackedInt32s.DEFAULT);
 
             BytesRef brefDummy;
             foreach (BytesRef v in values)
@@ -433,7 +433,7 @@ namespace Lucene.Net.Codecs.Lucene40
             long totalBytes = data.FilePointer - startPosition;
             index.WriteInt64(totalBytes);
             int maxDoc = State.SegmentInfo.DocCount;
-            PackedInts.Writer w = PackedInts.GetWriter(index, maxDoc, PackedInts.BitsRequired(currentAddress), PackedInts.DEFAULT);
+            PackedInt32s.Writer w = PackedInt32s.GetWriter(index, maxDoc, PackedInt32s.BitsRequired(currentAddress), PackedInt32s.DEFAULT);
 
             foreach (BytesRef v in values)
             {
@@ -552,7 +552,7 @@ namespace Lucene.Net.Codecs.Lucene40
             index.WriteInt32(valueCount);
             int maxDoc = State.SegmentInfo.DocCount;
             Debug.Assert(valueCount > 0);
-            PackedInts.Writer w = PackedInts.GetWriter(index, maxDoc, PackedInts.BitsRequired(valueCount - 1), PackedInts.DEFAULT);
+            PackedInt32s.Writer w = PackedInt32s.GetWriter(index, maxDoc, PackedInt32s.BitsRequired(valueCount - 1), PackedInt32s.DEFAULT);
             foreach (long n in docToOrd)
             {
                 w.Add((long)n);
@@ -586,7 +586,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             Debug.Assert(valueCount != int.MaxValue); // unsupported by the 4.0 impl
 
-            PackedInts.Writer w = PackedInts.GetWriter(index, valueCount + 1, PackedInts.BitsRequired(maxAddress), PackedInts.DEFAULT);
+            PackedInt32s.Writer w = PackedInt32s.GetWriter(index, valueCount + 1, PackedInt32s.BitsRequired(maxAddress), PackedInt32s.DEFAULT);
             long currentPosition = 0;
             foreach (BytesRef v in values)
             {
@@ -602,7 +602,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             int maxDoc = State.SegmentInfo.DocCount;
             Debug.Assert(valueCount > 0);
-            PackedInts.Writer ords = PackedInts.GetWriter(index, maxDoc, PackedInts.BitsRequired(valueCount - 1), PackedInts.DEFAULT);
+            PackedInt32s.Writer ords = PackedInt32s.GetWriter(index, maxDoc, PackedInt32s.BitsRequired(valueCount - 1), PackedInt32s.DEFAULT);
             foreach (long n in docToOrd)
             {
                 ords.Add((long)n);

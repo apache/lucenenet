@@ -23,10 +23,12 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// A pool for int blocks similar to <seealso cref="ByteBlockPool"/>
+    /// A pool for int blocks similar to <seealso cref="ByteBlockPool"/>.
+    /// <para/>
+    /// NOTE: This was IntBlockPool in Lucene
     /// @lucene.internal
     /// </summary>
-    public sealed class IntBlockPool
+    public sealed class Int32BlockPool
     {
         public static readonly int INT_BLOCK_SHIFT = 13;
         public static readonly int INT_BLOCK_SIZE = 1 << INT_BLOCK_SHIFT;
@@ -122,17 +124,17 @@ namespace Lucene.Net.Util
         private readonly Allocator allocator;
 
         /// <summary>
-        /// Creates a new <seealso cref="IntBlockPool"/> with a default <seealso cref="Allocator"/>. </summary>
-        /// <seealso cref= IntBlockPool#nextBuffer() </seealso>
-        public IntBlockPool()
+        /// Creates a new <seealso cref="Int32BlockPool"/> with a default <seealso cref="Allocator"/>. </summary>
+        /// <seealso cref= Int32BlockPool#nextBuffer() </seealso>
+        public Int32BlockPool()
             : this(new DirectAllocator())
         {
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="IntBlockPool"/> with the given <seealso cref="Allocator"/>. </summary>
-        /// <seealso cref= IntBlockPool#nextBuffer() </seealso>
-        public IntBlockPool(Allocator allocator)
+        /// Creates a new <seealso cref="Int32BlockPool"/> with the given <seealso cref="Allocator"/>. </summary>
+        /// <seealso cref= Int32BlockPool#nextBuffer() </seealso>
+        public Int32BlockPool(Allocator allocator)
         {
             // set defaults
             Int32Upto = INT_BLOCK_SIZE;
@@ -143,7 +145,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Resets the pool to its initial state reusing the first buffer. Calling
-        /// <seealso cref="IntBlockPool#nextBuffer()"/> is not needed after reset.
+        /// <seealso cref="Int32BlockPool#nextBuffer()"/> is not needed after reset.
         /// </summary>
         public void Reset()
         {
@@ -156,8 +158,8 @@ namespace Lucene.Net.Util
         ///        this should be set to <code>true</code> if this pool is used with
         ///        <seealso cref="SliceWriter"/>. </param>
         /// <param name="reuseFirst"> if <code>true</code> the first buffer will be reused and calling
-        ///        <seealso cref="IntBlockPool#nextBuffer()"/> is not needed after reset iff the
-        ///        block pool was used before ie. <seealso cref="IntBlockPool#nextBuffer()"/> was called before. </param>
+        ///        <seealso cref="Int32BlockPool#nextBuffer()"/> is not needed after reset iff the
+        ///        block pool was used before ie. <seealso cref="Int32BlockPool#nextBuffer()"/> was called before. </param>
         public void Reset(bool zeroFillBuffers, bool reuseFirst)
         {
             if (bufferUpto != -1)
@@ -203,7 +205,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Advances the pool to its next buffer. this method should be called once
         /// after the constructor to initialize the pool. In contrast to the
-        /// constructor a <seealso cref="IntBlockPool#reset()"/> call will advance the pool to
+        /// constructor a <seealso cref="Int32BlockPool#reset()"/> call will advance the pool to
         /// its first buffer immediately.
         /// </summary>
         public void NextBuffer()
@@ -251,7 +253,7 @@ namespace Lucene.Net.Util
         // no need to make this public unless we support different sizes
         // TODO make the levels and the sizes configurable
         /// <summary>
-        /// An array holding the offset into the <seealso cref="IntBlockPool#LEVEL_SIZE_ARRAY"/>
+        /// An array holding the offset into the <seealso cref="Int32BlockPool#LEVEL_SIZE_ARRAY"/>
         /// to quickly navigate to the next slice level.
         /// </summary>
         private static readonly int[] NEXT_LEVEL_ARRAY = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 9 };
@@ -294,16 +296,16 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// A <seealso cref="SliceWriter"/> that allows to write multiple integer slices into a given <seealso cref="IntBlockPool"/>.
+        /// A <seealso cref="SliceWriter"/> that allows to write multiple integer slices into a given <seealso cref="Int32BlockPool"/>.
         /// </summary>
         ///  <seealso cref= SliceReader
         ///  @lucene.internal </seealso>
         public class SliceWriter
         {
             private int offset;
-            private readonly IntBlockPool pool;
+            private readonly Int32BlockPool pool;
 
-            public SliceWriter(IntBlockPool pool)
+            public SliceWriter(Int32BlockPool pool)
             {
                 this.pool = pool;
             }
@@ -365,7 +367,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public sealed class SliceReader
         {
-            private readonly IntBlockPool pool;
+            private readonly Int32BlockPool pool;
             private int upto;
             private int bufferUpto;
             private int bufferOffset;
@@ -377,7 +379,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Creates a new <seealso cref="SliceReader"/> on the given pool
             /// </summary>
-            public SliceReader(IntBlockPool pool)
+            public SliceReader(Int32BlockPool pool)
             {
                 this.pool = pool;
             }
@@ -396,7 +398,7 @@ namespace Lucene.Net.Util
                 buffer = pool.buffers[bufferUpto];
                 upto = startOffset & INT_BLOCK_MASK;
 
-                int firstSize = IntBlockPool.LEVEL_SIZE_ARRAY[0];
+                int firstSize = Int32BlockPool.LEVEL_SIZE_ARRAY[0];
                 if (startOffset + firstSize >= endOffset)
                 {
                     // There is only this one slice to read

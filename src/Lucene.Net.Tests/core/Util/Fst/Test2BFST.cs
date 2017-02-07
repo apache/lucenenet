@@ -26,7 +26,7 @@ namespace Lucene.Net.Util.Fst
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOContext = Lucene.Net.Store.IOContext;
     using MMapDirectory = Lucene.Net.Store.MMapDirectory;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
 
     //ORIGINAL LINE: @TimeoutSuite(millis = 100 * TimeUnits.HOUR) public class Test2BFST extends Lucene.Net.Util.LuceneTestCase
     [Ignore("Requires tons of heap to run (420G works)")]
@@ -39,7 +39,7 @@ namespace Lucene.Net.Util.Fst
         public virtual void Test()
         {
             int[] ints = new int[7];
-            IntsRef input = new IntsRef(ints, 0, ints.Length);
+            Int32sRef input = new Int32sRef(ints, 0, ints.Length);
             int seed = Random().Next();
 
             Directory dir = new MMapDirectory(CreateTempDir("2BFST"));
@@ -54,12 +54,12 @@ namespace Lucene.Net.Util.Fst
                     Console.WriteLine("\nTEST: 3B nodes; doPack=false output=NO_OUTPUTS");
                     Outputs<object> outputs = NoOutputs.Singleton;
                     object NO_OUTPUT = outputs.NoOutput;
-                    Builder<object> b = new Builder<object>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPack, PackedInts.COMPACT, true, 15);
+                    Builder<object> b = new Builder<object>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPack, PackedInt32s.COMPACT, true, 15);
 
                     int count = 0;
                     Random r = new Random(seed);
                     int[] ints2 = new int[200];
-                    IntsRef input2 = new IntsRef(ints2, 0, ints2.Length);
+                    Int32sRef input2 = new Int32sRef(ints2, 0, ints2.Length);
                     while (true)
                     {
                         //System.out.println("add: " + input + " -> " + output);
@@ -104,14 +104,14 @@ namespace Lucene.Net.Util.Fst
                         }
 
                         Console.WriteLine("\nTEST: enum all input/outputs");
-                        IntsRefFSTEnum<object> fstEnum = new IntsRefFSTEnum<object>(fst);
+                        Int32sRefFSTEnum<object> fstEnum = new Int32sRefFSTEnum<object>(fst);
 
                         Arrays.Fill(ints2, 0);
                         r = new Random(seed);
                         int upto = 0;
                         while (true)
                         {
-                            IntsRefFSTEnum.InputOutput<object> pair = fstEnum.Next();
+                            Int32sRefFSTEnum.InputOutput<object> pair = fstEnum.Next();
                             if (pair == null)
                             {
                                 break;
@@ -149,7 +149,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     Console.WriteLine("\nTEST: 3 GB size; doPack=" + doPack + " outputs=bytes");
                     Outputs<BytesRef> outputs = ByteSequenceOutputs.Singleton;
-                    Builder<BytesRef> b = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPack, PackedInts.COMPACT, true, 15);
+                    Builder<BytesRef> b = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPack, PackedInt32s.COMPACT, true, 15);
 
                     var outputBytes = new byte[20];
                     BytesRef output = new BytesRef(outputBytes);
@@ -193,14 +193,14 @@ namespace Lucene.Net.Util.Fst
                         }
 
                         Console.WriteLine("\nTEST: enum all input/outputs");
-                        IntsRefFSTEnum<BytesRef> fstEnum = new IntsRefFSTEnum<BytesRef>(fst);
+                        Int32sRefFSTEnum<BytesRef> fstEnum = new Int32sRefFSTEnum<BytesRef>(fst);
 
                         Arrays.Fill(ints, 0);
                         r = new Random(seed);
                         int upto = 0;
                         while (true)
                         {
-                            IntsRefFSTEnum.InputOutput<BytesRef> pair = fstEnum.Next();
+                            Int32sRefFSTEnum.InputOutput<BytesRef> pair = fstEnum.Next();
                             if (pair == null)
                             {
                                 break;
@@ -234,8 +234,8 @@ namespace Lucene.Net.Util.Fst
                 // size = 3GB
                 {
                     Console.WriteLine("\nTEST: 3 GB size; doPack=" + doPack + " outputs=long");
-                    Outputs<long?> outputs = PositiveIntOutputs.Singleton;
-                    Builder<long?> b = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPack, PackedInts.COMPACT, true, 15);
+                    Outputs<long?> outputs = PositiveInt32Outputs.Singleton;
+                    Builder<long?> b = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPack, PackedInt32s.COMPACT, true, 15);
 
                     long output = 1;
 
@@ -285,7 +285,7 @@ namespace Lucene.Net.Util.Fst
                         }
 
                         Console.WriteLine("\nTEST: enum all input/outputs");
-                        IntsRefFSTEnum<long?> fstEnum = new IntsRefFSTEnum<long?>(fst);
+                        Int32sRefFSTEnum<long?> fstEnum = new Int32sRefFSTEnum<long?>(fst);
 
                         Arrays.Fill(ints, 0);
                         r = new Random(seed);
@@ -293,7 +293,7 @@ namespace Lucene.Net.Util.Fst
                         output = 1;
                         while (true)
                         {
-                            IntsRefFSTEnum.InputOutput<long?> pair = fstEnum.Next();
+                            Int32sRefFSTEnum.InputOutput<long?> pair = fstEnum.Next();
                             if (pair == null)
                             {
                                 break;

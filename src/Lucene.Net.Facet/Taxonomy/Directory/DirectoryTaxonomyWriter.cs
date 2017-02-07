@@ -89,7 +89,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private readonly Directory dir;
         private readonly IndexWriter indexWriter;
         private readonly ITaxonomyWriterCache cache;
-        private readonly AtomicInteger cacheMisses = new AtomicInteger(0);
+        private readonly AtomicInt32 cacheMisses = new AtomicInt32(0);
 
         // Records the taxonomy index epoch, updated on replaceTaxonomy as well.
         private long indexEpoch;

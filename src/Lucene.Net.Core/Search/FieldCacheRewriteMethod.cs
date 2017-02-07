@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using LongBitSet = Lucene.Net.Util.LongBitSet;
+    using Int64BitSet = Lucene.Net.Util.Int64BitSet;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
             {
                 SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex((context.AtomicReader), m_query.m_field);
                 // Cannot use FixedBitSet because we require long index (ord):
-                LongBitSet termSet = new LongBitSet(fcsi.ValueCount);
+                Int64BitSet termSet = new Int64BitSet(fcsi.ValueCount);
                 TermsEnum termsEnum = m_query.GetTermsEnum(new TermsAnonymousInnerClassHelper(this, fcsi));
 
                 Debug.Assert(termsEnum != null);
@@ -206,9 +206,9 @@ namespace Lucene.Net.Search
                 private readonly MultiTermQueryFieldCacheWrapperFilter outerInstance;
 
                 private SortedDocValues fcsi;
-                private LongBitSet termSet;
+                private Int64BitSet termSet;
 
-                public FieldCacheDocIdSetAnonymousInnerClassHelper(MultiTermQueryFieldCacheWrapperFilter outerInstance, int maxDoc, IBits acceptDocs, SortedDocValues fcsi, LongBitSet termSet)
+                public FieldCacheDocIdSetAnonymousInnerClassHelper(MultiTermQueryFieldCacheWrapperFilter outerInstance, int maxDoc, IBits acceptDocs, SortedDocValues fcsi, Int64BitSet termSet)
                     : base(maxDoc, acceptDocs)
                 {
                     this.outerInstance = outerInstance;

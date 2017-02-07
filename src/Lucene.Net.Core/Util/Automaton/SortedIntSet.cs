@@ -22,10 +22,14 @@ namespace Lucene.Net.Util.Automaton
      * limitations under the License.
      */
 
-    // Just holds a set of int[] states, plus a corresponding
-    // int[] count per state.  Used by
-    // BasicOperations.determinize
-    internal sealed class SortedIntSet : IEquatable<SortedIntSet>, IEquatable<SortedIntSet.FrozenIntSet> // LUCENENET TODO: Rename SortedInt32Set
+    /// <summary>
+    /// Just holds a set of int[] states, plus a corresponding
+    /// int[] count per state.  Used by
+    /// BasicOperations.determinize
+    /// <para/>
+    /// NOTE: This was SortedIntSet in Lucene
+    /// </summary>
+    internal sealed class SortedInt32Set : IEquatable<SortedInt32Set>, IEquatable<SortedInt32Set.FrozenInt32Set>
     {
         internal int[] values;
         internal int[] counts;
@@ -42,7 +46,7 @@ namespace Lucene.Net.Util.Automaton
 
         internal State state;
 
-        public SortedIntSet(int capacity)
+        public SortedInt32Set(int capacity)
         {
             values = new int[capacity];
             counts = new int[capacity];
@@ -184,18 +188,18 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
-        public FrozenIntSet ToFrozenInt32Set() // LUCENENET TODO: This didn't exist in the original
+        public FrozenInt32Set ToFrozenInt32Set() // LUCENENET TODO: This didn't exist in the original
         {
             int[] c = new int[upto];
             Array.Copy(values, 0, c, 0, upto);
-            return new FrozenIntSet(c, this.hashCode, this.state);
+            return new FrozenInt32Set(c, this.hashCode, this.state);
         }
 
-        public FrozenIntSet Freeze(State state)
+        public FrozenInt32Set Freeze(State state)
         {
             int[] c = new int[upto];
             Array.Copy(values, 0, c, 0, upto);
-            return new FrozenIntSet(c, hashCode, state);
+            return new FrozenInt32Set(c, hashCode, state);
         }
 
         public override int GetHashCode()
@@ -209,11 +213,11 @@ namespace Lucene.Net.Util.Automaton
             {
                 return false;
             }
-            if (!(other is FrozenIntSet))
+            if (!(other is FrozenInt32Set))
             {
                 return false;
             }
-            FrozenIntSet other2 = (FrozenIntSet)other;
+            FrozenInt32Set other2 = (FrozenInt32Set)other;
             if (hashCode != other2.hashCode)
             {
                 return false;
@@ -233,12 +237,12 @@ namespace Lucene.Net.Util.Automaton
             return true;
         }
 
-        public bool Equals(SortedIntSet other) // LUCENENET TODO: This didn't exist in the original
+        public bool Equals(SortedInt32Set other) // LUCENENET TODO: This didn't exist in the original
         {
             throw new NotImplementedException("SortedIntSet Equals");
         }
 
-        public bool Equals(FrozenIntSet other) // LUCENENET TODO: This didn't exist in the original
+        public bool Equals(FrozenInt32Set other) // LUCENENET TODO: This didn't exist in the original
         {
             if (other == null)
             {
@@ -280,20 +284,23 @@ namespace Lucene.Net.Util.Automaton
             return sb.ToString();
         }
 
-        public sealed class FrozenIntSet : IEquatable<SortedIntSet>, IEquatable<FrozenIntSet> // LUCENENET TODO: Rename FrozenInt32Set
+        /// <summary>
+        /// NOTE: This was FrozenIntSet in Lucene
+        /// </summary>
+        public sealed class FrozenInt32Set : IEquatable<SortedInt32Set>, IEquatable<FrozenInt32Set> 
         {
             internal readonly int[] values;
             internal readonly int hashCode;
             internal readonly State state;
 
-            public FrozenIntSet(int[] values, int hashCode, State state)
+            public FrozenInt32Set(int[] values, int hashCode, State state)
             {
                 this.values = values;
                 this.hashCode = hashCode;
                 this.state = state;
             }
 
-            public FrozenIntSet(int num, State state)
+            public FrozenInt32Set(int num, State state)
             {
                 this.values = new int[] { num };
                 this.state = state;
@@ -311,9 +318,9 @@ namespace Lucene.Net.Util.Automaton
                 {
                     return false;
                 }
-                if (other is FrozenIntSet)
+                if (other is FrozenInt32Set)
                 {
-                    FrozenIntSet other2 = (FrozenIntSet)other;
+                    FrozenInt32Set other2 = (FrozenInt32Set)other;
                     if (hashCode != other2.hashCode)
                     {
                         return false;
@@ -331,9 +338,9 @@ namespace Lucene.Net.Util.Automaton
                     }
                     return true;
                 }
-                else if (other is SortedIntSet)
+                else if (other is SortedInt32Set)
                 {
-                    SortedIntSet other3 = (SortedIntSet)other;
+                    SortedInt32Set other3 = (SortedInt32Set)other;
                     if (hashCode != other3.hashCode)
                     {
                         return false;
@@ -355,7 +362,7 @@ namespace Lucene.Net.Util.Automaton
                 return false;
             }
 
-            public bool Equals(SortedIntSet other) // LUCENENET TODO: This didn't exist in the original
+            public bool Equals(SortedInt32Set other) // LUCENENET TODO: This didn't exist in the original
             {
                 if (other == null)
                 {
@@ -380,7 +387,7 @@ namespace Lucene.Net.Util.Automaton
                 return true;
             }
 
-            public bool Equals(FrozenIntSet other) // LUCENENET TODO: This didn't exist in the original
+            public bool Equals(FrozenInt32Set other) // LUCENENET TODO: This didn't exist in the original
             {
                 if (other == null)
                 {

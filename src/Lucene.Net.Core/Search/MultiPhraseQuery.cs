@@ -519,9 +519,12 @@ namespace Lucene.Net.Search
             }
         }
 
-        private sealed class IntQueue
+        /// <summary>
+        /// NOTE: This was IntQueue in Lucene
+        /// </summary>
+        private sealed class Int32Queue
         {
-            public IntQueue()
+            public Int32Queue()
             {
                 InitializeInstanceFields();
             }
@@ -579,7 +582,7 @@ namespace Lucene.Net.Search
         private int _doc;
         private int _freq;
         private readonly DocsQueue _queue;
-        private readonly IntQueue _posList;
+        private readonly Int32Queue _posList;
         private readonly long _cost;
 
         public UnionDocsAndPositionsEnum(IBits liveDocs, AtomicReaderContext context, Term[] terms, IDictionary<Term, TermContext> termContexts, TermsEnum termsEnum)
@@ -606,7 +609,7 @@ namespace Lucene.Net.Search
             }
 
             _queue = new DocsQueue(docsEnums);
-            _posList = new IntQueue();
+            _posList = new Int32Queue();
         }
 
         public override sealed int NextDoc()

@@ -23,7 +23,7 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Testcase for <seealso cref="RecyclingIntBlockAllocator"/>
+    /// Testcase for <seealso cref="RecyclingInt32BlockAllocator"/>
     /// </summary>
     [TestFixture]
     public class TestRecyclingIntBlockAllocator : LuceneTestCase
@@ -34,15 +34,15 @@ namespace Lucene.Net.Util
             base.SetUp();
         }
 
-        private RecyclingIntBlockAllocator NewAllocator()
+        private RecyclingInt32BlockAllocator NewAllocator()
         {
-            return new RecyclingIntBlockAllocator(1 << (2 + Random().Next(15)), Random().Next(97), Util.Counter.NewCounter());
+            return new RecyclingInt32BlockAllocator(1 << (2 + Random().Next(15)), Random().Next(97), Util.Counter.NewCounter());
         }
 
         [Test]
         public virtual void TestAllocate()
         {
-            RecyclingIntBlockAllocator allocator = NewAllocator();
+            RecyclingInt32BlockAllocator allocator = NewAllocator();
             HashSet<int[]> set = new HashSet<int[]>();
             int[] block = allocator.GetInt32Block();
             set.Add(block);
@@ -64,7 +64,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestAllocateAndRecycle()
         {
-            RecyclingIntBlockAllocator allocator = NewAllocator();
+            RecyclingInt32BlockAllocator allocator = NewAllocator();
             HashSet<int[]> allocated = new HashSet<int[]>();
 
             int[] block = allocator.GetInt32Block();
@@ -106,7 +106,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestAllocateAndFree()
         {
-            RecyclingIntBlockAllocator allocator = NewAllocator();
+            RecyclingInt32BlockAllocator allocator = NewAllocator();
             HashSet<int[]> allocated = new HashSet<int[]>();
             int freeButAllocated = 0;
             int[] block = allocator.GetInt32Block();

@@ -21,15 +21,17 @@ namespace Lucene.Net.Util.Fst
 
     /// <summary>
     /// Enumerates all input (IntsRef) + output pairs in an
-    ///  FST.
+    /// FST.
+    /// <para/>
+    /// NOTE: This was IntsRefFSTEnum{T} in Lucene
     ///
     /// @lucene.experimental
     /// </summary>
-    public sealed class IntsRefFSTEnum<T> : FSTEnum<T>
+    public sealed class Int32sRefFSTEnum<T> : FSTEnum<T>
     {
-        private readonly IntsRef current = new IntsRef(10);
-        private readonly IntsRefFSTEnum.InputOutput<T> result = new IntsRefFSTEnum.InputOutput<T>();
-        private IntsRef target;
+        private readonly Int32sRef current = new Int32sRef(10);
+        private readonly Int32sRefFSTEnum.InputOutput<T> result = new Int32sRefFSTEnum.InputOutput<T>();
+        private Int32sRef target;
 
         // LUCENENET NOTE: The InputOutput<T> class was moved into the IntsRefFSTEnum class
 
@@ -38,19 +40,19 @@ namespace Lucene.Net.Util.Fst
         ///  doFloor is true, advance positions to the biggest
         ///  term before target.
         /// </summary>
-        public IntsRefFSTEnum(FST<T> fst)
+        public Int32sRefFSTEnum(FST<T> fst)
             : base(fst)
         {
             result.Input = current;
             current.Offset = 1;
         }
 
-        public IntsRefFSTEnum.InputOutput<T> Current
+        public Int32sRefFSTEnum.InputOutput<T> Current
         {
             get { return result; }
         }
 
-        public IntsRefFSTEnum.InputOutput<T> Next()
+        public Int32sRefFSTEnum.InputOutput<T> Next()
         {
             //System.out.println("  enum.next");
             DoNext();
@@ -59,7 +61,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Seeks to smallest term that's >= target. </summary>
-        public IntsRefFSTEnum.InputOutput<T> SeekCeil(IntsRef target)
+        public Int32sRefFSTEnum.InputOutput<T> SeekCeil(Int32sRef target)
         {
             this.target = target;
             m_targetLength = target.Length;
@@ -69,7 +71,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Seeks to biggest term that's <= target. </summary>
-        public IntsRefFSTEnum.InputOutput<T> SeekFloor(IntsRef target)
+        public Int32sRefFSTEnum.InputOutput<T> SeekFloor(Int32sRef target)
         {
             this.target = target;
             m_targetLength = target.Length;
@@ -83,7 +85,7 @@ namespace Lucene.Net.Util.Fst
         ///  #seekFloor} or <seealso cref="#seekCeil"/> because it
         ///  short-circuits as soon the match is not found.
         /// </summary>
-        public IntsRefFSTEnum.InputOutput<T> SeekExact(IntsRef target)
+        public Int32sRefFSTEnum.InputOutput<T> SeekExact(Int32sRef target)
         {
             this.target = target;
             m_targetLength = target.Length;
@@ -131,7 +133,7 @@ namespace Lucene.Net.Util.Fst
             current.Int32s = ArrayUtil.Grow(current.Int32s, m_upto + 1);
         }
 
-        private IntsRefFSTEnum.InputOutput<T> SetResult()
+        private Int32sRefFSTEnum.InputOutput<T> SetResult()
         {
             if (m_upto == 0)
             {
@@ -149,18 +151,20 @@ namespace Lucene.Net.Util.Fst
     /// <summary>
     /// LUCENENET specific. This class is to mimic Java's ability to specify
     /// nested classes of Generics without having to specify the generic type
-    /// (i.e. IntsRefFSTEnum.InputOutput{T} rather than IntsRefFSTEnum{T}.InputOutput{T})
+    /// (i.e. <c>Int32sRefFSTEnum.InputOutput{T}</c> rather than <c>Int32sRefFSTEnum{T}.InputOutput{T}</c>)
+    /// <para/>
+    /// NOTE: This was Int32sRefFSTEnum{T} in Lucene
     /// </summary>
-    public sealed class IntsRefFSTEnum
+    public sealed class Int32sRefFSTEnum
     {
-        private IntsRefFSTEnum()
+        private Int32sRefFSTEnum()
         { }
 
         /// <summary>
         /// Holds a single input (IntsRef) + output pair. </summary>
         public class InputOutput<T>
         {
-            public IntsRef Input { get; set; }
+            public Int32sRef Input { get; set; }
             public T Output { get; set; }
         }
     }

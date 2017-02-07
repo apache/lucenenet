@@ -226,7 +226,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             var @ref = SpecialOperations.GetFiniteStrings(automaton, -1);
             Automaton[] subs = new Automaton[@ref.Count];
             int upto = 0;
-            foreach (IntsRef path in @ref)
+            foreach (Int32sRef path in @ref)
             {
                 if (path.Length <= nonFuzzyPrefix || path.Length < minFuzzyLength)
                 {

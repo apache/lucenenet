@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs.Compressing
 
     using DataInput = Lucene.Net.Store.DataInput;
     using DataOutput = Lucene.Net.Store.DataOutput;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
 
     /// <summary>
     /// LZ4 compression and decompression routines.
@@ -222,16 +222,16 @@ namespace Lucene.Net.Codecs.Compressing
         public sealed class HashTable
         {
             internal int hashLog;
-            internal PackedInts.Mutable hashTable;
+            internal PackedInt32s.Mutable hashTable;
 
             internal void Reset(int len)
             {
-                int bitsPerOffset = PackedInts.BitsRequired(len - LAST_LITERALS);
+                int bitsPerOffset = PackedInt32s.BitsRequired(len - LAST_LITERALS);
                 int bitsPerOffsetLog = 32 - Number.NumberOfLeadingZeros(bitsPerOffset - 1);
                 hashLog = MEMORY_USAGE + 3 - bitsPerOffsetLog;
                 if (hashTable == null || hashTable.Count < 1 << hashLog || hashTable.BitsPerValue < bitsPerOffset)
                 {
-                    hashTable = PackedInts.GetMutable(1 << hashLog, bitsPerOffset, PackedInts.DEFAULT);
+                    hashTable = PackedInt32s.GetMutable(1 << hashLog, bitsPerOffset, PackedInt32s.DEFAULT);
                 }
                 else
                 {
@@ -258,7 +258,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int matchLimit = limit - MIN_MATCH;
                 ht.Reset(len);
                 int hashLog = ht.hashLog;
-                PackedInts.Mutable hashTable = ht.hashTable;
+                PackedInt32s.Mutable hashTable = ht.hashTable;
 
                 while (off <= limit)
                 {
@@ -273,7 +273,7 @@ namespace Lucene.Net.Codecs.Compressing
                         int v = ReadInt32(bytes, off);
                         int h = Hash(v, hashLog);
                         @ref = @base + (int)hashTable.Get(h);
-                        Debug.Assert(PackedInts.BitsRequired(off - @base) <= hashTable.BitsPerValue);
+                        Debug.Assert(PackedInt32s.BitsRequired(off - @base) <= hashTable.BitsPerValue);
                         hashTable.Set(h, off - @base);
                         if (off - @ref < MAX_DISTANCE && ReadInt32(bytes, @ref) == v)
                         {

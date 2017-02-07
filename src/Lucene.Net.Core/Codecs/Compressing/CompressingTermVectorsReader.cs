@@ -260,7 +260,7 @@ namespace Lucene.Net.Codecs.Compressing
                     totalDistinctFields += vectorsStream.ReadVInt32();
                 }
                 ++totalDistinctFields;
-                PackedInts.IReaderIterator it = PackedInts.GetReaderIteratorNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, totalDistinctFields, bitsPerFieldNum, 1);
+                PackedInt32s.IReaderIterator it = PackedInt32s.GetReaderIteratorNoHeader(vectorsStream, PackedInt32s.Format.PACKED, packedIntsVersion, totalDistinctFields, bitsPerFieldNum, 1);
                 fieldNums = new int[totalDistinctFields];
                 for (int i = 0; i < totalDistinctFields; ++i)
                 {
@@ -270,15 +270,15 @@ namespace Lucene.Net.Codecs.Compressing
 
             // read field numbers and flags
             int[] fieldNumOffs = new int[numFields];
-            PackedInts.Reader flags;
+            PackedInt32s.Reader flags;
             {
-                int bitsPerOff = PackedInts.BitsRequired(fieldNums.Length - 1);
-                PackedInts.Reader allFieldNumOffs = PackedInts.GetReaderNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, totalFields, bitsPerOff);
+                int bitsPerOff = PackedInt32s.BitsRequired(fieldNums.Length - 1);
+                PackedInt32s.Reader allFieldNumOffs = PackedInt32s.GetReaderNoHeader(vectorsStream, PackedInt32s.Format.PACKED, packedIntsVersion, totalFields, bitsPerOff);
                 switch (vectorsStream.ReadVInt32())
                 {
                     case 0:
-                        PackedInts.Reader fieldFlags = PackedInts.GetReaderNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, fieldNums.Length, CompressingTermVectorsWriter.FLAGS_BITS);
-                        PackedInts.Mutable f = PackedInts.GetMutable(totalFields, CompressingTermVectorsWriter.FLAGS_BITS, PackedInts.COMPACT);
+                        PackedInt32s.Reader fieldFlags = PackedInt32s.GetReaderNoHeader(vectorsStream, PackedInt32s.Format.PACKED, packedIntsVersion, fieldNums.Length, CompressingTermVectorsWriter.FLAGS_BITS);
+                        PackedInt32s.Mutable f = PackedInt32s.GetMutable(totalFields, CompressingTermVectorsWriter.FLAGS_BITS, PackedInt32s.COMPACT);
                         for (int i = 0; i < totalFields; ++i)
                         {
                             int fieldNumOff = (int)allFieldNumOffs.Get(i);
@@ -290,7 +290,7 @@ namespace Lucene.Net.Codecs.Compressing
                         break;
 
                     case 1:
-                        flags = PackedInts.GetReaderNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, totalFields, CompressingTermVectorsWriter.FLAGS_BITS);
+                        flags = PackedInt32s.GetReaderNoHeader(vectorsStream, PackedInt32s.Format.PACKED, packedIntsVersion, totalFields, CompressingTermVectorsWriter.FLAGS_BITS);
                         break;
 
                     default:
@@ -303,11 +303,11 @@ namespace Lucene.Net.Codecs.Compressing
             }
 
             // number of terms per field for all fields
-            PackedInts.Reader numTerms;
+            PackedInt32s.Reader numTerms;
             int totalTerms;
             {
                 int bitsRequired = vectorsStream.ReadVInt32();
-                numTerms = PackedInts.GetReaderNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, totalFields, bitsRequired);
+                numTerms = PackedInt32s.GetReaderNoHeader(vectorsStream, PackedInt32s.Format.PACKED, packedIntsVersion, totalFields, bitsRequired);
                 int sum = 0;
                 for (int i = 0; i < totalFields; ++i)
                 {
@@ -338,7 +338,7 @@ namespace Lucene.Net.Codecs.Compressing
                     prefixLengths[i] = fieldPrefixLengths;
                     for (int j = 0; j < termCount; )
                     {
-                        LongsRef next = reader.Next(termCount - j);
+                        Int64sRef next = reader.Next(termCount - j);
                         for (int k = 0; k < next.Length; ++k)
                         {
                             fieldPrefixLengths[j++] = (int)next.Int64s[next.Offset + k];
@@ -364,7 +364,7 @@ namespace Lucene.Net.Codecs.Compressing
                     suffixLengths[i] = fieldSuffixLengths;
                     for (int j = 0; j < termCount; )
                     {
-                        LongsRef next = reader.Next(termCount - j);
+                        Int64sRef next = reader.Next(termCount - j);
                         for (int k = 0; k < next.Length; ++k)
                         {
                             fieldSuffixLengths[j++] = (int)next.Int64s[next.Offset + k];
@@ -389,7 +389,7 @@ namespace Lucene.Net.Codecs.Compressing
                 reader.Reset(vectorsStream, totalTerms);
                 for (int i = 0; i < totalTerms; )
                 {
-                    LongsRef next = reader.Next(totalTerms - i);
+                    Int64sRef next = reader.Next(totalTerms - i);
                     for (int k = 0; k < next.Length; ++k)
                     {
                         termFreqs[i++] = 1 + (int)next.Int64s[next.Offset + k];
@@ -619,7 +619,7 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         // field -> term index -> position index
-        private int[][] PositionIndex(int skip, int numFields, PackedInts.Reader numTerms, int[] termFreqs)
+        private int[][] PositionIndex(int skip, int numFields, PackedInt32s.Reader numTerms, int[] termFreqs)
         {
             int[][] positionIndex = new int[numFields][];
             int termIndex = 0;
@@ -642,7 +642,7 @@ namespace Lucene.Net.Codecs.Compressing
             return positionIndex;
         }
 
-        private int[][] ReadPositions(int skip, int numFields, PackedInts.Reader flags, PackedInts.Reader numTerms, int[] termFreqs, int flag, int totalPositions, int[][] positionIndex)
+        private int[][] ReadPositions(int skip, int numFields, PackedInt32s.Reader flags, PackedInt32s.Reader numTerms, int[] termFreqs, int flag, int totalPositions, int[][] positionIndex)
         {
             int[][] positions = new int[numFields][];
             reader.Reset(vectorsStream, totalPositions);
@@ -676,7 +676,7 @@ namespace Lucene.Net.Codecs.Compressing
                     positions[i] = fieldPositions;
                     for (int j = 0; j < totalFreq; )
                     {
-                        LongsRef nextPositions = reader.Next(totalFreq - j);
+                        Int64sRef nextPositions = reader.Next(totalFreq - j);
                         for (int k = 0; k < nextPositions.Length; ++k)
                         {
                             fieldPositions[j++] = (int)nextPositions.Int64s[nextPositions.Offset + k];

@@ -529,21 +529,22 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Parses field's values as float (using {@link
         ///  FieldCache#getFloats} and sorts by ascending value
+        /// <para/>
+        /// NOTE: This was FloatComparator in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename SingleComparer ?
-        public sealed class FloatComparer : NumericComparer<float>
+        public sealed class SingleComparer : NumericComparer<float>
         {
             private readonly float[] values;
-            private readonly FieldCache.IFloatParser parser;
-            private FieldCache.Floats currentReaderValues;
+            private readonly FieldCache.ISingleParser parser;
+            private FieldCache.Singles currentReaderValues;
             private float bottom;
             private float topValue;
 
-            internal FloatComparer(int numHits, string field, FieldCache.IParser parser, float? missingValue)
+            internal SingleComparer(int numHits, string field, FieldCache.IParser parser, float? missingValue)
                 : base(field, missingValue)
             {
                 values = new float[numHits];
-                this.parser = (FieldCache.IFloatParser)parser;
+                this.parser = (FieldCache.ISingleParser)parser;
             }
 
             public override int Compare(int slot1, int slot2)
@@ -616,23 +617,24 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as short (using {@link
-        ///  FieldCache#getShorts} and sorts by ascending value
+        /// FieldCache#getShorts} and sorts by ascending value
+        /// <para/>
+        /// NOTE: This was ShortComparator in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename Int16Comparer ?
         [Obsolete]
-        public sealed class ShortComparer : NumericComparer<short>
+        public sealed class Int16Comparer : NumericComparer<short>
         {
             private readonly short[] values;
-            private readonly FieldCache.IShortParser parser;
-            private FieldCache.Shorts currentReaderValues;
+            private readonly FieldCache.IInt16Parser parser;
+            private FieldCache.Int16s currentReaderValues;
             private short bottom;
             private short topValue;
 
-            internal ShortComparer(int numHits, string field, FieldCache.IParser parser, short? missingValue)
+            internal Int16Comparer(int numHits, string field, FieldCache.IParser parser, short? missingValue)
                 : base(field, missingValue)
             {
                 values = new short[numHits];
-                this.parser = (FieldCache.IShortParser)parser;
+                this.parser = (FieldCache.IInt16Parser)parser;
             }
 
             public override int Compare(int slot1, int slot2)
@@ -706,22 +708,23 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as int (using {@link
-        ///  FieldCache#getInts} and sorts by ascending value
+        /// FieldCache#getInts} and sorts by ascending value
+        /// <para/>
+        /// NOTE: This was IntComparator in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename Int32Comparer ?
-        public sealed class IntComparer : NumericComparer<int>
+        public sealed class Int32Comparer : NumericComparer<int>
         {
             private readonly int[] values;
-            private readonly FieldCache.IIntParser parser;
-            private FieldCache.Ints currentReaderValues;
+            private readonly FieldCache.IInt32Parser parser;
+            private FieldCache.Int32s currentReaderValues;
             private int bottom; // Value of bottom of queue
             private int topValue;
 
-            internal IntComparer(int numHits, string field, FieldCache.IParser parser, int? missingValue)
+            internal Int32Comparer(int numHits, string field, FieldCache.IParser parser, int? missingValue)
                 : base(field, missingValue)
             {
                 values = new int[numHits];
-                this.parser = (FieldCache.IIntParser)parser;
+                this.parser = (FieldCache.IInt32Parser)parser;
             }
 
             public override int Compare(int slot1, int slot2)
@@ -792,22 +795,23 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as long (using {@link
-        ///  FieldCache#getLongs} and sorts by ascending value
+        /// FieldCache#getLongs} and sorts by ascending value
+        /// <para/>
+        /// NOTE: This was LongComparator in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename Int64Comparer ?
-        public sealed class LongComparer : NumericComparer<long>
+        public sealed class Int64Comparer : NumericComparer<long>
         {
             private readonly long[] values;
-            private readonly FieldCache.ILongParser parser;
-            private FieldCache.Longs currentReaderValues;
+            private readonly FieldCache.IInt64Parser parser;
+            private FieldCache.Int64s currentReaderValues;
             private long bottom;
             private long topValue;
 
-            internal LongComparer(int numHits, string field, FieldCache.IParser parser, long? missingValue)
+            internal Int64Comparer(int numHits, string field, FieldCache.IParser parser, long? missingValue)
                 : base(field, missingValue)
             {
                 values = new long[numHits];
-                this.parser = (FieldCache.ILongParser)parser;
+                this.parser = (FieldCache.IInt64Parser)parser;
             }
 
             public override int Compare(int slot1, int slot2)

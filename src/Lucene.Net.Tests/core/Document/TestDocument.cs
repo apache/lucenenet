@@ -432,10 +432,10 @@ namespace Lucene.Net.Documents
         public virtual void TestNumericFieldAsString()
         {
             Documents.Document doc = new Documents.Document();
-            doc.Add(new IntField("int", 5, Field.Store.YES));
+            doc.Add(new Int32Field("int", 5, Field.Store.YES));
             Assert.AreEqual("5", doc.Get("int"));
             Assert.IsNull(doc.Get("somethingElse"));
-            doc.Add(new IntField("int", 4, Field.Store.YES));
+            doc.Add(new Int32Field("int", 4, Field.Store.YES));
             Assert.AreEqual(new string[] { "5", "4" }, doc.GetValues("int"));
 
             Directory dir = NewDirectory();

@@ -22,11 +22,11 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using AppendingPackedLongBuffer = Lucene.Net.Util.Packed.AppendingPackedLongBuffer;
+    using AppendingPackedInt64Buffer = Lucene.Net.Util.Packed.AppendingPackedInt64Buffer;
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using MonotonicAppendingLongBuffer = Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using MonotonicAppendingInt64Buffer = Lucene.Net.Util.Packed.MonotonicAppendingInt64Buffer;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using TermsEnumIndex = Lucene.Net.Index.MultiTermsEnum.TermsEnumIndex;
     using TermsEnumWithSlice = Lucene.Net.Index.MultiTermsEnum.TermsEnumWithSlice;
 
@@ -443,13 +443,13 @@ namespace Lucene.Net.Index
             internal readonly object owner;
 
             // globalOrd -> (globalOrd - segmentOrd) where segmentOrd is the the ordinal in the first segment that contains this term
-            internal readonly MonotonicAppendingLongBuffer globalOrdDeltas;
+            internal readonly MonotonicAppendingInt64Buffer globalOrdDeltas;
 
             // globalOrd -> first segment container
-            internal readonly AppendingPackedLongBuffer firstSegments;
+            internal readonly AppendingPackedInt64Buffer firstSegments;
 
             // for every segment, segmentOrd -> (globalOrd - segmentOrd)
-            internal readonly MonotonicAppendingLongBuffer[] ordDeltas;
+            internal readonly MonotonicAppendingInt64Buffer[] ordDeltas;
 
             /// <summary>
             /// Creates an ordinal map that allows mapping ords to/from a merged
@@ -463,12 +463,12 @@ namespace Lucene.Net.Index
                 // create the ordinal mappings by pulling a termsenum over each sub's
                 // unique terms, and walking a multitermsenum over those
                 this.owner = owner;
-                globalOrdDeltas = new MonotonicAppendingLongBuffer(PackedInts.COMPACT);
-                firstSegments = new AppendingPackedLongBuffer(PackedInts.COMPACT);
-                ordDeltas = new MonotonicAppendingLongBuffer[subs.Length];
+                globalOrdDeltas = new MonotonicAppendingInt64Buffer(PackedInt32s.COMPACT);
+                firstSegments = new AppendingPackedInt64Buffer(PackedInt32s.COMPACT);
+                ordDeltas = new MonotonicAppendingInt64Buffer[subs.Length];
                 for (int i = 0; i < ordDeltas.Length; i++)
                 {
-                    ordDeltas[i] = new MonotonicAppendingLongBuffer();
+                    ordDeltas[i] = new MonotonicAppendingInt64Buffer();
                 }
                 long[] segmentOrds = new long[subs.Length];
                 ReaderSlice[] slices = new ReaderSlice[subs.Length];

@@ -216,12 +216,12 @@ namespace Lucene.Net.Spatial.Prefix
         /// </remarks>
         private class SmallDocSet : DocIdSet, IBits
         {
-            private readonly SentinelIntSet intSet;
+            private readonly SentinelInt32Set intSet;
             private int maxInt = 0;
 
             public SmallDocSet(int size)
             {
-                intSet = new SentinelIntSet(size, -1);
+                intSet = new SentinelInt32Set(size, -1);
             }
 
             public virtual bool Get(int index)

@@ -273,7 +273,7 @@ namespace Lucene.Net.Analysis.Synonym
 #pragma warning restore 612, 618
 
 
-                IntsRef scratchIntsRef = new IntsRef();
+                Int32sRef scratchIntsRef = new Int32sRef();
 
                 //System.out.println("fmap.build");
                 for (int keyIdx = 0; keyIdx < sortedKeys.Length; keyIdx++)

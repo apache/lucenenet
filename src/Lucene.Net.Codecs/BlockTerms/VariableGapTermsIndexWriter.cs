@@ -247,12 +247,12 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 this.outerInstance = outerInstance;
                 FieldInfo = fieldInfo;
-                PositiveIntOutputs fstOutputs = PositiveIntOutputs.Singleton;
+                PositiveInt32Outputs fstOutputs = PositiveInt32Outputs.Singleton;
                 _fstBuilder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, fstOutputs);
                 IndexStart = this.outerInstance.m_output.FilePointer;
 
                 // Always put empty string in
-                _fstBuilder.Add(new IntsRef(), termsFilePointer);
+                _fstBuilder.Add(new Int32sRef(), termsFilePointer);
                 _startTermsFilePointer = termsFilePointer;
             }
 
@@ -270,7 +270,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 return false;
             }
 
-            private readonly IntsRef _scratchIntsRef = new IntsRef();
+            private readonly Int32sRef _scratchIntsRef = new Int32sRef();
 
             public override void Add(BytesRef text, TermStats stats, long termsFilePointer)
             {

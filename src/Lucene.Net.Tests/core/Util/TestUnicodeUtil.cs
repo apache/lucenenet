@@ -158,7 +158,7 @@ namespace Lucene.Net.Util
         public virtual void TestUTF8toUTF32()
         {
             BytesRef utf8 = new BytesRef(20);
-            IntsRef utf32 = new IntsRef(20);
+            Int32sRef utf32 = new Int32sRef(20);
             int[] codePoints = new int[20];
             int num = AtLeast(50000);
             for (int i = 0; i < num; i++)

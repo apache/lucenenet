@@ -36,11 +36,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
     {
         private const int DEFAULT_VALUE = -1;
 
-        private readonly FieldCache.IIntParser parser;
+        private readonly FieldCache.IInt32Parser parser;
         private readonly IDictionary<int?, string> enumIntToStringMap;
         private readonly IDictionary<string, int?> enumStringToIntMap;
 
-        public EnumFieldSource(string field, FieldCache.IIntParser parser, IDictionary<int?, string> enumIntToStringMap, IDictionary<string, int?> enumStringToIntMap)
+        public EnumFieldSource(string field, FieldCache.IInt32Parser parser, IDictionary<int?, string> enumIntToStringMap, IDictionary<string, int?> enumStringToIntMap)
             : base(field)
         {
             this.parser = parser;
@@ -133,19 +133,19 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             private readonly EnumFieldSource outerInstance;
 
-            private readonly FieldCache.Ints arr;
+            private readonly FieldCache.Int32s arr;
             private readonly IBits valid;
 
-            public IntDocValuesAnonymousInnerClassHelper(EnumFieldSource outerInstance, EnumFieldSource @this, FieldCache.Ints arr, IBits valid)
+            public IntDocValuesAnonymousInnerClassHelper(EnumFieldSource outerInstance, EnumFieldSource @this, FieldCache.Int32s arr, IBits valid)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
                 this.arr = arr;
                 this.valid = valid;
-                val = new MutableValueInt();
+                val = new MutableValueInt32();
             }
 
-            private readonly MutableValueInt val;
+            private readonly MutableValueInt32 val;
 
             /// <summary>
             /// NOTE: This was floatVal() in Lucene
@@ -271,10 +271,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 public ValueFillerAnonymousInnerClassHelper(IntDocValuesAnonymousInnerClassHelper outerInstance)
                 {
                     this.outerInstance = outerInstance;
-                    mval = new MutableValueInt();
+                    mval = new MutableValueInt32();
                 }
 
-                private readonly MutableValueInt mval;
+                private readonly MutableValueInt32 mval;
 
                 public override MutableValue Value
                 {

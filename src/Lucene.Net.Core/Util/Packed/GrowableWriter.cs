@@ -23,17 +23,17 @@ namespace Lucene.Net.Util.Packed
     using DataOutput = Lucene.Net.Store.DataOutput;
 
     /// <summary>
-    /// Implements <seealso cref="PackedInts.Mutable"/>, but grows the
+    /// Implements <seealso cref="PackedInt32s.Mutable"/>, but grows the
     /// bit count of the underlying packed ints on-demand.
     /// <p>Beware that this class will accept to set negative values but in order
     /// to do this, it will grow the number of bits per value to 64.
     ///
     /// <p>@lucene.internal</p>
     /// </summary>
-    public class GrowableWriter : PackedInts.Mutable
+    public class GrowableWriter : PackedInt32s.Mutable
     {
         private long currentMask;
-        private PackedInts.Mutable current;
+        private PackedInt32s.Mutable current;
         private readonly float acceptableOverheadRatio;
 
         /// <param name="startBitsPerValue">       the initial number of bits per value, may grow depending on the data </param>
@@ -42,13 +42,13 @@ namespace Lucene.Net.Util.Packed
         public GrowableWriter(int startBitsPerValue, int valueCount, float acceptableOverheadRatio)
         {
             this.acceptableOverheadRatio = acceptableOverheadRatio;
-            current = PackedInts.GetMutable(valueCount, startBitsPerValue, this.acceptableOverheadRatio);
+            current = PackedInt32s.GetMutable(valueCount, startBitsPerValue, this.acceptableOverheadRatio);
             currentMask = Mask(current.BitsPerValue);
         }
 
         private static long Mask(int bitsPerValue)
         {
-            return bitsPerValue == 64 ? ~0L : PackedInts.MaxValue(bitsPerValue);
+            return bitsPerValue == 64 ? ~0L : PackedInt32s.MaxValue(bitsPerValue);
         }
 
         public override long Get(int index)
@@ -69,7 +69,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        public virtual PackedInts.Mutable Mutable
+        public virtual PackedInt32s.Mutable Mutable
         {
             get
             {
@@ -93,11 +93,11 @@ namespace Lucene.Net.Util.Packed
             {
                 return;
             }
-            int bitsRequired = value < 0 ? 64 : PackedInts.BitsRequired(value);
+            int bitsRequired = value < 0 ? 64 : PackedInt32s.BitsRequired(value);
             Debug.Assert(bitsRequired > current.BitsPerValue);
             int valueCount = Count;
-            PackedInts.Mutable next = PackedInts.GetMutable(valueCount, bitsRequired, acceptableOverheadRatio);
-            PackedInts.Copy(current, 0, next, 0, valueCount, PackedInts.DEFAULT_BUFFER_SIZE);
+            PackedInt32s.Mutable next = PackedInt32s.GetMutable(valueCount, bitsRequired, acceptableOverheadRatio);
+            PackedInt32s.Copy(current, 0, next, 0, valueCount, PackedInt32s.DEFAULT_BUFFER_SIZE);
             current = next;
             currentMask = Mask(current.BitsPerValue);
         }
@@ -117,7 +117,7 @@ namespace Lucene.Net.Util.Packed
         {
             GrowableWriter next = new GrowableWriter(BitsPerValue, newSize, acceptableOverheadRatio);
             int limit = Math.Min(Count, newSize);
-            PackedInts.Copy(current, 0, next, 0, limit, PackedInts.DEFAULT_BUFFER_SIZE);
+            PackedInt32s.Copy(current, 0, next, 0, limit, PackedInt32s.DEFAULT_BUFFER_SIZE);
             return next;
         }
 

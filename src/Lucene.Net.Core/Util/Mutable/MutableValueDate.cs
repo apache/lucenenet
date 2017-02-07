@@ -23,7 +23,7 @@ namespace Lucene.Net.Util.Mutable
     /// <seealso cref="MutableValue"/> implementation of type
     /// <seealso cref="Date"/>.
     /// </summary>
-    public class MutableValueDate : MutableValueLong
+    public class MutableValueDate : MutableValueInt64
     {
         public override object ToObject()
         {

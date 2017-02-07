@@ -22,7 +22,7 @@
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DocValues = Lucene.Net.Index.DocValues;
-    using IntsRef = Lucene.Net.Util.IntsRef;
+    using Int32sRef = Lucene.Net.Util.Int32sRef;
 
     /// <summary>
     /// Decodes ordinals previously indexed into a <see cref="BinaryDocValues"/> field
@@ -72,7 +72,7 @@
                 this.values = values;
             }
 
-            public override void Get(int docID, IntsRef ordinals)
+            public override void Get(int docID, Int32sRef ordinals)
             {
                 BytesRef bytes = new BytesRef();
                 values.Get(docID, bytes);
@@ -91,7 +91,7 @@
         /// <summary>
         /// Subclass &amp; override if you change the encoding.
         /// </summary>
-        protected virtual void Decode(BytesRef buf, IntsRef ordinals)
+        protected virtual void Decode(BytesRef buf, Int32sRef ordinals)
         {
 
             // grow the buffer up front, even if by a large number of values (buf.length)

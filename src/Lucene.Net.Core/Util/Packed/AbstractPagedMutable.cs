@@ -24,7 +24,7 @@ namespace Lucene.Net.Util.Packed
     /// Base implementation for <seealso cref="PagedMutable"/> and <seealso cref="PagedGrowableWriter"/>.
     /// @lucene.internal
     /// </summary>
-    public abstract class AbstractPagedMutable<T> : LongValues where T : AbstractPagedMutable<T> // LUCENENET NOTE: made public rather than internal because has public subclasses
+    public abstract class AbstractPagedMutable<T> : Int64Values where T : AbstractPagedMutable<T> // LUCENENET NOTE: made public rather than internal because has public subclasses
     {
         internal static readonly int MIN_BLOCK_SIZE = 1 << 6;
         internal static readonly int MAX_BLOCK_SIZE = 1 << 30;
@@ -32,22 +32,22 @@ namespace Lucene.Net.Util.Packed
         internal readonly long size;
         internal readonly int pageShift;
         internal readonly int pageMask;
-        internal readonly PackedInts.Mutable[] subMutables;
+        internal readonly PackedInt32s.Mutable[] subMutables;
         internal readonly int bitsPerValue;
 
         internal AbstractPagedMutable(int bitsPerValue, long size, int pageSize)
         {
             this.bitsPerValue = bitsPerValue;
             this.size = size;
-            pageShift = PackedInts.CheckBlockSize(pageSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
+            pageShift = PackedInt32s.CheckBlockSize(pageSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
             pageMask = pageSize - 1;
-            int numPages = PackedInts.NumBlocks(size, pageSize);
-            subMutables = new PackedInts.Mutable[numPages];
+            int numPages = PackedInt32s.NumBlocks(size, pageSize);
+            subMutables = new PackedInt32s.Mutable[numPages];
         }
 
         protected void FillPages()
         {
-            int numPages = PackedInts.NumBlocks(size, PageSize);
+            int numPages = PackedInt32s.NumBlocks(size, PageSize);
             for (int i = 0; i < numPages; ++i)
             {
                 // do not allocate for more entries than necessary on the last page
@@ -56,7 +56,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        protected abstract PackedInts.Mutable NewMutable(int valueCount, int bitsPerValue);
+        protected abstract PackedInt32s.Mutable NewMutable(int valueCount, int bitsPerValue);
 
         internal int LastPageSize(long size)
         {
@@ -117,7 +117,7 @@ namespace Lucene.Net.Util.Packed
         {
             long bytesUsed = RamUsageEstimator.AlignObjectSize(BaseRamBytesUsed());
             bytesUsed += RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + (long)RamUsageEstimator.NUM_BYTES_OBJECT_REF * subMutables.Length);
-            foreach (PackedInts.Mutable gw in subMutables)
+            foreach (PackedInt32s.Mutable gw in subMutables)
             {
                 bytesUsed += gw.RamBytesUsed();
             }
@@ -144,7 +144,7 @@ namespace Lucene.Net.Util.Packed
                 if (i < numCommonPages)
                 {
                     int copyLength = Math.Min(valueCount, subMutables[i].Count);
-                    PackedInts.Copy(subMutables[i], 0, copy.subMutables[i], 0, copyLength, copyBuffer);
+                    PackedInt32s.Copy(subMutables[i], 0, copy.subMutables[i], 0, copyLength, copyBuffer);
                 }
             }
             return copy;

@@ -30,14 +30,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
     [Obsolete]
     public class ShortFieldSource : FieldCacheSource
     {
-        private readonly FieldCache.IShortParser parser;
+        private readonly FieldCache.IInt16Parser parser;
 
         public ShortFieldSource(string field)
             : this(field, null)
         {
         }
 
-        public ShortFieldSource(string field, FieldCache.IShortParser parser)
+        public ShortFieldSource(string field, FieldCache.IInt16Parser parser)
             : base(field)
         {
             this.parser = parser;
@@ -57,9 +57,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         private class FunctionValuesAnonymousInnerClassHelper : FunctionValues
         {
             private readonly ShortFieldSource outerInstance;
-            private readonly FieldCache.Shorts arr;
+            private readonly FieldCache.Int16s arr;
 
-            public FunctionValuesAnonymousInnerClassHelper(ShortFieldSource outerInstance, FieldCache.Shorts arr)
+            public FunctionValuesAnonymousInnerClassHelper(ShortFieldSource outerInstance, FieldCache.Int16s arr)
             {
                 this.outerInstance = outerInstance;
                 this.arr = arr;

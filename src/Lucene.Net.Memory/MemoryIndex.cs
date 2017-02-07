@@ -174,9 +174,9 @@ namespace Lucene.Net.Index.Memory
         private readonly bool storeOffsets;
 
         private readonly ByteBlockPool byteBlockPool;
-        private readonly IntBlockPool intBlockPool;
+        private readonly Int32BlockPool intBlockPool;
         //  private final IntBlockPool.SliceReader postingsReader;
-        private readonly IntBlockPool.SliceWriter postingsWriter;
+        private readonly Int32BlockPool.SliceWriter postingsWriter;
 
         private Dictionary<string, FieldInfo> fieldInfos = new Dictionary<string, FieldInfo>();
 
@@ -215,11 +215,11 @@ namespace Lucene.Net.Index.Memory
             this.storeOffsets = storeOffsets;
             this.bytesUsed = Counter.NewCounter();
             int maxBufferedByteBlocks = (int)((maxReusedBytes / 2) / ByteBlockPool.BYTE_BLOCK_SIZE);
-            int maxBufferedIntBlocks = (int)((maxReusedBytes - (maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE)) / (IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT));
-            Debug.Assert((maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE) + (maxBufferedIntBlocks * IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT) <= maxReusedBytes);
+            int maxBufferedIntBlocks = (int)((maxReusedBytes - (maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE)) / (Int32BlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT));
+            Debug.Assert((maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE) + (maxBufferedIntBlocks * Int32BlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT) <= maxReusedBytes);
             byteBlockPool = new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, maxBufferedByteBlocks, bytesUsed));
-            intBlockPool = new IntBlockPool(new RecyclingIntBlockAllocator(IntBlockPool.INT_BLOCK_SIZE, maxBufferedIntBlocks, bytesUsed));
-            postingsWriter = new IntBlockPool.SliceWriter(intBlockPool);
+            intBlockPool = new Int32BlockPool(new RecyclingInt32BlockAllocator(Int32BlockPool.INT_BLOCK_SIZE, maxBufferedIntBlocks, bytesUsed));
+            postingsWriter = new Int32BlockPool.SliceWriter(intBlockPool);
         }
 
         /// <summary>
@@ -656,7 +656,7 @@ namespace Lucene.Net.Index.Memory
                 result.Append(fieldName + ":\n");
                 SliceByteStartArray sliceArray = info.sliceArray;
                 int numPositions = 0;
-                IntBlockPool.SliceReader postingsReader = new IntBlockPool.SliceReader(intBlockPool);
+                Int32BlockPool.SliceReader postingsReader = new Int32BlockPool.SliceReader(intBlockPool);
                 for (int j = 0; j < info.terms.Count; j++)
                 {
                     int ord = info.sortedTerms[j];

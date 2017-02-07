@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
 
         private class PayloadAnalyzer : Analyzer
         {
-            internal readonly AtomicInteger PayloadCount = new AtomicInteger(-1);
+            internal readonly AtomicInt32 PayloadCount = new AtomicInt32(-1);
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
@@ -137,9 +137,9 @@ namespace Lucene.Net.Index
         private class PayloadFilter : TokenFilter
         {
             internal IPayloadAttribute PayloadAtt;
-            internal AtomicInteger PayloadCount;
+            internal AtomicInt32 PayloadCount;
 
-            protected internal PayloadFilter(AtomicInteger payloadCount, TokenStream input)
+            protected internal PayloadFilter(AtomicInt32 payloadCount, TokenStream input)
                 : base(input)
             {
                 this.PayloadCount = payloadCount;

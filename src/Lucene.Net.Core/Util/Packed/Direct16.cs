@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Packed
     /// Direct wrapping of 16-bits values to a backing array.
     /// @lucene.internal
     /// </summary>
-    internal sealed class Direct16 : PackedInts.MutableImpl
+    internal sealed class Direct16 : PackedInt32s.MutableImpl
     {
         internal readonly short[] values;
 
@@ -47,7 +47,7 @@ namespace Lucene.Net.Util.Packed
                 values[i] = @in.ReadInt16();
             }
             // because packed ints have not always been byte-aligned
-            int remaining = (int)(PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 16) - 2L * valueCount);
+            int remaining = (int)(PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 16) - 2L * valueCount);
             for (int i = 0; i < remaining; ++i)
             {
                 @in.ReadByte();

@@ -23,7 +23,7 @@ namespace Lucene.Net.Util.Fst
      */
 
     //using INPUT_TYPE = Lucene.Net.Util.Fst.FST.INPUT_TYPE; // javadoc
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
 
     // TODO: could we somehow stream an FST to disk while we
     // build it?
@@ -68,7 +68,7 @@ namespace Lucene.Net.Util.Fst
         private readonly bool doShareNonSingletonNodes;
         private readonly int shareMaxTailLength;
 
-        private readonly IntsRef lastInput = new IntsRef();
+        private readonly Int32sRef lastInput = new Int32sRef();
 
         // for packing
         private readonly bool doPackFST;
@@ -104,7 +104,7 @@ namespace Lucene.Net.Util.Fst
         /// boolean, int)} with pruning options turned off.
         /// </summary>
         public Builder(FST.INPUT_TYPE inputType, Outputs<T> outputs)
-            : this(inputType, 0, 0, true, true, int.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15)
+            : this(inputType, 0, 0, true, true, int.MaxValue, outputs, null, false, PackedInt32s.COMPACT, true, 15)
         {
             var x = new System.Text.StringBuilder();
         }
@@ -149,7 +149,7 @@ namespace Lucene.Net.Util.Fst
         /// <param name="doPackFST"> Pass true to create a packed FST.
         /// </param>
         /// <param name="acceptableOverheadRatio"> How to trade speed for space when building the FST. this option </param>
-        ///    is only relevant when doPackFST is true. <seealso cref= PackedInts#getMutable(int, int, float)
+        ///    is only relevant when doPackFST is true. <seealso cref= PackedInt32s#getMutable(int, int, float)
         /// </seealso>
         /// <param name="allowArrayArcs"> Pass false to disable the array arc optimization
         ///    while building the FST; this will make the resulting
@@ -375,7 +375,7 @@ namespace Lucene.Net.Util.Fst
         ///  IntSequenceOutputs}) then you cannot reuse across
         ///  calls.
         /// </summary>
-        public virtual void Add(IntsRef input, T output)
+        public virtual void Add(Int32sRef input, T output)
         {
             /*
             if (DEBUG) {
@@ -609,7 +609,7 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public abstract class FreezeTail<S>
         {
-            public abstract void Freeze(UnCompiledNode<S>[] frontier, int prefixLenPlus1, IntsRef prevInput);
+            public abstract void Freeze(UnCompiledNode<S>[] frontier, int prefixLenPlus1, Int32sRef prevInput);
         }
 
         public interface INode // LUCENENET NOTE: made public rather than internal because it is returned in public types

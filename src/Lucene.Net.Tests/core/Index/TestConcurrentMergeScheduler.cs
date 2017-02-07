@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
             int maxMergeCount = TestUtil.NextInt(Random(), 1, 5);
             int maxMergeThreads = TestUtil.NextInt(Random(), 1, maxMergeCount);
             CountdownEvent enoughMergesWaiting = new CountdownEvent(maxMergeCount);
-            AtomicInteger runningMergeCount = new AtomicInteger(0);
+            AtomicInt32 runningMergeCount = new AtomicInt32(0);
             AtomicBoolean failed = new AtomicBoolean();
 
             if (VERBOSE)
@@ -329,10 +329,10 @@ namespace Lucene.Net.Index
 
             private int maxMergeCount;
             private CountdownEvent EnoughMergesWaiting;
-            private AtomicInteger RunningMergeCount;
+            private AtomicInt32 RunningMergeCount;
             private AtomicBoolean Failed;
 
-            public ConcurrentMergeSchedulerAnonymousInnerClassHelper(TestConcurrentMergeScheduler outerInstance, int maxMergeCount, CountdownEvent enoughMergesWaiting, AtomicInteger runningMergeCount, AtomicBoolean failed)
+            public ConcurrentMergeSchedulerAnonymousInnerClassHelper(TestConcurrentMergeScheduler outerInstance, int maxMergeCount, CountdownEvent enoughMergesWaiting, AtomicInt32 runningMergeCount, AtomicBoolean failed)
             {
                 this.OuterInstance = outerInstance;
                 this.maxMergeCount = maxMergeCount;

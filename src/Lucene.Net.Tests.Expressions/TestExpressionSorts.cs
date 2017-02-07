@@ -45,12 +45,12 @@ namespace Lucene.Net.Tests.Expressions
 				        ())), Field.Store.NO),
 				    NewStringField("short", string.Empty + ((short) Random().Next()), Field.Store
 				        .NO),
-				    new IntField("int", Random().Next(), Field.Store.NO),
-				    new LongField("long", Random().NextLong(), Field.Store.NO),
-				    new FloatField("float", Random().NextFloat(), Field.Store.NO),
+				    new Int32Field("int", Random().Next(), Field.Store.NO),
+				    new Int64Field("long", Random().NextLong(), Field.Store.NO),
+				    new SingleField("float", Random().NextFloat(), Field.Store.NO),
 				    new DoubleField("double", Random().NextDouble(), Field.Store.NO),
 				    new NumericDocValuesField("intdocvalues", Random().Next()),
-				    new FloatDocValuesField("floatdocvalues", Random().NextFloat())
+				    new SingleDocValuesField("floatdocvalues", Random().NextFloat())
 				};
                 iw.AddDocument(document);
             }

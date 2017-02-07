@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
     using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Counter = Lucene.Net.Util.Counter;
-    using IntBlockPool = Lucene.Net.Util.IntBlockPool;
+    using Int32BlockPool = Lucene.Net.Util.Int32BlockPool;
 
     /// <summary>
     /// this class implements <seealso cref="InvertedDocConsumer"/>, which
@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
         internal readonly TermsHashConsumer consumer;
         internal readonly TermsHash nextTermsHash;
 
-        internal readonly IntBlockPool intPool;
+        internal readonly Int32BlockPool intPool;
         internal readonly ByteBlockPool bytePool;
         internal ByteBlockPool termBytePool;
         internal readonly Counter bytesUsed;
@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
             this.trackAllocations = trackAllocations;
             this.nextTermsHash = nextTermsHash;
             this.bytesUsed = trackAllocations ? docWriter.bytesUsed : Counter.NewCounter();
-            intPool = new IntBlockPool(docWriter.intBlockAllocator);
+            intPool = new Int32BlockPool(docWriter.intBlockAllocator);
             bytePool = new ByteBlockPool(docWriter.byteBlockAllocator);
 
             if (nextTermsHash != null)

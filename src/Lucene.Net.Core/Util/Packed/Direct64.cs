@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Packed
     /// Direct wrapping of 64-bits values to a backing array.
     /// @lucene.internal
     /// </summary>
-    internal sealed class Direct64 : PackedInts.MutableImpl
+    internal sealed class Direct64 : PackedInt32s.MutableImpl
     {
         internal readonly long[] values;
 

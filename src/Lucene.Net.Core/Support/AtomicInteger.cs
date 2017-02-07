@@ -2,16 +2,19 @@
 
 namespace Lucene.Net.Support
 {
-    public class AtomicInteger
+    /// <summary>
+    /// NOTE: This was AtomicInteger in the JDK
+    /// </summary>
+    public class AtomicInt32
     {
         private int value;
 
-        public AtomicInteger()
+        public AtomicInt32()
             : this(0)
         {
         }
 
-        public AtomicInteger(int value_)
+        public AtomicInt32(int value_)
         {
             Interlocked.Exchange(ref value, value_);
         }

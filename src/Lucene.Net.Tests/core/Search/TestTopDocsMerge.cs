@@ -31,10 +31,10 @@ namespace Lucene.Net.Search
 
     using Document = Documents.Document;
     using Field = Field;
-    using FloatField = FloatField;
+    using SingleField = SingleField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
-    using IntField = IntField;
+    using Int32Field = Int32Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using ReaderUtil = Lucene.Net.Index.ReaderUtil;
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search
                     Document doc = new Document();
                     doc.Add(NewStringField("string", TestUtil.RandomRealisticUnicodeString(Random()), Field.Store.NO));
                     doc.Add(NewTextField("text", content[Random().Next(content.Length)], Field.Store.NO));
-                    doc.Add(new FloatField("float", (float)Random().NextDouble(), Field.Store.NO));
+                    doc.Add(new SingleField("float", (float)Random().NextDouble(), Field.Store.NO));
                     int intValue;
                     if (Random().Next(100) == 17)
                     {
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
                     {
                         intValue = Random().Next();
                     }
-                    doc.Add(new IntField("int", intValue, Field.Store.NO));
+                    doc.Add(new Int32Field("int", intValue, Field.Store.NO));
                     if (VERBOSE)
                     {
                         Console.WriteLine("  doc=" + doc);

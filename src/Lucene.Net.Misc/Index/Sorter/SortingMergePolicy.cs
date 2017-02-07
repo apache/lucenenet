@@ -103,9 +103,9 @@ namespace Lucene.Net.Index.Sorter
                 }
             }
 
-            internal virtual MonotonicAppendingLongBuffer GetDeletes(IList<AtomicReader> readers)
+            internal virtual MonotonicAppendingInt64Buffer GetDeletes(IList<AtomicReader> readers)
             {
-                MonotonicAppendingLongBuffer deletes = new MonotonicAppendingLongBuffer();
+                MonotonicAppendingInt64Buffer deletes = new MonotonicAppendingInt64Buffer();
                 int deleteCount = 0;
                 foreach (AtomicReader reader in readers)
                 {
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index.Sorter
                     return base.GetDocMap(mergeState);
                 }
                 Debug.Assert(mergeState.DocMaps.Length == 1); // we returned a singleton reader
-                MonotonicAppendingLongBuffer deletes = GetDeletes(unsortedReaders);
+                MonotonicAppendingInt64Buffer deletes = GetDeletes(unsortedReaders);
                 return new DocMapAnonymousInnerClassHelper(this, mergeState, deletes);
             }
 
@@ -147,9 +147,9 @@ namespace Lucene.Net.Index.Sorter
                 private readonly SortingOneMerge outerInstance;
 
                 private MergeState mergeState;
-                private MonotonicAppendingLongBuffer deletes;
+                private MonotonicAppendingInt64Buffer deletes;
 
-                public DocMapAnonymousInnerClassHelper(SortingOneMerge outerInstance, MergeState mergeState, MonotonicAppendingLongBuffer deletes)
+                public DocMapAnonymousInnerClassHelper(SortingOneMerge outerInstance, MergeState mergeState, MonotonicAppendingInt64Buffer deletes)
                 {
                     this.outerInstance = outerInstance;
                     this.mergeState = mergeState;

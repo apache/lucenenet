@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IOContext = Lucene.Net.Store.IOContext;
-    using LongBitSet = Lucene.Net.Util.LongBitSet;
+    using Int64BitSet = Lucene.Net.Util.Int64BitSet;
     using Lucene3xSegmentInfoFormat = Lucene.Net.Codecs.Lucene3x.Lucene3xSegmentInfoFormat;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
     using StringHelper = Lucene.Net.Util.StringHelper;
@@ -1874,7 +1874,7 @@ namespace Lucene.Net.Index
         private static void CheckSortedSetDocValues(string fieldName, AtomicReader reader, SortedSetDocValues dv, IBits docsWithField)
         {
             long maxOrd = dv.ValueCount - 1;
-            LongBitSet seenOrds = new LongBitSet(dv.ValueCount);
+            Int64BitSet seenOrds = new Int64BitSet(dv.ValueCount);
             long maxOrd2 = -1;
             for (int i = 0; i < reader.MaxDoc; i++)
             {

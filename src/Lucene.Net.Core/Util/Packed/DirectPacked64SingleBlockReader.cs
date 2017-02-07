@@ -21,7 +21,7 @@ namespace Lucene.Net.Util.Packed
 
     using IndexInput = Lucene.Net.Store.IndexInput;
 
-    internal sealed class DirectPacked64SingleBlockReader : PackedInts.ReaderImpl
+    internal sealed class DirectPacked64SingleBlockReader : PackedInt32s.ReaderImpl
     {
         private readonly IndexInput @in;
         private readonly long startPointer;

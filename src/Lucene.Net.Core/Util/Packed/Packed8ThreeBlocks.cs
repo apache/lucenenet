@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Packed
     /// Packs integers into 3 bytes (24 bits per value).
     /// @lucene.internal
     /// </summary>
-    internal sealed class Packed8ThreeBlocks : PackedInts.MutableImpl
+    internal sealed class Packed8ThreeBlocks : PackedInt32s.MutableImpl
     {
         readonly byte[] blocks;
 
@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Packed
         {
             @in.ReadBytes(blocks, 0, 3 * valueCount);
             // because packed ints have not always been byte-aligned
-            var remaining = (int)(PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 24) - 3L * valueCount * 1);
+            var remaining = (int)(PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 24) - 3L * valueCount * 1);
             for (int i = 0; i < remaining; ++i)
             {
                 @in.ReadByte();

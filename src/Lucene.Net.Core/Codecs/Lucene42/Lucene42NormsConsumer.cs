@@ -25,12 +25,12 @@ namespace Lucene.Net.Codecs.Lucene42
     using BlockPackedWriter = Lucene.Net.Util.Packed.BlockPackedWriter;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
-    using FormatAndBits = Lucene.Net.Util.Packed.PackedInts.FormatAndBits;
+    using FormatAndBits = Lucene.Net.Util.Packed.PackedInt32s.FormatAndBits;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using MathUtil = Lucene.Net.Util.MathUtil;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
     /// <summary>
@@ -132,8 +132,8 @@ namespace Lucene.Net.Codecs.Lucene42
             if (uniqueValues != null)
             {
                 // small number of unique values
-                int bitsPerValue = PackedInts.BitsRequired(uniqueValues.Count - 1);
-                FormatAndBits formatAndBits = PackedInts.FastestFormatAndBits(maxDoc, bitsPerValue, acceptableOverheadRatio);
+                int bitsPerValue = PackedInt32s.BitsRequired(uniqueValues.Count - 1);
+                FormatAndBits formatAndBits = PackedInt32s.FastestFormatAndBits(maxDoc, bitsPerValue, acceptableOverheadRatio);
                 if (formatAndBits.BitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
                 {
                     meta.WriteByte((byte)UNCOMPRESSED); // uncompressed
@@ -154,11 +154,11 @@ namespace Lucene.Net.Codecs.Lucene42
                         encode[decode[i]] = i;
                     }
 
-                    meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                    meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
                     data.WriteVInt32(formatAndBits.Format.Id);
                     data.WriteVInt32(formatAndBits.BitsPerValue);
 
-                    PackedInts.Writer writer = PackedInts.GetWriterNoHeader(data, formatAndBits.Format, maxDoc, formatAndBits.BitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
+                    PackedInt32s.Writer writer = PackedInt32s.GetWriterNoHeader(data, formatAndBits.Format, maxDoc, formatAndBits.BitsPerValue, PackedInt32s.DEFAULT_BUFFER_SIZE);
                     foreach (long? nv in values)
                     {
                         writer.Add(encode[nv == null ? 0 : nv.Value]);
@@ -169,7 +169,7 @@ namespace Lucene.Net.Codecs.Lucene42
             else if (gcd != 0 && gcd != 1)
             {
                 meta.WriteByte((byte)GCD_COMPRESSED);
-                meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
                 data.WriteInt64(minValue);
                 data.WriteInt64(gcd);
                 data.WriteVInt32(BLOCK_SIZE);
@@ -186,7 +186,7 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 meta.WriteByte((byte)DELTA_COMPRESSED); // delta-compressed
 
-                meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
                 data.WriteVInt32(BLOCK_SIZE);
 
                 var writer = new BlockPackedWriter(data, BLOCK_SIZE);

@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     Dictionary dictionary = new Dictionary(affixStream, dictStream);
                     assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
                     assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
-                    IntsRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
+                    Int32sRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
                     assertNotNull(ordList);
                     assertEquals(1, ordList.Length);
 
@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     Dictionary dictionary = new Dictionary(affixStream, dictStream);
                     assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
                     assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
-                    IntsRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
+                    Int32sRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
                     BytesRef @ref = new BytesRef();
                     dictionary.flagLookup.Get(ordList.Int32s[0], @ref);
                     char[] flags = Dictionary.DecodeFlags(@ref);
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     Dictionary dictionary = new Dictionary(affixStream, dictStream);
                     assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
                     assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
-                    IntsRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
+                    Int32sRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
                     BytesRef @ref = new BytesRef();
                     dictionary.flagLookup.Get(ordList.Int32s[0], @ref);
                     char[] flags = Dictionary.DecodeFlags(@ref);
@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     Dictionary dictionary = new Dictionary(affixStream, dictStream);
                     assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
                     assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
-                    IntsRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
+                    Int32sRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
                     BytesRef @ref = new BytesRef();
                     dictionary.flagLookup.Get(ordList.Int32s[0], @ref);
                     char[] flags = Dictionary.DecodeFlags(@ref);
@@ -289,7 +289,7 @@ namespace Lucene.Net.Analysis.Hunspell
         {
             Outputs<CharsRef> outputs = CharSequenceOutputs.Singleton;
             Builder<CharsRef> builder = new Builder<CharsRef>(FST.INPUT_TYPE.BYTE2, outputs);
-            IntsRef scratchInts = new IntsRef();
+            Int32sRef scratchInts = new Int32sRef();
 
             // a -> b
             Lucene.Net.Util.Fst.Util.ToUTF16("a", scratchInts);

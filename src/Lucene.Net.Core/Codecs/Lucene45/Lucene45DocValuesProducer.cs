@@ -36,10 +36,10 @@ namespace Lucene.Net.Codecs.Lucene45
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using LongValues = Lucene.Net.Util.LongValues;
+    using Int64Values = Lucene.Net.Util.Int64Values;
     using MonotonicBlockPackedReader = Lucene.Net.Util.Packed.MonotonicBlockPackedReader;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using RandomAccessOrds = Lucene.Net.Index.RandomAccessOrds;
     using SegmentReadState = Lucene.Net.Index.SegmentReadState;
@@ -56,7 +56,7 @@ namespace Lucene.Net.Codecs.Lucene45
         private readonly IDictionary<int, SortedSetEntry> sortedSets;
         private readonly IDictionary<int, NumericEntry> ords;
         private readonly IDictionary<int, NumericEntry> ordIndexes;
-        private readonly AtomicLong ramBytesUsed;
+        private readonly AtomicInt64 ramBytesUsed;
         private readonly IndexInput data;
         private readonly int maxDoc;
         private readonly int version;
@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
-            ramBytesUsed = new AtomicLong(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
+            ramBytesUsed = new AtomicInt64(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
         }
 
         private void ReadSortedField(int fieldNumber, IndexInput meta, FieldInfos infos)
@@ -369,7 +369,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
-        internal virtual LongValues GetNumeric(NumericEntry entry)
+        internal virtual Int64Values GetNumeric(NumericEntry entry)
         {
             IndexInput data = (IndexInput)this.data.Clone();
             data.Seek(entry.Offset);
@@ -384,20 +384,20 @@ namespace Lucene.Net.Codecs.Lucene45
                     long min = entry.minValue;
                     long mult = entry.gcd;
                     BlockPackedReader quotientReader = new BlockPackedReader(data, entry.PackedInt32sVersion, entry.BlockSize, entry.Count, true);
-                    return new LongValuesAnonymousInnerClassHelper(this, min, mult, quotientReader);
+                    return new Int64ValuesAnonymousInnerClassHelper(this, min, mult, quotientReader);
 
                 case Lucene45DocValuesConsumer.TABLE_COMPRESSED:
                     long[] table = entry.table;
-                    int bitsRequired = PackedInts.BitsRequired(table.Length - 1);
-                    PackedInts.Reader ords = PackedInts.GetDirectReaderNoHeader(data, PackedInts.Format.PACKED, entry.PackedInt32sVersion, (int)entry.Count, bitsRequired);
-                    return new LongValuesAnonymousInnerClassHelper2(this, table, ords);
+                    int bitsRequired = PackedInt32s.BitsRequired(table.Length - 1);
+                    PackedInt32s.Reader ords = PackedInt32s.GetDirectReaderNoHeader(data, PackedInt32s.Format.PACKED, entry.PackedInt32sVersion, (int)entry.Count, bitsRequired);
+                    return new Int64ValuesAnonymousInnerClassHelper2(this, table, ords);
 
                 default:
                     throw new Exception();
             }
         }
 
-        private class LongValuesAnonymousInnerClassHelper : LongValues
+        private class Int64ValuesAnonymousInnerClassHelper : Int64Values
         {
             private readonly Lucene45DocValuesProducer outerInstance;
 
@@ -405,7 +405,7 @@ namespace Lucene.Net.Codecs.Lucene45
             private long mult;
             private BlockPackedReader quotientReader;
 
-            public LongValuesAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, long min, long mult, BlockPackedReader quotientReader)
+            public Int64ValuesAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, long min, long mult, BlockPackedReader quotientReader)
             {
                 this.outerInstance = outerInstance;
                 this.min = min;
@@ -419,14 +419,14 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
-        private class LongValuesAnonymousInnerClassHelper2 : LongValues
+        private class Int64ValuesAnonymousInnerClassHelper2 : Int64Values
         {
             private readonly Lucene45DocValuesProducer outerInstance;
 
             private long[] table;
-            private PackedInts.Reader ords;
+            private PackedInt32s.Reader ords;
 
-            public LongValuesAnonymousInnerClassHelper2(Lucene45DocValuesProducer outerInstance, long[] table, PackedInts.Reader ords)
+            public Int64ValuesAnonymousInnerClassHelper2(Lucene45DocValuesProducer outerInstance, long[] table, PackedInt32s.Reader ords)
             {
                 this.outerInstance = outerInstance;
                 this.table = table;
@@ -462,17 +462,17 @@ namespace Lucene.Net.Codecs.Lucene45
         {
             IndexInput data = (IndexInput)this.data.Clone();
 
-            return new LongBinaryDocValuesAnonymousInnerClassHelper(this, bytes, data);
+            return new Int64BinaryDocValuesAnonymousInnerClassHelper(this, bytes, data);
         }
 
-        private class LongBinaryDocValuesAnonymousInnerClassHelper : LongBinaryDocValues
+        private class Int64BinaryDocValuesAnonymousInnerClassHelper : Int64BinaryDocValues
         {
             private readonly Lucene45DocValuesProducer outerInstance;
 
             private Lucene45DocValuesProducer.BinaryEntry bytes;
             private IndexInput data;
 
-            public LongBinaryDocValuesAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data)
+            public Int64BinaryDocValuesAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data)
             {
                 this.outerInstance = outerInstance;
                 this.bytes = bytes;
@@ -528,10 +528,10 @@ namespace Lucene.Net.Codecs.Lucene45
 
             MonotonicBlockPackedReader addresses = GetAddressInstance(data, field, bytes);
 
-            return new LongBinaryDocValuesAnonymousInnerClassHelper2(this, bytes, data, addresses);
+            return new Int64BinaryDocValuesAnonymousInnerClassHelper2(this, bytes, data, addresses);
         }
 
-        private class LongBinaryDocValuesAnonymousInnerClassHelper2 : LongBinaryDocValues
+        private class Int64BinaryDocValuesAnonymousInnerClassHelper2 : Int64BinaryDocValues
         {
             private readonly Lucene45DocValuesProducer outerInstance;
 
@@ -539,7 +539,7 @@ namespace Lucene.Net.Codecs.Lucene45
             private IndexInput data;
             private MonotonicBlockPackedReader addresses;
 
-            public LongBinaryDocValuesAnonymousInnerClassHelper2(Lucene45DocValuesProducer outerInstance, Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data, MonotonicBlockPackedReader addresses)
+            public Int64BinaryDocValuesAnonymousInnerClassHelper2(Lucene45DocValuesProducer outerInstance, Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data, MonotonicBlockPackedReader addresses)
             {
                 this.outerInstance = outerInstance;
                 this.bytes = bytes;
@@ -720,8 +720,8 @@ namespace Lucene.Net.Codecs.Lucene45
             IndexInput data = (IndexInput)this.data.Clone();
             long valueCount = binaries[field.Number].Count;
             // we keep the byte[]s and list of ords on disk, these could be large
-            LongBinaryDocValues binary = (LongBinaryDocValues)GetBinary(field);
-            LongValues ordinals = GetNumeric(ords[field.Number]);
+            Int64BinaryDocValues binary = (Int64BinaryDocValues)GetBinary(field);
+            Int64Values ordinals = GetNumeric(ords[field.Number]);
             // but the addresses to the ord stream are in RAM
             MonotonicBlockPackedReader ordIndex = GetOrdIndexInstance(data, field, ordIndexes[field.Number]);
 
@@ -733,11 +733,11 @@ namespace Lucene.Net.Codecs.Lucene45
             private readonly Lucene45DocValuesProducer outerInstance;
 
             private long valueCount;
-            private Lucene45DocValuesProducer.LongBinaryDocValues binary;
-            private LongValues ordinals;
+            private Lucene45DocValuesProducer.Int64BinaryDocValues binary;
+            private Int64Values ordinals;
             private MonotonicBlockPackedReader ordIndex;
 
-            public RandomAccessOrdsAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, long valueCount, Lucene45DocValuesProducer.LongBinaryDocValues binary, LongValues ordinals, MonotonicBlockPackedReader ordIndex)
+            public RandomAccessOrdsAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, long valueCount, Lucene45DocValuesProducer.Int64BinaryDocValues binary, Int64Values ordinals, MonotonicBlockPackedReader ordIndex)
             {
                 this.outerInstance = outerInstance;
                 this.valueCount = valueCount;
@@ -990,7 +990,10 @@ namespace Lucene.Net.Codecs.Lucene45
         }
 
         // internally we compose complex dv (sorted/sortedset) from other ones
-        internal abstract class LongBinaryDocValues : BinaryDocValues
+        /// <summary>
+        /// NOTE: This was LongBinaryDocValues in Lucene
+        /// </summary>
+        internal abstract class Int64BinaryDocValues : BinaryDocValues
         {
             public override sealed void Get(int docID, BytesRef result)
             {
@@ -1002,7 +1005,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         // in the compressed case, we add a few additional operations for
         // more efficient reverse lookup and enumeration
-        internal class CompressedBinaryDocValues : LongBinaryDocValues
+        internal class CompressedBinaryDocValues : Int64BinaryDocValues
         {
             internal readonly BinaryEntry bytes;
             internal readonly long interval;

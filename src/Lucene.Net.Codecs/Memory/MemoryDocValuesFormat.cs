@@ -34,7 +34,7 @@ namespace Lucene.Net.Codecs.Memory
         /// MemoryDocValuesFormat(PackedInts.DEFAULT)} 
         /// </summary>
         public MemoryDocValuesFormat() 
-            : this(PackedInts.DEFAULT)
+            : this(PackedInt32s.DEFAULT)
         {
         }
 

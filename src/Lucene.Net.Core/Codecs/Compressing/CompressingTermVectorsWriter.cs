@@ -42,7 +42,7 @@ namespace Lucene.Net.Codecs.Compressing
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using MergeState = Lucene.Net.Index.MergeState;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
     using SegmentReader = Lucene.Net.Index.SegmentReader;
     using StringHelper = Lucene.Net.Util.StringHelper;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Codecs.Compressing
         internal const int POSITIONS = 0x01;
         internal const int OFFSETS = 0x02;
         internal const int PAYLOADS = 0x04;
-        internal static readonly int FLAGS_BITS = PackedInts.BitsRequired(POSITIONS | OFFSETS | PAYLOADS);
+        internal static readonly int FLAGS_BITS = PackedInt32s.BitsRequired(POSITIONS | OFFSETS | PAYLOADS);
 
         private readonly Directory directory;
         private readonly string segment;
@@ -268,7 +268,7 @@ namespace Lucene.Net.Codecs.Compressing
                 indexWriter = new CompressingStoredFieldsIndexWriter(indexStream);
                 indexStream = null;
 
-                vectorsStream.WriteVInt32(PackedInts.VERSION_CURRENT);
+                vectorsStream.WriteVInt32(PackedInt32s.VERSION_CURRENT);
                 vectorsStream.WriteVInt32(chunkSize);
                 writer = new BlockPackedWriter(vectorsStream, BLOCK_SIZE);
 
@@ -455,14 +455,14 @@ namespace Lucene.Net.Codecs.Compressing
 
             int numDistinctFields = fieldNums.Count;
             Debug.Assert(numDistinctFields > 0);
-            int bitsRequired = PackedInts.BitsRequired(fieldNums.Last());
+            int bitsRequired = PackedInt32s.BitsRequired(fieldNums.Last());
             int token = (Math.Min(numDistinctFields - 1, 0x07) << 5) | bitsRequired;
             vectorsStream.WriteByte((byte)(sbyte)token);
             if (numDistinctFields - 1 >= 0x07)
             {
                 vectorsStream.WriteVInt32(numDistinctFields - 1 - 0x07);
             }
-            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, fieldNums.Count, bitsRequired, 1);
+            PackedInt32s.Writer writer = PackedInt32s.GetWriterNoHeader(vectorsStream, PackedInt32s.Format.PACKED, fieldNums.Count, bitsRequired, 1);
             foreach (int fieldNum in fieldNums)
             {
                 writer.Add(fieldNum);
@@ -480,7 +480,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private void FlushFields(int totalFields, int[] fieldNums)
         {
-            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, totalFields, PackedInts.BitsRequired(fieldNums.Length - 1), 1);
+            PackedInt32s.Writer writer = PackedInt32s.GetWriterNoHeader(vectorsStream, PackedInt32s.Format.PACKED, totalFields, PackedInt32s.BitsRequired(fieldNums.Length - 1), 1);
             foreach (DocData dd in pendingDocs)
             {
                 foreach (FieldData fd in dd.fields)
@@ -525,7 +525,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 // write one flag per field num
                 vectorsStream.WriteVInt32(0);
-                PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, fieldFlags.Length, FLAGS_BITS, 1);
+                PackedInt32s.Writer writer = PackedInt32s.GetWriterNoHeader(vectorsStream, PackedInt32s.Format.PACKED, fieldFlags.Length, FLAGS_BITS, 1);
                 foreach (int flags in fieldFlags)
                 {
                     Debug.Assert(flags >= 0);
@@ -538,7 +538,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 // write one flag for every field instance
                 vectorsStream.WriteVInt32(1);
-                PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, totalFields, FLAGS_BITS, 1);
+                PackedInt32s.Writer writer = PackedInt32s.GetWriterNoHeader(vectorsStream, PackedInt32s.Format.PACKED, totalFields, FLAGS_BITS, 1);
                 foreach (DocData dd in pendingDocs)
                 {
                     foreach (FieldData fd in dd.fields)
@@ -561,9 +561,9 @@ namespace Lucene.Net.Codecs.Compressing
                     maxNumTerms |= fd.numTerms;
                 }
             }
-            int bitsRequired = PackedInts.BitsRequired(maxNumTerms);
+            int bitsRequired = PackedInt32s.BitsRequired(maxNumTerms);
             vectorsStream.WriteVInt32(bitsRequired);
-            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, totalFields, bitsRequired, 1);
+            PackedInt32s.Writer writer = PackedInt32s.GetWriterNoHeader(vectorsStream, PackedInt32s.Format.PACKED, totalFields, bitsRequired, 1);
             foreach (DocData dd in pendingDocs)
             {
                 foreach (FieldData fd in dd.fields)
@@ -884,7 +884,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int maxDoc = reader.MaxDoc;
                 IBits liveDocs = reader.LiveDocs;
 
-                if (matchingVectorsReader == null || matchingVectorsReader.Version != VERSION_CURRENT || matchingVectorsReader.CompressionMode != compressionMode || matchingVectorsReader.ChunkSize != chunkSize || matchingVectorsReader.PackedInt32sVersion != PackedInts.VERSION_CURRENT)
+                if (matchingVectorsReader == null || matchingVectorsReader.Version != VERSION_CURRENT || matchingVectorsReader.CompressionMode != compressionMode || matchingVectorsReader.ChunkSize != chunkSize || matchingVectorsReader.PackedInt32sVersion != PackedInt32s.VERSION_CURRENT)
                 {
                     // naive merge...
                     for (int i = NextLiveDoc(0, liveDocs, maxDoc); i < maxDoc; i = NextLiveDoc(i + 1, liveDocs, maxDoc))

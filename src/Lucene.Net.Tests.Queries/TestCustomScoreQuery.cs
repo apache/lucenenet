@@ -184,7 +184,7 @@ namespace Lucene.Net.Tests.Queries
 
             protected override CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context)
             {
-                FieldCache.Ints values = FieldCache.DEFAULT.GetInt32s(context.AtomicReader, INT_FIELD, false);
+                FieldCache.Int32s values = FieldCache.DEFAULT.GetInt32s(context.AtomicReader, INT_FIELD, false);
                 return new CustomScoreProviderAnonymousInnerClassHelper(this, context, values);
             }
             
@@ -192,9 +192,9 @@ namespace Lucene.Net.Tests.Queries
             {
                 private readonly CustomExternalQuery outerInstance;
 
-                private FieldCache.Ints values;
+                private FieldCache.Int32s values;
 
-                public CustomScoreProviderAnonymousInnerClassHelper(CustomExternalQuery outerInstance, AtomicReaderContext context, FieldCache.Ints values) : base(context)
+                public CustomScoreProviderAnonymousInnerClassHelper(CustomExternalQuery outerInstance, AtomicReaderContext context, FieldCache.Int32s values) : base(context)
                 {
                     this.outerInstance = outerInstance;
                     this.values = values;

@@ -20,7 +20,7 @@ namespace Lucene.Net.Util.Fst
      * limitations under the License.
      */
 
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using PagedGrowableWriter = Lucene.Net.Util.Packed.PagedGrowableWriter;
 
     // Used to dedup states (lookup already-frozen states)
@@ -35,7 +35,7 @@ namespace Lucene.Net.Util.Fst
 
         public NodeHash(FST<T> fst, FST.BytesReader input)
         {
-            table = new PagedGrowableWriter(16, 1 << 30, 8, PackedInts.COMPACT);
+            table = new PagedGrowableWriter(16, 1 << 30, 8, PackedInt32s.COMPACT);
             mask = 15;
             this.fst = fst;
             this.input = input;
@@ -184,7 +184,7 @@ namespace Lucene.Net.Util.Fst
         {
             PagedGrowableWriter oldTable = table;
 
-            table = new PagedGrowableWriter(2 * oldTable.Count, 1 << 30, PackedInts.BitsRequired(count), PackedInts.COMPACT);
+            table = new PagedGrowableWriter(2 * oldTable.Count, 1 << 30, PackedInt32s.BitsRequired(count), PackedInt32s.COMPACT);
             mask = table.Count - 1;
             for (long idx = 0; idx < oldTable.Count; idx++)
             {

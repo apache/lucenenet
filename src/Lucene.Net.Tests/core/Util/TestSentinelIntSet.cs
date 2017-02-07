@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void Test()
         {
-            SentinelIntSet set = new SentinelIntSet(10, -1);
+            SentinelInt32Set set = new SentinelInt32Set(10, -1);
             Assert.IsFalse(set.Exists(50));
             set.Put(50);
             Assert.IsTrue(set.Exists(50));
@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
                 int maxVal = (Random().NextBoolean() ? Random().Next(50) : Random().Next(int.MaxValue)) + 1;
 
                 HashSet<int> a = new HashSet<int>(/*initSz*/);
-                SentinelIntSet b = new SentinelIntSet(initSz, -1);
+                SentinelInt32Set b = new SentinelInt32Set(initSz, -1);
 
                 for (int j = 0; j < num; j++)
                 {

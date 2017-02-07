@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.Lucene41
     using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IndexOutput = Store.IndexOutput;
     using IOUtils = Util.IOUtils;
-    using PackedInts = Util.Packed.PackedInts;
+    using PackedInt32s = Util.Packed.PackedInt32s;
     using SegmentWriteState = Index.SegmentWriteState;
     using TermState = Index.TermState;
 
@@ -64,8 +64,8 @@ namespace Lucene.Net.Codecs.Lucene41
         internal IndexOutput posOut;
         internal IndexOutput payOut;
 
-        internal static readonly IntBlockTermState emptyState = new IntBlockTermState();
-        internal IntBlockTermState lastState;
+        internal static readonly Int32BlockTermState emptyState = new Int32BlockTermState();
+        internal Int32BlockTermState lastState;
 
         // How current field indexes postings:
         private bool fieldHasFreqs;
@@ -189,11 +189,14 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <summary>
         /// Creates a postings writer with <code>PackedInts.COMPACT</code> </summary>
         public Lucene41PostingsWriter(SegmentWriteState state)
-            : this(state, PackedInts.COMPACT)
+            : this(state, PackedInt32s.COMPACT)
         {
         }
 
-        public sealed class IntBlockTermState : BlockTermState
+        /// <summary>
+        /// NOTE: This was IntBlockTermState in Lucene
+        /// </summary>
+        public sealed class Int32BlockTermState : BlockTermState
         {
             internal long docStartFP = 0;
             internal long posStartFP = 0;
@@ -207,7 +210,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             public override object Clone()
             {
-                IntBlockTermState other = new IntBlockTermState();
+                Int32BlockTermState other = new Int32BlockTermState();
                 other.CopyFrom(this);
                 return other;
             }
@@ -215,7 +218,7 @@ namespace Lucene.Net.Codecs.Lucene41
             public override void CopyFrom(TermState other)
             {
                 base.CopyFrom(other);
-                IntBlockTermState other2 = (IntBlockTermState)other;
+                Int32BlockTermState other2 = (Int32BlockTermState)other;
                 docStartFP = other2.docStartFP;
                 posStartFP = other2.posStartFP;
                 payStartFP = other2.payStartFP;
@@ -232,7 +235,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public override BlockTermState NewTermState()
         {
-            return new IntBlockTermState();
+            return new Int32BlockTermState();
         }
 
         public override void Init(IndexOutput termsOut)
@@ -433,7 +436,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// Called when we are done adding docs to this term </summary>
         public override void FinishTerm(BlockTermState state)
         {
-            IntBlockTermState state2 = (IntBlockTermState)state;
+            Int32BlockTermState state2 = (Int32BlockTermState)state;
             Debug.Assert(state2.DocFreq > 0);
 
             // TODO: wasteful we are counting this (counting # docs
@@ -617,7 +620,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public override void EncodeTerm(long[] longs, DataOutput @out, FieldInfo fieldInfo, BlockTermState state, bool absolute)
         {
-            IntBlockTermState state2 = (IntBlockTermState)state;
+            Int32BlockTermState state2 = (Int32BlockTermState)state;
             if (absolute)
             {
                 lastState = emptyState;

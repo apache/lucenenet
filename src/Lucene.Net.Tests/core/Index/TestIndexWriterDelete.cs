@@ -1304,7 +1304,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             // Cannot use RandomIndexWriter because we don't want to
             // ever call commit() for this test:
-            AtomicInteger docsInSegment = new AtomicInteger();
+            AtomicInt32 docsInSegment = new AtomicInt32();
             AtomicBoolean closing = new AtomicBoolean();
             AtomicBoolean sawAfterFlush = new AtomicBoolean();
             IndexWriter w = new IndexWriterAnonymousInnerClassHelper(this, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetRAMBufferSizeMB(0.5).SetMaxBufferedDocs(-1).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false), docsInSegment, closing, sawAfterFlush);
@@ -1346,11 +1346,11 @@ namespace Lucene.Net.Index
         {
             private readonly TestIndexWriterDelete OuterInstance;
 
-            private AtomicInteger DocsInSegment;
+            private AtomicInt32 DocsInSegment;
             private AtomicBoolean Closing;
             private AtomicBoolean SawAfterFlush;
 
-            public IndexWriterAnonymousInnerClassHelper(TestIndexWriterDelete outerInstance, Directory dir, IndexWriterConfig setReaderPooling, AtomicInteger docsInSegment, AtomicBoolean closing, AtomicBoolean sawAfterFlush)
+            public IndexWriterAnonymousInnerClassHelper(TestIndexWriterDelete outerInstance, Directory dir, IndexWriterConfig setReaderPooling, AtomicInt32 docsInSegment, AtomicBoolean closing, AtomicBoolean sawAfterFlush)
                 : base(dir, setReaderPooling)
             {
                 this.OuterInstance = outerInstance;

@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
 
         private readonly LiveIndexWriterConfig config;
 
-        private readonly AtomicInteger numDocsInRAM = new AtomicInteger(0);
+        private readonly AtomicInt32 numDocsInRAM = new AtomicInt32(0);
 
         // TODO: cut over to BytesRefHash in BufferedDeletes
         internal volatile DocumentsWriterDeleteQueue deleteQueue = new DocumentsWriterDeleteQueue();

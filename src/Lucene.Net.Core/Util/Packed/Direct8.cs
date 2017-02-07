@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Packed
     /// Direct wrapping of 8-bits values to a backing array.
     /// @lucene.internal
     /// </summary>
-    internal sealed class Direct8 : PackedInts.MutableImpl
+    internal sealed class Direct8 : PackedInt32s.MutableImpl
     {
         readonly byte[] values;
 
@@ -44,7 +44,7 @@ namespace Lucene.Net.Util.Packed
         {
             @in.ReadBytes(values, 0, valueCount);
             // because packed ints have not always been byte-aligned
-            int remaining = (int)(PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 8) - 1L * valueCount);
+            int remaining = (int)(PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 8) - 1L * valueCount);
             for (int i = 0; i < remaining; ++i)
             {
                 @in.ReadByte();

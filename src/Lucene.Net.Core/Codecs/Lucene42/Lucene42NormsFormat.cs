@@ -17,7 +17,7 @@ namespace Lucene.Net.Codecs.Lucene42
      * limitations under the License.
      */
 
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using SegmentReadState = Lucene.Net.Index.SegmentReadState;
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.Lucene42
     /// <p>
     /// NOTE: this uses the same format as <seealso cref="Lucene42DocValuesFormat"/>
     /// Numeric DocValues, but with different file extensions, and passing
-    /// <seealso cref="PackedInts#FASTEST"/> for uncompressed encoding: trading off
+    /// <seealso cref="PackedInt32s#FASTEST"/> for uncompressed encoding: trading off
     /// space for performance.
     /// <p>
     /// Files:
@@ -44,7 +44,7 @@ namespace Lucene.Net.Codecs.Lucene42
         /// Lucene42DocValuesFormat(PackedInts.FASTEST)}
         /// </summary>
         public Lucene42NormsFormat()
-            : this(PackedInts.FASTEST)
+            : this(PackedInt32s.FASTEST)
         {
             // note: we choose FASTEST here (otherwise our norms are half as big but 15% slower than previous lucene)
         }

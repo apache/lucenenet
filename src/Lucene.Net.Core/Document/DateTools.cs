@@ -35,7 +35,7 @@ namespace Lucene.Net.Documents
     /// date/time are.
     /// For indexing a <seealso cref="Date"/> or <seealso cref="Calendar"/>, just get the unix timestamp as
     /// <code>long</code> using <seealso cref="Date#getTime"/> or <seealso cref="Calendar#getTimeInMillis"/> and
-    /// index this as a numeric value with <seealso cref="LongField"/>
+    /// index this as a numeric value with <seealso cref="Int64Field"/>
     /// and use <seealso cref="NumericRangeQuery"/> to query it.
     /// </summary>
     public static class DateTools

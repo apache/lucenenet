@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
         // closed.  A given instance of SegmentReader may be
         // closed, even though it shares core objects with other
         // SegmentReaders:
-        private readonly AtomicInteger @ref = new AtomicInteger(1);
+        private readonly AtomicInt32 @ref = new AtomicInt32(1);
 
         internal readonly FieldsProducer fields;
         internal readonly DocValuesProducer normsProducer;

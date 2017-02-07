@@ -45,7 +45,7 @@ namespace Lucene.Net.Store
     public class RAMDirectory : BaseDirectory
     {
         protected internal readonly IDictionary<string, RAMFile> m_fileMap = new ConcurrentDictionary<string, RAMFile>();
-        protected internal readonly AtomicLong m_sizeInBytes = new AtomicLong(0);
+        protected internal readonly AtomicInt64 m_sizeInBytes = new AtomicInt64(0);
 
         // *****
         // Lock acquisition sequence:  RAMDirectory, then RAMFile

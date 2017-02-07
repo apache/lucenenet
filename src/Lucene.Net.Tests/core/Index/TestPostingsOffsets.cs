@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
     using English = Lucene.Net.Util.English;
     using Field = Field;
     using FieldType = FieldType;
-    using IntField = IntField;
+    using Int32Field = Int32Field;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
@@ -262,7 +262,7 @@ namespace Lucene.Net.Index
             for (int docCount = 0; docCount < numDocs; docCount++)
             {
                 Document doc = new Document();
-                doc.Add(new IntField("id", docCount, Field.Store.NO));
+                doc.Add(new Int32Field("id", docCount, Field.Store.NO));
                 IList<Token> tokens = new List<Token>();
                 int numTokens = AtLeast(100);
                 //final int numTokens = AtLeast(20);
@@ -331,7 +331,7 @@ namespace Lucene.Net.Index
                 DocsEnum docs = null;
                 DocsAndPositionsEnum docsAndPositions = null;
                 DocsAndPositionsEnum docsAndPositionsAndOffsets = null;
-                FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInt32s(sub, "id", false);
+                FieldCache.Int32s docIDToID = FieldCache.DEFAULT.GetInt32s(sub, "id", false);
                 foreach (string term in terms)
                 {
                     //System.out.println("  term=" + term);

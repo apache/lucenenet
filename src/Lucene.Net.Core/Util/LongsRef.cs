@@ -27,10 +27,12 @@ namespace Lucene.Net.Util
     /// Represents long[], as a slice (offset + length) into an
     ///  existing long[].  The <seealso cref="#longs"/> member should never be null; use
     ///  <seealso cref="#EMPTY_LONGS"/> if necessary.
+    ///  <para/>
+    /// NOTE: This was LongsRef in Lucene
     ///
     ///  @lucene.internal
     /// </summary>
-    public sealed class LongsRef : IComparable<LongsRef> // LUCENENET TODO: Rename Int64sRef ?
+    public sealed class Int64sRef : IComparable<Int64sRef>
     {
         /// <summary>
         /// An empty long array for convenience </summary>
@@ -67,7 +69,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Create a LongsRef with <seealso cref="#EMPTY_LONGS"/> </summary>
-        public LongsRef()
+        public Int64sRef()
         {
             longs = EMPTY_LONGS;
         }
@@ -76,7 +78,7 @@ namespace Lucene.Net.Util
         /// Create a LongsRef pointing to a new array of size <code>capacity</code>.
         /// Offset and length will both be zero.
         /// </summary>
-        public LongsRef(int capacity)
+        public Int64sRef(int capacity)
         {
             longs = new long[capacity];
         }
@@ -85,7 +87,7 @@ namespace Lucene.Net.Util
         /// this instance will directly reference longs w/o making a copy.
         /// longs should not be null
         /// </summary>
-        public LongsRef(long[] longs, int offset, int length)
+        public Int64sRef(long[] longs, int offset, int length)
         {
             this.longs = longs;
             this.Offset = offset;
@@ -101,7 +103,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= #deepCopyOf </seealso>
         public object Clone()
         {
-            return new LongsRef(longs, Offset, Length);
+            return new Int64sRef(longs, Offset, Length);
         }
 
         public override int GetHashCode()
@@ -122,9 +124,9 @@ namespace Lucene.Net.Util
             {
                 return false;
             }
-            if (other is LongsRef)
+            if (other is Int64sRef)
             {
-                return this.Int64sEquals((LongsRef)other);
+                return this.Int64sEquals((Int64sRef)other);
             }
             return false;
         }
@@ -132,7 +134,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// NOTE: This was longsEquals() in Lucene
         /// </summary>
-        public bool Int64sEquals(LongsRef other)
+        public bool Int64sEquals(Int64sRef other)
         {
             if (Length == other.Length)
             {
@@ -156,7 +158,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Signed int order comparison </summary>
-        public int CompareTo(LongsRef other)
+        public int CompareTo(Int64sRef other)
         {
             if (this == other)
             {
@@ -191,7 +193,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// NOTE: This was copyLongs() in Lucene
         /// </summary>
-        public void CopyInt64s(LongsRef other)
+        public void CopyInt64s(Int64sRef other)
         {
             if (longs.Length - Offset < other.Length)
             {
@@ -241,9 +243,9 @@ namespace Lucene.Net.Util
         /// The returned IntsRef will have a length of other.length
         /// and an offset of zero.
         /// </summary>
-        public static LongsRef DeepCopyOf(LongsRef other)
+        public static Int64sRef DeepCopyOf(Int64sRef other)
         {
-            LongsRef clone = new LongsRef();
+            Int64sRef clone = new Int64sRef();
             clone.CopyInt64s(other);
             return clone;
         }

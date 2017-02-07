@@ -32,9 +32,9 @@ namespace Lucene.Net.Facet.Range
     using DoubleDocValuesField = Lucene.Net.Documents.DoubleDocValuesField;
     using DoubleField = Lucene.Net.Documents.DoubleField;
     using Field = Lucene.Net.Documents.Field;
-    using FloatDocValuesField = Lucene.Net.Documents.FloatDocValuesField;
-    using FloatField = Lucene.Net.Documents.FloatField;
-    using LongField = Lucene.Net.Documents.LongField;
+    using SingleDocValuesField = Lucene.Net.Documents.SingleDocValuesField;
+    using SingleField = Lucene.Net.Documents.SingleField;
+    using Int64Field = Lucene.Net.Documents.Int64Field;
     using NumericDocValuesField = Lucene.Net.Documents.NumericDocValuesField;
     using DrillSidewaysResult = Lucene.Net.Facet.DrillSideways.DrillSidewaysResult;
     using TaxonomyReader = Lucene.Net.Facet.Taxonomy.TaxonomyReader;
@@ -229,7 +229,7 @@ namespace Lucene.Net.Facet.Range
                 // For computing range facet counts:
                 doc.Add(new NumericDocValuesField("field", l));
                 // For drill down by numeric range:
-                doc.Add(new LongField("field", l, Field.Store.NO));
+                doc.Add(new Int64Field("field", l, Field.Store.NO));
 
                 if ((l & 3) == 0)
                 {
@@ -358,7 +358,7 @@ namespace Lucene.Net.Facet.Range
             Directory d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Document doc = new Document();
-            FloatDocValuesField field = new FloatDocValuesField("field", 0.0f);
+            SingleDocValuesField field = new SingleDocValuesField("field", 0.0f);
             doc.Add(field);
             for (long l = 0; l < 100; l++)
             {
@@ -400,7 +400,7 @@ namespace Lucene.Net.Facet.Range
                 long v = Random().NextLong();
                 values[i] = v;
                 doc.Add(new NumericDocValuesField("field", v));
-                doc.Add(new LongField("field", v, Field.Store.NO));
+                doc.Add(new Int64Field("field", v, Field.Store.NO));
                 w.AddDocument(doc);
                 minValue = Math.Min(minValue, v);
                 maxValue = Math.Max(maxValue, v);
@@ -588,8 +588,8 @@ namespace Lucene.Net.Facet.Range
                 Document doc = new Document();
                 float v = Random().NextFloat();
                 values[i] = v;
-                doc.Add(new FloatDocValuesField("field", v));
-                doc.Add(new FloatField("field", v, Field.Store.NO));
+                doc.Add(new SingleDocValuesField("field", v));
+                doc.Add(new SingleField("field", v, Field.Store.NO));
                 w.AddDocument(doc);
                 minValue = Math.Min(minValue, v);
                 maxValue = Math.Max(maxValue, v);

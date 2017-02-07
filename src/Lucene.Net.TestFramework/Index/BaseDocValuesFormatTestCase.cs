@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
-    using FloatDocValuesField = FloatDocValuesField;
+    using SingleDocValuesField = SingleDocValuesField;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using Lucene42DocValuesFormat = Lucene.Net.Codecs.Lucene42.Lucene42DocValuesFormat;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
             doc.Add(NewTextField("fieldname", text, Field.Store.YES));
-            doc.Add(new FloatDocValuesField("dv", 5.7f));
+            doc.Add(new SingleDocValuesField("dv", 5.7f));
             iwriter.AddDocument(doc);
             iwriter.Dispose();
 

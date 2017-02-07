@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Packed
     /// Packs integers into 3 shorts (48 bits per value).
     /// @lucene.internal
     /// </summary>
-    internal sealed class Packed16ThreeBlocks : PackedInts.MutableImpl
+    internal sealed class Packed16ThreeBlocks : PackedInt32s.MutableImpl
     {
         internal readonly short[] blocks;
 
@@ -53,7 +53,7 @@ namespace Lucene.Net.Util.Packed
                 blocks[i] = @in.ReadInt16();
             }
             // because packed ints have not always been byte-aligned
-            int remaining = (int)(PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 48) - 3L * valueCount * 2);
+            int remaining = (int)(PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 48) - 3L * valueCount * 2);
             for (int i = 0; i < remaining; ++i)
             {
                 @in.ReadByte();

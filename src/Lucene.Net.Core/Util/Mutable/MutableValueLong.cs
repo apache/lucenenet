@@ -18,10 +18,11 @@ namespace Lucene.Net.Util.Mutable
      */
 
     /// <summary>
-    /// <seealso cref="MutableValue"/> implementation of type
-    /// <code>long</code>.
+    /// <see cref="MutableValue"/> implementation of type <see cref="long"/>.
+    /// <para/>
+    /// NOTE: This was MutableValueLong in Lucene
     /// </summary>
-    public class MutableValueLong : MutableValue
+    public class MutableValueInt64 : MutableValue
     {
         public long Value { get; set; }
 
@@ -32,14 +33,14 @@ namespace Lucene.Net.Util.Mutable
 
         public override void Copy(MutableValue source)
         {
-            MutableValueLong s = (MutableValueLong)source;
+            MutableValueInt64 s = (MutableValueInt64)source;
             Exists = s.Exists;
             Value = s.Value;
         }
 
         public override MutableValue Duplicate()
         {
-            MutableValueLong v = new MutableValueLong();
+            MutableValueInt64 v = new MutableValueInt64();
             v.Value = this.Value;
             v.Exists = this.Exists;
             return v;
@@ -47,13 +48,13 @@ namespace Lucene.Net.Util.Mutable
 
         public override bool EqualsSameType(object other)
         {
-            MutableValueLong b = (MutableValueLong)other;
+            MutableValueInt64 b = (MutableValueInt64)other;
             return Value == b.Value && Exists == b.Exists;
         }
 
         public override int CompareSameType(object other)
         {
-            MutableValueLong b = (MutableValueLong)other;
+            MutableValueInt64 b = (MutableValueInt64)other;
             long bv = b.Value;
             if (Value < bv)
             {

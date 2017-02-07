@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     using BytesRef = Lucene.Net.Util.BytesRef;
     using GrowableWriter = Lucene.Net.Util.Packed.GrowableWriter;
     using MathUtil = Lucene.Net.Util.MathUtil;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using PagedBytes = Lucene.Net.Util.PagedBytes;
     using PagedBytesDataInput = Lucene.Net.Util.PagedBytes.PagedBytesDataInput;
     using PagedBytesDataOutput = Lucene.Net.Util.PagedBytes.PagedBytesDataOutput;
@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private int totalIndexInterval;
         private IComparer<BytesRef> comparer = BytesRef.UTF8SortedAsUTF16Comparer;
         private readonly PagedBytesDataInput dataInput;
-        private readonly PackedInts.Reader indexToDataOffset;
+        private readonly PackedInt32s.Reader indexToDataOffset;
         private readonly int indexSize;
         private readonly int skipInterval;
         private readonly long ramBytesUsed;
@@ -73,7 +73,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             PagedBytesDataOutput dataOutput = dataPagedBytes.GetDataOutput();
 
             int bitEstimate = 1 + MathUtil.Log(tiiFileLength, 2);
-            GrowableWriter indexToTerms = new GrowableWriter(bitEstimate, indexSize, PackedInts.DEFAULT);
+            GrowableWriter indexToTerms = new GrowableWriter(bitEstimate, indexSize, PackedInt32s.DEFAULT);
 
             string currentField = null;
             IList<string> fieldStrs = new List<string>();

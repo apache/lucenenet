@@ -53,7 +53,7 @@ namespace Lucene.Net.Util.Fst
     //using ResultLong = Lucene.Net.Util.Fst.Util.Result<long?>;
     //using ResultPair = Lucene.Net.Util.Fst.Util.Result<long?>;
     using OpenMode = Lucene.Net.Index.OpenMode;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using Pair = Lucene.Net.Util.Fst.PairOutputs<long?, long?>.Pair;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using RegExp = Lucene.Net.Util.Automaton.RegExp;
@@ -93,8 +93,8 @@ namespace Lucene.Net.Util.Fst
         {
             string[] strings = new string[] { "station", "commotion", "elation", "elastic", "plastic", "stop", "ftop", "ftation", "stat" };
             string[] strings2 = new string[] { "station", "commotion", "elation", "elastic", "plastic", "stop", "ftop", "ftation" };
-            IntsRef[] terms = new IntsRef[strings.Length];
-            IntsRef[] terms2 = new IntsRef[strings2.Length];
+            Int32sRef[] terms = new Int32sRef[strings.Length];
+            Int32sRef[] terms2 = new Int32sRef[strings2.Length];
             for (int inputMode = 0; inputMode < 2; inputMode++)
             {
                 if (VERBOSE)
@@ -121,7 +121,7 @@ namespace Lucene.Net.Util.Fst
                     Outputs<object> outputs = NoOutputs.Singleton;
                     object NO_OUTPUT = outputs.NoOutput;
                     List<FSTTester<object>.InputOutput<object>> pairs = new List<FSTTester<object>.InputOutput<object>>(terms2.Length);
-                    foreach (IntsRef term in terms2)
+                    foreach (Int32sRef term in terms2)
                     {
                         pairs.Add(new FSTTester<object>.InputOutput<object>(term, NO_OUTPUT));
                     }
@@ -133,7 +133,7 @@ namespace Lucene.Net.Util.Fst
 
                 // FST ord pos int
                 {
-                    PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
+                    PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
                     List<FSTTester<long?>.InputOutput<long?>> pairs = new List<FSTTester<long?>.InputOutput<long?>>(terms2.Length);
                     for (int idx = 0; idx < terms2.Length; idx++)
                     {
@@ -164,7 +164,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         // given set of terms, test the different outputs for them
-        private void DoTest(int inputMode, IntsRef[] terms)
+        private void DoTest(int inputMode, Int32sRef[] terms)
         {
             Array.Sort(terms);
 
@@ -173,7 +173,7 @@ namespace Lucene.Net.Util.Fst
                 Outputs<object> outputs = NoOutputs.Singleton;
                 object NO_OUTPUT = outputs.NoOutput;
                 List<FSTTester<object>.InputOutput<object>> pairs = new List<FSTTester<object>.InputOutput<object>>(terms.Length);
-                foreach (IntsRef term in terms)
+                foreach (Int32sRef term in terms)
                 {
                     pairs.Add(new FSTTester<object>.InputOutput<object>(term, NO_OUTPUT));
                 }
@@ -182,7 +182,7 @@ namespace Lucene.Net.Util.Fst
 
             // PositiveIntOutput (ord)
             {
-                PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
+                PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
                 List<FSTTester<long?>.InputOutput<long?>> pairs = new List<FSTTester<long?>.InputOutput<long?>>(terms.Length);
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
@@ -193,7 +193,7 @@ namespace Lucene.Net.Util.Fst
 
             // PositiveIntOutput (random monotonically increasing positive number)
             {
-                PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
+                PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
                 List<FSTTester<long?>.InputOutput<long?>> pairs = new List<FSTTester<long?>.InputOutput<long?>>(terms.Length);
                 long lastOutput = 0;
                 for (int idx = 0; idx < terms.Length; idx++)
@@ -207,7 +207,7 @@ namespace Lucene.Net.Util.Fst
 
             // PositiveIntOutput (random positive number)
             {
-                PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
+                PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
                 List<FSTTester<long?>.InputOutput<long?>> pairs = new List<FSTTester<long?>.InputOutput<long?>>(terms.Length);
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
@@ -218,8 +218,8 @@ namespace Lucene.Net.Util.Fst
 
             // Pair<ord, (random monotonically increasing positive number>
             {
-                PositiveIntOutputs o1 = PositiveIntOutputs.Singleton;
-                PositiveIntOutputs o2 = PositiveIntOutputs.Singleton;
+                PositiveInt32Outputs o1 = PositiveInt32Outputs.Singleton;
+                PositiveInt32Outputs o2 = PositiveInt32Outputs.Singleton;
                 PairOutputs<long?, long?> outputs = new PairOutputs<long?, long?>(o1, o2);
                 List<FSTTester<Pair>.InputOutput<Pair>> pairs = new List<FSTTester<Pair>.InputOutput<Pair>>(terms.Length);
                 long lastOutput = 0;
@@ -247,20 +247,20 @@ namespace Lucene.Net.Util.Fst
 
             // Sequence-of-ints
             {
-                IntSequenceOutputs outputs = IntSequenceOutputs.Singleton;
-                List<FSTTester<IntsRef>.InputOutput<IntsRef>> pairs = new List<FSTTester<IntsRef>.InputOutput<IntsRef>>(terms.Length);
+                Int32SequenceOutputs outputs = Int32SequenceOutputs.Singleton;
+                List<FSTTester<Int32sRef>.InputOutput<Int32sRef>> pairs = new List<FSTTester<Int32sRef>.InputOutput<Int32sRef>>(terms.Length);
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
                     string s = Convert.ToString(idx);
-                    IntsRef output = new IntsRef(s.Length);
+                    Int32sRef output = new Int32sRef(s.Length);
                     output.Length = s.Length;
                     for (int idx2 = 0; idx2 < output.Length; idx2++)
                     {
                         output.Int32s[idx2] = s[idx2];
                     }
-                    pairs.Add(new FSTTester<IntsRef>.InputOutput<IntsRef>(terms[idx], output));
+                    pairs.Add(new FSTTester<Int32sRef>.InputOutput<Int32sRef>(terms[idx], output));
                 }
-                (new FSTTester<IntsRef>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
+                (new FSTTester<Int32sRef>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
             }
 
         }
@@ -302,8 +302,8 @@ namespace Lucene.Net.Util.Fst
                 for (int inputMode = 0; inputMode < 2; inputMode++)
                 {
                     int numWords = random.Next(maxNumWords + 1);
-                    HashSet<IntsRef> termsSet = new HashSet<IntsRef>();
-                    IntsRef[] terms = new IntsRef[numWords];
+                    HashSet<Int32sRef> termsSet = new HashSet<Int32sRef>();
+                    Int32sRef[] terms = new Int32sRef[numWords];
                     while (termsSet.Count < numWords)
                     {
                         string term = FSTTester<object>.GetRandomString(random);
@@ -346,11 +346,11 @@ namespace Lucene.Net.Util.Fst
             }
             IndexReader r = DirectoryReader.Open(writer, true);
             writer.Dispose();
-            PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
+            PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
 
             bool doRewrite = Random().NextBoolean();
 
-            Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doRewrite, PackedInts.DEFAULT, true, 15);
+            Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doRewrite, PackedInt32s.DEFAULT, true, 15);
 
             bool storeOrd = Random().NextBoolean();
             if (VERBOSE)
@@ -367,7 +367,7 @@ namespace Lucene.Net.Util.Fst
             Terms terms = MultiFields.GetTerms(r, "body");
             if (terms != null)
             {
-                IntsRef scratchIntsRef = new IntsRef();
+                Int32sRef scratchIntsRef = new Int32sRef();
                 TermsEnum termsEnum = terms.GetIterator(null);
                 if (VERBOSE)
                 {
@@ -536,17 +536,17 @@ namespace Lucene.Net.Util.Fst
                 this.Outputs = outputs;
                 this.DoPack = doPack;
 
-                Builder = new Builder<T>(inputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4, 0, prune, prune == 0, true, int.MaxValue, outputs, null, doPack, PackedInts.DEFAULT, !noArcArrays, 15);
+                Builder = new Builder<T>(inputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4, 0, prune, prune == 0, true, int.MaxValue, outputs, null, doPack, PackedInt32s.DEFAULT, !noArcArrays, 15);
             }
 
-            protected internal abstract T GetOutput(IntsRef input, int ord);
+            protected internal abstract T GetOutput(Int32sRef input, int ord);
 
             public virtual void Run(int limit, bool verify, bool verifyByOutput)
             {
                 TextReader @is = new StreamReader(new FileStream(WordsFileIn, FileMode.Open), Encoding.UTF8);
                 try
                 {
-                    IntsRef intsRef = new IntsRef(10);
+                    Int32sRef intsRef = new Int32sRef(10);
                     long tStart = Environment.TickCount;
                     int ord = 0;
                     while (true)
@@ -650,7 +650,7 @@ namespace Lucene.Net.Util.Fst
                                 {
                                     // Get by output
                                     long? output = GetOutput(intsRef, ord) as long?;
-                                    IntsRef actual = Util.GetByOutput(fst as FST<long?>, output.GetValueOrDefault());
+                                    Int32sRef actual = Util.GetByOutput(fst as FST<long?>, output.GetValueOrDefault());
                                     if (actual == null)
                                     {
                                         throw new Exception("unexpected null input from output=" + output);
@@ -826,7 +826,7 @@ namespace Lucene.Net.Util.Fst
             }
 
             internal Random rand;
-            protected internal override Pair GetOutput(IntsRef input, int ord)
+            protected internal override Pair GetOutput(Int32sRef input, int ord)
             {
                 if (ord == 0)
                 {
@@ -838,12 +838,12 @@ namespace Lucene.Net.Util.Fst
 
         private class VisitTermsAnonymousInnerClassHelper2 : VisitTerms<long?>
         {
-            public VisitTermsAnonymousInnerClassHelper2(string dirOut, string wordsFileIn, int inputMode, int prune, PositiveIntOutputs outputs, bool doPack, bool noArcArrays)
+            public VisitTermsAnonymousInnerClassHelper2(string dirOut, string wordsFileIn, int inputMode, int prune, PositiveInt32Outputs outputs, bool doPack, bool noArcArrays)
                 : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
             {
             }
 
-            protected internal override long? GetOutput(IntsRef input, int ord)
+            protected internal override long? GetOutput(Int32sRef input, int ord)
             {
                 return ord;
             }
@@ -851,13 +851,13 @@ namespace Lucene.Net.Util.Fst
 
         private class VisitTermsAnonymousInnerClassHelper3 : VisitTerms<long?>
         {
-            public VisitTermsAnonymousInnerClassHelper3(string dirOut, string wordsFileIn, int inputMode, int prune, PositiveIntOutputs outputs, bool doPack, bool noArcArrays)
+            public VisitTermsAnonymousInnerClassHelper3(string dirOut, string wordsFileIn, int inputMode, int prune, PositiveInt32Outputs outputs, bool doPack, bool noArcArrays)
                 : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
             {
             }
 
             internal Random rand;
-            protected internal override long? GetOutput(IntsRef input, int ord)
+            protected internal override long? GetOutput(Int32sRef input, int ord)
             {
                 if (ord == 0)
                 {
@@ -877,7 +877,7 @@ namespace Lucene.Net.Util.Fst
                 this.NO_OUTPUT = NO_OUTPUT;
             }
 
-            protected internal override object GetOutput(IntsRef input, int ord)
+            protected internal override object GetOutput(Int32sRef input, int ord)
             {
                 return NO_OUTPUT;
             }
@@ -888,7 +888,7 @@ namespace Lucene.Net.Util.Fst
         {
             Outputs<object> outputs = NoOutputs.Singleton;
             Builder<object> b = new Builder<object>(FST.INPUT_TYPE.BYTE1, outputs);
-            b.Add(Util.ToInt32sRef(new BytesRef("foobar"), new IntsRef()), outputs.NoOutput);
+            b.Add(Util.ToInt32sRef(new BytesRef("foobar"), new Int32sRef()), outputs.NoOutput);
             BytesRefFSTEnum<object> fstEnum = new BytesRefFSTEnum<object>(b.Finish());
             Assert.IsNull(fstEnum.SeekFloor(new BytesRef("foo")));
             Assert.IsNull(fstEnum.SeekCeil(new BytesRef("foobaz")));
@@ -901,7 +901,7 @@ namespace Lucene.Net.Util.Fst
             string str = "foobar";
             Outputs<object> outputs = NoOutputs.Singleton;
             Builder<object> b = new Builder<object>(FST.INPUT_TYPE.BYTE1, outputs);
-            IntsRef ints = new IntsRef();
+            Int32sRef ints = new Int32sRef();
             for (int i = 0; i < 10; i++)
             {
                 b.Add(Util.ToInt32sRef(new BytesRef(str), ints), outputs.NoOutput);
@@ -970,7 +970,7 @@ namespace Lucene.Net.Util.Fst
             // smaller FST if the outputs grow monotonically.  But
             // if numbers are "random", false should give smaller
             // final size:
-            PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
+            PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
 
             // Build an FST mapping BytesRef -> Long
             Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
@@ -979,9 +979,9 @@ namespace Lucene.Net.Util.Fst
             BytesRef b = new BytesRef("b");
             BytesRef c = new BytesRef("c");
 
-            builder.Add(Util.ToInt32sRef(a, new IntsRef()), 17L);
-            builder.Add(Util.ToInt32sRef(b, new IntsRef()), 42L);
-            builder.Add(Util.ToInt32sRef(c, new IntsRef()), 13824324872317238L);
+            builder.Add(Util.ToInt32sRef(a, new Int32sRef()), 17L);
+            builder.Add(Util.ToInt32sRef(b, new Int32sRef()), 42L);
+            builder.Add(Util.ToInt32sRef(c, new Int32sRef()), 13824324872317238L);
 
             FST<long?> fst = builder.Finish();
 
@@ -1006,10 +1006,10 @@ namespace Lucene.Net.Util.Fst
             Assert.AreEqual(b, seekResult.Input);
             Assert.AreEqual(42, seekResult.Output);
 
-            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("c"), new IntsRef()), Util.GetByOutput(fst, 13824324872317238L));
+            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("c"), new Int32sRef()), Util.GetByOutput(fst, 13824324872317238L));
             Assert.IsNull(Util.GetByOutput(fst, 47));
-            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("b"), new IntsRef()), Util.GetByOutput(fst, 42));
-            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("a"), new IntsRef()), Util.GetByOutput(fst, 17));
+            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("b"), new Int32sRef()), Util.GetByOutput(fst, 42));
+            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("a"), new Int32sRef()), Util.GetByOutput(fst, 17));
         }
 
         [Test]
@@ -1277,7 +1277,7 @@ namespace Lucene.Net.Util.Fst
 
                 int line = 0;
                 BytesRef term = new BytesRef();
-                IntsRef scratchIntsRef = new IntsRef();
+                Int32sRef scratchIntsRef = new Int32sRef();
 
                 while (line < lines.Length)
                 {
@@ -1338,11 +1338,11 @@ namespace Lucene.Net.Util.Fst
         [Test]
         public virtual void TestFinalOutputOnEndState()
         {
-            PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
+            PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
 
-            Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE4, 2, 0, true, true, int.MaxValue, outputs, null, Random().NextBoolean(), PackedInts.DEFAULT, true, 15);
-            builder.Add(Util.ToUTF32("stat", new IntsRef()), 17L);
-            builder.Add(Util.ToUTF32("station", new IntsRef()), 10L);
+            Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE4, 2, 0, true, true, int.MaxValue, outputs, null, Random().NextBoolean(), PackedInt32s.DEFAULT, true, 15);
+            builder.Add(Util.ToUTF32("stat", new Int32sRef()), 17L);
+            builder.Add(Util.ToUTF32("station", new Int32sRef()), 10L);
             FST<long?> fst = builder.Finish();
             //Writer w = new OutputStreamWriter(new FileOutputStream("/x/tmp3/out.dot"));
             StringWriter w = new StringWriter();
@@ -1355,11 +1355,11 @@ namespace Lucene.Net.Util.Fst
         [Test]
         public virtual void TestInternalFinalState()
         {
-            PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
+            PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
             bool willRewrite = Random().NextBoolean();
-            Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, willRewrite, PackedInts.DEFAULT, true, 15);
-            builder.Add(Util.ToInt32sRef(new BytesRef("stat"), new IntsRef()), outputs.NoOutput);
-            builder.Add(Util.ToInt32sRef(new BytesRef("station"), new IntsRef()), outputs.NoOutput);
+            Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, willRewrite, PackedInt32s.DEFAULT, true, 15);
+            builder.Add(Util.ToInt32sRef(new BytesRef("stat"), new Int32sRef()), outputs.NoOutput);
+            builder.Add(Util.ToInt32sRef(new BytesRef("station"), new Int32sRef()), outputs.NoOutput);
             FST<long?> fst = builder.Finish();
             StringWriter w = new StringWriter();
             //Writer w = new OutputStreamWriter(new FileOutputStream("/x/tmp/out.dot"));
@@ -1378,11 +1378,11 @@ namespace Lucene.Net.Util.Fst
         [Test]
         public virtual void TestNonFinalStopNode()
         {
-            PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
+            PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
             long? nothing = outputs.NoOutput;
             Builder<long?> b = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
 
-            FST<long?> fst = new FST<long?>(FST.INPUT_TYPE.BYTE1, outputs, false, PackedInts.COMPACT, true, 15);
+            FST<long?> fst = new FST<long?>(FST.INPUT_TYPE.BYTE1, outputs, false, PackedInt32s.COMPACT, true, 15);
 
             Builder.UnCompiledNode<long?> rootNode = new Builder.UnCompiledNode<long?>(b, 0);
 
@@ -1432,7 +1432,7 @@ namespace Lucene.Net.Util.Fst
             dir.Dispose();
         }
 
-        private void CheckStopNodes(FST<long?> fst, PositiveIntOutputs outputs)
+        private void CheckStopNodes(FST<long?> fst, PositiveInt32Outputs outputs)
         {
             long? nothing = outputs.NoOutput;
             FST.Arc<long?> startArc = fst.GetFirstArc(new FST.Arc<long?>());
@@ -1467,10 +1467,10 @@ namespace Lucene.Net.Util.Fst
         [Test]
         public virtual void TestShortestPaths()
         {
-            PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
+            PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
             Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
 
-            IntsRef scratch = new IntsRef();
+            Int32sRef scratch = new Int32sRef();
             builder.Add(Util.ToInt32sRef(new BytesRef("aab"), scratch), 22L);
             builder.Add(Util.ToInt32sRef(new BytesRef("aac"), scratch), 7L);
             builder.Add(Util.ToInt32sRef(new BytesRef("ax"), scratch), 17L);
@@ -1495,10 +1495,10 @@ namespace Lucene.Net.Util.Fst
         [Test]
         public virtual void TestRejectNoLimits()
         {
-            PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
+            PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
             Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
 
-            IntsRef scratch = new IntsRef();
+            Int32sRef scratch = new Int32sRef();
             builder.Add(Util.ToInt32sRef(new BytesRef("aab"), scratch), 22L);
             builder.Add(Util.ToInt32sRef(new BytesRef("aac"), scratch), 7L);
             builder.Add(Util.ToInt32sRef(new BytesRef("adcd"), scratch), 17L);
@@ -1506,10 +1506,10 @@ namespace Lucene.Net.Util.Fst
 
             builder.Add(Util.ToInt32sRef(new BytesRef("ax"), scratch), 17L);
             FST<long?> fst = builder.Finish();
-            AtomicInteger rejectCount = new AtomicInteger();
+            AtomicInt32 rejectCount = new AtomicInt32();
             Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, minLongComparer, rejectCount);
 
-            searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, true, new IntsRef());
+            searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, true, new Int32sRef());
             Util.TopResults<long?> res = searcher.Search();
             Assert.AreEqual(rejectCount.Get(), 4);
             Assert.IsTrue(res.IsComplete); // rejected(4) + topN(2) <= maxQueueSize(6)
@@ -1520,7 +1520,7 @@ namespace Lucene.Net.Util.Fst
             rejectCount.Set(0);
             searcher = new TopNSearcherAnonymousInnerClassHelper2(this, fst, minLongComparer, rejectCount);
 
-            searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, true, new IntsRef());
+            searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, true, new Int32sRef());
             res = searcher.Search();
             Assert.AreEqual(rejectCount.Get(), 4);
             Assert.IsFalse(res.IsComplete); // rejected(4) + topN(2) > maxQueueSize(5)
@@ -1530,16 +1530,16 @@ namespace Lucene.Net.Util.Fst
         {
             private readonly TestFSTs OuterInstance;
 
-            private AtomicInteger RejectCount;
+            private AtomicInt32 RejectCount;
 
-            public TopNSearcherAnonymousInnerClassHelper(TestFSTs outerInstance, FST<long?> fst, IComparer<long?> minLongComparer, AtomicInteger rejectCount)
+            public TopNSearcherAnonymousInnerClassHelper(TestFSTs outerInstance, FST<long?> fst, IComparer<long?> minLongComparer, AtomicInt32 rejectCount)
                 : base(fst, 2, 6, minLongComparer)
             {
                 this.OuterInstance = outerInstance;
                 this.RejectCount = rejectCount;
             }
 
-            protected override bool AcceptResult(IntsRef input, long? output)
+            protected override bool AcceptResult(Int32sRef input, long? output)
             {
                 bool accept = (int)output == 7;
                 if (!accept)
@@ -1554,16 +1554,16 @@ namespace Lucene.Net.Util.Fst
         {
             private readonly TestFSTs OuterInstance;
 
-            private AtomicInteger RejectCount;
+            private AtomicInt32 RejectCount;
 
-            public TopNSearcherAnonymousInnerClassHelper2(TestFSTs outerInstance, FST<long?> fst, IComparer<long?> minLongComparer, AtomicInteger rejectCount)
+            public TopNSearcherAnonymousInnerClassHelper2(TestFSTs outerInstance, FST<long?> fst, IComparer<long?> minLongComparer, AtomicInt32 rejectCount)
                 : base(fst, 2, 5, minLongComparer)
             {
                 this.OuterInstance = outerInstance;
                 this.RejectCount = rejectCount;
             }
 
-            protected override bool AcceptResult(IntsRef input, long? output)
+            protected override bool AcceptResult(Int32sRef input, long? output)
             {
                 bool accept = (int)output == 7;
                 if (!accept)
@@ -1595,11 +1595,11 @@ namespace Lucene.Net.Util.Fst
         public virtual void TestShortestPathsWFST()
         {
 
-            PairOutputs<long?, long?> outputs = new PairOutputs<long?, long?>(PositiveIntOutputs.Singleton, PositiveIntOutputs.Singleton); // output -  weight
+            PairOutputs<long?, long?> outputs = new PairOutputs<long?, long?>(PositiveInt32Outputs.Singleton, PositiveInt32Outputs.Singleton); // output -  weight
 
             Builder<Pair> builder = new Builder<Pair>(FST.INPUT_TYPE.BYTE1, outputs);
 
-            IntsRef scratch = new IntsRef();
+            Int32sRef scratch = new Int32sRef();
             builder.Add(Util.ToInt32sRef(new BytesRef("aab"), scratch), outputs.NewPair(22L, 57L));
             builder.Add(Util.ToInt32sRef(new BytesRef("aac"), scratch), outputs.NewPair(7L, 36L));
             builder.Add(Util.ToInt32sRef(new BytesRef("ax"), scratch), outputs.NewPair(17L, 85L));
@@ -1634,9 +1634,9 @@ namespace Lucene.Net.Util.Fst
             SortedDictionary<string, long> slowCompletor = new SortedDictionary<string, long>();
             SortedSet<string> allPrefixes = new SortedSet<string>();
 
-            PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
+            PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
             Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
-            IntsRef scratch = new IntsRef();
+            Int32sRef scratch = new Int32sRef();
 
             for (int i = 0; i < numWords; i++)
             {
@@ -1703,7 +1703,7 @@ namespace Lucene.Net.Util.Fst
                     if (e.Key.StartsWith(prefix))
                     {
                         //System.out.println("  consider " + e.getKey());
-                        matches.Add(new Util.Result<long?>(Util.ToInt32sRef(new BytesRef(e.Key.Substring(prefix.Length)), new IntsRef()), e.Value - prefixOutput));
+                        matches.Add(new Util.Result<long?>(Util.ToInt32sRef(new BytesRef(e.Key.Substring(prefix.Length)), new Int32sRef()), e.Value - prefixOutput));
                     }
                 }
 
@@ -1773,9 +1773,9 @@ namespace Lucene.Net.Util.Fst
             SortedDictionary<string, TwoLongs> slowCompletor = new SortedDictionary<string, TwoLongs>();
             SortedSet<string> allPrefixes = new SortedSet<string>();
 
-            PairOutputs<long?, long?> outputs = new PairOutputs<long?, long?>(PositiveIntOutputs.Singleton, PositiveIntOutputs.Singleton); // output -  weight
+            PairOutputs<long?, long?> outputs = new PairOutputs<long?, long?>(PositiveInt32Outputs.Singleton, PositiveInt32Outputs.Singleton); // output -  weight
             Builder<Pair> builder = new Builder<Pair>(FST.INPUT_TYPE.BYTE1, outputs);
-            IntsRef scratch = new IntsRef();
+            Int32sRef scratch = new Int32sRef();
 
             Random random = Random();
             for (int i = 0; i < numWords; i++)
@@ -1845,7 +1845,7 @@ namespace Lucene.Net.Util.Fst
                     if (e.Key.StartsWith(prefix))
                     {
                         //System.out.println("  consider " + e.getKey());
-                        matches.Add(new Util.Result<Pair>(Util.ToInt32sRef(new BytesRef(e.Key.Substring(prefix.Length)), new IntsRef()),
+                        matches.Add(new Util.Result<Pair>(Util.ToInt32sRef(new BytesRef(e.Key.Substring(prefix.Length)), new Int32sRef()),
                             outputs.NewPair(e.Value.a - prefixOutput.Output1, e.Value.b - prefixOutput.Output2)));
                     }
                 }
@@ -1875,7 +1875,7 @@ namespace Lucene.Net.Util.Fst
             Builder<BytesRef> builder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, outputs);
 
             byte[] bytes = new byte[300];
-            IntsRef input = new IntsRef();
+            Int32sRef input = new Int32sRef();
             input.Grow(1);
             input.Length = 1;
             BytesRef output = new BytesRef(bytes);

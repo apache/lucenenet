@@ -27,25 +27,25 @@ namespace Lucene.Net.Util.Packed
     /// <seealso cref="MonotonicBlockPackedWriter"/>.
     /// @lucene.internal
     /// </summary>
-    public sealed class MonotonicBlockPackedReader : LongValues
+    public sealed class MonotonicBlockPackedReader : Int64Values
     {
         private readonly int blockShift, blockMask;
         private readonly long valueCount;
         private readonly long[] minValues;
         private readonly float[] averages;
-        private readonly PackedInts.Reader[] subReaders;
+        private readonly PackedInt32s.Reader[] subReaders;
 
         /// <summary>
         /// Sole constructor. </summary>
         public MonotonicBlockPackedReader(IndexInput @in, int packedIntsVersion, int blockSize, long valueCount, bool direct)
         {
             this.valueCount = valueCount;
-            blockShift = PackedInts.CheckBlockSize(blockSize, AbstractBlockPackedWriter.MIN_BLOCK_SIZE, AbstractBlockPackedWriter.MAX_BLOCK_SIZE);
+            blockShift = PackedInt32s.CheckBlockSize(blockSize, AbstractBlockPackedWriter.MIN_BLOCK_SIZE, AbstractBlockPackedWriter.MAX_BLOCK_SIZE);
             blockMask = blockSize - 1;
-            int numBlocks = PackedInts.NumBlocks(valueCount, blockSize);
+            int numBlocks = PackedInt32s.NumBlocks(valueCount, blockSize);
             minValues = new long[numBlocks];
             averages = new float[numBlocks];
-            subReaders = new PackedInts.Reader[numBlocks];
+            subReaders = new PackedInt32s.Reader[numBlocks];
             for (int i = 0; i < numBlocks; ++i)
             {
                 minValues[i] = @in.ReadVInt64();
@@ -57,7 +57,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 if (bitsPerValue == 0)
                 {
-                    subReaders[i] = new PackedInts.NullReader(blockSize);
+                    subReaders[i] = new PackedInt32s.NullReader(blockSize);
                 }
                 else
                 {
@@ -65,12 +65,12 @@ namespace Lucene.Net.Util.Packed
                     if (direct)
                     {
                         long pointer = @in.FilePointer;
-                        subReaders[i] = PackedInts.GetDirectReaderNoHeader(@in, PackedInts.Format.PACKED, packedIntsVersion, size, bitsPerValue);
-                        @in.Seek(pointer + PackedInts.Format.PACKED.ByteCount(packedIntsVersion, size, bitsPerValue));
+                        subReaders[i] = PackedInt32s.GetDirectReaderNoHeader(@in, PackedInt32s.Format.PACKED, packedIntsVersion, size, bitsPerValue);
+                        @in.Seek(pointer + PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, size, bitsPerValue));
                     }
                     else
                     {
-                        subReaders[i] = PackedInts.GetReaderNoHeader(@in, PackedInts.Format.PACKED, packedIntsVersion, size, bitsPerValue);
+                        subReaders[i] = PackedInt32s.GetReaderNoHeader(@in, PackedInt32s.Format.PACKED, packedIntsVersion, size, bitsPerValue);
                     }
                 }
             }
@@ -100,7 +100,7 @@ namespace Lucene.Net.Util.Packed
             long sizeInBytes = 0;
             sizeInBytes += RamUsageEstimator.SizeOf(minValues);
             sizeInBytes += RamUsageEstimator.SizeOf(averages);
-            foreach (PackedInts.Reader reader in subReaders)
+            foreach (PackedInt32s.Reader reader in subReaders)
             {
                 sizeInBytes += reader.RamBytesUsed();
             }

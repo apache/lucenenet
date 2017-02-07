@@ -216,7 +216,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
                 Builder<BytesRef> builder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE4, outputs);
                 int[] sort = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
-                IntsRef intsSpare = new IntsRef();
+                Int32sRef intsSpare = new Int32sRef();
                 int size = hash.Count;
                 for (int i = 0; i < size; i++)
                 {

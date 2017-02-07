@@ -13,9 +13,9 @@ namespace Lucene.Net.Search
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
-    using FloatField = FloatField;
+    using SingleField = SingleField;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using IntField = IntField;
+    using Int32Field = Int32Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
             Directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
 
-            FieldType storedInt = new FieldType(IntField.TYPE_NOT_STORED);
+            FieldType storedInt = new FieldType(Int32Field.TYPE_NOT_STORED);
             storedInt.IsStored = true;
             storedInt.Freeze();
 
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
             FieldType storedIntNone = new FieldType(storedInt);
             storedIntNone.NumericPrecisionStep = int.MaxValue;
 
-            FieldType unstoredInt = IntField.TYPE_NOT_STORED;
+            FieldType unstoredInt = Int32Field.TYPE_NOT_STORED;
 
             FieldType unstoredInt8 = new FieldType(unstoredInt);
             unstoredInt8.NumericPrecisionStep = 8;
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
             FieldType unstoredInt2 = new FieldType(unstoredInt);
             unstoredInt2.NumericPrecisionStep = 2;
 
-            IntField field8 = new IntField("field8", 0, storedInt8), field4 = new IntField("field4", 0, storedInt4), field2 = new IntField("field2", 0, storedInt2), fieldNoTrie = new IntField("field" + int.MaxValue, 0, storedIntNone), ascfield8 = new IntField("ascfield8", 0, unstoredInt8), ascfield4 = new IntField("ascfield4", 0, unstoredInt4), ascfield2 = new IntField("ascfield2", 0, unstoredInt2);
+            Int32Field field8 = new Int32Field("field8", 0, storedInt8), field4 = new Int32Field("field4", 0, storedInt4), field2 = new Int32Field("field2", 0, storedInt2), fieldNoTrie = new Int32Field("field" + int.MaxValue, 0, storedIntNone), ascfield8 = new Int32Field("ascfield8", 0, unstoredInt8), ascfield4 = new Int32Field("ascfield4", 0, unstoredInt4), ascfield2 = new Int32Field("ascfield2", 0, unstoredInt2);
 
             Document doc = new Document();
             // add fields, that have a distance to test general functionality
@@ -332,24 +332,24 @@ namespace Lucene.Net.Search
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             Document doc = new Document();
-            doc.Add(new FloatField("float", float.NegativeInfinity, Field.Store.NO));
-            doc.Add(new IntField("int", int.MinValue, Field.Store.NO));
+            doc.Add(new SingleField("float", float.NegativeInfinity, Field.Store.NO));
+            doc.Add(new Int32Field("int", int.MinValue, Field.Store.NO));
             writer.AddDocument(doc);
 
             doc = new Document();
-            doc.Add(new FloatField("float", float.PositiveInfinity, Field.Store.NO));
-            doc.Add(new IntField("int", int.MaxValue, Field.Store.NO));
+            doc.Add(new SingleField("float", float.PositiveInfinity, Field.Store.NO));
+            doc.Add(new Int32Field("int", int.MaxValue, Field.Store.NO));
             writer.AddDocument(doc);
 
             doc = new Document();
-            doc.Add(new FloatField("float", 0.0f, Field.Store.NO));
-            doc.Add(new IntField("int", 0, Field.Store.NO));
+            doc.Add(new SingleField("float", 0.0f, Field.Store.NO));
+            doc.Add(new Int32Field("int", 0, Field.Store.NO));
             writer.AddDocument(doc);
 
             foreach (float f in TestNumericUtils.FLOAT_NANs)
             {
                 doc = new Document();
-                doc.Add(new FloatField("float", f, Field.Store.NO));
+                doc.Add(new SingleField("float", f, Field.Store.NO));
                 writer.AddDocument(doc);
             }
 

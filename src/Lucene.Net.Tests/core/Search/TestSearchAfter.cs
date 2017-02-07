@@ -35,11 +35,11 @@ namespace Lucene.Net.Search
     using DoubleField = DoubleField;
     using English = Lucene.Net.Util.English;
     using Field = Field;
-    using FloatDocValuesField = FloatDocValuesField;
-    using FloatField = FloatField;
+    using SingleDocValuesField = SingleDocValuesField;
+    using SingleField = SingleField;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using IntField = IntField;
-    using LongField = LongField;
+    using Int32Field = Int32Field;
+    using Int64Field = Int64Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NumericDocValuesField = NumericDocValuesField;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
@@ -153,10 +153,10 @@ namespace Lucene.Net.Search
                 fields.Add(NewTextField("oddeven", (i % 2 == 0) ? "even" : "odd", Field.Store.NO));
                 fields.Add(NewStringField("byte", "" + ((sbyte)Random().Next()), Field.Store.NO));
                 fields.Add(NewStringField("short", "" + ((short)Random().Next()), Field.Store.NO));
-                fields.Add(new IntField("int", Random().Next(), Field.Store.NO));
-                fields.Add(new LongField("long", Random().NextLong(), Field.Store.NO));
+                fields.Add(new Int32Field("int", Random().Next(), Field.Store.NO));
+                fields.Add(new Int64Field("long", Random().NextLong(), Field.Store.NO));
 
-                fields.Add(new FloatField("float", (float)Random().NextDouble(), Field.Store.NO));
+                fields.Add(new SingleField("float", (float)Random().NextDouble(), Field.Store.NO));
                 fields.Add(new DoubleField("double", Random().NextDouble(), Field.Store.NO));
                 fields.Add(NewStringField("bytes", TestUtil.RandomRealisticUnicodeString(Random()), Field.Store.NO));
                 fields.Add(NewStringField("bytesval", TestUtil.RandomRealisticUnicodeString(Random()), Field.Store.NO));
@@ -165,7 +165,7 @@ namespace Lucene.Net.Search
                 if (SupportsDocValues)
                 {
                     fields.Add(new NumericDocValuesField("intdocvalues", Random().Next()));
-                    fields.Add(new FloatDocValuesField("floatdocvalues", (float)Random().NextDouble()));
+                    fields.Add(new SingleDocValuesField("floatdocvalues", (float)Random().NextDouble()));
                     fields.Add(new SortedDocValuesField("sortedbytesdocvalues", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()))));
                     fields.Add(new SortedDocValuesField("sortedbytesdocvaluesval", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()))));
                     fields.Add(new BinaryDocValuesField("straightbytesdocvalues", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()))));

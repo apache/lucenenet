@@ -796,10 +796,10 @@ namespace Lucene.Net.Util.Automaton
             bool initAccept = a.initial.accept;
             int initNumber = a.initial.number;
             a.initial = new State();
-            SortedIntSet.FrozenIntSet initialset = new SortedIntSet.FrozenIntSet(initNumber, a.initial);
+            SortedInt32Set.FrozenInt32Set initialset = new SortedInt32Set.FrozenInt32Set(initNumber, a.initial);
 
-            LinkedList<SortedIntSet.FrozenIntSet> worklist = new LinkedList<SortedIntSet.FrozenIntSet>();
-            IDictionary<SortedIntSet.FrozenIntSet, State> newstate = new Dictionary<SortedIntSet.FrozenIntSet, State>();
+            LinkedList<SortedInt32Set.FrozenInt32Set> worklist = new LinkedList<SortedInt32Set.FrozenInt32Set>();
+            IDictionary<SortedInt32Set.FrozenInt32Set, State> newstate = new Dictionary<SortedInt32Set.FrozenInt32Set, State>();
 
             worklist.AddLast(initialset);
 
@@ -816,7 +816,7 @@ namespace Lucene.Net.Util.Automaton
             PointTransitionSet points = new PointTransitionSet();
 
             // like SortedMap<Integer,Integer>
-            SortedIntSet statesSet = new SortedIntSet(5);
+            SortedInt32Set statesSet = new SortedInt32Set(5);
 
             // LUCENENET TODO: THIS IS INFINITE LOOPING
 
@@ -825,7 +825,7 @@ namespace Lucene.Net.Util.Automaton
             // differing equality checking.
             while (worklist.Count > 0)
             {
-                SortedIntSet.FrozenIntSet s = worklist.First.Value;
+                SortedInt32Set.FrozenInt32Set s = worklist.First.Value;
                 worklist.Remove(s);
 
                 // Collate all outgoing transitions by min/1+max:
@@ -866,7 +866,7 @@ namespace Lucene.Net.Util.Automaton
                         {
                             q = new State();
 
-                            SortedIntSet.FrozenIntSet p = statesSet.Freeze(q);
+                            SortedInt32Set.FrozenInt32Set p = statesSet.Freeze(q);
                             worklist.AddLast(p);
                             if (newStateUpto == newStatesArray.Length)
                             {

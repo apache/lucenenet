@@ -144,7 +144,7 @@ namespace Lucene.Net.Facet.Taxonomy
         private volatile bool closed = false;
 
         // set refCount to 1 at start
-        private readonly AtomicInteger refCount = new AtomicInteger(1);
+        private readonly AtomicInt32 refCount = new AtomicInt32(1);
 
         /// <summary>
         /// performs the actual task of closing the resources that are used by the

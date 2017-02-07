@@ -42,7 +42,7 @@ namespace Lucene.Net.Util.Packed
     /// See https://issues.apache.org/jira/browse/LUCENE-4062 for details.
     ///
     /// </summary>
-    public class Packed64 : PackedInts.MutableImpl
+    public class Packed64 : PackedInt32s.MutableImpl
     {
         internal const int BLOCK_SIZE = 64; // 32 = int, 64 = long
         internal const int BLOCK_BITS = 6; // The #bits representing BLOCK_SIZE
@@ -71,8 +71,8 @@ namespace Lucene.Net.Util.Packed
         public Packed64(int valueCount, int bitsPerValue)
             : base(valueCount, bitsPerValue)
         {
-            PackedInts.Format format = PackedInts.Format.PACKED;
-            int longCount = format.Int64Count(PackedInts.VERSION_CURRENT, valueCount, bitsPerValue);
+            PackedInt32s.Format format = PackedInt32s.Format.PACKED;
+            int longCount = format.Int64Count(PackedInt32s.VERSION_CURRENT, valueCount, bitsPerValue);
             this.blocks = new long[longCount];
             //            MaskRight = ~0L << (int)((uint)(BLOCK_SIZE - bitsPerValue) >> (BLOCK_SIZE - bitsPerValue));    //original
             //            MaskRight = (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue);          //mod
@@ -98,9 +98,9 @@ namespace Lucene.Net.Util.Packed
         public Packed64(int packedIntsVersion, DataInput @in, int valueCount, int bitsPerValue)
             : base(valueCount, bitsPerValue)
         {
-            PackedInts.Format format = PackedInts.Format.PACKED;
+            PackedInt32s.Format format = PackedInt32s.Format.PACKED;
             long byteCount = format.ByteCount(packedIntsVersion, valueCount, bitsPerValue); // to know how much to read
-            int longCount = format.Int64Count(PackedInts.VERSION_CURRENT, valueCount, bitsPerValue); // to size the array
+            int longCount = format.Int64Count(PackedInt32s.VERSION_CURRENT, valueCount, bitsPerValue); // to size the array
             blocks = new long[longCount];
             // read as many longs as we can
             for (int i = 0; i < byteCount / 8; ++i)
@@ -180,7 +180,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(off + len <= arr.Length);
 
             int originalIndex = index;
-            PackedInts.IDecoder decoder = BulkOperation.Of(PackedInts.Format.PACKED, m_bitsPerValue);
+            PackedInt32s.IDecoder decoder = BulkOperation.Of(PackedInt32s.Format.PACKED, m_bitsPerValue);
 
             // go to the next block where the value does not span across two blocks
             int offsetInBlocks = index % decoder.Int64ValueCount;
@@ -248,7 +248,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(off + len <= arr.Length);
 
             int originalIndex = index;
-            PackedInts.IEncoder encoder = BulkOperation.Of(PackedInts.Format.PACKED, m_bitsPerValue);
+            PackedInt32s.IEncoder encoder = BulkOperation.Of(PackedInt32s.Format.PACKED, m_bitsPerValue);
 
             // go to the next block where the value does not span across two blocks
             int offsetInBlocks = index % encoder.Int64ValueCount;
@@ -306,7 +306,7 @@ namespace Lucene.Net.Util.Packed
 
         public override void Fill(int fromIndex, int toIndex, long val)
         {
-            Debug.Assert(PackedInts.BitsRequired(val) <= BitsPerValue);
+            Debug.Assert(PackedInt32s.BitsRequired(val) <= BitsPerValue);
             Debug.Assert(fromIndex <= toIndex);
 
             // minimum number of values that use an exact number of full blocks

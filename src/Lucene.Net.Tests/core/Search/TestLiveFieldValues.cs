@@ -15,7 +15,7 @@ namespace Lucene.Net.Search
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using IntField = IntField;
+    using Int32Field = Int32Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
@@ -181,7 +181,7 @@ namespace Lucene.Net.Search
                             string id = string.Format(CultureInfo.InvariantCulture, "{0}_{1:X4}", ThreadID, ThreadRandom.Next(IdCount));
                             int field = ThreadRandom.Next(int.MaxValue);
                             doc.Add(new StringField("id", id, Field.Store.YES));
-                            doc.Add(new IntField("field", (int)field, Field.Store.YES));
+                            doc.Add(new Int32Field("field", (int)field, Field.Store.YES));
                             w.UpdateDocument(new Term("id", id), doc);
                             Rt.Add(id, field);
                             if (!values.ContainsKey(id))//Key didn't exist before

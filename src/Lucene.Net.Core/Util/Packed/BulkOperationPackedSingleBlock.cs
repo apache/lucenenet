@@ -18,7 +18,7 @@ namespace Lucene.Net.Util.Packed
      */
 
     /// <summary>
-    /// Non-specialized <seealso cref="BulkOperation"/> for <seealso cref="PackedInts.Format#PACKED_SINGLE_BLOCK"/>.
+    /// Non-specialized <seealso cref="BulkOperation"/> for <seealso cref="PackedInt32s.Format#PACKED_SINGLE_BLOCK"/>.
     /// </summary>
     internal sealed class BulkOperationPackedSingleBlock : BulkOperation
     {

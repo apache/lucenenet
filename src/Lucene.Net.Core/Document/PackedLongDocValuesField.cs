@@ -31,18 +31,21 @@ namespace Lucene.Net.Documents
     /// <p>
     /// If you also need to store the value, you should add a
     /// separate <seealso cref="StoredField"/> instance.
+    /// <para>
+    /// NOTE: This was PackedLongDocValuesField in Lucene
+    /// </para>
     /// </summary>
     /// <seealso cref= NumericDocValues </seealso>
     /// @deprecated use <seealso cref="NumericDocValuesField"/> instead.
     [Obsolete("Use NumericDocValuesField instead.")]
-    public class PackedLongDocValuesField : NumericDocValuesField
+    public class PackedInt64DocValuesField : NumericDocValuesField
     {
         /// <summary>
-        /// Creates a new DocValues field with the specified long value </summary>
+        /// Creates a new DocValues field with the specified <see cref="long"/> value </summary>
         /// <param name="name"> field name </param>
-        /// <param name="value"> 64-bit long value </param>
+        /// <param name="value"> 64-bit <see cref="long"/> value </param>
         /// <exception cref="ArgumentException"> if the field name is null </exception>
-        public PackedLongDocValuesField(string name, long value)
+        public PackedInt64DocValuesField(string name, long value)
             : base(name, value)
         {
         }

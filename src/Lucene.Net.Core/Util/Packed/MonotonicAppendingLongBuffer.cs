@@ -25,10 +25,12 @@ namespace Lucene.Net.Util.Packed
     /// Utility class to buffer signed longs in memory, which is optimized for the
     /// case where the sequence is monotonic, although it can encode any sequence of
     /// arbitrary longs. It only supports appending.
-    ///
+    /// <para/>
+    /// NOTE: This was MonotonicAppendingLongBuffer in Lucene
+    /// 
     /// @lucene.internal
     /// </summary>
-    public sealed class MonotonicAppendingLongBuffer : AbstractAppendingLongBuffer
+    public sealed class MonotonicAppendingInt64Buffer : AbstractAppendingInt64Buffer
     {
         internal static long ZigZagDecode(long n)
         {
@@ -46,7 +48,7 @@ namespace Lucene.Net.Util.Packed
         /// <param name="initialPageCount">        the initial number of pages </param>
         /// <param name="pageSize">                the size of a single page </param>
         /// <param name="acceptableOverheadRatio"> an acceptable overhead ratio per value </param>
-        public MonotonicAppendingLongBuffer(int initialPageCount, int pageSize, float acceptableOverheadRatio)
+        public MonotonicAppendingInt64Buffer(int initialPageCount, int pageSize, float acceptableOverheadRatio)
             : base(initialPageCount, pageSize, acceptableOverheadRatio)
         {
             averages = new float[values.Length];
@@ -54,19 +56,19 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Create an <seealso cref="MonotonicAppendingLongBuffer"/> with initialPageCount=16,
-        /// pageSize=1024 and acceptableOverheadRatio=<seealso cref="PackedInts#DEFAULT"/>
+        /// Create an <seealso cref="MonotonicAppendingInt64Buffer"/> with initialPageCount=16,
+        /// pageSize=1024 and acceptableOverheadRatio=<seealso cref="PackedInt32s#DEFAULT"/>
         /// </summary>
-        public MonotonicAppendingLongBuffer()
-            : this(16, 1024, PackedInts.DEFAULT)
+        public MonotonicAppendingInt64Buffer()
+            : this(16, 1024, PackedInt32s.DEFAULT)
         {
         }
 
         /// <summary>
-        /// Create an <seealso cref="AppendingDeltaPackedLongBuffer"/> with initialPageCount=16,
+        /// Create an <seealso cref="AppendingDeltaPackedInt64Buffer"/> with initialPageCount=16,
         /// pageSize=1024
         /// </summary>
-        public MonotonicAppendingLongBuffer(float acceptableOverheadRatio)
+        public MonotonicAppendingInt64Buffer(float acceptableOverheadRatio)
             : this(16, 1024, acceptableOverheadRatio)
         {
         }
@@ -155,12 +157,12 @@ namespace Lucene.Net.Util.Packed
             }
             if (maxDelta == 0)
             {
-                values[valuesOff] = new PackedInts.NullReader(pendingOff);
+                values[valuesOff] = new PackedInt32s.NullReader(pendingOff);
             }
             else
             {
-                int bitsRequired = maxDelta < 0 ? 64 : PackedInts.BitsRequired(maxDelta);
-                PackedInts.Mutable mutable = PackedInts.GetMutable(pendingOff, bitsRequired, acceptableOverheadRatio);
+                int bitsRequired = maxDelta < 0 ? 64 : PackedInt32s.BitsRequired(maxDelta);
+                PackedInt32s.Mutable mutable = PackedInt32s.GetMutable(pendingOff, bitsRequired, acceptableOverheadRatio);
                 for (int i = 0; i < pendingOff; )
                 {
                     i += mutable.Set(i, pending, i, pendingOff - i);

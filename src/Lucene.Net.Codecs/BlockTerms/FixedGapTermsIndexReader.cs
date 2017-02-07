@@ -341,12 +341,12 @@ namespace Lucene.Net.Codecs.BlockTerms
                 /// <summary>
                 /// Offset into index TermBytes
                 /// </summary>
-                internal PackedInts.Reader TermOffsets { get; private set; }
+                internal PackedInt32s.Reader TermOffsets { get; private set; }
 
                 /// <summary>
                 /// Index pointers into main terms dict
                 /// </summary>
-                internal PackedInts.Reader TermsDictOffsets { get; private set; }
+                internal PackedInt32s.Reader TermsDictOffsets { get; private set; }
 
                 internal int NumIndexTerms { get; private set; }
                 internal long TermsStart { get; private set; }
@@ -380,11 +380,11 @@ namespace Lucene.Net.Codecs.BlockTerms
                             fgtir._termBytes.Copy(clone, numTermBytes);
 
                             // records offsets into main terms dict file
-                            TermsDictOffsets = PackedInts.GetReader(clone);
+                            TermsDictOffsets = PackedInt32s.GetReader(clone);
                             Debug.Assert(TermsDictOffsets.Count == numIndexTerms);
 
                             // records offsets into byte[] term data
-                            TermOffsets = PackedInts.GetReader(clone);
+                            TermOffsets = PackedInt32s.GetReader(clone);
                             Debug.Assert(TermOffsets.Count == 1 + numIndexTerms);
                         }
                         finally
@@ -403,23 +403,23 @@ namespace Lucene.Net.Codecs.BlockTerms
                             // Subsample the index terms
                             clone1.Seek(packedIndexStart);
                             
-                            PackedInts.IReaderIterator termsDictOffsetsIter = PackedInts.GetReaderIterator(clone1,
-                                PackedInts.DEFAULT_BUFFER_SIZE);
+                            PackedInt32s.IReaderIterator termsDictOffsetsIter = PackedInt32s.GetReaderIterator(clone1,
+                                PackedInt32s.DEFAULT_BUFFER_SIZE);
 
                             clone2.Seek(packedOffsetsStart);
                             
-                            PackedInts.IReaderIterator termOffsetsIter = PackedInts.GetReaderIterator(clone2,
-                                PackedInts.DEFAULT_BUFFER_SIZE);
+                            PackedInt32s.IReaderIterator termOffsetsIter = PackedInt32s.GetReaderIterator(clone2,
+                                PackedInt32s.DEFAULT_BUFFER_SIZE);
 
                             // TODO: often we can get by w/ fewer bits per
                             // value, below.. .but this'd be more complex:
                             // we'd have to try @ fewer bits and then grow
                             // if we overflowed it.
 
-                            PackedInts.Mutable termsDictOffsetsM = PackedInts.GetMutable(NumIndexTerms,
-                                termsDictOffsetsIter.BitsPerValue, PackedInts.DEFAULT);
-                            PackedInts.Mutable termOffsetsM = PackedInts.GetMutable(NumIndexTerms + 1,
-                                termOffsetsIter.BitsPerValue, PackedInts.DEFAULT);
+                            PackedInt32s.Mutable termsDictOffsetsM = PackedInt32s.GetMutable(NumIndexTerms,
+                                termsDictOffsetsIter.BitsPerValue, PackedInt32s.DEFAULT);
+                            PackedInt32s.Mutable termOffsetsM = PackedInt32s.GetMutable(NumIndexTerms + 1,
+                                termOffsetsIter.BitsPerValue, PackedInt32s.DEFAULT);
 
                             TermsDictOffsets = termsDictOffsetsM;
                             TermOffsets = termOffsetsM;

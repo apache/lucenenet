@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal sealed class JustCompileExtendedFieldCacheLongParser : FieldCache.ILongParser
+        internal sealed class JustCompileExtendedFieldCacheLongParser : FieldCache.IInt64Parser
         {
             /// <summary>
             /// NOTE: This was parseLong() in Lucene

@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestNRTReaderWithThreads : LuceneTestCase
     {
-        internal AtomicInteger Seq = new AtomicInteger(1);
+        internal AtomicInt32 Seq = new AtomicInt32(1);
         [Test]
         public virtual void TestIndexing()
         {

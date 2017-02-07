@@ -60,7 +60,7 @@ namespace Lucene.Net.QueryParsers.Xml
                 Document doc = new Document();
                 doc.Add(NewTextField("date", date, Field.Store.YES));
                 doc.Add(NewTextField("contents", content, Field.Store.YES));
-                doc.Add(new IntField("date2", Convert.ToInt32(date), Field.Store.NO));
+                doc.Add(new Int32Field("date2", Convert.ToInt32(date), Field.Store.NO));
                 writer.AddDocument(doc);
                 line = d.ReadLine();
             }

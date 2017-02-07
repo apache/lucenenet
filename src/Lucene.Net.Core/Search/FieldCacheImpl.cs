@@ -36,9 +36,9 @@ namespace Lucene.Net.Search
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using GrowableWriter = Lucene.Net.Util.Packed.GrowableWriter;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using MonotonicAppendingLongBuffer = Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer;
+    using MonotonicAppendingInt64Buffer = Lucene.Net.Util.Packed.MonotonicAppendingInt64Buffer;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using PagedBytes = Lucene.Net.Util.PagedBytes;
     using SegmentReader = Lucene.Net.Index.SegmentReader;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
@@ -71,10 +71,10 @@ namespace Lucene.Net.Search
             {
                 caches = new Dictionary<Type, Cache>(9);
                 caches[typeof(sbyte)] = new ByteCache(this);
-                caches[typeof(short)] = new ShortCache(this);
-                caches[typeof(int)] = new IntCache(this);
-                caches[typeof(float)] = new FloatCache(this);
-                caches[typeof(long)] = new LongCache(this);
+                caches[typeof(short)] = new Int16Cache(this);
+                caches[typeof(int)] = new Int32Cache(this);
+                caches[typeof(float)] = new SingleCache(this);
+                caches[typeof(long)] = new Int64Cache(this);
                 caches[typeof(double)] = new DoubleCache(this);
                 caches[typeof(BinaryDocValues)] = new BinaryDocValuesCache(this);
                 caches[typeof(SortedDocValues)] = new SortedDocValuesCache(this);
@@ -608,7 +608,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: this was getShorts() in Lucene
         /// </summary>
-        public virtual FieldCache.Shorts GetInt16s(AtomicReader reader, string field, bool setDocsWithField)
+        public virtual FieldCache.Int16s GetInt16s(AtomicReader reader, string field, bool setDocsWithField)
         {
             return GetInt16s(reader, field, null, setDocsWithField);
         }
@@ -617,21 +617,21 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: this was getShorts() in Lucene
         /// </summary>
-        public virtual FieldCache.Shorts GetInt16s(AtomicReader reader, string field, FieldCache.IShortParser parser, bool setDocsWithField)
+        public virtual FieldCache.Int16s GetInt16s(AtomicReader reader, string field, FieldCache.IInt16Parser parser, bool setDocsWithField)
         {
             NumericDocValues valuesIn = reader.GetNumericDocValues(field);
             if (valuesIn != null)
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_ShortsAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache_Int16sAnonymousInnerClassHelper(this, valuesIn);
             }
             else
             {
                 FieldInfo info = reader.FieldInfos.FieldInfo(field);
                 if (info == null)
                 {
-                    return FieldCache.Shorts.EMPTY;
+                    return FieldCache.Int16s.EMPTY;
                 }
                 else if (info.HasDocValues)
                 {
@@ -639,19 +639,19 @@ namespace Lucene.Net.Search
                 }
                 else if (!info.IsIndexed)
                 {
-                    return FieldCache.Shorts.EMPTY;
+                    return FieldCache.Int16s.EMPTY;
                 }
-                return (FieldCache.Shorts)caches[typeof(short)].Get(reader, new CacheKey(field, parser), setDocsWithField);
+                return (FieldCache.Int16s)caches[typeof(short)].Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
 
-        private class FieldCache_ShortsAnonymousInnerClassHelper : FieldCache.Shorts
+        private class FieldCache_Int16sAnonymousInnerClassHelper : FieldCache.Int16s
         {
             private readonly FieldCacheImpl outerInstance;
 
             private NumericDocValues valuesIn;
 
-            public FieldCache_ShortsAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
+            public FieldCache_Int16sAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
             {
                 this.outerInstance = outerInstance;
                 this.valuesIn = valuesIn;
@@ -663,11 +663,14 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal class ShortsFromArray : FieldCache.Shorts
+        /// <summary>
+        /// NOTE: This was ShortsFromArray in Lucene
+        /// </summary>
+        internal class Int16sFromArray : FieldCache.Int16s
         {
             private readonly short[] values;
 
-            public ShortsFromArray(short[] values)
+            public Int16sFromArray(short[] values)
             {
                 this.values = values;
             }
@@ -678,9 +681,12 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal sealed class ShortCache : Cache
+        /// <summary>
+        /// NOTE: This was ShortCache in Lucene
+        /// </summary>
+        internal sealed class Int16Cache : Cache
         {
-            internal ShortCache(FieldCacheImpl wrapper)
+            internal Int16Cache(FieldCacheImpl wrapper)
                 : base(wrapper)
             {
             }
@@ -689,7 +695,7 @@ namespace Lucene.Net.Search
             {
                 int maxDoc = reader.MaxDoc;
                 short[] values;
-                FieldCache.IShortParser parser = (FieldCache.IShortParser)key.custom;
+                FieldCache.IInt16Parser parser = (FieldCache.IInt16Parser)key.custom;
                 if (parser == null)
                 {
                     // Confusing: must delegate to wrapper (vs simply
@@ -707,17 +713,17 @@ namespace Lucene.Net.Search
                 {
                     wrapper.SetDocsWithField(reader, key.field, u.docsWithField);
                 }
-                return new ShortsFromArray(values);
+                return new Int16sFromArray(values);
             }
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly ShortCache outerInstance;
+                private readonly Int16Cache outerInstance;
 
                 private short[] values;
-                private FieldCache.IShortParser parser;
+                private FieldCache.IInt16Parser parser;
 
-                public UninvertAnonymousInnerClassHelper(ShortCache outerInstance, short[] values, FieldCache.IShortParser parser)
+                public UninvertAnonymousInnerClassHelper(Int16Cache outerInstance, short[] values, FieldCache.IInt16Parser parser)
                 {
                     this.outerInstance = outerInstance;
                     this.values = values;
@@ -747,7 +753,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: this was getInts() in Lucene
         /// </summary>
-        public virtual FieldCache.Ints GetInt32s(AtomicReader reader, string field, bool setDocsWithField)
+        public virtual FieldCache.Int32s GetInt32s(AtomicReader reader, string field, bool setDocsWithField)
         {
             return GetInt32s(reader, field, null, setDocsWithField);
         }
@@ -755,21 +761,21 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: this was getInts() in Lucene
         /// </summary>
-        public virtual FieldCache.Ints GetInt32s(AtomicReader reader, string field, FieldCache.IIntParser parser, bool setDocsWithField)
+        public virtual FieldCache.Int32s GetInt32s(AtomicReader reader, string field, FieldCache.IInt32Parser parser, bool setDocsWithField)
         {
             NumericDocValues valuesIn = reader.GetNumericDocValues(field);
             if (valuesIn != null)
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_IntsAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache_Int32sAnonymousInnerClassHelper(this, valuesIn);
             }
             else
             {
                 FieldInfo info = reader.FieldInfos.FieldInfo(field);
                 if (info == null)
                 {
-                    return FieldCache.Ints.EMPTY;
+                    return FieldCache.Int32s.EMPTY;
                 }
                 else if (info.HasDocValues)
                 {
@@ -777,19 +783,19 @@ namespace Lucene.Net.Search
                 }
                 else if (!info.IsIndexed)
                 {
-                    return FieldCache.Ints.EMPTY;
+                    return FieldCache.Int32s.EMPTY;
                 }
-                return (FieldCache.Ints)caches[typeof(int)].Get(reader, new CacheKey(field, parser), setDocsWithField);
+                return (FieldCache.Int32s)caches[typeof(int)].Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
 
-        private class FieldCache_IntsAnonymousInnerClassHelper : FieldCache.Ints
+        private class FieldCache_Int32sAnonymousInnerClassHelper : FieldCache.Int32s
         {
             private readonly FieldCacheImpl outerInstance;
 
             private NumericDocValues valuesIn;
 
-            public FieldCache_IntsAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
+            public FieldCache_Int32sAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
             {
                 this.outerInstance = outerInstance;
                 this.valuesIn = valuesIn;
@@ -801,12 +807,15 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal class IntsFromArray : FieldCache.Ints
+        /// <summary>
+        /// NOTE: This was IntsFromArray in Lucene
+        /// </summary>
+        internal class Int32sFromArray : FieldCache.Int32s
         {
-            private readonly PackedInts.Reader values;
+            private readonly PackedInt32s.Reader values;
             private readonly int minValue;
 
-            public IntsFromArray(PackedInts.Reader values, int minValue)
+            public Int32sFromArray(PackedInt32s.Reader values, int minValue)
             {
                 Debug.Assert(values.BitsPerValue <= 32);
                 this.values = values;
@@ -847,16 +856,19 @@ namespace Lucene.Net.Search
             public long MinValue { get; set; } // LUCENENET NOTE: for some reason, this was not marked readonly
         }
 
-        internal sealed class IntCache : Cache
+        /// <summary>
+        /// NOTE: This was IntCache in Lucene
+        /// </summary>
+        internal sealed class Int32Cache : Cache
         {
-            internal IntCache(FieldCacheImpl wrapper)
+            internal Int32Cache(FieldCacheImpl wrapper)
                 : base(wrapper)
             {
             }
 
             protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
-                FieldCache.IIntParser parser = (FieldCache.IIntParser)key.custom;
+                FieldCache.IInt32Parser parser = (FieldCache.IInt32Parser)key.custom;
                 if (parser == null)
                 {
                     // Confusing: must delegate to wrapper (vs simply
@@ -887,20 +899,20 @@ namespace Lucene.Net.Search
                 GrowableWriterAndMinValue values = valuesRef.Get();
                 if (values == null)
                 {
-                    return new IntsFromArray(new PackedInts.NullReader(reader.MaxDoc), 0);
+                    return new Int32sFromArray(new PackedInt32s.NullReader(reader.MaxDoc), 0);
                 }
-                return new IntsFromArray(values.Writer.Mutable, (int)values.MinValue);
+                return new Int32sFromArray(values.Writer.Mutable, (int)values.MinValue);
             }
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly IntCache outerInstance;
+                private readonly Int32Cache outerInstance;
 
                 private AtomicReader reader;
-                private FieldCache.IIntParser parser;
+                private FieldCache.IInt32Parser parser;
                 private FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef;
 
-                public UninvertAnonymousInnerClassHelper(IntCache outerInstance, AtomicReader reader, FieldCache.IIntParser parser, FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef)
+                public UninvertAnonymousInnerClassHelper(Int32Cache outerInstance, AtomicReader reader, FieldCache.IInt32Parser parser, FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef)
                 {
                     this.outerInstance = outerInstance;
                     this.reader = reader;
@@ -926,14 +938,14 @@ namespace Lucene.Net.Search
                         if (currentValue < 0)
                         {
                             minValue = currentValue;
-                            startBitsPerValue = PackedInts.BitsRequired((-minValue) & 0xFFFFFFFFL);
+                            startBitsPerValue = PackedInt32s.BitsRequired((-minValue) & 0xFFFFFFFFL);
                         }
                         else
                         {
                             minValue = 0;
-                            startBitsPerValue = PackedInts.BitsRequired(currentValue);
+                            startBitsPerValue = PackedInt32s.BitsRequired(currentValue);
                         }
-                        values = new GrowableWriter(startBitsPerValue, reader.MaxDoc, PackedInts.FAST);
+                        values = new GrowableWriter(startBitsPerValue, reader.MaxDoc, PackedInt32s.FAST);
                         if (minValue != 0)
                         {
                             values.Fill(0, values.Count, (-minValue) & 0xFFFFFFFFL); // default value must be 0
@@ -1043,7 +1055,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: this was getFloats() in Lucene
         /// </summary>
-        public virtual FieldCache.Floats GetSingles(AtomicReader reader, string field, bool setDocsWithField)
+        public virtual FieldCache.Singles GetSingles(AtomicReader reader, string field, bool setDocsWithField)
         {
             return GetSingles(reader, field, null, setDocsWithField);
         }
@@ -1051,21 +1063,21 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: this was getFloats() in Lucene
         /// </summary>
-        public virtual FieldCache.Floats GetSingles(AtomicReader reader, string field, FieldCache.IFloatParser parser, bool setDocsWithField)
+        public virtual FieldCache.Singles GetSingles(AtomicReader reader, string field, FieldCache.ISingleParser parser, bool setDocsWithField)
         {
             NumericDocValues valuesIn = reader.GetNumericDocValues(field);
             if (valuesIn != null)
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_FloatsAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache_SinglesAnonymousInnerClassHelper(this, valuesIn);
             }
             else
             {
                 FieldInfo info = reader.FieldInfos.FieldInfo(field);
                 if (info == null)
                 {
-                    return FieldCache.Floats.EMPTY;
+                    return FieldCache.Singles.EMPTY;
                 }
                 else if (info.HasDocValues)
                 {
@@ -1073,19 +1085,19 @@ namespace Lucene.Net.Search
                 }
                 else if (!info.IsIndexed)
                 {
-                    return FieldCache.Floats.EMPTY;
+                    return FieldCache.Singles.EMPTY;
                 }
-                return (FieldCache.Floats)caches[typeof(float)].Get(reader, new CacheKey(field, parser), setDocsWithField);
+                return (FieldCache.Singles)caches[typeof(float)].Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
 
-        private class FieldCache_FloatsAnonymousInnerClassHelper : FieldCache.Floats
+        private class FieldCache_SinglesAnonymousInnerClassHelper : FieldCache.Singles
         {
             private readonly FieldCacheImpl outerInstance;
 
             private NumericDocValues valuesIn;
 
-            public FieldCache_FloatsAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
+            public FieldCache_SinglesAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
             {
                 this.outerInstance = outerInstance;
                 this.valuesIn = valuesIn;
@@ -1097,11 +1109,14 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal class FloatsFromArray : FieldCache.Floats
+        /// <summary>
+        /// NOTE: This was FloatsFromArray in Lucene
+        /// </summary>
+        internal class SinglesFromArray : FieldCache.Singles
         {
             private readonly float[] values;
 
-            public FloatsFromArray(float[] values)
+            public SinglesFromArray(float[] values)
             {
                 this.values = values;
             }
@@ -1112,16 +1127,19 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal sealed class FloatCache : Cache
+        /// <summary>
+        /// NOTE: This was FloatCache in Lucene
+        /// </summary>
+        internal sealed class SingleCache : Cache
         {
-            internal FloatCache(FieldCacheImpl wrapper)
+            internal SingleCache(FieldCacheImpl wrapper)
                 : base(wrapper)
             {
             }
 
             protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
-                FieldCache.IFloatParser parser = (FieldCache.IFloatParser)key.custom;
+                FieldCache.ISingleParser parser = (FieldCache.ISingleParser)key.custom;
                 if (parser == null)
                 {
                     // Confusing: must delegate to wrapper (vs simply
@@ -1155,18 +1173,18 @@ namespace Lucene.Net.Search
                 {
                     values = new float[reader.MaxDoc];
                 }
-                return new FloatsFromArray(values);
+                return new SinglesFromArray(values);
             }
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly FloatCache outerInstance;
+                private readonly SingleCache outerInstance;
 
                 private AtomicReader reader;
-                private FieldCache.IFloatParser parser;
+                private FieldCache.ISingleParser parser;
                 private FieldCacheImpl.HoldsOneThing<float[]> valuesRef;
 
-                public UninvertAnonymousInnerClassHelper(FloatCache outerInstance, AtomicReader reader, FieldCache.IFloatParser parser, FieldCacheImpl.HoldsOneThing<float[]> valuesRef)
+                public UninvertAnonymousInnerClassHelper(SingleCache outerInstance, AtomicReader reader, FieldCache.ISingleParser parser, FieldCacheImpl.HoldsOneThing<float[]> valuesRef)
                 {
                     this.outerInstance = outerInstance;
                     this.reader = reader;
@@ -1206,7 +1224,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: this was getLongs() in Lucene
         /// </summary>
-        public virtual FieldCache.Longs GetInt64s(AtomicReader reader, string field, bool setDocsWithField)
+        public virtual FieldCache.Int64s GetInt64s(AtomicReader reader, string field, bool setDocsWithField)
         {
             return GetInt64s(reader, field, null, setDocsWithField);
         }
@@ -1214,21 +1232,21 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: this was getLongs() in Lucene
         /// </summary>
-        public virtual FieldCache.Longs GetInt64s(AtomicReader reader, string field, FieldCache.ILongParser parser, bool setDocsWithField)
+        public virtual FieldCache.Int64s GetInt64s(AtomicReader reader, string field, FieldCache.IInt64Parser parser, bool setDocsWithField)
         {
             NumericDocValues valuesIn = reader.GetNumericDocValues(field);
             if (valuesIn != null)
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_LongsAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache_Int64sAnonymousInnerClassHelper(this, valuesIn);
             }
             else
             {
                 FieldInfo info = reader.FieldInfos.FieldInfo(field);
                 if (info == null)
                 {
-                    return FieldCache.Longs.EMPTY;
+                    return FieldCache.Int64s.EMPTY;
                 }
                 else if (info.HasDocValues)
                 {
@@ -1236,19 +1254,19 @@ namespace Lucene.Net.Search
                 }
                 else if (!info.IsIndexed)
                 {
-                    return FieldCache.Longs.EMPTY;
+                    return FieldCache.Int64s.EMPTY;
                 }
-                return (FieldCache.Longs)caches[typeof(long)].Get(reader, new CacheKey(field, parser), setDocsWithField);
+                return (FieldCache.Int64s)caches[typeof(long)].Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
 
-        private class FieldCache_LongsAnonymousInnerClassHelper : FieldCache.Longs
+        private class FieldCache_Int64sAnonymousInnerClassHelper : FieldCache.Int64s
         {
             private readonly FieldCacheImpl outerInstance;
 
             private NumericDocValues valuesIn;
 
-            public FieldCache_LongsAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
+            public FieldCache_Int64sAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
             {
                 this.outerInstance = outerInstance;
                 this.valuesIn = valuesIn;
@@ -1260,12 +1278,15 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal class LongsFromArray : FieldCache.Longs
+        /// <summary>
+        /// NOTE: This was LongsFromArray in Lucene
+        /// </summary>
+        internal class Int64sFromArray : FieldCache.Int64s
         {
-            private readonly PackedInts.Reader values;
+            private readonly PackedInt32s.Reader values;
             private readonly long minValue;
 
-            public LongsFromArray(PackedInts.Reader values, long minValue)
+            public Int64sFromArray(PackedInt32s.Reader values, long minValue)
             {
                 this.values = values;
                 this.minValue = minValue;
@@ -1277,16 +1298,19 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal sealed class LongCache : Cache
+        /// <summary>
+        /// NOTE: This was LongCache in Lucene
+        /// </summary>
+        internal sealed class Int64Cache : Cache
         {
-            internal LongCache(FieldCacheImpl wrapper)
+            internal Int64Cache(FieldCacheImpl wrapper)
                 : base(wrapper)
             {
             }
 
             protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
-                FieldCache.ILongParser parser = (FieldCache.ILongParser)key.custom;
+                FieldCache.IInt64Parser parser = (FieldCache.IInt64Parser)key.custom;
                 if (parser == null)
                 {
                     // Confusing: must delegate to wrapper (vs simply
@@ -1317,20 +1341,20 @@ namespace Lucene.Net.Search
                 GrowableWriterAndMinValue values = valuesRef.Get();
                 if (values == null)
                 {
-                    return new LongsFromArray(new PackedInts.NullReader(reader.MaxDoc), 0L);
+                    return new Int64sFromArray(new PackedInt32s.NullReader(reader.MaxDoc), 0L);
                 }
-                return new LongsFromArray(values.Writer.Mutable, values.MinValue);
+                return new Int64sFromArray(values.Writer.Mutable, values.MinValue);
             }
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly LongCache outerInstance;
+                private readonly Int64Cache outerInstance;
 
                 private AtomicReader reader;
-                private FieldCache.ILongParser parser;
+                private FieldCache.IInt64Parser parser;
                 private FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef;
 
-                public UninvertAnonymousInnerClassHelper(LongCache outerInstance, AtomicReader reader, FieldCache.ILongParser parser, FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef)
+                public UninvertAnonymousInnerClassHelper(Int64Cache outerInstance, AtomicReader reader, FieldCache.IInt64Parser parser, FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef)
                 {
                     this.outerInstance = outerInstance;
                     this.reader = reader;
@@ -1356,14 +1380,14 @@ namespace Lucene.Net.Search
                         if (currentValue < 0)
                         {
                             minValue = currentValue;
-                            startBitsPerValue = minValue == long.MinValue ? 64 : PackedInts.BitsRequired(-minValue);
+                            startBitsPerValue = minValue == long.MinValue ? 64 : PackedInt32s.BitsRequired(-minValue);
                         }
                         else
                         {
                             minValue = 0;
-                            startBitsPerValue = PackedInts.BitsRequired(currentValue);
+                            startBitsPerValue = PackedInt32s.BitsRequired(currentValue);
                         }
-                        values = new GrowableWriter(startBitsPerValue, reader.MaxDoc, PackedInts.FAST);
+                        values = new GrowableWriter(startBitsPerValue, reader.MaxDoc, PackedInt32s.FAST);
                         if (minValue != 0)
                         {
                             values.Fill(0, values.Count, -minValue); // default value must be 0
@@ -1543,11 +1567,11 @@ namespace Lucene.Net.Search
         public class SortedDocValuesImpl : SortedDocValues
         {
             private readonly PagedBytes.Reader bytes;
-            private readonly MonotonicAppendingLongBuffer termOrdToBytesOffset;
-            private readonly PackedInts.Reader docToTermOrd;
+            private readonly MonotonicAppendingInt64Buffer termOrdToBytesOffset;
+            private readonly PackedInt32s.Reader docToTermOrd;
             private readonly int numOrd;
 
-            public SortedDocValuesImpl(PagedBytes.Reader bytes, MonotonicAppendingLongBuffer termOrdToBytesOffset, PackedInts.Reader docToTermOrd, int numOrd)
+            public SortedDocValuesImpl(PagedBytes.Reader bytes, MonotonicAppendingInt64Buffer termOrdToBytesOffset, PackedInt32s.Reader docToTermOrd, int numOrd)
             {
                 this.bytes = bytes;
                 this.docToTermOrd = docToTermOrd;
@@ -1583,7 +1607,7 @@ namespace Lucene.Net.Search
 
         public virtual SortedDocValues GetTermsIndex(AtomicReader reader, string field)
         {
-            return GetTermsIndex(reader, field, PackedInts.FAST);
+            return GetTermsIndex(reader, field, PackedInt32s.FAST);
         }
 
         public virtual SortedDocValues GetTermsIndex(AtomicReader reader, string field, float acceptableOverheadRatio)
@@ -1662,7 +1686,7 @@ namespace Lucene.Net.Search
                             numUniqueTerms = termCountHardLimit;
                         }
 
-                        startTermsBPV = PackedInts.BitsRequired(numUniqueTerms);
+                        startTermsBPV = PackedInt32s.BitsRequired(numUniqueTerms);
                     }
                     else
                     {
@@ -1674,7 +1698,7 @@ namespace Lucene.Net.Search
                     startTermsBPV = 1;
                 }
 
-                MonotonicAppendingLongBuffer termOrdToBytesOffset = new MonotonicAppendingLongBuffer();
+                MonotonicAppendingInt64Buffer termOrdToBytesOffset = new MonotonicAppendingInt64Buffer();
                 GrowableWriter docToTermOrd = new GrowableWriter(startTermsBPV, maxDoc, acceptableOverheadRatio);
 
                 int termOrd = 0;
@@ -1723,9 +1747,9 @@ namespace Lucene.Net.Search
         private class BinaryDocValuesImpl : BinaryDocValues
         {
             private readonly PagedBytes.Reader bytes;
-            private readonly PackedInts.Reader docToOffset;
+            private readonly PackedInt32s.Reader docToOffset;
 
-            public BinaryDocValuesImpl(PagedBytes.Reader bytes, PackedInts.Reader docToOffset)
+            public BinaryDocValuesImpl(PagedBytes.Reader bytes, PackedInt32s.Reader docToOffset)
             {
                 this.bytes = bytes;
                 this.docToOffset = docToOffset;
@@ -1751,7 +1775,7 @@ namespace Lucene.Net.Search
         // should share it...
         public virtual BinaryDocValues GetTerms(AtomicReader reader, string field, bool setDocsWithField)
         {
-            return GetTerms(reader, field, setDocsWithField, PackedInts.FAST);
+            return GetTerms(reader, field, setDocsWithField, PackedInt32s.FAST);
         }
 
         public virtual BinaryDocValues GetTerms(AtomicReader reader, string field, bool setDocsWithField, float acceptableOverheadRatio)
@@ -1823,7 +1847,7 @@ namespace Lucene.Net.Search
                         {
                             numUniqueTerms = termCountHardLimit;
                         }
-                        startBPV = PackedInts.BitsRequired(numUniqueTerms * 4);
+                        startBPV = PackedInt32s.BitsRequired(numUniqueTerms * 4);
                     }
                     else
                     {
@@ -1874,7 +1898,7 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                PackedInts.Reader offsetReader = docToOffset.Mutable;
+                PackedInt32s.Reader offsetReader = docToOffset.Mutable;
                 if (setDocsWithField)
                 {
                     wrapper.SetDocsWithField(reader, key.field, new BitsAnonymousInnerClassHelper(this, maxDoc, offsetReader));
@@ -1888,9 +1912,9 @@ namespace Lucene.Net.Search
                 private readonly BinaryDocValuesCache outerInstance;
 
                 private int maxDoc;
-                private PackedInts.Reader offsetReader;
+                private PackedInt32s.Reader offsetReader;
 
-                public BitsAnonymousInnerClassHelper(BinaryDocValuesCache outerInstance, int maxDoc, PackedInts.Reader offsetReader)
+                public BitsAnonymousInnerClassHelper(BinaryDocValuesCache outerInstance, int maxDoc, PackedInt32s.Reader offsetReader)
                 {
                     this.outerInstance = outerInstance;
                     this.maxDoc = maxDoc;

@@ -52,8 +52,8 @@ namespace Lucene.Net.Search.Spell
 
         public float GetDistance(string target, string other)
         {
-            IntsRef targetPoints;
-            IntsRef otherPoints;
+            Int32sRef targetPoints;
+            Int32sRef otherPoints;
             int n;
             int[][] d; // cost array
 
@@ -124,9 +124,9 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// NOTE: This was toIntsRef() in Lucene
         /// </summary>
-        private static IntsRef ToInt32sRef(string s)
+        private static Int32sRef ToInt32sRef(string s)
         {
-            var @ref = new IntsRef(s.Length); // worst case
+            var @ref = new Int32sRef(s.Length); // worst case
             int utf16Len = s.Length;
             for (int i = 0, cp = 0; i < utf16Len; i += Character.CharCount(cp))
             {

@@ -39,7 +39,7 @@ namespace Lucene.Net.Util.Fst
         /// Looks up the output for this input, or null if the
         ///  input is not accepted.
         /// </summary>
-        public static T Get<T>(FST<T> fst, IntsRef input)
+        public static T Get<T>(FST<T> fst, Int32sRef input)
         {
             // TODO: would be nice not to alloc this on every lookup
             var arc = fst.GetFirstArc(new FST.Arc<T>());
@@ -117,7 +117,7 @@ namespace Lucene.Net.Util.Fst
         ///  2, ...), or file offets (when appending to a file)
         ///  fit this.
         /// </summary>
-        public static IntsRef GetByOutput(FST<long?> fst, long targetOutput)
+        public static Int32sRef GetByOutput(FST<long?> fst, long targetOutput)
         {
             var @in = fst.GetBytesReader();
 
@@ -126,7 +126,7 @@ namespace Lucene.Net.Util.Fst
 
             FST.Arc<long?> scratchArc = new FST.Arc<long?>();
 
-            IntsRef result = new IntsRef();
+            Int32sRef result = new Int32sRef();
 
             return GetByOutput(fst, targetOutput, @in, arc, scratchArc, result);
         }
@@ -135,7 +135,7 @@ namespace Lucene.Net.Util.Fst
         /// Expert: like <seealso cref="Util#getByOutput(FST, long)"/> except reusing
         /// BytesReader, initial and scratch Arc, and result.
         /// </summary>
-        public static IntsRef GetByOutput(FST<long?> fst, long targetOutput, FST.BytesReader @in, FST.Arc<long?> arc, FST.Arc<long?> scratchArc, IntsRef result)
+        public static Int32sRef GetByOutput(FST<long?> fst, long targetOutput, FST.BytesReader @in, FST.Arc<long?> arc, FST.Arc<long?> scratchArc, Int32sRef result)
         {
             long output = arc.Output.Value;
             int upto = 0;
@@ -301,11 +301,11 @@ namespace Lucene.Net.Util.Fst
         {
             public FST.Arc<T> Arc { get; set; }
             public T Cost { get; set; }
-            public IntsRef Input { get; private set; }
+            public Int32sRef Input { get; private set; }
 
             /// <summary>
             /// Sole constructor </summary>
-            public FSTPath(T cost, FST.Arc<T> arc, IntsRef input)
+            public FSTPath(T cost, FST.Arc<T> arc, Int32sRef input)
             {
                 this.Arc = (new FST.Arc<T>()).CopyFrom(arc);
                 this.Cost = cost;
@@ -424,7 +424,7 @@ namespace Lucene.Net.Util.Fst
 
                 // copy over the current input to the new input
                 // and add the arc.label to the end
-                IntsRef newInput = new IntsRef(path.Input.Length + 1);
+                Int32sRef newInput = new Int32sRef(path.Input.Length + 1);
                 Array.Copy(path.Input.Int32s, 0, newInput.Int32s, 0, path.Input.Length);
                 newInput.Int32s[path.Input.Length] = path.Arc.Label;
                 newInput.Length = path.Input.Length + 1;
@@ -449,7 +449,7 @@ namespace Lucene.Net.Util.Fst
             /// Adds all leaving arcs, including 'finished' arc, if
             ///  the node is final, from this node into the queue.
             /// </summary>
-            public virtual void AddStartPaths(FST.Arc<T> node, T startOutput, bool allowEmptyString, IntsRef input)
+            public virtual void AddStartPaths(FST.Arc<T> node, T startOutput, bool allowEmptyString, Int32sRef input)
             {
                 // De-dup NO_OUTPUT since it must be a singleton:
                 if (startOutput.Equals(fst.Outputs.NoOutput))
@@ -634,7 +634,7 @@ namespace Lucene.Net.Util.Fst
                 return new TopResults<T>(rejectCount + topN <= maxQueueDepth, results);
             }
 
-            protected virtual bool AcceptResult(IntsRef input, T output)
+            protected virtual bool AcceptResult(Int32sRef input, T output)
             {
                 return true;
             }
@@ -646,10 +646,10 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public sealed class Result<T>
         {
-            public IntsRef Input { get; private set; }
+            public Int32sRef Input { get; private set; }
             public T Output { get; private set; }
 
-            public Result(IntsRef input, T output)
+            public Result(Int32sRef input, T output)
             {
                 this.Input = input;
                 this.Output = output;
@@ -702,7 +702,7 @@ namespace Lucene.Net.Util.Fst
 
             // since this search is initialized with a single start node
             // it is okay to start with an empty input path here
-            searcher.AddStartPaths(fromNode, startOutput, allowEmptyString, new IntsRef());
+            searcher.AddStartPaths(fromNode, startOutput, allowEmptyString, new Int32sRef());
             return searcher.Search();
         }
 
@@ -978,7 +978,7 @@ namespace Lucene.Net.Util.Fst
         /// Just maps each UTF16 unit (char) to the ints in an
         ///  IntsRef.
         /// </summary>
-        public static IntsRef ToUTF16(string s, IntsRef scratch)
+        public static Int32sRef ToUTF16(string s, Int32sRef scratch)
         {
             int charLimit = s.Length;
             scratch.Offset = 0;
@@ -996,7 +996,7 @@ namespace Lucene.Net.Util.Fst
         ///  CharSequence and places them in the provided scratch
         ///  IntsRef, which must not be null, returning it.
         /// </summary>
-        public static IntsRef ToUTF32(string s, IntsRef scratch)
+        public static Int32sRef ToUTF32(string s, Int32sRef scratch)
         {
             int charIdx = 0;
             int intIdx = 0;
@@ -1018,7 +1018,7 @@ namespace Lucene.Net.Util.Fst
         ///  char[] and places them in the provided scratch
         ///  IntsRef, which must not be null, returning it.
         /// </summary>
-        public static IntsRef ToUTF32(char[] s, int offset, int length, IntsRef scratch)
+        public static Int32sRef ToUTF32(char[] s, int offset, int length, Int32sRef scratch)
         {
             int charIdx = offset;
             int intIdx = 0;
@@ -1041,7 +1041,7 @@ namespace Lucene.Net.Util.Fst
         /// <para/>
         /// NOTE: This was toIntsRef() in Lucene
         /// </summary>
-        public static IntsRef ToInt32sRef(BytesRef input, IntsRef scratch)
+        public static Int32sRef ToInt32sRef(BytesRef input, Int32sRef scratch)
         {
             scratch.Grow(input.Length);
             for (int i = 0; i < input.Length; i++)
@@ -1056,7 +1056,7 @@ namespace Lucene.Net.Util.Fst
         /// Just converts IntsRef to BytesRef; you must ensure the
         ///  int values fit into a byte.
         /// </summary>
-        public static BytesRef ToBytesRef(IntsRef input, BytesRef scratch)
+        public static BytesRef ToBytesRef(Int32sRef input, BytesRef scratch)
         {
             scratch.Grow(input.Length);
             for (int i = 0; i < input.Length; i++)

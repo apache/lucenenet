@@ -92,17 +92,17 @@ namespace Lucene.Net.Expressions
             {
                 case SortFieldType.INT:
                     {
-                        return new IntFieldSource(field.Field, (FieldCache.IIntParser)field.Parser);
+                        return new IntFieldSource(field.Field, (FieldCache.IInt32Parser)field.Parser);
                     }
 
                 case SortFieldType.LONG:
                     {
-                        return new LongFieldSource(field.Field, (FieldCache.ILongParser)field.Parser);
+                        return new LongFieldSource(field.Field, (FieldCache.IInt64Parser)field.Parser);
                     }
 
                 case SortFieldType.FLOAT:
                     {
-                        return new FloatFieldSource(field.Field, (FieldCache.IFloatParser)field.Parser);
+                        return new FloatFieldSource(field.Field, (FieldCache.ISingleParser)field.Parser);
                     }
 
                 case SortFieldType.DOUBLE:

@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
         // Just counts how many merges are done
         private class MyIndexWriter : IndexWriter
         {
-            internal AtomicInteger MergeCount = new AtomicInteger();
+            internal AtomicInt32 MergeCount = new AtomicInt32();
             internal bool First;
 
             public MyIndexWriter(Directory dir, IndexWriterConfig conf)

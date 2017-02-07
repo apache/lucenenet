@@ -20,11 +20,11 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using AppendingDeltaPackedLongBuffer = Lucene.Net.Util.Packed.AppendingDeltaPackedLongBuffer;
+    using AppendingDeltaPackedInt64Buffer = Lucene.Net.Util.Packed.AppendingDeltaPackedInt64Buffer;
     using Counter = Lucene.Net.Util.Counter;
     using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
     /// <summary>
@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
     {
         private const long MISSING = 0L;
 
-        private AppendingDeltaPackedLongBuffer pending;
+        private AppendingDeltaPackedInt64Buffer pending;
         private readonly Counter iwBytesUsed;
         private long bytesUsed;
         private FixedBitSet docsWithField;
@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 
         public NumericDocValuesWriter(FieldInfo fieldInfo, Counter iwBytesUsed, bool trackDocsWithField)
         {
-            pending = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
+            pending = new AppendingDeltaPackedInt64Buffer(PackedInt32s.COMPACT);
             docsWithField = trackDocsWithField ? new FixedBitSet(64) : null;
             bytesUsed = pending.RamBytesUsed() + DocsWithFieldBytesUsed();
             this.fieldInfo = fieldInfo;
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
         private IEnumerable<long?> GetNumericIterator(int maxDoc)
         {
             // LUCENENET specific: using yield return instead of custom iterator type. Much less code.
-            AbstractAppendingLongBuffer.Iterator iter = pending.GetIterator();
+            AbstractAppendingInt64Buffer.Iterator iter = pending.GetIterator();
             int size = (int)pending.Count;
             int upto = 0;
 

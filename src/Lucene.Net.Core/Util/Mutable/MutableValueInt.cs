@@ -18,10 +18,11 @@ namespace Lucene.Net.Util.Mutable
      */
 
     /// <summary>
-    /// <seealso cref="MutableValue"/> implementation of type
-    /// <code>int</code>.
+    /// <see cref="MutableValue"/> implementation of type <see cref="int"/>.
+    /// <para/>
+    /// NOTE: This was MutableValueInt in Lucene
     /// </summary>
-    public class MutableValueInt : MutableValue
+    public class MutableValueInt32 : MutableValue
     {
         public int Value { get; set; }
 
@@ -32,14 +33,14 @@ namespace Lucene.Net.Util.Mutable
 
         public override void Copy(MutableValue source)
         {
-            MutableValueInt s = (MutableValueInt)source;
+            MutableValueInt32 s = (MutableValueInt32)source;
             Value = s.Value;
             Exists = s.Exists;
         }
 
         public override MutableValue Duplicate()
         {
-            MutableValueInt v = new MutableValueInt();
+            MutableValueInt32 v = new MutableValueInt32();
             v.Value = this.Value;
             v.Exists = this.Exists;
             return v;
@@ -47,13 +48,13 @@ namespace Lucene.Net.Util.Mutable
 
         public override bool EqualsSameType(object other)
         {
-            MutableValueInt b = (MutableValueInt)other;
+            MutableValueInt32 b = (MutableValueInt32)other;
             return Value == b.Value && Exists == b.Exists;
         }
 
         public override int CompareSameType(object other)
         {
-            MutableValueInt b = (MutableValueInt)other;
+            MutableValueInt32 b = (MutableValueInt32)other;
             int ai = Value;
             int bi = b.Value;
             if (ai < bi)

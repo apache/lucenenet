@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs.Memory
         private readonly IDictionary<int?, IBits> docsWithFieldInstances = new Dictionary<int?, IBits>();
 
         private readonly int maxDoc;
-        private readonly AtomicLong ramBytesUsed;
+        private readonly AtomicInt64 ramBytesUsed;
         private readonly int version;
 
         internal const sbyte NUMBER = 0;
@@ -63,7 +63,7 @@ namespace Lucene.Net.Codecs.Memory
             string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, metaExtension);
             // read in the entries from the metadata file.
             ChecksumIndexInput @in = state.Directory.OpenChecksumInput(metaName, state.Context);
-            ramBytesUsed = new AtomicLong(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
+            ramBytesUsed = new AtomicInt64(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
             bool success = false;
             try
             {

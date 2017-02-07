@@ -37,10 +37,10 @@ namespace Lucene.Net.Codecs.Memory
     using IndexInput = Store.IndexInput;
     using IndexOptions = Index.IndexOptions;
     using IndexOutput = Store.IndexOutput;
-    using IntsRef = Util.IntsRef;
+    using Int32sRef = Util.Int32sRef;
     using IOContext = Store.IOContext;
     using IOUtils = Util.IOUtils;
-    using PackedInts = Util.Packed.PackedInts;
+    using PackedInt32s = Util.Packed.PackedInt32s;
     using RAMOutputStream = Store.RAMOutputStream;
     using RamUsageEstimator = Util.RamUsageEstimator;
     using SegmentReadState = Index.SegmentReadState;
@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.Memory
         private readonly float acceptableOverheadRatio;
 
         public MemoryPostingsFormat() 
-            : this(false, PackedInts.DEFAULT)
+            : this(false, PackedInt32s.DEFAULT)
         {
         }
 
@@ -248,7 +248,7 @@ namespace Lucene.Net.Codecs.Memory
             private readonly BytesRef spare = new BytesRef();
             private byte[] finalBuffer = new byte[128];
 
-            private readonly IntsRef scratchIntsRef = new IntsRef();
+            private readonly Int32sRef scratchIntsRef = new Int32sRef();
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {

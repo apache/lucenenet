@@ -21,7 +21,7 @@ namespace Lucene.Net.Search.Similarities
 
     using BytesRef = Lucene.Net.Util.BytesRef;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
-    using SmallFloat = Lucene.Net.Util.SmallFloat;
+    using SmallSingle = Lucene.Net.Util.SmallSingle;
 
     /// <summary>
     /// Expert: Default scoring implementation which {@link #encodeNormValue(float)
@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.Similarities
         {
             for (int i = 0; i < 256; i++)
             {
-                NORM_TABLE[i] = SmallFloat.Byte315ToSingle((sbyte)i);
+                NORM_TABLE[i] = SmallSingle.Byte315ToSingle((sbyte)i);
             }
         }
 
@@ -90,10 +90,10 @@ namespace Lucene.Net.Search.Similarities
         /// representable value.
         /// </summary>
         /// <seealso cref= Lucene.Net.Document.Field#setBoost(float) </seealso>
-        /// <seealso cref= Lucene.Net.Util.SmallFloat </seealso>
+        /// <seealso cref= Lucene.Net.Util.SmallSingle </seealso>
         public override sealed long EncodeNormValue(float f)
         {
-            return SmallFloat.SingleToByte315(f);
+            return SmallSingle.SingleToByte315(f);
         }
 
         /// <summary>

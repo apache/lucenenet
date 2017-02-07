@@ -99,10 +99,10 @@ namespace Lucene.Net.Queries.Function.DocValues
             public ValueFillerAnonymousInnerClassHelper(FloatDocValues outerInstance)
             {
                 this.outerInstance = outerInstance;
-                mval = new MutableValueFloat();
+                mval = new MutableValueSingle();
             }
 
-            private readonly MutableValueFloat mval;
+            private readonly MutableValueSingle mval;
 
             public override MutableValue Value
             {

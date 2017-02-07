@@ -31,18 +31,21 @@ namespace Lucene.Net.Documents
     /// <p>
     /// If you also need to store the value, you should add a
     /// separate <seealso cref="StoredField"/> instance.
+    /// <para>
+    /// NOTE: This was ShortDocValuesField in Lucene
+    /// </para>
     /// </summary>
     /// <seealso cref= NumericDocValues </seealso>
     /// @deprecated use <seealso cref="NumericDocValuesField"/> instead.
     [Obsolete("Use NumericDocValuesField instead.")]
-    public class ShortDocValuesField : NumericDocValuesField
+    public class Int16DocValuesField : NumericDocValuesField
     {
         /// <summary>
-        /// Creates a new DocValues field with the specified 16-bit short value </summary>
+        /// Creates a new DocValues field with the specified 16-bit <see cref="short"/> value </summary>
         /// <param name="name"> field name </param>
-        /// <param name="value"> 16-bit short value </param>
+        /// <param name="value"> 16-bit <see cref="short"/> value </param>
         /// <exception cref="ArgumentException"> if the field name is null </exception>
-        public ShortDocValuesField(string name, short value)
+        public Int16DocValuesField(string name, short value)
             : base(name, value)
         {
         }

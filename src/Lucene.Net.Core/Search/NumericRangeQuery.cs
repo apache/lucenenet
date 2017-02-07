@@ -34,8 +34,8 @@ namespace Lucene.Net.Search
     /// <summary>
     /// <p>A <seealso cref="Query"/> that matches numeric values within a
     /// specified range.  To use this, you must first index the
-    /// numeric values using <seealso cref="IntField"/>, {@link
-    /// FloatField}, <seealso cref="LongField"/> or <seealso cref="DoubleField"/> (expert: {@link
+    /// numeric values using <seealso cref="Int32Field"/>, {@link
+    /// FloatField}, <seealso cref="Int64Field"/> or <seealso cref="DoubleField"/> (expert: {@link
     /// NumericTokenStream}).  If your terms are instead textual,
     /// you should use <seealso cref="TermRangeQuery"/>.  {@link
     /// NumericRangeFilter} is the filter equivalent of this
@@ -144,8 +144,8 @@ namespace Lucene.Net.Search
     ///  <li>Steps <b>&gt;=64</b> for <em>long/double</em> and <b>&gt;=32</b> for <em>int/float</em> produces one token
     ///  per value in the index and querying is as slow as a conventional <seealso cref="TermRangeQuery"/>. But it can be used
     ///  to produce fields, that are solely used for sorting (in this case simply use <seealso cref="Integer#MAX_VALUE"/> as
-    ///  <code>precisionStep</code>). Using <seealso cref="IntField"/>,
-    ///  <seealso cref="LongField"/>, <seealso cref="FloatField"/> or <seealso cref="DoubleField"/> for sorting
+    ///  <code>precisionStep</code>). Using <seealso cref="Int32Field"/>,
+    ///  <seealso cref="Int64Field"/>, <seealso cref="SingleField"/> or <seealso cref="DoubleField"/> for sorting
     ///  is ideal, because building the field cache is much faster than with text-only numbers.
     ///  These fields have one term per value and therefore also work with term enumeration for building distinct lists
     ///  (e.g. facets / preselected values to search for).
@@ -361,7 +361,7 @@ namespace Lucene.Net.Search
                                 maxBound--;
                             }
 
-                            NumericUtils.SplitInt64Range(new LongRangeBuilderAnonymousInnerClassHelper(this), this.outerInstance.precisionStep, minBound, maxBound);
+                            NumericUtils.SplitInt64Range(new Int64RangeBuilderAnonymousInnerClassHelper(this), this.outerInstance.precisionStep, minBound, maxBound);
                             break;
                         }
 
@@ -408,7 +408,7 @@ namespace Lucene.Net.Search
                                 maxBound--;
                             }
 
-                            NumericUtils.SplitInt32Range(new IntRangeBuilderAnonymousInnerClassHelper(this), this.outerInstance.precisionStep, minBound, maxBound);
+                            NumericUtils.SplitInt32Range(new Int32RangeBuilderAnonymousInnerClassHelper(this), this.outerInstance.precisionStep, minBound, maxBound);
                             break;
                         }
 
@@ -420,11 +420,11 @@ namespace Lucene.Net.Search
                 termComp = Comparer;
             }
 
-            private class LongRangeBuilderAnonymousInnerClassHelper : NumericUtils.LongRangeBuilder
+            private class Int64RangeBuilderAnonymousInnerClassHelper : NumericUtils.Int64RangeBuilder
             {
                 private readonly NumericRangeTermsEnum outerInstance;
 
-                public LongRangeBuilderAnonymousInnerClassHelper(NumericRangeTermsEnum outerInstance)
+                public Int64RangeBuilderAnonymousInnerClassHelper(NumericRangeTermsEnum outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }
@@ -436,11 +436,11 @@ namespace Lucene.Net.Search
                 }
             }
 
-            private class IntRangeBuilderAnonymousInnerClassHelper : NumericUtils.IntRangeBuilder
+            private class Int32RangeBuilderAnonymousInnerClassHelper : NumericUtils.Int32RangeBuilder
             {
                 private readonly NumericRangeTermsEnum outerInstance;
 
-                public IntRangeBuilderAnonymousInnerClassHelper(NumericRangeTermsEnum outerInstance)
+                public Int32RangeBuilderAnonymousInnerClassHelper(NumericRangeTermsEnum outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }

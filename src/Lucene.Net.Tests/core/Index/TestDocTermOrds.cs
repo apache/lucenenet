@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
-    using IntField = IntField;
+    using Int32Field = Int32Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
             {
                 Document doc = new Document();
 
-                doc.Add(new IntField("id", id, Field.Store.NO));
+                doc.Add(new Int32Field("id", id, Field.Store.NO));
 
                 int termCount = TestUtil.NextInt(Random(), 0, 20 * RANDOM_MULTIPLIER);
                 while (ordsForDocSet.Count < termCount)
@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
             {
                 Document doc = new Document();
 
-                doc.Add(new IntField("id", id, Field.Store.NO));
+                doc.Add(new Int32Field("id", id, Field.Store.NO));
 
                 int termCount = TestUtil.NextInt(Random(), 0, 20 * RANDOM_MULTIPLIER);
                 while (ordsForDocSet.Count < termCount)
@@ -342,7 +342,7 @@ namespace Lucene.Net.Index
         {
             DocTermOrds dto = new DocTermOrds(r, r.LiveDocs, "field", prefixRef, int.MaxValue, TestUtil.NextInt(Random(), 2, 10));
 
-            FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInt32s(r, "id", false);
+            FieldCache.Int32s docIDToID = FieldCache.DEFAULT.GetInt32s(r, "id", false);
             /*
               for(int docID=0;docID<subR.MaxDoc;docID++) {
               System.out.println("  docID=" + docID + " id=" + docIDToID[docID]);

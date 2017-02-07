@@ -822,7 +822,7 @@ namespace Lucene.Net.Index
             // Open reader1
             DirectoryReader r = DirectoryReader.Open(dir);
             AtomicReader r1 = GetOnlySegmentReader(r);
-            FieldCache.Ints ints = FieldCache.DEFAULT.GetInt32s(r1, "number", false);
+            FieldCache.Int32s ints = FieldCache.DEFAULT.GetInt32s(r1, "number", false);
             Assert.AreEqual(17, ints.Get(0));
 
             // Add new segment
@@ -834,7 +834,7 @@ namespace Lucene.Net.Index
             Assert.IsNotNull(r2);
             r.Dispose();
             AtomicReader sub0 = (AtomicReader)r2.Leaves[0].Reader;
-            FieldCache.Ints ints2 = FieldCache.DEFAULT.GetInt32s(sub0, "number", false);
+            FieldCache.Int32s ints2 = FieldCache.DEFAULT.GetInt32s(sub0, "number", false);
             r2.Dispose();
             Assert.IsTrue(ints == ints2);
 

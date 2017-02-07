@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
                 FilterAtomicReader reader = new FilterAtomicReaderAnonymousInnerClassHelper(this, wrap, throwOnClose);
                 IList<IndexReader.IReaderClosedListener> listeners = new List<IndexReader.IReaderClosedListener>();
                 int listenerCount = Random().Next(20);
-                AtomicInteger count = new AtomicInteger();
+                AtomicInt32 count = new AtomicInt32();
                 bool faultySet = false;
                 for (int i = 0; i < listenerCount; i++)
                 {
@@ -131,9 +131,9 @@ namespace Lucene.Net.Index
 
         private sealed class CountListener : IndexReader.IReaderClosedListener
         {
-            internal readonly AtomicInteger Count;
+            internal readonly AtomicInt32 Count;
 
-            public CountListener(AtomicInteger count)
+            public CountListener(AtomicInt32 count)
             {
                 this.Count = count;
             }

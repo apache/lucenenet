@@ -190,7 +190,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 numericConfigMap.Put(type.ToString(), new NumericConfig(PRECISION_STEP,
                     NUMBER_FORMAT, type)); 
 
-                FieldType ft2 = new FieldType(IntField.TYPE_NOT_STORED);
+                FieldType ft2 = new FieldType(Int32Field.TYPE_NOT_STORED);
                 ft2.NumericType = (type);
                 ft2.IsStored = (true);
                 ft2.NumericPrecisionStep = (PRECISION_STEP);
@@ -200,13 +200,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 switch (type)
                 {
                     case NumericType.INT:
-                        field = new IntField(type.ToString(), 0, ft2);
+                        field = new Int32Field(type.ToString(), 0, ft2);
                         break;
                     case NumericType.FLOAT:
-                        field = new FloatField(type.ToString(), 0.0f, ft2);
+                        field = new SingleField(type.ToString(), 0.0f, ft2);
                         break;
                     case NumericType.LONG:
-                        field = new LongField(type.ToString(), 0L, ft2);
+                        field = new Int64Field(type.ToString(), 0L, ft2);
                         break;
                     case NumericType.DOUBLE:
                         field = new DoubleField(type.ToString(), 0.0, ft2);
@@ -222,10 +222,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             numericConfigMap.Put(DATE_FIELD_NAME, new NumericConfig(PRECISION_STEP,
                 DATE_FORMAT, NumericType.LONG));
-            FieldType ft = new FieldType(LongField.TYPE_NOT_STORED);
+            FieldType ft = new FieldType(Int64Field.TYPE_NOT_STORED);
             ft.IsStored = (true);
             ft.NumericPrecisionStep = (PRECISION_STEP);
-            LongField dateField = new LongField(DATE_FIELD_NAME, 0L, ft);
+            Int64Field dateField = new Int64Field(DATE_FIELD_NAME, 0L, ft);
             numericFieldMap.Put(DATE_FIELD_NAME, dateField);
             doc.Add(dateField);
 

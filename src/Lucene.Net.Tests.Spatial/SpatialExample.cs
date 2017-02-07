@@ -111,7 +111,7 @@ namespace Lucene.Net.Spatial
         private Document NewSampleDocument(int id, params IShape[] shapes)
         {
             Document doc = new Document();
-            doc.Add(new IntField("id", id, Field.Store.YES));
+            doc.Add(new Int32Field("id", id, Field.Store.YES));
             //Potentially more than one shape in this field is supported by some
             // strategies; see the javadocs of the SpatialStrategy impl to see.
             foreach (IShape shape in shapes)

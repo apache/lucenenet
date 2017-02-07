@@ -45,7 +45,7 @@ namespace Lucene.Net.Documents
     ///  }
     /// </pre>
     ///
-    /// See also <seealso cref="IntField"/>, <seealso cref="LongField"/>, {@link
+    /// See also <seealso cref="Int32Field"/>, <seealso cref="Int64Field"/>, {@link
     /// FloatField}.</p>
     ///
     /// <p>To perform range querying or filtering against a

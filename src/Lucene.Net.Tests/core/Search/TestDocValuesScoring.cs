@@ -28,7 +28,7 @@ namespace Lucene.Net.Search
     using Document = Documents.Document;
     using Field = Field;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
-    using FloatDocValuesField = FloatDocValuesField;
+    using SingleDocValuesField = SingleDocValuesField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using PerFieldSimilarityWrapper = Lucene.Net.Search.Similarities.PerFieldSimilarityWrapper;
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
             Document doc = new Document();
             Field field = NewTextField("foo", "", Field.Store.NO);
             doc.Add(field);
-            Field dvField = new FloatDocValuesField("foo_boost", 0.0F);
+            Field dvField = new SingleDocValuesField("foo_boost", 0.0F);
             doc.Add(dvField);
             Field field2 = NewTextField("bar", "", Field.Store.NO);
             doc.Add(field2);
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
             public override SimScorer GetSimScorer(SimWeight stats, AtomicReaderContext context)
             {
                 SimScorer sub = Sim.GetSimScorer(stats, context);
-                FieldCache.Floats values = FieldCache.DEFAULT.GetSingles(context.AtomicReader, BoostField, false);
+                FieldCache.Singles values = FieldCache.DEFAULT.GetSingles(context.AtomicReader, BoostField, false);
 
                 return new SimScorerAnonymousInnerClassHelper(this, sub, values);
             }
@@ -194,9 +194,9 @@ namespace Lucene.Net.Search
                 private readonly BoostingSimilarity OuterInstance;
 
                 private SimScorer Sub;
-                private FieldCache.Floats Values;
+                private FieldCache.Singles Values;
 
-                public SimScorerAnonymousInnerClassHelper(BoostingSimilarity outerInstance, SimScorer sub, FieldCache.Floats values)
+                public SimScorerAnonymousInnerClassHelper(BoostingSimilarity outerInstance, SimScorer sub, FieldCache.Singles values)
                 {
                     this.OuterInstance = outerInstance;
                     this.Sub = sub;

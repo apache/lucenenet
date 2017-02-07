@@ -252,7 +252,7 @@ namespace Lucene.Net.Search.Grouping
                 Field content = NewTextField("content", "", Field.Store.NO);
                 doc.Add(content);
                 docNoGroup.Add(content);
-                IntField id = new IntField("id", 0, Field.Store.NO);
+                Int32Field id = new Int32Field("id", 0, Field.Store.NO);
                 doc.Add(id);
                 docNoGroup.Add(id);
                 GroupDoc[] groupDocs = new GroupDoc[numDocs];
@@ -312,7 +312,7 @@ namespace Lucene.Net.Search.Grouping
                 w.Dispose();
 
                 // NOTE: intentional but temporary field cache insanity!
-                FieldCache.Ints docIdToFieldId = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(r), "id", false);
+                FieldCache.Int32s docIdToFieldId = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(r), "id", false);
                 int[] fieldIdToDocID = new int[numDocs];
                 for (int i = 0; i < numDocs; i++)
                 {

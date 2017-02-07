@@ -19,7 +19,7 @@ namespace Lucene.Net.Support
         };
 
 
-        private static void relGet(LongBuffer b)
+        private static void relGet(Int64Buffer b)
         {
             int n = b.Capacity;
             //long v; // LUCENENET: Not used
@@ -28,7 +28,7 @@ namespace Lucene.Net.Support
             b.Rewind();
         }
 
-        private static void relGet(LongBuffer b, int start)
+        private static void relGet(Int64Buffer b, int start)
         {
             int n = b.Remaining;
             //long v; // LUCENENET: Not used
@@ -37,7 +37,7 @@ namespace Lucene.Net.Support
             b.Rewind();
         }
 
-        private static void absGet(LongBuffer b)
+        private static void absGet(Int64Buffer b)
         {
             int n = b.Capacity;
             //long v; // LUCENENET: Not used
@@ -46,7 +46,7 @@ namespace Lucene.Net.Support
             b.Rewind();
         }
 
-        private static void bulkGet(LongBuffer b)
+        private static void bulkGet(Int64Buffer b)
         {
             int n = b.Capacity;
             long[] a = new long[n + 7];
@@ -55,7 +55,7 @@ namespace Lucene.Net.Support
                 ck(b, (long)a[i + 7], (long)((long)Ic(i)));
         }
 
-        private static void relPut(LongBuffer b)
+        private static void relPut(Int64Buffer b)
         {
             int n = b.Capacity;
             b.Clear();
@@ -64,7 +64,7 @@ namespace Lucene.Net.Support
             b.Flip();
         }
 
-        private static void absPut(LongBuffer b)
+        private static void absPut(Int64Buffer b)
         {
             int n = b.Capacity;
             b.Clear();
@@ -74,7 +74,7 @@ namespace Lucene.Net.Support
             b.Position = (0);
         }
 
-        private static void bulkPutArray(LongBuffer b)
+        private static void bulkPutArray(Int64Buffer b)
         {
             int n = b.Capacity;
             b.Clear();
@@ -85,11 +85,11 @@ namespace Lucene.Net.Support
             b.Flip();
         }
 
-        private static void bulkPutBuffer(LongBuffer b)
+        private static void bulkPutBuffer(Int64Buffer b)
         {
             int n = b.Capacity;
             b.Clear();
-            LongBuffer c = LongBuffer.Allocate(n + 7);
+            Int64Buffer c = Int64Buffer.Allocate(n + 7);
             c.Position = (7);
             for (int i = 0; i < n; i++)
                 c.Put((long)Ic(i));
@@ -100,7 +100,7 @@ namespace Lucene.Net.Support
         }
 
         //6231529
-        private static void callReset(LongBuffer b)
+        private static void callReset(Int64Buffer b)
         {
             b.Position = (0);
             b.Mark();
@@ -122,23 +122,23 @@ namespace Lucene.Net.Support
             // LUCENENET: AllocateDirect not implemented
 
             //LongBuffer direct1 = ByteBuffer.AllocateDirect(cap).AsLongBuffer();
-            LongBuffer nondirect1 = ByteBuffer.Allocate(cap).AsInt64Buffer();
+            Int64Buffer nondirect1 = ByteBuffer.Allocate(cap).AsInt64Buffer();
             //direct1.Put(nondirect1);
 
             //LongBuffer direct2 = ByteBuffer.AllocateDirect(cap).AsLongBuffer();
-            LongBuffer nondirect2 = ByteBuffer.Allocate(cap).AsInt64Buffer();
+            Int64Buffer nondirect2 = ByteBuffer.Allocate(cap).AsInt64Buffer();
             //nondirect2.Put(direct2);
 
             //LongBuffer direct3 = ByteBuffer.AllocateDirect(cap).AsLongBuffer();
             //LongBuffer direct4 = ByteBuffer.AllocateDirect(cap).AsLongBuffer();
             //direct3.Put(direct4);
 
-            LongBuffer nondirect3 = ByteBuffer.Allocate(cap).AsInt64Buffer();
-            LongBuffer nondirect4 = ByteBuffer.Allocate(cap).AsInt64Buffer();
+            Int64Buffer nondirect3 = ByteBuffer.Allocate(cap).AsInt64Buffer();
+            Int64Buffer nondirect4 = ByteBuffer.Allocate(cap).AsInt64Buffer();
             nondirect3.Put(nondirect4);
         }
 
-        private static void checkSlice(LongBuffer b, LongBuffer slice)
+        private static void checkSlice(Int64Buffer b, Int64Buffer slice)
         {
             ck(slice, 0, slice.Position);
             ck(slice, b.Remaining, slice.Limit);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Support
         }
 
         private static void fail(string problem,
-                                 LongBuffer xb, LongBuffer yb,
+                                 Int64Buffer xb, Int64Buffer yb,
                                  long x, long y)
         {
             fail(problem + string.Format(": x={0} y={1}", x, y), xb, yb);
@@ -180,10 +180,10 @@ namespace Lucene.Net.Support
 
         private static void tryCatch(long[] t, Type ex, Action thunk)
         {
-            tryCatch(LongBuffer.Wrap(t), ex, thunk);
+            tryCatch(Int64Buffer.Wrap(t), ex, thunk);
         }
 
-        public static void test(int level, LongBuffer b, bool direct)
+        public static void test(int level, Int64Buffer b, bool direct)
         {
 
             Show(level, b);
@@ -276,7 +276,7 @@ namespace Lucene.Net.Support
 
             // Comparison
             b.Rewind();
-            LongBuffer b2 = Lucene.Net.Support.LongBuffer.Allocate(b.Capacity);
+            Int64Buffer b2 = Lucene.Net.Support.Int64Buffer.Allocate(b.Capacity);
             b2.Put(b);
             b2.Flip();
             b.Position = (2);
@@ -315,7 +315,7 @@ namespace Lucene.Net.Support
             // Check equals and compareTo with interesting values
             foreach (long x in VALUES)
             {
-                LongBuffer xb = Lucene.Net.Support.LongBuffer.Wrap(new long[] { x });
+                Int64Buffer xb = Lucene.Net.Support.Int64Buffer.Wrap(new long[] { x });
                 if (xb.CompareTo(xb) != 0)
                 {
                     fail("compareTo not reflexive", xb, xb, x, x);
@@ -326,7 +326,7 @@ namespace Lucene.Net.Support
                 }
                 foreach (long y in VALUES)
                 {
-                    LongBuffer yb = Lucene.Net.Support.LongBuffer.Wrap(new long[] { y });
+                    Int64Buffer yb = Lucene.Net.Support.Int64Buffer.Wrap(new long[] { y });
                     if (xb.CompareTo(yb) != -yb.CompareTo(xb))
                     {
                         fail("compareTo not anti-symmetric",
@@ -365,10 +365,10 @@ namespace Lucene.Net.Support
             // Slice
 
             b.Position = (5);
-            LongBuffer sb = b.Slice();
+            Int64Buffer sb = b.Slice();
             checkSlice(b, sb);
             b.Position = (0);
-            LongBuffer sb2 = sb.Slice();
+            Int64Buffer sb2 = sb.Slice();
             checkSlice(sb, sb2);
 
             if (!sb.equals(sb2))
@@ -462,7 +462,7 @@ namespace Lucene.Net.Support
         {
             int offset = 47;
             int length = 900;
-            LongBuffer b = LongBuffer.Wrap(ba, offset, length);
+            Int64Buffer b = Int64Buffer.Wrap(ba, offset, length);
             Show(0, b);
             ck(b, b.Capacity, ba.Length);
             ck(b, b.Position, offset);
@@ -471,29 +471,29 @@ namespace Lucene.Net.Support
             // The offset must be non-negative and no larger than <array.length>.
             tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
             {
-                LongBuffer.Wrap(ba, -1, ba.Length);
+                Int64Buffer.Wrap(ba, -1, ba.Length);
             });
             tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
             {
-                LongBuffer.Wrap(ba, ba.Length + 1, ba.Length);
+                Int64Buffer.Wrap(ba, ba.Length + 1, ba.Length);
             });
             tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
             {
-                LongBuffer.Wrap(ba, 0, -1);
+                Int64Buffer.Wrap(ba, 0, -1);
             });
             tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
             {
-                LongBuffer.Wrap(ba, 0, ba.Length + 1);
+                Int64Buffer.Wrap(ba, 0, ba.Length + 1);
             });
 
             // A NullPointerException will be thrown if the array is null.
             tryCatch(ba, typeof(NullReferenceException), () =>
             {
-                LongBuffer.Wrap((long[])null, 0, 5);
+                Int64Buffer.Wrap((long[])null, 0, 5);
             });
             tryCatch(ba, typeof(NullReferenceException), () =>
             {
-                LongBuffer.Wrap((long[])null);
+                Int64Buffer.Wrap((long[])null);
             });
         }
 
@@ -503,7 +503,7 @@ namespace Lucene.Net.Support
             // An IllegalArgumentException will be thrown for negative capacities.
             tryCatch((Buffer)null, typeof(ArgumentException), () =>
             {
-                LongBuffer.Allocate(-1);
+                Int64Buffer.Allocate(-1);
             });
         }
 
@@ -511,11 +511,11 @@ namespace Lucene.Net.Support
         public static void Test()
         {
             TestAllocate();
-            test(0, LongBuffer.Allocate(7 * 1024), false);
-            test(0, LongBuffer.Wrap(new long[7 * 1024], 0, 7 * 1024), false);
+            test(0, Int64Buffer.Allocate(7 * 1024), false);
+            test(0, Int64Buffer.Wrap(new long[7 * 1024], 0, 7 * 1024), false);
             test(new long[1024]);
 
-            callReset(LongBuffer.Allocate(10));
+            callReset(Int64Buffer.Allocate(10));
             putBuffer();
 
         }

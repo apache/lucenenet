@@ -534,7 +534,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <exception cref="IllegalArgumentException"> If invalid codepoint header byte occurs or the
         ///    content is prematurely truncated. </exception>
-        public static void UTF8toUTF32(BytesRef utf8, IntsRef utf32)
+        public static void UTF8toUTF32(BytesRef utf8, Int32sRef utf32)
         {
             // TODO: broken if incoming result.offset != 0
             // pre-alloc for worst case

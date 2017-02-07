@@ -69,7 +69,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal readonly int maxdoc;
 
-        private readonly AtomicLong ramBytesUsed;
+        private readonly AtomicInt64 ramBytesUsed;
 
         // note: just like segmentreader in 3.x, we open up all the files here (including separate norms) up front.
         // but we just don't do any seeks or reading yet.
@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     IOUtils.CloseWhileHandlingException(openFiles);
                 }
             }
-            ramBytesUsed = new AtomicLong();
+            ramBytesUsed = new AtomicInt64();
         }
 
         protected override void Dispose(bool disposing)

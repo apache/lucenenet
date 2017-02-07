@@ -372,7 +372,7 @@ namespace Lucene.Net.Support
         /// <summary>
         /// NOTE: This was asLongBuffer() in the JDK
         /// </summary>
-        public override LongBuffer AsInt64Buffer()
+        public override Int64Buffer AsInt64Buffer()
         {
             throw new NotSupportedException();
         }

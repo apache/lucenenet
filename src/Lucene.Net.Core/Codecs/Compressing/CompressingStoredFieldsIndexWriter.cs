@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Compressing
      */
 
     using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
 
     /// <summary>
     /// Efficient index format for block-based <seealso cref="Codec"/>s.
@@ -36,7 +36,7 @@ namespace Lucene.Net.Codecs.Compressing
     /// <p>Data is written as follows:</p>
     /// <ul>
     /// <li>PackedIntsVersion, &lt;Block&gt;<sup>BlockCount</sup>, BlocksEndMarker</li>
-    /// <li>PackedIntsVersion --&gt; <seealso cref="PackedInts#VERSION_CURRENT"/> as a <seealso cref="DataOutput#writeVInt VInt"/></li>
+    /// <li>PackedIntsVersion --&gt; <seealso cref="PackedInt32s#VERSION_CURRENT"/> as a <seealso cref="DataOutput#writeVInt VInt"/></li>
     /// <li>BlocksEndMarker --&gt; <tt>0</tt> as a <seealso cref="DataOutput#writeVInt VInt"/>, this marks the end of blocks since blocks are not allowed to start with <tt>0</tt></li>
     /// <li>Block --&gt; BlockChunks, &lt;DocBases&gt;, &lt;StartPointers&gt;</li>
     /// <li>BlockChunks --&gt; a <seealso cref="DataOutput#writeVInt VInt"/> which is the number of chunks encoded in the block</li>
@@ -44,12 +44,12 @@ namespace Lucene.Net.Codecs.Compressing
     /// <li>DocBase --&gt; first document ID of the block of chunks, as a <seealso cref="DataOutput#writeVInt VInt"/></li>
     /// <li>AvgChunkDocs --&gt; average number of documents in a single chunk, as a <seealso cref="DataOutput#writeVInt VInt"/></li>
     /// <li>BitsPerDocBaseDelta --&gt; number of bits required to represent a delta from the average using <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">ZigZag encoding</a></li>
-    /// <li>DocBaseDeltas --&gt; <seealso cref="PackedInts packed"/> array of BlockChunks elements of BitsPerDocBaseDelta bits each, representing the deltas from the average doc base using <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">ZigZag encoding</a>.</li>
+    /// <li>DocBaseDeltas --&gt; <seealso cref="PackedInt32s packed"/> array of BlockChunks elements of BitsPerDocBaseDelta bits each, representing the deltas from the average doc base using <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">ZigZag encoding</a>.</li>
     /// <li>StartPointers --&gt; StartPointerBase, AvgChunkSize, BitsPerStartPointerDelta, StartPointerDeltas</li>
     /// <li>StartPointerBase --&gt; the first start pointer of the block, as a <seealso cref="DataOutput#writeVLong VLong"/></li>
     /// <li>AvgChunkSize --&gt; the average size of a chunk of compressed documents, as a <seealso cref="DataOutput#writeVLong VLong"/></li>
     /// <li>BitsPerStartPointerDelta --&gt; number of bits required to represent a delta from the average using <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">ZigZag encoding</a></li>
-    /// <li>StartPointerDeltas --&gt; <seealso cref="PackedInts packed"/> array of BlockChunks elements of BitsPerStartPointerDelta bits each, representing the deltas from the average start pointer using <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">ZigZag encoding</a></li>
+    /// <li>StartPointerDeltas --&gt; <seealso cref="PackedInt32s packed"/> array of BlockChunks elements of BitsPerStartPointerDelta bits each, representing the deltas from the average start pointer using <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">ZigZag encoding</a></li>
     /// <li>Footer --&gt; <seealso cref="CodecUtil#writeFooter CodecFooter"/></li>
     /// </ul>
     /// <p>Notes</p>
@@ -90,7 +90,7 @@ namespace Lucene.Net.Codecs.Compressing
             totalDocs = 0;
             docBaseDeltas = new int[BLOCK_SIZE];
             startPointerDeltas = new long[BLOCK_SIZE];
-            fieldsIndexOut.WriteVInt32(PackedInts.VERSION_CURRENT);
+            fieldsIndexOut.WriteVInt32(PackedInt32s.VERSION_CURRENT);
         }
 
         private void Reset()
@@ -133,14 +133,14 @@ namespace Lucene.Net.Codecs.Compressing
                 docBase += docBaseDeltas[i];
             }
 
-            int bitsPerDocBase = PackedInts.BitsRequired(maxDelta);
+            int bitsPerDocBase = PackedInt32s.BitsRequired(maxDelta);
             fieldsIndexOut.WriteVInt32(bitsPerDocBase);
-            PackedInts.Writer writer = PackedInts.GetWriterNoHeader(fieldsIndexOut, PackedInts.Format.PACKED, blockChunks, bitsPerDocBase, 1);
+            PackedInt32s.Writer writer = PackedInt32s.GetWriterNoHeader(fieldsIndexOut, PackedInt32s.Format.PACKED, blockChunks, bitsPerDocBase, 1);
             docBase = 0;
             for (int i = 0; i < blockChunks; ++i)
             {
                 long delta = docBase - avgChunkDocs * i;
-                Debug.Assert(PackedInts.BitsRequired(MoveSignToLowOrderBit(delta)) <= writer.BitsPerValue);
+                Debug.Assert(PackedInt32s.BitsRequired(MoveSignToLowOrderBit(delta)) <= writer.BitsPerValue);
                 writer.Add(MoveSignToLowOrderBit(delta));
                 docBase += docBaseDeltas[i];
             }
@@ -167,15 +167,15 @@ namespace Lucene.Net.Codecs.Compressing
                 maxDelta |= MoveSignToLowOrderBit(delta);
             }
 
-            int bitsPerStartPointer = PackedInts.BitsRequired(maxDelta);
+            int bitsPerStartPointer = PackedInt32s.BitsRequired(maxDelta);
             fieldsIndexOut.WriteVInt32(bitsPerStartPointer);
-            writer = PackedInts.GetWriterNoHeader(fieldsIndexOut, PackedInts.Format.PACKED, blockChunks, bitsPerStartPointer, 1);
+            writer = PackedInt32s.GetWriterNoHeader(fieldsIndexOut, PackedInt32s.Format.PACKED, blockChunks, bitsPerStartPointer, 1);
             startPointer = 0;
             for (int i = 0; i < blockChunks; ++i)
             {
                 startPointer += startPointerDeltas[i];
                 long delta = startPointer - avgChunkSize * i;
-                Debug.Assert(PackedInts.BitsRequired(MoveSignToLowOrderBit(delta)) <= writer.BitsPerValue);
+                Debug.Assert(PackedInt32s.BitsRequired(MoveSignToLowOrderBit(delta)) <= writer.BitsPerValue);
                 writer.Add(MoveSignToLowOrderBit(delta));
             }
             writer.Finish();

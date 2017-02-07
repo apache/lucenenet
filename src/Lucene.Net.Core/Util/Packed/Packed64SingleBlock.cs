@@ -31,7 +31,7 @@ namespace Lucene.Net.Util.Packed
     /// speed by ensuring that a single block needs to be read/written in order to
     /// read/write a value.
     /// </summary>
-    internal abstract class Packed64SingleBlock : PackedInts.MutableImpl
+    internal abstract class Packed64SingleBlock : PackedInt32s.MutableImpl
     {
         public const int MAX_SUPPORTED_BITS_PER_VALUE = 32;
         private static readonly int[] SUPPORTED_BITS_PER_VALUE = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 21, 32 };
@@ -97,7 +97,7 @@ namespace Lucene.Net.Util.Packed
 
             // bulk get
             Debug.Assert(index % valuesPerBlock == 0);
-            PackedInts.IDecoder decoder = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
+            PackedInt32s.IDecoder decoder = BulkOperation.Of(PackedInt32s.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
             Debug.Assert(decoder.Int64BlockCount == 1);
             Debug.Assert(decoder.Int64ValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
@@ -148,7 +148,7 @@ namespace Lucene.Net.Util.Packed
 
             // bulk set
             Debug.Assert(index % valuesPerBlock == 0);
-            BulkOperation op = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
+            BulkOperation op = BulkOperation.Of(PackedInt32s.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
             Debug.Assert(op.Int64BlockCount == 1);
             Debug.Assert(op.Int64ValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
@@ -176,7 +176,7 @@ namespace Lucene.Net.Util.Packed
         {
             Debug.Assert(fromIndex >= 0);
             Debug.Assert(fromIndex <= toIndex);
-            Debug.Assert(PackedInts.BitsRequired(val) <= m_bitsPerValue);
+            Debug.Assert(PackedInt32s.BitsRequired(val) <= m_bitsPerValue);
 
             int valuesPerBlock = 64 / m_bitsPerValue;
             if (toIndex - fromIndex <= valuesPerBlock << 1)
@@ -217,11 +217,11 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        internal override PackedInts.Format Format
+        internal override PackedInt32s.Format Format
         {
             get
             {
-                return PackedInts.Format.PACKED_SINGLE_BLOCK;
+                return PackedInt32s.Format.PACKED_SINGLE_BLOCK;
             }
         }
 

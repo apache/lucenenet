@@ -31,14 +31,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class IntFieldSource : FieldCacheSource
     {
-        private readonly FieldCache.IIntParser parser;
+        private readonly FieldCache.IInt32Parser parser;
 
         public IntFieldSource(string field)
             : this(field, null)
         {
         }
 
-        public IntFieldSource(string field, FieldCache.IIntParser parser)
+        public IntFieldSource(string field, FieldCache.IInt32Parser parser)
             : base(field)
         {
             this.parser = parser;
@@ -51,7 +51,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            FieldCache.Ints arr = m_cache.GetInt32s(readerContext.AtomicReader, m_field, parser, true);
+            FieldCache.Int32s arr = m_cache.GetInt32s(readerContext.AtomicReader, m_field, parser, true);
             IBits valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
 
             return new IntDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
@@ -61,19 +61,19 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             private readonly IntFieldSource outerInstance;
 
-            private readonly FieldCache.Ints arr;
+            private readonly FieldCache.Int32s arr;
             private readonly IBits valid;
 
-            public IntDocValuesAnonymousInnerClassHelper(IntFieldSource outerInstance, IntFieldSource @this, FieldCache.Ints arr, IBits valid)
+            public IntDocValuesAnonymousInnerClassHelper(IntFieldSource outerInstance, IntFieldSource @this, FieldCache.Int32s arr, IBits valid)
                 : base(@this)
             {
                 this.outerInstance = outerInstance;
                 this.arr = arr;
                 this.valid = valid;
-                val = new MutableValueInt();
+                val = new MutableValueInt32();
             }
 
-            private readonly MutableValueInt val;
+            private readonly MutableValueInt32 val;
 
             /// <summary>
             /// NOTE: This was floatVal() in Lucene
@@ -136,10 +136,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 public ValueFillerAnonymousInnerClassHelper(IntDocValuesAnonymousInnerClassHelper outerInstance)
                 {
                     this.outerInstance = outerInstance;
-                    mval = new MutableValueInt();
+                    mval = new MutableValueInt32();
                 }
 
-                private readonly MutableValueInt mval;
+                private readonly MutableValueInt32 mval;
 
                 public override MutableValue Value
                 {

@@ -21,8 +21,8 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using AppendingDeltaPackedLongBuffer = Lucene.Net.Util.Packed.AppendingDeltaPackedLongBuffer;
-    using AppendingPackedLongBuffer = Lucene.Net.Util.Packed.AppendingPackedLongBuffer;
+    using AppendingDeltaPackedInt64Buffer = Lucene.Net.Util.Packed.AppendingDeltaPackedInt64Buffer;
+    using AppendingPackedInt64Buffer = Lucene.Net.Util.Packed.AppendingPackedInt64Buffer;
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
     using Counter = Lucene.Net.Util.Counter;
     using DirectBytesStartArray = Lucene.Net.Util.BytesRefHash.DirectBytesStartArray;
     using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
     /// <summary>
@@ -40,8 +40,8 @@ namespace Lucene.Net.Index
     internal class SortedSetDocValuesWriter : DocValuesWriter
     {
         internal readonly BytesRefHash hash;
-        private AppendingPackedLongBuffer pending; // stream of all termIDs
-        private AppendingDeltaPackedLongBuffer pendingCounts; // termIDs per doc
+        private AppendingPackedInt64Buffer pending; // stream of all termIDs
+        private AppendingDeltaPackedInt64Buffer pendingCounts; // termIDs per doc
         private readonly Counter iwBytesUsed;
         private long bytesUsed; // this only tracks differences in 'pending' and 'pendingCounts'
         private readonly FieldInfo fieldInfo;
@@ -55,8 +55,8 @@ namespace Lucene.Net.Index
             this.fieldInfo = fieldInfo;
             this.iwBytesUsed = iwBytesUsed;
             hash = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectTrackingAllocator(iwBytesUsed)), BytesRefHash.DEFAULT_CAPACITY, new DirectBytesStartArray(BytesRefHash.DEFAULT_CAPACITY, iwBytesUsed));
-            pending = new AppendingPackedLongBuffer(PackedInts.COMPACT);
-            pendingCounts = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
+            pending = new AppendingPackedInt64Buffer(PackedInt32s.COMPACT);
+            pendingCounts = new AppendingDeltaPackedInt64Buffer(PackedInt32s.COMPACT);
             bytesUsed = pending.RamBytesUsed() + pendingCounts.RamBytesUsed();
             iwBytesUsed.AddAndGet(bytesUsed);
         }
@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
 
         private IEnumerable<long?> GetOrdsEnumberable(int maxDoc)
         {
-            AppendingDeltaPackedLongBuffer.Iterator iter = pendingCounts.GetIterator();
+            AppendingDeltaPackedInt64Buffer.Iterator iter = pendingCounts.GetIterator();
 
             Debug.Assert(maxDoc == pendingCounts.Count, "MaxDoc: " + maxDoc + ", pending.Count: " + pending.Count);
 
@@ -210,8 +210,8 @@ namespace Lucene.Net.Index
         private IEnumerable<long?> GetOrdCountEnumberable(int maxCountPerDoc, int[] ordMap)
         {
             int currentUpTo = 0, currentLength = 0;
-            AppendingPackedLongBuffer.Iterator iter = pending.GetIterator();
-            AppendingDeltaPackedLongBuffer.Iterator counts = pendingCounts.GetIterator();
+            AppendingPackedInt64Buffer.Iterator iter = pending.GetIterator();
+            AppendingDeltaPackedInt64Buffer.Iterator counts = pendingCounts.GetIterator();
             int[] currentDoc = new int[maxCountPerDoc];
 
             for (long i = 0; i < pending.Count; ++i)

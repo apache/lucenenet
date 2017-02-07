@@ -45,7 +45,7 @@ namespace Lucene.Net.Documents
     ///  }
     /// </pre>
     ///
-    /// See also <seealso cref="LongField"/>, <seealso cref="FloatField"/>, {@link
+    /// See also <seealso cref="Int64Field"/>, <seealso cref="SingleField"/>, {@link
     /// DoubleField}.</p>
     ///
     /// <p>To perform range querying or filtering against a
@@ -104,10 +104,12 @@ namespace Lucene.Net.Documents
     /// NumericTokenStream} directly, when indexing numbers. this
     /// class is a wrapper around this token stream type for
     /// easier, more intuitive usage.</p>
-    ///
+    /// <para>
+    /// NOTE: This was IntField in Lucene
+    /// </para>
     /// @since 2.9
     /// </summary>
-    public sealed class IntField : Field
+    public sealed class Int32Field : Field
     {
         /// <summary>
         /// Type for an IntField that is not stored:
@@ -115,7 +117,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public static readonly FieldType TYPE_NOT_STORED = new FieldType();
 
-        static IntField()
+        static Int32Field()
         {
             TYPE_NOT_STORED.IsIndexed = true;
             TYPE_NOT_STORED.IsTokenized = true;
@@ -147,7 +149,7 @@ namespace Lucene.Net.Documents
         ///  <param name="value"> 32-bit integer value </param>
         ///  <param name="stored"> Store.YES if the content should also be stored </param>
         ///  <exception cref="IllegalArgumentException"> if the field name is null. </exception>
-        public IntField(string name, int value, Store stored)
+        public Int32Field(string name, int value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
             m_fieldsData = Convert.ToInt32(value);
@@ -162,7 +164,7 @@ namespace Lucene.Net.Documents
         ///         of <seealso cref="NumericType#INT"/>. </param>
         ///  <exception cref="IllegalArgumentException"> if the field name or type is null, or
         ///          if the field type does not have a INT numericType() </exception>
-        public IntField(string name, int value, FieldType type)
+        public Int32Field(string name, int value, FieldType type)
             : base(name, type)
         {
             if (type.NumericType != NumericType.INT)

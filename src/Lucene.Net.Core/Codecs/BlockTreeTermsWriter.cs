@@ -31,10 +31,10 @@ namespace Lucene.Net.Codecs
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using IntsRef = Lucene.Net.Util.IntsRef;
+    using Int32sRef = Lucene.Net.Util.Int32sRef;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using NoOutputs = Lucene.Net.Util.Fst.NoOutputs;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
     using Util = Lucene.Net.Util.Fst.Util;
@@ -413,7 +413,7 @@ namespace Lucene.Net.Codecs
             public bool HasTerms { get; private set; }
             public bool IsFloor { get; private set; }
             public int FloorLeadByte { get; private set; }
-            private readonly IntsRef scratchIntsRef = new IntsRef();
+            private readonly Int32sRef scratchIntsRef = new Int32sRef();
 
             public PendingBlock(BytesRef prefix, long fp, bool hasTerms, bool isFloor, int floorLeadByte, IList<FST<BytesRef>> subIndices)
                 : base(false)
@@ -457,7 +457,7 @@ namespace Lucene.Net.Codecs
                 }
 
                 ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
-                Builder<BytesRef> indexBuilder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, false, int.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15);
+                Builder<BytesRef> indexBuilder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, false, int.MaxValue, outputs, null, false, PackedInt32s.COMPACT, true, 15);
                 var bytes = new byte[(int)scratchBytes.FilePointer];
                 Debug.Assert(bytes.Length > 0);
                 scratchBytes.WriteTo(bytes, 0);
@@ -562,7 +562,7 @@ namespace Lucene.Net.Codecs
                     this.outerInstance = outerInstance;
                 }
 
-                public override void Freeze(Builder.UnCompiledNode<object>[] frontier, int prefixLenPlus1, IntsRef lastInput)
+                public override void Freeze(Builder.UnCompiledNode<object>[] frontier, int prefixLenPlus1, Int32sRef lastInput)
                 {
                     //if (DEBUG) System.out.println("  freeze prefixLenPlus1=" + prefixLenPlus1);
 
@@ -617,7 +617,7 @@ namespace Lucene.Net.Codecs
             // primary (initial) block and then one or more
             // following floor blocks:
 
-            internal virtual void WriteBlocks(IntsRef prevTerm, int prefixLength, int count)
+            internal virtual void WriteBlocks(Int32sRef prevTerm, int prefixLength, int count)
             {
                 if (prefixLength == 0 || count <= outerInstance.maxItemsInBlock)
                 {
@@ -874,7 +874,7 @@ namespace Lucene.Net.Codecs
 
             // Writes all entries in the pending slice as a single
             // block:
-            private PendingBlock WriteBlock(IntsRef prevTerm, int prefixLength, int indexPrefixLength, int startBackwards, int length, int futureTermCount, bool isFloor, int floorLeadByte, bool isLastInFloor)
+            private PendingBlock WriteBlock(Int32sRef prevTerm, int prefixLength, int indexPrefixLength, int startBackwards, int length, int futureTermCount, bool isFloor, int floorLeadByte, bool isLastInFloor)
             {
                 Debug.Assert(length > 0);
 
@@ -1104,7 +1104,7 @@ namespace Lucene.Net.Codecs
                 // this Builder is just used transiently to fragment
                 // terms into "good" blocks; we don't save the
                 // resulting FST:
-                blockBuilder = new Builder<object>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, noOutputs, new FindBlocks(this), false, PackedInts.COMPACT, true, 15);
+                blockBuilder = new Builder<object>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, noOutputs, new FindBlocks(this), false, PackedInt32s.COMPACT, true, 15);
 
                 this.longsSize = outerInstance.postingsWriter.SetField(fieldInfo);
             }
@@ -1131,7 +1131,7 @@ namespace Lucene.Net.Codecs
                 return outerInstance.postingsWriter;
             }
 
-            private readonly IntsRef scratchIntsRef = new IntsRef();
+            private readonly Int32sRef scratchIntsRef = new Int32sRef();
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {

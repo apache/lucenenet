@@ -12,7 +12,7 @@ namespace Lucene.Net.Codecs.Compressing
     using Field = Field;
     using FieldType = FieldType;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using IntField = IntField;
+    using Int32Field = Int32Field;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -59,7 +59,7 @@ namespace Lucene.Net.Codecs.Compressing
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConf);
 
             Document validDoc = new Document();
-            validDoc.Add(new IntField("id", 0, Field.Store.YES));
+            validDoc.Add(new Int32Field("id", 0, Field.Store.YES));
             iw.AddDocument(validDoc);
             iw.Commit();
 

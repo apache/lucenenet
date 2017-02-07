@@ -43,8 +43,8 @@ namespace Lucene.Net.Util.Fst
                 for (int inputMode = 0; inputMode < 2; inputMode++)
                 {
                     int numWords = random.nextInt(maxNumWords + 1);
-                    ISet<IntsRef> termsSet = new HashSet<IntsRef>();
-                    IntsRef[] terms = new IntsRef[numWords];
+                    ISet<Int32sRef> termsSet = new HashSet<Int32sRef>();
+                    Int32sRef[] terms = new Int32sRef[numWords];
                     while (termsSet.size() < numWords)
                     {
                         string term = FSTTester<object>.GetRandomString(random);
@@ -56,7 +56,7 @@ namespace Lucene.Net.Util.Fst
         }
 
 
-        private void DoTest(int inputMode, IntsRef[] terms)
+        private void DoTest(int inputMode, Int32sRef[] terms)
         {
             Array.Sort(terms);
 
@@ -106,7 +106,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         Console.WriteLine("TEST: now test OneOrMoreOutputs");
                     }
-                    PositiveIntOutputs _outputs = PositiveIntOutputs.Singleton; // LUCENENET TODO: This should probably not be a nullable type
+                    PositiveInt32Outputs _outputs = PositiveInt32Outputs.Singleton; // LUCENENET TODO: This should probably not be a nullable type
                     ListOfOutputs<long?> outputs2 = new ListOfOutputs<long?>(_outputs);
                     List<FSTTester<object>.InputOutput<object>> pairs2 = new List<FSTTester<object>.InputOutput<object>>(terms.Length);
                     long lastOutput2 = 0;
@@ -174,11 +174,11 @@ namespace Lucene.Net.Util.Fst
         [Test]
         public void TestListOfOutputs()
         {
-            PositiveIntOutputs _outputs = PositiveIntOutputs.Singleton;
+            PositiveInt32Outputs _outputs = PositiveInt32Outputs.Singleton;
             ListOfOutputs<long?> outputs = new ListOfOutputs<long?>(_outputs);
             Builder<object> builder = new Builder<object>(Lucene.Net.Util.Fst.FST.INPUT_TYPE.BYTE1, outputs);
 
-            IntsRef scratch = new IntsRef();
+            Int32sRef scratch = new Int32sRef();
             // Add the same input more than once and the outputs
             // are merged:
             builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), 1L);
@@ -205,11 +205,11 @@ namespace Lucene.Net.Util.Fst
         [Test]
         public void TestListOfOutputsEmptyString()
         {
-            PositiveIntOutputs _outputs = PositiveIntOutputs.Singleton;
+            PositiveInt32Outputs _outputs = PositiveInt32Outputs.Singleton;
             ListOfOutputs<long?> outputs = new ListOfOutputs<long?>(_outputs);
             Builder<object> builder = new Builder<object>(FST.INPUT_TYPE.BYTE1, outputs);
 
-            IntsRef scratch = new IntsRef();
+            Int32sRef scratch = new Int32sRef();
             builder.Add(scratch, 0L);
             builder.Add(scratch, 1L);
             builder.Add(scratch, 17L);

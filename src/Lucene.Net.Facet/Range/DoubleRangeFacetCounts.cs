@@ -39,7 +39,7 @@ namespace Lucene.Net.Facet.Range
     ///  distance from the user's location, "&lt; 1 km", "&lt; 2 km",
     ///  etc.).
     /// 
-    ///  <para> If you had indexed your field using <see cref="Documents.FloatDocValuesField"/> 
+    ///  <para> If you had indexed your field using <see cref="Documents.SingleDocValuesField"/> 
     ///  then pass <see cref="Queries.Function.ValueSources.FloatFieldSource"/>
     ///  as the <see cref="ValueSource"/>; if you used 
     ///  <see cref="Documents.DoubleDocValuesField"/> then pass 

@@ -24,7 +24,7 @@ namespace Lucene.Net.Util.Packed
 
     /// <summary>
     /// A <seealso cref="DataInput"/> wrapper to read unaligned, variable-length packed
-    /// integers. this API is much slower than the <seealso cref="PackedInts"/> fixed-length
+    /// integers. this API is much slower than the <seealso cref="PackedInt32s"/> fixed-length
     /// API but can be convenient to save space. </summary>
     /// <seealso cref= PackedDataOutput
     /// @lucene.internal </seealso>

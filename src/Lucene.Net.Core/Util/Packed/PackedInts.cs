@@ -33,10 +33,12 @@ namespace Lucene.Net.Util.Packed
     /// Each value is >= 0 and &lt;= a specified maximum value.  The
     /// values are stored as packed ints, with each value
     /// consuming a fixed number of bits.
+    /// <para/>
+    /// NOTE: This was PackedInts in Lucene
     ///
     /// @lucene.internal
     /// </summary>
-    public class PackedInts
+    public class PackedInt32s
     {
         /// <summary>
         /// At most 700% memory overhead, always select a direct implementation.
@@ -98,7 +100,7 @@ namespace Lucene.Net.Util.Packed
         /// A format that may insert padding bits to improve encoding and decoding
         /// speed. Since this format doesn't support all possible bits per value, you
         /// should never use it directly, but rather use
-        /// <seealso cref="PackedInts#fastestFormatAndBits(int, int, float)"/> to find the
+        /// <seealso cref="PackedInt32s#fastestFormatAndBits(int, int, float)"/> to find the
         /// format that best suits your needs.
         /// </summary>
 
@@ -375,7 +377,7 @@ namespace Lucene.Net.Util.Packed
         /// The <code>acceptableOverheadRatio</code> parameter makes sense for
         /// random-access <seealso cref="Reader"/>s. In case you only plan to perform
         /// sequential access on this stream later on, you should probably use
-        /// <seealso cref="PackedInts#COMPACT"/>.
+        /// <seealso cref="PackedInt32s#COMPACT"/>.
         /// </p><p>
         /// If you don't know how many values you are going to write, use
         /// <code>valueCount = -1</code>.
@@ -690,7 +692,7 @@ namespace Lucene.Net.Util.Packed
             /// Returns at least 1 and at most <code>count</code> next values,
             /// the returned ref MUST NOT be modified
             /// </summary>
-            LongsRef Next(int count);
+            Int64sRef Next(int count);
 
             /// <summary>
             /// Returns number of bits per value </summary>
@@ -723,7 +725,7 @@ namespace Lucene.Net.Util.Packed
 
             public virtual long Next()
             {
-                LongsRef nextValues = Next(1);
+                Int64sRef nextValues = Next(1);
                 Debug.Assert(nextValues.Length > 0);
                 long result = nextValues.Int64s[nextValues.Offset];
                 ++nextValues.Offset;
@@ -731,7 +733,7 @@ namespace Lucene.Net.Util.Packed
                 return result;
             }
 
-            public abstract LongsRef Next(int count);
+            public abstract Int64sRef Next(int count);
 
             public virtual int BitsPerValue
             {
@@ -964,7 +966,7 @@ namespace Lucene.Net.Util.Packed
 
             /// <summary>
             /// The format used to serialize values. </summary>
-            protected internal abstract PackedInts.Format Format { get; }
+            protected internal abstract PackedInt32s.Format Format { get; }
 
             /// <summary>
             /// Add a value to the stream. </summary>
@@ -1018,7 +1020,7 @@ namespace Lucene.Net.Util.Packed
         /// Expert: Restore a <seealso cref="Reader"/> from a stream without reading metadata at
         /// the beginning of the stream. this method is useful to restore data from
         /// streams which have been created using
-        /// <seealso cref="PackedInts#getWriterNoHeader(DataOutput, Format, int, int, int)"/>.
+        /// <seealso cref="PackedInt32s#getWriterNoHeader(DataOutput, Format, int, int, int)"/>.
         /// </summary>
         /// <param name="in">           the stream to read data from, positioned at the beginning of the packed values </param>
         /// <param name="format">       the format used to serialize </param>
@@ -1027,17 +1029,17 @@ namespace Lucene.Net.Util.Packed
         /// <param name="bitsPerValue"> the number of bits per value </param>
         /// <returns>             a Reader </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-        /// <seealso cref= PackedInts#getWriterNoHeader(DataOutput, Format, int, int, int)
+        /// <seealso cref= PackedInt32s#getWriterNoHeader(DataOutput, Format, int, int, int)
         /// @lucene.internal </seealso>
         public static Reader GetReaderNoHeader(DataInput @in, Format format, int version, int valueCount, int bitsPerValue)
         {
             CheckVersion(version);
 
-            if (format == PackedInts.Format.PACKED_SINGLE_BLOCK)
+            if (format == PackedInt32s.Format.PACKED_SINGLE_BLOCK)
             {
                 return Packed64SingleBlock.Create(@in, valueCount, bitsPerValue);
             }
-            else if (format == PackedInts.Format.PACKED)
+            else if (format == PackedInt32s.Format.PACKED)
             {
                 switch (bitsPerValue)
                 {
@@ -1113,7 +1115,7 @@ namespace Lucene.Net.Util.Packed
         /// Expert: Restore a <seealso cref="IReaderIterator"/> from a stream without reading
         /// metadata at the beginning of the stream. this method is useful to restore
         /// data from streams which have been created using
-        /// <seealso cref="PackedInts#getWriterNoHeader(DataOutput, Format, int, int, int)"/>.
+        /// <seealso cref="PackedInt32s#getWriterNoHeader(DataOutput, Format, int, int, int)"/>.
         /// </summary>
         /// <param name="in">           the stream to read data from, positioned at the beginning of the packed values </param>
         /// <param name="format">       the format used to serialize </param>
@@ -1122,7 +1124,7 @@ namespace Lucene.Net.Util.Packed
         /// <param name="bitsPerValue"> the number of bits per value </param>
         /// <param name="mem">          how much memory the iterator is allowed to use to read-ahead (likely to speed up iteration) </param>
         /// <returns>             a ReaderIterator </returns>
-        /// <seealso cref= PackedInts#getWriterNoHeader(DataOutput, Format, int, int, int)
+        /// <seealso cref= PackedInt32s#getWriterNoHeader(DataOutput, Format, int, int, int)
         /// @lucene.internal </seealso>
         public static IReaderIterator GetReaderIteratorNoHeader(DataInput @in, Format format, int version, int valueCount, int bitsPerValue, int mem)
         {
@@ -1151,7 +1153,7 @@ namespace Lucene.Net.Util.Packed
         /// Expert: Construct a direct <seealso cref="Reader"/> from a stream without reading
         /// metadata at the beginning of the stream. this method is useful to restore
         /// data from streams which have been created using
-        /// <seealso cref="PackedInts#getWriterNoHeader(DataOutput, Format, int, int, int)"/>.
+        /// <seealso cref="PackedInt32s#getWriterNoHeader(DataOutput, Format, int, int, int)"/>.
         /// </p><p>
         /// The returned reader will have very little memory overhead, but every call
         /// to <seealso cref="Reader#get(int)"/> is likely to perform a disk seek.
@@ -1167,11 +1169,11 @@ namespace Lucene.Net.Util.Packed
         {
             CheckVersion(version);
 
-            if (format == PackedInts.Format.PACKED_SINGLE_BLOCK)
+            if (format == PackedInt32s.Format.PACKED_SINGLE_BLOCK)
             {
                 return new DirectPacked64SingleBlockReader(bitsPerValue, valueCount, @in);
             }
-            else if (format == PackedInts.Format.PACKED)
+            else if (format == PackedInt32s.Format.PACKED)
             {
                 long byteCount = format.ByteCount(version, valueCount, bitsPerValue);
                 if (byteCount != format.ByteCount(VERSION_CURRENT, valueCount, bitsPerValue))
@@ -1248,7 +1250,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Construct a direct <seealso cref="Reader"/> from an <seealso cref="IndexInput"/>. this method
         /// is useful to restore data from streams which have been created using
-        /// <seealso cref="PackedInts#getWriter(DataOutput, int, int, float)"/>.
+        /// <seealso cref="PackedInt32s#getWriter(DataOutput, int, int, float)"/>.
         /// </p><p>
         /// The returned reader will have very little memory overhead, but every call
         /// to <seealso cref="Reader#get(int)"/> is likely to perform a disk seek.
@@ -1275,8 +1277,8 @@ namespace Lucene.Net.Util.Packed
         /// Positive values of <code>acceptableOverheadRatio</code> will trade space
         /// for speed by selecting a faster but potentially less memory-efficient
         /// implementation. An <code>acceptableOverheadRatio</code> of
-        /// <seealso cref="PackedInts#COMPACT"/> will make sure that the most memory-efficient
-        /// implementation is selected whereas <seealso cref="PackedInts#FASTEST"/> will make sure
+        /// <seealso cref="PackedInt32s#COMPACT"/> will make sure that the most memory-efficient
+        /// implementation is selected whereas <seealso cref="PackedInt32s#FASTEST"/> will make sure
         /// that the fastest implementation is selected.
         /// </summary>
         /// <param name="valueCount">   the number of elements </param>
@@ -1296,15 +1298,15 @@ namespace Lucene.Net.Util.Packed
         ///  of bits per value and format.
         ///  @lucene.internal
         /// </summary>
-        public static Mutable GetMutable(int valueCount, int bitsPerValue, PackedInts.Format format)
+        public static Mutable GetMutable(int valueCount, int bitsPerValue, PackedInt32s.Format format)
         {
             Debug.Assert(valueCount >= 0);
 
-            if (format == PackedInts.Format.PACKED_SINGLE_BLOCK)
+            if (format == PackedInt32s.Format.PACKED_SINGLE_BLOCK)
             {
                 return Packed64SingleBlock.Create(valueCount, bitsPerValue);
             }
-            else if (format == PackedInts.Format.PACKED)
+            else if (format == PackedInt32s.Format.PACKED)
             {
                 switch (bitsPerValue)
                 {
@@ -1381,7 +1383,7 @@ namespace Lucene.Net.Util.Packed
         /// <param name="bitsPerValue"> the number of bits per value </param>
         /// <param name="mem">          how much memory (in bytes) can be used to speed up serialization </param>
         /// <returns>             a Writer </returns>
-        /// <seealso cref= PackedInts#getReaderIteratorNoHeader(DataInput, Format, int, int, int, int) </seealso>
+        /// <seealso cref= PackedInt32s#getReaderIteratorNoHeader(DataInput, Format, int, int, int, int) </seealso>
         /// <seealso cref= PackedInts#getReaderNoHeader(DataInput, Format, int, int, int)
         /// @lucene.internal </seealso>
         public static Writer GetWriterNoHeader(DataOutput @out, Format format, int valueCount, int bitsPerValue, int mem)
@@ -1408,11 +1410,11 @@ namespace Lucene.Net.Util.Packed
         /// readers that will be restored from this stream trade space
         /// for speed by selecting a faster but potentially less memory-efficient
         /// implementation. An <code>acceptableOverheadRatio</code> of
-        /// <seealso cref="PackedInts#COMPACT"/> will make sure that the most memory-efficient
-        /// implementation is selected whereas <seealso cref="PackedInts#FASTEST"/> will make sure
+        /// <seealso cref="PackedInt32s#COMPACT"/> will make sure that the most memory-efficient
+        /// implementation is selected whereas <seealso cref="PackedInt32s#FASTEST"/> will make sure
         /// that the fastest implementation is selected. In case you are only interested
         /// in reading this stream sequentially later on, you should probably use
-        /// <seealso cref="PackedInts#COMPACT"/>.
+        /// <seealso cref="PackedInt32s#COMPACT"/>.
         /// </summary>
         /// <param name="out">          the data output </param>
         /// <param name="valueCount">   the number of values </param>

@@ -117,9 +117,9 @@ namespace Lucene.Net.Index
          */
         internal static readonly int BYTES_PER_BINARY_UPDATE_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT;
 
-        internal readonly AtomicInteger numTermDeletes = new AtomicInteger();
-        internal readonly AtomicInteger numNumericUpdates = new AtomicInteger();
-        internal readonly AtomicInteger numBinaryUpdates = new AtomicInteger();
+        internal readonly AtomicInt32 numTermDeletes = new AtomicInt32();
+        internal readonly AtomicInt32 numNumericUpdates = new AtomicInt32();
+        internal readonly AtomicInt32 numBinaryUpdates = new AtomicInt32();
         internal readonly IDictionary<Term, int?> terms = new Dictionary<Term, int?>();
         internal readonly IDictionary<Query, int?> queries = new Dictionary<Query, int?>();
         internal readonly IList<int?> docIDs = new List<int?>();
@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
 
         public static readonly int MAX_INT = Convert.ToInt32(int.MaxValue);
 
-        internal readonly AtomicLong bytesUsed;
+        internal readonly AtomicInt64 bytesUsed;
 
         private static bool VERBOSE_DELETES = false;
 
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
 
         internal BufferedUpdates() // LUCENENET NOTE: Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
         {
-            this.bytesUsed = new AtomicLong();
+            this.bytesUsed = new AtomicInt64();
         }
 
         public override string ToString()

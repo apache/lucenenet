@@ -256,8 +256,8 @@ namespace Lucene.Net.Index
         private long mergeGen;
         private bool stopMerges;
 
-        internal readonly AtomicInteger flushCount = new AtomicInteger();
-        internal readonly AtomicInteger flushDeletesCount = new AtomicInteger();
+        internal readonly AtomicInt32 flushCount = new AtomicInt32();
+        internal readonly AtomicInt32 flushDeletesCount = new AtomicInt32();
 
         internal ReaderPool readerPool;
         internal readonly BufferedUpdatesStream bufferedUpdatesStream;

@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
         public SegmentCommitInfo Info { get; private set; }
 
         // Tracks how many consumers are using this instance:
-        private readonly AtomicInteger refCount = new AtomicInteger(1);
+        private readonly AtomicInt32 refCount = new AtomicInt32(1);
 
         private readonly IndexWriter writer;
 

@@ -242,7 +242,7 @@ namespace Lucene.Net.Util
         private void AssertLongRangeSplit(long lower, long upper, int precisionStep, bool useBitSet, IEnumerable<long> expectedBounds, IEnumerable<int> expectedShifts)
         {
             // Cannot use FixedBitSet since the range could be long:
-            LongBitSet bits = useBitSet ? new LongBitSet(upper - lower + 1) : null;
+            Int64BitSet bits = useBitSet ? new Int64BitSet(upper - lower + 1) : null;
             IEnumerator<long> neededBounds = (expectedBounds == null) ? null : expectedBounds.GetEnumerator();
             IEnumerator<int> neededShifts = (expectedShifts == null) ? null : expectedShifts.GetEnumerator();
 
@@ -256,18 +256,18 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class LongRangeBuilderAnonymousInnerClassHelper : NumericUtils.LongRangeBuilder
+        private class LongRangeBuilderAnonymousInnerClassHelper : NumericUtils.Int64RangeBuilder
         {
             private readonly TestNumericUtils OuterInstance;
 
             private long Lower;
             private long Upper;
             private bool UseBitSet;
-            private LongBitSet Bits;
+            private Int64BitSet Bits;
             private IEnumerator<long> NeededBounds;
             private IEnumerator<int> NeededShifts;
 
-            public LongRangeBuilderAnonymousInnerClassHelper(TestNumericUtils outerInstance, long lower, long upper, bool useBitSet, LongBitSet bits, IEnumerator<long> neededBounds, IEnumerator<int> neededShifts)
+            public LongRangeBuilderAnonymousInnerClassHelper(TestNumericUtils outerInstance, long lower, long upper, bool useBitSet, Int64BitSet bits, IEnumerator<long> neededBounds, IEnumerator<int> neededShifts)
             {
                 this.OuterInstance = outerInstance;
                 this.Lower = lower;
@@ -456,7 +456,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class IntRangeBuilderAnonymousInnerClassHelper : NumericUtils.IntRangeBuilder
+        private class IntRangeBuilderAnonymousInnerClassHelper : NumericUtils.Int32RangeBuilder
         {
             private readonly TestNumericUtils OuterInstance;
 

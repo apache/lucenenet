@@ -23,8 +23,8 @@ namespace Lucene.Net.Util
 
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using MonotonicAppendingLongBuffer = Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using MonotonicAppendingInt64Buffer = Lucene.Net.Util.Packed.MonotonicAppendingInt64Buffer;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
 
     /// <summary>
     /// <seealso cref="DocIdSet"/> implementation based on pfor-delta encoding.
@@ -38,11 +38,11 @@ namespace Lucene.Net.Util
     {
         internal const int BLOCK_SIZE = 128;
         internal const int MAX_EXCEPTIONS = 24; // no more than 24 exceptions per block
-        internal static readonly PackedInts.IDecoder[] DECODERS = new PackedInts.IDecoder[32];
+        internal static readonly PackedInt32s.IDecoder[] DECODERS = new PackedInt32s.IDecoder[32];
         internal static readonly int[] ITERATIONS = new int[32];
         internal static readonly int[] BYTE_BLOCK_COUNTS = new int[32];
         internal static readonly int MAX_BYTE_BLOCK_COUNT;
-        internal static readonly MonotonicAppendingLongBuffer SINGLE_ZERO_BUFFER = new MonotonicAppendingLongBuffer(0, 64, PackedInts.COMPACT);
+        internal static readonly MonotonicAppendingInt64Buffer SINGLE_ZERO_BUFFER = new MonotonicAppendingInt64Buffer(0, 64, PackedInt32s.COMPACT);
         internal static readonly PForDeltaDocIdSet EMPTY = new PForDeltaDocIdSet(null, 0, int.MaxValue, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
         internal static readonly int LAST_BLOCK = 1 << 5; // flag to indicate the last block
         internal static readonly int HAS_EXCEPTIONS = 1 << 6;
@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
             int maxByteBLockCount = 0;
             for (int i = 1; i < ITERATIONS.Length; ++i)
             {
-                DECODERS[i] = PackedInts.GetDecoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, i);
+                DECODERS[i] = PackedInt32s.GetDecoder(PackedInt32s.Format.PACKED, PackedInt32s.VERSION_CURRENT, i);
                 Debug.Assert(BLOCK_SIZE % DECODERS[i].ByteValueCount == 0);
                 ITERATIONS[i] = BLOCK_SIZE / DECODERS[i].ByteValueCount;
                 BYTE_BLOCK_COUNTS[i] = ITERATIONS[i] * DECODERS[i].ByteBlockCount;
@@ -152,11 +152,11 @@ namespace Lucene.Net.Util
 
             internal virtual int PforBlockSize(int bitsPerValue, int numExceptions, int bitsPerException)
             {
-                PackedInts.Format format = PackedInts.Format.PACKED;
-                long blockSize = 1 + format.ByteCount(PackedInts.VERSION_CURRENT, BLOCK_SIZE, bitsPerValue); // header: number of bits per value
+                PackedInt32s.Format format = PackedInt32s.Format.PACKED;
+                long blockSize = 1 + format.ByteCount(PackedInt32s.VERSION_CURRENT, BLOCK_SIZE, bitsPerValue); // header: number of bits per value
                 if (numExceptions > 0)
                 {
-                    blockSize += 2 + numExceptions + format.ByteCount(PackedInts.VERSION_CURRENT, numExceptions, bitsPerException); // indices of the exceptions -  2 additional bytes in case of exceptions: numExceptions and bitsPerException
+                    blockSize += 2 + numExceptions + format.ByteCount(PackedInt32s.VERSION_CURRENT, numExceptions, bitsPerException); // indices of the exceptions -  2 additional bytes in case of exceptions: numExceptions and bitsPerException
                 }
                 if (bufferSize < BLOCK_SIZE)
                 {
@@ -230,7 +230,7 @@ namespace Lucene.Net.Util
 
                 if (bitsPerValue > 0)
                 {
-                    PackedInts.IEncoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, bitsPerValue);
+                    PackedInt32s.IEncoder encoder = PackedInt32s.GetEncoder(PackedInt32s.Format.PACKED, PackedInt32s.VERSION_CURRENT, bitsPerValue);
                     int numIterations = ITERATIONS[bitsPerValue];
                     encoder.Encode(buffer, 0, data.Bytes, data.Length, numIterations);
                     data.Length += encoder.ByteBlockCount * numIterations;
@@ -241,10 +241,10 @@ namespace Lucene.Net.Util
                     Debug.Assert(bitsPerException > 0);
                     data.WriteByte((byte)(sbyte)numExceptions);
                     data.WriteByte((byte)(sbyte)bitsPerException);
-                    PackedInts.IEncoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, bitsPerException);
+                    PackedInt32s.IEncoder encoder = PackedInt32s.GetEncoder(PackedInt32s.Format.PACKED, PackedInt32s.VERSION_CURRENT, bitsPerException);
                     int numIterations = (numExceptions + encoder.ByteValueCount - 1) / encoder.ByteValueCount;
                     encoder.Encode(exceptions, 0, data.Bytes, data.Length, numIterations);
-                    data.Length += (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, numExceptions, bitsPerException);
+                    data.Length += (int)PackedInt32s.Format.PACKED.ByteCount(PackedInt32s.VERSION_CURRENT, numExceptions, bitsPerException);
                     for (int i = 0; i < numExceptions; ++i)
                     {
                         data.WriteByte((byte)(sbyte)exceptionIndices[i]);
@@ -328,7 +328,7 @@ namespace Lucene.Net.Util
                 var dataArr = Arrays.CopyOf(data.Bytes, data.Length + MAX_BYTE_BLOCK_COUNT);
 
                 int indexSize = (numBlocks - 1) / indexInterval + 1;
-                MonotonicAppendingLongBuffer docIDs, offsets;
+                MonotonicAppendingInt64Buffer docIDs, offsets;
                 if (indexSize <= 1)
                 {
                     docIDs = offsets = SINGLE_ZERO_BUFFER;
@@ -337,8 +337,8 @@ namespace Lucene.Net.Util
                 {
                     const int pageSize = 128;
                     int initialPageCount = (indexSize + pageSize - 1) / pageSize;
-                    docIDs = new MonotonicAppendingLongBuffer(initialPageCount, pageSize, PackedInts.COMPACT);
-                    offsets = new MonotonicAppendingLongBuffer(initialPageCount, pageSize, PackedInts.COMPACT);
+                    docIDs = new MonotonicAppendingInt64Buffer(initialPageCount, pageSize, PackedInt32s.COMPACT);
+                    offsets = new MonotonicAppendingInt64Buffer(initialPageCount, pageSize, PackedInt32s.COMPACT);
                     // Now build the index
                     Iterator it = new Iterator(dataArr, cardinality, int.MaxValue, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
                     for (int k = 0; k < indexSize; ++k)
@@ -365,10 +365,10 @@ namespace Lucene.Net.Util
         }
 
         internal readonly byte[] data;
-        internal readonly MonotonicAppendingLongBuffer docIDs, offsets; // for the index
+        internal readonly MonotonicAppendingInt64Buffer docIDs, offsets; // for the index
         internal readonly int cardinality, indexInterval;
 
-        internal PForDeltaDocIdSet(byte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer docIDs, MonotonicAppendingLongBuffer offsets)
+        internal PForDeltaDocIdSet(byte[] data, int cardinality, int indexInterval, MonotonicAppendingInt64Buffer docIDs, MonotonicAppendingInt64Buffer offsets)
         {
             this.data = data;
             this.cardinality = cardinality;
@@ -402,7 +402,7 @@ namespace Lucene.Net.Util
             // index
             internal readonly int indexInterval;
 
-            internal readonly MonotonicAppendingLongBuffer docIDs, offsets;
+            internal readonly MonotonicAppendingInt64Buffer docIDs, offsets;
 
             internal readonly int cardinality;
             internal readonly byte[] data;
@@ -416,7 +416,7 @@ namespace Lucene.Net.Util
             internal int blockIdx;
             internal int docID;
 
-            internal Iterator(byte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer docIDs, MonotonicAppendingLongBuffer offsets)
+            internal Iterator(byte[] data, int cardinality, int indexInterval, MonotonicAppendingInt64Buffer docIDs, MonotonicAppendingInt64Buffer offsets)
             {
                 this.data = data;
                 this.cardinality = cardinality;
@@ -456,7 +456,7 @@ namespace Lucene.Net.Util
                     int bitsPerException = data[offset++];
                     int numIterations = (numExceptions + DECODERS[bitsPerException].ByteValueCount - 1) / DECODERS[bitsPerException].ByteValueCount;
                     DECODERS[bitsPerException].Decode(data, offset, nextExceptions, 0, numIterations);
-                    offset += (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, numExceptions, bitsPerException);
+                    offset += (int)PackedInt32s.Format.PACKED.ByteCount(PackedInt32s.VERSION_CURRENT, numExceptions, bitsPerException);
                     for (int i = 0; i < numExceptions; ++i)
                     {
                         nextDocs[data[offset++]] |= nextExceptions[i] << bitsPerValue;

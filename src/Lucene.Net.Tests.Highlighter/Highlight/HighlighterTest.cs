@@ -1971,22 +1971,22 @@ namespace Lucene.Net.Search.Highlight
                 addDoc(writer, text);
             }
             Document doc = new Document();
-            doc.Add(new IntField(NUMERIC_FIELD_NAME, 1, Field.Store.NO));
+            doc.Add(new Int32Field(NUMERIC_FIELD_NAME, 1, Field.Store.NO));
             doc.Add(new StoredField(NUMERIC_FIELD_NAME, 1));
             writer.AddDocument(doc, analyzer);
 
             doc = new Document();
-            doc.Add(new IntField(NUMERIC_FIELD_NAME, 3, Field.Store.NO));
+            doc.Add(new Int32Field(NUMERIC_FIELD_NAME, 3, Field.Store.NO));
             doc.Add(new StoredField(NUMERIC_FIELD_NAME, 3));
             writer.AddDocument(doc, analyzer);
 
             doc = new Document();
-            doc.Add(new IntField(NUMERIC_FIELD_NAME, 5, Field.Store.NO));
+            doc.Add(new Int32Field(NUMERIC_FIELD_NAME, 5, Field.Store.NO));
             doc.Add(new StoredField(NUMERIC_FIELD_NAME, 5));
             writer.AddDocument(doc, analyzer);
 
             doc = new Document();
-            doc.Add(new IntField(NUMERIC_FIELD_NAME, 7, Field.Store.NO));
+            doc.Add(new Int32Field(NUMERIC_FIELD_NAME, 7, Field.Store.NO));
             doc.Add(new StoredField(NUMERIC_FIELD_NAME, 7));
             writer.AddDocument(doc, analyzer);
 

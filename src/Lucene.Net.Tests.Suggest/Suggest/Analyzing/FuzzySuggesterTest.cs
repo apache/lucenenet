@@ -911,8 +911,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 foreach (TermFreqPayload2 e in slowCompletor)
                 {
                     spare.CopyChars(e.analyzedForm);
-                    ISet<IntsRef> finiteStrings = suggester.ToFiniteStrings(spare, tokenStreamToAutomaton);
-                    foreach (IntsRef intsRef in finiteStrings)
+                    ISet<Int32sRef> finiteStrings = suggester.ToFiniteStrings(spare, tokenStreamToAutomaton);
+                    foreach (Int32sRef intsRef in finiteStrings)
                     {
                         State p = automaton.GetInitialState();
                         BytesRef @ref = Lucene.Net.Util.Fst.Util.ToBytesRef(intsRef, spare);
@@ -1323,8 +1323,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
          * between two strings, including transpositions. */
         public int GetDistance(string target, string other, bool allowTransposition)
         {
-            IntsRef targetPoints;
-            IntsRef otherPoints;
+            Int32sRef targetPoints;
+            Int32sRef otherPoints;
             int n;
             int[][] d; // cost array
 
@@ -1413,9 +1413,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return array;
         }
 
-        private static IntsRef ToIntsRef(string s)
+        private static Int32sRef ToIntsRef(string s)
         {
-            IntsRef @ref = new IntsRef(s.Length); // worst case
+            Int32sRef @ref = new Int32sRef(s.Length); // worst case
             int utf16Len = s.Length;
             for (int i = 0, cp = 0; i < utf16Len; i += Character.CharCount(cp))
             {

@@ -32,7 +32,7 @@ namespace Lucene.Net.Util.Fst
     using GrowableWriter = Lucene.Net.Util.Packed.GrowableWriter;
     using InputStreamDataInput = Lucene.Net.Store.InputStreamDataInput;
     using OutputStreamDataOutput = Lucene.Net.Store.OutputStreamDataOutput;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
 
     // TODO: break this into WritableFST and ReadOnlyFST.. then
@@ -164,7 +164,7 @@ namespace Lucene.Net.Util.Fst
         private long arcWithOutputCount;
 
         private readonly bool packed;
-        private PackedInts.Reader nodeRefToAddress;
+        private PackedInt32s.Reader nodeRefToAddress;
 
         ///// <summary>
         ///// If arc has this label then that arc is final/accepted </summary>
@@ -297,7 +297,7 @@ namespace Lucene.Net.Util.Fst
             }
             if (packed)
             {
-                nodeRefToAddress = PackedInts.GetReader(@in);
+                nodeRefToAddress = PackedInt32s.GetReader(@in);
             }
             else
             {
@@ -493,7 +493,7 @@ namespace Lucene.Net.Util.Fst
             {
                 throw new InvalidOperationException("cannot save an FST pre-packed FST; it must first be packed");
             }
-            if (packed && !(nodeRefToAddress is PackedInts.Mutable))
+            if (packed && !(nodeRefToAddress is PackedInt32s.Mutable))
             {
                 throw new InvalidOperationException("cannot save a FST which has been loaded from disk ");
             }
@@ -556,7 +556,7 @@ namespace Lucene.Net.Util.Fst
             @out.WriteByte((byte)t);
             if (packed)
             {
-                ((PackedInts.Mutable)nodeRefToAddress).Save(@out);
+                ((PackedInt32s.Mutable)nodeRefToAddress).Save(@out);
             }
             @out.WriteVInt64(startNode);
             @out.WriteVInt64(nodeCount);
@@ -1727,7 +1727,7 @@ namespace Lucene.Net.Util.Fst
             }
 
             // +1 because node ords start at 1 (0 is reserved as stop node):
-            GrowableWriter newNodeAddress = new GrowableWriter(PackedInts.BitsRequired(this.bytes.Position), (int)(1 + nodeCount), acceptableOverheadRatio);
+            GrowableWriter newNodeAddress = new GrowableWriter(PackedInt32s.BitsRequired(this.bytes.Position), (int)(1 + nodeCount), acceptableOverheadRatio);
 
             // Fill initial coarse guess:
             for (int node = 1; node <= nodeCount; node++)
@@ -2035,7 +2035,7 @@ namespace Lucene.Net.Util.Fst
                 maxAddress = Math.Max(maxAddress, newNodeAddress.Get((int)key));
             }
 
-            PackedInts.Mutable nodeRefToAddressIn = PackedInts.GetMutable(topNodeMap.Count, PackedInts.BitsRequired(maxAddress), acceptableOverheadRatio);
+            PackedInt32s.Mutable nodeRefToAddressIn = PackedInt32s.GetMutable(topNodeMap.Count, PackedInt32s.BitsRequired(maxAddress), acceptableOverheadRatio);
             foreach (KeyValuePair<int, int> ent in topNodeMap)
             {
                 nodeRefToAddressIn.Set(ent.Value, newNodeAddress.Get(ent.Key));
@@ -2307,9 +2307,9 @@ namespace Lucene.Net.Util.Fst
         internal class ArcAndState<T>
         {
             internal Arc<T> Arc { get; private set; }
-            internal IntsRef Chain { get; private set; }
+            internal Int32sRef Chain { get; private set; }
 
-            public ArcAndState(Arc<T> arc, IntsRef chain)
+            public ArcAndState(Arc<T> arc, Int32sRef chain)
             {
                 this.Arc = arc;
                 this.Chain = chain;

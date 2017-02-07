@@ -38,9 +38,9 @@ namespace Lucene.Net.Codecs.SimpleText
     using IBits = Util.IBits;
     using IndexInput = Store.IndexInput;
     using IndexOptions = Index.IndexOptions;
-    using IntsRef = Util.IntsRef;
+    using Int32sRef = Util.Int32sRef;
     using IOUtils = Util.IOUtils;
-    using PositiveIntOutputs = Util.Fst.PositiveIntOutputs;
+    using PositiveInt32Outputs = Util.Fst.PositiveInt32Outputs;
     using SegmentReadState = Index.SegmentReadState;
     using StringHelper = Util.StringHelper;
     using Terms = Index.Terms;
@@ -596,7 +596,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             private void LoadTerms()
             {
-                var posIntOutputs = PositiveIntOutputs.Singleton;
+                var posIntOutputs = PositiveInt32Outputs.Singleton;
                 var outputsInner = new PairOutputs<long?, long?>(posIntOutputs, posIntOutputs);
                 var outputs = new PairOutputs<long?, PairOutputs<long?,long?>.Pair>(posIntOutputs, outputsInner);
                 
@@ -611,7 +611,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 long totalTermFreq = 0;
                 var visitedDocs = new FixedBitSet(_maxDoc);
 
-                var scratchIntsRef = new IntsRef();
+                var scratchIntsRef = new Int32sRef();
                 while (true)
                 {
                     SimpleTextUtil.ReadLine(input, _scratch);

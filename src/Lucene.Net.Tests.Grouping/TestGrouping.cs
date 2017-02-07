@@ -697,7 +697,7 @@ namespace Lucene.Net.Search.Grouping
                     }
                     doc.Add(NewStringField("sort1", groupValue.sort1.Utf8ToString(), Field.Store.NO));
                     doc.Add(NewStringField("sort2", groupValue.sort2.Utf8ToString(), Field.Store.NO));
-                    doc.Add(new IntField("id", groupValue.id, Field.Store.NO));
+                    doc.Add(new Int32Field("id", groupValue.id, Field.Store.NO));
                     doc.Add(NewTextField("content", groupValue.content, Field.Store.NO));
                     //Console.WriteLine("TEST:     doc content=" + groupValue.content + " group=" + (groupValue.group == null ? "null" : groupValue.group.utf8ToString()) + " sort1=" + groupValue.sort1.utf8ToString() + " id=" + groupValue.id);
                 }
@@ -836,7 +836,7 @@ namespace Lucene.Net.Search.Grouping
                 Field content = NewTextField("content", "", Field.Store.NO);
                 doc.Add(content);
                 docNoGroup.Add(content);
-                IntField id = new IntField("id", 0, Field.Store.NO);
+                Int32Field id = new Int32Field("id", 0, Field.Store.NO);
                 doc.Add(id);
                 docNoGroup.Add(id);
                 GroupDoc[] groupDocs = new GroupDoc[numDocs];
@@ -900,7 +900,7 @@ namespace Lucene.Net.Search.Grouping
                 w.Dispose();
 
                 // NOTE: intentional but temporary field cache insanity!
-                FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(r), "id", false);
+                FieldCache.Int32s docIDToID = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(r), "id", false);
                 DirectoryReader rBlocks = null;
                 Directory dirBlocks = null;
 
@@ -944,7 +944,7 @@ namespace Lucene.Net.Search.Grouping
                     dirBlocks = NewDirectory();
                     rBlocks = GetDocBlockReader(dirBlocks, groupDocs);
                     Filter lastDocInBlock = new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("groupend", "x"))));
-                    FieldCache.Ints docIDToIDBlocks = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(rBlocks), "id", false);
+                    FieldCache.Int32s docIDToIDBlocks = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(rBlocks), "id", false);
 
                     IndexSearcher sBlocks = NewSearcher(rBlocks);
                     ShardState shardsBlocks = new ShardState(sBlocks);
@@ -1557,7 +1557,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private void AssertEquals(FieldCache.Ints docIDtoID, ITopGroups<BytesRef> expected, ITopGroups<BytesRef> actual, bool verifyGroupValues, bool verifyTotalGroupCount, bool verifySortValues, bool testScores, bool idvBasedImplsUsed)
+        private void AssertEquals(FieldCache.Int32s docIDtoID, ITopGroups<BytesRef> expected, ITopGroups<BytesRef> actual, bool verifyGroupValues, bool verifyTotalGroupCount, bool verifySortValues, bool testScores, bool idvBasedImplsUsed)
         {
             if (expected == null)
             {

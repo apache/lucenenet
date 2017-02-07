@@ -23,7 +23,7 @@ namespace Lucene.Net.Search.Similarities
     using BytesRef = Lucene.Net.Util.BytesRef;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
-    using SmallFloat = Lucene.Net.Util.SmallFloat;
+    using SmallSingle = Lucene.Net.Util.SmallSingle;
 
     /// <summary>
     /// BM25 Similarity. Introduced in Stephen E. Robertson, Steve Walker,
@@ -102,18 +102,18 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// The default implementation encodes <code>boost / sqrt(length)</code>
-        /// with <seealso cref="SmallFloat#floatToByte315(float)"/>.  this is compatible with
+        /// with <seealso cref="SmallSingle#floatToByte315(float)"/>.  this is compatible with
         /// Lucene's default implementation.  If you change this, then you should
         /// change <seealso cref="#decodeNormValue(byte)"/> to match.
         /// </summary>
         protected internal virtual sbyte EncodeNormValue(float boost, int fieldLength) // LUCENENET TODO: Can we use byte?
         {
-            return SmallFloat.SingleToByte315(boost / (float)Math.Sqrt(fieldLength));
+            return SmallSingle.SingleToByte315(boost / (float)Math.Sqrt(fieldLength));
         }
 
         /// <summary>
         /// The default implementation returns <code>1 / f<sup>2</sup></code>
-        /// where <code>f</code> is <seealso cref="SmallFloat#byte315ToFloat(byte)"/>.
+        /// where <code>f</code> is <seealso cref="SmallSingle#byte315ToFloat(byte)"/>.
         /// </summary>
         protected internal virtual float DecodeNormValue(sbyte b) // LUCENENET TODO: Can we use byte?
         {
@@ -151,7 +151,7 @@ namespace Lucene.Net.Search.Similarities
         {
             for (int i = 0; i < 256; i++)
             {
-                float f = SmallFloat.Byte315ToSingle((sbyte)i);
+                float f = SmallSingle.Byte315ToSingle((sbyte)i);
                 NORM_TABLE[i] = 1.0f / (f * f);
             }
         }

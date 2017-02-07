@@ -1,7 +1,7 @@
 namespace Lucene.Net.Codecs.Compressing
 {
     using Lucene42NormsFormat = Lucene.Net.Codecs.Lucene42.Lucene42NormsFormat;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         public override NormsFormat NormsFormat
         {
-            get { return new Lucene42NormsFormat(PackedInts.COMPACT); }
+            get { return new Lucene42NormsFormat(PackedInt32s.COMPACT); }
         }
     }
 }

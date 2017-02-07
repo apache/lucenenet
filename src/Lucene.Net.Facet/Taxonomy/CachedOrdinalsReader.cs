@@ -28,7 +28,7 @@ namespace Lucene.Net.Facet.Taxonomy
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IntsRef = Lucene.Net.Util.IntsRef;
+    using Int32sRef = Lucene.Net.Util.Int32sRef;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
     /// <summary>
@@ -114,7 +114,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 this.cachedOrds = cachedOrds;
             }
 
-            public override void Get(int docID, IntsRef ordinals)
+            public override void Get(int docID, Int32sRef ordinals)
             {
                 ordinals.Int32s = cachedOrds.Ordinals;
                 ordinals.Offset = cachedOrds.Offsets[docID];
@@ -152,7 +152,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
                 // this aggregator is limited to Integer.MAX_VALUE total ordinals.
                 long totOrds = 0;
-                IntsRef values = new IntsRef(32);
+                Int32sRef values = new Int32sRef(32);
                 for (int docID = 0; docID < maxDoc; docID++)
                 {
                     Offsets[docID] = (int)totOrds;

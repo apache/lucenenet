@@ -266,7 +266,7 @@ namespace Lucene.Net.Index
             }
 
             CountdownEvent done = new CountdownEvent(numThreads);
-            AtomicInteger numUpdates = new AtomicInteger(AtLeast(100));
+            AtomicInt32 numUpdates = new AtomicInt32(AtLeast(100));
 
             // same thread updates a field as well as reopens
             ThreadClass[] threads = new ThreadClass[numThreads];
@@ -326,11 +326,11 @@ namespace Lucene.Net.Index
             private IndexWriter Writer;
             private int NumDocs;
             private CountdownEvent Done;
-            private AtomicInteger NumUpdates;
+            private AtomicInt32 NumUpdates;
             private string f;
             private string Cf;
 
-            public ThreadAnonymousInnerClassHelper(TestMixedDocValuesUpdates outerInstance, string str, IndexWriter writer, int numDocs, CountdownEvent done, AtomicInteger numUpdates, string f, string cf)
+            public ThreadAnonymousInnerClassHelper(TestMixedDocValuesUpdates outerInstance, string str, IndexWriter writer, int numDocs, CountdownEvent done, AtomicInt32 numUpdates, string f, string cf)
                 : base(str)
             {
                 this.OuterInstance = outerInstance;

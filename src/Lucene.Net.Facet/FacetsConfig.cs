@@ -36,7 +36,7 @@ namespace Lucene.Net.Facet
     using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IIndexableFieldType = Lucene.Net.Index.IIndexableFieldType;
     using IntAssociationFacetField = Lucene.Net.Facet.Taxonomy.IntAssociationFacetField;
-    using IntsRef = Lucene.Net.Util.IntsRef;
+    using Int32sRef = Lucene.Net.Util.Int32sRef;
     using SortedSetDocValuesFacetField = Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField;
     using SortedSetDocValuesField = Lucene.Net.Documents.SortedSetDocValuesField;
     using StringField = Lucene.Net.Documents.StringField;
@@ -411,7 +411,7 @@ namespace Lucene.Net.Facet
                 string indexFieldName = ent.Key;
                 //System.out.println("  indexFieldName=" + indexFieldName + " fields=" + ent.getValue());
 
-                IntsRef ordinals = new IntsRef(32);
+                Int32sRef ordinals = new Int32sRef(32);
                 foreach (FacetField facetField in ent.Value)
                 {
 
@@ -536,7 +536,7 @@ namespace Lucene.Net.Facet
         /// Encodes ordinals into a <see cref="BytesRef"/>; expert: subclass can
         /// override this to change encoding. 
         /// </summary>
-        protected virtual BytesRef DedupAndEncode(IntsRef ordinals)
+        protected virtual BytesRef DedupAndEncode(Int32sRef ordinals)
         {
             Array.Sort(ordinals.Int32s, ordinals.Offset, ordinals.Length);
             byte[] bytes = new byte[5 * ordinals.Length];

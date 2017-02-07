@@ -99,7 +99,7 @@ namespace Lucene.Net.Util.Packed
         internal long valueCount;
         internal readonly int blockSize;
         internal readonly long[] values;
-        internal readonly LongsRef valuesRef;
+        internal readonly Int64sRef valuesRef;
         internal byte[] blocks;
         internal int off;
         internal long ord;
@@ -111,11 +111,11 @@ namespace Lucene.Net.Util.Packed
         ///                  been used to write the stream </param>
         public BlockPackedReaderIterator(DataInput @in, int packedIntsVersion, int blockSize, long valueCount)
         {
-            PackedInts.CheckBlockSize(blockSize, AbstractBlockPackedWriter.MIN_BLOCK_SIZE, AbstractBlockPackedWriter.MAX_BLOCK_SIZE);
+            PackedInt32s.CheckBlockSize(blockSize, AbstractBlockPackedWriter.MIN_BLOCK_SIZE, AbstractBlockPackedWriter.MAX_BLOCK_SIZE);
             this.packedIntsVersion = packedIntsVersion;
             this.blockSize = blockSize;
             this.values = new long[blockSize];
-            this.valuesRef = new LongsRef(this.values, 0, 0);
+            this.valuesRef = new Int64sRef(this.values, 0, 0);
             Reset(@in, valueCount);
         }
 
@@ -166,7 +166,7 @@ namespace Lucene.Net.Util.Packed
                 {
                     ReadVInt64(@in);
                 }
-                long blockBytes = PackedInts.Format.PACKED.ByteCount(packedIntsVersion, blockSize, bitsPerValue);
+                long blockBytes = PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, blockSize, bitsPerValue);
                 SkipBytes(blockBytes);
                 ord += blockSize;
                 count -= blockSize;
@@ -225,7 +225,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Read between <tt>1</tt> and <code>count</code> values. </summary>
-        public LongsRef Next(int count)
+        public Int64sRef Next(int count)
         {
             Debug.Assert(count > 0);
             if (ord == valueCount)
@@ -265,7 +265,7 @@ namespace Lucene.Net.Util.Packed
             }
             else
             {
-                PackedInts.IDecoder decoder = PackedInts.GetDecoder(PackedInts.Format.PACKED, packedIntsVersion, bitsPerValue);
+                PackedInt32s.IDecoder decoder = PackedInt32s.GetDecoder(PackedInt32s.Format.PACKED, packedIntsVersion, bitsPerValue);
                 int iterations = blockSize / decoder.ByteValueCount;
                 int blocksSize = iterations * decoder.ByteBlockCount;
                 if (blocks == null || blocks.Length < blocksSize)
@@ -274,7 +274,7 @@ namespace Lucene.Net.Util.Packed
                 }
 
                 int valueCount = (int)Math.Min(this.valueCount - ord, blockSize);
-                int blocksCount = (int)PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, bitsPerValue);
+                int blocksCount = (int)PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, valueCount, bitsPerValue);
                 @in.ReadBytes(blocks, 0, blocksCount);
 
                 decoder.Decode(blocks, 0, values, 0, iterations);

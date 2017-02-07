@@ -419,11 +419,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 while ((surfaceForm = iterator.Next()) != null)
                 {
-                    ISet<IntsRef> paths = ToFiniteStrings(surfaceForm, ts2a);
+                    ISet<Int32sRef> paths = ToFiniteStrings(surfaceForm, ts2a);
 
                     maxAnalyzedPathsForOneInput = Math.Max(maxAnalyzedPathsForOneInput, paths.Count);
 
-                    foreach (IntsRef path in paths)
+                    foreach (Int32sRef path in paths)
                     {
 
                         Util.Fst.Util.ToBytesRef(path, scratch);
@@ -503,7 +503,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 reader = new OfflineSorter.ByteSequencesReader(tempSorted);
 
-                var outputs = new PairOutputs<long?, BytesRef>(PositiveIntOutputs.Singleton,
+                var outputs = new PairOutputs<long?, BytesRef>(PositiveInt32Outputs.Singleton,
                     ByteSequenceOutputs.Singleton);
                 var builder = new Builder<PairOutputs<long?, BytesRef>.Pair>(FST.INPUT_TYPE.BYTE1, outputs);
 
@@ -511,7 +511,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 BytesRef previousAnalyzed = null;
                 BytesRef analyzed = new BytesRef();
                 BytesRef surface = new BytesRef();
-                IntsRef scratchInts = new IntsRef();
+                Int32sRef scratchInts = new Int32sRef();
                 var input = new ByteArrayDataInput();
 
                 // Used to remove duplicate surface forms (but we
@@ -641,7 +641,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public override bool Load(DataInput input)
         {
             count = input.ReadVInt64();
-            this.fst = new FST<PairOutputs<long?, BytesRef>.Pair>(input, new PairOutputs<long?, BytesRef>(PositiveIntOutputs.Singleton, ByteSequenceOutputs.Singleton));
+            this.fst = new FST<PairOutputs<long?, BytesRef>.Pair>(input, new PairOutputs<long?, BytesRef>(PositiveInt32Outputs.Singleton, ByteSequenceOutputs.Singleton));
             maxAnalyzedPathsForOneInput = input.ReadVInt32();
             hasPayloads = input.ReadByte() == 1;
             return true;
@@ -896,7 +896,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             private readonly HashSet<BytesRef> seen;
 
-            protected override bool AcceptResult(IntsRef input, PairOutputs<long?, BytesRef>.Pair output)
+            protected override bool AcceptResult(Int32sRef input, PairOutputs<long?, BytesRef>.Pair output)
             {
 
                 // Dedup: when the input analyzes to a graph we
@@ -946,7 +946,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return prefixPaths;
         }
 
-        internal ISet<IntsRef> ToFiniteStrings(BytesRef surfaceForm, TokenStreamToAutomaton ts2a)
+        internal ISet<Int32sRef> ToFiniteStrings(BytesRef surfaceForm, TokenStreamToAutomaton ts2a)
         {
             // Analyze surface form:
             Automaton automaton = null;

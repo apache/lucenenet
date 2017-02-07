@@ -359,14 +359,14 @@ namespace Lucene.Net.Util
         /// Splits a long range recursively.
         /// You may implement a builder that adds clauses to a
         /// <seealso cref="Lucene.Net.Search.BooleanQuery"/> for each call to its
-        /// <seealso cref="LongRangeBuilder#addRange(BytesRef,BytesRef)"/>
+        /// <seealso cref="Int64RangeBuilder#addRange(BytesRef,BytesRef)"/>
         /// method.
         /// <para/>
         /// this method is used by <seealso cref="NumericRangeQuery"/>.
         /// <para/>
         /// NOTE: This was splitLongRange() in Lucene
         /// </summary>
-        public static void SplitInt64Range(LongRangeBuilder builder, int precisionStep, long minBound, long maxBound)
+        public static void SplitInt64Range(Int64RangeBuilder builder, int precisionStep, long minBound, long maxBound)
         {
             SplitRange(builder, 64, precisionStep, minBound, maxBound);
         }
@@ -375,14 +375,14 @@ namespace Lucene.Net.Util
         /// Splits an int range recursively.
         /// You may implement a builder that adds clauses to a
         /// <seealso cref="Lucene.Net.Search.BooleanQuery"/> for each call to its
-        /// <seealso cref="IntRangeBuilder#addRange(BytesRef,BytesRef)"/>
+        /// <seealso cref="Int32RangeBuilder#addRange(BytesRef,BytesRef)"/>
         /// method.
         /// <para/>
         /// this method is used by <seealso cref="NumericRangeQuery"/>.
         /// <para/>
         /// NOTE: This was splitIntRange() in Lucene
         /// </summary>
-        public static void SplitInt32Range(IntRangeBuilder builder, int precisionStep, int minBound, int maxBound)
+        public static void SplitInt32Range(Int32RangeBuilder builder, int precisionStep, int minBound, int maxBound)
         {
             SplitRange(builder, 32, precisionStep, minBound, maxBound);
         }
@@ -443,11 +443,11 @@ namespace Lucene.Net.Util
             switch (valSize)
             {
                 case 64:
-                    ((LongRangeBuilder)builder).AddRange(minBound, maxBound, shift);
+                    ((Int64RangeBuilder)builder).AddRange(minBound, maxBound, shift);
                     break;
 
                 case 32:
-                    ((IntRangeBuilder)builder).AddRange((int)minBound, (int)maxBound, shift);
+                    ((Int32RangeBuilder)builder).AddRange((int)minBound, (int)maxBound, shift);
                     break;
 
                 default:
@@ -459,10 +459,13 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Callback for <seealso cref="#splitLongRange"/>.
         /// You need to overwrite only one of the methods.
+        /// <para/>
+        /// NOTE: This was LongRangeBuilder in Lucene
+        /// 
         /// @lucene.internal
         /// @since 2.9, API changed non backwards-compliant in 4.0
         /// </summary>
-        public abstract class LongRangeBuilder // LUCENENET TODO: Rename Int64RangeBuilder ?
+        public abstract class Int64RangeBuilder
         {
             /// <summary>
             /// Overwrite this method, if you like to receive the already prefix encoded range bounds.
@@ -489,10 +492,13 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Callback for <seealso cref="#splitIntRange"/>.
         /// You need to overwrite only one of the methods.
+        /// <para/>
+        /// NOTE: This was IntRangeBuilder in Lucene
+        /// 
         /// @lucene.internal
         /// @since 2.9, API changed non backwards-compliant in 4.0
         /// </summary>
-        public abstract class IntRangeBuilder // LUCENENET TODO: Rename Int32RangeBuilder ?
+        public abstract class Int32RangeBuilder
         {
             /// <summary>
             /// Overwrite this method, if you like to receive the already prefix encoded range bounds.

@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
     public class TrackingIndexWriter
     {
         private readonly IndexWriter writer;
-        private readonly AtomicLong indexingGen = new AtomicLong(1);
+        private readonly AtomicInt64 indexingGen = new AtomicInt64(1);
 
         /// <summary>
         /// Create a {@code TrackingIndexWriter} wrapping the

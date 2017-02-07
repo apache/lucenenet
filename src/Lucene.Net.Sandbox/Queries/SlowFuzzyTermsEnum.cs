@@ -103,7 +103,7 @@ namespace Lucene.Net.Sandbox.Queries
 
             private readonly BytesRef prefixBytesRef;
             /// <summary>used for unicode conversion from BytesRef byte[] to int[]</summary>
-            private readonly IntsRef utf32 = new IntsRef(20);
+            private readonly Int32sRef utf32 = new Int32sRef(20);
 
             /// <summary>
             /// <para>

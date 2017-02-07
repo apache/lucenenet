@@ -24,38 +24,40 @@ namespace Lucene.Net.Util.Packed
     /// Utility class to buffer a list of signed longs in memory. this class only
     /// supports appending and is optimized for the case where values are close to
     /// each other.
+    /// <para/>
+    /// NOTE: This was AppendingDeltaPackedLongBuffer in Lucene
     ///
     /// @lucene.internal
     /// </summary>
-    public sealed class AppendingDeltaPackedLongBuffer : AbstractAppendingLongBuffer
+    public sealed class AppendingDeltaPackedInt64Buffer : AbstractAppendingInt64Buffer
     {
         internal long[] minValues;
 
         /// <summary>
-        /// Create <seealso cref="AppendingDeltaPackedLongBuffer"/> </summary>
+        /// Create <seealso cref="AppendingDeltaPackedInt64Buffer"/> </summary>
         /// <param name="initialPageCount">        the initial number of pages </param>
         /// <param name="pageSize">                the size of a single page </param>
         /// <param name="acceptableOverheadRatio"> an acceptable overhead ratio per value </param>
-        public AppendingDeltaPackedLongBuffer(int initialPageCount, int pageSize, float acceptableOverheadRatio)
+        public AppendingDeltaPackedInt64Buffer(int initialPageCount, int pageSize, float acceptableOverheadRatio)
             : base(initialPageCount, pageSize, acceptableOverheadRatio)
         {
             minValues = new long[values.Length];
         }
 
         /// <summary>
-        /// Create an <seealso cref="AppendingDeltaPackedLongBuffer"/> with initialPageCount=16,
-        /// pageSize=1024 and acceptableOverheadRatio=<seealso cref="PackedInts#DEFAULT"/>
+        /// Create an <seealso cref="AppendingDeltaPackedInt64Buffer"/> with initialPageCount=16,
+        /// pageSize=1024 and acceptableOverheadRatio=<seealso cref="PackedInt32s#DEFAULT"/>
         /// </summary>
-        public AppendingDeltaPackedLongBuffer()
-            : this(16, 1024, PackedInts.DEFAULT)
+        public AppendingDeltaPackedInt64Buffer()
+            : this(16, 1024, PackedInt32s.DEFAULT)
         {
         }
 
         /// <summary>
-        /// Create an <seealso cref="AppendingDeltaPackedLongBuffer"/> with initialPageCount=16,
+        /// Create an <seealso cref="AppendingDeltaPackedInt64Buffer"/> with initialPageCount=16,
         /// pageSize=1024
         /// </summary>
-        public AppendingDeltaPackedLongBuffer(float acceptableOverheadRatio)
+        public AppendingDeltaPackedInt64Buffer(float acceptableOverheadRatio)
             : this(16, 1024, acceptableOverheadRatio)
         {
         }
@@ -112,17 +114,17 @@ namespace Lucene.Net.Util.Packed
             minValues[valuesOff] = minValue;
             if (delta == 0)
             {
-                values[valuesOff] = new PackedInts.NullReader(pendingOff);
+                values[valuesOff] = new PackedInt32s.NullReader(pendingOff);
             }
             else
             {
                 // build a new packed reader
-                int bitsRequired = delta < 0 ? 64 : PackedInts.BitsRequired(delta);
+                int bitsRequired = delta < 0 ? 64 : PackedInt32s.BitsRequired(delta);
                 for (int i = 0; i < pendingOff; ++i)
                 {
                     pending[i] -= minValue;
                 }
-                PackedInts.Mutable mutable = PackedInts.GetMutable(pendingOff, bitsRequired, acceptableOverheadRatio);
+                PackedInt32s.Mutable mutable = PackedInt32s.GetMutable(pendingOff, bitsRequired, acceptableOverheadRatio);
                 for (int i = 0; i < pendingOff; )
                 {
                     i += mutable.Set(i, pending, i, pendingOff - i);

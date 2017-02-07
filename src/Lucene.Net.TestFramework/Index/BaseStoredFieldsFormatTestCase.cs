@@ -23,10 +23,10 @@ namespace Lucene.Net.Index
     using DoubleField = DoubleField;
     using Field = Field;
     using FieldType = FieldType;
-    using FloatField = FloatField;
+    using SingleField = SingleField;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using IntField = IntField;
-    using LongField = LongField;
+    using Int32Field = Int32Field;
+    using Int64Field = Int64Field;
     using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
     using MMapDirectory = Lucene.Net.Store.MMapDirectory;
 
@@ -284,7 +284,7 @@ namespace Lucene.Net.Index
                     {
                         float f = Random().NextFloat();
                         answer = Convert.ToSingle(f);
-                        nf = new FloatField("nf", f, Field.Store.NO);
+                        nf = new SingleField("nf", f, Field.Store.NO);
                         sf = new StoredField("nf", f);
                         typeAnswer = NumericType.FLOAT;
                     }
@@ -304,7 +304,7 @@ namespace Lucene.Net.Index
                     {
                         int i = Random().Next();
                         answer = Convert.ToInt32(i);
-                        nf = new IntField("nf", i, Field.Store.NO);
+                        nf = new Int32Field("nf", i, Field.Store.NO);
                         sf = new StoredField("nf", i);
                         typeAnswer = NumericType.INT;
                     }
@@ -312,7 +312,7 @@ namespace Lucene.Net.Index
                     {
                         long l = Random().NextLong();
                         answer = Convert.ToInt64(l);
-                        nf = new LongField("nf", l, Field.Store.NO);
+                        nf = new Int64Field("nf", l, Field.Store.NO);
                         sf = new StoredField("nf", l);
                         typeAnswer = NumericType.LONG;
                     }
@@ -321,9 +321,9 @@ namespace Lucene.Net.Index
                 doc.Add(sf);
                 answers[id] = answer;
                 typeAnswers[id] = typeAnswer;
-                FieldType ft = new FieldType(IntField.TYPE_STORED);
+                FieldType ft = new FieldType(Int32Field.TYPE_STORED);
                 ft.NumericPrecisionStep = int.MaxValue;
-                doc.Add(new IntField("id", id, ft));
+                doc.Add(new Int32Field("id", id, ft));
                 w.AddDocument(doc);
             }
             DirectoryReader r = w.Reader;
@@ -334,7 +334,7 @@ namespace Lucene.Net.Index
             foreach (AtomicReaderContext ctx in r.Leaves)
             {
                 AtomicReader sub = (AtomicReader)ctx.Reader;
-                FieldCache.Ints ids = FieldCache.DEFAULT.GetInt32s(sub, "id", false);
+                FieldCache.Int32s ids = FieldCache.DEFAULT.GetInt32s(sub, "id", false);
                 for (int docID = 0; docID < sub.NumDocs; docID++)
                 {
                     Document doc = sub.Document(docID);
@@ -385,7 +385,7 @@ namespace Lucene.Net.Index
             float f = Random().NextFloat();
             double d = Random().NextDouble();
 
-            IList<Field> fields = Arrays.AsList(new Field("bytes", bytes, ft), new Field("string", @string, ft), new LongField("long", l, Field.Store.YES), new IntField("int", i, Field.Store.YES), new FloatField("float", f, Field.Store.YES), new DoubleField("double", d, Field.Store.YES)
+            IList<Field> fields = Arrays.AsList(new Field("bytes", bytes, ft), new Field("string", @string, ft), new Int64Field("long", l, Field.Store.YES), new Int32Field("int", i, Field.Store.YES), new SingleField("float", f, Field.Store.YES), new DoubleField("double", d, Field.Store.YES)
            );
 
             for (int k = 0; k < 100; ++k)
@@ -600,7 +600,7 @@ namespace Lucene.Net.Index
             FieldType type = new FieldType(StringField.TYPE_STORED);
             type.IsIndexed = false;
             type.Freeze();
-            IntField id = new IntField("id", 0, Field.Store.YES);
+            Int32Field id = new Int32Field("id", 0, Field.Store.YES);
             for (int i = 0; i < data.Length; ++i)
             {
                 Document doc = new Document();

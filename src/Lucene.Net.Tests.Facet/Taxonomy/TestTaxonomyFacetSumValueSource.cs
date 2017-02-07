@@ -30,8 +30,8 @@ namespace Lucene.Net.Facet.Taxonomy
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using Document = Lucene.Net.Documents.Document;
     using Field = Lucene.Net.Documents.Field;
-    using FloatDocValuesField = Lucene.Net.Documents.FloatDocValuesField;
-    using IntField = Lucene.Net.Documents.IntField;
+    using SingleDocValuesField = Lucene.Net.Documents.SingleDocValuesField;
+    using Int32Field = Lucene.Net.Documents.Int32Field;
     using NumericDocValuesField = Lucene.Net.Documents.NumericDocValuesField;
     using StringField = Lucene.Net.Documents.StringField;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
@@ -82,27 +82,27 @@ namespace Lucene.Net.Facet.Taxonomy
             // Reused across documents, to add the necessary facet
             // fields:
             Document doc = new Document();
-            doc.Add(new IntField("num", 10, Field.Store.NO));
+            doc.Add(new Int32Field("num", 10, Field.Store.NO));
             doc.Add(new FacetField("Author", "Bob"));
             writer.AddDocument(config.Build(taxoWriter, doc));
 
             doc = new Document();
-            doc.Add(new IntField("num", 20, Field.Store.NO));
+            doc.Add(new Int32Field("num", 20, Field.Store.NO));
             doc.Add(new FacetField("Author", "Lisa"));
             writer.AddDocument(config.Build(taxoWriter, doc));
 
             doc = new Document();
-            doc.Add(new IntField("num", 30, Field.Store.NO));
+            doc.Add(new Int32Field("num", 30, Field.Store.NO));
             doc.Add(new FacetField("Author", "Lisa"));
             writer.AddDocument(config.Build(taxoWriter, doc));
 
             doc = new Document();
-            doc.Add(new IntField("num", 40, Field.Store.NO));
+            doc.Add(new Int32Field("num", 40, Field.Store.NO));
             doc.Add(new FacetField("Author", "Susan"));
             writer.AddDocument(config.Build(taxoWriter, doc));
 
             doc = new Document();
-            doc.Add(new IntField("num", 45, Field.Store.NO));
+            doc.Add(new Int32Field("num", 45, Field.Store.NO));
             doc.Add(new FacetField("Author", "Frank"));
             writer.AddDocument(config.Build(taxoWriter, doc));
 
@@ -149,7 +149,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsConfig config = new FacetsConfig();
 
             Document doc = new Document();
-            doc.Add(new IntField("num", 10, Field.Store.NO));
+            doc.Add(new Int32Field("num", 10, Field.Store.NO));
             doc.Add(new FacetField("a", "foo1"));
             writer.AddDocument(config.Build(taxoWriter, doc));
 
@@ -159,7 +159,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
 
             doc = new Document();
-            doc.Add(new IntField("num", 20, Field.Store.NO));
+            doc.Add(new Int32Field("num", 20, Field.Store.NO));
             doc.Add(new FacetField("a", "foo2"));
             doc.Add(new FacetField("b", "bar1"));
             writer.AddDocument(config.Build(taxoWriter, doc));
@@ -170,7 +170,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
 
             doc = new Document();
-            doc.Add(new IntField("num", 30, Field.Store.NO));
+            doc.Add(new Int32Field("num", 30, Field.Store.NO));
             doc.Add(new FacetField("a", "foo3"));
             doc.Add(new FacetField("b", "bar2"));
             doc.Add(new FacetField("c", "baz1"));
@@ -217,7 +217,7 @@ namespace Lucene.Net.Facet.Taxonomy
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Document doc = new Document();
-            doc.Add(new IntField("num", 10, Field.Store.NO));
+            doc.Add(new Int32Field("num", 10, Field.Store.NO));
             doc.Add(new FacetField("a", "foo1"));
             writer.AddDocument(config.Build(taxoWriter, doc));
 
@@ -506,7 +506,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Document doc = new Document();
                 doc.Add(NewStringField("content", testDoc.content, Field.Store.NO));
                 testDoc.value = Random().NextFloat();
-                doc.Add(new FloatDocValuesField("value", testDoc.value));
+                doc.Add(new SingleDocValuesField("value", testDoc.value));
                 for (int j = 0; j < numDims; j++)
                 {
                     if (testDoc.dims[j] != null)

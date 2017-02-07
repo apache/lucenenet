@@ -23,12 +23,12 @@ namespace Lucene.Net.Index
              */
 
     using Counter = Lucene.Net.Util.Counter;
-    using IntBlockPool = Lucene.Net.Util.IntBlockPool;
+    using Int32BlockPool = Lucene.Net.Util.Int32BlockPool;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
     /// <summary>
-    /// tests basic <seealso cref="IntBlockPool"/> functionality
+    /// tests basic <seealso cref="Int32BlockPool"/> functionality
     /// </summary>
     [TestFixture]
     public class TestIntBlockPool : LuceneTestCase
@@ -37,11 +37,11 @@ namespace Lucene.Net.Index
         public virtual void TestSingleWriterReader()
         {
             Counter bytesUsed = Util.Counter.NewCounter();
-            IntBlockPool pool = new IntBlockPool(new ByteTrackingAllocator(bytesUsed));
+            Int32BlockPool pool = new Int32BlockPool(new ByteTrackingAllocator(bytesUsed));
 
             for (int j = 0; j < 2; j++)
             {
-                IntBlockPool.SliceWriter writer = new IntBlockPool.SliceWriter(pool);
+                Int32BlockPool.SliceWriter writer = new Int32BlockPool.SliceWriter(pool);
                 int start = writer.StartNewSlice();
                 int num = AtLeast(100);
                 for (int i = 0; i < num; i++)
@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
                 }
 
                 int upto = writer.CurrentOffset;
-                IntBlockPool.SliceReader reader = new IntBlockPool.SliceReader(pool);
+                Int32BlockPool.SliceReader reader = new Int32BlockPool.SliceReader(pool);
                 reader.Reset(start, upto);
                 for (int i = 0; i < num; i++)
                 {
@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     pool.Reset(true, true);
-                    Assert.AreEqual(IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT, bytesUsed.Get());
+                    Assert.AreEqual(Int32BlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT, bytesUsed.Get());
                 }
             }
         }
@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
         public virtual void TestMultipleWriterReader()
         {
             Counter bytesUsed = Util.Counter.NewCounter();
-            IntBlockPool pool = new IntBlockPool(new ByteTrackingAllocator(bytesUsed));
+            Int32BlockPool pool = new Int32BlockPool(new ByteTrackingAllocator(bytesUsed));
             for (int j = 0; j < 2; j++)
             {
                 IList<StartEndAndValues> holders = new List<StartEndAndValues>();
@@ -83,8 +83,8 @@ namespace Lucene.Net.Index
                 {
                     holders.Add(new StartEndAndValues(Random().Next(1000)));
                 }
-                IntBlockPool.SliceWriter writer = new IntBlockPool.SliceWriter(pool);
-                IntBlockPool.SliceReader reader = new IntBlockPool.SliceReader(pool);
+                Int32BlockPool.SliceWriter writer = new Int32BlockPool.SliceWriter(pool);
+                Int32BlockPool.SliceReader reader = new Int32BlockPool.SliceReader(pool);
 
                 int numValuesToWrite = AtLeast(10000);
                 for (int i = 0; i < numValuesToWrite; i++)
@@ -122,17 +122,17 @@ namespace Lucene.Net.Index
                 else
                 {
                     pool.Reset(true, true);
-                    Assert.AreEqual(IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT, bytesUsed.Get());
+                    Assert.AreEqual(Int32BlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT, bytesUsed.Get());
                 }
             }
         }
 
-        private class ByteTrackingAllocator : IntBlockPool.Allocator
+        private class ByteTrackingAllocator : Int32BlockPool.Allocator
         {
             internal readonly Counter BytesUsed;
 
             public ByteTrackingAllocator(Counter bytesUsed)
-                : this(IntBlockPool.INT_BLOCK_SIZE, bytesUsed)
+                : this(Int32BlockPool.INT_BLOCK_SIZE, bytesUsed)
             {
             }
 
@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void AssertReader(IntBlockPool.SliceReader reader, StartEndAndValues values)
+        private void AssertReader(Int32BlockPool.SliceReader reader, StartEndAndValues values)
         {
             reader.Reset(values.Start, values.End);
             for (int i = 0; i < values.ValueCount; i++)

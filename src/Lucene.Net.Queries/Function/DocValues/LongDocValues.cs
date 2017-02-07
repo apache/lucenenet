@@ -172,10 +172,10 @@ namespace Lucene.Net.Queries.Function.DocValues
             public ValueFillerAnonymousInnerClassHelper(LongDocValues outerInstance)
             {
                 this.outerInstance = outerInstance;
-                mval = new MutableValueLong();
+                mval = new MutableValueInt64();
             }
 
-            private readonly MutableValueLong mval;
+            private readonly MutableValueInt64 mval;
 
             public override MutableValue Value
             {

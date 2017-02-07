@@ -59,8 +59,8 @@ namespace Lucene.Net.Index
         private Term lastDeleteTerm;
 
         private readonly InfoStream infoStream;
-        private readonly AtomicLong bytesUsed = new AtomicLong();
-        private readonly AtomicInteger numTerms = new AtomicInteger();
+        private readonly AtomicInt64 bytesUsed = new AtomicInt64();
+        private readonly AtomicInt32 numTerms = new AtomicInt32();
 
         public BufferedUpdatesStream(InfoStream infoStream)
         {

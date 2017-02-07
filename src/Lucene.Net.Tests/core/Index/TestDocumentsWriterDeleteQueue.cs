@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
                 uniqueValues.Add(new Term("id", ids[i].ToString()));
             }
             CountdownEvent latch = new CountdownEvent(1);
-            AtomicInteger index = new AtomicInteger(0);
+            AtomicInt32 index = new AtomicInt32(0);
             int numThreads = 2 + Random().Next(5);
             UpdateThread[] threads = new UpdateThread[numThreads];
             for (int i = 0; i < threads.Length; i++)
@@ -257,13 +257,13 @@ namespace Lucene.Net.Index
         private class UpdateThread : ThreadClass
         {
             internal readonly DocumentsWriterDeleteQueue Queue;
-            internal readonly AtomicInteger Index;
+            internal readonly AtomicInt32 Index;
             internal readonly int?[] Ids;
             internal readonly DeleteSlice Slice;
             internal readonly BufferedUpdates Deletes;
             internal readonly CountdownEvent Latch;
 
-            protected internal UpdateThread(DocumentsWriterDeleteQueue queue, AtomicInteger index, int?[] ids, CountdownEvent latch)
+            protected internal UpdateThread(DocumentsWriterDeleteQueue queue, AtomicInt32 index, int?[] ids, CountdownEvent latch)
             {
                 this.Queue = queue;
                 this.Index = index;

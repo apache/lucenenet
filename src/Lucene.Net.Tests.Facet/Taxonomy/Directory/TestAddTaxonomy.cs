@@ -39,7 +39,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     {
         private void Dotest(int ncats, int range)
         {
-            AtomicInteger numCats = new AtomicInteger(ncats);
+            AtomicInt32 numCats = new AtomicInt32(ncats);
             Directory[] dirs = new Directory[2];
             for (int i = 0; i < dirs.Length; i++)
             {
@@ -78,10 +78,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             private readonly TestAddTaxonomy outerInstance;
 
             private int range;
-            private AtomicInteger numCats;
+            private AtomicInt32 numCats;
             private DirectoryTaxonomyWriter tw;
 
-            public ThreadAnonymousInnerClassHelper(TestAddTaxonomy outerInstance, int range, AtomicInteger numCats, DirectoryTaxonomyWriter tw)
+            public ThreadAnonymousInnerClassHelper(TestAddTaxonomy outerInstance, int range, AtomicInt32 numCats, DirectoryTaxonomyWriter tw)
             {
                 this.outerInstance = outerInstance;
                 this.range = range;

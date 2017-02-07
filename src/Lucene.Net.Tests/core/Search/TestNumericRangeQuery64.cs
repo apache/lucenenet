@@ -15,7 +15,7 @@ namespace Lucene.Net.Search
     using Field = Field;
     using FieldType = FieldType;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using LongField = LongField;
+    using Int64Field = Int64Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
             Directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
 
-            FieldType storedLong = new FieldType(LongField.TYPE_NOT_STORED);
+            FieldType storedLong = new FieldType(Int64Field.TYPE_NOT_STORED);
             storedLong.IsStored = true;
             storedLong.Freeze();
 
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
             FieldType storedLongNone = new FieldType(storedLong);
             storedLongNone.NumericPrecisionStep = int.MaxValue;
 
-            FieldType unstoredLong = LongField.TYPE_NOT_STORED;
+            FieldType unstoredLong = Int64Field.TYPE_NOT_STORED;
 
             FieldType unstoredLong8 = new FieldType(unstoredLong);
             unstoredLong8.NumericPrecisionStep = 8;
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search
             FieldType unstoredLong2 = new FieldType(unstoredLong);
             unstoredLong2.NumericPrecisionStep = 2;
 
-            LongField field8 = new LongField("field8", 0L, storedLong8), field6 = new LongField("field6", 0L, storedLong6), field4 = new LongField("field4", 0L, storedLong4), field2 = new LongField("field2", 0L, storedLong2), fieldNoTrie = new LongField("field" + int.MaxValue, 0L, storedLongNone), ascfield8 = new LongField("ascfield8", 0L, unstoredLong8), ascfield6 = new LongField("ascfield6", 0L, unstoredLong6), ascfield4 = new LongField("ascfield4", 0L, unstoredLong4), ascfield2 = new LongField("ascfield2", 0L, unstoredLong2);
+            Int64Field field8 = new Int64Field("field8", 0L, storedLong8), field6 = new Int64Field("field6", 0L, storedLong6), field4 = new Int64Field("field4", 0L, storedLong4), field2 = new Int64Field("field2", 0L, storedLong2), fieldNoTrie = new Int64Field("field" + int.MaxValue, 0L, storedLongNone), ascfield8 = new Int64Field("ascfield8", 0L, unstoredLong8), ascfield6 = new Int64Field("ascfield6", 0L, unstoredLong6), ascfield4 = new Int64Field("ascfield4", 0L, unstoredLong4), ascfield2 = new Int64Field("ascfield2", 0L, unstoredLong2);
 
             Document doc = new Document();
             // add fields, that have a distance to test general functionality
@@ -360,17 +360,17 @@ namespace Lucene.Net.Search
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             Document doc = new Document();
             doc.Add(new DoubleField("double", double.NegativeInfinity, Field.Store.NO));
-            doc.Add(new LongField("long", long.MinValue, Field.Store.NO));
+            doc.Add(new Int64Field("long", long.MinValue, Field.Store.NO));
             writer.AddDocument(doc);
 
             doc = new Document();
             doc.Add(new DoubleField("double", double.PositiveInfinity, Field.Store.NO));
-            doc.Add(new LongField("long", long.MaxValue, Field.Store.NO));
+            doc.Add(new Int64Field("long", long.MaxValue, Field.Store.NO));
             writer.AddDocument(doc);
 
             doc = new Document();
             doc.Add(new DoubleField("double", 0.0, Field.Store.NO));
-            doc.Add(new LongField("long", 0L, Field.Store.NO));
+            doc.Add(new Int64Field("long", 0L, Field.Store.NO));
             writer.AddDocument(doc);
 
             foreach (double d in TestNumericUtils.DOUBLE_NANs)

@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 
         // we track tickets separately since count must be present even before the ticket is
         // constructed ie. queue.size would not reflect it.
-        private readonly AtomicInteger ticketCount = new AtomicInteger();
+        private readonly AtomicInt32 ticketCount = new AtomicInt32();
 
         private readonly ReentrantLock purgeLock = new ReentrantLock();
 

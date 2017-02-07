@@ -1547,7 +1547,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class IntParserAnonymousInnerClassHelper : FieldCache.IIntParser
+        private class IntParserAnonymousInnerClassHelper : FieldCache.IInt32Parser
         {
             private readonly TestSort OuterInstance;
 
@@ -1666,7 +1666,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class ShortParserAnonymousInnerClassHelper : FieldCache.IShortParser
+        private class ShortParserAnonymousInnerClassHelper : FieldCache.IInt16Parser
         {
             private readonly TestSort OuterInstance;
 
@@ -1727,7 +1727,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class LongParserAnonymousInnerClassHelper : FieldCache.ILongParser
+        private class LongParserAnonymousInnerClassHelper : FieldCache.IInt64Parser
         {
             private readonly TestSort OuterInstance;
 
@@ -1788,7 +1788,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class FloatParserAnonymousInnerClassHelper : FieldCache.IFloatParser
+        private class FloatParserAnonymousInnerClassHelper : FieldCache.ISingleParser
         {
             private readonly TestSort OuterInstance;
 

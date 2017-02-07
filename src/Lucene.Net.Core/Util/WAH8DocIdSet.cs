@@ -25,8 +25,8 @@ namespace Lucene.Net.Util
     using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using MonotonicAppendingLongBuffer = Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using MonotonicAppendingInt64Buffer = Lucene.Net.Util.Packed.MonotonicAppendingInt64Buffer;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
 
     /// <summary>
     /// <seealso cref="DocIdSet"/> implementation based on word-aligned hybrid encoding on
@@ -86,7 +86,7 @@ namespace Lucene.Net.Util
         /// Default index interval. </summary>
         public const int DEFAULT_INDEX_INTERVAL = 24;
 
-        private static readonly MonotonicAppendingLongBuffer SINGLE_ZERO_BUFFER = new MonotonicAppendingLongBuffer(1, 64, PackedInts.COMPACT);
+        private static readonly MonotonicAppendingInt64Buffer SINGLE_ZERO_BUFFER = new MonotonicAppendingInt64Buffer(1, 64, PackedInt32s.COMPACT);
         private static WAH8DocIdSet EMPTY = new WAH8DocIdSet(new byte[0], 0, 1, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
 
         static WAH8DocIdSet()
@@ -467,7 +467,7 @@ namespace Lucene.Net.Util
 
                 // Now build the index
                 int valueCount = (numSequences - 1) / indexInterval + 1;
-                MonotonicAppendingLongBuffer indexPositions, indexWordNums;
+                MonotonicAppendingInt64Buffer indexPositions, indexWordNums;
                 if (valueCount <= 1)
                 {
                     indexPositions = indexWordNums = SINGLE_ZERO_BUFFER;
@@ -476,8 +476,8 @@ namespace Lucene.Net.Util
                 {
                     const int pageSize = 128;
                     int initialPageCount = (valueCount + pageSize - 1) / pageSize;
-                    MonotonicAppendingLongBuffer positions = new MonotonicAppendingLongBuffer(initialPageCount, pageSize, PackedInts.COMPACT);
-                    MonotonicAppendingLongBuffer wordNums = new MonotonicAppendingLongBuffer(initialPageCount, pageSize, PackedInts.COMPACT);
+                    MonotonicAppendingInt64Buffer positions = new MonotonicAppendingInt64Buffer(initialPageCount, pageSize, PackedInt32s.COMPACT);
+                    MonotonicAppendingInt64Buffer wordNums = new MonotonicAppendingInt64Buffer(initialPageCount, pageSize, PackedInt32s.COMPACT);
 
                     positions.Add(0L);
                     wordNums.Add(0L);
@@ -586,9 +586,9 @@ namespace Lucene.Net.Util
         private readonly int indexInterval;
 
         // index for advance(int)
-        private readonly MonotonicAppendingLongBuffer positions, wordNums; // wordNums[i] starts at the sequence at positions[i]
+        private readonly MonotonicAppendingInt64Buffer positions, wordNums; // wordNums[i] starts at the sequence at positions[i]
 
-        internal WAH8DocIdSet(byte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer positions, MonotonicAppendingLongBuffer wordNums)
+        internal WAH8DocIdSet(byte[] data, int cardinality, int indexInterval, MonotonicAppendingInt64Buffer positions, MonotonicAppendingInt64Buffer wordNums)
         {
             this.data = data;
             this.cardinality = cardinality;
@@ -651,7 +651,7 @@ namespace Lucene.Net.Util
             internal readonly ByteArrayDataInput @in;
             internal readonly int cardinality;
             internal readonly int indexInterval;
-            internal readonly MonotonicAppendingLongBuffer positions, wordNums;
+            internal readonly MonotonicAppendingInt64Buffer positions, wordNums;
             internal readonly int indexThreshold;
             internal int allOnesLength;
             internal int dirtyLength;
@@ -663,7 +663,7 @@ namespace Lucene.Net.Util
 
             internal int docID;
 
-            internal Iterator(byte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer positions, MonotonicAppendingLongBuffer wordNums)
+            internal Iterator(byte[] data, int cardinality, int indexInterval, MonotonicAppendingInt64Buffer positions, MonotonicAppendingInt64Buffer wordNums)
             {
                 this.@in = new ByteArrayDataInput(data);
                 this.cardinality = cardinality;

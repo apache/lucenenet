@@ -86,7 +86,7 @@ namespace Lucene.Net.Util.Automaton
             int[] block = new int[statesLen];
             StateList[,] active = new StateList[statesLen, sigmaLen];
             StateListNode[,] active2 = new StateListNode[statesLen, sigmaLen];
-            LinkedList<IntPair> pending = new LinkedList<IntPair>();
+            LinkedList<Int32Pair> pending = new LinkedList<Int32Pair>();
             BitArray pending2 = new BitArray(sigmaLen * statesLen);
             BitArray split = new BitArray(statesLen), refine = new BitArray(statesLen), refine2 = new BitArray(statesLen);
             for (int q = 0; q < statesLen; q++)
@@ -134,14 +134,14 @@ namespace Lucene.Net.Util.Automaton
             for (int x = 0; x < sigmaLen; x++)
             {
                 int j = (active[0, x].Count <= active[1, x].Count) ? 0 : 1;
-                pending.AddLast(new IntPair(j, x));
+                pending.AddLast(new Int32Pair(j, x));
                 pending2.SafeSet(x * statesLen + j, true);
             }
             // process pending until fixed point
             int k = 2;
             while (pending.Count > 0)
             {
-                IntPair ip = pending.First.Value;
+                Int32Pair ip = pending.First.Value;
                 pending.Remove(ip);
                 int p = ip.N1;
                 int x = ip.N2;
@@ -199,12 +199,12 @@ namespace Lucene.Net.Util.Automaton
                             if (!pending2.SafeGet(ofs + j) && 0 < aj && aj <= ak)
                             {
                                 pending2.SafeSet(ofs + j, true);
-                                pending.AddLast(new IntPair(j, c));
+                                pending.AddLast(new Int32Pair(j, c));
                             }
                             else
                             {
                                 pending2.SafeSet(ofs + k, true);
-                                pending.AddLast(new IntPair(k, c));
+                                pending.AddLast(new Int32Pair(k, c));
                             }
                         }
                         k++;
@@ -249,11 +249,14 @@ namespace Lucene.Net.Util.Automaton
             a.RemoveDeadTransitions();
         }
 
-        internal sealed class IntPair
+        /// <summary>
+        /// NOTE: This was IntPair in Lucene
+        /// </summary>
+        internal sealed class Int32Pair
         {
             internal int N1 { get; private set; }
             internal int N2 { get; private set; }
-            internal IntPair(int n1, int n2)
+            internal Int32Pair(int n1, int n2)
             {
                 this.N1 = n1;
                 this.N2 = n2;

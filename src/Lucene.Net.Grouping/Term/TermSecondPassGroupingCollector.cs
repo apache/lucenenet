@@ -30,7 +30,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// </summary>
     public class TermSecondPassGroupingCollector : AbstractSecondPassGroupingCollector<BytesRef>
     {
-        private readonly SentinelIntSet ordSet;
+        private readonly SentinelInt32Set ordSet;
         private SortedDocValues index;
         private readonly string groupField;
 
@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                                                int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields)
                   : base(groups, groupSort, withinGroupSort, maxDocsPerGroup, getScores, getMaxScores, fillSortFields)
         {
-            ordSet = new SentinelIntSet(m_groupMap.Count, -2);
+            ordSet = new SentinelInt32Set(m_groupMap.Count, -2);
             this.groupField = groupField;
             m_groupDocs = /*(SearchGroupDocs<BytesRef>[])*/ new AbstractSecondPassGroupingCollector.SearchGroupDocs<BytesRef>[ordSet.Keys.Length];
         }

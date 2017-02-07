@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
 
             List<CharsRef> stems = new List<CharsRef>();
-            IntsRef forms = dictionary.LookupWord(word, 0, length);
+            Int32sRef forms = dictionary.LookupWord(word, 0, length);
             if (forms != null)
             {
                 // TODO: some forms should not be added, e.g. ONLYINCOMPOUND
@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 for (int i = length - 1; i >= 0; i--)
                 {
-                    IntsRef prefixes = dictionary.LookupPrefix(word, 0, i);
+                    Int32sRef prefixes = dictionary.LookupPrefix(word, 0, i);
                     if (prefixes == null)
                     {
                         continue;
@@ -248,7 +248,7 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 for (int i = 0; i < length; i++)
                 {
-                    IntsRef suffixes = dictionary.LookupSuffix(word, i, length - i);
+                    Int32sRef suffixes = dictionary.LookupSuffix(word, i, length - i);
                     if (suffixes == null)
                     {
                         continue;
@@ -373,7 +373,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
             List<CharsRef> stems = new List<CharsRef>();
 
-            IntsRef forms = dictionary.LookupWord(strippedWord, 0, length);
+            Int32sRef forms = dictionary.LookupWord(strippedWord, 0, length);
             if (forms != null)
             {
                 for (int i = 0; i < forms.Length; i++)

@@ -3,7 +3,7 @@
 namespace Lucene.Net.Support
 {
     /// <summary>
-    /// Base class for <see cref="ByteBuffer"/> and <see cref="LongBuffer"/> (ported from Java)
+    /// Base class for <see cref="ByteBuffer"/> and <see cref="Int64Buffer"/> (ported from Java)
     /// </summary>
     public abstract class Buffer
     {

@@ -23,7 +23,7 @@ namespace Lucene.Net.Util.Packed
 
     /* Reads directly from disk on each get */
 
-    internal class DirectPackedReader : PackedInts.ReaderImpl
+    internal class DirectPackedReader : PackedInt32s.ReaderImpl
     {
         private readonly IndexInput @in;
         private readonly long startPointer;

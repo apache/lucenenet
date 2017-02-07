@@ -20,7 +20,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using AppendingDeltaPackedLongBuffer = Lucene.Net.Util.Packed.AppendingDeltaPackedLongBuffer;
+    using AppendingDeltaPackedInt64Buffer = Lucene.Net.Util.Packed.AppendingDeltaPackedInt64Buffer;
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Counter = Lucene.Net.Util.Counter;
@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
     using DataOutput = Lucene.Net.Store.DataOutput;
     using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using PagedBytes = Lucene.Net.Util.PagedBytes;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
         private readonly DataOutput bytesOut;
 
         private readonly Counter iwBytesUsed;
-        private readonly AppendingDeltaPackedLongBuffer lengths;
+        private readonly AppendingDeltaPackedInt64Buffer lengths;
         private FixedBitSet docsWithField;
         private readonly FieldInfo fieldInfo;
         private int addedValues;
@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
             this.fieldInfo = fieldInfo;
             this.bytes = new PagedBytes(BLOCK_BITS);
             this.bytesOut = bytes.GetDataOutput();
-            this.lengths = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
+            this.lengths = new AppendingDeltaPackedInt64Buffer(PackedInt32s.COMPACT);
             this.iwBytesUsed = iwBytesUsed;
             this.docsWithField = new FixedBitSet(64);
             this.bytesUsed = DocsWithFieldBytesUsed();
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
         {
             // Use yield return instead of ucsom IEnumerable
 
-            AppendingDeltaPackedLongBuffer.Iterator lengthsIterator = lengths.GetIterator();
+            AppendingDeltaPackedInt64Buffer.Iterator lengthsIterator = lengths.GetIterator();
             int size = (int)lengths.Count;
             DataInput bytesIterator = bytes.GetDataInput();
             int maxDoc = maxDocParam;

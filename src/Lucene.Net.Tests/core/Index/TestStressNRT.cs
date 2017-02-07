@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
             bool tombstones = Random().NextBoolean();
 
             // query variables
-            AtomicLong operations = new AtomicLong(AtLeast(10000)); // number of query operations to perform in total
+            AtomicInt64 operations = new AtomicInt64(AtLeast(10000)); // number of query operations to perform in total
 
             int nReadThreads = TestUtil.NextInt(Random(), 1, TEST_NIGHTLY ? 10 : 5);
             InitModel(ndocs);
@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
                 Console.WriteLine("\n");
             }
 
-            AtomicInteger numCommitting = new AtomicInteger();
+            AtomicInt32 numCommitting = new AtomicInt32();
 
             IList<ThreadClass> threads = new List<ThreadClass>();
 
@@ -163,12 +163,12 @@ namespace Lucene.Net.Index
             private int Ndocs;
             private int MaxConcurrentCommits;
             private bool Tombstones;
-            private AtomicLong Operations;
+            private AtomicInt64 Operations;
             private FieldType StoredOnlyType;
-            private AtomicInteger NumCommitting;
+            private AtomicInt32 NumCommitting;
             private RandomIndexWriter Writer;
 
-            public ThreadAnonymousInnerClassHelper(TestStressNRT outerInstance, string str, int commitPercent, int softCommitPercent, int deletePercent, int deleteByQueryPercent, int ndocs, int maxConcurrentCommits, bool tombstones, AtomicLong operations, FieldType storedOnlyType, AtomicInteger numCommitting, RandomIndexWriter writer)
+            public ThreadAnonymousInnerClassHelper(TestStressNRT outerInstance, string str, int commitPercent, int softCommitPercent, int deletePercent, int deleteByQueryPercent, int ndocs, int maxConcurrentCommits, bool tombstones, AtomicInt64 operations, FieldType storedOnlyType, AtomicInt32 numCommitting, RandomIndexWriter writer)
                 : base(str)
             {
                 this.OuterInstance = outerInstance;
@@ -411,9 +411,9 @@ namespace Lucene.Net.Index
 
             private int Ndocs;
             private bool Tombstones;
-            private AtomicLong Operations;
+            private AtomicInt64 Operations;
 
-            public ThreadAnonymousInnerClassHelper2(TestStressNRT outerInstance, string str, int ndocs, bool tombstones, AtomicLong operations)
+            public ThreadAnonymousInnerClassHelper2(TestStressNRT outerInstance, string str, int ndocs, bool tombstones, AtomicInt64 operations)
                 : base(str)
             {
                 this.OuterInstance = outerInstance;

@@ -19,7 +19,7 @@ namespace Lucene.Net.Codecs.Lucene42
      * limitations under the License.
      */
 
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using SegmentReadState = Lucene.Net.Index.SegmentReadState;
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
@@ -104,7 +104,7 @@ namespace Lucene.Net.Codecs.Lucene42
     ///     <li>BinaryData --&gt;  <seealso cref="DataOutput#writeByte Byte"/><sup>DataLength</sup>,Addresses</li>
     ///     <li>SortedData --&gt; <seealso cref="FST FST&lt;Int64&gt;"/></li>
     ///     <li>DeltaCompressedNumerics --&gt; <seealso cref="BlockPackedWriter BlockPackedInts(blockSize=4096)"/></li>
-    ///     <li>TableCompressedNumerics --&gt; TableSize,<seealso cref="DataOutput#writeLong Int64"/><sup>TableSize</sup>,<seealso cref="PackedInts PackedInts"/></li>
+    ///     <li>TableCompressedNumerics --&gt; TableSize,<seealso cref="DataOutput#writeLong Int64"/><sup>TableSize</sup>,<seealso cref="PackedInt32s PackedInts"/></li>
     ///     <li>UncompressedNumerics --&gt; <seealso cref="DataOutput#writeByte Byte"/><sup>maxdoc</sup></li>
     ///     <li>Addresses --&gt; <seealso cref="MonotonicBlockPackedWriter MonotonicBlockPackedInts(blockSize=4096)"/></li>
     ///     <li>Footer --&gt; <seealso cref="CodecUtil#writeFooter CodecFooter"/></li>
@@ -132,7 +132,7 @@ namespace Lucene.Net.Codecs.Lucene42
         /// Lucene42DocValuesFormat(PackedInts.DEFAULT)}
         /// </summary>
         public Lucene42DocValuesFormat()
-            : this(PackedInts.DEFAULT)
+            : this(PackedInt32s.DEFAULT)
         {
         }
 

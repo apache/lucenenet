@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.Memory
                     long sumDocFreq = blockIn.ReadVInt64();
                     int docCount = blockIn.ReadVInt32();
                     int longsSize = blockIn.ReadVInt32();
-                    var index = new FST<long?>(indexIn, PositiveIntOutputs.Singleton);
+                    var index = new FST<long?>(indexIn, PositiveInt32Outputs.Singleton);
 
                     var current = new TermsReader(this, fieldInfo, blockIn, numTerms, sumTotalTermFreq, sumDocFreq, docCount, longsSize, index);
                     TermsReader previous;

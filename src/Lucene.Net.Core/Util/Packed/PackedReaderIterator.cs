@@ -23,17 +23,17 @@ namespace Lucene.Net.Util.Packed
 
     using DataInput = Lucene.Net.Store.DataInput;
 
-    internal sealed class PackedReaderIterator : PackedInts.ReaderIterator
+    internal sealed class PackedReaderIterator : PackedInt32s.ReaderIterator
     {
         internal readonly int packedIntsVersion;
-        internal readonly PackedInts.Format format;
+        internal readonly PackedInt32s.Format format;
         internal readonly BulkOperation bulkOperation;
         internal readonly byte[] nextBlocks;
-        internal readonly LongsRef nextValues;
+        internal readonly Int64sRef nextValues;
         internal readonly int iterations;
         internal int position;
 
-        internal PackedReaderIterator(PackedInts.Format format, int packedIntsVersion, int valueCount, int bitsPerValue, DataInput @in, int mem)
+        internal PackedReaderIterator(PackedInt32s.Format format, int packedIntsVersion, int valueCount, int bitsPerValue, DataInput @in, int mem)
             : base(valueCount, bitsPerValue, @in)
         {
             this.format = format;
@@ -42,7 +42,7 @@ namespace Lucene.Net.Util.Packed
             iterations = Iterations(mem);
             Debug.Assert(valueCount == 0 || iterations > 0);
             nextBlocks = new byte[iterations * bulkOperation.ByteBlockCount];
-            nextValues = new LongsRef(new long[iterations * bulkOperation.ByteValueCount], 0, 0);
+            nextValues = new Int64sRef(new long[iterations * bulkOperation.ByteValueCount], 0, 0);
             nextValues.Offset = nextValues.Int64s.Length;
             position = -1;
         }
@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Packed
         private int Iterations(int mem)
         {
             int iterations = bulkOperation.ComputeIterations(m_valueCount, mem);
-            if (packedIntsVersion < PackedInts.VERSION_BYTE_ALIGNED)
+            if (packedIntsVersion < PackedInt32s.VERSION_BYTE_ALIGNED)
             {
                 // make sure iterations is a multiple of 8
                 iterations = (iterations + 7) & unchecked((int)0xFFFFFFF8);
@@ -58,7 +58,7 @@ namespace Lucene.Net.Util.Packed
             return iterations;
         }
 
-        public override LongsRef Next(int count)
+        public override Int64sRef Next(int count)
         {
             Debug.Assert(nextValues.Length >= 0);
             Debug.Assert(count > 0);

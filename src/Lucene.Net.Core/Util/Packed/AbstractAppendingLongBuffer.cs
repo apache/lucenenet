@@ -21,8 +21,11 @@ namespace Lucene.Net.Util.Packed
      */
 
     /// <summary>
-    /// Common functionality shared by <seealso cref="AppendingDeltaPackedLongBuffer"/> and <seealso cref="MonotonicAppendingLongBuffer"/>. </summary>
-    public abstract class AbstractAppendingLongBuffer : LongValues // LUCENENET NOTE: made public rather than internal because has public subclasses
+    /// Common functionality shared by <seealso cref="AppendingDeltaPackedInt64Buffer"/> and <seealso cref="MonotonicAppendingInt64Buffer"/>. 
+    /// <para/>
+    /// NOTE: This was AbstractAppendingLongBuffer in Lucene
+    /// </summary>
+    public abstract class AbstractAppendingInt64Buffer : Int64Values // LUCENENET NOTE: made public rather than internal because has public subclasses
     {
         internal const int MIN_PAGE_SIZE = 64;
 
@@ -31,18 +34,18 @@ namespace Lucene.Net.Util.Packed
         internal static readonly int MAX_PAGE_SIZE = 1 << 20;
 
         internal readonly int pageShift, pageMask;
-        internal PackedInts.Reader[] values;
+        internal PackedInt32s.Reader[] values;
         private long valuesBytes;
         internal int valuesOff;
         internal long[] pending;
         internal int pendingOff;
         internal float acceptableOverheadRatio;
 
-        internal AbstractAppendingLongBuffer(int initialBlockCount, int pageSize, float acceptableOverheadRatio)
+        internal AbstractAppendingInt64Buffer(int initialBlockCount, int pageSize, float acceptableOverheadRatio)
         {
-            values = new PackedInts.Reader[initialBlockCount];
+            values = new PackedInt32s.Reader[initialBlockCount];
             pending = new long[pageSize];
-            pageShift = PackedInts.CheckBlockSize(pageSize, MIN_PAGE_SIZE, MAX_PAGE_SIZE);
+            pageShift = PackedInt32s.CheckBlockSize(pageSize, MIN_PAGE_SIZE, MAX_PAGE_SIZE);
             pageMask = pageSize - 1;
             valuesOff = 0;
             pendingOff = 0;
@@ -102,7 +105,7 @@ namespace Lucene.Net.Util.Packed
 
         internal virtual void Grow(int newBlockCount)
         {
-            Array.Resize<PackedInts.Reader>(ref values, newBlockCount);
+            Array.Resize<PackedInt32s.Reader>(ref values, newBlockCount);
         }
 
         internal abstract void PackPendingValues();
@@ -145,13 +148,13 @@ namespace Lucene.Net.Util.Packed
 
         public sealed class Iterator
         {
-            private readonly AbstractAppendingLongBuffer outerInstance;
+            private readonly AbstractAppendingInt64Buffer outerInstance;
 
             internal long[] currentValues;
             internal int vOff, pOff;
             internal int currentCount; // number of entries of the current page
 
-            internal Iterator(AbstractAppendingLongBuffer outerInstance)
+            internal Iterator(AbstractAppendingInt64Buffer outerInstance)
             {
                 this.outerInstance = outerInstance;
                 vOff = pOff = 0;

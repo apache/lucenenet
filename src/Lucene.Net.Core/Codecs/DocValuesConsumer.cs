@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs
     using BytesRef = Lucene.Net.Util.BytesRef;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FilteredTermsEnum = Lucene.Net.Index.FilteredTermsEnum;
-    using LongBitSet = Lucene.Net.Util.LongBitSet;
+    using Int64BitSet = Lucene.Net.Util.Int64BitSet;
     using MergeState = Lucene.Net.Index.MergeState;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
     using OrdinalMap = Lucene.Net.Index.MultiDocValues.OrdinalMap;
@@ -252,7 +252,7 @@ namespace Lucene.Net.Codecs
                 }
                 else
                 {
-                    var bitset = new LongBitSet(dv.ValueCount);
+                    var bitset = new Int64BitSet(dv.ValueCount);
                     for (int i = 0; i < reader.MaxDoc; i++)
                     {
                         if (liveDocs.Get(i))
@@ -510,7 +510,7 @@ namespace Lucene.Net.Codecs
                 }
                 else
                 {
-                    var bitset = new LongBitSet(dv.ValueCount);
+                    var bitset = new Int64BitSet(dv.ValueCount);
                     for (int i = 0; i < reader.MaxDoc; i++)
                     {
                         if (liveDocs.Get(i))
@@ -939,9 +939,9 @@ namespace Lucene.Net.Codecs
         // TODO: seek-by-ord to nextSetBit
         internal class BitsFilteredTermsEnum : FilteredTermsEnum
         {
-            internal readonly LongBitSet liveTerms;
+            internal readonly Int64BitSet liveTerms;
 
-            internal BitsFilteredTermsEnum(TermsEnum @in, LongBitSet liveTerms)
+            internal BitsFilteredTermsEnum(TermsEnum @in, Int64BitSet liveTerms)
                 : base(@in, false)
             {
                 Debug.Assert(liveTerms != null);

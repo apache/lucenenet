@@ -25,26 +25,28 @@ namespace Lucene.Net.Util
     /// BitSet of fixed length (numBits), backed by accessible (<seealso cref="#getBits"/>)
     /// long[], accessed with a long index. Use it only if you intend to store more
     /// than 2.1B bits, otherwise you should use <seealso cref="FixedBitSet"/>.
+    /// <para/>
+    /// NOTE: This was LongBitSet in Lucene
     ///
     /// @lucene.internal
     /// </summary>
-    public sealed class LongBitSet // LUCENENET TODO: Rename Int64BitSet ?
+    public sealed class Int64BitSet
     {
         private readonly long[] bits;
         private readonly long numBits;
         private readonly int numWords;
 
         /// <summary>
-        /// If the given <seealso cref="LongBitSet"/> is large enough to hold
+        /// If the given <seealso cref="Int64BitSet"/> is large enough to hold
         /// {@code numBits}, returns the given bits, otherwise returns a new
-        /// <seealso cref="LongBitSet"/> which can hold the requested number of bits.
+        /// <seealso cref="Int64BitSet"/> which can hold the requested number of bits.
         ///
         /// <p>
         /// <b>NOTE:</b> the returned bitset reuses the underlying {@code long[]} of
         /// the given {@code bits} if possible. Also, calling <seealso cref="#length()"/> on the
         /// returned bits may return a value greater than {@code numBits}.
         /// </summary>
-        public static LongBitSet EnsureCapacity(LongBitSet bits, long numBits)
+        public static Int64BitSet EnsureCapacity(Int64BitSet bits, long numBits)
         {
             if (numBits < bits.Length)
             {
@@ -58,7 +60,7 @@ namespace Lucene.Net.Util
                 {
                     arr = ArrayUtil.Grow(arr, numWords + 1);
                 }
-                return new LongBitSet(arr, arr.Length << 6);
+                return new Int64BitSet(arr, arr.Length << 6);
             }
         }
 
@@ -74,14 +76,14 @@ namespace Lucene.Net.Util
             return numLong;
         }
 
-        public LongBitSet(long numBits)
+        public Int64BitSet(long numBits)
         {
             this.numBits = numBits;
             bits = new long[Bits2words(numBits)];
             numWords = bits.Length;
         }
 
-        public LongBitSet(long[] storedBits, long numBits)
+        public Int64BitSet(long[] storedBits, long numBits)
         {
             this.numWords = Bits2words(numBits);
             if (numWords > storedBits.Length)
@@ -226,7 +228,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this = this OR other </summary>
-        public void Or(LongBitSet other)
+        public void Or(Int64BitSet other)
         {
             Debug.Assert(other.numWords <= numWords, "numWords=" + numWords + ", other.numWords=" + other.numWords);
             int pos = Math.Min(numWords, other.numWords);
@@ -238,7 +240,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this = this XOR other </summary>
-        public void Xor(LongBitSet other)
+        public void Xor(Int64BitSet other)
         {
             Debug.Assert(other.numWords <= numWords, "numWords=" + numWords + ", other.numWords=" + other.numWords);
             int pos = Math.Min(numWords, other.numWords);
@@ -250,7 +252,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// returns true if the sets have any elements in common </summary>
-        public bool Intersects(LongBitSet other)
+        public bool Intersects(Int64BitSet other)
         {
             int pos = Math.Min(numWords, other.numWords);
             while (--pos >= 0)
@@ -265,7 +267,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this = this AND other </summary>
-        public void And(LongBitSet other)
+        public void And(Int64BitSet other)
         {
             int pos = Math.Min(numWords, other.numWords);
             while (--pos >= 0)
@@ -280,7 +282,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this = this AND NOT other </summary>
-        public void AndNot(LongBitSet other)
+        public void AndNot(Int64BitSet other)
         {
             int pos = Math.Min(numWords, other.bits.Length);
             while (--pos >= 0)
@@ -409,11 +411,11 @@ namespace Lucene.Net.Util
             bits[endWord] &= endmask;
         }
 
-        public LongBitSet Clone()
+        public Int64BitSet Clone()
         {
             long[] bits = new long[this.bits.Length];
             Array.Copy(this.bits, 0, bits, 0, bits.Length);
-            return new LongBitSet(bits, numBits);
+            return new Int64BitSet(bits, numBits);
         }
 
         /// <summary>
@@ -424,11 +426,11 @@ namespace Lucene.Net.Util
             {
                 return true;
             }
-            if (!(o is LongBitSet))
+            if (!(o is Int64BitSet))
             {
                 return false;
             }
-            LongBitSet other = (LongBitSet)o;
+            Int64BitSet other = (Int64BitSet)o;
             if (numBits != other.Length)
             {
                 return false;

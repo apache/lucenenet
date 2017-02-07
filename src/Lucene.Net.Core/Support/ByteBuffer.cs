@@ -596,7 +596,7 @@ namespace Lucene.Net.Support
         /// <summary>
         /// NOTE: This was asLongBuffer() in the JDK
         /// </summary>
-        public abstract LongBuffer AsInt64Buffer();
+        public abstract Int64Buffer AsInt64Buffer();
 
         /// <summary>
         /// NOTE: This was getFloat() in the JDK
@@ -1093,11 +1093,11 @@ namespace Lucene.Net.Support
             /// <summary>
             /// NOTE: This was asLongBuffer() in the JDK
             /// </summary>
-            public override LongBuffer AsInt64Buffer()
+            public override Int64Buffer AsInt64Buffer()
             {
                 int size = this.Remaining >> 3;
                 int off = offset + Position;
-                return (new ByteBufferAsLongBuffer(bigEndian,
+                return (new ByteBufferAsInt64Buffer(bigEndian,
                     this,
                     -1,
                     0,
@@ -1499,7 +1499,7 @@ namespace Lucene.Net.Support
             /// <summary>
             /// NOTE: This was asLongBuffer() in the JDK
             /// </summary>
-            public override LongBuffer AsInt64Buffer()
+            public override Int64Buffer AsInt64Buffer()
             {
                 throw new NotImplementedException();
                 //int size = this.remaining() >> 3;
@@ -1589,14 +1589,16 @@ namespace Lucene.Net.Support
             //}
         }
 
-
-        internal class ByteBufferAsLongBuffer : LongBuffer
+        /// <summary>
+        /// NOTE: This was ByteBufferAsLongBuffer in the JDK
+        /// </summary>
+        internal class ByteBufferAsInt64Buffer : Int64Buffer
         {
             protected readonly ByteBuffer bb;
             new protected readonly int offset;
             protected readonly bool bigEndian;
 
-            internal ByteBufferAsLongBuffer(bool bigEndian, ByteBuffer bb)
+            internal ByteBufferAsInt64Buffer(bool bigEndian, ByteBuffer bb)
                 : base(-1, 0,
                       bb.Remaining >> 3,
                       bb.Remaining >> 3)
@@ -1611,7 +1613,7 @@ namespace Lucene.Net.Support
                 this.bigEndian = bigEndian;
             }
 
-            internal ByteBufferAsLongBuffer(bool bigEndian, ByteBuffer bb,
+            internal ByteBufferAsInt64Buffer(bool bigEndian, ByteBuffer bb,
                                              int mark, int pos, int lim, int cap,
                                              int off)
                 : base(mark, pos, lim, cap)
@@ -1621,7 +1623,7 @@ namespace Lucene.Net.Support
                 this.bigEndian = bigEndian;
             }
 
-            public override LongBuffer Slice()
+            public override Int64Buffer Slice()
             {
                 int pos = this.Position;
                 int lim = this.Limit;
@@ -1629,12 +1631,12 @@ namespace Lucene.Net.Support
                 int rem = (pos <= lim ? lim - pos : 0);
                 int off = (pos << 3) + offset;
                 Debug.Assert(off >= 0);
-                return new ByteBufferAsLongBuffer(this.bigEndian, bb, -1, 0, rem, rem, off);
+                return new ByteBufferAsInt64Buffer(this.bigEndian, bb, -1, 0, rem, rem, off);
             }
 
-            public override LongBuffer Duplicate()
+            public override Int64Buffer Duplicate()
             {
-                return new ByteBufferAsLongBuffer(this.bigEndian,
+                return new ByteBufferAsInt64Buffer(this.bigEndian,
                                             bb,
                                             this.MarkValue,
                                             this.Position,
@@ -1643,7 +1645,7 @@ namespace Lucene.Net.Support
                                             offset);
             }
 
-            public override LongBuffer AsReadOnlyBuffer()
+            public override Int64Buffer AsReadOnlyBuffer()
             {
                 throw new NotImplementedException();
                 //return new ByteBufferAsLongBufferRB(bb,
@@ -1685,13 +1687,13 @@ namespace Lucene.Net.Support
                 return littleEndian;
             }
 
-            public override LongBuffer Put(long value)
+            public override Int64Buffer Put(long value)
             {
                 PutImpl(Ix(NextPutIndex()), value);
                 return this;
             }
 
-            public override LongBuffer Put(int index, long value)
+            public override Int64Buffer Put(int index, long value)
             {
                 PutImpl(Ix(CheckIndex(index)), value);
                 return this;
@@ -1712,7 +1714,7 @@ namespace Lucene.Net.Support
             }
 
 
-            public override LongBuffer Compact()
+            public override Int64Buffer Compact()
             {
                 int pos = Position;
                 int lim = Limit;

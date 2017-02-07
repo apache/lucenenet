@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.Lucene40
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LegacyDocValuesType = Lucene.Net.Codecs.Lucene40.Lucene40FieldInfosReader.LegacyDocValuesType;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using PagedBytes = Lucene.Net.Util.PagedBytes;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using SegmentReadState = Lucene.Net.Index.SegmentReadState;
@@ -58,14 +58,14 @@ namespace Lucene.Net.Codecs.Lucene40
         private readonly IDictionary<int, BinaryDocValues> binaryInstances = new Dictionary<int, BinaryDocValues>();
         private readonly IDictionary<int, SortedDocValues> sortedInstances = new Dictionary<int, SortedDocValues>();
 
-        private readonly AtomicLong ramBytesUsed;
+        private readonly AtomicInt64 ramBytesUsed;
 
         internal Lucene40DocValuesReader(SegmentReadState state, string filename, string legacyKey)
         {
             this.state = state;
             this.legacyKey = legacyKey;
             this.dir = new CompoundFileDirectory(state.Directory, filename, state.Context, false);
-            ramBytesUsed = new AtomicLong(RamUsageEstimator.ShallowSizeOf(this.GetType()));
+            ramBytesUsed = new AtomicInt64(RamUsageEstimator.ShallowSizeOf(this.GetType()));
         }
 
         public override NumericDocValues GetNumeric(FieldInfo field)
@@ -159,7 +159,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 long minValue = input.ReadInt64();
                 long defaultValue = input.ReadInt64();
-                PackedInts.Reader reader = PackedInts.GetReader(input);
+                PackedInt32s.Reader reader = PackedInt32s.GetReader(input);
                 ramBytesUsed.AddAndGet(reader.RamBytesUsed());
                 return new NumericDocValuesAnonymousInnerClassHelper2(minValue, defaultValue, reader);
             }
@@ -188,9 +188,9 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             private readonly long minValue;
             private readonly long defaultValue;
-            private readonly PackedInts.Reader reader;
+            private readonly PackedInt32s.Reader reader;
 
-            public NumericDocValuesAnonymousInnerClassHelper2(long minValue, long defaultValue, PackedInts.Reader reader)
+            public NumericDocValuesAnonymousInnerClassHelper2(long minValue, long defaultValue, PackedInt32s.Reader reader)
             {
                 this.minValue = minValue;
                 this.defaultValue = defaultValue;
@@ -517,7 +517,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 PagedBytes bytes = new PagedBytes(16);
                 bytes.Copy(data, totalBytes);
                 PagedBytes.Reader bytesReader = bytes.Freeze(true);
-                PackedInts.Reader reader = PackedInts.GetReader(index);
+                PackedInt32s.Reader reader = PackedInt32s.GetReader(index);
                 CodecUtil.CheckEOF(data);
                 CodecUtil.CheckEOF(index);
                 success = true;
@@ -540,9 +540,9 @@ namespace Lucene.Net.Codecs.Lucene40
         private class BinaryDocValuesAnonymousInnerClassHelper2 : BinaryDocValues
         {
             private readonly PagedBytes.Reader bytesReader;
-            private readonly PackedInts.Reader reader;
+            private readonly PackedInt32s.Reader reader;
 
-            public BinaryDocValuesAnonymousInnerClassHelper2(PagedBytes.Reader bytesReader, PackedInts.Reader reader)
+            public BinaryDocValuesAnonymousInnerClassHelper2(PagedBytes.Reader bytesReader, PackedInt32s.Reader reader)
             {
                 this.bytesReader = bytesReader;
                 this.reader = reader;
@@ -575,7 +575,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 PagedBytes bytes = new PagedBytes(16);
                 bytes.Copy(data, fixedLength * (long)valueCount);
                 PagedBytes.Reader bytesReader = bytes.Freeze(true);
-                PackedInts.Reader reader = PackedInts.GetReader(index);
+                PackedInt32s.Reader reader = PackedInt32s.GetReader(index);
                 CodecUtil.CheckEOF(data);
                 CodecUtil.CheckEOF(index);
                 ramBytesUsed.AddAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
@@ -599,9 +599,9 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             private readonly int fixedLength;
             private readonly PagedBytes.Reader bytesReader;
-            private readonly PackedInts.Reader reader;
+            private readonly PackedInt32s.Reader reader;
 
-            public BinaryDocValuesAnonymousInnerClassHelper3(int fixedLength, PagedBytes.Reader bytesReader, PackedInts.Reader reader)
+            public BinaryDocValuesAnonymousInnerClassHelper3(int fixedLength, PagedBytes.Reader bytesReader, PackedInt32s.Reader reader)
             {
                 this.fixedLength = fixedLength;
                 this.bytesReader = bytesReader;
@@ -633,7 +633,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 PagedBytes bytes = new PagedBytes(16);
                 bytes.Copy(data, totalBytes);
                 PagedBytes.Reader bytesReader = bytes.Freeze(true);
-                PackedInts.Reader reader = PackedInts.GetReader(index);
+                PackedInt32s.Reader reader = PackedInt32s.GetReader(index);
                 CodecUtil.CheckEOF(data);
                 CodecUtil.CheckEOF(index);
                 ramBytesUsed.AddAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
@@ -656,9 +656,9 @@ namespace Lucene.Net.Codecs.Lucene40
         private class BinaryDocValuesAnonymousInnerClassHelper4 : BinaryDocValues
         {
             private readonly PagedBytes.Reader bytesReader;
-            private readonly PackedInts.Reader reader;
+            private readonly PackedInt32s.Reader reader;
 
-            public BinaryDocValuesAnonymousInnerClassHelper4(PagedBytes.Reader bytesReader, PackedInts.Reader reader)
+            public BinaryDocValuesAnonymousInnerClassHelper4(PagedBytes.Reader bytesReader, PackedInt32s.Reader reader)
             {
                 this.bytesReader = bytesReader;
                 this.reader = reader;
@@ -748,7 +748,7 @@ namespace Lucene.Net.Codecs.Lucene40
             PagedBytes bytes = new PagedBytes(16);
             bytes.Copy(data, fixedLength * (long)valueCount);
             PagedBytes.Reader bytesReader = bytes.Freeze(true);
-            PackedInts.Reader reader = PackedInts.GetReader(index);
+            PackedInt32s.Reader reader = PackedInt32s.GetReader(index);
             ramBytesUsed.AddAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
 
             return CorrectBuggyOrds(new SortedDocValuesAnonymousInnerClassHelper(fixedLength, valueCount, bytesReader, reader));
@@ -759,9 +759,9 @@ namespace Lucene.Net.Codecs.Lucene40
             private readonly int fixedLength;
             private readonly int valueCount;
             private readonly PagedBytes.Reader bytesReader;
-            private readonly PackedInts.Reader reader;
+            private readonly PackedInt32s.Reader reader;
 
-            public SortedDocValuesAnonymousInnerClassHelper(int fixedLength, int valueCount, PagedBytes.Reader bytesReader, PackedInts.Reader reader)
+            public SortedDocValuesAnonymousInnerClassHelper(int fixedLength, int valueCount, PagedBytes.Reader bytesReader, PackedInt32s.Reader reader)
             {
                 this.fixedLength = fixedLength;
                 this.valueCount = valueCount;
@@ -797,8 +797,8 @@ namespace Lucene.Net.Codecs.Lucene40
             PagedBytes bytes = new PagedBytes(16);
             bytes.Copy(data, maxAddress);
             PagedBytes.Reader bytesReader = bytes.Freeze(true);
-            PackedInts.Reader addressReader = PackedInts.GetReader(index);
-            PackedInts.Reader ordsReader = PackedInts.GetReader(index);
+            PackedInt32s.Reader addressReader = PackedInt32s.GetReader(index);
+            PackedInt32s.Reader ordsReader = PackedInt32s.GetReader(index);
 
             int valueCount = addressReader.Count - 1;
             ramBytesUsed.AddAndGet(bytes.RamBytesUsed() + addressReader.RamBytesUsed() + ordsReader.RamBytesUsed());
@@ -809,11 +809,11 @@ namespace Lucene.Net.Codecs.Lucene40
         private class SortedDocValuesAnonymousInnerClassHelper2 : SortedDocValues
         {
             private readonly PagedBytes.Reader bytesReader;
-            private readonly PackedInts.Reader addressReader;
-            private readonly PackedInts.Reader ordsReader;
+            private readonly PackedInt32s.Reader addressReader;
+            private readonly PackedInt32s.Reader ordsReader;
             private readonly int valueCount;
 
-            public SortedDocValuesAnonymousInnerClassHelper2(PagedBytes.Reader bytesReader, PackedInts.Reader addressReader, PackedInts.Reader ordsReader, int valueCount)
+            public SortedDocValuesAnonymousInnerClassHelper2(PagedBytes.Reader bytesReader, PackedInt32s.Reader addressReader, PackedInt32s.Reader ordsReader, int valueCount)
             {
                 this.bytesReader = bytesReader;
                 this.addressReader = addressReader;

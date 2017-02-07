@@ -42,7 +42,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         private static readonly int DEFAULT_INITIAL_SIZE = 128;
 
         private readonly String groupField;
-        private readonly SentinelIntSet ordSet;
+        private readonly SentinelInt32Set ordSet;
         private readonly IList<BytesRef> groups;
 
         private SortedDocValues index;
@@ -60,7 +60,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         /// </param>
         public TermAllGroupsCollector(string groupField, int initialSize)
         {
-            ordSet = new SentinelIntSet(initialSize, -2);
+            ordSet = new SentinelInt32Set(initialSize, -2);
             groups = new List<BytesRef>(initialSize);
             this.groupField = groupField;
         }

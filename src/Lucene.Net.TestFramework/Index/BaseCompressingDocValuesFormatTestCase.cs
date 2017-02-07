@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NumericDocValuesField = NumericDocValuesField;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
             iwriter.ForceMerge(1);
             long size2 = DirSize(dir);
             // make sure the new longs costed less than if they had only been packed
-            Assert.IsTrue(size2 < size1 + (PackedInts.BitsRequired(day) * 50) / 8);
+            Assert.IsTrue(size2 < size1 + (PackedInt32s.BitsRequired(day) * 50) / 8);
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass

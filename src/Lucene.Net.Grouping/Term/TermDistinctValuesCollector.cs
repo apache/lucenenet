@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         private readonly string groupField;
         private readonly string countField;
         private readonly List<GroupCount> groups;
-        private readonly SentinelIntSet ordSet;
+        private readonly SentinelInt32Set ordSet;
         private readonly GroupCount[] groupCounts;
 
         private SortedDocValues groupFieldTermIndex;
@@ -57,7 +57,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             {
                 this.groups.Add(new GroupCount(group.GroupValue));
             }
-            ordSet = new SentinelIntSet(groupCount, -2);
+            ordSet = new SentinelInt32Set(groupCount, -2);
             groupCounts = new GroupCount[ordSet.Keys.Length];
         }
 

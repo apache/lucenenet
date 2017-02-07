@@ -17,7 +17,7 @@ namespace Lucene.Net.Index
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Documents.Document;
     using Field = Field;
-    using IntField = IntField;
+    using Int32Field = Int32Field;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
         private void AddDoc(RandomIndexWriter w, ICollection<string> terms, IDictionary<BytesRef, int?> termToID, int id)
         {
             Document doc = new Document();
-            doc.Add(new IntField("id", id, Field.Store.NO));
+            doc.Add(new Int32Field("id", id, Field.Store.NO));
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: addDoc id:" + id + " terms=" + terms);
@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             // NOTE: intentional insanity!!
-            FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(r), "id", false);
+            FieldCache.Int32s docIDToID = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(r), "id", false);
 
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
             {

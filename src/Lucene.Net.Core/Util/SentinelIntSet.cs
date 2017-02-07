@@ -28,19 +28,21 @@ namespace Lucene.Net.Util
     /// would make it >= 75% full.  Consider extending and over-riding <seealso cref="#hash(int)"/> if the values might be poor
     /// hash keys; Lucene docids should be fine.
     /// The internal fields are exposed publicly to enable more efficient use at the expense of better O-O principles.
-    /// <p/>
+    /// <para/>
     /// To iterate over the integers held in this set, simply use code like this:
-    /// <pre class="prettyprint">
+    /// <code>
     /// SentinelIntSet set = ...
     /// for (int v : set.keys) {
     ///   if (v == set.emptyVal)
     ///     continue;
     ///   //use v...
-    /// }</pre>
+    /// }</code>
+    /// <para/>
+    /// NOTE: This was SentinelIntSet in Lucene
     ///
     /// @lucene.internal
     /// </summary>
-    public class SentinelIntSet
+    public class SentinelInt32Set
     {
         /// <summary>
         /// A power-of-2 over-sized array holding the integers in the set along with empty values. </summary>
@@ -66,7 +68,7 @@ namespace Lucene.Net.Util
         /// <param name="size">  The minimum number of elements this set should be able to hold without rehashing
         ///              (i.e. the slots are guaranteed not to change) </param>
         /// <param name="emptyVal"> The integer value to use for EMPTY </param>
-        public SentinelIntSet(int size, int emptyVal)
+        public SentinelInt32Set(int size, int emptyVal)
         {
             this.EmptyVal = emptyVal;
             int tsize = Math.Max(Lucene.Net.Util.BitUtil.NextHighestPowerOfTwo(size), 1);

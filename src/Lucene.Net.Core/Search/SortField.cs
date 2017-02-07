@@ -130,15 +130,15 @@ namespace Lucene.Net.Search
         ///  subclass an existing numeric parser, or field is null </exception>
         public SortField(string field, FieldCache.IParser parser, bool reverse)
         {
-            if (parser is FieldCache.IIntParser)
+            if (parser is FieldCache.IInt32Parser)
             {
                 InitFieldType(field, SortFieldType.INT);
             }
-            else if (parser is FieldCache.IFloatParser)
+            else if (parser is FieldCache.ISingleParser)
             {
                 InitFieldType(field, SortFieldType.FLOAT);
             }
-            else if (parser is FieldCache.IShortParser)
+            else if (parser is FieldCache.IInt16Parser)
             {
 #pragma warning disable 612, 618
                 InitFieldType(field, SortFieldType.SHORT);
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
                 InitFieldType(field, SortFieldType.BYTE);
 #pragma warning restore 612, 618
             }
-            else if (parser is FieldCache.ILongParser)
+            else if (parser is FieldCache.IInt64Parser)
             {
                 InitFieldType(field, SortFieldType.LONG);
             }
@@ -467,13 +467,13 @@ namespace Lucene.Net.Search
                     return new FieldComparer.DocComparer(numHits);
 
                 case SortFieldType.INT:
-                    return new FieldComparer.IntComparer(numHits, field, parser, (int?)m_missingValue);
+                    return new FieldComparer.Int32Comparer(numHits, field, parser, (int?)m_missingValue);
 
                 case SortFieldType.FLOAT:
-                    return new FieldComparer.FloatComparer(numHits, field, parser, (float?)m_missingValue);
+                    return new FieldComparer.SingleComparer(numHits, field, parser, (float?)m_missingValue);
 
                 case SortFieldType.LONG:
-                    return new FieldComparer.LongComparer(numHits, field, parser, (long?)m_missingValue);
+                    return new FieldComparer.Int64Comparer(numHits, field, parser, (long?)m_missingValue);
 
                 case SortFieldType.DOUBLE:
                     return new FieldComparer.DoubleComparer(numHits, field, parser, (double?)m_missingValue);
@@ -483,7 +483,7 @@ namespace Lucene.Net.Search
                     return new FieldComparer.ByteComparer(numHits, field, parser, (sbyte?)m_missingValue);
 
                 case SortFieldType.SHORT:
-                    return new FieldComparer.ShortComparer(numHits, field, parser, (short?)m_missingValue);
+                    return new FieldComparer.Int16Comparer(numHits, field, parser, (short?)m_missingValue);
 #pragma warning restore 612, 618
 
                 case SortFieldType.CUSTOM:

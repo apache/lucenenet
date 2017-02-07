@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     public abstract class TermGroupFacetCollector : AbstractGroupFacetCollector
     {
         internal readonly List<GroupedFacetHit> groupedFacetHits;
-        internal readonly SentinelIntSet segmentGroupedFacetHits;
+        internal readonly SentinelInt32Set segmentGroupedFacetHits;
 
         internal SortedDocValues groupFieldTermsIndex;
 
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             : base(groupField, facetField, facetPrefix)
         {
             groupedFacetHits = new List<GroupedFacetHit>(initialSize);
-            segmentGroupedFacetHits = new SentinelIntSet(initialSize, int.MinValue);
+            segmentGroupedFacetHits = new SentinelInt32Set(initialSize, int.MinValue);
         }
 
         /// <summary>

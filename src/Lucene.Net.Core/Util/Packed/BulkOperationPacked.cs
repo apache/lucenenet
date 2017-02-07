@@ -20,7 +20,7 @@ namespace Lucene.Net.Util.Packed
      */
 
     /// <summary>
-    /// Non-specialized <seealso cref="BulkOperation"/> for <seealso cref="PackedInts.Format#PACKED"/>.
+    /// Non-specialized <seealso cref="BulkOperation"/> for <seealso cref="PackedInt32s.Format#PACKED"/>.
     /// </summary>
     internal class BulkOperationPacked : BulkOperation
     {
@@ -255,7 +255,7 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < byteValueCount * iterations; ++i)
             {
                 long v = values[valuesOffset++];
-                Debug.Assert(bitsPerValue == 64 || PackedInts.BitsRequired(v) <= bitsPerValue);
+                Debug.Assert(bitsPerValue == 64 || PackedInt32s.BitsRequired(v) <= bitsPerValue);
                 if (bitsPerValue < bitsLeft)
                 {
                     // just buffer
@@ -287,7 +287,7 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < byteValueCount * iterations; ++i)
             {
                 int v = values[valuesOffset++];
-                Debug.Assert(PackedInts.BitsRequired(v & 0xFFFFFFFFL) <= bitsPerValue);
+                Debug.Assert(PackedInt32s.BitsRequired(v & 0xFFFFFFFFL) <= bitsPerValue);
                 if (bitsPerValue < bitsLeft)
                 {
                     // just buffer

@@ -53,13 +53,13 @@ namespace Lucene.Net.Util
     using FieldDoc = Lucene.Net.Search.FieldDoc;
     using FieldType = FieldType;
     using FilteredQuery = Lucene.Net.Search.FilteredQuery;
-    using FloatField = FloatField;
+    using SingleField = SingleField;
     using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using IntField = IntField;
+    using Int32Field = Int32Field;
     using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
-    using LongField = LongField;
+    using Int64Field = Int64Field;
     using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
     using MergePolicy = Lucene.Net.Index.MergePolicy;
     using MergeScheduler = Lucene.Net.Index.MergeScheduler;
@@ -1059,15 +1059,15 @@ namespace Lucene.Net.Util
                     switch (numType)
                     {
                         case NumericType.INT:
-                            field2 = new IntField(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
+                            field2 = new Int32Field(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
                             break;
 
                         case NumericType.FLOAT:
-                            field2 = new FloatField(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
+                            field2 = new SingleField(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
                             break;
 
                         case NumericType.LONG:
-                            field2 = new LongField(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
+                            field2 = new Int64Field(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
                             break;
 
                         case NumericType.DOUBLE:

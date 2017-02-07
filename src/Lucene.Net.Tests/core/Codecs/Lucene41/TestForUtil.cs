@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.Lucene41
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOContext = Lucene.Net.Store.IOContext;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
     [TestFixture]
@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     for (int j = 0; j < Lucene41PostingsFormat.BLOCK_SIZE; ++j)
                     {
-                        values[i * Lucene41PostingsFormat.BLOCK_SIZE + j] = RandomInts.NextIntBetween(Random(), 0, (int)PackedInts.MaxValue(bpv));
+                        values[i * Lucene41PostingsFormat.BLOCK_SIZE + j] = RandomInts.NextIntBetween(Random(), 0, (int)PackedInt32s.MaxValue(bpv));
                     }
                 }
             }

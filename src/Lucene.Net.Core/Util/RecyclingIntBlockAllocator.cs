@@ -20,18 +20,21 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-    using Allocator = Lucene.Net.Util.IntBlockPool.Allocator;
+    using Allocator = Lucene.Net.Util.Int32BlockPool.Allocator;
 
     /// <summary>
     /// A <seealso cref="Allocator"/> implementation that recycles unused int
     /// blocks in a buffer and reuses them in subsequent calls to
     /// <seealso cref="#getIntBlock()"/>.
-    /// <p>
+    /// <para>
     /// Note: this class is not thread-safe
-    /// </p>
+    /// </para>
+    /// <para>
+    /// NOTE: This was RecyclingIntBlockAllocator in Lucene
+    /// </para>
     /// @lucene.internal
     /// </summary>
-    public sealed class RecyclingIntBlockAllocator : Allocator // LUCENENET TODO: Rename RecyclingInt32BlockAllocator ?
+    public sealed class RecyclingInt32BlockAllocator : Allocator
     {
         private int[][] freeByteBlocks;
         private readonly int maxBufferedBlocks;
@@ -40,7 +43,7 @@ namespace Lucene.Net.Util
         public const int DEFAULT_BUFFERED_BLOCKS = 64;
 
         /// <summary>
-        /// Creates a new <seealso cref="RecyclingIntBlockAllocator"/>
+        /// Creates a new <seealso cref="RecyclingInt32BlockAllocator"/>
         /// </summary>
         /// <param name="blockSize">
         ///          the block size in bytes </param>
@@ -48,7 +51,7 @@ namespace Lucene.Net.Util
         ///          maximum number of buffered int block </param>
         /// <param name="bytesUsed">
         ///          <seealso cref="Counter"/> reference counting internally allocated bytes </param>
-        public RecyclingIntBlockAllocator(int blockSize, int maxBufferedBlocks, Counter bytesUsed)
+        public RecyclingInt32BlockAllocator(int blockSize, int maxBufferedBlocks, Counter bytesUsed)
             : base(blockSize)
         {
             freeByteBlocks = new int[maxBufferedBlocks][];
@@ -57,25 +60,25 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="RecyclingIntBlockAllocator"/>.
+        /// Creates a new <seealso cref="RecyclingInt32BlockAllocator"/>.
         /// </summary>
         /// <param name="blockSize">
         ///          the size of each block returned by this allocator </param>
         /// <param name="maxBufferedBlocks">
         ///          maximum number of buffered int blocks </param>
-        public RecyclingIntBlockAllocator(int blockSize, int maxBufferedBlocks)
+        public RecyclingInt32BlockAllocator(int blockSize, int maxBufferedBlocks)
             : this(blockSize, maxBufferedBlocks, Counter.NewCounter(false))
         {
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="RecyclingIntBlockAllocator"/> with a block size of
-        /// <seealso cref="IntBlockPool#INT_BLOCK_SIZE"/>, upper buffered docs limit of
+        /// Creates a new <seealso cref="RecyclingInt32BlockAllocator"/> with a block size of
+        /// <seealso cref="Int32BlockPool#INT_BLOCK_SIZE"/>, upper buffered docs limit of
         /// <seealso cref="#DEFAULT_BUFFERED_BLOCKS"/> ({@value #DEFAULT_BUFFERED_BLOCKS}).
         ///
         /// </summary>
-        public RecyclingIntBlockAllocator()
-            : this(IntBlockPool.INT_BLOCK_SIZE, 64, Counter.NewCounter(false))
+        public RecyclingInt32BlockAllocator()
+            : this(Int32BlockPool.INT_BLOCK_SIZE, 64, Counter.NewCounter(false))
         {
         }
 

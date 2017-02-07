@@ -370,10 +370,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // Move all ngrams into an FST:
                     TermsEnum termsEnum = terms.GetIterator(null);
 
-                    Outputs<long?> outputs = PositiveIntOutputs.Singleton;
+                    Outputs<long?> outputs = PositiveInt32Outputs.Singleton;
                     Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
 
-                    IntsRef scratchInts = new IntsRef();
+                    Int32sRef scratchInts = new Int32sRef();
                     while (true)
                     {
                         BytesRef term = termsEnum.Next();
@@ -478,7 +478,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             totTokens = input.ReadVInt64();
 
-            fst = new FST<long?>(input, PositiveIntOutputs.Singleton);
+            fst = new FST<long?>(input, PositiveInt32Outputs.Singleton);
 
             return true;
         }
@@ -676,7 +676,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         if (token.Bytes[token.Offset + i] == separator)
                         {
                             BytesRef context = new BytesRef(token.Bytes, token.Offset, i);
-                            long? output = Lucene.Net.Util.Fst.Util.Get(fst, Lucene.Net.Util.Fst.Util.ToInt32sRef(context, new IntsRef()));
+                            long? output = Lucene.Net.Util.Fst.Util.Get(fst, Lucene.Net.Util.Fst.Util.ToInt32sRef(context, new Int32sRef()));
                             Debug.Assert(output != null);
                             contextCount = DecodeWeight(output);
                             lastTokenFragment = new BytesRef(token.Bytes, token.Offset + i + 1, token.Length - i - 1);
@@ -718,7 +718,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                         // since this search is initialized with a single start node 
                         // it is okay to start with an empty input path here
-                        searcher.AddStartPaths(arc, prefixOutput, true, new IntsRef());
+                        searcher.AddStartPaths(arc, prefixOutput, true, new Int32sRef());
 
                         completions = searcher.Search();
                         Debug.Assert(completions.IsComplete);
@@ -828,7 +828,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
 
-            protected override bool AcceptResult(IntsRef input, long? output)
+            protected override bool AcceptResult(Int32sRef input, long? output)
             {
                 Util.Fst.Util.ToBytesRef(input, scratchBytes);
                 finalLastToken.Grow(finalLastToken.Length + scratchBytes.Length);

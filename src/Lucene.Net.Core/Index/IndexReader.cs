@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
     {
         private bool closed = false;
         private bool closedByChild = false;
-        private readonly AtomicInteger refCount = new AtomicInteger(1);
+        private readonly AtomicInt32 refCount = new AtomicInt32(1);
 
         internal IndexReader()
         {

@@ -62,7 +62,7 @@ namespace Lucene.Net.Util.Packed
         /// <param name="blockSize"> the number of values of a single block, must be a multiple of <tt>64</tt> </param>
         public AbstractBlockPackedWriter(DataOutput @out, int blockSize)
         {
-            PackedInts.CheckBlockSize(blockSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
+            PackedInt32s.CheckBlockSize(blockSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
             Reset(@out);
             m_values = new long[blockSize];
         }
@@ -142,7 +142,7 @@ namespace Lucene.Net.Util.Packed
 
         protected void WriteValues(int bitsRequired)
         {
-            PackedInts.IEncoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, bitsRequired);
+            PackedInt32s.IEncoder encoder = PackedInt32s.GetEncoder(PackedInt32s.Format.PACKED, PackedInt32s.VERSION_CURRENT, bitsRequired);
             int iterations = m_values.Length / encoder.ByteValueCount;
             int blockSize = encoder.ByteBlockCount * iterations;
             if (m_blocks == null || m_blocks.Length < blockSize)
@@ -154,7 +154,7 @@ namespace Lucene.Net.Util.Packed
                 Arrays.Fill(m_values, m_off, m_values.Length, 0L);
             }
             encoder.Encode(m_values, 0, m_blocks, 0, iterations);
-            int blockCount = (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, m_off, bitsRequired);
+            int blockCount = (int)PackedInt32s.Format.PACKED.ByteCount(PackedInt32s.VERSION_CURRENT, m_off, bitsRequired);
             m_out.WriteBytes(m_blocks, blockCount);
         }
     }

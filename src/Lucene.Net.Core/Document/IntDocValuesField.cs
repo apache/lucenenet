@@ -28,17 +28,20 @@ namespace Lucene.Net.Documents
     /// </pre>
     ///
     /// If you also need to store the value, you should add a
-    /// separate <seealso cref="StoredField"/> instance. </summary>
+    /// separate <seealso cref="StoredField"/> instance. 
+    /// <para/>
+    /// NOTE: This was IntDocValuesField in Lucene
+    /// </summary>
     /// <seealso cref="NumericDocValuesField"/>
     [Obsolete("Deprecated, use NumericDocValuesField instead")]
-    public class IntDocValuesField : NumericDocValuesField
+    public class Int32DocValuesField : NumericDocValuesField
     {
         /// <summary>
-        /// Creates a new DocValues field with the specified 32-bit integer value </summary>
+        /// Creates a new DocValues field with the specified 32-bit <see cref="int"/> value </summary>
         /// <param name="name"> field name </param>
-        /// <param name="value"> 32-bit integer value </param>
+        /// <param name="value"> 32-bit <see cref="int"/> value </param>
         /// <exception cref="ArgumentException"> if the field name is null </exception>
-        public IntDocValuesField(string name, int value)
+        public Int32DocValuesField(string name, int value)
             : base(name, value)
         {
         }

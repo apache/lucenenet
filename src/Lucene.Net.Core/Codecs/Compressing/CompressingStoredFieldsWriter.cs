@@ -43,8 +43,8 @@ namespace Lucene.Net.Codecs.Compressing
         internal const int NUMERIC_LONG = 0x04;
         internal const int NUMERIC_DOUBLE = 0x05;
 
-        internal static readonly int TYPE_BITS = PackedInts.BitsRequired(NUMERIC_DOUBLE);
-        internal static readonly int TYPE_MASK = (int)PackedInts.MaxValue(TYPE_BITS);
+        internal static readonly int TYPE_BITS = PackedInt32s.BitsRequired(NUMERIC_DOUBLE);
+        internal static readonly int TYPE_MASK = (int)PackedInt32s.MaxValue(TYPE_BITS);
 
         internal const string CODEC_SFX_IDX = "Index";
         internal const string CODEC_SFX_DAT = "Data";
@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.Compressing
                 indexStream = null;
 
                 fieldsStream.WriteVInt32(chunkSize);
-                fieldsStream.WriteVInt32(PackedInts.VERSION_CURRENT);
+                fieldsStream.WriteVInt32(PackedInt32s.VERSION_CURRENT);
 
                 success = true;
             }
@@ -187,9 +187,9 @@ namespace Lucene.Net.Codecs.Compressing
                     {
                         max |= (uint)values[i];
                     }
-                    int bitsRequired = PackedInts.BitsRequired(max);
+                    int bitsRequired = PackedInt32s.BitsRequired(max);
                     @out.WriteVInt32(bitsRequired);
-                    PackedInts.Writer w = PackedInts.GetWriterNoHeader(@out, PackedInts.Format.PACKED, length, bitsRequired, 1);
+                    PackedInt32s.Writer w = PackedInt32s.GetWriterNoHeader(@out, PackedInt32s.Format.PACKED, length, bitsRequired, 1);
                     for (int i = 0; i < length; ++i)
                     {
                         w.Add(values[i]);

@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
     internal class SortedDocValuesWriter : DocValuesWriter
     {
         internal readonly BytesRefHash hash;
-        private AppendingDeltaPackedLongBuffer pending;
+        private AppendingDeltaPackedInt64Buffer pending;
         private readonly Counter iwBytesUsed;
         private long bytesUsed; // this currently only tracks differences in 'pending'
         private readonly FieldInfo fieldInfo;
@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
             this.fieldInfo = fieldInfo;
             this.iwBytesUsed = iwBytesUsed;
             hash = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectTrackingAllocator(iwBytesUsed)), BytesRefHash.DEFAULT_CAPACITY, new BytesRefHash.DirectBytesStartArray(BytesRefHash.DEFAULT_CAPACITY, iwBytesUsed));
-            pending = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
+            pending = new AppendingDeltaPackedInt64Buffer(PackedInt32s.COMPACT);
             bytesUsed = pending.RamBytesUsed();
             iwBytesUsed.AddAndGet(bytesUsed);
         }
@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
 
         private IEnumerable<long?> GetOrdsEnumberable(int maxDoc, int[] ordMap)
         {
-            AppendingDeltaPackedLongBuffer.Iterator iter = pending.GetIterator();
+            AppendingDeltaPackedInt64Buffer.Iterator iter = pending.GetIterator();
 
             for (int i = 0; i < maxDoc; ++i)
             {

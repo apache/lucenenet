@@ -56,8 +56,8 @@ namespace Lucene.Net.Analysis.Hunspell
         private const string PREFIX_CONDITION_REGEX_PATTERN = "{0}.*";
         private const string SUFFIX_CONDITION_REGEX_PATTERN = ".*{0}";
 
-        internal FST<IntsRef> prefixes;
-        internal FST<IntsRef> suffixes;
+        internal FST<Int32sRef> prefixes;
+        internal FST<Int32sRef> suffixes;
 
         // all condition checks used by prefixes and suffixes. these are typically re-used across
         // many affix stripping rules. so these are deduplicated, to save RAM.
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
         // the entries in the .dic file, mapping to their set of flags.
         // the fst output is the ordinal list for flagLookup
-        internal FST<IntsRef> words;
+        internal FST<Int32sRef> words;
         // the list of unique flagsets (wordforms). theoretically huge, but practically
         // small (e.g. for polish this is 756), otherwise humans wouldn't be able to deal with it either.
         internal BytesRefHash flagLookup = new BytesRefHash();
@@ -157,8 +157,8 @@ namespace Lucene.Net.Analysis.Hunspell
             }
 
             // read dictionary entries
-            IntSequenceOutputs o = IntSequenceOutputs.Singleton;
-            Builder<IntsRef> b = new Builder<IntsRef>(FST.INPUT_TYPE.BYTE4, o);
+            Int32SequenceOutputs o = Int32SequenceOutputs.Singleton;
+            Builder<Int32sRef> b = new Builder<Int32sRef>(FST.INPUT_TYPE.BYTE4, o);
             ReadDictionaryFiles(dictionaries, decoder, b);
             words = b.Finish();
             aliases = null; // no longer needed
@@ -176,7 +176,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <summary>
         /// Looks up Hunspell word forms from the dictionary
         /// </summary>
-        internal virtual IntsRef LookupWord(char[] word, int offset, int length)
+        internal virtual Int32sRef LookupWord(char[] word, int offset, int length)
         {
             return Lookup(words, word, offset, length);
         }
@@ -188,7 +188,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <param name="offset"> Offset in the <see cref="char"/> array that the <see cref="string"/> starts at </param>
         /// <param name="length"> Length from the offset that the <see cref="string"/> is </param>
         /// <returns> List of HunspellAffix prefixes with an append that matches the <see cref="string"/>, or <c>null</c> if none are found </returns>
-        internal virtual IntsRef LookupPrefix(char[] word, int offset, int length)
+        internal virtual Int32sRef LookupPrefix(char[] word, int offset, int length)
         {
             return Lookup(prefixes, word, offset, length);
         }
@@ -200,24 +200,24 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <param name="offset"> Offset in the char array that the <see cref="string"/> starts at </param>
         /// <param name="length"> Length from the offset that the <see cref="string"/> is </param>
         /// <returns> List of HunspellAffix suffixes with an append that matches the <see cref="string"/>, or <c>null</c> if none are found </returns>
-        internal virtual IntsRef LookupSuffix(char[] word, int offset, int length)
+        internal virtual Int32sRef LookupSuffix(char[] word, int offset, int length)
         {
             return Lookup(suffixes, word, offset, length);
         }
 
         // TODO: this is pretty stupid, considering how the stemming algorithm works
         // we can speed it up to be significantly faster!
-        internal virtual IntsRef Lookup(FST<IntsRef> fst, char[] word, int offset, int length)
+        internal virtual Int32sRef Lookup(FST<Int32sRef> fst, char[] word, int offset, int length)
         {
             if (fst == null)
             {
                 return null;
             }
             FST.BytesReader bytesReader = fst.GetBytesReader();
-            FST.Arc<IntsRef> arc = fst.GetFirstArc(new FST.Arc<IntsRef>());
+            FST.Arc<Int32sRef> arc = fst.GetFirstArc(new FST.Arc<Int32sRef>());
             // Accumulate output as we go
-            IntsRef NO_OUTPUT = fst.Outputs.NoOutput;
-            IntsRef output = NO_OUTPUT;
+            Int32sRef NO_OUTPUT = fst.Outputs.NoOutput;
+            Int32sRef output = NO_OUTPUT;
 
             int l = offset + length;
             try
@@ -371,17 +371,17 @@ namespace Lucene.Net.Analysis.Hunspell
             stripOffsets[currentIndex] = currentOffset;
         }
 
-        private FST<IntsRef> AffixFST(SortedDictionary<string, IList<char?>> affixes)
+        private FST<Int32sRef> AffixFST(SortedDictionary<string, IList<char?>> affixes)
         {
-            IntSequenceOutputs outputs = IntSequenceOutputs.Singleton;
-            Builder<IntsRef> builder = new Builder<IntsRef>(FST.INPUT_TYPE.BYTE4, outputs);
+            Int32SequenceOutputs outputs = Int32SequenceOutputs.Singleton;
+            Builder<Int32sRef> builder = new Builder<Int32sRef>(FST.INPUT_TYPE.BYTE4, outputs);
 
-            IntsRef scratch = new IntsRef();
+            Int32sRef scratch = new Int32sRef();
             foreach (KeyValuePair<string, IList<char?>> entry in affixes)
             {
                 Lucene.Net.Util.Fst.Util.ToUTF32(entry.Key, scratch);
                 IList<char?> entries = entry.Value;
-                IntsRef output = new IntsRef(entries.Count);
+                Int32sRef output = new Int32sRef(entries.Count);
                 foreach (char? c in entries)
                 {
                     output.Int32s[output.Length++] = c.HasValue ? c.Value : 0;
@@ -566,7 +566,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
             Outputs<CharsRef> outputs = CharSequenceOutputs.Singleton;
             Builder<CharsRef> builder = new Builder<CharsRef>(FST.INPUT_TYPE.BYTE2, outputs);
-            IntsRef scratchInts = new IntsRef();
+            Int32sRef scratchInts = new Int32sRef();
             foreach (KeyValuePair<string, string> entry in mappings)
             {
                 Lucene.Net.Util.Fst.Util.ToUTF16(entry.Key, scratchInts);
@@ -737,10 +737,10 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <param name="decoder"> <see cref="Encoding"/> used to decode the contents of the file </param>
         /// <param name="words"></param>
         /// <exception cref="IOException"> Can be thrown while reading from the file </exception>
-        private void ReadDictionaryFiles(IList<Stream> dictionaries, Encoding decoder, Builder<IntsRef> words)
+        private void ReadDictionaryFiles(IList<Stream> dictionaries, Encoding decoder, Builder<Int32sRef> words)
         {
             BytesRef flagsScratch = new BytesRef();
-            IntsRef scratchInts = new IntsRef();
+            Int32sRef scratchInts = new Int32sRef();
 
             StringBuilder sb = new StringBuilder();
 
@@ -805,7 +805,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 // either way the trick is to encode them as char... but they must be parsed differently
 
                 string currentEntry = null;
-                IntsRef currentOrds = new IntsRef();
+                Int32sRef currentOrds = new Int32sRef();
 
                 string line2;
                 while (reader.Read(scratchLine))
@@ -872,7 +872,7 @@ namespace Lucene.Net.Analysis.Hunspell
                         if (cmp > 0 || currentEntry == null)
                         {
                             currentEntry = entry;
-                            currentOrds = new IntsRef(); // must be this way
+                            currentOrds = new Int32sRef(); // must be this way
                         }
                         currentOrds.Grow(currentOrds.Length + 1);
                         currentOrds.Int32s[currentOrds.Length++] = ord;

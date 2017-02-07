@@ -20,22 +20,26 @@ namespace Lucene.Net.Documents
     /// <summary>
     /// Syntactic sugar for encoding floats as NumericDocValues
     /// via <seealso cref="Float#floatToRawIntBits(float)"/>.
-    /// <p>
+    /// <para>
     /// Per-document floating point values can be retrieved via
-    /// <seealso cref="IFieldCache#getFloats(AtomicReader, String, boolean)"/>.</p>
-    /// <p>
+    /// <seealso cref="IFieldCache#getFloats(AtomicReader, String, boolean)"/>.</para>
+    /// <para>
     /// <b>NOTE</b>: In most all cases this will be rather inefficient,
     /// requiring four bytes per document. Consider encoding floating
-    /// point values yourself with only as much precision as you require.</p>
+    /// point values yourself with only as much precision as you require.
+    /// </para>
+    /// <para>
+    /// NOTE: This was FloatDocValuesField in Lucene
+    /// </para>
     /// </summary>
-    public class FloatDocValuesField : NumericDocValuesField
+    public class SingleDocValuesField : NumericDocValuesField
     {
         /// <summary>
-        /// Creates a new DocValues field with the specified 32-bit float value </summary>
+        /// Creates a new DocValues field with the specified 32-bit <see cref="float"/> value </summary>
         /// <param name="name"> field name </param>
-        /// <param name="value"> 32-bit float value </param>
+        /// <param name="value"> 32-bit <see cref="float"/> value </param>
         /// <exception cref="ArgumentException"> if the field name is null </exception>
-        public FloatDocValuesField(string name, float value)
+        public SingleDocValuesField(string name, float value)
             : base(name, Support.Number.SingleToInt32Bits(value))
         {
         }

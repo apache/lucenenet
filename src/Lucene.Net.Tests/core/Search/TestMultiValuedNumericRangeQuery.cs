@@ -8,7 +8,7 @@ namespace Lucene.Net.Search
     using Document = Documents.Document;
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using IntField = IntField;
+    using Int32Field = Int32Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
                 {
                     int value = Random().Next(int.MaxValue);
                     doc.Add(NewStringField("asc", value.ToString(format), Field.Store.NO));
-                    doc.Add(new IntField("trie", value, Field.Store.NO));
+                    doc.Add(new Int32Field("trie", value, Field.Store.NO));
                 }
                 writer.AddDocument(doc);
             }

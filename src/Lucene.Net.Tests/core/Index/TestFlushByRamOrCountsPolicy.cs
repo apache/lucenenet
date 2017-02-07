@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
         protected internal virtual void RunFlushByRam(int numThreads, double maxRamMB, bool ensureNotStalled)
         {
             int numDocumentsToIndex = 10 + AtLeast(30);
-            AtomicInteger numDocs = new AtomicInteger(numDocumentsToIndex);
+            AtomicInt32 numDocs = new AtomicInt32(numDocumentsToIndex);
             Directory dir = NewDirectory();
             MockDefaultFlushPolicy flushPolicy = new MockDefaultFlushPolicy();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
             {
 
                 int numDocumentsToIndex = 50 + AtLeast(30);
-                AtomicInteger numDocs = new AtomicInteger(numDocumentsToIndex);
+                AtomicInt32 numDocs = new AtomicInt32(numDocumentsToIndex);
                 Directory dir = NewDirectory();
                 MockDefaultFlushPolicy flushPolicy = new MockDefaultFlushPolicy();
                 IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetFlushPolicy(flushPolicy);
@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
         {
             int numThreads = 1 + Random().Next(8);
             int numDocumentsToIndex = 50 + AtLeast(70);
-            AtomicInteger numDocs = new AtomicInteger(numDocumentsToIndex);
+            AtomicInt32 numDocs = new AtomicInt32(numDocumentsToIndex);
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             MockDefaultFlushPolicy flushPolicy = new MockDefaultFlushPolicy();
@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
             int numDocumentsToIndex = 50 + Random().Next(50);
             for (int i = 0; i < numThreads.Length; i++)
             {
-                AtomicInteger numDocs = new AtomicInteger(numDocumentsToIndex);
+                AtomicInt32 numDocs = new AtomicInt32(numDocumentsToIndex);
                 MockDirectoryWrapper dir = NewMockDirectory();
                 // mock a very slow harddisk sometimes here so that flushing is very slow
                 dir.Throttling = MockDirectoryWrapper.Throttling_e.SOMETIMES;
@@ -312,10 +312,10 @@ namespace Lucene.Net.Index
             internal IndexWriter Writer;
             internal LiveIndexWriterConfig Iwc;
             internal LineFileDocs Docs;
-            internal AtomicInteger PendingDocs;
+            internal AtomicInt32 PendingDocs;
             internal readonly bool DoRandomCommit;
 
-            public IndexThread(TestFlushByRamOrCountsPolicy outerInstance, AtomicInteger pendingDocs, int numThreads, IndexWriter writer, LineFileDocs docs, bool doRandomCommit)
+            public IndexThread(TestFlushByRamOrCountsPolicy outerInstance, AtomicInt32 pendingDocs, int numThreads, IndexWriter writer, LineFileDocs docs, bool doRandomCommit)
             {
                 this.OuterInstance = outerInstance;
                 this.PendingDocs = pendingDocs;

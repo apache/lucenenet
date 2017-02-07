@@ -31,7 +31,7 @@ namespace Lucene.Net.Codecs.Lucene45
     using IOUtils = Lucene.Net.Util.IOUtils;
     using MathUtil = Lucene.Net.Util.MathUtil;
     using MonotonicBlockPackedWriter = Lucene.Net.Util.Packed.MonotonicBlockPackedWriter;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
     using StringHelper = Lucene.Net.Util.StringHelper;
@@ -183,7 +183,7 @@ namespace Lucene.Net.Codecs.Lucene45
             long delta = maxValue - minValue;
 
             int format;
-            if (uniqueValues != null && (delta < 0L || PackedInts.BitsRequired(uniqueValues.Count - 1) < PackedInts.BitsRequired(delta)) && count <= int.MaxValue)
+            if (uniqueValues != null && (delta < 0L || PackedInt32s.BitsRequired(uniqueValues.Count - 1) < PackedInt32s.BitsRequired(delta)) && count <= int.MaxValue)
             {
                 format = TABLE_COMPRESSED;
             }
@@ -207,7 +207,7 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 meta.WriteInt64(-1L);
             }
-            meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+            meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
             meta.WriteInt64(data.FilePointer);
             meta.WriteVInt64(count);
             meta.WriteVInt32(BLOCK_SIZE);
@@ -246,8 +246,8 @@ namespace Lucene.Net.Codecs.Lucene45
                         meta.WriteInt64(decode[i]);
                         encode[decode[i]] = i;
                     }
-                    int bitsRequired = PackedInts.BitsRequired(uniqueValues.Count - 1);
-                    PackedInts.Writer ordsWriter = PackedInts.GetWriterNoHeader(data, PackedInts.Format.PACKED, (int)count, bitsRequired, PackedInts.DEFAULT_BUFFER_SIZE);
+                    int bitsRequired = PackedInt32s.BitsRequired(uniqueValues.Count - 1);
+                    PackedInt32s.Writer ordsWriter = PackedInt32s.GetWriterNoHeader(data, PackedInt32s.Format.PACKED, (int)count, bitsRequired, PackedInt32s.DEFAULT_BUFFER_SIZE);
                     foreach (long? nv in values)
                     {
                         ordsWriter.Add(encode[nv == null ? 0 : nv.Value]);
@@ -336,7 +336,7 @@ namespace Lucene.Net.Codecs.Lucene45
             if (minLength != maxLength)
             {
                 meta.WriteInt64(data.FilePointer);
-                meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
                 meta.WriteVInt32(BLOCK_SIZE);
 
                 MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(data, BLOCK_SIZE);
@@ -414,7 +414,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 meta.WriteInt64(startFP);
                 meta.WriteVInt32(ADDRESS_INTERVAL);
                 meta.WriteInt64(indexStartFP);
-                meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
                 meta.WriteVInt32(BLOCK_SIZE);
             }
         }
@@ -459,7 +459,7 @@ namespace Lucene.Net.Codecs.Lucene45
             meta.WriteByte((byte)Lucene45DocValuesFormat.NUMERIC);
             meta.WriteVInt32(DELTA_COMPRESSED);
             meta.WriteInt64(-1L);
-            meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+            meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
             meta.WriteInt64(data.FilePointer);
             meta.WriteVInt64(maxDoc);
             meta.WriteVInt32(BLOCK_SIZE);

@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
     using BytesRefHash = Lucene.Net.Util.BytesRefHash;
     using Counter = Lucene.Net.Util.Counter;
-    using IntBlockPool = Lucene.Net.Util.IntBlockPool;
+    using Int32BlockPool = Lucene.Net.Util.Int32BlockPool;
 
     internal sealed class TermsHashPerField : InvertedDocConsumerPerField
     {
@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
         internal BytesRef termBytesRef;
 
         // Copied from our perThread
-        internal readonly IntBlockPool intPool;
+        internal readonly Int32BlockPool intPool;
 
         internal readonly ByteBlockPool bytePool;
         internal readonly ByteBlockPool termBytePool;
@@ -112,8 +112,8 @@ namespace Lucene.Net.Index
         {
             Debug.Assert(stream < streamCount);
             int intStart = postingsArray.intStarts[termID];
-            int[] ints = intPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
-            int upto = intStart & IntBlockPool.INT_BLOCK_MASK;
+            int[] ints = intPool.Buffers[intStart >> Int32BlockPool.INT_BLOCK_SHIFT];
+            int upto = intStart & Int32BlockPool.INT_BLOCK_MASK;
             reader.Init(bytePool, postingsArray.byteStarts[termID] + stream * ByteBlockPool.FIRST_LEVEL_SIZE, ints[upto + stream]);
         }
 
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
                 // First time we are seeing this token since we last
                 // flushed the hash.
                 // Init stream slices
-                if (numPostingInt + intPool.Int32Upto > IntBlockPool.INT_BLOCK_SIZE)
+                if (numPostingInt + intPool.Int32Upto > Int32BlockPool.INT_BLOCK_SIZE)
                 {
                     intPool.NextBuffer();
                 }
@@ -189,8 +189,8 @@ namespace Lucene.Net.Index
             {
                 termID = (-termID) - 1;
                 int intStart = postingsArray.intStarts[termID];
-                intUptos = intPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
-                intUptoStart = intStart & IntBlockPool.INT_BLOCK_MASK;
+                intUptos = intPool.Buffers[intStart >> Int32BlockPool.INT_BLOCK_SHIFT];
+                intUptoStart = intStart & Int32BlockPool.INT_BLOCK_MASK;
                 consumer.AddTerm(termID);
             }
         }
@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
             {
                 bytesHash.ByteStart(termID);
                 // Init stream slices
-                if (numPostingInt + intPool.Int32Upto > IntBlockPool.INT_BLOCK_SIZE)
+                if (numPostingInt + intPool.Int32Upto > Int32BlockPool.INT_BLOCK_SIZE)
                 {
                     intPool.NextBuffer();
                 }
@@ -264,8 +264,8 @@ namespace Lucene.Net.Index
             {
                 termID = (-termID) - 1;
                 int intStart = postingsArray.intStarts[termID];
-                intUptos = intPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
-                intUptoStart = intStart & IntBlockPool.INT_BLOCK_MASK;
+                intUptos = intPool.Buffers[intStart >> Int32BlockPool.INT_BLOCK_SHIFT];
+                intUptoStart = intStart & Int32BlockPool.INT_BLOCK_MASK;
                 consumer.AddTerm(termID);
             }
 

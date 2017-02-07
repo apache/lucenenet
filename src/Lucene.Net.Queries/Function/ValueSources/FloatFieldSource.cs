@@ -30,14 +30,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class FloatFieldSource : FieldCacheSource
     {
-        protected readonly FieldCache.IFloatParser m_parser;
+        protected readonly FieldCache.ISingleParser m_parser;
 
         public FloatFieldSource(string field)
             : this(field, null)
         {
         }
 
-        public FloatFieldSource(string field, FieldCache.IFloatParser parser)
+        public FloatFieldSource(string field, FieldCache.ISingleParser parser)
             : base(field)
         {
             this.m_parser = parser;
@@ -57,10 +57,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
         {
-            private readonly FieldCache.Floats arr;
+            private readonly FieldCache.Singles arr;
             private readonly IBits valid;
 
-            public FloatDocValuesAnonymousInnerClassHelper(FloatFieldSource @this, FieldCache.Floats arr, IBits valid)
+            public FloatDocValuesAnonymousInnerClassHelper(FloatFieldSource @this, FieldCache.Singles arr, IBits valid)
                 : base(@this)
             {
                 this.arr = arr;
@@ -97,10 +97,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 public ValueFillerAnonymousInnerClassHelper(FloatDocValuesAnonymousInnerClassHelper outerInstance)
                 {
                     this.outerInstance = outerInstance;
-                    mval = new MutableValueFloat();
+                    mval = new MutableValueSingle();
                 }
 
-                private readonly MutableValueFloat mval;
+                private readonly MutableValueSingle mval;
 
                 public override MutableValue Value
                 {
