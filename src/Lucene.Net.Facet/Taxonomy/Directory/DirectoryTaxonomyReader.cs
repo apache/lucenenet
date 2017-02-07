@@ -47,9 +47,15 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// </summary>
     public class DirectoryTaxonomyReader : TaxonomyReader, IDisposable
     {
-        public class IntClass
+        /// <summary>
+        /// LUCENENET specific class to make an <see cref="int"/> type into a reference type.
+        /// </summary>
+        private class Int32Class
         {
-            public int? IntItem { get; set; }
+            /// <summary>
+            /// NOTE: This was intItem (field) in Lucene
+            /// </summary>
+            public int Value { get; set; }
         }
         private const int DEFAULT_CACHE_VALUE = 4000;
 
@@ -58,7 +64,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private readonly DirectoryReader indexReader;
 
         // TODO: test DoubleBarrelLRUCache and consider using it instead
-        private LRUHashMap<FacetLabel, IntClass> ordinalCache;
+        private LRUHashMap<FacetLabel, Int32Class> ordinalCache;
         private LRUHashMap<int, FacetLabel> categoryCache;
 
         private volatile TaxonomyIndexArrays taxoArrays;
@@ -68,8 +74,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// recreated, you should pass <c>null</c> as the caches and parent/children
         /// arrays.
         /// </summary>
-        internal DirectoryTaxonomyReader(DirectoryReader indexReader, DirectoryTaxonomyWriter taxoWriter, 
-            LRUHashMap<FacetLabel, IntClass> ordinalCache, LRUHashMap<int, FacetLabel> categoryCache, 
+        private DirectoryTaxonomyReader(DirectoryReader indexReader, DirectoryTaxonomyWriter taxoWriter, 
+            LRUHashMap<FacetLabel, Int32Class> ordinalCache, LRUHashMap<int, FacetLabel> categoryCache, 
             TaxonomyIndexArrays taxoArrays)
         {
             this.indexReader = indexReader;
@@ -77,7 +83,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             this.taxoEpoch = taxoWriter == null ? -1 : taxoWriter.TaxonomyEpoch;
 
             // use the same instance of the cache, note the protective code in getOrdinal and getPath
-            this.ordinalCache = ordinalCache == null ? new LRUHashMap<FacetLabel, IntClass>(DEFAULT_CACHE_VALUE) : ordinalCache;
+            this.ordinalCache = ordinalCache == null ? new LRUHashMap<FacetLabel, Int32Class>(DEFAULT_CACHE_VALUE) : ordinalCache;
             this.categoryCache = categoryCache == null ? new LRUHashMap<int, FacetLabel>(DEFAULT_CACHE_VALUE) : categoryCache;
 
             this.taxoArrays = taxoArrays != null ? new TaxonomyIndexArrays(indexReader, taxoArrays) : null;
@@ -98,7 +104,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // These are the default cache sizes; they can be configured after
             // construction with the cache's setMaxSize() method
 
-            ordinalCache = new LRUHashMap<FacetLabel, IntClass>(DEFAULT_CACHE_VALUE);
+            ordinalCache = new LRUHashMap<FacetLabel, Int32Class>(DEFAULT_CACHE_VALUE);
             categoryCache = new LRUHashMap<int, FacetLabel>(DEFAULT_CACHE_VALUE);
         }
 
@@ -118,7 +124,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // These are the default cache sizes; they can be configured after
             // construction with the cache's setMaxSize() method
 
-            ordinalCache = new LRUHashMap<FacetLabel, IntClass>(DEFAULT_CACHE_VALUE);
+            ordinalCache = new LRUHashMap<FacetLabel, Int32Class>(DEFAULT_CACHE_VALUE);
             categoryCache = new LRUHashMap<int, FacetLabel>(DEFAULT_CACHE_VALUE);
         }
 
@@ -290,15 +296,15 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
             // and removing the lock seems to make the performance better.
-            IntClass res = ordinalCache.Get(cp);
-            if (res != null && res.IntItem != null)
+            Int32Class res = ordinalCache.Get(cp);
+            if (res != null)
             {
-                if ((int)res.IntItem.Value < indexReader.MaxDoc)
+                if ((int)res.Value < indexReader.MaxDoc)
                 {
                     // Since the cache is shared with DTR instances allocated from
                     // doOpenIfChanged, we need to ensure that the ordinal is one that
                     // this DTR instance recognizes.
-                    return (int)res.IntItem.Value;
+                    return (int)res.Value;
                 }
                 else
                 {
@@ -326,7 +332,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
                 // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
                 // and removing the lock seems to make the performance better.
-                ordinalCache.Put(cp, new IntClass { IntItem = Convert.ToInt32(ret) });
+                ordinalCache.Put(cp, new Int32Class { Value = Convert.ToInt32(ret) });
             }
 
             return ret;
