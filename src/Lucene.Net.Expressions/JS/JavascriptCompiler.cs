@@ -288,12 +288,12 @@ namespace Lucene.Net.Expressions.JS
                     }
                 case JavascriptParser.HEX:
                     {
-                        PushLong(Convert.ToInt64(text, 16));
+                        PushInt64(Convert.ToInt64(text, 16));
                         break;
                     }
                 case JavascriptParser.OCTAL:
                     {
-                        PushLong(Convert.ToInt64(text, 8));
+                        PushInt64(Convert.ToInt64(text, 8));
                         break;
                     }
 
@@ -566,7 +566,10 @@ namespace Lucene.Net.Expressions.JS
             gen.Emit(OpCodes.Conv_R8);
         }
 
-        private void PushLong(long i)
+        /// <summary>
+        /// NOTE: This was pushLong() in Lucene
+        /// </summary>
+        private void PushInt64(long i)
         {
             gen.Emit(OpCodes.Ldc_I8,i);
             if (!sourceText.Contains("<<"))
