@@ -20,14 +20,14 @@ namespace Lucene.Net.Codecs.MockSep
      * limitations under the License.
      */
 
-    public class MockSingleIntFactory : IntStreamFactory
+    public class MockSingleIntFactory : Int32StreamFactory
     {
-        public override IntIndexInput OpenInput(Directory dir, string fileName, IOContext context)
+        public override Int32IndexInput OpenInput(Directory dir, string fileName, IOContext context)
         {
             return new MockSingleIntIndexInput(dir, fileName, context);
         }
 
-        public override IntIndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
+        public override Int32IndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
         {
             return new MockSingleIntIndexOutput(dir, fileName, context);
         }

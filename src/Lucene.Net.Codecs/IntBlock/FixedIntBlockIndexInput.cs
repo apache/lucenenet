@@ -31,15 +31,17 @@ namespace Lucene.Net.Codecs.IntBlock
     ///  more performant approach would directly create an impl
     ///  of IntIndexInput inside Directory.  Wrapping a generic
     ///  IndexInput will likely cost performance.
+    /// <para/>
+    /// NOTE: This was FixedIntBlockIndexInput in Lucene
     /// 
     /// @lucene.experimental
     /// </summary>
-    public abstract class FixedIntBlockIndexInput : IntIndexInput
+    public abstract class FixedInt32BlockIndexInput : Int32IndexInput
     {
         private readonly IndexInput input;
         protected readonly int m_blockSize;
 
-        public FixedIntBlockIndexInput(IndexInput @in)
+        public FixedInt32BlockIndexInput(IndexInput @in)
         {
             input = @in;
             m_blockSize = @in.ReadVInt32();
@@ -132,9 +134,9 @@ namespace Lucene.Net.Codecs.IntBlock
 
         private class Index : AbstractIndex
         {
-            private readonly FixedIntBlockIndexInput outerInstance;
+            private readonly FixedInt32BlockIndexInput outerInstance;
 
-            public Index(FixedIntBlockIndexInput outerInstance)
+            public Index(FixedInt32BlockIndexInput outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

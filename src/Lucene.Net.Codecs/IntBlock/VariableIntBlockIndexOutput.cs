@@ -21,11 +21,11 @@ namespace Lucene.Net.Codecs.IntBlock
      * limitations under the License.
      */
 
-    /// <summary>
-    /// Naive int block API that writes vInts.  This is
-    /// expected to give poor performance; it's really only for
-    /// testing the pluggability.  One should typically use pfor instead. 
-    /// </summary>
+
+    // Naive int block API that writes vInts.  This is
+    // expected to give poor performance; it's really only for
+    // testing the pluggability.  One should typically use pfor instead. 
+
 
 
     // TODO: much of this can be shared code w/ the fixed case
@@ -36,10 +36,12 @@ namespace Lucene.Net.Codecs.IntBlock
     ///  more performant approach would directly create an impl
     ///  of IntIndexOutput inside Directory.  Wrapping a generic
     ///  IndexInput will likely cost performance.
+    /// <para/>
+    /// NOTE: This was VariableIntBlockIndexOutput in Lucene
     /// 
     /// @lucene.experimental
     /// </summary>
-    public abstract class VariableIntBlockIndexOutput : IntIndexOutput
+    public abstract class VariableInt32BlockIndexOutput : Int32IndexOutput
     {
         protected readonly IndexOutput m_output;
 
@@ -55,7 +57,7 @@ namespace Lucene.Net.Codecs.IntBlock
         ///  requires lookahead=1 because on seeing the Nth value
         ///  it knows it must now encode the N-1 values before it. 
         /// </summary>
-        protected VariableIntBlockIndexOutput(IndexOutput output, int maxBlockSize)
+        protected VariableInt32BlockIndexOutput(IndexOutput output, int maxBlockSize)
         {
             this.m_output = output;
             this.m_output.WriteInt32(maxBlockSize);
@@ -74,9 +76,9 @@ namespace Lucene.Net.Codecs.IntBlock
 
         private class Index : AbstractIndex
         {
-            private readonly VariableIntBlockIndexOutput outerInstance;
+            private readonly VariableInt32BlockIndexOutput outerInstance;
 
-            public Index(VariableIntBlockIndexOutput outerInstance)
+            public Index(VariableInt32BlockIndexOutput outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

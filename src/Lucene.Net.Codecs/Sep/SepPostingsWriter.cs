@@ -42,14 +42,14 @@ namespace Lucene.Net.Codecs.Sep
         internal const int VERSION_START = 0;
         internal const int VERSION_CURRENT = VERSION_START;
 
-        internal IntIndexOutput freqOut;
-        internal IntIndexOutput.AbstractIndex freqIndex;
+        internal Int32IndexOutput freqOut;
+        internal Int32IndexOutput.AbstractIndex freqIndex;
 
-        internal IntIndexOutput posOut;
-        internal IntIndexOutput.AbstractIndex posIndex;
+        internal Int32IndexOutput posOut;
+        internal Int32IndexOutput.AbstractIndex posIndex;
 
-        internal IntIndexOutput docOut;
-        internal IntIndexOutput.AbstractIndex docIndex;
+        internal Int32IndexOutput docOut;
+        internal Int32IndexOutput.AbstractIndex docIndex;
 
         internal IndexOutput payloadOut;
 
@@ -96,12 +96,12 @@ namespace Lucene.Net.Codecs.Sep
         internal long lastPayloadFP;
         internal long lastSkipFP; 
 
-        public SepPostingsWriter(SegmentWriteState state, IntStreamFactory factory)
+        public SepPostingsWriter(SegmentWriteState state, Int32StreamFactory factory)
             : this(state, factory, DEFAULT_SKIP_INTERVAL)
         {
         }
 
-        public SepPostingsWriter(SegmentWriteState state, IntStreamFactory factory, int skipInterval)
+        public SepPostingsWriter(SegmentWriteState state, Int32StreamFactory factory, int skipInterval)
         {
             freqOut = null;
             freqIndex = null;
@@ -302,9 +302,9 @@ namespace Lucene.Net.Codecs.Sep
 
         private class SepTermState : BlockTermState
         {
-            public IntIndexOutput.AbstractIndex DocIndex { get; set; }
-            public IntIndexOutput.AbstractIndex FreqIndex { get; set; }
-            public IntIndexOutput.AbstractIndex PosIndex { get; set; }
+            public Int32IndexOutput.AbstractIndex DocIndex { get; set; }
+            public Int32IndexOutput.AbstractIndex FreqIndex { get; set; }
+            public Int32IndexOutput.AbstractIndex PosIndex { get; set; }
             public long PayloadFp { get; set; }
             public long SkipFp { get; set; }
         }

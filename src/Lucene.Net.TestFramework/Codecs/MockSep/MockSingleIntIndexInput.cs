@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.MockSep
     /// 
     /// @lucene.experimental
     /// </summary>
-    public class MockSingleIntIndexInput : IntIndexInput
+    public class MockSingleIntIndexInput : Int32IndexInput
     {
         private readonly IndexInput @in;
 

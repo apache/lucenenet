@@ -21,11 +21,11 @@ namespace Lucene.Net.Codecs.IntBlock
      * limitations under the License.
      */
 
-    /// <summary>
-    /// Naive int block API that writes vInts.  This is
-    ///  expected to give poor performance; it's really only for
-    ///  testing the pluggability.  One should typically use pfor instead. 
-    /// </summary>
+
+    // Naive int block API that writes vInts.  This is
+    //  expected to give poor performance; it's really only for
+    //  testing the pluggability.  One should typically use pfor instead. 
+
 
 
     /// <summary>
@@ -34,17 +34,19 @@ namespace Lucene.Net.Codecs.IntBlock
     ///  more performant approach would directly create an impl
     ///  of IntIndexOutput inside Directory.  Wrapping a generic
     ///  IndexInput will likely cost performance.
+    /// <para/>
+    /// NOTE: This was FixedIntBlockIndexOutput in Lucene
     /// 
     /// @lucene.experimental
     /// </summary>
-    public abstract class FixedIntBlockIndexOutput : IntIndexOutput
+    public abstract class FixedInt32BlockIndexOutput : Int32IndexOutput
     {
         protected readonly IndexOutput m_output;
         private readonly int blockSize;
         protected readonly int[] m_buffer;
         private int upto;
 
-        protected FixedIntBlockIndexOutput(IndexOutput output, int fixedBlockSize)
+        protected FixedInt32BlockIndexOutput(IndexOutput output, int fixedBlockSize)
         {
             blockSize = fixedBlockSize;
             this.m_output = output;
@@ -61,9 +63,9 @@ namespace Lucene.Net.Codecs.IntBlock
 
         private class Index : AbstractIndex
         {
-            private readonly FixedIntBlockIndexOutput outerInstance;
+            private readonly FixedInt32BlockIndexOutput outerInstance;
 
-            public Index(FixedIntBlockIndexOutput outerInstance)
+            public Index(FixedInt32BlockIndexOutput outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

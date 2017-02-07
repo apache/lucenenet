@@ -35,15 +35,17 @@ namespace Lucene.Net.Codecs.IntBlock
     /// more performant approach would directly create an impl
     /// of IntIndexInput inside Directory.  Wrapping a generic
     /// IndexInput will likely cost performance.
+    /// <para/>
+    /// NOTE: This was VariableIntBlockIndexInput in Lucene
     /// 
     /// @lucene.experimental
     /// </summary>
-    public abstract class VariableIntBlockIndexInput : IntIndexInput
+    public abstract class VariableInt32BlockIndexInput : Int32IndexInput
     {
         private readonly IndexInput input;
         protected readonly int m_maxBlockSize;
 
-        protected internal VariableIntBlockIndexInput(IndexInput input)
+        protected internal VariableInt32BlockIndexInput(IndexInput input)
         {
             this.input = input;
             m_maxBlockSize = input.ReadInt32();
@@ -165,9 +167,9 @@ namespace Lucene.Net.Codecs.IntBlock
 
         private class Index : AbstractIndex
         {
-            private readonly VariableIntBlockIndexInput outerInstance;
+            private readonly VariableInt32BlockIndexInput outerInstance;
 
-            public Index(VariableIntBlockIndexInput outerInstance)
+            public Index(VariableInt32BlockIndexInput outerInstance)
             {
                 this.outerInstance = outerInstance;
             }

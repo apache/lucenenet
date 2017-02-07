@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.IntBlock
          * If the first value is &lt;= 3, writes baseBlockSize vInts at once,
          * otherwise writes 2*baseBlockSize vInts.
          */
-        public class MockIntFactory : IntStreamFactory
+        public class MockIntFactory : Int32StreamFactory
         {
 
             private readonly int baseBlockSize;
@@ -65,14 +65,14 @@ namespace Lucene.Net.Codecs.IntBlock
                 this.baseBlockSize = baseBlockSize;
             }
 
-            public override IntIndexInput OpenInput(Directory dir, string fileName, IOContext context)
+            public override Int32IndexInput OpenInput(Directory dir, string fileName, IOContext context)
             {
                 IndexInput input = dir.OpenInput(fileName, context);
                 int baseBlockSize = input.ReadInt32();
                 return new VariableIntBlockIndexInputAnonymousHelper(input, baseBlockSize);
             }
 
-            private class VariableIntBlockIndexInputAnonymousHelper : VariableIntBlockIndexInput
+            private class VariableIntBlockIndexInputAnonymousHelper : VariableInt32BlockIndexInput
             {
                 private readonly int baseBlockSize;
 
@@ -117,14 +117,14 @@ namespace Lucene.Net.Codecs.IntBlock
                 }
             }
 
-            public override IntIndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
+            public override Int32IndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
             {
                 IndexOutput output = dir.CreateOutput(fileName, context);
                 bool success = false;
                 try
                 {
                     output.WriteInt32(baseBlockSize);
-                    VariableIntBlockIndexOutput ret = new VariableIntBlockIndexOutputAnonymousHelper(output, 2 * baseBlockSize);
+                    VariableInt32BlockIndexOutput ret = new VariableIntBlockIndexOutputAnonymousHelper(output, 2 * baseBlockSize);
                     success = true;
                     return ret;
                 }
@@ -138,7 +138,7 @@ namespace Lucene.Net.Codecs.IntBlock
             }
         }
 
-        private class VariableIntBlockIndexOutputAnonymousHelper : VariableIntBlockIndexOutput
+        private class VariableIntBlockIndexOutputAnonymousHelper : VariableInt32BlockIndexOutput
         {
             private readonly int baseBlockSize;
             public VariableIntBlockIndexOutputAnonymousHelper(IndexOutput output, int baseBlockSize)

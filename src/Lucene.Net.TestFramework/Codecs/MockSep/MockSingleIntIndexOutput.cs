@@ -10,7 +10,7 @@ namespace Lucene.Net.Codecs.MockSep
     /// 
     /// @lucene.experimental
     /// </summary>
-    public class MockSingleIntIndexOutput : IntIndexOutput
+    public class MockSingleIntIndexOutput : Int32IndexOutput
     {
         private readonly IndexOutput @out;
         internal const string CODEC = "SINGLE_INTS";

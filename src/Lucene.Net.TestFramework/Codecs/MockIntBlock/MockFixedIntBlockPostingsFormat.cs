@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs.IntBlock
         }
 
         // only for testing
-        public IntStreamFactory getIntFactory()
+        public Int32StreamFactory getIntFactory()
         {
             return new MockIntFactory(blockSize);
         }
@@ -57,7 +57,7 @@ namespace Lucene.Net.Codecs.IntBlock
         /**
          * Encodes blocks as vInts of a fixed block size.
          */
-        public class MockIntFactory : IntStreamFactory
+        public class MockIntFactory : Int32StreamFactory
         {
             private readonly int blockSize;
 
@@ -66,12 +66,12 @@ namespace Lucene.Net.Codecs.IntBlock
                 this.blockSize = blockSize;
             }
 
-            public override IntIndexInput OpenInput(Directory dir, string fileName, IOContext context)
+            public override Int32IndexInput OpenInput(Directory dir, string fileName, IOContext context)
             {
                 return new FixedIntBlockIndexInputAnonymousHelper(this, dir.OpenInput(fileName, context));
             }
 
-            private class FixedIntBlockIndexInputAnonymousHelper : FixedIntBlockIndexInput
+            private class FixedIntBlockIndexInputAnonymousHelper : FixedInt32BlockIndexInput
             {
                 private readonly MockIntFactory outerInstance;
 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs.IntBlock
                     return new BlockReaderAnonymousHelper(outerInstance, @in, buffer);
                 }
 
-                private class BlockReaderAnonymousHelper : FixedIntBlockIndexInput.IBlockReader
+                private class BlockReaderAnonymousHelper : FixedInt32BlockIndexInput.IBlockReader
                 {
                     private readonly MockIntFactory outerInstance;
                     private readonly IndexInput @in;
@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.IntBlock
             }
 
 
-            public override IntIndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
+            public override Int32IndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
             {
                 IndexOutput output = dir.CreateOutput(fileName, context);
                 bool success = false;
@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.IntBlock
             }
         }
 
-        private class FixedIntBlockIndexOutputAnonymousHelper : FixedIntBlockIndexOutput
+        private class FixedIntBlockIndexOutputAnonymousHelper : FixedInt32BlockIndexOutput
         {
             public FixedIntBlockIndexOutputAnonymousHelper(IndexOutput output, int blockSize)
                 : base(output, blockSize)

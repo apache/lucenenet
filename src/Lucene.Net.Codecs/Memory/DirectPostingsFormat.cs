@@ -355,7 +355,10 @@ namespace Lucene.Net.Codecs.Memory
             private int[] sameCounts = new int[10];
             private readonly int minSkipCount;
 
-            private sealed class IntArrayWriter
+            /// <summary>
+            /// NOTE: This was IntArrayWriter in Lucene
+            /// </summary>
+            private sealed class Int32ArrayWriter
             {
                 private int[] ints = new int[10];
                 private int upto;
@@ -409,7 +412,7 @@ namespace Lucene.Net.Codecs.Memory
                 TermsEnum termsEnum = termsIn.GetIterator(null);
                 int termOffset = 0;
 
-                IntArrayWriter scratch = new IntArrayWriter();
+                Int32ArrayWriter scratch = new Int32ArrayWriter();
 
                 // Used for payloads, if any:
                 RAMOutputStream ros = new RAMOutputStream();

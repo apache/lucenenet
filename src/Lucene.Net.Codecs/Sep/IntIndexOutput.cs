@@ -25,6 +25,8 @@ namespace Lucene.Net.Codecs.Sep
     /// IntBlockCodec interacts with this API. @see IntBlockReader.
     /// 
     /// NOTE: block sizes could be variable
+    /// <para/>
+    /// NOTE: This was IntIndexOutput in Lucene
     /// 
     /// @lucene.experimental 
     /// </summary>
@@ -32,7 +34,7 @@ namespace Lucene.Net.Codecs.Sep
     /// TODO: We may want tighter integration w/IndexOutput
     /// may give better performance
     /// </remarks>
-    public abstract class IntIndexOutput : IDisposable
+    public abstract class Int32IndexOutput : IDisposable
     {
         /// <summary>
         /// Write an int to the primary file.  The value must be

@@ -33,30 +33,30 @@ namespace Lucene.Net.Codecs.Sep
     internal class SepSkipListReader : MultiLevelSkipListReader
     {
         private bool _currentFieldStoresPayloads;
-        private readonly IntIndexInput.AbstractIndex[] _freqIndex;
-        private readonly IntIndexInput.AbstractIndex[] _docIndex;
-        private readonly IntIndexInput.AbstractIndex[] _posIndex;
+        private readonly Int32IndexInput.AbstractIndex[] _freqIndex;
+        private readonly Int32IndexInput.AbstractIndex[] _docIndex;
+        private readonly Int32IndexInput.AbstractIndex[] _posIndex;
         private readonly long[] _payloadPointer;
         private readonly int[] _payloadLength;
 
-        private readonly IntIndexInput.AbstractIndex _lastFreqIndex;
-        private readonly IntIndexInput.AbstractIndex _lastDocIndex;
-        private readonly IntIndexInput.AbstractIndex _lastPosIndex;
+        private readonly Int32IndexInput.AbstractIndex _lastFreqIndex;
+        private readonly Int32IndexInput.AbstractIndex _lastDocIndex;
+        private readonly Int32IndexInput.AbstractIndex _lastPosIndex;
 
         private long _lastPayloadPointer;
         private int _lastPayloadLength;
 
-        internal SepSkipListReader(IndexInput skipStream, IntIndexInput freqIn, IntIndexInput docIn, IntIndexInput posIn,
+        internal SepSkipListReader(IndexInput skipStream, Int32IndexInput freqIn, Int32IndexInput docIn, Int32IndexInput posIn,
             int maxSkipLevels, int skipInterval)
             : base(skipStream, maxSkipLevels, skipInterval)
         {
             if (freqIn != null)
-                _freqIndex = new IntIndexInput.AbstractIndex[maxSkipLevels];
+                _freqIndex = new Int32IndexInput.AbstractIndex[maxSkipLevels];
 
-            _docIndex = new IntIndexInput.AbstractIndex[maxSkipLevels];
+            _docIndex = new Int32IndexInput.AbstractIndex[maxSkipLevels];
 
             if (posIn != null)
-                _posIndex = new IntIndexInput.AbstractIndex[m_maxNumberOfSkipLevels];
+                _posIndex = new Int32IndexInput.AbstractIndex[m_maxNumberOfSkipLevels];
 
             for (var i = 0; i < maxSkipLevels; i++)
             {
@@ -84,8 +84,8 @@ namespace Lucene.Net.Codecs.Sep
             _indexOptions = v;
         }
 
-        internal virtual void Init(long skipPointer, IntIndexInput.AbstractIndex docBaseIndex, IntIndexInput.AbstractIndex freqBaseIndex,
-            IntIndexInput.AbstractIndex posBaseIndex, long payloadBasePointer, int df, bool storesPayloads)
+        internal virtual void Init(long skipPointer, Int32IndexInput.AbstractIndex docBaseIndex, Int32IndexInput.AbstractIndex freqBaseIndex,
+            Int32IndexInput.AbstractIndex posBaseIndex, long payloadBasePointer, int df, bool storesPayloads)
         {
             base.Init(skipPointer, df);
             _currentFieldStoresPayloads = storesPayloads;
@@ -153,17 +153,17 @@ namespace Lucene.Net.Codecs.Sep
                 _posIndex[level - 1].CopyFrom(_posIndex[level]);
         }
 
-        internal virtual IntIndexInput.AbstractIndex FreqIndex
+        internal virtual Int32IndexInput.AbstractIndex FreqIndex
         {
             get { return _lastFreqIndex; }
         }
 
-        internal virtual IntIndexInput.AbstractIndex PosIndex
+        internal virtual Int32IndexInput.AbstractIndex PosIndex
         {
             get { return _lastPosIndex; }
         }
 
-        internal virtual IntIndexInput.AbstractIndex DocIndex
+        internal virtual Int32IndexInput.AbstractIndex DocIndex
         {
             get { return _lastDocIndex; }
         }

@@ -21,20 +21,22 @@ namespace Lucene.Net.Codecs.Sep
      */
 
     /// <summary>
-    /// Defines basic API for writing ints to an IndexOutput.
-    ///  IntBlockCodec interacts with this API. @see
-    ///  IntBlockReader
+    /// Defines basic API for writing ints to an <see cref="IndexOutput"/>.
+    /// IntBlockCodec interacts with this API. @see
+    /// IntBlockReader
+    /// <para/>
+    /// NOTE: This was IntIndexInput in Lucene
     /// 
     /// @lucene.experimental 
     /// </summary>
-    public abstract class IntIndexInput : IDisposable
+    public abstract class Int32IndexInput : IDisposable
     {
         public abstract AbstractReader GetReader();
         public abstract void Dispose();
         public abstract AbstractIndex GetIndex();
 
         /// <summary>
-        /// Records a single skip-point in the <see cref="IntIndexInput.GetReader"/>. </summary>
+        /// Records a single skip-point in the <see cref="Int32IndexInput.GetReader"/>. </summary>
         public abstract class AbstractIndex
         {
             public abstract void Read(DataInput indexIn, bool absolute);
