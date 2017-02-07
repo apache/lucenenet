@@ -179,9 +179,11 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Calculate a 64-bit hash function for this path.  This
         /// is necessary for <see cref="NameHashIntCacheLRU"/> (the
         /// default cache impl for <see cref="LruTaxonomyWriterCache"/>) 
-        /// to reduce the chance of "silent but deadly" collisions. 
+        /// to reduce the chance of "silent but deadly" collisions.
+        /// <para/>
+        /// NOTE: This was longHashCode() in Lucene
         /// </summary>
-        public virtual long LongHashCode()
+        public virtual long Int64HashCode()
         {
             if (Length == 0)
             {

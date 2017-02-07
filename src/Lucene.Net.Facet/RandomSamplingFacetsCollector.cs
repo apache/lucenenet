@@ -65,8 +65,10 @@ namespace Lucene.Net.Facet
 
             /// <summary>
             /// Get the next random long value
+            /// <para/>
+            /// NOTE: This was randomLong() in Lucene
             /// </summary>
-            public virtual long RandomLong()
+            public virtual long RandomInt64()
             {
                 x ^= (x << 21);
                 x ^= ((long)((ulong)x >> 35));
@@ -76,10 +78,12 @@ namespace Lucene.Net.Facet
 
             /// <summary>
             /// Get the next random int, between 0 (inclusive) and <paramref name="n"/> (exclusive)
+            /// <para/>
+            /// NOTE: This was nextInt() in Lucene
             /// </summary>
-            public virtual int NextInt(int n)
+            public virtual int NextInt32(int n)
             {
-                int res = (int)(RandomLong() % n);
+                int res = (int)(RandomInt64() % n);
                 return (res < 0) ? -res : res;
             }
         }
@@ -209,7 +213,7 @@ namespace Lucene.Net.Facet
                 else
                 {
                     limit = binSize;
-                    randomIndex = random.NextInt(binSize);
+                    randomIndex = random.NextInt32(binSize);
                 }
                 DocIdSetIterator it = docs.Bits.GetIterator();
                 for (int doc = it.NextDoc(); doc != DocIdSetIterator.NO_MORE_DOCS; doc = it.NextDoc())
@@ -223,7 +227,7 @@ namespace Lucene.Net.Facet
                     {
                         counter = 0;
                         limit = binSize;
-                        randomIndex = random.NextInt(binSize);
+                        randomIndex = random.NextInt32(binSize);
                     }
                 }
 

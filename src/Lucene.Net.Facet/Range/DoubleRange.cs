@@ -105,7 +105,10 @@ namespace Lucene.Net.Facet.Range
             return value >= minIncl && value <= maxIncl;
         }
 
-        internal LongRange ToLongRange()
+        /// <summary>
+        /// NOTE: This was toLongRange() in Lucene
+        /// </summary>
+        internal LongRange ToInt64Range()
         {
             return new LongRange(Label, NumericUtils.DoubleToSortableInt64(minIncl), true, NumericUtils.DoubleToSortableInt64(maxIncl), true);
         }

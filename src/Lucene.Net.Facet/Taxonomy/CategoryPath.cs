@@ -248,8 +248,10 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Calculate a 64-bit hash function for this path.
+        /// <para/>
+        /// NOTE: This was longHashCode() in Lucene
         /// </summary>
-        public virtual long LongHashCode()
+        public virtual long Int64HashCode()
         {
             if (Length == 0)
             {

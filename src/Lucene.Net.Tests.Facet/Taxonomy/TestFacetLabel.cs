@@ -124,9 +124,9 @@ namespace Lucene.Net.Facet.Taxonomy
         [Test]
         public virtual void TestLongHashCode()
         {
-            Assert.AreEqual((new FacetLabel()).LongHashCode(), (new FacetLabel()).LongHashCode());
-            Assert.False((new FacetLabel()).LongHashCode() == (new FacetLabel("hi")).LongHashCode());
-            Assert.AreEqual((new FacetLabel("hello", "world")).LongHashCode(), (new FacetLabel("hello", "world")).LongHashCode());
+            Assert.AreEqual((new FacetLabel()).Int64HashCode(), (new FacetLabel()).Int64HashCode());
+            Assert.False((new FacetLabel()).Int64HashCode() == (new FacetLabel("hi")).Int64HashCode());
+            Assert.AreEqual((new FacetLabel("hello", "world")).Int64HashCode(), (new FacetLabel("hello", "world")).Int64HashCode());
         }
 
         [Test]

@@ -37,30 +37,34 @@ namespace Lucene.Net.Facet.Taxonomy
         /// float association 
         /// </summary>
         public FloatAssociationFacetField(float assoc, string dim, params string[] path) 
-            : base(FloatToBytesRef(assoc), dim, path)
+            : base(SingleToBytesRef(assoc), dim, path)
         {
         }
 
         /// <summary>
         /// Encodes a <see cref="float"/> as a 4-byte <see cref="BytesRef"/>.
+        /// <para/>
+        /// NOTE: This was floatToBytesRef() in Lucene
         /// </summary>
-        public static BytesRef FloatToBytesRef(float v)
+        public static BytesRef SingleToBytesRef(float v)
         {
-            return IntAssociationFacetField.IntToBytesRef(Number.SingleToInt32Bits(v));
+            return IntAssociationFacetField.Int32ToBytesRef(Number.SingleToInt32Bits(v));
         }
 
         /// <summary>
         /// Decodes a previously encoded <see cref="float"/>.
+        /// <para/>
+        /// NOTE: This was bytesRefToFloat() in Lucene
         /// </summary>
-        public static float BytesRefToFloat(BytesRef b)
+        public static float BytesRefToSingle(BytesRef b)
         {
-            return Number.Int32BitsToSingle(IntAssociationFacetField.BytesRefToInt(b));
+            return Number.Int32BitsToSingle(IntAssociationFacetField.BytesRefToInt32(b));
         }
 
         public override string ToString()
         {
             return "FloatAssociationFacetField(dim=" + Dim + " path=" + Arrays.ToString(Path) + 
-                " value=" + BytesRefToFloat(Assoc).ToString("0.0#####", CultureInfo.InvariantCulture) + ")";
+                " value=" + BytesRefToSingle(Assoc).ToString("0.0#####", CultureInfo.InvariantCulture) + ")";
         }
     }
 }

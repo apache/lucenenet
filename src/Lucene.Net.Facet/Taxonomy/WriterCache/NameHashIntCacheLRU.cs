@@ -35,12 +35,12 @@
 
         internal override object Key(FacetLabel name)
         {
-            return new long?(name.LongHashCode());
+            return new long?(name.Int64HashCode());
         }
 
         internal override object Key(FacetLabel name, int prefixLen)
         {
-            return new long?(name.Subpath(prefixLen).LongHashCode());
+            return new long?(name.Subpath(prefixLen).Int64HashCode());
         }
     }
 }
